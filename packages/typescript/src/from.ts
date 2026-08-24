@@ -4,7 +4,7 @@ import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId, KIND_LITERAL_TEXT } from './types.js';
 import type { AnyNodeData } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData } from './utils.js';
+import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _FromFieldInput = unknown;
@@ -12,21 +12,21 @@ type _FromFieldInput = unknown;
 export const _fromMap = {
 	program: coerceToProgram,
 	hash_bang_line: coerceToHashBangLine,
-	export_statement: coerceToExportStatement,
+	export_statement: coerceToExportStatement$impl,
 	namespace_export: coerceToNamespaceExport,
 	export_clause: coerceToExportClause,
-	export_specifier: coerceToExportSpecifier,
+	export_specifier: coerceToExportSpecifier$impl,
 	import: coerceToImport,
-	import_statement: coerceToImportStatement,
-	import_clause: coerceToImportClause,
+	import_statement: coerceToImportStatement$impl,
+	import_clause: coerceToImportClause$impl,
 	namespace_import: coerceToNamespaceImport,
 	named_imports: coerceToNamedImports,
-	import_specifier: coerceToImportSpecifier,
-	import_attribute: coerceToImportAttribute,
+	import_specifier: coerceToImportSpecifier$impl,
+	import_attribute: coerceToImportAttribute$impl,
 	expression_statement: coerceToExpressionStatement,
 	variable_declaration: coerceToVariableDeclaration,
 	lexical_declaration: coerceToLexicalDeclaration,
-	variable_declarator: coerceToVariableDeclarator,
+	variable_declarator: coerceToVariableDeclarator$impl,
 	statement_block: coerceToStatementBlock,
 	else_clause: coerceToElseClause,
 	if_statement: coerceToIfStatement,
@@ -57,15 +57,15 @@ export const _fromMap = {
 	array: coerceToArray,
 	array_pattern: coerceToArrayPattern,
 	nested_identifier: coerceToNestedIdentifier,
-	class: coerceToClass,
+	class: coerceToClass$impl,
 	class_declaration: coerceToClassDeclaration,
-	class_heritage: coerceToClassHeritage,
+	class_heritage: coerceToClassHeritage$impl,
 	function_expression: coerceToFunctionExpression,
 	function_declaration: coerceToFunctionDeclaration,
 	generator_function: coerceToGeneratorFunction,
 	generator_function_declaration: coerceToGeneratorFunctionDeclaration,
 	arrow_function: coerceToArrowFunction,
-	call_expression: coerceToCallExpression,
+	call_expression: coerceToCallExpression$impl,
 	new_expression: coerceToNewExpression,
 	await_expression: coerceToAwaitExpression,
 	member_expression: coerceToMemberExpression,
@@ -74,11 +74,11 @@ export const _fromMap = {
 	augmented_assignment_expression: coerceToAugmentedAssignmentExpression,
 	spread_element: coerceToSpreadElement,
 	ternary_expression: coerceToTernaryExpression,
-	binary_expression: coerceToBinaryExpression,
+	binary_expression: coerceToBinaryExpression$impl,
 	unary_expression: coerceToUnaryExpression,
-	update_expression: coerceToUpdateExpression,
+	update_expression: coerceToUpdateExpression$impl,
 	sequence_expression: coerceToSequenceExpression,
-	string: coerceToString,
+	string: coerceToString$impl,
 	unescaped_double_string_fragment: coerceToUnescapedDoubleStringFragment,
 	unescaped_single_string_fragment: coerceToUnescapedSingleStringFragment,
 	escape_sequence: coerceToEscapeSequence,
@@ -106,14 +106,14 @@ export const _fromMap = {
 	formal_parameters: coerceToFormalParameters,
 	class_static_block: coerceToClassStaticBlock,
 	rest_pattern: coerceToRestPattern,
-	method_definition: coerceToMethodDefinition,
+	method_definition: coerceToMethodDefinition$impl,
 	pair: coerceToPair,
 	pair_pattern: coerceToPairPattern,
 	computed_property_name: coerceToComputedPropertyName,
-	public_field_definition: coerceToPublicFieldDefinition,
+	public_field_definition: coerceToPublicFieldDefinition$impl,
 	non_null_expression: coerceToNonNullExpression,
-	method_signature: coerceToMethodSignature,
-	abstract_method_signature: coerceToAbstractMethodSignature,
+	method_signature: coerceToMethodSignature$impl,
+	abstract_method_signature: coerceToAbstractMethodSignature$impl,
 	function_signature: coerceToFunctionSignature,
 	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression,
 	type_assertion: coerceToTypeAssertion,
@@ -172,9 +172,9 @@ export const _fromMap = {
 	type_parameters: coerceToTypeParameters,
 	type_parameter: coerceToTypeParameter,
 	default_type: coerceToDefaultType,
-	constraint: coerceToConstraint,
+	constraint: coerceToConstraint$impl,
 	construct_signature: coerceToConstructSignature,
-	index_signature: coerceToIndexSignature,
+	index_signature: coerceToIndexSignature$impl,
 	array_type: coerceToArrayType,
 	tuple_type: coerceToTupleType,
 	readonly_type: coerceToReadonlyType,
@@ -1021,7 +1021,7 @@ export function coerceToHashBangLine(input: string | T.HashBangLine): ReturnType
 	return F.buildHashBangLine(input as Parameters<typeof F.buildHashBangLine>[0]);
 }
 
-export function coerceToExportStatement(
+function coerceToExportStatement$impl(
 	input?:
 		| (
 				| T.ExportStatementDefault
@@ -1046,6 +1046,15 @@ export function coerceToExportStatement(
 	);
 }
 
+export const coerceToExportStatement = attachProps(coerceToExportStatement$impl, {
+	default: F.buildExportStatement.default,
+	fromArm: F.buildExportStatement.fromArm,
+	declArm: F.buildExportStatement.declArm,
+	typeExport: F.buildExportStatement.typeExport,
+	equalsExport: F.buildExportStatement.equalsExport,
+	namespaceExport: F.buildExportStatement.namespaceExport
+});
+
 export function coerceToNamespaceExport(
 	input?: T.ModuleExportName | T.NamespaceExport
 ): ReturnType<typeof F.buildNamespaceExport> {
@@ -1068,7 +1077,7 @@ export function coerceToExportClause(
 	return F.buildExportClause(_resolveOneBranch<T.ExportSpecifiers>(input, '_export_specifiers'));
 }
 
-export function coerceToExportSpecifier(input: T.ExportSpecifier.Loose): ReturnType<typeof F.buildExportSpecifier> {
+function coerceToExportSpecifier$impl(input: T.ExportSpecifier.Loose): ReturnType<typeof F.buildExportSpecifier> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExportSpecifier>;
 	return F.buildExportSpecifier({
 		exportKind: coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(input.exportKind, _K0, _K0), [
@@ -1084,12 +1093,17 @@ export function coerceToExportSpecifier(input: T.ExportSpecifier.Loose): ReturnT
 	});
 }
 
+export const coerceToExportSpecifier = attachProps(coerceToExportSpecifier$impl, {
+	type: F.buildExportSpecifier.type,
+	typeof: F.buildExportSpecifier.typeof
+});
+
 export function coerceToImport(input?: T.Import): ReturnType<typeof F.buildImport> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImport>;
 	return F.buildImport();
 }
 
-export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
+function coerceToImportStatement$impl(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportStatement>;
 	return F.buildImportStatement({
 		importClause: coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(input.importClause, _K0, _K0), [
@@ -1113,7 +1127,12 @@ export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnT
 	});
 }
 
-export function coerceToImportClause(
+export const coerceToImportStatement = attachProps(coerceToImportStatement$impl, {
+	type: F.buildImportStatement.type,
+	typeof: F.buildImportStatement.typeof
+});
+
+function coerceToImportClause$impl(
 	input?: (T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport) | T.ImportClause
 ): ReturnType<typeof F.buildImportClause> {
 	if (isNodeData(input) && input.$type === TSKindId.ImportClause) {
@@ -1125,6 +1144,12 @@ export function coerceToImportClause(
 		_resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(input, _K0, _K5)
 	);
 }
+
+export const coerceToImportClause = attachProps(coerceToImportClause$impl, {
+	namespaceImport: F.buildImportClause.namespaceImport,
+	namedImports: F.buildImportClause.namedImports,
+	defaultImport: F.buildImportClause.defaultImport
+});
 
 export function coerceToNamespaceImport(input: T.NamespaceImport.Loose): ReturnType<typeof F.buildNamespaceImport> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NamespaceImport)
@@ -1154,7 +1179,7 @@ export function coerceToNamedImports(
 	return F.buildNamedImports(_resolveOneBranch<T.ImportSpecifiers>(input, '_import_specifiers'));
 }
 
-export function coerceToImportSpecifier(input: T.ImportSpecifier.Loose): ReturnType<typeof F.buildImportSpecifier> {
+function coerceToImportSpecifier$impl(input: T.ImportSpecifier.Loose): ReturnType<typeof F.buildImportSpecifier> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportSpecifier>;
 	return F.buildImportSpecifier({
 		importKind: coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(input.importKind, _K0, _K0), [
@@ -1169,7 +1194,12 @@ export function coerceToImportSpecifier(input: T.ImportSpecifier.Loose): ReturnT
 	});
 }
 
-export function coerceToImportAttribute(input: T.ImportAttribute.Loose): ReturnType<typeof F.buildImportAttribute> {
+export const coerceToImportSpecifier = attachProps(coerceToImportSpecifier$impl, {
+	type: F.buildImportSpecifier.type,
+	typeof: F.buildImportSpecifier.typeof
+});
+
+function coerceToImportAttribute$impl(input: T.ImportAttribute.Loose): ReturnType<typeof F.buildImportAttribute> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportAttribute>;
 	return F.buildImportAttribute({
 		attributeKind: _requireField(
@@ -1183,6 +1213,11 @@ export function coerceToImportAttribute(input: T.ImportAttribute.Loose): ReturnT
 		object: _resolveOneBranch<T.Object>(input.object, 'object') ?? F.buildObject()
 	});
 }
+
+export const coerceToImportAttribute = attachProps(coerceToImportAttribute$impl, {
+	with: F.buildImportAttribute.with,
+	assert: F.buildImportAttribute.assert
+});
 
 export function coerceToExpressionStatement(
 	input: T.ExpressionStatement.Loose
@@ -1251,7 +1286,7 @@ export function coerceToLexicalDeclaration(
 	});
 }
 
-export function coerceToVariableDeclarator(
+function coerceToVariableDeclarator$impl(
 	input?: (T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2) | T.VariableDeclarator
 ): ReturnType<typeof F.buildVariableDeclarator> {
 	if (isNodeData(input) && input.$type === TSKindId.VariableDeclarator) {
@@ -1261,6 +1296,11 @@ export function coerceToVariableDeclarator(
 	}
 	return F.buildVariableDeclarator(_resolveOne<T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2>(input, _K0, _K9));
 }
+
+export const coerceToVariableDeclarator = attachProps(coerceToVariableDeclarator$impl, {
+	arm1: F.buildVariableDeclarator.arm1,
+	arm2: F.buildVariableDeclarator.arm2
+});
 
 export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildStatementBlock>;
@@ -1817,7 +1857,7 @@ export function coerceToNestedIdentifier(input: T.NestedIdentifier.Loose): Retur
 	});
 }
 
-export function coerceToClass(input: T.Class.Loose): ReturnType<typeof F.buildClass> {
+function coerceToClass$impl(input: T.Class.Loose): ReturnType<typeof F.buildClass> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClass>;
 	return F.buildClass({
 		decorator: _resolveManyBranch<T.Decorator>(input.decorator, 'decorator'),
@@ -1827,6 +1867,10 @@ export function coerceToClass(input: T.Class.Loose): ReturnType<typeof F.buildCl
 		body: _resolveOneBranch<T.ClassBody>(input.body, 'class_body') ?? F.buildClassBody()
 	});
 }
+
+export const coerceToClass = attachProps(coerceToClass$impl, {
+	body: F.buildClass.body
+});
 
 export function coerceToClassDeclaration(input: T.ClassDeclaration.Loose): ReturnType<typeof F.buildClassDeclaration> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClassDeclaration>;
@@ -1840,7 +1884,7 @@ export function coerceToClassDeclaration(input: T.ClassDeclaration.Loose): Retur
 	});
 }
 
-export function coerceToClassHeritage(
+function coerceToClassHeritage$impl(
 	input?: (T.ClassHeritageExtendsClause | T.ImplementsClause) | T.ClassHeritage
 ): ReturnType<typeof F.buildClassHeritage> {
 	if (isNodeData(input) && input.$type === TSKindId.ClassHeritage) {
@@ -1850,6 +1894,11 @@ export function coerceToClassHeritage(
 	}
 	return F.buildClassHeritage(_resolveOne<T.ClassHeritageExtendsClause | T.ImplementsClause>(input, _K0, _K22));
 }
+
+export const coerceToClassHeritage = attachProps(coerceToClassHeritage$impl, {
+	extendsClause: F.buildClassHeritage.extendsClause,
+	implementsClause: F.buildClassHeritage.implementsClause
+});
 
 export function coerceToFunctionExpression(
 	input: T.FunctionExpression.Loose
@@ -1946,7 +1995,7 @@ export function coerceToArrowFunction(input: T.ArrowFunction.Loose): ReturnType<
 	});
 }
 
-export function coerceToCallExpression(
+function coerceToCallExpression$impl(
 	input?: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember) | T.CallExpression
 ): ReturnType<typeof F.buildCallExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.CallExpression) {
@@ -1958,6 +2007,12 @@ export function coerceToCallExpression(
 		_resolveOne<T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember>(input, _K0, _K26)
 	);
 }
+
+export const coerceToCallExpression = attachProps(coerceToCallExpression$impl, {
+	call: F.buildCallExpression.call,
+	templateCall: F.buildCallExpression.templateCall,
+	member: F.buildCallExpression.member
+});
 
 export function coerceToNewExpression(input: T.NewExpression.Loose): ReturnType<typeof F.buildNewExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildNewExpression>;
@@ -2122,7 +2177,7 @@ export function coerceToTernaryExpression(
 	});
 }
 
-export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
+function coerceToBinaryExpression$impl(input?: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBinaryExpression>;
 	return F.buildBinaryExpression({
 		left: _resolveOne<T.Expression>(input?.left, _K7, _K14),
@@ -2185,6 +2240,34 @@ export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): Retu
 	});
 }
 
+export const coerceToBinaryExpression = attachProps(coerceToBinaryExpression$impl, {
+	arm: F.buildBinaryExpression.arm,
+	ampAmp: F.buildBinaryExpression.ampAmp,
+	pipePipe: F.buildBinaryExpression.pipePipe,
+	gtGt: F.buildBinaryExpression.gtGt,
+	gtGtGt: F.buildBinaryExpression.gtGtGt,
+	ltLt: F.buildBinaryExpression.ltLt,
+	amp: F.buildBinaryExpression.amp,
+	caret: F.buildBinaryExpression.caret,
+	pipe: F.buildBinaryExpression.pipe,
+	plus: F.buildBinaryExpression.plus,
+	dash: F.buildBinaryExpression.dash,
+	star: F.buildBinaryExpression.star,
+	slash: F.buildBinaryExpression.slash,
+	percent: F.buildBinaryExpression.percent,
+	starStar: F.buildBinaryExpression.starStar,
+	lt: F.buildBinaryExpression.lt,
+	ltEq: F.buildBinaryExpression.ltEq,
+	eqEq: F.buildBinaryExpression.eqEq,
+	eqEqEq: F.buildBinaryExpression.eqEqEq,
+	bangEq: F.buildBinaryExpression.bangEq,
+	bangEqEq: F.buildBinaryExpression.bangEqEq,
+	gtEq: F.buildBinaryExpression.gtEq,
+	gt: F.buildBinaryExpression.gt,
+	qmarkQmark: F.buildBinaryExpression.qmarkQmark,
+	instanceof: F.buildBinaryExpression.instanceof
+});
+
 export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnaryExpression>;
 	return F.buildUnaryExpression({
@@ -2205,7 +2288,7 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 	});
 }
 
-export function coerceToUpdateExpression(
+function coerceToUpdateExpression$impl(
 	input?: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix) | T.UpdateExpression
 ): ReturnType<typeof F.buildUpdateExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.UpdateExpression) {
@@ -2215,6 +2298,11 @@ export function coerceToUpdateExpression(
 	}
 	return F.buildUpdateExpression(_resolveOne<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(input, _K0, _K32));
 }
+
+export const coerceToUpdateExpression = attachProps(coerceToUpdateExpression$impl, {
+	postfix: F.buildUpdateExpression.postfix,
+	prefix: F.buildUpdateExpression.prefix
+});
 
 export function coerceToSequenceExpression(
 	...input: readonly (T.Expression | T.SequenceExpression | { expression: T.Expression | readonly T.Expression[] })[]
@@ -2239,7 +2327,7 @@ export function coerceToSequenceExpression(
 	);
 }
 
-export function coerceToString(input?: (T.StringDouble | T.StringSingle) | T.String): ReturnType<typeof F.buildString> {
+function coerceToString$impl(input?: (T.StringDouble | T.StringSingle) | T.String): ReturnType<typeof F.buildString> {
 	if (isNodeData(input) && input.$type === TSKindId.String) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
@@ -2247,6 +2335,11 @@ export function coerceToString(input?: (T.StringDouble | T.StringSingle) | T.Str
 	}
 	return F.buildString(_resolveOne<T.StringDouble | T.StringSingle>(input, _K0, _K33));
 }
+
+export const coerceToString = attachProps(coerceToString$impl, {
+	double: F.buildString.double,
+	single: F.buildString.single
+});
 
 export function coerceToUnescapedDoubleStringFragment(
 	input: string | T.UnescapedDoubleStringFragment
@@ -2534,7 +2627,7 @@ export function coerceToRestPattern(input?: T._LhsExpression | T.RestPattern): R
 	return F.buildRestPattern(_resolveOne<T._LhsExpression>(input, _K17, _K39));
 }
 
-export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): ReturnType<typeof F.buildMethodDefinition> {
+function coerceToMethodDefinition$impl(input: T.MethodDefinition.Loose): ReturnType<typeof F.buildMethodDefinition> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMethodDefinition>;
 	return F.buildMethodDefinition({
 		accessibilityModifier: coerceKindEnumStorage(
@@ -2567,6 +2660,12 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock()
 	});
 }
+
+export const coerceToMethodDefinition = attachProps(coerceToMethodDefinition$impl, {
+	get: F.buildMethodDefinition.get,
+	set: F.buildMethodDefinition.set,
+	star: F.buildMethodDefinition.star
+});
 
 export function coerceToPair(input: T.Pair.Loose): ReturnType<typeof F.buildPair> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPair>;
@@ -2604,7 +2703,7 @@ export function coerceToComputedPropertyName(
 	);
 }
 
-export function coerceToPublicFieldDefinition(
+function coerceToPublicFieldDefinition$impl(
 	input: T.PublicFieldDefinition.Loose
 ): ReturnType<typeof F.buildPublicFieldDefinition> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPublicFieldDefinition>;
@@ -2634,6 +2733,11 @@ export function coerceToPublicFieldDefinition(
 	});
 }
 
+export const coerceToPublicFieldDefinition = attachProps(coerceToPublicFieldDefinition$impl, {
+	qmark: F.buildPublicFieldDefinition.qmark,
+	bang: F.buildPublicFieldDefinition.bang
+});
+
 export function coerceToNonNullExpression(
 	input: T.NonNullExpression.Loose
 ): ReturnType<typeof F.buildNonNullExpression> {
@@ -2654,7 +2758,7 @@ export function coerceToNonNullExpression(
 	);
 }
 
-export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnType<typeof F.buildMethodSignature> {
+function coerceToMethodSignature$impl(input: T.MethodSignature.Loose): ReturnType<typeof F.buildMethodSignature> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMethodSignature>;
 	return F.buildMethodSignature({
 		accessibilityModifier: coerceKindEnumStorage(
@@ -2687,7 +2791,13 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 	});
 }
 
-export function coerceToAbstractMethodSignature(
+export const coerceToMethodSignature = attachProps(coerceToMethodSignature$impl, {
+	get: F.buildMethodSignature.get,
+	set: F.buildMethodSignature.set,
+	star: F.buildMethodSignature.star
+});
+
+function coerceToAbstractMethodSignature$impl(
 	input: T.AbstractMethodSignature.Loose
 ): ReturnType<typeof F.buildAbstractMethodSignature> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAbstractMethodSignature>;
@@ -2718,6 +2828,12 @@ export function coerceToAbstractMethodSignature(
 		)
 	});
 }
+
+export const coerceToAbstractMethodSignature = attachProps(coerceToAbstractMethodSignature$impl, {
+	get: F.buildAbstractMethodSignature.get,
+	set: F.buildAbstractMethodSignature.set,
+	star: F.buildAbstractMethodSignature.star
+});
 
 export function coerceToFunctionSignature(
 	input: T.FunctionSignature.Loose
@@ -3630,7 +3746,7 @@ export function coerceToDefaultType(input: T.DefaultType.Loose): ReturnType<type
 	);
 }
 
-export function coerceToConstraint(input: T.Constraint.Loose): ReturnType<typeof F.buildConstraint> {
+function coerceToConstraint$impl(input: T.Constraint.Loose): ReturnType<typeof F.buildConstraint> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildConstraint>;
 	return F.buildConstraint({
 		content: _requireField(
@@ -3645,6 +3761,11 @@ export function coerceToConstraint(input: T.Constraint.Loose): ReturnType<typeof
 	});
 }
 
+export const coerceToConstraint = attachProps(coerceToConstraint$impl, {
+	extends: F.buildConstraint.extends,
+	colon: F.buildConstraint.colon
+});
+
 export function coerceToConstructSignature(
 	input: T.ConstructSignature.Loose
 ): ReturnType<typeof F.buildConstructSignature> {
@@ -3658,7 +3779,7 @@ export function coerceToConstructSignature(
 	});
 }
 
-export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnType<typeof F.buildIndexSignature> {
+function coerceToIndexSignature$impl(input: T.IndexSignature.Loose): ReturnType<typeof F.buildIndexSignature> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildIndexSignature>;
 	return F.buildIndexSignature({
 		sign: coerceKindEnumStorage(_resolveOne<'-' | '+'>(input.sign, _K0, _K0), [
@@ -3682,6 +3803,11 @@ export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnTyp
 		)
 	});
 }
+
+export const coerceToIndexSignature = attachProps(coerceToIndexSignature$impl, {
+	dash: F.buildIndexSignature.dash,
+	plus: F.buildIndexSignature.plus
+});
 
 export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ArrayType)

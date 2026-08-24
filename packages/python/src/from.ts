@@ -4,7 +4,7 @@ import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
 import type { AnyNodeData } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData } from './utils.js';
+import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _FromFieldInput = unknown;
@@ -14,10 +14,10 @@ export const _fromMap = {
 	import_statement: coerceToImportStatement,
 	import_prefix: coerceToImportPrefix,
 	relative_import: coerceToRelativeImport,
-	future_import_statement: coerceToFutureImportStatement,
+	future_import_statement: coerceToFutureImportStatement$impl,
 	import_from_statement: coerceToImportFromStatement,
 	aliased_import: coerceToAliasedImport,
-	print_statement: coerceToPrintStatement,
+	print_statement: coerceToPrintStatement$impl,
 	chevron: coerceToChevron,
 	assert_statement: coerceToAssertStatement,
 	expression_statement: coerceToExpressionStatement,
@@ -39,7 +39,7 @@ export const _fromMap = {
 	except_clause: coerceToExceptClause,
 	finally_clause: coerceToFinallyClause,
 	with_statement: coerceToWithStatement,
-	with_clause: coerceToWithClause,
+	with_clause: coerceToWithClause$impl,
 	with_item: coerceToWithItem,
 	function_definition: coerceToFunctionDefinition,
 	parameters: coerceToParameters,
@@ -52,7 +52,7 @@ export const _fromMap = {
 	type_alias_statement: coerceToTypeAliasStatement,
 	class_definition: coerceToClassDefinition,
 	type_parameter: coerceToTypeParameter,
-	parenthesized_list_splat: coerceToParenthesizedListSplat,
+	parenthesized_list_splat: coerceToParenthesizedListSplat$impl,
 	argument_list: coerceToArgumentList,
 	decorated_definition: coerceToDecoratedDefinition,
 	decorator: coerceToDecorator,
@@ -63,9 +63,9 @@ export const _fromMap = {
 	union_pattern: coerceToUnionPattern,
 	dict_pattern: coerceToDictPattern,
 	keyword_pattern: coerceToKeywordPattern,
-	splat_pattern: coerceToSplatPattern,
+	splat_pattern: coerceToSplatPattern$impl,
 	class_pattern: coerceToClassPattern,
-	complex_pattern: coerceToComplexPattern,
+	complex_pattern: coerceToComplexPattern$impl,
 	tuple_pattern: coerceToTuplePattern,
 	list_pattern: coerceToListPattern,
 	default_parameter: coerceToDefaultParameter,
@@ -74,8 +74,8 @@ export const _fromMap = {
 	dictionary_splat_pattern: coerceToDictionarySplatPattern,
 	as_pattern: coerceToAsPattern,
 	not_operator: coerceToNotOperator,
-	boolean_operator: coerceToBooleanOperator,
-	binary_operator: coerceToBinaryOperator,
+	boolean_operator: coerceToBooleanOperator$impl,
+	binary_operator: coerceToBinaryOperator$impl,
 	unary_operator: coerceToUnaryOperator,
 	comparison_operator: coerceToComparisonOperator,
 	lambda: coerceToLambda,
@@ -86,11 +86,11 @@ export const _fromMap = {
 	yield: coerceToYield,
 	attribute: coerceToAttribute,
 	subscript: coerceToSubscript,
-	slice: coerceToSlice,
+	slice: coerceToSlice$impl,
 	call: coerceToCall,
 	typed_parameter: coerceToTypedParameter,
 	type: coerceToType,
-	splat_type: coerceToSplatType,
+	splat_type: coerceToSplatType$impl,
 	generic_type: coerceToGenericType,
 	union_type: coerceToUnionType,
 	constrained_type: coerceToConstrainedType,
@@ -967,7 +967,7 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 	});
 }
 
-export function coerceToFutureImportStatement(
+function coerceToFutureImportStatement$impl(
 	input?: (T.ImportList | T.FutureImportStatementArm) | T.FutureImportStatement
 ): ReturnType<typeof F.buildFutureImportStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.FutureImportStatement) {
@@ -977,6 +977,11 @@ export function coerceToFutureImportStatement(
 	}
 	return F.buildFutureImportStatement(_resolveOne<T.ImportList | T.FutureImportStatementArm>(input, _K0, _K2));
 }
+
+export const coerceToFutureImportStatement = attachProps(coerceToFutureImportStatement$impl, {
+	importList: F.buildFutureImportStatement.importList,
+	arm: F.buildFutureImportStatement.arm
+});
 
 export function coerceToImportFromStatement(
 	input: T.ImportFromStatement.Loose
@@ -1004,7 +1009,7 @@ export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<
 	});
 }
 
-export function coerceToPrintStatement(
+function coerceToPrintStatement$impl(
 	input?: (T.PrintStatementArm1 | T.PrintStatementArm2) | T.PrintStatement
 ): ReturnType<typeof F.buildPrintStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.PrintStatement) {
@@ -1014,6 +1019,11 @@ export function coerceToPrintStatement(
 	}
 	return F.buildPrintStatement(_resolveOne<T.PrintStatementArm1 | T.PrintStatementArm2>(input, _K0, _K4));
 }
+
+export const coerceToPrintStatement = attachProps(coerceToPrintStatement$impl, {
+	arm1: F.buildPrintStatement.arm1,
+	arm2: F.buildPrintStatement.arm2
+});
 
 export function coerceToChevron(input: T.Chevron.Loose): ReturnType<typeof F.buildChevron> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Chevron)
@@ -1286,7 +1296,7 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 	});
 }
 
-export function coerceToWithClause(
+function coerceToWithClause$impl(
 	input?: (T.WithClauseBare | T.WithClauseParen) | T.WithClause
 ): ReturnType<typeof F.buildWithClause> {
 	if (isNodeData(input) && input.$type === TSKindId.WithClause) {
@@ -1296,6 +1306,11 @@ export function coerceToWithClause(
 	}
 	return F.buildWithClause(_resolveOne<T.WithClauseBare | T.WithClauseParen>(input, _K0, _K12));
 }
+
+export const coerceToWithClause = attachProps(coerceToWithClause$impl, {
+	bare: F.buildWithClause.bare,
+	paren: F.buildWithClause.paren
+});
 
 export function coerceToWithItem(input: T.WithItem.Loose): ReturnType<typeof F.buildWithItem> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.WithItem)
@@ -1492,7 +1507,7 @@ export function coerceToTypeParameter(input?: T.Types | T.TypeParameter): Return
 	return F.buildTypeParameter(_resolveOneBranch<T.Types>(input, '_types'));
 }
 
-export function coerceToParenthesizedListSplat(
+function coerceToParenthesizedListSplat$impl(
 	input?: (T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedListSplat
 ): ReturnType<typeof F.buildParenthesizedListSplat> {
 	if (isNodeData(input) && input.$type === TSKindId.ParenthesizedListSplat) {
@@ -1502,6 +1517,11 @@ export function coerceToParenthesizedListSplat(
 	}
 	return F.buildParenthesizedListSplat(_resolveOne<T.ParenthesizedListSplat | T.ListSplat>(input, _K0, _K14));
 }
+
+export const coerceToParenthesizedListSplat = attachProps(coerceToParenthesizedListSplat$impl, {
+	parenthesizedListSplat: F.buildParenthesizedListSplat.parenthesizedListSplat,
+	listSplat: F.buildParenthesizedListSplat.listSplat
+});
 
 export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ArgumentList)
@@ -1676,7 +1696,7 @@ export function coerceToKeywordPattern(input: T.KeywordPattern.Loose): ReturnTyp
 	});
 }
 
-export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<typeof F.buildSplatPattern> {
+function coerceToSplatPattern$impl(input: T.SplatPattern.Loose): ReturnType<typeof F.buildSplatPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSplatPattern>;
 	return F.buildSplatPattern({
 		operator: _requireField(
@@ -1695,6 +1715,11 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 	});
 }
 
+export const coerceToSplatPattern = attachProps(coerceToSplatPattern$impl, {
+	star: F.buildSplatPattern.star,
+	starStar: F.buildSplatPattern.starStar
+});
+
 export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<typeof F.buildClassPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClassPattern>;
 	return F.buildClassPattern({
@@ -1703,7 +1728,7 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnType<typeof F.buildComplexPattern> {
+function coerceToComplexPattern$impl(input: T.ComplexPattern.Loose): ReturnType<typeof F.buildComplexPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildComplexPattern>;
 	return F.buildComplexPattern({
 		real: _resolveBooleanKeyword(input.real),
@@ -1723,6 +1748,11 @@ export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnTyp
 		content: _requireField('complex_pattern', 'content', _resolveOne<T.Integer | T.Float>(input.content, _K19, _K0))
 	});
 }
+
+export const coerceToComplexPattern = attachProps(coerceToComplexPattern$impl, {
+	plus: F.buildComplexPattern.plus,
+	dash: F.buildComplexPattern.dash
+});
 
 export function coerceToTuplePattern(input?: T.Patterns | T.TuplePattern): ReturnType<typeof F.buildTuplePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.TuplePattern) {
@@ -1817,7 +1847,7 @@ export function coerceToNotOperator(input: T.NotOperator.Loose): ReturnType<type
 	);
 }
 
-export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnType<typeof F.buildBooleanOperator> {
+function coerceToBooleanOperator$impl(input: T.BooleanOperator.Loose): ReturnType<typeof F.buildBooleanOperator> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBooleanOperator>;
 	return F.buildBooleanOperator({
 		left: _requireField('boolean_operator', 'left', _resolveOne<T.Expression>(input.left, _K5, _K6)),
@@ -1833,7 +1863,12 @@ export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnT
 	});
 }
 
-export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnType<typeof F.buildBinaryOperator> {
+export const coerceToBooleanOperator = attachProps(coerceToBooleanOperator$impl, {
+	and: F.buildBooleanOperator.and,
+	or: F.buildBooleanOperator.or
+});
+
+function coerceToBinaryOperator$impl(input: T.BinaryOperator.Loose): ReturnType<typeof F.buildBinaryOperator> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBinaryOperator>;
 	return F.buildBinaryOperator({
 		left: _requireField('binary_operator', 'left', _resolveOne<T.PrimaryExpression>(input.left, _K5, _K22)),
@@ -1866,6 +1901,22 @@ export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnTyp
 		right: _requireField('binary_operator', 'right', _resolveOne<T.PrimaryExpression>(input.right, _K5, _K22))
 	});
 }
+
+export const coerceToBinaryOperator = attachProps(coerceToBinaryOperator$impl, {
+	plus: F.buildBinaryOperator.plus,
+	dash: F.buildBinaryOperator.dash,
+	star: F.buildBinaryOperator.star,
+	at: F.buildBinaryOperator.at,
+	slash: F.buildBinaryOperator.slash,
+	percent: F.buildBinaryOperator.percent,
+	slashSlash: F.buildBinaryOperator.slashSlash,
+	starStar: F.buildBinaryOperator.starStar,
+	pipe: F.buildBinaryOperator.pipe,
+	amp: F.buildBinaryOperator.amp,
+	caret: F.buildBinaryOperator.caret,
+	ltLt: F.buildBinaryOperator.ltLt,
+	gtGt: F.buildBinaryOperator.gtGt
+});
 
 export function coerceToUnaryOperator(input: T.UnaryOperator.Loose): ReturnType<typeof F.buildUnaryOperator> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnaryOperator>;
@@ -2013,7 +2064,7 @@ export function coerceToSubscript(input: T.Subscript.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildSlice> {
+function coerceToSlice$impl(input?: T.Slice.Loose): ReturnType<typeof F.buildSlice> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSlice>;
 	return F.buildSlice({
 		start: _resolveOne<T.Expression>(input?.start, _K5, _K6),
@@ -2021,6 +2072,10 @@ export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildS
 		step: _resolveOneBranch<T.SliceGroup>(input?.step, '_slice_group')
 	});
 }
+
+export const coerceToSlice = attachProps(coerceToSlice$impl, {
+	group: F.buildSlice.group
+});
 
 export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildCall>;
@@ -2067,7 +2122,7 @@ export function coerceToType(
 	);
 }
 
-export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
+function coerceToSplatType$impl(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSplatType>;
 	return F.buildSplatType({
 		operator: _requireField(
@@ -2081,6 +2136,11 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 		identifier: _requireField('splat_type', 'identifier', _resolveOneLeaf<T.Identifier>(input.identifier, 'identifier'))
 	});
 }
+
+export const coerceToSplatType = attachProps(coerceToSplatType$impl, {
+	star: F.buildSplatType.star,
+	starStar: F.buildSplatType.starStar
+});
 
 export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<typeof F.buildGenericType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildGenericType>;
