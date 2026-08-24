@@ -70,7 +70,7 @@ describe('round-trip validation', () => {
 		expect(result.factories).toContain('_factoryMap');
 		// Types should have interfaces
 		expect(result.types).toContain('export interface');
-		expect(result.types).toContain('SyntaxKind');
+		expect(result.types).toContain('TSKindId');
 	}, 30000);
 });
 

@@ -3,8 +3,7 @@
  * Consumes NodeMap directly. No imports from node-model.ts or naming.ts.
  *
  * Sections:
- *   1. const enum SyntaxKind
- *   1b. const enum TSKindId + lookup helpers
+ *   1. const enum TSKindId + lookup helpers
  *   2. Scoped const enums per supertype
  *   3. Concrete node interfaces
  *   4. Per-form Config/Tree aliases (polymorph forms only — base-kind
@@ -155,13 +154,10 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('};');
 	lines.push('');
 
-	// 1. SyntaxKind enum
-	emitSyntaxKindEnum(lines, allKinds, nodeMap);
-
-	// 1b. TSKindId runtime discriminants + lookup helpers
+	// 1. TSKindId runtime discriminants + lookup helpers
 	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries, nodeMap);
 
-	// 1c. Delimiter — separated-list optional-flank bitflag members. Values
+	// 1b. Delimiter — separated-list optional-flank bitflag members. Values
 	// serialize compiler/model DelimiterFlags (one source, one derivation);
 	// factories/wrap/from reference the members instead of raw numbers.
 	emitDelimiterEnum(lines);
@@ -457,24 +453,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 	const { structNodes, leafKinds } = collectNodesByCategory(nodeMap);
 	return [...structNodes.map((n) => n.kind), ...leafKinds];
-}
-
-// ---------------------------------------------------------------------------
-// SyntaxKind enum emission
-// ---------------------------------------------------------------------------
-
-function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMap: NodeMap): void {
-	lines.push('export const enum SyntaxKind {');
-	const seenEnumMembers = new Set<string>();
-	for (const kind of allKinds) {
-		const node = nodeMap.nodes.get(kind);
-		const member = node?.typeName ?? toPascal(kind);
-		if (seenEnumMembers.has(member)) continue;
-		seenEnumMembers.add(member);
-		lines.push(`  ${member} = ${JSON.stringify(kind)},`);
-	}
-	lines.push('}');
-	lines.push('');
 }
 
 function emitDelimiterEnum(lines: string[]): void {
