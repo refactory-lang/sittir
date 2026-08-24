@@ -12,16 +12,14 @@ export function renderMainFunction() {
 }
 
 /**
- * Render a parsed root without touching anything.
+ * Render a parsed root without touching anything — and get the source back,
+ * byte for byte.
  *
- * Reading expands one level at a time, so the root's children are still
- * unexpanded: each renders from its own captured source, reproducing that
- * item's bytes exactly — irregular spacing included. Only the root itself
- * was expanded, so only the root rebuilds from its template. That means
- * what sits BETWEEN items — the separator, and any comment living in the
- * gap — is the root template's to spell, not the source's; it is not
- * reproduced. Expand further (and more rebuilds canonically); expand less
- * (and more comes back verbatim).
+ * Reading expands one level at a time, so a freshly parsed root has nothing
+ * expanded below it. Nothing was rebuilt, so nothing is re-spelled: the
+ * whole file comes back as its own captured text, comments and blank lines
+ * and indentation included. Edit any part of it and only what you rebuilt
+ * renders canonically; everything you left alone still comes back verbatim.
  */
 export function renderUntouched(source: string) {
 	const engine = createEngine();

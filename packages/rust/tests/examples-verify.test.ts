@@ -58,21 +58,21 @@ describe('examples/02 render round trip', () => {
 		expect(roundTrip(source).reparsesEqual).toBe(true);
 	});
 
-	// An unexpanded child renders from its own captured source, so its bytes
-	// come back exactly. Only the expanded root rebuilds from its template —
-	// which is why what sits BETWEEN items does not survive.
-	it('reproduces an untouched item byte-for-byte', () => {
-		expect(renderUntouched('pub fn main() { }\n')).toBe('pub fn main() { }');
+	// A freshly parsed root has nothing expanded below it, so nothing is
+	// rebuilt and nothing is re-spelled — the source comes back byte for byte.
+	it('reproduces an untouched parse byte-for-byte', () => {
+		const source = 'pub fn main() { }\n';
+		expect(renderUntouched(source)).toBe(source);
 	});
-	it("keeps an untouched item's own irregular spacing", () => {
-		expect(renderUntouched('fn   weird ( ) {   }\n')).toBe('fn   weird ( ) {   }');
+	it("keeps an untouched parse's own irregular spacing", () => {
+		const source = 'fn   weird ( ) {   }\n';
+		expect(renderUntouched(source)).toBe(source);
 	});
-	it('reproduces both items of a two-item file, joined by the root template', () => {
-		const first = 'struct A { a: u8, b: String }';
-		const second = 'fn f(a: &A) -> u8 { a.a + 1 }';
-		// The root's own separator is empty, so the source newline between the
-		// two items is not reproduced — only each item's own bytes are.
-		expect(renderUntouched(`${first}\n${second}\n`)).toBe(`${first}${second}`);
+	it('keeps what sits BETWEEN items, not just the items themselves', () => {
+		// The gap is where the comments and blank lines live — and in an
+		// indentation-sensitive grammar, the block structure.
+		const source = 'struct A { a: u8, b: String }\n\n// gap\nfn f(a: &A) -> u8 { a.a + 1 }\n';
+		expect(renderUntouched(source)).toBe(source);
 	});
 });
 

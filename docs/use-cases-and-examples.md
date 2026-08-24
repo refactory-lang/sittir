@@ -193,8 +193,12 @@ import { createEngine } from '@sittir/rust';
 
 const engine = createEngine();
 const tree = engine.parse(source);
-tree.$render(); // canonical (template) spelling — re-parses to the same tree
+tree.$render() === source; // nothing was rebuilt, so nothing is re-spelled
 ```
+
+Rendering is format-preserving by default. Only what you rebuild renders in
+the canonical spelling; anything you left alone comes back as its own bytes,
+comments and blank lines and indentation included.
 
 ## 3. Attach comments with `.$trivia()`
 
@@ -341,10 +345,9 @@ const lazy = engine.parse(source);
 const eager = engine.parse(source, { deep: true });
 ```
 
-Depth also decides how much of the source survives a render. An unexpanded
-subtree comes back as its own captured bytes; an expanded one rebuilds from
-its template, in the canonical spelling. So `lazy.$render()` reproduces each
-top-level item verbatim, while `eager.$render()` re-spells everything — both
+Depth also decides how much of the source survives a render, because only a
+level that was expanded can be rebuilt. `lazy.$render()` returns the source
+byte for byte; `eager.$render()` re-spells every level canonically. Both
 re-parse to the same tree.
 
 `engine.diagnostics` exposes the same reads un-wrapped:
