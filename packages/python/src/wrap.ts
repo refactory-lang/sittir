@@ -8242,6 +8242,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.Except]: _NodeData & { readonly $type: TSKindId.Except };
 }
 
+/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
+export type ModuleTree = _WrapReturnByKindId[TSKindId.Module];
+
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
 	for (const key of Object.keys(out)) {

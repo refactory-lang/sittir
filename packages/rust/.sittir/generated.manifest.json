@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "c1bafda4fb0bc3c3d19d1b51073e51d25b4850a966862e22b86ab62e3144fa99",
+  "source_hash": "cfe90c4e9b464c54dd6d37240c2ccc1c9cb8a8737dcd96b7beeb6913fc152e1c",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "2dc5211c972ab2250b7096010d31239ad3e0456f4140c5db3aa6b1448da62e54",
     "packages/rust/.sittir/grammar.js": "73f2369fb1ff3f0ec3638a0e1c06e822b0e4a727cc2d391d7a67ef560836fa51",
@@ -19,7 +19,7 @@
     "packages/rust/src/backend.ts": "812951b29c12d0ea8d3dbc0d6fd0a998085d5329541e66a0b1c33244b8f6d135",
     "packages/rust/src/boundary.ts": "7afd529ffef4b6ea432fc8d10ad21ea31fb55119d4101d4c9dff39b020d827ba",
     "packages/rust/src/consts.ts": "bb80340ad8d05c200ad1c968ca0bc603c8c08ce03452b58431e60151d83f6c36",
-    "packages/rust/src/engine.ts": "3c4ff8152b4dd90009a6ec3f4b8d15f04b3290f063d14ecbe9e80c87a62ae1a8",
+    "packages/rust/src/engine.ts": "d7b493566d0380366b2c59b1a9919daa4aa721a5c67dd25790a4b8a5a806d16b",
     "packages/rust/src/factories.ts": "e7ecb3ee1c2a4176a51ff496779d523b745b84f26fc75aa7718857ece602c36e",
     "packages/rust/src/from.ts": "c9d6e3c0e7e55f4929a0ddb556e371f670f619182e2693373bb59d4ee9acbaad",
     "packages/rust/src/grammar.ts": "ca7ca54d374dcbb8382b8f4ec03f71bc7d4ad30ffcc0bd431f15fafb011126ae",
@@ -31,7 +31,7 @@
     "packages/rust/src/type-test.ts": "791f17f546b07c90ab4a77542c4477c143bfd3a8b36de74a0d21a79033029445",
     "packages/rust/src/types.ts": "e56d0479d8a8d601694300b0b8e95a619a81538a9dba3861c56800aff25aec8a",
     "packages/rust/src/utils.ts": "7615db324a958bf6f54565b083c71b9c90fbaa5ead883b45395c21c3007e9a59",
-    "packages/rust/src/wrap.ts": "e9561e59e1eb6f52dc8b18388b5fdcfc0e4f167b91dcce9f13d04e2e972ba90b",
+    "packages/rust/src/wrap.ts": "ca12054172ed95ba7ef582276ce83facb2871498e9d273cb929bb9cf66b4fdf5",
     "packages/rust/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/rust/templates/_arguments_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",
     "packages/rust/templates/_array_expression_arm.jinja": "a509b2f392451b460678f1734d97353ef2c0f3d856d6a371fb05f5e8aacf9535",

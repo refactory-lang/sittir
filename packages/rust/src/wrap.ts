@@ -11757,6 +11757,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
 }
 
+/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
+export type SourceFileTree = _WrapReturnByKindId[TSKindId.SourceFile];
+
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
 	for (const key of Object.keys(out)) {

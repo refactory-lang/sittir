@@ -8,6 +8,7 @@
 import { createNativeEngine, type SittirEngineLike, type EngineOptions } from '@sittir/common/engine';
 import { KIND_NAMES, type Program } from './types.js';
 import type { NodeDataOf } from '@sittir/types';
+import { wrapNode, type ProgramTree } from './wrap.js';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,10 +17,20 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** The reader's raw root: the root kind's DATA projection — its `$type`
  *  and `_<slot>` storage, whose children are reader stubs. Accessor
- *  methods live on `wrapNode(root, tree)`. */
+ *  methods live on `wrapNode(root, tree)`, which is what `parse()` returns. */
 export type ProgramRoot = NodeDataOf<Program>;
 
-export type { EngineOptions };
+export type { EngineOptions, ProgramTree };
+
+/**
+ * A grammar engine: the product `parse()` surface plus the shared render /
+ * edit / diagnostics surface.
+ */
+export interface ProgramEngine extends SittirEngineLike<ProgramRoot> {
+	/** Parse `source` and return its wrapped root. Accessors on the result
+	 *  return wrapped nodes too — no caller-side `wrapNode` re-wrapping. */
+	parse(source: string): ProgramTree;
+}
 
 /**
  * Create a grammar-specific engine instance.
@@ -28,9 +39,9 @@ export type { EngineOptions };
  * silently falling back to a JS engine.
  *
  * @param options - Engine configuration (format, etc.)
- * @returns An engine implementing SittirEngineLike.
+ * @returns An engine implementing ProgramEngine.
  */
-export function createEngine(options?: EngineOptions): SittirEngineLike<ProgramRoot> {
+export function createEngine(options?: EngineOptions): ProgramEngine {
 	const result = createNativeEngine<ProgramRoot>(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
@@ -42,5 +53,12 @@ export function createEngine(options?: EngineOptions): SittirEngineLike<ProgramR
 	if (!result.engine) {
 		throw new Error(`createEngine: native engine unavailable (no JS-engine fallback): ${result.reason}`);
 	}
-	return result.engine;
+	const engine = result.engine;
+	return {
+		...engine,
+		parse(source: string): ProgramTree {
+			const { root, tree } = engine.diagnostics.parseAndRead(source);
+			return wrapNode(root, tree);
+		}
+	};
 }

@@ -6,5 +6,5 @@ export type {
 	ParseAndReadResult,
 	RenderHandle,
 	SittirEngineLike,
-	SittirEngineReader
+	EngineDiagnostics
 } from '@sittir/common/engine';

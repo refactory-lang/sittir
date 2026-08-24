@@ -16,8 +16,9 @@
 >
 > - `template(...)` and `snippets.*` construction helpers — not shipped yet
 > - `engine.findAndRead(...)` — intended surface, but not wired/implemented yet
-> - older docs that still show `wrap(...)` / `parseAndRead(...)` at the engine
->   top level instead of the current `wrapNode(...)` / `engine.reader.parseAndRead(...)`
+> - older docs that still show `wrap(...)` instead of the current `wrapNode(...)`,
+>   and `engine.findAndRead(...)` results that a shipped surface would already
+>   hand back wrapped
 >
 > **Access conventions:** Factory and wrap output exposes named fields via getter methods (`fn.name()`). Raw storage uses `_storageName` prefix (`fn._name`). `$with` provides immutable updates. All sittir methods use `$`-prefix.
 >
@@ -191,8 +192,8 @@ fn.$render();
 import { createEngine } from '@sittir/rust';
 
 const engine = createEngine();
-const tree = engine.parseAndRead(source);
-tree.$render() === source; // byte-identical for well-formed input
+const tree = engine.parse(source);
+tree.$render(); // canonical (template) spelling — re-parses to the same tree
 ```
 
 ## 3. Attach comments with `.$trivia()`
@@ -320,8 +321,9 @@ const source = snippets.implBlock
 import { createEngine } from '@sittir/rust';
 
 const engine = createEngine();
-const tree = engine.parseAndRead(source);
-// tree._statements[0]._name === 'greet' (terminal-hoisted: string)
+const tree = engine.parse(source);
+// tree.statements()[0].name() — accessors return wrapped nodes at every level.
+// engine.diagnostics.parseAndRead(source) exposes the raw `{ root, tree }` instead.
 ```
 
 ### Lazy drill-in
@@ -342,15 +344,13 @@ body.$children[0].$type === TSKindId.ExpressionStatement;
 ### Wrapped access
 
 ```ts
-import { createEngine, wrap } from '@sittir/rust';
+import { createEngine } from '@sittir/rust';
 
 const engine = createEngine();
-const tree = engine.parseAndRead(source);
-const shallow = engine.parseAndRead(source, { depth: 1 });
-const fn = wrap(shallow.$children[0], tree);
+const fn = engine.parse(source).statements()[0];
 fn.name(); // drillIn: lazy expand if needed
 fn.body(); // drillIn: returns Block
-fn.body().$children; // statements array
+fn.body().statements(); // statements array
 ```
 
 ## 8. Find nodes by pattern
@@ -359,7 +359,7 @@ fn.body().$children; // statements array
 import { createEngine, wrap } from '@sittir/rust';
 
 const engine = createEngine();
-const tree = engine.parseAndRead(source);
+const tree = engine.parse(source);
 const matches = engine.findAndRead(source, 'pub fn $NAME($...PARAMS) $BODY');
 for (const match of matches) {
 	console.log(wrap(match, tree).name());
@@ -369,13 +369,13 @@ for (const match of matches) {
 ## 9. Type guards
 
 ```ts
-import { is, wrap } from '@sittir/rust';
+import { is } from '@sittir/rust';
 
-for (const stmt of tree.$children) {
+for (const stmt of tree.statements()) {
 	if (is.functionItem(stmt)) {
-		console.log(`Function: ${wrap(stmt, tree).name()}`);
+		console.log(`Function: ${stmt.name()}`);
 	} else if (is.structItem(stmt)) {
-		console.log(`Struct: ${wrap(stmt, tree).name()}`);
+		console.log(`Struct: ${stmt.name()}`);
 	}
 }
 ```
@@ -390,7 +390,7 @@ import { createEngine, ir, replace, wrap } from '@sittir/rust';
 
 const engine = createEngine();
 const source = fs.readFileSync('src/main.rs', 'utf8');
-const tree = engine.parseAndRead(source);
+const tree = engine.parse(source);
 
 const matches = engine.findAndRead(source, '$EXPR.unwrap()');
 
@@ -423,7 +423,7 @@ import { createEngine, snippets, ir, replace, wrap } from '@sittir/rust';
 
 const engine = createEngine();
 const source = fs.readFileSync('src/handlers.rs', 'utf8');
-const tree = engine.parseAndRead(source);
+const tree = engine.parse(source);
 const fns = engine.findAndRead(source, 'pub fn $NAME($...PARAMS) -> $RET { $...BODY }');
 
 const edits = fns.map((fn) => {
@@ -458,8 +458,8 @@ import { createEngine as createTsEngine, wrap as wrapTs, is } from '@sittir/type
 import { snippets as pySnippets } from '@sittir/python';
 
 const tsEngine = createTsEngine();
-const tree = tsEngine.parseAndRead(tsSource);
-const iface = wrapTs(tree.$children[0], tree);
+const tree = tsEngine.parse(tsSource);
+const iface = tree.$children[0];
 
 const typeMap: Record<string, string> = { string: 'str', number: 'int', boolean: 'bool' };
 
@@ -492,7 +492,7 @@ const engine = createEngine();
 
 for (const file of glob.sync('src/**/*.rs')) {
 	const source = fs.readFileSync(file, 'utf8');
-	const tree = engine.parseAndRead(source);
+	const tree = engine.parse(source);
 	const matches = engine.findAndRead(source, 'println!($...ARGS)');
 	if (!matches.length) continue;
 
@@ -518,7 +518,7 @@ import { createEngine, ir, replace, wrap } from '@sittir/rust';
 
 const engine = createEngine();
 const source = fs.readFileSync('src/lib.rs', 'utf8');
-const tree = engine.parseAndRead(source, { extractFormat: true });
+const tree = engine.parse(source); // pending: format extraction option
 
 const fns = engine.findAndRead(source, 'fn $NAME($...PARAMS) $BODY');
 const target = wrap(
@@ -634,7 +634,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `snippets.*.from({})` — template fill with coercion
 - [ ] `template('...').fill({}).read()` / `.render()` — inline templates
 - [ ] Composition: `.read()` output as slot input for another template
-- [ ] `engine.parseAndRead()` with depth control, `$nodeHandle` / `$childIndex` drill-in
+- [ ] `engine.parse()` with depth control, `$nodeHandle` / `$childIndex` drill-in
 - [ ] `engine.readNode(handle, childIndex)` for lazy expansion
 - [ ] `engine.findAndRead()` with pattern matching
 - [ ] `engine.applyEdits()` for source modification

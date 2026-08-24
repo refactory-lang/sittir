@@ -96,6 +96,10 @@ export interface EmitWrapConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	kindEntries?: readonly KindEnumEntry[];
+	/** The grammar's `root` role kind. Names that kind's wrapped surface as an
+	 *  exported alias so `engine.ts` can type `parse()`'s return without
+	 *  re-deriving the wrap table's row for it. */
+	rootKind?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -1171,11 +1175,26 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #canonicalAliasSourceKinds: ReadonlySet<string>;
 	readonly #typeImportLine: string | undefined;
+	readonly #rootKind: string | undefined;
 	readonly #output: string[] = [];
 	readonly #emittedStructuralKinds = new Set<string>();
+	#rootTreeTypeName: string | undefined;
+
+	/** The exported alias naming the wrapped root surface, once `finalize()`
+	 *  has run. `undefined` when no root kind was configured. */
+	get rootTreeTypeName(): string | undefined {
+		return this.#rootTreeTypeName;
+	}
 
 	constructor(config: EmitWrapConfig) {
-		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries } = config;
+		const {
+			nodeMap,
+			generatedIdTables,
+			inlineKinds,
+			synthesizedKinds,
+			kindEntries: providedKindEntries,
+			rootKind
+		} = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -1188,6 +1207,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#inlineKinds = inlineKinds;
 		this.#synthesizedKinds = synthesizedKinds;
 		this.#canonicalAliasSourceKinds = new Set(collectAliasTargetToSourceMap(nodeMap).values());
+		this.#rootKind = rootKind;
 		this.#typeImportLine =
 			typeImports.size > 0
 				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
@@ -1916,6 +1936,18 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			}
 			lines.push('}');
 			lines.push('');
+			if (this.#rootKind !== undefined) {
+				const rootEntry = findKindEntry(this.#kindEntries, this.#rootKind);
+				if (rootEntry === undefined || !rows.has(rootEntry.member)) {
+					throw new Error(
+						`emitWrap: root kind '${this.#rootKind}' has no wrap-table row — cannot name the wrapped root surface`
+					);
+				}
+				this.#rootTreeTypeName = `${rootEntry.member}Tree`;
+				lines.push('/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */');
+				lines.push(`export type ${this.#rootTreeTypeName} = _WrapReturnByKindId[TSKindId.${rootEntry.member}];`);
+				lines.push('');
+			}
 		}
 
 		// Kinds absent from the NodeMap entirely (no `_wrapTable` entry — e.g.

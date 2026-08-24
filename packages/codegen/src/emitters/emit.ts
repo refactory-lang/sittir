@@ -67,6 +67,9 @@ export interface EmitAllResult {
 	jinjaTemplates: EmittedTemplates;
 	utils: string;
 	renderModule?: RenderModuleBundle;
+	/** Name of the `wrap.ts` alias for the root kind's wrapped surface — the
+	 *  return type `engine.ts` gives `parse()`. */
+	rootTreeTypeName?: string;
 }
 
 type RenderModuleEmission = { tag: 'emit'; validGrammar: Grammar } | { tag: 'skip' };
@@ -119,7 +122,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		generatedIdTables,
 		kindEntries,
 		inlineKinds,
-		synthesizedKinds
+		synthesizedKinds,
+		rootKind: grammarRoles?.get('root')[0]
 	});
 
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap });
@@ -164,7 +168,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		typeTests,
 		jinjaTemplates,
 		utils,
-		renderModule
+		renderModule,
+		rootTreeTypeName: wrapEmitter.rootTreeTypeName
 	};
 }
 

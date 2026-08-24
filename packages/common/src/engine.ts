@@ -75,7 +75,13 @@ export interface GrammarEngineConfig<
 	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
-export interface SittirEngineReader<TRoot extends AnyNodeData = AnyNodeData> {
+/**
+ * Raw reader access — the un-wrapped node data behind the product API.
+ * `parse()` on a grammar engine returns a wrapped root; this surface hands
+ * back the reader's own output (data plus the owning tree handle) for
+ * probes, validators, and anything that inspects the wire shape itself.
+ */
+export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
 	parseAndRead(source: string): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number): AnyNodeData;
 }
@@ -84,7 +90,7 @@ export interface SittirEngineLike<TRoot extends AnyNodeData = AnyNodeData> {
 	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
-	readonly reader?: SittirEngineReader<TRoot>;
+	readonly diagnostics: EngineDiagnostics<TRoot>;
 }
 
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
@@ -161,7 +167,7 @@ export function createNativeEngine<
 					engine.dispose();
 				},
 
-				reader: {
+				diagnostics: {
 					parseAndRead(source: string) {
 						const json = engine.parseAndRead(source);
 						const parsed = JSON.parse(json) as NativeParseResultShape;
@@ -179,10 +185,6 @@ export function createNativeEngine<
 									if (handle === undefined) return root;
 									const nodeJson = engine.readNode(handle, childIndex ?? 0);
 									return JSON.parse(nodeJson) as AnyNodeData;
-								},
-								render: (handle, opts) => {
-									const node = handle === undefined ? root : (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
-									return renderNativeNode(node, opts).toString();
 								},
 								format: parsed.format
 							} satisfies TreeHandle

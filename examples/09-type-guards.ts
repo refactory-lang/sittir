@@ -1,19 +1,16 @@
-import { createEngine, is, isNode, wrapNode } from '@sittir/rust';
-import { nodeText, parseSource, renderText } from './helpers.ts';
+import { createEngine, is, isNode } from '@sittir/rust';
+import { nodeText, renderText } from './helpers.ts';
 
 export function summarizeTopLevelItems(source: string) {
 	const engine = createEngine();
-	const { root, tree } = parseSource(engine, source);
-	const file = wrapNode(root, tree);
+	const file = engine.parse(source);
 	const summaries: string[] = [];
 
 	for (const stmt of file.statements()) {
 		if (isNode(stmt) && is.functionItem(stmt)) {
-			const fn = wrapNode(stmt, tree);
-			summaries.push(`Function: ${nodeText(fn.name())}`);
+			summaries.push(`Function: ${nodeText(stmt.name())}`);
 		} else if (isNode(stmt) && is.structItem(stmt)) {
-			const item = wrapNode(stmt, tree);
-			summaries.push(`Struct: ${renderText(item.name())}`);
+			summaries.push(`Struct: ${renderText(stmt.name())}`);
 		}
 	}
 

@@ -1,5 +1,5 @@
-import { createEngine, ir, wrapNode } from '@sittir/rust';
-import { parseSource, structuralShape } from './helpers.ts';
+import { createEngine, ir } from '@sittir/rust';
+import { structuralShape } from './helpers.ts';
 
 export function renderMainFunction() {
 	const fn = ir.functionItem.from({
@@ -20,13 +20,11 @@ export function renderMainFunction() {
  */
 export function roundTrip(source: string) {
 	const engine = createEngine();
-	const first = parseSource(engine, source);
-	const rendered = wrapNode(first.root, first.tree).$render();
-	const second = parseSource(engine, rendered);
+	const first = engine.parse(source);
+	const rendered = first.$render();
+	const second = engine.parse(rendered);
 	return {
 		rendered,
-		reparsesEqual:
-			JSON.stringify(structuralShape(wrapNode(first.root, first.tree))) ===
-			JSON.stringify(structuralShape(wrapNode(second.root, second.tree))),
+		reparsesEqual: JSON.stringify(structuralShape(first)) === JSON.stringify(structuralShape(second)),
 	};
 }

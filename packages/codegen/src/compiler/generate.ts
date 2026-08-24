@@ -300,17 +300,23 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		expectTestFailures: raw.expectTestFailures
 	});
 
-	// The stamped `root` role types the engine reader's root.
+	// The stamped `root` role types the engine's raw root and its wrapped surface.
 	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
 	if (rootTypeName === undefined) {
 		throw new Error(
 			`generate: root kind '${grammarRoles.get('root')[0]}' has no NodeMap entry — cannot type the engine root`
 		);
 	}
+	const rootTreeTypeName = emitted.rootTreeTypeName;
+	if (rootTreeTypeName === undefined) {
+		throw new Error(
+			`generate: wrap emitter named no root surface for '${grammarRoles.get('root')[0]}' — cannot type engine.parse()`
+		);
+	}
 
 	const result: GeneratedFiles = {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
-		engine: emitEngine({ grammar: cfg.grammar, rootTypeName }),
+		engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 		types: emitted.types,
 		jinjaTemplates: emitted.jinjaTemplates,
 		factories: emitted.factories,

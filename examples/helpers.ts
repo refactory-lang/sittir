@@ -1,17 +1,6 @@
-import type { ParseAndReadResult, SittirEngineLike } from '@sittir/common/engine';
 import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData, Edit } from '@sittir/types';
 export type { TreeHandle };
-
-export function parseSource<TRoot extends AnyNodeData>(
-	engine: SittirEngineLike<TRoot>,
-	source: string
-): ParseAndReadResult<TRoot> {
-	if (!engine.reader) {
-		throw new Error('This example requires an engine reader. The current backend is render-only.');
-	}
-	return engine.reader.parseAndRead(source);
-}
 
 export function nodeText(value: unknown): string {
 	if (typeof value === 'string') return value;
