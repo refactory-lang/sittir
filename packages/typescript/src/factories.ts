@@ -8405,7 +8405,10 @@ function _buildObjectTypeContent(
 ): ObjectTypeContentBuilt {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
-	const _separator = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[options.separator ?? ','];
+	const _separator =
+		options.separator === undefined
+			? undefined
+			: ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[options.separator];
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(

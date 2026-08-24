@@ -1408,8 +1408,13 @@ function emitSeparatedListFactory(
 			const arms = candidateKindNames
 				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
 				.join(', ');
+			// Stamp only a caller-chosen separator. A defaulted stamp fabricates
+			// a token the node never carried — read references for separator-less
+			// occurrences have no `_separator`, and the native render's
+			// separator_kind match already falls back to the template's own
+			// separator literal when the field is absent.
 			lines.push(
-				`  const _separator = ({ ${arms} } as Record<string, number>)[options.separator ?? ${JSON.stringify(candidateKindNames[0])}];`
+				`  const _separator = options.separator === undefined ? undefined : ({ ${arms} } as Record<string, number>)[options.separator];`
 			);
 		} else {
 			lines.push('  const _separator = undefined;');
