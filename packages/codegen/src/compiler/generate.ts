@@ -35,7 +35,8 @@ import {
 	loadGrammarJsonInlineList,
 	loadGrammarJsonAliasMap,
 	buildInlinableKinds,
-	buildPolymorphsConfigSkip
+	buildPolymorphsConfigSkip,
+	assertGrammarJsonInlineIntegrity
 } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
@@ -131,6 +132,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// auto-synthesized helpers (e.g., _type_arguments_repeat1) that tree-sitter
 	// expands at parse time.
 	//TODO: Pull into evaluate() so the inline list is available to link() and normalize() without a separate read.
+	// Fail loudly on dangling inline names — tree-sitter warns about only
+	// the FIRST undefined inline rule per run and silently drops the rest.
+	assertGrammarJsonInlineIntegrity(cfg.grammar);
 	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
 	const inlineKinds = new Set(inlineKindsArray ?? []);
 

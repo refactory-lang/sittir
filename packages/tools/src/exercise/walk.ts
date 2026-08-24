@@ -1,5 +1,5 @@
-import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
+import { loadBoundaryRender } from '../scripts/collect-baseline.ts';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
 
@@ -39,11 +39,6 @@ export interface WalkOptions {
 }
 
 const COMMON_MODULE_PATH = '../validate/common.ts';
-const TEMPLATE_DIR_PATHS: Record<GrammarName, string> = {
-	rust: '../../../rust/templates',
-	typescript: '../../../typescript/templates',
-	python: '../../../python/templates'
-};
 const DEFAULT_SOURCES: Record<GrammarName, string> = {
 	rust: 'type T = Bar::<X>::Baz;',
 	typescript: 'type T = Foo<Bar>;',
@@ -135,10 +130,10 @@ export async function run(opts: WalkOptions): Promise<number> {
 					}
 				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	const kindNames = await common.loadKindNames(grammar);
-	const { render: renderNode } = createRenderer(new URL(TEMPLATE_DIR_PATHS[grammar], import.meta.url).pathname, {
-		kindNames
-	});
+	// Native boundary render — same dispatch path the validators use; the
+	// removed legacy-core renderer had no SpacingWriter, so its output was
+	// seam-less garbage for any grammar with word-word seams.
+	const renderNode = await loadBoundaryRender(grammar as GrammarName);
 	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);

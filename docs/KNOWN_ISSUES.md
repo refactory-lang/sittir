@@ -10,8 +10,7 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 2. `ki-from-string-composition` — blocked on a quote-style design decision
 3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
 4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
-5. `ki-exercise-legacy-renderer` — exercise tool's renders are garbage until it moves off legacy-core
-6. `ki-inline-integrity-check` — cheap post-generate guard against a warning class tree-sitter masks
+5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
 8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
 9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
 10. `ki-mapentry-forwarded` — one-line type-union gap in the factory-map emitter
@@ -63,17 +62,13 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 **Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
 
 
-## `ki-exercise-legacy-renderer` — the exercise tool renders through `@sittir/legacy-core`, so its output is seam-less garbage
+## `ki-exercise-span-transport` — exercise factory round-trips fail on `Missing field start on …Transport.$span`
 
-**Found during:** unifying the exercise tool's factory-call dispatch with the validator's (`buildFactoryNodeFromReference`, `packages/tools/src/validate/common.ts`). The tool's render step uses `createRenderer` from `@sittir/legacy-core` — the removed JS engine surviving as diagnostic tooling — which has no SpacingWriter, so python's built-in cases all fail with renders like `(aforainb)` for `(a for a in b)`: **0 pass / 10 fail, identical before and after the dispatch unification** (verified against master via stash-baseline). The rust built-ins pass only because their cases (`foo`, `()`) have no seams. The tool therefore cannot distinguish a real factory defect from the renderer's own spacing blindness.
+**Found during:** porting the exercise tool's render step off `@sittir/legacy-core` onto the native boundary (`loadBoundaryRender`) — the port replaced the old seam-less-garbage renders with honest native-transport errors, exposing the real per-case failures the legacy renderer had been masking. Post-port inventory: rust 2 pass / 0 fail; python 1 pass / 9 fail (4× the `$span` class via `comparison_operator`/comprehension clauses, plus `set_comprehension` rendering `{ a for a in b }` with brace padding for input `{a for a in b}`); typescript 0 pass / 2 fail (both the `$span` class via `type_parameters` / `type_arguments`).
 
-**Fix, if/when prioritized:** render through the native engine (`createEngine()` per grammar) exactly as the validators do, and re-pin the built-in cases' expected output; the factory-side dispatch is already shared, so only the render/compare tail needs porting.
+The dominant class: the native transport deserializer demands a complete `$span` on nested transport structs (e.g. `ComparisonOperatorComparatorTransport.$span`) that the exercise path's factory-built (span-less) nodes cannot supply — while the factory-render-parse validator renders factory output for the same grammars at 1385/1390+, so the gap is specific to how the exercise tool materializes its node inputs (wrapped/read stubs mixed into factory configs), not to factory rendering per se.
 
-## `ki-inline-integrity-check` — tree-sitter reports only the FIRST undefined inline rule per run, masking the rest of the class
-
-**Found during:** root-causing the `inline rule '_object_arm1' is not defined` warning. The typescript override had authored an `inline:` list of 20 mint names of which every entry was dead — but tree-sitter's generate step warns about exactly one undefined inline name per run and silently drops the others, so 19 dangling entries hid behind the first for the whole life of the list. The authored list is deleted (wire auto-manages mint inlining, and its builder now also skips `orphanedSyntheticGroups`), but nothing today would catch a NEW dangling inline name beyond the single masked warning.
-
-**Fix, if/when prioritized:** a post-generate assertion in the gen pipeline — every name in the wired `inline:` output must exist in the final rule bag (compare against `.sittir/src/grammar.json`'s `rules`); fail loudly with the full list, not one name at a time.
+**Fix, if/when prioritized:** root-cause why exercise-built nodes reach the transport with partial `$span`s (likely a read-stub surviving `nodeToConfig` into the rebuilt node) and either materialize the stub fully or strip `$span` so the transport takes the factory-shaped (span-less) path; the `set_comprehension` padding row is a separate template-spacing defect.
 
 ## `ki-dict-pattern-comma` — python `dict_pattern` drops the inter-entry comma on render
 

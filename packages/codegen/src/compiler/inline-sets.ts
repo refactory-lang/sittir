@@ -19,19 +19,49 @@ import { join } from 'node:path';
 import { isNonInlinableLeafShape } from './assemble.ts';
 import type { LinkedGrammar } from './types.ts';
 
-export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
+interface GrammarJsonFile {
+	readonly inline?: unknown;
+	readonly rules?: Record<string, GrammarJsonNode>;
+}
+
+function readGrammarJson(grammar: string): GrammarJsonFile | undefined {
 	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(grammarJsonPath)) return undefined;
 	try {
-		const parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as {
-			inline?: unknown;
-		};
-		if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
-			return parsed.inline as string[];
-		}
-		return undefined;
+		return JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as GrammarJsonFile;
 	} catch {
 		return undefined;
+	}
+}
+
+export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
+	const parsed = readGrammarJson(grammar);
+	if (parsed === undefined) return undefined;
+	if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
+		return parsed.inline as string[];
+	}
+	return undefined;
+}
+
+/** Inline names the compiled rule bag does not define. tree-sitter's
+ *  generate step warns about exactly ONE undefined inline name per run
+ *  and silently drops the rest, so a dangling entry can hide for the
+ *  life of the list behind the first. */
+export function danglingInlineNames(parsed: GrammarJsonFile): string[] {
+	if (!Array.isArray(parsed.inline)) return [];
+	const rules = new Set(Object.keys(parsed.rules ?? {}));
+	return parsed.inline.filter((n): n is string => typeof n === 'string' && !rules.has(n));
+}
+
+export function assertGrammarJsonInlineIntegrity(grammar: string): void {
+	const parsed = readGrammarJson(grammar);
+	if (parsed === undefined) return;
+	const dangling = danglingInlineNames(parsed);
+	if (dangling.length > 0) {
+		throw new Error(
+			`inline-integrity[${grammar}]: ${dangling.length} wired inline name(s) missing from the compiled ` +
+				`rule bag (tree-sitter reports only the first per run): ${dangling.join(', ')}`
+		);
 	}
 }
 
@@ -45,15 +75,9 @@ interface GrammarJsonNode {
 }
 
 export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, string> {
-	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	const out = new Map<string, string>();
-	if (!existsSync(grammarJsonPath)) return out;
-	let parsed: { rules?: Record<string, GrammarJsonNode> };
-	try {
-		parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as typeof parsed;
-	} catch {
-		return out;
-	}
+	const parsed = readGrammarJson(grammar);
+	if (parsed === undefined) return out;
 	const walk = (node: GrammarJsonNode | undefined): void => {
 		if (!node) return;
 		if (

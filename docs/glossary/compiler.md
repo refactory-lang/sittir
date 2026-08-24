@@ -2121,6 +2121,34 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `danglingInlineNames` (`packages/codegen/src/compiler/inline-sets.ts:50`)
+
+```text
+/**
+ * Inline names the compiled rule bag does not define.
+ *
+ * @remarks
+ * tree-sitter's generate step warns about exactly ONE undefined inline
+ * name per run and silently drops the rest, so a dangling entry can hide
+ * for the life of the list behind the first (observed: a 20-entry
+ * authored inline list where every entry was dead, masked for months).
+ * Pure over the parsed grammar.json shape so the whole-class detection
+ * is unit-testable without filesystem fixtures.
+ */
+```
+
+### `assertGrammarJsonInlineIntegrity` (`packages/codegen/src/compiler/inline-sets.ts:56`)
+
+```text
+/**
+ * Post-generate integrity gate: throws (with the FULL dangling list, not
+ * one name at a time) when any wired inline name is missing from the
+ * compiled rule bag. Called by generate() right before the inline list is
+ * consumed; a missing or unparseable grammar.json is not this gate's
+ * concern and passes silently.
+ */
+```
+
 ### `loadGrammarJsonAliasMap` (`packages/codegen/src/compiler/inline-sets.ts:63`)
 
 ```text
