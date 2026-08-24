@@ -77,8 +77,8 @@ describe('wrap emitter — separatedList', () => {
 		expect(emitted).not.toContain('_separator:');
 		expect(emitted).toContain('_delimiter:');
 		// Only the trailing bit contributes — no leading term in the flag.
-		expect(emitted).not.toContain('? 1 : 0');
-		expect(emitted).toContain('? 2 : 0');
+		expect(emitted).not.toContain('? Delimiter.Leading');
+		expect(emitted).toContain('? Delimiter.Trailing : Delimiter.None');
 	});
 
 	it('routes a MULTI-field separatedList (each repeated element is itself a key/value pair) through the exact per-field drilling logic emitFieldCarryingWrap uses, not one shared bucket', () => {

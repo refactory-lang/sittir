@@ -35,6 +35,7 @@ import {
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
 import { detectRepeatSeparator } from './list-patterns.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
 
 export function ruleMatchesEmpty(rule: unknown): boolean {
 	if (!rule || typeof rule !== 'object') return false;
@@ -324,4 +325,135 @@ export function isSupertypeLike(body: unknown): boolean {
 		if (typeEq(coreType, 'ALIAS')) return c.named === true;
 		return false;
 	});
+}
+
+/**
+ * A choice whose arms are permutations of one modifier-slot set — every arm
+ * is a seq of singular atoms (optional-or-required keyword literals, marker
+ * fields, or symbol refs), and all arms carry the SAME atom set, differing
+ * only in ordering/optionality. Splitting such arms into kinds would mint
+ * identity for pure modifier ceremony (the permutable-modifiers row of the
+ * split-justification taxonomy: structural delta ⇒ kind, literal-only delta
+ * ⇒ enum slot, permutable modifiers ⇒ marker slots). Callers decline the
+ * arm mint and let the parent's own slots absorb the markers.
+ *
+ * `kwRules` carries the enrich pass's `_kw_*` bag so a keyword already
+ * promoted to a marker field in one arm keys identically to its raw string
+ * spelling in a sibling arm.
+ */
+export function isPermutationChoice(
+	body: unknown,
+	rulesBag?: Record<string, unknown>,
+	kwRules?: Record<string, unknown>,
+	wordMatcher?: RegExp
+): boolean {
+	const b = unwrapPrec(body);
+	if (!b || typeof b !== 'object') return false;
+	const t = (b as Record<string, unknown>).type;
+	if (typeof t !== 'string' || !isChoiceType(t)) return false;
+	const members = (b as Record<string, unknown>).members;
+	if (!Array.isArray(members)) return false;
+	const arms = members.filter(
+		(m) => m && typeof m === 'object' && !isBlankType(((m as { type?: string }).type ?? '') as string)
+	);
+	if (arms.length < 2) return false;
+	const keySets: Set<string>[] = [];
+	for (const arm of arms) {
+		const keys = permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher);
+		if (keys === null) return false;
+		keySets.push(keys);
+	}
+	const first = keySets[0]!;
+	if (!keySets.every((s) => s.size === first.size && [...s].every((k) => first.has(k)))) return false;
+	/* Byte-identical arms are not a permutation delta — require at least two
+	   structurally distinct arms so plain duplicated alternatives keep their
+	   existing handling. */
+	return new Set(arms.map((a) => JSON.stringify(a))).size >= 2;
+}
+
+/** Per-arm atom-key set for `isPermutationChoice`; null = arm ineligible. */
+function permutationArmSlotKeys(
+	arm: unknown,
+	rulesBag?: Record<string, unknown>,
+	kwRules?: Record<string, unknown>,
+	wordMatcher?: RegExp
+): Set<string> | null {
+	const core = unwrapPrec(arm);
+	if (!core || typeof core !== 'object') return null;
+	const t = (core as Record<string, unknown>).type;
+	if (typeof t !== 'string' || !isSeqType(t)) return null;
+	const members = (core as Record<string, unknown>).members;
+	if (!Array.isArray(members) || members.length < 2) return null;
+	const keys = new Set<string>();
+	for (const member of members) {
+		const key = permutationAtomKey(member, rulesBag, kwRules, wordMatcher);
+		if (key === null || keys.has(key)) return null;
+		keys.add(key);
+	}
+	return keys;
+}
+
+/**
+ * Identity key for one permutation-arm step: a word-shaped keyword literal
+ * (raw, `_kw_*`-promoted, or marker-fielded — all key to the literal) or a
+ * symbol ref (keyed by name). Optionality and field wrappers are peeled —
+ * they are the permutation delta, not the atom identity. Anything else
+ * (repeat, nested seq, non-optional choice) disqualifies the arm.
+ */
+function permutationAtomKey(
+	member: unknown,
+	rulesBag?: Record<string, unknown>,
+	kwRules?: Record<string, unknown>,
+	wordMatcher?: RegExp
+): string | null {
+	let core: unknown = unwrapPrec(member);
+	for (;;) {
+		if (!core || typeof core !== 'object') return null;
+		const r = core as Record<string, unknown>;
+		const t = typeof r.type === 'string' ? r.type : '';
+		if (isOptionalType(t) || isFieldType(t)) {
+			core = unwrapPrec(r.content);
+			continue;
+		}
+		if (isChoiceType(t)) {
+			const ms = r.members;
+			if (Array.isArray(ms) && ms.length === 2) {
+				const blankIdx = ms.findIndex(
+					(m) => m && typeof m === 'object' && isBlankType(((m as { type?: string }).type ?? '') as string)
+				);
+				if (blankIdx !== -1) {
+					core = unwrapPrec(ms[1 - blankIdx]);
+					continue;
+				}
+			}
+			return null;
+		}
+		break;
+	}
+	const r = core as Record<string, unknown>;
+	const t = typeof r.type === 'string' ? r.type : '';
+	if (isStringType(t)) {
+		const v = r.value;
+		if (typeof v !== 'string' || !matchesWordShape(v, wordMatcher)) return null;
+		return `lit:${v}`;
+	}
+	if (isSymbolType(t)) {
+		const name = typeof r.name === 'string' ? r.name : undefined;
+		if (name === undefined) return null;
+		const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
+		return resolved !== null ? `lit:${resolved}` : `sym:${name}`;
+	}
+	return null;
+}
+
+/** Literal text of a keyword-shaped rule body (STRING, possibly TOKEN- or
+ *  prec-wrapped), else null. */
+function resolveRuleLiteral(body: unknown): string | null {
+	const core = unwrapPrec(body);
+	if (!core || typeof core !== 'object') return null;
+	const r = core as Record<string, unknown>;
+	const t = typeof r.type === 'string' ? r.type : '';
+	if (typeEq(t, 'TOKEN')) return resolveRuleLiteral(r.content);
+	if (isStringType(t)) return typeof r.value === 'string' ? r.value : null;
+	return null;
 }

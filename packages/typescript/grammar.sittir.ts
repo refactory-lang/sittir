@@ -58,7 +58,7 @@ export default grammar(
 				// The fielded `readonly` in index_signature's modifier group makes
 				// `'class' '{' 'readonly' • '['` ambiguous with the sibling
 				// class-member rules that also start with a readonly modifier.
-				[$.method_definition, $.method_signature, $.index_signature, $._public_field_definition_readonly_first],
+				[$.method_definition, $.method_signature, $.index_signature, $.public_field_definition],
 				[$.primary_expression, $._kw_async_marker],
 				[$.primary_expression, $._property_name, $._kw_async_marker],
 				[$.primary_expression, $._kw_static_marker],
@@ -185,16 +185,10 @@ export default grammar(
 				[$.primary_expression, $._parameter_name, $.readonly_type],
 				[$._class_body_method],
 				[$._class_body_method_sig, $._class_body_member],
-				[$._public_field_definition_declare_first],
-				[$.method_definition, $._public_field_definition_readonly_first],
-				[$.method_definition, $._public_field_definition_static_mods],
-				[$.method_definition, $._public_field_definition_access_first],
-				[$._public_field_definition_static_mods],
-				[$._public_field_definition_abstract_first],
-				[$.method_definition, $.method_signature, $._public_field_definition_readonly_first],
-				[$.method_definition, $.method_signature, $._public_field_definition_static_mods],
-				[$.abstract_method_signature, $._public_field_definition_access_first],
-				[$.method_definition, $.method_signature, $._public_field_definition_access_first],
+				[$.public_field_definition],
+				[$.method_definition, $.public_field_definition],
+				[$.method_definition, $.method_signature, $.public_field_definition],
+				[$.abstract_method_signature, $.public_field_definition],
 				[$.primary_expression, $._for_header_lhs],
 				[$.primary_expression, $._for_header_var_kind],
 				[$.primary_expression, $._for_header_let_const_kind],
@@ -242,14 +236,6 @@ export default grammar(
 					'1/2': 'let_const_kind'
 				},
 
-				public_field_definition: {
-					'1/0/0/0': 'declare_first',
-					'1/0/0/1': 'access_first',
-					'2/0': 'static_mods',
-					'2/1': 'abstract_first',
-					'2/2': 'readonly_first',
-					'2/3': 'accessor_opt'
-				}
 			},
 			groups: {
 				jsx_opening_element_content: ($) =>
@@ -504,7 +490,13 @@ export default grammar(
 				},
 
 				public_field_definition: {
-					'1': field('visibility_prefix'),
+					// Both spellings of the accessibility position (declare-first
+					// and access-first modifier orders) carry ONE shared field so
+					// the exclusive occurrences merge into a single slot, same as
+					// the enrich-promoted `*_marker` fields merge across the
+					// permutation arms.
+					'1/0/0/1/0': field('accessibility_modifier'),
+					'1/0/1/0': field('accessibility_modifier'),
 					'4/0': field('optionality_marker')
 				},
 

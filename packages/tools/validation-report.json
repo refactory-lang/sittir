@@ -242,24 +242,6 @@
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
-    "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': choice rule:public_field_definition:root routes 3 unnamed-nonterminal arm(s) [public_field_definition_static_mods, public_field_definition_abstract_first, public_field_definition_readonly_first] into one union slot alongside 1 label-routed arm(s) [field(accessor_marker):\"accessor\"] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "accessor_marker"
-      ]
-    },
-    "location": "public_field_definition"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
     "ownerKind": "_enum_body_elements",
     "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true,
@@ -1460,58 +1442,6 @@
     "code": "factory-render-parse-ast-mismatch",
     "severity": "error",
     "label": "Mapped type 'as' clauses (object_type_content)"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "name": "Type Alias Statements [module]",
-    "message": "re-parse error [ERROR in type_parameter at \"P\"]",
-    "input": "type Point = tuple[float, float]\ntype Point[T] = tuple[T, T]\ntype IntFunc[**P] = Callable[P, int]  # ParamSpec\ntype LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple\ntype HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound\ntype IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints",
-    "rendered": "type Point=tuple[float,float]\ntype Point[T]=tuple[T,T]\ntype IntFunc[P P]=Callable[P,int]\n# ParamSpec\n\ntype LabeledTuple[Ts Ts]=tuple[str,Ts Ts]\n# TypeVarTuple\n\ntype HashableSequence[T:Hashable]=Sequence[T]\n# TypeVar with bound\n\ntype IntOrStrSequence[T:(int,str)]=Sequence[T]\n# TypeVar with constraints\n\n",
-    "stage": "read-render-parse",
-    "code": "read-render-parse-error",
-    "severity": "error",
-    "label": "Type Alias Statements [module]"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "name": "Generic Function Definitions [module]",
-    "message": "re-parse error [ERROR in types at \"Ts\"]",
-    "input": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-    "rendered": "def more_generic[T,Ts Ts,P P]():\n  type TA[T2,Ts2 Ts2,P2 P2]=tuple[Callable[P,tuple[T,Ts Ts]],Callable[P2,tuple[T2,Ts2 Ts2]]]\n  return TA\n",
-    "stage": "read-render-parse",
-    "code": "read-render-parse-error",
-    "severity": "error",
-    "label": "Generic Function Definitions [module]"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "name": "Type Alias Statements [module]",
-    "message": "re-parse error [ERROR in type_parameter at \"P\"]",
-    "input": "type Point = tuple[float, float]\ntype Point[T] = tuple[T, T]\ntype IntFunc[**P] = Callable[P, int]  # ParamSpec\ntype LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple\ntype HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound\ntype IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints",
-    "rendered": "type Point=tuple[float,float]\ntype Point[T]=tuple[T,T]\ntype IntFunc[P P]=Callable[P,int]\n# ParamSpec\n\ntype LabeledTuple[Ts Ts]=tuple[str,Ts Ts]\n# TypeVarTuple\n\ntype HashableSequence[T:Hashable]=Sequence[T]\n# TypeVar with bound\n\ntype IntOrStrSequence[T:(int,str)]=Sequence[T]\n# TypeVar with constraints\n\n",
-    "stage": "read-render-parse-shallow",
-    "code": "read-render-parse-shallow-error",
-    "severity": "error",
-    "label": "Type Alias Statements [module]"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "name": "Generic Function Definitions [module]",
-    "message": "re-parse error [ERROR in types at \"Ts\"]",
-    "input": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-    "rendered": "def more_generic[T,Ts Ts,P P]():\n  type TA[T2,Ts2 Ts2,P2 P2]=tuple[Callable[P,tuple[T,Ts Ts]],Callable[P2,tuple[T2,Ts2 Ts2]]]\n  return TA\n",
-    "stage": "read-render-parse-shallow",
-    "code": "read-render-parse-shallow-error",
-    "severity": "error",
-    "label": "Generic Function Definitions [module]"
   },
   {
     "source": "validator",

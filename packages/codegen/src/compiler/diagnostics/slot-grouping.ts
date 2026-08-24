@@ -57,6 +57,7 @@ import {
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, SimplifiedRule } from '../../types/rule.ts';
 import { isAllTextShape } from '../assemble.ts';
+import { isStructuralChoice } from '../collect-slots.ts';
 import { isNonterminalRuleType } from '../rule-catalog.ts';
 import type { Diagnostic } from '../../types/diagnostics.ts';
 
@@ -392,6 +393,16 @@ export function countContentSlots(rule: Rule<'link'>): number {
 		case VARIANT:
 		case GROUP:
 			return countContentSlots(rule.content);
+		case CHOICE:
+			// Mirror collectSlots' CHOICE routing (same predicate, imported):
+			// an unnamed STRUCTURAL choice distributes into its arms and merges
+			// by name — it yields no content slot of its own, only whatever
+			// unnamed content its arms carry. A non-structural unnamed choice
+			// (a true union) stays a single slot boundary, counted below.
+			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
+				return rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
+			}
+			return isContentSlot(rule) ? 1 : 0;
 		default:
 			return isContentSlot(rule) ? 1 : 0;
 	}

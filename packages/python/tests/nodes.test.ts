@@ -1739,6 +1739,7 @@ describe('type', () => {
 describe('splat_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.splatType({
+			operator: '*',
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.SplatType);
@@ -1746,8 +1747,22 @@ describe('splat_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.splatType({
+			operator: '*',
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('splat_type namespaced constructors', () => {
+	it('star builds the parent', () => {
+		const node = ir.splatType.star({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.SplatType);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('starStar builds the parent', () => {
+		const node = ir.splatType.starStar({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.SplatType);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

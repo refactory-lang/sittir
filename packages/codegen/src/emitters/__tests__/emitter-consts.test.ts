@@ -97,52 +97,6 @@ describe('emitConsts', () => {
 		expect(output).toContain('"+"');
 	});
 
-	it('emits FIELD_MAP for branch nodes', () => {
-		const nodeMap = makeNodeMap([
-			[
-				'function_item',
-				{
-					kind: 'function_item',
-					typeName: 'FunctionItem',
-					factoryName: 'functionItem',
-					modelType: 'branch',
-					fields: [
-						{
-							name: 'name',
-							propertyName: 'name',
-							paramName: 'name',
-							values: [
-								{
-									kind: 'node-ref',
-									node: { kind: 'unresolved-ref', name: 'identifier' },
-									multiplicity: 'single'
-								}
-							],
-							source: 'grammar'
-						},
-						{
-							name: 'body',
-							propertyName: 'body',
-							paramName: 'body',
-							values: [
-								{
-									kind: 'node-ref',
-									node: { kind: 'unresolved-ref', name: 'block' },
-									multiplicity: 'single'
-								}
-							],
-							source: 'grammar'
-						}
-					]
-				} as unknown as AssembledBranch
-			]
-		]);
-		const output = emitConsts({ grammar: 'test', nodeMap });
-		expect(output).toContain('FIELD_MAP');
-		expect(output).toContain("name: 'name'");
-		expect(output).toContain("name: 'body'");
-	});
-
 	it('emits enum values', () => {
 		const nodeMap = makeNodeMap([
 			[

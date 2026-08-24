@@ -1396,11 +1396,8 @@ export type PythonGrammar = {
 		type: 'splat_type';
 		named: true;
 		fields: {
-			identifier: {
-				multiple: true;
-				required: true;
-				types: [{ type: '*'; named: false }, { type: '**'; named: false }, { type: 'identifier'; named: true }];
-			};
+			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			operator: { multiple: false; required: true; types: [{ type: '*'; named: false }, { type: '**'; named: false }] };
 		};
 	};
 	readonly string: {

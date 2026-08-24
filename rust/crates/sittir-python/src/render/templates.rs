@@ -913,6 +913,7 @@ pub struct SplatPatternTemplate<'a> {
 #[template(path = "splat_type.jinja", escape = "none")]
 pub struct SplatTypeTemplate<'a> {
     pub identifier: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

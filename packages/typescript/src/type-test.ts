@@ -319,8 +319,6 @@ import type {
 	PropertySignature,
 	PropertySignatureTree,
 	PublicFieldDefinition,
-	PublicFieldDefinitionDeclareFirst,
-	PublicFieldDefinitionDeclareFirstTree,
 	PublicFieldDefinitionTree,
 	ReadonlyType,
 	ReadonlyTypeTree,
@@ -724,9 +722,6 @@ export type _Type_ExportStatementDefaultClauseFrom = _TypeAssert<
 	_TypeExtends<ExportStatementDefaultClauseFrom['$type'], TSKindId.ExportStatementDefaultClauseFrom>
 >;
 export type _Type_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhs['$type'], TSKindId.ForHeaderLhs>>;
-export type _Type_PublicFieldDefinitionDeclareFirst = _TypeAssert<
-	_TypeExtends<PublicFieldDefinitionDeclareFirst['$type'], TSKindId.PublicFieldDefinitionDeclareFirst>
->;
 export type _Type_HashBangLine = _TypeAssert<_TypeExtends<HashBangLine['$type'], TSKindId.HashBangLine>>;
 export type _Type_Import = _TypeAssert<_TypeExtends<Import['$type'], TSKindId.Import>>;
 export type _Type_HtmlCharacterReference = _TypeAssert<
@@ -1111,9 +1106,6 @@ export type _Tree_ExportStatementDefaultClauseFrom = _TypeAssert<
 	_TypeExtends<ExportStatementDefaultClauseFromTree['type'], '_export_statement_default_clause_from'>
 >;
 export type _Tree_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhsTree['type'], '_for_header_lhs'>>;
-export type _Tree_PublicFieldDefinitionDeclareFirst = _TypeAssert<
-	_TypeExtends<PublicFieldDefinitionDeclareFirstTree['type'], '_public_field_definition_declare_first'>
->;
 export type _Tree_HashBangLine = _TypeAssert<_TypeExtends<HashBangLineTree['type'], 'hash_bang_line'>>;
 export type _Tree_Import = _TypeAssert<_TypeExtends<ImportTree['type'], 'import'>>;
 export type _Tree_HtmlCharacterReference = _TypeAssert<

@@ -780,6 +780,77 @@ function distinct(values) {
   return [...new Set(values)];
 }
 
+// packages/codegen/src/util/word-matcher.ts
+function compileWordMatcher(word, rules) {
+  if (!word) return void 0;
+  const wordRule = rules[word];
+  if (!wordRule) return void 0;
+  const src = ruleToRegexSource(wordRule);
+  if (src === null) return void 0;
+  const full = `^(?:${src})$`;
+  try {
+    return new RegExp(full, "u");
+  } catch {
+    try {
+      return new RegExp(full);
+    } catch {
+      return void 0;
+    }
+  }
+}
+function matchesWordShape(value, wordMatcher) {
+  return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
+}
+function ruleToRegexSource(rule) {
+  const shaped = rule;
+  switch (rule.type) {
+    case PATTERN:
+      return shaped.value ?? null;
+    case STRING:
+      return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
+    case TOKEN:
+      return shaped.content ? ruleToRegexSource(shaped.content) : null;
+    case SEQ: {
+      const parts = [];
+      for (const m of shaped.members ?? []) {
+        const p = ruleToRegexSource(m);
+        if (p === null) return null;
+        parts.push(`(?:${p})`);
+      }
+      return parts.join("");
+    }
+    case CHOICE: {
+      const parts = [];
+      for (const m of shaped.members ?? []) {
+        const p = ruleToRegexSource(m);
+        if (p === null) return null;
+        parts.push(p);
+      }
+      return `(?:${parts.join("|")})`;
+    }
+    case OPTIONAL: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})?`;
+    }
+    case REPEAT: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})*`;
+    }
+    case REPEAT1: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})+`;
+    }
+    default:
+      return null;
+  }
+}
+function escapeRegexLiteral(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // packages/codegen/src/dsl/group-classify.ts
 function ruleMatchesEmpty(rule) {
   if (!rule || typeof rule !== "object") return false;
@@ -963,76 +1034,90 @@ function isSupertypeLike(body) {
     return false;
   });
 }
-
-// packages/codegen/src/util/word-matcher.ts
-function compileWordMatcher(word, rules) {
-  if (!word) return void 0;
-  const wordRule = rules[word];
-  if (!wordRule) return void 0;
-  const src = ruleToRegexSource(wordRule);
-  if (src === null) return void 0;
-  const full = `^(?:${src})$`;
-  try {
-    return new RegExp(full, "u");
-  } catch {
-    try {
-      return new RegExp(full);
-    } catch {
-      return void 0;
-    }
+function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
+  const b = unwrapPrec(body);
+  if (!b || typeof b !== "object") return false;
+  const t = b.type;
+  if (typeof t !== "string" || !isChoiceType(t)) return false;
+  const members = b.members;
+  if (!Array.isArray(members)) return false;
+  const arms = members.filter(
+    (m) => m && typeof m === "object" && !isBlankType(m.type ?? "")
+  );
+  if (arms.length < 2) return false;
+  const keySets = [];
+  for (const arm of arms) {
+    const keys = permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher);
+    if (keys === null) return false;
+    keySets.push(keys);
   }
+  const first = keySets[0];
+  if (!keySets.every((s) => s.size === first.size && [...s].every((k) => first.has(k)))) return false;
+  return new Set(arms.map((a) => JSON.stringify(a))).size >= 2;
 }
-function matchesWordShape(value, wordMatcher) {
-  return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
+function permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher) {
+  const core = unwrapPrec(arm);
+  if (!core || typeof core !== "object") return null;
+  const t = core.type;
+  if (typeof t !== "string" || !isSeqType(t)) return null;
+  const members = core.members;
+  if (!Array.isArray(members) || members.length < 2) return null;
+  const keys = /* @__PURE__ */ new Set();
+  for (const member of members) {
+    const key = permutationAtomKey(member, rulesBag, kwRules, wordMatcher);
+    if (key === null || keys.has(key)) return null;
+    keys.add(key);
+  }
+  return keys;
 }
-function ruleToRegexSource(rule) {
-  const shaped = rule;
-  switch (rule.type) {
-    case PATTERN:
-      return shaped.value ?? null;
-    case STRING:
-      return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
-    case TOKEN:
-      return shaped.content ? ruleToRegexSource(shaped.content) : null;
-    case SEQ: {
-      const parts = [];
-      for (const m of shaped.members ?? []) {
-        const p = ruleToRegexSource(m);
-        if (p === null) return null;
-        parts.push(`(?:${p})`);
+function permutationAtomKey(member, rulesBag, kwRules, wordMatcher) {
+  let core = unwrapPrec(member);
+  for (; ; ) {
+    if (!core || typeof core !== "object") return null;
+    const r2 = core;
+    const t2 = typeof r2.type === "string" ? r2.type : "";
+    if (isOptionalType(t2) || isFieldType(t2)) {
+      core = unwrapPrec(r2.content);
+      continue;
+    }
+    if (isChoiceType(t2)) {
+      const ms = r2.members;
+      if (Array.isArray(ms) && ms.length === 2) {
+        const blankIdx = ms.findIndex(
+          (m) => m && typeof m === "object" && isBlankType(m.type ?? "")
+        );
+        if (blankIdx !== -1) {
+          core = unwrapPrec(ms[1 - blankIdx]);
+          continue;
+        }
       }
-      return parts.join("");
-    }
-    case CHOICE: {
-      const parts = [];
-      for (const m of shaped.members ?? []) {
-        const p = ruleToRegexSource(m);
-        if (p === null) return null;
-        parts.push(p);
-      }
-      return `(?:${parts.join("|")})`;
-    }
-    case OPTIONAL: {
-      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
-      if (p === null) return null;
-      return `(?:${p})?`;
-    }
-    case REPEAT: {
-      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
-      if (p === null) return null;
-      return `(?:${p})*`;
-    }
-    case REPEAT1: {
-      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
-      if (p === null) return null;
-      return `(?:${p})+`;
-    }
-    default:
       return null;
+    }
+    break;
   }
+  const r = core;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isStringType(t)) {
+    const v = r.value;
+    if (typeof v !== "string" || !matchesWordShape(v, wordMatcher)) return null;
+    return `lit:${v}`;
+  }
+  if (isSymbolType(t)) {
+    const name = typeof r.name === "string" ? r.name : void 0;
+    if (name === void 0) return null;
+    const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
+    return resolved !== null ? `lit:${resolved}` : `sym:${name}`;
+  }
+  return null;
 }
-function escapeRegexLiteral(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function resolveRuleLiteral(body) {
+  const core = unwrapPrec(body);
+  if (!core || typeof core !== "object") return null;
+  const r = core;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (typeEq(t, "TOKEN")) return resolveRuleLiteral(r.content);
+  if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
+  return null;
 }
 
 // packages/codegen/src/dsl/enrich.ts
@@ -1073,6 +1158,8 @@ function enrich(baseInput, config) {
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
   separatedListEnrichSkip = enrichSkip;
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
+  hoistKwRules = kwRules;
+  hoistWordMatcher = wordMatcher;
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
@@ -1095,6 +1182,8 @@ function enrich(baseInput, config) {
     separatedListNameCounts = null;
     separatedListEnrichSkip = null;
     hiddenListPromotionNames = null;
+    hoistKwRules = null;
+    hoistWordMatcher = void 0;
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -2380,6 +2469,8 @@ function collectSeparatedListNameProposals(rules) {
 var separatedListNameCounts = null;
 var separatedListEnrichSkip = null;
 var hiddenListPromotionNames = null;
+var hoistKwRules = null;
+var hoistWordMatcher;
 function promoteHiddenListRef(member, rulesBag) {
   if (separatedListNameCounts === null || hiddenListPromotionNames === null) return member;
   if (!isSymbolType(member.type)) return member;
@@ -2603,7 +2694,12 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     return changed ? { ...rule, members: newMembers } : rule;
   }
   if (isChoiceType(rule.type)) {
-    const members = rule.members;
+    let choiceRule = rule;
+    const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher);
+    if (permutationChoice && hoistKwRules !== null) {
+      choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
+    }
+    const members = choiceRule.members;
     if (!Array.isArray(members)) return rule;
     const leadingNameCounts = /* @__PURE__ */ new Map();
     for (const m of members) {
@@ -2629,7 +2725,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         ambientPrec
       );
       const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-      const promoted = literalOnlySplit ? null : mintStructuredChoiceArm(
+      const promoted = permutationChoice || literalOnlySplit ? null : mintStructuredChoiceArm(
         out,
         parentKind,
         rulesBag,
@@ -2645,7 +2741,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       if (final !== m) changed = true;
       return final;
     });
-    return changed ? { ...rule, members: newMembers } : rule;
+    return changed || choiceRule !== rule ? { ...choiceRule, members: newMembers } : rule;
   }
   if (isRepeatType(rule.type) || isPrecWrapper(rule)) {
     const content = rule.content;
@@ -3095,6 +3191,29 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   };
   return same(a, b) && literalDeltas === 1;
 }
+function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatcher) {
+  const members = choiceRule.members;
+  let changed = false;
+  const newMembers = members.map((arm) => {
+    if (!isSeqType(arm.type)) return arm;
+    const seqMembers = arm.members;
+    let armChanged = false;
+    const newSeq = seqMembers.map((m) => {
+      const norm = normalizeMember(m);
+      if (!isStringType(norm.type) || typeof norm.value !== "string") return m;
+      if (!matchesWordShape(norm.value, wordMatcher)) return m;
+      const fieldName = `${norm.value}_marker`;
+      const symbolRef = registerKwRule(m, fieldName, kwRules, rulesBag);
+      if (symbolRef === null) return m;
+      armChanged = true;
+      return makeField(fieldName, symbolRef);
+    });
+    if (!armChanged) return arm;
+    changed = true;
+    return { ...arm, members: newSeq };
+  });
+  return changed ? { ...choiceRule, members: newMembers } : choiceRule;
+}
 function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
   const t = arm.type;
   if (typeof t !== "string") return null;
@@ -3135,6 +3254,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
   if (isSeqType(t) || isChoiceType(t)) {
     if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
     if (isSupertypeLike(arm)) return null;
+    if (isPermutationChoice(arm, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
     const names = visibleGroupSynthName(
       arm,
       parentKind,

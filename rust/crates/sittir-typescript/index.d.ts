@@ -2151,63 +2151,6 @@ export interface PropertySignatureTransport {
   _type?: TypeAnnotationTransport
 }
 
-export interface PublicFieldDefinitionAbstractFirstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _readonly_marker?: KwReadonlyMarkerTransport
-}
-
-export interface PublicFieldDefinitionAccessFirstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _declare_marker?: boolean
-  _accessibility_modifier: AccessibilityModifierEnum
-}
-
-export interface PublicFieldDefinitionDeclareFirstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: AccessibilityModifierEnum
-}
-
-export interface PublicFieldDefinitionReadonlyFirstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _abstract_marker?: KwAbstractMarkerTransport
-}
-
-export interface PublicFieldDefinitionStaticModsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _readonly_marker?: KwReadonlyMarkerTransport
-  _override_modifier?: OverrideModifierTransport
-}
-
 export interface PublicFieldDefinitionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2217,12 +2160,17 @@ export interface PublicFieldDefinitionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _visibility_prefix?: PublicFieldDefinitionVisibilityPrefixTransportSlot
+  _declare_marker?: KwDeclareMarkerTransport
+  _accessibility_modifier?: AccessibilityModifierEnum
+  _static_marker?: KwStaticMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
+  _abstract_marker?: KwAbstractMarkerTransport
+  _accessor_marker?: boolean
   _name: PropertyNameTransport
   _optionality_marker?: Box<AnyTransport>
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
-  _content?: PublicFieldDefinitionContentTransportSlot
+  _override_modifier?: OverrideModifierTransport
 }
 
 export interface ReadonlyTypeTransport {

@@ -4232,7 +4232,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "identifier",
+            "name": "operator",
             "content": {
               "type": "CHOICE",
               "members": [

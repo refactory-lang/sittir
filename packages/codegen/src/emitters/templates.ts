@@ -122,17 +122,25 @@ export interface EmitCtx {
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
-	// Array-shaped slots already emitted (as a `| join(...)` reference) during
-	// this kind's tree walk. Two DIFFERENT grammar-tree positions can resolve
-	// to the SAME merged array slot via `lookupSlot` — e.g. python's
-	// `if_statement` has `repeat(field('alternative', elif_clause))` and
+	// Slot storage names already emitted during this kind's tree walk. Two
+	// DIFFERENT grammar-tree positions can resolve to the SAME merged slot —
+	// arrays via `lookupSlot` (e.g. python's `if_statement` has
+	// `repeat(field('alternative', elif_clause))` and
 	// `optional(field('alternative', else_clause))` feeding one `alternative`
-	// slot, and rust's `tuple_expression` has three separate `elements`
-	// positions, one of them inside a CHOICE arm. Without this ctx-level
-	// (rather than SEQ-local) guard, `emitSlotReference` would re-emit the
-	// WHOLE merged array at each position, duplicating output. Cleared per
-	// node in `TemplateEmitter#emitNode` (mirrors `visitingHelpers`).
-	readonly emittedArraySlots: Set<AssembledNonterminal>;
+	// slot; rust's `tuple_expression` has three separate `elements`
+	// positions, one inside a CHOICE arm), and singular slots via
+	// structural-choice distribution (permutation arms sharing one marker
+	// field, e.g. `readonly_marker` at three positions of
+	// `public_field_definition`'s modifier choice). Without this ctx-level
+	// (rather than SEQ-local) guard the emitters would re-emit the merged
+	// slot at each position, duplicating output; first occurrence wins (the
+	// occurrences are mutually exclusive at parse time, so one reference is
+	// the whole slot). Keyed by storage name — both emission paths
+	// (`emitSlotReference`, `emitFieldNameSlot`) resolve to storage-key
+	// spellings, and storage keys are unique per kind (content-collision
+	// preflight). Cleared per node in `TemplateEmitter#emitNode` (mirrors
+	// `visitingHelpers`).
+	readonly emittedSlotNames: Set<string>;
 	// Seam-census sink (optional so hand-built test ctx literals stay valid):
 	// the SEQ join appends one record per boundary it classifies.
 	readonly seamBoundaries?: SeamBoundaryRecord[];
@@ -271,7 +279,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
-			emittedArraySlots: new Set<AssembledNonterminal>(),
+			emittedSlotNames: new Set<string>(),
 			seamBoundaries: this.#seamBoundaries
 		};
 	}
@@ -311,7 +319,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
-		this.#ctx.emittedArraySlots.clear();
+		this.#ctx.emittedSlotNames.clear();
 		const newBody = emitOne(node, this.#ctx);
 
 		if (newBody === undefined) {
@@ -544,7 +552,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			const patternFieldName = (rule as { fieldName?: string }).fieldName;
-			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule);
+			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule, ctx);
 			// No field name and no lookupSlot hit — this PATTERN can only be
 			// rendering its owner's OWN registered slot (e.g. a polymorph
 			// parent's single discriminating union slot). Read that slot's
@@ -592,7 +600,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			let indentPartIdx = -1;
 			// Two DIFFERENT grammar-tree positions — possibly straddling a SEQ/
 			// CHOICE boundary — can carry the SAME fieldName and merge into ONE
-			// array slot at collect-slots time (see EmitCtx.emittedArraySlots'
+			// array slot at collect-slots time (see EmitCtx.emittedSlotNames'
 			// doc comment). `emitSlotReference` is the shared chokepoint that
 			// dedupes by slot identity, so a member whose subtree resolves to an
 			// already-emitted array slot simply emits '' here.
@@ -1075,13 +1083,13 @@ function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: Em
 		return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
 	}
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+	// See EmitCtx.emittedSlotNames' doc comment: multiple grammar-tree
+	// positions (possibly straddling a SEQ/CHOICE boundary) can resolve to
+	// this SAME merged slot — emit the reference only once per kind.
+	if (ctx.emittedSlotNames.has(slotName)) return '';
+	ctx.emittedSlotNames.add(slotName);
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
-		// See EmitCtx.emittedArraySlots' doc comment: multiple grammar-tree
-		// positions (possibly straddling a SEQ/CHOICE boundary) can resolve to
-		// this SAME merged array slot — emit the join only once per kind.
-		if (ctx.emittedArraySlots.has(slot)) return '';
-		ctx.emittedArraySlots.add(slot);
 		return emitListSlot(slotName, rule, slot, ctx);
 	}
 	if (mult === 'optional' || !isRequired(slot)) {
@@ -1090,7 +1098,11 @@ function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: Em
 	return emitScalarSlot(slotName);
 }
 
-function emitFieldNameSlot(slotName: string, rule: RenderRule): string {
+function emitFieldNameSlot(slotName: string, rule: RenderRule, ctx: EmitCtx): string {
+	// Same merged-slot guard as emitSlotReference (one storage key, one
+	// reference per kind — see EmitCtx.emittedSlotNames).
+	if (ctx.emittedSlotNames.has(slotName)) return '';
+	ctx.emittedSlotNames.add(slotName);
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray') {
 		return emitListSlot(slotName, rule);
@@ -1182,7 +1194,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		if (slot) {
 			return emitSlotReference(rule, slot, ctx);
 		}
-		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule);
+		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule, ctx);
 	}
 
 	// Slot back-pointer: when assembly registered a slot for this rule
@@ -1515,15 +1527,15 @@ function scanArmBody(body: string): {
 // Those wrapper types no longer appear in RenderRule; their slot facts are
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
-// Reset `ctx.emittedArraySlots` to exactly the given snapshot. Used by
+// Reset `ctx.emittedSlotNames` to exactly the given snapshot. Used by
 // emitChoice's speculative per-arm probes (see its doc comments): a probe
 // whose body is discarded, or later superseded by a longer same-key body,
 // must not leave its `emitSlotReference` side effect behind — otherwise a
 // LATER reference to the same array slot (the trailing union reference, or
 // another arm) would wrongly see it as already-emitted and produce ''.
-function restoreEmittedArraySlots(ctx: EmitCtx, snapshot: ReadonlySet<AssembledNonterminal>): void {
-	ctx.emittedArraySlots.clear();
-	for (const s of snapshot) ctx.emittedArraySlots.add(s);
+function restoreEmittedSlotNames(ctx: EmitCtx, snapshot: ReadonlySet<string>): void {
+	ctx.emittedSlotNames.clear();
+	for (const s of snapshot) ctx.emittedSlotNames.add(s);
 }
 
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): string {
@@ -1567,8 +1579,8 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			const unionName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 			const blockByKey = new Map<string, string>();
 			// Array-slot marks produced by the WINNING body per key (see
-			// restoreEmittedArraySlots' doc comment) — only committed to
-			// `ctx.emittedArraySlots` for real once we know which bodies
+			// restoreEmittedSlotNames' doc comment) — only committed to
+			// `ctx.emittedSlotNames` for real once we know which bodies
 			// actually survive into the returned text.
 			const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
 			for (const arm of rule.members) {
@@ -1590,10 +1602,10 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				// onto the same slots and must reference them once (the phi2
 				// lesson: never one block per arm for arms sharing slots); the
 				// longest body wins (fullest literal shape).
-				const beforeSlots = new Set(ctx.emittedArraySlots);
+				const beforeSlots = new Set(ctx.emittedSlotNames);
 				const body = emitRule(arm as RenderRule, ctx);
-				const delta = [...ctx.emittedArraySlots].filter((s) => !beforeSlots.has(s));
-				restoreEmittedArraySlots(ctx, beforeSlots);
+				const delta = [...ctx.emittedSlotNames].filter((s) => !beforeSlots.has(s));
+				restoreEmittedSlotNames(ctx, beforeSlots);
 				if (!body) continue;
 				const { key, needsGate } = scanArmBody(body);
 				if (key === undefined || key === unionName || ctx.ownerSlots?.[key] === undefined) continue;
@@ -1605,7 +1617,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				}
 			}
 			for (const delta of arraySlotDeltaByKey.values()) {
-				for (const s of delta) ctx.emittedArraySlots.add(s);
+				for (const s of delta) ctx.emittedSlotNames.add(s);
 			}
 			return [...blockByKey.values()].join('') + emitSlotReference(rule, slot, ctx);
 		}
@@ -1616,7 +1628,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	// name directly.
 	const choiceFieldName = (rule as { fieldName?: string }).fieldName;
 	if (choiceFieldName !== undefined) {
-		return emitFieldNameSlot(choiceFieldName.toLowerCase(), rule);
+		return emitFieldNameSlot(choiceFieldName.toLowerCase(), rule, ctx);
 	}
 	// No slot, no fieldName. Two sub-cases:
 	//
@@ -1681,10 +1693,10 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		let literalFallback: string | undefined;
 		let literalFallbackAmbiguous = false;
 		for (const arm of rule.members) {
-			const beforeSlots = new Set(ctx.emittedArraySlots);
+			const beforeSlots = new Set(ctx.emittedSlotNames);
 			const body = emitRule(arm as RenderRule, ctx);
-			const delta = [...ctx.emittedArraySlots].filter((s) => !beforeSlots.has(s));
-			restoreEmittedArraySlots(ctx, beforeSlots);
+			const delta = [...ctx.emittedSlotNames].filter((s) => !beforeSlots.has(s));
+			restoreEmittedSlotNames(ctx, beforeSlots);
 			if (!body) continue;
 			const { key, needsGate, discriminatorKey } = scanArmBody(body);
 			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
@@ -1700,6 +1712,76 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				break;
 			}
 			armInfos.push({ key, discriminatorKey, body, needsGate, delta });
+		}
+		/* Modifier-stack (permutation) choice: every arm's body is PURELY
+		   self-gated slot units (`{% if k | isPresent %}{{ k }}{% endif %}`
+		   chunks, nothing else) and at least one slot name recurs across
+		   arms — the arms are order-permutations of one merged-slot set
+		   (structural-choice distribution merged them; e.g.
+		   public_field_definition's modifier positions). Per-arm blocks
+		   would re-render every shared slot once per arm; the correct
+		   emission is the flat dedup of the units in arm order (first
+		   occurrence wins — occurrences are mutually exclusive at parse
+		   time), which IS the canonical modifier order. Arms with no shared
+		   slot keep the block path below (byte-identical output for them).
+		*/
+		if (process.env.SITTIR_DEBUG_FLATCHOICE) {
+			process.stderr.write(`[flatchoice] id=${String((rule as { id?: string }).id)} ungateable=${ungateableArm} litFallback=${JSON.stringify(literalFallback)} arms=${armInfos.length} bodies=${JSON.stringify(armInfos.map((i) => i.body))}\n`);
+		}
+		if (!ungateableArm && literalFallback === undefined && armInfos.length >= 2) {
+			const unitLists = armInfos.map((i) => selfGatedSlotUnits(i.body));
+			if (unitLists.every((u) => u !== null)) {
+				const nameCounts = new Map<string, number>();
+				for (const units of unitLists as { name: string; text: string }[][]) {
+					for (const u of new Set(units.map((x) => x.name))) nameCounts.set(u, (nameCounts.get(u) ?? 0) + 1);
+				}
+				if ([...nameCounts.values()].some((c) => c >= 2)) {
+					const lists = unitLists as { name: string; text: string }[][];
+					const flatOrder: string[] = [];
+					const seen = new Set<string>();
+					for (const units of lists) {
+						for (const u of units) {
+							if (seen.has(u.name)) continue;
+							seen.add(u.name);
+							flatOrder.push(u.name);
+						}
+					}
+					/* Permutation check: flattening renders any present subset in
+					   flat order, which the grammar accepts only if that order is
+					   one an arm can parse. For each arm, project the flat order
+					   onto the arm's name set — the result must be a subsequence
+					   of SOME arm's own unit order (subsets of a subsequence stay
+					   subsequences, so full-set checks cover partial presence).
+					   Permutation stacks (pfd's modifier positions) pass; arms
+					   that merely share a trailing slot in different relative
+					   positions (rust function_type's trait/fn forms around
+					   `parameters`) fail and keep the block path below. */
+					const armOrders = lists.map((units) => units.map((u) => u.name));
+					const isSubseq = (needle: string[], hay: string[]): boolean => {
+						let i = 0;
+						for (const h of hay) if (i < needle.length && needle[i] === h) i++;
+						return i === needle.length;
+					};
+					const allProjectionsParseable = armOrders.every((arm) => {
+						const armSet = new Set(arm);
+						const projected = flatOrder.filter((n) => armSet.has(n));
+						return armOrders.some((other) => isSubseq(projected, other));
+					});
+					if (allProjectionsParseable) {
+						const parts: string[] = [];
+						const emitted = new Set<string>();
+						for (const units of lists) {
+							for (const u of units) {
+								if (emitted.has(u.name)) continue;
+								emitted.add(u.name);
+								parts.push(u.text);
+							}
+						}
+						for (const n of emitted) ctx.emittedSlotNames.add(n);
+						return parts.join('');
+					}
+				}
+			}
 		}
 		let hoistedTail = '';
 		if (!ungateableArm) {
@@ -1770,7 +1852,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			rawBodies.every((v) => v !== undefined)
 		) {
 			for (const delta of arraySlotDeltaByKey.values()) {
-				for (const s of delta) ctx.emittedArraySlots.add(s);
+				for (const s of delta) ctx.emittedSlotNames.add(s);
 			}
 			const parts: string[] = [];
 			[...blockByKey.keys()].forEach((key, i) => {
@@ -1781,14 +1863,14 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		}
 		if (!ungateableArm && (blockByKey.size >= 2 || (hoistedTail !== '' && blockByKey.size >= 1))) {
 			for (const delta of arraySlotDeltaByKey.values()) {
-				for (const s of delta) ctx.emittedArraySlots.add(s);
+				for (const s of delta) ctx.emittedSlotNames.add(s);
 			}
 			return [...blockByKey.values()].join('') + hoistedTail;
 		}
 		// ungateableArm, or fewer than 2 distinct keys with no usable literal
 		// fallback: falls through to the first-arm-wins loop below. Every
 		// per-arm probe above was already rolled back, so
-		// `ctx.emittedArraySlots` is unchanged by this block.
+		// `ctx.emittedSlotNames` is unchanged by this block.
 	}
 	// Pure-literal or unregistered choice — emit the first non-empty arm's text.
 	for (const member of rule.members) {
@@ -1796,6 +1878,35 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		if (text) return text;
 	}
 	return '';
+}
+
+/** Split an arm body into pure self-gated slot units
+ *  (`{% if <name> | isPresent %}{{ <name> }}{% endif %}` chunks, with the
+ *  gate key and the referenced slot identical); null if anything else —
+ *  literal text, ungated refs, joins, nested gates — appears. */
+function selfGatedSlotUnits(body: string): { name: string; text: string }[] | null {
+	const units: { name: string; text: string }[] = [];
+	let rest = body;
+	const UNIT_RE = /^\{% if ([a-z0-9_]+) \| isPresent %\}\{\{ \1 \}\}\{% endif %\}/;
+	// A bare ungated scalar ref is also a unit — an arm whose sole member is
+	// required WITHIN the arm emits it ungated (the arm's own optionality
+	// lived on the choice). Flat emission drops arm exclusivity, so the
+	// unit gets the standard presence gate here (identical output for a
+	// present slot).
+	const BARE_RE = /^\{\{ ([a-z0-9_]+) \}\}/;
+	while (rest !== '') {
+		const m = UNIT_RE.exec(rest);
+		if (m) {
+			units.push({ name: m[1]!, text: m[0] });
+			rest = rest.slice(m[0].length);
+			continue;
+		}
+		const b = BARE_RE.exec(rest);
+		if (!b) return null;
+		units.push({ name: b[1]!, text: `{% if ${b[1]} | isPresent %}{{ ${b[1]} }}{% endif %}` });
+		rest = rest.slice(b[0].length);
+	}
+	return units.length > 0 ? units : null;
 }
 
 // ---------------------------------------------------------------------------

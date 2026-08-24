@@ -125,7 +125,7 @@ import {
 	type ParseKindCollisionValue
 } from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
-import { ruleMatchesEmpty, isInlineSafe, isSupertypeLike } from './group-classify.ts';
+import { ruleMatchesEmpty, isInlineSafe, isSupertypeLike, isPermutationChoice } from './group-classify.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
@@ -270,6 +270,8 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
 	separatedListEnrichSkip = enrichSkip;
 	hiddenListPromotionNames = new Map();
+	hoistKwRules = kwRules;
+	hoistWordMatcher = wordMatcher;
 	try {
 		for (const name of Object.keys(enrichedRules)) {
 			const rule = enrichedRules[name];
@@ -292,6 +294,8 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 		separatedListNameCounts = null;
 		separatedListEnrichSkip = null;
 		hiddenListPromotionNames = null;
+		hoistKwRules = null;
+		hoistWordMatcher = undefined;
 	}
 	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
 	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
@@ -2562,6 +2566,15 @@ let separatedListEnrichSkip: ReadonlySet<string> | null = null;
  *  {@link separatedListNameCounts}. */
 let hiddenListPromotionNames: Map<string, string> | null = null;
 
+// Loop-2 (clause-hoist) access to the enrich() call's keyword bag and word
+// matcher, for the permutation-choice decline + marker normalization: a
+// keyword already `_kw_*`-promoted in one arm must key identically to its
+// raw string spelling in a sibling arm, and only word-shaped literals are
+// modifier candidates. Same set/reset-in-try/finally pattern as the
+// separated-list state above.
+let hoistKwRules: Record<string, Rule> | null = null;
+let hoistWordMatcher: RegExp | undefined;
+
 /**
  * @internal — a bare SYMBOL reference to a hidden rule whose ENTIRE body is
  * a flank-carrying separated list (python's `_import_list`) gets wrapped in
@@ -2919,7 +2932,17 @@ function applyClauseHoist(
 	// Descend into choice branches that are NOT optional(seq) wrappers
 	// (those were handled above via peelOptionalSeq).
 	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
+		let choiceRule = rule;
+		/* Permutable-modifier arms (isPermutationChoice): decline minting —
+		   the arms differ only in ordering/optionality of one modifier-slot
+		   set, so kind identity would be pure ceremony — and normalize each
+		   arm's raw keyword steps to marker fields so every arm spells the
+		   same slot the same way. */
+		const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? undefined, hoistWordMatcher);
+		if (permutationChoice && hoistKwRules !== null) {
+			choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
+		}
+		const members = (choiceRule as unknown as { members?: Rule[] }).members;
 		if (!Array.isArray(members)) return rule;
 		// PR 3 (2026-07-21 union-slot design): leading-symbol collisions
 		// across THIS choice's arms — any leading name shared by 2+ arms
@@ -2969,7 +2992,7 @@ function applyClauseHoist(
 			// (determined) enum; the literal belongs in the parent's own
 			// enum slot instead.
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-			const promoted = literalOnlySplit
+			const promoted = permutationChoice || literalOnlySplit
 				? null
 				: mintStructuredChoiceArm(
 						out,
@@ -2987,7 +3010,7 @@ function applyClauseHoist(
 			if (final !== m) changed = true;
 			return final;
 		});
-		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
+		return changed || choiceRule !== rule ? ({ ...choiceRule, members: newMembers } as Rule) : rule;
 	}
 
 	// Descend into repeat / repeat1 / prec wrappers.
@@ -3723,6 +3746,44 @@ export function armsDifferOnlyByLiteralChoice(a: Rule, b: Rule): boolean {
 	return same(a, b) && literalDeltas === 1;
 }
 
+/**
+ * Normalize a permutation choice's arms (`isPermutationChoice`) so every raw
+ * word-shaped keyword step carries the same marker-field shape the
+ * optional-keyword pass gives optional spellings: a REQUIRED keyword in one
+ * arm and `optional('<kw>')` in a sibling are the same modifier slot, and
+ * slot merging needs both spelled `field('<kw>_marker', $._kw_<kw>_marker)`.
+ * Scoped to permutation arms only — global bare-keyword promotion is
+ * deliberately off (it shifts parser tables grammar-wide).
+ */
+function promotePermutationArmKeywords(
+	choiceRule: Rule,
+	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
+	wordMatcher: RegExp | undefined
+): Rule {
+	const members = (choiceRule as unknown as { members: Rule[] }).members;
+	let changed = false;
+	const newMembers = members.map((arm) => {
+		if (!isSeqType((arm as { type?: string }).type as string)) return arm;
+		const seqMembers = (arm as unknown as { members: Rule[] }).members;
+		let armChanged = false;
+		const newSeq = seqMembers.map((m) => {
+			const norm = normalizeMember(m);
+			if (!isStringType(norm.type) || typeof norm.value !== 'string') return m;
+			if (!matchesWordShape(norm.value, wordMatcher)) return m;
+			const fieldName = `${norm.value}_marker`;
+			const symbolRef = registerKwRule(m, fieldName, kwRules, rulesBag);
+			if (symbolRef === null) return m;
+			armChanged = true;
+			return makeField(fieldName, symbolRef);
+		});
+		if (!armChanged) return arm;
+		changed = true;
+		return { ...arm, members: newSeq } as Rule;
+	});
+	return changed ? ({ ...choiceRule, members: newMembers } as Rule) : choiceRule;
+}
+
 function mintStructuredChoiceArm(
 	arm: Rule,
 	parentKind: string,
@@ -3851,6 +3912,10 @@ function mintStructuredChoiceArm(
 		// prior pass inlined the ref) — minting it wraps the union. See
 		// `isSupertypeLike`'s doc comment for the two-runtime rationale.
 		if (isSupertypeLike(arm)) return null;
+		/* Permutable-modifier choice offered whole (optional-position path):
+		   same decline as the per-arm path — the markers collapse into the
+		   parent's own slots instead of minting a group kind. */
+		if (isPermutationChoice(arm, rulesBag, hoistKwRules ?? undefined, hoistWordMatcher)) return null;
 		const names = visibleGroupSynthName(
 			arm,
 			parentKind,

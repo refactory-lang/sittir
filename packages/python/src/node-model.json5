@@ -1302,6 +1302,13 @@
       }
     },
     "splat_type": {
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "identifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -10556,9 +10563,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -10574,7 +10581,21 @@
               "multiplicity": "single",
               "value": "**",
               "parseKind": "star_star"
-            },
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -10592,9 +10613,30 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
+        "operator",
         "identifier"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "operator",
+          "literal": "*",
+          "params": [
+            "identifier"
+          ]
+        },
+        {
+          "name": "starStar",
+          "via": "member",
+          "slot": "operator",
+          "literal": "**",
+          "params": [
+            "identifier"
+          ]
+        }
       ]
     },
     {

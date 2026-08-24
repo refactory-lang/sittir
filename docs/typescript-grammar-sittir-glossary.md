@@ -224,42 +224,19 @@ polymorph helpers need to appear explicitly.
 				// Split each arm so the outer choice becomes all symbol-like.
 ```
 
-### `public_field_definition` (`packages/typescript/grammar.sittir.ts:387`)
+### `public_field_definition` — modifier positions (no polymorph split)
 
-```text
-				// public_field_definition body position 1:
-				//   optional(choice(
-				//     seq('declare', optional(accessibility_modifier)),
-				//     seq(accessibility_modifier, optional(field('declare', _kw_declare))),
-				//   ))
-				// Split both arms and INLINE the synthesized hidden rules (see
-				// `inline:` below). Inlining is critical here: the `access_first`
-				// arm reduces to "just accessibility_modifier" which conflicts
-				// with every class-member rule sharing that prefix
-				// (`method_definition`, `method_signature`,
-				// `abstract_method_signature`). Keeping them as standalone
-				// hidden rules produces an unresolvable LR state that
-				// tree-sitter can't disambiguate via conflict groups alone.
-				// Inlining folds each arm's body back into `public_field_definition`'s
-				// state machine — the LR table looks exactly like the pre-split
-				// grammar at the conflict site, while sittir's derive-audit
-				// still sees the post-polymorph shape (all-alias choice) as
-				// canonical. Variant adoption stays a pure sittir-side concern;
-				// tree-sitter parses the same tree as before.
-```
-
-### `1/0/0/0` (`packages/typescript/grammar.sittir.ts:407`)
-
-```text
-					// Paths carry an extra '/0' hop at position 1 vs. the raw base
-					// shape ('1/0/0/0' not '1/0/0') because `transforms:` below wraps
-					// position 1 in `field('visibility_prefix', …)` — transforms
-					// compose innermost, polymorphs outermost (see wire.ts), so these
-					// polymorph paths address the ALREADY-field-wrapped tree. FIELD is
-					// a single-content wrapper (like OPTIONAL) that consumes one
-					// index-0 hop to descend into its content, shifting every path
-					// under position 1 by one segment.
-```
+`public_field_definition` is ONE kind with flat optional marker slots. The
+upstream modifier positions (1 and 2) are permutation choices — every arm is
+an ordering of the same modifier set — so enrich declines the choice-arm mint
+(`isPermutationChoice`) instead of extracting per-arm kinds, and promotes the
+arms' keyword steps to shared `field('<kw>_marker', $._kw_*)` markers. The
+merged slots (`declare_marker`, `static_marker`, `readonly_marker`,
+`abstract_marker`, `accessor_marker`, plus the `accessibility_modifier` /
+`override_modifier` node slots) land directly on the kind; the template emits
+them once each, in canonical flat order. The former per-arm kinds and their
+`inline:`/conflict machinery are gone — the conflicts block declares the
+class-member ambiguities against `public_field_definition` itself.
 
 ### `2/0` (`packages/typescript/grammar.sittir.ts:417`)
 
@@ -833,28 +810,23 @@ The same rule governs the other standalone optional-punct markers
 ```text
 				// public_field_definition: seq(
 				//   repeat(field('decorator', ...)),                // pos 0
-				//   optional(choice(...)),                           // pos 1 (POLYMORPHED — declare_first / access_first)
-				//   choice(...),                                     // pos 2 (POLYMORPHED — static_mods / abstract_first / readonly_first / accessor_opt)
-				//   field('name', $._property_name),                 // pos 3
+				//   optional(choice(...)),                          // pos 1 (permutation: declare/accessibility orders)
+				//   choice(...),                                    // pos 2 (permutation: static/override/readonly/abstract/accessor stacks)
+				//   field('name', $._property_name),                // pos 3
 				//   optional(choice('?', '!')),                     // pos 4  →  '4/0'  (optionality_marker)
-				//   field('type', optional($.type_annotation)),     // pos 5
-				//   optional($._initializer))                        // pos 6
-				// Field-promotion wave 3 (016 task #25): label the `?`/`!` choice
-				// as `optionality_marker`. Different semantics in one slot
-				// (`?` = optional field, `!` = definite-assignment) — keep as one
-				// discriminator field; the literal value distinguishes.
+				//   field('type', optional($.type_annotation)),    // pos 5
+				//   optional($._initializer))                       // pos 6
+				// `?`/`!` share one `optionality_marker` discriminator field —
+				// different semantics (`?` optional field, `!` definite
+				// assignment) but one slot; the literal value distinguishes.
 				//
-				// content-collision (PR-L task 4): positions 1 and 2 are both
-				// unnamed POLYMORPHED unions (declare/access-first, and the
-				// 4-arm modifier choice) — 2 anonymous 'content' slots sharing
-				// the `_content` storage key. Name position 1's outer union
-				// `visibility_prefix` (>1 drops to 1, silencing the diagnostic;
-				// position 2 stays unnamed, no collision remains since only one
-				// unnamed content slot is left). The polymorphs map above adds
-				// an extra '/0' hop under position 1 to compensate — this
-				// field() wrap runs BEFORE polymorphs (transforms innermost,
-				// polymorphs outermost), so it shifts every path under
-				// position 1 by one segment.
+				// Positions 1 and 2 stay inline (permutation choices — no arm
+				// mint); the authored `accessibility_modifier` field on both
+				// pos-1 spellings makes the two exclusive occurrences merge
+				// into one slot, the same way the enrich-promoted `*_marker`
+				// fields merge across the permutation arms. Without the shared
+				// name the two bare refs derive two positional slots that
+				// collide on the `accessibility_modifier` storage key.
 ```
 
 ### `_type_query_subscript_expression` — deferred promotion (`packages/typescript/grammar.sittir.ts`)

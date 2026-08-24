@@ -232,7 +232,11 @@ export default grammar(
 				},
 
 				splat_type: {
-					0: field('identifier')
+					// Same star position as splat_pattern above — the choice of
+					// '*'/'**' is the operator, not a second 'identifier' (the
+					// duplicate name merged both positions into one slot and
+					// dropped the star from renders).
+					0: field('operator')
 				},
 
 				string: {
