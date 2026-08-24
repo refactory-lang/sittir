@@ -140,7 +140,7 @@ describe('dogfoodContract helper', () => {
 	});
 });
 
-// GAP inventory (examples/17): A=6 B=7 C=1 — each marked in the example at
+// GAP inventory (examples/17): A=6 B=8 C=1 — each marked in the example at
 // the construct it blocks. Both assertions flip to `it` as the classes close.
 describe('examples/17 dogfood rust (splice.rs)', () => {
 	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
