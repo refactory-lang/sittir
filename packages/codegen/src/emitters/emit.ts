@@ -102,7 +102,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		generatedIdTables,
 		kindEntries,
 		inlineKinds,
-		synthesizedKinds
+		synthesizedKinds,
+		triviaKinds
 	});
 
 	const fromEmitter = new FromEmitter({

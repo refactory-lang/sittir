@@ -24,13 +24,6 @@ import type { Rule } from '../types/rule.ts';
 type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 
-/** The catalog's enum member name for a kind, when the catalog knows it. */
-function catalogMemberName(
-	kindEntries: readonly { readonly kind: string; readonly member: string }[] | undefined,
-	kind: string
-): string | undefined {
-	return kindEntries?.find((e) => e.kind === kind)?.member;
-}
 import {
 	collectAliasTargetToSourceMap,
 	hasOptionalElements,
@@ -49,7 +42,7 @@ import { fieldElementType, childElementType, childrenSetterRestType } from './fa
 import { deriveChildrenKinds } from './transport-common.ts';
 import {
 	collectKindEntries,
-	kindIdMemberName,
+	findKindEntry,
 	hasCatalogEntry,
 	kindDiscriminantExpr,
 	kindDiscriminantExprForId,
@@ -736,7 +729,7 @@ function emitSeparatedListWrap(
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
-		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries, nodeMap)} }, methodsEngine);`);
+		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, methodsEngine);`);
 	}
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
@@ -773,9 +766,9 @@ function emitSeparatedListWrap(
 		lines.push('    ...data,');
 	}
 	if (kindEntries) {
-		const entry = kindEntries.find((e) => e.kind === node.kind);
+		const entry = findKindEntry(kindEntries, node.kind);
 		if (entry) {
-			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const,`);
+			lines.push(`    $type: TSKindId.${entry.member} as const,`);
 		}
 	}
 	if (node.fields.length > 1) {
@@ -988,13 +981,9 @@ function wrapsAnonLiteralContent(fields: readonly AssembledNonterminal[], nodeMa
 // `$type` restamp for the `_isReadTextLeaf` pass-through — same numeric
 // TSKindId discriminant the structural body stamps, so leaf pass-through
 // and structural output dispatch identically downstream.
-function wrapTextLeafTypeStamp(
-	node: { readonly kind: string },
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): string {
-	const entry = kindEntries?.find((e) => e.kind === node.kind);
-	return entry ? `, $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const` : '';
+function wrapTextLeafTypeStamp(node: { readonly kind: string }, kindEntries: readonly KindEnumEntry[] | undefined): string {
+	const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind);
+	return entry ? `, $type: TSKindId.${entry.member} as const` : '';
 }
 
 function emitFieldCarryingWrap(
@@ -1017,7 +1006,7 @@ function emitFieldCarryingWrap(
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	if (wrapsAnonLiteralContent(fields, nodeMap)) {
-		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries, nodeMap)} }, methodsEngine);`);
+		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, methodsEngine);`);
 	}
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
@@ -1047,9 +1036,9 @@ function emitFieldCarryingWrap(
 	}
 	// Override $type with the numeric TSKindId.X discriminant when kindEntries is present.
 	if (kindEntries) {
-		const entry = kindEntries.find((e) => e.kind === node.kind);
+		const entry = findKindEntry(kindEntries, node.kind);
 		if (entry) {
-			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const,`);
+			lines.push(`    $type: TSKindId.${entry.member} as const,`);
 		}
 	}
 	// Named fields -> `_<name>` storage (enumerable).
@@ -1737,6 +1726,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  return undefined;',
 						'}',
 						'',
+						'function _filterWrapChildrenByKind<T>(value: readonly T[], allowedKinds: readonly string[]): readonly T[];',
+						'function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): T | readonly T[] | undefined;',
 						'function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): T | readonly T[] | undefined {',
 						'  if (value == null) return undefined;',
 						'  if (!Array.isArray(value)) {',
@@ -1771,14 +1762,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// Idempotent over already-positional storage (a `$with` re-wrap carries',
 						'// no delimiters): with no delimiter present every entry is its own',
 						'// position, `undefined` holes intact.',
+						'type _WireDelimiter = number | { readonly $type: number; readonly $named: false };',
 						'function splitElidedWrapSlot<T>(',
-						'  value: T | readonly T[] | undefined,',
+						'  value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,',
 						'  separatorKindIds: readonly number[],',
 						'  allowedKinds: readonly string[] | undefined',
 						'): readonly (T | undefined)[] {',
-						'  const items: readonly unknown[] = value == null ? [] : Array.isArray(value) ? value : [value];',
+						'  // Assumes T itself is never an array type — slot elements are node unions.',
+						'  const isSlotList = (v: T | readonly (T | _WireDelimiter | undefined)[]): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);',
+						'  const items: readonly (T | _WireDelimiter | undefined)[] = value == null ? [] : isSlotList(value) ? value : [value];',
 						'  if (items.length === 0) return [];',
-						'  const isDelimiter = (e: unknown): boolean => {',
+						'  const isDelimiter = (e: unknown): e is _WireDelimiter => {',
 						'    if (typeof e === "number") return separatorKindIds.includes(e);',
 						'    if (typeof e === "object" && e !== null) {',
 						'      const stub = e as { $type?: unknown; $named?: unknown };',
@@ -1786,15 +1780,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    }',
 						'    return false;',
 						'  };',
-						'  const keepFirst = (seg: readonly unknown[]): T | undefined => {',
-						'    const kept = allowedKinds ? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[]) : (seg.filter((e) => e !== undefined) as unknown as readonly T[]);',
+						'  const keepFirst = (seg: readonly (T | undefined)[]): T | undefined => {',
+						'    const present = seg.filter((e): e is T => e !== undefined);',
+						'    const kept = allowedKinds === undefined ? present : _filterWrapChildrenByKind(present, allowedKinds);',
 						'    return kept.length > 0 ? kept[0] : undefined;',
 						'  };',
 						'  if (!items.some(isDelimiter)) {',
-						'    return (items as readonly (T | undefined)[]).map((e) => (e === undefined ? undefined : keepFirst([e])));',
+						'    return items.map((e) => (e === undefined || isDelimiter(e) ? undefined : keepFirst([e])));',
 						'  }',
 						'  const positions: (T | undefined)[] = [];',
-						'  let segment: unknown[] = [];',
+						'  let segment: (T | undefined)[] = [];',
 						'  for (const entry of items) {',
 						'    if (isDelimiter(entry)) {',
 						'      positions.push(keepFirst(segment));',
@@ -1823,6 +1818,20 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				? 'const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {'
 				: 'const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {'
 		);
+		// Members resolve through findKindEntry's kind-name chain — an
+		// exact-key find misses entries reached via parser-symbol/literal
+		// aliases (`)` → `Rparen`, `||` → `PipePipe`, hidden pairs →
+		// `_PropertyIdentifier`) and emitted keys for nonexistent members.
+		// The chain also lets TWO model kinds resolve to ONE catalog entry
+		// (hidden/alias pairs), where a duplicate object key would silently
+		// last-win — so each member is claimed once: the kind that IS the
+		// catalog entry's own key (the canonical storage kind) beats an
+		// alias-reached claimant; otherwise the first claim stands.
+		const rows = new Map<string, { row: string; exact: boolean }>();
+		const claimRow = (tableKey: string, row: string, exact: boolean): void => {
+			const existing = rows.get(tableKey);
+			if (existing === undefined || (exact && !existing.exact)) rows.set(tableKey, { row, exact });
+		};
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (
 				node.modelType === 'branch' ||
@@ -1833,23 +1842,35 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				node.modelType === 'separatedList'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
-				// The dispatch key must spell the CATALOG's enum member for this
-				// kind — `node.typeName` diverges for hidden/alias pairs (the
-				// catalog names `_PropertyIdentifier`, the model `PropertyIdentifier`).
-				lines.push(
-					`  ${wrapTableKey(kind, catalogMemberName(this.#kindEntries, kind) ?? node.typeName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`
+				const entry = this.#kindEntries ? findKindEntry(this.#kindEntries, kind) : undefined;
+				if (this.#kindEntries && entry === undefined) {
+					console.warn(
+						`[codegen] wrap dispatch: '${kind}' resolves to no catalog entry — no numeric dispatch row emitted (no parser-issued $type can reach it)`
+					);
+					continue;
+				}
+				const memberName = entry?.member ?? node.typeName;
+				claimRow(
+					this.#kindEntries ? memberName : kind,
+					`  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`,
+					entry !== undefined && entry.kind === kind
 				);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (!node.factoryName) continue;
-				if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 				if (this.#kindEntries) {
-					const memberName = catalogMemberName(this.#kindEntries, kind) ?? kindIdMemberName(this.#nodeMap, kind);
-					lines.push(`  [TSKindId.${memberName}]: (d) => ({ ...d, $type: TSKindId.${memberName} as const }),`);
+					const entry = findKindEntry(this.#kindEntries, kind);
+					if (entry === undefined) continue;
+					claimRow(
+						entry.member,
+						`  [TSKindId.${entry.member}]: (d) => ({ ...d, $type: TSKindId.${entry.member} as const }),`,
+						entry.kind === kind
+					);
 				} else {
-					lines.push(`  '${kind}': (d) => d,`);
+					claimRow(kind, `  '${kind}': (d) => d,`, true);
 				}
 			}
 		}
+		for (const { row } of rows.values()) lines.push(row);
 		lines.push('};');
 		lines.push('');
 

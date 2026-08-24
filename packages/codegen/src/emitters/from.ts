@@ -40,7 +40,7 @@ import {
 	type SoleSlotFacts,
 	canonicalSeparatedListField
 } from './shared.ts';
-import { fieldElementType, childElementType, kindEnumTextMapExpr, namespaceOf, namespacedEntryEligible } from './factories.ts';
+import { fieldElementType, childElementType, kindEnumTextMapExpr, namespaceOf, delimiterMembersFor } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
@@ -107,6 +107,7 @@ function emitNamespaceImports(
 	lines: string[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	usesKindLiteralText: boolean,
+	usesDelimiterGuard: boolean,
 	usesAttachProps: boolean
 ): void {
 	lines.push(`import * as F from './factories.js';`);
@@ -116,11 +117,14 @@ function emitNamespaceImports(
 	// above) — no call site references it anymore, so importing it here is
 	// dead weight that trips no-unused-vars.
 	if (kindEntries) {
-		lines.push(
-			usesKindLiteralText
-				? `import { TSKindId, KIND_LITERAL_TEXT } from './types.js';`
-				: `import { TSKindId } from './types.js';`
-		);
+		const valueImports = [
+			'TSKindId',
+			...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []),
+			...(usesDelimiterGuard ? ['Delimiter'] : [])
+		];
+		lines.push(`import { ${valueImports.join(', ')} } from './types.js';`);
+	} else if (usesDelimiterGuard) {
+		lines.push(`import { Delimiter } from './types.js';`);
 	}
 	lines.push("import type { AnyNodeData, NonEmptyArray } from '@sittir/types';");
 	lines.push(
@@ -181,20 +185,8 @@ function emitInternedKindTable(lines: string[], namedEntries: Map<string, string
 // Namespace — taxonomy-keyed from() dispatch API
 // ---------------------------------------------------------------------------
 
-/**
- * Taxonomy-keyed from() dispatch namespace.
- *
- * Callers provide the output buffer per run so collection state stays
- * instance-local instead of living in module globals.
- */
-/**
- * Mirror the factory's namespaced sub-constructors onto the from() surface:
- * rename the emitted coercer to `<fn>$impl` and export the public name as
- * `attachProps(<fn>$impl, { <key>: F.<factory>.<key>, ... })`, so
- * `FR.coerceToX.<form>` and `F.buildX.<form>` are the same constructors.
- * `_fromMap` keeps referencing the hoisted `$impl` declaration (a const
- * initializer at module top would hit the TDZ).
- */
+// `_fromMap` must keep referencing the hoisted `$impl` declaration — a
+// const initializer at module top would hit the TDZ.
 function withNamespaceProps(
 	emitted: string,
 	node: AssembledNode,
@@ -204,9 +196,7 @@ function withNamespaceProps(
 	const fn = node.fromFunctionName;
 	const factory = node.rawFactoryName;
 	if (!fn || !factory) return emitted;
-	const entries = namespaceOf(node, nodeMap, kindEntries).entries.filter((e) =>
-		namespacedEntryEligible(e, nodeMap, kindEntries)
-	);
+	const entries = namespaceOf(node, nodeMap, kindEntries).entries;
 	if (entries.length === 0) return emitted;
 	const impl = `${fn}$impl`;
 	// Strip `export` BEFORE the rename: `impl` contains `$`, which a RegExp
@@ -249,6 +239,12 @@ export function fromUsesAttachProps(
 	return false;
 }
 
+/**
+ * Taxonomy-keyed from() dispatch namespace.
+ *
+ * Callers provide the output buffer per run so collection state stays
+ * instance-local instead of living in module globals.
+ */
 export namespace from {
 	export function leaf(
 		output: string[],
@@ -809,12 +805,23 @@ function emitSeparatedListFrom(
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
-			// kindId→literal-text — no per-kind reverse-arms table to build here.
+			// kindId→literal-text; the emitted guard narrows its `string`
+			// result to the factory's own separator literal union (built from
+			// this same `candidateKindNames` list).
+			const guard = candidateKindNames.map((k) => `t === ${JSON.stringify(k)}`).join(' || ');
 			optionParts.push(
-				`separator: (() => { const sk = ${sourceFields}._separator; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
+				`separator: (() => { const sk = ${sourceFields}._separator; const t = sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); return ${guard} ? t : undefined; })()`
 			);
 		}
-		if (hasLeadingOption || hasTrailingOption) optionParts.push(`delimiter: ${sourceFields}._delimiter`);
+		if (hasLeadingOption || hasTrailingOption) {
+			// The stored bitflag can carry values outside the factory's
+			// permitted union (`Delimiter.None`, an unpermitted side) —
+			// narrow with the same member list the option type is built from.
+			const guard = delimiterMembersFor(node)
+				.map((m) => `d === ${m}`)
+				.join(' || ');
+			optionParts.push(`delimiter: (() => { const d = ${sourceFields}._delimiter; return ${guard} ? d : undefined; })()`);
+		}
 		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};
 
@@ -1571,8 +1578,13 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesKindLiteralText = [...nodeMap.nodes.values()].some(
 			(node) => node.modelType === 'separatedList' && node.separatorRule !== undefined
 		);
+		const usesDelimiterGuard = [...nodeMap.nodes.values()].some(
+			(node) =>
+				node.modelType === 'separatedList' &&
+				(node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional')
+		);
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-		emitNamespaceImports(lines, kindEntries, usesKindLiteralText, fromUsesAttachProps(nodeMap, kindEntries));
+		emitNamespaceImports(lines, kindEntries, usesKindLiteralText, usesDelimiterGuard, fromUsesAttachProps(nodeMap, kindEntries));
 		emitFromFieldInputType(lines);
 
 		this.#nodeMap = nodeMap;

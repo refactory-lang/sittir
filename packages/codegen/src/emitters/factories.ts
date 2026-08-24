@@ -61,6 +61,7 @@ import {
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { emittedByCatalog, namespacedConstructors, type NamespacedConstructorSet } from './namespaced-constructors.ts';
+import { buildTriviaParamType, resolveTriviaTypeNames } from './client-utils.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -70,6 +71,7 @@ export interface EmitFactoriesConfig {
 	kindEntries?: readonly KindEnumEntry[];
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
+	triviaKinds?: readonly string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -286,14 +288,11 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 // Namespace — taxonomy-keyed factory dispatch API
 // ---------------------------------------------------------------------------
 
-/**
- * Taxonomy-keyed factory dispatch namespace.
- *
- * Callers provide the output buffer per run so collection state stays
- * instance-local instead of living in module globals.
- */
-/** The factory's namespaced constructors, with each ambiguity reported
- *  once — a name two candidates claim is emitted for neither. */
+/** The factory's namespaced constructors — ambiguous names reported once
+ *  and dropped; entries pre-filtered to the emittable set (see
+ *  namespacedEntryEligible) so every consumer — factory consts, ir
+ *  bundles, from mirrors, `_fromMap`'s `$impl` decision — sees the same
+ *  surface. */
 export function namespaceOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -307,10 +306,17 @@ export function namespaceOf(
 			`[codegen] '${node.kind}': namespaced constructor '${a.name}' is claimed by ${a.claimants.join(' and ')} — none hoisted`
 		);
 	}
-	return set;
+	const entries = set.entries.filter((e) => namespacedEntryEligible(e, nodeMap, kindEntries));
+	return entries.length === set.entries.length ? set : { ...set, entries };
 }
 const warnedAmbiguous = new Set<string>();
 
+/**
+ * Taxonomy-keyed factory dispatch namespace.
+ *
+ * Callers provide the output buffer per run so collection state stays
+ * instance-local instead of living in module globals.
+ */
 export namespace factory {
 	export function leaf(
 		output: string[],
@@ -614,20 +620,29 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 	return [...new Set(parts)].join(' | ');
 }
 
-/** The `delimiter` option's type for a list with these flank modes — the
- *  bitflag values the grammar permits a caller to select (leading = 1,
- *  trailing = 2, both = 3); empty when neither flank is optional. */
-function delimiterUnionFor(list: {
+/** The `delimiter` bitflag members the grammar permits a caller to select
+ *  (leading = 1, trailing = 2, both = 3); empty when neither flank is
+ *  optional. ONE derivation for both the factory option's union type and
+ *  the from() coercer's runtime narrowing guard. */
+export function delimiterMembersFor(list: {
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
-}): string {
+}): readonly string[] {
 	const l = list.leadingDelimiter === 'optional';
 	const t = list.trailingDelimiter === 'optional';
 	return [
 		...(l ? ['Delimiter.Leading'] : []),
 		...(t ? ['Delimiter.Trailing'] : []),
 		...(l && t ? ['Delimiter.Both'] : [])
-	].join(' | ');
+	];
+}
+
+/** The `delimiter` option's type for a list with these flank modes. */
+function delimiterUnionFor(list: {
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+}): string {
+	return delimiterMembersFor(list).join(' | ');
 }
 
 /**
@@ -1544,7 +1559,7 @@ interface MapEntry {
 	factory: string;
 	typeName: string;
 	fluent: boolean;
-	shape: 'config' | 'children' | 'text' | 'direct';
+	shape: 'config' | 'children' | 'text' | 'direct' | 'forwarded';
 }
 
 // ---------------------------------------------------------------------------
@@ -1563,7 +1578,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFactoriesConfig) {
-		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
+		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds, triviaKinds } = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -1599,17 +1614,21 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
+		const triviaParamType = buildTriviaParamType(resolveTriviaTypeNames(triviaKinds ?? [], nodeMap), 'T.');
 		lines.push(
 			'/** The render/edit method surface withMethods attaches — the shared tail',
 			" *  of every factory's explicit return type (the per-kind `*Built` aliases",
 			' *  below). Explicit named return types keep declaration emit finite: the',
-			' *  recursive `$with` setter closures otherwise blow the serializer', 
-			" *  (TS7056) and the package can't publish types. */",
+			' *  recursive `$with` setter closures otherwise blow the serializer',
+			" *  (TS7056) and the package can't publish types. The `$trivia` argument",
+			' *  union is derived from the grammar trivia roles — the same derivation',
+			" *  behind utils.ts' withMethods signature — so this alias tail and the",
+			' *  runtime surface never diverge. */',
 			'type _NodeMethods = {',
 			'  $render(): string;',
 			'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 			'  $replace(target: { range(): ByteRange }): Edit;',
-			'  $trivia(...args: (T.Comment | { leading?: T.Comment[]; trailing?: T.Comment[] })[]): AnyNodeData;',
+			`  $trivia(...args: ${triviaParamType}[]): AnyNodeData;`,
 			'};',
 			''
 		);

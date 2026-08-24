@@ -1085,6 +1085,11 @@ function _firstKindKeyedWrapChild(data: object, allowedKinds: readonly string[])
 	return undefined;
 }
 
+function _filterWrapChildrenByKind<T>(value: readonly T[], allowedKinds: readonly string[]): readonly T[];
+function _filterWrapChildrenByKind<T>(
+	value: T | readonly T[] | undefined,
+	allowedKinds: readonly string[]
+): T | readonly T[] | undefined;
 function _filterWrapChildrenByKind<T>(
 	value: T | readonly T[] | undefined,
 	allowedKinds: readonly string[]
@@ -1118,14 +1123,19 @@ function _filterWrapChildrenByKind<T>(
 // Idempotent over already-positional storage (a `$with` re-wrap carries
 // no delimiters): with no delimiter present every entry is its own
 // position, `undefined` holes intact.
+type _WireDelimiter = number | { readonly $type: number; readonly $named: false };
 function splitElidedWrapSlot<T>(
-	value: T | readonly T[] | undefined,
+	value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,
 	separatorKindIds: readonly number[],
 	allowedKinds: readonly string[] | undefined
 ): readonly (T | undefined)[] {
-	const items: readonly unknown[] = value == null ? [] : Array.isArray(value) ? value : [value];
+	// Assumes T itself is never an array type — slot elements are node unions.
+	const isSlotList = (
+		v: T | readonly (T | _WireDelimiter | undefined)[]
+	): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);
+	const items: readonly (T | _WireDelimiter | undefined)[] = value == null ? [] : isSlotList(value) ? value : [value];
 	if (items.length === 0) return [];
-	const isDelimiter = (e: unknown): boolean => {
+	const isDelimiter = (e: unknown): e is _WireDelimiter => {
 		if (typeof e === 'number') return separatorKindIds.includes(e);
 		if (typeof e === 'object' && e !== null) {
 			const stub = e as { $type?: unknown; $named?: unknown };
@@ -1133,17 +1143,16 @@ function splitElidedWrapSlot<T>(
 		}
 		return false;
 	};
-	const keepFirst = (seg: readonly unknown[]): T | undefined => {
-		const kept = allowedKinds
-			? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[])
-			: (seg.filter((e) => e !== undefined) as unknown as readonly T[]);
+	const keepFirst = (seg: readonly (T | undefined)[]): T | undefined => {
+		const present = seg.filter((e): e is T => e !== undefined);
+		const kept = allowedKinds === undefined ? present : _filterWrapChildrenByKind(present, allowedKinds);
 		return kept.length > 0 ? kept[0] : undefined;
 	};
 	if (!items.some(isDelimiter)) {
-		return (items as readonly (T | undefined)[]).map((e) => (e === undefined ? undefined : keepFirst([e])));
+		return items.map((e) => (e === undefined || isDelimiter(e) ? undefined : keepFirst([e])));
 	}
 	const positions: (T | undefined)[] = [];
-	let segment: unknown[] = [];
+	let segment: (T | undefined)[] = [];
 	for (const entry of items) {
 		if (isDelimiter(entry)) {
 			positions.push(keepFirst(segment));
@@ -12526,11 +12535,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TemplateChars]: (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
 	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
 	[TSKindId.HtmlComment]: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
-	[TSKindId.Oror]: (d) => ({ ...d, $type: TSKindId.Oror as const }),
+	[TSKindId.PipePipe]: (d) => ({ ...d, $type: TSKindId.PipePipe as const }),
 	[TSKindId.JsxText]: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
-	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
-	[TSKindId.PropertyIdentifier]: (d, t) => wrapPropertyIdentifier(d as unknown as T.PropertyIdentifier, t),
-	[TSKindId.LhsExpression]: (d, t) => wrapLhsExpression(d as unknown as T.LhsExpression, t)
+	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const })
 };
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {

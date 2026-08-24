@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "d5cbacff2160aaee34edff013038d5626edc9c58477eb740e56a622edb3aa441",
+  "source_hash": "19fb7b6bb0b68f3f116020385fae43a6636caecb5bdcf373a845d7e9c5a150c2",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "d79d1e03183e49f956d11ea1efd02bbb7543378633526c23ad30d864214b279f",
@@ -20,8 +20,8 @@
     "packages/python/src/boundary.ts": "24637b5d59f133c9bcf18cc4a8f941ac745dc9ad4f6f0643f9ad5d4103c0c71d",
     "packages/python/src/consts.ts": "c238bd4517c5392b019ee0bf06573fdfb93f5508d5c92f28717293eb83da4d67",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
-    "packages/python/src/factories.ts": "7f15a86dcaa81717eea1fc10b47ed3ae693fa809dd8822bd6cd9680c79663be0",
-    "packages/python/src/from.ts": "9372c9b7ab12c941256e12c2dc47f868e6e6c27d2d75e78895f6af9839abcfe2",
+    "packages/python/src/factories.ts": "a33226d6adf38104c0f3d551e650c661115cbdd987e3347b37572deb91883e5a",
+    "packages/python/src/from.ts": "685bccfba302fdeab15b10cce38fdb96925edf5d9f96cb250ef8f98218797277",
     "packages/python/src/grammar.ts": "657f2e48204edaca177cb96fa7e9a8cbd98ec937571241352eba582546197158",
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
     "packages/python/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
@@ -31,7 +31,7 @@
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",
     "packages/python/src/types.ts": "32238583503c8e1ed34b2b4db81e349f0f27e9b11e2e6d2d2cf9e69f87a1ac72",
     "packages/python/src/utils.ts": "5bb731ea32f4fe737f381ea776dd0c39c65cc78268d33b268e16c63987028a17",
-    "packages/python/src/wrap.ts": "d7fe8f2587608d41d9f8ba277ea56287be9cd3e7225b95989838fb96966e2e8b",
+    "packages/python/src/wrap.ts": "d2cf21dc13b373ea6e2502adf38acdfe87afbc1bc354467231c80ccc31e7c860",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_argument_list_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",
     "packages/python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",

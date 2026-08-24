@@ -17,12 +17,21 @@ import {
  *  of every factory's explicit return type (the per-kind `*Built` aliases
  *  below). Explicit named return types keep declaration emit finite: the
  *  recursive `$with` setter closures otherwise blow the serializer
- *  (TS7056) and the package can't publish types. */
+ *  (TS7056) and the package can't publish types. The `$trivia` argument
+ *  union is derived from the grammar trivia roles — the same derivation
+ *  behind utils.ts' withMethods signature — so this alias tail and the
+ *  runtime surface never diverge. */
 type _NodeMethods = {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(...args: (T.Comment | { leading?: T.Comment[]; trailing?: T.Comment[] })[]): AnyNodeData;
+	$trivia(
+		...args: (
+			| T.BlockComment
+			| T.LineComment
+			| { leading?: (T.BlockComment | T.LineComment)[]; trailing?: (T.BlockComment | T.LineComment)[] }
+		)[]
+	): AnyNodeData;
 };
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {

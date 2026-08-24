@@ -18,8 +18,8 @@ import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { emittedByCatalog, namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
-import { namespacedEntryEligible } from './factories.ts';
+import type { NamespacedConstructor } from './namespaced-constructors.ts';
+import { namespaceOf as factoryNamespaceOf } from './factories.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -39,11 +39,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const refineInfos = collectRefineKindInfos(nodeMap);
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
-	const namespaceOptions = { isEmitted: emittedByCatalog(kindEntries) };
-	const namespaceOf = (node: AssembledNode) =>
-		namespacedConstructors(node, nodeMap, namespaceOptions).entries.filter((e) =>
-			namespacedEntryEligible(e, nodeMap, kindEntries)
-		);
+	const namespaceOf = (node: AssembledNode) => factoryNamespaceOf(node, nodeMap, kindEntries).entries;
 	// One hoisted, typeof-annotated const per bundle kind — the group/`ir`
 	// namespace consts reference these by NAME (see hoistedBundleLines).
 	const hoisted = new Map<string, string>();
