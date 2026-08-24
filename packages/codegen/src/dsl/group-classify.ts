@@ -327,20 +327,9 @@ export function isSupertypeLike(body: unknown): boolean {
 	});
 }
 
-/**
- * A choice whose arms are permutations of one modifier-slot set — every arm
- * is a seq of singular atoms (optional-or-required keyword literals, marker
- * fields, or symbol refs), and all arms carry the SAME atom set, differing
- * only in ordering/optionality. Splitting such arms into kinds would mint
- * identity for pure modifier ceremony (the permutable-modifiers row of the
- * split-justification taxonomy: structural delta ⇒ kind, literal-only delta
- * ⇒ enum slot, permutable modifiers ⇒ marker slots). Callers decline the
- * arm mint and let the parent's own slots absorb the markers.
- *
- * `kwRules` carries the enrich pass's `_kw_*` bag so a keyword already
- * promoted to a marker field in one arm keys identically to its raw string
- * spelling in a sibling arm.
- */
+/** Permutable-modifier choice (same atom set per arm, order/optionality
+ *  delta only) — callers decline the arm mint; full contract in
+ *  docs/glossary/dsl.md. */
 export function isPermutationChoice(
 	body: unknown,
 	rulesBag?: Record<string, unknown>,
@@ -407,11 +396,20 @@ function permutationAtomKey(
 	wordMatcher?: RegExp
 ): string | null {
 	let core: unknown = unwrapPrec(member);
+	let fieldName: string | undefined;
 	for (;;) {
 		if (!core || typeof core !== 'object') return null;
 		const r = core as Record<string, unknown>;
 		const t = typeof r.type === 'string' ? r.type : '';
-		if (isOptionalType(t) || isFieldType(t)) {
+		if (isFieldType(t)) {
+			// Keep the OUTERMOST authored field name — it is slot identity;
+			// two arms fielding the same symbol under different names are
+			// distinct slots, not a permutation.
+			if (fieldName === undefined && typeof r.name === 'string') fieldName = r.name;
+			core = unwrapPrec(r.content);
+			continue;
+		}
+		if (isOptionalType(t)) {
 			core = unwrapPrec(r.content);
 			continue;
 		}
@@ -432,16 +430,25 @@ function permutationAtomKey(
 	}
 	const r = core as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
+	/* A generated `<literal>_marker` field is the keyword-promotion spelling
+	   of the same literal — collapse it so a raw keyword in one arm keys
+	   equal to its promoted sibling. Any other field name is authored slot
+	   identity and stays in the key. */
+	const keyed = (lit: string | null, fallback: string): string => {
+		if (lit !== null && (fieldName === undefined || fieldName === `${lit}_marker`)) return `lit:${lit}`;
+		const bare = lit !== null ? `lit:${lit}` : fallback;
+		return fieldName === undefined ? bare : `field:${fieldName}=${bare}`;
+	};
 	if (isStringType(t)) {
 		const v = r.value;
 		if (typeof v !== 'string' || !matchesWordShape(v, wordMatcher)) return null;
-		return `lit:${v}`;
+		return keyed(v, '');
 	}
 	if (isSymbolType(t)) {
 		const name = typeof r.name === 'string' ? r.name : undefined;
 		if (name === undefined) return null;
 		const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
-		return resolved !== null ? `lit:${resolved}` : `sym:${name}`;
+		return keyed(resolved, `sym:${name}`);
 	}
 	return null;
 }

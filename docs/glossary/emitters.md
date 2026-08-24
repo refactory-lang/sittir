@@ -3943,25 +3943,6 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitSyntaxKindEnum` (`packages/codegen/src/emitters/types.ts:495`)
-
-```text
-/**
- * Emit the `export const enum SyntaxKind { … }` block, deduplicating on
- * member name.
- *
- * @remarks
- * Two kinds can resolve to the same `typeName` (e.g. python's `true` and
- * the string-literal keyword `'True'` both map to `True`). The first
- * occurrence wins; subsequent duplicates are skipped to avoid a
- * `const enum` duplicate-member error.
- *
- * @param lines - Output line buffer to append to.
- * @param allKinds - Ordered list of all kind strings (structural + leaf).
- * @param nodeMap - The assembled node map, used to look up `typeName` per kind.
- */
-```
-
 ### `emitKindIdEnumAndLookups` (`packages/codegen/src/emitters/types.ts:523`)
 
 ```text
