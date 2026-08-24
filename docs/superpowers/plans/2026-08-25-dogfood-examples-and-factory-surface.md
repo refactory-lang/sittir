@@ -133,13 +133,19 @@ export function dogfoodContract(
 }
 ```
 
-`structuralShape` must also carry trivia: in its body, after the `_`-key loop, add
+`structuralShape` must also carry trivia. Decide the leaf-`$text` case FIRST —
+it keys on `shape` holding only `$type` after the `_`-key loop — and add
+`$triviaData` after it, so a leaf carrying both keeps both:
 
 ```ts
+	const isBareLeaf = Object.keys(shape).length === 1;
+	if (typeof record.$text === 'string' && isBareLeaf) shape.$text = record.$text;
 	if (record.$triviaData !== undefined) shape.$triviaData = structuralShape(record.$triviaData);
 ```
 
-so comments participate in reparse-equality.
+(The `$text` line already exists at the end of the function; move it above the
+new trivia line rather than adding a second one.) Comments then participate in
+reparse-equality without displacing the token's own identity.
 
 - [ ] **Step 4: Run test to verify it passes**
 
