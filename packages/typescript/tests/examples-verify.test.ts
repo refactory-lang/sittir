@@ -1,0 +1,29 @@
+// Runtime verification of the TypeScript use-case examples against the native
+// engine: every export executes and produces what the guide promises.
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/typescript';
+import { dogfoodContract } from '../../../examples/helpers.ts';
+import { rebuildFormat, formatBoundary, returnResult } from '../../../examples/18-dogfood-typescript.ts';
+
+// GAP inventory (examples/18): A=2 cross-cutting (statement arms, import
+// clauses) B=1 (type-annotation wrapper) C=1 cross-cutting (required
+// punctuation slots) D=1 (return drops its expression). The surface cannot compose a real TypeScript file yet, so both
+// contract assertions are pinned.
+describe('examples/18 dogfood typescript (format.ts)', () => {
+	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
+	it('builds and renders the fragments that cross the boundary', () => {
+		expect(rebuildFormat().$render()).toContain('function applyFormat');
+	});
+	it('composes a member expression once its separator is supplied', () => {
+		expect(formatBoundary().$render()).toBe('format.boundary');
+	});
+	it.fails('renders a return statement with its expression', () => {
+		expect(returnResult().$render()).toBe('return result;');
+	});
+	it.fails('re-parses to the same tree as the real file', () => {
+		expect(dogfoodContract(createEngine(), rebuildFormat(), target).reparsesEqual).toBe(true);
+	});
+	it.fails('is identical to the real file modulo whitespace', () => {
+		expect(dogfoodContract(createEngine(), rebuildFormat(), target).sameModuloWhitespace).toBe(true);
+	});
+});

@@ -40,4 +40,5 @@ Current compile-checked examples:
 | `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
 | `17-dogfood-rust.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` with `ir.*` |
+| `18-dogfood-typescript.ts` | Dogfooding — rebuild `common/src/format.ts` with `ir.*` |
 | `index.ts` | Convenience barrel for all use-case modules |
