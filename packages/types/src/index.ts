@@ -581,6 +581,17 @@ type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHints
 	? InputHintsOf<T>[K]
 	: FieldsOf<T>[K];
 
+/** @internal — from()/loose-only widening hints (`__fromInputHints__`).
+ *  Consumed by FromInputBody alone: the strict Config surface stores
+ *  config values directly into Built storage, so these widenings must
+ *  never reach it. */
+type FromInputHintsOf<T> = T extends { readonly __fromInputHints__?: infer H } ? H : {};
+
+/** @internal — from()-side field input: from-hints beat config hints beat storage. */
+type FromFieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof FromInputHintsOf<T>
+	? FromInputHintsOf<T>[K]
+	: FieldInputType<T, K>;
+
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
  * consumer code writes `config.children`, not `config.$other`. The
@@ -837,11 +848,11 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]: WidenSlotValue<FromFieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]?: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]?: WidenSlotValue<FromFieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }
 		? {
 				readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited>;

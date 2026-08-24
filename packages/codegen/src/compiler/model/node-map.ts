@@ -2412,6 +2412,22 @@ export class AssembledBranch<
 		return r.type === SEQ || r.type === CHOICE ? r.members : [];
 	}
 
+	/**
+	 * The branch's fixed leading keyword text, when the node is
+	 * KEYWORD-CONSTRUCTIBLE: its rule opens with a STRING literal (a SEQ's
+	 * first member, or the whole rule) and every slot is optional — an
+	 * empty build renders the keyword alone. Drives from()'s
+	 * string→branch coercion (`'pub'` → the pub arm) and the config-input
+	 * literal widening; consumed instead of re-deriving from rule shape.
+	 */
+	get keywordConstructibleText(): string | undefined {
+		const r = this.rule;
+		const lead = r.type === SEQ ? r.members[0] : r;
+		if (lead === undefined || lead.type !== STRING) return undefined;
+		if (!this.fields.every((f) => !isRequired(f))) return undefined;
+		return lead.value;
+	}
+
 	get separator(): string | undefined {
 		return undefined;
 	}

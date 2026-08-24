@@ -64,7 +64,7 @@ export const _fromMap = {
 	variadic_parameter: coerceToVariadicParameter,
 	parameter: coerceToParameter,
 	extern_modifier: coerceToExternModifier,
-	visibility_modifier: coerceToVisibilityModifier,
+	visibility_modifier: coerceToVisibilityModifier$impl,
 	bracketed_type: coerceToBracketedType,
 	qualified_type: coerceToQualifiedType,
 	lifetime: coerceToLifetime,
@@ -256,6 +256,17 @@ function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
 	return undefined;
 }
 
+const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
+	where: 'where_clause',
+	extern: 'extern_modifier',
+	use: 'use_bounds',
+	return: 'return_expression',
+	yield: 'yield_expression',
+	break: 'break_expression',
+	continue: 'continue_expression'
+};
+const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['visibility_modifier']);
+
 function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
@@ -266,6 +277,12 @@ function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branch
 	if (typeof v === 'string' && leafKinds.length > 0) {
 		const leaf = _resolveLeafString(v, leafKinds);
 		if (leaf !== undefined) return leaf as T;
+	}
+	if (typeof v === 'string') {
+		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
+		if (bk !== undefined && branchKinds.includes(bk) && _isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+		const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;
+		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind, ...rest } = v;
@@ -1341,7 +1358,7 @@ export function coerceToEnumItem(input: T.EnumItem.Loose): ReturnType<typeof F.b
 }
 
 export function coerceToEnumVariantList(
-	input?: T.EnumVariantListElements | T.EnumVariantList
+	input?: T.EnumVariantListElements | T.AttributedEnumVariant | T.EnumVariant | T.EnumVariantList
 ): ReturnType<typeof F.buildEnumVariantList> {
 	if (isNodeData(input) && input.$type === TSKindId.EnumVariantList) {
 		const data = input;
@@ -1362,7 +1379,7 @@ export function coerceToEnumVariant(input: T.EnumVariant.Loose): ReturnType<type
 }
 
 export function coerceToFieldDeclarationList(
-	input?: T.FieldDeclarationListElements | T.FieldDeclarationList
+	input?: T.FieldDeclarationListElements | T.AttributedFieldDeclaration | T.FieldDeclaration | T.FieldDeclarationList
 ): ReturnType<typeof F.buildFieldDeclarationList> {
 	if (isNodeData(input) && input.$type === TSKindId.FieldDeclarationList) {
 		const data = input;
@@ -1507,7 +1524,9 @@ export function coerceToFunctionModifiers(
 	return F.buildFunctionModifiers(...(_elems as unknown as Parameters<typeof F.buildFunctionModifiers>));
 }
 
-export function coerceToWhereClause(input?: T.WherePredicates | T.WhereClause): ReturnType<typeof F.buildWhereClause> {
+export function coerceToWhereClause(
+	input?: T.WherePredicates | T.WherePredicate | T.WhereClause
+): ReturnType<typeof F.buildWhereClause> {
 	if (isNodeData(input) && input.$type === TSKindId.WhereClause) {
 		const data = input;
 		const child = (data as unknown as { _where_predicates?: unknown })._where_predicates;
@@ -1646,7 +1665,14 @@ export function coerceToRemovedTraitBound(
 }
 
 export function coerceToTypeParameters(
-	input?: T.TypeParametersElements | T.TypeParameters
+	input?:
+		| T.TypeParametersElements
+		| T.AttributedTypeParameter
+		| T.Metavariable
+		| T.TypeParameter
+		| T.LifetimeParameter
+		| T.ConstParameter
+		| T.TypeParameters
 ): ReturnType<typeof F.buildTypeParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.TypeParameters) {
 		const data = input;
@@ -1711,7 +1737,7 @@ export function coerceToScopedUseList(input: T.ScopedUseList.Loose): ReturnType<
 	});
 }
 
-export function coerceToUseList(input?: T.UseClauses | T.UseList): ReturnType<typeof F.buildUseList> {
+export function coerceToUseList(input?: T.UseClauses | T.UseClause | T.UseList): ReturnType<typeof F.buildUseList> {
 	if (isNodeData(input) && input.$type === TSKindId.UseList) {
 		const data = input;
 		const child = (data as unknown as { _use_clauses?: unknown })._use_clauses;
@@ -1740,7 +1766,17 @@ export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typ
 	);
 }
 
-export function coerceToParameters(input?: T.ParametersElements | T.Parameters): ReturnType<typeof F.buildParameters> {
+export function coerceToParameters(
+	input?:
+		| T.ParametersElements
+		| T.AttributedParameter
+		| T.Parameter
+		| T.SelfParameter
+		| T.VariadicParameter
+		| '_'
+		| T._Type
+		| T.Parameters
+): ReturnType<typeof F.buildParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.Parameters) {
 		const data = input;
 		const child = (data as unknown as { _parameters_elements?: unknown })._parameters_elements;
@@ -1790,7 +1826,7 @@ export function coerceToExternModifier(input?: T.ExternModifier.Loose): ReturnTy
 	);
 }
 
-export function coerceToVisibilityModifier(
+function coerceToVisibilityModifier$impl(
 	input?: (T.Crate | T.VisibilityModifierPub) | T.VisibilityModifier
 ): ReturnType<typeof F.buildVisibilityModifier> {
 	if (isNodeData(input) && input.$type === TSKindId.VisibilityModifier) {
@@ -1800,6 +1836,14 @@ export function coerceToVisibilityModifier(
 	}
 	return F.buildVisibilityModifier(_resolveOne<T.Crate | T.VisibilityModifierPub>(input, _K29, _K30));
 }
+
+export const coerceToVisibilityModifier: typeof coerceToVisibilityModifier$impl & {
+	crate: typeof F.buildVisibilityModifier.crate;
+	pub: typeof F.buildVisibilityModifier.pub;
+} = attachProps(coerceToVisibilityModifier$impl, {
+	crate: F.buildVisibilityModifier.crate,
+	pub: F.buildVisibilityModifier.pub
+});
 
 export function coerceToBracketedType(
 	input?: (T._Type | T.QualifiedType) | T.BracketedType
@@ -1845,7 +1889,9 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToForLifetimes(input?: T.Lifetimes | T.ForLifetimes): ReturnType<typeof F.buildForLifetimes> {
+export function coerceToForLifetimes(
+	input?: T.Lifetimes | T.Lifetime | T.ForLifetimes
+): ReturnType<typeof F.buildForLifetimes> {
 	if (isNodeData(input) && input.$type === TSKindId.ForLifetimes) {
 		const data = input;
 		const child = (data as unknown as { _lifetimes?: unknown })._lifetimes;
@@ -1868,7 +1914,9 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToTupleType(input?: T.TupleTypeElements | T.TupleType): ReturnType<typeof F.buildTupleType> {
+export function coerceToTupleType(
+	input?: T.TupleTypeElements | T._Type | T.TupleType
+): ReturnType<typeof F.buildTupleType> {
 	if (isNodeData(input) && input.$type === TSKindId.TupleType) {
 		const data = input;
 		const child = (data as unknown as { _tuple_type_elements?: unknown })._tuple_type_elements;
@@ -1960,7 +2008,15 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 }
 
 export function coerceToTypeArguments(
-	input?: T.TypeArgumentsElements | T.TypeArguments
+	input?:
+		| T.TypeArgumentsElements
+		| T.TypeArgument
+		| T._Type
+		| T.TypeBinding
+		| T.Lifetime
+		| T.Literal
+		| T.Block
+		| T.TypeArguments
 ): ReturnType<typeof F.buildTypeArguments> {
 	if (isNodeData(input) && input.$type === TSKindId.TypeArguments) {
 		const data = input;
@@ -2369,7 +2425,9 @@ export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnTyp
 	});
 }
 
-export function coerceToArguments(input?: T.ArgumentsElements | T.Arguments): ReturnType<typeof F.buildArguments> {
+export function coerceToArguments(
+	input?: T.ArgumentsElements | T.AttributedArgument | T.Expression | T.Arguments
+): ReturnType<typeof F.buildArguments> {
 	if (isNodeData(input) && input.$type === TSKindId.Arguments) {
 		const data = input;
 		const child = (data as unknown as { _arguments_elements?: unknown })._arguments_elements;
@@ -2856,7 +2914,9 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 	);
 }
 
-export function coerceToSlicePattern(input?: T.Patterns | T.SlicePattern): ReturnType<typeof F.buildSlicePattern> {
+export function coerceToSlicePattern(
+	input?: T.Patterns | T.Pattern | T.SlicePattern
+): ReturnType<typeof F.buildSlicePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.SlicePattern) {
 		const data = input;
 		const child = (data as unknown as { _patterns?: unknown })._patterns;

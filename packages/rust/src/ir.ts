@@ -1026,9 +1026,13 @@ const _b$externModifier: typeof FR.coerceToExternModifier & {
 const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
 	from: typeof FR.coerceToVisibilityModifier;
 	strict: typeof F.buildVisibilityModifier;
+	crate: typeof F.buildVisibilityModifier.crate;
+	pub: typeof F.buildVisibilityModifier.pub;
 } = attachProps(FR.coerceToVisibilityModifier, {
 	from: FR.coerceToVisibilityModifier,
-	strict: F.buildVisibilityModifier
+	strict: F.buildVisibilityModifier,
+	crate: F.buildVisibilityModifier.crate,
+	pub: F.buildVisibilityModifier.pub
 });
 
 const _b$bracketedType: typeof FR.coerceToBracketedType & {

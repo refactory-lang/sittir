@@ -160,12 +160,20 @@ function derive(
 		// IS that kind's surface); a lone arm beside optional siblings is a
 		// genuine alternative and gets its constructor.
 		const minKinds = user.length === 1 ? 2 : 1;
+		// An arm is form-capable when its factory exists: a slot-bearing
+		// compound (its own config surface) or a keyword leaf (a
+		// parameterless fixed-text factory, e.g. visibility_modifier's
+		// `crate` arm beside its `pub` branch arm).
 		const concrete =
 			!isMultiple(slot) &&
 			slotLiteralValues(slot).length === 0 &&
 			kinds.length >= minKinds &&
 			children.every(
-				(c) => c !== undefined && isSlotBearingCompound(c) && c.rawFactoryName !== undefined && isEmitted(c.kind)
+				(c) =>
+					c !== undefined &&
+					(isSlotBearingCompound(c) || c.modelType === 'keyword') &&
+					c.rawFactoryName !== undefined &&
+					isEmitted(c.kind)
 			);
 		if (concrete) {
 			const nextVisiting = new Set([...visiting, node.kind]);

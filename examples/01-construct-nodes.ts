@@ -21,7 +21,7 @@ export function nestedGreetFunction() {
 		visibilityModifier: ir.visibilityModifier.pub(), /* TODO: elevate choice arms to 'subfactories'  */
 		name: ir.identifier('greet'),
 		parameters: ir.parameters.strict(
-			ir.parameter({ pattern: 'name', type: 'String' }),
+			ir.parameter({ name: 'name', type: 'String' }),
 		),
 		body: ir.block.strict(),
 	});
@@ -32,7 +32,7 @@ export function fromGreetFunction() {
 		visibilityModifier: 'pub',
 		name: 'greet',
 		parameters: ir.parameters(
-			ir.parameter({ pattern: 'name', type: 'String' }),
+			ir.parameter({ name: 'name', type: 'String' }),
 		),
 		body: ir.block(),
 	});
@@ -41,7 +41,7 @@ export function fromGreetFunction() {
 export function minimalMainFunction() {
 	return ir.functionItem({
 		name: 'main',
-		parameters: ir.parameters(), /* parameters takes rest parameters, so likely ir.* mapped to strict api instead of from */
+		parameters: ir.parameters(),
 		body: ir.block({})
 	});
 }
@@ -50,11 +50,11 @@ export function immutableFunctionUpdates() {
 	const fn = ir.functionItem({
 		name: 'main',
 		parameters: ir.parameters(),
-		body: ir.block() /*TODO: from api should permit empty block, but it doesn't currently - likely need an overload for single slot array parameters in the from api*/,
+		body: ir.block(),
 	});
 
 	return fn.$with
-		.name(ir.identifier('greet')) /* TODO: name setter loses type infomation - withMethods must be dropping the type signature */
+		.name(ir.identifier('greet'))
 		.$with.body(ir.block.strict());
 }
 

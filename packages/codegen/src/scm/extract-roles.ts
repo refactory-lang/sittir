@@ -23,6 +23,7 @@ import { parseSCMQuery, parseInheritsDirective } from './parse.ts';
 import type { SCMCapture } from './parse.ts';
 
 export type Role =
+	| 'root'
 	| 'trivia'
 	| 'string'
 	| 'string.special'
@@ -54,6 +55,20 @@ export interface GrammarRoles {
 	grammar: string;
 	entries: RoleEntry[];
 	get(role: Role): string[];
+}
+
+/**
+ * Compose the scm-derived roles with the grammar's `root` role. The start
+ * symbol is a grammar fact — the rule record's first rule — not an scm
+ * capture, so the caller that owns the rule record stamps it here.
+ */
+export function withRootRole(roles: GrammarRoles, rootKind: string): GrammarRoles {
+	const entries: RoleEntry[] = [...roles.entries, { role: 'root', kinds: [rootKind] }];
+	return {
+		grammar: roles.grammar,
+		entries,
+		get: (role) => entries.filter((e) => e.role === role).flatMap((e) => e.kinds)
+	};
 }
 
 type QueryFile = 'highlights' | 'tags';

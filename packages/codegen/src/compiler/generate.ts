@@ -29,7 +29,7 @@ import {
 	computeSupertypeTransitiveParseKinds
 } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
-import { extractGrammarRoles } from '../scm/extract-roles.ts';
+import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import {
 	loadGrammarJsonInlineList,
@@ -224,10 +224,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
 	}
 
-	// Extract all semantic roles from the grammar's highlights.scm + tags.scm.
+	// Extract all semantic roles from the grammar's highlights.scm + tags.scm,
+	// plus the stamped `root` role: the start symbol is the rule record's
+	// FIRST rule (tree-sitter convention, preserved through every phase).
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
 	// The full GrammarRoles are passed to the ir emitter for `ir.from.*`.
-	const grammarRoles = extractGrammarRoles(cfg.grammar);
+	const rootKind = Object.keys(normalized.rules)[0]!;
+	const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
 	const triviaKinds = grammarRoles.get('trivia');
 
 	// Kinds that were synthesized by evaluate's inline-alias-source pass
@@ -297,9 +300,17 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		expectTestFailures: raw.expectTestFailures
 	});
 
+	// The stamped `root` role types the engine reader's root.
+	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
+	if (rootTypeName === undefined) {
+		throw new Error(
+			`generate: root kind '${grammarRoles.get('root')[0]}' has no NodeMap entry — cannot type the engine root`
+		);
+	}
+
 	const result: GeneratedFiles = {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
-		engine: emitEngine({ grammar: cfg.grammar }),
+		engine: emitEngine({ grammar: cfg.grammar, rootTypeName }),
 		types: emitted.types,
 		jinjaTemplates: emitted.jinjaTemplates,
 		factories: emitted.factories,

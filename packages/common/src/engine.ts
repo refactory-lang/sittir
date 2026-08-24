@@ -75,20 +75,20 @@ export interface GrammarEngineConfig<
 	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
-export interface SittirEngineReader {
-	parseAndRead(source: string): ParseAndReadResult;
+export interface SittirEngineReader<TRoot extends AnyNodeData = AnyNodeData> {
+	parseAndRead(source: string): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number): AnyNodeData;
 }
 
-export interface SittirEngineLike {
+export interface SittirEngineLike<TRoot extends AnyNodeData = AnyNodeData> {
 	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
-	readonly reader?: SittirEngineReader;
+	readonly reader?: SittirEngineReader<TRoot>;
 }
 
-export interface ParseAndReadResult {
-	root: AnyNodeData;
+export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
+	root: TRoot;
 	tree: TreeHandle;
 }
 
@@ -103,14 +103,15 @@ interface NativeParseResultShape {
  * `packages/tools/src/validate/common.ts`: `engine: null` always carries a
  * `reason` string (the real failure cause) instead of discarding it.
  */
-export type CreateNativeEngineResult =
-	| { readonly engine: SittirEngineLike; readonly reason?: undefined }
+export type CreateNativeEngineResult<TRoot extends AnyNodeData = AnyNodeData> =
+	| { readonly engine: SittirEngineLike<TRoot>; readonly reason?: undefined }
 	| { readonly engine: null; readonly reason: string };
 
 export function createNativeEngine<
+	TRoot extends AnyNodeData = AnyNodeData,
 	TTransport = unknown,
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
->(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): CreateNativeEngineResult {
+>(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): CreateNativeEngineResult<TRoot> {
 	const status = config.getActiveBackend();
 	if (status.name !== 'native') {
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
@@ -164,7 +165,9 @@ export function createNativeEngine<
 					parseAndRead(source: string) {
 						const json = engine.parseAndRead(source);
 						const parsed = JSON.parse(json) as NativeParseResultShape;
-						const root = parsed.nodeData;
+						// Boundary assertion: the native reader returns the grammar's
+						// root kind for a whole-source parse.
+						const root = parsed.nodeData as TRoot;
 						return {
 							root,
 							tree: {

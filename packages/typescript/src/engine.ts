@@ -7,6 +7,7 @@
  */
 import { createNativeEngine, type SittirEngineLike, type EngineOptions } from '@sittir/common/engine';
 import { KIND_NAMES } from './types.js';
+import type { Program } from './types.js';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,8 +25,8 @@ export type { EngineOptions };
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
  */
-export function createEngine(options?: EngineOptions): SittirEngineLike {
-	const result = createNativeEngine(
+export function createEngine(options?: EngineOptions): SittirEngineLike<Program> {
+	const result = createNativeEngine<Program>(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,

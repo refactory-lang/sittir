@@ -206,6 +206,13 @@ function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
 	return undefined;
 }
 
+const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
+	return: 'return_statement',
+	raise: 'raise_statement',
+	yield: 'yield'
+};
+const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['expression_statement', 'parenthesized_expression']);
+
 function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
@@ -216,6 +223,12 @@ function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branch
 	if (typeof v === 'string' && leafKinds.length > 0) {
 		const leaf = _resolveLeafString(v, leafKinds);
 		if (leaf !== undefined) return leaf as T;
+	}
+	if (typeof v === 'string') {
+		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
+		if (bk !== undefined && branchKinds.includes(bk) && _isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+		const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;
+		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind, ...rest } = v;
@@ -940,7 +953,7 @@ export function coerceToModule(
 }
 
 export function coerceToImportStatement(
-	input?: T.ImportList | T.ImportStatement
+	input?: T.ImportList | T.DottedName | T.AliasedImport | T.ImportStatement
 ): ReturnType<typeof F.buildImportStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.ImportStatement) {
 		const data = input;
@@ -1355,7 +1368,9 @@ export function coerceToFunctionDefinition(
 	});
 }
 
-export function coerceToParameters(input?: T._Parameters | T.Parameters): ReturnType<typeof F.buildParameters> {
+export function coerceToParameters(
+	input?: T._Parameters | T.Parameter | T.Parameters
+): ReturnType<typeof F.buildParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.Parameters) {
 		const data = input;
 		const child = (data as unknown as { _parameters?: unknown })._parameters;
@@ -1365,7 +1380,7 @@ export function coerceToParameters(input?: T._Parameters | T.Parameters): Return
 }
 
 export function coerceToLambdaParameters(
-	input?: T._Parameters | T.LambdaParameters
+	input?: T._Parameters | T.Parameter | T.LambdaParameters
 ): ReturnType<typeof F.buildLambdaParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.LambdaParameters) {
 		const data = input;
@@ -1507,7 +1522,9 @@ export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnT
 	});
 }
 
-export function coerceToTypeParameter(input?: T.Types | T.TypeParameter): ReturnType<typeof F.buildTypeParameter> {
+export function coerceToTypeParameter(
+	input?: T.Types | T.Type | T.TypeParameter
+): ReturnType<typeof F.buildTypeParameter> {
 	if (isNodeData(input) && input.$type === TSKindId.TypeParameter) {
 		const data = input;
 		const child = (data as unknown as { _types?: unknown })._types;
@@ -1682,7 +1699,7 @@ export function coerceToUnionPattern(
 }
 
 export function coerceToDictPattern(
-	input?: T.DictPatternElements | T.DictPattern
+	input?: T.DictPatternElements | T.KeyValuePattern | T.SplatPattern | T.DictPattern
 ): ReturnType<typeof F.buildDictPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.DictPattern) {
 		const data = input;
@@ -1772,7 +1789,9 @@ export const coerceToComplexPattern: typeof coerceToComplexPattern$impl & {
 	dash: F.buildComplexPattern.dash
 });
 
-export function coerceToTuplePattern(input?: T.Patterns | T.TuplePattern): ReturnType<typeof F.buildTuplePattern> {
+export function coerceToTuplePattern(
+	input?: T.Patterns | T.Pattern | T.TuplePattern
+): ReturnType<typeof F.buildTuplePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.TuplePattern) {
 		const data = input;
 		const child = (data as unknown as { _patterns?: unknown })._patterns;
@@ -1781,7 +1800,9 @@ export function coerceToTuplePattern(input?: T.Patterns | T.TuplePattern): Retur
 	return F.buildTuplePattern(_resolveOneBranch<T.Patterns>(input, '_patterns'));
 }
 
-export function coerceToListPattern(input?: T.Patterns | T.ListPattern): ReturnType<typeof F.buildListPattern> {
+export function coerceToListPattern(
+	input?: T.Patterns | T.Pattern | T.ListPattern
+): ReturnType<typeof F.buildListPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.ListPattern) {
 		const data = input;
 		const child = (data as unknown as { _patterns?: unknown })._patterns;
@@ -2238,7 +2259,9 @@ export function coerceToKeywordArgument(input: T.KeywordArgument.Loose): ReturnT
 	});
 }
 
-export function coerceToList(input?: T.CollectionElements | T.List): ReturnType<typeof F.buildList> {
+export function coerceToList(
+	input?: T.CollectionElements | T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat | T.List
+): ReturnType<typeof F.buildList> {
 	if (isNodeData(input) && input.$type === TSKindId.List) {
 		const data = input;
 		const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
@@ -2247,7 +2270,9 @@ export function coerceToList(input?: T.CollectionElements | T.List): ReturnType<
 	return F.buildList(_resolveOneBranch<T.CollectionElements>(input, '_collection_elements'));
 }
 
-export function coerceToSet(input?: T.CollectionElements | T.Set): ReturnType<typeof F.buildSet> {
+export function coerceToSet(
+	input?: T.CollectionElements | T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat | T.Set
+): ReturnType<typeof F.buildSet> {
 	if (isNodeData(input) && input.$type === TSKindId.Set) {
 		const data = input;
 		const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
@@ -2256,7 +2281,9 @@ export function coerceToSet(input?: T.CollectionElements | T.Set): ReturnType<ty
 	return F.buildSet(_resolveOneBranch<T.CollectionElements>(input, '_collection_elements'));
 }
 
-export function coerceToTuple(input?: T.CollectionElements | T.Tuple): ReturnType<typeof F.buildTuple> {
+export function coerceToTuple(
+	input?: T.CollectionElements | T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat | T.Tuple
+): ReturnType<typeof F.buildTuple> {
 	if (isNodeData(input) && input.$type === TSKindId.Tuple) {
 		const data = input;
 		const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
@@ -2575,7 +2602,7 @@ export function coerceToLineContinuation(
 }
 
 export function coerceToCaseTuplePattern(
-	input?: T.ListPatternCasePatterns | T.CaseTuplePattern
+	input?: T.ListPatternCasePatterns | T.CasePattern | T.CaseTuplePattern
 ): ReturnType<typeof F.buildCaseTuplePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.CaseTuplePattern) {
 		const data = input;
@@ -2586,7 +2613,7 @@ export function coerceToCaseTuplePattern(
 }
 
 export function coerceToCaseListPattern(
-	input?: T.ListPatternCasePatterns | T.CaseListPattern
+	input?: T.ListPatternCasePatterns | T.CasePattern | T.CaseListPattern
 ): ReturnType<typeof F.buildCaseListPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.CaseListPattern) {
 		const data = input;
@@ -2657,7 +2684,7 @@ export function coerceToPrintStatementArm1(
 }
 
 export function coerceToPrintStatementArm2(
-	input?: T.PrintArguments | T.PrintStatementArm2
+	input?: T.PrintArguments | T.Expression | T.PrintStatementArm2
 ): ReturnType<typeof F.buildPrintStatementArm2> {
 	if (isNodeData(input) && input.$type === TSKindId.PrintStatementArm2) {
 		const data = input;

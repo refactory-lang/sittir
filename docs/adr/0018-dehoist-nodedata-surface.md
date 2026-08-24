@@ -92,6 +92,19 @@ const fn = {
 - **Taxonomy-first** (revised 2026-05-03) — the assembled model collapse lands BEFORE the surface change so emitters consume the final model from day one (no transient adapter layer). Phase order: (1) Taxonomy rename, (2) Surface, (3) Transport, (4) Internal pipeline rewrite (Binding/Simplify produce the new taxonomy from scratch).
 - **Greppable transforms** for consumers: `.$fields.<name>` → `.<name>()`, `.name(v)` setter → `.$with.name(v)`, `.render()` → `.$render()`
 
+## Amendment — unnamed slots carry synthesized names (2026-08-24)
+
+The `$child` / `$children` unnamed-slot surface above was superseded during
+implementation: an unnamed slot receives a **synthesized slot name**
+(`content` for a sole choice/content slot, `children`/a plural noun for
+repeated slots) and behaves exactly like a named slot — `_<name>` storage,
+non-enumerable accessor, `$with.<name>` setter. No generated kind interface
+carries `$child` or `$children`; `$other` remains the residual storage for
+anonymous escape tokens only. Generic ordered iteration over a node's
+children (what `$children` would have offered) is deferred to the typed
+query API's cursor surface (ADR-0023); until then, consumers narrow via
+`is.*` guards and read the typed accessors.
+
 ## Alternatives Considered
 
 - **Native JS getters (`get name()`)** — rejected: triggers on Object.keys/JSON.stringify, can't evolve to cursor pattern.

@@ -15,6 +15,7 @@ import {
 	kindDiscriminantExpr,
 	kindDiscriminantExprForId,
 	kindDiscriminantExprForLiteral,
+	findKindEntry,
 	findKindEntryForLiteral,
 	hasCatalogEntry,
 	type KindEnumEntry
@@ -50,7 +51,8 @@ import {
 	soleSlotFacts,
 	canonicalSeparatedListField,
 	escForSource,
-	emitsPlainBuiltAlias
+	emitsPlainBuiltAlias,
+	transparentWrapperContentSlot
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -761,13 +763,26 @@ export function constructorTargetKind(kind: string, nodeMap: NodeMap): string {
 	return target === null ? kind : constructorTargetKind(target, nodeMap);
 }
 
+/** Whether any hop of `kind`'s forwarding chain crosses an OPTIONAL
+ *  slot — the hop target's surface alone loses that fact, so a form
+ *  constructor consuming the chain's final surface must re-apply it. */
+function chainParamOptional(kind: string, nodeMap: NodeMap): boolean {
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || (node.modelType !== 'branch' && node.modelType !== 'group')) return false;
+	const surface = resolveFactorySurface(node, nodeMap);
+	if (surface.directParamType === undefined) return false;
+	if (surface.directParamOptional) return true;
+	const target = forwardedTargetKind(node, nodeMap);
+	return target === null ? false : chainParamOptional(target, nodeMap);
+}
+
 /** The parameters a form constructor declares for `kind` and how it
  *  forwards them — the target factory's own surface. */
 function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { params: string; args: string } | undefined {
+): { params: string; args: string; argOptional?: boolean } | undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap));
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
@@ -783,8 +798,19 @@ function constructorSurface(
 		case 'branch':
 		case 'group': {
 			const surface = resolveFactorySurface(target, nodeMap);
-			return { params: surface.params, args: surface.args };
+			// The chain's final surface may declare a required param even
+			// though an earlier hop's slot is optional (e.g. a `pub` arm
+			// whose parenthesized group is optional): re-apply the lost
+			// optionality to the single-value param form. `argOptional`
+			// tells the caller to guard the forward — the target's own
+			// overloads need not accept undefined for this param type.
+			const optionalized = chainParamOptional(kind, nodeMap) && /^\w+: /.test(surface.params);
+			const params = optionalized ? surface.params.replace(/^(\w+): /, '$1?: ') : surface.params;
+			return { params, args: surface.args, argOptional: optionalized };
 		}
+		case 'keyword':
+			// Fixed-text leaf: its factory takes no arguments (`buildCrate()`).
+			return { params: '', args: '' };
 		default:
 			return undefined;
 	}
@@ -1050,7 +1076,9 @@ function emitNamespacedConstructors(
 			const call =
 				sig.args === '...args' && entry.path.length === 0
 					? `(${ctor} as (...a: unknown[]) => ReturnType<typeof ${ctor}>)(...args)`
-					: `${ctor}(${sig.args})`;
+					: sig.argOptional === true
+						? `${sig.args} === undefined ? ${ctor}() : ${ctor}(${sig.args})`
+						: `${ctor}(${sig.args})`;
 			lines.push(`  ${key}: (${sig.params}) => ${fill(entry.slot, call)},`);
 		} else {
 			// TS forbids a required parameter after an optional one: a slot is
@@ -1266,7 +1294,7 @@ function parenthesizeUnion(elemType: string): string {
  * `fn(options, ...elements)`. Shared by the list factory's own signature
  * and by form constructors that hoist it.
  */
-function separatedListSurface(
+export function separatedListSurface(
 	node: AssembledSeparatedList,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -1279,8 +1307,29 @@ function separatedListSurface(
 	readonly hasSeparatorKindOption: boolean;
 	readonly hasDelimiterOption: boolean;
 	readonly optionsType: string | undefined;
+	/** Present when the sole element kind is a transparent wrapper (see
+	 *  transparentWrapperContentSlot): the loose element union admits the
+	 *  wrapper's content directly, and the factory wraps bare content. */
+	readonly wrapper?: { readonly member: string; readonly factory: string; readonly contentKey: string };
+	/** The UN-widened elements tuple — what storage actually holds after
+	 *  the factory's wrap pass; Built assignability depends on it. */
+	readonly storageElementsType: string;
 } {
-	const elemType = fieldElementType(buildSeparatedListContentSlot(node), nodeMap);
+	const contentSlot = buildSeparatedListContentSlot(node);
+	let elemType = fieldElementType(contentSlot, nodeMap);
+	const baseElemType = elemType;
+	let wrapper: { member: string; factory: string; contentKey: string } | undefined;
+	const contentKinds = slotKindNames(contentSlot);
+	if (contentKinds.length === 1 && kindEntries) {
+		const wKind = contentKinds[0]!;
+		const entry = findKindEntry(kindEntries, wKind);
+		const content = transparentWrapperContentSlot(wKind, nodeMap);
+		const factoryName = nodeMap.nodes.get(wKind)?.rawFactoryName;
+		if (entry !== undefined && content !== undefined && factoryName !== undefined) {
+			wrapper = { member: entry.member, factory: factoryName, contentKey: content.configKey };
+			elemType = `${elemType} | ${fieldElementType(content, nodeMap)}`;
+		}
+	}
 	const elemTypeForArray = parenthesizeUnion(elemType);
 	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
 	// Outer gate matches wrap.ts's `emitSeparatedListWrap` and render-module.ts's
@@ -1313,7 +1362,9 @@ function separatedListSurface(
 		candidateKindNames,
 		hasSeparatorKindOption,
 		hasDelimiterOption,
-		optionsType
+		optionsType,
+		wrapper,
+		storageElementsType: node.nonEmpty ? `NonEmptyArray<${baseElemType}>` : `${parenthesizeUnion(baseElemType)}[]`
 	};
 }
 
@@ -1402,7 +1453,17 @@ function emitSeparatedListFactory(
 		lines.push(`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`);
 		lines.push('  }');
 	}
-	lines.push(`  const ${contentStorageKey} = elements;`);
+	const w = surface.wrapper;
+	if (w !== undefined) {
+		// Transparent-wrapper coercion: bare content becomes the wrapper;
+		// a pre-built wrapper passes through. The cast restores the
+		// rest-tuple shape the storage key expects.
+		lines.push(
+			`  const ${contentStorageKey} = elements.map((e) => (isNodeData(e) && e.$type === TSKindId.${w.member} ? e : ${w.factory}({ ${w.contentKey}: e } as Parameters<typeof ${w.factory}>[0]))) as unknown as ${surface.storageElementsType};`
+		);
+	} else {
+		lines.push(`  const ${contentStorageKey} = elements;`);
+	}
 	if (hasSeparatorKindOption) {
 		if (candidateKindNames.length > 0) {
 			const arms = candidateKindNames
@@ -1613,6 +1674,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			lines.push(`import { ${kindIdImports.join(', ')} } from './types.js';`);
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
+		const usesElementWrap = [...nodeMap.nodes.values()].some(
+			(n) => n.modelType === 'separatedList' && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
+		);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		const usesAttachProps = [...nodeMap.nodes.values()].some(
 			(node) =>
@@ -1628,7 +1692,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		if (refineKindInfos.length > 0) utilImports.push('ConfigOf');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesAttachProps ? ['attachProps'] : [])].join(', ')} } from './utils.js';`
+			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesAttachProps ? ['attachProps'] : []), ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from './utils.js';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

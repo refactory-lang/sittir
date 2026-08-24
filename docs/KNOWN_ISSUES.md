@@ -11,6 +11,7 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
 4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
 5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
+6. `ki-raw-read-root-render` — hydrate read stubs before transport; `it.fails` pin in examples-verify
 8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
 9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
 10. `ki-mapentry-forwarded` — one-line type-union gap in the factory-map emitter
@@ -60,6 +61,12 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 **Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
 
+
+## `ki-raw-read-root-render` — rendering a RAW parsed root fails: reader stubs reach the native transport unhydrated
+
+**Found during:** the examples verification pass — `wrapNode(root, tree).$render()` on a freshly parsed root (the use-case guide's round-trip example) throws ``Missing field `_name` on SourceFileTransport._statements``. The native reader materializes one level and leaves children as `$nodeHandle` stubs the wrap layer drills lazily; the boundary render hands the raw NodeData straight to the transport deserializer, which demands the full struct. Sibling class to `ki-exercise-span-transport` (there the inputs are factory-built span-less nodes; here they are READ stubs). Pinned by an `it.fails` in `packages/rust/tests/examples-verify.test.ts` — flips green when fixed.
+
+**Fix, if/when prioritized:** hydrate before transport — either the wrap surface's `$render` drills the tree fully first, or the boundary render resolves `$nodeHandle` stubs via `readNode` while projecting the transport. The validators' render paths (`loadBoundaryRender`) read fully-materialized nodes, which is why no validator row pins this.
 
 ## `ki-exercise-span-transport` — exercise factory round-trips fail on `Missing field start on …Transport.$span`
 
