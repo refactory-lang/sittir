@@ -60,8 +60,8 @@ describe('emitEngine root type', () => {
 	it('types parse() with the wrap-emitted root surface alias', () => {
 		const output = emitEngine({ grammar: 'rust', rootTypeName: 'SourceFile', rootTreeTypeName: 'SourceFileTree' });
 		expect(output).toContain("import { wrapNode, type SourceFileTree } from './wrap.js';");
-		expect(output).toContain('parse(source: string): SourceFileTree;');
-		expect(output).toContain('const { root, tree } = engine.diagnostics.parseAndRead(source);');
+		expect(output).toContain('parse(source: string, options?: ParseOptions): SourceFileTree;');
+		expect(output).toContain('const { root, tree } = engine.diagnostics.parseAndRead(source, options);');
 		expect(output).toContain('return wrapNode(root, tree);');
 	});
 });

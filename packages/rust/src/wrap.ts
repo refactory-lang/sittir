@@ -199,25 +199,53 @@ function normalizeRepeatedWrapSlot<T>(
 	return items;
 }
 // The wrap layer's method engine. A wrapped node carries accessor
-// methods over storage that still holds unexpanded child stubs, so
-// `$render`/`$toEdit` project it to plain data first; the transport
-// reproduces each stub's own text verbatim.
-const _wrapEngine: typeof methodsEngine = {
-	render: (node) => methodsEngine.render(toTransportData(node)),
-	toEdit: (node, startOrRange, endPos) => methodsEngine.toEdit(toTransportData(node), startOrRange, endPos)
-};
+// methods over storage the reader spelled its own way, so
+// `$render`/`$toEdit` project it to plain data first — routing every
+// level that carries storage back through `wrapNode`, which reconciles
+// slot names and arity. An unexpanded stub carries no storage, so it
+// passes through and the transport reproduces its own text verbatim.
+// One engine per tree — the closure is the only per-tree state.
+const _treeEngines = new WeakMap<TreeHandle, typeof methodsEngine>();
+function _treeEngine(tree: TreeHandle): typeof methodsEngine {
+	let engine = _treeEngines.get(tree);
+	if (engine === undefined) {
+		const project = (node: AnyNodeData) => toTransportData(node, (level) => wrapNode(level, tree) as AnyNodeData);
+		engine = {
+			render: (node) => methodsEngine.render(project(node)),
+			toEdit: (node, startOrRange, endPos) => methodsEngine.toEdit(project(node), startOrRange, endPos)
+		};
+		_treeEngines.set(tree, engine);
+	}
+	return engine;
+}
 // Drill-in helpers — call back through `readTreeNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
 //   readTreeNode (public entry)
 //     → readNode (handle-driven — tree.read for native, JS walker otherwise)
 //       → wrapNode (dispatches on $type)
 //         → drillIn → readTreeNode (recurse)
-function drillIn<T>(entry: T, tree: TreeHandle): T {
+// Resolve a node that IS the value being returned — a supertype
+// occurrence the reader collapsed to a text leaf stands in for its
+// own member. An unexpanded stub reads one more level; anything
+// else passes through untouched. It must NOT re-wrap: wrapping
+// would dispatch straight back into the wrap function that called
+// this, with the same data.
+function drillInSelf<T>(entry: T, tree: TreeHandle): T {
 	if (!entry) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
 	if (e.$nodeHandle != null && e.$childIndex != null)
 		return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;
 	return entry;
+}
+// Resolve a CHILD position. Beyond the stub read, node data a deep
+// read already expanded carries no coordinates to re-read by (and
+// re-reading would replace the expansion with a shallow one), so the
+// wrap layer adds its methods in place instead.
+function drillIn<T>(entry: T, tree: TreeHandle): T {
+	const resolved = drillInSelf(entry, tree);
+	const e = resolved as unknown as _NodeData;
+	if (resolved === entry && typeof e?.$type === 'number') return wrapNode(e, tree) as unknown as T;
+	return resolved;
 }
 function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): T[] {
 	if (!entries) return [];
@@ -1493,7 +1521,7 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle) {
 					wrapSourceFile({ ...data, _statements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -1557,7 +1585,7 @@ export function wrapStatement(
 			'static_item'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.Statement>(data as T.Statement, tree);
+		return drillInSelf<T.Statement>(data as T.Statement, tree);
 	}
 	return drillIn<T.Statement>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -1632,7 +1660,7 @@ export function wrapExpressionStatement(
 					wrapExpressionStatement({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -1674,7 +1702,7 @@ export function wrapMacroDefinition(
 				content: (v: NonNullable<T.MacroDefinition['_content']>) => wrapMacroDefinition({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -1708,7 +1736,7 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle) {
 				right: (v: NonNullable<T.MacroRule['_right']>) => wrapMacroRule({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -1774,7 +1802,7 @@ export function wrapTokenPattern(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.TokenPattern>(data as T.TokenPattern, tree);
+		return drillInSelf<T.TokenPattern>(data as T.TokenPattern, tree);
 	}
 	return drillIn<T.TokenPattern>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -1824,7 +1852,7 @@ export function wrapTokenTreePattern(
 					wrapTokenTreePattern({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -1895,14 +1923,14 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 				type: (v: NonNullable<T.TokenBindingPattern['_type']>) => wrapTokenBindingPattern({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree: TreeHandle) {
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.TokenRepetitionPattern as const }, _wrapEngine);
+		return withMethods({ ...data, $type: TSKindId.TokenRepetitionPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -1950,7 +1978,7 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 					wrapTokenRepetitionPattern({ ...data, _operator: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2041,13 +2069,14 @@ export function wrapTokenTree(
 				content: (v: NonNullable<T.TokenTree['_content']>) => wrapTokenTree({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TokenRepetition as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.TokenRepetition as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -2095,7 +2124,7 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 					wrapTokenRepetition({ ...data, _operator: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2149,7 +2178,7 @@ export function wrap_NonSpecialToken(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T._NonSpecialToken>(data as T._NonSpecialToken, tree);
+		return drillInSelf<T._NonSpecialToken>(data as T._NonSpecialToken, tree);
 	}
 	return drillIn<T._NonSpecialToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -2182,7 +2211,7 @@ export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle) {
 					wrapAttributeItem({ ...data, _attribute: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2207,7 +2236,7 @@ export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHan
 					wrapInnerAttributeItem({ ...data, _attribute: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2242,7 +2271,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 					wrapAttribute({ ...data, _attribute_arm: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2254,7 +2283,7 @@ export function wrapModItem(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ModItem as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ModItem as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_declaration_list', '_mod_item_external']),
@@ -2296,7 +2325,7 @@ export function wrapModItem(
 				content: (v: NonNullable<T.ModItem['_content']>) => wrapModItem({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2308,7 +2337,8 @@ export function wrapForeignModItem(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForeignModItem as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ForeignModItem as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_declaration_list', '_foreign_mod_item_semi']),
@@ -2351,7 +2381,7 @@ export function wrapForeignModItem(
 				content: (v: NonNullable<T.ForeignModItem['_content']>) => wrapForeignModItem({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2379,7 +2409,7 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle) {
 					wrapDeclarationList({ ...data, _declaration_statements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2392,7 +2422,7 @@ export function wrapStructItem(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StructItem as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StructItem as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_struct_item_brace', '_struct_item_tuple', '_struct_item_unit']),
@@ -2445,7 +2475,7 @@ export function wrapStructItem(
 				content: (v: NonNullable<T.StructItem['_content']>) => wrapStructItem({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2513,7 +2543,7 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle) {
 				body: (v: NonNullable<T.UnionItem['_body']>) => wrapUnionItem({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2580,7 +2610,7 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle) {
 				body: (v: NonNullable<T.EnumItem['_body']>) => wrapEnumItem({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2606,7 +2636,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
 					wrapEnumVariantList({ ...data, _enum_variant_list_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2662,7 +2692,7 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle) {
 				value: (v: NonNullable<T.EnumVariant['_value']>) => wrapEnumVariant({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2688,7 +2718,7 @@ export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: Tre
 					wrapFieldDeclarationList({ ...data, _field_declaration_list_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2734,7 +2764,7 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 				type: (v: NonNullable<T.FieldDeclaration['_type']>) => wrapFieldDeclaration({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2759,7 +2789,7 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
 					wrapOrderedFieldDeclarationList({ ...data, _attributes: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2807,7 +2837,7 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
 					wrapExternCrateDeclaration({ ...data, _alias: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -2863,13 +2893,13 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle) {
 				value: (v: NonNullable<T.ConstItem['_value']>) => wrapConstItem({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StaticItem as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StaticItem as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -2945,7 +2975,7 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
 				value: (v: NonNullable<T.StaticItem['_value']>) => wrapStaticItem({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3024,7 +3054,7 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle) {
 					wrapTypeItem({ ...data, _trailing_where_clause: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3126,7 +3156,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle) {
 				body: (v: NonNullable<T.FunctionItem['_body']>) => wrapFunctionItem({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3219,13 +3249,14 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
 					wrapFunctionSignatureItem({ ...data, _where_clause: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FunctionModifiers as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.FunctionModifiers as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -3248,7 +3279,7 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 					wrapFunctionModifiers({ ...data, _modifier: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3273,7 +3304,7 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle) {
 					wrapWhereClause({ ...data, _where_predicates: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3318,7 +3349,7 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
 				bounds: (v: NonNullable<T.WherePredicate['_bounds']>) => wrapWherePredicate({ ...data, _bounds: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3330,7 +3361,7 @@ export function wrapImplItem(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImplItem as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImplItem as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_impl_item_body', '_impl_item_semi']),
@@ -3404,13 +3435,13 @@ export function wrapImplItem(
 				content: (v: NonNullable<T.ImplItem['_content']>) => wrapImplItem({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TraitItem as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TraitItem as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -3496,7 +3527,7 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle) {
 				body: (v: NonNullable<T.TraitItem['_body']>) => wrapTraitItem({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3552,7 +3583,7 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle) {
 					wrapAssociatedType({ ...data, _where_clause: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3601,7 +3632,7 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle) {
 					wrapTraitBounds({ ...data, _bounds: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3637,7 +3668,7 @@ export function wrapHigherRankedTraitBound(data: T.HigherRankedTraitBound, tree:
 					wrapHigherRankedTraitBound({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3661,7 +3692,7 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 				type: (v: NonNullable<T.RemovedTraitBound['_type']>) => wrapRemovedTraitBound({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3687,7 +3718,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 					wrapTypeParameters({ ...data, _type_parameters_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3731,7 +3762,7 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle) {
 				value: (v: NonNullable<T.ConstParameter['_value']>) => wrapConstParameter({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3776,7 +3807,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 					wrapTypeParameter({ ...data, _default_type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3810,7 +3841,7 @@ export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandl
 				bounds: (v: NonNullable<T.LifetimeParameter['_bounds']>) => wrapLifetimeParameter({ ...data, _bounds: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3878,7 +3909,7 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
 					wrapLetDeclaration({ ...data, _alternative: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3914,7 +3945,7 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle) {
 				argument: (v: NonNullable<T.UseDeclaration['_argument']>) => wrapUseDeclaration({ ...data, _argument: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -3958,7 +3989,7 @@ export function wrapUseClause(
 			'use_wildcard'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.UseClause>(data as T.UseClause, tree);
+		return drillInSelf<T.UseClause>(data as T.UseClause, tree);
 	}
 	return drillIn<T.UseClause>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -4000,7 +4031,7 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle) {
 				list: (v: NonNullable<T.ScopedUseList['_list']>) => wrapScopedUseList({ ...data, _list: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4024,7 +4055,7 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle) {
 				useClauses: (v: NonNullable<T.UseList['_use_clauses']>) => wrapUseList({ ...data, _use_clauses: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4058,7 +4089,7 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle) {
 				alias: (v: NonNullable<T.UseAsClause['_alias']>) => wrapUseAsClause({ ...data, _alias: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4082,7 +4113,7 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle) {
 				path: (v: NonNullable<T.UseWildcard['_path']>) => wrapUseWildcard({ ...data, _path: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4108,13 +4139,13 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 					wrapParameters({ ...data, _parameters_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SelfParameter as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SelfParameter as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -4159,7 +4190,7 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
 					wrapSelfParameter({ ...data, _mutable_specifier: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4197,7 +4228,7 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 					wrapVariadicParameter({ ...data, _pattern: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4244,7 +4275,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 				type: (v: NonNullable<T.Parameter['_type']>) => wrapParameter({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4269,7 +4300,7 @@ export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle) {
 					wrapExternModifier({ ...data, _string_literal: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4301,7 +4332,7 @@ export function wrapVisibilityModifier(
 					wrapVisibilityModifier({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4350,7 +4381,7 @@ export function wrap_Type(data: T._Type & { readonly $other?: T._Type | readonly
 			'primitive_type'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T._Type>(data as T._Type, tree);
+		return drillInSelf<T._Type>(data as T._Type, tree);
 	}
 	return drillIn<T._Type>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -4445,7 +4476,7 @@ export function wrapBracketedType(
 				content: (v: NonNullable<T.BracketedType['_content']>) => wrapBracketedType({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4479,7 +4510,7 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle) {
 				alias: (v: NonNullable<T.QualifiedType['_alias']>) => wrapQualifiedType({ ...data, _alias: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4503,7 +4534,7 @@ export function wrapLifetime(data: T.Lifetime, tree: TreeHandle) {
 				identifier: (v: NonNullable<T.Lifetime['_identifier']>) => wrapLifetime({ ...data, _identifier: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4537,7 +4568,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 				length: (v: NonNullable<T.ArrayType['_length']>) => wrapArrayType({ ...data, _length: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4561,7 +4592,7 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle) {
 				lifetimes: (v: NonNullable<T.ForLifetimes['_lifetimes']>) => wrapForLifetimes({ ...data, _lifetimes: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4632,7 +4663,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 					wrapFunctionType({ ...data, _return_type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4658,7 +4689,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
 					wrapTupleType({ ...data, _tuple_type_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4694,7 +4725,7 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle) {
 					wrapGenericFunction({ ...data, _type_arguments: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4729,7 +4760,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 					wrapGenericType({ ...data, _type_arguments: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4765,7 +4796,7 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
 					wrapGenericTypeWithTurbofish({ ...data, _type_arguments: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4799,7 +4830,7 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle) {
 				right: (v: NonNullable<T.BoundedType['_right']>) => wrapBoundedType({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4823,7 +4854,7 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle) {
 				bounds: (v: NonNullable<T.UseBounds['_bounds']>) => wrapUseBounds({ ...data, _bounds: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4849,7 +4880,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 					wrapTypeArguments({ ...data, _type_arguments_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4894,7 +4925,7 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle) {
 				type: (v: NonNullable<T.TypeBinding['_type']>) => wrapTypeBinding({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4941,7 +4972,7 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle) {
 				type: (v: NonNullable<T.ReferenceType['_type']>) => wrapReferenceType({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -4953,7 +4984,7 @@ export function wrapPointerType(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PointerType as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PointerType as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_mutable_specifier', '_pointer_type_const']),
@@ -4989,7 +5020,7 @@ export function wrapPointerType(
 				type: (v: NonNullable<T.PointerType['_type']>) => wrapPointerType({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5032,7 +5063,7 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle) {
 				trait: (v: NonNullable<T.AbstractType['_trait']>) => wrapAbstractType({ ...data, _trait: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5063,7 +5094,7 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle) {
 				trait: (v: NonNullable<T.DynamicType['_trait']>) => wrapDynamicType({ ...data, _trait: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5179,7 +5210,7 @@ export function wrapExpressionExceptRange(
 			'const_block'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.ExpressionExceptRange>(data as T.ExpressionExceptRange, tree);
+		return drillInSelf<T.ExpressionExceptRange>(data as T.ExpressionExceptRange, tree);
 	}
 	return drillIn<T.ExpressionExceptRange>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -5309,7 +5340,7 @@ export function wrapExpression(
 			'range_expression'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.Expression>(data as T.Expression, tree);
+		return drillInSelf<T.Expression>(data as T.Expression, tree);
 	}
 	return drillIn<T.Expression>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -5352,7 +5383,7 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle) {
 					wrapMacroInvocation({ ...data, _token_tree: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5384,7 +5415,7 @@ export function wrapDelimTokenTree(
 				content: (v: NonNullable<T.DelimTokenTree['_content']>) => wrapDelimTokenTree({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5410,7 +5441,7 @@ export function wrapDelimTokens(
 			'delim_token_tree'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.DelimTokens>(data as T.DelimTokens, tree);
+		return drillInSelf<T.DelimTokens>(data as T.DelimTokens, tree);
 	}
 	return drillIn<T.DelimTokens>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -5476,7 +5507,7 @@ export function wrapNonDelimToken(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.NonDelimToken>(data as T.NonDelimToken, tree);
+		return drillInSelf<T.NonDelimToken>(data as T.NonDelimToken, tree);
 	}
 	return drillIn<T.NonDelimToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -5518,7 +5549,7 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 				name: (v: NonNullable<T.ScopedIdentifier['_name']>) => wrapScopedIdentifier({ ...data, _name: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5557,7 +5588,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 					wrapScopedTypeIdentifierInExpressionPosition({ ...data, _name: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5595,7 +5626,7 @@ export function wrapScopedTypeIdentifier(data: T.ScopedTypeIdentifier, tree: Tre
 				name: (v: NonNullable<T.ScopedTypeIdentifier['_name']>) => wrapScopedTypeIdentifier({ ...data, _name: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5625,7 +5656,8 @@ export function wrapRangeExpression(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.RangeExpression as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangeExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -5657,13 +5689,14 @@ export function wrapRangeExpression(
 				content: (v: NonNullable<T.RangeExpression['_content']>) => wrapRangeExpression({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UnaryExpression as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.UnaryExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -5697,7 +5730,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 				operand: (v: NonNullable<T.UnaryExpression['_operand']>) => wrapUnaryExpression({ ...data, _operand: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5721,7 +5754,7 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle) {
 				value: (v: NonNullable<T.TryExpression['_value']>) => wrapTryExpression({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5781,13 +5814,14 @@ export function wrapReferenceExpression(
 					wrapReferenceExpression({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BinaryExpression as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.BinaryExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -5870,7 +5904,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				right: (v: NonNullable<T.BinaryExpression['_right']>) => wrapBinaryExpression({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5906,7 +5940,7 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 					wrapAssignmentExpression({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -5969,7 +6003,7 @@ export function wrapCompoundAssignmentExpr(data: T.CompoundAssignmentExpr, tree:
 					wrapCompoundAssignmentExpr({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6003,7 +6037,7 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 				type: (v: NonNullable<T.TypeCastExpression['_type']>) => wrapTypeCastExpression({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6028,7 +6062,7 @@ export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle)
 					wrapReturnExpression({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6053,7 +6087,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 					wrapYieldExpression({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6089,7 +6123,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 					wrapCallExpression({ ...data, _arguments: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6115,7 +6149,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
 					wrapArguments({ ...data, _arguments_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6146,7 +6180,7 @@ export function wrapArrayExpression(
 				content: (v: NonNullable<T.ArrayExpression['_content']>) => wrapArrayExpression({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6171,7 +6205,7 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
 					wrapParenthesizedExpression({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6208,7 +6242,7 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
 					wrapTupleExpression({ ...data, _tuple_expression_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6245,7 +6279,7 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
 				body: (v: NonNullable<T.StructExpression['_body']>) => wrapStructExpression({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6270,7 +6304,7 @@ export function wrapFieldInitializerList(data: T.FieldInitializerList, tree: Tre
 					wrapFieldInitializerList({ ...data, _initializers: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6306,7 +6340,7 @@ export function wrapShorthandFieldInitializer(data: T.ShorthandFieldInitializer,
 					wrapShorthandFieldInitializer({ ...data, _identifier: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6351,7 +6385,7 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 				value: (v: NonNullable<T.FieldInitializer['_value']>) => wrapFieldInitializer({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6376,7 +6410,7 @@ export function wrapBaseFieldInitializer(data: T.BaseFieldInitializer, tree: Tre
 					wrapBaseFieldInitializer({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6422,7 +6456,7 @@ export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle) {
 					wrapIfExpression({ ...data, _alternative: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6456,7 +6490,7 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle) {
 				value: (v: NonNullable<T.LetCondition['_value']>) => wrapLetCondition({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6545,7 +6579,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 				rights: (...v: NonNullable<T.LetChain['_right']>[number][]) => wrapLetChain({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6677,7 +6711,7 @@ export function wrapCondition(
 			'let_chain'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.Condition>(data as T.Condition, tree);
+		return drillInSelf<T.Condition>(data as T.Condition, tree);
 	}
 	return drillIn<T.Condition>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -6716,7 +6750,7 @@ export function wrapElseClause(
 				content: (v: NonNullable<T.ElseClause['_content']>) => wrapElseClause({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6750,7 +6784,7 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle) {
 				body: (v: NonNullable<T.MatchExpression['_body']>) => wrapMatchExpression({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6775,7 +6809,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
 					wrapMatchBlock({ ...data, _match_block_arms: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6865,13 +6899,13 @@ export function wrapMatchArm(
 				content: (v: NonNullable<T.MatchArm['_content']>) => wrapMatchArm({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LastMatchArm as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LastMatchArm as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -6926,7 +6960,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
 				comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...data, _comma: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -6960,7 +6994,7 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle) {
 				condition: (v: NonNullable<T.MatchPattern['_condition']>) => wrapMatchPattern({ ...data, _condition: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7005,7 +7039,7 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle) {
 				body: (v: NonNullable<T.WhileExpression['_body']>) => wrapWhileExpression({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7039,7 +7073,7 @@ export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle) {
 				body: (v: NonNullable<T.LoopExpression['_body']>) => wrapLoopExpression({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7093,7 +7127,7 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle) {
 				body: (v: NonNullable<T.ForExpression['_body']>) => wrapForExpression({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7117,7 +7151,7 @@ export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle) {
 				body: (v: NonNullable<T.ConstBlock['_body']>) => wrapConstBlock({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7129,7 +7163,8 @@ export function wrapClosureExpression(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClosureExpression as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ClosureExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_closure_expression_block', '_closure_expression_expr']),
@@ -7200,7 +7235,7 @@ export function wrapClosureExpression(
 					wrapClosureExpression({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7257,7 +7292,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 					wrapClosureParameters({ ...data, _parameters: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7281,7 +7316,7 @@ export function wrapLabel(data: T.Label, tree: TreeHandle) {
 				identifier: (v: NonNullable<T.Label['_identifier']>) => wrapLabel({ ...data, _identifier: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7460,7 +7495,7 @@ export function wrapBreakExpression(
 					wrapBreakExpression({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7484,7 +7519,7 @@ export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHan
 				label: (v: NonNullable<T.ContinueExpression['_label']>) => wrapContinueExpression({ ...data, _label: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7518,7 +7553,7 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle) {
 				index: (v: NonNullable<T.IndexExpression['_index']>) => wrapIndexExpression({ ...data, _index: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7543,7 +7578,7 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle) {
 					wrapAwaitExpression({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7577,7 +7612,7 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle) {
 				field: (v: NonNullable<T.FieldExpression['_field']>) => wrapFieldExpression({ ...data, _field: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7601,13 +7636,13 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle) {
 				block: (v: NonNullable<T.UnsafeBlock['_block']>) => wrapUnsafeBlock({ ...data, _block: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AsyncBlock as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AsyncBlock as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -7639,13 +7674,13 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle) {
 				block: (v: NonNullable<T.AsyncBlock['_block']>) => wrapAsyncBlock({ ...data, _block: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.GenBlock as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.GenBlock as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -7676,7 +7711,7 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle) {
 				block: (v: NonNullable<T.GenBlock['_block']>) => wrapGenBlock({ ...data, _block: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7700,7 +7735,7 @@ export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle) {
 				block: (v: NonNullable<T.TryBlock['_block']>) => wrapTryBlock({ ...data, _block: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7747,7 +7782,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
 					wrapBlock({ ...data, _trailing_expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7821,7 +7856,7 @@ export function wrapPattern(
 			'wildcard_pattern'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.Pattern>(data as T.Pattern, tree);
+		return drillInSelf<T.Pattern>(data as T.Pattern, tree);
 	}
 	return drillIn<T.Pattern>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -7871,7 +7906,7 @@ export function wrapGenericPattern(
 					wrapGenericPattern({ ...data, _type_arguments: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7895,7 +7930,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 				elements: (v: NonNullable<T.TuplePattern['_elements']>) => wrapTuplePattern({ ...data, _elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7919,7 +7954,7 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle) {
 				patterns: (v: NonNullable<T.SlicePattern['_patterns']>) => wrapSlicePattern({ ...data, _patterns: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7954,7 +7989,7 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 					wrapTupleStructPattern({ ...data, _patterns: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -7988,7 +8023,7 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle) {
 				fields: (v: NonNullable<T.StructPattern['_fields']>) => wrapStructPattern({ ...data, _fields: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8000,7 +8035,7 @@ export function wrapFieldPattern(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FieldPattern as const }, _wrapEngine);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FieldPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_field_pattern_named', '_shorthand_field_identifier']),
@@ -8046,7 +8081,7 @@ export function wrapFieldPattern(
 				content: (v: NonNullable<T.FieldPattern['_content']>) => wrapFieldPattern({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8070,7 +8105,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 				pattern: (v: NonNullable<T.MutPattern['_pattern']>) => wrapMutPattern({ ...data, _pattern: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8101,7 +8136,7 @@ export function wrapRangePattern(
 				content: (v: NonNullable<T.RangePattern['_content']>) => wrapRangePattern({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8125,7 +8160,7 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle) {
 				pattern: (v: NonNullable<T.RefPattern['_pattern']>) => wrapRefPattern({ ...data, _pattern: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8160,7 +8195,7 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle) {
 				pattern: (v: NonNullable<T.CapturedPattern['_pattern']>) => wrapCapturedPattern({ ...data, _pattern: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8198,7 +8233,7 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 					wrapReferencePattern({ ...data, _pattern: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8229,7 +8264,7 @@ export function wrapOrPattern(
 				content: (v: NonNullable<T.OrPattern['_content']>) => wrapOrPattern({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8257,7 +8292,7 @@ export function wrapLiteral(
 			'float_literal'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.Literal>(data as T.Literal, tree);
+		return drillInSelf<T.Literal>(data as T.Literal, tree);
 	}
 	return drillIn<T.Literal>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -8295,7 +8330,7 @@ export function wrapLiteralPattern(
 			'negative_literal'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.LiteralPattern>(data as T.LiteralPattern, tree);
+		return drillInSelf<T.LiteralPattern>(data as T.LiteralPattern, tree);
 	}
 	return drillIn<T.LiteralPattern>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
@@ -8327,7 +8362,7 @@ export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle) {
 				value: (v: NonNullable<T.NegativeLiteral['_value']>) => wrapNegativeLiteral({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8366,7 +8401,7 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 					wrapStringLiteral({ ...data, _elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8415,7 +8450,7 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 					wrapRawStringLiteral({ ...data, _raw_string_literal_end: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8447,7 +8482,7 @@ export function wrapLineComment(
 				content: (v: NonNullable<T.LineComment['_content']>) => wrapLineComment({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8472,7 +8507,7 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle) {
 					wrapBlockComment({ ...data, _block_comment_arm: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -8501,7 +8536,7 @@ export function wrapMacroRules(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8535,7 +8570,7 @@ export function wrapEnumVariantListElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8569,7 +8604,7 @@ export function wrapFieldDeclarationListElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8603,7 +8638,7 @@ export function wrapOrderedFieldDeclarationListElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8631,7 +8666,7 @@ export function wrapWherePredicates(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8665,7 +8700,7 @@ export function wrapTypeParametersElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8693,7 +8728,7 @@ export function wrapUseClauses(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8724,7 +8759,7 @@ export function wrapParametersElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8752,7 +8787,7 @@ export function wrapLifetimes(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8786,7 +8821,7 @@ export function wrapUseBoundsElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8817,7 +8852,7 @@ export function wrapTypeArgumentsElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8848,7 +8883,7 @@ export function wrapArgumentsElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8884,7 +8919,7 @@ export function wrapFieldInitializerListElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8918,7 +8953,7 @@ export function wrapTuplePatternElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8946,7 +8981,7 @@ export function wrapPatterns(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8980,7 +9015,7 @@ export function wrapStructPatternElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -8991,7 +9026,8 @@ export function wrapRangePatternArm2(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.RangePatternArm2 as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangePatternArm2 as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_range_pattern_left_bare', '_range_pattern_left_with_right']),
@@ -9022,7 +9058,7 @@ export function wrapRangePatternArm2(
 					wrapRangePatternArm2({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9056,7 +9092,7 @@ export function wrapAttributeArm(data: T.AttributeArm, tree: TreeHandle) {
 				arguments: (v: NonNullable<T.AttributeArm['_arguments']>) => wrapAttributeArm({ ...data, _arguments: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9090,7 +9126,7 @@ export function wrapVisibilityModifierGroup(
 					wrapVisibilityModifierGroup({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9270,13 +9306,14 @@ export function wrapArrayExpressionArm(
 					wrapArrayExpressionArm({ ...data, _length: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapBlockCommentArm(data: T.BlockCommentArm, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BlockCommentArm as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.BlockCommentArm as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -9319,7 +9356,7 @@ export function wrapBlockCommentArm(data: T.BlockCommentArm, tree: TreeHandle) {
 				doc: (v: NonNullable<T.BlockCommentArm['_doc']>) => wrapBlockCommentArm({ ...data, _doc: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9351,7 +9388,7 @@ export function wrapTupleTypeElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -9382,7 +9419,7 @@ export function wrapTupleExpressionElements(
 			},
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -9405,12 +9442,12 @@ export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandl
 				path: (v: NonNullable<T.UseWildcardClause['_path']>) => wrapUseWildcardClause({ ...data, _path: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
-export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, _tree: TreeHandle) {
+export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
 	return withMethods(
 		{
 			...data,
@@ -9418,7 +9455,7 @@ export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut,
 
 			$with: {}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 }
 
@@ -9442,7 +9479,7 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle) {
 					wrapImplItemBody({ ...data, _declaration_list: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9467,7 +9504,7 @@ export function wrapImplItemPositiveClause(data: T.ImplItemPositiveClause, tree:
 					wrapImplItemPositiveClause({ ...data, _trait: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9492,7 +9529,7 @@ export function wrapImplItemNegativeClause(data: T.ImplItemNegativeClause, tree:
 					wrapImplItemNegativeClause({ ...data, _trait: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9529,7 +9566,7 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 					wrapArrayExpressionSemi({ ...data, _array_expression_arm: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9566,7 +9603,7 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 					wrapArrayExpressionList({ ...data, _arguments_elements: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9602,14 +9639,14 @@ export function wrapClosureExpressionBlock(data: T.ClosureExpressionBlock, tree:
 					wrapClosureExpressionBlock({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapClosureExpressionExpr(data: T.ClosureExpressionExpr, tree: TreeHandle) {
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ClosureExpressionExpr as const }, _wrapEngine);
+		return withMethods({ ...data, $type: TSKindId.ClosureExpressionExpr as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -9629,7 +9666,7 @@ export function wrapClosureExpressionExpr(data: T.ClosureExpressionExpr, tree: T
 					wrapClosureExpressionExpr({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9664,7 +9701,7 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 					wrapFieldPatternNamed({ ...data, _pattern: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9689,7 +9726,7 @@ export function wrapFunctionTypeTraitForm(data: T.FunctionTypeTraitForm, tree: T
 					wrapFunctionTypeTraitForm({ ...data, _trait: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9715,7 +9752,7 @@ export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHan
 					wrapFunctionTypeFnForm({ ...data, _function_modifiers: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9740,7 +9777,7 @@ export function wrapMacroDefinitionParen(data: T.MacroDefinitionParen, tree: Tre
 					wrapMacroDefinitionParen({ ...data, _macro_rules: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9765,7 +9802,7 @@ export function wrapMacroDefinitionBracket(data: T.MacroDefinitionBracket, tree:
 					wrapMacroDefinitionBracket({ ...data, _macro_rules: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9790,7 +9827,7 @@ export function wrapMacroDefinitionBrace(data: T.MacroDefinitionBrace, tree: Tre
 					wrapMacroDefinitionBrace({ ...data, _macro_rules: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9824,7 +9861,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle) {
 				right: (v: NonNullable<T.OrPatternBinary['_right']>) => wrapOrPatternBinary({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9848,14 +9885,14 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle) {
 				right: (v: NonNullable<T.OrPatternPrefix['_right']>) => wrapOrPatternPrefix({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: TreeHandle) {
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.RangeExpressionBinary as const }, _wrapEngine);
+		return withMethods({ ...data, $type: TSKindId.RangeExpressionBinary as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -9900,7 +9937,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 				end: (v: NonNullable<T.RangeExpressionBinary['_end']>) => wrapRangeExpressionBinary({ ...data, _end: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9925,7 +9962,7 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 					wrapRangeExpressionPostfix({ ...data, _start: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9949,7 +9986,7 @@ export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: T
 				end: (v: NonNullable<T.RangeExpressionPrefix['_end']>) => wrapRangeExpressionPrefix({ ...data, _end: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -9958,7 +9995,8 @@ export function wrapRangePatternPrefix(
 	data: T.RangePatternPrefix & { readonly _dot_dot_eq?: '..=' | '..'; readonly _dot_dot?: '..=' | '..' },
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.RangePatternPrefix as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangePatternPrefix as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dot_dot', '_dot_dot_eq']),
@@ -9995,7 +10033,7 @@ export function wrapRangePatternPrefix(
 				right: (v: NonNullable<T.RangePatternPrefix['_right']>) => wrapRangePatternPrefix({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10009,7 +10047,7 @@ export function wrapRangePatternLeftWithRight(
 	tree: TreeHandle
 ) {
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.RangePatternLeftWithRight as const }, _wrapEngine);
+		return withMethods({ ...data, $type: TSKindId.RangePatternLeftWithRight as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dot_dot', '_dot_dot_dot', '_dot_dot_eq']),
@@ -10048,7 +10086,7 @@ export function wrapRangePatternLeftWithRight(
 					wrapRangePatternLeftWithRight({ ...data, _right: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10083,7 +10121,7 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle) {
 				body: (v: NonNullable<T.StructItemBrace['_body']>) => wrapStructItemBrace({ ...data, _body: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10118,7 +10156,7 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle) {
 					wrapStructItemTuple({ ...data, _where_clause: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10144,7 +10182,7 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
 					wrapVisibilityModifierPub({ ...data, _visibility_modifier_group: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10196,7 +10234,7 @@ export function wrapVisibilityModifierInPath(
 					wrapVisibilityModifierInPath({ ...data, _path: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10221,7 +10259,7 @@ export function wrapExpressionStatementWithSemi(data: T.ExpressionStatementWithS
 					wrapExpressionStatementWithSemi({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10245,13 +10283,14 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 				value: (v: NonNullable<T.MatchArmWithComma['_value']>) => wrapMatchArmWithComma({ ...data, _value: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
 
 export function wrapLineCommentDoc(data: T.LineCommentDoc, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LineCommentDoc as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.LineCommentDoc as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -10294,7 +10333,7 @@ export function wrapLineCommentDoc(data: T.LineCommentDoc, tree: TreeHandle) {
 				doc: (v: NonNullable<T.LineCommentDoc['_doc']>) => wrapLineCommentDoc({ ...data, _doc: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10319,7 +10358,7 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 					wrapTokenTreePatternParen({ ...data, _token_patterns: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10344,7 +10383,7 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 					wrapTokenTreePatternBracket({ ...data, _token_patterns: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10369,7 +10408,7 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 					wrapTokenTreePatternBrace({ ...data, _token_patterns: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10394,7 +10433,7 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 					wrapTokenTreeParen({ ...data, _tokens: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10419,7 +10458,7 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 					wrapTokenTreeBracket({ ...data, _tokens: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10444,7 +10483,7 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 					wrapTokenTreeBrace({ ...data, _tokens: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10469,7 +10508,7 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 					wrapDelimTokenTreeParen({ ...data, _delim_tokens: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10494,7 +10533,7 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 					wrapDelimTokenTreeBracket({ ...data, _delim_tokens: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10519,7 +10558,7 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 					wrapDelimTokenTreeBrace({ ...data, _delim_tokens: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10555,7 +10594,7 @@ export function wrapAttributedFieldDeclaration(data: T.AttributedFieldDeclaratio
 					wrapAttributedFieldDeclaration({ ...data, _field_declaration: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10591,7 +10630,7 @@ export function wrapAttributedEnumVariant(data: T.AttributedEnumVariant, tree: T
 					wrapAttributedEnumVariant({ ...data, _enum_variant: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10623,7 +10662,8 @@ export function wrapAttributedParameter(
 	},
 	tree: TreeHandle
 ) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AttributedParameter as const }, _wrapEngine);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.AttributedParameter as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -10700,7 +10740,7 @@ export function wrapAttributedParameter(
 					wrapAttributedParameter({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10749,7 +10789,7 @@ export function wrapAttributedTypeParameter(
 					wrapAttributedTypeParameter({ ...data, _content: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10929,7 +10969,7 @@ export function wrapAttributedArgument(
 					wrapAttributedArgument({ ...data, _expression: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -10977,7 +11017,7 @@ export function wrapAttributedOrderedField(data: T.AttributedOrderedField, tree:
 					wrapAttributedOrderedField({ ...data, _type: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -11099,7 +11139,7 @@ export function wrapTypeArgument(
 					wrapTypeArgument({ ...data, _trait_bounds: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -11134,7 +11174,7 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle) {
 				lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) => wrapMatchBlockArms({ ...data, _last_arm: v }, tree)
 			}
 		},
-		_wrapEngine
+		_treeEngine(tree)
 	);
 	return _node;
 }
@@ -11188,7 +11228,7 @@ export function wrapNonSpecialToken(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
+		return drillInSelf<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
 	}
 	return drillIn<T.NonSpecialToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {

@@ -5,7 +5,12 @@
  * Thin wrapper — native binding stays in @sittir/common/engine. Native-only:
  * there is no JS-engine fallback.
  */
-import { createNativeEngine, type SittirEngineLike, type EngineOptions } from '@sittir/common/engine';
+import {
+	createNativeEngine,
+	type SittirEngineLike,
+	type EngineOptions,
+	type ParseOptions
+} from '@sittir/common/engine';
 import { KIND_NAMES, type Module } from './types.js';
 import type { NodeDataOf } from '@sittir/types';
 import { wrapNode, type ModuleTree } from './wrap.js';
@@ -20,7 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  *  methods live on `wrapNode(root, tree)`, which is what `parse()` returns. */
 export type ModuleRoot = NodeDataOf<Module>;
 
-export type { EngineOptions, ModuleTree };
+export type { EngineOptions, ParseOptions, ModuleTree };
 
 /**
  * A grammar engine: the product `parse()` surface plus the shared render /
@@ -28,8 +33,10 @@ export type { EngineOptions, ModuleTree };
  */
 export interface ModuleEngine extends SittirEngineLike<ModuleRoot> {
 	/** Parse `source` and return its wrapped root. Accessors on the result
-	 *  return wrapped nodes too — no caller-side `wrapNode` re-wrapping. */
-	parse(source: string): ModuleTree;
+	 *  return wrapped nodes too — no caller-side `wrapNode` re-wrapping.
+	 *  Reading is lazy by default: children expand on first access. Pass
+	 *  `{ deep: true }` to expand the whole tree up front instead. */
+	parse(source: string, options?: ParseOptions): ModuleTree;
 }
 
 /**
@@ -56,8 +63,8 @@ export function createEngine(options?: EngineOptions): ModuleEngine {
 	const engine = result.engine;
 	return {
 		...engine,
-		parse(source: string): ModuleTree {
-			const { root, tree } = engine.diagnostics.parseAndRead(source);
+		parse(source: string, options?: ParseOptions): ModuleTree {
+			const { root, tree } = engine.diagnostics.parseAndRead(source, options);
 			return wrapNode(root, tree);
 		}
 	};

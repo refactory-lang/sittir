@@ -51,7 +51,7 @@ export interface TreeHandle {
 	 *
 	 * ADR-0017: signature changed from `(nodeId?)` to `(handle?, childIndex?)`.
 	 */
-	read?(handle?: number, childIndex?: number): AnyNodeData;
+	read?(handle?: number, childIndex?: number, deep?: boolean): AnyNodeData;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).

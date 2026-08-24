@@ -32,6 +32,9 @@ pub use types::RenderableTransport;
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
 pub use slot::SlotValue;
+// Flat re-export for the read-expansion selector — grammar crates thread
+// it from the napi surface into `ParsedTree`.
+pub use read_node::ReadDepth;
 // ADR-0017: ParsedTree is the owned parse result; ParseResult is the JSON
 // envelope for parse_and_read. NodeCoords is an internal implementation detail.
 pub use engine::{apply_render_format, panic_msg, ParseResult, ParsedTree};

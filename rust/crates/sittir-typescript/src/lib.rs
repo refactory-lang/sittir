@@ -30,7 +30,7 @@ use sittir_core::engine::{Engine, EngineGrammar};
 #[cfg(feature = "napi-bindings")]
 use sittir_core::types::{Edit, FormatRecord};
 #[cfg(feature = "napi-bindings")]
-use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree};
+use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree, ReadDepth};
 
 #[cfg(feature = "napi-bindings")]
 use render::{render_transport_parts, RenderRoot, TEMPLATE_BUNDLE_HASH};
@@ -113,9 +113,14 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn parse_and_read(&mut self, source: String) -> Result<String> {
+    /// `deep` expands the whole tree in one pass instead of leaving each
+    /// child with substructure as a stub. Default (absent / `false`) is the
+    /// lazy one-level read.
+    pub fn parse_and_read(&mut self, source: String, deep: Option<bool>) -> Result<String> {
+        let depth = read_depth(deep);
         let mut parsed = self.engine.parse(source).map_err(Error::from_reason)?;
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| parsed.read_root()));
+        let result =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| parsed.read_root(depth)));
         match result {
             Ok(data) => {
                 let format = parsed.format().cloned();
@@ -134,12 +139,17 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn read_node(&mut self, handle: f64, child_index: f64) -> Result<String> {
+    pub fn read_node(
+        &mut self,
+        handle: f64,
+        child_index: f64,
+        deep: Option<bool>,
+    ) -> Result<String> {
         let parsed = self.parsed.as_mut().ok_or_else(|| {
             Error::from_reason("no tree parsed — call parseAndRead first".to_string())
         })?;
         parsed
-            .read_child(handle as u32, child_index as u16)
+            .read_child(handle as u32, child_index as u16, read_depth(deep))
             .map_err(Error::from_reason)
     }
 
@@ -174,6 +184,15 @@ impl SittirEngine {
     #[napi]
     pub fn dispose(&mut self) {
         self.parsed = None;
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+fn read_depth(deep: Option<bool>) -> ReadDepth {
+    if deep == Some(true) {
+        ReadDepth::Deep
+    } else {
+        ReadDepth::Shallow
     }
 }
 

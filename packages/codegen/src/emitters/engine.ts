@@ -27,7 +27,8 @@ export function emitEngine(config: EmitEngineConfig): string {
 import {
 	createNativeEngine,
 	type SittirEngineLike,
-	type EngineOptions
+	type EngineOptions,
+	type ParseOptions
 } from '@sittir/common/engine';
 import { KIND_NAMES, type ${rootTypeName} } from './types.js';
 import type { NodeDataOf } from '@sittir/types';
@@ -43,7 +44,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  *  methods live on \`wrapNode(root, tree)\`, which is what \`parse()\` returns. */
 export type ${rootTypeName}Root = NodeDataOf<${rootTypeName}>;
 
-export type { EngineOptions, ${rootTreeTypeName} };
+export type { EngineOptions, ParseOptions, ${rootTreeTypeName} };
 
 /**
  * A grammar engine: the product \`parse()\` surface plus the shared render /
@@ -51,8 +52,10 @@ export type { EngineOptions, ${rootTreeTypeName} };
  */
 export interface ${rootTypeName}Engine extends SittirEngineLike<${rootTypeName}Root> {
 	/** Parse \`source\` and return its wrapped root. Accessors on the result
-	 *  return wrapped nodes too — no caller-side \`wrapNode\` re-wrapping. */
-	parse(source: string): ${rootTreeTypeName};
+	 *  return wrapped nodes too — no caller-side \`wrapNode\` re-wrapping.
+	 *  Reading is lazy by default: children expand on first access. Pass
+	 *  \`{ deep: true }\` to expand the whole tree up front instead. */
+	parse(source: string, options?: ParseOptions): ${rootTreeTypeName};
 }
 
 /**
@@ -79,8 +82,8 @@ export function createEngine(options?: EngineOptions): ${rootTypeName}Engine {
 	const engine = result.engine;
 	return {
 		...engine,
-		parse(source: string): ${rootTreeTypeName} {
-			const { root, tree } = engine.diagnostics.parseAndRead(source);
+		parse(source: string, options?: ParseOptions): ${rootTreeTypeName} {
+			const { root, tree } = engine.diagnostics.parseAndRead(source, options);
 			return wrapNode(root, tree);
 		},
 	};

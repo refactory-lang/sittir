@@ -580,7 +580,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		// node itself as the resolved member instead of requiring a named
 		// child that will never surface.
 		`  if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {`,
-		`    return drillIn<T.${node.typeName}>(data as T.${node.typeName}, tree);`,
+		`    return drillInSelf<T.${node.typeName}>(data as T.${node.typeName}, tree);`,
 		`  }`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
@@ -741,7 +741,7 @@ function emitSeparatedListWrap(
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
 		lines.push(
-			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _wrapEngine);`
+			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
 		);
 	}
 
@@ -832,7 +832,7 @@ function emitSeparatedListWrap(
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
 	lines.push('    $with: {},');
-	lines.push('  }, _wrapEngine);');
+	lines.push('  }, _treeEngine(tree));');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1020,7 +1020,7 @@ function emitFieldCarryingWrap(
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	if (wrapsAnonLiteralContent(fields, nodeMap)) {
 		lines.push(
-			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _wrapEngine);`
+			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
 		);
 	}
 
@@ -1092,7 +1092,7 @@ function emitFieldCarryingWrap(
 	// $with — calls the corresponding factory for update operations.
 	emitInlineWithProperty(lines, node, fields, children, nodeMap, kindEntries);
 
-	lines.push('  }, _wrapEngine);');
+	lines.push('  }, _treeEngine(tree));');
 	if (hasWithSetters) {
 		lines.push('  return _node;');
 	}
@@ -1558,13 +1558,26 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					]
 				: []),
 			"// The wrap layer's method engine. A wrapped node carries accessor",
-			'// methods over storage that still holds unexpanded child stubs, so',
-			'// `$render`/`$toEdit` project it to plain data first; the transport',
-			"// reproduces each stub's own text verbatim.",
-			'const _wrapEngine: typeof methodsEngine = {',
-			'  render: (node) => methodsEngine.render(toTransportData(node)),',
-			'  toEdit: (node, startOrRange, endPos) => methodsEngine.toEdit(toTransportData(node), startOrRange, endPos),',
-			'};',
+			'// methods over storage the reader spelled its own way, so',
+			'// `$render`/`$toEdit` project it to plain data first — routing every',
+			'// level that carries storage back through `wrapNode`, which reconciles',
+			'// slot names and arity. An unexpanded stub carries no storage, so it',
+			'// passes through and the transport reproduces its own text verbatim.',
+			'// One engine per tree — the closure is the only per-tree state.',
+			'const _treeEngines = new WeakMap<TreeHandle, typeof methodsEngine>();',
+			'function _treeEngine(tree: TreeHandle): typeof methodsEngine {',
+			'  let engine = _treeEngines.get(tree);',
+			'  if (engine === undefined) {',
+			'    const project = (node: AnyNodeData) =>',
+			'      toTransportData(node, (level) => wrapNode(level, tree) as AnyNodeData);',
+			'    engine = {',
+			'      render: (node) => methodsEngine.render(project(node)),',
+			'      toEdit: (node, startOrRange, endPos) => methodsEngine.toEdit(project(node), startOrRange, endPos),',
+			'    };',
+			'    _treeEngines.set(tree, engine);',
+			'  }',
+			'  return engine;',
+			'}',
 			'// Drill-in helpers — call back through `readTreeNode` so the same',
 			'// per-handle dispatch + wrap pipeline runs at every level. Layering:',
 			'//   readTreeNode (public entry)',
@@ -1573,11 +1586,27 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'//         → drillIn → readTreeNode (recurse)',
 			...(usesDrillIn
 				? [
-						'function drillIn<T>(entry: T, tree: TreeHandle): T {',
+						'// Resolve a node that IS the value being returned — a supertype',
+						'// occurrence the reader collapsed to a text leaf stands in for its',
+						'// own member. An unexpanded stub reads one more level; anything',
+						'// else passes through untouched. It must NOT re-wrap: wrapping',
+						'// would dispatch straight back into the wrap function that called',
+						'// this, with the same data.',
+						'function drillInSelf<T>(entry: T, tree: TreeHandle): T {',
 						'  if (!entry) return undefined as unknown as T;',
 						'  const e = entry as unknown as _NodeData;',
 						'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;',
 						'  return entry;',
+						'}',
+						'// Resolve a CHILD position. Beyond the stub read, node data a deep',
+						'// read already expanded carries no coordinates to re-read by (and',
+						'// re-reading would replace the expansion with a shallow one), so the',
+						'// wrap layer adds its methods in place instead.',
+						'function drillIn<T>(entry: T, tree: TreeHandle): T {',
+						'  const resolved = drillInSelf(entry, tree);',
+						'  const e = resolved as unknown as _NodeData;',
+						'  if (resolved === entry && typeof e?.$type === "number") return wrapNode(e, tree) as unknown as T;',
+						'  return resolved;',
 						'}'
 					]
 				: []),

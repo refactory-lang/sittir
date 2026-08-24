@@ -14,6 +14,17 @@ function hasStructure(record: Record<string, unknown>): boolean {
 }
 
 /**
+ * Reshape one node's own storage into what the transport declares.
+ *
+ * The reader is grammar-agnostic: it spells an untagged named child by its
+ * kind (`_visibility_modifier_pub`, not the model's `_content`) and hands
+ * back a lone repeated child as a bare value rather than a one-element
+ * array. The per-kind wrap functions already reconcile both, so the
+ * projection routes every level that carries storage through them.
+ */
+export type NormalizeNodeStorage = (node: AnyNodeData) => AnyNodeData;
+
+/**
  * Project a node down to the plain data the native boundary accepts.
  *
  * The wrap surface carries accessor methods and `$with`; only data crosses
@@ -23,21 +34,26 @@ function hasStructure(record: Record<string, unknown>): boolean {
  * pre-edit spelling must not survive to be emitted instead.
  *
  * Unexpanded child stubs pass through as they are: carrying no storage,
- * they keep their `$text`, and the transport's slot carrier reproduces it
- * verbatim. That is what keeps an untouched subtree's original bytes while
- * its rebuilt siblings render canonically.
+ * they are left un-normalized (there is nothing to reshape) and keep their
+ * `$text`, which the transport's slot carrier reproduces verbatim. That is
+ * what keeps an untouched subtree's original bytes while its rebuilt
+ * siblings render canonically.
  */
-export function toTransportData(node: AnyNodeData): AnyNodeData {
-	return projectValue(node) as AnyNodeData;
+export function toTransportData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData {
+	return projectValue(node, normalize) as AnyNodeData;
 }
 
-function projectValue(value: unknown): unknown {
-	if (Array.isArray(value)) return value.map(projectValue);
+function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
+	if (Array.isArray(value)) return value.map((entry) => projectValue(entry, normalize));
 	if (!isRecord(value)) return value;
+	const source =
+		normalize !== undefined && hasStructure(value)
+			? (normalize(value as unknown as AnyNodeData) as unknown as Record<string, unknown>)
+			: value;
 	const out: Record<string, unknown> = {};
-	for (const [key, raw] of Object.entries(value)) {
+	for (const [key, raw] of Object.entries(source)) {
 		if (key === '$with' || typeof raw === 'function') continue;
-		out[key] = key.startsWith('_') || key === '$other' ? projectValue(raw) : raw;
+		out[key] = key.startsWith('_') || key === '$other' ? projectValue(raw, normalize) : raw;
 	}
 	if (hasStructure(out)) delete out.$text;
 	return out;

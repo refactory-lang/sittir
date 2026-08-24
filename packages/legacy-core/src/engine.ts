@@ -6,6 +6,7 @@ import type { FormatRecord } from '@sittir/types';
 
 export type {
 	EngineOptions,
+	ParseOptions,
 	ParseAndReadResult,
 	RenderHandle,
 	SittirEngineLike,

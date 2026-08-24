@@ -3,6 +3,7 @@
 export { resolveEngineFormat } from './engine.ts';
 export type {
 	EngineOptions,
+	ParseOptions,
 	ParseAndReadResult,
 	RenderHandle,
 	SittirEngineLike,

@@ -3,6 +3,7 @@ export type {
 	BackendStatusLike,
 	EngineDiagnostics,
 	EngineOptions,
+	ParseOptions,
 	GrammarEngineConfig,
 	JsBackendStatusLike,
 	NativeBackendStatusLike,

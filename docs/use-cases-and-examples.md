@@ -326,20 +326,30 @@ const tree = engine.parse(source);
 // engine.diagnostics.parseAndRead(source) exposes the raw `{ root, tree }` instead.
 ```
 
-### Lazy drill-in
+### Read depth
+
+Reading is lazy: `parse` expands one level, and a child with substructure is
+a stub the accessors expand on first access. `{ deep: true }` expands the
+whole tree up front instead — one crossing rather than one per level, at the
+cost of reading what you may never touch.
 
 ```ts
 import { createEngine } from '@sittir/rust';
 
 const engine = createEngine();
-const shallow = engine.parseAndRead(source, { depth: 1 });
-const fn = shallow.$children[0];
-// fn._name === 'greet'        (terminal-hoisted leaf: string)
-// fn._body.$nodeHandle === 42 (structured: drill in to expand)
-
-const body = engine.readNode(fn._body.$nodeHandle, fn._body.$childIndex);
-body.$children[0].$type === TSKindId.ExpressionStatement;
+const lazy = engine.parse(source);
+const eager = engine.parse(source, { deep: true });
 ```
+
+Depth also decides how much of the source survives a render. An unexpanded
+subtree comes back as its own captured bytes; an expanded one rebuilds from
+its template, in the canonical spelling. So `lazy.$render()` reproduces each
+top-level item verbatim, while `eager.$render()` re-spells everything — both
+re-parse to the same tree.
+
+`engine.diagnostics` exposes the same reads un-wrapped:
+`parseAndRead(source, { deep })` returns `{ root, tree }`, and
+`readNode(handle, childIndex)` expands one stub by its coordinates.
 
 ### Wrapped access
 
@@ -634,7 +644,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `snippets.*.from({})` — template fill with coercion
 - [ ] `template('...').fill({}).read()` / `.render()` — inline templates
 - [ ] Composition: `.read()` output as slot input for another template
-- [ ] `engine.parse()` with depth control, `$nodeHandle` / `$childIndex` drill-in
+- [x] `engine.parse()` with depth control, `$nodeHandle` / `$childIndex` drill-in
 - [ ] `engine.readNode(handle, childIndex)` for lazy expansion
 - [ ] `engine.findAndRead()` with pattern matching
 - [ ] `engine.applyEdits()` for source modification

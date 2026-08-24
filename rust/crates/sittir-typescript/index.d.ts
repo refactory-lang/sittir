@@ -39,8 +39,13 @@ export declare class SittirEngine {
    */
   get buildProfile(): string
   findAndRead(source: string, pattern: string): string
-  parseAndRead(source: string): string
-  readNode(handle: number, childIndex: number): string
+  /**
+   * `deep` expands the whole tree in one pass instead of leaving each
+   * child with substructure as a stub. Default (absent / `false`) is the
+   * lazy one-level read.
+   */
+  parseAndRead(source: string, deep?: boolean | undefined | null): string
+  readNode(handle: number, childIndex: number, deep?: boolean | undefined | null): string
   /** Render a typed transport object (napi-native, numeric `$type`). */
   render(transport: RenderRoot): string
   renderToFile(transport: RenderRoot, path: string): void
