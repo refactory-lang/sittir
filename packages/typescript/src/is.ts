@@ -327,9 +327,6 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementDefaultClauseFrom };
 	ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
-	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): v is Declaration;
@@ -576,9 +573,6 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultClauseFrom };
 	ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
-	PublicFieldDefinitionDeclareFirst(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): asserts v is Declaration;
@@ -632,23 +626,23 @@ const _supertype_expression_ids = new Set<number>([
 	276, 277, 278, 286, 275, 238, 240, 234, 246, 245, 244, 247, 233, 213
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	236, 235, 210, 105, 1, 445, 100, 101, 98, 249, 250, 252, 102, 103, 104, 214, 218, 224, 228, 226, 221, 253, 232, 270
+	236, 235, 210, 105, 1, 440, 100, 101, 98, 249, 250, 252, 102, 103, 104, 214, 218, 224, 228, 226, 221, 253, 232, 270
 ]);
 const _supertype_jsxChild_ids = new Set<number>([164]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 220]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_formalParameter_ids = new Set<number>([298, 299]);
-const _supertype_lhsExpression_ids = new Set<number>([235, 236, 105, 1, 445, 215, 219, 270]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([235, 236, 445, 1, 210, 270]);
+const _supertype_lhsExpression_ids = new Set<number>([235, 236, 105, 1, 440, 215, 219, 270]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([235, 236, 440, 1, 210, 270]);
 const _supertype_destructuringPattern_ids = new Set<number>([215, 219]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
-const _supertype_pattern_ids = new Set<number>([235, 236, 105, 1, 445, 215, 219, 270, 262]);
-const _supertype_propertyName_ids = new Set<number>([1, 445, 99, 249, 98, 267]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 445]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 445]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 445]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 445]);
+const _supertype_pattern_ids = new Set<number>([235, 236, 105, 1, 440, 215, 219, 270, 262]);
+const _supertype_propertyName_ids = new Set<number>([1, 440, 99, 249, 98, 267]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 440]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 440]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 440]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 440]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_type_ids = new Set<number>([353, 350, 315, 319, 305, 306]);
 const _supertype_tupleTypeMember_ids = new Set<number>([310, 311, 312, 313]);
@@ -902,6 +896,7 @@ const _kindIdByKind = new Map<string, number>([
 	['function_type', TSKindId.FunctionType],
 	['_kw_async_marker', TSKindId.KwAsyncMarker],
 	['_kw_static_marker', TSKindId.KwStaticMarker],
+	['_kw_declare_marker', TSKindId.KwDeclareMarker],
 	['_kw_abstract_marker', TSKindId.KwAbstractMarker],
 	['_kw_const_marker', TSKindId.KwConstMarker],
 	['_export_specifiers', TSKindId.ExportSpecifiers],
@@ -944,11 +939,6 @@ const _kindIdByKind = new Map<string, number>([
 	['_for_header_lhs', TSKindId.ForHeaderLhs],
 	['_for_header_var_kind', TSKindId.ForHeaderVarKind],
 	['_for_header_let_const_kind', TSKindId.ForHeaderLetConstKind],
-	['_public_field_definition_declare_first', TSKindId.PublicFieldDefinitionDeclareFirst],
-	['_public_field_definition_access_first', TSKindId.PublicFieldDefinitionAccessFirst],
-	['_public_field_definition_static_mods', TSKindId.PublicFieldDefinitionStaticMods],
-	['_public_field_definition_abstract_first', TSKindId.PublicFieldDefinitionAbstractFirst],
-	['_public_field_definition_readonly_first', TSKindId.PublicFieldDefinitionReadonlyFirst],
 	['_parenthesized_expression_typed', TSKindId.ParenthesizedExpressionTyped],
 	['_export_statement_type_export', TSKindId.ExportStatementTypeExport],
 	['_export_statement_equals_export', TSKindId.ExportStatementEqualsExport],
@@ -1135,7 +1125,6 @@ export const is = {
 	ExportStatementDefaultNsFrom: _g(TSKindId.ExportStatementDefaultNsFrom),
 	ExportStatementDefaultClauseFrom: _g(TSKindId.ExportStatementDefaultClauseFrom),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
-	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
 		const id = _kindIdByKind.get(k);
 		return id !== undefined && v.$type === id;
@@ -1383,10 +1372,6 @@ export const assert = {
 		is.ExportStatementDefaultClauseFrom as _AnyGuard
 	),
 	ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
-	PublicFieldDefinitionDeclareFirst: _makeAssert(
-		'PublicFieldDefinitionDeclareFirst',
-		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
-	),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
 	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),

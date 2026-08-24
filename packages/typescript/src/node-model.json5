@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 417,
+  "nodeCount": 413,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -142,16 +142,6 @@
         "class_body_method": "method",
         "class_body_method_sig": "method_sig",
         "class_body_member": "member"
-      }
-    },
-    "public_field_definition": {
-      "definedBy": "override",
-      "childKind": {
-        "public_field_definition_declare_first": "declare_first",
-        "public_field_definition_access_first": "access_first",
-        "public_field_definition_static_mods": "static_mods",
-        "public_field_definition_abstract_first": "abstract_first",
-        "public_field_definition_readonly_first": "readonly_first"
       }
     },
     "function_signature": {
@@ -2126,14 +2116,49 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "visibility_prefix": {
+      "declare_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "accessibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "static_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "readonly_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "abstract_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "accessor_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "override_modifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4087,65 +4112,6 @@
         "nonEmpty": false
       },
       "automatic_semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_public_field_definition_declare_first": {
-      "accessibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_public_field_definition_access_first": {
-      "accessibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "declare_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_public_field_definition_static_mods": {
-      "override_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "readonly_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_public_field_definition_abstract_first": {
-      "readonly_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_public_field_definition_readonly_first": {
-      "abstract_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -7714,6 +7680,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_kw_declare_marker",
+      "modelType": "keyword",
+      "typeName": "KwDeclareMarker",
+      "factoryName": "kwDeclareMarker",
+      "irKey": "kwDeclareMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"declare\" as const",
+      "text": "declare",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_kw_optional_marker",
       "modelType": "token",
       "typeName": "KwOptionalMarker",
@@ -8205,259 +8183,6 @@
         "number",
         "private_property_identifier",
         "string"
-      ]
-    },
-    {
-      "kind": "_public_field_definition_abstract_first",
-      "modelType": "group",
-      "typeName": "PublicFieldDefinitionAbstractFirst",
-      "factoryName": "_publicFieldDefinitionAbstractFirst",
-      "irKey": "publicFieldDefinitionAbstractFirst",
-      "hidden": false,
-      "isParameterless": true,
-      "name": "_public_field_definition_abstract_first",
-      "fields": [
-        {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "determinedSlots": [
-        {
-          "name": "abstract_marker",
-          "storageKey": "_abstract_marker",
-          "text": "abstract"
-        }
-      ]
-    },
-    {
-      "kind": "_public_field_definition_access_first",
-      "modelType": "group",
-      "typeName": "PublicFieldDefinitionAccessFirst",
-      "factoryName": "_publicFieldDefinitionAccessFirst",
-      "irKey": "publicFieldDefinitionAccessFirst",
-      "hidden": false,
-      "name": "_public_field_definition_access_first",
-      "fields": [
-        {
-          "name": "accessibility_modifier",
-          "propertyName": "accessibilityModifier",
-          "paramName": "accessibilityModifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "accessibility_modifier",
-              "parseKind": "accessibility_modifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "accessibility_modifier"
-            ]
-          }
-        },
-        {
-          "name": "declare_marker",
-          "propertyName": "declareMarker",
-          "paramName": "declareMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "declare",
-              "parseKind": "declare"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "accessibility_modifier"
-      ]
-    },
-    {
-      "kind": "_public_field_definition_declare_first",
-      "modelType": "branch",
-      "typeName": "PublicFieldDefinitionDeclareFirst",
-      "factoryName": "publicFieldDefinitionDeclareFirst",
-      "irKey": "publicFieldDefinitionDeclareFirst",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "accessibility_modifier",
-          "propertyName": "accessibilityModifier",
-          "paramName": "accessibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "accessibility_modifier",
-              "parseKind": "accessibility_modifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "accessibility_modifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "forwarded",
-      "forwardsTo": "accessibility_modifier",
-      "factoryFields": [
-        "accessibility_modifier"
-      ]
-    },
-    {
-      "kind": "_public_field_definition_readonly_first",
-      "modelType": "group",
-      "typeName": "PublicFieldDefinitionReadonlyFirst",
-      "factoryName": "_publicFieldDefinitionReadonlyFirst",
-      "irKey": "publicFieldDefinitionReadonlyFirst",
-      "hidden": false,
-      "isParameterless": true,
-      "name": "_public_field_definition_readonly_first",
-      "fields": [
-        {
-          "name": "abstract_marker",
-          "propertyName": "abstractMarker",
-          "paramName": "abstractMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_abstract_marker",
-              "parseKind": "_kw_abstract_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_abstract_marker"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "determinedSlots": [
-        {
-          "name": "readonly_marker",
-          "storageKey": "_readonly_marker",
-          "text": "readonly"
-        }
-      ]
-    },
-    {
-      "kind": "_public_field_definition_static_mods",
-      "modelType": "group",
-      "typeName": "PublicFieldDefinitionStaticMods",
-      "factoryName": "_publicFieldDefinitionStaticMods",
-      "irKey": "publicFieldDefinitionStaticMods",
-      "hidden": false,
-      "isParameterless": true,
-      "name": "_public_field_definition_static_mods",
-      "fields": [
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "parseKind": "override_modifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "override_modifier"
-            ]
-          }
-        },
-        {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "determinedSlots": [
-        {
-          "name": "static_marker",
-          "storageKey": "_static_marker",
-          "text": "static"
-        }
       ]
     },
     {
@@ -21006,9 +20731,9 @@
           }
         },
         {
-          "name": "visibility_prefix",
-          "propertyName": "visibilityPrefix",
-          "paramName": "visibilityPrefix",
+          "name": "declare_marker",
+          "propertyName": "declareMarker",
+          "paramName": "declareMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21016,30 +20741,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_public_field_definition_declare_first",
-              "parseKind": "public_field_definition_declare_first",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_public_field_definition_access_first",
-              "parseKind": "public_field_definition_access_first",
+              "name": "_kw_declare_marker",
+              "parseKind": "_kw_declare_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_public_field_definition_declare_first",
-              "_public_field_definition_access_first"
+              "_kw_declare_marker"
             ]
           }
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "accessibility_modifier",
+          "propertyName": "accessibilityModifier",
+          "paramName": "accessibilityModifier",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21047,24 +20764,95 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_public_field_definition_static_mods",
-              "parseKind": "public_field_definition_static_mods",
+              "name": "accessibility_modifier",
+              "parseKind": "accessibility_modifier",
               "unresolved": true
-            },
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "accessibility_modifier"
+            ]
+          }
+        },
+        {
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_public_field_definition_abstract_first",
-              "parseKind": "public_field_definition_abstract_first",
+              "name": "_kw_static_marker",
+              "parseKind": "_kw_static_marker",
               "unresolved": true
-            },
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_static_marker"
+            ]
+          }
+        },
+        {
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_public_field_definition_readonly_first",
-              "parseKind": "public_field_definition_readonly_first",
+              "name": "_kw_readonly_marker",
+              "parseKind": "_kw_readonly_marker",
               "unresolved": true
-            },
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_readonly_marker"
+            ]
+          }
+        },
+        {
+          "name": "abstract_marker",
+          "propertyName": "abstractMarker",
+          "paramName": "abstractMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_abstract_marker",
+              "parseKind": "_kw_abstract_marker",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_abstract_marker"
+            ]
+          }
+        },
+        {
+          "name": "accessor_marker",
+          "propertyName": "accessorMarker",
+          "paramName": "accessorMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "terminal",
               "multiplicity": "optional",
@@ -21074,10 +20862,29 @@
           ],
           "projection": {
             "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "override_modifier",
+          "propertyName": "overrideModifier",
+          "paramName": "overrideModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "parseKind": "override_modifier",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
             "kinds": [
-              "_public_field_definition_static_mods",
-              "_public_field_definition_abstract_first",
-              "_public_field_definition_readonly_first"
+              "override_modifier"
             ]
           }
         },
@@ -21181,8 +20988,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "visibility_prefix",
-        "content",
+        "accessibility_modifier",
         "name",
         "optionality_marker",
         "type",
@@ -21196,7 +21002,7 @@
           "literal": "?",
           "params": [
             "decorator",
-            "content",
+            "accessibility_modifier",
             "name",
             "type",
             "value"
@@ -21209,7 +21015,7 @@
           "literal": "!",
           "params": [
             "decorator",
-            "content",
+            "accessibility_modifier",
             "name",
             "type",
             "value"

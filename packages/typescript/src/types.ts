@@ -70,6 +70,7 @@ export type LeafStringMap = {
 	_kw_async_marker: 'async';
 	_kw_static_marker: 'static';
 	_kw_readonly_marker: 'readonly';
+	_kw_declare_marker: 'declare';
 	_kw_abstract_marker: 'abstract';
 	_kw_const_marker: 'const';
 	_kind: 'let' | 'const';
@@ -365,11 +366,6 @@ export const enum SyntaxKind {
 	ForHeaderLhs = '_for_header_lhs',
 	ForHeaderVarKind = '_for_header_var_kind',
 	ForHeaderLetConstKind = '_for_header_let_const_kind',
-	PublicFieldDefinitionDeclareFirst = '_public_field_definition_declare_first',
-	PublicFieldDefinitionAccessFirst = '_public_field_definition_access_first',
-	PublicFieldDefinitionStaticMods = '_public_field_definition_static_mods',
-	PublicFieldDefinitionAbstractFirst = '_public_field_definition_abstract_first',
-	PublicFieldDefinitionReadonlyFirst = '_public_field_definition_readonly_first',
 	ParenthesizedExpressionTyped = '_parenthesized_expression_typed',
 	ExportStatementTypeExport = '_export_statement_type_export',
 	ExportStatementEqualsExport = '_export_statement_equals_export',
@@ -412,6 +408,7 @@ export const enum SyntaxKind {
 	KwAsyncMarker = '_kw_async_marker',
 	KwStaticMarker = '_kw_static_marker',
 	KwReadonlyMarker = '_kw_readonly_marker',
+	KwDeclareMarker = '_kw_declare_marker',
 	KwAbstractMarker = '_kw_abstract_marker',
 	KwConstMarker = '_kw_const_marker',
 	MetaPropertyArm1 = '_meta_property_arm1',
@@ -841,7 +838,7 @@ export const enum TSKindId {
 	KwAsyncMarker = 355,
 	_KwUsingMarker = 356,
 	KwStaticMarker = 357,
-	_KwDeclareMarker = 358,
+	KwDeclareMarker = 358,
 	KwAbstractMarker = 359,
 	_KwAccessorMarker = 360,
 	KwConstMarker = 361,
@@ -885,55 +882,50 @@ export const enum TSKindId {
 	ForHeaderLhs = 399,
 	ForHeaderVarKind = 400,
 	ForHeaderLetConstKind = 401,
-	PublicFieldDefinitionDeclareFirst = 402,
-	PublicFieldDefinitionAccessFirst = 403,
-	PublicFieldDefinitionStaticMods = 404,
-	PublicFieldDefinitionAbstractFirst = 405,
-	PublicFieldDefinitionReadonlyFirst = 406,
-	ParenthesizedExpressionTyped = 407,
-	ExportStatementTypeExport = 408,
-	ExportStatementEqualsExport = 409,
-	ExportStatementNamespaceExport = 410,
-	CallExpressionCall = 411,
-	CallExpressionTemplateCall = 412,
-	CallExpressionMember = 413,
-	StringDouble = 414,
-	StringSingle = 415,
-	UpdateExpressionPostfix = 416,
-	UpdateExpressionPrefix = 417,
-	ProgramRepeat1 = 418,
-	VariableDeclarationRepeat1 = 419,
-	SwitchBodyRepeat1 = 420,
-	ObjectRepeat1 = 421,
-	ObjectPatternRepeat1 = 422,
-	ArrayRepeat1 = 423,
-	ArrayPatternRepeat1 = 424,
-	ClassRepeat1 = 425,
-	SequenceExpressionRepeat1 = 426,
-	TemplateStringRepeat1 = 427,
-	ClassBodyRepeat1 = 428,
-	ExtendsClauseRepeat1 = 429,
-	ImplementsClauseRepeat1 = 430,
-	ExtendsTypeClauseRepeat1 = 431,
-	TemplateLiteralTypeRepeat1 = 432,
-	_ExportSpecifiersRepeat1 = 433,
-	_ImportSpecifiersRepeat1 = 434,
-	_FormalParametersElementsRepeat1 = 435,
-	_EnumBodyElementsRepeat1 = 436,
-	_TypeParametersElementsRepeat1 = 437,
-	_TupleTypeMembersRepeat1 = 438,
-	ObjectTypeContentRepeat1 = 439,
-	_StringDoubleRepeat1 = 440,
-	_StringSingleRepeat1 = 441,
-	_InterfaceBody = 442,
-	_PropertyIdentifier = 444,
-	ReservedIdentifier = 445,
-	Semicolon = 446,
-	ShorthandPropertyIdentifier = 447,
-	ShorthandPropertyIdentifierPattern = 448,
-	StatementIdentifier = 449,
-	_ThisType = 450,
-	TypeIdentifier = 451
+	ParenthesizedExpressionTyped = 402,
+	ExportStatementTypeExport = 403,
+	ExportStatementEqualsExport = 404,
+	ExportStatementNamespaceExport = 405,
+	CallExpressionCall = 406,
+	CallExpressionTemplateCall = 407,
+	CallExpressionMember = 408,
+	StringDouble = 409,
+	StringSingle = 410,
+	UpdateExpressionPostfix = 411,
+	UpdateExpressionPrefix = 412,
+	ProgramRepeat1 = 413,
+	VariableDeclarationRepeat1 = 414,
+	SwitchBodyRepeat1 = 415,
+	ObjectRepeat1 = 416,
+	ObjectPatternRepeat1 = 417,
+	ArrayRepeat1 = 418,
+	ArrayPatternRepeat1 = 419,
+	ClassRepeat1 = 420,
+	SequenceExpressionRepeat1 = 421,
+	TemplateStringRepeat1 = 422,
+	ClassBodyRepeat1 = 423,
+	ExtendsClauseRepeat1 = 424,
+	ImplementsClauseRepeat1 = 425,
+	ExtendsTypeClauseRepeat1 = 426,
+	TemplateLiteralTypeRepeat1 = 427,
+	_ExportSpecifiersRepeat1 = 428,
+	_ImportSpecifiersRepeat1 = 429,
+	_FormalParametersElementsRepeat1 = 430,
+	_EnumBodyElementsRepeat1 = 431,
+	_TypeParametersElementsRepeat1 = 432,
+	_TupleTypeMembersRepeat1 = 433,
+	ObjectTypeContentRepeat1 = 434,
+	_StringDoubleRepeat1 = 435,
+	_StringSingleRepeat1 = 436,
+	_InterfaceBody = 437,
+	_PropertyIdentifier = 439,
+	ReservedIdentifier = 440,
+	Semicolon = 441,
+	ShorthandPropertyIdentifier = 442,
+	ShorthandPropertyIdentifierPattern = 443,
+	StatementIdentifier = 444,
+	_ThisType = 445,
+	TypeIdentifier = 446
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1174,7 +1166,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'member_expression'],
 	[236, 'subscript_expression'],
 	[237, '_lhs_expression'],
-	[443, '_lhs_expression'],
+	[438, '_lhs_expression'],
 	[238, 'assignment_expression'],
 	[239, '_augmented_assignment_lhs'],
 	[240, 'augmented_assignment_expression'],
@@ -1339,55 +1331,50 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, '_for_header_lhs'],
 	[400, '_for_header_var_kind'],
 	[401, '_for_header_let_const_kind'],
-	[402, '_public_field_definition_declare_first'],
-	[403, '_public_field_definition_access_first'],
-	[404, '_public_field_definition_static_mods'],
-	[405, '_public_field_definition_abstract_first'],
-	[406, '_public_field_definition_readonly_first'],
-	[407, '_parenthesized_expression_typed'],
-	[408, '_export_statement_type_export'],
-	[409, '_export_statement_equals_export'],
-	[410, '_export_statement_namespace_export'],
-	[411, '_call_expression_call'],
-	[412, '_call_expression_template_call'],
-	[413, '_call_expression_member'],
-	[414, '_string_double'],
-	[415, '_string_single'],
-	[416, '_update_expression_postfix'],
-	[417, '_update_expression_prefix'],
-	[418, 'program_repeat1'],
-	[419, 'variable_declaration_repeat1'],
-	[420, 'switch_body_repeat1'],
-	[421, 'object_repeat1'],
-	[422, 'object_pattern_repeat1'],
-	[423, 'array_repeat1'],
-	[424, 'array_pattern_repeat1'],
-	[425, 'class_repeat1'],
-	[426, 'sequence_expression_repeat1'],
-	[427, 'template_string_repeat1'],
-	[428, 'class_body_repeat1'],
-	[429, 'extends_clause_repeat1'],
-	[430, 'implements_clause_repeat1'],
-	[431, 'extends_type_clause_repeat1'],
-	[432, 'template_literal_type_repeat1'],
-	[433, '_export_specifiers_repeat1'],
-	[434, '_import_specifiers_repeat1'],
-	[435, '_formal_parameters_elements_repeat1'],
-	[436, '_enum_body_elements_repeat1'],
-	[437, '_type_parameters_elements_repeat1'],
-	[438, '_tuple_type_members_repeat1'],
-	[439, 'object_type_content_repeat1'],
-	[440, '_string_double_repeat1'],
-	[441, '_string_single_repeat1'],
-	[442, '_interface_body'],
-	[444, '_property_identifier'],
-	[445, '_reserved_identifier'],
-	[446, '_semicolon'],
-	[447, '_shorthand_property_identifier'],
-	[448, '_shorthand_property_identifier_pattern'],
-	[449, '_statement_identifier'],
-	[450, '_this_type'],
-	[451, '_type_identifier']
+	[402, '_parenthesized_expression_typed'],
+	[403, '_export_statement_type_export'],
+	[404, '_export_statement_equals_export'],
+	[405, '_export_statement_namespace_export'],
+	[406, '_call_expression_call'],
+	[407, '_call_expression_template_call'],
+	[408, '_call_expression_member'],
+	[409, '_string_double'],
+	[410, '_string_single'],
+	[411, '_update_expression_postfix'],
+	[412, '_update_expression_prefix'],
+	[413, 'program_repeat1'],
+	[414, 'variable_declaration_repeat1'],
+	[415, 'switch_body_repeat1'],
+	[416, 'object_repeat1'],
+	[417, 'object_pattern_repeat1'],
+	[418, 'array_repeat1'],
+	[419, 'array_pattern_repeat1'],
+	[420, 'class_repeat1'],
+	[421, 'sequence_expression_repeat1'],
+	[422, 'template_string_repeat1'],
+	[423, 'class_body_repeat1'],
+	[424, 'extends_clause_repeat1'],
+	[425, 'implements_clause_repeat1'],
+	[426, 'extends_type_clause_repeat1'],
+	[427, 'template_literal_type_repeat1'],
+	[428, '_export_specifiers_repeat1'],
+	[429, '_import_specifiers_repeat1'],
+	[430, '_formal_parameters_elements_repeat1'],
+	[431, '_enum_body_elements_repeat1'],
+	[432, '_type_parameters_elements_repeat1'],
+	[433, '_tuple_type_members_repeat1'],
+	[434, 'object_type_content_repeat1'],
+	[435, '_string_double_repeat1'],
+	[436, '_string_single_repeat1'],
+	[437, '_interface_body'],
+	[439, '_property_identifier'],
+	[440, '_reserved_identifier'],
+	[441, '_semicolon'],
+	[442, '_shorthand_property_identifier'],
+	[443, '_shorthand_property_identifier_pattern'],
+	[444, '_statement_identifier'],
+	[445, '_this_type'],
+	[446, '_type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1629,7 +1616,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'member_expression'],
 	[236, 'subscript_expression'],
 	[237, 'lhs_expression'],
-	[443, 'lhs_expression'],
+	[438, 'lhs_expression'],
 	[238, 'assignment_expression'],
 	[239, '_augmented_assignment_lhs'],
 	[240, 'augmented_assignment_expression'],
@@ -1794,55 +1781,50 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, 'for_header_lhs'],
 	[400, 'for_header_var_kind'],
 	[401, 'for_header_let_const_kind'],
-	[402, 'public_field_definition_declare_first'],
-	[403, 'public_field_definition_access_first'],
-	[404, 'public_field_definition_static_mods'],
-	[405, 'public_field_definition_abstract_first'],
-	[406, 'public_field_definition_readonly_first'],
-	[407, 'parenthesized_expression_typed'],
-	[408, 'export_statement_type_export'],
-	[409, 'export_statement_equals_export'],
-	[410, 'export_statement_namespace_export'],
-	[411, 'call_expression_call'],
-	[412, 'call_expression_template_call'],
-	[413, 'call_expression_member'],
-	[414, 'string_double'],
-	[415, 'string_single'],
-	[416, 'update_expression_postfix'],
-	[417, 'update_expression_prefix'],
-	[418, 'program_repeat1'],
-	[419, 'variable_declaration_repeat1'],
-	[420, 'switch_body_repeat1'],
-	[421, 'object_repeat1'],
-	[422, 'object_pattern_repeat1'],
-	[423, 'array_repeat1'],
-	[424, 'array_pattern_repeat1'],
-	[425, 'class_repeat1'],
-	[426, 'sequence_expression_repeat1'],
-	[427, 'template_string_repeat1'],
-	[428, 'class_body_repeat1'],
-	[429, 'extends_clause_repeat1'],
-	[430, 'implements_clause_repeat1'],
-	[431, 'extends_type_clause_repeat1'],
-	[432, 'template_literal_type_repeat1'],
-	[433, '_export_specifiers_repeat1'],
-	[434, '_import_specifiers_repeat1'],
-	[435, '_formal_parameters_elements_repeat1'],
-	[436, '_enum_body_elements_repeat1'],
-	[437, '_type_parameters_elements_repeat1'],
-	[438, '_tuple_type_members_repeat1'],
-	[439, 'object_type_content_repeat1'],
-	[440, '_string_double_repeat1'],
-	[441, '_string_single_repeat1'],
-	[442, 'interface_body'],
-	[444, 'property_identifier'],
-	[445, 'reserved_identifier'],
-	[446, 'semicolon'],
-	[447, 'shorthand_property_identifier'],
-	[448, 'shorthand_property_identifier_pattern'],
-	[449, 'statement_identifier'],
-	[450, 'this_type'],
-	[451, 'type_identifier']
+	[402, 'parenthesized_expression_typed'],
+	[403, 'export_statement_type_export'],
+	[404, 'export_statement_equals_export'],
+	[405, 'export_statement_namespace_export'],
+	[406, 'call_expression_call'],
+	[407, 'call_expression_template_call'],
+	[408, 'call_expression_member'],
+	[409, 'string_double'],
+	[410, 'string_single'],
+	[411, 'update_expression_postfix'],
+	[412, 'update_expression_prefix'],
+	[413, 'program_repeat1'],
+	[414, 'variable_declaration_repeat1'],
+	[415, 'switch_body_repeat1'],
+	[416, 'object_repeat1'],
+	[417, 'object_pattern_repeat1'],
+	[418, 'array_repeat1'],
+	[419, 'array_pattern_repeat1'],
+	[420, 'class_repeat1'],
+	[421, 'sequence_expression_repeat1'],
+	[422, 'template_string_repeat1'],
+	[423, 'class_body_repeat1'],
+	[424, 'extends_clause_repeat1'],
+	[425, 'implements_clause_repeat1'],
+	[426, 'extends_type_clause_repeat1'],
+	[427, 'template_literal_type_repeat1'],
+	[428, '_export_specifiers_repeat1'],
+	[429, '_import_specifiers_repeat1'],
+	[430, '_formal_parameters_elements_repeat1'],
+	[431, '_enum_body_elements_repeat1'],
+	[432, '_type_parameters_elements_repeat1'],
+	[433, '_tuple_type_members_repeat1'],
+	[434, 'object_type_content_repeat1'],
+	[435, '_string_double_repeat1'],
+	[436, '_string_single_repeat1'],
+	[437, 'interface_body'],
+	[439, 'property_identifier'],
+	[440, 'reserved_identifier'],
+	[441, 'semicolon'],
+	[442, 'shorthand_property_identifier'],
+	[443, 'shorthand_property_identifier_pattern'],
+	[444, 'statement_identifier'],
+	[445, 'this_type'],
+	[446, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2568,7 +2550,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_kw_static_marker':
 			return TSKindId.KwStaticMarker;
 		case '_kw_declare_marker':
-			return TSKindId._KwDeclareMarker;
+			return TSKindId.KwDeclareMarker;
 		case '_kw_abstract_marker':
 			return TSKindId.KwAbstractMarker;
 		case '_kw_accessor_marker':
@@ -2655,16 +2637,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ForHeaderVarKind;
 		case '_for_header_let_const_kind':
 			return TSKindId.ForHeaderLetConstKind;
-		case '_public_field_definition_declare_first':
-			return TSKindId.PublicFieldDefinitionDeclareFirst;
-		case '_public_field_definition_access_first':
-			return TSKindId.PublicFieldDefinitionAccessFirst;
-		case '_public_field_definition_static_mods':
-			return TSKindId.PublicFieldDefinitionStaticMods;
-		case '_public_field_definition_abstract_first':
-			return TSKindId.PublicFieldDefinitionAbstractFirst;
-		case '_public_field_definition_readonly_first':
-			return TSKindId.PublicFieldDefinitionReadonlyFirst;
 		case '_parenthesized_expression_typed':
 			return TSKindId.ParenthesizedExpressionTyped;
 		case '_export_statement_type_export':
@@ -2973,16 +2945,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ForHeaderVarKind;
 		case 'for_header_let_const_kind':
 			return TSKindId.ForHeaderLetConstKind;
-		case 'public_field_definition_declare_first':
-			return TSKindId.PublicFieldDefinitionDeclareFirst;
-		case 'public_field_definition_access_first':
-			return TSKindId.PublicFieldDefinitionAccessFirst;
-		case 'public_field_definition_static_mods':
-			return TSKindId.PublicFieldDefinitionStaticMods;
-		case 'public_field_definition_abstract_first':
-			return TSKindId.PublicFieldDefinitionAbstractFirst;
-		case 'public_field_definition_readonly_first':
-			return TSKindId.PublicFieldDefinitionReadonlyFirst;
 		case 'parenthesized_expression_typed':
 			return TSKindId.ParenthesizedExpressionTyped;
 		case 'export_statement_type_export':
@@ -4342,27 +4304,38 @@ export interface ComputedPropertyName {
 export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
 	readonly _decorator?: readonly Decorator[];
-	readonly _visibility_prefix?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
-	readonly _content?:
-		| PublicFieldDefinitionStaticMods
-		| PublicFieldDefinitionAbstractFirst
-		| PublicFieldDefinitionReadonlyFirst
-		| 'accessor';
+	readonly _declare_marker?: boolean;
+	readonly _accessibility_modifier?: number;
+	readonly _static_marker?: boolean;
+	readonly _readonly_marker?: boolean;
+	readonly _abstract_marker?: boolean;
+	readonly _accessor_marker?: boolean;
+	readonly _override_modifier?: boolean;
 	readonly _name: PropertyName;
 	readonly _optionality_marker?: number;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
+		readonly declare_marker?: BooleanKeyword<'declare'>;
+		readonly accessibility_modifier?: KindEnum<
+			'public' | 'private' | 'protected',
+			TSKindId.Public | TSKindId.Private | TSKindId.Protected
+		>;
+		readonly static_marker?: BooleanKeyword<'static'>;
+		readonly readonly_marker?: BooleanKeyword<'readonly'>;
+		readonly abstract_marker?: BooleanKeyword<'abstract'>;
+		readonly accessor_marker?: BooleanKeyword<'accessor'>;
+		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly optionality_marker?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 	};
 	decorators(): readonly Decorator[];
-	visibilityPrefix(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
-	content():
-		| PublicFieldDefinitionStaticMods
-		| PublicFieldDefinitionAbstractFirst
-		| PublicFieldDefinitionReadonlyFirst
-		| 'accessor'
-		| undefined;
+	declareMarker(): boolean | undefined;
+	accessibilityModifier(): number | undefined;
+	staticMarker(): boolean | undefined;
+	readonlyMarker(): boolean | undefined;
+	abstractMarker(): boolean | undefined;
+	accessorMarker(): boolean | undefined;
+	overrideModifier(): boolean | undefined;
 	name(): PropertyName;
 	optionalityMarker(): number | undefined;
 	type(): TypeAnnotation | undefined;
@@ -5521,63 +5494,6 @@ export interface ForHeaderLetConstKind {
 	automaticSemicolon(): boolean | undefined;
 }
 
-export interface PublicFieldDefinitionDeclareFirst {
-	readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst;
-	readonly _accessibility_modifier?: number;
-	readonly __inputHints__?: {
-		readonly accessibility_modifier?: KindEnum<
-			'public' | 'private' | 'protected',
-			TSKindId.Public | TSKindId.Private | TSKindId.Protected
-		>;
-	};
-	accessibilityModifier(): number | undefined;
-}
-
-export interface PublicFieldDefinitionAccessFirst {
-	readonly $type: TSKindId.PublicFieldDefinitionAccessFirst;
-	readonly _accessibility_modifier: number;
-	readonly _declare_marker?: boolean;
-	readonly __inputHints__?: {
-		readonly accessibility_modifier: KindEnum<
-			'public' | 'private' | 'protected',
-			TSKindId.Public | TSKindId.Private | TSKindId.Protected
-		>;
-		readonly declare_marker?: BooleanKeyword<'declare'>;
-	};
-	accessibilityModifier(): number;
-	declareMarker(): boolean | undefined;
-}
-
-export interface PublicFieldDefinitionStaticMods {
-	readonly $type: TSKindId.PublicFieldDefinitionStaticMods;
-	readonly _override_modifier?: boolean;
-	readonly _readonly_marker?: boolean;
-	readonly __inputHints__?: {
-		readonly override_modifier?: BooleanKeyword<'override'>;
-		readonly readonly_marker?: BooleanKeyword<'readonly'>;
-	};
-	overrideModifier(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
-}
-
-export interface PublicFieldDefinitionAbstractFirst {
-	readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
-	readonly _readonly_marker?: boolean;
-	readonly __inputHints__?: {
-		readonly readonly_marker?: BooleanKeyword<'readonly'>;
-	};
-	readonlyMarker(): boolean | undefined;
-}
-
-export interface PublicFieldDefinitionReadonlyFirst {
-	readonly $type: TSKindId.PublicFieldDefinitionReadonlyFirst;
-	readonly _abstract_marker?: boolean;
-	readonly __inputHints__?: {
-		readonly abstract_marker?: BooleanKeyword<'abstract'>;
-	};
-	abstractMarker(): boolean | undefined;
-}
-
 export interface ParenthesizedExpressionTyped {
 	readonly $type: TSKindId.ParenthesizedExpressionTyped;
 	readonly _expression: Expression;
@@ -6170,21 +6086,6 @@ export interface ForHeaderVarKindTree extends AnyTreeNode {
 }
 export interface ForHeaderLetConstKindTree extends AnyTreeNode {
 	readonly type: '_for_header_let_const_kind';
-}
-export interface PublicFieldDefinitionDeclareFirstTree extends AnyTreeNode {
-	readonly type: '_public_field_definition_declare_first';
-}
-export interface PublicFieldDefinitionAccessFirstTree extends AnyTreeNode {
-	readonly type: '_public_field_definition_access_first';
-}
-export interface PublicFieldDefinitionStaticModsTree extends AnyTreeNode {
-	readonly type: '_public_field_definition_static_mods';
-}
-export interface PublicFieldDefinitionAbstractFirstTree extends AnyTreeNode {
-	readonly type: '_public_field_definition_abstract_first';
-}
-export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode {
-	readonly type: '_public_field_definition_readonly_first';
 }
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode {
 	readonly type: '_parenthesized_expression_typed';
@@ -7120,11 +7021,6 @@ export type TypescriptNode =
 	| ForHeaderLhs
 	| ForHeaderVarKind
 	| ForHeaderLetConstKind
-	| PublicFieldDefinitionDeclareFirst
-	| PublicFieldDefinitionAccessFirst
-	| PublicFieldDefinitionStaticMods
-	| PublicFieldDefinitionAbstractFirst
-	| PublicFieldDefinitionReadonlyFirst
 	| ParenthesizedExpressionTyped
 	| ExportStatementTypeExport
 	| ExportStatementEqualsExport
@@ -7355,11 +7251,6 @@ export interface KindMap {
 	_for_header_lhs: ForHeaderLhs;
 	_for_header_var_kind: ForHeaderVarKind;
 	_for_header_let_const_kind: ForHeaderLetConstKind;
-	_public_field_definition_declare_first: PublicFieldDefinitionDeclareFirst;
-	_public_field_definition_access_first: PublicFieldDefinitionAccessFirst;
-	_public_field_definition_static_mods: PublicFieldDefinitionStaticMods;
-	_public_field_definition_abstract_first: PublicFieldDefinitionAbstractFirst;
-	_public_field_definition_readonly_first: PublicFieldDefinitionReadonlyFirst;
 	_parenthesized_expression_typed: ParenthesizedExpressionTyped;
 	_export_statement_type_export: ExportStatementTypeExport;
 	_export_statement_equals_export: ExportStatementEqualsExport;
@@ -7947,36 +7838,6 @@ export interface ForHeaderLetConstKindNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface PublicFieldDefinitionDeclareFirstNs extends NodeNs<
-	PublicFieldDefinitionDeclareFirst,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PublicFieldDefinitionAccessFirstNs extends NodeNs<
-	PublicFieldDefinitionAccessFirst,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PublicFieldDefinitionStaticModsNs extends NodeNs<
-	PublicFieldDefinitionStaticMods,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PublicFieldDefinitionAbstractFirstNs extends NodeNs<
-	PublicFieldDefinitionAbstractFirst,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PublicFieldDefinitionReadonlyFirstNs extends NodeNs<
-	PublicFieldDefinitionReadonlyFirst,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	ParenthesizedExpressionTyped,
 	LeafScalarMap,
@@ -8252,11 +8113,6 @@ export interface NamespaceMap {
 	_for_header_lhs: ForHeaderLhsNs;
 	_for_header_var_kind: ForHeaderVarKindNs;
 	_for_header_let_const_kind: ForHeaderLetConstKindNs;
-	_public_field_definition_declare_first: PublicFieldDefinitionDeclareFirstNs;
-	_public_field_definition_access_first: PublicFieldDefinitionAccessFirstNs;
-	_public_field_definition_static_mods: PublicFieldDefinitionStaticModsNs;
-	_public_field_definition_abstract_first: PublicFieldDefinitionAbstractFirstNs;
-	_public_field_definition_readonly_first: PublicFieldDefinitionReadonlyFirstNs;
 	_parenthesized_expression_typed: ParenthesizedExpressionTypedNs;
 	_export_statement_type_export: ExportStatementTypeExportNs;
 	_export_statement_equals_export: ExportStatementEqualsExportNs;
@@ -9798,41 +9654,6 @@ export namespace ForHeaderLetConstKind {
 	export type Loose = LooseFor<'_for_header_let_const_kind'>;
 	export type Tree = TreeFor<'_for_header_let_const_kind'>;
 	export type Kind = '_for_header_let_const_kind';
-}
-export namespace PublicFieldDefinitionDeclareFirst {
-	export type Config = ConfigFor<'_public_field_definition_declare_first'>;
-	export type Fluent = FluentFor<'_public_field_definition_declare_first'>;
-	export type Loose = LooseFor<'_public_field_definition_declare_first'>;
-	export type Tree = TreeFor<'_public_field_definition_declare_first'>;
-	export type Kind = '_public_field_definition_declare_first';
-}
-export namespace PublicFieldDefinitionAccessFirst {
-	export type Config = ConfigFor<'_public_field_definition_access_first'>;
-	export type Fluent = FluentFor<'_public_field_definition_access_first'>;
-	export type Loose = LooseFor<'_public_field_definition_access_first'>;
-	export type Tree = TreeFor<'_public_field_definition_access_first'>;
-	export type Kind = '_public_field_definition_access_first';
-}
-export namespace PublicFieldDefinitionStaticMods {
-	export type Config = ConfigFor<'_public_field_definition_static_mods'>;
-	export type Fluent = FluentFor<'_public_field_definition_static_mods'>;
-	export type Loose = LooseFor<'_public_field_definition_static_mods'>;
-	export type Tree = TreeFor<'_public_field_definition_static_mods'>;
-	export type Kind = '_public_field_definition_static_mods';
-}
-export namespace PublicFieldDefinitionAbstractFirst {
-	export type Config = ConfigFor<'_public_field_definition_abstract_first'>;
-	export type Fluent = FluentFor<'_public_field_definition_abstract_first'>;
-	export type Loose = LooseFor<'_public_field_definition_abstract_first'>;
-	export type Tree = TreeFor<'_public_field_definition_abstract_first'>;
-	export type Kind = '_public_field_definition_abstract_first';
-}
-export namespace PublicFieldDefinitionReadonlyFirst {
-	export type Config = ConfigFor<'_public_field_definition_readonly_first'>;
-	export type Fluent = FluentFor<'_public_field_definition_readonly_first'>;
-	export type Loose = LooseFor<'_public_field_definition_readonly_first'>;
-	export type Tree = TreeFor<'_public_field_definition_readonly_first'>;
-	export type Kind = '_public_field_definition_readonly_first';
 }
 export namespace ParenthesizedExpressionTyped {
 	export type Config = ConfigFor<'_parenthesized_expression_typed'>;

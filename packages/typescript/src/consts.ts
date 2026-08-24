@@ -18,7 +18,6 @@ export const NODE_KINDS = [
 	'_import_statement_arm',
 	'_jsx_start_opening_element',
 	'_jsx_string',
-	'_public_field_definition_declare_first',
 	'_tuple_type_members',
 	'_type_parameters_elements',
 	'_types',
@@ -194,6 +193,7 @@ export const LEAF_KINDS = [
 	'_kw_abstract_marker',
 	'_kw_async_marker',
 	'_kw_const_marker',
+	'_kw_declare_marker',
 	'_kw_readonly_marker',
 	'_kw_static_marker',
 	'_meta_property_arm1',
@@ -295,6 +295,7 @@ export const KEYWORDS = [
 	'_kw_abstract_marker',
 	'_kw_async_marker',
 	'_kw_const_marker',
+	'_kw_declare_marker',
 	'_kw_readonly_marker',
 	'_kw_static_marker',
 	'abstract',
@@ -830,55 +831,50 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_for_header_lhs: 399,
 	_for_header_var_kind: 400,
 	_for_header_let_const_kind: 401,
-	_public_field_definition_declare_first: 402,
-	_public_field_definition_access_first: 403,
-	_public_field_definition_static_mods: 404,
-	_public_field_definition_abstract_first: 405,
-	_public_field_definition_readonly_first: 406,
-	_parenthesized_expression_typed: 407,
-	_export_statement_type_export: 408,
-	_export_statement_equals_export: 409,
-	_export_statement_namespace_export: 410,
-	_call_expression_call: 411,
-	_call_expression_template_call: 412,
-	_call_expression_member: 413,
-	_string_double: 414,
-	_string_single: 415,
-	_update_expression_postfix: 416,
-	_update_expression_prefix: 417,
-	program_repeat1: 418,
-	variable_declaration_repeat1: 419,
-	switch_body_repeat1: 420,
-	object_repeat1: 421,
-	object_pattern_repeat1: 422,
-	array_repeat1: 423,
-	array_pattern_repeat1: 424,
-	class_repeat1: 425,
-	sequence_expression_repeat1: 426,
-	template_string_repeat1: 427,
-	class_body_repeat1: 428,
-	extends_clause_repeat1: 429,
-	implements_clause_repeat1: 430,
-	extends_type_clause_repeat1: 431,
-	template_literal_type_repeat1: 432,
-	_export_specifiers_repeat1: 433,
-	_import_specifiers_repeat1: 434,
-	_formal_parameters_elements_repeat1: 435,
-	_enum_body_elements_repeat1: 436,
-	_type_parameters_elements_repeat1: 437,
-	_tuple_type_members_repeat1: 438,
-	object_type_content_repeat1: 439,
-	_string_double_repeat1: 440,
-	_string_single_repeat1: 441,
-	_interface_body: 442,
-	_property_identifier: 444,
-	_reserved_identifier: 445,
-	_semicolon: 446,
-	_shorthand_property_identifier: 447,
-	_shorthand_property_identifier_pattern: 448,
-	_statement_identifier: 449,
-	_this_type: 450,
-	_type_identifier: 451
+	_parenthesized_expression_typed: 402,
+	_export_statement_type_export: 403,
+	_export_statement_equals_export: 404,
+	_export_statement_namespace_export: 405,
+	_call_expression_call: 406,
+	_call_expression_template_call: 407,
+	_call_expression_member: 408,
+	_string_double: 409,
+	_string_single: 410,
+	_update_expression_postfix: 411,
+	_update_expression_prefix: 412,
+	program_repeat1: 413,
+	variable_declaration_repeat1: 414,
+	switch_body_repeat1: 415,
+	object_repeat1: 416,
+	object_pattern_repeat1: 417,
+	array_repeat1: 418,
+	array_pattern_repeat1: 419,
+	class_repeat1: 420,
+	sequence_expression_repeat1: 421,
+	template_string_repeat1: 422,
+	class_body_repeat1: 423,
+	extends_clause_repeat1: 424,
+	implements_clause_repeat1: 425,
+	extends_type_clause_repeat1: 426,
+	template_literal_type_repeat1: 427,
+	_export_specifiers_repeat1: 428,
+	_import_specifiers_repeat1: 429,
+	_formal_parameters_elements_repeat1: 430,
+	_enum_body_elements_repeat1: 431,
+	_type_parameters_elements_repeat1: 432,
+	_tuple_type_members_repeat1: 433,
+	object_type_content_repeat1: 434,
+	_string_double_repeat1: 435,
+	_string_single_repeat1: 436,
+	_interface_body: 437,
+	_property_identifier: 439,
+	_reserved_identifier: 440,
+	_semicolon: 441,
+	_shorthand_property_identifier: 442,
+	_shorthand_property_identifier_pattern: 443,
+	_statement_identifier: 444,
+	_this_type: 445,
+	_type_identifier: 446
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -1283,55 +1279,50 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[399]: '_for_header_lhs',
 	[400]: '_for_header_var_kind',
 	[401]: '_for_header_let_const_kind',
-	[402]: '_public_field_definition_declare_first',
-	[403]: '_public_field_definition_access_first',
-	[404]: '_public_field_definition_static_mods',
-	[405]: '_public_field_definition_abstract_first',
-	[406]: '_public_field_definition_readonly_first',
-	[407]: '_parenthesized_expression_typed',
-	[408]: '_export_statement_type_export',
-	[409]: '_export_statement_equals_export',
-	[410]: '_export_statement_namespace_export',
-	[411]: '_call_expression_call',
-	[412]: '_call_expression_template_call',
-	[413]: '_call_expression_member',
-	[414]: '_string_double',
-	[415]: '_string_single',
-	[416]: '_update_expression_postfix',
-	[417]: '_update_expression_prefix',
-	[418]: 'program_repeat1',
-	[419]: 'variable_declaration_repeat1',
-	[420]: 'switch_body_repeat1',
-	[421]: 'object_repeat1',
-	[422]: 'object_pattern_repeat1',
-	[423]: 'array_repeat1',
-	[424]: 'array_pattern_repeat1',
-	[425]: 'class_repeat1',
-	[426]: 'sequence_expression_repeat1',
-	[427]: 'template_string_repeat1',
-	[428]: 'class_body_repeat1',
-	[429]: 'extends_clause_repeat1',
-	[430]: 'implements_clause_repeat1',
-	[431]: 'extends_type_clause_repeat1',
-	[432]: 'template_literal_type_repeat1',
-	[433]: '_export_specifiers_repeat1',
-	[434]: '_import_specifiers_repeat1',
-	[435]: '_formal_parameters_elements_repeat1',
-	[436]: '_enum_body_elements_repeat1',
-	[437]: '_type_parameters_elements_repeat1',
-	[438]: '_tuple_type_members_repeat1',
-	[439]: 'object_type_content_repeat1',
-	[440]: '_string_double_repeat1',
-	[441]: '_string_single_repeat1',
-	[442]: '_interface_body',
-	[444]: '_property_identifier',
-	[445]: '_reserved_identifier',
-	[446]: '_semicolon',
-	[447]: '_shorthand_property_identifier',
-	[448]: '_shorthand_property_identifier_pattern',
-	[449]: '_statement_identifier',
-	[450]: '_this_type',
-	[451]: '_type_identifier'
+	[402]: '_parenthesized_expression_typed',
+	[403]: '_export_statement_type_export',
+	[404]: '_export_statement_equals_export',
+	[405]: '_export_statement_namespace_export',
+	[406]: '_call_expression_call',
+	[407]: '_call_expression_template_call',
+	[408]: '_call_expression_member',
+	[409]: '_string_double',
+	[410]: '_string_single',
+	[411]: '_update_expression_postfix',
+	[412]: '_update_expression_prefix',
+	[413]: 'program_repeat1',
+	[414]: 'variable_declaration_repeat1',
+	[415]: 'switch_body_repeat1',
+	[416]: 'object_repeat1',
+	[417]: 'object_pattern_repeat1',
+	[418]: 'array_repeat1',
+	[419]: 'array_pattern_repeat1',
+	[420]: 'class_repeat1',
+	[421]: 'sequence_expression_repeat1',
+	[422]: 'template_string_repeat1',
+	[423]: 'class_body_repeat1',
+	[424]: 'extends_clause_repeat1',
+	[425]: 'implements_clause_repeat1',
+	[426]: 'extends_type_clause_repeat1',
+	[427]: 'template_literal_type_repeat1',
+	[428]: '_export_specifiers_repeat1',
+	[429]: '_import_specifiers_repeat1',
+	[430]: '_formal_parameters_elements_repeat1',
+	[431]: '_enum_body_elements_repeat1',
+	[432]: '_type_parameters_elements_repeat1',
+	[433]: '_tuple_type_members_repeat1',
+	[434]: 'object_type_content_repeat1',
+	[435]: '_string_double_repeat1',
+	[436]: '_string_single_repeat1',
+	[437]: '_interface_body',
+	[439]: '_property_identifier',
+	[440]: '_reserved_identifier',
+	[441]: '_semicolon',
+	[442]: '_shorthand_property_identifier',
+	[443]: '_shorthand_property_identifier_pattern',
+	[444]: '_statement_identifier',
+	[445]: '_this_type',
+	[446]: '_type_identifier'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1952,235 +1943,206 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym__for_header_let_const_kind'
 	},
 	{
-		name: '_public_field_definition_declare_first',
-		id: 402,
-		enumName: 'PublicFieldDefinitionDeclareFirst',
-		cName: 'sym__public_field_definition_declare_first'
-	},
-	{
-		name: '_public_field_definition_access_first',
-		id: 403,
-		enumName: 'PublicFieldDefinitionAccessFirst',
-		cName: 'sym__public_field_definition_access_first'
-	},
-	{
-		name: '_public_field_definition_static_mods',
-		id: 404,
-		enumName: 'PublicFieldDefinitionStaticMods',
-		cName: 'sym__public_field_definition_static_mods'
-	},
-	{
-		name: '_public_field_definition_abstract_first',
-		id: 405,
-		enumName: 'PublicFieldDefinitionAbstractFirst',
-		cName: 'sym__public_field_definition_abstract_first'
-	},
-	{
-		name: '_public_field_definition_readonly_first',
-		id: 406,
-		enumName: 'PublicFieldDefinitionReadonlyFirst',
-		cName: 'sym__public_field_definition_readonly_first'
-	},
-	{
 		name: '_parenthesized_expression_typed',
-		id: 407,
+		id: 402,
 		enumName: 'ParenthesizedExpressionTyped',
 		cName: 'sym__parenthesized_expression_typed'
 	},
 	{
 		name: '_export_statement_type_export',
-		id: 408,
+		id: 403,
 		enumName: 'ExportStatementTypeExport',
 		cName: 'sym__export_statement_type_export'
 	},
 	{
 		name: '_export_statement_equals_export',
-		id: 409,
+		id: 404,
 		enumName: 'ExportStatementEqualsExport',
 		cName: 'sym__export_statement_equals_export'
 	},
 	{
 		name: '_export_statement_namespace_export',
-		id: 410,
+		id: 405,
 		enumName: 'ExportStatementNamespaceExport',
 		cName: 'sym__export_statement_namespace_export'
 	},
-	{ name: '_call_expression_call', id: 411, enumName: 'CallExpressionCall', cName: 'sym__call_expression_call' },
+	{ name: '_call_expression_call', id: 406, enumName: 'CallExpressionCall', cName: 'sym__call_expression_call' },
 	{
 		name: '_call_expression_template_call',
-		id: 412,
+		id: 407,
 		enumName: 'CallExpressionTemplateCall',
 		cName: 'sym__call_expression_template_call'
 	},
-	{ name: '_call_expression_member', id: 413, enumName: 'CallExpressionMember', cName: 'sym__call_expression_member' },
-	{ name: '_string_double', id: 414, enumName: 'StringDouble', cName: 'sym__string_double' },
-	{ name: '_string_single', id: 415, enumName: 'StringSingle', cName: 'sym__string_single' },
+	{ name: '_call_expression_member', id: 408, enumName: 'CallExpressionMember', cName: 'sym__call_expression_member' },
+	{ name: '_string_double', id: 409, enumName: 'StringDouble', cName: 'sym__string_double' },
+	{ name: '_string_single', id: 410, enumName: 'StringSingle', cName: 'sym__string_single' },
 	{
 		name: '_update_expression_postfix',
-		id: 416,
+		id: 411,
 		enumName: 'UpdateExpressionPostfix',
 		cName: 'sym__update_expression_postfix'
 	},
 	{
 		name: '_update_expression_prefix',
-		id: 417,
+		id: 412,
 		enumName: 'UpdateExpressionPrefix',
 		cName: 'sym__update_expression_prefix'
 	},
-	{ name: 'program_repeat1', id: 418, enumName: 'AuxProgramRepeat1', cName: 'aux_sym_program_repeat1' },
+	{ name: 'program_repeat1', id: 413, enumName: 'AuxProgramRepeat1', cName: 'aux_sym_program_repeat1' },
 	{
 		name: 'variable_declaration_repeat1',
-		id: 419,
+		id: 414,
 		enumName: 'AuxVariableDeclarationRepeat1',
 		cName: 'aux_sym_variable_declaration_repeat1'
 	},
-	{ name: 'switch_body_repeat1', id: 420, enumName: 'AuxSwitchBodyRepeat1', cName: 'aux_sym_switch_body_repeat1' },
-	{ name: 'object_repeat1', id: 421, enumName: 'AuxObjectRepeat1', cName: 'aux_sym_object_repeat1' },
+	{ name: 'switch_body_repeat1', id: 415, enumName: 'AuxSwitchBodyRepeat1', cName: 'aux_sym_switch_body_repeat1' },
+	{ name: 'object_repeat1', id: 416, enumName: 'AuxObjectRepeat1', cName: 'aux_sym_object_repeat1' },
 	{
 		name: 'object_pattern_repeat1',
-		id: 422,
+		id: 417,
 		enumName: 'AuxObjectPatternRepeat1',
 		cName: 'aux_sym_object_pattern_repeat1'
 	},
-	{ name: 'array_repeat1', id: 423, enumName: 'AuxArrayRepeat1', cName: 'aux_sym_array_repeat1' },
+	{ name: 'array_repeat1', id: 418, enumName: 'AuxArrayRepeat1', cName: 'aux_sym_array_repeat1' },
 	{
 		name: 'array_pattern_repeat1',
-		id: 424,
+		id: 419,
 		enumName: 'AuxArrayPatternRepeat1',
 		cName: 'aux_sym_array_pattern_repeat1'
 	},
-	{ name: 'class_repeat1', id: 425, enumName: 'AuxClassRepeat1', cName: 'aux_sym_class_repeat1' },
+	{ name: 'class_repeat1', id: 420, enumName: 'AuxClassRepeat1', cName: 'aux_sym_class_repeat1' },
 	{
 		name: 'sequence_expression_repeat1',
-		id: 426,
+		id: 421,
 		enumName: 'AuxSequenceExpressionRepeat1',
 		cName: 'aux_sym_sequence_expression_repeat1'
 	},
 	{
 		name: 'template_string_repeat1',
-		id: 427,
+		id: 422,
 		enumName: 'AuxTemplateStringRepeat1',
 		cName: 'aux_sym_template_string_repeat1'
 	},
-	{ name: 'class_body_repeat1', id: 428, enumName: 'AuxClassBodyRepeat1', cName: 'aux_sym_class_body_repeat1' },
+	{ name: 'class_body_repeat1', id: 423, enumName: 'AuxClassBodyRepeat1', cName: 'aux_sym_class_body_repeat1' },
 	{
 		name: 'extends_clause_repeat1',
-		id: 429,
+		id: 424,
 		enumName: 'AuxExtendsClauseRepeat1',
 		cName: 'aux_sym_extends_clause_repeat1'
 	},
 	{
 		name: 'implements_clause_repeat1',
-		id: 430,
+		id: 425,
 		enumName: 'AuxImplementsClauseRepeat1',
 		cName: 'aux_sym_implements_clause_repeat1'
 	},
 	{
 		name: 'extends_type_clause_repeat1',
-		id: 431,
+		id: 426,
 		enumName: 'AuxExtendsTypeClauseRepeat1',
 		cName: 'aux_sym_extends_type_clause_repeat1'
 	},
 	{
 		name: 'template_literal_type_repeat1',
-		id: 432,
+		id: 427,
 		enumName: 'AuxTemplateLiteralTypeRepeat1',
 		cName: 'aux_sym_template_literal_type_repeat1'
 	},
 	{
 		name: '_export_specifiers_repeat1',
-		id: 433,
+		id: 428,
 		enumName: 'AuxExportSpecifiersRepeat1',
 		cName: 'aux_sym__export_specifiers_repeat1'
 	},
 	{
 		name: '_import_specifiers_repeat1',
-		id: 434,
+		id: 429,
 		enumName: 'AuxImportSpecifiersRepeat1',
 		cName: 'aux_sym__import_specifiers_repeat1'
 	},
 	{
 		name: '_formal_parameters_elements_repeat1',
-		id: 435,
+		id: 430,
 		enumName: 'AuxFormalParametersElementsRepeat1',
 		cName: 'aux_sym__formal_parameters_elements_repeat1'
 	},
 	{
 		name: '_enum_body_elements_repeat1',
-		id: 436,
+		id: 431,
 		enumName: 'AuxEnumBodyElementsRepeat1',
 		cName: 'aux_sym__enum_body_elements_repeat1'
 	},
 	{
 		name: '_type_parameters_elements_repeat1',
-		id: 437,
+		id: 432,
 		enumName: 'AuxTypeParametersElementsRepeat1',
 		cName: 'aux_sym__type_parameters_elements_repeat1'
 	},
 	{
 		name: '_tuple_type_members_repeat1',
-		id: 438,
+		id: 433,
 		enumName: 'AuxTupleTypeMembersRepeat1',
 		cName: 'aux_sym__tuple_type_members_repeat1'
 	},
 	{
 		name: 'object_type_content_repeat1',
-		id: 439,
+		id: 434,
 		enumName: 'AuxObjectTypeContentRepeat1',
 		cName: 'aux_sym_object_type_content_repeat1'
 	},
 	{
 		name: '_string_double_repeat1',
-		id: 440,
+		id: 435,
 		enumName: 'AuxStringDoubleRepeat1',
 		cName: 'aux_sym__string_double_repeat1'
 	},
 	{
 		name: '_string_single_repeat1',
-		id: 441,
+		id: 436,
 		enumName: 'AuxStringSingleRepeat1',
 		cName: 'aux_sym__string_single_repeat1'
 	},
-	{ name: '_interface_body', id: 442, enumName: 'AliasInterfaceBody', cName: 'alias_sym_interface_body' },
+	{ name: '_interface_body', id: 437, enumName: 'AliasInterfaceBody', cName: 'alias_sym_interface_body' },
 	{
 		name: '_property_identifier',
-		id: 444,
+		id: 439,
 		enumName: 'AliasPropertyIdentifier',
 		cName: 'alias_sym_property_identifier'
 	},
 	{
 		name: '_reserved_identifier',
-		id: 445,
+		id: 440,
 		enumName: 'AliasReservedIdentifier',
 		cName: 'alias_sym_reserved_identifier'
 	},
-	{ name: '_semicolon', id: 446, enumName: 'AliasSemicolon', cName: 'alias_sym_semicolon' },
+	{ name: '_semicolon', id: 441, enumName: 'AliasSemicolon', cName: 'alias_sym_semicolon' },
 	{
 		name: '_shorthand_property_identifier',
-		id: 447,
+		id: 442,
 		enumName: 'AliasShorthandPropertyIdentifier',
 		cName: 'alias_sym_shorthand_property_identifier'
 	},
 	{
 		name: '_shorthand_property_identifier_pattern',
-		id: 448,
+		id: 443,
 		enumName: 'AliasShorthandPropertyIdentifierPattern',
 		cName: 'alias_sym_shorthand_property_identifier_pattern'
 	},
 	{
 		name: '_statement_identifier',
-		id: 449,
+		id: 444,
 		enumName: 'AliasStatementIdentifier',
 		cName: 'alias_sym_statement_identifier'
 	},
-	{ name: '_this_type', id: 450, enumName: 'AliasThisType', cName: 'alias_sym_this_type' },
-	{ name: '_type_identifier', id: 451, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
+	{ name: '_this_type', id: 445, enumName: 'AliasThisType', cName: 'alias_sym_this_type' },
+	{ name: '_type_identifier', id: 446, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
 export const enum TSFieldId {
 	FieldAbstractMarker = 1,
 	FieldAccessibilityModifier = 2,
 	FieldAccessorKind = 3,
+	FieldAccessorMarker = 4,
 	FieldAlias = 5,
 	FieldAlternative = 6,
 	FieldArgument = 7,
@@ -2265,14 +2227,14 @@ export const enum TSFieldId {
 	FieldTypeParameter = 87,
 	FieldTypeParameters = 88,
 	FieldUsingMarker = 89,
-	FieldValue = 90,
-	FieldVisibilityPrefix = 91
+	FieldValue = 90
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	abstract_marker: TSFieldId.FieldAbstractMarker,
 	accessibility_modifier: TSFieldId.FieldAccessibilityModifier,
 	accessor_kind: TSFieldId.FieldAccessorKind,
+	accessor_marker: TSFieldId.FieldAccessorMarker,
 	alias: TSFieldId.FieldAlias,
 	alternative: TSFieldId.FieldAlternative,
 	argument: TSFieldId.FieldArgument,
@@ -2357,14 +2319,14 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	type_parameter: TSFieldId.FieldTypeParameter,
 	type_parameters: TSFieldId.FieldTypeParameters,
 	using_marker: TSFieldId.FieldUsingMarker,
-	value: TSFieldId.FieldValue,
-	visibility_prefix: TSFieldId.FieldVisibilityPrefix
+	value: TSFieldId.FieldValue
 } as const satisfies Record<string, TSFieldId>;
 
 export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldAbstractMarker]: 'abstract_marker',
 	[TSFieldId.FieldAccessibilityModifier]: 'accessibility_modifier',
 	[TSFieldId.FieldAccessorKind]: 'accessor_kind',
+	[TSFieldId.FieldAccessorMarker]: 'accessor_marker',
 	[TSFieldId.FieldAlias]: 'alias',
 	[TSFieldId.FieldAlternative]: 'alternative',
 	[TSFieldId.FieldArgument]: 'argument',
@@ -2449,8 +2411,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldTypeParameter]: 'type_parameter',
 	[TSFieldId.FieldTypeParameters]: 'type_parameters',
 	[TSFieldId.FieldUsingMarker]: 'using_marker',
-	[TSFieldId.FieldValue]: 'value',
-	[TSFieldId.FieldVisibilityPrefix]: 'visibility_prefix'
+	[TSFieldId.FieldValue]: 'value'
 } as const;
 
 export const TREE_SITTER_FIELD_ID_JSON = [
@@ -2462,6 +2423,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 		cName: 'field_accessibility_modifier'
 	},
 	{ name: 'accessor_kind', id: 3, enumName: 'FieldAccessorKind', cName: 'field_accessor_kind' },
+	{ name: 'accessor_marker', id: 4, enumName: 'FieldAccessorMarker', cName: 'field_accessor_marker' },
 	{ name: 'alias', id: 5, enumName: 'FieldAlias', cName: 'field_alias' },
 	{ name: 'alternative', id: 6, enumName: 'FieldAlternative', cName: 'field_alternative' },
 	{ name: 'argument', id: 7, enumName: 'FieldArgument', cName: 'field_argument' },
@@ -2546,8 +2508,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'type_parameter', id: 87, enumName: 'FieldTypeParameter', cName: 'field_type_parameter' },
 	{ name: 'type_parameters', id: 88, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
 	{ name: 'using_marker', id: 89, enumName: 'FieldUsingMarker', cName: 'field_using_marker' },
-	{ name: 'value', id: 90, enumName: 'FieldValue', cName: 'field_value' },
-	{ name: 'visibility_prefix', id: 91, enumName: 'FieldVisibilityPrefix', cName: 'field_visibility_prefix' }
+	{ name: 'value', id: 90, enumName: 'FieldValue', cName: 'field_value' }
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -2593,7 +2554,6 @@ export const FIELD_MAP: Record<
 		{ name: 'elements', required: false, multiple: true },
 		{ name: 'elements_2s', required: false, multiple: true }
 	],
-	_public_field_definition_declare_first: [{ name: 'accessibilityModifier', required: false, multiple: false }],
 	_tuple_type_members: [{ name: 'tupleTypeMembers', required: true, multiple: true }],
 	_type_parameters_elements: [{ name: 'typeParameters', required: true, multiple: true }],
 	_types: [{ name: 'types', required: true, multiple: true }],
@@ -3031,8 +2991,13 @@ export const FIELD_MAP: Record<
 	],
 	public_field_definition: [
 		{ name: 'decorators', required: false, multiple: true },
-		{ name: 'visibilityPrefix', required: false, multiple: false },
-		{ name: 'content', required: false, multiple: false },
+		{ name: 'declareMarker', required: false, multiple: false },
+		{ name: 'accessibilityModifier', required: false, multiple: false },
+		{ name: 'staticMarker', required: false, multiple: false },
+		{ name: 'readonlyMarker', required: false, multiple: false },
+		{ name: 'abstractMarker', required: false, multiple: false },
+		{ name: 'accessorMarker', required: false, multiple: false },
+		{ name: 'overrideModifier', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'optionalityMarker', required: false, multiple: false },
 		{ name: 'type', required: false, multiple: false },

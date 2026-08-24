@@ -373,38 +373,6 @@ pub struct ParenthesizedExpressionTypedTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_public_field_definition_abstract_first.jinja", escape = "none")]
-pub struct PublicFieldDefinitionAbstractFirstTemplate<'a> {
-    pub readonly_marker: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_public_field_definition_access_first.jinja", escape = "none")]
-pub struct PublicFieldDefinitionAccessFirstTemplate<'a> {
-    pub accessibility_modifier: SingleNonterminalView<'a>,
-    pub declare_marker: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_public_field_definition_declare_first.jinja", escape = "none")]
-pub struct PublicFieldDefinitionDeclareFirstTemplate<'a> {
-    pub accessibility_modifier: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_public_field_definition_readonly_first.jinja", escape = "none")]
-pub struct PublicFieldDefinitionReadonlyFirstTemplate<'a> {
-    pub abstract_marker: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_public_field_definition_static_mods.jinja", escape = "none")]
-pub struct PublicFieldDefinitionStaticModsTemplate<'a> {
-    pub override_modifier: OptionalNonterminalView<'a>,
-    pub readonly_marker: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_string_double.jinja", escape = "none")]
 pub struct StringDoubleTemplate<'a> {
     pub elements: ListNonterminalView<'a>,
@@ -1386,13 +1354,18 @@ pub struct PropertySignatureTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "public_field_definition.jinja", escape = "none")]
 pub struct PublicFieldDefinitionTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
+    pub abstract_marker: OptionalNonterminalView<'a>,
+    pub accessibility_modifier: OptionalNonterminalView<'a>,
+    pub accessor_marker: OptionalNonterminalView<'a>,
+    pub declare_marker: OptionalNonterminalView<'a>,
     pub decorator: ListNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub optionality_marker: OptionalNonterminalView<'a>,
+    pub override_modifier: OptionalNonterminalView<'a>,
+    pub readonly_marker: OptionalNonterminalView<'a>,
+    pub static_marker: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
-    pub visibility_prefix: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -2093,7 +2093,14 @@ export type TypescriptGrammar = {
 		type: 'public_field_definition';
 		named: true;
 		fields: {
+			abstract_marker: { multiple: false; required: false; types: [{ type: 'abstract'; named: false }] };
+			accessibility_modifier: {
+				multiple: false;
+				required: false;
+				types: [{ type: 'accessibility_modifier'; named: true }];
+			};
 			accessor_marker: { multiple: false; required: false; types: [{ type: 'accessor'; named: false }] };
+			declare_marker: { multiple: false; required: false; types: [{ type: 'declare'; named: false }] };
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
 			name: {
 				multiple: false;
@@ -2111,61 +2118,10 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: '!'; named: false }, { type: '?'; named: false }];
 			};
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
+			static_marker: { multiple: false; required: false; types: [{ type: 'static'; named: false }] };
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
-			visibility_prefix: {
-				multiple: false;
-				required: false;
-				types: [
-					{ type: 'public_field_definition_access_first'; named: true },
-					{ type: 'public_field_definition_declare_first'; named: true }
-				];
-			};
-		};
-		children: {
-			multiple: false;
-			required: false;
-			types: [
-				{ type: 'public_field_definition_abstract_first'; named: true },
-				{ type: 'public_field_definition_readonly_first'; named: true },
-				{ type: 'public_field_definition_static_mods'; named: true }
-			];
-		};
-	};
-	readonly public_field_definition_abstract_first: {
-		type: 'public_field_definition_abstract_first';
-		named: true;
-		fields: {
-			abstract_marker: { multiple: false; required: true; types: [{ type: 'abstract'; named: false }] };
-			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
-		};
-	};
-	readonly public_field_definition_access_first: {
-		type: 'public_field_definition_access_first';
-		named: true;
-		fields: { declare_marker: { multiple: false; required: false; types: [{ type: 'declare'; named: false }] } };
-		children: { multiple: false; required: true; types: [{ type: 'accessibility_modifier'; named: true }] };
-	};
-	readonly public_field_definition_declare_first: {
-		type: 'public_field_definition_declare_first';
-		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'accessibility_modifier'; named: true }] };
-	};
-	readonly public_field_definition_readonly_first: {
-		type: 'public_field_definition_readonly_first';
-		named: true;
-		fields: {
-			abstract_marker: { multiple: false; required: false; types: [{ type: 'abstract'; named: false }] };
-			readonly_marker: { multiple: false; required: true; types: [{ type: 'readonly'; named: false }] };
-		};
-	};
-	readonly public_field_definition_static_mods: {
-		type: 'public_field_definition_static_mods';
-		named: true;
-		fields: {
-			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
-			static_marker: { multiple: false; required: true; types: [{ type: 'static'; named: false }] };
 		};
 		children: { multiple: false; required: false; types: [{ type: 'override_modifier'; named: true }] };
 	};

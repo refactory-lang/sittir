@@ -3104,8 +3104,17 @@ export function buildSemicolon(text: '\n' | ';') {
 
 function buildPublicFieldDefinition$impl(config: T.PublicFieldDefinition.Config) {
 	const _decorator = config.decorator ?? [];
-	const _visibility_prefix = config.visibilityPrefix;
-	const _content = config.content;
+	const _declare_marker = coerceBooleanKeywordStorage(config.declareMarker);
+	const _accessibility_modifier = coerceKindEnumStorage<number>(config.accessibilityModifier, [
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const
+	]);
+	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
+	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
+	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
+	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
+	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _name = config.name;
 	const _optionality_marker = coerceKindEnumStorage<number>(config.optionalityMarker, [
 		['?', TSKindId.Qmark] as const,
@@ -3120,23 +3129,39 @@ function buildPublicFieldDefinition$impl(config: T.PublicFieldDefinition.Config)
 				$source: 2 as const,
 				$named: true as const,
 				_decorator,
-				_visibility_prefix,
-				_content,
+				_declare_marker,
+				_accessibility_modifier,
+				_static_marker,
+				_readonly_marker,
+				_abstract_marker,
+				_accessor_marker,
+				_override_modifier,
 				_name,
 				_optionality_marker,
 				_type,
 				_value,
 				$with: {
 					decorators: (...values: T.Decorator[]) => buildPublicFieldDefinition$impl({ ...config, decorator: values }),
-					visibilityPrefix: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
-						buildPublicFieldDefinition$impl({ ...config, visibilityPrefix: value }),
-					content: (
-						value?:
-							| T.PublicFieldDefinitionStaticMods
-							| T.PublicFieldDefinitionAbstractFirst
-							| T.PublicFieldDefinitionReadonlyFirst
-							| 'accessor'
-					) => buildPublicFieldDefinition$impl({ ...config, content: value }),
+					declareMarker: (
+						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['declareMarker']
+					) => buildPublicFieldDefinition$impl({ ...config, declareMarker: value }),
+					accessibilityModifier: (
+						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['accessibilityModifier']
+					) => buildPublicFieldDefinition$impl({ ...config, accessibilityModifier: value }),
+					staticMarker: (value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['staticMarker']) =>
+						buildPublicFieldDefinition$impl({ ...config, staticMarker: value }),
+					readonlyMarker: (
+						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['readonlyMarker']
+					) => buildPublicFieldDefinition$impl({ ...config, readonlyMarker: value }),
+					abstractMarker: (
+						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['abstractMarker']
+					) => buildPublicFieldDefinition$impl({ ...config, abstractMarker: value }),
+					accessorMarker: (
+						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['accessorMarker']
+					) => buildPublicFieldDefinition$impl({ ...config, accessorMarker: value }),
+					overrideModifier: (
+						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['overrideModifier']
+					) => buildPublicFieldDefinition$impl({ ...config, overrideModifier: value }),
 					name: (value: T.PropertyName) => buildPublicFieldDefinition$impl({ ...config, name: value }),
 					optionalityMarker: (
 						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition$impl>[0]>['optionalityMarker']
@@ -3147,8 +3172,13 @@ function buildPublicFieldDefinition$impl(config: T.PublicFieldDefinition.Config)
 			},
 			{
 				decorators: () => _decorator,
-				visibilityPrefix: () => _visibility_prefix,
-				content: () => _content,
+				declareMarker: () => _declare_marker,
+				accessibilityModifier: () => _accessibility_modifier,
+				staticMarker: () => _static_marker,
+				readonlyMarker: () => _readonly_marker,
+				abstractMarker: () => _abstract_marker,
+				accessorMarker: () => _accessor_marker,
+				overrideModifier: () => _override_modifier,
 				name: () => _name,
 				optionalityMarker: () => _optionality_marker,
 				type: () => _type,
@@ -3162,14 +3192,14 @@ function buildPublicFieldDefinition$impl(config: T.PublicFieldDefinition.Config)
 export const buildPublicFieldDefinition = attachProps(buildPublicFieldDefinition$impl, {
 	qmark: (
 		decorators: T.PublicFieldDefinition.Config['decorator'] | undefined,
-		content: T.PublicFieldDefinition.Config['content'] | undefined,
+		accessibilityModifier: T.PublicFieldDefinition.Config['accessibilityModifier'] | undefined,
 		name: T.PublicFieldDefinition.Config['name'],
 		type?: T.PublicFieldDefinition.Config['type'],
 		value?: T.PublicFieldDefinition.Config['value']
 	) =>
 		buildPublicFieldDefinition$impl({
 			decorator: decorators,
-			content: content,
+			accessibilityModifier: accessibilityModifier,
 			name: name,
 			type: type,
 			value: value,
@@ -3177,14 +3207,14 @@ export const buildPublicFieldDefinition = attachProps(buildPublicFieldDefinition
 		}),
 	bang: (
 		decorators: T.PublicFieldDefinition.Config['decorator'] | undefined,
-		content: T.PublicFieldDefinition.Config['content'] | undefined,
+		accessibilityModifier: T.PublicFieldDefinition.Config['accessibilityModifier'] | undefined,
 		name: T.PublicFieldDefinition.Config['name'],
 		type?: T.PublicFieldDefinition.Config['type'],
 		value?: T.PublicFieldDefinition.Config['value']
 	) =>
 		buildPublicFieldDefinition$impl({
 			decorator: decorators,
-			content: content,
+			accessibilityModifier: accessibilityModifier,
 			name: name,
 			type: type,
 			value: value,
@@ -6962,158 +6992,6 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 	);
 }
 
-export function buildPublicFieldDefinitionDeclareFirst(
-	child?: T.AccessibilityModifier
-): ReturnType<typeof _buildPublicFieldDefinitionDeclareFirst>;
-export function buildPublicFieldDefinitionDeclareFirst(
-	...args: Parameters<typeof buildAccessibilityModifier>
-): ReturnType<typeof _buildPublicFieldDefinitionDeclareFirst>;
-export function buildPublicFieldDefinitionDeclareFirst(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildPublicFieldDefinitionDeclareFirst(args[0] as T.AccessibilityModifier);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.AccessibilityModifier as const);
-	return prebuilt
-		? _buildPublicFieldDefinitionDeclareFirst(args[0] as T.AccessibilityModifier)
-		: _buildPublicFieldDefinitionDeclareFirst(
-				(buildAccessibilityModifier as (...a: unknown[]) => unknown)(...args) as T.AccessibilityModifier
-			);
-}
-function _buildPublicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifier) {
-	const _accessibility_modifier = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
-				$source: 2 as const,
-				$named: true as const,
-				_accessibility_modifier,
-				$with: { $child: (v: T.AccessibilityModifier) => buildPublicFieldDefinitionDeclareFirst(v) }
-			},
-			{
-				accessibilityModifier: () => _accessibility_modifier
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildPublicFieldDefinitionAccessFirst(config: T.PublicFieldDefinitionAccessFirst.Config) {
-	const _accessibility_modifier = coerceKindEnumStorage<number>(config.accessibilityModifier, [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
-	const _declare_marker = coerceBooleanKeywordStorage(config.declareMarker);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PublicFieldDefinitionAccessFirst as const,
-				$source: 2 as const,
-				$named: true as const,
-				_accessibility_modifier,
-				_declare_marker,
-				$with: {
-					accessibilityModifier: (
-						value: NonNullable<Parameters<typeof buildPublicFieldDefinitionAccessFirst>[0]>['accessibilityModifier']
-					) => buildPublicFieldDefinitionAccessFirst({ ...config, accessibilityModifier: value }),
-					declareMarker: (
-						value?: NonNullable<Parameters<typeof buildPublicFieldDefinitionAccessFirst>[0]>['declareMarker']
-					) => buildPublicFieldDefinitionAccessFirst({ ...config, declareMarker: value })
-				}
-			},
-			{
-				accessibilityModifier: () => _accessibility_modifier,
-				declareMarker: () => _declare_marker
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDefinitionStaticMods.Config> = {}) {
-	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
-	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PublicFieldDefinitionStaticMods as const,
-				$source: 2 as const,
-				$named: true as const,
-				_override_modifier,
-				_readonly_marker,
-				$with: {
-					overrideModifier: (
-						value?: NonNullable<Parameters<typeof buildPublicFieldDefinitionStaticMods>[0]>['overrideModifier']
-					) => buildPublicFieldDefinitionStaticMods({ ...config, overrideModifier: value }),
-					readonlyMarker: (
-						value?: NonNullable<Parameters<typeof buildPublicFieldDefinitionStaticMods>[0]>['readonlyMarker']
-					) => buildPublicFieldDefinitionStaticMods({ ...config, readonlyMarker: value })
-				}
-			},
-			{
-				overrideModifier: () => _override_modifier,
-				readonlyMarker: () => _readonly_marker
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildPublicFieldDefinitionAbstractFirst(
-	config: Partial<T.PublicFieldDefinitionAbstractFirst.Config> = {}
-) {
-	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
-				$source: 2 as const,
-				$named: true as const,
-				_readonly_marker,
-				$with: {
-					readonlyMarker: (
-						value?: NonNullable<Parameters<typeof buildPublicFieldDefinitionAbstractFirst>[0]>['readonlyMarker']
-					) => buildPublicFieldDefinitionAbstractFirst({ ...config, readonlyMarker: value })
-				}
-			},
-			{
-				readonlyMarker: () => _readonly_marker
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildPublicFieldDefinitionReadonlyFirst(
-	config: Partial<T.PublicFieldDefinitionReadonlyFirst.Config> = {}
-) {
-	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
-				$source: 2 as const,
-				$named: true as const,
-				_abstract_marker,
-				$with: {
-					abstractMarker: (
-						value?: NonNullable<Parameters<typeof buildPublicFieldDefinitionReadonlyFirst>[0]>['abstractMarker']
-					) => buildPublicFieldDefinitionReadonlyFirst({ ...config, abstractMarker: value })
-				}
-			},
-			{
-				abstractMarker: () => _abstract_marker
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildParenthesizedExpressionTyped(config: T.ParenthesizedExpressionTyped.Config) {
 	const _expression = config.expression;
 	const _type = config.type;
@@ -7747,14 +7625,6 @@ export type FluentKindMap = {
 	_for_header_lhs: FluentNode<'_for_header_lhs', T.ForHeaderLhs.Config>;
 	_for_header_var_kind: T.ForHeaderVarKind;
 	_for_header_let_const_kind: T.ForHeaderLetConstKind;
-	_public_field_definition_declare_first: FluentNode<
-		'_public_field_definition_declare_first',
-		T.PublicFieldDefinitionDeclareFirst.Config
-	>;
-	_public_field_definition_access_first: T.PublicFieldDefinitionAccessFirst;
-	_public_field_definition_static_mods: T.PublicFieldDefinitionStaticMods;
-	_public_field_definition_abstract_first: T.PublicFieldDefinitionAbstractFirst;
-	_public_field_definition_readonly_first: T.PublicFieldDefinitionReadonlyFirst;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped;
 	_export_statement_type_export: T.ExportStatementTypeExport;
 	_export_statement_equals_export: T.ExportStatementEqualsExport;
@@ -8003,11 +7873,6 @@ export const _factoryMap = {
 	_for_header_lhs: buildForHeaderLhs,
 	_for_header_var_kind: buildForHeaderVarKind,
 	_for_header_let_const_kind: buildForHeaderLetConstKind,
-	_public_field_definition_declare_first: buildPublicFieldDefinitionDeclareFirst,
-	_public_field_definition_access_first: buildPublicFieldDefinitionAccessFirst,
-	_public_field_definition_static_mods: buildPublicFieldDefinitionStaticMods,
-	_public_field_definition_abstract_first: buildPublicFieldDefinitionAbstractFirst,
-	_public_field_definition_readonly_first: buildPublicFieldDefinitionReadonlyFirst,
 	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	_export_statement_type_export: buildExportStatementTypeExport,
 	_export_statement_equals_export: buildExportStatementEqualsExport,

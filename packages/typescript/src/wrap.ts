@@ -6260,47 +6260,12 @@ export function wrap_PropertyIdentifier(
 	);
 }
 
-export function wrapPublicFieldDefinition(
-	data: T.PublicFieldDefinition & {
-		readonly _accessor_marker?:
-			| T.PublicFieldDefinitionStaticMods
-			| T.PublicFieldDefinitionAbstractFirst
-			| T.PublicFieldDefinitionReadonlyFirst
-			| 'accessor';
-		readonly _public_field_definition_static_mods?:
-			| T.PublicFieldDefinitionStaticMods
-			| T.PublicFieldDefinitionAbstractFirst
-			| T.PublicFieldDefinitionReadonlyFirst
-			| 'accessor';
-		readonly _public_field_definition_abstract_first?:
-			| T.PublicFieldDefinitionStaticMods
-			| T.PublicFieldDefinitionAbstractFirst
-			| T.PublicFieldDefinitionReadonlyFirst
-			| 'accessor';
-		readonly _public_field_definition_readonly_first?:
-			| T.PublicFieldDefinitionStaticMods
-			| T.PublicFieldDefinitionAbstractFirst
-			| T.PublicFieldDefinitionReadonlyFirst
-			| 'accessor';
-		readonly _accessor?:
-			| T.PublicFieldDefinitionStaticMods
-			| T.PublicFieldDefinitionAbstractFirst
-			| T.PublicFieldDefinitionReadonlyFirst
-			| 'accessor';
-	},
-	tree: TreeHandle
-) {
+export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: TreeHandle) {
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinition as const }, methodsEngine);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_accessor',
-				'_accessor_marker',
-				'_public_field_definition_abstract_first',
-				'_public_field_definition_readonly_first',
-				'_public_field_definition_static_mods'
-			]),
+			...data,
 			$type: TSKindId.PublicFieldDefinition as const,
 			_decorator: normalizeRepeatedWrapSlot(data._decorator, false, 'decorator', {
 				tree,
@@ -6308,23 +6273,64 @@ export function wrapPublicFieldDefinition(
 				slotName: 'decorator',
 				span: (data as _NodeData).$span
 			}),
-			_visibility_prefix: normalizeSingularWrapSlot(data._visibility_prefix, 'visibility_prefix', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'visibility_prefix',
-				span: (data as _NodeData).$span
-			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._accessor_marker ??
-					data._public_field_definition_static_mods ??
-					data._public_field_definition_abstract_first ??
-					data._public_field_definition_readonly_first ??
-					data._accessor,
-				'content',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_declare_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._declare_marker, 'declare_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'declare_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_accessibility_modifier: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._accessibility_modifier ??
+						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+					'accessibility_modifier',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
+				),
+				{ public: 112, private: 113, protected: 114 }
+			),
+			_static_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'static_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_readonly_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'readonly_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_abstract_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'abstract_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_accessor_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._accessor_marker, 'accessor_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessor_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_override_modifier: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'override_modifier',
+					span: (data as _NodeData).$span
+				})
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -6358,20 +6364,26 @@ export function wrapPublicFieldDefinition(
 			decorators() {
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
-			visibilityPrefix() {
-				return drillIn<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | undefined>(
-					this._visibility_prefix,
-					tree
-				);
+			declareMarker() {
+				return this._declare_marker;
 			},
-			content() {
-				return drillIn<
-					| T.PublicFieldDefinitionStaticMods
-					| T.PublicFieldDefinitionAbstractFirst
-					| T.PublicFieldDefinitionReadonlyFirst
-					| 'accessor'
-					| undefined
-				>(this._content, tree);
+			accessibilityModifier() {
+				return this._accessibility_modifier;
+			},
+			staticMarker() {
+				return this._static_marker;
+			},
+			readonlyMarker() {
+				return this._readonly_marker;
+			},
+			abstractMarker() {
+				return this._abstract_marker;
+			},
+			accessorMarker() {
+				return this._accessor_marker;
+			},
+			overrideModifier() {
+				return this._override_modifier;
 			},
 			name() {
 				return drillIn<T.PropertyName>(this._name, tree);
@@ -6388,10 +6400,20 @@ export function wrapPublicFieldDefinition(
 			$with: {
 				decorators: (...v: NonNullable<T.PublicFieldDefinition['_decorator']>[number][]) =>
 					wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
-				visibilityPrefix: (v: NonNullable<T.PublicFieldDefinition['_visibility_prefix']>) =>
-					wrapPublicFieldDefinition({ ...data, _visibility_prefix: v }, tree),
-				content: (v: NonNullable<T.PublicFieldDefinition['_content']>) =>
-					wrapPublicFieldDefinition({ ...data, _content: v }, tree),
+				declareMarker: (v: NonNullable<T.PublicFieldDefinition['_declare_marker']>) =>
+					wrapPublicFieldDefinition({ ...data, _declare_marker: v }, tree),
+				accessibilityModifier: (v: NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>) =>
+					wrapPublicFieldDefinition({ ...data, _accessibility_modifier: v }, tree),
+				staticMarker: (v: NonNullable<T.PublicFieldDefinition['_static_marker']>) =>
+					wrapPublicFieldDefinition({ ...data, _static_marker: v }, tree),
+				readonlyMarker: (v: NonNullable<T.PublicFieldDefinition['_readonly_marker']>) =>
+					wrapPublicFieldDefinition({ ...data, _readonly_marker: v }, tree),
+				abstractMarker: (v: NonNullable<T.PublicFieldDefinition['_abstract_marker']>) =>
+					wrapPublicFieldDefinition({ ...data, _abstract_marker: v }, tree),
+				accessorMarker: (v: NonNullable<T.PublicFieldDefinition['_accessor_marker']>) =>
+					wrapPublicFieldDefinition({ ...data, _accessor_marker: v }, tree),
+				overrideModifier: (v: NonNullable<T.PublicFieldDefinition['_override_modifier']>) =>
+					wrapPublicFieldDefinition({ ...data, _override_modifier: v }, tree),
 				name: (v: NonNullable<T.PublicFieldDefinition['_name']>) =>
 					wrapPublicFieldDefinition({ ...data, _name: v }, tree),
 				optionalityMarker: (v: NonNullable<T.PublicFieldDefinition['_optionality_marker']>) =>
@@ -11560,181 +11582,6 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 	return _node;
 }
 
-export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinitionDeclareFirst, tree: TreeHandle) {
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
-			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
-					'accessibility_modifier',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
-				{ public: 112, private: 113, protected: 114 }
-			),
-
-			accessibilityModifier() {
-				return this._accessibility_modifier;
-			},
-			$with: {
-				accessibilityModifier: (v: NonNullable<T.PublicFieldDefinitionDeclareFirst['_accessibility_modifier']>) =>
-					wrapPublicFieldDefinitionDeclareFirst({ ...data, _accessibility_modifier: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
-}
-
-export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefinitionAccessFirst, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionAccessFirst as const }, methodsEngine);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.PublicFieldDefinitionAccessFirst as const,
-			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
-					'accessibility_modifier',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
-				{ public: 112, private: 113, protected: 114 }
-			),
-			_declare_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._declare_marker, 'declare_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'declare_marker',
-					span: (data as _NodeData).$span
-				})
-			),
-
-			accessibilityModifier() {
-				return this._accessibility_modifier;
-			},
-			declareMarker() {
-				return this._declare_marker;
-			},
-			$with: {
-				accessibilityModifier: (v: NonNullable<T.PublicFieldDefinitionAccessFirst['_accessibility_modifier']>) =>
-					wrapPublicFieldDefinitionAccessFirst({ ...data, _accessibility_modifier: v }, tree),
-				declareMarker: (v: NonNullable<T.PublicFieldDefinitionAccessFirst['_declare_marker']>) =>
-					wrapPublicFieldDefinitionAccessFirst({ ...data, _declare_marker: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
-}
-
-export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitionStaticMods, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionStaticMods as const }, methodsEngine);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.PublicFieldDefinitionStaticMods as const,
-			_override_modifier: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'override_modifier',
-					span: (data as _NodeData).$span
-				})
-			),
-			_readonly_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'readonly_marker',
-					span: (data as _NodeData).$span
-				})
-			),
-
-			overrideModifier() {
-				return this._override_modifier;
-			},
-			readonlyMarker() {
-				return this._readonly_marker;
-			},
-			$with: {
-				overrideModifier: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_override_modifier']>) =>
-					wrapPublicFieldDefinitionStaticMods({ ...data, _override_modifier: v }, tree),
-				readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_readonly_marker']>) =>
-					wrapPublicFieldDefinitionStaticMods({ ...data, _readonly_marker: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
-}
-
-export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefinitionAbstractFirst, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionAbstractFirst as const }, methodsEngine);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
-			_readonly_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'readonly_marker',
-					span: (data as _NodeData).$span
-				})
-			),
-
-			readonlyMarker() {
-				return this._readonly_marker;
-			},
-			$with: {
-				readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionAbstractFirst['_readonly_marker']>) =>
-					wrapPublicFieldDefinitionAbstractFirst({ ...data, _readonly_marker: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
-}
-
-export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefinitionReadonlyFirst, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionReadonlyFirst as const }, methodsEngine);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
-			_abstract_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'abstract_marker',
-					span: (data as _NodeData).$span
-				})
-			),
-
-			abstractMarker() {
-				return this._abstract_marker;
-			},
-			$with: {
-				abstractMarker: (v: NonNullable<T.PublicFieldDefinitionReadonlyFirst['_abstract_marker']>) =>
-					wrapPublicFieldDefinitionReadonlyFirst({ ...data, _abstract_marker: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
-}
-
 export function wrapParenthesizedExpressionTyped(
 	data: T.ParenthesizedExpressionTyped & {
 		readonly _as_expression?: T.Expression;
@@ -12588,6 +12435,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TypeIdentifier]: (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
 	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	[TSKindId.KwStaticMarker]: (d) => ({ ...d, $type: TSKindId.KwStaticMarker as const }),
+	[TSKindId.KwDeclareMarker]: (d) => ({ ...d, $type: TSKindId.KwDeclareMarker as const }),
 	[TSKindId.KwAbstractMarker]: (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
 	[TSKindId.KwConstMarker]: (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
 	[TSKindId.ExportSpecifiers]: (d, t) => wrapExportSpecifiers(d as unknown as T.ExportSpecifiers, t),
@@ -12643,16 +12491,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
-	[TSKindId.PublicFieldDefinitionDeclareFirst]: (d, t) =>
-		wrapPublicFieldDefinitionDeclareFirst(d as unknown as T.PublicFieldDefinitionDeclareFirst, t),
-	[TSKindId.PublicFieldDefinitionAccessFirst]: (d, t) =>
-		wrapPublicFieldDefinitionAccessFirst(d as unknown as T.PublicFieldDefinitionAccessFirst, t),
-	[TSKindId.PublicFieldDefinitionStaticMods]: (d, t) =>
-		wrapPublicFieldDefinitionStaticMods(d as unknown as T.PublicFieldDefinitionStaticMods, t),
-	[TSKindId.PublicFieldDefinitionAbstractFirst]: (d, t) =>
-		wrapPublicFieldDefinitionAbstractFirst(d as unknown as T.PublicFieldDefinitionAbstractFirst, t),
-	[TSKindId.PublicFieldDefinitionReadonlyFirst]: (d, t) =>
-		wrapPublicFieldDefinitionReadonlyFirst(d as unknown as T.PublicFieldDefinitionReadonlyFirst, t),
 	[TSKindId.ParenthesizedExpressionTyped]: (d, t) =>
 		wrapParenthesizedExpressionTyped(d as unknown as T.ParenthesizedExpressionTyped, t),
 	[TSKindId.ExportStatementTypeExport]: (d, t) =>
