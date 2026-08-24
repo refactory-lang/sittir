@@ -8,5 +8,4 @@ export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from './metrics.t
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export { assertRenderableNodeData, isRenderableNodeData } from './native-boundary.ts';
 export { normalizeNativeReadNode } from './native-read.ts';
-export { materializeTreeNode, stripStructuralNodeText } from './materialize.ts';
-export type { DrillFn } from './materialize.ts';
+export { toTransportData, stripStructuralNodeText } from './transport-data.ts';

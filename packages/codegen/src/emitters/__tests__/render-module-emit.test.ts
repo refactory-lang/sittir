@@ -216,7 +216,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const structBody = extractStructBody(src, 'ConstItemTransport');
 		expect(structBody).not.toBe('');
 		// name field has kinds: ["identifier"] — single kind → concrete
-		expect(structBody).toMatch(/pub name: IdentifierTransport,/);
+		expect(structBody).toMatch(/pub name: ::sittir_core::SlotValue<IdentifierTransport>,/);
 	});
 
 	it('const_item.name field is NOT Box<AnyTransport>', async () => {
@@ -232,7 +232,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const structBody = extractStructBody(src, 'FunctionItemTransport');
 		expect(structBody).not.toBe('');
 		// body field has kinds: ["block"] — single kind → concrete
-		expect(structBody).toMatch(/pub body: BlockTransport,/);
+		expect(structBody).toMatch(/pub body: ::sittir_core::SlotValue<BlockTransport>,/);
 	});
 
 	it('function_item.name is FunctionItemNameTransportSlot (proper subset of _path stays heterogeneous, not collapsed)', async () => {

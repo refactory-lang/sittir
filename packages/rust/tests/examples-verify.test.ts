@@ -13,7 +13,7 @@ import {
 	immutableFunctionUpdates,
 	structSideBySide
 } from '../../../examples/01-construct-nodes.ts';
-import { renderMainFunction, roundTrip } from '../../../examples/02-render-round-trip.ts';
+import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 
@@ -56,6 +56,23 @@ describe('examples/02 render round trip', () => {
 	it('re-parses a multi-item source file to the same tree', () => {
 		const source = 'struct A { a: u8, b: String }\nfn f(a: &A) -> u8 { a.a + 1 }\n';
 		expect(roundTrip(source).reparsesEqual).toBe(true);
+	});
+
+	// An unexpanded child renders from its own captured source, so its bytes
+	// come back exactly. Only the expanded root rebuilds from its template —
+	// which is why what sits BETWEEN items does not survive.
+	it('reproduces an untouched item byte-for-byte', () => {
+		expect(renderUntouched('pub fn main() { }\n')).toBe('pub fn main() { }');
+	});
+	it("keeps an untouched item's own irregular spacing", () => {
+		expect(renderUntouched('fn   weird ( ) {   }\n')).toBe('fn   weird ( ) {   }');
+	});
+	it('reproduces both items of a two-item file, joined by the root template', () => {
+		const first = 'struct A { a: u8, b: String }';
+		const second = 'fn f(a: &A) -> u8 { a.a + 1 }';
+		// The root's own separator is empty, so the source newline between the
+		// two items is not reproduced — only each item's own bytes are.
+		expect(renderUntouched(`${first}\n${second}\n`)).toBe(`${first}${second}`);
 	});
 });
 

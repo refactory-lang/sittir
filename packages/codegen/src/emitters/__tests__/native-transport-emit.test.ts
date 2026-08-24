@@ -434,7 +434,7 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('#[serde(tag = "$type")]');
 		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 		expect(emitted.transportRs.contents).toContain('pub struct CallExpressionTransport');
-		expect(emitted.transportRs.contents).toContain('pub callee: ExpressionTransport,');
+		expect(emitted.transportRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionTransport>,');
 		expect(emitted.transportRs.contents).toContain('#[serde(rename = ";")]\n    Literal0_3b,');
 		expect(emitted.transportRs.contents).not.toContain('pub struct LiteralTransport');
 		// `from_transport` (2026-04-29 renderable-native-views plan, Task 4) was
@@ -450,7 +450,7 @@ describe('native transport emission', () => {
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
 		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).toContain(
-			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport};'
+			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};'
 		);
 		expect(emitted.transportRs.contents).not.toContain('AnyTransport::NodeData');
 		expect(emitted.transportRs.contents).not.toContain('node_json');
@@ -477,10 +477,10 @@ describe('native transport emission', () => {
 		).transportRs.contents;
 
 		expect(rust).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Option<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
-		expect(rust).not.toContain('pub identifier: Option<Vec<IdentifierTransport>>');
-		expect(rust).not.toContain('pub identifier: OneOrMany<IdentifierTransport>');
+		expect(rust).not.toContain('pub identifier: Option<Vec<');
+		expect(rust).not.toContain('pub identifier: OneOrMany<');
 	});
 
 	it('emits required singular children as bare transport values', () => {
@@ -499,7 +499,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: IdentifierTransport,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain('pub identifier: Option<');
 		expect(structBody).not.toContain('pub identifier: Vec<');
@@ -533,7 +533,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]\n    pub content: SupertypeAliasParentContentTransportSlot,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentTransportSlot>,'
 		);
 		expect(emitted.transportRs.contents).toContain('pub enum SupertypeAliasParentContentTransportSlot {');
 		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
@@ -556,9 +556,9 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Vec<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
-		expect(structBody).not.toContain('OneOrMany<IdentifierTransport>');
+		expect(structBody).not.toContain('OneOrMany<');
 	});
 
 	it('emits optional repeated unnamed children as Option<Vec<T>> transport (same rule as named fields)', () => {
@@ -582,7 +582,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Option<Vec<IdentifierTransport>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
 		);
 	});
 
@@ -738,8 +738,8 @@ describe('native transport emission', () => {
 			'fn field_expression_field_transport_slot_to_any(t: FieldExpressionFieldTransportSlot) -> AnyTransport {'
 		);
 		// Per-slot enum is now load-bearing — struct field type IS the enum.
-		expect(emitted).toContain('pub field: FieldExpressionFieldTransportSlot');
-		expect(emitted).not.toContain('pub field: Box<AnyTransport>');
+		expect(emitted).toContain('pub field: ::sittir_core::SlotValue<FieldExpressionFieldTransportSlot>');
+		expect(emitted).not.toContain('Box<AnyTransport>>');
 	});
 
 	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {
@@ -758,9 +758,9 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    pub items: Vec<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
-		expect(structBody).not.toContain('OneOrMany<IdentifierTransport>');
+		expect(structBody).not.toContain('OneOrMany<');
 	});
 
 	it('emits optional repeated named fields as Option<Vec<T>> transport', () => {
@@ -779,9 +779,9 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    pub items: Option<Vec<IdentifierTransport>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    pub items: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
 		);
-		expect(structBody).not.toContain('Option<OneOrMany<IdentifierTransport>>');
+		expect(structBody).not.toContain('OneOrMany<');
 	});
 
 	it('flattens reserved nested supertypes in Rust transport enums', () => {

@@ -88,7 +88,7 @@ describe('render-module unnamed structural signals', () => {
 			nodeMap
 		).transportRs.contents;
 
-		expect(emitted).toContain('pub content: Option<Vec<MixedParentContentTransportSlot>>,');
+		expect(emitted).toContain('pub content: Option<Vec<::sittir_core::SlotValue<MixedParentContentTransportSlot>>>,');
 		expect(emitted).toContain('identifier: ListNonterminalView {');
 		expect(emitted).toContain('items: content_buf.as_slice(),');
 		expect(emitted).not.toContain('items: &[],');
@@ -117,8 +117,8 @@ describe('render-module unnamed structural signals', () => {
 		const start = emitted.indexOf('pub struct ParentHelperTransport');
 		const end = emitted.indexOf('}', start);
 		const structBody = emitted.slice(start, end);
-		expect(structBody).toContain('pub helper: Option<HelperTransport>,');
-		expect(structBody).toContain('pub value: Option<IdentifierTransport>,');
-		expect(structBody).not.toContain('pub integer: Option<IntegerTransport>,');
+		expect(structBody).toContain('pub helper: Option<::sittir_core::SlotValue<HelperTransport>>,');
+		expect(structBody).toContain('pub value: Option<::sittir_core::SlotValue<IdentifierTransport>>,');
+		expect(structBody).not.toContain('pub integer:');
 	});
 });

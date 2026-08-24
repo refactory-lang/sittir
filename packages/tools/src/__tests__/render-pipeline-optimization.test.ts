@@ -545,7 +545,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		// render_transport itself was retired (R5 — dead transport→NodeData
 		// inverse bridge deleted); only the dispatch/parts helpers remain.
 		expect(emitted.libRs.contents).toContain(
-			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport};'
+			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});

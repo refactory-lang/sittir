@@ -63,7 +63,6 @@ import {
 	keywordPresenceValue,
 	slotLiteralValues,
 	isSlotBearingCompound,
-	classifyBranchSlots,
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
@@ -276,12 +275,7 @@ export const RUST_KEYWORDS = new Set([
 
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
-const RESERVED_TRANSPORT_STRUCT_NAMES = new Set([
-	'AnyTransport',
-	'VerbatimTransport',
-	'ProtectedTransport',
-	'LiteralTransport'
-]);
+const RESERVED_TRANSPORT_STRUCT_NAMES = new Set(['AnyTransport', 'ProtectedTransport', 'LiteralTransport']);
 
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
 	return (
@@ -828,16 +822,21 @@ function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotCl
 	return cls;
 }
 
+/**
+ * Write one slot value directly (no template). `expr` names the slot's
+ * `SlotValue` carrier: the concrete and supertype classes call their own
+ * `render_<kind>` function, so they unwrap through `node_or_write`, which
+ * emits the verbatim arm itself and yields the node only when there is one.
+ * The heterogeneous classes go through `RenderableTransport`, which the
+ * carrier implements, so they need no unwrap.
+ */
 function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 	switch (cls.tag) {
 		case 'concrete':
-			return `render_${rustSnakeIdent(cls.typeName)}(${expr}, dest)?;`;
+			return `if let Some(v) = ${expr}.node_or_write(dest)? { render_${rustSnakeIdent(cls.typeName)}(v, dest)?; }`;
 		case 'supertype':
-			return `render_${rustSnakeIdent(cls.supertypeName)}(${expr}, dest)?;`;
+			return `if let Some(v) = ${expr}.node_or_write(dest)? { render_${rustSnakeIdent(cls.supertypeName)}(v, dest)?; }`;
 		case 'heterogeneous':
-			if (cls.useBox === true) {
-				return `${expr}.as_ref().render_into(dest)?;`;
-			}
 			return `${expr}.render_into(dest)?;`;
 		default:
 			return assertNever(cls);
@@ -906,7 +905,13 @@ function renderTypedDispatch(
 		}`
 	);
 	lines.push('');
-	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
+	lines.push(`/// Render a transport tree to text. Takes the trait rather than`);
+	lines.push(`/// \`&AnyTransport\` so the root's own \`SlotValue\` carrier renders through`);
+	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
+	lines.push(`/// second place the root seam policy could drift.`);
+	lines.push(
+		`pub fn render_transport_dispatch(transport: &dyn RenderableTransport) -> Result<String, ::askama::Error> {`
+	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
 	lines.push(`    // only where a word-class char would collide with a word-class char`);
@@ -956,32 +961,6 @@ function renderTypedDispatch(
 			`            AnyTransport::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
 		);
 	}
-	// Verbatim variant — text carried verbatim from a bare-string input.
-	lines.push(`            AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	// ---- impl AnyTransport::transport_named --------------------------------
-	// Returns the inner transport struct's named flag so the children-slot
-	// filter (.filter(|t| t.transport_named().unwrap_or(true))) can skip
-	// anonymous fill items (e.g. duplicate commas in tuple_pattern).
-	// Unit-literal variants have no struct, so they return None (= include).
-	lines.push(`impl AnyTransport {`);
-	lines.push(`    #[inline]`);
-	lines.push(`    pub fn transport_named(&self) -> Option<bool> {`);
-	lines.push(`        match self {`);
-	for (const node of nodes) {
-		// Only transport structs carry the transport_named field.
-		// AssembledEnum nodes (perSlotEnum — e.g. RangeExpressionBinaryOperatorEnum) and
-		// polymorph nodes (e.g. ArrayExpressionTransport) generate Rust enums, not structs,
-		// and have no such field. Fall through to `_ => None` for those.
-		if (node instanceof AssembledEnum) continue;
-		const variant = rustTransportVariantName(node);
-		lines.push(`            Self::${variant}(t) => t.transport_named,`);
-	}
-	lines.push(`            _ => None,`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -1058,9 +1037,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 				}
 				lines.push(`    }`);
 			} else if (isRequired(slot)) {
-				const singleExpr = slotCls.tag === 'heterogeneous' ? `node.${slotIdent}` : `&node.${slotIdent}`;
-				const writeSingle = buildSlotWriteCall(slotCls, singleExpr);
-				lines.push(`    ${writeSingle}`);
+				lines.push(`    ${buildSlotWriteCall(slotCls, `node.${slotIdent}`)}`);
 			} else {
 				lines.push(`    if let Some(child) = &node.${slotIdent} {`);
 				lines.push(`        ${writeChild}`);
@@ -1157,17 +1134,16 @@ function renderTypedBranchFn(
 
 const RENDERABLE_PREFIX = '::sittir_core::filters::';
 
-function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string, filterAnon = false): string[] {
+function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string): string[] {
 	const R = RENDERABLE_PREFIX;
-	const lines: string[] = [`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`];
-	if (filterAnon) {
-		lines.push(`        .filter(|t| t.transport_named().unwrap_or(true))`);
-	}
-	lines.push(`        .map(|t| ${mapBody})`, `        .collect();`);
-	return lines;
+	return [
+		`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`,
+		`        .map(|t| ${mapBody})`,
+		`        .collect();`
+	];
 }
 
-function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false, optionalElement = false): string[] {
+function emitListSlotBuffer(ident: string, required: boolean, optionalElement = false): string[] {
 	const R = RENDERABLE_PREFIX;
 	// An elidable position (`Vec<Option<T>>`) renders a hole as empty text —
 	// it still occupies a join position, so `Joined` emits the separators
@@ -1176,11 +1152,11 @@ function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false
 		? `match t { Some(t) => ${R}Renderable::Transport(t), None => ${R}Renderable::Text("") }`
 		: `${R}Renderable::Transport(t)`;
 	if (required) {
-		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody, filterAnon);
+		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody);
 	}
 	return [
 		`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`,
-		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody, filterAnon)
+		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody)
 	];
 }
 
@@ -1328,9 +1304,7 @@ function buildTypedTemplateBody(
 			slotModel !== undefined
 				? [...slotModel.named, ...slotModel.unnamed].find((s) => s.storageName === f.storageName)
 				: undefined;
-		lines.push(
-			...emitListSlotBuffer(rIdent, f.required, false, slotForBuf !== undefined && hasOptionalElements(slotForBuf))
-		);
+		lines.push(...emitListSlotBuffer(rIdent, f.required, slotForBuf !== undefined && hasOptionalElements(slotForBuf)));
 	}
 
 	// Build template struct — all single-value fields use Renderable::Transport.
@@ -1440,11 +1414,10 @@ function buildTypedTemplateBody(
 				// Virtual presentation slot — no backing transport field.
 				lines.push(`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Text("")),`);
 			} else if (isBoxed) {
-				// Heterogeneous fallback — type is Box<AnyTransport> (no concrete
-				// child kind to ground a per-slot enum). Deref through Box.
-				lines.push(
-					`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`
-				);
+				// Heterogeneous fallback — type is SlotValue<Box<AnyTransport>>
+				// (no concrete child kind to ground a per-slot enum). The carrier
+				// implements RenderableTransport over the boxed inner.
+				lines.push(`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Transport(&node.${rIdent})),`);
 			} else {
 				// Concrete / supertype / per-slot enum — Rust auto-coerces &T to
 				// &dyn RenderableTransport (per-slot enum impls RenderableTransport).
@@ -1479,24 +1452,32 @@ function buildTypedTemplateBody(
 				if (f.backingDirectField) {
 					// Dual-path: try direct field (CST read) then helper (factory).
 					const directRIdent = rustFieldIdent(f.backingDirectField);
+					// `.node()` on the helper's carrier: reaching the inner field
+					// needs the helper's own storage. A hidden inlined helper has
+					// no CST node of its own, so it never arrives as an unexpanded
+					// stub — only the factory path populates it, always in full.
 					if (f.backingInnerRequired) {
-						// Direct field is T (not Option): always present when field exists.
+						// Inner field is required inside the helper.
 						lines.push(`        ${templateIdent}: node.${directRIdent}.as_ref().or_else(|| {`);
-						lines.push(`            node.${backingRIdent}.as_ref().map(|h| &h.${templateIdent})`);
+						lines.push(
+							`            node.${backingRIdent}.as_ref().and_then(|h| h.node()).map(|h| &h.${templateIdent})`
+						);
 						lines.push(`        }).map_or(OptionalNonterminalView::Missing, |v| {`);
 						lines.push(`            OptionalNonterminalView::Present(${R}Renderable::Transport(v))`);
 						lines.push(`        }),`);
 					} else {
-						// Direct field is Option<T>; both paths need an Option unwrap.
+						// Inner field is Option<T> inside the helper; both paths unwrap.
 						lines.push(`        ${templateIdent}: node.${directRIdent}.as_ref().or_else(|| {`);
-						lines.push(`            node.${backingRIdent}.as_ref().and_then(|h| h.${templateIdent}.as_ref())`);
+						lines.push(
+							`            node.${backingRIdent}.as_ref().and_then(|h| h.node()).and_then(|h| h.${templateIdent}.as_ref())`
+						);
 						lines.push(`        }).map_or(OptionalNonterminalView::Missing, |inner| {`);
 						lines.push(`            OptionalNonterminalView::Present(${R}Renderable::Transport(inner))`);
 						lines.push(`        }),`);
 					}
 				} else if (f.backingInnerRequired) {
 					// Inner field is a direct (required) transport — reference directly.
-					lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
+					lines.push(`        ${templateIdent}: match node.${backingRIdent}.as_ref().and_then(|h| h.node()) {`);
 					lines.push(
 						`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(&v.${templateIdent})),`
 					);
@@ -1504,7 +1485,7 @@ function buildTypedTemplateBody(
 					lines.push(`        },`);
 				} else {
 					// Inner field is itself Option<T> — flatten with a nested match.
-					lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
+					lines.push(`        ${templateIdent}: match node.${backingRIdent}.as_ref().and_then(|h| h.node()) {`);
 					lines.push(`            Some(v) => match &v.${templateIdent} {`);
 					lines.push(
 						`                Some(inner) => OptionalNonterminalView::Present(${R}Renderable::Transport(inner)),`
@@ -1517,9 +1498,9 @@ function buildTypedTemplateBody(
 			} else if (!f.hasTransportField) {
 				lines.push(`        ${templateIdent}: OptionalNonterminalView::Missing,`);
 			} else if (isBoxed) {
-				// Heterogeneous fallback — type is Option<Box<AnyTransport>>.
+				// Heterogeneous fallback — type is Option<SlotValue<Box<AnyTransport>>>.
 				lines.push(`        ${templateIdent}: match &node.${rIdent} {`);
-				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v.as_ref())),`);
+				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v)),`);
 				lines.push(`            None => OptionalNonterminalView::Missing,`);
 				lines.push(`        },`);
 			} else {
@@ -1551,7 +1532,7 @@ pub mod kind_ids;
 pub mod templates;
 pub mod transport;
 
-pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport};
+pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};
 pub use hash::TEMPLATE_BUNDLE_HASH;
 pub use kind_ids::*;
 `;
@@ -1733,8 +1714,6 @@ function renderTransportSupport(
 		[
 			...anyTransportLines,
 			'',
-			...renderTransportValueTypeHelper(),
-			...renderVerbatimTransportStruct(),
 			...renderLiteralTransportStruct(projection.literals),
 			...renderTriviaTransportSupport(nodeMap, kindEntries),
 			'',
@@ -1942,11 +1921,6 @@ function renderAnyTransportWithStringTag(
 			const variant = rustLiteralTransportVariantName(literal, index);
 			return [`    #[serde(rename = ${JSON.stringify(literal.kind)})]`, `    ${variant},`].join('\n');
 		}),
-		// Verbatim mirror — string-tag fallback path. Same semantics as the
-		// napi-FromNapiValue path; required so per-slot-enum bridge fns can
-		// reference AnyTransport::Verbatim(...) without conditional emission.
-		'    #[serde(skip)]',
-		'    Verbatim(VerbatimTransport),',
 		'}'
 	];
 }
@@ -2013,51 +1987,18 @@ function boxedInEnum(
 	return false;
 }
 
-function renderTransportValueTypeHelper(): string[] {
-	// Hand-expanded `napi::type_of!` — the macro internally invokes a bare
-	// `check_status!`, which would have to be in scope at the expansion site.
-	return [
-		'#[cfg(feature = "napi-bindings")]',
-		'unsafe fn transport_value_type(',
-		'    env: ::napi::sys::napi_env,',
-		'    napi_val: ::napi::sys::napi_value,',
-		') -> ::napi::Result<::napi::ValueType> {',
-		'    let mut value_type = 0;',
-		'    let status = unsafe { ::napi::sys::napi_typeof(env, napi_val, &mut value_type) };',
-		'    if status != ::napi::sys::Status::napi_ok {',
-		'        return Err(::napi::Error::new(',
-		'            ::napi::Status::from(status),',
-		'            "napi_typeof failed".to_owned(),',
-		'        ));',
-		'    }',
-		'    Ok(::napi::ValueType::from(value_type))',
-		'}',
-		''
-	];
-}
-
-function emitTransportEnumFromNapiValueBody(
-	enumName: string,
-	kindIdArms: readonly string[],
-	admitsVerbatim: boolean
-): string[] {
+function emitTransportEnumFromNapiValueBody(enumName: string, kindIdArms: readonly string[]): string[] {
 	const lines: string[] = [];
-	lines.push(`        match transport_value_type(env, napi_val)? {`);
+	lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 	// (a) Raw u16 input: kind_id sent directly (value-less kinds).
 	lines.push(`            ::napi::ValueType::Number => {`);
 	lines.push(`                match u16::from_napi_value(env, napi_val)? {`);
 	for (const arm of kindIdArms) lines.push(`    ${arm}`);
 	lines.push(`                }`);
 	lines.push(`            }`);
-	// (b) Bare string: wrap as Verbatim (only when this enum admits a
-	//     pattern variant; bare strings carry no kind tag).
-	if (admitsVerbatim) {
-		lines.push(`            ::napi::ValueType::String => {`);
-		lines.push(`                let text = String::from_napi_value(env, napi_val)?;`);
-		lines.push(`                Ok(Self::Verbatim(VerbatimTransport { text }))`);
-		lines.push(`            }`);
-	}
-	// (c) Object with numeric $type: strict kind_id dispatch.
+	// (b) Object with numeric $type: strict kind_id dispatch. A bare string
+	//     carries no kind tag and is not this enum's to hold — the slot's
+	//     `SlotValue` carrier takes it as verbatim text instead.
 	lines.push(`            ::napi::ValueType::Object => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(`                let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
@@ -2071,7 +2012,7 @@ function emitTransportEnumFromNapiValueBody(
 	lines.push(`            }`);
 	lines.push(
 		`            _ => Err(::napi::Error::from_reason(${JSON.stringify(
-			`${enumName}: expected u16 kind_id, string, or object with $type`
+			`${enumName}: expected u16 kind_id or object with $type`
 		)})),`
 	);
 	lines.push(`        }`);
@@ -2180,9 +2121,6 @@ function emitSupertypeTransportEnum(
 	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
-	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
-
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
 		// own kind_id rather than a concrete variant's. We don't know which
@@ -2218,9 +2156,6 @@ function emitSupertypeTransportEnum(
 		const typeName = rustTransportStructName(subNode);
 		const variantType = isBoxed(subKind, subNode) ? `Box<${typeName}>` : typeName;
 		lines.push(`    ${variant}(${variantType}),`);
-	}
-	if (admitsVerbatim) {
-		lines.push(`    Verbatim(VerbatimTransport),`);
 	}
 	lines.push(`}`);
 	lines.push(``);
@@ -2335,7 +2270,7 @@ function emitSupertypeTransportEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
+		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms));
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -2399,9 +2334,6 @@ function emitSupertypeTransportEnum(
 			}
 		}
 	}
-	if (admitsVerbatim) {
-		lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
-	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -2430,9 +2362,6 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
-
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
 	for (const { subKind, subNode } of validSubtypes) {
@@ -2443,9 +2372,6 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 		// subtype's own render_with_trivia!-wrapped impl fires.
 		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
 		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render_into(dest),`);
-	}
-	if (admitsVerbatim) {
-		lines.push(`        ${enumName}::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -2632,29 +2558,6 @@ function assertRoutableTransportIds(
 	);
 }
 
-function admitsVerbatimCollapse(kinds: readonly string[], nodeMap: NodeMap): boolean {
-	const isHiddenPatternLeaf = (candidateKind: string): boolean =>
-		candidateKind.startsWith('_') && nodeMap.nodes.get(candidateKind)?.modelType === 'pattern';
-	const kindCollapses = (kind: string): boolean => {
-		const node = nodeMap.nodes.get(kind);
-		if (node === undefined) return false;
-		// 'keyword' (a visible fixed-text leaf, e.g. rust's `mutable_specifier`,
-		// `self`, `super`, `crate`) raw-reads as a bare string, same as a hidden
-		// 'pattern' leaf raw-reads as a bare kind_id — its own struct-level
-		// FromNapiValue already accepts ValueType::String (see e.g.
-		// MutableSpecifierTransport). A union slot mixing named keyword
-		// variants with unnamed/hidden ones (pointer_type.content:
-		// choice('const', $.mutable_specifier); visibility_modifier's
-		// self/super/crate arm) needs a String branch for its named members.
-		if (node.modelType === 'pattern' || node.modelType === 'keyword') return true;
-		if (node.modelType !== 'branch' && node.modelType !== 'group') return false;
-		const slotClass = classifyBranchSlots(node, nodeMap);
-		if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'multiple') return false;
-		return slotClass.slot.values.some((value) => isNodeRef(value) && isHiddenPatternLeaf(storageKindOfRef(value.node)));
-	};
-	return kinds.some((kind) => collectConcreteTransportKinds(kind, nodeMap).some(kindCollapses));
-}
-
 function expandConcreteTransportKinds(
 	kinds: readonly string[],
 	nodeMap: NodeMap
@@ -2809,21 +2712,17 @@ function isImmediateLeafKind(kind: string, nodeMap: NodeMap): boolean {
 
 /**
  * True when every SCALAR-capable source of this slot is grammar-immediate —
- * the gate for marking the slot enum's `Verbatim` arm adjacent. Scalars on
- * the wire erase kind identity (a text-collapsed leaf and an inline terminal
- * both arrive as bare strings), so the arm can only be marked when ALL
- * sources that can produce one forbid preceding whitespace: inline
- * `TerminalValue`s via their own `immediate` stamp, leaf
- * kind refs via the referenced node's stamp. Non-leaf refs can't scalarize
- * through this arm's normal path and are ignored. Requires at least one
- * scalar-capable source — a vacuous pass would mark arms whose scalars come
- * from paths this gate can't see.
+ * the `ADJACENT` const on the slot's `SlotValue` carrier. Verbatim text on
+ * the wire erases kind identity (a text-collapsed leaf, an inline terminal
+ * and an unexpanded read stub all arrive as text), so the carrier can only
+ * suppress the seam space when ALL sources that can produce one forbid
+ * preceding whitespace: inline `TerminalValue`s via their own `immediate`
+ * stamp, leaf kind refs via the referenced node's stamp. Non-leaf refs
+ * can't scalarize and are ignored. Requires at least one scalar-capable
+ * source — a vacuous pass would mark positions whose text comes from paths
+ * this gate can't see.
  */
-function slotVerbatimIsImmediate(entry: PerSlotChildEnum, nodeMap: NodeMap): boolean {
-	const owner = nodeMap.nodes.get(entry.ownerKind);
-	if (!owner) return false;
-	const slot = allSlotsOf(owner).find((s) => s.name === entry.fieldName);
-	if (!slot) return false;
+function slotVerbatimIsImmediate(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	let sawScalarSource = false;
 	for (const v of slot.values) {
 		if (isTerminalValue(v)) {
@@ -2984,9 +2883,6 @@ function emitPerSlotChildEnum(
 	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
 		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
 
-	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(entry.kinds, nodeMap);
-
 	// Spec 024 cleanup-§E1: named-slot enums are load-bearing alongside unnamed
 	// `$children` enums — `rustTransportSlotType` returns the per-slot enum name
 	// for any heterogeneous slot with at least one concrete child kind. No
@@ -3004,9 +2900,6 @@ function emitPerSlotChildEnum(
 		if (variant !== undefined) {
 			lines.push(`    ${variant},`);
 		}
-	}
-	if (admitsVerbatim) {
-		lines.push(`    Verbatim(VerbatimTransport),`);
 	}
 	lines.push(`}`);
 	lines.push(``);
@@ -3124,7 +3017,7 @@ function emitPerSlotChildEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
+		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms));
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3181,9 +3074,6 @@ function emitPerSlotChildEnum(
 			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		}
 	}
-	if (admitsVerbatim) {
-		lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
-	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -3226,16 +3116,6 @@ function emitPerSlotChildEnum(
 			lines.push(`            ${enumName}::${variant} => ${arm},`);
 		}
 	}
-	if (admitsVerbatim) {
-		// See `slotVerbatimIsImmediate` — scalars erase kind identity, so
-		// the arm is marked only when every scalar-capable source forbids
-		// preceding whitespace (string fragments/escapes, format-spec text
-		// runs); code-token scalars (identifiers, keywords) keep seams.
-		const arm = slotVerbatimIsImmediate(entry, nodeMap)
-			? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(&inner.text).map_err(::askama::Error::from) }`
-			: `dest.write_str(&inner.text).map_err(::askama::Error::from)`;
-		lines.push(`            ${enumName}::Verbatim(inner) => ${arm},`);
-	}
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -3269,12 +3149,6 @@ function renderAnyTransportWithNapiFromValue(
 		const variant = rustLiteralTransportVariantName(literal, index);
 		lines.push(`    ${variant},`);
 	}
-	// Verbatim is a synthetic variant: pattern-modeled per-slot enums upcast
-	// their bare-string inputs (via VerbatimTransport) into AnyTransport
-	// through their `*_transport_slot_to_any` bridge. AnyTransport itself
-	// never constructs Verbatim directly — its FromNapiValue requires an
-	// object with $type or a numeric kind_id. See VerbatimTransport docstring.
-	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
 
@@ -3342,9 +3216,9 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('            };');
 	lines.push('        }');
 	// AnyTransport is kind_id-only: it admits the universe of typed nodes, so
-	// no bare-string fast-path can pick the "right" variant. Per-slot enums
-	// handle bare-string inputs via VerbatimTransport upstream. By the time
-	// we reach AnyTransport, a missing kind_id is a real error.
+	// no bare-string fast-path can pick the "right" variant. A value with no
+	// kind_id belongs to the enclosing `SlotValue` carrier as verbatim text;
+	// by the time we reach AnyTransport, a missing kind_id is a real error.
 	lines.push('        Err(::napi::Error::from_reason(');
 	lines.push('            "AnyTransport: expected u16 kind_id or object with $type",');
 	lines.push('        ))');
@@ -3429,14 +3303,15 @@ function renderTransportEntry(): string[] {
 	return [
 		'use ::sittir_core::types::Source as TransportSource;',
 		'',
-		'pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportSource, String), ::askama::Error> {',
-		'    let rendered = render_transport_dispatch(&transport)?;',
-		'    let source = transport_source(&transport);',
-		'    Ok((source, rendered))',
-		'}',
+		'/// The render entry point. The root arrives in the same `SlotValue`',
+		'/// carrier every slot position uses, so a root that is itself an',
+		'/// unexpanded read stub reproduces its source instead of failing to',
+		'/// deserialize as its own kind.',
+		'pub type RenderRoot = ::sittir_core::SlotValue<AnyTransport>;',
 		'',
-		'fn transport_source(transport: &AnyTransport) -> TransportSource {',
-		'    TransportSource::Factory',
+		'pub fn render_transport_parts(transport: RenderRoot) -> Result<(TransportSource, String), ::askama::Error> {',
+		'    let rendered = render_transport_dispatch(&transport)?;',
+		'    Ok((TransportSource::Factory, rendered))',
 		'}'
 	];
 }
@@ -3461,18 +3336,7 @@ function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): s
  * @param structName — the node's typed transport struct name
  */
 function emitTriviaKindIdArm(id: number, variant: string, structName: string): string[] {
-	return [
-		`                ${id} => {`,
-		`                    if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`,
-		`                        return Ok(Self::${variant}(value));`,
-		'                    }',
-		'                    let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)',
-		'                        .ok()',
-		'                        .and_then(|o| o.get::<String>("$text").ok().flatten())',
-		'                        .unwrap_or_default();',
-		'                    Ok(Self::Verbatim(VerbatimTransport { text }))',
-		'                },'
-	];
+	return [`                ${id} => Ok(Self::${variant}(${structName}::from_napi_value(env, napi_val)?)),`];
 }
 
 function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -3489,7 +3353,6 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	for (const node of extrasNodes) {
 		lines.push(`    ${rustTransportVariantName(node)}(${rustTransportStructName(node)}),`);
 	}
-	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
 
@@ -3503,7 +3366,6 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 		const variant = rustTransportVariantName(node);
 		lines.push(`            TriviaTransport::${variant}(t) => t.render_into(dest),`);
 	}
-	lines.push('            TriviaTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),');
 	lines.push('        }');
 	lines.push('    }');
 	lines.push('}');
@@ -3526,7 +3388,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('        env: ::napi::sys::napi_env,');
 	lines.push('        napi_val: ::napi::sys::napi_value,');
 	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms, true));
+	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms));
 	lines.push('    }');
 	lines.push('}');
 	lines.push('');
@@ -3544,8 +3406,8 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 
 	lines.push('#[derive(Debug, Clone, Default)]');
 	lines.push('pub struct TransportTrivia {');
-	lines.push('    pub leading: Option<Vec<TriviaTransport>>,');
-	lines.push('    pub trailing: Option<Vec<TriviaTransport>>,');
+	lines.push('    pub leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,');
+	lines.push('    pub trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,');
 	lines.push('}');
 	lines.push('');
 	lines.push('#[cfg(feature = "napi-bindings")]');
@@ -3555,8 +3417,8 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('        napi_val: ::napi::sys::napi_value,');
 	lines.push('    ) -> ::napi::Result<Self> {');
 	lines.push('        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;');
-	lines.push('        let leading: Option<Vec<TriviaTransport>> = obj.get("leading")?;');
-	lines.push('        let trailing: Option<Vec<TriviaTransport>> = obj.get("trailing")?;');
+	lines.push('        let leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("leading")?;');
+	lines.push('        let trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("trailing")?;');
 	lines.push('        Ok(TransportTrivia { leading, trailing })');
 	lines.push('    }');
 	lines.push('}');
@@ -3586,43 +3448,6 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('');
 
 	return lines;
-}
-
-function renderVerbatimTransportStruct(): string[] {
-	return [
-		'#[derive(Debug, Clone)]',
-		'pub struct VerbatimTransport {',
-		'    pub text: String,',
-		'}',
-		'',
-		'#[cfg(feature = "napi-bindings")]',
-		'impl ::napi::bindgen_prelude::FromNapiValue for VerbatimTransport {',
-		'    unsafe fn from_napi_value(',
-		'        env: ::napi::sys::napi_env,',
-		'        napi_val: ::napi::sys::napi_value,',
-		'    ) -> ::napi::Result<Self> {',
-		'        // typeof guard: never call String::from_napi_value on a non-string',
-		"        // (its failure path JSON.stringify's Object inputs — see",
-		'        // transport_value_type).',
-		'        if transport_value_type(env, napi_val)? != ::napi::ValueType::String {',
-		'            return Err(::napi::Error::from_reason("VerbatimTransport: expected bare string"));',
-		'        }',
-		'        let text = String::from_napi_value(env, napi_val)?;',
-		'        Ok(Self { text })',
-		'    }',
-		'}',
-		'',
-		'#[cfg(feature = "napi-bindings")]',
-		'impl ::napi::bindgen_prelude::ToNapiValue for VerbatimTransport {',
-		'    unsafe fn to_napi_value(',
-		'        _env: ::napi::sys::napi_env,',
-		'        _val: Self,',
-		'    ) -> ::napi::Result<::napi::sys::napi_value> {',
-		'        Err(::napi::Error::from_reason("VerbatimTransport is receive-only"))',
-		'    }',
-		'}',
-		''
-	];
 }
 
 function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): string | undefined {
@@ -3867,9 +3692,9 @@ function renderLeafTransportNapiImpls(
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	// typeof dispatch — never probe String::from_napi_value on a non-string
-	// (its failure path JSON.stringify's Object inputs; see transport_value_type).
+	// (its failure path JSON.stringify's Object inputs; see sittir_core::slot::transport_value_type).
 	lines.push(declareLeafTriviaCapture());
-	lines.push(`        let text = match transport_value_type(env, napi_val)? {`);
+	lines.push(`        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
 		lines.push(`            // Raw kind_id: value-less leaf sent as its numeric kind tag.`);
@@ -3922,8 +3747,8 @@ function renderLeafTransportNapiImpls(
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	if (booleanLiteral !== undefined) {
 		// typeof dispatch — never probe String::from_napi_value on a non-string
-		// (its failure path JSON.stringify's Object inputs; see transport_value_type).
-		lines.push(`        match transport_value_type(env, napi_val)? {`);
+		// (its failure path JSON.stringify's Object inputs; see sittir_core::slot::transport_value_type).
+		lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 		lines.push(`            ::napi::ValueType::String => {`);
 		lines.push(`                let text = String::from_napi_value(env, napi_val)?;`);
 		lines.push(`                return Ok(Self {`);
@@ -4107,6 +3932,7 @@ function renderTransportField(
 	// / `AnyTransport` machinery expects.
 	const required = forceOptional ? false : isRequired(field);
 	const primitive = classifyPrimitiveField(field, nodeMap);
+	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
 	const primitiveType =
 		primitive?.kind === 'boolean'
 			? // `Option<bool>`, NOT bare `bool`: wrap OMITS the wire key entirely
@@ -4128,7 +3954,7 @@ function renderTransportField(
 			rustTransportSlotType(
 				kindsOf(field),
 				nodeMap,
-				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field) },
+				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field), adjacent },
 				parentKind,
 				typeName,
 				field.name,
@@ -4139,16 +3965,27 @@ function renderTransportField(
 	return lines;
 }
 
+/**
+ * The `SlotValue` carrier every slot position holds — one uniform tolerance
+ * for values the position's own type cannot represent (an unexpanded read
+ * stub, or free text where no text kind is admitted). `ADJACENT` rides on
+ * the type because it is a grammar fact about the position, not about the
+ * value that arrives there.
+ */
+function slotCarrier(inner: string, adjacent: boolean): string {
+	return adjacent ? `::sittir_core::SlotValue<${inner}, true>` : `::sittir_core::SlotValue<${inner}>`;
+}
+
 function rustTransportSlotType(
 	slotKinds: readonly string[],
 	nodeMap: NodeMap,
-	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean },
+	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean; adjacent: boolean },
 	parentKind: string,
 	typeName: string,
 	fieldName: string,
 	literalTexts: readonly string[] = []
 ): string {
-	const { required, multiple, optionalElement } = cardinality;
+	const { required, multiple, optionalElement, adjacent } = cardinality;
 	// Mixed-content override: a field with named kinds AND anonymous literal
 	// content is heterogeneous regardless of classifier (e.g. `function_modifiers.modifier`
 	// which accepts `extern_modifier` OR bare keywords like `async`/`const`/`unsafe`).
@@ -4188,11 +4025,15 @@ function rustTransportSlotType(
 			// Elidable separated-list positions (array elision, `[a, , b]`): a
 			// hole is a real position holding no element — `None` entries, which
 			// napi maps from the wire's `undefined` entries natively.
-			const vec = optionalElement ? `Vec<Option<${inner}>>` : `Vec<${inner}>`;
+			const element = slotCarrier(inner, adjacent);
+			const vec = optionalElement ? `Vec<Option<${element}>>` : `Vec<${element}>`;
 			if (required) return vec;
 			return `Option<${vec}>`;
 		}
-		const sized = createsBackEdge ? `Box<${inner}>` : inner;
+		// Box goes INSIDE the carrier: the carrier's own size is bounded by
+		// its `String` arm, so the indirection still has to sit on the node
+		// arm to break the size cycle.
+		const sized = slotCarrier(createsBackEdge ? `Box<${inner}>` : inner, adjacent);
 		return required ? sized : `Option<${sized}>`;
 	};
 
@@ -4588,7 +4429,7 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// under `$text` or `_<literal>` child fields (fragment_specifier).
 			// typeof dispatch — never probe a typed read on a mismatched shape
 			// (String::from_napi_value's failure path JSON.stringify's Object
-			// inputs; see transport_value_type).
+			// inputs; see sittir_core::slot::transport_value_type).
 			const kindIdMatchArms = (indent: string): void => {
 				for (const v of values) {
 					// `values` are LITERAL member texts — read the node's
@@ -4611,7 +4452,7 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 				}
 				lines.push(`${indent}_ => {}`);
 			};
-			lines.push(`        match transport_value_type(env, napi_val)? {`);
+			lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 			lines.push(`            ::napi::ValueType::Number => {`);
 			lines.push(`                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
 			lines.push(`                    match kind_id {`);

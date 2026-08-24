@@ -1,5 +1,11 @@
 //! Thin N-API binding for the Rust grammar.
 
+// Every transport slot position wraps its value in `SlotValue`, which adds a
+// layer to an already deeply nested generated type graph. Auto-trait
+// resolution (`Unpin` on the innermost `Vec`) exceeds the default limit on
+// the larger grammars.
+#![recursion_limit = "256"]
+
 pub mod render;
 
 use tree_sitter_language::LanguageFn;
@@ -27,7 +33,7 @@ use sittir_core::types::{Edit, FormatRecord};
 use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree};
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
+use render::{render_transport_parts, RenderRoot, TEMPLATE_BUNDLE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
@@ -139,7 +145,7 @@ impl SittirEngine {
 
     /// Render a typed transport object (napi-native, numeric `$type`).
     #[napi]
-    pub fn render(&self, transport: AnyTransport) -> Result<String> {
+    pub fn render(&self, transport: RenderRoot) -> Result<String> {
         let (source, canonical) = render_transport_parts(transport)
             .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
         let tree_format = self.parsed.as_ref().and_then(|pt| pt.format());
@@ -152,7 +158,7 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn render_to_file(&self, transport: AnyTransport, path: String) -> Result<()> {
+    pub fn render_to_file(&self, transport: RenderRoot, path: String) -> Result<()> {
         let rendered = self.render(transport)?;
         std::fs::write(&path, rendered)
             .map_err(|e| Error::from_reason(format!("render_to_file failed for {path}: {e}")))

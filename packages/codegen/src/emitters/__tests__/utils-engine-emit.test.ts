@@ -25,9 +25,9 @@ describe('utils engine facade emission', () => {
 		// Factory-built nodes own their storage outright — the shared engine renders them as-is.
 		expect(factoriesSrc).toContain('import { withMethods, withAccessors, methodsEngine');
 		expect(factoriesSrc).toContain('}, methodsEngine);');
-		// Wrapped nodes hold reader stubs, so they bind the tree-scoped engine that
-		// materializes storage before it reaches the native boundary.
+		// Wrapped nodes carry accessor methods over stub-bearing storage, so they
+		// bind the wrap engine that projects to plain data before the boundary.
 		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
-		expect(wrapSrc).toContain('}, _treeEngine(tree));');
+		expect(wrapSrc).toContain('}, _wrapEngine);');
 	});
 });

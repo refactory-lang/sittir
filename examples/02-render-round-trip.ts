@@ -12,11 +12,26 @@ export function renderMainFunction() {
 }
 
 /**
- * Read → render → re-read. A parsed root renders back through the same
- * templates a factory node uses, so the output is the CANONICAL spelling
- * (template whitespace), not the original bytes — byte-for-byte fidelity
- * of untouched regions is what `$replace` + `applyEdits` are for. What
- * must hold is that the rendered text re-parses to the same tree.
+ * Render a parsed root without touching anything.
+ *
+ * Reading expands one level at a time, so the root's children are still
+ * unexpanded: each renders from its own captured source, reproducing that
+ * item's bytes exactly — irregular spacing included. Only the root itself
+ * was expanded, so only the root rebuilds from its template. That means
+ * what sits BETWEEN items — the separator, and any comment living in the
+ * gap — is the root template's to spell, not the source's; it is not
+ * reproduced. Expand further (and more rebuilds canonically); expand less
+ * (and more comes back verbatim).
+ */
+export function renderUntouched(source: string) {
+	const engine = createEngine();
+	return engine.parse(source).$render();
+}
+
+/**
+ * Read → render → re-read. What must hold is that the rendered text
+ * re-parses to the same tree, whichever levels came back verbatim and
+ * whichever were rebuilt from templates.
  */
 export function roundTrip(source: string) {
 	const engine = createEngine();
