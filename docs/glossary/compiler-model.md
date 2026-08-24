@@ -1507,3 +1507,18 @@ can't be unified.
  * `fields` / `children` getters fire, so the audit can attribute shapes
  * to their originating kind. */
 ```
+
+---
+
+### `AssembledBranch.keywordConstructibleText` (`packages/codegen/src/compiler/model/node-map.ts:2419`)
+
+```text
+/**
+ * The branch's fixed leading keyword text, when the node is
+ * KEYWORD-CONSTRUCTIBLE: its rule opens with a STRING literal (a SEQ's
+ * first member, or the whole rule) and every slot is optional — an empty
+ * build renders the keyword alone. Drives from()'s string→branch coercion
+ * (`'pub'` → the pub arm) and the config-input literal widening; consumed
+ * instead of re-deriving from rule shape.
+ */
+```

@@ -253,6 +253,16 @@ function _resolveScalar(_v: boolean | number): AnyNodeData | undefined {
 	return undefined;
 }
 
+const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
+	default: 'switch_default',
+	yield: 'yield_expression'
+};
+const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {
+	switch_default: () => F.buildSwitchDefault(),
+	yield_expression: () => F.buildYieldExpression()
+};
+const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['asserts', 'type_query', 'literal_type']);
+
 function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
@@ -263,6 +273,16 @@ function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branch
 	if (typeof v === 'string' && leafKinds.length > 0) {
 		const leaf = _resolveLeafString(v, leafKinds);
 		if (leaf !== undefined) return leaf as T;
+	}
+	if (typeof v === 'string') {
+		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
+		if (bk !== undefined && branchKinds.includes(bk)) {
+			const build = _KEYWORD_BRANCH_BUILD[bk];
+			if (build !== undefined) return build() as T;
+			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+		}
+		const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;
+		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind, ...rest } = v;
@@ -1074,7 +1094,7 @@ export function coerceToNamespaceExport(
 }
 
 export function coerceToExportClause(
-	input?: T.ExportSpecifiers | T.ExportClause
+	input?: T.ExportSpecifiers | T.ExportSpecifier | T.ModuleExportName | T.ExportClause
 ): ReturnType<typeof F.buildExportClause> {
 	if (isNodeData(input) && input.$type === TSKindId.ExportClause) {
 		const data = input;
@@ -1184,7 +1204,7 @@ export function coerceToNamespaceImport(input: T.NamespaceImport.Loose): ReturnT
 }
 
 export function coerceToNamedImports(
-	input?: T.ImportSpecifiers | T.NamedImports
+	input?: T.ImportSpecifiers | T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs | T.NamedImports
 ): ReturnType<typeof F.buildNamedImports> {
 	if (isNodeData(input) && input.$type === TSKindId.NamedImports) {
 		const data = input;
@@ -2665,7 +2685,7 @@ export function coerceToClassBody(
 }
 
 export function coerceToFormalParameters(
-	input?: T.FormalParametersElements | T.FormalParameters
+	input?: T.FormalParametersElements | T.FormalParameter | T.FormalParameters
 ): ReturnType<typeof F.buildFormalParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.FormalParameters) {
 		const data = input;
@@ -3233,7 +3253,9 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	});
 }
 
-export function coerceToEnumBody(input?: T.EnumBodyElements | T.EnumBody): ReturnType<typeof F.buildEnumBody> {
+export function coerceToEnumBody(
+	input?: T.EnumBodyElements | T.PropertyName | T.EnumAssignment | T.EnumBody
+): ReturnType<typeof F.buildEnumBody> {
 	if (isNodeData(input) && input.$type === TSKindId.EnumBody) {
 		const data = input;
 		const child = (data as unknown as { _enum_body_elements?: unknown })._enum_body_elements;
@@ -3721,7 +3743,9 @@ export function coerceToPredefinedType(input: string | T.PredefinedType): Return
 	return F.buildPredefinedType(input as Parameters<typeof F.buildPredefinedType>[0]);
 }
 
-export function coerceToTypeArguments(input?: T.Types | T.TypeArguments): ReturnType<typeof F.buildTypeArguments> {
+export function coerceToTypeArguments(
+	input?: T.Types | T.Type | T.TypeArguments
+): ReturnType<typeof F.buildTypeArguments> {
 	if (isNodeData(input) && input.$type === TSKindId.TypeArguments) {
 		const data = input;
 		const child = (data as unknown as { _types?: unknown })._types;
@@ -3790,7 +3814,7 @@ export function coerceToPropertySignature(
 }
 
 export function coerceToTypeParameters(
-	input?: T.TypeParametersElements | T.TypeParameters
+	input?: T.TypeParametersElements | T.TypeParameter | T.Identifier | T.TypeParameters
 ): ReturnType<typeof F.buildTypeParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.TypeParameters) {
 		const data = input;
@@ -3913,7 +3937,9 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 	);
 }
 
-export function coerceToTupleType(input?: T.TupleTypeMembers | T.TupleType): ReturnType<typeof F.buildTupleType> {
+export function coerceToTupleType(
+	input?: T.TupleTypeMembers | T.TupleTypeMember | T.TupleType
+): ReturnType<typeof F.buildTupleType> {
 	if (isNodeData(input) && input.$type === TSKindId.TupleType) {
 		const data = input;
 		const child = (data as unknown as { _tuple_type_members?: unknown })._tuple_type_members;

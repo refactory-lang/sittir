@@ -1,5 +1,5 @@
-import { createEngine, ir, is, wrapNode } from '@sittir/rust';
-import { isTypedNodeData, nodeText, parseSource } from './helpers.ts';
+import { createEngine, is, wrapNode } from '@sittir/rust';
+import { nodeText, parseSource } from './helpers.ts';
 
 export function readSource(source: string) {
 	const engine = createEngine();
@@ -9,9 +9,10 @@ export function readSource(source: string) {
 export function readFirstFunction(source: string) {
 	const engine = createEngine();
 	const { root, tree } = parseSource(engine, source);
-	const first = (root.$children ?? [])[0];
-	if (!isTypedNodeData(first) || !is.functionItem(first)) return undefined;
-	const fn = wrapNode(first, tree) as ReturnType<typeof ir.functionItem>;
+	const file = wrapNode(root, tree);
+	const first = file.statements()[0];
+	if (first === undefined || !is.functionItem(first)) return undefined;
+	const fn = wrapNode(first, tree);
 
 	return {
 		name: nodeText(fn.name()),
@@ -22,13 +23,14 @@ export function readFirstFunction(source: string) {
 export function wrappedLazyAccess(source: string) {
 	const engine = createEngine();
 	const { root, tree } = parseSource(engine, source);
-	const first = (root.$children ?? [])[0];
-	if (!isTypedNodeData(first) || !is.functionItem(first)) return undefined;
-	const fn = wrapNode(first, tree) as ReturnType<typeof ir.functionItem>;
+	const file = wrapNode(root, tree);
+	const first = file.statements()[0];
+	if (first === undefined || !is.functionItem(first)) return undefined;
+	const fn = wrapNode(first, tree);
 
 	return {
 		name: nodeText(fn.name()),
 		body: fn.body(),
-		statements: fn.body().$children,
+		statements: fn.body().statements(),
 	};
 }

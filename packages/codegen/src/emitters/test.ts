@@ -29,7 +29,7 @@ import {
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { emittedByCatalog, namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
-import { constructorTargetKind, kindEnumConfigValue } from './factories.ts';
+import { constructorSurface, constructorTargetKind, kindEnumConfigValue } from './factories.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -343,6 +343,11 @@ function namespacedCallArgs(
 				: namespacedConstructors(child, nodeMap, { isEmitted }).entries.find((e) => e.name === entry.path[0]);
 		return sub === undefined ? undefined : namespacedCallArgs(sub, nodeMap, kindEntries, isEmitted);
 	}
+	// A zero-arg call is the honest test when the surface allows it (a
+	// parameterless keyword arm, or a single OPTIONAL param) — no dummy
+	// literal, no cast.
+	const sig = constructorSurface(entry.childKind, nodeMap, kindEntries);
+	if (sig !== undefined && (sig.params === '' || /^\w+\?:/.test(sig.params))) return '';
 	// A form constructor declares its forwarding target's parameters
 	// (`constructorTargetKind`, factories.ts) — build the dummies for that.
 	const target = nodeMap.nodes.get(constructorTargetKind(entry.childKind, nodeMap));

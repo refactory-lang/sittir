@@ -1,8 +1,8 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"rootDir": ".",
 		"noEmit": true,
+		"types": ["node"],
 		"composite": false,
 		"declaration": false,
 		"declarationMap": false,

@@ -6063,3 +6063,68 @@ pipeline — which falls back to string equality.
  * Prefer the unambiguous kind-name lookup whenever one exists.
  */
 ```
+
+---
+
+### `stringConstructibleTexts` (`packages/codegen/src/emitters/shared.ts:590`)
+
+```text
+/**
+ * Texts that construct `kind` from a bare string via from(): a keyword's
+ * own text, a keyword-constructible branch's leading keyword, or — for a
+ * branch whose sole user slot is its content — the constructible texts of
+ * that content's arms, one level deep. Single derivation shared by the
+ * runtime resolver tables (from emitter) and the config-input literal
+ * widening (types emitter).
+ */
+```
+
+### `wordConstructibleText` (`packages/codegen/src/emitters/shared.ts:614`)
+
+```text
+/**
+ * `keywordConstructibleText` gated by the grammar's word shape — brace/
+ * paren-led list kinds also open with a fixed STRING, but only a WORD
+ * keyword may claim a bare-string construction route. The single filter
+ * both the runtime routing tables and the literal widening go through.
+ */
+```
+
+### `transparentWrapperContentSlot` (`packages/codegen/src/emitters/shared.ts:626`)
+
+```text
+/**
+ * A wrapper kind is TRANSPARENT when exactly ONE of its slots is required
+ * (a singular content payload beside only-optional decoration — e.g.
+ * parameters' `attributed_parameter`: optional attribute + required
+ * content). Callers may hand the content directly; the consuming factory
+ * wraps it. A single-slot kind IS the element — its factory may take a
+ * direct value (text form), never qualifying. Returns the content slot,
+ * or undefined when the shape doesn't qualify.
+ */
+```
+
+### `chainParamOptional` (`packages/codegen/src/emitters/factories.ts:768`)
+
+```text
+/**
+ * Whether any hop of `kind`'s forwarding chain crosses an OPTIONAL slot —
+ * the hop target's surface alone loses that fact, so a form constructor
+ * consuming the chain's final surface must re-apply it (and guard the
+ * forward call: the target's own overloads need not accept undefined for
+ * that param type).
+ */
+```
+
+### `fieldFromInputHintTypeExpr` (`packages/codegen/src/emitters/types.ts:1103`)
+
+```text
+/**
+ * from()/loose-only input widening — never reaches the strict Config
+ * surface (strict factories store config values directly, so a widened
+ * strict input would leak literals into Built storage). Keyword-
+ * constructible widening: a sole-ref-kind field whose target builds from
+ * a bare keyword string accepts those literals — mirrors _resolveOne's
+ * string routes exactly (same stringConstructibleTexts derivation).
+ */
+```

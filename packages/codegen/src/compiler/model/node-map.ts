@@ -1582,6 +1582,12 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		return this.rule.metadata;
 	}
 
+	// Diagnostics-only raw view — behavior must never key off it (the
+	// protected-rule convention above stands for every live consumer).
+	get diagnosticRule(): R {
+		return this.rule;
+	}
+
 	/**
 	 * User-facing eligibility: set at assemble time after alias-source
 	 * analysis completes. Determines whether template, factory, type,
@@ -2410,6 +2416,16 @@ export class AssembledBranch<
 	get members(): readonly Rule<'link'>[] {
 		const r = this.rule;
 		return r.type === SEQ || r.type === CHOICE ? r.members : [];
+	}
+
+	// An empty build renders the keyword alone — drives from()'s
+	// string→branch coercion. See glossary.
+	get keywordConstructibleText(): string | undefined {
+		const r = this.rule;
+		const lead = r.type === SEQ ? r.members[0] : r;
+		if (lead === undefined || lead.type !== STRING) return undefined;
+		if (!this.fields.every((f) => !isRequired(f))) return undefined;
+		return lead.value;
 	}
 
 	get separator(): string | undefined {

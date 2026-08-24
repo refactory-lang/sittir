@@ -6,12 +6,18 @@
  * there is no JS-engine fallback.
  */
 import { createNativeEngine, type SittirEngineLike, type EngineOptions } from '@sittir/common/engine';
-import { KIND_NAMES } from './types.js';
+import { KIND_NAMES, TSKindId } from './types.js';
+import type { AnyNodeData } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/** The reader's raw root: wire DATA only — the parse returns storage
+ *  fields and stubs, not accessor methods. Accessors live on
+ *  `wrapNode(root, tree)`. */
+export type SourceFileRoot = AnyNodeData & { readonly $type: TSKindId.SourceFile };
 
 export type { EngineOptions };
 
@@ -24,8 +30,8 @@ export type { EngineOptions };
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
  */
-export function createEngine(options?: EngineOptions): SittirEngineLike {
-	const result = createNativeEngine(
+export function createEngine(options?: EngineOptions): SittirEngineLike<SourceFileRoot> {
+	const result = createNativeEngine<SourceFileRoot>(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,

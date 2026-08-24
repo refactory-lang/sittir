@@ -1838,10 +1838,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// last-win — so each member is claimed once: the kind that IS the
 		// catalog entry's own key (the canonical storage kind) beats an
 		// alias-reached claimant; otherwise the first claim stands.
-		const rows = new Map<string, { row: string; exact: boolean }>();
-		const claimRow = (tableKey: string, row: string, exact: boolean): void => {
+		const rows = new Map<string, { row: string; exact: boolean; typeExpr: string }>();
+		const claimRow = (tableKey: string, row: string, exact: boolean, typeExpr: string): void => {
 			const existing = rows.get(tableKey);
-			if (existing === undefined || (exact && !existing.exact)) rows.set(tableKey, { row, exact });
+			if (existing === undefined || (exact && !existing.exact)) rows.set(tableKey, { row, exact, typeExpr });
 		};
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (
@@ -1864,7 +1864,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				claimRow(
 					this.#kindEntries ? memberName : kind,
 					`  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`,
-					entry !== undefined && entry.kind === kind
+					entry !== undefined && entry.kind === kind,
+					`ReturnType<typeof wrap${node.typeName}>`
 				);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (!node.factoryName) continue;
@@ -1874,16 +1875,30 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					claimRow(
 						entry.member,
 						`  [TSKindId.${entry.member}]: (d) => ({ ...d, $type: TSKindId.${entry.member} as const }),`,
-						entry.kind === kind
+						entry.kind === kind,
+						// Structural type — some leaf kinds (enrich-minted markers,
+						// alias-reached members) have no exported interface.
+						`_NodeData & { readonly $type: TSKindId.${entry.member} }`
 					);
 				} else {
-					claimRow(kind, `  '${kind}': (d) => d,`, true);
+					claimRow(kind, `  '${kind}': (d) => d,`, true, `_NodeData`);
 				}
 			}
 		}
 		for (const { row } of rows.values()) lines.push(row);
 		lines.push('};');
 		lines.push('');
+		if (this.#kindEntries) {
+			// Kind-id → wrapped-surface map: `wrapNode` on a `$type`-narrowed
+			// input (an `is.*` guard) resolves to that kind's wrap return —
+			// no caller-side cast. Rows mirror _wrapTable's claims exactly.
+			lines.push('interface _WrapReturnByKindId {');
+			for (const [tableKey, { typeExpr }] of rows) {
+				lines.push(`  [TSKindId.${tableKey}]: ${typeExpr};`);
+			}
+			lines.push('}');
+			lines.push('');
+		}
 
 		// Kinds absent from the NodeMap entirely (no `_wrapTable` entry — e.g.
 		// python's `case_pattern_group1`, a hidden alias-mint wrapper the
@@ -1920,6 +1935,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 		// Public entry points
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
+		if (this.#kindEntries) {
+			// T-based with an indexed `$type` access — a guard-narrowed
+			// intersection (`Statement & { $type: TSKindId.FunctionItem }`)
+			// REDUCES under indexed access, where a bare `{ $type: K }`
+			// inference site would union every constituent's discriminant.
+			lines.push('export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(');
+			lines.push('  data: T,');
+			lines.push('  tree: TreeHandle');
+			lines.push("): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId];");
+			lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;');
+		}
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');
 		if (this.#kindEntries) {
 			lines.push('  // The wire `$type` is the numeric grammar-symbol KindId — dispatch');

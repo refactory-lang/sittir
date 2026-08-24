@@ -14,5 +14,5 @@ export function renderMainFunction() {
 export function roundTripIsByteIdentical(source: string) {
 	const engine = createEngine();
 	const { root, tree } = parseSource(engine, source);
-	return (wrapNode(root, tree) as { $render(): string }).$render() === source;
+	return wrapNode(root, tree).$render() === source;
 }

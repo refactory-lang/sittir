@@ -10,7 +10,8 @@ import {
 	methodsEngine,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
-	attachProps
+	attachProps,
+	isNodeData
 } from './utils.js';
 
 /** The render/edit method surface withMethods attaches — the shared tail
@@ -217,11 +218,11 @@ function buildTokenTreePattern$impl(
 
 export const buildTokenTreePattern = attachProps(buildTokenTreePattern$impl, {
 	paren: (config: Partial<T.TokenTreePatternParen.Config> = {}) =>
-		buildTokenTreePattern$impl(buildTokenTreePatternParen(config)),
+		buildTokenTreePattern$impl(buildTokenTreePatternParen(config) as T.TokenTreePatternParen),
 	bracket: (config: Partial<T.TokenTreePatternBracket.Config> = {}) =>
-		buildTokenTreePattern$impl(buildTokenTreePatternBracket(config)),
+		buildTokenTreePattern$impl(buildTokenTreePatternBracket(config) as T.TokenTreePatternBracket),
 	brace: (config: Partial<T.TokenTreePatternBrace.Config> = {}) =>
-		buildTokenTreePattern$impl(buildTokenTreePatternBrace(config))
+		buildTokenTreePattern$impl(buildTokenTreePatternBrace(config) as T.TokenTreePatternBrace)
 });
 
 export type TokenBindingPatternBuilt = T.TokenBindingPattern & {
@@ -417,15 +418,18 @@ function buildTokenTree$impl(
 }
 
 export const buildTokenTree = attachProps(buildTokenTree$impl, {
-	paren: (config: Partial<T.TokenTreeParen.Config> = {}) => buildTokenTree$impl(buildTokenTreeParen(config)),
-	bracket: (config: Partial<T.TokenTreeBracket.Config> = {}) => buildTokenTree$impl(buildTokenTreeBracket(config)),
-	brace: (config: Partial<T.TokenTreeBrace.Config> = {}) => buildTokenTree$impl(buildTokenTreeBrace(config)),
+	paren: (config: Partial<T.TokenTreeParen.Config> = {}) =>
+		buildTokenTree$impl(buildTokenTreeParen(config) as T.TokenTreeParen),
+	bracket: (config: Partial<T.TokenTreeBracket.Config> = {}) =>
+		buildTokenTree$impl(buildTokenTreeBracket(config) as T.TokenTreeBracket),
+	brace: (config: Partial<T.TokenTreeBrace.Config> = {}) =>
+		buildTokenTree$impl(buildTokenTreeBrace(config) as T.TokenTreeBrace),
 	delimTokenTreeParen: (config: Partial<T.DelimTokenTreeParen.Config> = {}) =>
-		buildTokenTree$impl(buildDelimTokenTreeParen(config)),
+		buildTokenTree$impl(buildDelimTokenTreeParen(config) as T.DelimTokenTreeParen),
 	delimTokenTreeBracket: (config: Partial<T.DelimTokenTreeBracket.Config> = {}) =>
-		buildTokenTree$impl(buildDelimTokenTreeBracket(config)),
+		buildTokenTree$impl(buildDelimTokenTreeBracket(config) as T.DelimTokenTreeBracket),
 	delimTokenTreeBrace: (config: Partial<T.DelimTokenTreeBrace.Config> = {}) =>
-		buildTokenTree$impl(buildDelimTokenTreeBrace(config))
+		buildTokenTree$impl(buildDelimTokenTreeBrace(config) as T.DelimTokenTreeBrace)
 });
 
 export type TokenRepetitionBuilt = T.TokenRepetition & {
@@ -871,7 +875,7 @@ export type EnumVariantListBuilt = T.EnumVariantList & {
 
 export function buildEnumVariantList(child?: T.EnumVariantListElements): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedEnumVariant)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedEnumVariant | T.EnumVariant))[]
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -965,7 +969,7 @@ export function buildFieldDeclarationList(
 	child?: T.FieldDeclarationListElements
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedFieldDeclaration)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedFieldDeclaration | T.FieldDeclaration))[]
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1053,7 +1057,7 @@ export function buildOrderedFieldDeclarationList(
 	child?: T.OrderedFieldDeclarationList.Config['attributes']
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedOrderedField)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1818,7 +1822,10 @@ export type TypeParametersBuilt = T.TypeParameters & {
 
 export function buildTypeParameters(child: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedTypeParameter)[]
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)
+	)[]
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2205,7 +2212,10 @@ export type ParametersBuilt = T.Parameters & {
 
 export function buildParameters(child?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedParameter)[]
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type)
+	)[]
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2415,7 +2425,7 @@ export type VisibilityModifierBuilt = T.VisibilityModifier & {
 	};
 } & _NodeMethods;
 
-export function buildVisibilityModifier(child: T.Crate | T.VisibilityModifierPub): VisibilityModifierBuilt {
+function buildVisibilityModifier$impl(child: T.Crate | T.VisibilityModifierPub): VisibilityModifierBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2424,7 +2434,7 @@ export function buildVisibilityModifier(child: T.Crate | T.VisibilityModifierPub
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Crate | T.VisibilityModifierPub) => buildVisibilityModifier(v) }
+				$with: { $child: (v: T.Crate | T.VisibilityModifierPub) => buildVisibilityModifier$impl(v) }
 			},
 			{
 				content: () => _content
@@ -2433,6 +2443,16 @@ export function buildVisibilityModifier(child: T.Crate | T.VisibilityModifierPub
 		methodsEngine
 	);
 }
+
+export const buildVisibilityModifier = attachProps(buildVisibilityModifier$impl, {
+	crate: () => buildVisibilityModifier$impl(buildCrate() as T.Crate),
+	pub: (child?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) =>
+		buildVisibilityModifier$impl(
+			(child === undefined
+				? buildVisibilityModifierPub()
+				: buildVisibilityModifierPub(child)) as T.VisibilityModifierPub
+		)
+});
 
 export type BracketedTypeBuilt = T.BracketedType & {
 	readonly $source: 2;
@@ -2923,7 +2943,10 @@ export type TypeArgumentsBuilt = T.TypeArguments & {
 
 export function buildTypeArguments(child: T.TypeArgumentsElements): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.TypeArgument)[]
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)
+	)[]
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3239,11 +3262,11 @@ function buildDelimTokenTree$impl(
 
 export const buildDelimTokenTree = attachProps(buildDelimTokenTree$impl, {
 	paren: (config: Partial<T.DelimTokenTreeParen.Config> = {}) =>
-		buildDelimTokenTree$impl(buildDelimTokenTreeParen(config)),
+		buildDelimTokenTree$impl(buildDelimTokenTreeParen(config) as T.DelimTokenTreeParen),
 	bracket: (config: Partial<T.DelimTokenTreeBracket.Config> = {}) =>
-		buildDelimTokenTree$impl(buildDelimTokenTreeBracket(config)),
+		buildDelimTokenTree$impl(buildDelimTokenTreeBracket(config) as T.DelimTokenTreeBracket),
 	brace: (config: Partial<T.DelimTokenTreeBrace.Config> = {}) =>
-		buildDelimTokenTree$impl(buildDelimTokenTreeBrace(config))
+		buildDelimTokenTree$impl(buildDelimTokenTreeBrace(config) as T.DelimTokenTreeBrace)
 });
 
 export type ScopedIdentifierBuilt = T.ScopedIdentifier & {
@@ -3822,7 +3845,7 @@ export type ArgumentsBuilt = T.Arguments & {
 
 export function buildArguments(child?: T.ArgumentsElements): ReturnType<typeof _buildArguments>;
 export function buildArguments(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedArgument)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedArgument | T.Expression))[]
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3884,9 +3907,10 @@ function buildArrayExpression$impl(child: T.ArrayExpressionSemi | T.ArrayExpress
 }
 
 export const buildArrayExpression = attachProps(buildArrayExpression$impl, {
-	semi: (config: T.ArrayExpressionSemi.Config) => buildArrayExpression$impl(buildArrayExpressionSemi(config)),
+	semi: (config: T.ArrayExpressionSemi.Config) =>
+		buildArrayExpression$impl(buildArrayExpressionSemi(config) as T.ArrayExpressionSemi),
 	list: (config: Partial<T.ArrayExpressionList.Config> = {}) =>
-		buildArrayExpression$impl(buildArrayExpressionList(config))
+		buildArrayExpression$impl(buildArrayExpressionList(config) as T.ArrayExpressionList)
 });
 
 export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
@@ -3960,7 +3984,7 @@ export const buildTupleExpression = attachProps(buildTupleExpression$impl, {
 		buildTupleExpression$impl({
 			tupleExpressionElements: (
 				buildTupleExpressionElements as (...a: unknown[]) => ReturnType<typeof buildTupleExpressionElements>
-			)(...args)
+			)(...args) as T.TupleExpressionElements
 		})
 });
 
@@ -4314,8 +4338,8 @@ function buildElseClause$impl(child: T.Block | T.IfExpression): ElseClauseBuilt 
 }
 
 export const buildElseClause = attachProps(buildElseClause$impl, {
-	block: (config: Partial<T.Block.Config> = {}) => buildElseClause$impl(buildBlock(config)),
-	ifExpression: (config: T.IfExpression.Config) => buildElseClause$impl(buildIfExpression(config))
+	block: (config: Partial<T.Block.Config> = {}) => buildElseClause$impl(buildBlock(config) as T.Block),
+	ifExpression: (config: T.IfExpression.Config) => buildElseClause$impl(buildIfExpression(config) as T.IfExpression)
 });
 
 export type MatchExpressionBuilt = T.MatchExpression & {
@@ -5477,12 +5501,14 @@ function buildRangePattern$impl(child: T.RangePatternArm2 | T.RangePatternPrefix
 }
 
 export const buildRangePattern = attachProps(buildRangePattern$impl, {
-	arm2: (config: T.RangePatternArm2.Config) => buildRangePattern$impl(buildRangePatternArm2(config)),
-	prefix: (config: T.RangePatternPrefix.Config) => buildRangePattern$impl(buildRangePatternPrefix(config)),
+	arm2: (config: T.RangePatternArm2.Config) =>
+		buildRangePattern$impl(buildRangePatternArm2(config) as T.RangePatternArm2),
+	prefix: (config: T.RangePatternPrefix.Config) =>
+		buildRangePattern$impl(buildRangePatternPrefix(config) as T.RangePatternPrefix),
 	dotDotEq: (...args: Parameters<typeof buildRangePatternPrefix.dotDotEq>) =>
-		buildRangePattern$impl(buildRangePatternPrefix.dotDotEq(...args)),
+		buildRangePattern$impl(buildRangePatternPrefix.dotDotEq(...args) as T.RangePatternPrefix),
 	dotDot: (...args: Parameters<typeof buildRangePatternPrefix.dotDot>) =>
-		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args))
+		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args) as T.RangePatternPrefix)
 });
 
 export type RefPatternBuilt = T.RefPattern & {
@@ -5613,8 +5639,8 @@ function buildOrPattern$impl(child: T.OrPatternBinary | T.OrPatternPrefix): OrPa
 }
 
 export const buildOrPattern = attachProps(buildOrPattern$impl, {
-	binary: (config: T.OrPatternBinary.Config) => buildOrPattern$impl(buildOrPatternBinary(config)),
-	prefix: (config: T.OrPatternPrefix.Config) => buildOrPattern$impl(buildOrPatternPrefix(config))
+	binary: (config: T.OrPatternBinary.Config) => buildOrPattern$impl(buildOrPatternBinary(config) as T.OrPatternBinary),
+	prefix: (config: T.OrPatternPrefix.Config) => buildOrPattern$impl(buildOrPatternPrefix(config) as T.OrPatternPrefix)
 });
 
 export type NegativeLiteralBuilt = T.NegativeLiteral & {
@@ -6025,20 +6051,20 @@ export type EnumVariantListElementsBuilt = T.EnumVariantListElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedEnumVariant>): EnumVariantListElementsBuilt;
+		$children(...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>): EnumVariantListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): EnumVariantListElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildEnumVariantListElements(
-	...elements: NonEmptyArray<T.AttributedEnumVariant>
+	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedEnumVariant>
+	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedEnumVariant)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedEnumVariant | T.EnumVariant))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6047,15 +6073,24 @@ export function buildEnumVariantListElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedEnumVariant>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		T.AttributedEnumVariant | T.EnumVariant
+	>;
 	return _buildEnumVariantListElements(elements, options);
 }
 function _buildEnumVariantListElements(
-	elements: NonEmptyArray<T.AttributedEnumVariant>,
+	elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>,
 	options: { delimiter?: Delimiter.Trailing }
 ): EnumVariantListElementsBuilt {
 	_assertNonEmpty(elements, '_enum_variant_list_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.AttributedEnumVariant =>
+			isNodeData(e) && e.$type === TSKindId.AttributedEnumVariant
+				? (e as T.AttributedEnumVariant)
+				: buildAttributedEnumVariant({ enumVariant: e } as Parameters<typeof buildAttributedEnumVariant>[0])
+	);
+	_assertNonEmpty(_mapped, '_enum_variant_list_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6066,7 +6101,8 @@ function _buildEnumVariantListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => buildEnumVariantListElements(options, ...vs),
+					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>) =>
+						buildEnumVariantListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6083,20 +6119,22 @@ export type FieldDeclarationListElementsBuilt = T.FieldDeclarationListElements &
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedFieldDeclaration>): FieldDeclarationListElementsBuilt;
+		$children(
+			...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+		): FieldDeclarationListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): FieldDeclarationListElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildFieldDeclarationListElements(
-	...elements: NonEmptyArray<T.AttributedFieldDeclaration>
+	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedFieldDeclaration>
+	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedFieldDeclaration)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedFieldDeclaration | T.FieldDeclaration))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6105,15 +6143,26 @@ export function buildFieldDeclarationListElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedFieldDeclaration>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		T.AttributedFieldDeclaration | T.FieldDeclaration
+	>;
 	return _buildFieldDeclarationListElements(elements, options);
 }
 function _buildFieldDeclarationListElements(
-	elements: NonEmptyArray<T.AttributedFieldDeclaration>,
+	elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>,
 	options: { delimiter?: Delimiter.Trailing }
 ): FieldDeclarationListElementsBuilt {
 	_assertNonEmpty(elements, '_field_declaration_list_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.AttributedFieldDeclaration =>
+			isNodeData(e) && e.$type === TSKindId.AttributedFieldDeclaration
+				? (e as T.AttributedFieldDeclaration)
+				: buildAttributedFieldDeclaration({ fieldDeclaration: e } as Parameters<
+						typeof buildAttributedFieldDeclaration
+					>[0])
+	);
+	_assertNonEmpty(_mapped, '_field_declaration_list_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6124,7 +6173,7 @@ function _buildFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
+					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>) =>
 						buildFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
@@ -6143,20 +6192,20 @@ export type OrderedFieldDeclarationListElementsBuilt = T.OrderedFieldDeclaration
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedOrderedField>): OrderedFieldDeclarationListElementsBuilt;
+		$children(...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>): OrderedFieldDeclarationListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): OrderedFieldDeclarationListElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildOrderedFieldDeclarationListElements(
-	...elements: NonEmptyArray<T.AttributedOrderedField>
+	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedOrderedField>
+	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedOrderedField)[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6165,15 +6214,22 @@ export function buildOrderedFieldDeclarationListElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField | T._Type>;
 	return _buildOrderedFieldDeclarationListElements(elements, options);
 }
 function _buildOrderedFieldDeclarationListElements(
-	elements: NonEmptyArray<T.AttributedOrderedField>,
+	elements: NonEmptyArray<T.AttributedOrderedField | T._Type>,
 	options: { delimiter?: Delimiter.Trailing }
 ): OrderedFieldDeclarationListElementsBuilt {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.AttributedOrderedField =>
+			isNodeData(e) && e.$type === TSKindId.AttributedOrderedField
+				? (e as T.AttributedOrderedField)
+				: buildAttributedOrderedField({ type: e } as Parameters<typeof buildAttributedOrderedField>[0])
+	);
+	_assertNonEmpty(_mapped, '_ordered_field_declaration_list_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6184,7 +6240,7 @@ function _buildOrderedFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
+					$children: (...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>) =>
 						buildOrderedFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
@@ -6259,20 +6315,31 @@ export type TypeParametersElementsBuilt = T.TypeParametersElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedTypeParameter>): TypeParametersElementsBuilt;
+		$children(
+			...vs: NonEmptyArray<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+			>
+		): TypeParametersElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TypeParametersElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildTypeParametersElements(
-	...elements: NonEmptyArray<T.AttributedTypeParameter>
+	...elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedTypeParameter>
+	...elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedTypeParameter)[]
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6281,15 +6348,26 @@ export function buildTypeParametersElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedTypeParameter>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>;
 	return _buildTypeParametersElements(elements, options);
 }
 function _buildTypeParametersElements(
-	elements: NonEmptyArray<T.AttributedTypeParameter>,
+	elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>,
 	options: { delimiter?: Delimiter.Trailing }
 ): TypeParametersElementsBuilt {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.AttributedTypeParameter =>
+			isNodeData(e) && e.$type === TSKindId.AttributedTypeParameter
+				? (e as T.AttributedTypeParameter)
+				: buildAttributedTypeParameter({ content: e } as Parameters<typeof buildAttributedTypeParameter>[0])
+	);
+	_assertNonEmpty(_mapped, '_type_parameters_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6300,7 +6378,11 @@ function _buildTypeParametersElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedTypeParameter>) => buildTypeParametersElements(options, ...vs),
+					$children: (
+						...vs: NonEmptyArray<
+							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+						>
+					) => buildTypeParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6371,19 +6453,30 @@ export type ParametersElementsBuilt = T.ParametersElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedParameter>): ParametersElementsBuilt;
+		$children(
+			...vs: NonEmptyArray<T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>
+		): ParametersElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): ParametersElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildParametersElements(
-	...elements: NonEmptyArray<T.AttributedParameter>
+	...elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedParameter>
+	...elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+	>
 ): ReturnType<typeof _buildParametersElements>;
-export function buildParametersElements(...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedParameter)[]) {
+export function buildParametersElements(
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type)
+	)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
@@ -6391,15 +6484,24 @@ export function buildParametersElements(...args: ({ delimiter?: Delimiter.Traili
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedParameter>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+	>;
 	return _buildParametersElements(elements, options);
 }
 function _buildParametersElements(
-	elements: NonEmptyArray<T.AttributedParameter>,
+	elements: NonEmptyArray<T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>,
 	options: { delimiter?: Delimiter.Trailing }
 ): ParametersElementsBuilt {
 	_assertNonEmpty(elements, '_parameters_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.AttributedParameter =>
+			isNodeData(e) && e.$type === TSKindId.AttributedParameter
+				? (e as T.AttributedParameter)
+				: buildAttributedParameter({ content: e } as Parameters<typeof buildAttributedParameter>[0])
+	);
+	_assertNonEmpty(_mapped, '_parameters_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6410,7 +6512,11 @@ function _buildParametersElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedParameter>) => buildParametersElements(options, ...vs),
+					$children: (
+						...vs: NonEmptyArray<
+							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+						>
+					) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6537,19 +6643,26 @@ export type TypeArgumentsElementsBuilt = T.TypeArgumentsElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.TypeArgument>): TypeArgumentsElementsBuilt;
+		$children(
+			...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+		): TypeArgumentsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TypeArgumentsElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildTypeArgumentsElements(
-	...elements: NonEmptyArray<T.TypeArgument>
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.TypeArgument>
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
-export function buildTypeArgumentsElements(...args: ({ delimiter?: Delimiter.Trailing } | T.TypeArgument)[]) {
+export function buildTypeArgumentsElements(
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)
+	)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
@@ -6557,15 +6670,24 @@ export function buildTypeArgumentsElements(...args: ({ delimiter?: Delimiter.Tra
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeArgument>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block
+	>;
 	return _buildTypeArgumentsElements(elements, options);
 }
 function _buildTypeArgumentsElements(
-	elements: NonEmptyArray<T.TypeArgument>,
+	elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>,
 	options: { delimiter?: Delimiter.Trailing }
 ): TypeArgumentsElementsBuilt {
 	_assertNonEmpty(elements, '_type_arguments_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.TypeArgument =>
+			isNodeData(e) && e.$type === TSKindId.TypeArgument
+				? (e as T.TypeArgument)
+				: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])
+	);
+	_assertNonEmpty(_mapped, '_type_arguments_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6576,7 +6698,9 @@ function _buildTypeArgumentsElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.TypeArgument>) => buildTypeArgumentsElements(options, ...vs),
+					$children: (
+						...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+					) => buildTypeArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6593,19 +6717,21 @@ export type ArgumentsElementsBuilt = T.ArgumentsElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedArgument>): ArgumentsElementsBuilt;
+		$children(...vs: NonEmptyArray<T.AttributedArgument | T.Expression>): ArgumentsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): ArgumentsElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildArgumentsElements(
-	...elements: NonEmptyArray<T.AttributedArgument>
+	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedArgument>
+	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
 ): ReturnType<typeof _buildArgumentsElements>;
-export function buildArgumentsElements(...args: ({ delimiter?: Delimiter.Trailing } | T.AttributedArgument)[]) {
+export function buildArgumentsElements(
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedArgument | T.Expression))[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
@@ -6613,15 +6739,22 @@ export function buildArgumentsElements(...args: ({ delimiter?: Delimiter.Trailin
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedArgument>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedArgument | T.Expression>;
 	return _buildArgumentsElements(elements, options);
 }
 function _buildArgumentsElements(
-	elements: NonEmptyArray<T.AttributedArgument>,
+	elements: NonEmptyArray<T.AttributedArgument | T.Expression>,
 	options: { delimiter?: Delimiter.Trailing }
 ): ArgumentsElementsBuilt {
 	_assertNonEmpty(elements, '_arguments_elements.elements');
-	const _element = elements;
+	const _mapped = elements.map(
+		(e): T.AttributedArgument =>
+			isNodeData(e) && e.$type === TSKindId.AttributedArgument
+				? (e as T.AttributedArgument)
+				: buildAttributedArgument({ expression: e } as Parameters<typeof buildAttributedArgument>[0])
+	);
+	_assertNonEmpty(_mapped, '_arguments_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6632,7 +6765,8 @@ function _buildArgumentsElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedArgument>) => buildArgumentsElements(options, ...vs),
+					$children: (...vs: NonEmptyArray<T.AttributedArgument | T.Expression>) =>
+						buildArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6962,7 +7096,7 @@ export type VisibilityModifierGroupBuilt = T.VisibilityModifierGroup & {
 	};
 } & _NodeMethods;
 
-export function buildVisibilityModifierGroup(
+function buildVisibilityModifierGroup$impl(
 	child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath
 ): VisibilityModifierGroupBuilt {
 	const _content = child;
@@ -6974,7 +7108,7 @@ export function buildVisibilityModifierGroup(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) => buildVisibilityModifierGroup(v)
+					$child: (v: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) => buildVisibilityModifierGroup$impl(v)
 				}
 			},
 			{
@@ -6984,6 +7118,14 @@ export function buildVisibilityModifierGroup(
 		methodsEngine
 	);
 }
+
+export const buildVisibilityModifierGroup = attachProps(buildVisibilityModifierGroup$impl, {
+	self: () => buildVisibilityModifierGroup$impl(buildSelf() as T.Self),
+	super: () => buildVisibilityModifierGroup$impl(buildSuper() as T.Super),
+	crate: () => buildVisibilityModifierGroup$impl(buildCrate() as T.Crate),
+	visibilityModifierInPath: (child: T.Path) =>
+		buildVisibilityModifierGroup$impl(buildVisibilityModifierInPath(child) as T.VisibilityModifierInPath)
+});
 
 export type ArrayExpressionArmBuilt = T.ArrayExpressionArm & {
 	readonly $source: 2;

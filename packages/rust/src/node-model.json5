@@ -8208,6 +8208,36 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "content",
+          "childKind": "self",
+          "path": []
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "content",
+          "childKind": "super",
+          "path": []
+        },
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "content",
+          "childKind": "crate",
+          "path": []
+        },
+        {
+          "name": "visibilityModifierInPath",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_in_path",
+          "path": []
+        }
       ]
     },
     {
@@ -19647,6 +19677,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "content",
+          "childKind": "crate",
+          "path": []
+        },
+        {
+          "name": "pub",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": []
+        }
       ]
     },
     {

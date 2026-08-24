@@ -9,13 +9,13 @@ import type {
 	NodeOrTerminal,
 	NodeBackedRef,
 	AssembledNode,
-	AssembledBranch,
 	AssembledGroup,
 	AssembledSeparatedList,
 	BranchSlotClass,
 	FieldStorageInfo
 } from '../compiler/model/node-map.ts';
 import {
+	AssembledBranch,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
@@ -32,6 +32,7 @@ import {
 	storageKindOfRef,
 	structuralFieldsOf
 } from '../compiler/model/node-map.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
 
 export function isSlotBearingCompound(
 	node: AssembledNode
@@ -574,6 +575,52 @@ export type ChildFactorySurface = 'direct' | 'spread';
 export function userSlotsOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal[] {
 	if (!isSlotBearingCompound(node)) return [];
 	return node.fields.filter((f) => !isHiddenInfraSlot(f, nodeMap) && keywordPresenceKind(f, nodeMap) === null);
+}
+
+// One derivation shared by the runtime string routes and the
+// config-literal widening — see glossary.
+export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined) return [];
+	const isWord = (t: string | undefined): t is string => t !== undefined && matchesWordShape(t, nodeMap.wordMatcher);
+	if (node instanceof AssembledKeyword) return isWord(node.text) ? [node.text] : [];
+	if (!(node instanceof AssembledBranch)) return [];
+	const own = wordConstructibleText(node, nodeMap);
+	if (own !== undefined) return [own];
+	const facts = soleSlotFacts(node, nodeMap);
+	if (facts === null || facts.multiple) return [];
+	const out: string[] = [];
+	for (const k of slotKindNames(facts.slot)) {
+		const child = nodeMap.nodes.get(k);
+		if (child instanceof AssembledKeyword && isWord(child.text)) out.push(child.text);
+		else if (child instanceof AssembledBranch) {
+			const t = wordConstructibleText(child, nodeMap);
+			if (t !== undefined) out.push(t);
+		}
+	}
+	return out;
+}
+
+// Word-shape gate: brace/paren-led list kinds also open with a fixed
+// STRING — only a WORD keyword claims a bare-string route.
+export function wordConstructibleText(node: AssembledNode, nodeMap: NodeMap): string | undefined {
+	if (!(node instanceof AssembledBranch)) return undefined;
+	const text = node.keywordConstructibleText;
+	return text !== undefined && matchesWordShape(text, nodeMap.wordMatcher) ? text : undefined;
+}
+
+// ≥2 slots required: a single-slot kind IS the element — its factory may
+// take a direct text value. See glossary.
+export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): AssembledNonterminal | undefined {
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || !isSlotBearingCompound(node) || node.rawFactoryName === undefined) return undefined;
+	// A REAL wrapper decorates its content (≥2 slots, one required). A
+	// single-slot kind IS the element — its factory may take a direct
+	// value (text form), not a config object, so it never qualifies.
+	if (node.fields.length < 2) return undefined;
+	const required = node.fields.filter((f) => isRequired(f));
+	if (required.length !== 1 || isMultiple(required[0]!)) return undefined;
+	return required[0];
 }
 
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {

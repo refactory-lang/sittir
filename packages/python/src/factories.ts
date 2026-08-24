@@ -237,11 +237,13 @@ function buildFutureImportStatement$impl(child: T.ImportList | T.FutureImportSta
 export const buildFutureImportStatement = attachProps(buildFutureImportStatement$impl, {
 	importList: (...args: ({ delimiter?: Delimiter.Trailing } | (T.DottedName | T.AliasedImport))[]) =>
 		buildFutureImportStatement$impl(
-			(buildImportList as (...a: unknown[]) => ReturnType<typeof buildImportList>)(...args)
+			(buildImportList as (...a: unknown[]) => ReturnType<typeof buildImportList>)(...args) as T.ImportList
 		),
 	arm: (...args: ({ delimiter?: Delimiter.Trailing } | (T.DottedName | T.AliasedImport))[]) =>
 		buildFutureImportStatement$impl(
-			(buildFutureImportStatementArm as (...a: unknown[]) => ReturnType<typeof buildFutureImportStatementArm>)(...args)
+			(buildFutureImportStatementArm as (...a: unknown[]) => ReturnType<typeof buildFutureImportStatementArm>)(
+				...args
+			) as T.FutureImportStatementArm
 		)
 });
 
@@ -399,10 +401,13 @@ function buildPrintStatement$impl(child: T.PrintStatementArm1 | T.PrintStatement
 }
 
 export const buildPrintStatement = attachProps(buildPrintStatement$impl, {
-	arm1: (config: T.PrintStatementArm1.Config) => buildPrintStatement$impl(buildPrintStatementArm1(config)),
+	arm1: (config: T.PrintStatementArm1.Config) =>
+		buildPrintStatement$impl(buildPrintStatementArm1(config) as T.PrintStatementArm1),
 	arm2: (...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) =>
 		buildPrintStatement$impl(
-			(buildPrintStatementArm2 as (...a: unknown[]) => ReturnType<typeof buildPrintStatementArm2>)(...args)
+			(buildPrintStatementArm2 as (...a: unknown[]) => ReturnType<typeof buildPrintStatementArm2>)(
+				...args
+			) as T.PrintStatementArm2
 		)
 });
 
@@ -1137,10 +1142,14 @@ function buildWithClause$impl(child: T.WithClauseBare | T.WithClauseParen): With
 
 export const buildWithClause = attachProps(buildWithClause$impl, {
 	bare: (...args: ({ delimiter?: Delimiter.Trailing } | T.WithItem)[]) =>
-		buildWithClause$impl((buildWithClauseBare as (...a: unknown[]) => ReturnType<typeof buildWithClauseBare>)(...args)),
+		buildWithClause$impl(
+			(buildWithClauseBare as (...a: unknown[]) => ReturnType<typeof buildWithClauseBare>)(...args) as T.WithClauseBare
+		),
 	paren: (...args: ({ delimiter?: Delimiter.Trailing } | T.WithItem)[]) =>
 		buildWithClause$impl(
-			(buildWithClauseParen as (...a: unknown[]) => ReturnType<typeof buildWithClauseParen>)(...args)
+			(buildWithClauseParen as (...a: unknown[]) => ReturnType<typeof buildWithClauseParen>)(
+				...args
+			) as T.WithClauseParen
 		)
 });
 
@@ -1619,9 +1628,9 @@ function buildParenthesizedListSplat$impl(child: T.ParenthesizedListSplat | T.Li
 
 export const buildParenthesizedListSplat = attachProps(buildParenthesizedListSplat$impl, {
 	parenthesizedListSplat: (child: T.ParenthesizedListSplat | T.ListSplat) =>
-		buildParenthesizedListSplat$impl(buildParenthesizedListSplat(child)),
+		buildParenthesizedListSplat$impl(buildParenthesizedListSplat(child) as T.ParenthesizedListSplat),
 	listSplat: (expression: T.ListSplat.Config['expression']) =>
-		buildParenthesizedListSplat$impl(buildListSplat(expression))
+		buildParenthesizedListSplat$impl(buildListSplat(expression) as T.ListSplat)
 });
 
 export type ArgumentListBuilt = T.ArgumentList & {
@@ -3086,7 +3095,7 @@ function buildSlice$impl(config: Partial<T.Slice.Config> = {}): SliceBuilt {
 }
 
 export const buildSlice = attachProps(buildSlice$impl, {
-	group: (child?: T.Expression) => buildSlice$impl({ step: buildSliceGroup(child) })
+	group: (child?: T.Expression) => buildSlice$impl({ step: buildSliceGroup(child) as T.SliceGroup })
 });
 
 export type CallBuilt = T.Call & {
@@ -5067,8 +5076,10 @@ function buildExceptClauseArm$impl(child: T.ExceptClauseAs | T.ExceptClauseList)
 }
 
 export const buildExceptClauseArm = attachProps(buildExceptClauseArm$impl, {
-	exceptClauseAs: (config: T.ExceptClauseAs.Config) => buildExceptClauseArm$impl(buildExceptClauseAs(config)),
-	exceptClauseList: (...children: T.Expression[]) => buildExceptClauseArm$impl(buildExceptClauseList(...children))
+	exceptClauseAs: (config: T.ExceptClauseAs.Config) =>
+		buildExceptClauseArm$impl(buildExceptClauseAs(config) as T.ExceptClauseAs),
+	exceptClauseList: (...children: T.Expression[]) =>
+		buildExceptClauseArm$impl(buildExceptClauseList(...children) as T.ExceptClauseList)
 });
 
 export type SliceGroupBuilt = T.SliceGroup & {

@@ -1023,6 +1023,19 @@ describe('visibility_modifier', () => {
 	});
 });
 
+describe('visibility_modifier namespaced constructors', () => {
+	it('crate builds the parent', () => {
+		const node = ir.visibilityModifier.crate();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub builds the parent', () => {
+		const node = ir.visibilityModifier.pub();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('bracketed_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.bracketedType({ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any);

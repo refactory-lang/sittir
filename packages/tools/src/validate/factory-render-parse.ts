@@ -387,6 +387,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				return {
 					factoryMap,
 					factoryShapes,
+					determinedStorageKeys,
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,

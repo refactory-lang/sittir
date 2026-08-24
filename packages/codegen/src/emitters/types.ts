@@ -68,7 +68,8 @@ import {
 	fieldTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
-	emitsPlainBuiltAlias
+	emitsPlainBuiltAlias,
+	stringConstructibleTexts
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
@@ -1095,6 +1096,16 @@ function fieldInputHintTypeExpr(
 	return undefined;
 }
 
+// Loose-only: strict factories store config values directly, so widened
+// literals must never reach Config. See glossary.
+function fieldFromInputHintTypeExpr(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+	if (f.values.length === 1 && slotKindNames(f).length === 1) {
+		const texts = stringConstructibleTexts(slotKindNames(f)[0]!, nodeMap);
+		if (texts.length > 0) return `${fieldTypeExpr(f, nodeMap)} | ${stringUnion(texts)}`;
+	}
+	return undefined;
+}
+
 function emitFieldInputHints(
 	lines: string[],
 	fields: readonly AssembledNonterminal[],
@@ -1115,10 +1126,24 @@ function emitFieldInputHints(
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;
 		})
 		.filter((line): line is string => line !== undefined);
-	if (hintLines.length === 0) return;
-	lines.push('  readonly __inputHints__?: {');
-	lines.push(...hintLines);
-	lines.push('  };');
+	if (hintLines.length > 0) {
+		lines.push('  readonly __inputHints__?: {');
+		lines.push(...hintLines);
+		lines.push('  };');
+	}
+	const fromHintLines = fields
+		.map((field) => {
+			const hintType = fieldFromInputHintTypeExpr(field, nodeMap);
+			if (!hintType) return undefined;
+			const opt = isRequired(field) ? '' : '?';
+			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;
+		})
+		.filter((line): line is string => line !== undefined);
+	if (fromHintLines.length > 0) {
+		lines.push('  readonly __fromInputHints__?: {');
+		lines.push(...fromHintLines);
+		lines.push('  };');
+	}
 }
 
 function toPascal(kind: string): string {

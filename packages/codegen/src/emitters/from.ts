@@ -38,17 +38,20 @@ import {
 	classifyFromEmission,
 	soleSlotFacts,
 	type SoleSlotFacts,
-	canonicalSeparatedListField
+	canonicalSeparatedListField,
+	stringConstructibleTexts,
+	wordConstructibleText
 } from './shared.ts';
 import {
 	fieldElementType,
 	childElementType,
 	kindEnumTextMapExpr,
 	namespaceOf,
-	delimiterMembersFor
+	delimiterMembersFor,
+	separatedListSurface
 } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
-import { isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { AssembledBranch, isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -666,7 +669,8 @@ function emitSingularContainerFrom(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
-	storageKey: string
+	storageKey: string,
+	inputWiden?: string
 ): string {
 	// The factory's child parameter inferred type may be required or optional
 	// depending on grammar shape. Cast at the boundary funnels both shapes
@@ -689,7 +693,7 @@ function emitSingularContainerFrom(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(input?: ${slotLiteralValues(slot).length === 0 ? looseElementType(elementType, slot, nodeMap) : elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(input?: ${slotLiteralValues(slot).length === 0 ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
 		`    const child = ${storageAccess};`,
@@ -728,6 +732,19 @@ function emitContainerFrom(
 	const elementType = facts
 		? childElementType({ children: node.fields ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
+	// A sole separated-list slot forwards single elements too: the list's
+	// (wrapper-widened) element union joins the INPUT signature only — the
+	// resolver's type argument and the factory call keep the narrow element
+	// type (the runtime resolver builds the list node before the factory
+	// sees it).
+	let inputWiden: string | undefined;
+	if (facts && !facts.multiple) {
+		const kinds = slotKindNames(facts.slot);
+		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
+		if (inner !== undefined && inner.modelType === 'separatedList') {
+			inputWiden = separatedListSurface(inner, nodeMap, kindEntries).elemType;
+		}
+	}
 	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts === null) {
 		// No classified sole slot — the legacy `$other` passthrough has no
@@ -762,7 +779,8 @@ function emitContainerFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		storageKey
+		storageKey,
+		inputWiden
 	);
 }
 
@@ -776,7 +794,10 @@ function emitSeparatedListFrom(
 	const factory = `F.${node.rawFactoryName}`;
 	const tName = `T.${node.typeName}`;
 	const contentSlot = buildSeparatedListContentSlot(node);
-	const elemType = fieldElementType(contentSlot, nodeMap);
+	// Single elemType derivation with the factory surface — including the
+	// transparent-wrapper widening (the factory wraps bare content).
+	const elemType = separatedListSurface(node, nodeMap, kindEntries).elemType;
+	void contentSlot;
 	// Same single-field-storage rule as `emitSeparatedListFactory`
 	// (factories.ts): the self-NodeData-unwrap path must read the SAME wire
 	// storage key the factory actually wrote. Multi-field kinds keep the
@@ -1210,6 +1231,18 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    const leaf = _resolveLeafString(v, leafKinds);');
 	lines.push('    if (leaf !== undefined) return leaf as T;');
 	lines.push('  }');
+	lines.push('  if (typeof v === "string") {');
+	lines.push('    const bk = _KEYWORD_BRANCH_BY_TEXT[v];');
+	lines.push('    if (bk !== undefined && branchKinds.includes(bk)) {');
+	lines.push('      const build = _KEYWORD_BRANCH_BUILD[bk];');
+	lines.push('      if (build !== undefined) return build() as T;');
+	lines.push('      if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;');
+	lines.push('    }');
+	lines.push('    const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;');
+	lines.push(
+		'    if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;'
+	);
+	lines.push('  }');
 	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
 	lines.push('    const { kind, ...rest } = v;');
 	lines.push('    if (typeof kind === "string" && _isFromKind(kind)) return _resolveByKind(kind, rest) as T;');
@@ -1404,6 +1437,39 @@ function emitResolverHelpers(
 	}
 	lines.push('  return undefined;');
 	lines.push('}');
+	lines.push('');
+
+	// Keyword-constructible branch routing (see _resolveOne's string
+	// routes): text → branch kind for exact-arm construction, plus the
+	// single-target branches whose coercer can consume a bare string.
+	// Both derive from the model's stringConstructibleTexts stamp. HIDDEN
+	// arms (`_visibility_modifier_pub`) have no from() route of their own,
+	// so a parallel build table maps each constructible kind to its STRICT
+	// factory — an empty build IS the keyword (all slots optional).
+	const byText: [string, string][] = [];
+	const buildByKind: [string, string][] = [];
+	const stringCapable: string[] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledBranch)) continue;
+		const own = wordConstructibleText(node, nodeMap);
+		if (own !== undefined && node.rawFactoryName !== undefined) {
+			byText.push([own, kind]);
+			buildByKind.push([kind, node.rawFactoryName]);
+		} else if (
+			!kind.startsWith('_') &&
+			node.fromFunctionName !== undefined &&
+			stringConstructibleTexts(kind, nodeMap).length > 0
+		) {
+			stringCapable.push(kind);
+		}
+	}
+	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
+	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
+	lines.push('};');
+	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {');
+	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
+	lines.push('};');
+	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);
 	lines.push('');
 
 	emitResolveOneHelper(lines);

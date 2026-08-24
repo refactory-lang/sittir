@@ -2195,6 +2195,9 @@ export interface ForStatement {
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
+	readonly __fromInputHints__?: {
+		readonly async_marker?: 'async' | 'async';
+	};
 	asyncMarker(): boolean | undefined;
 	left(): LeftHandSide;
 	right(): Expressions;
@@ -2251,6 +2254,9 @@ export interface WithStatement {
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
+	readonly __fromInputHints__?: {
+		readonly async_marker?: 'async' | 'async';
+	};
 	asyncMarker(): boolean | undefined;
 	withClause(): WithClause;
 	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
@@ -2278,6 +2284,9 @@ export interface FunctionDefinition {
 	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+	};
+	readonly __fromInputHints__?: {
+		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -2856,6 +2865,9 @@ export interface ForInClause {
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 		readonly comma?: BooleanKeyword<','>;
+	};
+	readonly __fromInputHints__?: {
+		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
 	left(): LeftHandSide;

@@ -194,7 +194,7 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 	const inline: InlineSlotEntry[] = [];
 
 	for (const [kind, node] of nm.nodes) {
-		const rule = (node as { rule?: AnyRule }).rule;
+		const rule = node.diagnosticRule as AnyRule;
 		const modelType = String((node as { modelType?: string }).modelType ?? '?');
 
 		if (isRepeatShaped(rule) && rule?.separator) {

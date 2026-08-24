@@ -149,9 +149,14 @@ describe('namespacedConstructors — factory emission', () => {
 
 	it('declares a form constructor with the child factory parameters and stores the built child', () => {
 		const emitted = emitFactories({ grammar: 'test', nodeMap: makeFormNodeMap() });
-		expect(emitted).toContain('a: (config: T.WrapperA.Config) => buildWrapper$impl(buildWrapperA(config)),');
+		// The built child is upcast to its base interface — the Built literal
+		// is deep enough to blow TS's comparison depth against the parent's
+		// Config union (a shallow supertype hop, not an escape hatch).
 		expect(emitted).toContain(
-			'let: (...args: Parameters<typeof buildWrapperB.let>) => buildWrapper$impl(buildWrapperB.let(...args)),'
+			'a: (config: T.WrapperA.Config) => buildWrapper$impl((buildWrapperA(config)) as T.WrapperA),'
+		);
+		expect(emitted).toContain(
+			'let: (...args: Parameters<typeof buildWrapperB.let>) => buildWrapper$impl((buildWrapperB.let(...args)) as T.WrapperB),'
 		);
 	});
 
