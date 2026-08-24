@@ -7,6 +7,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "ConditionKind": "object",
   "DeclarationStatementKind": "object",
   "DelimTokensKind": "object",
+  "Delimiter": "object",
   "ExpressionEndingWithBlockKind": "object",
   "ExpressionExceptRangeKind": "object",
   "ExpressionKind": "object",

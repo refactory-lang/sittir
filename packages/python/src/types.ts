@@ -2076,6 +2076,15 @@ export function kindIdFromName(kindName: string): TSKindId {
 	}
 }
 
+/** Separated-list optional-flank bitflag — the wire's `_delimiter` key
+ *  and the list factories' `delimiter` option. */
+export const enum Delimiter {
+	None = 0,
+	Leading = 1,
+	Trailing = 2,
+	Both = 3
+}
+
 // Scoped enums per supertype
 export const enum StatementKind {
 	SimpleStatements = '_simple_statements',

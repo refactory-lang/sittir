@@ -725,7 +725,7 @@ function emitSeparatedListFrom(
 		// `storageAccess` above needs its own `unknown` cast) — read the
 		// three per-instance fields through one shared cast rather than
 		// three separate ones.
-		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: number })';
+		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: T.Delimiter })';
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for

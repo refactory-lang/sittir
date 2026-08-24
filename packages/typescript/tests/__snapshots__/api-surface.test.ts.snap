@@ -6,6 +6,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "ALL_KINDS": "array",
   "AugmentedAssignmentLhsKind": "object",
   "DeclarationKind": "object",
+  "Delimiter": "object",
   "DestructuringPatternKind": "object",
   "ExpressionKind": "object",
   "ExpressionsKind": "object",

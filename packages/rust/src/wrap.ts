@@ -7,6 +7,7 @@ import type { TreeHandle } from '@sittir/common';
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES, kindIdFromName } from './types.js';
+import { Delimiter } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
@@ -8478,7 +8479,9 @@ export function wrapMacroRules(
 			...data,
 			$type: TSKindId.MacroRules as const,
 			_macro_rule: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			macroRules() {
 				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
@@ -8507,7 +8510,9 @@ export function wrapEnumVariantListElements(
 			...data,
 			$type: TSKindId.EnumVariantListElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.AttributedEnumVariant>(
@@ -8539,7 +8544,9 @@ export function wrapFieldDeclarationListElements(
 			...data,
 			$type: TSKindId.FieldDeclarationListElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.AttributedFieldDeclaration>(
@@ -8571,7 +8578,9 @@ export function wrapOrderedFieldDeclarationListElements(
 			...data,
 			$type: TSKindId.OrderedFieldDeclarationListElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.AttributedOrderedField>(
@@ -8600,7 +8609,9 @@ export function wrapWherePredicates(
 			...data,
 			$type: TSKindId.WherePredicates as const,
 			_where_predicate: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			wherePredicates() {
 				return drillInAll<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);
@@ -8629,7 +8640,9 @@ export function wrapTypeParametersElements(
 			...data,
 			$type: TSKindId.TypeParametersElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.AttributedTypeParameter>(
@@ -8658,7 +8671,9 @@ export function wrapUseClauses(
 			...data,
 			$type: TSKindId.UseClauses as const,
 			_use_clause: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			useClauses() {
 				return drillInAll<T.UseClause>(this._use_clause as readonly T.UseClause[] | undefined, tree);
@@ -8687,7 +8702,9 @@ export function wrapParametersElements(
 			...data,
 			$type: TSKindId.ParametersElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.AttributedParameter>(this._element as readonly T.AttributedParameter[] | undefined, tree);
@@ -8713,7 +8730,9 @@ export function wrapLifetimes(
 			...data,
 			$type: TSKindId.Lifetimes as const,
 			_lifetime: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			lifetimes() {
 				return drillInAll<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
@@ -8742,7 +8761,9 @@ export function wrapUseBoundsElements(
 			...data,
 			$type: TSKindId.UseBoundsElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.Lifetime | T.Identifier>(
@@ -8774,7 +8795,9 @@ export function wrapTypeArgumentsElements(
 			...data,
 			$type: TSKindId.TypeArgumentsElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.TypeArgument>(this._element as readonly T.TypeArgument[] | undefined, tree);
@@ -8803,7 +8826,9 @@ export function wrapArgumentsElements(
 			...data,
 			$type: TSKindId.ArgumentsElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.AttributedArgument>(this._element as readonly T.AttributedArgument[] | undefined, tree);
@@ -8832,7 +8857,9 @@ export function wrapFieldInitializerListElements(
 			...data,
 			$type: TSKindId.FieldInitializerListElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(
@@ -8866,7 +8893,9 @@ export function wrapTuplePatternElements(
 			...data,
 			$type: TSKindId.TuplePatternElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.Pattern | T.ClosureExpression>(
@@ -8895,7 +8924,9 @@ export function wrapPatterns(
 			...data,
 			$type: TSKindId.Patterns as const,
 			_pattern: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
@@ -8924,7 +8955,9 @@ export function wrapStructPatternElements(
 			...data,
 			$type: TSKindId.StructPatternElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.FieldPattern | T.RemainingFieldPattern>(
@@ -9296,7 +9329,9 @@ export function wrapTupleTypeElements(
 			...data,
 			$type: TSKindId.TupleTypeElements as const,
 			_type: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			types() {
 				return drillInAll<T._Type>(this._type as readonly T._Type[] | undefined, tree);
@@ -9325,7 +9360,9 @@ export function wrapTupleExpressionElements(
 			...data,
 			$type: TSKindId.TupleExpressionElements as const,
 			_element: _content,
-			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+				? Delimiter.Trailing
+				: Delimiter.None,
 
 			elements() {
 				return drillInAll<T.Expression>(this._element as readonly T.Expression[] | undefined, tree);

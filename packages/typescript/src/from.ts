@@ -3774,10 +3774,10 @@ export function coerceToObjectTypeContent(
 		return F.buildObjectTypeContent(
 			{
 				separator: (() => {
-					const sk = (data as unknown as { _separator?: number; _delimiter?: number })._separator;
+					const sk = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator;
 					return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
 				})(),
-				delimiter: (data as unknown as { _separator?: number; _delimiter?: number })._delimiter
+				delimiter: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter
 			},
 			...(children as unknown as NonEmptyArray<
 				| T.ExportStatement

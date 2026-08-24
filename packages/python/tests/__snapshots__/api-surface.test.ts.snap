@@ -4,6 +4,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
 {
   "ALL_KINDS": "array",
   "CompoundStatementKind": "object",
+  "Delimiter": "object",
   "ExpressionKind": "object",
   "ExpressionWithinForInClauseKind": "object",
   "ExpressionsKind": "object",

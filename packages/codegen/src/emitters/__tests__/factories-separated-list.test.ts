@@ -106,11 +106,11 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).toContain('separator?: "," | ";"');
-		expect(emitted).toContain('delimiter?: 1 | 2 | 3');
+		expect(emitted).toContain('delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).toContain('_member');
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('options.delimiter ?? 0');
+		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
 		// Selection maps the caller's literal choice to its KindId, defaulting
 		// to the first candidate arm when omitted.
 		expect(emitted).toContain('TSKindId.Comma');
@@ -128,10 +128,10 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).not.toContain('separator?:');
-		expect(emitted).toContain('delimiter?: 2');
+		expect(emitted).toContain('delimiter?: Delimiter.Trailing');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('options.delimiter ?? 0');
+		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
 	});
 
 	it('literal separator with both flanks optional (mirrors object_type_content_comma/_semi): leading + trailing, no separatorKind', () => {
@@ -143,10 +143,10 @@ describe('factories emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).not.toContain('separator?:');
-		expect(emitted).toContain('delimiter?: 1 | 2 | 3');
+		expect(emitted).toContain('delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('options.delimiter ?? 0');
+		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
 	});
 
 	it('literal separator with mandatory-only (no optional flanks): no options object at all — bare elements signature', () => {

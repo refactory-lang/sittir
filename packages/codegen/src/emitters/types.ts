@@ -15,6 +15,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
@@ -159,6 +160,11 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// 1b. TSKindId runtime discriminants + lookup helpers
 	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries, nodeMap);
+
+	// 1c. Delimiter — separated-list optional-flank bitflag members. Values
+	// serialize compiler/model DelimiterFlags (one source, one derivation);
+	// factories/wrap/from reference the members instead of raw numbers.
+	emitDelimiterEnum(lines);
 
 	// 2. Scoped enums per supertype
 	if (supertypes.length > 0) {
@@ -466,6 +472,17 @@ function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMa
 		if (seenEnumMembers.has(member)) continue;
 		seenEnumMembers.add(member);
 		lines.push(`  ${member} = ${JSON.stringify(kind)},`);
+	}
+	lines.push('}');
+	lines.push('');
+}
+
+function emitDelimiterEnum(lines: string[]): void {
+	lines.push("/** Separated-list optional-flank bitflag — the wire's `_delimiter` key");
+	lines.push(" *  and the list factories' `delimiter` option. */");
+	lines.push('export const enum Delimiter {');
+	for (const [member, value] of Object.entries(DelimiterFlags)) {
+		lines.push(`  ${toPascal(member)} = ${value},`);
 	}
 	lines.push('}');
 	lines.push('');

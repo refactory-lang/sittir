@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "9ee68f9a31882ac326abd539f7a2d206c35bc70267f87421494b46086bdcd943",
+  "source_hash": "079e90cb8b9d4ad174d52982b01b31cfae5965ba4fa20c4fc90a20dba3aa35bd",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "52ffb68ea750b54714cb38a13148f9d8d7e4cf3c823ced008afcef0d4590b18c",
@@ -20,7 +20,7 @@
     "packages/python/src/boundary.ts": "24637b5d59f133c9bcf18cc4a8f941ac745dc9ad4f6f0643f9ad5d4103c0c71d",
     "packages/python/src/consts.ts": "fc2a2806ab2fffa74778bfa463600fc85b505fedcc4ad58ad2d139f08f5bf4af",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
-    "packages/python/src/factories.ts": "1e5bdfb8f86b8bf77b5cb43658b83c9d550f3bbb849d7d33dec0a1c20760eaf0",
+    "packages/python/src/factories.ts": "67db9d38db550832a1f221dd08873440da2cbaea5abcb840e75cf06ee8195089",
     "packages/python/src/from.ts": "1a00eebe3598f7a36d86c45460d2f8d80103471b79624c3d012be1a3a76d7d6b",
     "packages/python/src/grammar.ts": "657f2e48204edaca177cb96fa7e9a8cbd98ec937571241352eba582546197158",
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
@@ -29,9 +29,9 @@
     "packages/python/src/is.ts": "521b910dd95b2912dd6f959929d12cd8561eafe15089a26caadc877d31b7438f",
     "packages/python/src/node-model.json5": "5989282860e2c1b201c47bc31c25833701865226b996704c90a7f1038142f989",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",
-    "packages/python/src/types.ts": "2a514bd5d8e814ab42454e6c13237b1b286c4f3714d7d6d71591e02ef353ec4f",
+    "packages/python/src/types.ts": "a12f359ae5294bd52d4adfd6e7690bf654b420171d7754a7617bff37fdd11619",
     "packages/python/src/utils.ts": "24de84cbd1523a9b80ac5e66c35d4b484360391d45cf39745ee9cda1494bf732",
-    "packages/python/src/wrap.ts": "1b8cf60eeb01ec038cba23021db5821e44bfc2688d21d6ed070a5ecddde19a26",
+    "packages/python/src/wrap.ts": "e97368988e19581049b18cf41e58c0a69c6ff2eadfefbb211e60a20672788069",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_argument_list_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",
     "packages/python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
