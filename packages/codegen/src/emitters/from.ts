@@ -40,7 +40,7 @@ import {
 	type SoleSlotFacts,
 	canonicalSeparatedListField
 } from './shared.ts';
-import { fieldElementType, childElementType, kindEnumTextMapExpr, namespaceOf } from './factories.ts';
+import { fieldElementType, childElementType, kindEnumTextMapExpr, namespaceOf, namespacedEntryEligible } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
@@ -122,7 +122,7 @@ function emitNamespaceImports(
 				: `import { TSKindId } from './types.js';`
 		);
 	}
-	lines.push("import type { AnyNodeData } from '@sittir/types';");
+	lines.push("import type { AnyNodeData, NonEmptyArray } from '@sittir/types';");
 	lines.push(
 		usesAttachProps
 			? "import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';"
@@ -204,7 +204,9 @@ function withNamespaceProps(
 	const fn = node.fromFunctionName;
 	const factory = node.rawFactoryName;
 	if (!fn || !factory) return emitted;
-	const entries = namespaceOf(node, nodeMap, kindEntries).entries;
+	const entries = namespaceOf(node, nodeMap, kindEntries).entries.filter((e) =>
+		namespacedEntryEligible(e, nodeMap, kindEntries)
+	);
 	if (entries.length === 0) return emitted;
 	const impl = `${fn}$impl`;
 	// Strip `export` BEFORE the rename: `impl` contains `$`, which a RegExp
@@ -217,9 +219,20 @@ function withNamespaceProps(
 	const props = entries.map((e) => {
 		const key = IDENT.test(e.name) ? e.name : JSON.stringify(e.name);
 		const access = IDENT.test(e.name) ? `F.${factory}.${e.name}` : `F.${factory}[${JSON.stringify(e.name)}]`;
-		return `  ${key}: ${access},`;
+		return { key, access };
 	});
-	return [renamed, '', `export const ${fn} = attachProps(${impl}, {`, ...props, '});'].join('\n');
+	// Explicit typeof-composed annotation: without it the const's INFERRED
+	// type expands every prop structurally and can blow declaration emit
+	// (TS7056); typeof references keep the .d.ts one line per member.
+	return [
+		renamed,
+		'',
+		`export const ${fn}: typeof ${impl} & {`,
+		...props.map((p) => `  ${p.key}: typeof ${p.access};`),
+		`} = attachProps(${impl}, {`,
+		...props.map((p) => `  ${p.key}: ${p.access},`),
+		'});'
+	].join('\n');
 }
 
 /** True when any emitted from() function carries namespaced props (drives

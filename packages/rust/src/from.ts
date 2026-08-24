@@ -3,7 +3,7 @@
 import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -1054,7 +1054,11 @@ function coerceToTokenTreePattern$impl(
 	);
 }
 
-export const coerceToTokenTreePattern = attachProps(coerceToTokenTreePattern$impl, {
+export const coerceToTokenTreePattern: typeof coerceToTokenTreePattern$impl & {
+	paren: typeof F.buildTokenTreePattern.paren;
+	bracket: typeof F.buildTokenTreePattern.bracket;
+	brace: typeof F.buildTokenTreePattern.brace;
+} = attachProps(coerceToTokenTreePattern$impl, {
 	paren: F.buildTokenTreePattern.paren,
 	bracket: F.buildTokenTreePattern.bracket,
 	brace: F.buildTokenTreePattern.brace
@@ -1109,7 +1113,11 @@ function coerceToTokenRepetitionPattern$impl(
 	});
 }
 
-export const coerceToTokenRepetitionPattern = attachProps(coerceToTokenRepetitionPattern$impl, {
+export const coerceToTokenRepetitionPattern: typeof coerceToTokenRepetitionPattern$impl & {
+	plus: typeof F.buildTokenRepetitionPattern.plus;
+	star: typeof F.buildTokenRepetitionPattern.star;
+	qmark: typeof F.buildTokenRepetitionPattern.qmark;
+} = attachProps(coerceToTokenRepetitionPattern$impl, {
 	plus: F.buildTokenRepetitionPattern.plus,
 	star: F.buildTokenRepetitionPattern.star,
 	qmark: F.buildTokenRepetitionPattern.qmark
@@ -1151,7 +1159,14 @@ function coerceToTokenTree$impl(
 	);
 }
 
-export const coerceToTokenTree = attachProps(coerceToTokenTree$impl, {
+export const coerceToTokenTree: typeof coerceToTokenTree$impl & {
+	paren: typeof F.buildTokenTree.paren;
+	bracket: typeof F.buildTokenTree.bracket;
+	brace: typeof F.buildTokenTree.brace;
+	delimTokenTreeParen: typeof F.buildTokenTree.delimTokenTreeParen;
+	delimTokenTreeBracket: typeof F.buildTokenTree.delimTokenTreeBracket;
+	delimTokenTreeBrace: typeof F.buildTokenTree.delimTokenTreeBrace;
+} = attachProps(coerceToTokenTree$impl, {
 	paren: F.buildTokenTree.paren,
 	bracket: F.buildTokenTree.bracket,
 	brace: F.buildTokenTree.brace,
@@ -1177,7 +1192,11 @@ function coerceToTokenRepetition$impl(input: T.TokenRepetition.Loose): ReturnTyp
 	});
 }
 
-export const coerceToTokenRepetition = attachProps(coerceToTokenRepetition$impl, {
+export const coerceToTokenRepetition: typeof coerceToTokenRepetition$impl & {
+	plus: typeof F.buildTokenRepetition.plus;
+	star: typeof F.buildTokenRepetition.star;
+	qmark: typeof F.buildTokenRepetition.qmark;
+} = attachProps(coerceToTokenRepetition$impl, {
 	plus: F.buildTokenRepetition.plus,
 	star: F.buildTokenRepetition.star,
 	qmark: F.buildTokenRepetition.qmark
@@ -2056,7 +2075,11 @@ function coerceToDelimTokenTree$impl(
 	);
 }
 
-export const coerceToDelimTokenTree = attachProps(coerceToDelimTokenTree$impl, {
+export const coerceToDelimTokenTree: typeof coerceToDelimTokenTree$impl & {
+	paren: typeof F.buildDelimTokenTree.paren;
+	bracket: typeof F.buildDelimTokenTree.bracket;
+	brace: typeof F.buildDelimTokenTree.brace;
+} = attachProps(coerceToDelimTokenTree$impl, {
 	paren: F.buildDelimTokenTree.paren,
 	bracket: F.buildDelimTokenTree.bracket,
 	brace: F.buildDelimTokenTree.brace
@@ -2123,7 +2146,11 @@ function coerceToUnaryExpression$impl(input: T.UnaryExpression.Loose): ReturnTyp
 	});
 }
 
-export const coerceToUnaryExpression = attachProps(coerceToUnaryExpression$impl, {
+export const coerceToUnaryExpression: typeof coerceToUnaryExpression$impl & {
+	dash: typeof F.buildUnaryExpression.dash;
+	star: typeof F.buildUnaryExpression.star;
+	bang: typeof F.buildUnaryExpression.bang;
+} = attachProps(coerceToUnaryExpression$impl, {
 	dash: F.buildUnaryExpression.dash,
 	star: F.buildUnaryExpression.star,
 	bang: F.buildUnaryExpression.bang
@@ -2213,7 +2240,26 @@ function coerceToBinaryExpression$impl(input: T.BinaryExpression.Loose): ReturnT
 	});
 }
 
-export const coerceToBinaryExpression = attachProps(coerceToBinaryExpression$impl, {
+export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
+	ampAmp: typeof F.buildBinaryExpression.ampAmp;
+	pipePipe: typeof F.buildBinaryExpression.pipePipe;
+	amp: typeof F.buildBinaryExpression.amp;
+	pipe: typeof F.buildBinaryExpression.pipe;
+	caret: typeof F.buildBinaryExpression.caret;
+	eqEq: typeof F.buildBinaryExpression.eqEq;
+	bangEq: typeof F.buildBinaryExpression.bangEq;
+	lt: typeof F.buildBinaryExpression.lt;
+	ltEq: typeof F.buildBinaryExpression.ltEq;
+	gt: typeof F.buildBinaryExpression.gt;
+	gtEq: typeof F.buildBinaryExpression.gtEq;
+	ltLt: typeof F.buildBinaryExpression.ltLt;
+	gtGt: typeof F.buildBinaryExpression.gtGt;
+	plus: typeof F.buildBinaryExpression.plus;
+	dash: typeof F.buildBinaryExpression.dash;
+	star: typeof F.buildBinaryExpression.star;
+	slash: typeof F.buildBinaryExpression.slash;
+	percent: typeof F.buildBinaryExpression.percent;
+} = attachProps(coerceToBinaryExpression$impl, {
 	ampAmp: F.buildBinaryExpression.ampAmp,
 	pipePipe: F.buildBinaryExpression.pipePipe,
 	amp: F.buildBinaryExpression.amp,
@@ -2343,7 +2389,10 @@ function coerceToArrayExpression$impl(
 	return F.buildArrayExpression(_resolveOne<T.ArrayExpressionSemi | T.ArrayExpressionList>(input, _K0, _K48));
 }
 
-export const coerceToArrayExpression = attachProps(coerceToArrayExpression$impl, {
+export const coerceToArrayExpression: typeof coerceToArrayExpression$impl & {
+	semi: typeof F.buildArrayExpression.semi;
+	list: typeof F.buildArrayExpression.list;
+} = attachProps(coerceToArrayExpression$impl, {
 	semi: F.buildArrayExpression.semi,
 	list: F.buildArrayExpression.list
 });
@@ -2380,7 +2429,9 @@ function coerceToTupleExpression$impl(input: T.TupleExpression.Loose): ReturnTyp
 	});
 }
 
-export const coerceToTupleExpression = attachProps(coerceToTupleExpression$impl, {
+export const coerceToTupleExpression: typeof coerceToTupleExpression$impl & {
+	elements: typeof F.buildTupleExpression.elements;
+} = attachProps(coerceToTupleExpression$impl, {
 	elements: F.buildTupleExpression.elements
 });
 
@@ -2496,7 +2547,10 @@ function coerceToElseClause$impl(
 	return F.buildElseClause(_resolveOne<T.Block | T.IfExpression>(input, _K0, _K52));
 }
 
-export const coerceToElseClause = attachProps(coerceToElseClause$impl, {
+export const coerceToElseClause: typeof coerceToElseClause$impl & {
+	block: typeof F.buildElseClause.block;
+	ifExpression: typeof F.buildElseClause.ifExpression;
+} = attachProps(coerceToElseClause$impl, {
 	block: F.buildElseClause.block,
 	ifExpression: F.buildElseClause.ifExpression
 });
@@ -2877,7 +2931,12 @@ function coerceToRangePattern$impl(
 	return F.buildRangePattern(_resolveOne<T.RangePatternArm2 | T.RangePatternPrefix>(input, _K0, _K58));
 }
 
-export const coerceToRangePattern = attachProps(coerceToRangePattern$impl, {
+export const coerceToRangePattern: typeof coerceToRangePattern$impl & {
+	arm2: typeof F.buildRangePattern.arm2;
+	prefix: typeof F.buildRangePattern.prefix;
+	dotDotEq: typeof F.buildRangePattern.dotDotEq;
+	dotDot: typeof F.buildRangePattern.dotDot;
+} = attachProps(coerceToRangePattern$impl, {
 	arm2: F.buildRangePattern.arm2,
 	prefix: F.buildRangePattern.prefix,
 	dotDotEq: F.buildRangePattern.dotDotEq,
@@ -2931,7 +2990,10 @@ function coerceToOrPattern$impl(
 	return F.buildOrPattern(_resolveOne<T.OrPatternBinary | T.OrPatternPrefix>(input, _K0, _K59));
 }
 
-export const coerceToOrPattern = attachProps(coerceToOrPattern$impl, {
+export const coerceToOrPattern: typeof coerceToOrPattern$impl & {
+	binary: typeof F.buildOrPattern.binary;
+	prefix: typeof F.buildOrPattern.prefix;
+} = attachProps(coerceToOrPattern$impl, {
 	binary: F.buildOrPattern.binary,
 	prefix: F.buildOrPattern.prefix
 });

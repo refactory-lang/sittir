@@ -157,7 +157,7 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>) {');
+		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): MemberListBuilt {');
 		expect(emitted).not.toContain('options');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).not.toContain('_delimiter');

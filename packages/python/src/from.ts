@@ -3,7 +3,7 @@
 import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -978,7 +978,10 @@ function coerceToFutureImportStatement$impl(
 	return F.buildFutureImportStatement(_resolveOne<T.ImportList | T.FutureImportStatementArm>(input, _K0, _K2));
 }
 
-export const coerceToFutureImportStatement = attachProps(coerceToFutureImportStatement$impl, {
+export const coerceToFutureImportStatement: typeof coerceToFutureImportStatement$impl & {
+	importList: typeof F.buildFutureImportStatement.importList;
+	arm: typeof F.buildFutureImportStatement.arm;
+} = attachProps(coerceToFutureImportStatement$impl, {
 	importList: F.buildFutureImportStatement.importList,
 	arm: F.buildFutureImportStatement.arm
 });
@@ -1020,7 +1023,10 @@ function coerceToPrintStatement$impl(
 	return F.buildPrintStatement(_resolveOne<T.PrintStatementArm1 | T.PrintStatementArm2>(input, _K0, _K4));
 }
 
-export const coerceToPrintStatement = attachProps(coerceToPrintStatement$impl, {
+export const coerceToPrintStatement: typeof coerceToPrintStatement$impl & {
+	arm1: typeof F.buildPrintStatement.arm1;
+	arm2: typeof F.buildPrintStatement.arm2;
+} = attachProps(coerceToPrintStatement$impl, {
 	arm1: F.buildPrintStatement.arm1,
 	arm2: F.buildPrintStatement.arm2
 });
@@ -1307,7 +1313,10 @@ function coerceToWithClause$impl(
 	return F.buildWithClause(_resolveOne<T.WithClauseBare | T.WithClauseParen>(input, _K0, _K12));
 }
 
-export const coerceToWithClause = attachProps(coerceToWithClause$impl, {
+export const coerceToWithClause: typeof coerceToWithClause$impl & {
+	bare: typeof F.buildWithClause.bare;
+	paren: typeof F.buildWithClause.paren;
+} = attachProps(coerceToWithClause$impl, {
 	bare: F.buildWithClause.bare,
 	paren: F.buildWithClause.paren
 });
@@ -1518,7 +1527,10 @@ function coerceToParenthesizedListSplat$impl(
 	return F.buildParenthesizedListSplat(_resolveOne<T.ParenthesizedListSplat | T.ListSplat>(input, _K0, _K14));
 }
 
-export const coerceToParenthesizedListSplat = attachProps(coerceToParenthesizedListSplat$impl, {
+export const coerceToParenthesizedListSplat: typeof coerceToParenthesizedListSplat$impl & {
+	parenthesizedListSplat: typeof F.buildParenthesizedListSplat.parenthesizedListSplat;
+	listSplat: typeof F.buildParenthesizedListSplat.listSplat;
+} = attachProps(coerceToParenthesizedListSplat$impl, {
 	parenthesizedListSplat: F.buildParenthesizedListSplat.parenthesizedListSplat,
 	listSplat: F.buildParenthesizedListSplat.listSplat
 });
@@ -1715,7 +1727,10 @@ function coerceToSplatPattern$impl(input: T.SplatPattern.Loose): ReturnType<type
 	});
 }
 
-export const coerceToSplatPattern = attachProps(coerceToSplatPattern$impl, {
+export const coerceToSplatPattern: typeof coerceToSplatPattern$impl & {
+	star: typeof F.buildSplatPattern.star;
+	starStar: typeof F.buildSplatPattern.starStar;
+} = attachProps(coerceToSplatPattern$impl, {
 	star: F.buildSplatPattern.star,
 	starStar: F.buildSplatPattern.starStar
 });
@@ -1749,7 +1764,10 @@ function coerceToComplexPattern$impl(input: T.ComplexPattern.Loose): ReturnType<
 	});
 }
 
-export const coerceToComplexPattern = attachProps(coerceToComplexPattern$impl, {
+export const coerceToComplexPattern: typeof coerceToComplexPattern$impl & {
+	plus: typeof F.buildComplexPattern.plus;
+	dash: typeof F.buildComplexPattern.dash;
+} = attachProps(coerceToComplexPattern$impl, {
 	plus: F.buildComplexPattern.plus,
 	dash: F.buildComplexPattern.dash
 });
@@ -1863,7 +1881,10 @@ function coerceToBooleanOperator$impl(input: T.BooleanOperator.Loose): ReturnTyp
 	});
 }
 
-export const coerceToBooleanOperator = attachProps(coerceToBooleanOperator$impl, {
+export const coerceToBooleanOperator: typeof coerceToBooleanOperator$impl & {
+	and: typeof F.buildBooleanOperator.and;
+	or: typeof F.buildBooleanOperator.or;
+} = attachProps(coerceToBooleanOperator$impl, {
 	and: F.buildBooleanOperator.and,
 	or: F.buildBooleanOperator.or
 });
@@ -1902,7 +1923,21 @@ function coerceToBinaryOperator$impl(input: T.BinaryOperator.Loose): ReturnType<
 	});
 }
 
-export const coerceToBinaryOperator = attachProps(coerceToBinaryOperator$impl, {
+export const coerceToBinaryOperator: typeof coerceToBinaryOperator$impl & {
+	plus: typeof F.buildBinaryOperator.plus;
+	dash: typeof F.buildBinaryOperator.dash;
+	star: typeof F.buildBinaryOperator.star;
+	at: typeof F.buildBinaryOperator.at;
+	slash: typeof F.buildBinaryOperator.slash;
+	percent: typeof F.buildBinaryOperator.percent;
+	slashSlash: typeof F.buildBinaryOperator.slashSlash;
+	starStar: typeof F.buildBinaryOperator.starStar;
+	pipe: typeof F.buildBinaryOperator.pipe;
+	amp: typeof F.buildBinaryOperator.amp;
+	caret: typeof F.buildBinaryOperator.caret;
+	ltLt: typeof F.buildBinaryOperator.ltLt;
+	gtGt: typeof F.buildBinaryOperator.gtGt;
+} = attachProps(coerceToBinaryOperator$impl, {
 	plus: F.buildBinaryOperator.plus,
 	dash: F.buildBinaryOperator.dash,
 	star: F.buildBinaryOperator.star,
@@ -2073,7 +2108,9 @@ function coerceToSlice$impl(input?: T.Slice.Loose): ReturnType<typeof F.buildSli
 	});
 }
 
-export const coerceToSlice = attachProps(coerceToSlice$impl, {
+export const coerceToSlice: typeof coerceToSlice$impl & {
+	group: typeof F.buildSlice.group;
+} = attachProps(coerceToSlice$impl, {
 	group: F.buildSlice.group
 });
 
@@ -2137,7 +2174,10 @@ function coerceToSplatType$impl(input: T.SplatType.Loose): ReturnType<typeof F.b
 	});
 }
 
-export const coerceToSplatType = attachProps(coerceToSplatType$impl, {
+export const coerceToSplatType: typeof coerceToSplatType$impl & {
+	star: typeof F.buildSplatType.star;
+	starStar: typeof F.buildSplatType.starStar;
+} = attachProps(coerceToSplatType$impl, {
 	star: F.buildSplatType.star,
 	starStar: F.buildSplatType.starStar
 });

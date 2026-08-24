@@ -23,6 +23,14 @@ import type { Rule } from '../types/rule.ts';
 
 type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
+
+/** The catalog's enum member name for a kind, when the catalog knows it. */
+function catalogMemberName(
+	kindEntries: readonly { readonly kind: string; readonly member: string }[] | undefined,
+	kind: string
+): string | undefined {
+	return kindEntries?.find((e) => e.kind === kind)?.member;
+}
 import {
 	collectAliasTargetToSourceMap,
 	hasOptionalElements,
@@ -1779,7 +1787,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    return false;',
 						'  };',
 						'  const keepFirst = (seg: readonly unknown[]): T | undefined => {',
-						'    const kept = allowedKinds ? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[]) : (seg.filter((e) => e !== undefined) as readonly T[]);',
+						'    const kept = allowedKinds ? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[]) : (seg.filter((e) => e !== undefined) as unknown as readonly T[]);',
 						'    return kept.length > 0 ? kept[0] : undefined;',
 						'  };',
 						'  if (!items.some(isDelimiter)) {',
@@ -1825,14 +1833,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				node.modelType === 'separatedList'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
+				// The dispatch key must spell the CATALOG's enum member for this
+				// kind — `node.typeName` diverges for hidden/alias pairs (the
+				// catalog names `_PropertyIdentifier`, the model `PropertyIdentifier`).
 				lines.push(
-					`  ${wrapTableKey(kind, node.typeName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`
+					`  ${wrapTableKey(kind, catalogMemberName(this.#kindEntries, kind) ?? node.typeName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`
 				);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 				if (this.#kindEntries) {
-					const memberName = kindIdMemberName(this.#nodeMap, kind);
+					const memberName = catalogMemberName(this.#kindEntries, kind) ?? kindIdMemberName(this.#nodeMap, kind);
 					lines.push(`  [TSKindId.${memberName}]: (d) => ({ ...d, $type: TSKindId.${memberName} as const }),`);
 				} else {
 					lines.push(`  '${kind}': (d) => d,`);

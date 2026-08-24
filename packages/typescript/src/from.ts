@@ -3,7 +3,7 @@
 import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId, KIND_LITERAL_TEXT } from './types.js';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -1046,7 +1046,14 @@ function coerceToExportStatement$impl(
 	);
 }
 
-export const coerceToExportStatement = attachProps(coerceToExportStatement$impl, {
+export const coerceToExportStatement: typeof coerceToExportStatement$impl & {
+	default: typeof F.buildExportStatement.default;
+	fromArm: typeof F.buildExportStatement.fromArm;
+	declArm: typeof F.buildExportStatement.declArm;
+	typeExport: typeof F.buildExportStatement.typeExport;
+	equalsExport: typeof F.buildExportStatement.equalsExport;
+	namespaceExport: typeof F.buildExportStatement.namespaceExport;
+} = attachProps(coerceToExportStatement$impl, {
 	default: F.buildExportStatement.default,
 	fromArm: F.buildExportStatement.fromArm,
 	declArm: F.buildExportStatement.declArm,
@@ -1093,7 +1100,10 @@ function coerceToExportSpecifier$impl(input: T.ExportSpecifier.Loose): ReturnTyp
 	});
 }
 
-export const coerceToExportSpecifier = attachProps(coerceToExportSpecifier$impl, {
+export const coerceToExportSpecifier: typeof coerceToExportSpecifier$impl & {
+	type: typeof F.buildExportSpecifier.type;
+	typeof: typeof F.buildExportSpecifier.typeof;
+} = attachProps(coerceToExportSpecifier$impl, {
 	type: F.buildExportSpecifier.type,
 	typeof: F.buildExportSpecifier.typeof
 });
@@ -1127,7 +1137,10 @@ function coerceToImportStatement$impl(input: T.ImportStatement.Loose): ReturnTyp
 	});
 }
 
-export const coerceToImportStatement = attachProps(coerceToImportStatement$impl, {
+export const coerceToImportStatement: typeof coerceToImportStatement$impl & {
+	type: typeof F.buildImportStatement.type;
+	typeof: typeof F.buildImportStatement.typeof;
+} = attachProps(coerceToImportStatement$impl, {
 	type: F.buildImportStatement.type,
 	typeof: F.buildImportStatement.typeof
 });
@@ -1145,8 +1158,10 @@ function coerceToImportClause$impl(
 	);
 }
 
-export const coerceToImportClause = attachProps(coerceToImportClause$impl, {
-	namespaceImport: F.buildImportClause.namespaceImport,
+export const coerceToImportClause: typeof coerceToImportClause$impl & {
+	namedImports: typeof F.buildImportClause.namedImports;
+	defaultImport: typeof F.buildImportClause.defaultImport;
+} = attachProps(coerceToImportClause$impl, {
 	namedImports: F.buildImportClause.namedImports,
 	defaultImport: F.buildImportClause.defaultImport
 });
@@ -1194,7 +1209,10 @@ function coerceToImportSpecifier$impl(input: T.ImportSpecifier.Loose): ReturnTyp
 	});
 }
 
-export const coerceToImportSpecifier = attachProps(coerceToImportSpecifier$impl, {
+export const coerceToImportSpecifier: typeof coerceToImportSpecifier$impl & {
+	type: typeof F.buildImportSpecifier.type;
+	typeof: typeof F.buildImportSpecifier.typeof;
+} = attachProps(coerceToImportSpecifier$impl, {
 	type: F.buildImportSpecifier.type,
 	typeof: F.buildImportSpecifier.typeof
 });
@@ -1214,7 +1232,10 @@ function coerceToImportAttribute$impl(input: T.ImportAttribute.Loose): ReturnTyp
 	});
 }
 
-export const coerceToImportAttribute = attachProps(coerceToImportAttribute$impl, {
+export const coerceToImportAttribute: typeof coerceToImportAttribute$impl & {
+	with: typeof F.buildImportAttribute.with;
+	assert: typeof F.buildImportAttribute.assert;
+} = attachProps(coerceToImportAttribute$impl, {
 	with: F.buildImportAttribute.with,
 	assert: F.buildImportAttribute.assert
 });
@@ -1297,7 +1318,10 @@ function coerceToVariableDeclarator$impl(
 	return F.buildVariableDeclarator(_resolveOne<T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2>(input, _K0, _K9));
 }
 
-export const coerceToVariableDeclarator = attachProps(coerceToVariableDeclarator$impl, {
+export const coerceToVariableDeclarator: typeof coerceToVariableDeclarator$impl & {
+	arm1: typeof F.buildVariableDeclarator.arm1;
+	arm2: typeof F.buildVariableDeclarator.arm2;
+} = attachProps(coerceToVariableDeclarator$impl, {
 	arm1: F.buildVariableDeclarator.arm1,
 	arm2: F.buildVariableDeclarator.arm2
 });
@@ -1868,7 +1892,9 @@ function coerceToClass$impl(input: T.Class.Loose): ReturnType<typeof F.buildClas
 	});
 }
 
-export const coerceToClass = attachProps(coerceToClass$impl, {
+export const coerceToClass: typeof coerceToClass$impl & {
+	body: typeof F.buildClass.body;
+} = attachProps(coerceToClass$impl, {
 	body: F.buildClass.body
 });
 
@@ -1895,7 +1921,10 @@ function coerceToClassHeritage$impl(
 	return F.buildClassHeritage(_resolveOne<T.ClassHeritageExtendsClause | T.ImplementsClause>(input, _K0, _K22));
 }
 
-export const coerceToClassHeritage = attachProps(coerceToClassHeritage$impl, {
+export const coerceToClassHeritage: typeof coerceToClassHeritage$impl & {
+	extendsClause: typeof F.buildClassHeritage.extendsClause;
+	implementsClause: typeof F.buildClassHeritage.implementsClause;
+} = attachProps(coerceToClassHeritage$impl, {
 	extendsClause: F.buildClassHeritage.extendsClause,
 	implementsClause: F.buildClassHeritage.implementsClause
 });
@@ -2008,7 +2037,11 @@ function coerceToCallExpression$impl(
 	);
 }
 
-export const coerceToCallExpression = attachProps(coerceToCallExpression$impl, {
+export const coerceToCallExpression: typeof coerceToCallExpression$impl & {
+	call: typeof F.buildCallExpression.call;
+	templateCall: typeof F.buildCallExpression.templateCall;
+	member: typeof F.buildCallExpression.member;
+} = attachProps(coerceToCallExpression$impl, {
 	call: F.buildCallExpression.call,
 	templateCall: F.buildCallExpression.templateCall,
 	member: F.buildCallExpression.member
@@ -2240,7 +2273,33 @@ function coerceToBinaryExpression$impl(input?: T.BinaryExpression.Loose): Return
 	});
 }
 
-export const coerceToBinaryExpression = attachProps(coerceToBinaryExpression$impl, {
+export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
+	arm: typeof F.buildBinaryExpression.arm;
+	ampAmp: typeof F.buildBinaryExpression.ampAmp;
+	pipePipe: typeof F.buildBinaryExpression.pipePipe;
+	gtGt: typeof F.buildBinaryExpression.gtGt;
+	gtGtGt: typeof F.buildBinaryExpression.gtGtGt;
+	ltLt: typeof F.buildBinaryExpression.ltLt;
+	amp: typeof F.buildBinaryExpression.amp;
+	caret: typeof F.buildBinaryExpression.caret;
+	pipe: typeof F.buildBinaryExpression.pipe;
+	plus: typeof F.buildBinaryExpression.plus;
+	dash: typeof F.buildBinaryExpression.dash;
+	star: typeof F.buildBinaryExpression.star;
+	slash: typeof F.buildBinaryExpression.slash;
+	percent: typeof F.buildBinaryExpression.percent;
+	starStar: typeof F.buildBinaryExpression.starStar;
+	lt: typeof F.buildBinaryExpression.lt;
+	ltEq: typeof F.buildBinaryExpression.ltEq;
+	eqEq: typeof F.buildBinaryExpression.eqEq;
+	eqEqEq: typeof F.buildBinaryExpression.eqEqEq;
+	bangEq: typeof F.buildBinaryExpression.bangEq;
+	bangEqEq: typeof F.buildBinaryExpression.bangEqEq;
+	gtEq: typeof F.buildBinaryExpression.gtEq;
+	gt: typeof F.buildBinaryExpression.gt;
+	qmarkQmark: typeof F.buildBinaryExpression.qmarkQmark;
+	instanceof: typeof F.buildBinaryExpression.instanceof;
+} = attachProps(coerceToBinaryExpression$impl, {
 	arm: F.buildBinaryExpression.arm,
 	ampAmp: F.buildBinaryExpression.ampAmp,
 	pipePipe: F.buildBinaryExpression.pipePipe,
@@ -2299,7 +2358,10 @@ function coerceToUpdateExpression$impl(
 	return F.buildUpdateExpression(_resolveOne<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(input, _K0, _K32));
 }
 
-export const coerceToUpdateExpression = attachProps(coerceToUpdateExpression$impl, {
+export const coerceToUpdateExpression: typeof coerceToUpdateExpression$impl & {
+	postfix: typeof F.buildUpdateExpression.postfix;
+	prefix: typeof F.buildUpdateExpression.prefix;
+} = attachProps(coerceToUpdateExpression$impl, {
 	postfix: F.buildUpdateExpression.postfix,
 	prefix: F.buildUpdateExpression.prefix
 });
@@ -2336,7 +2398,10 @@ function coerceToString$impl(input?: (T.StringDouble | T.StringSingle) | T.Strin
 	return F.buildString(_resolveOne<T.StringDouble | T.StringSingle>(input, _K0, _K33));
 }
 
-export const coerceToString = attachProps(coerceToString$impl, {
+export const coerceToString: typeof coerceToString$impl & {
+	double: typeof F.buildString.double;
+	single: typeof F.buildString.single;
+} = attachProps(coerceToString$impl, {
 	double: F.buildString.double,
 	single: F.buildString.single
 });
@@ -2661,7 +2726,11 @@ function coerceToMethodDefinition$impl(input: T.MethodDefinition.Loose): ReturnT
 	});
 }
 
-export const coerceToMethodDefinition = attachProps(coerceToMethodDefinition$impl, {
+export const coerceToMethodDefinition: typeof coerceToMethodDefinition$impl & {
+	get: typeof F.buildMethodDefinition.get;
+	set: typeof F.buildMethodDefinition.set;
+	star: typeof F.buildMethodDefinition.star;
+} = attachProps(coerceToMethodDefinition$impl, {
 	get: F.buildMethodDefinition.get,
 	set: F.buildMethodDefinition.set,
 	star: F.buildMethodDefinition.star
@@ -2733,7 +2802,10 @@ function coerceToPublicFieldDefinition$impl(
 	});
 }
 
-export const coerceToPublicFieldDefinition = attachProps(coerceToPublicFieldDefinition$impl, {
+export const coerceToPublicFieldDefinition: typeof coerceToPublicFieldDefinition$impl & {
+	qmark: typeof F.buildPublicFieldDefinition.qmark;
+	bang: typeof F.buildPublicFieldDefinition.bang;
+} = attachProps(coerceToPublicFieldDefinition$impl, {
 	qmark: F.buildPublicFieldDefinition.qmark,
 	bang: F.buildPublicFieldDefinition.bang
 });
@@ -2791,7 +2863,11 @@ function coerceToMethodSignature$impl(input: T.MethodSignature.Loose): ReturnTyp
 	});
 }
 
-export const coerceToMethodSignature = attachProps(coerceToMethodSignature$impl, {
+export const coerceToMethodSignature: typeof coerceToMethodSignature$impl & {
+	get: typeof F.buildMethodSignature.get;
+	set: typeof F.buildMethodSignature.set;
+	star: typeof F.buildMethodSignature.star;
+} = attachProps(coerceToMethodSignature$impl, {
 	get: F.buildMethodSignature.get,
 	set: F.buildMethodSignature.set,
 	star: F.buildMethodSignature.star
@@ -2829,7 +2905,11 @@ function coerceToAbstractMethodSignature$impl(
 	});
 }
 
-export const coerceToAbstractMethodSignature = attachProps(coerceToAbstractMethodSignature$impl, {
+export const coerceToAbstractMethodSignature: typeof coerceToAbstractMethodSignature$impl & {
+	get: typeof F.buildAbstractMethodSignature.get;
+	set: typeof F.buildAbstractMethodSignature.set;
+	star: typeof F.buildAbstractMethodSignature.star;
+} = attachProps(coerceToAbstractMethodSignature$impl, {
 	get: F.buildAbstractMethodSignature.get,
 	set: F.buildAbstractMethodSignature.set,
 	star: F.buildAbstractMethodSignature.star
@@ -3761,7 +3841,10 @@ function coerceToConstraint$impl(input: T.Constraint.Loose): ReturnType<typeof F
 	});
 }
 
-export const coerceToConstraint = attachProps(coerceToConstraint$impl, {
+export const coerceToConstraint: typeof coerceToConstraint$impl & {
+	extends: typeof F.buildConstraint.extends;
+	colon: typeof F.buildConstraint.colon;
+} = attachProps(coerceToConstraint$impl, {
 	extends: F.buildConstraint.extends,
 	colon: F.buildConstraint.colon
 });
@@ -3804,7 +3887,10 @@ function coerceToIndexSignature$impl(input: T.IndexSignature.Loose): ReturnType<
 	});
 }
 
-export const coerceToIndexSignature = attachProps(coerceToIndexSignature$impl, {
+export const coerceToIndexSignature: typeof coerceToIndexSignature$impl & {
+	dash: typeof F.buildIndexSignature.dash;
+	plus: typeof F.buildIndexSignature.plus;
+} = attachProps(coerceToIndexSignature$impl, {
 	dash: F.buildIndexSignature.dash,
 	plus: F.buildIndexSignature.plus
 });

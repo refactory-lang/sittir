@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "4a2243a5f2c1c2b4588765612ab6413ff12ffbb774ff78aa643b67ab2d8050fb",
+  "source_hash": "8f0ca0d974cbae17fed6f5fda613d3c24339339f2610fe6d1e9bd0b7c45d4f58",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "52ffb68ea750b54714cb38a13148f9d8d7e4cf3c823ced008afcef0d4590b18c",
@@ -20,12 +20,12 @@
     "packages/python/src/boundary.ts": "24637b5d59f133c9bcf18cc4a8f941ac745dc9ad4f6f0643f9ad5d4103c0c71d",
     "packages/python/src/consts.ts": "c238bd4517c5392b019ee0bf06573fdfb93f5508d5c92f28717293eb83da4d67",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
-    "packages/python/src/factories.ts": "67db9d38db550832a1f221dd08873440da2cbaea5abcb840e75cf06ee8195089",
-    "packages/python/src/from.ts": "bc0ef97bb3c5e462c04ba66e733f21785a9fb2cae6b887542a3a97717403a9d1",
+    "packages/python/src/factories.ts": "7f15a86dcaa81717eea1fc10b47ed3ae693fa809dd8822bd6cd9680c79663be0",
+    "packages/python/src/from.ts": "9372c9b7ab12c941256e12c2dc47f868e6e6c27d2d75e78895f6af9839abcfe2",
     "packages/python/src/grammar.ts": "657f2e48204edaca177cb96fa7e9a8cbd98ec937571241352eba582546197158",
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
     "packages/python/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
-    "packages/python/src/ir.ts": "55f6b3f54f2ef2b5db3b87904a95c53fa1b9d892eaa372a50c3e8d41ef14896c",
+    "packages/python/src/ir.ts": "099fb26d6b81d297106d451350a2346d2aa641769449f324574136d80774b3f4",
     "packages/python/src/is.ts": "521b910dd95b2912dd6f959929d12cd8561eafe15089a26caadc877d31b7438f",
     "packages/python/src/node-model.json5": "5989282860e2c1b201c47bc31c25833701865226b996704c90a7f1038142f989",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",

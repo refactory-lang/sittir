@@ -1136,7 +1136,7 @@ function splitElidedWrapSlot<T>(
 	const keepFirst = (seg: readonly unknown[]): T | undefined => {
 		const kept = allowedKinds
 			? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[])
-			: (seg.filter((e) => e !== undefined) as readonly T[]);
+			: (seg.filter((e) => e !== undefined) as unknown as readonly T[]);
 		return kept.length > 0 ? kept[0] : undefined;
 	};
 	if (!items.some(isDelimiter)) {
@@ -12054,14 +12054,14 @@ export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 
-			elements_2s() {
+			elements2s() {
 				return drillInAll<T.UnescapedSingleStringFragment | T.EscapeSequence>(
 					this._elements_2 as readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				elements_2s: (...v: NonNullable<T.StringSingle['_elements_2']>[number][]) =>
+				elements2s: (...v: NonNullable<T.StringSingle['_elements_2']>[number][]) =>
 					wrapStringSingle({ ...data, _elements_2: v }, tree)
 			}
 		},
