@@ -1,5 +1,6 @@
 import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData, Edit } from '@sittir/types';
+import { readFileSync } from 'node:fs';
 export type { TreeHandle };
 
 export function nodeText(value: unknown): string {
@@ -59,6 +60,45 @@ export function structuralShape(node: unknown): unknown {
 		const value = typeof accessor === 'function' ? (accessor as () => unknown).call(record) : record[key];
 		shape[key] = structuralShape(value);
 	}
+	if (record.$triviaData !== undefined) shape.$triviaData = structuralShape(record.$triviaData);
 	if (typeof record.$text === 'string' && Object.keys(shape).length === 1) shape.$text = record.$text;
 	return shape;
+}
+
+export interface DogfoodResult {
+	readonly rendered: string;
+	readonly reparsesEqual: boolean;
+	readonly sameModuloWhitespace: boolean;
+	/** The 80-character window around the first whitespace-insensitive
+	 *  difference, `<target> ⟷ <rendered>`; absent when identical. */
+	readonly firstDifference?: string;
+}
+
+function collapseWhitespace(s: string): string {
+	return s.replace(/\s+/g, '');
+}
+
+/**
+ * The dogfood contract: a rebuilt node renders to text that (1) re-parses
+ * to the same tree as the target file and (2) is identical to the target
+ * after collapsing whitespace. Layout is not the claim — canonical render
+ * whitespace may differ from the author's.
+ */
+export function dogfoodContract(
+	engine: { parse(source: string): unknown },
+	rebuilt: { $render(): string },
+	targetPath: string
+): DogfoodResult {
+	const target = readFileSync(targetPath, 'utf8');
+	const rendered = rebuilt.$render();
+	const reparsesEqual =
+		JSON.stringify(structuralShape(engine.parse(rendered))) ===
+		JSON.stringify(structuralShape(engine.parse(target)));
+	const a = collapseWhitespace(target);
+	const b = collapseWhitespace(rendered);
+	if (a === b) return { rendered, reparsesEqual, sameModuloWhitespace: true };
+	let i = 0;
+	while (i < a.length && a[i] === b[i]) i++;
+	const firstDifference = `${a.slice(Math.max(0, i - 40), i + 40)} ⟷ ${b.slice(Math.max(0, i - 40), i + 40)}`;
+	return { rendered, reparsesEqual, sameModuloWhitespace: false, firstDifference };
 }

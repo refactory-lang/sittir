@@ -16,6 +16,11 @@ import {
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
+import { dogfoodContract } from '../../../examples/helpers.ts';
+import { createEngine, ir } from '@sittir/rust';
+import { writeFileSync, mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 describe('examples/01 construct nodes', () => {
 	it('explicit strict construction renders a pub main', () => {
@@ -95,5 +100,41 @@ describe('examples/09 type guards', () => {
 			'Function: main',
 			'Struct: Config'
 		]);
+	});
+});
+
+describe('dogfoodContract helper', () => {
+	it('reports equality for a node that reproduces its own file', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
+		const target = join(dir, 'main.rs');
+		writeFileSync(target, 'pub fn main() { }\n');
+		const rebuilt = ir.sourceFile.from({
+			statements: [
+				ir.functionItem.from({
+					visibilityModifier: 'pub',
+					name: 'main',
+					parameters: ir.parameters.strict(),
+					body: ir.block.strict()
+				})
+			]
+		});
+		const result = dogfoodContract(createEngine(), rebuilt, target);
+		expect(result.reparsesEqual).toBe(true);
+		expect(result.sameModuloWhitespace).toBe(true);
+		expect(result.firstDifference).toBeUndefined();
+	});
+	it('names the first token that differs', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
+		const target = join(dir, 'main.rs');
+		writeFileSync(target, 'pub fn other() { }\n');
+		const rebuilt = ir.functionItem.from({
+			visibilityModifier: 'pub',
+			name: 'main',
+			parameters: ir.parameters.strict(),
+			body: ir.block.strict()
+		});
+		const result = dogfoodContract(createEngine(), rebuilt, target);
+		expect(result.sameModuloWhitespace).toBe(false);
+		expect(result.firstDifference).toContain('other');
 	});
 });
