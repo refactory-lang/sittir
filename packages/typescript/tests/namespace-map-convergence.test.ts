@@ -4,7 +4,9 @@
  */
 
 import { describe, it } from 'vitest';
-import type { ClassDeclaration, Program, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
+import type { ClassDeclaration, Program, JsxElement, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
+import type { ProgramBuilt } from '../src/factories.ts';
+import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -27,5 +29,20 @@ describe('typescript NamespaceMap access-path convergence', () => {
 	it('Program (root kind) converges', () => {
 		expectTrue<Equals<Program.Config, ConfigFor<'program'>>>();
 		expectTrue<Equals<Program.Tree, NamespaceMap['program']['Tree']>>();
+	});
+
+	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
+		// Every Fluent access path resolves to the factory's EXACT return
+		// type (`$with` setter record, `$`-prefixed methods, named
+		// self-reference) — not a re-derived generic projection.
+		expectTrue<Equals<Program.Fluent, ProgramBuilt>>();
+		expectTrue<Equals<FluentFor<'program'>, ProgramBuilt>>();
+		expectTrue<Equals<NamespaceMap['program']['Fluent'], ProgramBuilt>>();
+	});
+
+	it('factory-less kinds keep the FluentNodeOf fallback', () => {
+		// jsx_element has no emitted factory (no Built alias exists), so
+		// NodeNs' default Fluent projection remains in effect.
+		expectTrue<Equals<JsxElement.Fluent, FluentNodeOf<JsxElement>>>();
 	});
 });

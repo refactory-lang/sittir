@@ -483,6 +483,11 @@ export type FluentSetters<Fields, Excluded extends string = never, Self = unknow
  * Used by the generated `_factoryMap` as the return type of each
  * entry so callers like `_factoryMap[kind](config)` get a typed
  * result without per-entry casts.
+ *
+ * @deprecated Generated `FluentKindMap` entries now reference the emitted
+ * per-kind `<TypeName>Built` aliases — the factories' exact return types
+ * (bare setter methods and the combined getter/setter model here never
+ * matched the runtime `$with` record). No generated code consumes this.
  */
 export type FluentNode<K extends string, C = unknown> = {
 	readonly $type: K;
@@ -538,6 +543,14 @@ export type RuntimeNodeOf<T> = T extends {
 /**
  * FluentNodeOf<T> — RuntimeNodeOf + fluent setters (camelCase setter names
  * derived from snake_case field names via SetterKey/CamelCase).
+ *
+ * @deprecated Superseded by the emitted `<TypeName>Built` aliases (NodeNs'
+ * `Built` parameter): a generic projection over `T` cannot reproduce the
+ * factory surface (container `$child`/`$children`, `NonEmptyArray` rests,
+ * enum-coercion input unions, forwarded shapes are model-derived facts
+ * absent from `T`), and this shape's bare combined getter/setter methods
+ * predate the runtime `$with` record. Survives only as NodeNs' default
+ * `Fluent` for factory-less kinds.
  */
 export type FluentNodeOf<T> = T extends { readonly $type: number }
 	? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>>
@@ -1069,11 +1082,22 @@ type WidenChildSlot<
  * @param T - A concrete node interface with a literal `type` discriminant.
  * @param Scalars - Leaf-kind → scalar projection (e.g. `{ integer_literal: number }`).
  * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
+ * @param Built - The kind's emitted `<TypeName>Built` factory return alias —
+ *   the exact runtime fluent surface ($with setter record, $-prefixed
+ *   methods). Generated packages pass it for every kind with a factory;
+ *   the deprecated `FluentNodeOf<T>` default covers only factory-less
+ *   kinds, where no runtime surface exists to mirror.
  */
-export interface NodeNs<T extends { readonly $type: string | number }, Scalars = {}, Strings = {}, NsMap = {}> {
+export interface NodeNs<
+	T extends { readonly $type: string | number },
+	Scalars = {},
+	Strings = {},
+	NsMap = {},
+	Built = FluentNodeOf<T>
+> {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
-	readonly Fluent: FluentNodeOf<T>;
+	readonly Fluent: Built;
 	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
 	// `FromInputOf<U>` per arm.

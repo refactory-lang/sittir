@@ -34,8 +34,7 @@ function isNonEnumerable(obj: object, key: string): boolean {
 }
 
 // A minimal block with no statements.
-// `as any` bypasses Config type constraints — this test verifies runtime shape, not type-level API.
-const minimalBlock = ir.block({ statement: [] as any });
+const minimalBlock = ir.block({ statements: [] });
 
 // ---------- factory shape ----------
 

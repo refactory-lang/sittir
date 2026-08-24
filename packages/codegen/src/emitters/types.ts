@@ -67,7 +67,8 @@ import {
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
-	resolveFieldStorageInfo
+	resolveFieldStorageInfo,
+	emitsPlainBuiltAlias
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
@@ -297,7 +298,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of nodeKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		if (!generatedTypes.has(node.typeName)) continue;
-		emitNamespaceInterfaceLine(lines, node.typeName);
+		emitNamespaceInterfaceLine(lines, node.typeName, emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries }));
 	}
 	lines.push('');
 
@@ -348,6 +349,15 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// bitflag-typed fields). Empty grammars don't pull any of these, so emitting
 	// them unconditionally trips `no-unused-vars` on the generated package.
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
+	// The per-kind Ns lines reference `F$.<TypeName>Built` factory return
+	// aliases; import the factories module (type-only — erased at runtime,
+	// so the factories→types value import stays acyclic) only when at
+	// least one such reference was emitted. The `$` in the alias keeps it
+	// collision-proof: kind names are tree-sitter identifiers, so no
+	// generated interface name can ever contain `$`.
+	if (/\bF\$\./.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories.js';`);
+	}
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
@@ -857,9 +867,14 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 // Per-kind namespace interface line emission
 // ---------------------------------------------------------------------------
 
-function emitNamespaceInterfaceLine(lines: string[], typeName: string): void {
+function emitNamespaceInterfaceLine(lines: string[], typeName: string, hasBuiltAlias: boolean): void {
+	// A kind with an emitted factory pins `Fluent` to the factory's own
+	// `<TypeName>Built` alias — the exact return type, never a re-derived
+	// generic. Factory-less kinds keep NodeNs' default Fluent projection.
 	lines.push(
-		`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
+		hasBuiltAlias
+			? `export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap, F$.${typeName}Built> {}`
+			: `export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
 	);
 }
 

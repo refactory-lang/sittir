@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "0b6bfaab593a49b9aaf8a232f854af0ece4f55fd1fa261a83fb1a3843a3a594e",
+  "source_hash": "e6ad0975395de367d1a31ec7439477e11ea7dc70315f7283fdfe8dc72660d36a",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "4068ba698ec7fa651f8764b5f1c96f034feaca227a27e68099988a55f2639e69",
     "packages/typescript/.sittir/grammar.js": "e1b455a6cbd5f7f026da37364084e09476c4cea6f222fe3ae3bdd0181bbf33c3",
@@ -21,7 +21,7 @@
     "packages/typescript/src/boundary.ts": "b6af1716a00167f1f83f375781b58ef22fd510584f01a36e0315845c82800228",
     "packages/typescript/src/consts.ts": "d25cd22de27032655874bca2a7f9b081df6542e74d5fa4e9f53c10dac945d986",
     "packages/typescript/src/engine.ts": "6b0239f4389dd1bf2ab850eeb31f5d264ae88e7efb76936db1434e3ff3248ca2",
-    "packages/typescript/src/factories.ts": "1763e713f0cbb71541b49fcefa800e5755c9623082b60b84b99129f8c41e983d",
+    "packages/typescript/src/factories.ts": "9a21b797184c6a9d3fc5b14b803d4bfbfea7dcc0c82cf21c3bfdf029b5f27654",
     "packages/typescript/src/from.ts": "d4c4ecac187b09628c596cdc504ee158751090a61fdbc569dd1fe10722dd2ebb",
     "packages/typescript/src/grammar.ts": "ca919cd082e7df26da6c2faee75fdc04e21e841f7d415b3a73691fb0e0e81630",
     "packages/typescript/src/hash.ts": "a52a9dccba87e9f3938c72e8495e7090222f660d723b8361a3ce9dfa93298fd4",
@@ -30,7 +30,7 @@
     "packages/typescript/src/is.ts": "dbc9f1221b8af029ddf993561556bbc551754b2cd5003012e1d91600da4ce548",
     "packages/typescript/src/node-model.json5": "7d2ca26612e66b4c2be408752c50e3a60e1b08e5bc58c281cf4a42e5a26c32ff",
     "packages/typescript/src/type-test.ts": "ba6cf1dce376162b7bdb4f043d24681812c1c136b1109e6840ced7ac452baa21",
-    "packages/typescript/src/types.ts": "63c478cfbfbe21627012b3211e69f68ec8526f406faeb5046a0e6b387ff84059",
+    "packages/typescript/src/types.ts": "b75f4c2b646768d9ca106250a41eb58325de29b5fe81d0c7b9fef20e7a0dfa92",
     "packages/typescript/src/utils.ts": "5bb731ea32f4fe737f381ea776dd0c39c65cc78268d33b268e16c63987028a17",
     "packages/typescript/src/wrap.ts": "3accfaf2870684ee550290ab7c459d76a542ce217f9ab0f5bfa1bda0f479a4a9",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

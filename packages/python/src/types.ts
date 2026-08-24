@@ -13,6 +13,7 @@ import type {
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
+import type * as F$ from './factories.js';
 
 export type { PythonGrammar };
 
@@ -4260,185 +4261,625 @@ export interface KindMap {
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
-export interface ModuleNs extends NodeNs<Module, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SimpleStatementsNs extends NodeNs<SimpleStatements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImportStatementNs extends NodeNs<ImportStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RelativeImportNs extends NodeNs<RelativeImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ModuleNs extends NodeNs<Module, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ModuleBuilt> {}
+export interface SimpleStatementsNs extends NodeNs<
+	SimpleStatements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.SimpleStatementsBuilt
+> {}
+export interface ImportStatementNs extends NodeNs<
+	ImportStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ImportStatementBuilt
+> {}
+export interface RelativeImportNs extends NodeNs<
+	RelativeImport,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.RelativeImportBuilt
+> {}
 export interface FutureImportStatementNs extends NodeNs<
 	FutureImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.FutureImportStatementBuilt
 > {}
 export interface ImportFromStatementNs extends NodeNs<
 	ImportFromStatement,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ImportFromStatementBuilt
 > {}
-export interface ImportListNs extends NodeNs<ImportList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AliasedImportNs extends NodeNs<AliasedImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PrintStatementNs extends NodeNs<PrintStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ChevronNs extends NodeNs<Chevron, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssertStatementNs extends NodeNs<AssertStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ImportListNs extends NodeNs<
+	ImportList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ImportListBuilt
+> {}
+export interface AliasedImportNs extends NodeNs<
+	AliasedImport,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AliasedImportBuilt
+> {}
+export interface PrintStatementNs extends NodeNs<
+	PrintStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.PrintStatementBuilt
+> {}
+export interface ChevronNs extends NodeNs<Chevron, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ChevronBuilt> {}
+export interface AssertStatementNs extends NodeNs<
+	AssertStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AssertStatementBuilt
+> {}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ExpressionStatementBuilt
 > {}
-export interface NamedExpressionNs extends NodeNs<NamedExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ReturnStatementNs extends NodeNs<ReturnStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DeleteStatementNs extends NodeNs<DeleteStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RaiseStatementNs extends NodeNs<RaiseStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IfStatementNs extends NodeNs<IfStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ElifClauseNs extends NodeNs<ElifClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ElseClauseNs extends NodeNs<ElseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchStatementNs extends NodeNs<MatchStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CaseClauseNs extends NodeNs<CaseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForStatementNs extends NodeNs<ForStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WhileStatementNs extends NodeNs<WhileStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TryStatementNs extends NodeNs<TryStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExceptClauseNs extends NodeNs<ExceptClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FinallyClauseNs extends NodeNs<FinallyClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithStatementNs extends NodeNs<WithStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseNs extends NodeNs<WithClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionDefinitionNs extends NodeNs<FunctionDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParametersNs extends NodeNs<Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LambdaParametersNs extends NodeNs<LambdaParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListSplatNs extends NodeNs<ListSplat, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionarySplatNs extends NodeNs<DictionarySplat, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GlobalStatementNs extends NodeNs<GlobalStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NonlocalStatementNs extends NodeNs<NonlocalStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExecStatementNs extends NodeNs<ExecStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeAliasStatementNs extends NodeNs<TypeAliasStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClassDefinitionNs extends NodeNs<ClassDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeParameterNs extends NodeNs<TypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface NamedExpressionNs extends NodeNs<
+	NamedExpression,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.NamedExpressionBuilt
+> {}
+export interface ReturnStatementNs extends NodeNs<
+	ReturnStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ReturnStatementBuilt
+> {}
+export interface DeleteStatementNs extends NodeNs<
+	DeleteStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DeleteStatementBuilt
+> {}
+export interface RaiseStatementNs extends NodeNs<
+	RaiseStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.RaiseStatementBuilt
+> {}
+export interface IfStatementNs extends NodeNs<
+	IfStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.IfStatementBuilt
+> {}
+export interface ElifClauseNs extends NodeNs<
+	ElifClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ElifClauseBuilt
+> {}
+export interface ElseClauseNs extends NodeNs<
+	ElseClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ElseClauseBuilt
+> {}
+export interface MatchStatementNs extends NodeNs<
+	MatchStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.MatchStatementBuilt
+> {}
+export interface MatchBlockNs extends NodeNs<
+	MatchBlock,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.MatchBlockBuilt
+> {}
+export interface CaseClauseNs extends NodeNs<
+	CaseClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CaseClauseBuilt
+> {}
+export interface ForStatementNs extends NodeNs<
+	ForStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ForStatementBuilt
+> {}
+export interface WhileStatementNs extends NodeNs<
+	WhileStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.WhileStatementBuilt
+> {}
+export interface TryStatementNs extends NodeNs<
+	TryStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TryStatementBuilt
+> {}
+export interface ExceptClauseNs extends NodeNs<
+	ExceptClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ExceptClauseBuilt
+> {}
+export interface FinallyClauseNs extends NodeNs<
+	FinallyClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.FinallyClauseBuilt
+> {}
+export interface WithStatementNs extends NodeNs<
+	WithStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.WithStatementBuilt
+> {}
+export interface WithClauseNs extends NodeNs<
+	WithClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.WithClauseBuilt
+> {}
+export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.WithItemBuilt> {}
+export interface FunctionDefinitionNs extends NodeNs<
+	FunctionDefinition,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.FunctionDefinitionBuilt
+> {}
+export interface ParametersNs extends NodeNs<
+	Parameters,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ParametersBuilt
+> {}
+export interface LambdaParametersNs extends NodeNs<
+	LambdaParameters,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.LambdaParametersBuilt
+> {}
+export interface ListSplatNs extends NodeNs<ListSplat, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ListSplatBuilt> {}
+export interface DictionarySplatNs extends NodeNs<
+	DictionarySplat,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DictionarySplatBuilt
+> {}
+export interface GlobalStatementNs extends NodeNs<
+	GlobalStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.GlobalStatementBuilt
+> {}
+export interface NonlocalStatementNs extends NodeNs<
+	NonlocalStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.NonlocalStatementBuilt
+> {}
+export interface ExecStatementNs extends NodeNs<
+	ExecStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ExecStatementBuilt
+> {}
+export interface TypeAliasStatementNs extends NodeNs<
+	TypeAliasStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TypeAliasStatementBuilt
+> {}
+export interface ClassDefinitionNs extends NodeNs<
+	ClassDefinition,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ClassDefinitionBuilt
+> {}
+export interface TypeParameterNs extends NodeNs<
+	TypeParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TypeParameterBuilt
+> {}
 export interface ParenthesizedListSplatNs extends NodeNs<
 	ParenthesizedListSplat,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ParenthesizedListSplatBuilt
 > {}
-export interface ArgumentListNs extends NodeNs<ArgumentList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArgumentListNs extends NodeNs<
+	ArgumentList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ArgumentListBuilt
+> {}
 export interface DecoratedDefinitionNs extends NodeNs<
 	DecoratedDefinition,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.DecoratedDefinitionBuilt
 > {}
-export interface DecoratorNs extends NodeNs<Decorator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DecoratorNs extends NodeNs<Decorator, LeafScalarMap, LeafStringMap, NamespaceMap, F$.DecoratorBuilt> {}
 export interface SuiteNs extends NodeNs<Suite, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExpressionListNs extends NodeNs<ExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DottedNameNs extends NodeNs<DottedName, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CasePatternNs extends NodeNs<CasePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnionPatternNs extends NodeNs<UnionPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictPatternNs extends NodeNs<DictPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeyValuePatternNs extends NodeNs<KeyValuePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeywordPatternNs extends NodeNs<KeywordPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SplatPatternNs extends NodeNs<SplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClassPatternNs extends NodeNs<ClassPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ComplexPatternNs extends NodeNs<ComplexPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ParametersNs extends NodeNs<_Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TuplePatternNs extends NodeNs<TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListPatternNs extends NodeNs<ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DefaultParameterNs extends NodeNs<DefaultParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap, F$.BlockBuilt> {}
+export interface ExpressionListNs extends NodeNs<
+	ExpressionList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ExpressionListBuilt
+> {}
+export interface DottedNameNs extends NodeNs<
+	DottedName,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DottedNameBuilt
+> {}
+export interface CasePatternNs extends NodeNs<
+	CasePattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CasePatternBuilt
+> {}
+export interface UnionPatternNs extends NodeNs<
+	UnionPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.UnionPatternBuilt
+> {}
+export interface DictPatternNs extends NodeNs<
+	DictPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DictPatternBuilt
+> {}
+export interface KeyValuePatternNs extends NodeNs<
+	KeyValuePattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.KeyValuePatternBuilt
+> {}
+export interface KeywordPatternNs extends NodeNs<
+	KeywordPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.KeywordPatternBuilt
+> {}
+export interface SplatPatternNs extends NodeNs<
+	SplatPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.SplatPatternBuilt
+> {}
+export interface ClassPatternNs extends NodeNs<
+	ClassPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ClassPatternBuilt
+> {}
+export interface ComplexPatternNs extends NodeNs<
+	ComplexPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ComplexPatternBuilt
+> {}
+export interface _ParametersNs extends NodeNs<
+	_Parameters,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$._ParametersBuilt
+> {}
+export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap, F$.PatternsBuilt> {}
+export interface TuplePatternNs extends NodeNs<
+	TuplePattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TuplePatternBuilt
+> {}
+export interface ListPatternNs extends NodeNs<
+	ListPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ListPatternBuilt
+> {}
+export interface DefaultParameterNs extends NodeNs<
+	DefaultParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DefaultParameterBuilt
+> {}
 export interface TypedDefaultParameterNs extends NodeNs<
 	TypedDefaultParameter,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.TypedDefaultParameterBuilt
 > {}
-export interface ListSplatPatternNs extends NodeNs<ListSplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ListSplatPatternNs extends NodeNs<
+	ListSplatPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ListSplatPatternBuilt
+> {}
 export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.DictionarySplatPatternBuilt
 > {}
-export interface AsPatternNs extends NodeNs<AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NotOperatorNs extends NodeNs<NotOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BooleanOperatorNs extends NodeNs<BooleanOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BinaryOperatorNs extends NodeNs<BinaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnaryOperatorNs extends NodeNs<UnaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ComparisonOperatorNs extends NodeNs<ComparisonOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LambdaNs extends NodeNs<Lambda, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AsPatternNs extends NodeNs<AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap, F$.AsPatternBuilt> {}
+export interface NotOperatorNs extends NodeNs<
+	NotOperator,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.NotOperatorBuilt
+> {}
+export interface BooleanOperatorNs extends NodeNs<
+	BooleanOperator,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.BooleanOperatorBuilt
+> {}
+export interface BinaryOperatorNs extends NodeNs<
+	BinaryOperator,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.BinaryOperatorBuilt
+> {}
+export interface UnaryOperatorNs extends NodeNs<
+	UnaryOperator,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.UnaryOperatorBuilt
+> {}
+export interface ComparisonOperatorNs extends NodeNs<
+	ComparisonOperator,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ComparisonOperatorBuilt
+> {}
+export interface LambdaNs extends NodeNs<Lambda, LeafScalarMap, LeafStringMap, NamespaceMap, F$.LambdaBuilt> {}
 export interface LambdaWithinForInClauseNs extends NodeNs<
 	LambdaWithinForInClause,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.LambdaWithinForInClauseBuilt
 > {}
-export interface AssignmentNs extends NodeNs<Assignment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AssignmentNs extends NodeNs<
+	Assignment,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AssignmentBuilt
+> {}
 export interface AugmentedAssignmentNs extends NodeNs<
 	AugmentedAssignment,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.AugmentedAssignmentBuilt
 > {}
-export interface PatternListNs extends NodeNs<PatternList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface YieldNs extends NodeNs<Yield, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SubscriptNs extends NodeNs<Subscript, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SliceNs extends NodeNs<Slice, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CallNs extends NodeNs<Call, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypedParameterNs extends NodeNs<TypedParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeNs extends NodeNs<Type, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SplatTypeNs extends NodeNs<SplatType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GenericTypeNs extends NodeNs<GenericType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnionTypeNs extends NodeNs<UnionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ConstrainedTypeNs extends NodeNs<ConstrainedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MemberTypeNs extends NodeNs<MemberType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeywordArgumentNs extends NodeNs<KeywordArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListNs extends NodeNs<List, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SetNs extends NodeNs<Set, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TupleNs extends NodeNs<Tuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionaryNs extends NodeNs<Dictionary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PairNs extends NodeNs<Pair, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListComprehensionNs extends NodeNs<ListComprehension, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PatternListNs extends NodeNs<
+	PatternList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.PatternListBuilt
+> {}
+export interface YieldNs extends NodeNs<Yield, LeafScalarMap, LeafStringMap, NamespaceMap, F$.YieldBuilt> {}
+export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap, F$.AttributeBuilt> {}
+export interface SubscriptNs extends NodeNs<Subscript, LeafScalarMap, LeafStringMap, NamespaceMap, F$.SubscriptBuilt> {}
+export interface SliceNs extends NodeNs<Slice, LeafScalarMap, LeafStringMap, NamespaceMap, F$.SliceBuilt> {}
+export interface CallNs extends NodeNs<Call, LeafScalarMap, LeafStringMap, NamespaceMap, F$.CallBuilt> {}
+export interface TypedParameterNs extends NodeNs<
+	TypedParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TypedParameterBuilt
+> {}
+export interface TypeNs extends NodeNs<Type, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TypeBuilt> {}
+export interface SplatTypeNs extends NodeNs<SplatType, LeafScalarMap, LeafStringMap, NamespaceMap, F$.SplatTypeBuilt> {}
+export interface GenericTypeNs extends NodeNs<
+	GenericType,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.GenericTypeBuilt
+> {}
+export interface UnionTypeNs extends NodeNs<UnionType, LeafScalarMap, LeafStringMap, NamespaceMap, F$.UnionTypeBuilt> {}
+export interface ConstrainedTypeNs extends NodeNs<
+	ConstrainedType,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ConstrainedTypeBuilt
+> {}
+export interface MemberTypeNs extends NodeNs<
+	MemberType,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.MemberTypeBuilt
+> {}
+export interface KeywordArgumentNs extends NodeNs<
+	KeywordArgument,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.KeywordArgumentBuilt
+> {}
+export interface ListNs extends NodeNs<List, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ListBuilt> {}
+export interface SetNs extends NodeNs<Set, LeafScalarMap, LeafStringMap, NamespaceMap, F$.SetBuilt> {}
+export interface TupleNs extends NodeNs<Tuple, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TupleBuilt> {}
+export interface DictionaryNs extends NodeNs<
+	Dictionary,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DictionaryBuilt
+> {}
+export interface PairNs extends NodeNs<Pair, LeafScalarMap, LeafStringMap, NamespaceMap, F$.PairBuilt> {}
+export interface ListComprehensionNs extends NodeNs<
+	ListComprehension,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ListComprehensionBuilt
+> {}
 export interface DictionaryComprehensionNs extends NodeNs<
 	DictionaryComprehension,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.DictionaryComprehensionBuilt
 > {}
-export interface SetComprehensionNs extends NodeNs<SetComprehension, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SetComprehensionNs extends NodeNs<
+	SetComprehension,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.SetComprehensionBuilt
+> {}
 export interface GeneratorExpressionNs extends NodeNs<
 	GeneratorExpression,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.GeneratorExpressionBuilt
 > {}
 export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ParenthesizedExpressionBuilt
 > {}
-export interface CollectionElementsNs extends NodeNs<CollectionElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForInClauseNs extends NodeNs<ForInClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IfClauseNs extends NodeNs<IfClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CollectionElementsNs extends NodeNs<
+	CollectionElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CollectionElementsBuilt
+> {}
+export interface ForInClauseNs extends NodeNs<
+	ForInClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ForInClauseBuilt
+> {}
+export interface IfClauseNs extends NodeNs<IfClause, LeafScalarMap, LeafStringMap, NamespaceMap, F$.IfClauseBuilt> {}
 export interface ConditionalExpressionNs extends NodeNs<
 	ConditionalExpression,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ConditionalExpressionBuilt
 > {}
-export interface ConcatenatedStringNs extends NodeNs<ConcatenatedString, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringNs extends NodeNs<String, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ConcatenatedStringNs extends NodeNs<
+	ConcatenatedString,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ConcatenatedStringBuilt
+> {}
+export interface StringNs extends NodeNs<String, LeafScalarMap, LeafStringMap, NamespaceMap, F$.StringBuilt> {}
+export interface StringContentNs extends NodeNs<
+	StringContent,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.StringContentBuilt
+> {}
+export interface InterpolationNs extends NodeNs<
+	Interpolation,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.InterpolationBuilt
+> {}
+export interface FormatSpecifierNs extends NodeNs<
+	FormatSpecifier,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.FormatSpecifierBuilt
+> {}
+export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap, F$.AwaitBuilt> {}
 export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.SimpleStatementsElementsBuilt
 > {}
 export interface RaiseStatementOptional1Ns extends NodeNs<
 	RaiseStatementOptional1,
@@ -4446,13 +4887,20 @@ export interface RaiseStatementOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface SubjectsNs extends NodeNs<Subjects, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CasePatternsNs extends NodeNs<CasePatterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SubjectsNs extends NodeNs<Subjects, LeafScalarMap, LeafStringMap, NamespaceMap, F$.SubjectsBuilt> {}
+export interface CasePatternsNs extends NodeNs<
+	CasePatterns,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CasePatternsBuilt
+> {}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.WithClauseWithItemsBuilt
 > {}
 export interface FunctionDefinitionOptional1Ns extends NodeNs<
 	FunctionDefinitionOptional1,
@@ -4466,104 +4914,230 @@ export interface ExecStatementOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface TypesNs extends NodeNs<Types, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypesNs extends NodeNs<Types, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TypesBuilt> {}
 export interface ArgumentListElementsNs extends NodeNs<
 	ArgumentListElements,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ArgumentListElementsBuilt
 > {}
 export interface ExpressionListExpressionsNs extends NodeNs<
 	ExpressionListExpressions,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ExpressionListExpressionsBuilt
 > {}
 export interface ListPatternCasePatternsNs extends NodeNs<
 	ListPatternCasePatterns,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ListPatternCasePatternsBuilt
 > {}
 export interface DictPatternElementsNs extends NodeNs<
 	DictPatternElements,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.DictPatternElementsBuilt
 > {}
 export interface PatternListPatternsNs extends NodeNs<
 	PatternListPatterns,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.PatternListPatternsBuilt
 > {}
-export interface SubscriptsNs extends NodeNs<Subscripts, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionaryElementsNs extends NodeNs<DictionaryElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SubscriptsNs extends NodeNs<
+	Subscripts,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.SubscriptsBuilt
+> {}
+export interface DictionaryElementsNs extends NodeNs<
+	DictionaryElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.DictionaryElementsBuilt
+> {}
 export interface FutureImportStatementArmNs extends NodeNs<
 	FutureImportStatementArm,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.FutureImportStatementArmBuilt
 > {}
-export interface ExceptClauseArmNs extends NodeNs<ExceptClauseArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SliceGroupNs extends NodeNs<SliceGroup, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseArmNs extends NodeNs<
+	ExceptClauseArm,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ExceptClauseArmBuilt
+> {}
+export interface SliceGroupNs extends NodeNs<
+	SliceGroup,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.SliceGroupBuilt
+> {}
+export interface ExceptClauseAsNs extends NodeNs<
+	ExceptClauseAs,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ExceptClauseAsBuilt
+> {}
 export interface ExceptClauseAsOptional1Ns extends NodeNs<
 	ExceptClauseAsOptional1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface CaseTuplePatternNs extends NodeNs<CaseTuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CaseListPatternNs extends NodeNs<CaseListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CaseAsPatternNs extends NodeNs<CaseAsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CaseTuplePatternNs extends NodeNs<
+	CaseTuplePattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CaseTuplePatternBuilt
+> {}
+export interface CaseListPatternNs extends NodeNs<
+	CaseListPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CaseListPatternBuilt
+> {}
+export interface CaseAsPatternNs extends NodeNs<
+	CaseAsPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.CaseAsPatternBuilt
+> {}
 export interface ComprehensionClausesNs extends NodeNs<
 	ComprehensionClauses,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ComprehensionClausesBuilt
 > {}
-export interface PrintArgumentsNs extends NodeNs<PrintArguments, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PrintArgumentsNs extends NodeNs<
+	PrintArguments,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.PrintArgumentsBuilt
+> {}
 export interface PrintChevronArgumentsNs extends NodeNs<
 	PrintChevronArguments,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.PrintChevronArgumentsBuilt
 > {}
-export interface PrintStatementArm1Ns extends NodeNs<PrintStatementArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PrintStatementArm2Ns extends NodeNs<PrintStatementArm2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PrintStatementArm1Ns extends NodeNs<
+	PrintStatementArm1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.PrintStatementArm1Built
+> {}
+export interface PrintStatementArm2Ns extends NodeNs<
+	PrintStatementArm2,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.PrintStatementArm2Built
+> {}
+export interface AssignmentEqNs extends NodeNs<
+	AssignmentEq,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AssignmentEqBuilt
+> {}
+export interface AssignmentTypeNs extends NodeNs<
+	AssignmentType,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AssignmentTypeBuilt
+> {}
+export interface AssignmentTypedNs extends NodeNs<
+	AssignmentTyped,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AssignmentTypedBuilt
+> {}
 export interface ExpressionStatementTupleNs extends NodeNs<
 	ExpressionStatementTuple,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ExpressionStatementTupleBuilt
 > {}
-export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseBareNs extends NodeNs<
+	WithClauseBare,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.WithClauseBareBuilt
+> {}
+export interface WithClauseParenNs extends NodeNs<
+	WithClauseParen,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.WithClauseParenBuilt
+> {}
+export interface MatchBlockBlockNs extends NodeNs<
+	MatchBlockBlock,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.MatchBlockBlockBuilt
+> {}
 export interface SuiteBlockWithIndentNs extends NodeNs<
 	SuiteBlockWithIndent,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.SuiteBlockWithIndentBuilt
 > {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.SimplePatternNegativeBuilt
 > {}
-export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseListNs extends NodeNs<
+	ExceptClauseList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ExceptClauseListBuilt
+> {}
 export interface ComparisonOperatorComparatorNs extends NodeNs<
 	ComparisonOperatorComparator,
 	LeafScalarMap,
 	LeafStringMap,
-	NamespaceMap
+	NamespaceMap,
+	F$.ComparisonOperatorComparatorBuilt
 > {}
-export interface YieldFromClauseNs extends NodeNs<YieldFromClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface YieldFromClauseNs extends NodeNs<
+	YieldFromClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.YieldFromClauseBuilt
+> {}
 
 export interface NamespaceMap {
 	module: ModuleNs;

@@ -855,6 +855,14 @@ export function classifyFactoryEmission(
 	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
 }
 
+/** ONE predicate for "this kind declares a plain `<TypeName>Built` alias" —
+ *  a local re-derivation would let the generated references and the
+ *  actually-emitted aliases drift. */
+export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
+	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
+	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
+}
+
 export interface FromDispatchContext {
 	nodeMap: NodeMap;
 	kindEntries?: readonly KindEnumEntry[];
