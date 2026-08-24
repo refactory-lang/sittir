@@ -102,7 +102,14 @@ export function coerceKindEnumStorage<T = unknown>(
 	if (isRecord(value) && typeof value.$type === 'number') return value.$type as T;
 	if (typeof value === 'string') {
 		const mapped = byText.find(([candidate]) => candidate === value);
-		return (mapped ? mapped[1] : kindIdFromName(value)) as T;
+		if (mapped) return mapped[1] as T;
+		// The slot's own literal table is the ONLY string surface — an
+		// unknown string must fail here, not resolve through the global
+		// kind catalog into a valid-looking id outside the slot's member
+		// union.
+		throw new Error(
+			`kind-enum slot: ${JSON.stringify(value)} is not a valid value (expected one of: ${byText.map(([t]) => t).join(', ')})`
+		);
 	}
 	return value as T;
 }
