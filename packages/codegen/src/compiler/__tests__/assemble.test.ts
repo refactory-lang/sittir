@@ -20,7 +20,14 @@ import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
-import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList, AssembledSupertype } from '../model/node-map.ts';
+import {
+	deriveSlots,
+	isRequired,
+	isMultiple,
+	allSlotsOf,
+	AssembledSeparatedList,
+	AssembledSupertype
+} from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -236,7 +243,10 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: '_expression',
-			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
+			subtypes: [
+				{ type: SYMBOL, name: 'binary_expression' },
+				{ type: SYMBOL, name: 'identifier' }
+			]
 		};
 		expect(classifyNode('_expression', deleteWrapper(rule))).toBe('supertype');
 	});
@@ -247,7 +257,10 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: 'expression',
-			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
+			subtypes: [
+				{ type: SYMBOL, name: 'binary_expression' },
+				{ type: SYMBOL, name: 'identifier' }
+			]
 		};
 		const renderRule = deleteWrapper(rule);
 		expect(classifyNode('expression', renderRule)).toBe('supertype');
@@ -394,7 +407,10 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: 'string' }]
+					subtypes: [
+						{ type: SYMBOL, name: 'identifier' },
+						{ type: SYMBOL, name: 'string' }
+					]
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
@@ -419,7 +435,10 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: 'string' }]
+					subtypes: [
+						{ type: SYMBOL, name: 'identifier' },
+						{ type: SYMBOL, name: 'string' }
+					]
 				},
 				_type_identifier: {
 					type: SUPERTYPE,
@@ -485,7 +504,10 @@ describe('Assemble — classifyNode', () => {
 			_delim_tokens: {
 				type: SUPERTYPE,
 				name: '_delim_tokens',
-				subtypes: [{ type: SYMBOL, name: '_non_delim_token' }, { type: SYMBOL, name: 'identifier' }]
+				subtypes: [
+					{ type: SYMBOL, name: '_non_delim_token' },
+					{ type: SYMBOL, name: 'identifier' }
+				]
 			},
 			_non_delim_token: {
 				type: CHOICE,
@@ -551,7 +573,10 @@ describe('Assemble — classifyNode', () => {
 			_simple_pattern: {
 				type: SUPERTYPE,
 				name: '_simple_pattern',
-				subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: '_simple_pattern_negative' }]
+				subtypes: [
+					{ type: SYMBOL, name: 'identifier' },
+					{ type: SYMBOL, name: '_simple_pattern_negative' }
+				]
 			},
 			_simple_pattern_negative: {
 				type: SEQ,
@@ -1039,7 +1064,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([99, 77]);
 	});
 
-	it('carries a nested supertype arm\'s own stamped kindId through to the flattened subtype list', () => {
+	it("carries a nested supertype arm's own stamped kindId through to the flattened subtype list", () => {
 		// `_outer` never directly references `identifier` / `_simple_statements` —
 		// they're reachable ONLY through `_inner`'s own `subtypes`. Before the
 		// stamped-SubtypeRef chain, only names directly in the OUTER rule's

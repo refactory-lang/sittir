@@ -761,9 +761,7 @@ function resolveFieldPlaceholder(
 		if (overrideName === existingName && !process.env.SITTIR_QUIET) {
 			const parentKind = wireGetCurrentRuleKind() ?? '(unknown)';
 			const label = isEnrichShaped ? 'an enrich-labeled FIELD' : 'an existing FIELD';
-			const advice = isEnrichShaped
-				? 'enrich will cover it automatically.'
-				: 'it already has this name.';
+			const advice = isEnrichShaped ? 'enrich will cover it automatically.' : 'it already has this name.';
 			process.stderr.write(
 				`transform: override field('${overrideName}') on '${parentKind}' wraps ${label} — ` +
 					`duplicate name ('${overrideName}'). Drop the override entry; ${advice}\n`

@@ -659,24 +659,28 @@ export async function validateReadRenderParse(
 			if (readTreeNodeFn && handle.read) {
 				const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 				const seen = new Set<string>();
-				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
-					if (w.$named === false) return;
-					const displayKind = kindNameFromId?.(w.$type);
-					const sourceKind = canonicalKindNameFromId?.(w.$type);
-					// Testable-surface filter is CANONICAL-keyed, like the bucketing:
-					// template filenames carry canonical spellings, so hidden minted
-					// kinds (whose display name differs) are admitted and probed
-					// against their own templates rather than silently skipped.
-					if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
-					const span = (w as { $span?: { start: number; end: number } }).$span;
-					if (span == null) return;
-					const dedup = `${sourceKind}@${span.start}:${span.end}`;
-					if (seen.has(dedup)) return;
-					seen.add(dedup);
-					const list = candidatesByKind.get(sourceKind) ?? [];
-					list.push({ start: span.start, end: span.end, node: w, displayKind });
-					candidatesByKind.set(sourceKind, list);
-				}, onAccessorThrow);
+				walkWrappedTree(
+					wrappedRoot,
+					(w: WrappedNodeData) => {
+						if (w.$named === false) return;
+						const displayKind = kindNameFromId?.(w.$type);
+						const sourceKind = canonicalKindNameFromId?.(w.$type);
+						// Testable-surface filter is CANONICAL-keyed, like the bucketing:
+						// template filenames carry canonical spellings, so hidden minted
+						// kinds (whose display name differs) are admitted and probed
+						// against their own templates rather than silently skipped.
+						if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+						const span = (w as { $span?: { start: number; end: number } }).$span;
+						if (span == null) return;
+						const dedup = `${sourceKind}@${span.start}:${span.end}`;
+						if (seen.has(dedup)) return;
+						seen.add(dedup);
+						const list = candidatesByKind.get(sourceKind) ?? [];
+						list.push({ start: span.start, end: span.end, node: w, displayKind });
+						candidatesByKind.set(sourceKind, list);
+					},
+					onAccessorThrow
+				);
 			}
 			const testableKinds = [...candidatesByKind.keys()];
 
@@ -745,10 +749,7 @@ export async function validateReadRenderParse(
 						// child mislabeled as the parent). Root candidates take the
 						// deep-materialization path instead of guessing an index.
 						data =
-							recursive !== true &&
-							cand.node.$nodeHandle != null &&
-							cand.node.$childIndex != null &&
-							handle.read
+							recursive !== true && cand.node.$nodeHandle != null && cand.node.$childIndex != null && handle.read
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
 								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
 					} catch (e) {
@@ -774,9 +775,18 @@ export async function validateReadRenderParse(
 					}
 					try {
 						const rendered = render(data);
-						if (process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']) {
-							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} data=${JSON.stringify(data)}\n`);
-							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`);
+						if (
+							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] &&
+							entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
+						) {
+							writeSync(
+								2,
+								`[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} data=${JSON.stringify(data)}\n`
+							);
+							writeSync(
+								2,
+								`[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`
+							);
 						}
 
 						// Wrap for reparse using supertype context. `renderedKind` IS the
@@ -794,8 +804,14 @@ export async function validateReadRenderParse(
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
-						if (process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']) {
-							writeSync(2, `[dump-reparse] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0,300))}\n`);
+						if (
+							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] &&
+							entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
+						) {
+							writeSync(
+								2,
+								`[dump-reparse] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0, 300))}\n`
+							);
 						}
 						if (tree2.rootNode.hasError) {
 							const failure = {

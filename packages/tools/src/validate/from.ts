@@ -422,11 +422,11 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
 							// Config-shaped factories with flank capture take `(config,
-						// options)` — factories without options ignore the extra argument.
-						factoryResult = (factory as (c: unknown, o?: unknown) => AnyNodeData)(
-							config,
-							separatedListFactoryOptions(readData, kindLiteralText)
-						);
+							// options)` — factories without options ignore the extra argument.
+							factoryResult = (factory as (c: unknown, o?: unknown) => AnyNodeData)(
+								config,
+								separatedListFactoryOptions(readData, kindLiteralText)
+							);
 						}
 					} else if (shape === 'text') {
 						// readData.$text is absent on branch nodes (gated by

@@ -16,7 +16,7 @@ export const probeKind: CommandModule = {
 			.option('--reparse', 'Render → re-parse → include reparsed CST')
 			.option(
 				'--validator-reparse',
-				'Render → reparse using the validator\'s own wrapForReparse + offset lookup → include the selected wrapper, offset, located node, and structural diff'
+				"Render → reparse using the validator's own wrapForReparse + offset lookup → include the selected wrapper, offset, located node, and structural diff"
 			)
 			.option('--pretty', 'Pretty-print JSON output (2-space indent)')
 			.option('--baseline <dir>', 'Compare against a staged baseline package dir')

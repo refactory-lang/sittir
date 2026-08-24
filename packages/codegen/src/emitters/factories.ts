@@ -1110,10 +1110,14 @@ export function childrenSetterRestType(
 }
 
 function renameUnusedConfigParam(lines: string[]): string {
-	const header = lines[0]!;
-	const body = lines.slice(1).join('\n');
-	if (!/\bconfig\b/.test(body)) {
-		lines[0] = header.replace(/\bconfig(\??:)/, '_config$1');
+	// Locate the signature line rather than assuming lines[0] — callers
+	// prepend Built-alias (and forwarded-wrapper) lines before the
+	// implementation's own header.
+	const idx = lines.findIndex((l) => /^(?:export )?function \w+\(config\??:/.test(l));
+	if (idx === -1) return lines.join('\n');
+	const rest = [...lines.slice(0, idx), ...lines.slice(idx + 1)].join('\n');
+	if (!/\bconfig\b/.test(rest)) {
+		lines[idx] = lines[idx]!.replace(/\bconfig(\??:)/, '_config$1');
 	}
 	return lines.join('\n');
 }
@@ -1196,8 +1200,10 @@ function emitRefineFormFactory(
 	}
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
-	lines.unshift(...builtAliasLines(formBuiltName, `T.${info.typeName}`, formWithTypeMembers));
-	return lines.join('\n');
+	// An all-narrowed form reads nothing off `config` — rename before the
+	// alias lines are prepended (the rename inspects lines[0] as the header).
+	const fnSource = renameUnusedConfigParam(lines);
+	return [...builtAliasLines(formBuiltName, `T.${info.typeName}`, formWithTypeMembers), fnSource].join('\n');
 }
 
 function resolveRefineFormConfigOptional(
@@ -1359,9 +1365,7 @@ function emitSeparatedListFactory(
 		...(hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
 		...(hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
 	];
-	lines.push(
-		...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers)
-	);
+	lines.push(...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers));
 	if (hasOptions) {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
@@ -1404,8 +1408,13 @@ function emitSeparatedListFactory(
 			const arms = candidateKindNames
 				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
 				.join(', ');
+			// Stamp only a caller-chosen separator. A defaulted stamp fabricates
+			// a token the node never carried — read references for separator-less
+			// occurrences have no `_separator`, and the native render's
+			// separator_kind match already falls back to the template's own
+			// separator literal when the field is absent.
 			lines.push(
-				`  const _separator = ({ ${arms} } as Record<string, number>)[options.separator ?? ${JSON.stringify(candidateKindNames[0])}];`
+				`  const _separator = options.separator === undefined ? undefined : ({ ${arms} } as Record<string, number>)[options.separator];`
 			);
 		} else {
 			lines.push('  const _separator = undefined;');
@@ -1580,7 +1589,14 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFactoriesConfig) {
-		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds, triviaKinds } = config;
+		const {
+			nodeMap,
+			generatedIdTables,
+			kindEntries: providedKindEntries,
+			inlineKinds,
+			synthesizedKinds,
+			triviaKinds
+		} = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables

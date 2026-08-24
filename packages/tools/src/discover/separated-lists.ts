@@ -119,7 +119,7 @@ function isNonterminalSeparatorRule(rule: AnyRule | undefined): boolean {
 /** Naive English pluralization, mirroring the array-slot naming convention.
  *  Names that already end in a plural-looking 's' pass through unchanged. */
 export function pluralizeFieldName(name: string): string {
-	if (/(?:s|ses|xes|zes|ches|shes)$/.test(name) && !/ss$/.test(name)) return name;
+	if (/(?:s|ses|xes|zes|ches|shes)$/.test(name) && !name.endsWith('ss')) return name;
 	if (/(?:s|x|z|ch|sh)$/.test(name)) return `${name}es`;
 	if (/[^aeiou]y$/.test(name)) return `${name.slice(0, -1)}ies`;
 	return `${name}s`;
@@ -172,7 +172,7 @@ function fallbackNameOf(listKind: string, pluralField: string): string {
 }
 
 export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): SeparatedListsCensus {
-	const allKinds = new Set([...nm.nodes.keys()]);
+	const allKinds = new Set(nm.nodes.keys());
 
 	// Reverse index: list kind -> referencing parents (for the forwarded-factory
 	// column: a single-slot parent forwards the hoisted list's constructor).
@@ -233,9 +233,7 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 		}
 
 		for (const slot of slotsOf(node)) {
-			const arrayValues = slot.values.filter(
-				(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-			);
+			const arrayValues = slot.values.filter((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 			if (arrayValues.length === 0) continue;
 			const separators = [...new Set(arrayValues.map((v) => v.separator).filter((s) => s !== undefined))];
 			if (separators.length === 0) continue;
@@ -249,9 +247,7 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 				leading: slot.leadingDelimiter,
 				trailing: slot.trailingDelimiter,
 				flankCarrying,
-				elementKinds: [
-					...new Set(arrayValues.map((v) => refKindName(v) ?? JSON.stringify(v.value)))
-				].sort(),
+				elementKinds: [...new Set(arrayValues.map((v) => refKindName(v) ?? JSON.stringify(v.value)))].sort(),
 				proposedName,
 				// Hoisting mints a NEW kind next to the parent, so a proposal
 				// matching ANY existing kind (the parent included) collides.
@@ -334,22 +330,24 @@ function printCensus(census: SeparatedListsCensus): void {
 
 	const hoist = census.kindLevel.filter((e) => e.flankCarrying);
 	const demote = census.kindLevel.filter((e) => !e.flankCarrying);
-	w(`\n-- kind-level lists: ${hoist.length} flank-carrying (hoist -> visible), ${demote.length} flankless (stay hidden/inline) --`);
+	w(
+		`\n-- kind-level lists: ${hoist.length} flank-carrying (hoist -> visible), ${demote.length} flankless (stay hidden/inline) --`
+	);
 	for (const e of census.kindLevel) {
 		const target = e.flankCarrying ? 'hoist ' : 'stays ';
 		const name = e.flankCarrying
 			? ` -> ${e.effectiveName}${e.unresolvedCollision ? ' [UNRESOLVED]' : ''}${e.sharedShape ? ' [shared shape]' : ''}${e.proposedCollision ? ` (field-name '${e.proposedName}' collides)` : ''}`
 			: `  fields=[${e.elementFields.join(',')}]`;
-		const parents = e.parents
-			.map((p) => `${p.kind}${p.slotCount === 1 ? ' [single-slot->forwarded]' : ''}`)
-			.join(', ');
+		const parents = e.parents.map((p) => `${p.kind}${p.slotCount === 1 ? ' [single-slot->forwarded]' : ''}`).join(', ');
 		w(
 			`  [${target}] ${e.kind}  (${e.modelType})  sep=${e.separator}  leading=${e.leading} trailing=${e.trailing}${name}  elements=[${e.elementKinds.join(',')}]  parents=[${parents}]`
 		);
 	}
 
 	const hoistInline = census.inline.filter((e) => e.flankCarrying);
-	w(`\n-- inline list slots: ${hoistInline.length} flank-carrying (hoist -> visible), ${census.inline.length - hoistInline.length} flankless (stay) --`);
+	w(
+		`\n-- inline list slots: ${hoistInline.length} flank-carrying (hoist -> visible), ${census.inline.length - hoistInline.length} flankless (stay) --`
+	);
 	for (const e of census.inline) {
 		const target = e.flankCarrying ? 'hoist ' : 'stays ';
 		const name = e.flankCarrying

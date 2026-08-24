@@ -19,9 +19,9 @@ files:
   - packages/python/grammar.sittir.ts
   - packages/rust/base.ts
 ignores:
-  - "**/__tests__/**"
-  - "**/*.test.ts"
-  - "**/*.test-d.ts"
+  - '**/__tests__/**'
+  - '**/*.test.ts'
+  - '**/*.test-d.ts'
 rule:
   kind: comment
   not:

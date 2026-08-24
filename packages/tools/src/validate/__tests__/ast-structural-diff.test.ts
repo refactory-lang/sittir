@@ -31,32 +31,80 @@ describe('astStructuralDiff leaf-kind tolerance', () => {
 	const tsPairs = new Set([leafAliasKey('identifier', 'super')]);
 
 	it('tolerates an allowlisted same-text leaf pair (identifier/super, both orders)', () => {
-		expect(astStructuralDiff(leaf('identifier', 'super'), leaf('super', 'super'), NO_EXTRAS, '', undefined, undefined, tsPairs)).toBeNull();
-		expect(astStructuralDiff(leaf('super', 'super'), leaf('identifier', 'super'), NO_EXTRAS, '', undefined, undefined, tsPairs)).toBeNull();
+		expect(
+			astStructuralDiff(
+				leaf('identifier', 'super'),
+				leaf('super', 'super'),
+				NO_EXTRAS,
+				'',
+				undefined,
+				undefined,
+				tsPairs
+			)
+		).toBeNull();
+		expect(
+			astStructuralDiff(
+				leaf('super', 'super'),
+				leaf('identifier', 'super'),
+				NO_EXTRAS,
+				'',
+				undefined,
+				undefined,
+				tsPairs
+			)
+		).toBeNull();
 	});
 
 	it('fails an allowlisted pair when the bytes differ', () => {
-		expect(astStructuralDiff(leaf('identifier', 'supper'), leaf('super', 'super'), NO_EXTRAS, '', undefined, undefined, tsPairs)).toMatch(/type identifier ≠ super/);
+		expect(
+			astStructuralDiff(
+				leaf('identifier', 'supper'),
+				leaf('super', 'super'),
+				NO_EXTRAS,
+				'',
+				undefined,
+				undefined,
+				tsPairs
+			)
+		).toMatch(/type identifier ≠ super/);
 	});
 
 	it('fails a same-text leaf kind swap that is NOT allowlisted', () => {
 		// A regression that re-lexes a terminal under a different kind with
 		// identical bytes must surface, not pass as alias noise.
 		expect(
-			astStructuralDiff(leaf('type_identifier', 'T'), leaf('identifier', 'T'), NO_EXTRAS, '', undefined, undefined, tsPairs)
+			astStructuralDiff(
+				leaf('type_identifier', 'T'),
+				leaf('identifier', 'T'),
+				NO_EXTRAS,
+				'',
+				undefined,
+				undefined,
+				tsPairs
+			)
 		).toMatch(/type type_identifier ≠ identifier/);
 	});
 
 	it('fails every same-text leaf kind swap when no allowlist is provided', () => {
 		expect(
-			astStructuralDiff(leaf('identifier', 'super'), leaf('super', 'super'), NO_EXTRAS, '', undefined, undefined, undefined)
+			astStructuralDiff(
+				leaf('identifier', 'super'),
+				leaf('super', 'super'),
+				NO_EXTRAS,
+				'',
+				undefined,
+				undefined,
+				undefined
+			)
 		).toMatch(/type identifier ≠ super/);
 	});
 
 	it('never tolerates a kind mismatch on structured nodes, even with identical text', () => {
 		const a = branch('call_expression', 'f()', [leaf('identifier', 'f')]);
 		const b = branch('new_expression', 'f()', [leaf('identifier', 'f')]);
-		expect(astStructuralDiff(a, b, NO_EXTRAS, '', undefined, undefined, tsPairs)).toMatch(/type call_expression ≠ new_expression/);
+		expect(astStructuralDiff(a, b, NO_EXTRAS, '', undefined, undefined, tsPairs)).toMatch(
+			/type call_expression ≠ new_expression/
+		);
 	});
 
 	it('applies the tolerance at nested depth through the recursion', () => {

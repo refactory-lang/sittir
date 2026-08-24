@@ -21,13 +21,13 @@ import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
  */
 function makeFieldPatternNodeMap(withMarkers: boolean) {
 	const markers: SeqRule<'link'>['members'] = [
-			{ type: FIELD, name: 'ref_marker', content: { type: OPTIONAL, content: { type: STRING, value: 'ref' } } },
-			{
-				type: FIELD,
-				name: 'mutable_specifier',
-				content: { type: OPTIONAL, content: { type: SYMBOL, name: '_mutable_specifier' } }
-			},
-		];
+		{ type: FIELD, name: 'ref_marker', content: { type: OPTIONAL, content: { type: STRING, value: 'ref' } } },
+		{
+			type: FIELD,
+			name: 'mutable_specifier',
+			content: { type: OPTIONAL, content: { type: SYMBOL, name: '_mutable_specifier' } }
+		}
+	];
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [

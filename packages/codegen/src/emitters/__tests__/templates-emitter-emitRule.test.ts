@@ -600,7 +600,13 @@ describe('emitRule — tag-boundary seams', () => {
 					type: CHOICE,
 					members: [
 						{ type: PATTERN, value: '[a-z]+' },
-						{ type: SEQ, members: [{ type: STRING, value: '(' }, { type: STRING, value: ')' }] }
+						{
+							type: SEQ,
+							members: [
+								{ type: STRING, value: '(' },
+								{ type: STRING, value: ')' }
+							]
+						}
 					]
 				}
 			}

@@ -1,4 +1,15 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SYMBOL,
+	VARIANT
+} from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	normalizeGrammar,

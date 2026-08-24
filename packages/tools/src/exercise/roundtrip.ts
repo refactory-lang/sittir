@@ -1,5 +1,5 @@
-import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
+import { loadBoundaryRender } from '../scripts/collect-baseline.ts';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
 type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
@@ -131,11 +131,6 @@ const FACTORY_MODULE_PATHS: Record<GrammarName, string> = {
 	rust: '../../../rust/src/factories.ts',
 	typescript: '../../../typescript/src/factories.ts',
 	python: '../../../python/src/factories.ts'
-};
-const TEMPLATE_DIR_PATHS: Record<GrammarName, string> = {
-	rust: '../../../rust/templates',
-	typescript: '../../../typescript/templates',
-	python: '../../../python/templates'
 };
 const BUILTIN_CASES: Record<GrammarName, readonly ExerciseCase[]> = {
 	rust: [
@@ -330,11 +325,11 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 					}
 				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	const kindNames = await common.loadKindNames(grammar);
 	const kindLiteralText = await common.loadKindLiteralText(grammar);
-	const { render } = createRenderer(new URL(TEMPLATE_DIR_PATHS[grammar], import.meta.url).pathname, {
-		kindNames
-	});
+	// Native boundary render — same dispatch path the validators use; the
+	// removed legacy-core renderer had no SpacingWriter, so its output was
+	// seam-less garbage for any grammar with word-word seams.
+	const render = await loadBoundaryRender(grammar);
 	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);

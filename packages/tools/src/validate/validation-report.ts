@@ -83,7 +83,10 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
 	readonly grammar: string;
 	readonly backend: string;
 	readonly sClass?: SClass;
-} & (Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>> | Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>);
+} & (
+		| Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>>
+		| Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>
+	);
 
 /**
  * Round-trip-fidelity source-class taxonomy: S1 alias-storage identity, S2
@@ -116,7 +119,8 @@ function classifyByMessage(message: string): SClass | undefined {
 	if (/expected u16 kind_id/.test(message)) return 'S2';
 	if (/automatic_semicolon/.test(message)) return 'S7';
 	if (/_comment|_line_continuation|Missing field `_content`$/.test(message)) return 'S6';
-	if (/no kind-keyed child slot|unknown kind id \d+|native coords unresolved for alias target/.test(message)) return 'S1';
+	if (/no kind-keyed child slot|unknown kind id \d+|native coords unresolved for alias target/.test(message))
+		return 'S1';
 	return undefined;
 }
 

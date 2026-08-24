@@ -49,7 +49,10 @@ export function emitIr(config: EmitIrConfig): string {
 		if (existing !== undefined) return existing;
 		const name = `_b$${toCamel(node.kind.replace(/^_+/, ''))}`;
 		hoisted.set(node.kind, name);
-		hoistedLines.push(...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind), namespaceOf(node))), '');
+		hoistedLines.push(
+			...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind), namespaceOf(node))),
+			''
+		);
 		return name;
 	};
 

@@ -2992,20 +2992,21 @@ function applyClauseHoist(
 			// (determined) enum; the literal belongs in the parent's own
 			// enum slot instead.
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-			const promoted = permutationChoice || literalOnlySplit
-				? null
-				: mintStructuredChoiceArm(
-						out,
-						parentKind,
-						rulesBag,
-						clauseGroupRules,
-						counter,
-						groupDedupeMap,
-						visibleGroupHiddenNames,
-						clauseGroupOwners,
-						collidingLeadingNames,
-						ambientPrec
-					);
+			const promoted =
+				permutationChoice || literalOnlySplit
+					? null
+					: mintStructuredChoiceArm(
+							out,
+							parentKind,
+							rulesBag,
+							clauseGroupRules,
+							counter,
+							groupDedupeMap,
+							visibleGroupHiddenNames,
+							clauseGroupOwners,
+							collidingLeadingNames,
+							ambientPrec
+						);
 			const final = promoteHiddenListRef(promoted ?? out, rulesBag);
 			if (final !== m) changed = true;
 			return final;

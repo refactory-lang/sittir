@@ -19,19 +19,52 @@ import { join } from 'node:path';
 import { isNonInlinableLeafShape } from './assemble.ts';
 import type { LinkedGrammar } from './types.ts';
 
-export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
+interface GrammarJsonFile {
+	readonly inline?: unknown;
+	readonly rules?: Record<string, GrammarJsonNode>;
+}
+
+function readGrammarJson(grammar: string): GrammarJsonFile | undefined {
 	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(grammarJsonPath)) return undefined;
 	try {
-		const parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as {
-			inline?: unknown;
-		};
-		if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
-			return parsed.inline as string[];
-		}
-		return undefined;
-	} catch {
-		return undefined;
+		return JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as GrammarJsonFile;
+	} catch (e) {
+		// An ABSENT file is tolerated (early return above); an existing
+		// file that fails to read or parse must surface — swallowing it
+		// would let generation continue with empty inline/alias metadata.
+		throw new Error(
+			`readGrammarJson[${grammar}]: failed to read/parse ${grammarJsonPath}: ${e instanceof Error ? e.message : String(e)}`
+		);
+	}
+}
+
+export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
+	const parsed = readGrammarJson(grammar);
+	if (parsed === undefined) return undefined;
+	if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
+		return parsed.inline as string[];
+	}
+	return undefined;
+}
+
+// tree-sitter's generate step warns about only the FIRST undefined inline
+// name per run — later dangling entries hide behind it.
+export function danglingInlineNames(parsed: GrammarJsonFile): string[] {
+	if (!Array.isArray(parsed.inline)) return [];
+	const rules = new Set(Object.keys(parsed.rules ?? {}));
+	return parsed.inline.filter((n): n is string => typeof n === 'string' && !rules.has(n));
+}
+
+export function assertGrammarJsonInlineIntegrity(grammar: string): void {
+	const parsed = readGrammarJson(grammar);
+	if (parsed === undefined) return;
+	const dangling = danglingInlineNames(parsed);
+	if (dangling.length > 0) {
+		throw new Error(
+			`inline-integrity[${grammar}]: ${dangling.length} wired inline name(s) missing from the compiled ` +
+				`rule bag (tree-sitter reports only the first per run): ${dangling.join(', ')}`
+		);
 	}
 }
 
@@ -45,15 +78,9 @@ interface GrammarJsonNode {
 }
 
 export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, string> {
-	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	const out = new Map<string, string>();
-	if (!existsSync(grammarJsonPath)) return out;
-	let parsed: { rules?: Record<string, GrammarJsonNode> };
-	try {
-		parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as typeof parsed;
-	} catch {
-		return out;
-	}
+	const parsed = readGrammarJson(grammar);
+	if (parsed === undefined) return out;
 	const walk = (node: GrammarJsonNode | undefined): void => {
 		if (!node) return;
 		if (

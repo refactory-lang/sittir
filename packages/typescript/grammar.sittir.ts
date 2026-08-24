@@ -234,8 +234,7 @@ export default grammar(
 					'1/0': 'lhs',
 					'1/1': 'var_kind',
 					'1/2': 'let_const_kind'
-				},
-
+				}
 			},
 			groups: {
 				jsx_opening_element_content: ($) =>

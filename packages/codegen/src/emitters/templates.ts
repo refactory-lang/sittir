@@ -1726,7 +1726,9 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		   slot keep the block path below (byte-identical output for them).
 		*/
 		if (process.env.SITTIR_DEBUG_FLATCHOICE) {
-			process.stderr.write(`[flatchoice] id=${String((rule as { id?: string }).id)} ungateable=${ungateableArm} litFallback=${JSON.stringify(literalFallback)} arms=${armInfos.length} bodies=${JSON.stringify(armInfos.map((i) => i.body))}\n`);
+			process.stderr.write(
+				`[flatchoice] id=${String((rule as { id?: string }).id)} ungateable=${ungateableArm} litFallback=${JSON.stringify(literalFallback)} arms=${armInfos.length} bodies=${JSON.stringify(armInfos.map((i) => i.body))}\n`
+			);
 		}
 		if (!ungateableArm && literalFallback === undefined && armInfos.length >= 2) {
 			const unitLists = armInfos.map((i) => selfGatedSlotUnits(i.body));

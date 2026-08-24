@@ -17,7 +17,10 @@ export interface DefectHistogramOptions {
  * class keyed by the failing kind.
  */
 export function defectSignature(kind: string, message: string): string {
-	const msg = message.replace(/^render:\s*/, '').replace(/\s+/g, ' ').trim();
+	const msg = message
+		.replace(/^render:\s*/, '')
+		.replace(/\s+/g, ' ')
+		.trim();
 	if (msg.startsWith('re-parse error')) {
 		// Cause marker from firstParseDefect (read-render-parse) — the broken
 		// construct in the re-parsed tree. Bucketing by entry kind instead

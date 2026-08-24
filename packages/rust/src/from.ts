@@ -2,8 +2,8 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
-import { TSKindId, Delimiter } from './types.js';
-import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
+import { TSKindId } from './types.js';
+import type { AnyNodeData } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */

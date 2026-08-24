@@ -112,6 +112,15 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
 // Namespace — taxonomy-keyed wrap dispatch API
 // ---------------------------------------------------------------------------
 
+// A wrap body with nothing to drill never reads `tree` — rename the param
+// so the generated package lints clean.
+function renameUnusedTreeParam(source: string): string {
+	const header = source.match(/^export function wrap\w+\(data: .*, tree: TreeHandle\) \{$/m)?.[0];
+	if (header === undefined) return source;
+	if (/\btree\b/.test(source.replace(header, ''))) return source;
+	return source.replace(header, header.replace(', tree: TreeHandle)', ', _tree: TreeHandle)'));
+}
+
 /**
  * Taxonomy-keyed wrap dispatch namespace.
  *
@@ -141,7 +150,7 @@ export namespace wrap {
 			kindEntries,
 			nodeMap
 		);
-		output.push(result);
+		output.push(renameUnusedTreeParam(result));
 	}
 
 	export function group(
@@ -162,7 +171,7 @@ export namespace wrap {
 			kindEntries,
 			nodeMap
 		);
-		output.push(result);
+		output.push(renameUnusedTreeParam(result));
 	}
 
 	export function supertype(
@@ -170,7 +179,7 @@ export namespace wrap {
 		node: Extract<AssembledNode, { modelType: 'supertype' }>,
 		_kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(emitTransparentSupertypeWrap(node));
+		output.push(renameUnusedTreeParam(emitTransparentSupertypeWrap(node)));
 	}
 
 	export function separatedList(
@@ -180,7 +189,7 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
-		if (result !== undefined) output.push(result);
+		if (result !== undefined) output.push(renameUnusedTreeParam(result));
 	}
 }
 
@@ -634,9 +643,7 @@ function collectSeparatedListContentStorageKeys(
 	// A fielded element arm routes by its field label, not its kind — the
 	// raw read stores those elements under `_<label>` (the value's stamped
 	// `parseName`), so the label is a capture key alongside the kind buckets.
-	const armFieldNames = contentSlot.values
-		.map((v) => v.parseName)
-		.filter((n): n is string => n !== undefined);
+	const armFieldNames = contentSlot.values.map((v) => v.parseName).filter((n): n is string => n !== undefined);
 	return [...new Set([...armFieldNames.map((n) => `_${n}`), ...concrete.map((k) => `_${k}`)])];
 }
 
@@ -729,7 +736,9 @@ function emitSeparatedListWrap(
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
-		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, methodsEngine);`);
+		lines.push(
+			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, methodsEngine);`
+		);
 	}
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
@@ -913,7 +922,6 @@ function emitFieldStorageLines(
 	}
 }
 
-
 /**
  * Emitted `[<sep kind id>, …]` expression for an elidable separated-list
  * slot (`hasOptionalElements`), or undefined for every other slot. Throws
@@ -928,9 +936,7 @@ function elidedSeparatorIdsExprOf(
 	if (!hasOptionalElements(f) || !kindEntries) return undefined;
 	const sepTexts = [
 		...new Set(
-			f.values
-				.filter((v) => v.optionalElement === true && v.separator !== undefined)
-				.map((v) => v.separator as string)
+			f.values.filter((v) => v.optionalElement === true && v.separator !== undefined).map((v) => v.separator as string)
 		)
 	];
 	if (sepTexts.length === 0) return undefined;
@@ -981,7 +987,10 @@ function wrapsAnonLiteralContent(fields: readonly AssembledNonterminal[], nodeMa
 // `$type` restamp for the `_isReadTextLeaf` pass-through — same numeric
 // TSKindId discriminant the structural body stamps, so leaf pass-through
 // and structural output dispatch identically downstream.
-function wrapTextLeafTypeStamp(node: { readonly kind: string }, kindEntries: readonly KindEnumEntry[] | undefined): string {
+function wrapTextLeafTypeStamp(
+	node: { readonly kind: string },
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
 	const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind);
 	return entry ? `, $type: TSKindId.${entry.member} as const` : '';
 }
@@ -1006,7 +1015,9 @@ function emitFieldCarryingWrap(
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	if (wrapsAnonLiteralContent(fields, nodeMap)) {
-		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, methodsEngine);`);
+		lines.push(
+			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, methodsEngine);`
+		);
 	}
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
@@ -1054,7 +1065,7 @@ function emitFieldCarryingWrap(
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
-			allowedKinds: childrenConfig.allowedKinds,
+			allowedKinds: childrenConfig.allowedKinds
 		});
 		lines.push(`    $other: ${storeExpr},`);
 	}
@@ -1069,7 +1080,7 @@ function emitFieldCarryingWrap(
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
-			allowedKinds: childrenConfig.allowedKinds,
+			allowedKinds: childrenConfig.allowedKinds
 		});
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
@@ -1303,10 +1314,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// structure (no `_<slot>` storage keys, no `$other`) and captured the',
 						"// node's verbatim `$text` — e.g. a `string_content` whose only CST",
 						'// children are anonymous escape tokens. Such data passes through the',
-						'// wrap untouched: fabricating this kind\'s (empty) slot storage on top',
+						"// wrap untouched: fabricating this kind's (empty) slot storage on top",
 						'// of it would read as "structure" to every downstream structure probe',
 						"// — the validator's `$text` strip and the native render's",
-						'// all-slots-empty `$text` fast-path — replacing the leaf\'s verbatim',
+						"// all-slots-empty `$text` fast-path — replacing the leaf's verbatim",
 						'// text with an empty template render.',
 						'function _isReadTextLeaf(data: object): boolean {',
 						'  const d = data as { $text?: unknown; $other?: unknown };',
@@ -1490,7 +1501,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				? [
 						'// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union',
 						"// slot's per-route wire buckets into document order by walking the",
-						'// parent\'s `$slotOrder` stamp (route names in child order, emitted by',
+						"// parent's `$slotOrder` stamp (route names in child order, emitted by",
 						'// the native reader on multi-bucket parents) with a cursor per bucket.',
 						'// Text-collapsed scalar leaves carry no `$span`, so a position sort',
 						'// cannot order them — the stamp is the only cross-bucket order source.',
