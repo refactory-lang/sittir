@@ -871,6 +871,37 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+
+### `isPermutationChoice` (`packages/codegen/src/dsl/group-classify.ts`)
+
+A choice whose arms are permutations of one modifier-slot set — every arm is
+a seq of singular atoms (optional-or-required keyword literals, marker
+fields, or symbol refs), and all arms carry the SAME atom set, differing only
+in ordering/optionality. Splitting such arms into kinds would mint identity
+for pure modifier ceremony (the permutable-modifiers row of the
+split-justification taxonomy: structural delta ⇒ kind, literal-only delta ⇒
+enum slot, permutable modifiers ⇒ marker slots). Callers (`applyClauseHoist`'s
+CHOICE branch and `mintStructuredChoiceArm`) decline the arm mint and let the
+parent's own slots absorb the markers; `promotePermutationArmKeywords`
+(enrich) then normalizes required raw keyword steps to the shared
+`field('<kw>_marker', $._kw_*)` spelling so the arms' slots merge.
+
+Atom identity: a generated `<literal>_marker` field collapses to its literal
+(the keyword-promotion spelling of the same fact), while any OTHER authored
+field name is slot identity and stays in the key — reordered same-named
+fields are a permutation, differing field sets are alternatives. The
+`kwRules` bag resolves `_kw_*` refs so a promoted keyword in one arm keys
+equal to its raw spelling in a sibling. `public_field_definition`'s modifier
+positions are the exemplar; the byte-identity of the other two grammars under
+the decline is the conservatism gate.
+
+### `permutationArmSlotKeys` / `permutationAtomKey` / `resolveRuleLiteral` (`packages/codegen/src/dsl/group-classify.ts`)
+
+Support for `isPermutationChoice`: per-arm atom-key sets (null = arm
+ineligible — non-seq arm, <2 members, repeat/nested steps, duplicate keys,
+non-word literals), the per-step identity key described above, and the
+literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
+
 ### `separatorFactsEqual` (`packages/codegen/src/dsl/list-patterns.ts:43`)
 
 ```text

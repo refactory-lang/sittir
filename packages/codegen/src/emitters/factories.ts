@@ -61,6 +61,7 @@ import {
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { emittedByCatalog, namespacedConstructors, type NamespacedConstructorSet } from './namespaced-constructors.ts';
+import { buildTriviaParamType, resolveTriviaTypeNames } from './client-utils.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -70,6 +71,7 @@ export interface EmitFactoriesConfig {
 	kindEntries?: readonly KindEnumEntry[];
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
+	triviaKinds?: readonly string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -286,14 +288,11 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 // Namespace — taxonomy-keyed factory dispatch API
 // ---------------------------------------------------------------------------
 
-/**
- * Taxonomy-keyed factory dispatch namespace.
- *
- * Callers provide the output buffer per run so collection state stays
- * instance-local instead of living in module globals.
- */
-/** The factory's namespaced constructors, with each ambiguity reported
- *  once — a name two candidates claim is emitted for neither. */
+/** The factory's namespaced constructors — ambiguous names reported once
+ *  and dropped; entries pre-filtered to the emittable set (see
+ *  namespacedEntryEligible) so every consumer — factory consts, ir
+ *  bundles, from mirrors, `_fromMap`'s `$impl` decision — sees the same
+ *  surface. */
 export function namespaceOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -307,10 +306,17 @@ export function namespaceOf(
 			`[codegen] '${node.kind}': namespaced constructor '${a.name}' is claimed by ${a.claimants.join(' and ')} — none hoisted`
 		);
 	}
-	return set;
+	const entries = set.entries.filter((e) => namespacedEntryEligible(e, nodeMap, kindEntries));
+	return entries.length === set.entries.length ? set : { ...set, entries };
 }
 const warnedAmbiguous = new Set<string>();
 
+/**
+ * Taxonomy-keyed factory dispatch namespace.
+ *
+ * Callers provide the output buffer per run so collection state stays
+ * instance-local instead of living in module globals.
+ */
 export namespace factory {
 	export function leaf(
 		output: string[],
@@ -614,20 +620,29 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 	return [...new Set(parts)].join(' | ');
 }
 
-/** The `delimiter` option's type for a list with these flank modes — the
- *  bitflag values the grammar permits a caller to select (leading = 1,
- *  trailing = 2, both = 3); empty when neither flank is optional. */
-function delimiterUnionFor(list: {
+/** The `delimiter` bitflag members the grammar permits a caller to select
+ *  (leading = 1, trailing = 2, both = 3); empty when neither flank is
+ *  optional. ONE derivation for both the factory option's union type and
+ *  the from() coercer's runtime narrowing guard. */
+export function delimiterMembersFor(list: {
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
-}): string {
+}): readonly string[] {
 	const l = list.leadingDelimiter === 'optional';
 	const t = list.trailingDelimiter === 'optional';
 	return [
 		...(l ? ['Delimiter.Leading'] : []),
 		...(t ? ['Delimiter.Trailing'] : []),
 		...(l && t ? ['Delimiter.Both'] : [])
-	].join(' | ');
+	];
+}
+
+/** The `delimiter` option's type for a list with these flank modes. */
+function delimiterUnionFor(list: {
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+}): string {
+	return delimiterMembersFor(list).join(' | ');
 }
 
 /**
@@ -773,6 +788,30 @@ function constructorSurface(
 	}
 }
 
+/** The per-kind explicit factory return type: the concrete interface plus
+ *  construction metadata, the `$with` setter record (self-referencing by
+ *  NAME — what keeps declaration emit finite), and the shared method tail. */
+function builtAliasLines(
+	builtName: string,
+	base: string,
+	withTypeMembers: readonly string[],
+	variantName?: string,
+	extraMembers: readonly string[] = []
+): string[] {
+	return [
+		`export type ${builtName} = ${base} & {`,
+		'  readonly $source: 2;',
+		'  readonly $named: true;',
+		...(variantName ? [`  readonly $variant: '${variantName}';`] : []),
+		...extraMembers,
+		'  readonly $with: {',
+		...withTypeMembers,
+		'  };',
+		'} & _NodeMethods;',
+		''
+	];
+}
+
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
@@ -808,9 +847,13 @@ function emitFieldCarryingFactory(
 		);
 	}
 
-	const signature = `${exportKw}function ${fn}(${surface.params}) {`;
+	const builtName = `${node.typeName}Built`;
+	const signature = `${exportKw}function ${fn}(${surface.params}): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
+	// Parallel type members for the `$with` record — same parameter text as
+	// the lambdas below, so the alias and the runtime never diverge.
+	let withTypeMembers: string[];
 	// Which fields actually get storage + a getter. Container shape only
 	// stamps its ONE real slot — `node.fields` can hold other entries
 	// (e.g. keyword-presence markers) that `classifyBranchSlots`' userSlot
@@ -829,16 +872,17 @@ function emitFieldCarryingFactory(
 		withLines = containerFacts.multiple
 			? [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`]
 			: [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
+		withTypeMembers = containerFacts.multiple
+			? [`    $children(...vs: ${elementType}[]): ${builtName};`]
+			: [`    $child(v: ${elementType}): ${builtName};`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		const paramName = singleField.paramName;
 		valueSourceFor = (f) => slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries);
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
-		withLines = [
-			'    $with: {',
-			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value),`,
-			'    },'
-		];
+		const setterSig = setterValueSignature(singleField, setterType);
+		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
+		withTypeMembers = [`    ${singleField.propertyName}(${setterSig}): ${builtName};`];
 	} else {
 		const configAccess = 'config';
 		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries);
@@ -849,6 +893,7 @@ function emitFieldCarryingFactory(
 		// the setter is purely a rebuild). Auto-stamp fields are skipped — no
 		// setter exposed because the value is fixed.
 		withLines = ['    $with: {'];
+		withTypeMembers = [];
 		for (const f of fields) {
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
@@ -859,11 +904,12 @@ function emitFieldCarryingFactory(
 				withLines.push(
 					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
 				);
+				withTypeMembers.push(`    ${method}(...values: ${restType}): ${builtName};`);
 			} else {
 				const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
-				withLines.push(
-					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
-				);
+				const setterSig = setterValueSignature(f, elemType);
+				withLines.push(`      ${method}: (${setterSig}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`);
+				withTypeMembers.push(`    ${method}(${setterSig}): ${builtName};`);
 			}
 		}
 		// Post-unification: the legacy `children` setter is gone — per-slot setters
@@ -923,8 +969,11 @@ function emitFieldCarryingFactory(
 		// surface (its spread form for a list target) rather than
 		// `Parameters<typeof target>`, which would select the target's LAST
 		// overload — the options-first form of a separated list.
-		const targetParams =
+		const rawTargetParams =
 			constructorSurface(forwardTarget, nodeMap, kindEntries)?.params ?? `...args: Parameters<typeof ${targetFn}>`;
+		// Overload DECLARATIONS cannot carry parameter initializers — a target
+		// surface like `config: Partial<X> = {}` re-declares as `config?: Partial<X>`.
+		const targetParams = rawTargetParams.replace(/(\w+)\??: ([^=]+?) = \{\}/g, '$1?: $2');
 		const wrapper: string[] = [
 			`${exportKw}function ${fn}(child${optMark}: ${directParamType}): ReturnType<typeof _${fn}>;`,
 			`${exportKw}function ${fn}(${targetParams}): ReturnType<typeof _${fn}>;`,
@@ -951,6 +1000,7 @@ function emitFieldCarryingFactory(
 		);
 		lines.unshift(...wrapper);
 	}
+	lines.unshift(...builtAliasLines(builtName, `T.${node.typeName}`, withTypeMembers, variantName));
 	if (namespaced) {
 		lines.push('', ...emitNamespacedConstructors(node, namespace!, fn, exportName, surface, nodeMap, kindEntries));
 	}
@@ -990,6 +1040,8 @@ function emitNamespacedConstructors(
 				entry.path.length > 0
 					? { params: `...args: Parameters<typeof ${ctor}>`, args: '...args' }
 					: constructorSurface(entry.childKind, nodeMap, kindEntries);
+			// Unreachable when callers pre-filter via namespacedEntryEligible;
+			// kept as a hard guard so a stale caller can't emit a dangling ref.
 			if (sig === undefined) continue;
 			// An `(options | element)[]` surface has no overload to resolve
 			// against — the same untyped-args call the forwarded wrapper makes.
@@ -1021,6 +1073,19 @@ function emitNamespacedConstructors(
 	}
 	lines.push('});');
 	return lines;
+}
+
+/** Whether a namespaced constructor entry can actually be emitted as a
+ *  factory prop: a direct form entry needs a resolvable constructor
+ *  surface for its child kind. The ir/from surfaces attach the SAME prop
+ *  set the factory carries, so all three consult this one predicate. */
+export function namespacedEntryEligible(
+	entry: NamespacedConstructorSet['entries'][number],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): boolean {
+	if (entry.via !== 'form' || entry.path.length > 0) return true;
+	return constructorSurface(entry.childKind, nodeMap, kindEntries) !== undefined;
 }
 
 /** The strict Config value for a kind-enum member: its kind discriminant
@@ -1076,7 +1141,9 @@ function emitRefineFormFactory(
 	// Refine form Config lives at `T.<Parent>.<FormShort>.Config` per
 	// emitRefineFormSubNamespaces — the flat `T.<ParentForm>` identifier
 	// is not emitted as a top-level namespace.
-	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`);
+	const formBuiltName = `${info.typeName}${formShortName}Built`;
+	const formWithTypeMembers: string[] = [];
+	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config): ${formBuiltName} {`);
 	// Post-unification: kind-named slots flow through `fields`; no separate
 	// `$children` storage path remains.
 	// Shape A: storage hoist + property shorthand + pure getters + $with.
@@ -1109,11 +1176,12 @@ function emitRefineFormFactory(
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 			lines.push(`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }),`);
+			formWithTypeMembers.push(`    ${method}(...values: ${restType}): ${formBuiltName};`);
 		} else {
 			const elemType = setterElemType(f, fieldElementType(f, nodeMap), formFn, nodeMap);
-			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.configKey}: value }),`
-			);
+			const setterSig = setterValueSignature(f, elemType);
+			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }),`);
+			formWithTypeMembers.push(`    ${method}(${setterSig}): ${formBuiltName};`);
 		}
 	}
 	// Post-unification: legacy children setter is gone — per-slot setters above
@@ -1126,6 +1194,7 @@ function emitRefineFormFactory(
 	}
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
+	lines.unshift(...builtAliasLines(formBuiltName, `T.${info.typeName}`, formWithTypeMembers));
 	return lines.join('\n');
 }
 
@@ -1278,6 +1347,19 @@ function emitSeparatedListFactory(
 	// first argument: every element value is either a string literal or a
 	// node carrying `$type`, so a plain object WITHOUT `$type` can only be
 	// the options bag.
+	const listBuiltName = `${node.typeName}Built`;
+	const listWithTypeMembers = [
+		`    $children(...vs: ${elementsType}): ${listBuiltName};`,
+		...(hasSeparatorKindOption ? [`    separator(v: ${separatorKindUnion}): ${listBuiltName};`] : []),
+		...(hasDelimiterOption ? [`    delimiter(v?: ${delimiterUnion}): ${listBuiltName};`] : [])
+	];
+	const listExtraMembers = [
+		...(hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
+		...(hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
+	];
+	lines.push(
+		...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers)
+	);
 	if (hasOptions) {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
@@ -1298,9 +1380,9 @@ function emitSeparatedListFactory(
 		lines.push(`  const elements = (_optsFirst ? args.slice(1) : args) as unknown as ${elementsType};`);
 		lines.push(`  return _${fn}(elements, options);`);
 		lines.push('}');
-		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}) {`);
+		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}): ${listBuiltName} {`);
 	} else {
-		lines.push(`export function ${fn}(...elements: ${elementsType}) {`);
+		lines.push(`export function ${fn}(...elements: ${elementsType}): ${listBuiltName} {`);
 	}
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
@@ -1477,7 +1559,7 @@ interface MapEntry {
 	factory: string;
 	typeName: string;
 	fluent: boolean;
-	shape: 'config' | 'children' | 'text' | 'direct';
+	shape: 'config' | 'children' | 'text' | 'direct' | 'forwarded';
 }
 
 // ---------------------------------------------------------------------------
@@ -1496,7 +1578,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFactoriesConfig) {
-		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
+		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds, triviaKinds } = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -1520,7 +1602,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				namespaceOf(node, nodeMap, kindEntries).entries.length > 0
 		);
 		const refineKindInfos = collectRefineKindInfos(nodeMap) ?? [];
-		const utilImports = ['FluentNode'];
+		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'FluentNode'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		// resolveConfigType() emits `ConfigOf<T.X>` (rather than `T.X.Config`)
 		// for every refine-form kind's config parameter — import it whenever
@@ -1532,6 +1614,24 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
+		const triviaParamType = buildTriviaParamType(resolveTriviaTypeNames(triviaKinds ?? [], nodeMap), 'T.');
+		lines.push(
+			'/** The render/edit method surface withMethods attaches — the shared tail',
+			" *  of every factory's explicit return type (the per-kind `*Built` aliases",
+			' *  below). Explicit named return types keep declaration emit finite: the',
+			' *  recursive `$with` setter closures otherwise blow the serializer',
+			" *  (TS7056) and the package can't publish types. The `$trivia` argument",
+			' *  union is derived from the grammar trivia roles — the same derivation',
+			" *  behind utils.ts' withMethods signature — so this alias tail and the",
+			' *  runtime surface never diverge. */',
+			'type _NodeMethods = {',
+			'  $render(): string;',
+			'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
+			'  $replace(target: { range(): ByteRange }): Edit;',
+			`  $trivia(...args: ${triviaParamType}[]): AnyNodeData;`,
+			'};',
+			''
+		);
 		lines.push(...emitNonEmptyAssertHelper());
 		lines.push('');
 

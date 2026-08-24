@@ -400,7 +400,11 @@ export function countContentSlots(rule: Rule<'link'>): number {
 			// unnamed content its arms carry. A non-structural unnamed choice
 			// (a true union) stays a single slot boundary, counted below.
 			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
-				return rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
+				// Arms are mutually exclusive and same-named slots merge across
+				// them (mergeChoiceArms), so the choice contributes the MAXIMUM
+				// of its arms' counts — two content slots within ONE arm still
+				// collide, one per arm does not.
+				return rule.members.reduce((max, m) => Math.max(max, countContentSlots(m)), 0);
 			}
 			return isContentSlot(rule) ? 1 : 0;
 		default:

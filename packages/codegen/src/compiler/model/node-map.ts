@@ -514,7 +514,10 @@ const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
 ]);
 
 export function snakeToCamel(name: string): string {
-	const camel = name.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+	// Digit segments fold too ('elements_2' → 'elements2') — the type-level
+	// key mapping (type-fest CamelCase) folds them, and the runtime config
+	// key must spell exactly what the Config type declares.
+	const camel = name.replace(/_([a-z])/g, (_, c) => c.toUpperCase()).replace(/_(\d)/g, '$1');
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 

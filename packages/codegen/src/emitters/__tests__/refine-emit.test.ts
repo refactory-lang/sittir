@@ -474,9 +474,14 @@ describe('ir emitter — per-form key attachment', () => {
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		// The bundle expression should list curly and flow entries alongside `from`.
-		expect(irSrc).toMatch(
-			/ifaceBody: attachProps\(FR\.coerceToIfaceBody, \{ from: FR\.coerceToIfaceBody, strict: F\.buildIfaceBody, "curly": F\.buildIfaceBodyCurly, "flow": F\.buildIfaceBodyFlow \}\)/
-		);
+		// The bundle is hoisted to a typeof-annotated const (declaration-emit
+		// finiteness) that lists curly and flow entries alongside `from`;
+		// the ir key references it by name.
+		expect(irSrc).toContain('const _b$ifaceBody: typeof FR.coerceToIfaceBody & {');
+		expect(irSrc).toContain('"curly": typeof F.buildIfaceBodyCurly;');
+		expect(irSrc).toContain('= attachProps(FR.coerceToIfaceBody, {');
+		expect(irSrc).toContain('"curly": F.buildIfaceBodyCurly,');
+		expect(irSrc).toContain('"flow": F.buildIfaceBodyFlow,');
+		expect(irSrc).toContain('ifaceBody: _b$ifaceBody,');
 	});
 });

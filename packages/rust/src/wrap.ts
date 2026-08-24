@@ -1426,6 +1426,11 @@ function _firstKindKeyedWrapChild(data: object, allowedKinds: readonly string[])
 	return undefined;
 }
 
+function _filterWrapChildrenByKind<T>(value: readonly T[], allowedKinds: readonly string[]): readonly T[];
+function _filterWrapChildrenByKind<T>(
+	value: T | readonly T[] | undefined,
+	allowedKinds: readonly string[]
+): T | readonly T[] | undefined;
 function _filterWrapChildrenByKind<T>(
 	value: T | readonly T[] | undefined,
 	allowedKinds: readonly string[]
@@ -11346,7 +11351,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CapturedPattern]: (d, t) => wrapCapturedPattern(d as unknown as T.CapturedPattern, t),
 	[TSKindId.ReferencePattern]: (d, t) => wrapReferencePattern(d as unknown as T.ReferencePattern, t),
 	[TSKindId.OrPattern]: (d, t) => wrapOrPattern(d as unknown as T.OrPattern, t),
-	[TSKindId.Literal]: (d, t) => wrapLiteral(d as unknown as T.Literal, t),
+	[TSKindId.Literal_309]: (d, t) => wrapLiteral(d as unknown as T.Literal, t),
 	[TSKindId.LiteralPattern]: (d, t) => wrapLiteralPattern(d as unknown as T.LiteralPattern, t),
 	[TSKindId.NegativeLiteral]: (d, t) => wrapNegativeLiteral(d as unknown as T.NegativeLiteral, t),
 	[TSKindId.IntegerLiteral]: (d) => ({ ...d, $type: TSKindId.IntegerLiteral as const }),
@@ -11463,8 +11468,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
 	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
-	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
-	[TSKindId.NonSpecialToken]: (d, t) => wrapNonSpecialToken(d as unknown as T.NonSpecialToken, t)
+	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const })
 };
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {

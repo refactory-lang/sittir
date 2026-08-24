@@ -3457,7 +3457,7 @@ export interface JsxString {
 	readonly _elements?: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference)[];
 	readonly _elements_2?: readonly (UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
 	elements(): readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference)[];
-	elements_2s(): readonly (UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
+	elements2s(): readonly (UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
 }
 
 export interface Class {
@@ -5252,7 +5252,7 @@ export interface StringDouble {
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
 	readonly _elements_2?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
-	elements_2s(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	elements2s(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
 export interface UpdateExpressionPostfix {

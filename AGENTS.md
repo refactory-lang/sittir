@@ -13,7 +13,7 @@ Three-layer architecture:
 Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) contain:
 
 - `grammar.ts` — grammar type literal for type projections
-- `types.ts` — `const enum SyntaxKind`, concrete interfaces (source of truth), `ConfigOf`-derived configs, `TreeNode<K>` interfaces, supertype unions, grammar-bound aliases
+- `types.ts` — `const enum TSKindId`, concrete interfaces (source of truth), `ConfigOf`-derived configs, `TreeNode<K>` interfaces, supertype unions, grammar-bound aliases
 - `rules.ts` — S-expression render templates (tree-sitter query syntax)
 - `joinby.ts` — separator map for list children (ast-grep `joinBy` convention)
 - `factories.ts` — unified factories: config input (camelCase) → NodeData output (raw fields) + fluent getters/setters + methods

@@ -46,6 +46,21 @@ describe('isPermutationChoice', () => {
 		expect(isPermutationChoice(arms)).toBe(false);
 	});
 
+	it('keys authored field names into atom identity', () => {
+		// Reordered same-named fields over the same symbol ARE a permutation…
+		const arms = choice(
+			seq(field('left', sym('identifier')), opt(field('right', sym('identifier')))),
+			seq(field('right', sym('identifier')), opt(field('left', sym('identifier'))))
+		);
+		expect(isPermutationChoice(arms)).toBe(true);
+		// …but arms whose field sets DIFFER are alternatives, not permutations.
+		const differing = choice(
+			seq(field('left', sym('identifier')), opt(sym('expr'))),
+			seq(field('alias', sym('identifier')), opt(sym('expr')))
+		);
+		expect(isPermutationChoice(differing)).toBe(false);
+	});
+
 	it('declines byte-identical duplicate arms', () => {
 		const arm = () => seq(str('static'), opt(str('readonly')));
 		expect(isPermutationChoice(choice(arm(), arm()))).toBe(false);

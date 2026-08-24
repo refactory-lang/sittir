@@ -730,6 +730,11 @@ function _firstKindKeyedWrapChild(data: object, allowedKinds: readonly string[])
 	return undefined;
 }
 
+function _filterWrapChildrenByKind<T>(value: readonly T[], allowedKinds: readonly string[]): readonly T[];
+function _filterWrapChildrenByKind<T>(
+	value: T | readonly T[] | undefined,
+	allowedKinds: readonly string[]
+): T | readonly T[] | undefined;
 function _filterWrapChildrenByKind<T>(
 	value: T | readonly T[] | undefined,
 	allowedKinds: readonly string[]
@@ -8020,9 +8025,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
 	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
-	[TSKindId.CloseBracket]: (d) => ({ ...d, $type: TSKindId.CloseBracket as const }),
-	[TSKindId.CloseParen]: (d) => ({ ...d, $type: TSKindId.CloseParen as const }),
-	[TSKindId.CloseBrace]: (d) => ({ ...d, $type: TSKindId.CloseBrace as const }),
+	[TSKindId.Rbrack]: (d) => ({ ...d, $type: TSKindId.Rbrack as const }),
+	[TSKindId.Rparen]: (d) => ({ ...d, $type: TSKindId.Rparen as const }),
+	[TSKindId.Rbrace]: (d) => ({ ...d, $type: TSKindId.Rbrace as const }),
 	[TSKindId.Except]: (d) => ({ ...d, $type: TSKindId.Except as const })
 };
 

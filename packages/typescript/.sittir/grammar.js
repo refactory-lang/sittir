@@ -1068,11 +1068,17 @@ function permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher) {
 }
 function permutationAtomKey(member, rulesBag, kwRules, wordMatcher) {
   let core = unwrapPrec(member);
+  let fieldName;
   for (; ; ) {
     if (!core || typeof core !== "object") return null;
     const r2 = core;
     const t2 = typeof r2.type === "string" ? r2.type : "";
-    if (isOptionalType(t2) || isFieldType(t2)) {
+    if (isFieldType(t2)) {
+      if (fieldName === void 0 && typeof r2.name === "string") fieldName = r2.name;
+      core = unwrapPrec(r2.content);
+      continue;
+    }
+    if (isOptionalType(t2)) {
       core = unwrapPrec(r2.content);
       continue;
     }
@@ -1093,16 +1099,21 @@ function permutationAtomKey(member, rulesBag, kwRules, wordMatcher) {
   }
   const r = core;
   const t = typeof r.type === "string" ? r.type : "";
+  const keyed = (lit, fallback) => {
+    if (lit !== null && (fieldName === void 0 || fieldName === `${lit}_marker`)) return `lit:${lit}`;
+    const bare = lit !== null ? `lit:${lit}` : fallback;
+    return fieldName === void 0 ? bare : `field:${fieldName}=${bare}`;
+  };
   if (isStringType(t)) {
     const v = r.value;
     if (typeof v !== "string" || !matchesWordShape(v, wordMatcher)) return null;
-    return `lit:${v}`;
+    return keyed(v, "");
   }
   if (isSymbolType(t)) {
     const name = typeof r.name === "string" ? r.name : void 0;
     if (name === void 0) return null;
     const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
-    return resolved !== null ? `lit:${resolved}` : `sym:${name}`;
+    return keyed(resolved, `sym:${name}`);
   }
   return null;
 }

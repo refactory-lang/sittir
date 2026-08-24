@@ -188,6 +188,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `namespaceOf` (`packages/codegen/src/emitters/factories.ts:297`)
+
+```text
+/**
+ * The factory's namespaced constructors for a node, with each ambiguity
+ * reported once — a name two candidates claim is emitted for neither.
+ *
+ * @remarks
+ * Entries are pre-filtered to the emittable set (`namespacedEntryEligible`)
+ * before being returned, so every consumer — the factory's attachProps
+ * const, ir's hoisted bundles, from's mirrored props, and
+ * `emitFromMapDeclaration`'s `$impl`-vs-plain-name decision — sees the
+ * SAME surface. Filtering at any single consumer instead would let the
+ * others disagree (e.g. `_fromMap` referencing a `<fn>$impl` that
+ * `withNamespaceProps` never declared because all entries were
+ * ineligible).
+ */
+```
+
 ### `buildFactoryMapEntries` (`packages/codegen/src/emitters/factories.ts:296`)
 
 ```text
@@ -690,6 +709,26 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * concrete node unions.
  *
  * @param lines - Output lines array to push into.
+ */
+```
+
+### `withNamespaceProps` (`packages/codegen/src/emitters/from.ts:198`)
+
+```text
+/**
+ * Mirror the factory's namespaced sub-constructors onto the from() surface:
+ * rename the emitted coercer to `<fn>$impl` and export the public name as
+ * `attachProps(<fn>$impl, { <key>: F.<factory>.<key>, ... })`, so
+ * `FR.coerceToX.<form>` and `F.buildX.<form>` are the same constructors.
+ * `_fromMap` keeps referencing the hoisted `$impl` declaration (a const
+ * initializer at module top would hit the TDZ).
+ *
+ * @remarks
+ * Consumes `namespaceOf`'s already-eligibility-filtered entries — the same
+ * set `emitFromMapDeclaration` consults for its `$impl`-vs-plain-name
+ * decision, so a node whose candidate entries are all ineligible keeps its
+ * plain exported coercer and `_fromMap` never references an undeclared
+ * `$impl` symbol.
  */
 ```
 
@@ -3940,25 +3979,6 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  * Both consumers MUST receive the same list — drift means a guard or
  * lookup references a TSKindId member that the integer enum never
  * received, breaking the generated package's type-check.
- */
-```
-
-### `emitSyntaxKindEnum` (`packages/codegen/src/emitters/types.ts:495`)
-
-```text
-/**
- * Emit the `export const enum SyntaxKind { … }` block, deduplicating on
- * member name.
- *
- * @remarks
- * Two kinds can resolve to the same `typeName` (e.g. python's `true` and
- * the string-literal keyword `'True'` both map to `True`). The first
- * occurrence wins; subsequent duplicates are skipped to avoid a
- * `const enum` duplicate-member error.
- *
- * @param lines - Output line buffer to append to.
- * @param allKinds - Ordered list of all kind strings (structural + leaf).
- * @param nodeMap - The assembled node map, used to look up `typeName` per kind.
  */
 ```
 

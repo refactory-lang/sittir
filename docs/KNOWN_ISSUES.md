@@ -86,7 +86,3 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 **Found during:** the container-from coercion review fixes — the dominant remaining type-error cluster (TS2739, ~20-40 sites per grammar pre-review-fix, still the bulk of what's left). `canDefaultToEmpty` emits `?? F.<list>({ delimiter: 2 })` as the empty-list default, but the options bag alone is not assignable to the list factory's element-bearing Config — runtime is fine (the factory dispatches on the bag shape), types are not. Cosmetic per the type-debt policy (gates run on `validate:native`, not tsgo), but it is the single biggest cluster and one emitter site.
 
 **Fix, if/when prioritized:** emit the empty call in the list factory's real signature — `F.<list>({ delimiter: 2 })` → the options-first overload requires at least the options bag to typecheck against the overload set; passing it through the factory's declared options overload (or emitting `F.<list>()` when no options vary) closes the whole cluster at `canDefaultToEmpty`.
-
-## `ki-mapentry-forwarded` — `MapEntry.shape` union lacks `'forwarded'`
-
-**Found during:** every codegen typecheck since the forwarded shape landed (`packages/codegen/src/emitters/factories.ts` — `buildFactoryMapEntries` assigns a `FactoryShape` including `'forwarded'` into `MapEntry.shape`, whose union stops at `'config' | 'children' | 'text' | 'direct'`). One-line union widening; verify the `_factoryMap`/`FluentKindMap` emission has no shape-conditional that silently mishandles `'forwarded'` before widening.

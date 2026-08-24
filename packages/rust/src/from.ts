@@ -2,9 +2,9 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
-import { TSKindId } from './types.js';
-import type { AnyNodeData } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData } from './utils.js';
+import { TSKindId, Delimiter } from './types.js';
+import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
+import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _FromFieldInput = unknown;
@@ -14,12 +14,12 @@ export const _fromMap = {
 	expression_statement: coerceToExpressionStatement,
 	macro_definition: coerceToMacroDefinition,
 	macro_rule: coerceToMacroRule,
-	token_tree_pattern: coerceToTokenTreePattern,
+	token_tree_pattern: coerceToTokenTreePattern$impl,
 	token_binding_pattern: coerceToTokenBindingPattern,
-	token_repetition_pattern: coerceToTokenRepetitionPattern,
+	token_repetition_pattern: coerceToTokenRepetitionPattern$impl,
 	fragment_specifier: coerceToFragmentSpecifier,
-	token_tree: coerceToTokenTree,
-	token_repetition: coerceToTokenRepetition,
+	token_tree: coerceToTokenTree$impl,
+	token_repetition: coerceToTokenRepetition$impl,
 	attribute_item: coerceToAttributeItem,
 	inner_attribute_item: coerceToInnerAttributeItem,
 	attribute: coerceToAttribute,
@@ -86,15 +86,15 @@ export const _fromMap = {
 	dynamic_type: coerceToDynamicType,
 	mutable_specifier: coerceToMutableSpecifier,
 	macro_invocation: coerceToMacroInvocation,
-	delim_token_tree: coerceToDelimTokenTree,
+	delim_token_tree: coerceToDelimTokenTree$impl,
 	scoped_identifier: coerceToScopedIdentifier,
 	scoped_type_identifier_in_expression_position: coerceToScopedTypeIdentifierInExpressionPosition,
 	scoped_type_identifier: coerceToScopedTypeIdentifier,
 	range_expression: coerceToRangeExpression,
-	unary_expression: coerceToUnaryExpression,
+	unary_expression: coerceToUnaryExpression$impl,
 	try_expression: coerceToTryExpression,
 	reference_expression: coerceToReferenceExpression,
-	binary_expression: coerceToBinaryExpression,
+	binary_expression: coerceToBinaryExpression$impl,
 	assignment_expression: coerceToAssignmentExpression,
 	compound_assignment_expr: coerceToCompoundAssignmentExpr,
 	type_cast_expression: coerceToTypeCastExpression,
@@ -102,9 +102,9 @@ export const _fromMap = {
 	yield_expression: coerceToYieldExpression,
 	call_expression: coerceToCallExpression,
 	arguments: coerceToArguments,
-	array_expression: coerceToArrayExpression,
+	array_expression: coerceToArrayExpression$impl,
 	parenthesized_expression: coerceToParenthesizedExpression,
-	tuple_expression: coerceToTupleExpression,
+	tuple_expression: coerceToTupleExpression$impl,
 	unit_expression: coerceToUnitExpression,
 	struct_expression: coerceToStructExpression,
 	field_initializer_list: coerceToFieldInitializerList,
@@ -113,7 +113,7 @@ export const _fromMap = {
 	base_field_initializer: coerceToBaseFieldInitializer,
 	if_expression: coerceToIfExpression,
 	let_condition: coerceToLetCondition,
-	else_clause: coerceToElseClause,
+	else_clause: coerceToElseClause$impl,
 	match_expression: coerceToMatchExpression,
 	match_block: coerceToMatchBlock,
 	match_arm: coerceToMatchArm,
@@ -143,11 +143,11 @@ export const _fromMap = {
 	struct_pattern: coerceToStructPattern,
 	field_pattern: coerceToFieldPattern,
 	mut_pattern: coerceToMutPattern,
-	range_pattern: coerceToRangePattern,
+	range_pattern: coerceToRangePattern$impl,
 	ref_pattern: coerceToRefPattern,
 	captured_pattern: coerceToCapturedPattern,
 	reference_pattern: coerceToReferencePattern,
-	or_pattern: coerceToOrPattern,
+	or_pattern: coerceToOrPattern$impl,
 	negative_literal: coerceToNegativeLiteral,
 	integer_literal: coerceToIntegerLiteral,
 	string_literal: coerceToStringLiteral,
@@ -1041,7 +1041,7 @@ export function coerceToMacroRule(input: T.MacroRule.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToTokenTreePattern(
+function coerceToTokenTreePattern$impl(
 	input?: (T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace) | T.TokenTreePattern
 ): ReturnType<typeof F.buildTokenTreePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.TokenTreePattern) {
@@ -1053,6 +1053,16 @@ export function coerceToTokenTreePattern(
 		_resolveOne<T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace>(input, _K0, _K4)
 	);
 }
+
+export const coerceToTokenTreePattern: typeof coerceToTokenTreePattern$impl & {
+	paren: typeof F.buildTokenTreePattern.paren;
+	bracket: typeof F.buildTokenTreePattern.bracket;
+	brace: typeof F.buildTokenTreePattern.brace;
+} = attachProps(coerceToTokenTreePattern$impl, {
+	paren: F.buildTokenTreePattern.paren,
+	bracket: F.buildTokenTreePattern.bracket,
+	brace: F.buildTokenTreePattern.brace
+});
 
 export function coerceToTokenBindingPattern(
 	input: T.TokenBindingPattern.Loose
@@ -1084,7 +1094,7 @@ export function coerceToTokenBindingPattern(
 	});
 }
 
-export function coerceToTokenRepetitionPattern(
+function coerceToTokenRepetitionPattern$impl(
 	input: T.TokenRepetitionPattern.Loose
 ): ReturnType<typeof F.buildTokenRepetitionPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTokenRepetitionPattern>;
@@ -1103,6 +1113,16 @@ export function coerceToTokenRepetitionPattern(
 	});
 }
 
+export const coerceToTokenRepetitionPattern: typeof coerceToTokenRepetitionPattern$impl & {
+	plus: typeof F.buildTokenRepetitionPattern.plus;
+	star: typeof F.buildTokenRepetitionPattern.star;
+	qmark: typeof F.buildTokenRepetitionPattern.qmark;
+} = attachProps(coerceToTokenRepetitionPattern$impl, {
+	plus: F.buildTokenRepetitionPattern.plus,
+	star: F.buildTokenRepetitionPattern.star,
+	qmark: F.buildTokenRepetitionPattern.qmark
+});
+
 export function coerceToFragmentSpecifier(
 	input: string | T.FragmentSpecifier
 ): ReturnType<typeof F.buildFragmentSpecifier> {
@@ -1110,7 +1130,7 @@ export function coerceToFragmentSpecifier(
 	return F.buildFragmentSpecifier(input as Parameters<typeof F.buildFragmentSpecifier>[0]);
 }
 
-export function coerceToTokenTree(
+function coerceToTokenTree$impl(
 	input?:
 		| (
 				| T.TokenTreeParen
@@ -1139,7 +1159,23 @@ export function coerceToTokenTree(
 	);
 }
 
-export function coerceToTokenRepetition(input: T.TokenRepetition.Loose): ReturnType<typeof F.buildTokenRepetition> {
+export const coerceToTokenTree: typeof coerceToTokenTree$impl & {
+	paren: typeof F.buildTokenTree.paren;
+	bracket: typeof F.buildTokenTree.bracket;
+	brace: typeof F.buildTokenTree.brace;
+	delimTokenTreeParen: typeof F.buildTokenTree.delimTokenTreeParen;
+	delimTokenTreeBracket: typeof F.buildTokenTree.delimTokenTreeBracket;
+	delimTokenTreeBrace: typeof F.buildTokenTree.delimTokenTreeBrace;
+} = attachProps(coerceToTokenTree$impl, {
+	paren: F.buildTokenTree.paren,
+	bracket: F.buildTokenTree.bracket,
+	brace: F.buildTokenTree.brace,
+	delimTokenTreeParen: F.buildTokenTree.delimTokenTreeParen,
+	delimTokenTreeBracket: F.buildTokenTree.delimTokenTreeBracket,
+	delimTokenTreeBrace: F.buildTokenTree.delimTokenTreeBrace
+});
+
+function coerceToTokenRepetition$impl(input: T.TokenRepetition.Loose): ReturnType<typeof F.buildTokenRepetition> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTokenRepetition>;
 	return F.buildTokenRepetition({
 		tokens: _resolveMany<T.Tokens>(input.tokens, _K5, _K8),
@@ -1155,6 +1191,16 @@ export function coerceToTokenRepetition(input: T.TokenRepetition.Loose): ReturnT
 		)
 	});
 }
+
+export const coerceToTokenRepetition: typeof coerceToTokenRepetition$impl & {
+	plus: typeof F.buildTokenRepetition.plus;
+	star: typeof F.buildTokenRepetition.star;
+	qmark: typeof F.buildTokenRepetition.qmark;
+} = attachProps(coerceToTokenRepetition$impl, {
+	plus: F.buildTokenRepetition.plus,
+	star: F.buildTokenRepetition.star,
+	qmark: F.buildTokenRepetition.qmark
+});
 
 export function coerceToAttributeItem(input: T.AttributeItem.Loose): ReturnType<typeof F.buildAttributeItem> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AttributeItem)
@@ -2016,7 +2062,7 @@ export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnT
 	});
 }
 
-export function coerceToDelimTokenTree(
+function coerceToDelimTokenTree$impl(
 	input?: (T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) | T.DelimTokenTree
 ): ReturnType<typeof F.buildDelimTokenTree> {
 	if (isNodeData(input) && input.$type === TSKindId.DelimTokenTree) {
@@ -2028,6 +2074,16 @@ export function coerceToDelimTokenTree(
 		_resolveOne<T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace>(input, _K0, _K39)
 	);
 }
+
+export const coerceToDelimTokenTree: typeof coerceToDelimTokenTree$impl & {
+	paren: typeof F.buildDelimTokenTree.paren;
+	bracket: typeof F.buildDelimTokenTree.bracket;
+	brace: typeof F.buildDelimTokenTree.brace;
+} = attachProps(coerceToDelimTokenTree$impl, {
+	paren: F.buildDelimTokenTree.paren,
+	bracket: F.buildDelimTokenTree.bracket,
+	brace: F.buildDelimTokenTree.brace
+});
 
 export function coerceToScopedIdentifier(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.buildScopedIdentifier> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildScopedIdentifier>;
@@ -2074,7 +2130,7 @@ export function coerceToRangeExpression(
 	);
 }
 
-export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
+function coerceToUnaryExpression$impl(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnaryExpression>;
 	return F.buildUnaryExpression({
 		operator: _requireField(
@@ -2089,6 +2145,16 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 		operand: _requireField('unary_expression', 'operand', _resolveOne<T.Expression>(input.operand, _K14, _K15))
 	});
 }
+
+export const coerceToUnaryExpression: typeof coerceToUnaryExpression$impl & {
+	dash: typeof F.buildUnaryExpression.dash;
+	star: typeof F.buildUnaryExpression.star;
+	bang: typeof F.buildUnaryExpression.bang;
+} = attachProps(coerceToUnaryExpression$impl, {
+	dash: F.buildUnaryExpression.dash,
+	star: F.buildUnaryExpression.star,
+	bang: F.buildUnaryExpression.bang
+});
 
 export function coerceToTryExpression(input: T.TryExpression.Loose): ReturnType<typeof F.buildTryExpression> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TryExpression)
@@ -2120,7 +2186,7 @@ export function coerceToReferenceExpression(
 	});
 }
 
-export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
+function coerceToBinaryExpression$impl(input: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBinaryExpression>;
 	return F.buildBinaryExpression({
 		left: _requireField('binary_expression', 'left', _resolveOne<T.Expression>(input.left, _K14, _K15)),
@@ -2173,6 +2239,46 @@ export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): Retur
 		right: _requireField('binary_expression', 'right', _resolveOne<T.Expression>(input.right, _K14, _K15))
 	});
 }
+
+export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
+	ampAmp: typeof F.buildBinaryExpression.ampAmp;
+	pipePipe: typeof F.buildBinaryExpression.pipePipe;
+	amp: typeof F.buildBinaryExpression.amp;
+	pipe: typeof F.buildBinaryExpression.pipe;
+	caret: typeof F.buildBinaryExpression.caret;
+	eqEq: typeof F.buildBinaryExpression.eqEq;
+	bangEq: typeof F.buildBinaryExpression.bangEq;
+	lt: typeof F.buildBinaryExpression.lt;
+	ltEq: typeof F.buildBinaryExpression.ltEq;
+	gt: typeof F.buildBinaryExpression.gt;
+	gtEq: typeof F.buildBinaryExpression.gtEq;
+	ltLt: typeof F.buildBinaryExpression.ltLt;
+	gtGt: typeof F.buildBinaryExpression.gtGt;
+	plus: typeof F.buildBinaryExpression.plus;
+	dash: typeof F.buildBinaryExpression.dash;
+	star: typeof F.buildBinaryExpression.star;
+	slash: typeof F.buildBinaryExpression.slash;
+	percent: typeof F.buildBinaryExpression.percent;
+} = attachProps(coerceToBinaryExpression$impl, {
+	ampAmp: F.buildBinaryExpression.ampAmp,
+	pipePipe: F.buildBinaryExpression.pipePipe,
+	amp: F.buildBinaryExpression.amp,
+	pipe: F.buildBinaryExpression.pipe,
+	caret: F.buildBinaryExpression.caret,
+	eqEq: F.buildBinaryExpression.eqEq,
+	bangEq: F.buildBinaryExpression.bangEq,
+	lt: F.buildBinaryExpression.lt,
+	ltEq: F.buildBinaryExpression.ltEq,
+	gt: F.buildBinaryExpression.gt,
+	gtEq: F.buildBinaryExpression.gtEq,
+	ltLt: F.buildBinaryExpression.ltLt,
+	gtGt: F.buildBinaryExpression.gtGt,
+	plus: F.buildBinaryExpression.plus,
+	dash: F.buildBinaryExpression.dash,
+	star: F.buildBinaryExpression.star,
+	slash: F.buildBinaryExpression.slash,
+	percent: F.buildBinaryExpression.percent
+});
 
 export function coerceToAssignmentExpression(
 	input: T.AssignmentExpression.Loose
@@ -2272,7 +2378,7 @@ export function coerceToArguments(input?: T.ArgumentsElements | T.Arguments): Re
 	return F.buildArguments(_resolveOneBranch<T.ArgumentsElements>(input, '_arguments_elements'));
 }
 
-export function coerceToArrayExpression(
+function coerceToArrayExpression$impl(
 	input?: (T.ArrayExpressionSemi | T.ArrayExpressionList) | T.ArrayExpression
 ): ReturnType<typeof F.buildArrayExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.ArrayExpression) {
@@ -2282,6 +2388,14 @@ export function coerceToArrayExpression(
 	}
 	return F.buildArrayExpression(_resolveOne<T.ArrayExpressionSemi | T.ArrayExpressionList>(input, _K0, _K48));
 }
+
+export const coerceToArrayExpression: typeof coerceToArrayExpression$impl & {
+	semi: typeof F.buildArrayExpression.semi;
+	list: typeof F.buildArrayExpression.list;
+} = attachProps(coerceToArrayExpression$impl, {
+	semi: F.buildArrayExpression.semi,
+	list: F.buildArrayExpression.list
+});
 
 export function coerceToParenthesizedExpression(
 	input: T.ParenthesizedExpression.Loose
@@ -2303,7 +2417,7 @@ export function coerceToParenthesizedExpression(
 	);
 }
 
-export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
+function coerceToTupleExpression$impl(input: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTupleExpression>;
 	return F.buildTupleExpression({
 		attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, 'attribute_item'),
@@ -2314,6 +2428,12 @@ export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnT
 		)
 	});
 }
+
+export const coerceToTupleExpression: typeof coerceToTupleExpression$impl & {
+	elements: typeof F.buildTupleExpression.elements;
+} = attachProps(coerceToTupleExpression$impl, {
+	elements: F.buildTupleExpression.elements
+});
 
 export function coerceToUnitExpression(input: string | T.UnitExpression): ReturnType<typeof F.buildUnitExpression> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnitExpression>;
@@ -2416,7 +2536,7 @@ export function coerceToLetCondition(input: T.LetCondition.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToElseClause(
+function coerceToElseClause$impl(
 	input?: (T.Block | T.IfExpression) | T.ElseClause
 ): ReturnType<typeof F.buildElseClause> {
 	if (isNodeData(input) && input.$type === TSKindId.ElseClause) {
@@ -2426,6 +2546,14 @@ export function coerceToElseClause(
 	}
 	return F.buildElseClause(_resolveOne<T.Block | T.IfExpression>(input, _K0, _K52));
 }
+
+export const coerceToElseClause: typeof coerceToElseClause$impl & {
+	block: typeof F.buildElseClause.block;
+	ifExpression: typeof F.buildElseClause.ifExpression;
+} = attachProps(coerceToElseClause$impl, {
+	block: F.buildElseClause.block,
+	ifExpression: F.buildElseClause.ifExpression
+});
 
 export function coerceToMatchExpression(input: T.MatchExpression.Loose): ReturnType<typeof F.buildMatchExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMatchExpression>;
@@ -2792,7 +2920,7 @@ export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof
 	);
 }
 
-export function coerceToRangePattern(
+function coerceToRangePattern$impl(
 	input?: (T.RangePatternArm2 | T.RangePatternPrefix) | T.RangePattern
 ): ReturnType<typeof F.buildRangePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.RangePattern) {
@@ -2802,6 +2930,18 @@ export function coerceToRangePattern(
 	}
 	return F.buildRangePattern(_resolveOne<T.RangePatternArm2 | T.RangePatternPrefix>(input, _K0, _K58));
 }
+
+export const coerceToRangePattern: typeof coerceToRangePattern$impl & {
+	arm2: typeof F.buildRangePattern.arm2;
+	prefix: typeof F.buildRangePattern.prefix;
+	dotDotEq: typeof F.buildRangePattern.dotDotEq;
+	dotDot: typeof F.buildRangePattern.dotDot;
+} = attachProps(coerceToRangePattern$impl, {
+	arm2: F.buildRangePattern.arm2,
+	prefix: F.buildRangePattern.prefix,
+	dotDotEq: F.buildRangePattern.dotDotEq,
+	dotDot: F.buildRangePattern.dotDot
+});
 
 export function coerceToRefPattern(input: T.RefPattern.Loose): ReturnType<typeof F.buildRefPattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.RefPattern)
@@ -2839,7 +2979,7 @@ export function coerceToReferencePattern(input: T.ReferencePattern.Loose): Retur
 	});
 }
 
-export function coerceToOrPattern(
+function coerceToOrPattern$impl(
 	input?: (T.OrPatternBinary | T.OrPatternPrefix) | T.OrPattern
 ): ReturnType<typeof F.buildOrPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.OrPattern) {
@@ -2849,6 +2989,14 @@ export function coerceToOrPattern(
 	}
 	return F.buildOrPattern(_resolveOne<T.OrPatternBinary | T.OrPatternPrefix>(input, _K0, _K59));
 }
+
+export const coerceToOrPattern: typeof coerceToOrPattern$impl & {
+	binary: typeof F.buildOrPattern.binary;
+	prefix: typeof F.buildOrPattern.prefix;
+} = attachProps(coerceToOrPattern$impl, {
+	binary: F.buildOrPattern.binary,
+	prefix: F.buildOrPattern.prefix
+});
 
 export function coerceToNegativeLiteral(input: T.NegativeLiteral.Loose): ReturnType<typeof F.buildNegativeLiteral> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NegativeLiteral)
