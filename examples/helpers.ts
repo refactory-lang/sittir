@@ -60,8 +60,9 @@ export function structuralShape(node: unknown): unknown {
 		const value = typeof accessor === 'function' ? (accessor as () => unknown).call(record) : record[key];
 		shape[key] = structuralShape(value);
 	}
+	const isBareLeaf = Object.keys(shape).length === 1;
+	if (typeof record.$text === 'string' && isBareLeaf) shape.$text = record.$text;
 	if (record.$triviaData !== undefined) shape.$triviaData = structuralShape(record.$triviaData);
-	if (typeof record.$text === 'string' && Object.keys(shape).length === 1) shape.$text = record.$text;
 	return shape;
 }
 

@@ -16,7 +16,7 @@ import {
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
-import { dogfoodContract } from '../../../examples/helpers.ts';
+import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
 import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
 import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
 import { createEngine, ir } from '@sittir/rust';
@@ -138,6 +138,15 @@ describe('dogfoodContract helper', () => {
 		const result = dogfoodContract(createEngine(), rebuilt, target);
 		expect(result.sameModuloWhitespace).toBe(false);
 		expect(result.firstDifference).toContain('other');
+	});
+});
+
+describe('structuralShape trivia handling', () => {
+	it('keeps a bare leaf\'s $text alongside its $triviaData', () => {
+		const leaf = ir.from.identifier('main').$trivia(ir.lineComment('// c'));
+		const shape = structuralShape(leaf) as Record<string, unknown>;
+		expect(shape.$text).toBe('main');
+		expect(shape.$triviaData).toBeDefined();
 	});
 });
 
