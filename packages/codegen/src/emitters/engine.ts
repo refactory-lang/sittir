@@ -25,18 +25,18 @@ import {
 	type SittirEngineLike,
 	type EngineOptions
 } from '@sittir/common/engine';
-import { KIND_NAMES, TSKindId } from './types.js';
-import type { AnyNodeData } from '@sittir/types';
+import { KIND_NAMES, type ${rootTypeName} } from './types.js';
+import type { NodeDataOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-/** The reader's raw root: wire DATA only — the parse returns storage
- *  fields and stubs, not accessor methods. Accessors live on
- *  \`wrapNode(root, tree)\`. */
-export type ${rootTypeName}Root = AnyNodeData & { readonly $type: TSKindId.${rootTypeName} };
+/** The reader's raw root: the root kind's DATA projection — its \`$type\`
+ *  and \`_<slot>\` storage, whose children are reader stubs. Accessor
+ *  methods live on \`wrapNode(root, tree)\`. */
+export type ${rootTypeName}Root = NodeDataOf<${rootTypeName}>;
 
 export type { EngineOptions };
 

@@ -13,6 +13,7 @@ import { writeSync } from 'node:fs';
 import { createRenderer } from '@sittir/legacy-core';
 
 import type { AnyNodeData } from '@sittir/types';
+import { stripStructuralNodeText } from '@sittir/common';
 import { deriveRuleKinds } from './templates-path.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -30,7 +31,6 @@ import {
 	loadReadTreeNode,
 	walkWrappedTree,
 	materializeWrappedNodeData,
-	stripStructuralNodeText,
 	emitValidatorMetrics,
 	loadNodeModel,
 	dedupeMismatchesByContainment,

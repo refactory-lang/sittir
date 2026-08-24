@@ -47,3 +47,12 @@ describe('emitEngine', () => {
 		expect(output).not.toContain('toNativeRenderTransport,');
 	});
 });
+
+describe('emitEngine root type', () => {
+	it('types the reader root as the data projection of the root kind', () => {
+		const output = emitEngine({ grammar: 'rust', rootTypeName: 'SourceFile' });
+		expect(output).toContain('export type SourceFileRoot = NodeDataOf<SourceFile>;');
+		expect(output).toContain("import type { NodeDataOf } from '@sittir/types';");
+		expect(output).not.toContain('AnyNodeData &');
+	});
+});
