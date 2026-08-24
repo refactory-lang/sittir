@@ -44,6 +44,7 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 		extras: [],
 		externals: [],
 		supertypes: [],
+		factoryInline: [],
 		inline: [],
 		conflicts: [],
 		word: null,

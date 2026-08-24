@@ -1609,6 +1609,21 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	 */
 	userFacing: boolean = true;
 
+	/**
+	 * No top-level `ir.*` builder: this kind is constructed only through
+	 * nested config on the slot(s) that reference it, and its `build*`
+	 * function is called by the referencing parent's factory. Reading a
+	 * parsed tree is unaffected — the `is.*` guard and the node interface
+	 * stay.
+	 *
+	 * Declared by the grammar's `factoryInline` section and stamped by
+	 * assemble()'s post-pass, which also proves every listed kind has a slot
+	 * to nest in. Writable so that post-pass can install it; the rest of the
+	 * pipeline treats it as immutable. Defaults to `false` so hand-built test
+	 * fixtures that bypass assemble keep their top-level builders.
+	 */
+	factoryInline: boolean = false;
+
 	constructor(
 		kind: string,
 		rule: R,

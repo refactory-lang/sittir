@@ -42,6 +42,7 @@ import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts
 import { assertEmittable } from './emit-gate.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
+import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -229,7 +230,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// FIRST rule (tree-sitter convention, preserved through every phase).
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
 	// The full GrammarRoles are passed to the ir emitter for `ir.from.*`.
-	const rootKind = Object.keys(normalized.rules)[0]!;
+	const rootKind = rootRuleName(normalized.rules)!;
 	const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
 	const triviaKinds = grammarRoles.get('trivia');
 

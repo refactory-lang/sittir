@@ -69,6 +69,7 @@ function makeNormalized(
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: new Set(),
+		factoryInline: new Set(),
 		word: null,
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		...overrides

@@ -125,6 +125,9 @@ describe('post-evaluate invariant', () => {
 				'extras',
 				'externals',
 				'supertypes',
+				// Kinds with no top-level `ir.*` builder, declared by
+				// `factoryInline:` — stamped onto the assembled node in assemble.
+				'factoryInline',
 				'inline',
 				'conflicts',
 				'word',

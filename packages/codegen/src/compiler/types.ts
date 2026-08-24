@@ -112,6 +112,12 @@ export interface RawGrammar {
 	readonly extras: string[];
 	readonly externals: string[];
 	readonly supertypes: string[];
+	/**
+	 * Kinds the grammar declares as having no top-level `ir.*` builder — see
+	 * `WireConfig.factoryInline`. Carried by name through link and stamped
+	 * onto the assembled node as `factoryInline`.
+	 */
+	readonly factoryInline: string[];
 	readonly inline: string[];
 	readonly conflicts: string[][];
 	readonly word: string | null;
@@ -186,6 +192,7 @@ export interface LinkedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
+	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
@@ -247,6 +254,7 @@ export interface SimplifiedGrammar {
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
+	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];

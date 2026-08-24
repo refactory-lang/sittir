@@ -86,7 +86,8 @@ import { inlineRefs } from '../dsl/rule-transforms.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
-import { DiagnosticSink } from '../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
+import { rootRuleName } from '../util/reachable-rules.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 export class AssembleCtx extends BaseCtx<'simplify'> {
@@ -411,6 +412,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
+		stampFactoryInline(nodes, ctx);
 		// Pre-compute the two cross-node sets once, then run the merged
 		// markUserFacing pass (M3 — one pass marks both alias-source + variant-
 		// children; see _UserFacingCtx / markUserFacing JSDoc).
@@ -640,6 +642,95 @@ function unwrapGroupRuleAndSimplified(
 	const groupRenderRule: RenderRule =
 		rule.type === GROUP ? ((renderRule as GroupRule<'normalize'>).content as RenderRule) : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
+}
+
+// ---------------------------------------------------------------------------
+// stampFactoryInline — declared no-top-level-builder kinds + nestability proof
+// ---------------------------------------------------------------------------
+
+/**
+ * Stamp `factoryInline` on every kind the grammar's `factoryInline` section
+ * declares, and prove each one has somewhere to nest.
+ *
+ * An inline kind is reachable ONLY as nested config on a referencing slot, so
+ * it needs at least one such slot, and every route to it must run through a
+ * parent that owns one. Three shapes have no such route:
+ *
+ *   - the grammar root — nothing references it;
+ *   - a kind no slot references at all;
+ *   - a supertype member whose supertype is itself referenced from a slot on
+ *     some node that is not one of the kind's own referencing parents — that
+ *     slot accepts the kind without being able to nest its config.
+ */
+function stampFactoryInline(nodes: Map<string, AssembledNode>, ctx: AssembleCtx): void {
+	const declared = ctx.grammar.factoryInline;
+	if (declared.size === 0) return;
+
+	// One walk, two maps: referenced kind -> the nodes owning a slot that
+	// references it, and member kind -> the supertypes carrying it. Supertypes
+	// are kinds too, so a supertype's own referrers are in the first map.
+	const parentsByKind = new Map<string, Set<string>>();
+	const supertypesByMember = new Map<string, string[]>();
+	for (const node of nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			for (const value of slot.values) {
+				if (!isNodeRef(value)) continue;
+				const referenced = storageKindOfRef(value.node);
+				const referrers = parentsByKind.get(referenced);
+				if (referrers) referrers.add(node.kind);
+				else parentsByKind.set(referenced, new Set([node.kind]));
+			}
+		}
+		if (node.modelType !== 'supertype') continue;
+		for (const member of node.subtypeNames) {
+			const carriers = supertypesByMember.get(member);
+			if (carriers) carriers.push(node.kind);
+			else supertypesByMember.set(member, [node.kind]);
+		}
+	}
+
+	const rootKind = rootRuleName(ctx.grammar.rules);
+	for (const kind of declared) {
+		const node = nodes.get(kind);
+		if (!node) {
+			emitUnnestable(kind, ctx, 'no kind by that name exists in the grammar');
+			continue;
+		}
+		node.factoryInline = true;
+		if (kind === rootKind) {
+			emitUnnestable(kind, ctx, 'it is the grammar root, so no slot can carry its config');
+			continue;
+		}
+		const parents = parentsByKind.get(kind);
+		if (parents === undefined || parents.size === 0) {
+			emitUnnestable(kind, ctx, 'no slot references it');
+			continue;
+		}
+		// A supertype carrying `kind` and referenced from a slot on a node
+		// outside `parents` is a route to `kind` with no config to nest into.
+		const escaped = (supertypesByMember.get(kind) ?? []).filter((supertype) =>
+			[...(parentsByKind.get(supertype) ?? [])].some((referrer) => !parents.has(referrer))
+		);
+		if (escaped.length > 0) {
+			emitUnnestable(
+				kind,
+				ctx,
+				`it is a member of supertype ${escaped.join(', ')}, referenced from a slot outside its own parents (${[...parents].sort().join(', ')})`
+			);
+		}
+	}
+}
+
+function emitUnnestable(kind: string, ctx: AssembleCtx, reason: string): void {
+	const diagnostic: CompilerDiagnostic = {
+		code: 'factory-inline-unnestable',
+		severity: 'fail',
+		canProceed: false,
+		scope: 'compiler',
+		phase: 'assemble',
+		message: `factoryInline kind '${kind}' has nowhere to nest: ${reason}.`
+	};
+	ctx.diagnostics.emit(diagnostic);
 }
 
 // ---------------------------------------------------------------------------

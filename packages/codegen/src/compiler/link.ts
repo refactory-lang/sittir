@@ -79,6 +79,7 @@ import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
+import { rootRuleName } from '../util/reachable-rules.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
@@ -140,6 +141,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const include = ctx?.include;
 	const supertypes = new Set(raw.supertypes);
+	const factoryInline = new Set(raw.factoryInline);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
 	const kindEntries = collectGeneratedKindEntries(ctx?.generatedIdTables);
@@ -381,10 +383,8 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// which reads it via this same helper). VAPORIZED vs inline-excluded
 	// classification needs THAT authoritative set, not the DSL-level one.
 	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
-	const rootRuleName = Object.keys(raw.rules)[0];
-	const reachableFromRoot = rootRuleName
-		? computeReachableFromRoot({ rules, rootName: rootRuleName })
-		: new Set<string>();
+	const rootName = rootRuleName(raw.rules);
+	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
 	// Validate refine() forms against the linked rule tree.
@@ -404,6 +404,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		name: raw.name,
 		rules,
 		supertypes,
+		factoryInline,
 		externalRoles,
 		externals: raw.externals,
 		extras: raw.extras,

@@ -21,6 +21,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		extras: [],
 		externals: [],
 		supertypes: [],
+		factoryInline: [],
 		inline: [],
 		conflicts: [],
 		word: null,

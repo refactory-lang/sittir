@@ -491,6 +491,7 @@ interface GrammarOptions {
 	extras?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
 	externals?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
 	supertypes?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
+	factoryInline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
 	inline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
 	conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
 	word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef;
@@ -501,6 +502,7 @@ interface MetadataSinks {
 	extras: string[];
 	externals: string[];
 	supertypes: string[];
+	factoryInline: string[];
 	inline: string[];
 	conflicts: string[][];
 }
@@ -544,11 +546,12 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const extras: string[] = [];
 	const externals: string[] = [];
 	const supertypes: string[] = [];
+	const factoryInline: string[] = [];
 	const inline: string[] = [];
 	const conflicts: string[][] = [];
 	let word: string | null = null;
 
-	const sinks: MetadataSinks = { extras, externals, supertypes, inline, conflicts };
+	const sinks: MetadataSinks = { extras, externals, supertypes, factoryInline, inline, conflicts };
 	const ctx: EvaluateCtx = {
 		rules,
 		provenanceByKind,
@@ -612,6 +615,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		extras,
 		externals,
 		supertypes,
+		factoryInline,
 		inline,
 		conflicts,
 		word,
@@ -1351,6 +1355,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		extras?: string[];
 		externals?: string[];
 		supertypes?: string[];
+		factoryInline?: string[];
 		inline?: string[];
 		conflicts?: string[][];
 		word?: string;
@@ -1359,6 +1364,9 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
 		if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras);
 		if (!opts.supertypes && Array.isArray(inherited.supertypes)) sinks.supertypes.push(...inherited.supertypes);
+		if (!opts.factoryInline && Array.isArray(inherited.factoryInline)) {
+			sinks.factoryInline.push(...inherited.factoryInline);
+		}
 		if (!opts.inline && Array.isArray(inherited.inline)) sinks.inline.push(...inherited.inline);
 		if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts);
 		if (!opts.word && inherited.word) setWord(inherited.word);
@@ -1369,14 +1377,14 @@ function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
 }
 
-// Shared by `supertypes` and `inline` callback results: both accept a mixed
-// array where the callback's `previous` param carries already-coerced
-// STRING names from the base grammar, while `$.foo` references added in the
-// override coerce to `{ type: 'SYMBOL', name: 'foo' }`. An override body
-// like `previous.concat([$.foo])` produces exactly this mixed shape; without
-// the string branch the base-inherited names silently drop (coerceToRule()
-// turns a bare string into a STRING rule, never SYMBOL, so `n.type ===
-// SYMBOL` is always false for them).
+// Shared by the `supertypes`, `factoryInline` and `inline` callback results:
+// each accepts a mixed array where the callback's `previous` param carries
+// already-coerced STRING names from the base grammar, while `$.foo` references
+// added in the override coerce to `{ type: 'SYMBOL', name: 'foo' }`. An
+// override body like `previous.concat([$.foo])` produces exactly this mixed
+// shape; without the string branch the base-inherited names silently drop
+// (coerceToRule() turns a bare string into a STRING rule, never SYMBOL, so
+// `n.type === SYMBOL` is always false for them).
 function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 	if (!Array.isArray(result)) return;
 	for (const item of result) {
@@ -1395,6 +1403,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		extras?: string[];
 		externals?: string[];
 		supertypes?: string[];
+		factoryInline?: string[];
 		inline?: string[];
 		conflicts?: string[][];
 		word?: string;
@@ -1429,6 +1438,12 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		const $ = createProxy('_supertypes_', refs);
 		const baseSupertypes = baseGrammar?.supertypes ?? [];
 		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
+	}
+
+	if (opts.factoryInline) {
+		const $ = createProxy('_factory_inline_', refs);
+		const baseFactoryInline = baseGrammar?.factoryInline ?? [];
+		appendCallbackMetadataNames(sinks.factoryInline, opts.factoryInline.call($, $, baseFactoryInline));
 	}
 
 	if (opts.inline) {

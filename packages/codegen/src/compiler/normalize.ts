@@ -470,6 +470,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
+		factoryInline: linked.factoryInline,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
 		externals: linked.externals,
