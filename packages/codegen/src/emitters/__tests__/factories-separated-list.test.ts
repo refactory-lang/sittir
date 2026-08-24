@@ -111,10 +111,13 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
-		// Selection maps the caller's literal choice to its KindId, defaulting
-		// to the first candidate arm when omitted.
+		// Selection maps the caller's literal choice to its KindId; an
+		// OMITTED separator stays undefined — a defaulted stamp would
+		// fabricate a token the node never carried.
 		expect(emitted).toContain('TSKindId.Comma');
 		expect(emitted).toContain('TSKindId.Semi');
+		expect(emitted).toContain('options.separator === undefined ? undefined :');
+		expect(emitted).not.toContain('options.separator ?? ');
 	});
 
 	it('literal separator with only an optional trailing flank (mirrors with_clause_bare/expression_statement_tuple/lambda_parameters): no separatorKind, no leading', () => {

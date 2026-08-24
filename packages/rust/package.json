@@ -43,7 +43,6 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@sittir/legacy-core": "workspace:*",
 		"@sittir/types": "workspace:*",
 		"@sittir/common": "workspace:*"
 	},
