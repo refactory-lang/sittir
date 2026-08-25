@@ -2861,9 +2861,9 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	readonly #subtypes: readonly NodeOrTerminal[];
 	// Transitive parse-kind closure through nested supertypes — e.g. python's
 	// `expression → primary_expression → parenthesized_expression`. Stamped
-	// once, post-hydration (`computeSupertypeTransitiveParseKinds`), since a
-	// nested supertype's own subtypes aren't resolvable until every kind's
-	// forward references exist. `undefined` before that pass runs. Each
+	// once, at the end of assemble (`stampSupertypeClosures`), since a nested
+	// supertype's own subtypes aren't resolvable until every kind's node
+	// exists. `undefined` before that pass runs. Each
 	// entry is a plain `NodeOrTerminal` — `.parseKind.name`/`.node`'s name
 	// carry the parse (`$type`) and storage identity respectively, the same
 	// shape `.subtypes` already uses, so downstream readers don't need a

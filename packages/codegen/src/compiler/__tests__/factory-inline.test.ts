@@ -95,6 +95,47 @@ describe('factoryInline', () => {
 		).rejects.toThrow(/factory-inline-unnestable/);
 	});
 
+	it('rejects an inline kind reachable through a supertype OF a supertype outside its own parents', async () => {
+		await expect(
+			compileGrammarSource(
+				`module.exports = grammar({
+  name: "fi",
+  supertypes: ($) => [$.outer, $.inner],
+  rules: {
+    root: ($) => seq($.holder, $.outer),
+    holder: ($) => seq("(", $.in_path, ")"),
+    outer: ($) => choice($.inner, $.path),
+    inner: ($) => choice($.in_path, $.other),
+    in_path: ($) => seq("in", $.path),
+    other: ($) => "o",
+    path: ($) => /[a-z]+/
+  },
+  factoryInline: ($) => [$.in_path]
+});\n`
+			)
+		).rejects.toThrow(/factory-inline-unnestable/);
+	});
+
+	it('accepts an inline kind whose nested supertypes are referenced only by its own parents', async () => {
+		const nodeMap = await compileGrammarSource(
+			`module.exports = grammar({
+  name: "fi",
+  supertypes: ($) => [$.outer, $.inner],
+  rules: {
+    root: ($) => seq($.holder, "x"),
+    holder: ($) => seq("(", $.in_path, ")", $.outer),
+    outer: ($) => choice($.inner, $.path),
+    inner: ($) => choice($.in_path, $.other),
+    in_path: ($) => seq("in", $.path),
+    other: ($) => "o",
+    path: ($) => /[a-z]+/
+  },
+  factoryInline: ($) => [$.in_path]
+});\n`
+		);
+		expect(nodeMap.nodes.get('in_path')?.factoryInline).toBe(true);
+	});
+
 	it('rejects an inline kind reachable through a supertype outside its own parents', async () => {
 		await expect(
 			compileGrammarSource(

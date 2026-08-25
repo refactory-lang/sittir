@@ -51,8 +51,8 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-// Reads the stamp `emitters/shared.ts::computeSupertypeTransitiveParseKinds`
-// computes once, post-assemble — see glossary.
+// Reads the stamp `compiler/supertype-closure.ts::stampSupertypeClosures`
+// computes once, during assemble — see glossary.
 function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
 	const expanded: string[] = [];
 	const seen = new Set<string>();

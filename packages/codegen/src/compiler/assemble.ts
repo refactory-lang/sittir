@@ -86,8 +86,9 @@ import { inlineRefs } from '../dsl/rule-transforms.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
-import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
+import { stampSupertypeClosures } from './supertype-closure.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 export class AssembleCtx extends BaseCtx<'simplify'> {
@@ -412,7 +413,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
-		stampFactoryInline(nodes, ctx);
+		stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
 		// Pre-compute the two cross-node sets once, then run the merged
 		// markUserFacing pass (M3 — one pass marks both alias-source + variant-
 		// children; see _UserFacingCtx / markUserFacing JSDoc).
@@ -661,8 +662,17 @@ function unwrapGroupRuleAndSimplified(
  *   - a supertype member whose supertype is itself referenced from a slot on
  *     some node that is not one of the kind's own referencing parents — that
  *     slot accepts the kind without being able to nest its config.
+ *
+ * A supertype reaches a kind at any depth, so membership is read from the
+ * flattened closure, never from the immediate `subtypeNames` list: a kind
+ * carried only by a supertype-of-a-supertype escapes through the OUTER
+ * union's referrers.
  */
-function stampFactoryInline(nodes: Map<string, AssembledNode>, ctx: AssembleCtx): void {
+function stampFactoryInline(
+	nodes: Map<string, AssembledNode>,
+	ctx: AssembleCtx,
+	supertypeClosures: ReadonlyMap<string, ReadonlySet<string>>
+): void {
 	const declared = ctx.grammar.factoryInline;
 	if (declared.size === 0) return;
 
@@ -681,11 +691,12 @@ function stampFactoryInline(nodes: Map<string, AssembledNode>, ctx: AssembleCtx)
 				else parentsByKind.set(referenced, new Set([node.kind]));
 			}
 		}
-		if (node.modelType !== 'supertype') continue;
-		for (const member of node.subtypeNames) {
+	}
+	for (const [supertype, members] of supertypeClosures) {
+		for (const member of members) {
 			const carriers = supertypesByMember.get(member);
-			if (carriers) carriers.push(node.kind);
-			else supertypesByMember.set(member, [node.kind]);
+			if (carriers) carriers.push(supertype);
+			else supertypesByMember.set(member, [supertype]);
 		}
 	}
 
@@ -722,15 +733,12 @@ function stampFactoryInline(nodes: Map<string, AssembledNode>, ctx: AssembleCtx)
 }
 
 function emitUnnestable(kind: string, ctx: AssembleCtx, reason: string): void {
-	const diagnostic: CompilerDiagnostic = {
+	ctx.diagnostics.fail({
 		code: 'factory-inline-unnestable',
-		severity: 'fail',
-		canProceed: false,
 		scope: 'compiler',
 		phase: 'assemble',
 		message: `factoryInline kind '${kind}' has nowhere to nest: ${reason}.`
-	};
-	ctx.diagnostics.emit(diagnostic);
+	});
 }
 
 // ---------------------------------------------------------------------------

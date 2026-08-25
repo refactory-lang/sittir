@@ -40,40 +40,6 @@ export function isSlotBearingCompound(
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
 }
 
-// Walks assemble-time-RESOLVED subtypes, not raw `rule.subtypes` — see glossary.
-export function computeSupertypeTransitiveParseKinds(nodeMap: NodeMap): void {
-	for (const [, root] of nodeMap.nodes) {
-		if (root.modelType !== 'supertype') continue;
-		const seenLeaves = new Set<string>();
-		const visitingSupertypes = new Set<string>();
-		const out: NodeOrTerminal[] = [];
-		const add = (parseKind: string, storageKind: string): void => {
-			if (seenLeaves.has(parseKind)) return;
-			seenLeaves.add(parseKind);
-			out.push({
-				node: { kind: 'unresolved-ref', name: storageKind },
-				parseKind: { kind: 'unresolved-ref', name: parseKind },
-				multiplicity: 'single'
-			});
-		};
-		const visit = (name: string): void => {
-			const normalized = name.startsWith('_') ? name.slice(1) : name;
-			if (seenLeaves.has(normalized) || visitingSupertypes.has(normalized)) return;
-			const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
-			if (node?.modelType !== 'supertype') {
-				add(normalized, normalized);
-				return;
-			}
-			visitingSupertypes.add(normalized);
-			for (const [storageKind, parseKind] of Object.entries(node.subtypeParseNames ?? {})) add(parseKind, storageKind);
-			for (const subtype of node.subtypeNames) visit(subtype);
-			visitingSupertypes.delete(normalized);
-		};
-		visit(root.kind);
-		root.transitiveParseKinds = out;
-	}
-}
-
 export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {
 	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
 }

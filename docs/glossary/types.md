@@ -663,7 +663,7 @@ alongside its parse (`$type`) identity — the same two-sided reference shape
 plus `.storageKindId`/`.parseKindId`. Kept as this narrower pair here (not
 `NodeOrTerminal` itself) because `types/` sits below `compiler/` in the
 module layering and cannot import it; model-layer callers
-(`emitters/shared.ts::computeSupertypeTransitiveParseKinds`) build real
+(`compiler/supertype-closure.ts::stampSupertypeClosures`) build real
 `NodeOrTerminal` entries from this where needed.
 ```
 
@@ -676,7 +676,7 @@ parenthesized_expression`) via `lookup`, so callers only supply how to
 resolve a name to its `SupertypeRule` in whatever raw-rule representation
 they hold (a rule bag pre-hydration; NOT a hydrated `NodeMap` — see
 `compiler/model/node-map.ts::existingSupertypeClosureOf`, the pre-hydration
-caller, and contrast with `emitters/shared.ts::computeSupertypeTransitiveParseKinds`,
+caller, and contrast with `compiler/supertype-closure.ts::stampSupertypeClosures`,
 which walks the assemble-time-resolved `AssembledSupertype.subtypes` instead
 and does NOT call this helper — `AssembledSupertype`'s own doc comment
 explains why the two representations diverge and can't share one walk).

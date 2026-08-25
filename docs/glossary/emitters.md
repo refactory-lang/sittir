@@ -4395,8 +4395,8 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  *   This helper expands each value's referenced kind through
  *   `expandToConcreteParseKinds`, which normalizes the leading underscore on
  *   supertype names and reads each supertype's stamped `transitiveParseKinds`
- *   closure (`computeSupertypeTransitiveParseKinds`, computed once
- *   post-assemble — see that entry) to enumerate concrete subtypes. The
+ *   closure (`stampSupertypeClosures`, computed once during assemble — see
+ *   `docs/glossary/compiler-model.md`) to enumerate concrete subtypes. The
  *   result is a list of concrete `_<kind>` keys — exactly one of which will
  *   be populated on the data object at runtime.
  *
@@ -5990,33 +5990,13 @@ at all.
 
 Expands each name to the parser's actual emittable leaf kinds: a plain
 (non-supertype) name passes through as-is; a supertype name expands to its
-stamped `transitiveParseKinds` closure (`computeSupertypeTransitiveParseKinds`,
-below — computed once, post-assemble; this reads the stamp rather than
+stamped `transitiveParseKinds` closure
+(`compiler/supertype-closure.ts::stampSupertypeClosures` — computed once
+during assemble; this reads the stamp rather than
 re-walking the closure per call site, as the deleted `factory-map.ts::
 expandRuntimeDiscriminatorKinds`/`pushAliasMintedArmParseNames` did on every
 call). Dedupes by normalized (hidden-prefix-stripped) name across the whole
 input list.
-
-### `computeSupertypeTransitiveParseKinds` (`packages/codegen/src/emitters/shared.ts:40`)
-
-Stamps each supertype's transitive parse-kind closure once, post-hydration,
-onto `AssembledSupertype.transitiveParseKinds` (a plain `NodeOrTerminal[]` —
-the same reference shape `.subtypes` already uses). Walks the assemble-time-
-RESOLVED `AssembledSupertype.subtypes`/`.subtypeParseNames` — hidden names
-already expanded to concrete kinds — NOT the raw `rule.subtypes`, which is
-less complete (`AssembledSupertype`'s own doc comment: do not substitute
-it). This is why this function does its own closure walk instead of calling
-`types/rule.ts::transitiveParseKinds` (the pre-hydration raw-rule helper
-`compiler/model/node-map.ts::existingSupertypeClosureOf` uses) — the two
-representations diverge (assemble does additional hidden-name resolution
-between link and itself) and a shared walk over either one would be wrong,
-or stale, for the other's caller. Confirmed empirically: reusing the
-raw-rule path here silently dropped a real typescript discriminator kind
-(`_statement_identifier_group1`) until caught by diffing regenerated
-`wrap.ts` byte-for-byte against pre-refactor HEAD for all 3 grammars.
-
-`wrap.ts`'s storage-key routing (`expandToConcreteParseKinds`, above) reads
-this stamp instead of re-walking the closure per call site.
 
 ### `coversExactly` (`packages/codegen/src/emitters/transport-common.ts`)
 

@@ -98,6 +98,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub) continue;
+			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
 			if (sub.modelType === 'supertype' || sub.modelType === 'group' || sub.modelType === 'token') continue;
 			// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
@@ -138,7 +139,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	const flatKeys = new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
+		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
@@ -163,7 +164,7 @@ export function emitIr(config: EmitIrConfig): string {
 		for (const subKind of sup.subtypeNames) {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
-			if (!sub?.rawFactoryName) continue;
+			if (!sub?.rawFactoryName || sub.factoryInline) continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
@@ -207,7 +208,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const irValueLines: string[] = [];
 	irValueLines.push('  // Node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
+		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
@@ -225,7 +226,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
+		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (node.modelType !== 'keyword') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
@@ -240,7 +241,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
+		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (node.modelType !== 'pattern' && node.modelType !== 'enum') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;

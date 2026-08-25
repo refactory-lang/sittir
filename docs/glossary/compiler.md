@@ -9,6 +9,36 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+### `stampSupertypeClosures` (`packages/codegen/src/compiler/supertype-closure.ts`)
+
+Flattens each supertype's membership through nested supertypes, at the end of
+assemble, in the two vocabularies a subtype reference has. It stamps
+`AssembledSupertype.transitiveParseKinds` (a plain `NodeOrTerminal[]` — the
+same reference shape `.subtypes` already uses, hidden arms normalized to the
+visible name tree-sitter reports) and returns the same walk's storage-identity
+closure, keyed by supertype kind, for the callers that ask reachability
+questions about the model rather than about parse output. One traversal
+produces both, so the two can never drift.
+
+Walks the assemble-time-RESOLVED `AssembledSupertype.subtypes` /
+`.subtypeParseNames` — hidden names already expanded to concrete kinds — NOT
+the raw `rule.subtypes`, which is less complete (`AssembledSupertype`'s own
+doc comment: do not substitute it). This is why it does its own closure walk
+instead of calling `types/rule.ts::transitiveParseKinds` (the pre-hydration
+raw-rule helper `compiler/model/node-map.ts::existingSupertypeClosureOf`
+uses) — the two representations diverge (assemble does additional hidden-name
+resolution between link and itself) and a shared walk over either one would be
+wrong, or stale, for the other's caller. Confirmed empirically: reusing the
+raw-rule path here silently dropped a real typescript discriminator kind
+(`_statement_identifier_group1`) until caught by diffing regenerated `wrap.ts`
+byte-for-byte against pre-refactor HEAD for all 3 grammars.
+
+Consumers: `wrap.ts`'s storage-key routing (`expandToConcreteParseKinds`)
+reads the parse-kind stamp instead of re-walking the closure per call site;
+`assemble.ts::stampFactoryInline` reads the storage closure to decide whether
+a `factoryInline` kind escapes through a supertype referenced outside its own
+parents.
+
 ### `rules` (`packages/codegen/src/compiler/assemble.ts:214`)
 
 ```text

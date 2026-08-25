@@ -676,8 +676,8 @@ recursive closure walk to `types/rule.ts::transitiveParseKinds`, over
 `ctx.simplifiedRules` (the raw, pre-hydration rule bag — the only
 representation available at this point in the pipeline; `AssembledNode`
 objects for other kinds may not exist yet during this same construction
-pass). Contrast with `emitters/shared.ts::computeSupertypeTransitiveParseKinds`,
-a POST-hydration pass that walks the assemble-time-resolved `NodeMap`
+pass). Contrast with `compiler/supertype-closure.ts::stampSupertypeClosures`,
+a late-assemble pass that walks the assemble-time-resolved node map
 instead and does not share this walk — see that entry for why the two
 can't be unified.
 ```
