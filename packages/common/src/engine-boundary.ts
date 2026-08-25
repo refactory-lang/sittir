@@ -1,6 +1,7 @@
 export { createNativeEngine, createRenderHandle } from './engine.ts';
 export type {
 	BackendStatusLike,
+	EngineDiagnostics,
 	ParseEngine,
 	EngineOptions,
 	ParseOptions,

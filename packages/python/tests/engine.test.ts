@@ -21,7 +21,7 @@ describe('engine', () => {
 		expect(() => createEngine()).toThrow('createRenderEngine: native engine unavailable');
 	});
 
-	it('native engine exposes parse plus the render and reader surfaces', async () => {
+	it('native engine exposes parse plus the diagnostics surface', async () => {
 		// Mock a native backend with read support
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
@@ -70,15 +70,14 @@ describe('engine', () => {
 		const { createEngine } = await import('../src/engine.js');
 		const engine = createEngine();
 
-		// Native engine exposes the product parse surface plus render/edit and the reader
+		// Native engine exposes the product parse surface plus render/edit/diagnostics
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.applyEdits).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		expect(engine.parseAndRead).toBeDefined();
-		expect(engine.readNode).toBeDefined();
-		expect(typeof engine.parseAndRead).toBe('function');
-		expect(typeof engine.readNode).toBe('function');
+		expect(engine.diagnostics).toBeDefined();
+		expect(typeof engine.diagnostics.parseAndRead).toBe('function');
+		expect(typeof engine.diagnostics.readNode).toBe('function');
 	});
 
 	it('native engine rejects ignoreFormat option (Task 4 requirement)', async () => {

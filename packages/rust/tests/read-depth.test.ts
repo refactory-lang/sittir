@@ -28,13 +28,13 @@ function countStubs(value: unknown): number {
 describe('read depth', () => {
 	it('leaves children unexpanded by default', () => {
 		const engine = createEngine();
-		const { root } = engine.parseAndRead(SOURCE);
+		const { root } = engine.diagnostics.parseAndRead(SOURCE);
 		expect(countStubs(root)).toBeGreaterThan(0);
 	});
 
 	it('expands every child under { deep: true }', () => {
 		const engine = createEngine();
-		const { root } = engine.parseAndRead(SOURCE, { deep: true });
+		const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
 		expect(countStubs(root)).toBe(0);
 	});
 

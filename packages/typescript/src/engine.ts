@@ -7,7 +7,7 @@
  * `./render-engine.js` directly; importing this module pulls the wrapper
  * and, through it, the factories.
  */
-import type { SittirEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
+import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
 
@@ -15,16 +15,12 @@ export type { ProgramRoot };
 export type { EngineOptions, ParseOptions, ProgramTree };
 
 /**
- * A grammar engine: the product `parse()` surface plus the shared render /
- * edit surface.
+ * A grammar engine: the public `parse()` surface plus the shared render /
+ * edit surface. `parse` wraps what `diagnostics.parseAndRead` returns —
+ * accessors on the result return wrapped nodes too, with children expanding
+ * lazily unless `{ deep: true }` is passed.
  */
-export interface ProgramEngine extends SittirEngine<ProgramRoot> {
-	/** Parse `source` and return its wrapped root. Accessors on the result
-	 *  return wrapped nodes too — no caller-side `wrapNode` re-wrapping.
-	 *  Reading is lazy by default: children expand on first access. Pass
-	 *  `{ deep: true }` to expand the whole tree up front instead. */
-	parse(source: string, options?: ParseOptions): ProgramTree;
-}
+export interface ProgramEngine extends SittirEngine<ProgramRoot>, ParseEngine<ProgramTree> {}
 
 /**
  * Create a grammar-specific engine instance.
@@ -40,7 +36,7 @@ export function createEngine(options?: EngineOptions): ProgramEngine {
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): ProgramTree {
-			const { root, tree } = engine.parseAndRead(source, options);
+			const { root, tree } = engine.diagnostics.parseAndRead(source, options);
 			return wrapNode(root, tree);
 		}
 	};

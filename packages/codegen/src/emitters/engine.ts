@@ -13,7 +13,7 @@
 export interface EmitEngineConfig {
 	grammar: string;
 	/** The grammar's root kind interface name (e.g. `SourceFile`) — types
-	 *  `createEngine`'s reader so `parseAndRead(...).root` needs no cast. */
+	 *  `createEngine`'s diagnostics so `parseAndRead(...).root` needs no cast. */
 	rootTypeName: string;
 	/** The `wrap.ts` alias for the root kind's wrapped surface (e.g.
 	 *  `SourceFileTree`) — `parse()`'s return type. Emitted by the wrap
@@ -83,7 +83,7 @@ export function emitEngine(config: EmitEngineConfig): string {
  * \`./render-engine.js\` directly; importing this module pulls the wrapper
  * and, through it, the factories.
  */
-import type { SittirEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
+import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
 
@@ -91,16 +91,14 @@ export type { ${rootTypeName}Root };
 export type { EngineOptions, ParseOptions, ${rootTreeTypeName} };
 
 /**
- * A grammar engine: the product \`parse()\` surface plus the shared render /
- * edit surface.
+ * A grammar engine: the public \`parse()\` surface plus the shared render /
+ * edit surface. \`parse\` wraps what \`diagnostics.parseAndRead\` returns —
+ * accessors on the result return wrapped nodes too, with children expanding
+ * lazily unless \`{ deep: true }\` is passed.
  */
-export interface ${rootTypeName}Engine extends SittirEngine<${rootTypeName}Root> {
-	/** Parse \`source\` and return its wrapped root. Accessors on the result
-	 *  return wrapped nodes too — no caller-side \`wrapNode\` re-wrapping.
-	 *  Reading is lazy by default: children expand on first access. Pass
-	 *  \`{ deep: true }\` to expand the whole tree up front instead. */
-	parse(source: string, options?: ParseOptions): ${rootTreeTypeName};
-}
+export interface ${rootTypeName}Engine
+	extends SittirEngine<${rootTypeName}Root>,
+		ParseEngine<${rootTreeTypeName}> {}
 
 /**
  * Create a grammar-specific engine instance.
@@ -116,7 +114,7 @@ export function createEngine(options?: EngineOptions): ${rootTypeName}Engine {
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): ${rootTreeTypeName} {
-			const { root, tree } = engine.parseAndRead(source, options);
+			const { root, tree } = engine.diagnostics.parseAndRead(source, options);
 			return wrapNode(root, tree);
 		},
 	};

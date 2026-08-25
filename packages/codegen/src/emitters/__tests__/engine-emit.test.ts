@@ -31,7 +31,7 @@ describe('emitEngine', () => {
 
 	it('createEngine returns the grammar engine synchronously (not a Promise)', () => {
 		const output = emitEngine({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree' });
-		expect(output).toContain('export interface ModuleEngine extends SittirEngine<ModuleRoot> {');
+		expect(output).toContain('export interface ModuleEngine');
 		expect(output).toContain('): ModuleEngine {');
 	});
 
@@ -68,8 +68,8 @@ describe('emitEngine root type', () => {
 	it('types parse() with the wrap-emitted root surface alias', () => {
 		const output = emitEngine({ grammar: 'rust', rootTypeName: 'SourceFile', rootTreeTypeName: 'SourceFileTree' });
 		expect(output).toContain("import { wrapNode, type SourceFileTree } from './wrap.js';");
-		expect(output).toContain('parse(source: string, options?: ParseOptions): SourceFileTree;');
-		expect(output).toContain('const { root, tree } = engine.parseAndRead(source, options);');
+		expect(output).toContain('ParseEngine<SourceFileTree>');
+		expect(output).toContain('const { root, tree } = engine.diagnostics.parseAndRead(source, options);');
 		expect(output).toContain('return wrapNode(root, tree);');
 	});
 });

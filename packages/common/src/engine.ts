@@ -94,22 +94,24 @@ export interface ParseOptions {
  * probes, validators, and anything that inspects the wire shape itself.
  */
 /**
- * Turning source into node DATA: parsing, and the per-handle drill-in reads
- * that expand a tree lazily. The peer of `RenderEngine` — neither half
- * depends on the other, and a consumer should name the one it uses.
+ * Engine internals, reached through the `diagnostics` property rather than
+ * the engine's own surface because they are NOT public API. These return raw
+ * node DATA with reader stubs for children; the public entry point is
+ * `ParseEngine.parse`, which wraps what these produce. Reach for these only
+ * from inside the wrap layer or from validator/diagnostic tooling.
  */
-export interface ParseEngine<TRoot extends AnyNodeData = AnyNodeData> {
+export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
 	parseAndRead(source: string, options?: ParseOptions): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
 
 /**
- * The render half of an engine: turning node DATA back into source, and the
- * lifecycle that owns the native handle. Deliberately separate from
- * `SittirEngine` so a consumer that only renders can say so in its types —
+ * The render half of the public surface: turning node DATA back into source,
+ * and the lifecycle that owns the native handle. Deliberately separate from
+ * `ParseEngine` so a consumer that only renders can say so in its types —
  * notably each grammar's `boundary.ts`, which node construction reaches
  * through `utils.ts`. Depending on the narrower contract there is what keeps
- * rendering from dragging in the parse surface.
+ * rendering from dragging in the parse surface, and the module graph acyclic.
  */
 export interface RenderEngine {
 	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
@@ -118,11 +120,23 @@ export interface RenderEngine {
 }
 
 /**
- * Both halves. The native binding supplies one object implementing each, but
- * nothing about rendering requires parsing or vice versa — depend on
- * `RenderEngine` or `ParseEngine` directly wherever only one is used.
+ * The parse half of the public surface: source in, a WRAPPED tree out.
+ * `TTree` is the grammar's own root surface, so this is implemented per
+ * grammar rather than by the shared native binding — the wrapping is what
+ * makes it public, and what makes it need `wrap.ts`.
  */
-export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData> extends RenderEngine, ParseEngine<TRoot> {}
+export interface ParseEngine<TTree> {
+	parse(source: string, options?: ParseOptions): TTree;
+}
+
+/**
+ * The shared engine the native binding supplies: rendering, plus the
+ * internals under `diagnostics`. A grammar's own engine composes this with
+ * `ParseEngine<TTree>` to add the public `parse`.
+ */
+export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData> extends RenderEngine {
+	readonly diagnostics: EngineDiagnostics<TRoot>;
+}
 
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
 	root: TRoot;
@@ -198,32 +212,34 @@ export function createNativeEngine<
 					engine.dispose();
 				},
 
-				parseAndRead(source: string, parseOptions?: ParseOptions) {
-					const json = engine.parseAndRead(source, parseOptions?.deep);
-					const parsed = JSON.parse(json) as NativeParseResultShape;
-					// Boundary assertion: the native reader returns the grammar's
-					// root kind for a whole-source parse.
-					const root = parsed.nodeData as TRoot;
-					return {
-						root,
-						tree: {
-							get rootNode(): never {
-								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
-							},
-							source,
-							read: (handle, childIndex, deep) => {
-								if (handle === undefined) return root;
-								const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
-								return JSON.parse(nodeJson) as AnyNodeData;
-							},
-							format: parsed.format
-						} satisfies TreeHandle
-					};
-				},
+				diagnostics: {
+					parseAndRead(source: string, parseOptions?: ParseOptions) {
+						const json = engine.parseAndRead(source, parseOptions?.deep);
+						const parsed = JSON.parse(json) as NativeParseResultShape;
+						// Boundary assertion: the native reader returns the grammar's
+						// root kind for a whole-source parse.
+						const root = parsed.nodeData as TRoot;
+						return {
+							root,
+							tree: {
+								get rootNode(): never {
+									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
+								},
+								source,
+								read: (handle, childIndex, deep) => {
+									if (handle === undefined) return root;
+									const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
+									return JSON.parse(nodeJson) as AnyNodeData;
+								},
+								format: parsed.format
+							} satisfies TreeHandle
+						};
+					},
 
-				readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
-					const json = engine.readNode(handle, childIndex, parseOptions?.deep);
-					return JSON.parse(json) as AnyNodeData;
+					readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
+						const json = engine.readNode(handle, childIndex, parseOptions?.deep);
+						return JSON.parse(json) as AnyNodeData;
+					}
 				}
 			}
 		};
