@@ -26,7 +26,7 @@ const id = (name: string) => ir.identifier(name);
 
 /** `function applyFormat(canonicalRender, format) { }` */
 export function applyFormatStrict() {
-	return ir.functionDeclaration.strict({
+	return ir.declaration.function.strict({
 		name: ir.identifier.identifier('applyFormat'),
 		// GAP B (factory): `type_annotation.strict` rejects a type node in its own
 		// `type` slot ("$type property missing in TypeTransport"), so the
@@ -54,7 +54,7 @@ export function formatBoundaryStrict() {
  * coercion in front of it.
  */
 export function returnResultStrict() {
-	return ir.returnStatement.strict({ expression: ir.identifier.identifier('result'), semicolon: ';' });
+	return ir.statement.return.strict({ expression: ir.identifier.identifier('result'), semicolon: ';' });
 }
 
 export function rebuildFormatStrict() {

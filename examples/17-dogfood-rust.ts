@@ -88,7 +88,7 @@ export function spliceErrorDerive() {
 
 /** `pub enum SpliceError { InvalidRange { … }, OutOfBounds { … }, NonCharBoundary { … } }` */
 export function spliceErrorEnum() {
-	return ir.enumItem({
+	return ir.statement.enum({
 		visibilityModifier: 'pub',
 		name: 'SpliceError',
 		// GAP C: the `{ delimiter }` option is honored only as the FIRST argument;
@@ -132,7 +132,7 @@ export function spliceErrorEnum() {
 
 /** `impl std::fmt::Display for SpliceError { fn fmt(…) … }` */
 export function displayImpl() {
-	return ir.implItem({
+	return ir.statement.impl({
 		// GAP B: `_impl_item_positive_clause` is a two-arm hidden choice, so the
 		// coercer takes neither a string nor a `{ kind }` config for it. The string
 		// falls through UNRESOLVED into the slot and renders verbatim, silently
@@ -140,7 +140,7 @@ export function displayImpl() {
 		traitClause: 'std::fmt::Display',
 		type: 'SpliceError',
 		content: ir.declarationList.strict(
-			ir.functionItem({
+			ir.statement.function({
 				name: 'fmt',
 				parameters: ir.parameters.strict(
 					ir.selfParameter({ reference: true }),
@@ -225,7 +225,7 @@ export function displayImpl() {
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImpl() {
 	// GAP B: same unresolved two-arm trait clause as displayImpl.
-	return ir.implItem({
+	return ir.statement.impl({
 		traitClause: 'std::error::Error',
 		type: 'SpliceError',
 		content: ir.declarationList.strict(),
@@ -267,13 +267,13 @@ export function applyEditsFn() {
 					// `_closure_expression_block` arm; the hidden arm is absent from the
 					// from map and a bare block is rejected (unknown kind id 294), so the
 					// sort call below carries no comparator.
-					ir.expressionStatement.withSemi({
+					ir.statement.expression.withSemi({
 						expression: ir.callExpression({
 							function: ir.fieldExpression({ value: 'edits', field: 'sort_by' }),
 							arguments: [],
 						}),
 					}),
-					ir.expressionStatement(
+					ir.statement.expression(
 						ir.forExpression({
 							pattern: 'e',
 							value: ir.referenceExpression({ value: 'edits' }),

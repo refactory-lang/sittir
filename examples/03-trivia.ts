@@ -1,7 +1,7 @@
 import { ir } from '@sittir/rust';
 
 export function attachDocComment() {
-	const fn = ir.functionItem
+	const fn = ir.statement.function
 		.from({
 			visibilityModifier: 'pub',
 			name: 'main',
@@ -14,7 +14,7 @@ export function attachDocComment() {
 }
 
 export function attachLeadingTrivia() {
-	return ir.functionItem({
+	return ir.statement.function({
 		visibilityModifier: 'crate',
 		name: 'main',
 		parameters: ir.parameters.strict(),

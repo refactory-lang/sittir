@@ -2,7 +2,7 @@ import { ir } from '@sittir/rust';
 import { nodeText } from './helpers.ts';
 
 export function explicitMainFunction() {
-	const fn = ir.functionItem.strict({
+	const fn = ir.statement.function.strict({
 		visibilityModifier: ir.visibilityModifier.pub(),
 		name: ir.identifier('main'),
 		parameters: ir.parameters.strict(),
@@ -17,7 +17,7 @@ export function explicitMainFunction() {
 }
 
 export function nestedGreetFunction() {
-	return ir.functionItem.strict({
+	return ir.statement.function.strict({
 		// A form three levels down (`pub` -> its parenthesized group -> the
 		// `in <path>` arm) keeps the variant name the grammar authored, on the
 		// parent a caller actually names.
@@ -36,7 +36,7 @@ export function nestedGreetFunction() {
 }
 
 export function fromGreetFunction() {
-	return ir.functionItem({
+	return ir.statement.function({
 		visibilityModifier: 'pub',
 		name: 'greet',
 		parameters: ir.parameters(
@@ -47,7 +47,7 @@ export function fromGreetFunction() {
 }
 
 export function minimalMainFunction() {
-	return ir.functionItem({
+	return ir.statement.function({
 		name: 'main',
 		parameters: ir.parameters(),
 		body: ir.block({})
@@ -55,7 +55,7 @@ export function minimalMainFunction() {
 }
 
 export function immutableFunctionUpdates() {
-	const fn = ir.functionItem({
+	const fn = ir.statement.function({
 		name: 'main',
 		parameters: ir.parameters(),
 		body: ir.block(),
@@ -67,14 +67,14 @@ export function immutableFunctionUpdates() {
 }
 
 export function structSideBySide() {
-	const strictFn = ir.functionItem.strict({
+	const strictFn = ir.statement.function.strict({
 		visibilityModifier: ir.visibilityModifier.pub(),
 		name: ir.identifier('config'),
 		parameters: ir.parameters.strict(),
 		body: ir.block.strict(),
 	});
 
-	const fromFn = ir.functionItem({
+	const fromFn = ir.statement.function({
 		visibilityModifier: 'pub',
 		name: 'config',
 		parameters: ir.parameters.strict(),

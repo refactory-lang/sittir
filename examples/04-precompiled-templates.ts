@@ -1,7 +1,7 @@
 import { ir } from '@sittir/rust';
 
 export function renderPublicStruct() {
-	return ir.structItem.unit({
+	return ir.statement.struct.unit({
 		visibilityModifier: 'pub',
 		name: ir.synonym.type('Config'),
 	}).$render();
@@ -10,7 +10,7 @@ export function renderPublicStruct() {
 export function renderSourceFile() {
 	return ir.sourceFile({
 		statements: [
-			ir.functionItem({
+			ir.statement.function({
 				visibilityModifier: 'pub',
 				name: 'main',
 				parameters: ir.parameters.strict(),

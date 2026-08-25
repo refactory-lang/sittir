@@ -30,7 +30,7 @@ export function useEditStrict() {
 
 /** `pub enum SpliceError { InvalidRange, OutOfBounds, NonCharBoundary }` */
 export function spliceErrorEnumStrict() {
-	return ir.enumItem.strict({
+	return ir.statement.enum.strict({
 		visibilityModifier: ir.visibilityModifier.pub(),
 		name: ir.identifier('SpliceError'),
 		// GAP A (exposure): the struct bodies need `field_declaration_list`

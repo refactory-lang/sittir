@@ -4,11 +4,11 @@ import { ir } from '@sittir/rust';
 export function generateCacheModule() {
 	const file = ir.sourceFile({
 		statements: [
-			ir.structItem.unit({
+			ir.statement.struct.unit({
 				visibilityModifier: 'pub',
 				name: ir.synonym.type('Cache'),
 			}),
-			ir.functionItem({
+			ir.statement.function({
 				visibilityModifier: 'pub',
 				name: 'new_cache',
 				parameters: ir.parameters.strict(),

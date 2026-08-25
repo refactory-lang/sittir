@@ -14,7 +14,7 @@ export function wrapHandlersInTryBlock(source: string) {
 					.fill({
 						RET: w.returnType(),
 						BODY: w.body(),
-						FNAME: ir.stringLiteral(w.name()),
+						FNAME: ir.literal.string(w.name()),
 						FALLBACK: ir.macroInvocation({
 							macro: 'panic!',
 							args: ['"unrecoverable"']

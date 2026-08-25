@@ -25,7 +25,7 @@ export function rebuildProbeSweepStrict() {
 export function callStatementStrict() {
 	// GAP D (factory): `expression_statement.strict` rejects a call in its own
 	// `content` slot; only the coercer routes it. The loose form is what builds.
-	return ir.expressionStatement(
+	return ir.simpleStatement.expression(
 		ir.call.strict({ function: ir.identifier('main'), arguments: ir.argumentList.strict() })
 	);
 }

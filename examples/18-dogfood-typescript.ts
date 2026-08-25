@@ -37,7 +37,7 @@ export function applyFormatDoc() {
 
 /** `function applyFormat(canonicalRender: string, format: FormatRecord): string { … }` */
 export function applyFormat() {
-	return ir.functionDeclaration({
+	return ir.declaration.function({
 		name: 'applyFormat',
 		parameters: ir.formalParameters.strict(
 			ir.requiredParameter({ pattern: 'canonicalRender', type: { type: 'string' } }),
@@ -57,7 +57,7 @@ export function applyFormat() {
 
 /** `function applyBoundary(s: string, format: FormatRecord): string { … }` */
 export function applyBoundary() {
-	return ir.functionDeclaration({
+	return ir.declaration.function({
 		name: 'applyBoundary',
 		parameters: ir.formalParameters.strict(
 			ir.requiredParameter({ pattern: 's', type: { type: 'string' } }),
@@ -73,7 +73,7 @@ export function applyBoundary() {
 // GAP D: `return_statement` with both slots supplied renders `return;` — the
 // `expression` is silently dropped rather than rendered before the semicolon.
 export function returnResult() {
-	return ir.returnStatement({ expression: 'result', semicolon: ';' });
+	return ir.statement.return({ expression: 'result', semicolon: ';' });
 }
 
 // A member expression composes once its separator is supplied by hand.
