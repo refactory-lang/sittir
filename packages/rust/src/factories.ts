@@ -92,7 +92,7 @@ export type ExpressionStatementBuilt = T.ExpressionStatement & {
 	};
 } & _NodeMethods;
 
-export function buildExpressionStatement(
+function buildExpressionStatement$impl(
 	child: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock
 ): ExpressionStatementBuilt {
 	const _content = child;
@@ -104,7 +104,7 @@ export function buildExpressionStatement(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) => buildExpressionStatement(v)
+					$child: (v: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) => buildExpressionStatement$impl(v)
 				}
 			},
 			{
@@ -114,6 +114,11 @@ export function buildExpressionStatement(
 		methodsEngine
 	);
 }
+
+export const buildExpressionStatement = attachProps(buildExpressionStatement$impl, {
+	withSemi: (config: T.ExpressionStatementWithSemi.Config) =>
+		buildExpressionStatement$impl(buildExpressionStatementWithSemi(config) as T.ExpressionStatementWithSemi)
+});
 
 export type MacroDefinitionBuilt = T.MacroDefinition & {
 	readonly $source: 2;
@@ -2377,13 +2382,13 @@ export type ExternModifierBuilt = T.ExternModifier & {
 	};
 } & _NodeMethods;
 
-export function buildExternModifier(
+function buildExternModifier$impl(
 	child?: T.ExternModifier.Config['stringLiteral']
-): ReturnType<typeof _buildExternModifier>;
-export function buildExternModifier(_config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier>;
-export function buildExternModifier(...args: unknown[]) {
+): ReturnType<typeof _buildExternModifier$impl>;
+function buildExternModifier$impl(config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier$impl>;
+function buildExternModifier$impl(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildExternModifier(args[0] as T.ExternModifier.Config['stringLiteral']);
+		return _buildExternModifier$impl(args[0] as T.ExternModifier.Config['stringLiteral']);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -2391,12 +2396,12 @@ export function buildExternModifier(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StringLiteral as const);
 	return prebuilt
-		? _buildExternModifier(args[0] as T.ExternModifier.Config['stringLiteral'])
-		: _buildExternModifier(
+		? _buildExternModifier$impl(args[0] as T.ExternModifier.Config['stringLiteral'])
+		: _buildExternModifier$impl(
 				(buildStringLiteral as (...a: unknown[]) => unknown)(...args) as T.ExternModifier.Config['stringLiteral']
 			);
 }
-function _buildExternModifier(stringLiteral?: T.ExternModifier.Config['stringLiteral']): ExternModifierBuilt {
+function _buildExternModifier$impl(stringLiteral?: T.ExternModifier.Config['stringLiteral']): ExternModifierBuilt {
 	const _string_literal = stringLiteral;
 	return withMethods(
 		withAccessors(
@@ -2406,7 +2411,7 @@ function _buildExternModifier(stringLiteral?: T.ExternModifier.Config['stringLit
 				$named: true as const,
 				_string_literal,
 				$with: {
-					stringLiteral: (value?: T.ExternModifier.Config['stringLiteral']) => buildExternModifier(value)
+					stringLiteral: (value?: T.ExternModifier.Config['stringLiteral']) => buildExternModifier$impl(value)
 				}
 			},
 			{
@@ -2416,6 +2421,11 @@ function _buildExternModifier(stringLiteral?: T.ExternModifier.Config['stringLit
 		methodsEngine
 	);
 }
+
+export const buildExternModifier = attachProps(buildExternModifier$impl, {
+	open: (...args: Parameters<typeof buildStringLiteral.open>) =>
+		buildExternModifier$impl(buildStringLiteral.open(...args) as T.StringLiteral)
+});
 
 export type VisibilityModifierBuilt = T.VisibilityModifier & {
 	readonly $source: 2;
@@ -2451,6 +2461,14 @@ export const buildVisibilityModifier = attachProps(buildVisibilityModifier$impl,
 			(child === undefined
 				? buildVisibilityModifierPub()
 				: buildVisibilityModifierPub(child)) as T.VisibilityModifierPub
+		),
+	self: (...args: Parameters<typeof buildVisibilityModifierPub.self>) =>
+		buildVisibilityModifier$impl(buildVisibilityModifierPub.self(...args) as T.VisibilityModifierPub),
+	super: (...args: Parameters<typeof buildVisibilityModifierPub.super>) =>
+		buildVisibilityModifier$impl(buildVisibilityModifierPub.super(...args) as T.VisibilityModifierPub),
+	visibilityModifierInPath: (...args: Parameters<typeof buildVisibilityModifierPub.visibilityModifierInPath>) =>
+		buildVisibilityModifier$impl(
+			buildVisibilityModifierPub.visibilityModifierInPath(...args) as T.VisibilityModifierPub
 		)
 });
 
@@ -2462,7 +2480,7 @@ export type BracketedTypeBuilt = T.BracketedType & {
 	};
 } & _NodeMethods;
 
-export function buildBracketedType(child: T._Type | T.QualifiedType): BracketedTypeBuilt {
+function buildBracketedType$impl(child: T._Type | T.QualifiedType): BracketedTypeBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2471,7 +2489,7 @@ export function buildBracketedType(child: T._Type | T.QualifiedType): BracketedT
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T._Type | T.QualifiedType) => buildBracketedType(v) }
+				$with: { $child: (v: T._Type | T.QualifiedType) => buildBracketedType$impl(v) }
 			},
 			{
 				content: () => _content
@@ -2480,6 +2498,11 @@ export function buildBracketedType(child: T._Type | T.QualifiedType): BracketedT
 		methodsEngine
 	);
 }
+
+export const buildBracketedType = attachProps(buildBracketedType$impl, {
+	qualifiedType: (config: T.QualifiedType.Config) =>
+		buildBracketedType$impl(buildQualifiedType(config) as T.QualifiedType)
+});
 
 export type QualifiedTypeBuilt = T.QualifiedType & {
 	readonly $source: 2;
@@ -2524,7 +2547,7 @@ export type LifetimeBuilt = T.Lifetime & {
 } & _NodeMethods;
 
 export function buildLifetime(child: T.Lifetime.Config['identifier']): ReturnType<typeof _buildLifetime>;
-export function buildLifetime(...args: Parameters<typeof buildIdentifier>): ReturnType<typeof _buildLifetime>;
+export function buildLifetime(text: string): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildLifetime(args[0] as T.Lifetime.Config['identifier']);
@@ -3161,7 +3184,7 @@ export type DynamicTypeBuilt = T.DynamicType & {
 	};
 } & _NodeMethods;
 
-export function buildDynamicType(trait: T.DynamicType.Config['trait']): DynamicTypeBuilt {
+function buildDynamicType$impl(trait: T.DynamicType.Config['trait']): DynamicTypeBuilt {
 	const _trait = trait;
 	return withMethods(
 		withAccessors(
@@ -3171,7 +3194,7 @@ export function buildDynamicType(trait: T.DynamicType.Config['trait']): DynamicT
 				$named: true as const,
 				_trait,
 				$with: {
-					trait: (value: T.DynamicType.Config['trait']) => buildDynamicType(value)
+					trait: (value: T.DynamicType.Config['trait']) => buildDynamicType$impl(value)
 				}
 			},
 			{
@@ -3181,6 +3204,20 @@ export function buildDynamicType(trait: T.DynamicType.Config['trait']): DynamicT
 		methodsEngine
 	);
 }
+
+export const buildDynamicType = attachProps(buildDynamicType$impl, {
+	higherRankedTraitBound: (config: T.HigherRankedTraitBound.Config) =>
+		buildDynamicType$impl(buildHigherRankedTraitBound(config) as T.HigherRankedTraitBound),
+	identifier: (text: string) => buildDynamicType$impl(buildIdentifier(text) as T.Identifier),
+	scopedTypeIdentifier: (config: T.ScopedTypeIdentifier.Config) =>
+		buildDynamicType$impl(buildScopedTypeIdentifier(config) as T.ScopedTypeIdentifier),
+	genericType: (config: T.GenericType.Config) => buildDynamicType$impl(buildGenericType(config) as T.GenericType),
+	functionType: (config: T.FunctionType.Config) => buildDynamicType$impl(buildFunctionType(config) as T.FunctionType),
+	tupleType: (...args: ({ delimiter?: Delimiter.Trailing } | T._Type)[]) =>
+		buildDynamicType$impl(
+			(buildTupleType as (...a: unknown[]) => ReturnType<typeof buildTupleType>)(...args) as T.TupleType
+		)
+});
 
 export function buildMutableSpecifier() {
 	return withMethods(
@@ -3386,7 +3423,7 @@ export type RangeExpressionBuilt = T.RangeExpression & {
 	};
 } & _NodeMethods;
 
-export function buildRangeExpression(
+function buildRangeExpression$impl(
 	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
 ): RangeExpressionBuilt {
 	const _content = child;
@@ -3399,7 +3436,7 @@ export function buildRangeExpression(
 				_content,
 				$with: {
 					$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') =>
-						buildRangeExpression(v)
+						buildRangeExpression$impl(v)
 				}
 			},
 			{
@@ -3409,6 +3446,21 @@ export function buildRangeExpression(
 		methodsEngine
 	);
 }
+
+export const buildRangeExpression = attachProps(buildRangeExpression$impl, {
+	binary: (config: T.RangeExpressionBinary.Config) =>
+		buildRangeExpression$impl(buildRangeExpressionBinary(config) as T.RangeExpressionBinary),
+	dotDot: (...args: Parameters<typeof buildRangeExpressionBinary.dotDot>) =>
+		buildRangeExpression$impl(buildRangeExpressionBinary.dotDot(...args) as T.RangeExpressionBinary),
+	dotDotDot: (...args: Parameters<typeof buildRangeExpressionBinary.dotDotDot>) =>
+		buildRangeExpression$impl(buildRangeExpressionBinary.dotDotDot(...args) as T.RangeExpressionBinary),
+	dotDotEq: (...args: Parameters<typeof buildRangeExpressionBinary.dotDotEq>) =>
+		buildRangeExpression$impl(buildRangeExpressionBinary.dotDotEq(...args) as T.RangeExpressionBinary),
+	postfix: (config: T.RangeExpressionPostfix.Config) =>
+		buildRangeExpression$impl(buildRangeExpressionPostfix(config) as T.RangeExpressionPostfix),
+	prefix: (config: T.RangeExpressionPrefix.Config) =>
+		buildRangeExpression$impl(buildRangeExpressionPrefix(config) as T.RangeExpressionPrefix)
+});
 
 export type UnaryExpressionBuilt = T.UnaryExpression & {
 	readonly $source: 2;
@@ -4793,7 +4845,7 @@ export type LabelBuilt = T.Label & {
 } & _NodeMethods;
 
 export function buildLabel(child: T.Label.Config['identifier']): ReturnType<typeof _buildLabel>;
-export function buildLabel(...args: Parameters<typeof buildIdentifier>): ReturnType<typeof _buildLabel>;
+export function buildLabel(text: string): ReturnType<typeof _buildLabel>;
 export function buildLabel(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildLabel(args[0] as T.Label.Config['identifier']);
@@ -4873,9 +4925,7 @@ export type ContinueExpressionBuilt = T.ContinueExpression & {
 export function buildContinueExpression(
 	child?: T.ContinueExpression.Config['label']
 ): ReturnType<typeof _buildContinueExpression>;
-export function buildContinueExpression(
-	...args: Parameters<typeof buildLabel>
-): ReturnType<typeof _buildContinueExpression>;
+export function buildContinueExpression(text: string): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildContinueExpression(args[0] as T.ContinueExpression.Config['label']);
@@ -5405,15 +5455,15 @@ export type FieldPatternBuilt = T.FieldPattern & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		refMarker(value?: NonNullable<Parameters<typeof buildFieldPattern>[0]>['refMarker']): FieldPatternBuilt;
+		refMarker(value?: NonNullable<Parameters<typeof buildFieldPattern$impl>[0]>['refMarker']): FieldPatternBuilt;
 		mutableSpecifier(
-			value?: NonNullable<Parameters<typeof buildFieldPattern>[0]>['mutableSpecifier']
+			value?: NonNullable<Parameters<typeof buildFieldPattern$impl>[0]>['mutableSpecifier']
 		): FieldPatternBuilt;
 		content(value: T.Identifier | T.FieldPatternNamed): FieldPatternBuilt;
 	};
 } & _NodeMethods;
 
-export function buildFieldPattern(config: T.FieldPattern.Config): FieldPatternBuilt {
+function buildFieldPattern$impl(config: T.FieldPattern.Config): FieldPatternBuilt {
 	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _content = config.content;
@@ -5427,11 +5477,11 @@ export function buildFieldPattern(config: T.FieldPattern.Config): FieldPatternBu
 				_mutable_specifier,
 				_content,
 				$with: {
-					refMarker: (value?: NonNullable<Parameters<typeof buildFieldPattern>[0]>['refMarker']) =>
-						buildFieldPattern({ ...config, refMarker: value }),
-					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildFieldPattern>[0]>['mutableSpecifier']) =>
-						buildFieldPattern({ ...config, mutableSpecifier: value }),
-					content: (value: T.Identifier | T.FieldPatternNamed) => buildFieldPattern({ ...config, content: value })
+					refMarker: (value?: NonNullable<Parameters<typeof buildFieldPattern$impl>[0]>['refMarker']) =>
+						buildFieldPattern$impl({ ...config, refMarker: value }),
+					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildFieldPattern$impl>[0]>['mutableSpecifier']) =>
+						buildFieldPattern$impl({ ...config, mutableSpecifier: value }),
+					content: (value: T.Identifier | T.FieldPatternNamed) => buildFieldPattern$impl({ ...config, content: value })
 				}
 			},
 			{
@@ -5443,6 +5493,12 @@ export function buildFieldPattern(config: T.FieldPattern.Config): FieldPatternBu
 		methodsEngine
 	);
 }
+
+export const buildFieldPattern = attachProps(buildFieldPattern$impl, {
+	identifier: (text: string) => buildFieldPattern$impl({ content: buildIdentifier(text) as T.Identifier }),
+	named: (config: T.FieldPatternNamed.Config) =>
+		buildFieldPattern$impl({ content: buildFieldPatternNamed(config) as T.FieldPatternNamed })
+});
 
 export type MutPatternBuilt = T.MutPattern & {
 	readonly $source: 2;
@@ -5651,7 +5707,7 @@ export type NegativeLiteralBuilt = T.NegativeLiteral & {
 	};
 } & _NodeMethods;
 
-export function buildNegativeLiteral(value: T.NegativeLiteral.Config['value']): NegativeLiteralBuilt {
+function buildNegativeLiteral$impl(value: T.NegativeLiteral.Config['value']): NegativeLiteralBuilt {
 	const _value = value;
 	return withMethods(
 		withAccessors(
@@ -5661,7 +5717,7 @@ export function buildNegativeLiteral(value: T.NegativeLiteral.Config['value']): 
 				$named: true as const,
 				_value,
 				$with: {
-					value: (value: T.NegativeLiteral.Config['value']) => buildNegativeLiteral(value)
+					value: (value: T.NegativeLiteral.Config['value']) => buildNegativeLiteral$impl(value)
 				}
 			},
 			{
@@ -5671,6 +5727,11 @@ export function buildNegativeLiteral(value: T.NegativeLiteral.Config['value']): 
 		methodsEngine
 	);
 }
+
+export const buildNegativeLiteral = attachProps(buildNegativeLiteral$impl, {
+	integerLiteral: (text: string) => buildNegativeLiteral$impl(buildIntegerLiteral(text) as T.IntegerLiteral),
+	floatLiteral: (text: string) => buildNegativeLiteral$impl(buildFloatLiteral(text) as T.FloatLiteral)
+});
 
 export function buildIntegerLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -5695,7 +5756,7 @@ export type StringLiteralBuilt = T.StringLiteral & {
 	};
 } & _NodeMethods;
 
-export function buildStringLiteral(config: T.StringLiteral.Config): StringLiteralBuilt {
+function buildStringLiteral$impl(config: T.StringLiteral.Config): StringLiteralBuilt {
 	const _string_open = config.stringOpen;
 	const _elements = config.elements ?? [];
 	return withMethods(
@@ -5707,9 +5768,9 @@ export function buildStringLiteral(config: T.StringLiteral.Config): StringLitera
 				_string_open,
 				_elements,
 				$with: {
-					stringOpen: (value: T.StringLiteralOpen) => buildStringLiteral({ ...config, stringOpen: value }),
+					stringOpen: (value: T.StringLiteralOpen) => buildStringLiteral$impl({ ...config, stringOpen: value }),
 					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
-						buildStringLiteral({ ...config, elements: values })
+						buildStringLiteral$impl({ ...config, elements: values })
 				}
 			},
 			{
@@ -5720,6 +5781,10 @@ export function buildStringLiteral(config: T.StringLiteral.Config): StringLitera
 		methodsEngine
 	);
 }
+
+export const buildStringLiteral = attachProps(buildStringLiteral$impl, {
+	open: (text: string) => buildStringLiteral$impl({ stringOpen: buildStringLiteralOpen(text) as T.StringLiteralOpen })
+});
 
 export type RawStringLiteralBuilt = T.RawStringLiteral & {
 	readonly $source: 2;
@@ -5811,7 +5876,7 @@ export type LineCommentBuilt = T.LineComment & {
 	};
 } & _NodeMethods;
 
-export function buildLineComment(
+function buildLineComment$impl(
 	child: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent
 ): LineCommentBuilt {
 	const _content = child;
@@ -5823,7 +5888,7 @@ export function buildLineComment(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) => buildLineComment(v)
+					$child: (v: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) => buildLineComment$impl(v)
 				}
 			},
 			{
@@ -5833,6 +5898,13 @@ export function buildLineComment(
 		methodsEngine
 	);
 }
+
+export const buildLineComment = attachProps(buildLineComment$impl, {
+	regularDslash: (text: string) =>
+		buildLineComment$impl(buildLineCommentRegularDslash(text) as T.LineCommentRegularDslash),
+	doc: (config: T.LineCommentDoc.Config) => buildLineComment$impl(buildLineCommentDoc(config) as T.LineCommentDoc),
+	content: (text: string) => buildLineComment$impl(buildLineCommentContent(text) as T.LineCommentContent)
+});
 
 export type BlockCommentBuilt = T.BlockComment & {
 	readonly $source: 2;
@@ -7510,6 +7582,9 @@ export type ImplItemBodyBuilt = T.ImplItemBody & {
 export function buildImplItemBody(child: T.DeclarationList): ReturnType<typeof _buildImplItemBody>;
 export function buildImplItemBody(...children: T.DeclarationStatement[]): ReturnType<typeof _buildImplItemBody>;
 export function buildImplItemBody(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildImplItemBody(buildDeclarationList() as T.DeclarationList);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildImplItemBody(args[0] as T.DeclarationList);
 	}
@@ -7549,7 +7624,7 @@ export type ImplItemPositiveClauseBuilt = T.ImplItemPositiveClause & {
 	};
 } & _NodeMethods;
 
-export function buildImplItemPositiveClause(config: T.ImplItemPositiveClause.Config): ImplItemPositiveClauseBuilt {
+function buildImplItemPositiveClause$impl(config: T.ImplItemPositiveClause.Config): ImplItemPositiveClauseBuilt {
 	const _trait = config.trait;
 	return withMethods(
 		withAccessors(
@@ -7560,7 +7635,7 @@ export function buildImplItemPositiveClause(config: T.ImplItemPositiveClause.Con
 				_trait,
 				$with: {
 					trait: (value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType) =>
-						buildImplItemPositiveClause({ ...config, trait: value })
+						buildImplItemPositiveClause$impl({ ...config, trait: value })
 				}
 			},
 			{
@@ -7571,6 +7646,14 @@ export function buildImplItemPositiveClause(config: T.ImplItemPositiveClause.Con
 	);
 }
 
+export const buildImplItemPositiveClause = attachProps(buildImplItemPositiveClause$impl, {
+	identifier: (text: string) => buildImplItemPositiveClause$impl({ trait: buildIdentifier(text) as T.Identifier }),
+	scopedTypeIdentifier: (config: T.ScopedTypeIdentifier.Config) =>
+		buildImplItemPositiveClause$impl({ trait: buildScopedTypeIdentifier(config) as T.ScopedTypeIdentifier }),
+	genericType: (config: T.GenericType.Config) =>
+		buildImplItemPositiveClause$impl({ trait: buildGenericType(config) as T.GenericType })
+});
+
 export type ImplItemNegativeClauseBuilt = T.ImplItemNegativeClause & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7579,7 +7662,7 @@ export type ImplItemNegativeClauseBuilt = T.ImplItemNegativeClause & {
 	};
 } & _NodeMethods;
 
-export function buildImplItemNegativeClause(config: T.ImplItemNegativeClause.Config): ImplItemNegativeClauseBuilt {
+function buildImplItemNegativeClause$impl(config: T.ImplItemNegativeClause.Config): ImplItemNegativeClauseBuilt {
 	const _trait = config.trait;
 	return withMethods(
 		withAccessors(
@@ -7590,7 +7673,7 @@ export function buildImplItemNegativeClause(config: T.ImplItemNegativeClause.Con
 				_trait,
 				$with: {
 					trait: (value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType) =>
-						buildImplItemNegativeClause({ ...config, trait: value })
+						buildImplItemNegativeClause$impl({ ...config, trait: value })
 				}
 			},
 			{
@@ -7600,6 +7683,14 @@ export function buildImplItemNegativeClause(config: T.ImplItemNegativeClause.Con
 		methodsEngine
 	);
 }
+
+export const buildImplItemNegativeClause = attachProps(buildImplItemNegativeClause$impl, {
+	identifier: (text: string) => buildImplItemNegativeClause$impl({ trait: buildIdentifier(text) as T.Identifier }),
+	scopedTypeIdentifier: (config: T.ScopedTypeIdentifier.Config) =>
+		buildImplItemNegativeClause$impl({ trait: buildScopedTypeIdentifier(config) as T.ScopedTypeIdentifier }),
+	genericType: (config: T.GenericType.Config) =>
+		buildImplItemNegativeClause$impl({ trait: buildGenericType(config) as T.GenericType })
+});
 
 export type ArrayExpressionSemiBuilt = T.ArrayExpressionSemi & {
 	readonly $source: 2;
@@ -7776,7 +7867,7 @@ export type FunctionTypeTraitFormBuilt = T.FunctionTypeTraitForm & {
 	};
 } & _NodeMethods;
 
-export function buildFunctionTypeTraitForm(config: T.FunctionTypeTraitForm.Config): FunctionTypeTraitFormBuilt {
+function buildFunctionTypeTraitForm$impl(config: T.FunctionTypeTraitForm.Config): FunctionTypeTraitFormBuilt {
 	const _trait = config.trait;
 	return withMethods(
 		withAccessors(
@@ -7787,7 +7878,7 @@ export function buildFunctionTypeTraitForm(config: T.FunctionTypeTraitForm.Confi
 				_trait,
 				$with: {
 					trait: (value: T.Identifier | T.ScopedTypeIdentifier) =>
-						buildFunctionTypeTraitForm({ ...config, trait: value })
+						buildFunctionTypeTraitForm$impl({ ...config, trait: value })
 				}
 			},
 			{
@@ -7797,6 +7888,12 @@ export function buildFunctionTypeTraitForm(config: T.FunctionTypeTraitForm.Confi
 		methodsEngine
 	);
 }
+
+export const buildFunctionTypeTraitForm = attachProps(buildFunctionTypeTraitForm$impl, {
+	identifier: (text: string) => buildFunctionTypeTraitForm$impl({ trait: buildIdentifier(text) as T.Identifier }),
+	scopedTypeIdentifier: (config: T.ScopedTypeIdentifier.Config) =>
+		buildFunctionTypeTraitForm$impl({ trait: buildScopedTypeIdentifier(config) as T.ScopedTypeIdentifier })
+});
 
 export type FunctionTypeFnFormBuilt = T.FunctionTypeFnForm & {
 	readonly $source: 2;
@@ -8325,15 +8422,15 @@ export type VisibilityModifierPubBuilt = T.VisibilityModifierPub & {
 	};
 } & _NodeMethods;
 
-export function buildVisibilityModifierPub(
+function buildVisibilityModifierPub$impl(
 	child?: T.VisibilityModifierGroup
-): ReturnType<typeof _buildVisibilityModifierPub>;
-export function buildVisibilityModifierPub(
+): ReturnType<typeof _buildVisibilityModifierPub$impl>;
+function buildVisibilityModifierPub$impl(
 	child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath
-): ReturnType<typeof _buildVisibilityModifierPub>;
-export function buildVisibilityModifierPub(...args: unknown[]) {
+): ReturnType<typeof _buildVisibilityModifierPub$impl>;
+function buildVisibilityModifierPub$impl(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup);
+		return _buildVisibilityModifierPub$impl(args[0] as T.VisibilityModifierGroup);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -8341,12 +8438,12 @@ export function buildVisibilityModifierPub(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.VisibilityModifierGroup as const);
 	return prebuilt
-		? _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup)
-		: _buildVisibilityModifierPub(
+		? _buildVisibilityModifierPub$impl(args[0] as T.VisibilityModifierGroup)
+		: _buildVisibilityModifierPub$impl(
 				(buildVisibilityModifierGroup as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierGroup
 			);
 }
-function _buildVisibilityModifierPub(child?: T.VisibilityModifierGroup): VisibilityModifierPubBuilt {
+function _buildVisibilityModifierPub$impl(child?: T.VisibilityModifierGroup): VisibilityModifierPubBuilt {
 	const _visibility_modifier_group = child;
 	return withMethods(
 		withAccessors(
@@ -8355,7 +8452,7 @@ function _buildVisibilityModifierPub(child?: T.VisibilityModifierGroup): Visibil
 				$source: 2 as const,
 				$named: true as const,
 				_visibility_modifier_group,
-				$with: { $child: (v: T.VisibilityModifierGroup) => buildVisibilityModifierPub(v) }
+				$with: { $child: (v: T.VisibilityModifierGroup) => buildVisibilityModifierPub$impl(v) }
 			},
 			{
 				visibilityModifierGroup: () => _visibility_modifier_group
@@ -8364,6 +8461,19 @@ function _buildVisibilityModifierPub(child?: T.VisibilityModifierGroup): Visibil
 		methodsEngine
 	);
 }
+
+export const buildVisibilityModifierPub = attachProps(buildVisibilityModifierPub$impl, {
+	self: (...args: Parameters<typeof buildVisibilityModifierGroup.self>) =>
+		buildVisibilityModifierPub$impl(buildVisibilityModifierGroup.self(...args) as T.VisibilityModifierGroup),
+	super: (...args: Parameters<typeof buildVisibilityModifierGroup.super>) =>
+		buildVisibilityModifierPub$impl(buildVisibilityModifierGroup.super(...args) as T.VisibilityModifierGroup),
+	crate: (...args: Parameters<typeof buildVisibilityModifierGroup.crate>) =>
+		buildVisibilityModifierPub$impl(buildVisibilityModifierGroup.crate(...args) as T.VisibilityModifierGroup),
+	visibilityModifierInPath: (...args: Parameters<typeof buildVisibilityModifierGroup.visibilityModifierInPath>) =>
+		buildVisibilityModifierPub$impl(
+			buildVisibilityModifierGroup.visibilityModifierInPath(...args) as T.VisibilityModifierGroup
+		)
+});
 
 export type VisibilityModifierInPathBuilt = T.VisibilityModifierInPath & {
 	readonly $source: 2;

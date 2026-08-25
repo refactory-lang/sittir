@@ -1,7 +1,7 @@
 // Runtime verification of the TypeScript use-case examples against the native
 // engine: every export executes and produces what the guide promises.
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '@sittir/typescript';
+import { createEngine, ir } from '@sittir/typescript';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildFormat, formatBoundary, returnResult } from '../../../examples/18-dogfood-typescript.ts';
 import {
@@ -44,5 +44,13 @@ describe('examples/18 dogfood typescript — strict factory surface', () => {
 	});
 	it.fails('renders a return statement with its expression', () => {
 		expect(returnResultStrict().$render()).toBe('return result;');
+	});
+});
+
+// Ceiling, never a floor: an artefact kind moves off the top-level namespace
+// onto its parent, so this count only shrinks.
+describe('ir entry ratchet', () => {
+	it('exposes no more top-level builders than the recorded ceiling', () => {
+		expect(Object.keys(ir).length).toBeLessThanOrEqual(269);
 	});
 });

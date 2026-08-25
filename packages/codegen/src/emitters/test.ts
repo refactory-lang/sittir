@@ -365,6 +365,17 @@ function namespacedCallArgs(
 			const element = dummyValueForField(buildSeparatedListContentSlot(target), nodeMap, kindEntries, 0, new Set());
 			return `${element}, ${element}`;
 		}
+		case 'pattern': {
+			// A text leaf's factory enforces its own pattern at construction,
+			// so the sample has to satisfy it; an exotic shape yields none and
+			// the constructor goes untested rather than known-failing.
+			const sample = pickSampleForPattern(target.pattern);
+			return sample === null ? undefined : JSON.stringify(sample);
+		}
+		case 'enum': {
+			const first = target.values[0];
+			return first === undefined ? undefined : JSON.stringify(first);
+		}
 		default:
 			return undefined;
 	}
@@ -381,8 +392,9 @@ function emitNamespacedTests(
 ): void {
 	const isEmitted = emittedByCatalog(kindEntries);
 	const entries = namespacedConstructors(node, nodeMap, { isEmitted }).entries;
-	if (entries.length === 0) return;
-	lines.push(`describe('${kind} namespaced constructors', () => {`);
+	// Collected first: a constructor whose arguments cannot be synthesized is
+	// skipped, and a describe with no `it` left in it is a suite failure.
+	const cases: string[] = [];
 	for (const entry of entries) {
 		const args = namespacedCallArgs(entry, nodeMap, kindEntries, isEmitted);
 		if (args === undefined) continue;
@@ -391,15 +403,18 @@ function emitNamespacedTests(
 		// constructor's test as known-failing (the dummy builder cannot
 		// stub every child shape), without skipping the kind's own tests.
 		const knownFailure = expectTestFailures?.[`${kind}.${entry.name}`];
-		if (knownFailure !== undefined) lines.push(`  // known-failing: ${knownFailure}`);
-		lines.push(
+		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
+		cases.push(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(entry.name)} builds the parent', () => {`
 		);
-		lines.push(`    const node = ir.${key}${access}(${args});`);
-		lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		lines.push('  });');
+		cases.push(`    const node = ir.${key}${access}(${args});`);
+		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
+		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
+		cases.push('  });');
 	}
+	if (cases.length === 0) return;
+	lines.push(`describe('${kind} namespaced constructors', () => {`);
+	lines.push(...cases);
 	lines.push('});');
 	lines.push('');
 }

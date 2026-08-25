@@ -32,7 +32,8 @@ describe('examples/01 construct nodes', () => {
 	});
 	it('nested strict construction renders greet with its parameter', () => {
 		const text = nestedGreetFunction().$render();
-		expect(text).toContain('pub fn greet');
+		expect(text).toContain('pub(in crate::x)');
+		expect(text).toContain('greet');
 		expect(text).toContain('name');
 		expect(text).toContain('String');
 	});
@@ -142,7 +143,7 @@ describe('dogfoodContract helper', () => {
 });
 
 describe('structuralShape trivia handling', () => {
-	it('keeps a bare leaf\'s $text alongside its $triviaData', () => {
+	it("keeps a bare leaf's $text alongside its $triviaData", () => {
 		const leaf = ir.from.identifier('main').$trivia(ir.lineComment('// c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
@@ -174,6 +175,39 @@ describe('examples/17 dogfood rust (splice.rs)', () => {
 		const r = dogfoodContract(createEngine(), rebuildSplice(), target);
 		expect(r.firstDifference).toBeUndefined();
 		expect(r.sameModuloWhitespace).toBe(true);
+	});
+});
+
+// Namespaced constructors are the reachable spelling for an arm kind: the
+// parent names the form, the arm keeps no top-level builder of its own.
+describe('namespaced constructors reach the arm kinds', () => {
+	it('builds both doc-comment forms through line_comment', () => {
+		expect(ir.lineComment.doc({ outer: true, doc: ' hi' }).$render()).toBe('/// hi');
+		expect(ir.lineComment.doc({ inner: true, doc: ' hi' }).$render()).toBe('//! hi');
+	});
+	it('builds a plain line comment through the same parent', () => {
+		expect(ir.lineComment.content(' hi').$render()).toBe('// hi');
+	});
+	it('builds a semicolon-terminated expression statement', () => {
+		expect(ir.expressionStatement.withSemi({ expression: ir.identifier('x') }).$render()).toBe('x;');
+	});
+	it('reaches an in-path visibility modifier two levels down', () => {
+		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
+		expect(ir.visibilityModifier.visibilityModifierInPath(path).$render()).toBe('pub(in crate::x)');
+		expect(ir.visibilityModifier.self().$render()).toBe('pub(self)');
+	});
+	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
+	// `pub(crate)`. The arm this slot takes directly keeps the name.
+	it('keeps the direct arm when a hoisted constructor claims its name', () => {
+		expect(ir.visibilityModifier.crate().$render()).toBe('crate');
+	});
+});
+
+// Ceiling, never a floor: an artefact kind moves off the top-level namespace
+// onto its parent, so this count only shrinks.
+describe('ir entry ratchet', () => {
+	it('exposes no more top-level builders than the recorded ceiling', () => {
+		expect(Object.keys(ir).length).toBeLessThanOrEqual(247);
 	});
 });
 

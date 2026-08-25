@@ -478,7 +478,7 @@ export type ExpressionStatementBuilt = T.ExpressionStatement & {
 	};
 } & _NodeMethods;
 
-export function buildExpressionStatement(
+function buildExpressionStatement$impl(
 	child: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
 ): ExpressionStatementBuilt {
 	const _content = child;
@@ -491,7 +491,7 @@ export function buildExpressionStatement(
 				_content,
 				$with: {
 					$child: (v: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield) =>
-						buildExpressionStatement(v)
+						buildExpressionStatement$impl(v)
 				}
 			},
 			{
@@ -501,6 +501,21 @@ export function buildExpressionStatement(
 		methodsEngine
 	);
 }
+
+export const buildExpressionStatement = attachProps(buildExpressionStatement$impl, {
+	tuple: (...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) =>
+		buildExpressionStatement$impl(
+			(buildExpressionStatementTuple as (...a: unknown[]) => ReturnType<typeof buildExpressionStatementTuple>)(
+				...args
+			) as T.ExpressionStatementTuple
+		),
+	assignment: (config: T.Assignment.Config) => buildExpressionStatement$impl(buildAssignment(config) as T.Assignment),
+	augmentedAssignment: (config: T.AugmentedAssignment.Config) =>
+		buildExpressionStatement$impl(buildAugmentedAssignment(config) as T.AugmentedAssignment),
+	yield: (child?: T.YieldFromClause | T.Expressions) => buildExpressionStatement$impl(buildYield(child) as T.Yield),
+	fromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
+		buildExpressionStatement$impl(buildYield.fromClause(...args) as T.Yield)
+});
 
 export type NamedExpressionBuilt = T.NamedExpression & {
 	readonly $source: 2;
@@ -744,7 +759,7 @@ export type ElseClauseBuilt = T.ElseClause & {
 	};
 } & _NodeMethods;
 
-export function buildElseClause(body: T.ElseClause.Config['body']): ElseClauseBuilt {
+function buildElseClause$impl(body: T.ElseClause.Config['body']): ElseClauseBuilt {
 	const _body = body;
 	return withMethods(
 		withAccessors(
@@ -754,7 +769,7 @@ export function buildElseClause(body: T.ElseClause.Config['body']): ElseClauseBu
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: T.ElseClause.Config['body']) => buildElseClause(value)
+					body: (value: T.ElseClause.Config['body']) => buildElseClause$impl(value)
 				}
 			},
 			{
@@ -764,6 +779,17 @@ export function buildElseClause(body: T.ElseClause.Config['body']): ElseClauseBu
 		methodsEngine
 	);
 }
+
+export const buildElseClause = attachProps(buildElseClause$impl, {
+	simpleStatements: (...args: ({ delimiter?: Delimiter.Trailing } | T.SimpleStatement)[]) =>
+		buildElseClause$impl(
+			(buildSimpleStatements as (...a: unknown[]) => ReturnType<typeof buildSimpleStatements>)(
+				...args
+			) as T.SimpleStatements
+		),
+	suiteBlockWithIndent: (...children: T.Statement[]) =>
+		buildElseClause$impl(buildSuiteBlockWithIndent(...children) as T.SuiteBlockWithIndent)
+});
 
 export type MatchStatementBuilt = T.MatchStatement & {
 	readonly $source: 2;
@@ -807,7 +833,7 @@ export type MatchBlockBuilt = T.MatchBlock & {
 	};
 } & _NodeMethods;
 
-export function buildMatchBlock(child: T.MatchBlockBlock | '\n'): MatchBlockBuilt {
+function buildMatchBlock$impl(child: T.MatchBlockBlock | '\n'): MatchBlockBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -816,7 +842,7 @@ export function buildMatchBlock(child: T.MatchBlockBlock | '\n'): MatchBlockBuil
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.MatchBlockBlock | '\n') => buildMatchBlock(v) }
+				$with: { $child: (v: T.MatchBlockBlock | '\n') => buildMatchBlock$impl(v) }
 			},
 			{
 				content: () => _content
@@ -825,6 +851,11 @@ export function buildMatchBlock(child: T.MatchBlockBlock | '\n'): MatchBlockBuil
 		methodsEngine
 	);
 }
+
+export const buildMatchBlock = attachProps(buildMatchBlock$impl, {
+	block: (config: Partial<T.MatchBlockBlock.Config> = {}) =>
+		buildMatchBlock$impl(buildMatchBlockBlock(config) as T.MatchBlockBlock)
+});
 
 export type CaseClauseBuilt = T.CaseClause & {
 	readonly $source: 2;
@@ -1051,7 +1082,7 @@ export type FinallyClauseBuilt = T.FinallyClause & {
 	};
 } & _NodeMethods;
 
-export function buildFinallyClause(block: T.FinallyClause.Config['block']): FinallyClauseBuilt {
+function buildFinallyClause$impl(block: T.FinallyClause.Config['block']): FinallyClauseBuilt {
 	const _block = block;
 	return withMethods(
 		withAccessors(
@@ -1061,7 +1092,7 @@ export function buildFinallyClause(block: T.FinallyClause.Config['block']): Fina
 				$named: true as const,
 				_block,
 				$with: {
-					block: (value: T.FinallyClause.Config['block']) => buildFinallyClause(value)
+					block: (value: T.FinallyClause.Config['block']) => buildFinallyClause$impl(value)
 				}
 			},
 			{
@@ -1071,6 +1102,17 @@ export function buildFinallyClause(block: T.FinallyClause.Config['block']): Fina
 		methodsEngine
 	);
 }
+
+export const buildFinallyClause = attachProps(buildFinallyClause$impl, {
+	simpleStatements: (...args: ({ delimiter?: Delimiter.Trailing } | T.SimpleStatement)[]) =>
+		buildFinallyClause$impl(
+			(buildSimpleStatements as (...a: unknown[]) => ReturnType<typeof buildSimpleStatements>)(
+				...args
+			) as T.SimpleStatements
+		),
+	suiteBlockWithIndent: (...children: T.Statement[]) =>
+		buildFinallyClause$impl(buildSuiteBlockWithIndent(...children) as T.SuiteBlockWithIndent)
+});
 
 export type WithStatementBuilt = T.WithStatement & {
 	readonly $source: 2;
@@ -1846,7 +1888,7 @@ export type CasePatternBuilt = T.CasePattern & {
 	};
 } & _NodeMethods;
 
-export function buildCasePattern(child: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern): CasePatternBuilt {
+function buildCasePattern$impl(child: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern): CasePatternBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1855,7 +1897,7 @@ export function buildCasePattern(child: T.CaseAsPattern | T.KeywordPattern | T.S
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(v) }
+				$with: { $child: (v: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern$impl(v) }
 			},
 			{
 				content: () => _content
@@ -1864,6 +1906,13 @@ export function buildCasePattern(child: T.CaseAsPattern | T.KeywordPattern | T.S
 		methodsEngine
 	);
 }
+
+export const buildCasePattern = attachProps(buildCasePattern$impl, {
+	caseAsPattern: (config: T.CaseAsPattern.Config) =>
+		buildCasePattern$impl(buildCaseAsPattern(config) as T.CaseAsPattern),
+	keywordPattern: (config: T.KeywordPattern.Config) =>
+		buildCasePattern$impl(buildKeywordPattern(config) as T.KeywordPattern)
+});
 
 export type UnionPatternBuilt = T.UnionPattern & {
 	readonly $source: 2;
@@ -2417,7 +2466,7 @@ export type ListSplatPatternBuilt = T.ListSplatPattern & {
 	};
 } & _NodeMethods;
 
-export function buildListSplatPattern(
+function buildListSplatPattern$impl(
 	child: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute
 ): ListSplatPatternBuilt {
 	const _content = child;
@@ -2429,7 +2478,7 @@ export function buildListSplatPattern(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildListSplatPattern(v)
+					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildListSplatPattern$impl(v)
 				}
 			},
 			{
@@ -2440,6 +2489,12 @@ export function buildListSplatPattern(
 	);
 }
 
+export const buildListSplatPattern = attachProps(buildListSplatPattern$impl, {
+	identifier: (text: string) => buildListSplatPattern$impl(buildIdentifier(text) as T.Identifier),
+	subscript: (config: T.Subscript.Config) => buildListSplatPattern$impl(buildSubscript(config) as T.Subscript),
+	attribute: (config: T.Attribute.Config) => buildListSplatPattern$impl(buildAttribute(config) as T.Attribute)
+});
+
 export type DictionarySplatPatternBuilt = T.DictionarySplatPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2448,7 +2503,7 @@ export type DictionarySplatPatternBuilt = T.DictionarySplatPattern & {
 	};
 } & _NodeMethods;
 
-export function buildDictionarySplatPattern(
+function buildDictionarySplatPattern$impl(
 	child: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute
 ): DictionarySplatPatternBuilt {
 	const _content = child;
@@ -2460,7 +2515,8 @@ export function buildDictionarySplatPattern(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v)
+					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) =>
+						buildDictionarySplatPattern$impl(v)
 				}
 			},
 			{
@@ -2470,6 +2526,12 @@ export function buildDictionarySplatPattern(
 		methodsEngine
 	);
 }
+
+export const buildDictionarySplatPattern = attachProps(buildDictionarySplatPattern$impl, {
+	identifier: (text: string) => buildDictionarySplatPattern$impl(buildIdentifier(text) as T.Identifier),
+	subscript: (config: T.Subscript.Config) => buildDictionarySplatPattern$impl(buildSubscript(config) as T.Subscript),
+	attribute: (config: T.Attribute.Config) => buildDictionarySplatPattern$impl(buildAttribute(config) as T.Attribute)
+});
 
 export type AsPatternBuilt = T.AsPattern & {
 	readonly $source: 2;
@@ -2968,7 +3030,7 @@ export type YieldBuilt = T.Yield & {
 	};
 } & _NodeMethods;
 
-export function buildYield(child?: T.YieldFromClause | T.Expressions): YieldBuilt {
+function buildYield$impl(child?: T.YieldFromClause | T.Expressions): YieldBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2977,7 +3039,7 @@ export function buildYield(child?: T.YieldFromClause | T.Expressions): YieldBuil
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.YieldFromClause | T.Expressions) => buildYield(v) }
+				$with: { $child: (v: T.YieldFromClause | T.Expressions) => buildYield$impl(v) }
 			},
 			{
 				content: () => _content
@@ -2986,6 +3048,10 @@ export function buildYield(child?: T.YieldFromClause | T.Expressions): YieldBuil
 		methodsEngine
 	);
 }
+
+export const buildYield = attachProps(buildYield$impl, {
+	fromClause: (child: T.Expression) => buildYield$impl(buildYieldFromClause(child) as T.YieldFromClause)
+});
 
 export type AttributeBuilt = T.Attribute & {
 	readonly $source: 2;
@@ -3175,7 +3241,7 @@ export type TypeBuilt = T.Type & {
 	};
 } & _NodeMethods;
 
-export function buildType(
+function buildType$impl(
 	child: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
 ): TypeBuilt {
 	const _content = child;
@@ -3188,7 +3254,7 @@ export function buildType(
 				_content,
 				$with: {
 					$child: (v: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) =>
-						buildType(v)
+						buildType$impl(v)
 				}
 			},
 			{
@@ -3198,6 +3264,19 @@ export function buildType(
 		methodsEngine
 	);
 }
+
+export const buildType = attachProps(buildType$impl, {
+	splatType: (config: T.SplatType.Config) => buildType$impl(buildSplatType(config) as T.SplatType),
+	star: (...args: Parameters<typeof buildSplatType.star>) =>
+		buildType$impl(buildSplatType.star(...args) as T.SplatType),
+	starStar: (...args: Parameters<typeof buildSplatType.starStar>) =>
+		buildType$impl(buildSplatType.starStar(...args) as T.SplatType),
+	genericType: (config: T.GenericType.Config) => buildType$impl(buildGenericType(config) as T.GenericType),
+	unionType: (config: T.UnionType.Config) => buildType$impl(buildUnionType(config) as T.UnionType),
+	constrainedType: (config: T.ConstrainedType.Config) =>
+		buildType$impl(buildConstrainedType(config) as T.ConstrainedType),
+	memberType: (config: T.MemberType.Config) => buildType$impl(buildMemberType(config) as T.MemberType)
+});
 
 export type SplatTypeBuilt = T.SplatType & {
 	readonly $source: 2;
@@ -3776,9 +3855,7 @@ export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
 	};
 } & _NodeMethods;
 
-export function buildParenthesizedExpression(
-	child: T.Expression | T.Yield | T.ListSplat
-): ParenthesizedExpressionBuilt {
+function buildParenthesizedExpression$impl(child: T.Expression | T.Yield | T.ListSplat): ParenthesizedExpressionBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -3787,7 +3864,7 @@ export function buildParenthesizedExpression(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Expression | T.Yield | T.ListSplat) => buildParenthesizedExpression(v) }
+				$with: { $child: (v: T.Expression | T.Yield | T.ListSplat) => buildParenthesizedExpression$impl(v) }
 			},
 			{
 				content: () => _content
@@ -3796,6 +3873,14 @@ export function buildParenthesizedExpression(
 		methodsEngine
 	);
 }
+
+export const buildParenthesizedExpression = attachProps(buildParenthesizedExpression$impl, {
+	yield: (child?: T.YieldFromClause | T.Expressions) => buildParenthesizedExpression$impl(buildYield(child) as T.Yield),
+	fromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
+		buildParenthesizedExpression$impl(buildYield.fromClause(...args) as T.Yield),
+	listSplat: (expression: T.ListSplat.Config['expression']) =>
+		buildParenthesizedExpression$impl(buildListSplat(expression) as T.ListSplat)
+});
 
 export type CollectionElementsBuilt = T.CollectionElements & {
 	readonly $source: 2;
@@ -5536,7 +5621,7 @@ export type AssignmentTypeBuilt = T.AssignmentType & {
 	};
 } & _NodeMethods;
 
-export function buildAssignmentType(config: T.AssignmentType.Config): AssignmentTypeBuilt {
+function buildAssignmentType$impl(config: T.AssignmentType.Config): AssignmentTypeBuilt {
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -5546,7 +5631,7 @@ export function buildAssignmentType(config: T.AssignmentType.Config): Assignment
 				$named: true as const,
 				_type,
 				$with: {
-					type: (value: T.Type) => buildAssignmentType({ ...config, type: value })
+					type: (value: T.Type) => buildAssignmentType$impl({ ...config, type: value })
 				}
 			},
 			{
@@ -5556,6 +5641,23 @@ export function buildAssignmentType(config: T.AssignmentType.Config): Assignment
 		methodsEngine
 	);
 }
+
+export const buildAssignmentType = attachProps(buildAssignmentType$impl, {
+	splatType: (...args: Parameters<typeof buildType.splatType>) =>
+		buildAssignmentType$impl({ type: buildType.splatType(...args) as T.Type }),
+	star: (...args: Parameters<typeof buildType.star>) =>
+		buildAssignmentType$impl({ type: buildType.star(...args) as T.Type }),
+	starStar: (...args: Parameters<typeof buildType.starStar>) =>
+		buildAssignmentType$impl({ type: buildType.starStar(...args) as T.Type }),
+	genericType: (...args: Parameters<typeof buildType.genericType>) =>
+		buildAssignmentType$impl({ type: buildType.genericType(...args) as T.Type }),
+	unionType: (...args: Parameters<typeof buildType.unionType>) =>
+		buildAssignmentType$impl({ type: buildType.unionType(...args) as T.Type }),
+	constrainedType: (...args: Parameters<typeof buildType.constrainedType>) =>
+		buildAssignmentType$impl({ type: buildType.constrainedType(...args) as T.Type }),
+	memberType: (...args: Parameters<typeof buildType.memberType>) =>
+		buildAssignmentType$impl({ type: buildType.memberType(...args) as T.Type })
+});
 
 export type AssignmentTypedBuilt = T.AssignmentTyped & {
 	readonly $source: 2;
@@ -5788,6 +5890,9 @@ export type SuiteBlockWithIndentBuilt = T.SuiteBlockWithIndent & {
 export function buildSuiteBlockWithIndent(child: T.Block): ReturnType<typeof _buildSuiteBlockWithIndent>;
 export function buildSuiteBlockWithIndent(...children: T.Statement[]): ReturnType<typeof _buildSuiteBlockWithIndent>;
 export function buildSuiteBlockWithIndent(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildSuiteBlockWithIndent(buildBlock() as T.Block);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSuiteBlockWithIndent(args[0] as T.Block);
 	}
@@ -5823,12 +5928,14 @@ export type SimplePatternNegativeBuilt = T.SimplePatternNegative & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		sign(value?: NonNullable<Parameters<typeof buildSimplePatternNegative>[0]>['sign']): SimplePatternNegativeBuilt;
+		sign(
+			value?: NonNullable<Parameters<typeof buildSimplePatternNegative$impl>[0]>['sign']
+		): SimplePatternNegativeBuilt;
 		content(value: T.Integer | T.Float): SimplePatternNegativeBuilt;
 	};
 } & _NodeMethods;
 
-export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): SimplePatternNegativeBuilt {
+function buildSimplePatternNegative$impl(config: T.SimplePatternNegative.Config): SimplePatternNegativeBuilt {
 	const _sign = coerceBooleanKeywordStorage(config.sign);
 	const _content = config.content;
 	return withMethods(
@@ -5840,9 +5947,9 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 				_sign,
 				_content,
 				$with: {
-					sign: (value?: NonNullable<Parameters<typeof buildSimplePatternNegative>[0]>['sign']) =>
-						buildSimplePatternNegative({ ...config, sign: value }),
-					content: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, content: value })
+					sign: (value?: NonNullable<Parameters<typeof buildSimplePatternNegative$impl>[0]>['sign']) =>
+						buildSimplePatternNegative$impl({ ...config, sign: value }),
+					content: (value: T.Integer | T.Float) => buildSimplePatternNegative$impl({ ...config, content: value })
 				}
 			},
 			{
@@ -5853,6 +5960,11 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 		methodsEngine
 	);
 }
+
+export const buildSimplePatternNegative = attachProps(buildSimplePatternNegative$impl, {
+	integer: (text: string) => buildSimplePatternNegative$impl({ content: buildInteger(text) as T.Integer }),
+	float: (text: string) => buildSimplePatternNegative$impl({ content: buildFloat(text) as T.Float })
+});
 
 export type ExceptClauseListBuilt = T.ExceptClauseList & {
 	readonly $source: 2;

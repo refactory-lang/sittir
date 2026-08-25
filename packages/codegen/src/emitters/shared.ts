@@ -19,6 +19,7 @@ import {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
+	type AssembledPattern,
 	AssembledSupertype,
 	isNodeRef,
 	isTerminalValue,
@@ -38,6 +39,14 @@ export function isSlotBearingCompound(
 	node: AssembledNode
 ): node is AssembledBranch | AssembledGroup | AssembledSeparatedList {
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
+}
+
+/** The three model types whose factory is a text leaf (`factory.leaf`): a
+ *  fixed-text keyword, a free-text pattern, a literal-union enum. Together
+ *  with `isSlotBearingCompound` this is every kind that has a factory of its
+ *  own — a supertype does not. */
+export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPattern | AssembledEnum {
+	return node.modelType === 'keyword' || node.modelType === 'pattern' || node.modelType === 'enum';
 }
 
 export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {

@@ -126,9 +126,13 @@ const _b$importAlias: typeof FR.coerceToImportAlias & {
 const _b$ambientDeclaration: typeof FR.coerceToAmbientDeclaration & {
 	from: typeof FR.coerceToAmbientDeclaration;
 	strict: typeof F.buildAmbientDeclaration;
+	global: typeof F.buildAmbientDeclaration.global;
+	module: typeof F.buildAmbientDeclaration.module;
 } = attachProps(FR.coerceToAmbientDeclaration, {
 	from: FR.coerceToAmbientDeclaration,
-	strict: F.buildAmbientDeclaration
+	strict: F.buildAmbientDeclaration,
+	global: F.buildAmbientDeclaration.global,
+	module: F.buildAmbientDeclaration.module
 });
 
 const _b$exportStatement: typeof FR.coerceToExportStatement & {
@@ -476,9 +480,19 @@ const _b$memberExpression: typeof FR.coerceToMemberExpression & {
 const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
 	from: typeof FR.coerceToParenthesizedExpression;
 	strict: typeof F.buildParenthesizedExpression;
+	typed: typeof F.buildParenthesizedExpression.typed;
+	sequenceExpression: typeof F.buildParenthesizedExpression.sequenceExpression;
+	identifier: typeof F.buildParenthesizedExpression.identifier;
+	decoratorMemberExpression: typeof F.buildParenthesizedExpression.decoratorMemberExpression;
+	decoratorCallExpression: typeof F.buildParenthesizedExpression.decoratorCallExpression;
 } = attachProps(FR.coerceToParenthesizedExpression, {
 	from: FR.coerceToParenthesizedExpression,
-	strict: F.buildParenthesizedExpression
+	strict: F.buildParenthesizedExpression,
+	typed: F.buildParenthesizedExpression.typed,
+	sequenceExpression: F.buildParenthesizedExpression.sequenceExpression,
+	identifier: F.buildParenthesizedExpression.identifier,
+	decoratorMemberExpression: F.buildParenthesizedExpression.decoratorMemberExpression,
+	decoratorCallExpression: F.buildParenthesizedExpression.decoratorCallExpression
 });
 
 const _b$templateString: typeof FR.coerceToTemplateString & {
@@ -492,9 +506,11 @@ const _b$templateString: typeof FR.coerceToTemplateString & {
 const _b$regex: typeof FR.coerceToRegex & {
 	from: typeof FR.coerceToRegex;
 	strict: typeof F.buildRegex;
+	pattern: typeof F.buildRegex.pattern;
 } = attachProps(FR.coerceToRegex, {
 	from: FR.coerceToRegex,
-	strict: F.buildRegex
+	strict: F.buildRegex,
+	pattern: F.buildRegex.pattern
 });
 
 const _b$object: typeof FR.coerceToObject & {
@@ -550,9 +566,13 @@ const _b$class: typeof FR.coerceToClass & {
 const _b$metaProperty: typeof FR.coerceToMetaProperty & {
 	from: typeof FR.coerceToMetaProperty;
 	strict: typeof F.buildMetaProperty;
+	arm1: typeof F.buildMetaProperty.arm1;
+	arm2: typeof F.buildMetaProperty.arm2;
 } = attachProps(FR.coerceToMetaProperty, {
 	from: FR.coerceToMetaProperty,
-	strict: F.buildMetaProperty
+	strict: F.buildMetaProperty,
+	arm1: F.buildMetaProperty.arm1,
+	arm2: F.buildMetaProperty.arm2
 });
 
 const _b$callExpression: typeof FR.coerceToCallExpression & {
@@ -760,9 +780,25 @@ const _b$flowMaybeType: typeof FR.coerceToFlowMaybeType & {
 const _b$typeQuery: typeof FR.coerceToTypeQuery & {
 	from: typeof FR.coerceToTypeQuery;
 	strict: typeof F.buildTypeQuery;
+	subscriptExpression: typeof F.buildTypeQuery.subscriptExpression;
+	memberExpression: typeof F.buildTypeQuery.memberExpression;
+	dot: typeof F.buildTypeQuery.dot;
+	qmarkDot: typeof F.buildTypeQuery.qmarkDot;
+	callExpression: typeof F.buildTypeQuery.callExpression;
+	instantiationExpression: typeof F.buildTypeQuery.instantiationExpression;
+	identifier: typeof F.buildTypeQuery.identifier;
+	this: typeof F.buildTypeQuery.this;
 } = attachProps(FR.coerceToTypeQuery, {
 	from: FR.coerceToTypeQuery,
-	strict: F.buildTypeQuery
+	strict: F.buildTypeQuery,
+	subscriptExpression: F.buildTypeQuery.subscriptExpression,
+	memberExpression: F.buildTypeQuery.memberExpression,
+	dot: F.buildTypeQuery.dot,
+	qmarkDot: F.buildTypeQuery.qmarkDot,
+	callExpression: F.buildTypeQuery.callExpression,
+	instantiationExpression: F.buildTypeQuery.instantiationExpression,
+	identifier: F.buildTypeQuery.identifier,
+	this: F.buildTypeQuery.this
 });
 
 const _b$indexTypeQuery: typeof FR.coerceToIndexTypeQuery & {
@@ -776,9 +812,23 @@ const _b$indexTypeQuery: typeof FR.coerceToIndexTypeQuery & {
 const _b$literalType: typeof FR.coerceToLiteralType & {
 	from: typeof FR.coerceToLiteralType;
 	strict: typeof F.buildLiteralType;
+	string: typeof F.buildLiteralType.string;
+	double: typeof F.buildLiteralType.double;
+	single: typeof F.buildLiteralType.single;
+	true: typeof F.buildLiteralType.true;
+	false: typeof F.buildLiteralType.false;
+	null: typeof F.buildLiteralType.null;
+	undefined: typeof F.buildLiteralType.undefined;
 } = attachProps(FR.coerceToLiteralType, {
 	from: FR.coerceToLiteralType,
-	strict: F.buildLiteralType
+	strict: F.buildLiteralType,
+	string: F.buildLiteralType.string,
+	double: F.buildLiteralType.double,
+	single: F.buildLiteralType.single,
+	true: F.buildLiteralType.true,
+	false: F.buildLiteralType.false,
+	null: F.buildLiteralType.null,
+	undefined: F.buildLiteralType.undefined
 });
 
 const _b$lookupType: typeof FR.coerceToLookupType & {
@@ -868,11 +918,13 @@ const _b$exportSpecifier: typeof FR.coerceToExportSpecifier & {
 const _b$importClause: typeof FR.coerceToImportClause & {
 	from: typeof FR.coerceToImportClause;
 	strict: typeof F.buildImportClause;
+	namespaceImport: typeof F.buildImportClause.namespaceImport;
 	namedImports: typeof F.buildImportClause.namedImports;
 	defaultImport: typeof F.buildImportClause.defaultImport;
 } = attachProps(FR.coerceToImportClause, {
 	from: FR.coerceToImportClause,
 	strict: F.buildImportClause,
+	namespaceImport: F.buildImportClause.namespaceImport,
 	namedImports: F.buildImportClause.namedImports,
 	defaultImport: F.buildImportClause.defaultImport
 });
@@ -1032,9 +1084,21 @@ const _b$arguments: typeof FR.coerceToArguments & {
 const _b$decorator: typeof FR.coerceToDecorator & {
 	from: typeof FR.coerceToDecorator;
 	strict: typeof F.buildDecorator;
+	identifier: typeof F.buildDecorator.identifier;
+	memberExpression: typeof F.buildDecorator.memberExpression;
+	callExpression: typeof F.buildDecorator.callExpression;
+	parenthesizedExpression: typeof F.buildDecorator.parenthesizedExpression;
+	decoratorMemberExpression: typeof F.buildDecorator.decoratorMemberExpression;
+	decoratorCallExpression: typeof F.buildDecorator.decoratorCallExpression;
 } = attachProps(FR.coerceToDecorator, {
 	from: FR.coerceToDecorator,
-	strict: F.buildDecorator
+	strict: F.buildDecorator,
+	identifier: F.buildDecorator.identifier,
+	memberExpression: F.buildDecorator.memberExpression,
+	callExpression: F.buildDecorator.callExpression,
+	parenthesizedExpression: F.buildDecorator.parenthesizedExpression,
+	decoratorMemberExpression: F.buildDecorator.decoratorMemberExpression,
+	decoratorCallExpression: F.buildDecorator.decoratorCallExpression
 });
 
 const _b$decoratorMemberExpression: typeof FR.coerceToDecoratorMemberExpression & {
@@ -1150,9 +1214,15 @@ const _b$abstractMethodSignature: typeof FR.coerceToAbstractMethodSignature & {
 const _b$decoratorParenthesizedExpression: typeof FR.coerceToDecoratorParenthesizedExpression & {
 	from: typeof FR.coerceToDecoratorParenthesizedExpression;
 	strict: typeof F.buildDecoratorParenthesizedExpression;
+	identifier: typeof F.buildDecoratorParenthesizedExpression.identifier;
+	decoratorMemberExpression: typeof F.buildDecoratorParenthesizedExpression.decoratorMemberExpression;
+	decoratorCallExpression: typeof F.buildDecoratorParenthesizedExpression.decoratorCallExpression;
 } = attachProps(FR.coerceToDecoratorParenthesizedExpression, {
 	from: FR.coerceToDecoratorParenthesizedExpression,
-	strict: F.buildDecoratorParenthesizedExpression
+	strict: F.buildDecoratorParenthesizedExpression,
+	identifier: F.buildDecoratorParenthesizedExpression.identifier,
+	decoratorMemberExpression: F.buildDecoratorParenthesizedExpression.decoratorMemberExpression,
+	decoratorCallExpression: F.buildDecoratorParenthesizedExpression.decoratorCallExpression
 });
 
 const _b$importRequireClause: typeof FR.coerceToImportRequireClause & {
@@ -1238,25 +1308,39 @@ const _b$typeAnnotation: typeof FR.coerceToTypeAnnotation & {
 const _b$asserts: typeof FR.coerceToAsserts & {
 	from: typeof FR.coerceToAsserts;
 	strict: typeof F.buildAsserts;
+	typePredicate: typeof F.buildAsserts.typePredicate;
+	identifier: typeof F.buildAsserts.identifier;
+	this: typeof F.buildAsserts.this;
 } = attachProps(FR.coerceToAsserts, {
 	from: FR.coerceToAsserts,
-	strict: F.buildAsserts
+	strict: F.buildAsserts,
+	typePredicate: F.buildAsserts.typePredicate,
+	identifier: F.buildAsserts.identifier,
+	this: F.buildAsserts.this
 });
 
 const _b$assertsAnnotation: typeof FR.coerceToAssertsAnnotation & {
 	from: typeof FR.coerceToAssertsAnnotation;
 	strict: typeof F.buildAssertsAnnotation;
+	typePredicate: typeof F.buildAssertsAnnotation.typePredicate;
+	identifier: typeof F.buildAssertsAnnotation.identifier;
+	this: typeof F.buildAssertsAnnotation.this;
 } = attachProps(FR.coerceToAssertsAnnotation, {
 	from: FR.coerceToAssertsAnnotation,
-	strict: F.buildAssertsAnnotation
+	strict: F.buildAssertsAnnotation,
+	typePredicate: F.buildAssertsAnnotation.typePredicate,
+	identifier: F.buildAssertsAnnotation.identifier,
+	this: F.buildAssertsAnnotation.this
 });
 
 const _b$templateType: typeof FR.coerceToTemplateType & {
 	from: typeof FR.coerceToTemplateType;
 	strict: typeof F.buildTemplateType;
+	inferType: typeof F.buildTemplateType.inferType;
 } = attachProps(FR.coerceToTemplateType, {
 	from: FR.coerceToTemplateType,
-	strict: F.buildTemplateType
+	strict: F.buildTemplateType,
+	inferType: F.buildTemplateType.inferType
 });
 
 const _b$typePredicate: typeof FR.coerceToTypePredicate & {

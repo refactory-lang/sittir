@@ -28,7 +28,14 @@ import {
 	type AssembledNode,
 	type AssembledNonterminal
 } from '../compiler/model/node-map.ts';
-import { isSlotBearingCompound, isValidIdent, slotKindNames, slotLiteralValues, userSlotsOf } from './shared.ts';
+import {
+	isSlotBearingCompound,
+	isTextLeaf,
+	isValidIdent,
+	slotKindNames,
+	slotLiteralValues,
+	userSlotsOf
+} from './shared.ts';
 import { camelCase } from './refine-emit.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
 import { hasCatalogEntry, type KindEnumEntry } from './kind-discriminant.ts';
@@ -155,35 +162,33 @@ function derive(
 	if (formSlot !== undefined) {
 		const slot = formSlot;
 		const kinds = slotKindNames(slot);
-		const children = kinds.map((k) => nodeMap.nodes.get(k));
-		// A sole slot with one kind is the forwarded shape (the parent already
-		// IS that kind's surface); a lone arm beside optional siblings is a
-		// genuine alternative and gets its constructor.
-		const minKinds = user.length === 1 ? 2 : 1;
-		// An arm is form-capable when its factory exists: a slot-bearing
-		// compound (its own config surface) or a keyword leaf (a
-		// parameterless fixed-text factory, e.g. visibility_modifier's
-		// `crate` arm beside its `pub` branch arm).
-		const concrete =
-			!isMultiple(slot) &&
-			slotLiteralValues(slot).length === 0 &&
-			kinds.length >= minKinds &&
-			children.every(
-				(c) =>
-					c !== undefined &&
-					(isSlotBearingCompound(c) || c.modelType === 'keyword') &&
-					c.rawFactoryName !== undefined &&
-					isEmitted(c.kind)
-			);
+		// An arm is form-capable when it reaches a factory of its own: a
+		// slot-bearing compound (its own config surface) or a text leaf
+		// (keyword / pattern / enum). A supertype arm has none, so it takes no
+		// constructor — and does not disqualify the siblings that do.
+		const formable: { readonly child: AssembledNode; readonly factory: string }[] = [];
+		for (const kind of kinds) {
+			const child = nodeMap.nodes.get(kind);
+			if (child === undefined || child.rawFactoryName === undefined || !isEmitted(kind)) continue;
+			if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
+			formable.push({ child, factory: child.rawFactoryName });
+		}
+		// A sole slot with exactly one kind is the forwarded shape: the parent
+		// already IS that kind's surface, so it gets no constructor named for
+		// it. The child's own namespace still flattens through — that hop is
+		// the only route to an arm two levels down.
+		const forwarded = user.length === 1 && kinds.length === 1;
+		const concrete = !isMultiple(slot) && slotLiteralValues(slot).length === 0 && formable.length > 0;
 		if (concrete) {
 			const nextVisiting = new Set([...visiting, node.kind]);
-			for (const child of children as AssembledNode[]) {
-				const name = formName(node.kind, child);
-				const childFactory = child.rawFactoryName!;
-				candidates.push({
-					entry: { via: 'form', name, slot, childKind: child.kind, childFactory, path: [] },
-					claimant: child.kind
-				});
+			for (const { child, factory: childFactory } of formable) {
+				if (!forwarded) {
+					const name = formName(node.kind, child);
+					candidates.push({
+						entry: { via: 'form', name, slot, childKind: child.kind, childFactory, path: [] },
+						claimant: child.kind
+					});
+				}
 				if (nextVisiting.has(child.kind)) continue;
 				// Sub-constructors flatten upward, recursively: the child's
 				// namespace is already flat, so one level suffices.
@@ -221,8 +226,15 @@ function derive(
 	const entries: NamespacedConstructor[] = [];
 	const ambiguous: { name: string; claimants: string[] }[] = [];
 	for (const [name, list] of byName) {
-		if (list.length === 1) entries.push(list[0]!.entry);
-		else ambiguous.push({ name, claimants: list.map((c) => c.claimant) });
+		// A constructor named for one of this parent's OWN arms outranks one
+		// borrowed from a child's namespace a hop down: both fill the same
+		// slot, but the direct arm is the value the slot takes here. Only
+		// claimants at the same depth cancel each other out — never
+		// first-wins.
+		const own = list.filter((c) => c.entry.via !== 'form' || c.entry.path.length === 0);
+		const contenders = own.length > 0 ? own : list;
+		if (contenders.length === 1) entries.push(contenders[0]!.entry);
+		else ambiguous.push({ name, claimants: contenders.map((c) => c.claimant) });
 	}
 	return { entries, ambiguous };
 }

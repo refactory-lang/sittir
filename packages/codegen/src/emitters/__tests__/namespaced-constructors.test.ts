@@ -98,9 +98,10 @@ describe('namespacedConstructors — derivation', () => {
 		}
 	});
 
-	it('drops a name two candidates claim and reports both', () => {
+	it('lets a direct arm outrank the same name hoisted from a child', () => {
 		// `_wrapper_b`'s members are `let` and `const`; a sibling arm minted
-		// as `_wrapper_let` claims `let` too — neither is hoisted.
+		// as `_wrapper_let` claims `let` too. Both fill `content`, but the
+		// direct arm is the value the slot takes here, so it keeps the name.
 		const nodeMap = makeFormNodeMap();
 		const nodes = new Map(nodeMap.nodes);
 		nodes.set(
@@ -123,8 +124,39 @@ describe('namespacedConstructors — derivation', () => {
 		const clashing = makeNodeMapWith(nodes);
 		computeSlotClasses(clashing);
 		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
-		expect(entries.map((e) => e.name)).toEqual(['b', 'const']);
-		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', '_wrapper_b.let'] }]);
+		expect(entries.map((e) => e.name)).toEqual(['let', 'b', 'const']);
+		expect(entries.find((e) => e.name === 'let')).toMatchObject({ childKind: '_wrapper_let', path: [] });
+		expect(ambiguous).toEqual([]);
+	});
+
+	it('drops a name two direct arms claim and reports both', () => {
+		// Same depth, so neither outranks the other: `_wrapper_let` and a bare
+		// `let` kind both name themselves `let` on `wrapper`.
+		const nodeMap = makeFormNodeMap();
+		const nodes = new Map(nodeMap.nodes);
+		nodes.set(
+			'_wrapper_let',
+			branch('_wrapper_let', { type: SEQ, members: [{ type: STRING, value: 'x' }, field('name', NAME)] })
+		);
+		nodes.set('let', branch('let', { type: SEQ, members: [{ type: STRING, value: 'y' }, field('name', NAME)] }));
+		const rule: SeqRule<'link'> = {
+			type: SEQ,
+			members: [
+				field('content', {
+					type: CHOICE,
+					members: [
+						{ type: SYMBOL, name: '_wrapper_let' },
+						{ type: SYMBOL, name: 'let' }
+					]
+				})
+			]
+		};
+		nodes.set('wrapper', branch('wrapper', rule));
+		const clashing = makeNodeMapWith(nodes);
+		computeSlotClasses(clashing);
+		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
+		expect(entries).toEqual([]);
+		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', 'let'] }]);
 	});
 
 	it('is empty for a sole slot holding one kind (the forwarded shape)', () => {

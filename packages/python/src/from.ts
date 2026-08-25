@@ -20,7 +20,7 @@ export const _fromMap = {
 	print_statement: coerceToPrintStatement$impl,
 	chevron: coerceToChevron,
 	assert_statement: coerceToAssertStatement,
-	expression_statement: coerceToExpressionStatement,
+	expression_statement: coerceToExpressionStatement$impl,
 	named_expression: coerceToNamedExpression,
 	return_statement: coerceToReturnStatement,
 	delete_statement: coerceToDeleteStatement,
@@ -30,14 +30,14 @@ export const _fromMap = {
 	continue_statement: coerceToContinueStatement,
 	if_statement: coerceToIfStatement,
 	elif_clause: coerceToElifClause,
-	else_clause: coerceToElseClause,
+	else_clause: coerceToElseClause$impl,
 	match_statement: coerceToMatchStatement,
 	case_clause: coerceToCaseClause,
 	for_statement: coerceToForStatement,
 	while_statement: coerceToWhileStatement,
 	try_statement: coerceToTryStatement,
 	except_clause: coerceToExceptClause,
-	finally_clause: coerceToFinallyClause,
+	finally_clause: coerceToFinallyClause$impl,
 	with_statement: coerceToWithStatement,
 	with_clause: coerceToWithClause$impl,
 	with_item: coerceToWithItem,
@@ -59,7 +59,7 @@ export const _fromMap = {
 	block: coerceToBlock,
 	expression_list: coerceToExpressionList,
 	dotted_name: coerceToDottedName,
-	case_pattern: coerceToCasePattern,
+	case_pattern: coerceToCasePattern$impl,
 	union_pattern: coerceToUnionPattern,
 	dict_pattern: coerceToDictPattern,
 	keyword_pattern: coerceToKeywordPattern,
@@ -70,8 +70,8 @@ export const _fromMap = {
 	list_pattern: coerceToListPattern,
 	default_parameter: coerceToDefaultParameter,
 	typed_default_parameter: coerceToTypedDefaultParameter,
-	list_splat_pattern: coerceToListSplatPattern,
-	dictionary_splat_pattern: coerceToDictionarySplatPattern,
+	list_splat_pattern: coerceToListSplatPattern$impl,
+	dictionary_splat_pattern: coerceToDictionarySplatPattern$impl,
 	as_pattern: coerceToAsPattern,
 	not_operator: coerceToNotOperator,
 	boolean_operator: coerceToBooleanOperator$impl,
@@ -83,13 +83,13 @@ export const _fromMap = {
 	assignment: coerceToAssignment,
 	augmented_assignment: coerceToAugmentedAssignment,
 	pattern_list: coerceToPatternList,
-	yield: coerceToYield,
+	yield: coerceToYield$impl,
 	attribute: coerceToAttribute,
 	subscript: coerceToSubscript,
 	slice: coerceToSlice$impl,
 	call: coerceToCall,
 	typed_parameter: coerceToTypedParameter,
-	type: coerceToType,
+	type: coerceToType$impl,
 	splat_type: coerceToSplatType$impl,
 	generic_type: coerceToGenericType,
 	union_type: coerceToUnionType,
@@ -105,7 +105,7 @@ export const _fromMap = {
 	dictionary_comprehension: coerceToDictionaryComprehension,
 	set_comprehension: coerceToSetComprehension,
 	generator_expression: coerceToGeneratorExpression,
-	parenthesized_expression: coerceToParenthesizedExpression,
+	parenthesized_expression: coerceToParenthesizedExpression$impl,
 	for_in_clause: coerceToForInClause,
 	if_clause: coerceToIfClause,
 	conditional_expression: coerceToConditionalExpression,
@@ -1094,7 +1094,7 @@ export function coerceToAssertStatement(
 	);
 }
 
-export function coerceToExpressionStatement(
+function coerceToExpressionStatement$impl(
 	input?:
 		| (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)
 		| T.ExpressionStatement
@@ -1112,6 +1112,20 @@ export function coerceToExpressionStatement(
 		)
 	);
 }
+
+export const coerceToExpressionStatement: typeof coerceToExpressionStatement$impl & {
+	tuple: typeof F.buildExpressionStatement.tuple;
+	assignment: typeof F.buildExpressionStatement.assignment;
+	augmentedAssignment: typeof F.buildExpressionStatement.augmentedAssignment;
+	yield: typeof F.buildExpressionStatement.yield;
+	fromClause: typeof F.buildExpressionStatement.fromClause;
+} = attachProps(coerceToExpressionStatement$impl, {
+	tuple: F.buildExpressionStatement.tuple,
+	assignment: F.buildExpressionStatement.assignment,
+	augmentedAssignment: F.buildExpressionStatement.augmentedAssignment,
+	yield: F.buildExpressionStatement.yield,
+	fromClause: F.buildExpressionStatement.fromClause
+});
 
 export function coerceToNamedExpression(input: T.NamedExpression.Loose): ReturnType<typeof F.buildNamedExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildNamedExpression>;
@@ -1191,7 +1205,7 @@ export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof
 	});
 }
 
-export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
+function coerceToElseClause$impl(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ElseClause)
 		return input as unknown as ReturnType<typeof F.buildElseClause>;
 	return F.buildElseClause(
@@ -1206,6 +1220,14 @@ export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof
 		)
 	);
 }
+
+export const coerceToElseClause: typeof coerceToElseClause$impl & {
+	simpleStatements: typeof F.buildElseClause.simpleStatements;
+	suiteBlockWithIndent: typeof F.buildElseClause.suiteBlockWithIndent;
+} = attachProps(coerceToElseClause$impl, {
+	simpleStatements: F.buildElseClause.simpleStatements,
+	suiteBlockWithIndent: F.buildElseClause.suiteBlockWithIndent
+});
 
 export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnType<typeof F.buildMatchStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMatchStatement>;
@@ -1291,7 +1313,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause> {
+function coerceToFinallyClause$impl(input: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FinallyClause)
 		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
 	return F.buildFinallyClause(
@@ -1306,6 +1328,14 @@ export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<
 		)
 	);
 }
+
+export const coerceToFinallyClause: typeof coerceToFinallyClause$impl & {
+	simpleStatements: typeof F.buildFinallyClause.simpleStatements;
+	suiteBlockWithIndent: typeof F.buildFinallyClause.suiteBlockWithIndent;
+} = attachProps(coerceToFinallyClause$impl, {
+	simpleStatements: F.buildFinallyClause.simpleStatements,
+	suiteBlockWithIndent: F.buildFinallyClause.suiteBlockWithIndent
+});
 
 export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<typeof F.buildWithStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWithStatement>;
@@ -1669,7 +1699,7 @@ export function coerceToDottedName(
 	);
 }
 
-export function coerceToCasePattern(
+function coerceToCasePattern$impl(
 	input?: (T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) | T.CasePattern
 ): ReturnType<typeof F.buildCasePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.CasePattern) {
@@ -1679,6 +1709,14 @@ export function coerceToCasePattern(
 	}
 	return F.buildCasePattern(_resolveOne<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(input, _K16, _K17));
 }
+
+export const coerceToCasePattern: typeof coerceToCasePattern$impl & {
+	caseAsPattern: typeof F.buildCasePattern.caseAsPattern;
+	keywordPattern: typeof F.buildCasePattern.keywordPattern;
+} = attachProps(coerceToCasePattern$impl, {
+	caseAsPattern: F.buildCasePattern.caseAsPattern,
+	keywordPattern: F.buildCasePattern.keywordPattern
+});
 
 export function coerceToUnionPattern(
 	...input: readonly (
@@ -1843,7 +1881,7 @@ export function coerceToTypedDefaultParameter(
 	});
 }
 
-export function coerceToListSplatPattern(
+function coerceToListSplatPattern$impl(
 	input?: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) | T.ListSplatPattern
 ): ReturnType<typeof F.buildListSplatPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.ListSplatPattern) {
@@ -1856,7 +1894,17 @@ export function coerceToListSplatPattern(
 	);
 }
 
-export function coerceToDictionarySplatPattern(
+export const coerceToListSplatPattern: typeof coerceToListSplatPattern$impl & {
+	identifier: typeof F.buildListSplatPattern.identifier;
+	subscript: typeof F.buildListSplatPattern.subscript;
+	attribute: typeof F.buildListSplatPattern.attribute;
+} = attachProps(coerceToListSplatPattern$impl, {
+	identifier: F.buildListSplatPattern.identifier,
+	subscript: F.buildListSplatPattern.subscript,
+	attribute: F.buildListSplatPattern.attribute
+});
+
+function coerceToDictionarySplatPattern$impl(
 	input?: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) | T.DictionarySplatPattern
 ): ReturnType<typeof F.buildDictionarySplatPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.DictionarySplatPattern) {
@@ -1868,6 +1916,16 @@ export function coerceToDictionarySplatPattern(
 		_resolveOne<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(input, _super_keyword_identifier, _K21)
 	);
 }
+
+export const coerceToDictionarySplatPattern: typeof coerceToDictionarySplatPattern$impl & {
+	identifier: typeof F.buildDictionarySplatPattern.identifier;
+	subscript: typeof F.buildDictionarySplatPattern.subscript;
+	attribute: typeof F.buildDictionarySplatPattern.attribute;
+} = attachProps(coerceToDictionarySplatPattern$impl, {
+	identifier: F.buildDictionarySplatPattern.identifier,
+	subscript: F.buildDictionarySplatPattern.subscript,
+	attribute: F.buildDictionarySplatPattern.attribute
+});
 
 export function coerceToAsPattern(input: T.AsPattern.Loose): ReturnType<typeof F.buildAsPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAsPattern>;
@@ -2100,7 +2158,7 @@ export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<type
 	});
 }
 
-export function coerceToYield(input?: (T.YieldFromClause | T.Expressions) | T.Yield): ReturnType<typeof F.buildYield> {
+function coerceToYield$impl(input?: (T.YieldFromClause | T.Expressions) | T.Yield): ReturnType<typeof F.buildYield> {
 	if (isNodeData(input) && input.$type === TSKindId.Yield) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
@@ -2108,6 +2166,12 @@ export function coerceToYield(input?: (T.YieldFromClause | T.Expressions) | T.Yi
 	}
 	return F.buildYield(_resolveOne<T.YieldFromClause | T.Expressions>(input, _K5, _K27));
 }
+
+export const coerceToYield: typeof coerceToYield$impl & {
+	fromClause: typeof F.buildYield.fromClause;
+} = attachProps(coerceToYield$impl, {
+	fromClause: F.buildYield.fromClause
+});
 
 export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F.buildAttribute> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
@@ -2172,7 +2236,7 @@ export function coerceToTypedParameter(input: T.TypedParameter.Loose): ReturnTyp
 	});
 }
 
-export function coerceToType(
+function coerceToType$impl(
 	input?: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) | T.Type
 ): ReturnType<typeof F.buildType> {
 	if (isNodeData(input) && input.$type === TSKindId.Type) {
@@ -2188,6 +2252,24 @@ export function coerceToType(
 		)
 	);
 }
+
+export const coerceToType: typeof coerceToType$impl & {
+	splatType: typeof F.buildType.splatType;
+	star: typeof F.buildType.star;
+	starStar: typeof F.buildType.starStar;
+	genericType: typeof F.buildType.genericType;
+	unionType: typeof F.buildType.unionType;
+	constrainedType: typeof F.buildType.constrainedType;
+	memberType: typeof F.buildType.memberType;
+} = attachProps(coerceToType$impl, {
+	splatType: F.buildType.splatType,
+	star: F.buildType.star,
+	starStar: F.buildType.starStar,
+	genericType: F.buildType.genericType,
+	unionType: F.buildType.unionType,
+	constrainedType: F.buildType.constrainedType,
+	memberType: F.buildType.memberType
+});
 
 function coerceToSplatType$impl(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSplatType>;
@@ -2366,7 +2448,7 @@ export function coerceToGeneratorExpression(
 	});
 }
 
-export function coerceToParenthesizedExpression(
+function coerceToParenthesizedExpression$impl(
 	input?: (T.Expression | T.Yield | T.ListSplat) | T.ParenthesizedExpression
 ): ReturnType<typeof F.buildParenthesizedExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
@@ -2376,6 +2458,16 @@ export function coerceToParenthesizedExpression(
 	}
 	return F.buildParenthesizedExpression(_resolveOne<T.Expression | T.Yield | T.ListSplat>(input, _K5, _K31));
 }
+
+export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpression$impl & {
+	yield: typeof F.buildParenthesizedExpression.yield;
+	fromClause: typeof F.buildParenthesizedExpression.fromClause;
+	listSplat: typeof F.buildParenthesizedExpression.listSplat;
+} = attachProps(coerceToParenthesizedExpression$impl, {
+	yield: F.buildParenthesizedExpression.yield,
+	fromClause: F.buildParenthesizedExpression.fromClause,
+	listSplat: F.buildParenthesizedExpression.listSplat
+});
 
 export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<typeof F.buildForInClause> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildForInClause>;

@@ -1,7 +1,7 @@
 // Runtime verification of the Python use-case examples against the native
 // engine: every export executes and produces what the guide promises.
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '@sittir/python';
+import { createEngine, ir } from '@sittir/python';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildProbeSweep, callStatement } from '../../../examples/19-dogfood-python.ts';
 import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/19-dogfood-python-strict.ts';
@@ -33,5 +33,13 @@ describe('examples/19 dogfood python — strict factory surface', () => {
 	});
 	it.fails('assembles the statements the coercion surface assembles', () => {
 		expect(rebuildProbeSweepStrict().$render()).toContain('#!/usr/bin/env python3');
+	});
+});
+
+// Ceiling, never a floor: an artefact kind moves off the top-level namespace
+// onto its parent, so this count only shrinks.
+describe('ir entry ratchet', () => {
+	it('exposes no more top-level builders than the recorded ceiling', () => {
+		expect(Object.keys(ir).length).toBeLessThanOrEqual(188);
 	});
 });

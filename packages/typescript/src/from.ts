@@ -48,7 +48,7 @@ export const _fromMap = {
 	switch_default: coerceToSwitchDefault,
 	catch_clause: coerceToCatchClause,
 	finally_clause: coerceToFinallyClause,
-	parenthesized_expression: coerceToParenthesizedExpression,
+	parenthesized_expression: coerceToParenthesizedExpression$impl,
 	yield_expression: coerceToYieldExpression,
 	object: coerceToObject,
 	object_pattern: coerceToObjectPattern,
@@ -85,13 +85,13 @@ export const _fromMap = {
 	comment: coerceToComment,
 	template_string: coerceToTemplateString,
 	template_substitution: coerceToTemplateSubstitution,
-	regex: coerceToRegex,
+	regex: coerceToRegex$impl,
 	regex_pattern: coerceToRegexPattern,
 	regex_flags: coerceToRegexFlags,
 	number: coerceToNumber,
 	identifier: coerceToIdentifier,
 	private_property_identifier: coerceToPrivatePropertyIdentifier,
-	meta_property: coerceToMetaProperty,
+	meta_property: coerceToMetaProperty$impl,
 	this: coerceToThis,
 	super: coerceToSuper,
 	true: coerceToTrue,
@@ -99,7 +99,7 @@ export const _fromMap = {
 	null: coerceToNull,
 	undefined: coerceToUndefined,
 	arguments: coerceToArguments,
-	decorator: coerceToDecorator,
+	decorator: coerceToDecorator$impl,
 	decorator_member_expression: coerceToDecoratorMemberExpression,
 	decorator_call_expression: coerceToDecoratorCallExpression,
 	class_body: coerceToClassBody,
@@ -115,7 +115,7 @@ export const _fromMap = {
 	method_signature: coerceToMethodSignature$impl,
 	abstract_method_signature: coerceToAbstractMethodSignature$impl,
 	function_signature: coerceToFunctionSignature,
-	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression,
+	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression$impl,
 	type_assertion: coerceToTypeAssertion,
 	as_expression: coerceToAsExpression,
 	satisfies_expression: coerceToSatisfiesExpression,
@@ -123,7 +123,7 @@ export const _fromMap = {
 	import_require_clause: coerceToImportRequireClause,
 	extends_clause: coerceToExtendsClause,
 	implements_clause: coerceToImplementsClause,
-	ambient_declaration: coerceToAmbientDeclaration,
+	ambient_declaration: coerceToAmbientDeclaration$impl,
 	abstract_class_declaration: coerceToAbstractClassDeclaration,
 	module: coerceToModule,
 	internal_module: coerceToInternalModule,
@@ -143,25 +143,25 @@ export const _fromMap = {
 	adding_type_annotation: coerceToAddingTypeAnnotation,
 	opting_type_annotation: coerceToOptingTypeAnnotation,
 	type_annotation: coerceToTypeAnnotation,
-	asserts: coerceToAsserts,
-	asserts_annotation: coerceToAssertsAnnotation,
+	asserts: coerceToAsserts$impl,
+	asserts_annotation: coerceToAssertsAnnotation$impl,
 	tuple_parameter: coerceToTupleParameter,
 	optional_tuple_parameter: coerceToOptionalTupleParameter,
 	optional_type: coerceToOptionalType,
 	rest_type: coerceToRestType,
 	constructor_type: coerceToConstructorType,
-	template_type: coerceToTemplateType,
+	template_type: coerceToTemplateType$impl,
 	template_literal_type: coerceToTemplateLiteralType,
 	infer_type: coerceToInferType,
 	conditional_type: coerceToConditionalType,
 	generic_type: coerceToGenericType,
 	type_predicate: coerceToTypePredicate,
 	type_predicate_annotation: coerceToTypePredicateAnnotation,
-	type_query: coerceToTypeQuery,
+	type_query: coerceToTypeQuery$impl,
 	index_type_query: coerceToIndexTypeQuery,
 	lookup_type: coerceToLookupType,
 	mapped_type_clause: coerceToMappedTypeClause,
-	literal_type: coerceToLiteralType,
+	literal_type: coerceToLiteralType$impl,
 	flow_maybe_type: coerceToFlowMaybeType,
 	parenthesized_type: coerceToParenthesizedType,
 	predefined_type: coerceToPredefinedType,
@@ -1179,9 +1179,11 @@ function coerceToImportClause$impl(
 }
 
 export const coerceToImportClause: typeof coerceToImportClause$impl & {
+	namespaceImport: typeof F.buildImportClause.namespaceImport;
 	namedImports: typeof F.buildImportClause.namedImports;
 	defaultImport: typeof F.buildImportClause.defaultImport;
 } = attachProps(coerceToImportClause$impl, {
+	namespaceImport: F.buildImportClause.namespaceImport,
 	namedImports: F.buildImportClause.namedImports,
 	defaultImport: F.buildImportClause.defaultImport
 });
@@ -1675,7 +1677,7 @@ export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<
 	);
 }
 
-export function coerceToParenthesizedExpression(
+function coerceToParenthesizedExpression$impl(
 	input?:
 		| (
 				| T.ParenthesizedExpressionTyped
@@ -1701,6 +1703,20 @@ export function coerceToParenthesizedExpression(
 		>(input, _super_import_identifier, _K13)
 	);
 }
+
+export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpression$impl & {
+	typed: typeof F.buildParenthesizedExpression.typed;
+	sequenceExpression: typeof F.buildParenthesizedExpression.sequenceExpression;
+	identifier: typeof F.buildParenthesizedExpression.identifier;
+	decoratorMemberExpression: typeof F.buildParenthesizedExpression.decoratorMemberExpression;
+	decoratorCallExpression: typeof F.buildParenthesizedExpression.decoratorCallExpression;
+} = attachProps(coerceToParenthesizedExpression$impl, {
+	typed: F.buildParenthesizedExpression.typed,
+	sequenceExpression: F.buildParenthesizedExpression.sequenceExpression,
+	identifier: F.buildParenthesizedExpression.identifier,
+	decoratorMemberExpression: F.buildParenthesizedExpression.decoratorMemberExpression,
+	decoratorCallExpression: F.buildParenthesizedExpression.decoratorCallExpression
+});
 
 export function coerceToYieldExpression(input?: T.YieldExpression.Loose): ReturnType<typeof F.buildYieldExpression> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.YieldExpression)
@@ -2500,13 +2516,19 @@ export function coerceToTemplateSubstitution(
 	return F.buildTemplateSubstitution(_resolveOne<T.Expressions>(input, _K7, _K8));
 }
 
-export function coerceToRegex(input: T.Regex.Loose): ReturnType<typeof F.buildRegex> {
+function coerceToRegex$impl(input: T.Regex.Loose): ReturnType<typeof F.buildRegex> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildRegex>;
 	return F.buildRegex({
 		pattern: _requireField('regex', 'pattern', _resolveOneLeaf<T.RegexPattern>(input.pattern, 'regex_pattern')),
 		flags: _resolveOneLeaf<T.RegexFlags>(input.flags, 'regex_flags')
 	});
 }
+
+export const coerceToRegex: typeof coerceToRegex$impl & {
+	pattern: typeof F.buildRegex.pattern;
+} = attachProps(coerceToRegex$impl, {
+	pattern: F.buildRegex.pattern
+});
 
 export function coerceToRegexPattern(input: string | T.RegexPattern): ReturnType<typeof F.buildRegexPattern> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRegexPattern>;
@@ -2535,7 +2557,7 @@ export function coerceToPrivatePropertyIdentifier(
 	return F.buildPrivatePropertyIdentifier(input as Parameters<typeof F.buildPrivatePropertyIdentifier>[0]);
 }
 
-export function coerceToMetaProperty(
+function coerceToMetaProperty$impl(
 	input?: (T.MetaPropertyArm1 | T.MetaPropertyArm2) | string | T.MetaProperty
 ): ReturnType<typeof F.buildMetaProperty> {
 	if (isNodeData(input) && input.$type === TSKindId.MetaProperty) {
@@ -2545,6 +2567,14 @@ export function coerceToMetaProperty(
 	}
 	return F.buildMetaProperty(_resolveOne<T.MetaPropertyArm1 | T.MetaPropertyArm2>(input, _K36, _K0));
 }
+
+export const coerceToMetaProperty: typeof coerceToMetaProperty$impl & {
+	arm1: typeof F.buildMetaProperty.arm1;
+	arm2: typeof F.buildMetaProperty.arm2;
+} = attachProps(coerceToMetaProperty$impl, {
+	arm1: F.buildMetaProperty.arm1,
+	arm2: F.buildMetaProperty.arm2
+});
 
 export function coerceToThis(input?: T.This): ReturnType<typeof F.buildThis> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildThis>;
@@ -2607,7 +2637,7 @@ export function coerceToArguments(
 	);
 }
 
-export function coerceToDecorator(
+function coerceToDecorator$impl(
 	input?:
 		| (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)
 		| T.Decorator
@@ -2623,6 +2653,22 @@ export function coerceToDecorator(
 		>(input, _super_import_identifier, _K37)
 	);
 }
+
+export const coerceToDecorator: typeof coerceToDecorator$impl & {
+	identifier: typeof F.buildDecorator.identifier;
+	memberExpression: typeof F.buildDecorator.memberExpression;
+	callExpression: typeof F.buildDecorator.callExpression;
+	parenthesizedExpression: typeof F.buildDecorator.parenthesizedExpression;
+	decoratorMemberExpression: typeof F.buildDecorator.decoratorMemberExpression;
+	decoratorCallExpression: typeof F.buildDecorator.decoratorCallExpression;
+} = attachProps(coerceToDecorator$impl, {
+	identifier: F.buildDecorator.identifier,
+	memberExpression: F.buildDecorator.memberExpression,
+	callExpression: F.buildDecorator.callExpression,
+	parenthesizedExpression: F.buildDecorator.parenthesizedExpression,
+	decoratorMemberExpression: F.buildDecorator.decoratorMemberExpression,
+	decoratorCallExpression: F.buildDecorator.decoratorCallExpression
+});
 
 export function coerceToDecoratorMemberExpression(
 	input: T.DecoratorMemberExpression.Loose
@@ -2962,7 +3008,7 @@ export function coerceToFunctionSignature(
 	});
 }
 
-export function coerceToDecoratorParenthesizedExpression(
+function coerceToDecoratorParenthesizedExpression$impl(
 	input?: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) | T.DecoratorParenthesizedExpression
 ): ReturnType<typeof F.buildDecoratorParenthesizedExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.DecoratorParenthesizedExpression) {
@@ -2980,6 +3026,16 @@ export function coerceToDecoratorParenthesizedExpression(
 		)
 	);
 }
+
+export const coerceToDecoratorParenthesizedExpression: typeof coerceToDecoratorParenthesizedExpression$impl & {
+	identifier: typeof F.buildDecoratorParenthesizedExpression.identifier;
+	decoratorMemberExpression: typeof F.buildDecoratorParenthesizedExpression.decoratorMemberExpression;
+	decoratorCallExpression: typeof F.buildDecoratorParenthesizedExpression.decoratorCallExpression;
+} = attachProps(coerceToDecoratorParenthesizedExpression$impl, {
+	identifier: F.buildDecoratorParenthesizedExpression.identifier,
+	decoratorMemberExpression: F.buildDecoratorParenthesizedExpression.decoratorMemberExpression,
+	decoratorCallExpression: F.buildDecoratorParenthesizedExpression.decoratorCallExpression
+});
 
 export function coerceToTypeAssertion(input: T.TypeAssertion.Loose): ReturnType<typeof F.buildTypeAssertion> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeAssertion>;
@@ -3109,7 +3165,7 @@ export function coerceToImplementsClause(
 	);
 }
 
-export function coerceToAmbientDeclaration(
+function coerceToAmbientDeclaration$impl(
 	input?: (T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule) | T.AmbientDeclaration
 ): ReturnType<typeof F.buildAmbientDeclaration> {
 	if (isNodeData(input) && input.$type === TSKindId.AmbientDeclaration) {
@@ -3121,6 +3177,14 @@ export function coerceToAmbientDeclaration(
 		_resolveOne<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(input, _K0, _K45)
 	);
 }
+
+export const coerceToAmbientDeclaration: typeof coerceToAmbientDeclaration$impl & {
+	global: typeof F.buildAmbientDeclaration.global;
+	module: typeof F.buildAmbientDeclaration.module;
+} = attachProps(coerceToAmbientDeclaration$impl, {
+	global: F.buildAmbientDeclaration.global,
+	module: F.buildAmbientDeclaration.module
+});
 
 export function coerceToAbstractClassDeclaration(
 	input: T.AbstractClassDeclaration.Loose
@@ -3417,7 +3481,7 @@ export function coerceToTypeAnnotation(input: T.TypeAnnotation.Loose): ReturnTyp
 	);
 }
 
-export function coerceToAsserts(
+function coerceToAsserts$impl(
 	input?: (T.TypePredicate | T.Identifier | T.This) | T.Asserts
 ): ReturnType<typeof F.buildAsserts> {
 	if (isNodeData(input) && input.$type === TSKindId.Asserts) {
@@ -3428,9 +3492,17 @@ export function coerceToAsserts(
 	return F.buildAsserts(_resolveOne<T.TypePredicate | T.Identifier | T.This>(input, _K49, _K50));
 }
 
-export function coerceToAssertsAnnotation(
-	input: T.AssertsAnnotation.Loose
-): ReturnType<typeof F.buildAssertsAnnotation> {
+export const coerceToAsserts: typeof coerceToAsserts$impl & {
+	typePredicate: typeof F.buildAsserts.typePredicate;
+	identifier: typeof F.buildAsserts.identifier;
+	this: typeof F.buildAsserts.this;
+} = attachProps(coerceToAsserts$impl, {
+	typePredicate: F.buildAsserts.typePredicate,
+	identifier: F.buildAsserts.identifier,
+	this: F.buildAsserts.this
+});
+
+function coerceToAssertsAnnotation$impl(input: T.AssertsAnnotation.Loose): ReturnType<typeof F.buildAssertsAnnotation> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AssertsAnnotation)
 		return input as unknown as ReturnType<typeof F.buildAssertsAnnotation>;
 	return F.buildAssertsAnnotation(
@@ -3444,6 +3516,16 @@ export function coerceToAssertsAnnotation(
 		)
 	);
 }
+
+export const coerceToAssertsAnnotation: typeof coerceToAssertsAnnotation$impl & {
+	typePredicate: typeof F.buildAssertsAnnotation.typePredicate;
+	identifier: typeof F.buildAssertsAnnotation.identifier;
+	this: typeof F.buildAssertsAnnotation.this;
+} = attachProps(coerceToAssertsAnnotation$impl, {
+	typePredicate: F.buildAssertsAnnotation.typePredicate,
+	identifier: F.buildAssertsAnnotation.identifier,
+	this: F.buildAssertsAnnotation.this
+});
 
 export function coerceToTupleParameter(input: T.TupleParameter.Loose): ReturnType<typeof F.buildTupleParameter> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTupleParameter>;
@@ -3514,7 +3596,7 @@ export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnT
 	});
 }
 
-export function coerceToTemplateType(
+function coerceToTemplateType$impl(
 	input?: (T.PrimaryType | T.InferType) | T.TemplateType
 ): ReturnType<typeof F.buildTemplateType> {
 	if (isNodeData(input) && input.$type === TSKindId.TemplateType) {
@@ -3524,6 +3606,12 @@ export function coerceToTemplateType(
 	}
 	return F.buildTemplateType(_resolveOne<T.PrimaryType | T.InferType>(input, _K43, _K52));
 }
+
+export const coerceToTemplateType: typeof coerceToTemplateType$impl & {
+	inferType: typeof F.buildTemplateType.inferType;
+} = attachProps(coerceToTemplateType$impl, {
+	inferType: F.buildTemplateType.inferType
+});
 
 export function coerceToTemplateLiteralType(
 	...input: readonly (
@@ -3625,7 +3713,7 @@ export function coerceToTypePredicateAnnotation(
 	);
 }
 
-export function coerceToTypeQuery(
+function coerceToTypeQuery$impl(
 	input?:
 		| (
 				| T.TypeQuerySubscriptExpression
@@ -3653,6 +3741,26 @@ export function coerceToTypeQuery(
 		>(input, _K49, _K57)
 	);
 }
+
+export const coerceToTypeQuery: typeof coerceToTypeQuery$impl & {
+	subscriptExpression: typeof F.buildTypeQuery.subscriptExpression;
+	memberExpression: typeof F.buildTypeQuery.memberExpression;
+	dot: typeof F.buildTypeQuery.dot;
+	qmarkDot: typeof F.buildTypeQuery.qmarkDot;
+	callExpression: typeof F.buildTypeQuery.callExpression;
+	instantiationExpression: typeof F.buildTypeQuery.instantiationExpression;
+	identifier: typeof F.buildTypeQuery.identifier;
+	this: typeof F.buildTypeQuery.this;
+} = attachProps(coerceToTypeQuery$impl, {
+	subscriptExpression: F.buildTypeQuery.subscriptExpression,
+	memberExpression: F.buildTypeQuery.memberExpression,
+	dot: F.buildTypeQuery.dot,
+	qmarkDot: F.buildTypeQuery.qmarkDot,
+	callExpression: F.buildTypeQuery.callExpression,
+	instantiationExpression: F.buildTypeQuery.instantiationExpression,
+	identifier: F.buildTypeQuery.identifier,
+	this: F.buildTypeQuery.this
+});
 
 export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnType<typeof F.buildIndexTypeQuery> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IndexTypeQuery)
@@ -3689,7 +3797,7 @@ export function coerceToMappedTypeClause(input: T.MappedTypeClause.Loose): Retur
 	});
 }
 
-export function coerceToLiteralType(
+function coerceToLiteralType$impl(
 	input?: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined) | T.LiteralType
 ): ReturnType<typeof F.buildLiteralType> {
 	if (isNodeData(input) && input.$type === TSKindId.LiteralType) {
@@ -3701,6 +3809,24 @@ export function coerceToLiteralType(
 		_resolveOne<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(input, _K59, _K60)
 	);
 }
+
+export const coerceToLiteralType: typeof coerceToLiteralType$impl & {
+	string: typeof F.buildLiteralType.string;
+	double: typeof F.buildLiteralType.double;
+	single: typeof F.buildLiteralType.single;
+	true: typeof F.buildLiteralType.true;
+	false: typeof F.buildLiteralType.false;
+	null: typeof F.buildLiteralType.null;
+	undefined: typeof F.buildLiteralType.undefined;
+} = attachProps(coerceToLiteralType$impl, {
+	string: F.buildLiteralType.string,
+	double: F.buildLiteralType.double,
+	single: F.buildLiteralType.single,
+	true: F.buildLiteralType.true,
+	false: F.buildLiteralType.false,
+	null: F.buildLiteralType.null,
+	undefined: F.buildLiteralType.undefined
+});
 
 export function coerceToFlowMaybeType(input: T.FlowMaybeType.Loose): ReturnType<typeof F.buildFlowMaybeType> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FlowMaybeType)

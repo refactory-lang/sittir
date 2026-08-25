@@ -2214,6 +2214,71 @@
       "factoryShape": "config",
       "factoryFields": [
         "type"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "splatType",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "splatType"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "star"
+          ]
+        },
+        {
+          "name": "starStar",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "starStar"
+          ]
+        },
+        {
+          "name": "genericType",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "genericType"
+          ]
+        },
+        {
+          "name": "unionType",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "unionType"
+          ]
+        },
+        {
+          "name": "constrainedType",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "constrainedType"
+          ]
+        },
+        {
+          "name": "memberType",
+          "via": "form",
+          "slot": "type",
+          "childKind": "type",
+          "path": [
+            "memberType"
+          ]
+        }
       ]
     },
     {
@@ -2970,7 +3035,72 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "splatType",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "splatType"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "star"
+          ]
+        },
+        {
+          "name": "starStar",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "starStar"
+          ]
+        },
+        {
+          "name": "genericType",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "genericType"
+          ]
+        },
+        {
+          "name": "unionType",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "unionType"
+          ]
+        },
+        {
+          "name": "constrainedType",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "constrainedType"
+          ]
+        },
+        {
+          "name": "memberType",
+          "via": "form",
+          "slot": "return_type",
+          "childKind": "type",
+          "path": [
+            "memberType"
+          ]
+        }
+      ]
     },
     {
       "kind": "_future_import_statement_arm",
@@ -3197,6 +3327,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "block",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_match_block_block",
+          "path": []
+        }
       ]
     },
     {
@@ -3508,7 +3647,23 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "integer",
+          "via": "form",
+          "slot": "content",
+          "childKind": "integer",
+          "path": []
+        },
+        {
+          "name": "float",
+          "via": "form",
+          "slot": "content",
+          "childKind": "float",
+          "path": []
+        }
+      ]
     },
     {
       "kind": "_simple_statement",
@@ -3755,7 +3910,23 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "simpleStatements",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_simple_statements",
+          "path": []
+        },
+        {
+          "name": "blockWithIndent",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_suite_block_with_indent",
+          "path": []
+        }
+      ]
     },
     {
       "kind": "_suite_block_with_indent",
@@ -5343,6 +5514,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "caseAsPattern",
+          "via": "form",
+          "slot": "content",
+          "childKind": "case_as_pattern",
+          "path": []
+        },
+        {
+          "name": "keywordPattern",
+          "via": "form",
+          "slot": "content",
+          "childKind": "keyword_pattern",
+          "path": []
+        }
       ]
     },
     {
@@ -6627,6 +6814,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "subscript",
+          "via": "form",
+          "slot": "content",
+          "childKind": "subscript",
+          "path": []
+        },
+        {
+          "name": "attribute",
+          "via": "form",
+          "slot": "content",
+          "childKind": "attribute",
+          "path": []
+        }
       ]
     },
     {
@@ -6839,6 +7049,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "body"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "simpleStatements",
+          "via": "form",
+          "slot": "body",
+          "childKind": "_simple_statements",
+          "path": []
+        },
+        {
+          "name": "suiteBlockWithIndent",
+          "via": "form",
+          "slot": "body",
+          "childKind": "_suite_block_with_indent",
+          "path": []
+        }
       ]
     },
     {
@@ -7211,6 +7437,45 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "tuple",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_expression_statement_tuple",
+          "path": []
+        },
+        {
+          "name": "assignment",
+          "via": "form",
+          "slot": "content",
+          "childKind": "assignment",
+          "path": []
+        },
+        {
+          "name": "augmentedAssignment",
+          "via": "form",
+          "slot": "content",
+          "childKind": "augmented_assignment",
+          "path": []
+        },
+        {
+          "name": "yield",
+          "via": "form",
+          "slot": "content",
+          "childKind": "yield",
+          "path": []
+        },
+        {
+          "name": "fromClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "yield",
+          "path": [
+            "fromClause"
+          ]
+        }
       ]
     },
     {
@@ -7288,6 +7553,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "block"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "simpleStatements",
+          "via": "form",
+          "slot": "block",
+          "childKind": "_simple_statements",
+          "path": []
+        },
+        {
+          "name": "suiteBlockWithIndent",
+          "via": "form",
+          "slot": "block",
+          "childKind": "_suite_block_with_indent",
+          "path": []
+        }
       ]
     },
     {
@@ -9058,6 +9339,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "subscript",
+          "via": "form",
+          "slot": "content",
+          "childKind": "subscript",
+          "path": []
+        },
+        {
+          "name": "attribute",
+          "via": "form",
+          "slot": "content",
+          "childKind": "attribute",
+          "path": []
+        }
       ]
     },
     {
@@ -9607,6 +9911,31 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "yield",
+          "via": "form",
+          "slot": "content",
+          "childKind": "yield",
+          "path": []
+        },
+        {
+          "name": "fromClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "yield",
+          "path": [
+            "fromClause"
+          ]
+        },
+        {
+          "name": "listSplat",
+          "via": "form",
+          "slot": "content",
+          "childKind": "list_splat",
+          "path": []
+        }
       ]
     },
     {
@@ -11200,6 +11529,61 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "splatType",
+          "via": "form",
+          "slot": "content",
+          "childKind": "splat_type",
+          "path": []
+        },
+        {
+          "name": "star",
+          "via": "form",
+          "slot": "content",
+          "childKind": "splat_type",
+          "path": [
+            "star"
+          ]
+        },
+        {
+          "name": "starStar",
+          "via": "form",
+          "slot": "content",
+          "childKind": "splat_type",
+          "path": [
+            "starStar"
+          ]
+        },
+        {
+          "name": "genericType",
+          "via": "form",
+          "slot": "content",
+          "childKind": "generic_type",
+          "path": []
+        },
+        {
+          "name": "unionType",
+          "via": "form",
+          "slot": "content",
+          "childKind": "union_type",
+          "path": []
+        },
+        {
+          "name": "constrainedType",
+          "via": "form",
+          "slot": "content",
+          "childKind": "constrained_type",
+          "path": []
+        },
+        {
+          "name": "memberType",
+          "via": "form",
+          "slot": "content",
+          "childKind": "member_type",
+          "path": []
+        }
       ]
     },
     {
@@ -12018,6 +12402,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "fromClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_yield_from_clause",
+          "path": []
+        }
       ]
     },
     {

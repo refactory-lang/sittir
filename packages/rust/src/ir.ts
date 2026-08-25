@@ -18,9 +18,11 @@ import { attachProps } from './utils.js';
 const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
 	from: typeof FR.coerceToExpressionStatement;
 	strict: typeof F.buildExpressionStatement;
+	withSemi: typeof F.buildExpressionStatement.withSemi;
 } = attachProps(FR.coerceToExpressionStatement, {
 	from: FR.coerceToExpressionStatement,
-	strict: F.buildExpressionStatement
+	strict: F.buildExpressionStatement,
+	withSemi: F.buildExpressionStatement.withSemi
 });
 
 const _b$constItem: typeof FR.coerceToConstItem & {
@@ -214,9 +216,11 @@ const _b$tokenBindingPattern: typeof FR.coerceToTokenBindingPattern & {
 const _b$stringLiteral: typeof FR.coerceToStringLiteral & {
 	from: typeof FR.coerceToStringLiteral;
 	strict: typeof F.buildStringLiteral;
+	open: typeof F.buildStringLiteral.open;
 } = attachProps(FR.coerceToStringLiteral, {
 	from: FR.coerceToStringLiteral,
-	strict: F.buildStringLiteral
+	strict: F.buildStringLiteral,
+	open: F.buildStringLiteral.open
 });
 
 const _b$rawStringLiteral: typeof FR.coerceToRawStringLiteral & {
@@ -346,9 +350,21 @@ const _b$functionType: typeof FR.coerceToFunctionType & {
 const _b$dynamicType: typeof FR.coerceToDynamicType & {
 	from: typeof FR.coerceToDynamicType;
 	strict: typeof F.buildDynamicType;
+	higherRankedTraitBound: typeof F.buildDynamicType.higherRankedTraitBound;
+	identifier: typeof F.buildDynamicType.identifier;
+	scopedTypeIdentifier: typeof F.buildDynamicType.scopedTypeIdentifier;
+	genericType: typeof F.buildDynamicType.genericType;
+	functionType: typeof F.buildDynamicType.functionType;
+	tupleType: typeof F.buildDynamicType.tupleType;
 } = attachProps(FR.coerceToDynamicType, {
 	from: FR.coerceToDynamicType,
-	strict: F.buildDynamicType
+	strict: F.buildDynamicType,
+	higherRankedTraitBound: F.buildDynamicType.higherRankedTraitBound,
+	identifier: F.buildDynamicType.identifier,
+	scopedTypeIdentifier: F.buildDynamicType.scopedTypeIdentifier,
+	genericType: F.buildDynamicType.genericType,
+	functionType: F.buildDynamicType.functionType,
+	tupleType: F.buildDynamicType.tupleType
 });
 
 const _b$boundedType: typeof FR.coerceToBoundedType & {
@@ -666,9 +682,21 @@ const _b$constBlock: typeof FR.coerceToConstBlock & {
 const _b$rangeExpression: typeof FR.coerceToRangeExpression & {
 	from: typeof FR.coerceToRangeExpression;
 	strict: typeof F.buildRangeExpression;
+	binary: typeof F.buildRangeExpression.binary;
+	dotDot: typeof F.buildRangeExpression.dotDot;
+	dotDotDot: typeof F.buildRangeExpression.dotDotDot;
+	dotDotEq: typeof F.buildRangeExpression.dotDotEq;
+	postfix: typeof F.buildRangeExpression.postfix;
+	prefix: typeof F.buildRangeExpression.prefix;
 } = attachProps(FR.coerceToRangeExpression, {
 	from: FR.coerceToRangeExpression,
-	strict: F.buildRangeExpression
+	strict: F.buildRangeExpression,
+	binary: F.buildRangeExpression.binary,
+	dotDot: F.buildRangeExpression.dotDot,
+	dotDotDot: F.buildRangeExpression.dotDotDot,
+	dotDotEq: F.buildRangeExpression.dotDotEq,
+	postfix: F.buildRangeExpression.postfix,
+	prefix: F.buildRangeExpression.prefix
 });
 
 const _b$tryBlock: typeof FR.coerceToTryBlock & {
@@ -704,9 +732,13 @@ const _b$letCondition: typeof FR.coerceToLetCondition & {
 const _b$negativeLiteral: typeof FR.coerceToNegativeLiteral & {
 	from: typeof FR.coerceToNegativeLiteral;
 	strict: typeof F.buildNegativeLiteral;
+	integerLiteral: typeof F.buildNegativeLiteral.integerLiteral;
+	floatLiteral: typeof F.buildNegativeLiteral.floatLiteral;
 } = attachProps(FR.coerceToNegativeLiteral, {
 	from: FR.coerceToNegativeLiteral,
-	strict: F.buildNegativeLiteral
+	strict: F.buildNegativeLiteral,
+	integerLiteral: F.buildNegativeLiteral.integerLiteral,
+	floatLiteral: F.buildNegativeLiteral.floatLiteral
 });
 
 const _b$genericPattern: typeof FR.coerceToGenericPattern & {
@@ -1018,9 +1050,11 @@ const _b$parameter: typeof FR.coerceToParameter & {
 const _b$externModifier: typeof FR.coerceToExternModifier & {
 	from: typeof FR.coerceToExternModifier;
 	strict: typeof F.buildExternModifier;
+	open: typeof F.buildExternModifier.open;
 } = attachProps(FR.coerceToExternModifier, {
 	from: FR.coerceToExternModifier,
-	strict: F.buildExternModifier
+	strict: F.buildExternModifier,
+	open: F.buildExternModifier.open
 });
 
 const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
@@ -1028,19 +1062,27 @@ const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
 	strict: typeof F.buildVisibilityModifier;
 	crate: typeof F.buildVisibilityModifier.crate;
 	pub: typeof F.buildVisibilityModifier.pub;
+	self: typeof F.buildVisibilityModifier.self;
+	super: typeof F.buildVisibilityModifier.super;
+	visibilityModifierInPath: typeof F.buildVisibilityModifier.visibilityModifierInPath;
 } = attachProps(FR.coerceToVisibilityModifier, {
 	from: FR.coerceToVisibilityModifier,
 	strict: F.buildVisibilityModifier,
 	crate: F.buildVisibilityModifier.crate,
-	pub: F.buildVisibilityModifier.pub
+	pub: F.buildVisibilityModifier.pub,
+	self: F.buildVisibilityModifier.self,
+	super: F.buildVisibilityModifier.super,
+	visibilityModifierInPath: F.buildVisibilityModifier.visibilityModifierInPath
 });
 
 const _b$bracketedType: typeof FR.coerceToBracketedType & {
 	from: typeof FR.coerceToBracketedType;
 	strict: typeof F.buildBracketedType;
+	qualifiedType: typeof F.buildBracketedType.qualifiedType;
 } = attachProps(FR.coerceToBracketedType, {
 	from: FR.coerceToBracketedType,
-	strict: F.buildBracketedType
+	strict: F.buildBracketedType,
+	qualifiedType: F.buildBracketedType.qualifiedType
 });
 
 const _b$qualifiedType: typeof FR.coerceToQualifiedType & {
@@ -1210,17 +1252,27 @@ const _b$label: typeof FR.coerceToLabel & {
 const _b$fieldPattern: typeof FR.coerceToFieldPattern & {
 	from: typeof FR.coerceToFieldPattern;
 	strict: typeof F.buildFieldPattern;
+	identifier: typeof F.buildFieldPattern.identifier;
+	named: typeof F.buildFieldPattern.named;
 } = attachProps(FR.coerceToFieldPattern, {
 	from: FR.coerceToFieldPattern,
-	strict: F.buildFieldPattern
+	strict: F.buildFieldPattern,
+	identifier: F.buildFieldPattern.identifier,
+	named: F.buildFieldPattern.named
 });
 
 const _b$lineComment: typeof FR.coerceToLineComment & {
 	from: typeof FR.coerceToLineComment;
 	strict: typeof F.buildLineComment;
+	regularDslash: typeof F.buildLineComment.regularDslash;
+	doc: typeof F.buildLineComment.doc;
+	content: typeof F.buildLineComment.content;
 } = attachProps(FR.coerceToLineComment, {
 	from: FR.coerceToLineComment,
-	strict: F.buildLineComment
+	strict: F.buildLineComment,
+	regularDslash: F.buildLineComment.regularDslash,
+	doc: F.buildLineComment.doc,
+	content: F.buildLineComment.content
 });
 
 const _b$blockComment: typeof FR.coerceToBlockComment & {

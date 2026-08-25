@@ -18,7 +18,12 @@ export function explicitMainFunction() {
 
 export function nestedGreetFunction() {
 	return ir.functionItem.strict({
-		visibilityModifier: ir.visibilityModifier.pub(ir.visibilityModifier.inPath), /* TODO: elevate choice arms to 'subfactories'  */
+		// A choice arm two levels down (`pub` -> its parenthesized group ->
+		// the `in <path>` arm) is reached by the constructor the parent
+		// hoists for it, not by naming the arm's own kind.
+		visibilityModifier: ir.visibilityModifier.visibilityModifierInPath(
+			ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') }),
+		),
 		name: ir.identifier('greet'),
 		parameters: ir.parameters.strict(
 			ir.parameter({ name: 'name', type: 'String' }),

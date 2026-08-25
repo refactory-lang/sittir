@@ -138,9 +138,19 @@ const _b$assertStatement: typeof FR.coerceToAssertStatement & {
 const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
 	from: typeof FR.coerceToExpressionStatement;
 	strict: typeof F.buildExpressionStatement;
+	tuple: typeof F.buildExpressionStatement.tuple;
+	assignment: typeof F.buildExpressionStatement.assignment;
+	augmentedAssignment: typeof F.buildExpressionStatement.augmentedAssignment;
+	yield: typeof F.buildExpressionStatement.yield;
+	fromClause: typeof F.buildExpressionStatement.fromClause;
 } = attachProps(FR.coerceToExpressionStatement, {
 	from: FR.coerceToExpressionStatement,
-	strict: F.buildExpressionStatement
+	strict: F.buildExpressionStatement,
+	tuple: F.buildExpressionStatement.tuple,
+	assignment: F.buildExpressionStatement.assignment,
+	augmentedAssignment: F.buildExpressionStatement.augmentedAssignment,
+	yield: F.buildExpressionStatement.yield,
+	fromClause: F.buildExpressionStatement.fromClause
 });
 
 const _b$returnStatement: typeof FR.coerceToReturnStatement & {
@@ -322,9 +332,15 @@ const _b$typedDefaultParameter: typeof FR.coerceToTypedDefaultParameter & {
 const _b$listSplatPattern: typeof FR.coerceToListSplatPattern & {
 	from: typeof FR.coerceToListSplatPattern;
 	strict: typeof F.buildListSplatPattern;
+	identifier: typeof F.buildListSplatPattern.identifier;
+	subscript: typeof F.buildListSplatPattern.subscript;
+	attribute: typeof F.buildListSplatPattern.attribute;
 } = attachProps(FR.coerceToListSplatPattern, {
 	from: FR.coerceToListSplatPattern,
-	strict: F.buildListSplatPattern
+	strict: F.buildListSplatPattern,
+	identifier: F.buildListSplatPattern.identifier,
+	subscript: F.buildListSplatPattern.subscript,
+	attribute: F.buildListSplatPattern.attribute
 });
 
 const _b$tuplePattern: typeof FR.coerceToTuplePattern & {
@@ -338,9 +354,15 @@ const _b$tuplePattern: typeof FR.coerceToTuplePattern & {
 const _b$dictionarySplatPattern: typeof FR.coerceToDictionarySplatPattern & {
 	from: typeof FR.coerceToDictionarySplatPattern;
 	strict: typeof F.buildDictionarySplatPattern;
+	identifier: typeof F.buildDictionarySplatPattern.identifier;
+	subscript: typeof F.buildDictionarySplatPattern.subscript;
+	attribute: typeof F.buildDictionarySplatPattern.attribute;
 } = attachProps(FR.coerceToDictionarySplatPattern, {
 	from: FR.coerceToDictionarySplatPattern,
-	strict: F.buildDictionarySplatPattern
+	strict: F.buildDictionarySplatPattern,
+	identifier: F.buildDictionarySplatPattern.identifier,
+	subscript: F.buildDictionarySplatPattern.subscript,
+	attribute: F.buildDictionarySplatPattern.attribute
 });
 
 const _b$subscript: typeof FR.coerceToSubscript & {
@@ -528,9 +550,15 @@ const _b$tuple: typeof FR.coerceToTuple & {
 const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
 	from: typeof FR.coerceToParenthesizedExpression;
 	strict: typeof F.buildParenthesizedExpression;
+	yield: typeof F.buildParenthesizedExpression.yield;
+	fromClause: typeof F.buildParenthesizedExpression.fromClause;
+	listSplat: typeof F.buildParenthesizedExpression.listSplat;
 } = attachProps(FR.coerceToParenthesizedExpression, {
 	from: FR.coerceToParenthesizedExpression,
-	strict: F.buildParenthesizedExpression
+	strict: F.buildParenthesizedExpression,
+	yield: F.buildParenthesizedExpression.yield,
+	fromClause: F.buildParenthesizedExpression.fromClause,
+	listSplat: F.buildParenthesizedExpression.listSplat
 });
 
 const _b$generatorExpression: typeof FR.coerceToGeneratorExpression & {
@@ -568,9 +596,11 @@ const _b$augmentedAssignment: typeof FR.coerceToAugmentedAssignment & {
 const _b$yield: typeof FR.coerceToYield & {
 	from: typeof FR.coerceToYield;
 	strict: typeof F.buildYield;
+	fromClause: typeof F.buildYield.fromClause;
 } = attachProps(FR.coerceToYield, {
 	from: FR.coerceToYield,
-	strict: F.buildYield
+	strict: F.buildYield,
+	fromClause: F.buildYield.fromClause
 });
 
 const _b$module: typeof FR.coerceToModule & {
@@ -616,9 +646,13 @@ const _b$elifClause: typeof FR.coerceToElifClause & {
 const _b$elseClause: typeof FR.coerceToElseClause & {
 	from: typeof FR.coerceToElseClause;
 	strict: typeof F.buildElseClause;
+	simpleStatements: typeof F.buildElseClause.simpleStatements;
+	suiteBlockWithIndent: typeof F.buildElseClause.suiteBlockWithIndent;
 } = attachProps(FR.coerceToElseClause, {
 	from: FR.coerceToElseClause,
-	strict: F.buildElseClause
+	strict: F.buildElseClause,
+	simpleStatements: F.buildElseClause.simpleStatements,
+	suiteBlockWithIndent: F.buildElseClause.suiteBlockWithIndent
 });
 
 const _b$caseClause: typeof FR.coerceToCaseClause & {
@@ -640,9 +674,13 @@ const _b$exceptClause: typeof FR.coerceToExceptClause & {
 const _b$finallyClause: typeof FR.coerceToFinallyClause & {
 	from: typeof FR.coerceToFinallyClause;
 	strict: typeof F.buildFinallyClause;
+	simpleStatements: typeof F.buildFinallyClause.simpleStatements;
+	suiteBlockWithIndent: typeof F.buildFinallyClause.suiteBlockWithIndent;
 } = attachProps(FR.coerceToFinallyClause, {
 	from: FR.coerceToFinallyClause,
-	strict: F.buildFinallyClause
+	strict: F.buildFinallyClause,
+	simpleStatements: F.buildFinallyClause.simpleStatements,
+	suiteBlockWithIndent: F.buildFinallyClause.suiteBlockWithIndent
 });
 
 const _b$withClause: typeof FR.coerceToWithClause & {
@@ -744,9 +782,13 @@ const _b$block: typeof FR.coerceToBlock & {
 const _b$casePattern: typeof FR.coerceToCasePattern & {
 	from: typeof FR.coerceToCasePattern;
 	strict: typeof F.buildCasePattern;
+	caseAsPattern: typeof F.buildCasePattern.caseAsPattern;
+	keywordPattern: typeof F.buildCasePattern.keywordPattern;
 } = attachProps(FR.coerceToCasePattern, {
 	from: FR.coerceToCasePattern,
-	strict: F.buildCasePattern
+	strict: F.buildCasePattern,
+	caseAsPattern: F.buildCasePattern.caseAsPattern,
+	keywordPattern: F.buildCasePattern.keywordPattern
 });
 
 const _b$keywordPattern: typeof FR.coerceToKeywordPattern & {
@@ -770,9 +812,23 @@ const _b$slice: typeof FR.coerceToSlice & {
 const _b$type: typeof FR.coerceToType & {
 	from: typeof FR.coerceToType;
 	strict: typeof F.buildType;
+	splatType: typeof F.buildType.splatType;
+	star: typeof F.buildType.star;
+	starStar: typeof F.buildType.starStar;
+	genericType: typeof F.buildType.genericType;
+	unionType: typeof F.buildType.unionType;
+	constrainedType: typeof F.buildType.constrainedType;
+	memberType: typeof F.buildType.memberType;
 } = attachProps(FR.coerceToType, {
 	from: FR.coerceToType,
-	strict: F.buildType
+	strict: F.buildType,
+	splatType: F.buildType.splatType,
+	star: F.buildType.star,
+	starStar: F.buildType.starStar,
+	genericType: F.buildType.genericType,
+	unionType: F.buildType.unionType,
+	constrainedType: F.buildType.constrainedType,
+	memberType: F.buildType.memberType
 });
 
 const _b$splatType: typeof FR.coerceToSplatType & {

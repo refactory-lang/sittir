@@ -405,6 +405,7 @@ function buildImportClause$impl(
 }
 
 export const buildImportClause = attachProps(buildImportClause$impl, {
+	namespaceImport: (text: string) => buildImportClause$impl(buildNamespaceImport(text) as T.NamespaceImport),
 	namedImports: (
 		...args: ({ delimiter?: Delimiter.Trailing } | (T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs))[]
 	) =>
@@ -423,7 +424,7 @@ export type FromClauseBuilt = T.FromClause & {
 	};
 } & _NodeMethods;
 
-export function buildFromClause(config: T.FromClause.Config): FromClauseBuilt {
+function buildFromClause$impl(config: T.FromClause.Config): FromClauseBuilt {
 	const _source = config.source;
 	return withMethods(
 		withAccessors(
@@ -433,7 +434,7 @@ export function buildFromClause(config: T.FromClause.Config): FromClauseBuilt {
 				$named: true as const,
 				_source,
 				$with: {
-					source: (value: T.String) => buildFromClause({ ...config, source: value })
+					source: (value: T.String) => buildFromClause$impl({ ...config, source: value })
 				}
 			},
 			{
@@ -443,6 +444,13 @@ export function buildFromClause(config: T.FromClause.Config): FromClauseBuilt {
 		methodsEngine
 	);
 }
+
+export const buildFromClause = attachProps(buildFromClause$impl, {
+	double: (...args: Parameters<typeof buildString.double>) =>
+		buildFromClause$impl({ source: buildString.double(...args) as T.String }),
+	single: (...args: Parameters<typeof buildString.single>) =>
+		buildFromClause$impl({ source: buildString.single(...args) as T.String })
+});
 
 export type NamespaceImportBuilt = T.NamespaceImport & {
 	readonly $source: 2;
@@ -455,9 +463,7 @@ export type NamespaceImportBuilt = T.NamespaceImport & {
 export function buildNamespaceImport(
 	child: T.NamespaceImport.Config['identifier']
 ): ReturnType<typeof _buildNamespaceImport>;
-export function buildNamespaceImport(
-	...args: Parameters<typeof buildIdentifier>
-): ReturnType<typeof _buildNamespaceImport>;
+export function buildNamespaceImport(text: string): ReturnType<typeof _buildNamespaceImport>;
 export function buildNamespaceImport(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildNamespaceImport(args[0] as T.NamespaceImport.Config['identifier']);
@@ -1320,9 +1326,7 @@ export type DebuggerStatementBuilt = T.DebuggerStatement & {
 export function buildDebuggerStatement(
 	child: T.DebuggerStatement.Config['semicolon']
 ): ReturnType<typeof _buildDebuggerStatement>;
-export function buildDebuggerStatement(
-	...args: Parameters<typeof buildSemicolon>
-): ReturnType<typeof _buildDebuggerStatement>;
+export function buildDebuggerStatement(text: '\n' | ';'): ReturnType<typeof _buildDebuggerStatement>;
 export function buildDebuggerStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildDebuggerStatement(args[0] as T.DebuggerStatement.Config['semicolon']);
@@ -1655,7 +1659,7 @@ export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
 	};
 } & _NodeMethods;
 
-export function buildParenthesizedExpression(
+function buildParenthesizedExpression$impl(
 	child:
 		| T.ParenthesizedExpressionTyped
 		| T.SequenceExpression
@@ -1679,7 +1683,7 @@ export function buildParenthesizedExpression(
 							| T.Identifier
 							| T.DecoratorMemberExpression
 							| T.DecoratorCallExpression
-					) => buildParenthesizedExpression(v)
+					) => buildParenthesizedExpression$impl(v)
 				}
 			},
 			{
@@ -1689,6 +1693,18 @@ export function buildParenthesizedExpression(
 		methodsEngine
 	);
 }
+
+export const buildParenthesizedExpression = attachProps(buildParenthesizedExpression$impl, {
+	typed: (config: T.ParenthesizedExpressionTyped.Config) =>
+		buildParenthesizedExpression$impl(buildParenthesizedExpressionTyped(config) as T.ParenthesizedExpressionTyped),
+	sequenceExpression: (...children: T.Expression[]) =>
+		buildParenthesizedExpression$impl(buildSequenceExpression(...children) as T.SequenceExpression),
+	identifier: (text: string) => buildParenthesizedExpression$impl(buildIdentifier(text) as T.Identifier),
+	decoratorMemberExpression: (config: T.DecoratorMemberExpression.Config) =>
+		buildParenthesizedExpression$impl(buildDecoratorMemberExpression(config) as T.DecoratorMemberExpression),
+	decoratorCallExpression: (config: T.DecoratorCallExpression.Config) =>
+		buildParenthesizedExpression$impl(buildDecoratorCallExpression(config) as T.DecoratorCallExpression)
+});
 
 export type YieldExpressionBuilt = T.YieldExpression & {
 	readonly $source: 2;
@@ -3222,7 +3238,7 @@ export type RegexBuilt = T.Regex & {
 	};
 } & _NodeMethods;
 
-export function buildRegex(config: T.Regex.Config): RegexBuilt {
+function buildRegex$impl(config: T.Regex.Config): RegexBuilt {
 	const _pattern = config.pattern;
 	const _flags = config.flags;
 	return withMethods(
@@ -3234,8 +3250,8 @@ export function buildRegex(config: T.Regex.Config): RegexBuilt {
 				_pattern,
 				_flags,
 				$with: {
-					pattern: (value: T.RegexPattern) => buildRegex({ ...config, pattern: value }),
-					flags: (value?: T.RegexFlags) => buildRegex({ ...config, flags: value })
+					pattern: (value: T.RegexPattern) => buildRegex$impl({ ...config, pattern: value }),
+					flags: (value?: T.RegexFlags) => buildRegex$impl({ ...config, flags: value })
 				}
 			},
 			{
@@ -3246,6 +3262,10 @@ export function buildRegex(config: T.Regex.Config): RegexBuilt {
 		methodsEngine
 	);
 }
+
+export const buildRegex = attachProps(buildRegex$impl, {
+	pattern: (text: string) => buildRegex$impl({ pattern: buildRegexPattern(text) as T.RegexPattern })
+});
 
 export function buildRegexPattern(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -3327,7 +3347,7 @@ export type MetaPropertyBuilt = T.MetaProperty & {
 	};
 } & _NodeMethods;
 
-export function buildMetaProperty(child: T.MetaPropertyArm1 | T.MetaPropertyArm2): MetaPropertyBuilt {
+function buildMetaProperty$impl(child: T.MetaPropertyArm1 | T.MetaPropertyArm2): MetaPropertyBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -3336,7 +3356,7 @@ export function buildMetaProperty(child: T.MetaPropertyArm1 | T.MetaPropertyArm2
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.MetaPropertyArm1 | T.MetaPropertyArm2) => buildMetaProperty(v) }
+				$with: { $child: (v: T.MetaPropertyArm1 | T.MetaPropertyArm2) => buildMetaProperty$impl(v) }
 			},
 			{
 				content: () => _content
@@ -3345,6 +3365,11 @@ export function buildMetaProperty(child: T.MetaPropertyArm1 | T.MetaPropertyArm2
 		methodsEngine
 	);
 }
+
+export const buildMetaProperty = attachProps(buildMetaProperty$impl, {
+	arm1: (text: string) => buildMetaProperty$impl(buildMetaPropertyArm1(text) as T.MetaPropertyArm1),
+	arm2: (text: string) => buildMetaProperty$impl(buildMetaPropertyArm2(text) as T.MetaPropertyArm2)
+});
 
 export function buildThis() {
 	return withMethods(
@@ -3455,7 +3480,7 @@ export type DecoratorBuilt = T.Decorator & {
 	};
 } & _NodeMethods;
 
-export function buildDecorator(
+function buildDecorator$impl(
 	child: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 ): DecoratorBuilt {
 	const _content = child;
@@ -3473,7 +3498,7 @@ export function buildDecorator(
 							| T.DecoratorMemberExpression
 							| T.DecoratorCallExpression
 							| T.DecoratorParenthesizedExpression
-					) => buildDecorator(v)
+					) => buildDecorator$impl(v)
 				}
 			},
 			{
@@ -3483,6 +3508,28 @@ export function buildDecorator(
 		methodsEngine
 	);
 }
+
+export const buildDecorator = attachProps(buildDecorator$impl, {
+	identifier: (text: string) => buildDecorator$impl(buildIdentifier(text) as T.Identifier),
+	memberExpression: (config: T.DecoratorMemberExpression.Config) =>
+		buildDecorator$impl(buildDecoratorMemberExpression(config) as T.DecoratorMemberExpression),
+	callExpression: (config: T.DecoratorCallExpression.Config) =>
+		buildDecorator$impl(buildDecoratorCallExpression(config) as T.DecoratorCallExpression),
+	parenthesizedExpression: (child: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) =>
+		buildDecorator$impl(buildDecoratorParenthesizedExpression(child) as T.DecoratorParenthesizedExpression),
+	decoratorMemberExpression: (
+		...args: Parameters<typeof buildDecoratorParenthesizedExpression.decoratorMemberExpression>
+	) =>
+		buildDecorator$impl(
+			buildDecoratorParenthesizedExpression.decoratorMemberExpression(...args) as T.DecoratorParenthesizedExpression
+		),
+	decoratorCallExpression: (
+		...args: Parameters<typeof buildDecoratorParenthesizedExpression.decoratorCallExpression>
+	) =>
+		buildDecorator$impl(
+			buildDecoratorParenthesizedExpression.decoratorCallExpression(...args) as T.DecoratorParenthesizedExpression
+		)
+});
 
 export type DecoratorMemberExpressionBuilt = T.DecoratorMemberExpression & {
 	readonly $source: 2;
@@ -4582,7 +4629,7 @@ export type DecoratorParenthesizedExpressionBuilt = T.DecoratorParenthesizedExpr
 	};
 } & _NodeMethods;
 
-export function buildDecoratorParenthesizedExpression(
+function buildDecoratorParenthesizedExpression$impl(
 	child: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression
 ): DecoratorParenthesizedExpressionBuilt {
 	const _content = child;
@@ -4595,7 +4642,7 @@ export function buildDecoratorParenthesizedExpression(
 				_content,
 				$with: {
 					$child: (v: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) =>
-						buildDecoratorParenthesizedExpression(v)
+						buildDecoratorParenthesizedExpression$impl(v)
 				}
 			},
 			{
@@ -4605,6 +4652,14 @@ export function buildDecoratorParenthesizedExpression(
 		methodsEngine
 	);
 }
+
+export const buildDecoratorParenthesizedExpression = attachProps(buildDecoratorParenthesizedExpression$impl, {
+	identifier: (text: string) => buildDecoratorParenthesizedExpression$impl(buildIdentifier(text) as T.Identifier),
+	decoratorMemberExpression: (config: T.DecoratorMemberExpression.Config) =>
+		buildDecoratorParenthesizedExpression$impl(buildDecoratorMemberExpression(config) as T.DecoratorMemberExpression),
+	decoratorCallExpression: (config: T.DecoratorCallExpression.Config) =>
+		buildDecoratorParenthesizedExpression$impl(buildDecoratorCallExpression(config) as T.DecoratorCallExpression)
+});
 
 export type TypeAssertionBuilt = T.TypeAssertion & {
 	readonly $source: 2;
@@ -4874,7 +4929,7 @@ export type AmbientDeclarationBuilt = T.AmbientDeclaration & {
 	};
 } & _NodeMethods;
 
-export function buildAmbientDeclaration(
+function buildAmbientDeclaration$impl(
 	child: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule
 ): AmbientDeclarationBuilt {
 	const _content = child;
@@ -4887,7 +4942,7 @@ export function buildAmbientDeclaration(
 				_content,
 				$with: {
 					$child: (v: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule) =>
-						buildAmbientDeclaration(v)
+						buildAmbientDeclaration$impl(v)
 				}
 			},
 			{
@@ -4897,6 +4952,13 @@ export function buildAmbientDeclaration(
 		methodsEngine
 	);
 }
+
+export const buildAmbientDeclaration = attachProps(buildAmbientDeclaration$impl, {
+	global: (config: T.AmbientDeclarationGlobal.Config) =>
+		buildAmbientDeclaration$impl(buildAmbientDeclarationGlobal(config) as T.AmbientDeclarationGlobal),
+	module: (config: T.AmbientDeclarationModule.Config) =>
+		buildAmbientDeclaration$impl(buildAmbientDeclarationModule(config) as T.AmbientDeclarationModule)
+});
 
 export type AbstractClassDeclarationBuilt = T.AbstractClassDeclaration & {
 	readonly $source: 2;
@@ -5814,7 +5876,7 @@ export type AssertsBuilt = T.Asserts & {
 	};
 } & _NodeMethods;
 
-export function buildAsserts(child: T.TypePredicate | T.Identifier | T.This): AssertsBuilt {
+function buildAsserts$impl(child: T.TypePredicate | T.Identifier | T.This): AssertsBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -5823,7 +5885,7 @@ export function buildAsserts(child: T.TypePredicate | T.Identifier | T.This): As
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.TypePredicate | T.Identifier | T.This) => buildAsserts(v) }
+				$with: { $child: (v: T.TypePredicate | T.Identifier | T.This) => buildAsserts$impl(v) }
 			},
 			{
 				content: () => _content
@@ -5833,6 +5895,12 @@ export function buildAsserts(child: T.TypePredicate | T.Identifier | T.This): As
 	);
 }
 
+export const buildAsserts = attachProps(buildAsserts$impl, {
+	typePredicate: (config: T.TypePredicate.Config) => buildAsserts$impl(buildTypePredicate(config) as T.TypePredicate),
+	identifier: (text: string) => buildAsserts$impl(buildIdentifier(text) as T.Identifier),
+	this: () => buildAsserts$impl(buildThis() as T.This)
+});
+
 export type AssertsAnnotationBuilt = T.AssertsAnnotation & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5841,15 +5909,15 @@ export type AssertsAnnotationBuilt = T.AssertsAnnotation & {
 	};
 } & _NodeMethods;
 
-export function buildAssertsAnnotation(
+function buildAssertsAnnotation$impl(
 	child: T.AssertsAnnotation.Config['asserts']
-): ReturnType<typeof _buildAssertsAnnotation>;
-export function buildAssertsAnnotation(
+): ReturnType<typeof _buildAssertsAnnotation$impl>;
+function buildAssertsAnnotation$impl(
 	child: T.TypePredicate | T.Identifier | T.This
-): ReturnType<typeof _buildAssertsAnnotation>;
-export function buildAssertsAnnotation(...args: unknown[]) {
+): ReturnType<typeof _buildAssertsAnnotation$impl>;
+function buildAssertsAnnotation$impl(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildAssertsAnnotation(args[0] as T.AssertsAnnotation.Config['asserts']);
+		return _buildAssertsAnnotation$impl(args[0] as T.AssertsAnnotation.Config['asserts']);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -5857,12 +5925,12 @@ export function buildAssertsAnnotation(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Asserts as const);
 	return prebuilt
-		? _buildAssertsAnnotation(args[0] as T.AssertsAnnotation.Config['asserts'])
-		: _buildAssertsAnnotation(
+		? _buildAssertsAnnotation$impl(args[0] as T.AssertsAnnotation.Config['asserts'])
+		: _buildAssertsAnnotation$impl(
 				(buildAsserts as (...a: unknown[]) => unknown)(...args) as T.AssertsAnnotation.Config['asserts']
 			);
 }
-function _buildAssertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts']): AssertsAnnotationBuilt {
+function _buildAssertsAnnotation$impl(asserts: T.AssertsAnnotation.Config['asserts']): AssertsAnnotationBuilt {
 	const _asserts = asserts;
 	return withMethods(
 		withAccessors(
@@ -5872,7 +5940,7 @@ function _buildAssertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts'])
 				$named: true as const,
 				_asserts,
 				$with: {
-					asserts: (value: T.AssertsAnnotation.Config['asserts']) => buildAssertsAnnotation(value)
+					asserts: (value: T.AssertsAnnotation.Config['asserts']) => buildAssertsAnnotation$impl(value)
 				}
 			},
 			{
@@ -5882,6 +5950,15 @@ function _buildAssertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts'])
 		methodsEngine
 	);
 }
+
+export const buildAssertsAnnotation = attachProps(buildAssertsAnnotation$impl, {
+	typePredicate: (...args: Parameters<typeof buildAsserts.typePredicate>) =>
+		buildAssertsAnnotation$impl(buildAsserts.typePredicate(...args) as T.Asserts),
+	identifier: (...args: Parameters<typeof buildAsserts.identifier>) =>
+		buildAssertsAnnotation$impl(buildAsserts.identifier(...args) as T.Asserts),
+	this: (...args: Parameters<typeof buildAsserts.this>) =>
+		buildAssertsAnnotation$impl(buildAsserts.this(...args) as T.Asserts)
+});
 
 export type TupleParameterBuilt = T.TupleParameter & {
 	readonly $source: 2;
@@ -6064,7 +6141,7 @@ export type TemplateTypeBuilt = T.TemplateType & {
 	};
 } & _NodeMethods;
 
-export function buildTemplateType(child: T.PrimaryType | T.InferType): TemplateTypeBuilt {
+function buildTemplateType$impl(child: T.PrimaryType | T.InferType): TemplateTypeBuilt {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -6073,7 +6150,7 @@ export function buildTemplateType(child: T.PrimaryType | T.InferType): TemplateT
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.PrimaryType | T.InferType) => buildTemplateType(v) }
+				$with: { $child: (v: T.PrimaryType | T.InferType) => buildTemplateType$impl(v) }
 			},
 			{
 				content: () => _content
@@ -6082,6 +6159,10 @@ export function buildTemplateType(child: T.PrimaryType | T.InferType): TemplateT
 		methodsEngine
 	);
 }
+
+export const buildTemplateType = attachProps(buildTemplateType$impl, {
+	inferType: (config: T.InferType.Config) => buildTemplateType$impl(buildInferType(config) as T.InferType)
+});
 
 export type TemplateLiteralTypeBuilt = T.TemplateLiteralType & {
 	readonly $source: 2;
@@ -6528,7 +6609,7 @@ export type TypeQueryBuilt = T.TypeQuery & {
 	};
 } & _NodeMethods;
 
-export function buildTypeQuery(
+function buildTypeQuery$impl(
 	child:
 		| T.TypeQuerySubscriptExpression
 		| T.TypeQueryMemberExpression
@@ -6554,7 +6635,7 @@ export function buildTypeQuery(
 							| T.TypeQueryInstantiationExpression
 							| T.Identifier
 							| T.This
-					) => buildTypeQuery(v)
+					) => buildTypeQuery$impl(v)
 				}
 			},
 			{
@@ -6564,6 +6645,23 @@ export function buildTypeQuery(
 		methodsEngine
 	);
 }
+
+export const buildTypeQuery = attachProps(buildTypeQuery$impl, {
+	subscriptExpression: (config: T.TypeQuerySubscriptExpression.Config) =>
+		buildTypeQuery$impl(buildTypeQuerySubscriptExpression(config) as T.TypeQuerySubscriptExpression),
+	memberExpression: (config: T.TypeQueryMemberExpression.Config) =>
+		buildTypeQuery$impl(buildTypeQueryMemberExpression(config) as T.TypeQueryMemberExpression),
+	dot: (...args: Parameters<typeof buildTypeQueryMemberExpression.dot>) =>
+		buildTypeQuery$impl(buildTypeQueryMemberExpression.dot(...args) as T.TypeQueryMemberExpression),
+	qmarkDot: (...args: Parameters<typeof buildTypeQueryMemberExpression.qmarkDot>) =>
+		buildTypeQuery$impl(buildTypeQueryMemberExpression.qmarkDot(...args) as T.TypeQueryMemberExpression),
+	callExpression: (config: T.TypeQueryCallExpression.Config) =>
+		buildTypeQuery$impl(buildTypeQueryCallExpression(config) as T.TypeQueryCallExpression),
+	instantiationExpression: (config: T.TypeQueryInstantiationExpression.Config) =>
+		buildTypeQuery$impl(buildTypeQueryInstantiationExpression(config) as T.TypeQueryInstantiationExpression),
+	identifier: (text: string) => buildTypeQuery$impl(buildIdentifier(text) as T.Identifier),
+	this: () => buildTypeQuery$impl(buildThis() as T.This)
+});
 
 export type IndexTypeQueryBuilt = T.IndexTypeQuery & {
 	readonly $source: 2;
@@ -6675,7 +6773,7 @@ export type LiteralTypeBuilt = T.LiteralType & {
 	};
 } & _NodeMethods;
 
-export function buildLiteralType(
+function buildLiteralType$impl(
 	child: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined
 ): LiteralTypeBuilt {
 	const _content = child;
@@ -6687,7 +6785,8 @@ export function buildLiteralType(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined) => buildLiteralType(v)
+					$child: (v: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined) =>
+						buildLiteralType$impl(v)
 				}
 			},
 			{
@@ -6697,6 +6796,18 @@ export function buildLiteralType(
 		methodsEngine
 	);
 }
+
+export const buildLiteralType = attachProps(buildLiteralType$impl, {
+	string: (child: T.StringDouble | T.StringSingle) => buildLiteralType$impl(buildString(child) as T.String),
+	double: (...args: Parameters<typeof buildString.double>) =>
+		buildLiteralType$impl(buildString.double(...args) as T.String),
+	single: (...args: Parameters<typeof buildString.single>) =>
+		buildLiteralType$impl(buildString.single(...args) as T.String),
+	true: () => buildLiteralType$impl(buildTrue() as T.True),
+	false: () => buildLiteralType$impl(buildFalse() as T.False),
+	null: () => buildLiteralType$impl(buildNull() as T.Null),
+	undefined: () => buildLiteralType$impl(buildUndefined() as T.Undefined)
+});
 
 export type _NumberBuilt = T._Number & {
 	readonly $source: 2;
@@ -8187,6 +8298,7 @@ function buildImportClauseGroup$impl(child: T.NamespaceImport | T.NamedImports):
 }
 
 export const buildImportClauseGroup = attachProps(buildImportClauseGroup$impl, {
+	namespaceImport: (text: string) => buildImportClauseGroup$impl(buildNamespaceImport(text) as T.NamespaceImport),
 	namedImports: (
 		...args: ({ delimiter?: Delimiter.Trailing } | (T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs))[]
 	) =>
@@ -8540,7 +8652,7 @@ export type ArrowFunctionParameterBuilt = T.ArrowFunctionParameter & {
 	};
 } & _NodeMethods;
 
-export function buildArrowFunctionParameter(config: T.ArrowFunctionParameter.Config): ArrowFunctionParameterBuilt {
+function buildArrowFunctionParameter$impl(config: T.ArrowFunctionParameter.Config): ArrowFunctionParameterBuilt {
 	const _parameter = config.parameter;
 	return withMethods(
 		withAccessors(
@@ -8551,7 +8663,7 @@ export function buildArrowFunctionParameter(config: T.ArrowFunctionParameter.Con
 				_parameter,
 				$with: {
 					parameter: (value: T.ReservedIdentifier | T.Identifier) =>
-						buildArrowFunctionParameter({ ...config, parameter: value })
+						buildArrowFunctionParameter$impl({ ...config, parameter: value })
 				}
 			},
 			{
@@ -8561,6 +8673,35 @@ export function buildArrowFunctionParameter(config: T.ArrowFunctionParameter.Con
 		methodsEngine
 	);
 }
+
+export const buildArrowFunctionParameter = attachProps(buildArrowFunctionParameter$impl, {
+	reservedIdentifier: (
+		text:
+			| 'declare'
+			| 'namespace'
+			| 'type'
+			| 'public'
+			| 'private'
+			| 'protected'
+			| 'override'
+			| 'readonly'
+			| 'module'
+			| 'any'
+			| 'number'
+			| 'boolean'
+			| 'string'
+			| 'symbol'
+			| 'export'
+			| 'object'
+			| 'new'
+			| 'get'
+			| 'set'
+			| 'async'
+			| 'static'
+			| 'let'
+	) => buildArrowFunctionParameter$impl({ parameter: buildReservedIdentifier(text) as T.ReservedIdentifier }),
+	identifier: (text: string) => buildArrowFunctionParameter$impl({ parameter: buildIdentifier(text) as T.Identifier })
+});
 
 export type ArrowFunctionUCallSignatureBuilt = T.ArrowFunctionUCallSignature & {
 	readonly $source: 2;
@@ -8851,7 +8992,7 @@ export type ExportStatementDefaultStarFromBuilt = T.ExportStatementDefaultStarFr
 	};
 } & _NodeMethods;
 
-export function buildExportStatementDefaultStarFrom(
+function buildExportStatementDefaultStarFrom$impl(
 	config: T.ExportStatementDefaultStarFrom.Config
 ): ExportStatementDefaultStarFromBuilt {
 	const _source = config.source;
@@ -8863,7 +9004,7 @@ export function buildExportStatementDefaultStarFrom(
 				$named: true as const,
 				_source,
 				$with: {
-					source: (value: T.String) => buildExportStatementDefaultStarFrom({ ...config, source: value })
+					source: (value: T.String) => buildExportStatementDefaultStarFrom$impl({ ...config, source: value })
 				}
 			},
 			{
@@ -8873,6 +9014,13 @@ export function buildExportStatementDefaultStarFrom(
 		methodsEngine
 	);
 }
+
+export const buildExportStatementDefaultStarFrom = attachProps(buildExportStatementDefaultStarFrom$impl, {
+	double: (...args: Parameters<typeof buildString.double>) =>
+		buildExportStatementDefaultStarFrom$impl({ source: buildString.double(...args) as T.String }),
+	single: (...args: Parameters<typeof buildString.single>) =>
+		buildExportStatementDefaultStarFrom$impl({ source: buildString.single(...args) as T.String })
+});
 
 export type ExportStatementDefaultNsFromBuilt = T.ExportStatementDefaultNsFrom & {
 	readonly $source: 2;
@@ -8956,7 +9104,7 @@ export type ExportStatementDefaultDefaultKwBuilt = T.ExportStatementDefaultDefau
 	};
 } & _NodeMethods;
 
-export function buildExportStatementDefaultDefaultKw(
+function buildExportStatementDefaultDefaultKw$impl(
 	config: T.ExportStatementDefaultDefaultKw.Config
 ): ExportStatementDefaultDefaultKwBuilt {
 	const _content = config.content;
@@ -8969,7 +9117,7 @@ export function buildExportStatementDefaultDefaultKw(
 				_content,
 				$with: {
 					content: (value: T.ExportStatementDefaultValue | T.Declaration) =>
-						buildExportStatementDefaultDefaultKw({ ...config, content: value })
+						buildExportStatementDefaultDefaultKw$impl({ ...config, content: value })
 				}
 			},
 			{
@@ -8979,6 +9127,13 @@ export function buildExportStatementDefaultDefaultKw(
 		methodsEngine
 	);
 }
+
+export const buildExportStatementDefaultDefaultKw = attachProps(buildExportStatementDefaultDefaultKw$impl, {
+	exportStatementDefaultValue: (config: T.ExportStatementDefaultValue.Config) =>
+		buildExportStatementDefaultDefaultKw$impl({
+			content: buildExportStatementDefaultValue(config) as T.ExportStatementDefaultValue
+		})
+});
 
 export type ExportStatementDefaultValueBuilt = T.ExportStatementDefaultValue & {
 	readonly $source: 2;
@@ -9071,12 +9226,12 @@ export type ClassBodyMethodSigBuilt = T.ClassBodyMethodSig & {
 	readonly $with: {
 		methodSignature(value: T.MethodSignature): ClassBodyMethodSigBuilt;
 		terminator(
-			value: NonNullable<Parameters<typeof buildClassBodyMethodSig>[0]>['terminator']
+			value: NonNullable<Parameters<typeof buildClassBodyMethodSig$impl>[0]>['terminator']
 		): ClassBodyMethodSigBuilt;
 	};
 } & _NodeMethods;
 
-export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config): ClassBodyMethodSigBuilt {
+function buildClassBodyMethodSig$impl(config: T.ClassBodyMethodSig.Config): ClassBodyMethodSigBuilt {
 	const _method_signature = config.methodSignature;
 	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const,
@@ -9091,9 +9246,10 @@ export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config): Cl
 				_method_signature,
 				_terminator,
 				$with: {
-					methodSignature: (value: T.MethodSignature) => buildClassBodyMethodSig({ ...config, methodSignature: value }),
-					terminator: (value: NonNullable<Parameters<typeof buildClassBodyMethodSig>[0]>['terminator']) =>
-						buildClassBodyMethodSig({ ...config, terminator: value })
+					methodSignature: (value: T.MethodSignature) =>
+						buildClassBodyMethodSig$impl({ ...config, methodSignature: value }),
+					terminator: (value: NonNullable<Parameters<typeof buildClassBodyMethodSig$impl>[0]>['terminator']) =>
+						buildClassBodyMethodSig$impl({ ...config, terminator: value })
 				}
 			},
 			{
@@ -9104,6 +9260,15 @@ export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config): Cl
 		methodsEngine
 	);
 }
+
+export const buildClassBodyMethodSig = attachProps(buildClassBodyMethodSig$impl, {
+	get: (...args: Parameters<typeof buildMethodSignature.get>) =>
+		buildClassBodyMethodSig$impl({ methodSignature: buildMethodSignature.get(...args) as T.MethodSignature }),
+	set: (...args: Parameters<typeof buildMethodSignature.set>) =>
+		buildClassBodyMethodSig$impl({ methodSignature: buildMethodSignature.set(...args) as T.MethodSignature }),
+	star: (...args: Parameters<typeof buildMethodSignature.star>) =>
+		buildClassBodyMethodSig$impl({ methodSignature: buildMethodSignature.star(...args) as T.MethodSignature })
+});
 
 export type ClassBodyMemberBuilt = T.ClassBodyMember & {
 	readonly $source: 2;
@@ -9156,7 +9321,7 @@ export type ForHeaderLhsBuilt = T.ForHeaderLhs & {
 	};
 } & _NodeMethods;
 
-export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): ForHeaderLhsBuilt {
+function buildForHeaderLhs$impl(config: T.ForHeaderLhs.Config): ForHeaderLhsBuilt {
 	const _left = config.left;
 	return withMethods(
 		withAccessors(
@@ -9166,7 +9331,8 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): ForHeaderLhsBu
 				$named: true as const,
 				_left,
 				$with: {
-					left: (value: T._LhsExpression | T.ParenthesizedExpression) => buildForHeaderLhs({ ...config, left: value })
+					left: (value: T._LhsExpression | T.ParenthesizedExpression) =>
+						buildForHeaderLhs$impl({ ...config, left: value })
 				}
 			},
 			{
@@ -9176,6 +9342,33 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): ForHeaderLhsBu
 		methodsEngine
 	);
 }
+
+export const buildForHeaderLhs = attachProps(buildForHeaderLhs$impl, {
+	parenthesizedExpression: (
+		child:
+			| T.ParenthesizedExpressionTyped
+			| T.SequenceExpression
+			| T.Identifier
+			| T.DecoratorMemberExpression
+			| T.DecoratorCallExpression
+	) => buildForHeaderLhs$impl({ left: buildParenthesizedExpression(child) as T.ParenthesizedExpression }),
+	typed: (...args: Parameters<typeof buildParenthesizedExpression.typed>) =>
+		buildForHeaderLhs$impl({ left: buildParenthesizedExpression.typed(...args) as T.ParenthesizedExpression }),
+	sequenceExpression: (...args: Parameters<typeof buildParenthesizedExpression.sequenceExpression>) =>
+		buildForHeaderLhs$impl({
+			left: buildParenthesizedExpression.sequenceExpression(...args) as T.ParenthesizedExpression
+		}),
+	identifier: (...args: Parameters<typeof buildParenthesizedExpression.identifier>) =>
+		buildForHeaderLhs$impl({ left: buildParenthesizedExpression.identifier(...args) as T.ParenthesizedExpression }),
+	decoratorMemberExpression: (...args: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>) =>
+		buildForHeaderLhs$impl({
+			left: buildParenthesizedExpression.decoratorMemberExpression(...args) as T.ParenthesizedExpression
+		}),
+	decoratorCallExpression: (...args: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>) =>
+		buildForHeaderLhs$impl({
+			left: buildParenthesizedExpression.decoratorCallExpression(...args) as T.ParenthesizedExpression
+		})
+});
 
 export type ForHeaderVarKindBuilt = T.ForHeaderVarKind & {
 	readonly $source: 2;

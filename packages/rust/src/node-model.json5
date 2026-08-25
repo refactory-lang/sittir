@@ -4784,7 +4784,48 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "block",
+          "via": "form",
+          "slot": "value",
+          "childKind": "block",
+          "path": []
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "value",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "negativeLiteral",
+          "via": "form",
+          "slot": "value",
+          "childKind": "negative_literal",
+          "path": []
+        },
+        {
+          "name": "integerLiteral",
+          "via": "form",
+          "slot": "value",
+          "childKind": "negative_literal",
+          "path": [
+            "integerLiteral"
+          ]
+        },
+        {
+          "name": "floatLiteral",
+          "via": "form",
+          "slot": "value",
+          "childKind": "negative_literal",
+          "path": [
+            "floatLiteral"
+          ]
+        }
+      ]
     },
     {
       "kind": "_declaration_statement",
@@ -5456,6 +5497,22 @@
       "factoryShape": "config",
       "factoryFields": [
         "trait"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "scopedTypeIdentifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "scoped_type_identifier",
+          "path": []
+        }
       ]
     },
     {
@@ -5550,6 +5607,29 @@
       "factoryShape": "config",
       "factoryFields": [
         "trait"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "scopedTypeIdentifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "scoped_type_identifier",
+          "path": []
+        },
+        {
+          "name": "genericType",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "generic_type",
+          "path": []
+        }
       ]
     },
     {
@@ -5605,6 +5685,29 @@
       "factoryShape": "config",
       "factoryFields": [
         "trait"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "scopedTypeIdentifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "scoped_type_identifier",
+          "path": []
+        },
+        {
+          "name": "genericType",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "generic_type",
+          "path": []
+        }
       ]
     },
     {
@@ -8315,6 +8418,44 @@
       "forwardsTo": "_visibility_modifier_group",
       "factoryFields": [
         "visibility_modifier_group"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "self"
+          ]
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "super"
+          ]
+        },
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "crate"
+          ]
+        },
+        {
+          "name": "visibilityModifierInPath",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "visibilityModifierInPath"
+          ]
+        }
       ]
     },
     {
@@ -8350,7 +8491,45 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "self"
+          ]
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "super"
+          ]
+        },
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "crate"
+          ]
+        },
+        {
+          "name": "visibilityModifierInPath",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "visibilityModifierInPath"
+          ]
+        }
+      ]
     },
     {
       "kind": "_where_predicates",
@@ -9816,6 +9995,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "qualifiedType",
+          "via": "form",
+          "slot": "content",
+          "childKind": "qualified_type",
+          "path": []
+        }
       ]
     },
     {
@@ -10295,6 +10483,33 @@
           "slot": "content",
           "childKind": "line_comment",
           "path": []
+        },
+        {
+          "name": "regularDslash",
+          "via": "form",
+          "slot": "content",
+          "childKind": "line_comment",
+          "path": [
+            "regularDslash"
+          ]
+        },
+        {
+          "name": "doc",
+          "via": "form",
+          "slot": "content",
+          "childKind": "line_comment",
+          "path": [
+            "doc"
+          ]
+        },
+        {
+          "name": "content",
+          "via": "form",
+          "slot": "content",
+          "childKind": "line_comment",
+          "path": [
+            "content"
+          ]
         },
         {
           "name": "blockComment",
@@ -10995,6 +11210,50 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "higherRankedTraitBound",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "higher_ranked_trait_bound",
+          "path": []
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "scopedTypeIdentifier",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "scoped_type_identifier",
+          "path": []
+        },
+        {
+          "name": "genericType",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "generic_type",
+          "path": []
+        },
+        {
+          "name": "functionType",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "function_type",
+          "path": []
+        },
+        {
+          "name": "tupleType",
+          "via": "form",
+          "slot": "trait",
+          "childKind": "tuple_type",
+          "path": []
+        }
       ]
     },
     {
@@ -11455,6 +11714,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "withSemi",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_expression_statement_with_semi",
+          "path": []
+        }
       ]
     },
     {
@@ -11598,6 +11866,17 @@
       "forwardsTo": "string_literal",
       "factoryFields": [
         "string_literal"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "open",
+          "via": "form",
+          "slot": "string_literal",
+          "childKind": "string_literal",
+          "path": [
+            "open"
+          ]
+        }
       ]
     },
     {
@@ -12018,6 +12297,22 @@
       "factoryShape": "config",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "named",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_field_pattern_named",
+          "path": []
+        }
       ]
     },
     {
@@ -14300,6 +14595,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "regularDslash",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_line_comment_regular_dslash",
+          "path": []
+        },
+        {
+          "name": "doc",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_line_comment_doc",
+          "path": []
+        },
+        {
+          "name": "content",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_line_comment_content",
+          "path": []
+        }
       ]
     },
     {
@@ -15129,6 +15447,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "integerLiteral",
+          "via": "form",
+          "slot": "value",
+          "childKind": "integer_literal",
+          "path": []
+        },
+        {
+          "name": "floatLiteral",
+          "via": "form",
+          "slot": "value",
+          "childKind": "float_literal",
+          "path": []
+        }
       ]
     },
     {
@@ -15689,6 +16023,56 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "binary",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_expression_binary",
+          "path": []
+        },
+        {
+          "name": "dotDot",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_expression_binary",
+          "path": [
+            "dotDot"
+          ]
+        },
+        {
+          "name": "dotDotDot",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_expression_binary",
+          "path": [
+            "dotDotDot"
+          ]
+        },
+        {
+          "name": "dotDotEq",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_expression_binary",
+          "path": [
+            "dotDotEq"
+          ]
+        },
+        {
+          "name": "postfix",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_expression_postfix",
+          "path": []
+        },
+        {
+          "name": "prefix",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_expression_prefix",
+          "path": []
+        }
       ]
     },
     {
@@ -17169,6 +17553,15 @@
       "factoryFields": [
         "string_open",
         "elements"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "open",
+          "via": "form",
+          "slot": "string_open",
+          "childKind": "_string_literal_open",
+          "path": []
+        }
       ]
     },
     {
@@ -19692,6 +20085,33 @@
           "slot": "content",
           "childKind": "_visibility_modifier_pub",
           "path": []
+        },
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": [
+            "self"
+          ]
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": [
+            "super"
+          ]
+        },
+        {
+          "name": "visibilityModifierInPath",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": [
+            "visibilityModifierInPath"
+          ]
         }
       ]
     },

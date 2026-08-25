@@ -11,7 +11,7 @@ type _FromFieldInput = unknown;
 
 export const _fromMap = {
 	source_file: coerceToSourceFile,
-	expression_statement: coerceToExpressionStatement,
+	expression_statement: coerceToExpressionStatement$impl,
 	macro_definition: coerceToMacroDefinition,
 	macro_rule: coerceToMacroRule,
 	token_tree_pattern: coerceToTokenTreePattern$impl,
@@ -63,9 +63,9 @@ export const _fromMap = {
 	self_parameter: coerceToSelfParameter,
 	variadic_parameter: coerceToVariadicParameter,
 	parameter: coerceToParameter,
-	extern_modifier: coerceToExternModifier,
+	extern_modifier: coerceToExternModifier$impl,
 	visibility_modifier: coerceToVisibilityModifier$impl,
-	bracketed_type: coerceToBracketedType,
+	bracketed_type: coerceToBracketedType$impl,
 	qualified_type: coerceToQualifiedType,
 	lifetime: coerceToLifetime,
 	array_type: coerceToArrayType,
@@ -83,14 +83,14 @@ export const _fromMap = {
 	reference_type: coerceToReferenceType,
 	pointer_type: coerceToPointerType,
 	abstract_type: coerceToAbstractType,
-	dynamic_type: coerceToDynamicType,
+	dynamic_type: coerceToDynamicType$impl,
 	mutable_specifier: coerceToMutableSpecifier,
 	macro_invocation: coerceToMacroInvocation,
 	delim_token_tree: coerceToDelimTokenTree$impl,
 	scoped_identifier: coerceToScopedIdentifier,
 	scoped_type_identifier_in_expression_position: coerceToScopedTypeIdentifierInExpressionPosition,
 	scoped_type_identifier: coerceToScopedTypeIdentifier,
-	range_expression: coerceToRangeExpression,
+	range_expression: coerceToRangeExpression$impl,
 	unary_expression: coerceToUnaryExpression$impl,
 	try_expression: coerceToTryExpression,
 	reference_expression: coerceToReferenceExpression,
@@ -141,21 +141,21 @@ export const _fromMap = {
 	slice_pattern: coerceToSlicePattern,
 	tuple_struct_pattern: coerceToTupleStructPattern,
 	struct_pattern: coerceToStructPattern,
-	field_pattern: coerceToFieldPattern,
+	field_pattern: coerceToFieldPattern$impl,
 	mut_pattern: coerceToMutPattern,
 	range_pattern: coerceToRangePattern$impl,
 	ref_pattern: coerceToRefPattern,
 	captured_pattern: coerceToCapturedPattern,
 	reference_pattern: coerceToReferencePattern,
 	or_pattern: coerceToOrPattern$impl,
-	negative_literal: coerceToNegativeLiteral,
+	negative_literal: coerceToNegativeLiteral$impl,
 	integer_literal: coerceToIntegerLiteral,
-	string_literal: coerceToStringLiteral,
+	string_literal: coerceToStringLiteral$impl,
 	raw_string_literal: coerceToRawStringLiteral,
 	char_literal: coerceToCharLiteral,
 	escape_sequence: coerceToEscapeSequence,
 	boolean_literal: coerceToBooleanLiteral,
-	line_comment: coerceToLineComment,
+	line_comment: coerceToLineComment$impl,
 	block_comment: coerceToBlockComment,
 	identifier: coerceToIdentifier,
 	shebang: coerceToShebang,
@@ -1042,7 +1042,7 @@ export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeo
 	});
 }
 
-export function coerceToExpressionStatement(
+function coerceToExpressionStatement$impl(
 	input?: (T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) | T.ExpressionStatement
 ): ReturnType<typeof F.buildExpressionStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.ExpressionStatement) {
@@ -1054,6 +1054,12 @@ export function coerceToExpressionStatement(
 		_resolveOne<T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock>(input, _K0, _K2)
 	);
 }
+
+export const coerceToExpressionStatement: typeof coerceToExpressionStatement$impl & {
+	withSemi: typeof F.buildExpressionStatement.withSemi;
+} = attachProps(coerceToExpressionStatement$impl, {
+	withSemi: F.buildExpressionStatement.withSemi
+});
 
 export function coerceToMacroDefinition(input: T.MacroDefinition.Loose): ReturnType<typeof F.buildMacroDefinition> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMacroDefinition>;
@@ -1830,7 +1836,7 @@ export function coerceToParameter(input: T.Parameter.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToExternModifier(input?: T.ExternModifier.Loose): ReturnType<typeof F.buildExternModifier> {
+function coerceToExternModifier$impl(input?: T.ExternModifier.Loose): ReturnType<typeof F.buildExternModifier> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ExternModifier)
 		return input as unknown as ReturnType<typeof F.buildExternModifier>;
 	return F.buildExternModifier(
@@ -1842,6 +1848,12 @@ export function coerceToExternModifier(input?: T.ExternModifier.Loose): ReturnTy
 		)
 	);
 }
+
+export const coerceToExternModifier: typeof coerceToExternModifier$impl & {
+	open: typeof F.buildExternModifier.open;
+} = attachProps(coerceToExternModifier$impl, {
+	open: F.buildExternModifier.open
+});
 
 function coerceToVisibilityModifier$impl(
 	input?: (T.Crate | T.VisibilityModifierPub) | T.VisibilityModifier
@@ -1857,12 +1869,18 @@ function coerceToVisibilityModifier$impl(
 export const coerceToVisibilityModifier: typeof coerceToVisibilityModifier$impl & {
 	crate: typeof F.buildVisibilityModifier.crate;
 	pub: typeof F.buildVisibilityModifier.pub;
+	self: typeof F.buildVisibilityModifier.self;
+	super: typeof F.buildVisibilityModifier.super;
+	visibilityModifierInPath: typeof F.buildVisibilityModifier.visibilityModifierInPath;
 } = attachProps(coerceToVisibilityModifier$impl, {
 	crate: F.buildVisibilityModifier.crate,
-	pub: F.buildVisibilityModifier.pub
+	pub: F.buildVisibilityModifier.pub,
+	self: F.buildVisibilityModifier.self,
+	super: F.buildVisibilityModifier.super,
+	visibilityModifierInPath: F.buildVisibilityModifier.visibilityModifierInPath
 });
 
-export function coerceToBracketedType(
+function coerceToBracketedType$impl(
 	input?: (T._Type | T.QualifiedType) | T.BracketedType
 ): ReturnType<typeof F.buildBracketedType> {
 	if (isNodeData(input) && input.$type === TSKindId.BracketedType) {
@@ -1872,6 +1890,12 @@ export function coerceToBracketedType(
 	}
 	return F.buildBracketedType(_resolveOne<T._Type | T.QualifiedType>(input, _K16, _K31));
 }
+
+export const coerceToBracketedType: typeof coerceToBracketedType$impl & {
+	qualifiedType: typeof F.buildBracketedType.qualifiedType;
+} = attachProps(coerceToBracketedType$impl, {
+	qualifiedType: F.buildBracketedType.qualifiedType
+});
 
 export function coerceToQualifiedType(input: T.QualifiedType.Loose): ReturnType<typeof F.buildQualifiedType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildQualifiedType>;
@@ -2096,7 +2120,7 @@ export function coerceToAbstractType(input: T.AbstractType.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToDynamicType(input: T.DynamicType.Loose): ReturnType<typeof F.buildDynamicType> {
+function coerceToDynamicType$impl(input: T.DynamicType.Loose): ReturnType<typeof F.buildDynamicType> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DynamicType)
 		return input as unknown as ReturnType<typeof F.buildDynamicType>;
 	return F.buildDynamicType(
@@ -2113,6 +2137,22 @@ export function coerceToDynamicType(input: T.DynamicType.Loose): ReturnType<type
 		)
 	);
 }
+
+export const coerceToDynamicType: typeof coerceToDynamicType$impl & {
+	higherRankedTraitBound: typeof F.buildDynamicType.higherRankedTraitBound;
+	identifier: typeof F.buildDynamicType.identifier;
+	scopedTypeIdentifier: typeof F.buildDynamicType.scopedTypeIdentifier;
+	genericType: typeof F.buildDynamicType.genericType;
+	functionType: typeof F.buildDynamicType.functionType;
+	tupleType: typeof F.buildDynamicType.tupleType;
+} = attachProps(coerceToDynamicType$impl, {
+	higherRankedTraitBound: F.buildDynamicType.higherRankedTraitBound,
+	identifier: F.buildDynamicType.identifier,
+	scopedTypeIdentifier: F.buildDynamicType.scopedTypeIdentifier,
+	genericType: F.buildDynamicType.genericType,
+	functionType: F.buildDynamicType.functionType,
+	tupleType: F.buildDynamicType.tupleType
+});
 
 export function coerceToMutableSpecifier(input?: T.MutableSpecifier): ReturnType<typeof F.buildMutableSpecifier> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMutableSpecifier>;
@@ -2190,7 +2230,7 @@ export function coerceToScopedTypeIdentifier(
 	});
 }
 
-export function coerceToRangeExpression(
+function coerceToRangeExpression$impl(
 	input?: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') | T.RangeExpression
 ): ReturnType<typeof F.buildRangeExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.RangeExpression) {
@@ -2202,6 +2242,22 @@ export function coerceToRangeExpression(
 		_resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(input, _K0, _K44)
 	);
 }
+
+export const coerceToRangeExpression: typeof coerceToRangeExpression$impl & {
+	binary: typeof F.buildRangeExpression.binary;
+	dotDot: typeof F.buildRangeExpression.dotDot;
+	dotDotDot: typeof F.buildRangeExpression.dotDotDot;
+	dotDotEq: typeof F.buildRangeExpression.dotDotEq;
+	postfix: typeof F.buildRangeExpression.postfix;
+	prefix: typeof F.buildRangeExpression.prefix;
+} = attachProps(coerceToRangeExpression$impl, {
+	binary: F.buildRangeExpression.binary,
+	dotDot: F.buildRangeExpression.dotDot,
+	dotDotDot: F.buildRangeExpression.dotDotDot,
+	dotDotEq: F.buildRangeExpression.dotDotEq,
+	postfix: F.buildRangeExpression.postfix,
+	prefix: F.buildRangeExpression.prefix
+});
 
 function coerceToUnaryExpression$impl(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnaryExpression>;
@@ -2968,7 +3024,7 @@ export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<
 	});
 }
 
-export function coerceToFieldPattern(input: T.FieldPattern.Loose): ReturnType<typeof F.buildFieldPattern> {
+function coerceToFieldPattern$impl(input: T.FieldPattern.Loose): ReturnType<typeof F.buildFieldPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildFieldPattern>;
 	return F.buildFieldPattern({
 		refMarker: _resolveBooleanKeyword(input.refMarker),
@@ -2980,6 +3036,14 @@ export function coerceToFieldPattern(input: T.FieldPattern.Loose): ReturnType<ty
 		)
 	});
 }
+
+export const coerceToFieldPattern: typeof coerceToFieldPattern$impl & {
+	identifier: typeof F.buildFieldPattern.identifier;
+	named: typeof F.buildFieldPattern.named;
+} = attachProps(coerceToFieldPattern$impl, {
+	identifier: F.buildFieldPattern.identifier,
+	named: F.buildFieldPattern.named
+});
 
 export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof F.buildMutPattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MutPattern)
@@ -3075,7 +3139,7 @@ export const coerceToOrPattern: typeof coerceToOrPattern$impl & {
 	prefix: F.buildOrPattern.prefix
 });
 
-export function coerceToNegativeLiteral(input: T.NegativeLiteral.Loose): ReturnType<typeof F.buildNegativeLiteral> {
+function coerceToNegativeLiteral$impl(input: T.NegativeLiteral.Loose): ReturnType<typeof F.buildNegativeLiteral> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NegativeLiteral)
 		return input as unknown as ReturnType<typeof F.buildNegativeLiteral>;
 	return F.buildNegativeLiteral(
@@ -3091,12 +3155,20 @@ export function coerceToNegativeLiteral(input: T.NegativeLiteral.Loose): ReturnT
 	);
 }
 
+export const coerceToNegativeLiteral: typeof coerceToNegativeLiteral$impl & {
+	integerLiteral: typeof F.buildNegativeLiteral.integerLiteral;
+	floatLiteral: typeof F.buildNegativeLiteral.floatLiteral;
+} = attachProps(coerceToNegativeLiteral$impl, {
+	integerLiteral: F.buildNegativeLiteral.integerLiteral,
+	floatLiteral: F.buildNegativeLiteral.floatLiteral
+});
+
 export function coerceToIntegerLiteral(input: string | T.IntegerLiteral): ReturnType<typeof F.buildIntegerLiteral> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIntegerLiteral>;
 	return F.buildIntegerLiteral(input as Parameters<typeof F.buildIntegerLiteral>[0]);
 }
 
-export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
+function coerceToStringLiteral$impl(input: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildStringLiteral>;
 	return F.buildStringLiteral({
 		stringOpen: _requireField(
@@ -3107,6 +3179,12 @@ export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<
 		elements: _resolveMany<T.EscapeSequence | T.StringContent>(input.elements, _K61, _K0)
 	});
 }
+
+export const coerceToStringLiteral: typeof coerceToStringLiteral$impl & {
+	open: typeof F.buildStringLiteral.open;
+} = attachProps(coerceToStringLiteral$impl, {
+	open: F.buildStringLiteral.open
+});
 
 export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
@@ -3144,7 +3222,7 @@ export function coerceToBooleanLiteral(input: string | T.BooleanLiteral): Return
 	return F.buildBooleanLiteral(input as Parameters<typeof F.buildBooleanLiteral>[0]);
 }
 
-export function coerceToLineComment(
+function coerceToLineComment$impl(
 	input?: (T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) | T.LineComment
 ): ReturnType<typeof F.buildLineComment> {
 	if (isNodeData(input) && input.$type === TSKindId.LineComment) {
@@ -3156,6 +3234,16 @@ export function coerceToLineComment(
 		_resolveOne<T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent>(input, _K62, _K63)
 	);
 }
+
+export const coerceToLineComment: typeof coerceToLineComment$impl & {
+	regularDslash: typeof F.buildLineComment.regularDslash;
+	doc: typeof F.buildLineComment.doc;
+	content: typeof F.buildLineComment.content;
+} = attachProps(coerceToLineComment$impl, {
+	regularDslash: F.buildLineComment.regularDslash,
+	doc: F.buildLineComment.doc,
+	content: F.buildLineComment.content
+});
 
 export function coerceToBlockComment(
 	input?: T.BlockCommentArm | T.BlockComment

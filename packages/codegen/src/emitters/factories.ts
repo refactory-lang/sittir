@@ -810,6 +810,12 @@ export function constructorSurface(
 		case 'keyword':
 			// Fixed-text leaf: its factory takes no arguments (`buildCrate()`).
 			return { params: '', args: '' };
+		case 'pattern':
+			// Free-text leaf: its factory takes the raw text.
+			return { params: 'text: string', args: 'text' };
+		case 'enum':
+			// Literal-union leaf: same shape, narrowed to the declared values.
+			return { params: `text: ${buildEnumLiteralUnion(target)}`, args: 'text' };
 		default:
 			return undefined;
 	}
@@ -996,8 +1002,20 @@ function emitFieldCarryingFactory(
 		// surface (its spread form for a list target) rather than
 		// `Parameters<typeof target>`, which would select the target's LAST
 		// overload — the options-first form of a separated list.
-		const rawTargetParams =
-			constructorSurface(forwardTarget, nodeMap, kindEntries)?.params ?? `...args: Parameters<typeof ${targetFn}>`;
+		const targetSurfaceParams = constructorSurface(forwardTarget, nodeMap, kindEntries)?.params;
+		const rawTargetParams = targetSurfaceParams ?? `...args: Parameters<typeof ${targetFn}>`;
+		// Whether the target's own factory accepts a call with no arguments at
+		// all: a parameterless keyword, a lone optional param, or a rest
+		// spread over a possibly-empty list. A non-empty list demands its
+		// first element, and says so on the model — its options-first overload
+		// spells the rest as a plain array, so the surface string alone would
+		// read as empty-admitting.
+		const targetNode = nodeMap.nodes.get(forwardTarget);
+		const targetTakesNoArgs =
+			targetSurfaceParams !== undefined &&
+			!(targetNode?.modelType === 'separatedList' && targetNode.nonEmpty) &&
+			!targetSurfaceParams.includes('NonEmptyArray<') &&
+			(targetSurfaceParams === '' || targetSurfaceParams.startsWith('...') || /^\w+\?:/.test(targetSurfaceParams));
 		// Overload DECLARATIONS cannot carry parameter initializers — a target
 		// surface like `config: Partial<X> = {}` re-declares as `config?: Partial<X>`.
 		const targetParams = rawTargetParams.replace(/(\w+)\??: ([^=]+?) = \{\}/g, '$1?: $2');
@@ -1006,6 +1024,13 @@ function emitFieldCarryingFactory(
 			`${exportKw}function ${fn}(${targetParams}): ReturnType<typeof _${fn}>;`,
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		];
+		if (!directParamOptional && targetTakesNoArgs) {
+			// The forwarded overload admits zero arguments, but the child this
+			// node stores is REQUIRED — passing the missing argument straight
+			// through would store `undefined` in a slot the render transport
+			// demands. The target builds its own empty form instead.
+			wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetFn}() as ${directParamType});`, `  }`);
+		}
 		wrapper.push(
 			// A single non-object argument (undefined = optional-empty; string
 			// = text-collapsed scalar storage; number = scalarized kind-enum
