@@ -51,30 +51,43 @@ Root: the `ir` namespace emitter / `namespacedConstructors` eligibility
 
 | kind | needed for | evidence |
 | --- | --- | --- |
-| `_line_comment_doc` | `///` and `//!` doc comments (rust) | `buildLineCommentDoc` renders `/// hi` and `//! hi`; no `ir` entry |
-| `_attribute_arm` | `#[derive(…)]` arguments (rust) | `buildAttributeArm` renders `#[derive(Debug)]`; no `ir` entry. (`_delim_token_tree_paren` is NOT a gap — `ir.delimTokenTree.paren(…)` already ships) |
-| `_match_arm_with_comma` | `pattern => expr,` (rust) | `buildMatchArmWithComma` renders `x,`; no `ir` entry |
-| `_expression_statement_with_semi` | `call();` (rust) | `buildExpressionStatementWithSemi` renders `x;`; no `ir` entry |
-| `_impl_item_positive_clause` | `impl Trait for Type` (rust) | `buildImplItemPositiveClause` exists; no `ir` entry |
-| `_impl_item_body` | any `impl` body (rust) | factory exists; no `ir` entry |
+| `_match_arm_with_comma` | `pattern => expr,` (rust) | `buildMatchArmWithComma` renders `x,`; `ir.matchArm` exposes only `from,strict` — no `withComma` form |
+| `_attribute_arm` | `#[derive(…)]` arguments (rust) | `buildAttributeArm` renders `#[derive(Debug)]`; `ir.attribute` exposes only `from,strict` |
+| `_impl_item_positive_clause` | `impl Trait for Type` (rust) | builder exists; `ir.implItem` exposes only `from,strict` |
+| `_impl_item_body` | any `impl` body (rust) | builder exists; `ir.implItem` exposes only `from,strict` |
 | `_import_list` element | `import argparse` (python) | coercer cannot resolve; element wrapper has no public constructor |
 | `_import_statement_arm` | any `import` (typescript) | coercer cannot resolve; no public constructor |
 | `_variable_declarator_arm1/2` | `let x = y` (typescript) | coercer cannot resolve; no public constructor |
 | `_call_expression_call` | any call (typescript) | coercer cannot resolve; no public constructor |
 | `_export_statement_default` | any `export` (typescript) | coercer cannot resolve; no public constructor |
 
+**Retracted rows — reachable all along, via the namespaced form.** The original
+probe only tried the coercer (`ir.lineComment(…)`) and the `{ kind: … }`
+config, never `ir.<parent>.<form>(…)`, and wrongly concluded these were
+unreachable:
+
+| retracted | actually ships | renders |
+| --- | --- | --- |
+| `_line_comment_doc` | `ir.lineComment.doc({ outer: true, doc })` / `{ inner: true }` | `/// hi`, `//! hi` |
+| `_expression_statement_with_semi` | `ir.expressionStatement.withSemi({ expression })` | `edits.sort_by();` |
+| `_visibility_modifier_in_path` | `ir.visibilityModifier.visibilityModifierInPath(…)` | `pub(in crate)` |
+| `_delim_token_tree_paren` | `ir.delimTokenTree.paren(…)` | — |
+
+`examples/17-dogfood-rust.ts` now uses the real spellings for all four.
+
+The lesson is procedural: a kind is only unreachable once
+`ir.<parent>.<form>` has been enumerated (`Object.keys(ir.<parent>)`), not
+merely once the coercer has refused it.
+
 These are artefact kinds that should be constructed through their parent
 rather than exposed as top-level builders — but `factoryInline` is not the
 mechanism, since it only removes an entry a hidden kind never had. Measured
 against the live model, the six rust kinds split three ways:
 
-- **`namespacedConstructors` eligibility** (`_line_comment_doc`,
-  `_expression_statement_with_semi`, `_match_arm_with_comma`, and the
-  `visibility_modifier` chain): three predicates block them — a form arm must
-  currently be a compound or keyword (excluding `pattern`/`enum` leaves), a
-  supertype sibling arm vetoes the whole slot, and a single-kind "forwarded
-  shape" slot yields no namespace to flatten upward. Fixing those reaches all
-  four as `ir.<parent>.<form>(…)` with zero new `ir` entries.
+- **`namespacedConstructors` eligibility** (`_match_arm_with_comma`): its
+  parent exposes no form, so a predicate blocks it. Re-measure which one before
+  changing any predicate — three of the four kinds originally attributed here
+  turned out to already ship.
 - **Class B `from()` nested config** (`_impl_item_positive_clause`,
   `_impl_item_body`, `_attribute_arm`): multi-slot parents where forms do not
   apply, because form slots require every other user slot to be optional.
