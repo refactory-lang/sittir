@@ -63,11 +63,22 @@ Root: the `ir` namespace emitter / `namespacedConstructors` eligibility
 | `_call_expression_call` | any call (typescript) | coercer cannot resolve; no public constructor |
 | `_export_statement_default` | any `export` (typescript) | coercer cannot resolve; no public constructor |
 
-Note the overlap with `factoryInline` (plan Task 7): several of these are
-exactly the artefact kinds that should be constructed through their parent's
-config rather than exposed as top-level builders. Fix the two together —
-decide per kind whether it becomes an `ir` entry or a `factoryInline` nested
-config, and no kind ends up with neither.
+These are artefact kinds that should be constructed through their parent
+rather than exposed as top-level builders — but `factoryInline` is not the
+mechanism, since it only removes an entry a hidden kind never had. Measured
+against the live model, the six rust kinds split three ways:
+
+- **`namespacedConstructors` eligibility** (`_line_comment_doc`,
+  `_expression_statement_with_semi`, `_match_arm_with_comma`, and the
+  `visibility_modifier` chain): three predicates block them — a form arm must
+  currently be a compound or keyword (excluding `pattern`/`enum` leaves), a
+  supertype sibling arm vetoes the whole slot, and a single-kind "forwarded
+  shape" slot yields no namespace to flatten upward. Fixing those reaches all
+  four as `ir.<parent>.<form>(…)` with zero new `ir` entries.
+- **Class B `from()` nested config** (`_impl_item_positive_clause`,
+  `_impl_item_body`, `_attribute_arm`): multi-slot parents where forms do not
+  apply, because form slots require every other user slot to be optional.
+- **Already reachable** (`_delim_token_tree_paren`): no work.
 
 ## Class B — missing loose form (coercion)
 
@@ -125,9 +136,11 @@ any dogfood example back under the typecheck gate.
 
 ## Suggested order
 
-1. **Class A exposure** — one emitter change (`ir` entries and/or
-   `factoryInline` nesting per kind), and it retires most of rust's inventory.
-   Do it with plan Task 7 so no kind falls between the two mechanisms.
+1. **Class A eligibility** — three bounded predicate changes in
+   `namespacedConstructors`, each derivable from the model and testable in
+   isolation. Retires four of the six rust kinds as `ir.<parent>.<form>(…)`
+   with zero new `ir` entries, so the shrink-only ratchet holds. The three
+   multi-slot residuals fall to class B below.
 2. **Class D python** — a module that cannot hold a statement and a function
    that cannot hold a body are the most basic failures found; nothing about the
    Python surface is usable until they close.
