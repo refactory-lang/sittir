@@ -98,10 +98,10 @@ describe('namespacedConstructors — derivation', () => {
 		}
 	});
 
-	it('lets a direct arm outrank the same name hoisted from a child', () => {
+	it("stops the hoist at an ambiguity but keeps the parent's own arm", () => {
 		// `_wrapper_b`'s members are `let` and `const`; a sibling arm minted
-		// as `_wrapper_let` claims `let` too. Both fill `content`, but the
-		// direct arm is the value the slot takes here, so it keeps the name.
+		// as `_wrapper_let` claims `let` too. The hoist stops, the direct arm
+		// — never hoisted — keeps the name, and the clash is still reported.
 		const nodeMap = makeFormNodeMap();
 		const nodes = new Map(nodeMap.nodes);
 		nodes.set(
@@ -126,7 +126,7 @@ describe('namespacedConstructors — derivation', () => {
 		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
 		expect(entries.map((e) => e.name)).toEqual(['let', 'b', 'const']);
 		expect(entries.find((e) => e.name === 'let')).toMatchObject({ childKind: '_wrapper_let', path: [] });
-		expect(ambiguous).toEqual([]);
+		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', '_wrapper_b.let'], kept: '_wrapper_let' }]);
 	});
 
 	it('drops a name two direct arms claim and reports both', () => {

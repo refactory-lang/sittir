@@ -2423,7 +2423,7 @@ function _buildExternModifier$impl(stringLiteral?: T.ExternModifier.Config['stri
 }
 
 export const buildExternModifier = attachProps(buildExternModifier$impl, {
-	open: (...args: Parameters<typeof buildStringLiteral.open>) =>
+	stringLiteralOpen: (...args: Parameters<typeof buildStringLiteral.open>) =>
 		buildExternModifier$impl(buildStringLiteral.open(...args) as T.StringLiteral)
 });
 
@@ -2466,7 +2466,7 @@ export const buildVisibilityModifier = attachProps(buildVisibilityModifier$impl,
 		buildVisibilityModifier$impl(buildVisibilityModifierPub.self(...args) as T.VisibilityModifierPub),
 	super: (...args: Parameters<typeof buildVisibilityModifierPub.super>) =>
 		buildVisibilityModifier$impl(buildVisibilityModifierPub.super(...args) as T.VisibilityModifierPub),
-	visibilityModifierInPath: (...args: Parameters<typeof buildVisibilityModifierPub.visibilityModifierInPath>) =>
+	inPath: (...args: Parameters<typeof buildVisibilityModifierPub.visibilityModifierInPath>) =>
 		buildVisibilityModifier$impl(
 			buildVisibilityModifierPub.visibilityModifierInPath(...args) as T.VisibilityModifierPub
 		)

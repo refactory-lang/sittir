@@ -50,6 +50,12 @@ export interface FormConstructor {
 	/** Empty: call the child's factory. One name: call that namespaced
 	 *  constructor on the child's factory (a hoisted sub-constructor). */
 	readonly path: readonly string[];
+	/** The kind this constructor ultimately builds — `childKind` for a direct
+	 *  form, the originating arm for a hoisted one. The name is derived from
+	 *  it against whichever parent the constructor is attached to, so a form
+	 *  minted under the TOP parent keeps its authored variant name however
+	 *  many hops it flattens through. */
+	readonly formKind: string;
 }
 
 export interface MemberConstructor {
@@ -64,10 +70,20 @@ export interface MemberConstructor {
 
 export type NamespacedConstructor = FormConstructor | MemberConstructor;
 
+/** A name more than one candidate claims. Flattening stops at the ambiguity:
+ *  no HOISTED candidate takes the name. The parent's own direct arm was never
+ *  hoisted, so when exactly one claimant is one it keeps the name and is named
+ *  in `kept`; otherwise the name goes unclaimed. Reported either way — never a
+ *  silent resolution. */
+export interface NamespacedAmbiguity {
+	readonly name: string;
+	readonly claimants: readonly string[];
+	readonly kept?: string;
+}
+
 export interface NamespacedConstructorSet {
 	readonly entries: readonly NamespacedConstructor[];
-	/** Names claimed by more than one candidate — none of them is emitted. */
-	readonly ambiguous: readonly { readonly name: string; readonly claimants: readonly string[] }[];
+	readonly ambiguous: readonly NamespacedAmbiguity[];
 }
 
 export interface NamespacedConstructorOptions {
@@ -185,16 +201,31 @@ function derive(
 				if (!forwarded) {
 					const name = formName(node.kind, child);
 					candidates.push({
-						entry: { via: 'form', name, slot, childKind: child.kind, childFactory, path: [] },
+						entry: { via: 'form', name, slot, childKind: child.kind, childFactory, path: [], formKind: child.kind },
 						claimant: child.kind
 					});
 				}
 				if (nextVisiting.has(child.kind)) continue;
 				// Sub-constructors flatten upward, recursively: the child's
-				// namespace is already flat, so one level suffices.
+				// namespace is already flat, so one level suffices. A hoisted
+				// FORM is re-named against THIS parent — the arm it builds may
+				// be minted under this kind even though the hop it travelled
+				// through is not, which is how `visibility_modifier`'s `in_path`
+				// keeps its authored name three levels up. A hoisted enum MEMBER
+				// carries the authored member name and is never re-derived.
 				for (const sub of namespacedConstructors(child, nodeMap, options, nextVisiting).entries) {
+					const origin = sub.via === 'form' ? nodeMap.nodes.get(sub.formKind) : undefined;
+					const name = origin === undefined ? sub.name : formName(node.kind, origin);
 					candidates.push({
-						entry: { via: 'form', name: sub.name, slot, childKind: child.kind, childFactory, path: [sub.name] },
+						entry: {
+							via: 'form',
+							name,
+							slot,
+							childKind: child.kind,
+							childFactory,
+							path: [sub.name],
+							formKind: sub.via === 'form' ? sub.formKind : child.kind
+						},
 						claimant: `${child.kind}.${sub.name}`
 					});
 				}
@@ -224,17 +255,24 @@ function derive(
 		else list.push(c);
 	}
 	const entries: NamespacedConstructor[] = [];
-	const ambiguous: { name: string; claimants: string[] }[] = [];
+	const ambiguous: NamespacedAmbiguity[] = [];
 	for (const [name, list] of byName) {
-		// A constructor named for one of this parent's OWN arms outranks one
-		// borrowed from a child's namespace a hop down: both fill the same
-		// slot, but the direct arm is the value the slot takes here. Only
-		// claimants at the same depth cancel each other out — never
-		// first-wins.
-		const own = list.filter((c) => c.entry.via !== 'form' || c.entry.path.length === 0);
-		const contenders = own.length > 0 ? own : list;
-		if (contenders.length === 1) entries.push(contenders[0]!.entry);
-		else ambiguous.push({ name, claimants: contenders.map((c) => c.claimant) });
+		if (list.length === 1) {
+			entries.push(list[0]!.entry);
+			continue;
+		}
+		// Flattening stops at the ambiguity: no hoisted candidate takes the
+		// name. A direct arm of this parent was never hoisted, so one of those
+		// still keeps it — two of them cancel each other exactly as two hoists
+		// do. Reported in every case.
+		const direct = list.filter((c) => c.entry.via !== 'form' || c.entry.path.length === 0);
+		const claimants = list.map((c) => c.claimant);
+		if (direct.length === 1) {
+			entries.push(direct[0]!.entry);
+			ambiguous.push({ name, claimants, kept: direct[0]!.claimant });
+		} else {
+			ambiguous.push({ name, claimants });
+		}
 	}
 	return { entries, ambiguous };
 }

@@ -6085,7 +6085,7 @@
       ],
       "namespacedConstructors": [
         {
-          "name": "double",
+          "name": "stringDouble",
           "via": "form",
           "slot": "source",
           "childKind": "string",
@@ -6094,7 +6094,7 @@
           ]
         },
         {
-          "name": "single",
+          "name": "stringSingle",
           "via": "form",
           "slot": "source",
           "childKind": "string",
@@ -6699,7 +6699,7 @@
           "path": []
         },
         {
-          "name": "typed",
+          "name": "parenthesizedExpressionTyped",
           "via": "form",
           "slot": "left",
           "childKind": "parenthesized_expression",
@@ -6889,7 +6889,7 @@
       "children": [],
       "namespacedConstructors": [
         {
-          "name": "double",
+          "name": "stringDouble",
           "via": "form",
           "slot": "source",
           "childKind": "string",
@@ -6898,7 +6898,7 @@
           ]
         },
         {
-          "name": "single",
+          "name": "stringSingle",
           "via": "form",
           "slot": "source",
           "childKind": "string",
@@ -13059,24 +13059,6 @@
           "slot": "content",
           "childKind": "decorator_parenthesized_expression",
           "path": []
-        },
-        {
-          "name": "decoratorMemberExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_parenthesized_expression",
-          "path": [
-            "decoratorMemberExpression"
-          ]
-        },
-        {
-          "name": "decoratorCallExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_parenthesized_expression",
-          "path": [
-            "decoratorCallExpression"
-          ]
         }
       ]
     },
@@ -14053,7 +14035,7 @@
           "path": []
         },
         {
-          "name": "fromArm",
+          "name": "defaultFromArm",
           "via": "form",
           "slot": "content",
           "childKind": "_export_statement_default",
@@ -14062,7 +14044,7 @@
           ]
         },
         {
-          "name": "declArm",
+          "name": "defaultDeclArm",
           "via": "form",
           "slot": "content",
           "childKind": "_export_statement_default",
@@ -18093,7 +18075,7 @@
           "path": []
         },
         {
-          "name": "double",
+          "name": "stringDouble",
           "via": "form",
           "slot": "content",
           "childKind": "string",
@@ -18102,7 +18084,7 @@
           ]
         },
         {
-          "name": "single",
+          "name": "stringSingle",
           "via": "form",
           "slot": "content",
           "childKind": "string",

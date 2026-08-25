@@ -513,7 +513,7 @@ export const buildExpressionStatement = attachProps(buildExpressionStatement$imp
 	augmentedAssignment: (config: T.AugmentedAssignment.Config) =>
 		buildExpressionStatement$impl(buildAugmentedAssignment(config) as T.AugmentedAssignment),
 	yield: (child?: T.YieldFromClause | T.Expressions) => buildExpressionStatement$impl(buildYield(child) as T.Yield),
-	fromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
+	yieldFromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
 		buildExpressionStatement$impl(buildYield.fromClause(...args) as T.Yield)
 });
 
@@ -3876,7 +3876,7 @@ function buildParenthesizedExpression$impl(child: T.Expression | T.Yield | T.Lis
 
 export const buildParenthesizedExpression = attachProps(buildParenthesizedExpression$impl, {
 	yield: (child?: T.YieldFromClause | T.Expressions) => buildParenthesizedExpression$impl(buildYield(child) as T.Yield),
-	fromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
+	yieldFromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
 		buildParenthesizedExpression$impl(buildYield.fromClause(...args) as T.Yield),
 	listSplat: (expression: T.ListSplat.Config['expression']) =>
 		buildParenthesizedExpression$impl(buildListSplat(expression) as T.ListSplat)
@@ -5643,12 +5643,6 @@ function buildAssignmentType$impl(config: T.AssignmentType.Config): AssignmentTy
 }
 
 export const buildAssignmentType = attachProps(buildAssignmentType$impl, {
-	splatType: (...args: Parameters<typeof buildType.splatType>) =>
-		buildAssignmentType$impl({ type: buildType.splatType(...args) as T.Type }),
-	star: (...args: Parameters<typeof buildType.star>) =>
-		buildAssignmentType$impl({ type: buildType.star(...args) as T.Type }),
-	starStar: (...args: Parameters<typeof buildType.starStar>) =>
-		buildAssignmentType$impl({ type: buildType.starStar(...args) as T.Type }),
 	genericType: (...args: Parameters<typeof buildType.genericType>) =>
 		buildAssignmentType$impl({ type: buildType.genericType(...args) as T.Type }),
 	unionType: (...args: Parameters<typeof buildType.unionType>) =>

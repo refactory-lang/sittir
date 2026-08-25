@@ -1850,9 +1850,9 @@ function coerceToExternModifier$impl(input?: T.ExternModifier.Loose): ReturnType
 }
 
 export const coerceToExternModifier: typeof coerceToExternModifier$impl & {
-	open: typeof F.buildExternModifier.open;
+	stringLiteralOpen: typeof F.buildExternModifier.stringLiteralOpen;
 } = attachProps(coerceToExternModifier$impl, {
-	open: F.buildExternModifier.open
+	stringLiteralOpen: F.buildExternModifier.stringLiteralOpen
 });
 
 function coerceToVisibilityModifier$impl(
@@ -1871,13 +1871,13 @@ export const coerceToVisibilityModifier: typeof coerceToVisibilityModifier$impl 
 	pub: typeof F.buildVisibilityModifier.pub;
 	self: typeof F.buildVisibilityModifier.self;
 	super: typeof F.buildVisibilityModifier.super;
-	visibilityModifierInPath: typeof F.buildVisibilityModifier.visibilityModifierInPath;
+	inPath: typeof F.buildVisibilityModifier.inPath;
 } = attachProps(coerceToVisibilityModifier$impl, {
 	crate: F.buildVisibilityModifier.crate,
 	pub: F.buildVisibilityModifier.pub,
 	self: F.buildVisibilityModifier.self,
 	super: F.buildVisibilityModifier.super,
-	visibilityModifierInPath: F.buildVisibilityModifier.visibilityModifierInPath
+	inPath: F.buildVisibilityModifier.inPath
 });
 
 function coerceToBracketedType$impl(

@@ -1050,11 +1050,11 @@ const _b$parameter: typeof FR.coerceToParameter & {
 const _b$externModifier: typeof FR.coerceToExternModifier & {
 	from: typeof FR.coerceToExternModifier;
 	strict: typeof F.buildExternModifier;
-	open: typeof F.buildExternModifier.open;
+	stringLiteralOpen: typeof F.buildExternModifier.stringLiteralOpen;
 } = attachProps(FR.coerceToExternModifier, {
 	from: FR.coerceToExternModifier,
 	strict: F.buildExternModifier,
-	open: F.buildExternModifier.open
+	stringLiteralOpen: F.buildExternModifier.stringLiteralOpen
 });
 
 const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
@@ -1064,7 +1064,7 @@ const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
 	pub: typeof F.buildVisibilityModifier.pub;
 	self: typeof F.buildVisibilityModifier.self;
 	super: typeof F.buildVisibilityModifier.super;
-	visibilityModifierInPath: typeof F.buildVisibilityModifier.visibilityModifierInPath;
+	inPath: typeof F.buildVisibilityModifier.inPath;
 } = attachProps(FR.coerceToVisibilityModifier, {
 	from: FR.coerceToVisibilityModifier,
 	strict: F.buildVisibilityModifier,
@@ -1072,7 +1072,7 @@ const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
 	pub: F.buildVisibilityModifier.pub,
 	self: F.buildVisibilityModifier.self,
 	super: F.buildVisibilityModifier.super,
-	visibilityModifierInPath: F.buildVisibilityModifier.visibilityModifierInPath
+	inPath: F.buildVisibilityModifier.inPath
 });
 
 const _b$bracketedType: typeof FR.coerceToBracketedType & {

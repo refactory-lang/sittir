@@ -1118,13 +1118,13 @@ export const coerceToExpressionStatement: typeof coerceToExpressionStatement$imp
 	assignment: typeof F.buildExpressionStatement.assignment;
 	augmentedAssignment: typeof F.buildExpressionStatement.augmentedAssignment;
 	yield: typeof F.buildExpressionStatement.yield;
-	fromClause: typeof F.buildExpressionStatement.fromClause;
+	yieldFromClause: typeof F.buildExpressionStatement.yieldFromClause;
 } = attachProps(coerceToExpressionStatement$impl, {
 	tuple: F.buildExpressionStatement.tuple,
 	assignment: F.buildExpressionStatement.assignment,
 	augmentedAssignment: F.buildExpressionStatement.augmentedAssignment,
 	yield: F.buildExpressionStatement.yield,
-	fromClause: F.buildExpressionStatement.fromClause
+	yieldFromClause: F.buildExpressionStatement.yieldFromClause
 });
 
 export function coerceToNamedExpression(input: T.NamedExpression.Loose): ReturnType<typeof F.buildNamedExpression> {
@@ -2461,11 +2461,11 @@ function coerceToParenthesizedExpression$impl(
 
 export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpression$impl & {
 	yield: typeof F.buildParenthesizedExpression.yield;
-	fromClause: typeof F.buildParenthesizedExpression.fromClause;
+	yieldFromClause: typeof F.buildParenthesizedExpression.yieldFromClause;
 	listSplat: typeof F.buildParenthesizedExpression.listSplat;
 } = attachProps(coerceToParenthesizedExpression$impl, {
 	yield: F.buildParenthesizedExpression.yield,
-	fromClause: F.buildParenthesizedExpression.fromClause,
+	yieldFromClause: F.buildParenthesizedExpression.yieldFromClause,
 	listSplat: F.buildParenthesizedExpression.listSplat
 });
 

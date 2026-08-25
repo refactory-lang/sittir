@@ -191,13 +191,17 @@ describe('namespaced constructors reach the arm kinds', () => {
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi({ expression: ir.identifier('x') }).$render()).toBe('x;');
 	});
-	it('reaches an in-path visibility modifier two levels down', () => {
+	// The arm is minted under `visibility_modifier` and reaches it through two
+	// intermediate hops, but the name a caller types is the one the grammar
+	// authored for the form — never the arm's full kind name.
+	it('reaches an in-path visibility modifier under its authored name', () => {
 		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
-		expect(ir.visibilityModifier.visibilityModifierInPath(path).$render()).toBe('pub(in crate::x)');
+		expect(ir.visibilityModifier.inPath(path).$render()).toBe('pub(in crate::x)');
 		expect(ir.visibilityModifier.self().$render()).toBe('pub(self)');
 	});
 	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
-	// `pub(crate)`. The arm this slot takes directly keeps the name.
+	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is
+	// dropped and this kind's own arm — never hoisted — keeps the name.
 	it('keeps the direct arm when a hoisted constructor claims its name', () => {
 		expect(ir.visibilityModifier.crate().$render()).toBe('crate');
 	});

@@ -1054,13 +1054,8 @@ describe('visibility_modifier namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('visibilityModifierInPath builds the parent', () => {
-		const node = ir.visibilityModifier.visibilityModifierInPath({
-			$type: TSKindId.Self,
-			$text: 'self',
-			$source: 2,
-			$named: true
-		} as any);
+	it('inPath builds the parent', () => {
+		const node = ir.visibilityModifier.inPath({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

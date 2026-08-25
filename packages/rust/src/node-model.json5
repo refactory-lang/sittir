@@ -10485,7 +10485,7 @@
           "path": []
         },
         {
-          "name": "regularDslash",
+          "name": "lineCommentRegularDslash",
           "via": "form",
           "slot": "content",
           "childKind": "line_comment",
@@ -10494,7 +10494,7 @@
           ]
         },
         {
-          "name": "doc",
+          "name": "lineCommentDoc",
           "via": "form",
           "slot": "content",
           "childKind": "line_comment",
@@ -10503,7 +10503,7 @@
           ]
         },
         {
-          "name": "content",
+          "name": "lineCommentContent",
           "via": "form",
           "slot": "content",
           "childKind": "line_comment",
@@ -11869,7 +11869,7 @@
       ],
       "namespacedConstructors": [
         {
-          "name": "open",
+          "name": "stringLiteralOpen",
           "via": "form",
           "slot": "string_literal",
           "childKind": "string_literal",
@@ -20105,7 +20105,7 @@
           ]
         },
         {
-          "name": "visibilityModifierInPath",
+          "name": "inPath",
           "via": "form",
           "slot": "content",
           "childKind": "_visibility_modifier_pub",

@@ -278,8 +278,8 @@ describe('expression_statement namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('fromClause builds the parent', () => {
-		const node = ir.expressionStatement.fromClause({
+	it('yieldFromClause builds the parent', () => {
+		const node = ir.expressionStatement.yieldFromClause({
 			$type: TSKindId.Identifier,
 			$text: 'test',
 			$source: 2,
@@ -2414,8 +2414,8 @@ describe('parenthesized_expression namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.ParenthesizedExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('fromClause builds the parent', () => {
-		const node = ir.parenthesizedExpression.fromClause({
+	it('yieldFromClause builds the parent', () => {
+		const node = ir.parenthesizedExpression.yieldFromClause({
 			$type: TSKindId.Identifier,
 			$text: 'test',
 			$source: 2,

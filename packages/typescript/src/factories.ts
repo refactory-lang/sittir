@@ -145,9 +145,9 @@ function buildExportStatement$impl(
 export const buildExportStatement = attachProps(buildExportStatement$impl, {
 	default: (child: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) =>
 		buildExportStatement$impl(buildExportStatementDefault(child) as T.ExportStatementDefault),
-	fromArm: (...args: Parameters<typeof buildExportStatementDefault.fromArm>) =>
+	defaultFromArm: (...args: Parameters<typeof buildExportStatementDefault.fromArm>) =>
 		buildExportStatement$impl(buildExportStatementDefault.fromArm(...args) as T.ExportStatementDefault),
-	declArm: (...args: Parameters<typeof buildExportStatementDefault.declArm>) =>
+	defaultDeclArm: (...args: Parameters<typeof buildExportStatementDefault.declArm>) =>
 		buildExportStatement$impl(buildExportStatementDefault.declArm(...args) as T.ExportStatementDefault),
 	typeExport: (config: T.ExportStatementTypeExport.Config) =>
 		buildExportStatement$impl(buildExportStatementTypeExport(config) as T.ExportStatementTypeExport),
@@ -446,9 +446,9 @@ function buildFromClause$impl(config: T.FromClause.Config): FromClauseBuilt {
 }
 
 export const buildFromClause = attachProps(buildFromClause$impl, {
-	double: (...args: Parameters<typeof buildString.double>) =>
+	stringDouble: (...args: Parameters<typeof buildString.double>) =>
 		buildFromClause$impl({ source: buildString.double(...args) as T.String }),
-	single: (...args: Parameters<typeof buildString.single>) =>
+	stringSingle: (...args: Parameters<typeof buildString.single>) =>
 		buildFromClause$impl({ source: buildString.single(...args) as T.String })
 });
 
@@ -3516,19 +3516,7 @@ export const buildDecorator = attachProps(buildDecorator$impl, {
 	callExpression: (config: T.DecoratorCallExpression.Config) =>
 		buildDecorator$impl(buildDecoratorCallExpression(config) as T.DecoratorCallExpression),
 	parenthesizedExpression: (child: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) =>
-		buildDecorator$impl(buildDecoratorParenthesizedExpression(child) as T.DecoratorParenthesizedExpression),
-	decoratorMemberExpression: (
-		...args: Parameters<typeof buildDecoratorParenthesizedExpression.decoratorMemberExpression>
-	) =>
-		buildDecorator$impl(
-			buildDecoratorParenthesizedExpression.decoratorMemberExpression(...args) as T.DecoratorParenthesizedExpression
-		),
-	decoratorCallExpression: (
-		...args: Parameters<typeof buildDecoratorParenthesizedExpression.decoratorCallExpression>
-	) =>
-		buildDecorator$impl(
-			buildDecoratorParenthesizedExpression.decoratorCallExpression(...args) as T.DecoratorParenthesizedExpression
-		)
+		buildDecorator$impl(buildDecoratorParenthesizedExpression(child) as T.DecoratorParenthesizedExpression)
 });
 
 export type DecoratorMemberExpressionBuilt = T.DecoratorMemberExpression & {
@@ -6799,9 +6787,9 @@ function buildLiteralType$impl(
 
 export const buildLiteralType = attachProps(buildLiteralType$impl, {
 	string: (child: T.StringDouble | T.StringSingle) => buildLiteralType$impl(buildString(child) as T.String),
-	double: (...args: Parameters<typeof buildString.double>) =>
+	stringDouble: (...args: Parameters<typeof buildString.double>) =>
 		buildLiteralType$impl(buildString.double(...args) as T.String),
-	single: (...args: Parameters<typeof buildString.single>) =>
+	stringSingle: (...args: Parameters<typeof buildString.single>) =>
 		buildLiteralType$impl(buildString.single(...args) as T.String),
 	true: () => buildLiteralType$impl(buildTrue() as T.True),
 	false: () => buildLiteralType$impl(buildFalse() as T.False),
@@ -9016,9 +9004,9 @@ function buildExportStatementDefaultStarFrom$impl(
 }
 
 export const buildExportStatementDefaultStarFrom = attachProps(buildExportStatementDefaultStarFrom$impl, {
-	double: (...args: Parameters<typeof buildString.double>) =>
+	stringDouble: (...args: Parameters<typeof buildString.double>) =>
 		buildExportStatementDefaultStarFrom$impl({ source: buildString.double(...args) as T.String }),
-	single: (...args: Parameters<typeof buildString.single>) =>
+	stringSingle: (...args: Parameters<typeof buildString.single>) =>
 		buildExportStatementDefaultStarFrom$impl({ source: buildString.single(...args) as T.String })
 });
 
@@ -9352,7 +9340,7 @@ export const buildForHeaderLhs = attachProps(buildForHeaderLhs$impl, {
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression
 	) => buildForHeaderLhs$impl({ left: buildParenthesizedExpression(child) as T.ParenthesizedExpression }),
-	typed: (...args: Parameters<typeof buildParenthesizedExpression.typed>) =>
+	parenthesizedExpressionTyped: (...args: Parameters<typeof buildParenthesizedExpression.typed>) =>
 		buildForHeaderLhs$impl({ left: buildParenthesizedExpression.typed(...args) as T.ParenthesizedExpression }),
 	sequenceExpression: (...args: Parameters<typeof buildParenthesizedExpression.sequenceExpression>) =>
 		buildForHeaderLhs$impl({

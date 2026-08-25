@@ -82,8 +82,8 @@ describe('export_statement namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.ExportStatement);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('fromArm builds the parent', () => {
-		const node = ir.exportStatement.fromArm({
+	it('defaultFromArm builds the parent', () => {
+		const node = ir.exportStatement.defaultFromArm({
 			content: {
 				$type: TSKindId.ExportStatementDefaultStarFrom,
 				$text: 'test',
@@ -102,8 +102,8 @@ describe('export_statement namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.ExportStatement);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('declArm builds the parent', () => {
-		const node = ir.exportStatement.declArm({
+	it('defaultDeclArm builds the parent', () => {
+		const node = ir.exportStatement.defaultDeclArm({
 			content: {
 				$type: TSKindId.ExportStatementDefaultDefaultKw,
 				$text: 'test',
@@ -2112,22 +2112,6 @@ describe('decorator namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.Decorator);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('decoratorMemberExpression builds the parent', () => {
-		const node = ir.decorator.decoratorMemberExpression({
-			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.Decorator);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('decoratorCallExpression builds the parent', () => {
-		const node = ir.decorator.decoratorCallExpression({
-			function: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.Decorator);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 });
 
 describe('decorator_member_expression', () => {
@@ -3817,13 +3801,13 @@ describe('literal_type namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('double builds the parent', () => {
-		const node = ir.literalType.double({});
+	it('stringDouble builds the parent', () => {
+		const node = ir.literalType.stringDouble({});
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('single builds the parent', () => {
-		const node = ir.literalType.single({});
+	it('stringSingle builds the parent', () => {
+		const node = ir.literalType.stringSingle({});
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

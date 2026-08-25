@@ -139,8 +139,8 @@ const _b$exportStatement: typeof FR.coerceToExportStatement & {
 	from: typeof FR.coerceToExportStatement;
 	strict: typeof F.buildExportStatement;
 	default: typeof F.buildExportStatement.default;
-	fromArm: typeof F.buildExportStatement.fromArm;
-	declArm: typeof F.buildExportStatement.declArm;
+	defaultFromArm: typeof F.buildExportStatement.defaultFromArm;
+	defaultDeclArm: typeof F.buildExportStatement.defaultDeclArm;
 	typeExport: typeof F.buildExportStatement.typeExport;
 	equalsExport: typeof F.buildExportStatement.equalsExport;
 	namespaceExport: typeof F.buildExportStatement.namespaceExport;
@@ -148,8 +148,8 @@ const _b$exportStatement: typeof FR.coerceToExportStatement & {
 	from: FR.coerceToExportStatement,
 	strict: F.buildExportStatement,
 	default: F.buildExportStatement.default,
-	fromArm: F.buildExportStatement.fromArm,
-	declArm: F.buildExportStatement.declArm,
+	defaultFromArm: F.buildExportStatement.defaultFromArm,
+	defaultDeclArm: F.buildExportStatement.defaultDeclArm,
 	typeExport: F.buildExportStatement.typeExport,
 	equalsExport: F.buildExportStatement.equalsExport,
 	namespaceExport: F.buildExportStatement.namespaceExport
@@ -813,8 +813,8 @@ const _b$literalType: typeof FR.coerceToLiteralType & {
 	from: typeof FR.coerceToLiteralType;
 	strict: typeof F.buildLiteralType;
 	string: typeof F.buildLiteralType.string;
-	double: typeof F.buildLiteralType.double;
-	single: typeof F.buildLiteralType.single;
+	stringDouble: typeof F.buildLiteralType.stringDouble;
+	stringSingle: typeof F.buildLiteralType.stringSingle;
 	true: typeof F.buildLiteralType.true;
 	false: typeof F.buildLiteralType.false;
 	null: typeof F.buildLiteralType.null;
@@ -823,8 +823,8 @@ const _b$literalType: typeof FR.coerceToLiteralType & {
 	from: FR.coerceToLiteralType,
 	strict: F.buildLiteralType,
 	string: F.buildLiteralType.string,
-	double: F.buildLiteralType.double,
-	single: F.buildLiteralType.single,
+	stringDouble: F.buildLiteralType.stringDouble,
+	stringSingle: F.buildLiteralType.stringSingle,
 	true: F.buildLiteralType.true,
 	false: F.buildLiteralType.false,
 	null: F.buildLiteralType.null,
@@ -1088,17 +1088,13 @@ const _b$decorator: typeof FR.coerceToDecorator & {
 	memberExpression: typeof F.buildDecorator.memberExpression;
 	callExpression: typeof F.buildDecorator.callExpression;
 	parenthesizedExpression: typeof F.buildDecorator.parenthesizedExpression;
-	decoratorMemberExpression: typeof F.buildDecorator.decoratorMemberExpression;
-	decoratorCallExpression: typeof F.buildDecorator.decoratorCallExpression;
 } = attachProps(FR.coerceToDecorator, {
 	from: FR.coerceToDecorator,
 	strict: F.buildDecorator,
 	identifier: F.buildDecorator.identifier,
 	memberExpression: F.buildDecorator.memberExpression,
 	callExpression: F.buildDecorator.callExpression,
-	parenthesizedExpression: F.buildDecorator.parenthesizedExpression,
-	decoratorMemberExpression: F.buildDecorator.decoratorMemberExpression,
-	decoratorCallExpression: F.buildDecorator.decoratorCallExpression
+	parenthesizedExpression: F.buildDecorator.parenthesizedExpression
 });
 
 const _b$decoratorMemberExpression: typeof FR.coerceToDecoratorMemberExpression & {

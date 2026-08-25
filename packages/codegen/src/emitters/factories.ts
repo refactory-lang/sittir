@@ -307,7 +307,9 @@ export function namespaceOf(
 		if (warnedAmbiguous.has(`${node.kind}.${a.name}`)) continue;
 		warnedAmbiguous.add(`${node.kind}.${a.name}`);
 		console.warn(
-			`[codegen] '${node.kind}': namespaced constructor '${a.name}' is claimed by ${a.claimants.join(' and ')} — none hoisted`
+			`[codegen] '${node.kind}': namespaced constructor '${a.name}' is claimed by ${a.claimants.join(' and ')} — ${
+				a.kept === undefined ? 'none hoisted' : `only ${a.kept}, this kind's own arm, keeps it`
+			}`
 		);
 	}
 	const entries = set.entries.filter((e) => namespacedEntryEligible(e, nodeMap, kindEntries));

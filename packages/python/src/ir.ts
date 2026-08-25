@@ -142,7 +142,7 @@ const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
 	assignment: typeof F.buildExpressionStatement.assignment;
 	augmentedAssignment: typeof F.buildExpressionStatement.augmentedAssignment;
 	yield: typeof F.buildExpressionStatement.yield;
-	fromClause: typeof F.buildExpressionStatement.fromClause;
+	yieldFromClause: typeof F.buildExpressionStatement.yieldFromClause;
 } = attachProps(FR.coerceToExpressionStatement, {
 	from: FR.coerceToExpressionStatement,
 	strict: F.buildExpressionStatement,
@@ -150,7 +150,7 @@ const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
 	assignment: F.buildExpressionStatement.assignment,
 	augmentedAssignment: F.buildExpressionStatement.augmentedAssignment,
 	yield: F.buildExpressionStatement.yield,
-	fromClause: F.buildExpressionStatement.fromClause
+	yieldFromClause: F.buildExpressionStatement.yieldFromClause
 });
 
 const _b$returnStatement: typeof FR.coerceToReturnStatement & {
@@ -551,13 +551,13 @@ const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
 	from: typeof FR.coerceToParenthesizedExpression;
 	strict: typeof F.buildParenthesizedExpression;
 	yield: typeof F.buildParenthesizedExpression.yield;
-	fromClause: typeof F.buildParenthesizedExpression.fromClause;
+	yieldFromClause: typeof F.buildParenthesizedExpression.yieldFromClause;
 	listSplat: typeof F.buildParenthesizedExpression.listSplat;
 } = attachProps(FR.coerceToParenthesizedExpression, {
 	from: FR.coerceToParenthesizedExpression,
 	strict: F.buildParenthesizedExpression,
 	yield: F.buildParenthesizedExpression.yield,
-	fromClause: F.buildParenthesizedExpression.fromClause,
+	yieldFromClause: F.buildParenthesizedExpression.yieldFromClause,
 	listSplat: F.buildParenthesizedExpression.listSplat
 });
 

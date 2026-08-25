@@ -2217,33 +2217,6 @@
       ],
       "namespacedConstructors": [
         {
-          "name": "splatType",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "splatType"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "star"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "starStar"
-          ]
-        },
-        {
           "name": "genericType",
           "via": "form",
           "slot": "type",
@@ -3037,33 +3010,6 @@
       ],
       "children": [],
       "namespacedConstructors": [
-        {
-          "name": "splatType",
-          "via": "form",
-          "slot": "return_type",
-          "childKind": "type",
-          "path": [
-            "splatType"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "form",
-          "slot": "return_type",
-          "childKind": "type",
-          "path": [
-            "star"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "form",
-          "slot": "return_type",
-          "childKind": "type",
-          "path": [
-            "starStar"
-          ]
-        },
         {
           "name": "genericType",
           "via": "form",
@@ -7468,7 +7414,7 @@
           "path": []
         },
         {
-          "name": "fromClause",
+          "name": "yieldFromClause",
           "via": "form",
           "slot": "content",
           "childKind": "yield",
@@ -9921,7 +9867,7 @@
           "path": []
         },
         {
-          "name": "fromClause",
+          "name": "yieldFromClause",
           "via": "form",
           "slot": "content",
           "childKind": "yield",
