@@ -26,6 +26,6 @@ export function callStatementStrict() {
 	// GAP D (factory): `expression_statement.strict` rejects a call in its own
 	// `content` slot; only the coercer routes it. The loose form is what builds.
 	return ir.expressionStatement(
-		ir.call.strict({ function: ir.from.identifier('main'), arguments: ir.argumentList.strict() })
+		ir.call.strict({ function: ir.identifier('main'), arguments: ir.argumentList.strict() })
 	);
 }

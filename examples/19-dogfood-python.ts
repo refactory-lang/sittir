@@ -35,7 +35,7 @@ export function imports() {
 
 /** `f()` — a call statement is the one statement shape that composes. */
 export function callStatement() {
-	return ir.expressionStatement(ir.call({ function: ir.from.identifier('main'), arguments: ir.argumentList.strict() }));
+	return ir.expressionStatement(ir.call({ function: ir.identifier('main'), arguments: ir.argumentList.strict() }));
 }
 
 export function rebuildProbeSweep() {
