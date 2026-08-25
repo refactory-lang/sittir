@@ -1319,11 +1319,11 @@ function emitLooseConfigGuard(lines: string[]): void {
 }
 
 function emitRequireFieldHelper(lines: string[]): void {
-	lines.push('function _requireField<T>(kind: string, slot: string, v: T): Exclude<T, undefined | null> {');
+	lines.push('function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {');
 	lines.push('  if (v === undefined || v === null) {');
 	lines.push("    throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);");
 	lines.push('  }');
-	lines.push('  return v as Exclude<T, undefined | null>;');
+	lines.push('  return v;');
 	lines.push('}');
 }
 

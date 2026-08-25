@@ -580,11 +580,11 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 function _isLooseConfig<C>(v: C | AnyNodeData): v is C {
 	return !isNodeData(v);
 }
-function _requireField<T>(kind: string, slot: string, v: T): Exclude<T, undefined | null> {
+function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {
 	if (v === undefined || v === null) {
 		throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);
 	}
-	return v as Exclude<T, undefined | null>;
+	return v;
 }
 
 // Interned resolver kind lists (dedup)
