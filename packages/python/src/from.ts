@@ -1852,6 +1852,14 @@ export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<t
 	);
 }
 
+export function resolveDecoratedDefinition_decorators(
+	value: T.DecoratedDefinition.LooseConfig['decorator']
+): T.DecoratedDefinition['_decorator'] {
+	const resolved = _resolveManyBranch<T.Decorator>(value, 'decorator');
+	_assertNonEmpty(resolved, 'decorated_definition.decorators');
+	return resolved;
+}
+
 export function resolveDecoratedDefinition_definition(
 	value: T.DecoratedDefinition.LooseConfig['definition']
 ): T.DecoratedDefinition['_definition'] {
@@ -1863,10 +1871,12 @@ export function coerceToDecoratedDefinition(
 ): ReturnType<typeof F.buildDecoratedDefinition> {
 	if (!_isLooseConfig<T.DecoratedDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildDecoratedDefinition>;
-	const _ne_decorators = _resolveManyBranch<T.Decorator>(input.decorator, 'decorator');
-	_assertNonEmpty(_ne_decorators, 'decorated_definition.decorators');
 	return F.buildDecoratedDefinition({
-		decorator: _ne_decorators,
+		decorator: _requireField(
+			'decorated_definition',
+			'decorator',
+			resolveDecoratedDefinition_decorators(input.decorator)
+		),
 		definition: _requireField(
 			'decorated_definition',
 			'definition',
@@ -2436,19 +2446,26 @@ export function resolveComparisonOperator_left(
 	return _resolveOne<T.PrimaryExpression>(value, _K5, _K22);
 }
 
+export function resolveComparisonOperator_comparators(
+	value: T.ComparisonOperator.LooseConfig['comparators']
+): T.ComparisonOperator['_comparators'] {
+	const resolved = _resolveManyBranch<T.ComparisonOperatorComparator>(value, '_comparison_operator_comparator');
+	_assertNonEmpty(resolved, 'comparison_operator.comparators');
+	return resolved;
+}
+
 export function coerceToComparisonOperator(
 	input: T.ComparisonOperator.Loose
 ): ReturnType<typeof F.buildComparisonOperator> {
 	if (!_isLooseConfig<T.ComparisonOperator.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildComparisonOperator>;
-	const _ne_comparators = _resolveManyBranch<T.ComparisonOperatorComparator>(
-		input.comparators,
-		'_comparison_operator_comparator'
-	);
-	_assertNonEmpty(_ne_comparators, 'comparison_operator.comparators');
 	return F.buildComparisonOperator({
 		left: _requireField('comparison_operator', 'left', resolveComparisonOperator_left(input.left)),
-		comparators: _ne_comparators
+		comparators: _requireField(
+			'comparison_operator',
+			'comparators',
+			resolveComparisonOperator_comparators(input.comparators)
+		)
 	});
 }
 
@@ -3025,15 +3042,19 @@ export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']
 	return _resolveOne<T.LeftHandSide>(value, _super_keyword_identifier, _K11);
 }
 
+export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): T.ForInClause['_right'] {
+	const resolved = _resolveMany<T.ExpressionWithinForInClause>(value, _K5, _K23);
+	_assertNonEmpty(resolved, 'for_in_clause.rights');
+	return resolved;
+}
+
 export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<typeof F.buildForInClause> {
 	if (!_isLooseConfig<T.ForInClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForInClause>;
-	const _ne_rights = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K5, _K23);
-	_assertNonEmpty(_ne_rights, 'for_in_clause.rights');
 	return F.buildForInClause({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
 		left: _requireField('for_in_clause', 'left', resolveForInClause_left(input.left)),
-		right: _ne_rights,
+		right: _requireField('for_in_clause', 'right', resolveForInClause_rights(input.right)),
 		comma: _resolveBooleanKeyword(input.comma)
 	});
 }

@@ -24,7 +24,6 @@ type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }>;
 import {
 	isRequired,
 	isMultiple,
-	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
 	keywordPresenceKind,
@@ -32,6 +31,7 @@ import {
 	resolveFieldStorageInfo,
 	isHiddenInfraSlot,
 	configurableFactoryFields,
+	needsNonEmptyHoist,
 	type BranchSlotClass,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
@@ -448,25 +448,28 @@ function emitBranchFrom(
 	// off `Loose` picks up the interface's accessor signature from its `| T`
 	// arm, and never `LooseValue<Config[key]>`, which drops the owner and with
 	// it the field's `__looseHints__`.
-	// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on the
-	// factory's Config surface, so they take no non-empty hoist even when the
-	// underlying values are repeat1.
-	const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
-		isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
-	// Non-empty list fields are excluded: their value is hoisted through
-	// `_assertNonEmpty`, which narrows an inline expression to the tuple form
-	// the factory config demands. A declared resolver return type is a plain
-	// array and loses that narrowing, so those keep the inline call.
-	const resolverFields = configurableFactoryFields(fields, nodeMap).filter((f) => !needsNonEmptyHoist(f));
+	const resolverFields = configurableFactoryFields(fields, nodeMap);
 	for (const f of resolverFields) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 		const key = JSON.stringify(f.configKey);
-		lines.push(
-			`export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`,
-			`  return ${body};`,
-			'}',
-			''
-		);
+		const signature = `export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`;
+		// A non-empty repeated field carries its own emptiness check: the
+		// assertion narrows the resolved array to the tuple form the storage
+		// type declares, so the declared return type holds and every caller
+		// -- `coerceTo<Kind>` and the `$with` setters alike -- inherits the
+		// check from this one place.
+		if (needsNonEmptyHoist(f, nodeMap)) {
+			lines.push(
+				signature,
+				`  const resolved = ${body};`,
+				`  _assertNonEmpty(resolved, '${node.kind}.${f.propertyName}');`,
+				'  return resolved;',
+				'}',
+				''
+			);
+		} else {
+			lines.push(signature, `  return ${body};`, '}', '');
+		}
 	}
 	const resolverFor = new Set(resolverFields.map((f) => f.propertyName));
 	const fieldValue = (f: AssembledNonterminal, valueExpr: string): string =>
@@ -489,7 +492,7 @@ function emitBranchFrom(
 		// when the underlying values are repeat1, otherwise we generate a
 		// `_ne_X` array hoist + `_assertNonEmpty` call against a non-array.
 		for (const f of fields) {
-			if (needsNonEmptyHoist(f)) {
+			if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
 				const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
@@ -524,7 +527,7 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
-				if (needsNonEmptyHoist(f)) {
+				if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
 					const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);

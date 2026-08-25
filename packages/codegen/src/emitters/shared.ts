@@ -926,6 +926,28 @@ export function classifyFromEmission(kind: string, node: AssembledNode, context:
 	return node.rawFactoryName && node.fromFunctionName ? 'emit' : 'skip-no-from-surface';
 }
 
+/** ONE predicate for "this kind's from-emitter declares per-field
+ *  `resolve<TypeName>_<field>` helpers". The `$with` setters in wrap.ts call
+ *  those resolvers, so a local re-derivation would let a setter reference a
+ *  resolver that was never emitted. Mirrors `emitBranchFrom`'s own
+ *  delegation check: a kind carrying a child factory surface is handed to
+ *  `emitContainerFrom`, which declares no per-field resolvers. */
+export function emitsFieldResolvers(kind: string, node: AssembledNode, context: FromDispatchContext): boolean {
+	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
+	if (node.modelType !== 'branch') return false;
+	return classifyChildFactorySurface(node, context.nodeMap) === null;
+}
+
+/** A non-empty repeated field reaches the factory config through
+ *  `_assertNonEmpty`, which narrows an inline expression to the tuple form
+ *  the config demands; a declared resolver return type is a plain array and
+ *  loses that narrowing. Keyword-presence fields (boolean / bitflag) are a
+ *  brand rather than an array on the Config surface, so they take no hoist
+ *  even when the underlying values are repeat1. */
+export function needsNonEmptyHoist(field: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	return isNonEmpty(field) && isMultiple(field) && keywordPresenceKind(field, nodeMap) === null;
+}
+
 export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;
 
 export function classifyWrapEmission(

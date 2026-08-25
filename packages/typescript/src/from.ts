@@ -1367,6 +1367,14 @@ export function coerceToExpressionStatement(
 	});
 }
 
+export function resolveVariableDeclaration_declarators(
+	value: T.VariableDeclaration.LooseConfig['declarators']
+): T.VariableDeclaration['_declarators'] {
+	const resolved = _resolveManyBranch<T.VariableDeclarator>(value, 'variable_declarator');
+	_assertNonEmpty(resolved, 'variable_declaration.declarators');
+	return resolved;
+}
+
 export function resolveVariableDeclaration_semicolon(
 	value: T.VariableDeclaration.LooseConfig['semicolon']
 ): T.VariableDeclaration['_semicolon'] {
@@ -1381,10 +1389,12 @@ export function coerceToVariableDeclaration(
 ): ReturnType<typeof F.buildVariableDeclaration> {
 	if (!_isLooseConfig<T.VariableDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildVariableDeclaration>;
-	const _ne_declarators = _resolveManyBranch<T.VariableDeclarator>(input.declarators, 'variable_declarator');
-	_assertNonEmpty(_ne_declarators, 'variable_declaration.declarators');
 	return F.buildVariableDeclaration({
-		declarators: _ne_declarators,
+		declarators: _requireField(
+			'variable_declaration',
+			'declarators',
+			resolveVariableDeclaration_declarators(input.declarators)
+		),
 		semicolon: _requireField('variable_declaration', 'semicolon', resolveVariableDeclaration_semicolon(input.semicolon))
 	});
 }
@@ -1396,6 +1406,14 @@ export function resolveLexicalDeclaration_kind(
 		['let', TSKindId.Let] as const,
 		['const', TSKindId.Const] as const
 	]);
+}
+
+export function resolveLexicalDeclaration_declarators(
+	value: T.LexicalDeclaration.LooseConfig['declarators']
+): T.LexicalDeclaration['_declarators'] {
+	const resolved = _resolveManyBranch<T.VariableDeclarator>(value, 'variable_declarator');
+	_assertNonEmpty(resolved, 'lexical_declaration.declarators');
+	return resolved;
 }
 
 export function resolveLexicalDeclaration_semicolon(
@@ -1412,11 +1430,13 @@ export function coerceToLexicalDeclaration(
 ): ReturnType<typeof F.buildLexicalDeclaration> {
 	if (!_isLooseConfig<T.LexicalDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLexicalDeclaration>;
-	const _ne_declarators = _resolveManyBranch<T.VariableDeclarator>(input.declarators, 'variable_declarator');
-	_assertNonEmpty(_ne_declarators, 'lexical_declaration.declarators');
 	return F.buildLexicalDeclaration({
 		kind: _requireField('lexical_declaration', 'kind', resolveLexicalDeclaration_kind(input.kind)),
-		declarators: _ne_declarators,
+		declarators: _requireField(
+			'lexical_declaration',
+			'declarators',
+			resolveLexicalDeclaration_declarators(input.declarators)
+		),
 		semicolon: _requireField('lexical_declaration', 'semicolon', resolveLexicalDeclaration_semicolon(input.semicolon))
 	});
 }
