@@ -842,7 +842,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	const hasConfigReads = fields.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
 	// A config parameter's loose counterpart is the kind's own `Loose` — the
-	// only projection that reads the from-only (`__fromInputHints__`)
+	// only projection that reads the from-only (`__looseHints__`)
 	// widenings, which a per-value widener applied to `Config` cannot reach.
 	const param: FactoryParam = {
 		label: 'config',

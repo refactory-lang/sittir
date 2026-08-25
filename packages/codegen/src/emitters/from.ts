@@ -144,7 +144,7 @@ function emitNamespaceImports(
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
-	lines.push('type _FromFieldInput = unknown;');
+	lines.push('type _LooseFieldInput = unknown;');
 	lines.push('');
 }
 
@@ -447,7 +447,7 @@ function emitBranchFrom(
 	// The parameter is `LooseConfig[key]`, never `Loose[key]`: reading a field
 	// off `Loose` picks up the interface's accessor signature from its `| T`
 	// arm, and never `LooseValue<Config[key]>`, which drops the owner and with
-	// it the field's `__fromInputHints__`.
+	// it the field's `__looseHints__`.
 	// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on the
 	// factory's Config surface, so they take no non-empty hoist even when the
 	// underlying values are repeat1.
@@ -1227,9 +1227,9 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('');
 	lines.push('function _resolveByKind<K extends keyof _FromMap>(');
 	lines.push('  kind: K,');
-	lines.push('  rest: _FromFieldInput,');
+	lines.push('  rest: _LooseFieldInput,');
 	lines.push('): ReturnType<_FromMap[K]> {');
-	lines.push('  const fn = _fromMap[kind] as (rest: _FromFieldInput) => ReturnType<_FromMap[K]>;');
+	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
 	lines.push('  return fn(rest);');
 	lines.push('}');
 	lines.push('');
@@ -1250,7 +1250,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	// factory output. Single-site cast keeps the helper readable; per-call
 	// assertions would clutter every consumer.
 	lines.push('function _resolveOne<T>(');
-	lines.push('  v: _FromFieldInput,');
+	lines.push('  v: _LooseFieldInput,');
 	lines.push('  leafKinds: readonly string[],');
 	lines.push('  branchKinds: readonly string[],');
 	lines.push('): T {');
@@ -1517,12 +1517,12 @@ function emitResolverHelpers(
 	emitResolveOneHelper(lines);
 
 	lines.push('function _resolveMany<T>(');
-	lines.push('  v: _FromFieldInput,');
+	lines.push('  v: _LooseFieldInput,');
 	lines.push('  leafKinds: readonly string[],');
 	lines.push('  branchKinds: readonly string[],');
 	lines.push('): readonly T[] {');
 	lines.push('  if (v === undefined || v === null) return [];');
-	lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];');
+	lines.push('  const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];');
 	lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));');
 	lines.push('}');
 	lines.push('');
@@ -1530,7 +1530,7 @@ function emitResolverHelpers(
 	// Single-kind fast paths — resolver call sites with only one
 	// possible target dispatch here directly, skipping the leafKinds
 	// / branchKinds iteration in _resolveOne.
-	lines.push('function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {');
+	lines.push('function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (isNodeData(v)) return v as T;');
 	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
@@ -1560,7 +1560,7 @@ function emitResolverHelpers(
 	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
 
 	lines.push(
-		'function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {'
+		'function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {'
 	);
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	// Gap 4: NodeData pass-through if $type matches; wrap as single child
@@ -1618,18 +1618,18 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	lines.push('function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {');
+	lines.push('function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly T[] {');
 	lines.push('  if (v === undefined || v === null) return [];');
-	lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];');
+	lines.push('  const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];');
 	lines.push('  return arr.map(e => _resolveOneLeaf<T>(e, kind));');
 	lines.push('}');
 	lines.push('');
 
 	lines.push(
-		'function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): readonly T[] {'
+		'function _resolveManyBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): readonly T[] {'
 	);
 	lines.push('  if (v === undefined || v === null) return [];');
-	lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];');
+	lines.push('  const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];');
 	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind, altKinds));');
 	lines.push('}');
 	lines.push('');
@@ -1641,7 +1641,7 @@ function emitResolverHelpers(
 	// resolver layer only has to refuse the leaf-registry path so a
 	// `true` input doesn't get misrouted through `_resolveScalar` into
 	// a `boolean_literal` factory call.
-	lines.push('function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {');
+	lines.push('function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (v === true || v === false) return v as T;');
 	lines.push('  if (isNodeData(v)) return v as T;');
@@ -1649,7 +1649,7 @@ function emitResolverHelpers(
 	lines.push('  return v as T;');
 	lines.push('}');
 	lines.push('');
-	lines.push('function _resolveBitflag<T>(v: _FromFieldInput): T {');
+	lines.push('function _resolveBitflag<T>(v: _LooseFieldInput): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (typeof v === "number") return v as T;');
 	lines.push('  if (typeof v === "string") return v as T;');

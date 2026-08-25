@@ -285,7 +285,7 @@ Each kind ships in three forms with the same output type:
 
 ```ts
 ir.functionItem.strict({ /* every field explicit, no coercion */ })
-ir.functionItem.from({   /* loose input — strings / arrays / plain objects */ })
+ir.functionItem({   /* loose input — strings / arrays / plain objects */ })
 ir.functionItem({         /* alias for .from() */ })
 ```
 
@@ -428,11 +428,11 @@ fn.body();         // returns the Block NodeData
 // expected slot kind.
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem.from({
+const fn = ir.functionItem({
   visibilityModifier: 'pub',                                       // string → VisibilityModifier
   name: 'greet',                                                   // string → Identifier
   parameters: ir.parameters.strict(
-    ir.parameter.from({ pattern: 'name', type: 'String' })         // nested .from()
+    ir.parameter({ pattern: 'name', type: 'String' })         // nested .from()
   ),
   body: ir.block.strict()
 });

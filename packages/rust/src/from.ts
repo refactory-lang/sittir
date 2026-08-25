@@ -7,7 +7,7 @@ import type { AnyNodeData } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
-type _FromFieldInput = unknown;
+type _LooseFieldInput = unknown;
 
 export const _fromMap = {
 	source_file: coerceToSourceFile,
@@ -235,8 +235,8 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
-function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _FromFieldInput): ReturnType<_FromMap[K]> {
-	const fn = _fromMap[kind] as (rest: _FromFieldInput) => ReturnType<_FromMap[K]>;
+function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
+	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
 	return fn(rest);
 }
 
@@ -280,7 +280,7 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {
 };
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['visibility_modifier']);
 
-function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
+function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
 	if (typeof v === 'boolean' || typeof v === 'number') {
@@ -318,16 +318,16 @@ function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branch
 }
 
 function _resolveMany<T>(
-	v: _FromFieldInput,
+	v: _LooseFieldInput,
 	leafKinds: readonly string[],
 	branchKinds: readonly string[]
 ): readonly T[] {
 	if (v === undefined || v === null) return [];
-	const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
+	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds));
 }
 
-function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
+function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
 	if (typeof v === 'boolean' || typeof v === 'number') {
@@ -523,7 +523,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {
+function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) {
 		const wrapId = _wrapKindIds[kind];
@@ -564,23 +564,23 @@ function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: reado
 	return v as T;
 }
 
-function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
+function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly T[] {
 	if (v === undefined || v === null) return [];
-	const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
+	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
 }
 
 function _resolveManyBranch<T>(
-	v: _FromFieldInput,
+	v: _LooseFieldInput,
 	kind: string,
 	altKinds?: readonly (string | number)[]
 ): readonly T[] {
 	if (v === undefined || v === null) return [];
-	const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
+	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
 }
 
-function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
+function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {
 	if (v === undefined || v === null) return v as T;
 	if (v === true || v === false) return v as T;
 	if (isNodeData(v)) return v as T;
@@ -588,7 +588,7 @@ function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
 	return v as T;
 }
 
-function _resolveBitflag<T>(v: _FromFieldInput): T {
+function _resolveBitflag<T>(v: _LooseFieldInput): T {
 	if (v === undefined || v === null) return v as T;
 	if (typeof v === 'number') return v as T;
 	if (typeof v === 'string') return v as T;

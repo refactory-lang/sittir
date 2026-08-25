@@ -101,7 +101,10 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/ir.ts'), 'utf-8');
 
 			expect(content).toContain('.strict');
-			expect(content).toContain('from: FR.');
+			// The bundle's call position IS the coercer, so a `from` prop would
+			// be the same function under a second name.
+			expect(content).toContain('const _b$');
+			expect(content).not.toContain('from: FR.');
 		});
 	});
 });

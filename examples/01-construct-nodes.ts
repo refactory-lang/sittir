@@ -74,7 +74,7 @@ export function structSideBySide() {
 		body: ir.block.strict(),
 	});
 
-	const fromFn = ir.functionItem.from({
+	const fromFn = ir.functionItem({
 		visibilityModifier: 'pub',
 		name: 'config',
 		parameters: ir.parameters.strict(),

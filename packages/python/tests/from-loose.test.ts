@@ -21,7 +21,7 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 		// standard `{identifier: [...]}` object shape, not a rest-args
 		// spread of elements. The `identifier` field itself accepts bare
 		// strings via leaf-shorthand resolution.
-		const result = ir.dottedName.from({ identifier: ['foo'] } as any) as any;
+		const result = ir.dottedName({ identifier: ['foo'] } as any) as any;
 		expect(result.$type).toBe(TSKindId.DottedName);
 	});
 
@@ -29,7 +29,7 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 		// aliased_import: { name: dotted_name, alias: identifier }
 		// Loose: `name` needs at least one identifier for its dotted_name
 		// field; `alias` is a bare-string leaf field.
-		const result = ir.aliasedImport.from({
+		const result = ir.aliasedImport({
 			name: { identifier: ['os'] } as any,
 			alias: 'system' as any
 		}) as any;
@@ -48,7 +48,7 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 		// a caller supplies one. `ir.assignment.eq(...)` (a synthesized
 		// per-form factory) no longer exists; F.buildAssignmentEq is the
 		// current way to construct that branch's NodeData directly.
-		const result = ir.assignment.from({
+		const result = ir.assignment({
 			left: 'x' as any,
 			content: F.buildAssignmentEq({ right: { kind: 'integer', text: '42' } as any })
 		}) as any;
@@ -76,7 +76,7 @@ describe('loose from() — NodeData passthrough still works', () => {
 		// ir.assignment.eq, which no longer exists) is how a caller
 		// supplies assignment's hidden-branch-kind `content` field.
 		const child = F.buildAssignmentEq({ right: nodeData });
-		const result = ir.assignment.from({
+		const result = ir.assignment({
 			left: 'x' as any,
 			content: child
 		}) as any;

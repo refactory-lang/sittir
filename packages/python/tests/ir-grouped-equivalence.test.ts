@@ -9,7 +9,7 @@ describe('python ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
 		// `statement.if` === `ir.statement.if` (reserved words are valid property keys).
 		expect(ir.statement.if).toBe(statement.if);
-		expect(ir.statement.if.from).toBe(statement.if.from);
+		expect(ir.statement.if.strict).toBe(statement.if.strict);
 	});
 
 	it('grouped namespace attached to ir is the same object as standalone export', () => {

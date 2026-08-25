@@ -111,9 +111,9 @@ describe('dogfoodContract helper', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
 		const target = join(dir, 'main.rs');
 		writeFileSync(target, 'pub fn main() { }\n');
-		const rebuilt = ir.sourceFile.from({
+		const rebuilt = ir.sourceFile({
 			statements: [
-				ir.functionItem.from({
+				ir.functionItem({
 					visibilityModifier: 'pub',
 					name: 'main',
 					parameters: ir.parameters.strict(),
@@ -130,7 +130,7 @@ describe('dogfoodContract helper', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
 		const target = join(dir, 'main.rs');
 		writeFileSync(target, 'pub fn other() { }\n');
-		const rebuilt = ir.functionItem.from({
+		const rebuilt = ir.functionItem({
 			visibilityModifier: 'pub',
 			name: 'main',
 			parameters: ir.parameters.strict(),

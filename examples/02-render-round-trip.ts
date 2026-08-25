@@ -2,7 +2,7 @@ import { createEngine, ir } from '@sittir/rust';
 import { structuralShape } from './helpers.ts';
 
 export function renderMainFunction() {
-	const fn = ir.functionItem.from({
+	const fn = ir.functionItem({
 		visibilityModifier: 'pub',
 		name: 'main',
 		parameters: ir.parameters.strict(),

@@ -1123,7 +1123,7 @@ function fieldInputHintTypeExpr(
 
 // Loose-only: strict factories store config values directly, so widened
 // literals must never reach Config. See glossary.
-function fieldFromInputHintTypeExpr(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+function fieldLooseHintTypeExpr(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	if (f.values.length === 1 && slotKindNames(f).length === 1) {
 		const texts = stringConstructibleTexts(slotKindNames(f)[0]!, nodeMap);
 		if (texts.length > 0) return `${fieldTypeExpr(f, nodeMap)} | ${stringUnion(texts)}`;
@@ -1158,14 +1158,14 @@ function emitFieldInputHints(
 	}
 	const fromHintLines = fields
 		.map((field) => {
-			const hintType = fieldFromInputHintTypeExpr(field, nodeMap);
+			const hintType = fieldLooseHintTypeExpr(field, nodeMap);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;
 		})
 		.filter((line): line is string => line !== undefined);
 	if (fromHintLines.length > 0) {
-		lines.push('  readonly __fromInputHints__?: {');
+		lines.push('  readonly __looseHints__?: {');
 		lines.push(...fromHintLines);
 		lines.push('  };');
 	}

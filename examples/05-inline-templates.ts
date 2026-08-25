@@ -1,7 +1,7 @@
 import { ir } from '@sittir/rust';
 
 export function renderDirectlyWithoutInlineTemplates() {
-	return ir.functionItem.from({
+	return ir.functionItem({
 		visibilityModifier: 'pub',
 		name: 'render_config',
 		parameters: ir.parameters.strict(),

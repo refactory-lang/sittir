@@ -85,6 +85,17 @@ export function emitIr(config: EmitIrConfig): string {
 	const groupBlocks: string[] = [];
 	const groupNames: string[] = [];
 	const usedGroupNames = new Set<string>();
+
+	let hasFrom = false;
+	if (grammarRoles) {
+		const fromLines = emitFromNamespace(grammarRoles, nodeMap);
+		if (fromLines.length > 0) {
+			hasFrom = true;
+			body.push(...fromLines);
+			body.push('');
+		}
+	}
+
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
 		const sup = node as AssembledSupertype;
@@ -191,16 +202,6 @@ export function emitIr(config: EmitIrConfig): string {
 	// Emitted BEFORE `ir` so it can be referenced as `ir.from`.
 	// Also exported standalone for tree-shakeable `from.boolean(...)`.
 	// ------------------------------------------------------------------
-	let hasFrom = false;
-	if (grammarRoles) {
-		const fromLines = emitFromNamespace(grammarRoles, nodeMap);
-		if (fromLines.length > 0) {
-			hasFrom = true;
-			body.push(...fromLines);
-			body.push('');
-		}
-	}
-
 	// ----------------------------------------------------------------------
 	// Flat `ir.*` namespace — every grammar kind by camelCase short name.
 	// ----------------------------------------------------------------------
@@ -301,13 +302,10 @@ function bundleParts(
 	// isSlotBearingCompound's doc comment (shared.ts).
 	if (node.modelType === 'branch' || node.modelType === 'separatedList') {
 		if (!node.rawFactoryName) {
-			return { base: `FR.${node.fromFunctionName}`, props: [{ key: 'from', expr: `FR.${node.fromFunctionName}` }] };
+			return { base: `FR.${node.fromFunctionName}`, props: [] };
 		}
 		const baseFactoryName = node.rawFactoryName;
-		const props: { key: string; expr: string }[] = [
-			{ key: 'from', expr: `FR.${node.fromFunctionName}` },
-			{ key: 'strict', expr: `F.${baseFactoryName}` }
-		];
+		const props: { key: string; expr: string }[] = [{ key: 'strict', expr: `F.${baseFactoryName}` }];
 		for (const form of refineInfo?.forms ?? []) {
 			const factoryName = refineFormFactoryName(baseFactoryName, form.name);
 			const keys = [camelCase(form.name)];
@@ -328,7 +326,10 @@ function bundleParts(
 		}
 		return { base: `FR.${node.fromFunctionName}`, props };
 	}
-	return { base: `F.${node.rawFactoryName}`, props: [{ key: 'from', expr: `FR.${node.fromFunctionName}` }] };
+	// One convention across the whole surface: the entry coerces, `.strict` is
+	// the strict factory. No `from` prop — it was the entry itself under a
+	// second name.
+	return { base: `FR.${node.fromFunctionName}`, props: [{ key: 'strict', expr: `F.${node.rawFactoryName}` }] };
 }
 
 /** Hoisted, explicitly-annotated bundle const. The typeof-composed

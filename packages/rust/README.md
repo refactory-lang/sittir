@@ -35,7 +35,7 @@ node.render('fast'); // same, with brace/paren validation
 For deeply nested constructs, use `.from()` with a typed options object:
 
 ```ts
-const node = ir.fn.from({
+const node = ir.fn({
 	name: ir.identifier('main'),
 	parameters: ir.parameters(),
 	body: ir.block()
@@ -46,7 +46,7 @@ Leaf-typed fields accept strings — auto-resolved to `LeafBuilder`:
 
 ```ts
 // name is typed as Builder<TypeIdentifier> | string
-const s = ir.struct_.from({ name: 'Config' });
+const s = ir.struct_({ name: 'Config' });
 // equivalent to: ir.struct_(ir.typeIdentifier('Config'))
 ```
 

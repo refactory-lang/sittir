@@ -3511,7 +3511,7 @@ export interface FunctionExpression {
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
@@ -3535,7 +3535,7 @@ export interface FunctionDeclaration {
 		readonly async_marker?: BooleanKeyword<'async'>;
 		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
@@ -3558,7 +3558,7 @@ export interface GeneratorFunction {
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
@@ -3582,7 +3582,7 @@ export interface GeneratorFunctionDeclaration {
 		readonly async_marker?: BooleanKeyword<'async'>;
 		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
@@ -3602,7 +3602,7 @@ export interface ArrowFunction {
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
@@ -3904,7 +3904,7 @@ export interface FieldDefinition {
 	readonly __inputHints__?: {
 		readonly static_marker?: BooleanKeyword<'static'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
 	};
 	decorators(): readonly Decorator[];
@@ -3962,7 +3962,7 @@ export interface MethodDefinition {
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
@@ -4031,7 +4031,7 @@ export interface PublicFieldDefinition {
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly optionality_marker?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly declare_marker?: 'declare' | 'declare';
 		readonly static_marker?: 'static' | 'static';
 		readonly readonly_marker?: 'readonly' | 'readonly';
@@ -4089,7 +4089,7 @@ export interface MethodSignature {
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
@@ -4127,7 +4127,7 @@ export interface AbstractMethodSignature {
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 	};
 	accessibilityModifier(): number | undefined;
@@ -4155,7 +4155,7 @@ export interface FunctionSignature {
 			TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
 		>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
@@ -4323,7 +4323,7 @@ export interface EnumDeclaration {
 	readonly __inputHints__?: {
 		readonly const_marker?: BooleanKeyword<'const'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly const_marker?: 'const' | 'const';
 	};
 	constMarker(): boolean | undefined;
@@ -4377,7 +4377,7 @@ export interface RequiredParameter {
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 	};
@@ -4407,7 +4407,7 @@ export interface OptionalParameter {
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 	};
@@ -4435,7 +4435,7 @@ export interface ParameterName {
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 	};
@@ -4495,7 +4495,7 @@ export interface Asserts {
 export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
 	readonly _asserts: Asserts;
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly asserts: Asserts | 'this';
 	};
 	asserts(): Asserts;
@@ -4538,7 +4538,7 @@ export interface ConstructorType {
 	readonly __inputHints__?: {
 		readonly abstract_marker?: BooleanKeyword<'abstract'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly abstract_marker?: 'abstract' | 'abstract';
 	};
 	abstractMarker(): boolean | undefined;
@@ -4768,7 +4768,7 @@ export interface PropertySignature {
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
@@ -4797,7 +4797,7 @@ export interface TypeParameter {
 	readonly __inputHints__?: {
 		readonly const_marker?: BooleanKeyword<'const'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly const_marker?: 'const' | 'const';
 	};
 	constMarker(): boolean | undefined;
@@ -4832,7 +4832,7 @@ export interface ConstructSignature {
 	readonly __inputHints__?: {
 		readonly abstract_marker?: BooleanKeyword<'abstract'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly abstract_marker?: 'abstract' | 'abstract';
 	};
 	abstractMarker(): boolean | undefined;
@@ -4851,7 +4851,7 @@ export interface IndexSignature {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
-	readonly __fromInputHints__?: {
+	readonly __looseHints__?: {
 		readonly readonly_marker?: 'readonly' | 'readonly';
 	};
 	sign(): number | undefined;
