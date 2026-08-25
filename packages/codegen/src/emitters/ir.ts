@@ -351,18 +351,64 @@ function groupNameFor(supertypeKind: string): string {
 	return toCamel(bare);
 }
 
+/** Kind-name tokens that mean the same thing as a token in a group's name.
+ *  A grammar spells the category one way in the group and another in the
+ *  kinds themselves — rust groups `declaration_statement` over members named
+ *  `function_item`, `struct_item`. */
+const GROUP_TOKEN_SYNONYMS: Readonly<Record<string, string>> = {
+	item: 'statement',
+	stmt: 'statement',
+	expr: 'expression',
+	decl: 'declaration',
+	impl: 'implementation'
+};
+
+/** Tokens naming a syntactic CATEGORY rather than the construct itself.
+ *  Only these may be dropped from a member's tail, and only when the group's
+ *  own name did not already account for a token. `line_comment` keeps
+ *  `comment` because a comment is the construct, not a category. */
+const CATEGORY_TOKENS: ReadonlySet<string> = new Set([
+	'expression',
+	'statement',
+	'literal',
+	'declaration',
+	'definition',
+	'operator',
+	'pattern',
+	'type'
+]);
+
+function normalizeGroupToken(token: string): string {
+	return GROUP_TOKEN_SYNONYMS[token] ?? token;
+}
+
 function memberKeyFor(memberKind: string, supertypeKind: string): string {
 	const bareMember = memberKind.replace(/^_+/, '');
-	const parts = bareMember.split('_');
-	let short: string;
-	if (parts.length >= 2) {
-		short = parts.slice(0, -1).join('_');
-	} else {
-		short = bareMember;
+	const parts = bareMember.split('_').filter((t) => t.length > 0);
+	const groupTokens = new Set(
+		supertypeKind
+			.replace(/^_+/, '')
+			.split('_')
+			.filter((t) => t.length > 0)
+			.map(normalizeGroupToken)
+	);
+	// Drop what the GROUP already says, wherever it sits — not the last token
+	// positionally. `expression_statement` under `statement` keeps
+	// `expression`, and `statement_block` keeps `block` instead of stuttering.
+	let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
+	if (kept.length === parts.length && parts.length >= 2) {
+		// The group's name says nothing about these members — many groups are
+		// structural unions (`condition`, `non_delim_token`) whose name never
+		// appears in a member. Drop a trailing CATEGORY token instead, so
+		// `array_expression` still reduces to `array`.
+		const tail = normalizeGroupToken(parts[parts.length - 1]!);
+		if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
 	}
-	const camel = toCamel(short);
-	// Avoid collision with the group name itself (e.g. if a subtype happens
-	// to strip down to the same key as the group). Fall back to full name.
+	if (kept.length === 0) return toCamel(bareMember);
+	// camelCase runs LAST, on the surviving snake tokens, so the group's own
+	// capitalization never has to be matched.
+	const camel = toCamel(kept.join('_'));
+	// A member that reduces to the group's own name would read as a stutter.
 	if (camel === groupNameFor(supertypeKind)) return toCamel(bareMember);
 	return camel;
 }

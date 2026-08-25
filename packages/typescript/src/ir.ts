@@ -55,6 +55,12 @@ const _b$variableDeclaration: typeof FR.coerceToVariableDeclaration & {
 	strict: F.buildVariableDeclaration
 });
 
+const _b$functionSignature: typeof FR.coerceToFunctionSignature & {
+	strict: typeof F.buildFunctionSignature;
+} = attachProps(FR.coerceToFunctionSignature, {
+	strict: F.buildFunctionSignature
+});
+
 const _b$abstractClassDeclaration: typeof FR.coerceToAbstractClassDeclaration & {
 	strict: typeof F.buildAbstractClassDeclaration;
 } = attachProps(FR.coerceToAbstractClassDeclaration, {
@@ -691,12 +697,6 @@ const _b$unionType: typeof FR.coerceToUnionType & {
 	strict: F.buildUnionType
 });
 
-const _b$functionSignature: typeof FR.coerceToFunctionSignature & {
-	strict: typeof F.buildFunctionSignature;
-} = attachProps(FR.coerceToFunctionSignature, {
-	strict: F.buildFunctionSignature
-});
-
 const _b$program: typeof FR.coerceToProgram & {
 	strict: typeof F.buildProgram;
 } = attachProps(FR.coerceToProgram, {
@@ -1203,13 +1203,14 @@ export const declaration: {
 	readonly class: typeof _b$classDeclaration;
 	readonly lexical: typeof _b$lexicalDeclaration;
 	readonly variable: typeof _b$variableDeclaration;
+	readonly functionSignature: typeof _b$functionSignature;
 	readonly abstractClass: typeof _b$abstractClassDeclaration;
 	readonly module: typeof _b$module;
-	readonly internal: typeof _b$internalModule;
+	readonly internalModule: typeof _b$internalModule;
 	readonly typeAlias: typeof _b$typeAliasDeclaration;
 	readonly enum: typeof _b$enumDeclaration;
 	readonly interface: typeof _b$interfaceDeclaration;
-	readonly import: typeof _b$importAlias;
+	readonly importAlias: typeof _b$importAlias;
 	readonly ambient: typeof _b$ambientDeclaration;
 } = {
 	function: _b$functionDeclaration,
@@ -1217,13 +1218,14 @@ export const declaration: {
 	class: _b$classDeclaration,
 	lexical: _b$lexicalDeclaration,
 	variable: _b$variableDeclaration,
+	functionSignature: _b$functionSignature,
 	abstractClass: _b$abstractClassDeclaration,
 	module: _b$module,
-	internal: _b$internalModule,
+	internalModule: _b$internalModule,
 	typeAlias: _b$typeAliasDeclaration,
 	enum: _b$enumDeclaration,
 	interface: _b$interfaceDeclaration,
-	import: _b$importAlias,
+	importAlias: _b$importAlias,
 	ambient: _b$ambientDeclaration
 };
 
@@ -1232,7 +1234,7 @@ export const statement: {
 	readonly import: typeof _b$importStatement;
 	readonly debugger: typeof _b$debuggerStatement;
 	readonly expression: typeof _b$expressionStatement;
-	readonly statementBlock: typeof _b$statementBlock;
+	readonly block: typeof _b$statementBlock;
 	readonly if: typeof _b$ifStatement;
 	readonly switch: typeof _b$switchStatement;
 	readonly for: typeof _b$forStatement;
@@ -1251,7 +1253,7 @@ export const statement: {
 	import: _b$importStatement,
 	debugger: _b$debuggerStatement,
 	expression: _b$expressionStatement,
-	statementBlock: _b$statementBlock,
+	block: _b$statementBlock,
 	if: _b$ifStatement,
 	switch: _b$switchStatement,
 	for: _b$forStatement,
@@ -1277,8 +1279,8 @@ export const expression: {
 	readonly as: typeof _b$asExpression;
 	readonly satisfies: typeof _b$satisfiesExpression;
 	readonly instantiation: typeof _b$instantiationExpression;
-	readonly internal: typeof _b$internalModule;
-	readonly type: typeof _b$typeAssertion;
+	readonly internalModule: typeof _b$internalModule;
+	readonly typeAssertion: typeof _b$typeAssertion;
 	readonly assignment: typeof _b$assignmentExpression;
 	readonly augmentedAssignment: typeof _b$augmentedAssignmentExpression;
 	readonly await: typeof _b$awaitExpression;
@@ -1292,8 +1294,8 @@ export const expression: {
 	as: _b$asExpression,
 	satisfies: _b$satisfiesExpression,
 	instantiation: _b$instantiationExpression,
-	internal: _b$internalModule,
-	type: _b$typeAssertion,
+	internalModule: _b$internalModule,
+	typeAssertion: _b$typeAssertion,
 	assignment: _b$assignmentExpression,
 	augmentedAssignment: _b$augmentedAssignmentExpression,
 	await: _b$awaitExpression,
@@ -1315,7 +1317,7 @@ export const primaryExpression: {
 	readonly super: typeof F.buildSuper;
 	readonly number: typeof F.buildNumber;
 	readonly string: typeof _b$string;
-	readonly template: typeof _b$templateString;
+	readonly templateString: typeof _b$templateString;
 	readonly regex: typeof _b$regex;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
@@ -1323,10 +1325,10 @@ export const primaryExpression: {
 	readonly object: typeof _b$object;
 	readonly array: typeof _b$array;
 	readonly function: typeof _b$functionExpression;
-	readonly arrow: typeof _b$arrowFunction;
-	readonly generator: typeof _b$generatorFunction;
+	readonly arrowFunction: typeof _b$arrowFunction;
+	readonly generatorFunction: typeof _b$generatorFunction;
 	readonly class: typeof _b$class;
-	readonly meta: typeof _b$metaProperty;
+	readonly metaProperty: typeof _b$metaProperty;
 	readonly call: typeof _b$callExpression;
 	readonly nonNull: typeof _b$nonNullExpression;
 } = {
@@ -1339,7 +1341,7 @@ export const primaryExpression: {
 	super: F.buildSuper,
 	number: F.buildNumber,
 	string: _b$string,
-	template: _b$templateString,
+	templateString: _b$templateString,
 	regex: _b$regex,
 	true: F.buildTrue,
 	false: F.buildFalse,
@@ -1347,18 +1349,18 @@ export const primaryExpression: {
 	object: _b$object,
 	array: _b$array,
 	function: _b$functionExpression,
-	arrow: _b$arrowFunction,
-	generator: _b$generatorFunction,
+	arrowFunction: _b$arrowFunction,
+	generatorFunction: _b$generatorFunction,
 	class: _b$class,
-	meta: _b$metaProperty,
+	metaProperty: _b$metaProperty,
 	call: _b$callExpression,
 	nonNull: _b$nonNullExpression
 };
 
 export const jsxChild: {
-	readonly jsx: typeof F.buildJsxText;
+	readonly text: typeof F.buildJsxText;
 } = {
-	jsx: F.buildJsxText
+	text: F.buildJsxText
 };
 
 export const jsxIdentifier: {
@@ -1369,10 +1371,10 @@ export const jsxIdentifier: {
 
 export const jsxElementName: {
 	readonly identifier: typeof F.buildIdentifier;
-	readonly nested: typeof _b$nestedIdentifier;
+	readonly nestedIdentifier: typeof _b$nestedIdentifier;
 } = {
 	identifier: F.buildIdentifier,
-	nested: _b$nestedIdentifier
+	nestedIdentifier: _b$nestedIdentifier
 };
 
 export const jsxAttributeName: {
@@ -1459,16 +1461,16 @@ export const pattern: {
 
 export const propertyName: {
 	readonly identifier: typeof F.buildIdentifier;
-	readonly privateProperty: typeof F.buildPrivatePropertyIdentifier;
+	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly string: typeof _b$string;
 	readonly number: typeof F.buildNumber;
-	readonly computedProperty: typeof _b$computedPropertyName;
+	readonly computed: typeof _b$computedPropertyName;
 } = {
 	identifier: F.buildIdentifier,
-	privateProperty: F.buildPrivatePropertyIdentifier,
+	privateIdentifier: F.buildPrivatePropertyIdentifier,
 	string: _b$string,
 	number: F.buildNumber,
-	computedProperty: _b$computedPropertyName
+	computed: _b$computedPropertyName
 };
 
 export const statementIdentifier: {
@@ -1514,13 +1516,13 @@ export const type: {
 };
 
 export const tupleTypeMember: {
-	readonly tuple: typeof _b$tupleParameter;
-	readonly optionalTuple: typeof _b$optionalTupleParameter;
+	readonly parameter: typeof _b$tupleParameter;
+	readonly optionalParameter: typeof _b$optionalTupleParameter;
 	readonly optional: typeof _b$optionalType;
 	readonly rest: typeof _b$restType;
 } = {
-	tuple: _b$tupleParameter,
-	optionalTuple: _b$optionalTupleParameter,
+	parameter: _b$tupleParameter,
+	optionalParameter: _b$optionalTupleParameter,
 	optional: _b$optionalType,
 	rest: _b$restType
 };
@@ -1529,14 +1531,14 @@ export const primaryType: {
 	readonly parenthesized: typeof _b$parenthesizedType;
 	readonly predefined: typeof F.buildPredefinedType;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly nestedType: typeof _b$nestedTypeIdentifier;
+	readonly nestedIdentifier: typeof _b$nestedTypeIdentifier;
 	readonly generic: typeof _b$genericType;
 	readonly object: typeof _b$objectType;
 	readonly array: typeof _b$arrayType;
 	readonly tuple: typeof _b$tupleType;
 	readonly flowMaybe: typeof _b$flowMaybeType;
-	readonly type: typeof _b$typeQuery;
-	readonly indexType: typeof _b$indexTypeQuery;
+	readonly query: typeof _b$typeQuery;
+	readonly indexQuery: typeof _b$indexTypeQuery;
 	readonly this: typeof F.buildThis;
 	readonly literal: typeof _b$literalType;
 	readonly lookup: typeof _b$lookupType;
@@ -1548,14 +1550,14 @@ export const primaryType: {
 	parenthesized: _b$parenthesizedType,
 	predefined: F.buildPredefinedType,
 	identifier: F.buildIdentifier,
-	nestedType: _b$nestedTypeIdentifier,
+	nestedIdentifier: _b$nestedTypeIdentifier,
 	generic: _b$genericType,
 	object: _b$objectType,
 	array: _b$arrayType,
 	tuple: _b$tupleType,
 	flowMaybe: _b$flowMaybeType,
-	type: _b$typeQuery,
-	indexType: _b$indexTypeQuery,
+	query: _b$typeQuery,
+	indexQuery: _b$indexTypeQuery,
 	this: F.buildThis,
 	literal: _b$literalType,
 	lookup: _b$lookupType,
@@ -1742,15 +1744,15 @@ export const ir: {
 	readonly jsxText: typeof F.buildJsxText;
 	readonly abstractClass: typeof _b$abstractClassDeclaration;
 	readonly ambient: typeof _b$ambientDeclaration;
-	readonly arrow: typeof _b$arrowFunction;
 	readonly as: typeof _b$asExpression;
 	readonly assignment: typeof _b$assignmentExpression;
 	readonly augmentedAssignment: typeof _b$augmentedAssignmentExpression;
 	readonly await: typeof _b$awaitExpression;
 	readonly binary: typeof _b$binaryExpression;
+	readonly block: typeof _b$statementBlock;
 	readonly break: typeof _b$breakStatement;
 	readonly call: typeof _b$callExpression;
-	readonly computedProperty: typeof _b$computedPropertyName;
+	readonly computed: typeof _b$computedPropertyName;
 	readonly conditional: typeof _b$conditionalType;
 	readonly constructor: typeof _b$constructorType;
 	readonly continue: typeof _b$continueStatement;
@@ -1762,31 +1764,26 @@ export const ir: {
 	readonly for: typeof _b$forStatement;
 	readonly forIn: typeof _b$forInStatement;
 	readonly function: typeof _b$functionDeclaration;
-	readonly generator: typeof _b$generatorFunction;
 	readonly generic: typeof _b$genericType;
 	readonly if: typeof _b$ifStatement;
-	readonly indexType: typeof _b$indexTypeQuery;
+	readonly indexQuery: typeof _b$indexTypeQuery;
 	readonly infer: typeof _b$inferType;
 	readonly instantiation: typeof _b$instantiationExpression;
 	readonly interface: typeof _b$interfaceDeclaration;
-	readonly internal: typeof _b$internalModule;
 	readonly intersection: typeof _b$intersectionType;
-	readonly jsx: typeof F.buildJsxText;
 	readonly labeled: typeof _b$labeledStatement;
 	readonly lexical: typeof _b$lexicalDeclaration;
 	readonly literal: typeof _b$literalType;
 	readonly lookup: typeof _b$lookupType;
 	readonly member: typeof _b$memberExpression;
-	readonly meta: typeof _b$metaProperty;
-	readonly nested: typeof _b$nestedIdentifier;
-	readonly nestedType: typeof _b$nestedTypeIdentifier;
 	readonly new: typeof _b$newExpression;
 	readonly nonNull: typeof _b$nonNullExpression;
 	readonly optional: typeof _b$optionalParameter;
-	readonly optionalTuple: typeof _b$optionalTupleParameter;
+	readonly parameter: typeof _b$tupleParameter;
 	readonly parenthesized: typeof _b$parenthesizedExpression;
 	readonly predefined: typeof F.buildPredefinedType;
-	readonly privateProperty: typeof F.buildPrivatePropertyIdentifier;
+	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly query: typeof _b$typeQuery;
 	readonly readonly: typeof _b$readonlyType;
 	readonly required: typeof _b$requiredParameter;
 	readonly rest: typeof _b$restPattern;
@@ -1795,12 +1792,12 @@ export const ir: {
 	readonly sequence: typeof _b$sequenceExpression;
 	readonly subscript: typeof _b$subscriptExpression;
 	readonly switch: typeof _b$switchStatement;
-	readonly template: typeof _b$templateString;
 	readonly templateLiteral: typeof _b$templateLiteralType;
 	readonly ternary: typeof _b$ternaryExpression;
+	readonly text: typeof F.buildJsxText;
 	readonly throw: typeof _b$throwStatement;
 	readonly try: typeof _b$tryStatement;
-	readonly tuple: typeof _b$tupleParameter;
+	readonly tuple: typeof _b$tupleType;
 	readonly typeAlias: typeof _b$typeAliasDeclaration;
 	readonly unary: typeof _b$unaryExpression;
 	readonly union: typeof _b$unionType;
@@ -2019,15 +2016,15 @@ export const ir: {
 	// Supertype-stripped short aliases
 	abstractClass: _b$abstractClassDeclaration,
 	ambient: _b$ambientDeclaration,
-	arrow: _b$arrowFunction,
 	as: _b$asExpression,
 	assignment: _b$assignmentExpression,
 	augmentedAssignment: _b$augmentedAssignmentExpression,
 	await: _b$awaitExpression,
 	binary: _b$binaryExpression,
+	block: _b$statementBlock,
 	break: _b$breakStatement,
 	call: _b$callExpression,
-	computedProperty: _b$computedPropertyName,
+	computed: _b$computedPropertyName,
 	conditional: _b$conditionalType,
 	constructor: _b$constructorType,
 	continue: _b$continueStatement,
@@ -2039,31 +2036,26 @@ export const ir: {
 	for: _b$forStatement,
 	forIn: _b$forInStatement,
 	function: _b$functionDeclaration,
-	generator: _b$generatorFunction,
 	generic: _b$genericType,
 	if: _b$ifStatement,
-	indexType: _b$indexTypeQuery,
+	indexQuery: _b$indexTypeQuery,
 	infer: _b$inferType,
 	instantiation: _b$instantiationExpression,
 	interface: _b$interfaceDeclaration,
-	internal: _b$internalModule,
 	intersection: _b$intersectionType,
-	jsx: F.buildJsxText,
 	labeled: _b$labeledStatement,
 	lexical: _b$lexicalDeclaration,
 	literal: _b$literalType,
 	lookup: _b$lookupType,
 	member: _b$memberExpression,
-	meta: _b$metaProperty,
-	nested: _b$nestedIdentifier,
-	nestedType: _b$nestedTypeIdentifier,
 	new: _b$newExpression,
 	nonNull: _b$nonNullExpression,
 	optional: _b$optionalParameter,
-	optionalTuple: _b$optionalTupleParameter,
+	parameter: _b$tupleParameter,
 	parenthesized: _b$parenthesizedExpression,
 	predefined: F.buildPredefinedType,
-	privateProperty: F.buildPrivatePropertyIdentifier,
+	privateIdentifier: F.buildPrivatePropertyIdentifier,
+	query: _b$typeQuery,
 	readonly: _b$readonlyType,
 	required: _b$requiredParameter,
 	rest: _b$restPattern,
@@ -2072,12 +2064,12 @@ export const ir: {
 	sequence: _b$sequenceExpression,
 	subscript: _b$subscriptExpression,
 	switch: _b$switchStatement,
-	template: _b$templateString,
 	templateLiteral: _b$templateLiteralType,
 	ternary: _b$ternaryExpression,
+	text: F.buildJsxText,
 	throw: _b$throwStatement,
 	try: _b$tryStatement,
-	tuple: _b$tupleParameter,
+	tuple: _b$tupleType,
 	typeAlias: _b$typeAliasDeclaration,
 	unary: _b$unaryExpression,
 	union: _b$unionType,

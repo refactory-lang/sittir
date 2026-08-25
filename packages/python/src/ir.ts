@@ -413,16 +413,34 @@ const _b$list: typeof FR.coerceToList & {
 	strict: F.buildList
 });
 
+const _b$listComprehension: typeof FR.coerceToListComprehension & {
+	strict: typeof F.buildListComprehension;
+} = attachProps(FR.coerceToListComprehension, {
+	strict: F.buildListComprehension
+});
+
 const _b$dictionary: typeof FR.coerceToDictionary & {
 	strict: typeof F.buildDictionary;
 } = attachProps(FR.coerceToDictionary, {
 	strict: F.buildDictionary
 });
 
+const _b$dictionaryComprehension: typeof FR.coerceToDictionaryComprehension & {
+	strict: typeof F.buildDictionaryComprehension;
+} = attachProps(FR.coerceToDictionaryComprehension, {
+	strict: F.buildDictionaryComprehension
+});
+
 const _b$set: typeof FR.coerceToSet & {
 	strict: typeof F.buildSet;
 } = attachProps(FR.coerceToSet, {
 	strict: F.buildSet
+});
+
+const _b$setComprehension: typeof FR.coerceToSetComprehension & {
+	strict: typeof F.buildSetComprehension;
+} = attachProps(FR.coerceToSetComprehension, {
+	strict: F.buildSetComprehension
 });
 
 const _b$tuple: typeof FR.coerceToTuple & {
@@ -701,24 +719,6 @@ const _b$pair: typeof FR.coerceToPair & {
 	strict: F.buildPair
 });
 
-const _b$listComprehension: typeof FR.coerceToListComprehension & {
-	strict: typeof F.buildListComprehension;
-} = attachProps(FR.coerceToListComprehension, {
-	strict: F.buildListComprehension
-});
-
-const _b$dictionaryComprehension: typeof FR.coerceToDictionaryComprehension & {
-	strict: typeof F.buildDictionaryComprehension;
-} = attachProps(FR.coerceToDictionaryComprehension, {
-	strict: F.buildDictionaryComprehension
-});
-
-const _b$setComprehension: typeof FR.coerceToSetComprehension & {
-	strict: typeof F.buildSetComprehension;
-} = attachProps(FR.coerceToSetComprehension, {
-	strict: F.buildSetComprehension
-});
-
 const _b$forInClause: typeof FR.coerceToForInClause & {
 	strict: typeof F.buildForInClause;
 } = attachProps(FR.coerceToForInClause, {
@@ -878,9 +878,9 @@ export const namedExpressionLhs: {
 };
 
 export const expressions: {
-	readonly expression: typeof _b$expressionList;
+	readonly expressionList: typeof _b$expressionList;
 } = {
-	expression: _b$expressionList
+	expressionList: _b$expressionList
 };
 
 export const compoundStatement: {
@@ -913,12 +913,12 @@ export const simplePattern: {
 	readonly caseTuple: typeof _b$caseTuplePattern;
 	readonly dict: typeof _b$dictPattern;
 	readonly string: typeof _b$string;
-	readonly concatenated: typeof _b$concatenatedString;
+	readonly concatenatedString: typeof _b$concatenatedString;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
 	readonly complex: typeof _b$complexPattern;
-	readonly dotted: typeof _b$dottedName;
+	readonly dottedName: typeof _b$dottedName;
 } = {
 	class: _b$classPattern,
 	splat: _b$splatPattern,
@@ -927,12 +927,12 @@ export const simplePattern: {
 	caseTuple: _b$caseTuplePattern,
 	dict: _b$dictPattern,
 	string: _b$string,
-	concatenated: _b$concatenatedString,
+	concatenatedString: _b$concatenatedString,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
 	complex: _b$complexPattern,
-	dotted: _b$dottedName
+	dottedName: _b$dottedName
 };
 
 export const parameter: {
@@ -970,9 +970,9 @@ export const pattern: {
 };
 
 export const expressionWithinForInClause: {
-	readonly lambdaWithinForIn: typeof _b$lambdaWithinForInClause;
+	readonly lambda: typeof _b$lambdaWithinForInClause;
 } = {
-	lambdaWithinForIn: _b$lambdaWithinForInClause
+	lambda: _b$lambdaWithinForInClause
 };
 
 export const expression: {
@@ -998,7 +998,7 @@ export const primaryExpression: {
 	readonly binary: typeof _b$binaryOperator;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly string: typeof _b$string;
-	readonly concatenated: typeof _b$concatenatedString;
+	readonly concatenatedString: typeof _b$concatenatedString;
 	readonly integer: typeof F.buildInteger;
 	readonly float: typeof F.buildFloat;
 	readonly true: typeof F.buildTrue;
@@ -1009,8 +1009,11 @@ export const primaryExpression: {
 	readonly subscript: typeof _b$subscript;
 	readonly call: typeof _b$call;
 	readonly list: typeof _b$list;
+	readonly listComprehension: typeof _b$listComprehension;
 	readonly dictionary: typeof _b$dictionary;
+	readonly dictionaryComprehension: typeof _b$dictionaryComprehension;
 	readonly set: typeof _b$set;
+	readonly setComprehension: typeof _b$setComprehension;
 	readonly tuple: typeof _b$tuple;
 	readonly parenthesized: typeof _b$parenthesizedExpression;
 	readonly generator: typeof _b$generatorExpression;
@@ -1020,7 +1023,7 @@ export const primaryExpression: {
 	binary: _b$binaryOperator,
 	identifier: F.buildIdentifier,
 	string: _b$string,
-	concatenated: _b$concatenatedString,
+	concatenatedString: _b$concatenatedString,
 	integer: F.buildInteger,
 	float: F.buildFloat,
 	true: F.buildTrue,
@@ -1031,8 +1034,11 @@ export const primaryExpression: {
 	subscript: _b$subscript,
 	call: _b$call,
 	list: _b$list,
+	listComprehension: _b$listComprehension,
 	dictionary: _b$dictionary,
+	dictionaryComprehension: _b$dictionaryComprehension,
 	set: _b$set,
+	setComprehension: _b$setComprehension,
 	tuple: _b$tuple,
 	parenthesized: _b$parenthesizedExpression,
 	generator: _b$generatorExpression,
@@ -1040,32 +1046,32 @@ export const primaryExpression: {
 };
 
 export const leftHandSide: {
-	readonly pattern: typeof _b$patternList;
+	readonly patternList: typeof _b$patternList;
 } = {
-	pattern: _b$patternList
+	patternList: _b$patternList
 };
 
 export const rightHandSide: {
-	readonly expression: typeof _b$expressionList;
+	readonly expressionList: typeof _b$expressionList;
 	readonly assignment: typeof _b$assignment;
-	readonly augmented: typeof _b$augmentedAssignment;
-	readonly pattern: typeof _b$patternList;
+	readonly augmentedAssignment: typeof _b$augmentedAssignment;
+	readonly patternList: typeof _b$patternList;
 	readonly yield: typeof _b$yield;
 } = {
-	expression: _b$expressionList,
+	expressionList: _b$expressionList,
 	assignment: _b$assignment,
-	augmented: _b$augmentedAssignment,
-	pattern: _b$patternList,
+	augmentedAssignment: _b$augmentedAssignment,
+	patternList: _b$patternList,
 	yield: _b$yield
 };
 
 export const fExpression: {
-	readonly expression: typeof _b$expressionList;
-	readonly pattern: typeof _b$patternList;
+	readonly list: typeof _b$expressionList;
+	readonly patternList: typeof _b$patternList;
 	readonly yield: typeof _b$yield;
 } = {
-	expression: _b$expressionList,
-	pattern: _b$patternList,
+	list: _b$expressionList,
+	patternList: _b$patternList,
 	yield: _b$yield
 };
 
@@ -1203,7 +1209,6 @@ export const ir: {
 	readonly except: typeof F.buildExcept;
 	readonly as: typeof _b$asPattern;
 	readonly assert: typeof _b$assertStatement;
-	readonly augmented: typeof _b$augmentedAssignment;
 	readonly binary: typeof _b$binaryOperator;
 	readonly boolean: typeof _b$booleanOperator;
 	readonly break: typeof F.buildBreakStatement;
@@ -1212,14 +1217,12 @@ export const ir: {
 	readonly class: typeof _b$classDefinition;
 	readonly comparison: typeof _b$comparisonOperator;
 	readonly complex: typeof _b$complexPattern;
-	readonly concatenated: typeof _b$concatenatedString;
 	readonly conditional: typeof _b$conditionalExpression;
 	readonly continue: typeof F.buildContinueStatement;
 	readonly decorated: typeof _b$decoratedDefinition;
 	readonly default: typeof _b$defaultParameter;
 	readonly delete: typeof _b$deleteStatement;
 	readonly dict: typeof _b$dictPattern;
-	readonly dotted: typeof _b$dottedName;
 	readonly exec: typeof _b$execStatement;
 	readonly for: typeof _b$forStatement;
 	readonly function: typeof _b$functionDefinition;
@@ -1229,7 +1232,6 @@ export const ir: {
 	readonly if: typeof _b$ifStatement;
 	readonly import: typeof _b$importStatement;
 	readonly importFrom: typeof _b$importFromStatement;
-	readonly lambdaWithinForIn: typeof _b$lambdaWithinForInClause;
 	readonly match: typeof _b$matchStatement;
 	readonly named: typeof _b$namedExpression;
 	readonly nonlocal: typeof _b$nonlocalStatement;
@@ -1399,7 +1401,6 @@ export const ir: {
 	// Supertype-stripped short aliases
 	as: _b$asPattern,
 	assert: _b$assertStatement,
-	augmented: _b$augmentedAssignment,
 	binary: _b$binaryOperator,
 	boolean: _b$booleanOperator,
 	break: F.buildBreakStatement,
@@ -1408,14 +1409,12 @@ export const ir: {
 	class: _b$classDefinition,
 	comparison: _b$comparisonOperator,
 	complex: _b$complexPattern,
-	concatenated: _b$concatenatedString,
 	conditional: _b$conditionalExpression,
 	continue: F.buildContinueStatement,
 	decorated: _b$decoratedDefinition,
 	default: _b$defaultParameter,
 	delete: _b$deleteStatement,
 	dict: _b$dictPattern,
-	dotted: _b$dottedName,
 	exec: _b$execStatement,
 	for: _b$forStatement,
 	function: _b$functionDefinition,
@@ -1425,7 +1424,6 @@ export const ir: {
 	if: _b$ifStatement,
 	import: _b$importStatement,
 	importFrom: _b$importFromStatement,
-	lambdaWithinForIn: _b$lambdaWithinForInClause,
 	match: _b$matchStatement,
 	named: _b$namedExpression,
 	nonlocal: _b$nonlocalStatement,
