@@ -50,6 +50,9 @@ const _leafRe_buildMetavariable = /^(?:\$[a-zA-Z_]\w*)/u;
 const _leafRe_buildStringLiteralOpen = /^(?:[bc]?")/u;
 const _leafRe_buildLineCommentContent = /^(?:.*)/u;
 
+export type SourceFileBuildArgs = [config?: Partial<T.SourceFile.Config>];
+export type SourceFileLooseArgs = [config?: T.SourceFile.Loose];
+
 export type SourceFileBuilt = T.SourceFile & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -83,6 +86,9 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): Sour
 		methodsEngine
 	);
 }
+
+export type ExpressionStatementBuildArgs = [child: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock];
+export type ExpressionStatementLooseArgs = [child: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock];
 
 export type ExpressionStatementBuilt = T.ExpressionStatement & {
 	readonly $source: 2;
@@ -120,6 +126,9 @@ export const buildExpressionStatement = attachProps(buildExpressionStatement$imp
 		buildExpressionStatement$impl(buildExpressionStatementWithSemi(config) as T.ExpressionStatementWithSemi)
 });
 
+export type MacroDefinitionBuildArgs = [config: T.MacroDefinition.Config];
+export type MacroDefinitionLooseArgs = [config: T.MacroDefinition.Loose];
+
 export type MacroDefinitionBuilt = T.MacroDefinition & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -155,6 +164,9 @@ export function buildMacroDefinition(config: T.MacroDefinition.Config): MacroDef
 	);
 }
 
+export type MacroRuleBuildArgs = [config: T.MacroRule.Config];
+export type MacroRuleLooseArgs = [config: T.MacroRule.Loose];
+
 export type MacroRuleBuilt = T.MacroRule & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -188,6 +200,13 @@ export function buildMacroRule(config: T.MacroRule.Config): MacroRuleBuilt {
 		methodsEngine
 	);
 }
+
+export type TokenTreePatternBuildArgs = [
+	child: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace
+];
+export type TokenTreePatternLooseArgs = [
+	child: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace
+];
 
 export type TokenTreePatternBuilt = T.TokenTreePattern & {
 	readonly $source: 2;
@@ -229,6 +248,9 @@ export const buildTokenTreePattern = attachProps(buildTokenTreePattern$impl, {
 	brace: (config: Partial<T.TokenTreePatternBrace.Config> = {}) =>
 		buildTokenTreePattern$impl(buildTokenTreePatternBrace(config) as T.TokenTreePatternBrace)
 });
+
+export type TokenBindingPatternBuildArgs = [config: T.TokenBindingPattern.Config];
+export type TokenBindingPatternLooseArgs = [config: T.TokenBindingPattern.Loose];
 
 export type TokenBindingPatternBuilt = T.TokenBindingPattern & {
 	readonly $source: 2;
@@ -280,6 +302,9 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 		methodsEngine
 	);
 }
+
+export type TokenRepetitionPatternBuildArgs = [config: T.TokenRepetitionPattern.Config];
+export type TokenRepetitionPatternLooseArgs = [config: T.TokenRepetitionPattern.Loose];
 
 export type TokenRepetitionPatternBuilt = T.TokenRepetitionPattern & {
 	readonly $source: 2;
@@ -340,6 +365,43 @@ export const buildTokenRepetitionPattern = attachProps(buildTokenRepetitionPatte
 		buildTokenRepetitionPattern$impl({ tokenPatterns: tokenPatterns, operator: TSKindId.Qmark })
 });
 
+export type FragmentSpecifierBuildArgs = [
+	text:
+		| 'block'
+		| 'expr'
+		| 'expr_2021'
+		| 'ident'
+		| 'item'
+		| 'lifetime'
+		| 'literal'
+		| 'meta'
+		| 'pat'
+		| 'pat_param'
+		| 'path'
+		| 'stmt'
+		| 'tt'
+		| 'ty'
+		| 'vis'
+];
+export type FragmentSpecifierLooseArgs = [
+	text:
+		| 'block'
+		| 'expr'
+		| 'expr_2021'
+		| 'ident'
+		| 'item'
+		| 'lifetime'
+		| 'literal'
+		| 'meta'
+		| 'pat'
+		| 'pat_param'
+		| 'path'
+		| 'stmt'
+		| 'tt'
+		| 'ty'
+		| 'vis'
+];
+
 export function buildFragmentSpecifier(
 	text:
 		| 'block'
@@ -368,6 +430,25 @@ export function buildFragmentSpecifier(
 		methodsEngine
 	);
 }
+
+export type TokenTreeBuildArgs = [
+	child:
+		| T.TokenTreeParen
+		| T.TokenTreeBracket
+		| T.TokenTreeBrace
+		| T.DelimTokenTreeParen
+		| T.DelimTokenTreeBracket
+		| T.DelimTokenTreeBrace
+];
+export type TokenTreeLooseArgs = [
+	child:
+		| T.TokenTreeParen
+		| T.TokenTreeBracket
+		| T.TokenTreeBrace
+		| T.DelimTokenTreeParen
+		| T.DelimTokenTreeBracket
+		| T.DelimTokenTreeBrace
+];
 
 export type TokenTreeBuilt = T.TokenTree & {
 	readonly $source: 2;
@@ -437,6 +518,9 @@ export const buildTokenTree = attachProps(buildTokenTree$impl, {
 		buildTokenTree$impl(buildDelimTokenTreeBrace(config) as T.DelimTokenTreeBrace)
 });
 
+export type TokenRepetitionBuildArgs = [config: T.TokenRepetition.Config];
+export type TokenRepetitionLooseArgs = [config: T.TokenRepetition.Loose];
+
 export type TokenRepetitionBuilt = T.TokenRepetition & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -491,6 +575,9 @@ export const buildTokenRepetition = attachProps(buildTokenRepetition$impl, {
 		buildTokenRepetition$impl({ tokens: tokens, operator: TSKindId.Qmark })
 });
 
+export type AttributeItemBuildArgs = [attribute: T.AttributeItem.Config['attribute']];
+export type AttributeItemLooseArgs = [attribute: T.AttributeItem.Config['attribute']];
+
 export type AttributeItemBuilt = T.AttributeItem & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -536,6 +623,9 @@ function _buildAttributeItem(attribute: T.AttributeItem.Config['attribute']): At
 		methodsEngine
 	);
 }
+
+export type InnerAttributeItemBuildArgs = [attribute: T.InnerAttributeItem.Config['attribute']];
+export type InnerAttributeItemLooseArgs = [attribute: T.InnerAttributeItem.Config['attribute']];
 
 export type InnerAttributeItemBuilt = T.InnerAttributeItem & {
 	readonly $source: 2;
@@ -585,6 +675,9 @@ function _buildInnerAttributeItem(attribute: T.InnerAttributeItem.Config['attrib
 	);
 }
 
+export type AttributeBuildArgs = [config: T.Attribute.Config];
+export type AttributeLooseArgs = [config: T.Attribute.Loose];
+
 export type AttributeBuilt = T.Attribute & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -618,6 +711,9 @@ export function buildAttribute(config: T.Attribute.Config): AttributeBuilt {
 		methodsEngine
 	);
 }
+
+export type ModItemBuildArgs = [config: T.ModItem.Config];
+export type ModItemLooseArgs = [config: T.ModItem.Loose];
 
 export type ModItemBuilt = T.ModItem & {
 	readonly $source: 2;
@@ -657,6 +753,9 @@ export function buildModItem(config: T.ModItem.Config): ModItemBuilt {
 		methodsEngine
 	);
 }
+
+export type ForeignModItemBuildArgs = [config: T.ForeignModItem.Config];
+export type ForeignModItemLooseArgs = [config: T.ForeignModItem.Loose];
 
 export type ForeignModItemBuilt = T.ForeignModItem & {
 	readonly $source: 2;
@@ -698,6 +797,9 @@ export function buildForeignModItem(config: T.ForeignModItem.Config): ForeignMod
 	);
 }
 
+export type DeclarationListBuildArgs = [...children: T.DeclarationStatement[]];
+export type DeclarationListLooseArgs = [...children: T.DeclarationStatement[]];
+
 export type DeclarationListBuilt = T.DeclarationList & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -724,6 +826,9 @@ export function buildDeclarationList(...children: T.DeclarationStatement[]): Dec
 		methodsEngine
 	);
 }
+
+export type StructItemBuildArgs = [config: T.StructItem.Config];
+export type StructItemLooseArgs = [config: T.StructItem.Loose];
 
 export type StructItemBuilt = T.StructItem & {
 	readonly $source: 2;
@@ -770,6 +875,9 @@ export function buildStructItem(config: T.StructItem.Config): StructItemBuilt {
 		methodsEngine
 	);
 }
+
+export type UnionItemBuildArgs = [config: T.UnionItem.Config];
+export type UnionItemLooseArgs = [config: T.UnionItem.Loose];
 
 export type UnionItemBuilt = T.UnionItem & {
 	readonly $source: 2;
@@ -821,6 +929,9 @@ export function buildUnionItem(config: T.UnionItem.Config): UnionItemBuilt {
 	);
 }
 
+export type EnumItemBuildArgs = [config: T.EnumItem.Config];
+export type EnumItemLooseArgs = [config: T.EnumItem.Loose];
+
 export type EnumItemBuilt = T.EnumItem & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -870,6 +981,9 @@ export function buildEnumItem(config: T.EnumItem.Config): EnumItemBuilt {
 	);
 }
 
+export type EnumVariantListBuildArgs = [child?: T.EnumVariantListElements];
+export type EnumVariantListLooseArgs = [child?: T.EnumVariantListElements];
+
 export type EnumVariantListBuilt = T.EnumVariantList & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -916,6 +1030,9 @@ function _buildEnumVariantList(child?: T.EnumVariantListElements): EnumVariantLi
 	);
 }
 
+export type EnumVariantBuildArgs = [config: T.EnumVariant.Config];
+export type EnumVariantLooseArgs = [config: T.EnumVariant.Loose];
+
 export type EnumVariantBuilt = T.EnumVariant & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -961,6 +1078,9 @@ export function buildEnumVariant(config: T.EnumVariant.Config): EnumVariantBuilt
 		methodsEngine
 	);
 }
+
+export type FieldDeclarationListBuildArgs = [child?: T.FieldDeclarationListElements];
+export type FieldDeclarationListLooseArgs = [child?: T.FieldDeclarationListElements];
 
 export type FieldDeclarationListBuilt = T.FieldDeclarationList & {
 	readonly $source: 2;
@@ -1010,6 +1130,9 @@ function _buildFieldDeclarationList(child?: T.FieldDeclarationListElements): Fie
 	);
 }
 
+export type FieldDeclarationBuildArgs = [config: T.FieldDeclaration.Config];
+export type FieldDeclarationLooseArgs = [config: T.FieldDeclaration.Loose];
+
 export type FieldDeclarationBuilt = T.FieldDeclaration & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1049,6 +1172,9 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): FieldD
 		methodsEngine
 	);
 }
+
+export type OrderedFieldDeclarationListBuildArgs = [attributes?: T.OrderedFieldDeclarationList.Config['attributes']];
+export type OrderedFieldDeclarationListLooseArgs = [attributes?: T.OrderedFieldDeclarationList.Config['attributes']];
 
 export type OrderedFieldDeclarationListBuilt = T.OrderedFieldDeclarationList & {
 	readonly $source: 2;
@@ -1105,6 +1231,9 @@ function _buildOrderedFieldDeclarationList(
 	);
 }
 
+export type ExternCrateDeclarationBuildArgs = [config: T.ExternCrateDeclaration.Config];
+export type ExternCrateDeclarationLooseArgs = [config: T.ExternCrateDeclaration.Loose];
+
 export type ExternCrateDeclarationBuilt = T.ExternCrateDeclaration & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1144,6 +1273,9 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 		methodsEngine
 	);
 }
+
+export type ConstItemBuildArgs = [config: T.ConstItem.Config];
+export type ConstItemLooseArgs = [config: T.ConstItem.Loose];
 
 export type ConstItemBuilt = T.ConstItem & {
 	readonly $source: 2;
@@ -1189,6 +1321,9 @@ export function buildConstItem(config: T.ConstItem.Config): ConstItemBuilt {
 		methodsEngine
 	);
 }
+
+export type StaticItemBuildArgs = [config: T.StaticItem.Config];
+export type StaticItemLooseArgs = [config: T.StaticItem.Loose];
 
 export type StaticItemBuilt = T.StaticItem & {
 	readonly $source: 2;
@@ -1247,6 +1382,9 @@ export function buildStaticItem(config: T.StaticItem.Config): StaticItemBuilt {
 	);
 }
 
+export type TypeItemBuildArgs = [config: T.TypeItem.Config];
+export type TypeItemLooseArgs = [config: T.TypeItem.Loose];
+
 export type TypeItemBuilt = T.TypeItem & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1300,6 +1438,9 @@ export function buildTypeItem(config: T.TypeItem.Config): TypeItemBuilt {
 		methodsEngine
 	);
 }
+
+export type FunctionItemBuildArgs = [config: T.FunctionItem.Config];
+export type FunctionItemLooseArgs = [config: T.FunctionItem.Loose];
 
 export type FunctionItemBuilt = T.FunctionItem & {
 	readonly $source: 2;
@@ -1367,6 +1508,9 @@ export function buildFunctionItem(config: T.FunctionItem.Config): FunctionItemBu
 	);
 }
 
+export type FunctionSignatureItemBuildArgs = [config: T.FunctionSignatureItem.Config];
+export type FunctionSignatureItemLooseArgs = [config: T.FunctionSignatureItem.Loose];
+
 export type FunctionSignatureItemBuilt = T.FunctionSignatureItem & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1429,6 +1573,9 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 }
 
+export type FunctionModifiersBuildArgs = [...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]];
+export type FunctionModifiersLooseArgs = [...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]];
+
 export type FunctionModifiersBuilt = T.FunctionModifiers & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1461,6 +1608,9 @@ export function buildFunctionModifiers(
 		methodsEngine
 	);
 }
+
+export type WhereClauseBuildArgs = [child?: T.WherePredicates];
+export type WhereClauseLooseArgs = [child?: T.WherePredicates];
 
 export type WhereClauseBuilt = T.WhereClause & {
 	readonly $source: 2;
@@ -1505,6 +1655,9 @@ function _buildWhereClause(child?: T.WherePredicates): WhereClauseBuilt {
 		methodsEngine
 	);
 }
+
+export type WherePredicateBuildArgs = [config: T.WherePredicate.Config];
+export type WherePredicateLooseArgs = [config: T.WherePredicate.Loose];
 
 export type WherePredicateBuilt = T.WherePredicate & {
 	readonly $source: 2;
@@ -1564,6 +1717,9 @@ export function buildWherePredicate(config: T.WherePredicate.Config): WherePredi
 	);
 }
 
+export type ImplItemBuildArgs = [config: T.ImplItem.Config];
+export type ImplItemLooseArgs = [config: T.ImplItem.Loose];
+
 export type ImplItemBuilt = T.ImplItem & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1619,6 +1775,9 @@ export function buildImplItem(config: T.ImplItem.Config): ImplItemBuilt {
 		methodsEngine
 	);
 }
+
+export type TraitItemBuildArgs = [config: T.TraitItem.Config];
+export type TraitItemLooseArgs = [config: T.TraitItem.Loose];
 
 export type TraitItemBuilt = T.TraitItem & {
 	readonly $source: 2;
@@ -1681,6 +1840,9 @@ export function buildTraitItem(config: T.TraitItem.Config): TraitItemBuilt {
 	);
 }
 
+export type AssociatedTypeBuildArgs = [config: T.AssociatedType.Config];
+export type AssociatedTypeLooseArgs = [config: T.AssociatedType.Loose];
+
 export type AssociatedTypeBuilt = T.AssociatedType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1725,6 +1887,9 @@ export function buildAssociatedType(config: T.AssociatedType.Config): Associated
 	);
 }
 
+export type TraitBoundsBuildArgs = [...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]];
+export type TraitBoundsLooseArgs = [...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]];
+
 export type TraitBoundsBuilt = T.TraitBounds & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1752,6 +1917,9 @@ export function buildTraitBounds(...children: (T._Type | T.Lifetime | T.HigherRa
 		methodsEngine
 	);
 }
+
+export type HigherRankedTraitBoundBuildArgs = [config: T.HigherRankedTraitBound.Config];
+export type HigherRankedTraitBoundLooseArgs = [config: T.HigherRankedTraitBound.Loose];
 
 export type HigherRankedTraitBoundBuilt = T.HigherRankedTraitBound & {
 	readonly $source: 2;
@@ -1788,6 +1956,9 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 	);
 }
 
+export type RemovedTraitBoundBuildArgs = [type: T.RemovedTraitBound.Config['type']];
+export type RemovedTraitBoundLooseArgs = [type: T.RemovedTraitBound.Config['type']];
+
 export type RemovedTraitBoundBuilt = T.RemovedTraitBound & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1816,6 +1987,9 @@ export function buildRemovedTraitBound(type: T.RemovedTraitBound.Config['type'])
 		methodsEngine
 	);
 }
+
+export type TypeParametersBuildArgs = [child: T.TypeParametersElements];
+export type TypeParametersLooseArgs = [child: T.TypeParametersElements];
 
 export type TypeParametersBuilt = T.TypeParameters & {
 	readonly $source: 2;
@@ -1866,6 +2040,9 @@ function _buildTypeParameters(child: T.TypeParametersElements): TypeParametersBu
 	);
 }
 
+export type ConstParameterBuildArgs = [config: T.ConstParameter.Config];
+export type ConstParameterLooseArgs = [config: T.ConstParameter.Loose];
+
 export type ConstParameterBuilt = T.ConstParameter & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1906,6 +2083,9 @@ export function buildConstParameter(config: T.ConstParameter.Config): ConstParam
 	);
 }
 
+export type TypeParameterBuildArgs = [config: T.TypeParameter.Config];
+export type TypeParameterLooseArgs = [config: T.TypeParameter.Loose];
+
 export type TypeParameterBuilt = T.TypeParameter & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1945,6 +2125,9 @@ export function buildTypeParameter(config: T.TypeParameter.Config): TypeParamete
 	);
 }
 
+export type LifetimeParameterBuildArgs = [config: T.LifetimeParameter.Config];
+export type LifetimeParameterLooseArgs = [config: T.LifetimeParameter.Loose];
+
 export type LifetimeParameterBuilt = T.LifetimeParameter & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -1978,6 +2161,9 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): Life
 		methodsEngine
 	);
 }
+
+export type LetDeclarationBuildArgs = [config: T.LetDeclaration.Config];
+export type LetDeclarationLooseArgs = [config: T.LetDeclaration.Loose];
 
 export type LetDeclarationBuilt = T.LetDeclaration & {
 	readonly $source: 2;
@@ -2031,6 +2217,9 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): LetDeclara
 	);
 }
 
+export type UseDeclarationBuildArgs = [config: T.UseDeclaration.Config];
+export type UseDeclarationLooseArgs = [config: T.UseDeclaration.Loose];
+
 export type UseDeclarationBuilt = T.UseDeclaration & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2066,6 +2255,9 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): UseDeclara
 	);
 }
 
+export type ScopedUseListBuildArgs = [config: T.ScopedUseList.Config];
+export type ScopedUseListLooseArgs = [config: T.ScopedUseList.Loose];
+
 export type ScopedUseListBuilt = T.ScopedUseList & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2099,6 +2291,9 @@ export function buildScopedUseList(config: T.ScopedUseList.Config): ScopedUseLis
 		methodsEngine
 	);
 }
+
+export type UseListBuildArgs = [child?: T.UseClauses];
+export type UseListLooseArgs = [child?: T.UseClauses];
 
 export type UseListBuilt = T.UseList & {
 	readonly $source: 2;
@@ -2144,6 +2339,9 @@ function _buildUseList(child?: T.UseClauses): UseListBuilt {
 	);
 }
 
+export type UseAsClauseBuildArgs = [config: T.UseAsClause.Config];
+export type UseAsClauseLooseArgs = [config: T.UseAsClause.Loose];
+
 export type UseAsClauseBuilt = T.UseAsClause & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2178,6 +2376,9 @@ export function buildUseAsClause(config: T.UseAsClause.Config): UseAsClauseBuilt
 	);
 }
 
+export type UseWildcardBuildArgs = [path?: T.UseWildcard.Config['path']];
+export type UseWildcardLooseArgs = [path?: T.UseWildcard.Config['path']];
+
 export type UseWildcardBuilt = T.UseWildcard & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2206,6 +2407,9 @@ export function buildUseWildcard(path?: T.UseWildcard.Config['path']): UseWildca
 		methodsEngine
 	);
 }
+
+export type ParametersBuildArgs = [child?: T.ParametersElements];
+export type ParametersLooseArgs = [child?: T.ParametersElements];
 
 export type ParametersBuilt = T.Parameters & {
 	readonly $source: 2;
@@ -2254,6 +2458,9 @@ function _buildParameters(child?: T.ParametersElements): ParametersBuilt {
 	);
 }
 
+export type SelfParameterBuildArgs = [config?: Partial<T.SelfParameter.Config>];
+export type SelfParameterLooseArgs = [config?: T.SelfParameter.Loose];
+
 export type SelfParameterBuilt = T.SelfParameter & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2297,6 +2504,9 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	);
 }
 
+export type VariadicParameterBuildArgs = [config?: Partial<T.VariadicParameter.Config>];
+export type VariadicParameterLooseArgs = [config?: T.VariadicParameter.Loose];
+
 export type VariadicParameterBuilt = T.VariadicParameter & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2333,6 +2543,9 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 		methodsEngine
 	);
 }
+
+export type ParameterBuildArgs = [config: T.Parameter.Config];
+export type ParameterLooseArgs = [config: T.Parameter.Loose];
 
 export type ParameterBuilt = T.Parameter & {
 	readonly $source: 2;
@@ -2373,6 +2586,9 @@ export function buildParameter(config: T.Parameter.Config): ParameterBuilt {
 		methodsEngine
 	);
 }
+
+export type ExternModifierBuildArgs = [stringLiteral?: T.ExternModifier.Config['stringLiteral']];
+export type ExternModifierLooseArgs = [stringLiteral?: T.ExternModifier.Config['stringLiteral']];
 
 export type ExternModifierBuilt = T.ExternModifier & {
 	readonly $source: 2;
@@ -2427,6 +2643,9 @@ export const buildExternModifier = attachProps(buildExternModifier$impl, {
 		buildExternModifier$impl(buildStringLiteral.open(...args) as T.StringLiteral)
 });
 
+export type VisibilityModifierBuildArgs = [child: T.Crate | T.VisibilityModifierPub];
+export type VisibilityModifierLooseArgs = [child: T.Crate | T.VisibilityModifierPub];
+
 export type VisibilityModifierBuilt = T.VisibilityModifier & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2472,6 +2691,9 @@ export const buildVisibilityModifier = attachProps(buildVisibilityModifier$impl,
 		)
 });
 
+export type BracketedTypeBuildArgs = [child: T._Type | T.QualifiedType];
+export type BracketedTypeLooseArgs = [child: T._Type | T.QualifiedType];
+
 export type BracketedTypeBuilt = T.BracketedType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2503,6 +2725,9 @@ export const buildBracketedType = attachProps(buildBracketedType$impl, {
 	qualifiedType: (config: T.QualifiedType.Config) =>
 		buildBracketedType$impl(buildQualifiedType(config) as T.QualifiedType)
 });
+
+export type QualifiedTypeBuildArgs = [config: T.QualifiedType.Config];
+export type QualifiedTypeLooseArgs = [config: T.QualifiedType.Loose];
 
 export type QualifiedTypeBuilt = T.QualifiedType & {
 	readonly $source: 2;
@@ -2537,6 +2762,9 @@ export function buildQualifiedType(config: T.QualifiedType.Config): QualifiedTyp
 		methodsEngine
 	);
 }
+
+export type LifetimeBuildArgs = [identifier: T.Lifetime.Config['identifier']];
+export type LifetimeLooseArgs = [identifier: T.Lifetime.Config['identifier']];
 
 export type LifetimeBuilt = T.Lifetime & {
 	readonly $source: 2;
@@ -2582,6 +2810,9 @@ function _buildLifetime(identifier: T.Lifetime.Config['identifier']): LifetimeBu
 	);
 }
 
+export type ArrayTypeBuildArgs = [config: T.ArrayType.Config];
+export type ArrayTypeLooseArgs = [config: T.ArrayType.Loose];
+
 export type ArrayTypeBuilt = T.ArrayType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2615,6 +2846,9 @@ export function buildArrayType(config: T.ArrayType.Config): ArrayTypeBuilt {
 		methodsEngine
 	);
 }
+
+export type ForLifetimesBuildArgs = [child: T.Lifetimes];
+export type ForLifetimesLooseArgs = [child: T.Lifetimes];
 
 export type ForLifetimesBuilt = T.ForLifetimes & {
 	readonly $source: 2;
@@ -2659,6 +2893,9 @@ function _buildForLifetimes(child: T.Lifetimes): ForLifetimesBuilt {
 		methodsEngine
 	);
 }
+
+export type FunctionTypeBuildArgs = [config: T.FunctionType.Config];
+export type FunctionTypeLooseArgs = [config: T.FunctionType.Loose];
 
 export type FunctionTypeBuilt = T.FunctionType & {
 	readonly $source: 2;
@@ -2711,6 +2948,9 @@ export function buildFunctionType(config: T.FunctionType.Config): FunctionTypeBu
 	);
 }
 
+export type TupleTypeBuildArgs = [child: T.TupleTypeElements];
+export type TupleTypeLooseArgs = [child: T.TupleTypeElements];
+
 export type TupleTypeBuilt = T.TupleType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2755,6 +2995,9 @@ function _buildTupleType(child: T.TupleTypeElements): TupleTypeBuilt {
 	);
 }
 
+export type UnitTypeBuildArgs = [text: string];
+export type UnitTypeLooseArgs = [text: string];
+
 export function buildUnitType(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`unit_type: text must be non-empty`);
@@ -2768,6 +3011,9 @@ export function buildUnitType(text: string) {
 		methodsEngine
 	);
 }
+
+export type GenericFunctionBuildArgs = [config: T.GenericFunction.Config];
+export type GenericFunctionLooseArgs = [config: T.GenericFunction.Loose];
 
 export type GenericFunctionBuilt = T.GenericFunction & {
 	readonly $source: 2;
@@ -2804,6 +3050,9 @@ export function buildGenericFunction(config: T.GenericFunction.Config): GenericF
 	);
 }
 
+export type GenericTypeBuildArgs = [config: T.GenericType.Config];
+export type GenericTypeLooseArgs = [config: T.GenericType.Loose];
+
 export type GenericTypeBuilt = T.GenericType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2837,6 +3086,9 @@ export function buildGenericType(config: T.GenericType.Config): GenericTypeBuilt
 		methodsEngine
 	);
 }
+
+export type GenericTypeWithTurbofishBuildArgs = [config: T.GenericTypeWithTurbofish.Config];
+export type GenericTypeWithTurbofishLooseArgs = [config: T.GenericTypeWithTurbofish.Loose];
 
 export type GenericTypeWithTurbofishBuilt = T.GenericTypeWithTurbofish & {
 	readonly $source: 2;
@@ -2874,6 +3126,9 @@ export function buildGenericTypeWithTurbofish(
 	);
 }
 
+export type BoundedTypeBuildArgs = [config: T.BoundedType.Config];
+export type BoundedTypeLooseArgs = [config: T.BoundedType.Loose];
+
 export type BoundedTypeBuilt = T.BoundedType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -2907,6 +3162,9 @@ export function buildBoundedType(config: T.BoundedType.Config): BoundedTypeBuilt
 		methodsEngine
 	);
 }
+
+export type UseBoundsBuildArgs = [bounds?: T.UseBounds.Config['bounds']];
+export type UseBoundsLooseArgs = [bounds?: T.UseBounds.Config['bounds']];
 
 export type UseBoundsBuilt = T.UseBounds & {
 	readonly $source: 2;
@@ -2955,6 +3213,9 @@ function _buildUseBounds(bounds?: T.UseBounds.Config['bounds']): UseBoundsBuilt 
 		methodsEngine
 	);
 }
+
+export type TypeArgumentsBuildArgs = [child: T.TypeArgumentsElements];
+export type TypeArgumentsLooseArgs = [child: T.TypeArgumentsElements];
 
 export type TypeArgumentsBuilt = T.TypeArguments & {
 	readonly $source: 2;
@@ -3005,6 +3266,9 @@ function _buildTypeArguments(child: T.TypeArgumentsElements): TypeArgumentsBuilt
 	);
 }
 
+export type TypeBindingBuildArgs = [config: T.TypeBinding.Config];
+export type TypeBindingLooseArgs = [config: T.TypeBinding.Loose];
+
 export type TypeBindingBuilt = T.TypeBinding & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3043,6 +3307,9 @@ export function buildTypeBinding(config: T.TypeBinding.Config): TypeBindingBuilt
 		methodsEngine
 	);
 }
+
+export type ReferenceTypeBuildArgs = [config: T.ReferenceType.Config];
+export type ReferenceTypeLooseArgs = [config: T.ReferenceType.Loose];
 
 export type ReferenceTypeBuilt = T.ReferenceType & {
 	readonly $source: 2;
@@ -3086,6 +3353,9 @@ export function buildReferenceType(config: T.ReferenceType.Config): ReferenceTyp
 	);
 }
 
+export type PointerTypeBuildArgs = [config: T.PointerType.Config];
+export type PointerTypeLooseArgs = [config: T.PointerType.Loose];
+
 export type PointerTypeBuilt = T.PointerType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3123,6 +3393,9 @@ export function buildPointerType(config: T.PointerType.Config): PointerTypeBuilt
 		methodsEngine
 	);
 }
+
+export type AbstractTypeBuildArgs = [config: T.AbstractType.Config];
+export type AbstractTypeLooseArgs = [config: T.AbstractType.Loose];
 
 export type AbstractTypeBuilt = T.AbstractType & {
 	readonly $source: 2;
@@ -3176,6 +3449,9 @@ export function buildAbstractType(config: T.AbstractType.Config): AbstractTypeBu
 	);
 }
 
+export type DynamicTypeBuildArgs = [trait: T.DynamicType.Config['trait']];
+export type DynamicTypeLooseArgs = [trait: T.DynamicType.Config['trait']];
+
 export type DynamicTypeBuilt = T.DynamicType & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3219,6 +3495,9 @@ export const buildDynamicType = attachProps(buildDynamicType$impl, {
 		)
 });
 
+export type MutableSpecifierBuildArgs = [];
+export type MutableSpecifierLooseArgs = [];
+
 export function buildMutableSpecifier() {
 	return withMethods(
 		{
@@ -3230,6 +3509,9 @@ export function buildMutableSpecifier() {
 		methodsEngine
 	);
 }
+
+export type MacroInvocationBuildArgs = [config: T.MacroInvocation.Config];
+export type MacroInvocationLooseArgs = [config: T.MacroInvocation.Loose];
 
 export type MacroInvocationBuilt = T.MacroInvocation & {
 	readonly $source: 2;
@@ -3264,6 +3546,9 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): MacroInv
 		methodsEngine
 	);
 }
+
+export type DelimTokenTreeBuildArgs = [child: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace];
+export type DelimTokenTreeLooseArgs = [child: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace];
 
 export type DelimTokenTreeBuilt = T.DelimTokenTree & {
 	readonly $source: 2;
@@ -3306,6 +3591,9 @@ export const buildDelimTokenTree = attachProps(buildDelimTokenTree$impl, {
 		buildDelimTokenTree$impl(buildDelimTokenTreeBrace(config) as T.DelimTokenTreeBrace)
 });
 
+export type ScopedIdentifierBuildArgs = [config: T.ScopedIdentifier.Config];
+export type ScopedIdentifierLooseArgs = [config: T.ScopedIdentifier.Loose];
+
 export type ScopedIdentifierBuilt = T.ScopedIdentifier & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3340,6 +3628,13 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): Scoped
 		methodsEngine
 	);
 }
+
+export type ScopedTypeIdentifierInExpressionPositionBuildArgs = [
+	config: T.ScopedTypeIdentifierInExpressionPosition.Config
+];
+export type ScopedTypeIdentifierInExpressionPositionLooseArgs = [
+	config: T.ScopedTypeIdentifierInExpressionPosition.Loose
+];
 
 export type ScopedTypeIdentifierInExpressionPositionBuilt = T.ScopedTypeIdentifierInExpressionPosition & {
 	readonly $source: 2;
@@ -3378,6 +3673,9 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 	);
 }
 
+export type ScopedTypeIdentifierBuildArgs = [config: T.ScopedTypeIdentifier.Config];
+export type ScopedTypeIdentifierLooseArgs = [config: T.ScopedTypeIdentifier.Loose];
+
 export type ScopedTypeIdentifierBuilt = T.ScopedTypeIdentifier & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3412,6 +3710,13 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 		methodsEngine
 	);
 }
+
+export type RangeExpressionBuildArgs = [
+	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
+];
+export type RangeExpressionLooseArgs = [
+	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
+];
 
 export type RangeExpressionBuilt = T.RangeExpression & {
 	readonly $source: 2;
@@ -3462,6 +3767,9 @@ export const buildRangeExpression = attachProps(buildRangeExpression$impl, {
 		buildRangeExpression$impl(buildRangeExpressionPrefix(config) as T.RangeExpressionPrefix)
 });
 
+export type UnaryExpressionBuildArgs = [config: T.UnaryExpression.Config];
+export type UnaryExpressionLooseArgs = [config: T.UnaryExpression.Loose];
+
 export type UnaryExpressionBuilt = T.UnaryExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3510,6 +3818,9 @@ export const buildUnaryExpression = attachProps(buildUnaryExpression$impl, {
 		buildUnaryExpression$impl({ operand: operand, operator: TSKindId.Bang })
 });
 
+export type TryExpressionBuildArgs = [value: T.TryExpression.Config['value']];
+export type TryExpressionLooseArgs = [value: T.TryExpression.Config['value']];
+
 export type TryExpressionBuilt = T.TryExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3538,6 +3849,9 @@ export function buildTryExpression(value: T.TryExpression.Config['value']): TryE
 		methodsEngine
 	);
 }
+
+export type ReferenceExpressionBuildArgs = [config: T.ReferenceExpression.Config];
+export type ReferenceExpressionLooseArgs = [config: T.ReferenceExpression.Loose];
 
 export type ReferenceExpressionBuilt = T.ReferenceExpression & {
 	readonly $source: 2;
@@ -3575,6 +3889,9 @@ export function buildReferenceExpression(config: T.ReferenceExpression.Config): 
 		methodsEngine
 	);
 }
+
+export type BinaryExpressionBuildArgs = [config: T.BinaryExpression.Config];
+export type BinaryExpressionLooseArgs = [config: T.BinaryExpression.Loose];
 
 export type BinaryExpressionBuilt = T.BinaryExpression & {
 	readonly $source: 2;
@@ -3674,6 +3991,9 @@ export const buildBinaryExpression = attachProps(buildBinaryExpression$impl, {
 		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Percent })
 });
 
+export type AssignmentExpressionBuildArgs = [config: T.AssignmentExpression.Config];
+export type AssignmentExpressionLooseArgs = [config: T.AssignmentExpression.Loose];
+
 export type AssignmentExpressionBuilt = T.AssignmentExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3707,6 +4027,9 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		methodsEngine
 	);
 }
+
+export type CompoundAssignmentExprBuildArgs = [config: T.CompoundAssignmentExpr.Config];
+export type CompoundAssignmentExprLooseArgs = [config: T.CompoundAssignmentExpr.Loose];
 
 export type CompoundAssignmentExprBuilt = T.CompoundAssignmentExpr & {
 	readonly $source: 2;
@@ -3761,6 +4084,9 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 	);
 }
 
+export type TypeCastExpressionBuildArgs = [config: T.TypeCastExpression.Config];
+export type TypeCastExpressionLooseArgs = [config: T.TypeCastExpression.Loose];
+
 export type TypeCastExpressionBuilt = T.TypeCastExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3795,6 +4121,9 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): Ty
 	);
 }
 
+export type ReturnExpressionBuildArgs = [expression?: T.ReturnExpression.Config['expression']];
+export type ReturnExpressionLooseArgs = [expression?: T.ReturnExpression.Config['expression']];
+
 export type ReturnExpressionBuilt = T.ReturnExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3824,6 +4153,9 @@ export function buildReturnExpression(expression?: T.ReturnExpression.Config['ex
 	);
 }
 
+export type YieldExpressionBuildArgs = [expression?: T.YieldExpression.Config['expression']];
+export type YieldExpressionLooseArgs = [expression?: T.YieldExpression.Config['expression']];
+
 export type YieldExpressionBuilt = T.YieldExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3852,6 +4184,9 @@ export function buildYieldExpression(expression?: T.YieldExpression.Config['expr
 		methodsEngine
 	);
 }
+
+export type CallExpressionBuildArgs = [config: T.CallExpression.Config];
+export type CallExpressionLooseArgs = [config: T.CallExpression.Loose];
 
 export type CallExpressionBuilt = T.CallExpression & {
 	readonly $source: 2;
@@ -3886,6 +4221,9 @@ export function buildCallExpression(config: T.CallExpression.Config): CallExpres
 		methodsEngine
 	);
 }
+
+export type ArgumentsBuildArgs = [child?: T.ArgumentsElements];
+export type ArgumentsLooseArgs = [child?: T.ArgumentsElements];
 
 export type ArgumentsBuilt = T.Arguments & {
 	readonly $source: 2;
@@ -3931,6 +4269,9 @@ function _buildArguments(child?: T.ArgumentsElements): ArgumentsBuilt {
 	);
 }
 
+export type ArrayExpressionBuildArgs = [child: T.ArrayExpressionSemi | T.ArrayExpressionList];
+export type ArrayExpressionLooseArgs = [child: T.ArrayExpressionSemi | T.ArrayExpressionList];
+
 export type ArrayExpressionBuilt = T.ArrayExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3965,6 +4306,9 @@ export const buildArrayExpression = attachProps(buildArrayExpression$impl, {
 		buildArrayExpression$impl(buildArrayExpressionList(config) as T.ArrayExpressionList)
 });
 
+export type ParenthesizedExpressionBuildArgs = [expression: T.ParenthesizedExpression.Config['expression']];
+export type ParenthesizedExpressionLooseArgs = [expression: T.ParenthesizedExpression.Config['expression']];
+
 export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -3995,6 +4339,9 @@ export function buildParenthesizedExpression(
 		methodsEngine
 	);
 }
+
+export type TupleExpressionBuildArgs = [config: T.TupleExpression.Config];
+export type TupleExpressionLooseArgs = [config: T.TupleExpression.Loose];
 
 export type TupleExpressionBuilt = T.TupleExpression & {
 	readonly $source: 2;
@@ -4040,6 +4387,9 @@ export const buildTupleExpression = attachProps(buildTupleExpression$impl, {
 		})
 });
 
+export type UnitExpressionBuildArgs = [text: string];
+export type UnitExpressionLooseArgs = [text: string];
+
 export function buildUnitExpression(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`unit_expression: text must be non-empty`);
@@ -4053,6 +4403,9 @@ export function buildUnitExpression(text: string) {
 		methodsEngine
 	);
 }
+
+export type StructExpressionBuildArgs = [config: T.StructExpression.Config];
+export type StructExpressionLooseArgs = [config: T.StructExpression.Loose];
 
 export type StructExpressionBuilt = T.StructExpression & {
 	readonly $source: 2;
@@ -4090,6 +4443,9 @@ export function buildStructExpression(config: T.StructExpression.Config): Struct
 		methodsEngine
 	);
 }
+
+export type FieldInitializerListBuildArgs = [initializers?: T.FieldInitializerList.Config['initializers']];
+export type FieldInitializerListLooseArgs = [initializers?: T.FieldInitializerList.Config['initializers']];
 
 export type FieldInitializerListBuilt = T.FieldInitializerList & {
 	readonly $source: 2;
@@ -4148,6 +4504,9 @@ function _buildFieldInitializerList(
 	);
 }
 
+export type ShorthandFieldInitializerBuildArgs = [config: T.ShorthandFieldInitializer.Config];
+export type ShorthandFieldInitializerLooseArgs = [config: T.ShorthandFieldInitializer.Loose];
+
 export type ShorthandFieldInitializerBuilt = T.ShorthandFieldInitializer & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4184,6 +4543,9 @@ export function buildShorthandFieldInitializer(
 		methodsEngine
 	);
 }
+
+export type FieldInitializerBuildArgs = [config: T.FieldInitializer.Config];
+export type FieldInitializerLooseArgs = [config: T.FieldInitializer.Loose];
 
 export type FieldInitializerBuilt = T.FieldInitializer & {
 	readonly $source: 2;
@@ -4224,6 +4586,9 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): FieldI
 	);
 }
 
+export type BaseFieldInitializerBuildArgs = [expression: T.BaseFieldInitializer.Config['expression']];
+export type BaseFieldInitializerLooseArgs = [expression: T.BaseFieldInitializer.Config['expression']];
+
 export type BaseFieldInitializerBuilt = T.BaseFieldInitializer & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4254,6 +4619,9 @@ export function buildBaseFieldInitializer(
 		methodsEngine
 	);
 }
+
+export type IfExpressionBuildArgs = [config: T.IfExpression.Config];
+export type IfExpressionLooseArgs = [config: T.IfExpression.Loose];
 
 export type IfExpressionBuilt = T.IfExpression & {
 	readonly $source: 2;
@@ -4294,6 +4662,9 @@ export function buildIfExpression(config: T.IfExpression.Config): IfExpressionBu
 	);
 }
 
+export type LetConditionBuildArgs = [config: T.LetCondition.Config];
+export type LetConditionLooseArgs = [config: T.LetCondition.Loose];
+
 export type LetConditionBuilt = T.LetCondition & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4327,6 +4698,9 @@ export function buildLetCondition(config: T.LetCondition.Config): LetConditionBu
 		methodsEngine
 	);
 }
+
+export type LetChainBuildArgs = [config?: Partial<T.LetChain.Config>];
+export type LetChainLooseArgs = [config?: T.LetChain.Loose];
 
 export type LetChainBuilt = T.LetChain & {
 	readonly $source: 2;
@@ -4362,6 +4736,9 @@ export function buildLetChain(config: Partial<T.LetChain.Config> = {}): LetChain
 	);
 }
 
+export type ElseClauseBuildArgs = [child: T.Block | T.IfExpression];
+export type ElseClauseLooseArgs = [child: T.Block | T.IfExpression];
+
 export type ElseClauseBuilt = T.ElseClause & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4393,6 +4770,9 @@ export const buildElseClause = attachProps(buildElseClause$impl, {
 	block: (config: Partial<T.Block.Config> = {}) => buildElseClause$impl(buildBlock(config) as T.Block),
 	ifExpression: (config: T.IfExpression.Config) => buildElseClause$impl(buildIfExpression(config) as T.IfExpression)
 });
+
+export type MatchExpressionBuildArgs = [config: T.MatchExpression.Config];
+export type MatchExpressionLooseArgs = [config: T.MatchExpression.Loose];
 
 export type MatchExpressionBuilt = T.MatchExpression & {
 	readonly $source: 2;
@@ -4427,6 +4807,9 @@ export function buildMatchExpression(config: T.MatchExpression.Config): MatchExp
 		methodsEngine
 	);
 }
+
+export type MatchBlockBuildArgs = [child?: T.MatchBlockArms];
+export type MatchBlockLooseArgs = [child?: T.MatchBlockArms];
 
 export type MatchBlockBuilt = T.MatchBlock & {
 	readonly $source: 2;
@@ -4470,6 +4853,9 @@ function _buildMatchBlock(child?: T.MatchBlockArms): MatchBlockBuilt {
 	);
 }
 
+export type MatchArmBuildArgs = [config: T.MatchArm.Config];
+export type MatchArmLooseArgs = [config: T.MatchArm.Loose];
+
 export type MatchArmBuilt = T.MatchArm & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4510,6 +4896,9 @@ export function buildMatchArm(config: T.MatchArm.Config): MatchArmBuilt {
 		methodsEngine
 	);
 }
+
+export type LastMatchArmBuildArgs = [config: T.LastMatchArm.Config];
+export type LastMatchArmLooseArgs = [config: T.LastMatchArm.Loose];
 
 export type LastMatchArmBuilt = T.LastMatchArm & {
 	readonly $source: 2;
@@ -4557,6 +4946,9 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): LastMatchArmBu
 	);
 }
 
+export type MatchPatternBuildArgs = [config: T.MatchPattern.Config];
+export type MatchPatternLooseArgs = [config: T.MatchPattern.Loose];
+
 export type MatchPatternBuilt = T.MatchPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4590,6 +4982,9 @@ export function buildMatchPattern(config: T.MatchPattern.Config): MatchPatternBu
 		methodsEngine
 	);
 }
+
+export type WhileExpressionBuildArgs = [config: T.WhileExpression.Config];
+export type WhileExpressionLooseArgs = [config: T.WhileExpression.Loose];
 
 export type WhileExpressionBuilt = T.WhileExpression & {
 	readonly $source: 2;
@@ -4630,6 +5025,9 @@ export function buildWhileExpression(config: T.WhileExpression.Config): WhileExp
 	);
 }
 
+export type LoopExpressionBuildArgs = [config: T.LoopExpression.Config];
+export type LoopExpressionLooseArgs = [config: T.LoopExpression.Loose];
+
 export type LoopExpressionBuilt = T.LoopExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4663,6 +5061,9 @@ export function buildLoopExpression(config: T.LoopExpression.Config): LoopExpres
 		methodsEngine
 	);
 }
+
+export type ForExpressionBuildArgs = [config: T.ForExpression.Config];
+export type ForExpressionLooseArgs = [config: T.ForExpression.Loose];
 
 export type ForExpressionBuilt = T.ForExpression & {
 	readonly $source: 2;
@@ -4708,6 +5109,9 @@ export function buildForExpression(config: T.ForExpression.Config): ForExpressio
 	);
 }
 
+export type ConstBlockBuildArgs = [body: T.ConstBlock.Config['body']];
+export type ConstBlockLooseArgs = [body: T.ConstBlock.Config['body']];
+
 export type ConstBlockBuilt = T.ConstBlock & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4751,6 +5155,9 @@ function _buildConstBlock(body: T.ConstBlock.Config['body']): ConstBlockBuilt {
 		methodsEngine
 	);
 }
+
+export type ClosureExpressionBuildArgs = [config: T.ClosureExpression.Config];
+export type ClosureExpressionLooseArgs = [config: T.ClosureExpression.Loose];
 
 export type ClosureExpressionBuilt = T.ClosureExpression & {
 	readonly $source: 2;
@@ -4809,6 +5216,9 @@ export function buildClosureExpression(config: T.ClosureExpression.Config): Clos
 	);
 }
 
+export type ClosureParametersBuildArgs = [...children: (T.Pattern | T.Parameter)[]];
+export type ClosureParametersLooseArgs = [...children: (T.Pattern | T.Parameter)[]];
+
 export type ClosureParametersBuilt = T.ClosureParameters & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4835,6 +5245,9 @@ export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[])
 		methodsEngine
 	);
 }
+
+export type LabelBuildArgs = [identifier: T.Label.Config['identifier']];
+export type LabelLooseArgs = [identifier: T.Label.Config['identifier']];
 
 export type LabelBuilt = T.Label & {
 	readonly $source: 2;
@@ -4880,6 +5293,9 @@ function _buildLabel(identifier: T.Label.Config['identifier']): LabelBuilt {
 	);
 }
 
+export type BreakExpressionBuildArgs = [config?: Partial<T.BreakExpression.Config>];
+export type BreakExpressionLooseArgs = [config?: T.BreakExpression.Loose];
+
 export type BreakExpressionBuilt = T.BreakExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4913,6 +5329,9 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 		methodsEngine
 	);
 }
+
+export type ContinueExpressionBuildArgs = [label?: T.ContinueExpression.Config['label']];
+export type ContinueExpressionLooseArgs = [label?: T.ContinueExpression.Config['label']];
 
 export type ContinueExpressionBuilt = T.ContinueExpression & {
 	readonly $source: 2;
@@ -4962,6 +5381,9 @@ function _buildContinueExpression(label?: T.ContinueExpression.Config['label']):
 	);
 }
 
+export type IndexExpressionBuildArgs = [config: T.IndexExpression.Config];
+export type IndexExpressionLooseArgs = [config: T.IndexExpression.Loose];
+
 export type IndexExpressionBuilt = T.IndexExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -4996,6 +5418,9 @@ export function buildIndexExpression(config: T.IndexExpression.Config): IndexExp
 	);
 }
 
+export type AwaitExpressionBuildArgs = [expression: T.AwaitExpression.Config['expression']];
+export type AwaitExpressionLooseArgs = [expression: T.AwaitExpression.Config['expression']];
+
 export type AwaitExpressionBuilt = T.AwaitExpression & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5024,6 +5449,9 @@ export function buildAwaitExpression(expression: T.AwaitExpression.Config['expre
 		methodsEngine
 	);
 }
+
+export type FieldExpressionBuildArgs = [config: T.FieldExpression.Config];
+export type FieldExpressionLooseArgs = [config: T.FieldExpression.Loose];
 
 export type FieldExpressionBuilt = T.FieldExpression & {
 	readonly $source: 2;
@@ -5058,6 +5486,9 @@ export function buildFieldExpression(config: T.FieldExpression.Config): FieldExp
 		methodsEngine
 	);
 }
+
+export type UnsafeBlockBuildArgs = [block: T.UnsafeBlock.Config['block']];
+export type UnsafeBlockLooseArgs = [block: T.UnsafeBlock.Config['block']];
 
 export type UnsafeBlockBuilt = T.UnsafeBlock & {
 	readonly $source: 2;
@@ -5103,6 +5534,9 @@ function _buildUnsafeBlock(block: T.UnsafeBlock.Config['block']): UnsafeBlockBui
 	);
 }
 
+export type AsyncBlockBuildArgs = [config: T.AsyncBlock.Config];
+export type AsyncBlockLooseArgs = [config: T.AsyncBlock.Loose];
+
 export type AsyncBlockBuilt = T.AsyncBlock & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5138,6 +5572,9 @@ export function buildAsyncBlock(config: T.AsyncBlock.Config): AsyncBlockBuilt {
 	);
 }
 
+export type GenBlockBuildArgs = [config: T.GenBlock.Config];
+export type GenBlockLooseArgs = [config: T.GenBlock.Loose];
+
 export type GenBlockBuilt = T.GenBlock & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5172,6 +5609,9 @@ export function buildGenBlock(config: T.GenBlock.Config): GenBlockBuilt {
 		methodsEngine
 	);
 }
+
+export type TryBlockBuildArgs = [block: T.TryBlock.Config['block']];
+export type TryBlockLooseArgs = [block: T.TryBlock.Config['block']];
 
 export type TryBlockBuilt = T.TryBlock & {
 	readonly $source: 2;
@@ -5217,6 +5657,9 @@ function _buildTryBlock(block: T.TryBlock.Config['block']): TryBlockBuilt {
 	);
 }
 
+export type BlockBuildArgs = [config?: Partial<T.Block.Config>];
+export type BlockLooseArgs = [config?: T.Block.Loose];
+
 export type BlockBuilt = T.Block & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5256,6 +5699,9 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): BlockBuilt {
 	);
 }
 
+export type GenericPatternBuildArgs = [config: T.GenericPattern.Config];
+export type GenericPatternLooseArgs = [config: T.GenericPattern.Loose];
+
 export type GenericPatternBuilt = T.GenericPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5289,6 +5735,9 @@ export function buildGenericPattern(config: T.GenericPattern.Config): GenericPat
 		methodsEngine
 	);
 }
+
+export type TuplePatternBuildArgs = [elements?: T.TuplePattern.Config['elements']];
+export type TuplePatternLooseArgs = [elements?: T.TuplePattern.Config['elements']];
 
 export type TuplePatternBuilt = T.TuplePattern & {
 	readonly $source: 2;
@@ -5338,6 +5787,9 @@ function _buildTuplePattern(elements?: T.TuplePattern.Config['elements']): Tuple
 	);
 }
 
+export type SlicePatternBuildArgs = [child?: T.Patterns];
+export type SlicePatternLooseArgs = [child?: T.Patterns];
+
 export type SlicePatternBuilt = T.SlicePattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5382,6 +5834,9 @@ function _buildSlicePattern(child?: T.Patterns): SlicePatternBuilt {
 	);
 }
 
+export type TupleStructPatternBuildArgs = [config: T.TupleStructPattern.Config];
+export type TupleStructPatternLooseArgs = [config: T.TupleStructPattern.Loose];
+
 export type TupleStructPatternBuilt = T.TupleStructPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5417,6 +5872,9 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): Tu
 	);
 }
 
+export type StructPatternBuildArgs = [config: T.StructPattern.Config];
+export type StructPatternLooseArgs = [config: T.StructPattern.Loose];
+
 export type StructPatternBuilt = T.StructPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5450,6 +5908,9 @@ export function buildStructPattern(config: T.StructPattern.Config): StructPatter
 		methodsEngine
 	);
 }
+
+export type FieldPatternBuildArgs = [config: T.FieldPattern.Config];
+export type FieldPatternLooseArgs = [config: T.FieldPattern.Loose];
 
 export type FieldPatternBuilt = T.FieldPattern & {
 	readonly $source: 2;
@@ -5500,6 +5961,9 @@ export const buildFieldPattern = attachProps(buildFieldPattern$impl, {
 		buildFieldPattern$impl({ content: buildFieldPatternNamed(config) as T.FieldPatternNamed })
 });
 
+export type MutPatternBuildArgs = [pattern: T.MutPattern.Config['pattern']];
+export type MutPatternLooseArgs = [pattern: T.MutPattern.Config['pattern']];
+
 export type MutPatternBuilt = T.MutPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5528,6 +5992,9 @@ export function buildMutPattern(pattern: T.MutPattern.Config['pattern']): MutPat
 		methodsEngine
 	);
 }
+
+export type RangePatternBuildArgs = [child: T.RangePatternArm2 | T.RangePatternPrefix];
+export type RangePatternLooseArgs = [child: T.RangePatternArm2 | T.RangePatternPrefix];
 
 export type RangePatternBuilt = T.RangePattern & {
 	readonly $source: 2;
@@ -5567,6 +6034,9 @@ export const buildRangePattern = attachProps(buildRangePattern$impl, {
 		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args) as T.RangePatternPrefix)
 });
 
+export type RefPatternBuildArgs = [pattern: T.RefPattern.Config['pattern']];
+export type RefPatternLooseArgs = [pattern: T.RefPattern.Config['pattern']];
+
 export type RefPatternBuilt = T.RefPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5595,6 +6065,9 @@ export function buildRefPattern(pattern: T.RefPattern.Config['pattern']): RefPat
 		methodsEngine
 	);
 }
+
+export type CapturedPatternBuildArgs = [config: T.CapturedPattern.Config];
+export type CapturedPatternLooseArgs = [config: T.CapturedPattern.Loose];
 
 export type CapturedPatternBuilt = T.CapturedPattern & {
 	readonly $source: 2;
@@ -5629,6 +6102,9 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): Captured
 		methodsEngine
 	);
 }
+
+export type ReferencePatternBuildArgs = [config: T.ReferencePattern.Config];
+export type ReferencePatternLooseArgs = [config: T.ReferencePattern.Loose];
 
 export type ReferencePatternBuilt = T.ReferencePattern & {
 	readonly $source: 2;
@@ -5667,6 +6143,9 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): Refere
 	);
 }
 
+export type OrPatternBuildArgs = [child: T.OrPatternBinary | T.OrPatternPrefix];
+export type OrPatternLooseArgs = [child: T.OrPatternBinary | T.OrPatternPrefix];
+
 export type OrPatternBuilt = T.OrPattern & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -5698,6 +6177,9 @@ export const buildOrPattern = attachProps(buildOrPattern$impl, {
 	binary: (config: T.OrPatternBinary.Config) => buildOrPattern$impl(buildOrPatternBinary(config) as T.OrPatternBinary),
 	prefix: (config: T.OrPatternPrefix.Config) => buildOrPattern$impl(buildOrPatternPrefix(config) as T.OrPatternPrefix)
 });
+
+export type NegativeLiteralBuildArgs = [value: T.NegativeLiteral.Config['value']];
+export type NegativeLiteralLooseArgs = [value: T.NegativeLiteral.Config['value']];
 
 export type NegativeLiteralBuilt = T.NegativeLiteral & {
 	readonly $source: 2;
@@ -5733,6 +6215,9 @@ export const buildNegativeLiteral = attachProps(buildNegativeLiteral$impl, {
 	floatLiteral: (text: string) => buildNegativeLiteral$impl(buildFloatLiteral(text) as T.FloatLiteral)
 });
 
+export type IntegerLiteralBuildArgs = [text: string];
+export type IntegerLiteralLooseArgs = [text: string];
+
 export function buildIntegerLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`integer_literal: text must be non-empty`);
@@ -5746,6 +6231,9 @@ export function buildIntegerLiteral(text: string) {
 		methodsEngine
 	);
 }
+
+export type StringLiteralBuildArgs = [config: T.StringLiteral.Config];
+export type StringLiteralLooseArgs = [config: T.StringLiteral.Loose];
 
 export type StringLiteralBuilt = T.StringLiteral & {
 	readonly $source: 2;
@@ -5785,6 +6273,9 @@ function buildStringLiteral$impl(config: T.StringLiteral.Config): StringLiteralB
 export const buildStringLiteral = attachProps(buildStringLiteral$impl, {
 	open: (text: string) => buildStringLiteral$impl({ stringOpen: buildStringLiteralOpen(text) as T.StringLiteralOpen })
 });
+
+export type RawStringLiteralBuildArgs = [config: T.RawStringLiteral.Config];
+export type RawStringLiteralLooseArgs = [config: T.RawStringLiteral.Loose];
 
 export type RawStringLiteralBuilt = T.RawStringLiteral & {
 	readonly $source: 2;
@@ -5828,6 +6319,9 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): RawStr
 	);
 }
 
+export type CharLiteralBuildArgs = [text: string];
+export type CharLiteralLooseArgs = [text: string];
+
 export function buildCharLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`char_literal: text must be non-empty`);
@@ -5841,6 +6335,9 @@ export function buildCharLiteral(text: string) {
 		methodsEngine
 	);
 }
+
+export type EscapeSequenceBuildArgs = [text: string];
+export type EscapeSequenceLooseArgs = [text: string];
 
 export function buildEscapeSequence(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -5856,6 +6353,9 @@ export function buildEscapeSequence(text: string) {
 	);
 }
 
+export type BooleanLiteralBuildArgs = [text: 'true' | 'false'];
+export type BooleanLiteralLooseArgs = [text: 'true' | 'false'];
+
 export function buildBooleanLiteral(text: 'true' | 'false') {
 	return withMethods(
 		{
@@ -5867,6 +6367,9 @@ export function buildBooleanLiteral(text: 'true' | 'false') {
 		methodsEngine
 	);
 }
+
+export type LineCommentBuildArgs = [child: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent];
+export type LineCommentLooseArgs = [child: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent];
 
 export type LineCommentBuilt = T.LineComment & {
 	readonly $source: 2;
@@ -5905,6 +6408,9 @@ export const buildLineComment = attachProps(buildLineComment$impl, {
 	doc: (config: T.LineCommentDoc.Config) => buildLineComment$impl(buildLineCommentDoc(config) as T.LineCommentDoc),
 	content: (text: string) => buildLineComment$impl(buildLineCommentContent(text) as T.LineCommentContent)
 });
+
+export type BlockCommentBuildArgs = [child?: T.BlockCommentArm];
+export type BlockCommentLooseArgs = [child?: T.BlockCommentArm];
 
 export type BlockCommentBuilt = T.BlockComment & {
 	readonly $source: 2;
@@ -5948,6 +6454,9 @@ function _buildBlockComment(child?: T.BlockCommentArm): BlockCommentBuilt {
 	);
 }
 
+export type IdentifierBuildArgs = [text: string];
+export type IdentifierLooseArgs = [text: string];
+
 export function buildIdentifier(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`identifier: text must be non-empty`);
@@ -5963,6 +6472,9 @@ export function buildIdentifier(text: string) {
 		methodsEngine
 	);
 }
+
+export type ShebangBuildArgs = [text: string];
+export type ShebangLooseArgs = [text: string];
 
 export function buildShebang(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -5980,6 +6492,9 @@ export function buildShebang(text: string) {
 	);
 }
 
+export type TypeIdentifierBuildArgs = [text: string];
+export type TypeIdentifierLooseArgs = [text: string];
+
 export function buildTypeIdentifier(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_type_identifier: text must be non-empty`);
@@ -5995,6 +6510,9 @@ export function buildTypeIdentifier(text: string) {
 		methodsEngine
 	);
 }
+
+export type FieldIdentifierBuildArgs = [text: string];
+export type FieldIdentifierLooseArgs = [text: string];
 
 export function buildFieldIdentifier(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -6012,6 +6530,9 @@ export function buildFieldIdentifier(text: string) {
 	);
 }
 
+export type SelfBuildArgs = [];
+export type SelfLooseArgs = [];
+
 export function buildSelf() {
 	return withMethods(
 		{
@@ -6023,6 +6544,9 @@ export function buildSelf() {
 		methodsEngine
 	);
 }
+
+export type SuperBuildArgs = [];
+export type SuperLooseArgs = [];
 
 export function buildSuper() {
 	return withMethods(
@@ -6036,6 +6560,9 @@ export function buildSuper() {
 	);
 }
 
+export type CrateBuildArgs = [];
+export type CrateLooseArgs = [];
+
 export function buildCrate() {
 	return withMethods(
 		{
@@ -6047,6 +6574,9 @@ export function buildCrate() {
 		methodsEngine
 	);
 }
+
+export type MetavariableBuildArgs = [text: string];
+export type MetavariableLooseArgs = [text: string];
 
 export function buildMetavariable(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -6063,6 +6593,9 @@ export function buildMetavariable(text: string) {
 		methodsEngine
 	);
 }
+
+export type MacroRulesBuildArgs = [...elements: NonEmptyArray<T.MacroRule>];
+export type MacroRulesLooseArgs = [...elements: NonEmptyArray<T.MacroRule>];
 
 export type MacroRulesBuilt = T.MacroRules & {
 	readonly $source: 2;
@@ -6117,6 +6650,9 @@ function _buildMacroRules(
 		methodsEngine
 	);
 }
+
+export type EnumVariantListElementsBuildArgs = [...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>];
+export type EnumVariantListElementsLooseArgs = [...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>];
 
 export type EnumVariantListElementsBuilt = T.EnumVariantListElements & {
 	readonly $source: 2;
@@ -6185,6 +6721,13 @@ function _buildEnumVariantListElements(
 		methodsEngine
 	);
 }
+
+export type FieldDeclarationListElementsBuildArgs = [
+	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+];
+export type FieldDeclarationListElementsLooseArgs = [
+	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+];
 
 export type FieldDeclarationListElementsBuilt = T.FieldDeclarationListElements & {
 	readonly $source: 2;
@@ -6259,6 +6802,13 @@ function _buildFieldDeclarationListElements(
 	);
 }
 
+export type OrderedFieldDeclarationListElementsBuildArgs = [
+	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+];
+export type OrderedFieldDeclarationListElementsLooseArgs = [
+	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+];
+
 export type OrderedFieldDeclarationListElementsBuilt = T.OrderedFieldDeclarationListElements & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -6326,6 +6876,9 @@ function _buildOrderedFieldDeclarationListElements(
 	);
 }
 
+export type WherePredicatesBuildArgs = [...elements: NonEmptyArray<T.WherePredicate>];
+export type WherePredicatesLooseArgs = [...elements: NonEmptyArray<T.WherePredicate>];
+
 export type WherePredicatesBuilt = T.WherePredicates & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -6381,6 +6934,17 @@ function _buildWherePredicates(
 		methodsEngine
 	);
 }
+
+export type TypeParametersElementsBuildArgs = [
+	...elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>
+];
+export type TypeParametersElementsLooseArgs = [
+	...elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>
+];
 
 export type TypeParametersElementsBuilt = T.TypeParametersElements & {
 	readonly $source: 2;
@@ -6466,6 +7030,9 @@ function _buildTypeParametersElements(
 	);
 }
 
+export type UseClausesBuildArgs = [...elements: NonEmptyArray<T.UseClause>];
+export type UseClausesLooseArgs = [...elements: NonEmptyArray<T.UseClause>];
+
 export type UseClausesBuilt = T.UseClauses & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -6519,6 +7086,17 @@ function _buildUseClauses(
 		methodsEngine
 	);
 }
+
+export type ParametersElementsBuildArgs = [
+	...elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+	>
+];
+export type ParametersElementsLooseArgs = [
+	...elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+	>
+];
 
 export type ParametersElementsBuilt = T.ParametersElements & {
 	readonly $source: 2;
@@ -6600,6 +7178,9 @@ function _buildParametersElements(
 	);
 }
 
+export type LifetimesBuildArgs = [...elements: NonEmptyArray<T.Lifetime>];
+export type LifetimesLooseArgs = [...elements: NonEmptyArray<T.Lifetime>];
+
 export type LifetimesBuilt = T.Lifetimes & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -6653,6 +7234,9 @@ function _buildLifetimes(
 		methodsEngine
 	);
 }
+
+export type UseBoundsElementsBuildArgs = [...elements: NonEmptyArray<T.Lifetime | T.Identifier>];
+export type UseBoundsElementsLooseArgs = [...elements: NonEmptyArray<T.Lifetime | T.Identifier>];
 
 export type UseBoundsElementsBuilt = T.UseBoundsElements & {
 	readonly $source: 2;
@@ -6709,6 +7293,13 @@ function _buildUseBoundsElements(
 		methodsEngine
 	);
 }
+
+export type TypeArgumentsElementsBuildArgs = [
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+];
+export type TypeArgumentsElementsLooseArgs = [
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+];
 
 export type TypeArgumentsElementsBuilt = T.TypeArgumentsElements & {
 	readonly $source: 2;
@@ -6784,6 +7375,9 @@ function _buildTypeArgumentsElements(
 	);
 }
 
+export type ArgumentsElementsBuildArgs = [...elements: NonEmptyArray<T.AttributedArgument | T.Expression>];
+export type ArgumentsElementsLooseArgs = [...elements: NonEmptyArray<T.AttributedArgument | T.Expression>];
+
 export type ArgumentsElementsBuilt = T.ArgumentsElements & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -6849,6 +7443,13 @@ function _buildArgumentsElements(
 		methodsEngine
 	);
 }
+
+export type FieldInitializerListElementsBuildArgs = [
+	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+];
+export type FieldInitializerListElementsLooseArgs = [
+	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+];
 
 export type FieldInitializerListElementsBuilt = T.FieldInitializerListElements & {
 	readonly $source: 2;
@@ -6918,6 +7519,9 @@ function _buildFieldInitializerListElements(
 	);
 }
 
+export type TuplePatternElementsBuildArgs = [...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>];
+export type TuplePatternElementsLooseArgs = [...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>];
+
 export type TuplePatternElementsBuilt = T.TuplePatternElements & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -6977,6 +7581,9 @@ function _buildTuplePatternElements(
 	);
 }
 
+export type PatternsBuildArgs = [...elements: NonEmptyArray<T.Pattern>];
+export type PatternsLooseArgs = [...elements: NonEmptyArray<T.Pattern>];
+
 export type PatternsBuilt = T.Patterns & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7030,6 +7637,9 @@ function _buildPatterns(
 		methodsEngine
 	);
 }
+
+export type StructPatternElementsBuildArgs = [...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>];
+export type StructPatternElementsLooseArgs = [...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>];
 
 export type StructPatternElementsBuilt = T.StructPatternElements & {
 	readonly $source: 2;
@@ -7092,6 +7702,9 @@ function _buildStructPatternElements(
 	);
 }
 
+export type RangePatternArm2BuildArgs = [config: T.RangePatternArm2.Config];
+export type RangePatternArm2LooseArgs = [config: T.RangePatternArm2.Loose];
+
 export type RangePatternArm2Built = T.RangePatternArm2 & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7126,6 +7739,9 @@ export function buildRangePatternArm2(config: T.RangePatternArm2.Config): RangeP
 	);
 }
 
+export type AttributeArmBuildArgs = [config?: Partial<T.AttributeArm.Config>];
+export type AttributeArmLooseArgs = [config?: T.AttributeArm.Loose];
+
 export type AttributeArmBuilt = T.AttributeArm & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7159,6 +7775,9 @@ export function buildAttributeArm(config: Partial<T.AttributeArm.Config> = {}): 
 		methodsEngine
 	);
 }
+
+export type VisibilityModifierGroupBuildArgs = [child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath];
+export type VisibilityModifierGroupLooseArgs = [child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath];
 
 export type VisibilityModifierGroupBuilt = T.VisibilityModifierGroup & {
 	readonly $source: 2;
@@ -7199,6 +7818,9 @@ export const buildVisibilityModifierGroup = attachProps(buildVisibilityModifierG
 		buildVisibilityModifierGroup$impl(buildVisibilityModifierInPath(child) as T.VisibilityModifierInPath)
 });
 
+export type ArrayExpressionArmBuildArgs = [config: T.ArrayExpressionArm.Config];
+export type ArrayExpressionArmLooseArgs = [config: T.ArrayExpressionArm.Loose];
+
 export type ArrayExpressionArmBuilt = T.ArrayExpressionArm & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7232,6 +7854,9 @@ export function buildArrayExpressionArm(config: T.ArrayExpressionArm.Config): Ar
 		methodsEngine
 	);
 }
+
+export type BlockCommentArmBuildArgs = [config?: Partial<T.BlockCommentArm.Config>];
+export type BlockCommentArmLooseArgs = [config?: T.BlockCommentArm.Loose];
 
 export type BlockCommentArmBuilt = T.BlockCommentArm & {
 	readonly $source: 2;
@@ -7273,6 +7898,9 @@ export function buildBlockCommentArm(config: Partial<T.BlockCommentArm.Config> =
 		methodsEngine
 	);
 }
+
+export type TupleTypeElementsBuildArgs = [...elements: NonEmptyArray<T._Type>];
+export type TupleTypeElementsLooseArgs = [...elements: NonEmptyArray<T._Type>];
 
 export type TupleTypeElementsBuilt = T.TupleTypeElements & {
 	readonly $source: 2;
@@ -7327,6 +7955,9 @@ function _buildTupleTypeElements(
 		methodsEngine
 	);
 }
+
+export type TupleExpressionElementsBuildArgs = [...elements: NonEmptyArray<T.Expression>];
+export type TupleExpressionElementsLooseArgs = [...elements: NonEmptyArray<T.Expression>];
 
 export type TupleExpressionElementsBuilt = T.TupleExpressionElements & {
 	readonly $source: 2;
@@ -7387,6 +8018,103 @@ function _buildTupleExpressionElements(
 	);
 }
 
+export type TokenTreePunctuationBuildArgs = [
+	text:
+		| '+'
+		| '-'
+		| '*'
+		| '/'
+		| '%'
+		| '^'
+		| '!'
+		| '&'
+		| '|'
+		| '&&'
+		| '||'
+		| '<<'
+		| '>>'
+		| '+='
+		| '-='
+		| '*='
+		| '/='
+		| '%='
+		| '^='
+		| '&='
+		| '|='
+		| '<<='
+		| '>>='
+		| '='
+		| '=='
+		| '!='
+		| '>'
+		| '<'
+		| '>='
+		| '<='
+		| '@'
+		| '_'
+		| '.'
+		| '..'
+		| '...'
+		| '..='
+		| ','
+		| ';'
+		| ':'
+		| '::'
+		| '->'
+		| '=>'
+		| '#'
+		| '?'
+		| '$'
+];
+export type TokenTreePunctuationLooseArgs = [
+	text:
+		| '+'
+		| '-'
+		| '*'
+		| '/'
+		| '%'
+		| '^'
+		| '!'
+		| '&'
+		| '|'
+		| '&&'
+		| '||'
+		| '<<'
+		| '>>'
+		| '+='
+		| '-='
+		| '*='
+		| '/='
+		| '%='
+		| '^='
+		| '&='
+		| '|='
+		| '<<='
+		| '>>='
+		| '='
+		| '=='
+		| '!='
+		| '>'
+		| '<'
+		| '>='
+		| '<='
+		| '@'
+		| '_'
+		| '.'
+		| '..'
+		| '...'
+		| '..='
+		| ','
+		| ';'
+		| ':'
+		| '::'
+		| '->'
+		| '=>'
+		| '#'
+		| '?'
+		| '$'
+];
+
 export function buildTokenTreePunctuation(
 	text:
 		| '+'
@@ -7446,6 +8174,71 @@ export function buildTokenTreePunctuation(
 	);
 }
 
+export type TokenKeywordsBuildArgs = [
+	text:
+		| "'"
+		| 'as'
+		| 'async'
+		| 'await'
+		| 'break'
+		| 'const'
+		| 'continue'
+		| 'default'
+		| 'enum'
+		| 'fn'
+		| 'for'
+		| 'gen'
+		| 'if'
+		| 'impl'
+		| 'let'
+		| 'loop'
+		| 'match'
+		| 'mod'
+		| 'pub'
+		| 'return'
+		| 'static'
+		| 'struct'
+		| 'trait'
+		| 'type'
+		| 'union'
+		| 'unsafe'
+		| 'use'
+		| 'where'
+		| 'while'
+];
+export type TokenKeywordsLooseArgs = [
+	text:
+		| "'"
+		| 'as'
+		| 'async'
+		| 'await'
+		| 'break'
+		| 'const'
+		| 'continue'
+		| 'default'
+		| 'enum'
+		| 'fn'
+		| 'for'
+		| 'gen'
+		| 'if'
+		| 'impl'
+		| 'let'
+		| 'loop'
+		| 'match'
+		| 'mod'
+		| 'pub'
+		| 'return'
+		| 'static'
+		| 'struct'
+		| 'trait'
+		| 'type'
+		| 'union'
+		| 'unsafe'
+		| 'use'
+		| 'where'
+		| 'while'
+];
+
 export function buildTokenKeywords(
 	text:
 		| "'"
@@ -7489,6 +8282,9 @@ export function buildTokenKeywords(
 	);
 }
 
+export type UseWildcardClauseBuildArgs = [config: T.UseWildcardClause.Config];
+export type UseWildcardClauseLooseArgs = [config: T.UseWildcardClause.Loose];
+
 export type UseWildcardClauseBuilt = T.UseWildcardClause & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7518,6 +8314,9 @@ export function buildUseWildcardClause(config: T.UseWildcardClause.Config): UseW
 	);
 }
 
+export type StringLiteralOpenBuildArgs = [text: string];
+export type StringLiteralOpenLooseArgs = [text: string];
+
 export function buildStringLiteralOpen(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_string_literal_open: text must be non-empty`);
@@ -7534,6 +8333,9 @@ export function buildStringLiteralOpen(text: string) {
 	);
 }
 
+export type ReferenceExpressionRawConstBuildArgs = [text: string];
+export type ReferenceExpressionRawConstLooseArgs = [text: string];
+
 export function buildReferenceExpressionRawConst(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_reference_expression_raw_const: text must be non-empty`);
@@ -7547,6 +8349,9 @@ export function buildReferenceExpressionRawConst(text: string) {
 		methodsEngine
 	);
 }
+
+export type ReferenceExpressionRawMutBuildArgs = [config?: T.ReferenceExpressionRawMut.Config];
+export type ReferenceExpressionRawMutLooseArgs = [config?: T.ReferenceExpressionRawMut.Loose];
 
 export type ReferenceExpressionRawMutBuilt = T.ReferenceExpressionRawMut & {
 	readonly $source: 2;
@@ -7570,6 +8375,9 @@ export function buildReferenceExpressionRawMut(
 		methodsEngine
 	);
 }
+
+export type ImplItemBodyBuildArgs = [child: T.DeclarationList];
+export type ImplItemBodyLooseArgs = [child: T.DeclarationList];
 
 export type ImplItemBodyBuilt = T.ImplItemBody & {
 	readonly $source: 2;
@@ -7616,6 +8424,9 @@ function _buildImplItemBody(child: T.DeclarationList): ImplItemBodyBuilt {
 	);
 }
 
+export type ImplItemPositiveClauseBuildArgs = [config: T.ImplItemPositiveClause.Config];
+export type ImplItemPositiveClauseLooseArgs = [config: T.ImplItemPositiveClause.Loose];
+
 export type ImplItemPositiveClauseBuilt = T.ImplItemPositiveClause & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7653,6 +8464,9 @@ export const buildImplItemPositiveClause = attachProps(buildImplItemPositiveClau
 	genericType: (config: T.GenericType.Config) =>
 		buildImplItemPositiveClause$impl({ trait: buildGenericType(config) as T.GenericType })
 });
+
+export type ImplItemNegativeClauseBuildArgs = [config: T.ImplItemNegativeClause.Config];
+export type ImplItemNegativeClauseLooseArgs = [config: T.ImplItemNegativeClause.Loose];
 
 export type ImplItemNegativeClauseBuilt = T.ImplItemNegativeClause & {
 	readonly $source: 2;
@@ -7692,6 +8506,9 @@ export const buildImplItemNegativeClause = attachProps(buildImplItemNegativeClau
 		buildImplItemNegativeClause$impl({ trait: buildGenericType(config) as T.GenericType })
 });
 
+export type ArrayExpressionSemiBuildArgs = [config: T.ArrayExpressionSemi.Config];
+export type ArrayExpressionSemiLooseArgs = [config: T.ArrayExpressionSemi.Loose];
+
 export type ArrayExpressionSemiBuilt = T.ArrayExpressionSemi & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7726,6 +8543,9 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 		methodsEngine
 	);
 }
+
+export type ArrayExpressionListBuildArgs = [config?: Partial<T.ArrayExpressionList.Config>];
+export type ArrayExpressionListLooseArgs = [config?: T.ArrayExpressionList.Loose];
 
 export type ArrayExpressionListBuilt = T.ArrayExpressionList & {
 	readonly $source: 2;
@@ -7762,6 +8582,9 @@ export function buildArrayExpressionList(config: Partial<T.ArrayExpressionList.C
 	);
 }
 
+export type ClosureExpressionBlockBuildArgs = [config: T.ClosureExpressionBlock.Config];
+export type ClosureExpressionBlockLooseArgs = [config: T.ClosureExpressionBlock.Loose];
+
 export type ClosureExpressionBlockBuilt = T.ClosureExpressionBlock & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7796,6 +8619,9 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	);
 }
 
+export type ClosureExpressionExprBuildArgs = [config: T.ClosureExpressionExpr.Config];
+export type ClosureExpressionExprLooseArgs = [config: T.ClosureExpressionExpr.Loose];
+
 export type ClosureExpressionExprBuilt = T.ClosureExpressionExpr & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7824,6 +8650,9 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 		methodsEngine
 	);
 }
+
+export type FieldPatternNamedBuildArgs = [config: T.FieldPatternNamed.Config];
+export type FieldPatternNamedLooseArgs = [config: T.FieldPatternNamed.Loose];
 
 export type FieldPatternNamedBuilt = T.FieldPatternNamed & {
 	readonly $source: 2;
@@ -7858,6 +8687,9 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): Fiel
 		methodsEngine
 	);
 }
+
+export type FunctionTypeTraitFormBuildArgs = [config: T.FunctionTypeTraitForm.Config];
+export type FunctionTypeTraitFormLooseArgs = [config: T.FunctionTypeTraitForm.Loose];
 
 export type FunctionTypeTraitFormBuilt = T.FunctionTypeTraitForm & {
 	readonly $source: 2;
@@ -7894,6 +8726,9 @@ export const buildFunctionTypeTraitForm = attachProps(buildFunctionTypeTraitForm
 	scopedTypeIdentifier: (config: T.ScopedTypeIdentifier.Config) =>
 		buildFunctionTypeTraitForm$impl({ trait: buildScopedTypeIdentifier(config) as T.ScopedTypeIdentifier })
 });
+
+export type FunctionTypeFnFormBuildArgs = [child?: T.FunctionModifiers];
+export type FunctionTypeFnFormLooseArgs = [child?: T.FunctionModifiers];
 
 export type FunctionTypeFnFormBuilt = T.FunctionTypeFnForm & {
 	readonly $source: 2;
@@ -7941,6 +8776,9 @@ function _buildFunctionTypeFnForm(child?: T.FunctionModifiers): FunctionTypeFnFo
 	);
 }
 
+export type MacroDefinitionParenBuildArgs = [child?: T.MacroRules];
+export type MacroDefinitionParenLooseArgs = [child?: T.MacroRules];
+
 export type MacroDefinitionParenBuilt = T.MacroDefinitionParen & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -7984,6 +8822,9 @@ function _buildMacroDefinitionParen(child?: T.MacroRules): MacroDefinitionParenB
 		methodsEngine
 	);
 }
+
+export type MacroDefinitionBracketBuildArgs = [child?: T.MacroRules];
+export type MacroDefinitionBracketLooseArgs = [child?: T.MacroRules];
 
 export type MacroDefinitionBracketBuilt = T.MacroDefinitionBracket & {
 	readonly $source: 2;
@@ -8029,6 +8870,9 @@ function _buildMacroDefinitionBracket(child?: T.MacroRules): MacroDefinitionBrac
 	);
 }
 
+export type MacroDefinitionBraceBuildArgs = [child?: T.MacroRules];
+export type MacroDefinitionBraceLooseArgs = [child?: T.MacroRules];
+
 export type MacroDefinitionBraceBuilt = T.MacroDefinitionBrace & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8073,6 +8917,9 @@ function _buildMacroDefinitionBrace(child?: T.MacroRules): MacroDefinitionBraceB
 	);
 }
 
+export type OrPatternBinaryBuildArgs = [config: T.OrPatternBinary.Config];
+export type OrPatternBinaryLooseArgs = [config: T.OrPatternBinary.Loose];
+
 export type OrPatternBinaryBuilt = T.OrPatternBinary & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8107,6 +8954,9 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): OrPatter
 	);
 }
 
+export type OrPatternPrefixBuildArgs = [config: T.OrPatternPrefix.Config];
+export type OrPatternPrefixLooseArgs = [config: T.OrPatternPrefix.Loose];
+
 export type OrPatternPrefixBuilt = T.OrPatternPrefix & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8135,6 +8985,9 @@ export function buildOrPatternPrefix(config: T.OrPatternPrefix.Config): OrPatter
 		methodsEngine
 	);
 }
+
+export type RangeExpressionBinaryBuildArgs = [config: T.RangeExpressionBinary.Config];
+export type RangeExpressionBinaryLooseArgs = [config: T.RangeExpressionBinary.Loose];
 
 export type RangeExpressionBinaryBuilt = T.RangeExpressionBinary & {
 	readonly $source: 2;
@@ -8191,6 +9044,9 @@ export const buildRangeExpressionBinary = attachProps(buildRangeExpressionBinary
 		buildRangeExpressionBinary$impl({ start: start, end: end, operator: TSKindId.DotDotEq })
 });
 
+export type RangeExpressionPostfixBuildArgs = [config: T.RangeExpressionPostfix.Config];
+export type RangeExpressionPostfixLooseArgs = [config: T.RangeExpressionPostfix.Loose];
+
 export type RangeExpressionPostfixBuilt = T.RangeExpressionPostfix & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8220,6 +9076,9 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 	);
 }
 
+export type RangeExpressionPrefixBuildArgs = [config: T.RangeExpressionPrefix.Config];
+export type RangeExpressionPrefixLooseArgs = [config: T.RangeExpressionPrefix.Loose];
+
 export type RangeExpressionPrefixBuilt = T.RangeExpressionPrefix & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8248,6 +9107,9 @@ export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Confi
 		methodsEngine
 	);
 }
+
+export type RangePatternPrefixBuildArgs = [config: T.RangePatternPrefix.Config];
+export type RangePatternPrefixLooseArgs = [config: T.RangePatternPrefix.Loose];
 
 export type RangePatternPrefixBuilt = T.RangePatternPrefix & {
 	readonly $source: 2;
@@ -8293,6 +9155,9 @@ export const buildRangePatternPrefix = attachProps(buildRangePatternPrefix$impl,
 	dotDot: (right: T.RangePatternPrefix.Config['right']) =>
 		buildRangePatternPrefix$impl({ right: right, content: TSKindId.DotDot })
 });
+
+export type RangePatternLeftWithRightBuildArgs = [config: T.RangePatternLeftWithRight.Config];
+export type RangePatternLeftWithRightLooseArgs = [config: T.RangePatternLeftWithRight.Loose];
 
 export type RangePatternLeftWithRightBuilt = T.RangePatternLeftWithRight & {
 	readonly $source: 2;
@@ -8346,6 +9211,9 @@ export const buildRangePatternLeftWithRight = attachProps(buildRangePatternLeftW
 		buildRangePatternLeftWithRight$impl({ right: right, content: TSKindId.DotDot })
 });
 
+export type StructItemBraceBuildArgs = [config: T.StructItemBrace.Config];
+export type StructItemBraceLooseArgs = [config: T.StructItemBrace.Loose];
+
 export type StructItemBraceBuilt = T.StructItemBrace & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8380,6 +9248,9 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): StructIt
 	);
 }
 
+export type StructItemTupleBuildArgs = [config: T.StructItemTuple.Config];
+export type StructItemTupleLooseArgs = [config: T.StructItemTuple.Loose];
+
 export type StructItemTupleBuilt = T.StructItemTuple & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8413,6 +9284,9 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): StructIt
 		methodsEngine
 	);
 }
+
+export type VisibilityModifierPubBuildArgs = [child?: T.VisibilityModifierGroup];
+export type VisibilityModifierPubLooseArgs = [child?: T.VisibilityModifierGroup];
 
 export type VisibilityModifierPubBuilt = T.VisibilityModifierPub & {
 	readonly $source: 2;
@@ -8475,6 +9349,9 @@ export const buildVisibilityModifierPub = attachProps(buildVisibilityModifierPub
 		)
 });
 
+export type VisibilityModifierInPathBuildArgs = [child: T.Path];
+export type VisibilityModifierInPathLooseArgs = [child: T.Path];
+
 export type VisibilityModifierInPathBuilt = T.VisibilityModifierInPath & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8501,6 +9378,9 @@ export function buildVisibilityModifierInPath(child: T.Path): VisibilityModifier
 		methodsEngine
 	);
 }
+
+export type ExpressionStatementWithSemiBuildArgs = [config: T.ExpressionStatementWithSemi.Config];
+export type ExpressionStatementWithSemiLooseArgs = [config: T.ExpressionStatementWithSemi.Loose];
 
 export type ExpressionStatementWithSemiBuilt = T.ExpressionStatementWithSemi & {
 	readonly $source: 2;
@@ -8533,6 +9413,9 @@ export function buildExpressionStatementWithSemi(
 	);
 }
 
+export type MatchArmWithCommaBuildArgs = [config: T.MatchArmWithComma.Config];
+export type MatchArmWithCommaLooseArgs = [config: T.MatchArmWithComma.Loose];
+
 export type MatchArmWithCommaBuilt = T.MatchArmWithComma & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8562,6 +9445,9 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): Matc
 	);
 }
 
+export type LineCommentRegularDslashBuildArgs = [text: string];
+export type LineCommentRegularDslashLooseArgs = [text: string];
+
 export function buildLineCommentRegularDslash(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_line_comment_regular_dslash: text must be non-empty`);
@@ -8575,6 +9461,9 @@ export function buildLineCommentRegularDslash(text: string) {
 		methodsEngine
 	);
 }
+
+export type LineCommentDocBuildArgs = [config: T.LineCommentDoc.Config];
+export type LineCommentDocLooseArgs = [config: T.LineCommentDoc.Loose];
 
 export type LineCommentDocBuilt = T.LineCommentDoc & {
 	readonly $source: 2;
@@ -8617,6 +9506,9 @@ export function buildLineCommentDoc(config: T.LineCommentDoc.Config): LineCommen
 	);
 }
 
+export type LineCommentContentBuildArgs = [text: string];
+export type LineCommentContentLooseArgs = [text: string];
+
 export function buildLineCommentContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_line_comment_content: text must be non-empty`);
@@ -8632,6 +9524,9 @@ export function buildLineCommentContent(text: string) {
 		methodsEngine
 	);
 }
+
+export type TokenTreePatternParenBuildArgs = [config?: Partial<T.TokenTreePatternParen.Config>];
+export type TokenTreePatternParenLooseArgs = [config?: T.TokenTreePatternParen.Loose];
 
 export type TokenTreePatternParenBuilt = T.TokenTreePatternParen & {
 	readonly $source: 2;
@@ -8665,6 +9560,9 @@ export function buildTokenTreePatternParen(
 	);
 }
 
+export type TokenTreePatternBracketBuildArgs = [config?: Partial<T.TokenTreePatternBracket.Config>];
+export type TokenTreePatternBracketLooseArgs = [config?: T.TokenTreePatternBracket.Loose];
+
 export type TokenTreePatternBracketBuilt = T.TokenTreePatternBracket & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8696,6 +9594,9 @@ export function buildTokenTreePatternBracket(
 		methodsEngine
 	);
 }
+
+export type TokenTreePatternBraceBuildArgs = [config?: Partial<T.TokenTreePatternBrace.Config>];
+export type TokenTreePatternBraceLooseArgs = [config?: T.TokenTreePatternBrace.Loose];
 
 export type TokenTreePatternBraceBuilt = T.TokenTreePatternBrace & {
 	readonly $source: 2;
@@ -8729,6 +9630,9 @@ export function buildTokenTreePatternBrace(
 	);
 }
 
+export type TokenTreeParenBuildArgs = [config?: Partial<T.TokenTreeParen.Config>];
+export type TokenTreeParenLooseArgs = [config?: T.TokenTreeParen.Loose];
+
 export type TokenTreeParenBuilt = T.TokenTreeParen & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8757,6 +9661,9 @@ export function buildTokenTreeParen(config: Partial<T.TokenTreeParen.Config> = {
 		methodsEngine
 	);
 }
+
+export type TokenTreeBracketBuildArgs = [config?: Partial<T.TokenTreeBracket.Config>];
+export type TokenTreeBracketLooseArgs = [config?: T.TokenTreeBracket.Loose];
 
 export type TokenTreeBracketBuilt = T.TokenTreeBracket & {
 	readonly $source: 2;
@@ -8787,6 +9694,9 @@ export function buildTokenTreeBracket(config: Partial<T.TokenTreeBracket.Config>
 	);
 }
 
+export type TokenTreeBraceBuildArgs = [config?: Partial<T.TokenTreeBrace.Config>];
+export type TokenTreeBraceLooseArgs = [config?: T.TokenTreeBrace.Loose];
+
 export type TokenTreeBraceBuilt = T.TokenTreeBrace & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8816,6 +9726,9 @@ export function buildTokenTreeBrace(config: Partial<T.TokenTreeBrace.Config> = {
 	);
 }
 
+export type DelimTokenTreeParenBuildArgs = [config?: Partial<T.DelimTokenTreeParen.Config>];
+export type DelimTokenTreeParenLooseArgs = [config?: T.DelimTokenTreeParen.Loose];
+
 export type DelimTokenTreeParenBuilt = T.DelimTokenTreeParen & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8844,6 +9757,9 @@ export function buildDelimTokenTreeParen(config: Partial<T.DelimTokenTreeParen.C
 		methodsEngine
 	);
 }
+
+export type DelimTokenTreeBracketBuildArgs = [config?: Partial<T.DelimTokenTreeBracket.Config>];
+export type DelimTokenTreeBracketLooseArgs = [config?: T.DelimTokenTreeBracket.Loose];
 
 export type DelimTokenTreeBracketBuilt = T.DelimTokenTreeBracket & {
 	readonly $source: 2;
@@ -8876,6 +9792,9 @@ export function buildDelimTokenTreeBracket(
 	);
 }
 
+export type DelimTokenTreeBraceBuildArgs = [config?: Partial<T.DelimTokenTreeBrace.Config>];
+export type DelimTokenTreeBraceLooseArgs = [config?: T.DelimTokenTreeBrace.Loose];
+
 export type DelimTokenTreeBraceBuilt = T.DelimTokenTreeBrace & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8904,6 +9823,9 @@ export function buildDelimTokenTreeBrace(config: Partial<T.DelimTokenTreeBrace.C
 		methodsEngine
 	);
 }
+
+export type AttributedFieldDeclarationBuildArgs = [config: T.AttributedFieldDeclaration.Config];
+export type AttributedFieldDeclarationLooseArgs = [config: T.AttributedFieldDeclaration.Loose];
 
 export type AttributedFieldDeclarationBuilt = T.AttributedFieldDeclaration & {
 	readonly $source: 2;
@@ -8943,6 +9865,9 @@ export function buildAttributedFieldDeclaration(
 	);
 }
 
+export type AttributedEnumVariantBuildArgs = [config: T.AttributedEnumVariant.Config];
+export type AttributedEnumVariantLooseArgs = [config: T.AttributedEnumVariant.Loose];
+
 export type AttributedEnumVariantBuilt = T.AttributedEnumVariant & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -8978,6 +9903,9 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 	);
 }
 
+export type AttributedParameterBuildArgs = [config: T.AttributedParameter.Config];
+export type AttributedParameterLooseArgs = [config: T.AttributedParameter.Loose];
+
 export type AttributedParameterBuilt = T.AttributedParameter & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -9012,6 +9940,9 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 		methodsEngine
 	);
 }
+
+export type AttributedTypeParameterBuildArgs = [config: T.AttributedTypeParameter.Config];
+export type AttributedTypeParameterLooseArgs = [config: T.AttributedTypeParameter.Loose];
 
 export type AttributedTypeParameterBuilt = T.AttributedTypeParameter & {
 	readonly $source: 2;
@@ -9051,6 +9982,9 @@ export function buildAttributedTypeParameter(config: T.AttributedTypeParameter.C
 	);
 }
 
+export type AttributedArgumentBuildArgs = [config: T.AttributedArgument.Config];
+export type AttributedArgumentLooseArgs = [config: T.AttributedArgument.Loose];
+
 export type AttributedArgumentBuilt = T.AttributedArgument & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -9085,6 +10019,9 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): At
 		methodsEngine
 	);
 }
+
+export type AttributedOrderedFieldBuildArgs = [config: T.AttributedOrderedField.Config];
+export type AttributedOrderedFieldLooseArgs = [config: T.AttributedOrderedField.Loose];
 
 export type AttributedOrderedFieldBuilt = T.AttributedOrderedField & {
 	readonly $source: 2;
@@ -9127,6 +10064,9 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 	);
 }
 
+export type TypeArgumentBuildArgs = [config: T.TypeArgument.Config];
+export type TypeArgumentLooseArgs = [config: T.TypeArgument.Loose];
+
 export type TypeArgumentBuilt = T.TypeArgument & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -9162,6 +10102,9 @@ export function buildTypeArgument(config: T.TypeArgument.Config): TypeArgumentBu
 	);
 }
 
+export type MatchBlockArmsBuildArgs = [config: T.MatchBlockArms.Config];
+export type MatchBlockArmsLooseArgs = [config: T.MatchBlockArms.Loose];
+
 export type MatchBlockArmsBuilt = T.MatchBlockArms & {
 	readonly $source: 2;
 	readonly $named: true;
@@ -9196,6 +10139,9 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): MatchBlock
 	);
 }
 
+export type StringContentBuildArgs = [text: string];
+export type StringContentLooseArgs = [text: string];
+
 export function buildStringContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`string_content: text must be non-empty`);
@@ -9209,6 +10155,9 @@ export function buildStringContent(text: string) {
 		methodsEngine
 	);
 }
+
+export type RawStringLiteralStartBuildArgs = [text: string];
+export type RawStringLiteralStartLooseArgs = [text: string];
 
 export function buildRawStringLiteralStart(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -9224,6 +10173,9 @@ export function buildRawStringLiteralStart(text: string) {
 	);
 }
 
+export type RawStringLiteralContentBuildArgs = [text: string];
+export type RawStringLiteralContentLooseArgs = [text: string];
+
 export function buildRawStringLiteralContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`raw_string_literal_content: text must be non-empty`);
@@ -9237,6 +10189,9 @@ export function buildRawStringLiteralContent(text: string) {
 		methodsEngine
 	);
 }
+
+export type RawStringLiteralEndBuildArgs = [text: string];
+export type RawStringLiteralEndLooseArgs = [text: string];
 
 export function buildRawStringLiteralEnd(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -9252,6 +10207,9 @@ export function buildRawStringLiteralEnd(text: string) {
 	);
 }
 
+export type FloatLiteralBuildArgs = [text: string];
+export type FloatLiteralLooseArgs = [text: string];
+
 export function buildFloatLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`float_literal: text must be non-empty`);
@@ -9266,6 +10224,9 @@ export function buildFloatLiteral(text: string) {
 	);
 }
 
+export type LineDocContentBuildArgs = [text: string];
+export type LineDocContentLooseArgs = [text: string];
+
 export function buildLineDocContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_line_doc_content: text must be non-empty`);
@@ -9279,6 +10240,9 @@ export function buildLineDocContent(text: string) {
 		methodsEngine
 	);
 }
+
+export type ErrorSentinelBuildArgs = [text: string];
+export type ErrorSentinelLooseArgs = [text: string];
 
 export function buildErrorSentinel(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)

@@ -7253,822 +7253,1242 @@ export interface SourceFileNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SourceFileBuilt
+	F$.SourceFileBuilt,
+	F$.SourceFileBuildArgs,
+	F$.SourceFileLooseArgs
 > {}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExpressionStatementBuilt
+	F$.ExpressionStatementBuilt,
+	F$.ExpressionStatementBuildArgs,
+	F$.ExpressionStatementLooseArgs
 > {}
 export interface MacroDefinitionNs extends NodeNs<
 	MacroDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MacroDefinitionBuilt
+	F$.MacroDefinitionBuilt,
+	F$.MacroDefinitionBuildArgs,
+	F$.MacroDefinitionLooseArgs
 > {}
-export interface MacroRuleNs extends NodeNs<MacroRule, LeafScalarMap, LeafStringMap, NamespaceMap, F$.MacroRuleBuilt> {}
+export interface MacroRuleNs extends NodeNs<
+	MacroRule,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.MacroRuleBuilt,
+	F$.MacroRuleBuildArgs,
+	F$.MacroRuleLooseArgs
+> {}
 export interface TokenTreePatternNs extends NodeNs<
 	TokenTreePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreePatternBuilt
+	F$.TokenTreePatternBuilt,
+	F$.TokenTreePatternBuildArgs,
+	F$.TokenTreePatternLooseArgs
 > {}
 export interface TokenBindingPatternNs extends NodeNs<
 	TokenBindingPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenBindingPatternBuilt
+	F$.TokenBindingPatternBuilt,
+	F$.TokenBindingPatternBuildArgs,
+	F$.TokenBindingPatternLooseArgs
 > {}
 export interface TokenRepetitionPatternNs extends NodeNs<
 	TokenRepetitionPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenRepetitionPatternBuilt
+	F$.TokenRepetitionPatternBuilt,
+	F$.TokenRepetitionPatternBuildArgs,
+	F$.TokenRepetitionPatternLooseArgs
 > {}
-export interface TokenTreeNs extends NodeNs<TokenTree, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TokenTreeBuilt> {}
+export interface TokenTreeNs extends NodeNs<
+	TokenTree,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TokenTreeBuilt,
+	F$.TokenTreeBuildArgs,
+	F$.TokenTreeLooseArgs
+> {}
 export interface TokenRepetitionNs extends NodeNs<
 	TokenRepetition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenRepetitionBuilt
+	F$.TokenRepetitionBuilt,
+	F$.TokenRepetitionBuildArgs,
+	F$.TokenRepetitionLooseArgs
 > {}
 export interface AttributeItemNs extends NodeNs<
 	AttributeItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributeItemBuilt
+	F$.AttributeItemBuilt,
+	F$.AttributeItemBuildArgs,
+	F$.AttributeItemLooseArgs
 > {}
 export interface InnerAttributeItemNs extends NodeNs<
 	InnerAttributeItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.InnerAttributeItemBuilt
+	F$.InnerAttributeItemBuilt,
+	F$.InnerAttributeItemBuildArgs,
+	F$.InnerAttributeItemLooseArgs
 > {}
-export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap, F$.AttributeBuilt> {}
-export interface ModItemNs extends NodeNs<ModItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ModItemBuilt> {}
+export interface AttributeNs extends NodeNs<
+	Attribute,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.AttributeBuilt,
+	F$.AttributeBuildArgs,
+	F$.AttributeLooseArgs
+> {}
+export interface ModItemNs extends NodeNs<
+	ModItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ModItemBuilt,
+	F$.ModItemBuildArgs,
+	F$.ModItemLooseArgs
+> {}
 export interface ForeignModItemNs extends NodeNs<
 	ForeignModItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ForeignModItemBuilt
+	F$.ForeignModItemBuilt,
+	F$.ForeignModItemBuildArgs,
+	F$.ForeignModItemLooseArgs
 > {}
 export interface DeclarationListNs extends NodeNs<
 	DeclarationList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DeclarationListBuilt
+	F$.DeclarationListBuilt,
+	F$.DeclarationListBuildArgs,
+	F$.DeclarationListLooseArgs
 > {}
 export interface StructItemNs extends NodeNs<
 	StructItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StructItemBuilt
+	F$.StructItemBuilt,
+	F$.StructItemBuildArgs,
+	F$.StructItemLooseArgs
 > {}
-export interface UnionItemNs extends NodeNs<UnionItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.UnionItemBuilt> {}
-export interface EnumItemNs extends NodeNs<EnumItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.EnumItemBuilt> {}
+export interface UnionItemNs extends NodeNs<
+	UnionItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.UnionItemBuilt,
+	F$.UnionItemBuildArgs,
+	F$.UnionItemLooseArgs
+> {}
+export interface EnumItemNs extends NodeNs<
+	EnumItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.EnumItemBuilt,
+	F$.EnumItemBuildArgs,
+	F$.EnumItemLooseArgs
+> {}
 export interface EnumVariantListNs extends NodeNs<
 	EnumVariantList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.EnumVariantListBuilt
+	F$.EnumVariantListBuilt,
+	F$.EnumVariantListBuildArgs,
+	F$.EnumVariantListLooseArgs
 > {}
 export interface EnumVariantNs extends NodeNs<
 	EnumVariant,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.EnumVariantBuilt
+	F$.EnumVariantBuilt,
+	F$.EnumVariantBuildArgs,
+	F$.EnumVariantLooseArgs
 > {}
 export interface FieldDeclarationListNs extends NodeNs<
 	FieldDeclarationList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldDeclarationListBuilt
+	F$.FieldDeclarationListBuilt,
+	F$.FieldDeclarationListBuildArgs,
+	F$.FieldDeclarationListLooseArgs
 > {}
 export interface FieldDeclarationNs extends NodeNs<
 	FieldDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldDeclarationBuilt
+	F$.FieldDeclarationBuilt,
+	F$.FieldDeclarationBuildArgs,
+	F$.FieldDeclarationLooseArgs
 > {}
 export interface OrderedFieldDeclarationListNs extends NodeNs<
 	OrderedFieldDeclarationList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.OrderedFieldDeclarationListBuilt
+	F$.OrderedFieldDeclarationListBuilt,
+	F$.OrderedFieldDeclarationListBuildArgs,
+	F$.OrderedFieldDeclarationListLooseArgs
 > {}
 export interface ExternCrateDeclarationNs extends NodeNs<
 	ExternCrateDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExternCrateDeclarationBuilt
+	F$.ExternCrateDeclarationBuilt,
+	F$.ExternCrateDeclarationBuildArgs,
+	F$.ExternCrateDeclarationLooseArgs
 > {}
-export interface ConstItemNs extends NodeNs<ConstItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ConstItemBuilt> {}
+export interface ConstItemNs extends NodeNs<
+	ConstItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ConstItemBuilt,
+	F$.ConstItemBuildArgs,
+	F$.ConstItemLooseArgs
+> {}
 export interface StaticItemNs extends NodeNs<
 	StaticItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StaticItemBuilt
+	F$.StaticItemBuilt,
+	F$.StaticItemBuildArgs,
+	F$.StaticItemLooseArgs
 > {}
-export interface TypeItemNs extends NodeNs<TypeItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TypeItemBuilt> {}
+export interface TypeItemNs extends NodeNs<
+	TypeItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TypeItemBuilt,
+	F$.TypeItemBuildArgs,
+	F$.TypeItemLooseArgs
+> {}
 export interface FunctionItemNs extends NodeNs<
 	FunctionItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionItemBuilt
+	F$.FunctionItemBuilt,
+	F$.FunctionItemBuildArgs,
+	F$.FunctionItemLooseArgs
 > {}
 export interface FunctionSignatureItemNs extends NodeNs<
 	FunctionSignatureItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionSignatureItemBuilt
+	F$.FunctionSignatureItemBuilt,
+	F$.FunctionSignatureItemBuildArgs,
+	F$.FunctionSignatureItemLooseArgs
 > {}
 export interface FunctionModifiersNs extends NodeNs<
 	FunctionModifiers,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionModifiersBuilt
+	F$.FunctionModifiersBuilt,
+	F$.FunctionModifiersBuildArgs,
+	F$.FunctionModifiersLooseArgs
 > {}
 export interface WhereClauseNs extends NodeNs<
 	WhereClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WhereClauseBuilt
+	F$.WhereClauseBuilt,
+	F$.WhereClauseBuildArgs,
+	F$.WhereClauseLooseArgs
 > {}
 export interface WherePredicateNs extends NodeNs<
 	WherePredicate,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WherePredicateBuilt
+	F$.WherePredicateBuilt,
+	F$.WherePredicateBuildArgs,
+	F$.WherePredicateLooseArgs
 > {}
-export interface ImplItemNs extends NodeNs<ImplItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ImplItemBuilt> {}
-export interface TraitItemNs extends NodeNs<TraitItem, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TraitItemBuilt> {}
+export interface ImplItemNs extends NodeNs<
+	ImplItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ImplItemBuilt,
+	F$.ImplItemBuildArgs,
+	F$.ImplItemLooseArgs
+> {}
+export interface TraitItemNs extends NodeNs<
+	TraitItem,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TraitItemBuilt,
+	F$.TraitItemBuildArgs,
+	F$.TraitItemLooseArgs
+> {}
 export interface AssociatedTypeNs extends NodeNs<
 	AssociatedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssociatedTypeBuilt
+	F$.AssociatedTypeBuilt,
+	F$.AssociatedTypeBuildArgs,
+	F$.AssociatedTypeLooseArgs
 > {}
 export interface TraitBoundsNs extends NodeNs<
 	TraitBounds,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TraitBoundsBuilt
+	F$.TraitBoundsBuilt,
+	F$.TraitBoundsBuildArgs,
+	F$.TraitBoundsLooseArgs
 > {}
 export interface HigherRankedTraitBoundNs extends NodeNs<
 	HigherRankedTraitBound,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.HigherRankedTraitBoundBuilt
+	F$.HigherRankedTraitBoundBuilt,
+	F$.HigherRankedTraitBoundBuildArgs,
+	F$.HigherRankedTraitBoundLooseArgs
 > {}
 export interface RemovedTraitBoundNs extends NodeNs<
 	RemovedTraitBound,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RemovedTraitBoundBuilt
+	F$.RemovedTraitBoundBuilt,
+	F$.RemovedTraitBoundBuildArgs,
+	F$.RemovedTraitBoundLooseArgs
 > {}
 export interface TypeParametersNs extends NodeNs<
 	TypeParameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeParametersBuilt
+	F$.TypeParametersBuilt,
+	F$.TypeParametersBuildArgs,
+	F$.TypeParametersLooseArgs
 > {}
 export interface ConstParameterNs extends NodeNs<
 	ConstParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ConstParameterBuilt
+	F$.ConstParameterBuilt,
+	F$.ConstParameterBuildArgs,
+	F$.ConstParameterLooseArgs
 > {}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeParameterBuilt
+	F$.TypeParameterBuilt,
+	F$.TypeParameterBuildArgs,
+	F$.TypeParameterLooseArgs
 > {}
 export interface LifetimeParameterNs extends NodeNs<
 	LifetimeParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LifetimeParameterBuilt
+	F$.LifetimeParameterBuilt,
+	F$.LifetimeParameterBuildArgs,
+	F$.LifetimeParameterLooseArgs
 > {}
 export interface LetDeclarationNs extends NodeNs<
 	LetDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LetDeclarationBuilt
+	F$.LetDeclarationBuilt,
+	F$.LetDeclarationBuildArgs,
+	F$.LetDeclarationLooseArgs
 > {}
 export interface UseDeclarationNs extends NodeNs<
 	UseDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UseDeclarationBuilt
+	F$.UseDeclarationBuilt,
+	F$.UseDeclarationBuildArgs,
+	F$.UseDeclarationLooseArgs
 > {}
 export interface ScopedUseListNs extends NodeNs<
 	ScopedUseList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ScopedUseListBuilt
+	F$.ScopedUseListBuilt,
+	F$.ScopedUseListBuildArgs,
+	F$.ScopedUseListLooseArgs
 > {}
-export interface UseListNs extends NodeNs<UseList, LeafScalarMap, LeafStringMap, NamespaceMap, F$.UseListBuilt> {}
+export interface UseListNs extends NodeNs<
+	UseList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.UseListBuilt,
+	F$.UseListBuildArgs,
+	F$.UseListLooseArgs
+> {}
 export interface UseAsClauseNs extends NodeNs<
 	UseAsClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UseAsClauseBuilt
+	F$.UseAsClauseBuilt,
+	F$.UseAsClauseBuildArgs,
+	F$.UseAsClauseLooseArgs
 > {}
 export interface UseWildcardNs extends NodeNs<
 	UseWildcard,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UseWildcardBuilt
+	F$.UseWildcardBuilt,
+	F$.UseWildcardBuildArgs,
+	F$.UseWildcardLooseArgs
 > {}
 export interface ParametersNs extends NodeNs<
 	Parameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ParametersBuilt
+	F$.ParametersBuilt,
+	F$.ParametersBuildArgs,
+	F$.ParametersLooseArgs
 > {}
 export interface SelfParameterNs extends NodeNs<
 	SelfParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SelfParameterBuilt
+	F$.SelfParameterBuilt,
+	F$.SelfParameterBuildArgs,
+	F$.SelfParameterLooseArgs
 > {}
 export interface VariadicParameterNs extends NodeNs<
 	VariadicParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.VariadicParameterBuilt
+	F$.VariadicParameterBuilt,
+	F$.VariadicParameterBuildArgs,
+	F$.VariadicParameterLooseArgs
 > {}
-export interface ParameterNs extends NodeNs<Parameter, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ParameterBuilt> {}
+export interface ParameterNs extends NodeNs<
+	Parameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ParameterBuilt,
+	F$.ParameterBuildArgs,
+	F$.ParameterLooseArgs
+> {}
 export interface ExternModifierNs extends NodeNs<
 	ExternModifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExternModifierBuilt
+	F$.ExternModifierBuilt,
+	F$.ExternModifierBuildArgs,
+	F$.ExternModifierLooseArgs
 > {}
 export interface VisibilityModifierNs extends NodeNs<
 	VisibilityModifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.VisibilityModifierBuilt
+	F$.VisibilityModifierBuilt,
+	F$.VisibilityModifierBuildArgs,
+	F$.VisibilityModifierLooseArgs
 > {}
 export interface BracketedTypeNs extends NodeNs<
 	BracketedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BracketedTypeBuilt
+	F$.BracketedTypeBuilt,
+	F$.BracketedTypeBuildArgs,
+	F$.BracketedTypeLooseArgs
 > {}
 export interface QualifiedTypeNs extends NodeNs<
 	QualifiedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.QualifiedTypeBuilt
+	F$.QualifiedTypeBuilt,
+	F$.QualifiedTypeBuildArgs,
+	F$.QualifiedTypeLooseArgs
 > {}
-export interface LifetimeNs extends NodeNs<Lifetime, LeafScalarMap, LeafStringMap, NamespaceMap, F$.LifetimeBuilt> {}
-export interface ArrayTypeNs extends NodeNs<ArrayType, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ArrayTypeBuilt> {}
+export interface LifetimeNs extends NodeNs<
+	Lifetime,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.LifetimeBuilt,
+	F$.LifetimeBuildArgs,
+	F$.LifetimeLooseArgs
+> {}
+export interface ArrayTypeNs extends NodeNs<
+	ArrayType,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ArrayTypeBuilt,
+	F$.ArrayTypeBuildArgs,
+	F$.ArrayTypeLooseArgs
+> {}
 export interface ForLifetimesNs extends NodeNs<
 	ForLifetimes,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ForLifetimesBuilt
+	F$.ForLifetimesBuilt,
+	F$.ForLifetimesBuildArgs,
+	F$.ForLifetimesLooseArgs
 > {}
 export interface FunctionTypeNs extends NodeNs<
 	FunctionType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionTypeBuilt
+	F$.FunctionTypeBuilt,
+	F$.FunctionTypeBuildArgs,
+	F$.FunctionTypeLooseArgs
 > {}
-export interface TupleTypeNs extends NodeNs<TupleType, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TupleTypeBuilt> {}
+export interface TupleTypeNs extends NodeNs<
+	TupleType,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TupleTypeBuilt,
+	F$.TupleTypeBuildArgs,
+	F$.TupleTypeLooseArgs
+> {}
 export interface GenericFunctionNs extends NodeNs<
 	GenericFunction,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GenericFunctionBuilt
+	F$.GenericFunctionBuilt,
+	F$.GenericFunctionBuildArgs,
+	F$.GenericFunctionLooseArgs
 > {}
 export interface GenericTypeNs extends NodeNs<
 	GenericType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GenericTypeBuilt
+	F$.GenericTypeBuilt,
+	F$.GenericTypeBuildArgs,
+	F$.GenericTypeLooseArgs
 > {}
 export interface GenericTypeWithTurbofishNs extends NodeNs<
 	GenericTypeWithTurbofish,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GenericTypeWithTurbofishBuilt
+	F$.GenericTypeWithTurbofishBuilt,
+	F$.GenericTypeWithTurbofishBuildArgs,
+	F$.GenericTypeWithTurbofishLooseArgs
 > {}
 export interface BoundedTypeNs extends NodeNs<
 	BoundedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BoundedTypeBuilt
+	F$.BoundedTypeBuilt,
+	F$.BoundedTypeBuildArgs,
+	F$.BoundedTypeLooseArgs
 > {}
-export interface UseBoundsNs extends NodeNs<UseBounds, LeafScalarMap, LeafStringMap, NamespaceMap, F$.UseBoundsBuilt> {}
+export interface UseBoundsNs extends NodeNs<
+	UseBounds,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.UseBoundsBuilt,
+	F$.UseBoundsBuildArgs,
+	F$.UseBoundsLooseArgs
+> {}
 export interface TypeArgumentsNs extends NodeNs<
 	TypeArguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeArgumentsBuilt
+	F$.TypeArgumentsBuilt,
+	F$.TypeArgumentsBuildArgs,
+	F$.TypeArgumentsLooseArgs
 > {}
 export interface TypeBindingNs extends NodeNs<
 	TypeBinding,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeBindingBuilt
+	F$.TypeBindingBuilt,
+	F$.TypeBindingBuildArgs,
+	F$.TypeBindingLooseArgs
 > {}
 export interface ReferenceTypeNs extends NodeNs<
 	ReferenceType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ReferenceTypeBuilt
+	F$.ReferenceTypeBuilt,
+	F$.ReferenceTypeBuildArgs,
+	F$.ReferenceTypeLooseArgs
 > {}
 export interface PointerTypeNs extends NodeNs<
 	PointerType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PointerTypeBuilt
+	F$.PointerTypeBuilt,
+	F$.PointerTypeBuildArgs,
+	F$.PointerTypeLooseArgs
 > {}
 export interface AbstractTypeNs extends NodeNs<
 	AbstractType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AbstractTypeBuilt
+	F$.AbstractTypeBuilt,
+	F$.AbstractTypeBuildArgs,
+	F$.AbstractTypeLooseArgs
 > {}
 export interface DynamicTypeNs extends NodeNs<
 	DynamicType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DynamicTypeBuilt
+	F$.DynamicTypeBuilt,
+	F$.DynamicTypeBuildArgs,
+	F$.DynamicTypeLooseArgs
 > {}
 export interface MacroInvocationNs extends NodeNs<
 	MacroInvocation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MacroInvocationBuilt
+	F$.MacroInvocationBuilt,
+	F$.MacroInvocationBuildArgs,
+	F$.MacroInvocationLooseArgs
 > {}
 export interface DelimTokenTreeNs extends NodeNs<
 	DelimTokenTree,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DelimTokenTreeBuilt
+	F$.DelimTokenTreeBuilt,
+	F$.DelimTokenTreeBuildArgs,
+	F$.DelimTokenTreeLooseArgs
 > {}
 export interface ScopedIdentifierNs extends NodeNs<
 	ScopedIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ScopedIdentifierBuilt
+	F$.ScopedIdentifierBuilt,
+	F$.ScopedIdentifierBuildArgs,
+	F$.ScopedIdentifierLooseArgs
 > {}
 export interface ScopedTypeIdentifierInExpressionPositionNs extends NodeNs<
 	ScopedTypeIdentifierInExpressionPosition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ScopedTypeIdentifierInExpressionPositionBuilt
+	F$.ScopedTypeIdentifierInExpressionPositionBuilt,
+	F$.ScopedTypeIdentifierInExpressionPositionBuildArgs,
+	F$.ScopedTypeIdentifierInExpressionPositionLooseArgs
 > {}
 export interface ScopedTypeIdentifierNs extends NodeNs<
 	ScopedTypeIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ScopedTypeIdentifierBuilt
+	F$.ScopedTypeIdentifierBuilt,
+	F$.ScopedTypeIdentifierBuildArgs,
+	F$.ScopedTypeIdentifierLooseArgs
 > {}
 export interface RangeExpressionNs extends NodeNs<
 	RangeExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangeExpressionBuilt
+	F$.RangeExpressionBuilt,
+	F$.RangeExpressionBuildArgs,
+	F$.RangeExpressionLooseArgs
 > {}
 export interface UnaryExpressionNs extends NodeNs<
 	UnaryExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UnaryExpressionBuilt
+	F$.UnaryExpressionBuilt,
+	F$.UnaryExpressionBuildArgs,
+	F$.UnaryExpressionLooseArgs
 > {}
 export interface TryExpressionNs extends NodeNs<
 	TryExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TryExpressionBuilt
+	F$.TryExpressionBuilt,
+	F$.TryExpressionBuildArgs,
+	F$.TryExpressionLooseArgs
 > {}
 export interface ReferenceExpressionNs extends NodeNs<
 	ReferenceExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ReferenceExpressionBuilt
+	F$.ReferenceExpressionBuilt,
+	F$.ReferenceExpressionBuildArgs,
+	F$.ReferenceExpressionLooseArgs
 > {}
 export interface BinaryExpressionNs extends NodeNs<
 	BinaryExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BinaryExpressionBuilt
+	F$.BinaryExpressionBuilt,
+	F$.BinaryExpressionBuildArgs,
+	F$.BinaryExpressionLooseArgs
 > {}
 export interface AssignmentExpressionNs extends NodeNs<
 	AssignmentExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssignmentExpressionBuilt
+	F$.AssignmentExpressionBuilt,
+	F$.AssignmentExpressionBuildArgs,
+	F$.AssignmentExpressionLooseArgs
 > {}
 export interface CompoundAssignmentExprNs extends NodeNs<
 	CompoundAssignmentExpr,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CompoundAssignmentExprBuilt
+	F$.CompoundAssignmentExprBuilt,
+	F$.CompoundAssignmentExprBuildArgs,
+	F$.CompoundAssignmentExprLooseArgs
 > {}
 export interface TypeCastExpressionNs extends NodeNs<
 	TypeCastExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeCastExpressionBuilt
+	F$.TypeCastExpressionBuilt,
+	F$.TypeCastExpressionBuildArgs,
+	F$.TypeCastExpressionLooseArgs
 > {}
 export interface ReturnExpressionNs extends NodeNs<
 	ReturnExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ReturnExpressionBuilt
+	F$.ReturnExpressionBuilt,
+	F$.ReturnExpressionBuildArgs,
+	F$.ReturnExpressionLooseArgs
 > {}
 export interface YieldExpressionNs extends NodeNs<
 	YieldExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.YieldExpressionBuilt
+	F$.YieldExpressionBuilt,
+	F$.YieldExpressionBuildArgs,
+	F$.YieldExpressionLooseArgs
 > {}
 export interface CallExpressionNs extends NodeNs<
 	CallExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CallExpressionBuilt
+	F$.CallExpressionBuilt,
+	F$.CallExpressionBuildArgs,
+	F$.CallExpressionLooseArgs
 > {}
-export interface ArgumentsNs extends NodeNs<Arguments, LeafScalarMap, LeafStringMap, NamespaceMap, F$.ArgumentsBuilt> {}
+export interface ArgumentsNs extends NodeNs<
+	Arguments,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.ArgumentsBuilt,
+	F$.ArgumentsBuildArgs,
+	F$.ArgumentsLooseArgs
+> {}
 export interface ArrayExpressionNs extends NodeNs<
 	ArrayExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArrayExpressionBuilt
+	F$.ArrayExpressionBuilt,
+	F$.ArrayExpressionBuildArgs,
+	F$.ArrayExpressionLooseArgs
 > {}
 export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ParenthesizedExpressionBuilt
+	F$.ParenthesizedExpressionBuilt,
+	F$.ParenthesizedExpressionBuildArgs,
+	F$.ParenthesizedExpressionLooseArgs
 > {}
 export interface TupleExpressionNs extends NodeNs<
 	TupleExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TupleExpressionBuilt
+	F$.TupleExpressionBuilt,
+	F$.TupleExpressionBuildArgs,
+	F$.TupleExpressionLooseArgs
 > {}
 export interface StructExpressionNs extends NodeNs<
 	StructExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StructExpressionBuilt
+	F$.StructExpressionBuilt,
+	F$.StructExpressionBuildArgs,
+	F$.StructExpressionLooseArgs
 > {}
 export interface FieldInitializerListNs extends NodeNs<
 	FieldInitializerList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldInitializerListBuilt
+	F$.FieldInitializerListBuilt,
+	F$.FieldInitializerListBuildArgs,
+	F$.FieldInitializerListLooseArgs
 > {}
 export interface ShorthandFieldInitializerNs extends NodeNs<
 	ShorthandFieldInitializer,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ShorthandFieldInitializerBuilt
+	F$.ShorthandFieldInitializerBuilt,
+	F$.ShorthandFieldInitializerBuildArgs,
+	F$.ShorthandFieldInitializerLooseArgs
 > {}
 export interface FieldInitializerNs extends NodeNs<
 	FieldInitializer,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldInitializerBuilt
+	F$.FieldInitializerBuilt,
+	F$.FieldInitializerBuildArgs,
+	F$.FieldInitializerLooseArgs
 > {}
 export interface BaseFieldInitializerNs extends NodeNs<
 	BaseFieldInitializer,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BaseFieldInitializerBuilt
+	F$.BaseFieldInitializerBuilt,
+	F$.BaseFieldInitializerBuildArgs,
+	F$.BaseFieldInitializerLooseArgs
 > {}
 export interface IfExpressionNs extends NodeNs<
 	IfExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.IfExpressionBuilt
+	F$.IfExpressionBuilt,
+	F$.IfExpressionBuildArgs,
+	F$.IfExpressionLooseArgs
 > {}
 export interface LetConditionNs extends NodeNs<
 	LetCondition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LetConditionBuilt
+	F$.LetConditionBuilt,
+	F$.LetConditionBuildArgs,
+	F$.LetConditionLooseArgs
 > {}
-export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap, F$.LetChainBuilt> {}
+export interface LetChainNs extends NodeNs<
+	LetChain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.LetChainBuilt,
+	F$.LetChainBuildArgs,
+	F$.LetChainLooseArgs
+> {}
 export interface ElseClauseNs extends NodeNs<
 	ElseClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ElseClauseBuilt
+	F$.ElseClauseBuilt,
+	F$.ElseClauseBuildArgs,
+	F$.ElseClauseLooseArgs
 > {}
 export interface MatchExpressionNs extends NodeNs<
 	MatchExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchExpressionBuilt
+	F$.MatchExpressionBuilt,
+	F$.MatchExpressionBuildArgs,
+	F$.MatchExpressionLooseArgs
 > {}
 export interface MatchBlockNs extends NodeNs<
 	MatchBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchBlockBuilt
+	F$.MatchBlockBuilt,
+	F$.MatchBlockBuildArgs,
+	F$.MatchBlockLooseArgs
 > {}
-export interface MatchArmNs extends NodeNs<MatchArm, LeafScalarMap, LeafStringMap, NamespaceMap, F$.MatchArmBuilt> {}
+export interface MatchArmNs extends NodeNs<
+	MatchArm,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.MatchArmBuilt,
+	F$.MatchArmBuildArgs,
+	F$.MatchArmLooseArgs
+> {}
 export interface LastMatchArmNs extends NodeNs<
 	LastMatchArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LastMatchArmBuilt
+	F$.LastMatchArmBuilt,
+	F$.LastMatchArmBuildArgs,
+	F$.LastMatchArmLooseArgs
 > {}
 export interface MatchPatternNs extends NodeNs<
 	MatchPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchPatternBuilt
+	F$.MatchPatternBuilt,
+	F$.MatchPatternBuildArgs,
+	F$.MatchPatternLooseArgs
 > {}
 export interface WhileExpressionNs extends NodeNs<
 	WhileExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WhileExpressionBuilt
+	F$.WhileExpressionBuilt,
+	F$.WhileExpressionBuildArgs,
+	F$.WhileExpressionLooseArgs
 > {}
 export interface LoopExpressionNs extends NodeNs<
 	LoopExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LoopExpressionBuilt
+	F$.LoopExpressionBuilt,
+	F$.LoopExpressionBuildArgs,
+	F$.LoopExpressionLooseArgs
 > {}
 export interface ForExpressionNs extends NodeNs<
 	ForExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ForExpressionBuilt
+	F$.ForExpressionBuilt,
+	F$.ForExpressionBuildArgs,
+	F$.ForExpressionLooseArgs
 > {}
 export interface ConstBlockNs extends NodeNs<
 	ConstBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ConstBlockBuilt
+	F$.ConstBlockBuilt,
+	F$.ConstBlockBuildArgs,
+	F$.ConstBlockLooseArgs
 > {}
 export interface ClosureExpressionNs extends NodeNs<
 	ClosureExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ClosureExpressionBuilt
+	F$.ClosureExpressionBuilt,
+	F$.ClosureExpressionBuildArgs,
+	F$.ClosureExpressionLooseArgs
 > {}
 export interface ClosureParametersNs extends NodeNs<
 	ClosureParameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ClosureParametersBuilt
+	F$.ClosureParametersBuilt,
+	F$.ClosureParametersBuildArgs,
+	F$.ClosureParametersLooseArgs
 > {}
-export interface LabelNs extends NodeNs<Label, LeafScalarMap, LeafStringMap, NamespaceMap, F$.LabelBuilt> {}
+export interface LabelNs extends NodeNs<
+	Label,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.LabelBuilt,
+	F$.LabelBuildArgs,
+	F$.LabelLooseArgs
+> {}
 export interface BreakExpressionNs extends NodeNs<
 	BreakExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BreakExpressionBuilt
+	F$.BreakExpressionBuilt,
+	F$.BreakExpressionBuildArgs,
+	F$.BreakExpressionLooseArgs
 > {}
 export interface ContinueExpressionNs extends NodeNs<
 	ContinueExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ContinueExpressionBuilt
+	F$.ContinueExpressionBuilt,
+	F$.ContinueExpressionBuildArgs,
+	F$.ContinueExpressionLooseArgs
 > {}
 export interface IndexExpressionNs extends NodeNs<
 	IndexExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.IndexExpressionBuilt
+	F$.IndexExpressionBuilt,
+	F$.IndexExpressionBuildArgs,
+	F$.IndexExpressionLooseArgs
 > {}
 export interface AwaitExpressionNs extends NodeNs<
 	AwaitExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AwaitExpressionBuilt
+	F$.AwaitExpressionBuilt,
+	F$.AwaitExpressionBuildArgs,
+	F$.AwaitExpressionLooseArgs
 > {}
 export interface FieldExpressionNs extends NodeNs<
 	FieldExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldExpressionBuilt
+	F$.FieldExpressionBuilt,
+	F$.FieldExpressionBuildArgs,
+	F$.FieldExpressionLooseArgs
 > {}
 export interface UnsafeBlockNs extends NodeNs<
 	UnsafeBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UnsafeBlockBuilt
+	F$.UnsafeBlockBuilt,
+	F$.UnsafeBlockBuildArgs,
+	F$.UnsafeBlockLooseArgs
 > {}
 export interface AsyncBlockNs extends NodeNs<
 	AsyncBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AsyncBlockBuilt
+	F$.AsyncBlockBuilt,
+	F$.AsyncBlockBuildArgs,
+	F$.AsyncBlockLooseArgs
 > {}
-export interface GenBlockNs extends NodeNs<GenBlock, LeafScalarMap, LeafStringMap, NamespaceMap, F$.GenBlockBuilt> {}
-export interface TryBlockNs extends NodeNs<TryBlock, LeafScalarMap, LeafStringMap, NamespaceMap, F$.TryBlockBuilt> {}
-export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap, F$.BlockBuilt> {}
+export interface GenBlockNs extends NodeNs<
+	GenBlock,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.GenBlockBuilt,
+	F$.GenBlockBuildArgs,
+	F$.GenBlockLooseArgs
+> {}
+export interface TryBlockNs extends NodeNs<
+	TryBlock,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.TryBlockBuilt,
+	F$.TryBlockBuildArgs,
+	F$.TryBlockLooseArgs
+> {}
+export interface BlockNs extends NodeNs<
+	Block,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.BlockBuilt,
+	F$.BlockBuildArgs,
+	F$.BlockLooseArgs
+> {}
 export interface GenericPatternNs extends NodeNs<
 	GenericPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GenericPatternBuilt
+	F$.GenericPatternBuilt,
+	F$.GenericPatternBuildArgs,
+	F$.GenericPatternLooseArgs
 > {}
 export interface TuplePatternNs extends NodeNs<
 	TuplePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TuplePatternBuilt
+	F$.TuplePatternBuilt,
+	F$.TuplePatternBuildArgs,
+	F$.TuplePatternLooseArgs
 > {}
 export interface SlicePatternNs extends NodeNs<
 	SlicePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SlicePatternBuilt
+	F$.SlicePatternBuilt,
+	F$.SlicePatternBuildArgs,
+	F$.SlicePatternLooseArgs
 > {}
 export interface TupleStructPatternNs extends NodeNs<
 	TupleStructPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TupleStructPatternBuilt
+	F$.TupleStructPatternBuilt,
+	F$.TupleStructPatternBuildArgs,
+	F$.TupleStructPatternLooseArgs
 > {}
 export interface StructPatternNs extends NodeNs<
 	StructPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StructPatternBuilt
+	F$.StructPatternBuilt,
+	F$.StructPatternBuildArgs,
+	F$.StructPatternLooseArgs
 > {}
 export interface FieldPatternNs extends NodeNs<
 	FieldPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldPatternBuilt
+	F$.FieldPatternBuilt,
+	F$.FieldPatternBuildArgs,
+	F$.FieldPatternLooseArgs
 > {}
 export interface MutPatternNs extends NodeNs<
 	MutPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MutPatternBuilt
+	F$.MutPatternBuilt,
+	F$.MutPatternBuildArgs,
+	F$.MutPatternLooseArgs
 > {}
 export interface RangePatternNs extends NodeNs<
 	RangePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangePatternBuilt
+	F$.RangePatternBuilt,
+	F$.RangePatternBuildArgs,
+	F$.RangePatternLooseArgs
 > {}
 export interface RefPatternNs extends NodeNs<
 	RefPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RefPatternBuilt
+	F$.RefPatternBuilt,
+	F$.RefPatternBuildArgs,
+	F$.RefPatternLooseArgs
 > {}
 export interface CapturedPatternNs extends NodeNs<
 	CapturedPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CapturedPatternBuilt
+	F$.CapturedPatternBuilt,
+	F$.CapturedPatternBuildArgs,
+	F$.CapturedPatternLooseArgs
 > {}
 export interface ReferencePatternNs extends NodeNs<
 	ReferencePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ReferencePatternBuilt
+	F$.ReferencePatternBuilt,
+	F$.ReferencePatternBuildArgs,
+	F$.ReferencePatternLooseArgs
 > {}
-export interface OrPatternNs extends NodeNs<OrPattern, LeafScalarMap, LeafStringMap, NamespaceMap, F$.OrPatternBuilt> {}
+export interface OrPatternNs extends NodeNs<
+	OrPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.OrPatternBuilt,
+	F$.OrPatternBuildArgs,
+	F$.OrPatternLooseArgs
+> {}
 export interface NegativeLiteralNs extends NodeNs<
 	NegativeLiteral,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.NegativeLiteralBuilt
+	F$.NegativeLiteralBuilt,
+	F$.NegativeLiteralBuildArgs,
+	F$.NegativeLiteralLooseArgs
 > {}
 export interface StringLiteralNs extends NodeNs<
 	StringLiteral,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StringLiteralBuilt
+	F$.StringLiteralBuilt,
+	F$.StringLiteralBuildArgs,
+	F$.StringLiteralLooseArgs
 > {}
 export interface RawStringLiteralNs extends NodeNs<
 	RawStringLiteral,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RawStringLiteralBuilt
+	F$.RawStringLiteralBuilt,
+	F$.RawStringLiteralBuildArgs,
+	F$.RawStringLiteralLooseArgs
 > {}
 export interface CommentNs extends NodeNs<Comment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LineCommentNs extends NodeNs<
@@ -8076,28 +8496,36 @@ export interface LineCommentNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LineCommentBuilt
+	F$.LineCommentBuilt,
+	F$.LineCommentBuildArgs,
+	F$.LineCommentLooseArgs
 > {}
 export interface BlockCommentNs extends NodeNs<
 	BlockComment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BlockCommentBuilt
+	F$.BlockCommentBuilt,
+	F$.BlockCommentBuildArgs,
+	F$.BlockCommentLooseArgs
 > {}
 export interface MacroRulesNs extends NodeNs<
 	MacroRules,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MacroRulesBuilt
+	F$.MacroRulesBuilt,
+	F$.MacroRulesBuildArgs,
+	F$.MacroRulesLooseArgs
 > {}
 export interface EnumVariantListElementsNs extends NodeNs<
 	EnumVariantListElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.EnumVariantListElementsBuilt
+	F$.EnumVariantListElementsBuilt,
+	F$.EnumVariantListElementsBuildArgs,
+	F$.EnumVariantListElementsLooseArgs
 > {}
 export interface EnumVariantOptional1Ns extends NodeNs<
 	EnumVariantOptional1,
@@ -8110,14 +8538,18 @@ export interface FieldDeclarationListElementsNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldDeclarationListElementsBuilt
+	F$.FieldDeclarationListElementsBuilt,
+	F$.FieldDeclarationListElementsBuildArgs,
+	F$.FieldDeclarationListElementsLooseArgs
 > {}
 export interface OrderedFieldDeclarationListElementsNs extends NodeNs<
 	OrderedFieldDeclarationListElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.OrderedFieldDeclarationListElementsBuilt
+	F$.OrderedFieldDeclarationListElementsBuilt,
+	F$.OrderedFieldDeclarationListElementsBuildArgs,
+	F$.OrderedFieldDeclarationListElementsLooseArgs
 > {}
 export interface ExternCrateDeclarationOptional1Ns extends NodeNs<
 	ExternCrateDeclarationOptional1,
@@ -8136,14 +8568,18 @@ export interface WherePredicatesNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WherePredicatesBuilt
+	F$.WherePredicatesBuilt,
+	F$.WherePredicatesBuildArgs,
+	F$.WherePredicatesLooseArgs
 > {}
 export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeParametersElementsBuilt
+	F$.TypeParametersElementsBuilt,
+	F$.TypeParametersElementsBuildArgs,
+	F$.TypeParametersElementsLooseArgs
 > {}
 export interface ConstParameterOptional1Ns extends NodeNs<
 	ConstParameterOptional1,
@@ -8174,14 +8610,18 @@ export interface UseClausesNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UseClausesBuilt
+	F$.UseClausesBuilt,
+	F$.UseClausesBuildArgs,
+	F$.UseClausesLooseArgs
 > {}
 export interface ParametersElementsNs extends NodeNs<
 	ParametersElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ParametersElementsBuilt
+	F$.ParametersElementsBuilt,
+	F$.ParametersElementsBuildArgs,
+	F$.ParametersElementsLooseArgs
 > {}
 export interface VariadicParameterOptional1Ns extends NodeNs<
 	VariadicParameterOptional1,
@@ -8190,20 +8630,32 @@ export interface VariadicParameterOptional1Ns extends NodeNs<
 	NamespaceMap
 > {}
 export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LifetimesNs extends NodeNs<Lifetimes, LeafScalarMap, LeafStringMap, NamespaceMap, F$.LifetimesBuilt> {}
+export interface LifetimesNs extends NodeNs<
+	Lifetimes,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.LifetimesBuilt,
+	F$.LifetimesBuildArgs,
+	F$.LifetimesLooseArgs
+> {}
 export interface UseBoundsElementsNs extends NodeNs<
 	UseBoundsElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UseBoundsElementsBuilt
+	F$.UseBoundsElementsBuilt,
+	F$.UseBoundsElementsBuildArgs,
+	F$.UseBoundsElementsLooseArgs
 > {}
 export interface TypeArgumentsElementsNs extends NodeNs<
 	TypeArgumentsElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeArgumentsElementsBuilt
+	F$.TypeArgumentsElementsBuilt,
+	F$.TypeArgumentsElementsBuildArgs,
+	F$.TypeArgumentsElementsLooseArgs
 > {}
 export interface AbstractTypeOptional1Ns extends NodeNs<
 	AbstractTypeOptional1,
@@ -8216,14 +8668,18 @@ export interface ArgumentsElementsNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArgumentsElementsBuilt
+	F$.ArgumentsElementsBuilt,
+	F$.ArgumentsElementsBuildArgs,
+	F$.ArgumentsElementsLooseArgs
 > {}
 export interface FieldInitializerListElementsNs extends NodeNs<
 	FieldInitializerListElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldInitializerListElementsBuilt
+	F$.FieldInitializerListElementsBuilt,
+	F$.FieldInitializerListElementsBuildArgs,
+	F$.FieldInitializerListElementsLooseArgs
 > {}
 export interface MatchPatternOptional1Ns extends NodeNs<
 	MatchPatternOptional1,
@@ -8242,386 +8698,504 @@ export interface TuplePatternElementsNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TuplePatternElementsBuilt
+	F$.TuplePatternElementsBuilt,
+	F$.TuplePatternElementsBuildArgs,
+	F$.TuplePatternElementsLooseArgs
 > {}
-export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap, F$.PatternsBuilt> {}
+export interface PatternsNs extends NodeNs<
+	Patterns,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.PatternsBuilt,
+	F$.PatternsBuildArgs,
+	F$.PatternsLooseArgs
+> {}
 export interface StructPatternElementsNs extends NodeNs<
 	StructPatternElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StructPatternElementsBuilt
+	F$.StructPatternElementsBuilt,
+	F$.StructPatternElementsBuildArgs,
+	F$.StructPatternElementsLooseArgs
 > {}
 export interface RangePatternArm2Ns extends NodeNs<
 	RangePatternArm2,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangePatternArm2Built
+	F$.RangePatternArm2Built,
+	F$.RangePatternArm2BuildArgs,
+	F$.RangePatternArm2LooseArgs
 > {}
 export interface AttributeArmNs extends NodeNs<
 	AttributeArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributeArmBuilt
+	F$.AttributeArmBuilt,
+	F$.AttributeArmBuildArgs,
+	F$.AttributeArmLooseArgs
 > {}
 export interface VisibilityModifierGroupNs extends NodeNs<
 	VisibilityModifierGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.VisibilityModifierGroupBuilt
+	F$.VisibilityModifierGroupBuilt,
+	F$.VisibilityModifierGroupBuildArgs,
+	F$.VisibilityModifierGroupLooseArgs
 > {}
 export interface ArrayExpressionArmNs extends NodeNs<
 	ArrayExpressionArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArrayExpressionArmBuilt
+	F$.ArrayExpressionArmBuilt,
+	F$.ArrayExpressionArmBuildArgs,
+	F$.ArrayExpressionArmLooseArgs
 > {}
 export interface BlockCommentArmNs extends NodeNs<
 	BlockCommentArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BlockCommentArmBuilt
+	F$.BlockCommentArmBuilt,
+	F$.BlockCommentArmBuildArgs,
+	F$.BlockCommentArmLooseArgs
 > {}
 export interface TupleTypeElementsNs extends NodeNs<
 	TupleTypeElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TupleTypeElementsBuilt
+	F$.TupleTypeElementsBuilt,
+	F$.TupleTypeElementsBuildArgs,
+	F$.TupleTypeElementsLooseArgs
 > {}
 export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TupleExpressionElementsBuilt
+	F$.TupleExpressionElementsBuilt,
+	F$.TupleExpressionElementsBuildArgs,
+	F$.TupleExpressionElementsLooseArgs
 > {}
 export interface UseWildcardClauseNs extends NodeNs<
 	UseWildcardClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UseWildcardClauseBuilt
+	F$.UseWildcardClauseBuilt,
+	F$.UseWildcardClauseBuildArgs,
+	F$.UseWildcardClauseLooseArgs
 > {}
 export interface ReferenceExpressionRawMutNs extends NodeNs<
 	ReferenceExpressionRawMut,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ReferenceExpressionRawMutBuilt
+	F$.ReferenceExpressionRawMutBuilt,
+	F$.ReferenceExpressionRawMutBuildArgs,
+	F$.ReferenceExpressionRawMutLooseArgs
 > {}
 export interface ImplItemBodyNs extends NodeNs<
 	ImplItemBody,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ImplItemBodyBuilt
+	F$.ImplItemBodyBuilt,
+	F$.ImplItemBodyBuildArgs,
+	F$.ImplItemBodyLooseArgs
 > {}
 export interface ImplItemPositiveClauseNs extends NodeNs<
 	ImplItemPositiveClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ImplItemPositiveClauseBuilt
+	F$.ImplItemPositiveClauseBuilt,
+	F$.ImplItemPositiveClauseBuildArgs,
+	F$.ImplItemPositiveClauseLooseArgs
 > {}
 export interface ImplItemNegativeClauseNs extends NodeNs<
 	ImplItemNegativeClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ImplItemNegativeClauseBuilt
+	F$.ImplItemNegativeClauseBuilt,
+	F$.ImplItemNegativeClauseBuildArgs,
+	F$.ImplItemNegativeClauseLooseArgs
 > {}
 export interface ArrayExpressionSemiNs extends NodeNs<
 	ArrayExpressionSemi,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArrayExpressionSemiBuilt
+	F$.ArrayExpressionSemiBuilt,
+	F$.ArrayExpressionSemiBuildArgs,
+	F$.ArrayExpressionSemiLooseArgs
 > {}
 export interface ArrayExpressionListNs extends NodeNs<
 	ArrayExpressionList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArrayExpressionListBuilt
+	F$.ArrayExpressionListBuilt,
+	F$.ArrayExpressionListBuildArgs,
+	F$.ArrayExpressionListLooseArgs
 > {}
 export interface ClosureExpressionBlockNs extends NodeNs<
 	ClosureExpressionBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ClosureExpressionBlockBuilt
+	F$.ClosureExpressionBlockBuilt,
+	F$.ClosureExpressionBlockBuildArgs,
+	F$.ClosureExpressionBlockLooseArgs
 > {}
 export interface ClosureExpressionExprNs extends NodeNs<
 	ClosureExpressionExpr,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ClosureExpressionExprBuilt
+	F$.ClosureExpressionExprBuilt,
+	F$.ClosureExpressionExprBuildArgs,
+	F$.ClosureExpressionExprLooseArgs
 > {}
 export interface FieldPatternNamedNs extends NodeNs<
 	FieldPatternNamed,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FieldPatternNamedBuilt
+	F$.FieldPatternNamedBuilt,
+	F$.FieldPatternNamedBuildArgs,
+	F$.FieldPatternNamedLooseArgs
 > {}
 export interface FunctionTypeTraitFormNs extends NodeNs<
 	FunctionTypeTraitForm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionTypeTraitFormBuilt
+	F$.FunctionTypeTraitFormBuilt,
+	F$.FunctionTypeTraitFormBuildArgs,
+	F$.FunctionTypeTraitFormLooseArgs
 > {}
 export interface FunctionTypeFnFormNs extends NodeNs<
 	FunctionTypeFnForm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionTypeFnFormBuilt
+	F$.FunctionTypeFnFormBuilt,
+	F$.FunctionTypeFnFormBuildArgs,
+	F$.FunctionTypeFnFormLooseArgs
 > {}
 export interface MacroDefinitionParenNs extends NodeNs<
 	MacroDefinitionParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MacroDefinitionParenBuilt
+	F$.MacroDefinitionParenBuilt,
+	F$.MacroDefinitionParenBuildArgs,
+	F$.MacroDefinitionParenLooseArgs
 > {}
 export interface MacroDefinitionBracketNs extends NodeNs<
 	MacroDefinitionBracket,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MacroDefinitionBracketBuilt
+	F$.MacroDefinitionBracketBuilt,
+	F$.MacroDefinitionBracketBuildArgs,
+	F$.MacroDefinitionBracketLooseArgs
 > {}
 export interface MacroDefinitionBraceNs extends NodeNs<
 	MacroDefinitionBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MacroDefinitionBraceBuilt
+	F$.MacroDefinitionBraceBuilt,
+	F$.MacroDefinitionBraceBuildArgs,
+	F$.MacroDefinitionBraceLooseArgs
 > {}
 export interface OrPatternBinaryNs extends NodeNs<
 	OrPatternBinary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.OrPatternBinaryBuilt
+	F$.OrPatternBinaryBuilt,
+	F$.OrPatternBinaryBuildArgs,
+	F$.OrPatternBinaryLooseArgs
 > {}
 export interface OrPatternPrefixNs extends NodeNs<
 	OrPatternPrefix,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.OrPatternPrefixBuilt
+	F$.OrPatternPrefixBuilt,
+	F$.OrPatternPrefixBuildArgs,
+	F$.OrPatternPrefixLooseArgs
 > {}
 export interface RangeExpressionBinaryNs extends NodeNs<
 	RangeExpressionBinary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangeExpressionBinaryBuilt
+	F$.RangeExpressionBinaryBuilt,
+	F$.RangeExpressionBinaryBuildArgs,
+	F$.RangeExpressionBinaryLooseArgs
 > {}
 export interface RangeExpressionPostfixNs extends NodeNs<
 	RangeExpressionPostfix,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangeExpressionPostfixBuilt
+	F$.RangeExpressionPostfixBuilt,
+	F$.RangeExpressionPostfixBuildArgs,
+	F$.RangeExpressionPostfixLooseArgs
 > {}
 export interface RangeExpressionPrefixNs extends NodeNs<
 	RangeExpressionPrefix,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangeExpressionPrefixBuilt
+	F$.RangeExpressionPrefixBuilt,
+	F$.RangeExpressionPrefixBuildArgs,
+	F$.RangeExpressionPrefixLooseArgs
 > {}
 export interface RangePatternPrefixNs extends NodeNs<
 	RangePatternPrefix,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangePatternPrefixBuilt
+	F$.RangePatternPrefixBuilt,
+	F$.RangePatternPrefixBuildArgs,
+	F$.RangePatternPrefixLooseArgs
 > {}
 export interface RangePatternLeftWithRightNs extends NodeNs<
 	RangePatternLeftWithRight,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RangePatternLeftWithRightBuilt
+	F$.RangePatternLeftWithRightBuilt,
+	F$.RangePatternLeftWithRightBuildArgs,
+	F$.RangePatternLeftWithRightLooseArgs
 > {}
 export interface StructItemBraceNs extends NodeNs<
 	StructItemBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StructItemBraceBuilt
+	F$.StructItemBraceBuilt,
+	F$.StructItemBraceBuildArgs,
+	F$.StructItemBraceLooseArgs
 > {}
 export interface StructItemTupleNs extends NodeNs<
 	StructItemTuple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StructItemTupleBuilt
+	F$.StructItemTupleBuilt,
+	F$.StructItemTupleBuildArgs,
+	F$.StructItemTupleLooseArgs
 > {}
 export interface VisibilityModifierPubNs extends NodeNs<
 	VisibilityModifierPub,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.VisibilityModifierPubBuilt
+	F$.VisibilityModifierPubBuilt,
+	F$.VisibilityModifierPubBuildArgs,
+	F$.VisibilityModifierPubLooseArgs
 > {}
 export interface VisibilityModifierInPathNs extends NodeNs<
 	VisibilityModifierInPath,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.VisibilityModifierInPathBuilt
+	F$.VisibilityModifierInPathBuilt,
+	F$.VisibilityModifierInPathBuildArgs,
+	F$.VisibilityModifierInPathLooseArgs
 > {}
 export interface ExpressionStatementWithSemiNs extends NodeNs<
 	ExpressionStatementWithSemi,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExpressionStatementWithSemiBuilt
+	F$.ExpressionStatementWithSemiBuilt,
+	F$.ExpressionStatementWithSemiBuildArgs,
+	F$.ExpressionStatementWithSemiLooseArgs
 > {}
 export interface MatchArmWithCommaNs extends NodeNs<
 	MatchArmWithComma,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchArmWithCommaBuilt
+	F$.MatchArmWithCommaBuilt,
+	F$.MatchArmWithCommaBuildArgs,
+	F$.MatchArmWithCommaLooseArgs
 > {}
 export interface LineCommentDocNs extends NodeNs<
 	LineCommentDoc,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LineCommentDocBuilt
+	F$.LineCommentDocBuilt,
+	F$.LineCommentDocBuildArgs,
+	F$.LineCommentDocLooseArgs
 > {}
 export interface TokenTreePatternParenNs extends NodeNs<
 	TokenTreePatternParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreePatternParenBuilt
+	F$.TokenTreePatternParenBuilt,
+	F$.TokenTreePatternParenBuildArgs,
+	F$.TokenTreePatternParenLooseArgs
 > {}
 export interface TokenTreePatternBracketNs extends NodeNs<
 	TokenTreePatternBracket,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreePatternBracketBuilt
+	F$.TokenTreePatternBracketBuilt,
+	F$.TokenTreePatternBracketBuildArgs,
+	F$.TokenTreePatternBracketLooseArgs
 > {}
 export interface TokenTreePatternBraceNs extends NodeNs<
 	TokenTreePatternBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreePatternBraceBuilt
+	F$.TokenTreePatternBraceBuilt,
+	F$.TokenTreePatternBraceBuildArgs,
+	F$.TokenTreePatternBraceLooseArgs
 > {}
 export interface TokenTreeParenNs extends NodeNs<
 	TokenTreeParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreeParenBuilt
+	F$.TokenTreeParenBuilt,
+	F$.TokenTreeParenBuildArgs,
+	F$.TokenTreeParenLooseArgs
 > {}
 export interface TokenTreeBracketNs extends NodeNs<
 	TokenTreeBracket,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreeBracketBuilt
+	F$.TokenTreeBracketBuilt,
+	F$.TokenTreeBracketBuildArgs,
+	F$.TokenTreeBracketLooseArgs
 > {}
 export interface TokenTreeBraceNs extends NodeNs<
 	TokenTreeBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TokenTreeBraceBuilt
+	F$.TokenTreeBraceBuilt,
+	F$.TokenTreeBraceBuildArgs,
+	F$.TokenTreeBraceLooseArgs
 > {}
 export interface DelimTokenTreeParenNs extends NodeNs<
 	DelimTokenTreeParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DelimTokenTreeParenBuilt
+	F$.DelimTokenTreeParenBuilt,
+	F$.DelimTokenTreeParenBuildArgs,
+	F$.DelimTokenTreeParenLooseArgs
 > {}
 export interface DelimTokenTreeBracketNs extends NodeNs<
 	DelimTokenTreeBracket,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DelimTokenTreeBracketBuilt
+	F$.DelimTokenTreeBracketBuilt,
+	F$.DelimTokenTreeBracketBuildArgs,
+	F$.DelimTokenTreeBracketLooseArgs
 > {}
 export interface DelimTokenTreeBraceNs extends NodeNs<
 	DelimTokenTreeBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DelimTokenTreeBraceBuilt
+	F$.DelimTokenTreeBraceBuilt,
+	F$.DelimTokenTreeBraceBuildArgs,
+	F$.DelimTokenTreeBraceLooseArgs
 > {}
 export interface AttributedFieldDeclarationNs extends NodeNs<
 	AttributedFieldDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributedFieldDeclarationBuilt
+	F$.AttributedFieldDeclarationBuilt,
+	F$.AttributedFieldDeclarationBuildArgs,
+	F$.AttributedFieldDeclarationLooseArgs
 > {}
 export interface AttributedEnumVariantNs extends NodeNs<
 	AttributedEnumVariant,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributedEnumVariantBuilt
+	F$.AttributedEnumVariantBuilt,
+	F$.AttributedEnumVariantBuildArgs,
+	F$.AttributedEnumVariantLooseArgs
 > {}
 export interface AttributedParameterNs extends NodeNs<
 	AttributedParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributedParameterBuilt
+	F$.AttributedParameterBuilt,
+	F$.AttributedParameterBuildArgs,
+	F$.AttributedParameterLooseArgs
 > {}
 export interface AttributedTypeParameterNs extends NodeNs<
 	AttributedTypeParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributedTypeParameterBuilt
+	F$.AttributedTypeParameterBuilt,
+	F$.AttributedTypeParameterBuildArgs,
+	F$.AttributedTypeParameterLooseArgs
 > {}
 export interface AttributedArgumentNs extends NodeNs<
 	AttributedArgument,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributedArgumentBuilt
+	F$.AttributedArgumentBuilt,
+	F$.AttributedArgumentBuildArgs,
+	F$.AttributedArgumentLooseArgs
 > {}
 export interface AttributedOrderedFieldNs extends NodeNs<
 	AttributedOrderedField,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributedOrderedFieldBuilt
+	F$.AttributedOrderedFieldBuilt,
+	F$.AttributedOrderedFieldBuildArgs,
+	F$.AttributedOrderedFieldLooseArgs
 > {}
 export interface TypeArgumentNs extends NodeNs<
 	TypeArgument,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeArgumentBuilt
+	F$.TypeArgumentBuilt,
+	F$.TypeArgumentBuildArgs,
+	F$.TypeArgumentLooseArgs
 > {}
 export interface MatchBlockArmsNs extends NodeNs<
 	MatchBlockArms,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchBlockArmsBuilt
+	F$.MatchBlockArmsBuilt,
+	F$.MatchBlockArmsBuildArgs,
+	F$.MatchBlockArmsLooseArgs
 > {}
 export interface VisibilityModifierPubParensNs extends NodeNs<
 	VisibilityModifierPubParens,
@@ -8859,6 +9433,8 @@ export interface NamespaceMap {
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
 export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
+export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
+export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];
 export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
@@ -8867,6 +9443,8 @@ export namespace SourceFile {
 	export type Config = ConfigFor<'source_file'>;
 	export type Fluent = FluentFor<'source_file'>;
 	export type Loose = LooseFor<'source_file'>;
+	export type BuildArgs = BuildArgsFor<'source_file'>;
+	export type LooseArgs = LooseArgsFor<'source_file'>;
 	export type Tree = TreeFor<'source_file'>;
 	export type Kind = 'source_file';
 }
@@ -8874,6 +9452,8 @@ export namespace ExpressionStatement {
 	export type Config = ConfigFor<'expression_statement'>;
 	export type Fluent = FluentFor<'expression_statement'>;
 	export type Loose = LooseFor<'expression_statement'>;
+	export type BuildArgs = BuildArgsFor<'expression_statement'>;
+	export type LooseArgs = LooseArgsFor<'expression_statement'>;
 	export type Tree = TreeFor<'expression_statement'>;
 	export type Kind = 'expression_statement';
 }
@@ -8881,6 +9461,8 @@ export namespace MacroDefinition {
 	export type Config = ConfigFor<'macro_definition'>;
 	export type Fluent = FluentFor<'macro_definition'>;
 	export type Loose = LooseFor<'macro_definition'>;
+	export type BuildArgs = BuildArgsFor<'macro_definition'>;
+	export type LooseArgs = LooseArgsFor<'macro_definition'>;
 	export type Tree = TreeFor<'macro_definition'>;
 	export type Kind = 'macro_definition';
 }
@@ -8888,6 +9470,8 @@ export namespace MacroRule {
 	export type Config = ConfigFor<'macro_rule'>;
 	export type Fluent = FluentFor<'macro_rule'>;
 	export type Loose = LooseFor<'macro_rule'>;
+	export type BuildArgs = BuildArgsFor<'macro_rule'>;
+	export type LooseArgs = LooseArgsFor<'macro_rule'>;
 	export type Tree = TreeFor<'macro_rule'>;
 	export type Kind = 'macro_rule';
 }
@@ -8895,6 +9479,8 @@ export namespace TokenTreePattern {
 	export type Config = ConfigFor<'token_tree_pattern'>;
 	export type Fluent = FluentFor<'token_tree_pattern'>;
 	export type Loose = LooseFor<'token_tree_pattern'>;
+	export type BuildArgs = BuildArgsFor<'token_tree_pattern'>;
+	export type LooseArgs = LooseArgsFor<'token_tree_pattern'>;
 	export type Tree = TreeFor<'token_tree_pattern'>;
 	export type Kind = 'token_tree_pattern';
 }
@@ -8902,6 +9488,8 @@ export namespace TokenBindingPattern {
 	export type Config = ConfigFor<'token_binding_pattern'>;
 	export type Fluent = FluentFor<'token_binding_pattern'>;
 	export type Loose = LooseFor<'token_binding_pattern'>;
+	export type BuildArgs = BuildArgsFor<'token_binding_pattern'>;
+	export type LooseArgs = LooseArgsFor<'token_binding_pattern'>;
 	export type Tree = TreeFor<'token_binding_pattern'>;
 	export type Kind = 'token_binding_pattern';
 }
@@ -8909,6 +9497,8 @@ export namespace TokenRepetitionPattern {
 	export type Config = ConfigFor<'token_repetition_pattern'>;
 	export type Fluent = FluentFor<'token_repetition_pattern'>;
 	export type Loose = LooseFor<'token_repetition_pattern'>;
+	export type BuildArgs = BuildArgsFor<'token_repetition_pattern'>;
+	export type LooseArgs = LooseArgsFor<'token_repetition_pattern'>;
 	export type Tree = TreeFor<'token_repetition_pattern'>;
 	export type Kind = 'token_repetition_pattern';
 }
@@ -8916,6 +9506,8 @@ export namespace TokenTree {
 	export type Config = ConfigFor<'token_tree'>;
 	export type Fluent = FluentFor<'token_tree'>;
 	export type Loose = LooseFor<'token_tree'>;
+	export type BuildArgs = BuildArgsFor<'token_tree'>;
+	export type LooseArgs = LooseArgsFor<'token_tree'>;
 	export type Tree = TreeFor<'token_tree'>;
 	export type Kind = 'token_tree';
 }
@@ -8923,6 +9515,8 @@ export namespace TokenRepetition {
 	export type Config = ConfigFor<'token_repetition'>;
 	export type Fluent = FluentFor<'token_repetition'>;
 	export type Loose = LooseFor<'token_repetition'>;
+	export type BuildArgs = BuildArgsFor<'token_repetition'>;
+	export type LooseArgs = LooseArgsFor<'token_repetition'>;
 	export type Tree = TreeFor<'token_repetition'>;
 	export type Kind = 'token_repetition';
 }
@@ -8930,6 +9524,8 @@ export namespace AttributeItem {
 	export type Config = ConfigFor<'attribute_item'>;
 	export type Fluent = FluentFor<'attribute_item'>;
 	export type Loose = LooseFor<'attribute_item'>;
+	export type BuildArgs = BuildArgsFor<'attribute_item'>;
+	export type LooseArgs = LooseArgsFor<'attribute_item'>;
 	export type Tree = TreeFor<'attribute_item'>;
 	export type Kind = 'attribute_item';
 }
@@ -8937,6 +9533,8 @@ export namespace InnerAttributeItem {
 	export type Config = ConfigFor<'inner_attribute_item'>;
 	export type Fluent = FluentFor<'inner_attribute_item'>;
 	export type Loose = LooseFor<'inner_attribute_item'>;
+	export type BuildArgs = BuildArgsFor<'inner_attribute_item'>;
+	export type LooseArgs = LooseArgsFor<'inner_attribute_item'>;
 	export type Tree = TreeFor<'inner_attribute_item'>;
 	export type Kind = 'inner_attribute_item';
 }
@@ -8944,6 +9542,8 @@ export namespace Attribute {
 	export type Config = ConfigFor<'attribute'>;
 	export type Fluent = FluentFor<'attribute'>;
 	export type Loose = LooseFor<'attribute'>;
+	export type BuildArgs = BuildArgsFor<'attribute'>;
+	export type LooseArgs = LooseArgsFor<'attribute'>;
 	export type Tree = TreeFor<'attribute'>;
 	export type Kind = 'attribute';
 }
@@ -8951,6 +9551,8 @@ export namespace ModItem {
 	export type Config = ConfigFor<'mod_item'>;
 	export type Fluent = FluentFor<'mod_item'>;
 	export type Loose = LooseFor<'mod_item'>;
+	export type BuildArgs = BuildArgsFor<'mod_item'>;
+	export type LooseArgs = LooseArgsFor<'mod_item'>;
 	export type Tree = TreeFor<'mod_item'>;
 	export type Kind = 'mod_item';
 }
@@ -8958,6 +9560,8 @@ export namespace ForeignModItem {
 	export type Config = ConfigFor<'foreign_mod_item'>;
 	export type Fluent = FluentFor<'foreign_mod_item'>;
 	export type Loose = LooseFor<'foreign_mod_item'>;
+	export type BuildArgs = BuildArgsFor<'foreign_mod_item'>;
+	export type LooseArgs = LooseArgsFor<'foreign_mod_item'>;
 	export type Tree = TreeFor<'foreign_mod_item'>;
 	export type Kind = 'foreign_mod_item';
 }
@@ -8965,6 +9569,8 @@ export namespace DeclarationList {
 	export type Config = ConfigFor<'declaration_list'>;
 	export type Fluent = FluentFor<'declaration_list'>;
 	export type Loose = LooseFor<'declaration_list'>;
+	export type BuildArgs = BuildArgsFor<'declaration_list'>;
+	export type LooseArgs = LooseArgsFor<'declaration_list'>;
 	export type Tree = TreeFor<'declaration_list'>;
 	export type Kind = 'declaration_list';
 }
@@ -8972,6 +9578,8 @@ export namespace StructItem {
 	export type Config = ConfigFor<'struct_item'>;
 	export type Fluent = FluentFor<'struct_item'>;
 	export type Loose = LooseFor<'struct_item'>;
+	export type BuildArgs = BuildArgsFor<'struct_item'>;
+	export type LooseArgs = LooseArgsFor<'struct_item'>;
 	export type Tree = TreeFor<'struct_item'>;
 	export type Kind = 'struct_item';
 }
@@ -8979,6 +9587,8 @@ export namespace UnionItem {
 	export type Config = ConfigFor<'union_item'>;
 	export type Fluent = FluentFor<'union_item'>;
 	export type Loose = LooseFor<'union_item'>;
+	export type BuildArgs = BuildArgsFor<'union_item'>;
+	export type LooseArgs = LooseArgsFor<'union_item'>;
 	export type Tree = TreeFor<'union_item'>;
 	export type Kind = 'union_item';
 }
@@ -8986,6 +9596,8 @@ export namespace EnumItem {
 	export type Config = ConfigFor<'enum_item'>;
 	export type Fluent = FluentFor<'enum_item'>;
 	export type Loose = LooseFor<'enum_item'>;
+	export type BuildArgs = BuildArgsFor<'enum_item'>;
+	export type LooseArgs = LooseArgsFor<'enum_item'>;
 	export type Tree = TreeFor<'enum_item'>;
 	export type Kind = 'enum_item';
 }
@@ -8993,6 +9605,8 @@ export namespace EnumVariantList {
 	export type Config = ConfigFor<'enum_variant_list'>;
 	export type Fluent = FluentFor<'enum_variant_list'>;
 	export type Loose = LooseFor<'enum_variant_list'>;
+	export type BuildArgs = BuildArgsFor<'enum_variant_list'>;
+	export type LooseArgs = LooseArgsFor<'enum_variant_list'>;
 	export type Tree = TreeFor<'enum_variant_list'>;
 	export type Kind = 'enum_variant_list';
 }
@@ -9000,6 +9614,8 @@ export namespace EnumVariant {
 	export type Config = ConfigFor<'enum_variant'>;
 	export type Fluent = FluentFor<'enum_variant'>;
 	export type Loose = LooseFor<'enum_variant'>;
+	export type BuildArgs = BuildArgsFor<'enum_variant'>;
+	export type LooseArgs = LooseArgsFor<'enum_variant'>;
 	export type Tree = TreeFor<'enum_variant'>;
 	export type Kind = 'enum_variant';
 }
@@ -9007,6 +9623,8 @@ export namespace FieldDeclarationList {
 	export type Config = ConfigFor<'field_declaration_list'>;
 	export type Fluent = FluentFor<'field_declaration_list'>;
 	export type Loose = LooseFor<'field_declaration_list'>;
+	export type BuildArgs = BuildArgsFor<'field_declaration_list'>;
+	export type LooseArgs = LooseArgsFor<'field_declaration_list'>;
 	export type Tree = TreeFor<'field_declaration_list'>;
 	export type Kind = 'field_declaration_list';
 }
@@ -9014,6 +9632,8 @@ export namespace FieldDeclaration {
 	export type Config = ConfigFor<'field_declaration'>;
 	export type Fluent = FluentFor<'field_declaration'>;
 	export type Loose = LooseFor<'field_declaration'>;
+	export type BuildArgs = BuildArgsFor<'field_declaration'>;
+	export type LooseArgs = LooseArgsFor<'field_declaration'>;
 	export type Tree = TreeFor<'field_declaration'>;
 	export type Kind = 'field_declaration';
 }
@@ -9021,6 +9641,8 @@ export namespace OrderedFieldDeclarationList {
 	export type Config = ConfigFor<'ordered_field_declaration_list'>;
 	export type Fluent = FluentFor<'ordered_field_declaration_list'>;
 	export type Loose = LooseFor<'ordered_field_declaration_list'>;
+	export type BuildArgs = BuildArgsFor<'ordered_field_declaration_list'>;
+	export type LooseArgs = LooseArgsFor<'ordered_field_declaration_list'>;
 	export type Tree = TreeFor<'ordered_field_declaration_list'>;
 	export type Kind = 'ordered_field_declaration_list';
 }
@@ -9028,6 +9650,8 @@ export namespace ExternCrateDeclaration {
 	export type Config = ConfigFor<'extern_crate_declaration'>;
 	export type Fluent = FluentFor<'extern_crate_declaration'>;
 	export type Loose = LooseFor<'extern_crate_declaration'>;
+	export type BuildArgs = BuildArgsFor<'extern_crate_declaration'>;
+	export type LooseArgs = LooseArgsFor<'extern_crate_declaration'>;
 	export type Tree = TreeFor<'extern_crate_declaration'>;
 	export type Kind = 'extern_crate_declaration';
 }
@@ -9035,6 +9659,8 @@ export namespace ConstItem {
 	export type Config = ConfigFor<'const_item'>;
 	export type Fluent = FluentFor<'const_item'>;
 	export type Loose = LooseFor<'const_item'>;
+	export type BuildArgs = BuildArgsFor<'const_item'>;
+	export type LooseArgs = LooseArgsFor<'const_item'>;
 	export type Tree = TreeFor<'const_item'>;
 	export type Kind = 'const_item';
 }
@@ -9042,6 +9668,8 @@ export namespace StaticItem {
 	export type Config = ConfigFor<'static_item'>;
 	export type Fluent = FluentFor<'static_item'>;
 	export type Loose = LooseFor<'static_item'>;
+	export type BuildArgs = BuildArgsFor<'static_item'>;
+	export type LooseArgs = LooseArgsFor<'static_item'>;
 	export type Tree = TreeFor<'static_item'>;
 	export type Kind = 'static_item';
 }
@@ -9049,6 +9677,8 @@ export namespace TypeItem {
 	export type Config = ConfigFor<'type_item'>;
 	export type Fluent = FluentFor<'type_item'>;
 	export type Loose = LooseFor<'type_item'>;
+	export type BuildArgs = BuildArgsFor<'type_item'>;
+	export type LooseArgs = LooseArgsFor<'type_item'>;
 	export type Tree = TreeFor<'type_item'>;
 	export type Kind = 'type_item';
 }
@@ -9056,6 +9686,8 @@ export namespace FunctionItem {
 	export type Config = ConfigFor<'function_item'>;
 	export type Fluent = FluentFor<'function_item'>;
 	export type Loose = LooseFor<'function_item'>;
+	export type BuildArgs = BuildArgsFor<'function_item'>;
+	export type LooseArgs = LooseArgsFor<'function_item'>;
 	export type Tree = TreeFor<'function_item'>;
 	export type Kind = 'function_item';
 }
@@ -9063,6 +9695,8 @@ export namespace FunctionSignatureItem {
 	export type Config = ConfigFor<'function_signature_item'>;
 	export type Fluent = FluentFor<'function_signature_item'>;
 	export type Loose = LooseFor<'function_signature_item'>;
+	export type BuildArgs = BuildArgsFor<'function_signature_item'>;
+	export type LooseArgs = LooseArgsFor<'function_signature_item'>;
 	export type Tree = TreeFor<'function_signature_item'>;
 	export type Kind = 'function_signature_item';
 }
@@ -9070,6 +9704,8 @@ export namespace FunctionModifiers {
 	export type Config = ConfigFor<'function_modifiers'>;
 	export type Fluent = FluentFor<'function_modifiers'>;
 	export type Loose = LooseFor<'function_modifiers'>;
+	export type BuildArgs = BuildArgsFor<'function_modifiers'>;
+	export type LooseArgs = LooseArgsFor<'function_modifiers'>;
 	export type Tree = TreeFor<'function_modifiers'>;
 	export type Kind = 'function_modifiers';
 }
@@ -9077,6 +9713,8 @@ export namespace WhereClause {
 	export type Config = ConfigFor<'where_clause'>;
 	export type Fluent = FluentFor<'where_clause'>;
 	export type Loose = LooseFor<'where_clause'>;
+	export type BuildArgs = BuildArgsFor<'where_clause'>;
+	export type LooseArgs = LooseArgsFor<'where_clause'>;
 	export type Tree = TreeFor<'where_clause'>;
 	export type Kind = 'where_clause';
 }
@@ -9084,6 +9722,8 @@ export namespace WherePredicate {
 	export type Config = ConfigFor<'where_predicate'>;
 	export type Fluent = FluentFor<'where_predicate'>;
 	export type Loose = LooseFor<'where_predicate'>;
+	export type BuildArgs = BuildArgsFor<'where_predicate'>;
+	export type LooseArgs = LooseArgsFor<'where_predicate'>;
 	export type Tree = TreeFor<'where_predicate'>;
 	export type Kind = 'where_predicate';
 }
@@ -9091,6 +9731,8 @@ export namespace ImplItem {
 	export type Config = ConfigFor<'impl_item'>;
 	export type Fluent = FluentFor<'impl_item'>;
 	export type Loose = LooseFor<'impl_item'>;
+	export type BuildArgs = BuildArgsFor<'impl_item'>;
+	export type LooseArgs = LooseArgsFor<'impl_item'>;
 	export type Tree = TreeFor<'impl_item'>;
 	export type Kind = 'impl_item';
 }
@@ -9098,6 +9740,8 @@ export namespace TraitItem {
 	export type Config = ConfigFor<'trait_item'>;
 	export type Fluent = FluentFor<'trait_item'>;
 	export type Loose = LooseFor<'trait_item'>;
+	export type BuildArgs = BuildArgsFor<'trait_item'>;
+	export type LooseArgs = LooseArgsFor<'trait_item'>;
 	export type Tree = TreeFor<'trait_item'>;
 	export type Kind = 'trait_item';
 }
@@ -9105,6 +9749,8 @@ export namespace AssociatedType {
 	export type Config = ConfigFor<'associated_type'>;
 	export type Fluent = FluentFor<'associated_type'>;
 	export type Loose = LooseFor<'associated_type'>;
+	export type BuildArgs = BuildArgsFor<'associated_type'>;
+	export type LooseArgs = LooseArgsFor<'associated_type'>;
 	export type Tree = TreeFor<'associated_type'>;
 	export type Kind = 'associated_type';
 }
@@ -9112,6 +9758,8 @@ export namespace TraitBounds {
 	export type Config = ConfigFor<'trait_bounds'>;
 	export type Fluent = FluentFor<'trait_bounds'>;
 	export type Loose = LooseFor<'trait_bounds'>;
+	export type BuildArgs = BuildArgsFor<'trait_bounds'>;
+	export type LooseArgs = LooseArgsFor<'trait_bounds'>;
 	export type Tree = TreeFor<'trait_bounds'>;
 	export type Kind = 'trait_bounds';
 }
@@ -9119,6 +9767,8 @@ export namespace HigherRankedTraitBound {
 	export type Config = ConfigFor<'higher_ranked_trait_bound'>;
 	export type Fluent = FluentFor<'higher_ranked_trait_bound'>;
 	export type Loose = LooseFor<'higher_ranked_trait_bound'>;
+	export type BuildArgs = BuildArgsFor<'higher_ranked_trait_bound'>;
+	export type LooseArgs = LooseArgsFor<'higher_ranked_trait_bound'>;
 	export type Tree = TreeFor<'higher_ranked_trait_bound'>;
 	export type Kind = 'higher_ranked_trait_bound';
 }
@@ -9126,6 +9776,8 @@ export namespace RemovedTraitBound {
 	export type Config = ConfigFor<'removed_trait_bound'>;
 	export type Fluent = FluentFor<'removed_trait_bound'>;
 	export type Loose = LooseFor<'removed_trait_bound'>;
+	export type BuildArgs = BuildArgsFor<'removed_trait_bound'>;
+	export type LooseArgs = LooseArgsFor<'removed_trait_bound'>;
 	export type Tree = TreeFor<'removed_trait_bound'>;
 	export type Kind = 'removed_trait_bound';
 }
@@ -9133,6 +9785,8 @@ export namespace TypeParameters {
 	export type Config = ConfigFor<'type_parameters'>;
 	export type Fluent = FluentFor<'type_parameters'>;
 	export type Loose = LooseFor<'type_parameters'>;
+	export type BuildArgs = BuildArgsFor<'type_parameters'>;
+	export type LooseArgs = LooseArgsFor<'type_parameters'>;
 	export type Tree = TreeFor<'type_parameters'>;
 	export type Kind = 'type_parameters';
 }
@@ -9140,6 +9794,8 @@ export namespace ConstParameter {
 	export type Config = ConfigFor<'const_parameter'>;
 	export type Fluent = FluentFor<'const_parameter'>;
 	export type Loose = LooseFor<'const_parameter'>;
+	export type BuildArgs = BuildArgsFor<'const_parameter'>;
+	export type LooseArgs = LooseArgsFor<'const_parameter'>;
 	export type Tree = TreeFor<'const_parameter'>;
 	export type Kind = 'const_parameter';
 }
@@ -9147,6 +9803,8 @@ export namespace TypeParameter {
 	export type Config = ConfigFor<'type_parameter'>;
 	export type Fluent = FluentFor<'type_parameter'>;
 	export type Loose = LooseFor<'type_parameter'>;
+	export type BuildArgs = BuildArgsFor<'type_parameter'>;
+	export type LooseArgs = LooseArgsFor<'type_parameter'>;
 	export type Tree = TreeFor<'type_parameter'>;
 	export type Kind = 'type_parameter';
 }
@@ -9154,6 +9812,8 @@ export namespace LifetimeParameter {
 	export type Config = ConfigFor<'lifetime_parameter'>;
 	export type Fluent = FluentFor<'lifetime_parameter'>;
 	export type Loose = LooseFor<'lifetime_parameter'>;
+	export type BuildArgs = BuildArgsFor<'lifetime_parameter'>;
+	export type LooseArgs = LooseArgsFor<'lifetime_parameter'>;
 	export type Tree = TreeFor<'lifetime_parameter'>;
 	export type Kind = 'lifetime_parameter';
 }
@@ -9161,6 +9821,8 @@ export namespace LetDeclaration {
 	export type Config = ConfigFor<'let_declaration'>;
 	export type Fluent = FluentFor<'let_declaration'>;
 	export type Loose = LooseFor<'let_declaration'>;
+	export type BuildArgs = BuildArgsFor<'let_declaration'>;
+	export type LooseArgs = LooseArgsFor<'let_declaration'>;
 	export type Tree = TreeFor<'let_declaration'>;
 	export type Kind = 'let_declaration';
 }
@@ -9168,6 +9830,8 @@ export namespace UseDeclaration {
 	export type Config = ConfigFor<'use_declaration'>;
 	export type Fluent = FluentFor<'use_declaration'>;
 	export type Loose = LooseFor<'use_declaration'>;
+	export type BuildArgs = BuildArgsFor<'use_declaration'>;
+	export type LooseArgs = LooseArgsFor<'use_declaration'>;
 	export type Tree = TreeFor<'use_declaration'>;
 	export type Kind = 'use_declaration';
 }
@@ -9175,6 +9839,8 @@ export namespace ScopedUseList {
 	export type Config = ConfigFor<'scoped_use_list'>;
 	export type Fluent = FluentFor<'scoped_use_list'>;
 	export type Loose = LooseFor<'scoped_use_list'>;
+	export type BuildArgs = BuildArgsFor<'scoped_use_list'>;
+	export type LooseArgs = LooseArgsFor<'scoped_use_list'>;
 	export type Tree = TreeFor<'scoped_use_list'>;
 	export type Kind = 'scoped_use_list';
 }
@@ -9182,6 +9848,8 @@ export namespace UseList {
 	export type Config = ConfigFor<'use_list'>;
 	export type Fluent = FluentFor<'use_list'>;
 	export type Loose = LooseFor<'use_list'>;
+	export type BuildArgs = BuildArgsFor<'use_list'>;
+	export type LooseArgs = LooseArgsFor<'use_list'>;
 	export type Tree = TreeFor<'use_list'>;
 	export type Kind = 'use_list';
 }
@@ -9189,6 +9857,8 @@ export namespace UseAsClause {
 	export type Config = ConfigFor<'use_as_clause'>;
 	export type Fluent = FluentFor<'use_as_clause'>;
 	export type Loose = LooseFor<'use_as_clause'>;
+	export type BuildArgs = BuildArgsFor<'use_as_clause'>;
+	export type LooseArgs = LooseArgsFor<'use_as_clause'>;
 	export type Tree = TreeFor<'use_as_clause'>;
 	export type Kind = 'use_as_clause';
 }
@@ -9196,6 +9866,8 @@ export namespace UseWildcard {
 	export type Config = ConfigFor<'use_wildcard'>;
 	export type Fluent = FluentFor<'use_wildcard'>;
 	export type Loose = LooseFor<'use_wildcard'>;
+	export type BuildArgs = BuildArgsFor<'use_wildcard'>;
+	export type LooseArgs = LooseArgsFor<'use_wildcard'>;
 	export type Tree = TreeFor<'use_wildcard'>;
 	export type Kind = 'use_wildcard';
 }
@@ -9203,6 +9875,8 @@ export namespace Parameters {
 	export type Config = ConfigFor<'parameters'>;
 	export type Fluent = FluentFor<'parameters'>;
 	export type Loose = LooseFor<'parameters'>;
+	export type BuildArgs = BuildArgsFor<'parameters'>;
+	export type LooseArgs = LooseArgsFor<'parameters'>;
 	export type Tree = TreeFor<'parameters'>;
 	export type Kind = 'parameters';
 }
@@ -9210,6 +9884,8 @@ export namespace SelfParameter {
 	export type Config = ConfigFor<'self_parameter'>;
 	export type Fluent = FluentFor<'self_parameter'>;
 	export type Loose = LooseFor<'self_parameter'>;
+	export type BuildArgs = BuildArgsFor<'self_parameter'>;
+	export type LooseArgs = LooseArgsFor<'self_parameter'>;
 	export type Tree = TreeFor<'self_parameter'>;
 	export type Kind = 'self_parameter';
 }
@@ -9217,6 +9893,8 @@ export namespace VariadicParameter {
 	export type Config = ConfigFor<'variadic_parameter'>;
 	export type Fluent = FluentFor<'variadic_parameter'>;
 	export type Loose = LooseFor<'variadic_parameter'>;
+	export type BuildArgs = BuildArgsFor<'variadic_parameter'>;
+	export type LooseArgs = LooseArgsFor<'variadic_parameter'>;
 	export type Tree = TreeFor<'variadic_parameter'>;
 	export type Kind = 'variadic_parameter';
 }
@@ -9224,6 +9902,8 @@ export namespace Parameter {
 	export type Config = ConfigFor<'parameter'>;
 	export type Fluent = FluentFor<'parameter'>;
 	export type Loose = LooseFor<'parameter'>;
+	export type BuildArgs = BuildArgsFor<'parameter'>;
+	export type LooseArgs = LooseArgsFor<'parameter'>;
 	export type Tree = TreeFor<'parameter'>;
 	export type Kind = 'parameter';
 }
@@ -9231,6 +9911,8 @@ export namespace ExternModifier {
 	export type Config = ConfigFor<'extern_modifier'>;
 	export type Fluent = FluentFor<'extern_modifier'>;
 	export type Loose = LooseFor<'extern_modifier'>;
+	export type BuildArgs = BuildArgsFor<'extern_modifier'>;
+	export type LooseArgs = LooseArgsFor<'extern_modifier'>;
 	export type Tree = TreeFor<'extern_modifier'>;
 	export type Kind = 'extern_modifier';
 }
@@ -9238,6 +9920,8 @@ export namespace VisibilityModifier {
 	export type Config = ConfigFor<'visibility_modifier'>;
 	export type Fluent = FluentFor<'visibility_modifier'>;
 	export type Loose = LooseFor<'visibility_modifier'>;
+	export type BuildArgs = BuildArgsFor<'visibility_modifier'>;
+	export type LooseArgs = LooseArgsFor<'visibility_modifier'>;
 	export type Tree = TreeFor<'visibility_modifier'>;
 	export type Kind = 'visibility_modifier';
 }
@@ -9245,6 +9929,8 @@ export namespace BracketedType {
 	export type Config = ConfigFor<'bracketed_type'>;
 	export type Fluent = FluentFor<'bracketed_type'>;
 	export type Loose = LooseFor<'bracketed_type'>;
+	export type BuildArgs = BuildArgsFor<'bracketed_type'>;
+	export type LooseArgs = LooseArgsFor<'bracketed_type'>;
 	export type Tree = TreeFor<'bracketed_type'>;
 	export type Kind = 'bracketed_type';
 }
@@ -9252,6 +9938,8 @@ export namespace QualifiedType {
 	export type Config = ConfigFor<'qualified_type'>;
 	export type Fluent = FluentFor<'qualified_type'>;
 	export type Loose = LooseFor<'qualified_type'>;
+	export type BuildArgs = BuildArgsFor<'qualified_type'>;
+	export type LooseArgs = LooseArgsFor<'qualified_type'>;
 	export type Tree = TreeFor<'qualified_type'>;
 	export type Kind = 'qualified_type';
 }
@@ -9259,6 +9947,8 @@ export namespace Lifetime {
 	export type Config = ConfigFor<'lifetime'>;
 	export type Fluent = FluentFor<'lifetime'>;
 	export type Loose = LooseFor<'lifetime'>;
+	export type BuildArgs = BuildArgsFor<'lifetime'>;
+	export type LooseArgs = LooseArgsFor<'lifetime'>;
 	export type Tree = TreeFor<'lifetime'>;
 	export type Kind = 'lifetime';
 }
@@ -9266,6 +9956,8 @@ export namespace ArrayType {
 	export type Config = ConfigFor<'array_type'>;
 	export type Fluent = FluentFor<'array_type'>;
 	export type Loose = LooseFor<'array_type'>;
+	export type BuildArgs = BuildArgsFor<'array_type'>;
+	export type LooseArgs = LooseArgsFor<'array_type'>;
 	export type Tree = TreeFor<'array_type'>;
 	export type Kind = 'array_type';
 }
@@ -9273,6 +9965,8 @@ export namespace ForLifetimes {
 	export type Config = ConfigFor<'for_lifetimes'>;
 	export type Fluent = FluentFor<'for_lifetimes'>;
 	export type Loose = LooseFor<'for_lifetimes'>;
+	export type BuildArgs = BuildArgsFor<'for_lifetimes'>;
+	export type LooseArgs = LooseArgsFor<'for_lifetimes'>;
 	export type Tree = TreeFor<'for_lifetimes'>;
 	export type Kind = 'for_lifetimes';
 }
@@ -9280,6 +9974,8 @@ export namespace FunctionType {
 	export type Config = ConfigFor<'function_type'>;
 	export type Fluent = FluentFor<'function_type'>;
 	export type Loose = LooseFor<'function_type'>;
+	export type BuildArgs = BuildArgsFor<'function_type'>;
+	export type LooseArgs = LooseArgsFor<'function_type'>;
 	export type Tree = TreeFor<'function_type'>;
 	export type Kind = 'function_type';
 }
@@ -9287,6 +9983,8 @@ export namespace TupleType {
 	export type Config = ConfigFor<'tuple_type'>;
 	export type Fluent = FluentFor<'tuple_type'>;
 	export type Loose = LooseFor<'tuple_type'>;
+	export type BuildArgs = BuildArgsFor<'tuple_type'>;
+	export type LooseArgs = LooseArgsFor<'tuple_type'>;
 	export type Tree = TreeFor<'tuple_type'>;
 	export type Kind = 'tuple_type';
 }
@@ -9294,6 +9992,8 @@ export namespace GenericFunction {
 	export type Config = ConfigFor<'generic_function'>;
 	export type Fluent = FluentFor<'generic_function'>;
 	export type Loose = LooseFor<'generic_function'>;
+	export type BuildArgs = BuildArgsFor<'generic_function'>;
+	export type LooseArgs = LooseArgsFor<'generic_function'>;
 	export type Tree = TreeFor<'generic_function'>;
 	export type Kind = 'generic_function';
 }
@@ -9301,6 +10001,8 @@ export namespace GenericType {
 	export type Config = ConfigFor<'generic_type'>;
 	export type Fluent = FluentFor<'generic_type'>;
 	export type Loose = LooseFor<'generic_type'>;
+	export type BuildArgs = BuildArgsFor<'generic_type'>;
+	export type LooseArgs = LooseArgsFor<'generic_type'>;
 	export type Tree = TreeFor<'generic_type'>;
 	export type Kind = 'generic_type';
 }
@@ -9308,6 +10010,8 @@ export namespace GenericTypeWithTurbofish {
 	export type Config = ConfigFor<'generic_type_with_turbofish'>;
 	export type Fluent = FluentFor<'generic_type_with_turbofish'>;
 	export type Loose = LooseFor<'generic_type_with_turbofish'>;
+	export type BuildArgs = BuildArgsFor<'generic_type_with_turbofish'>;
+	export type LooseArgs = LooseArgsFor<'generic_type_with_turbofish'>;
 	export type Tree = TreeFor<'generic_type_with_turbofish'>;
 	export type Kind = 'generic_type_with_turbofish';
 }
@@ -9315,6 +10019,8 @@ export namespace BoundedType {
 	export type Config = ConfigFor<'bounded_type'>;
 	export type Fluent = FluentFor<'bounded_type'>;
 	export type Loose = LooseFor<'bounded_type'>;
+	export type BuildArgs = BuildArgsFor<'bounded_type'>;
+	export type LooseArgs = LooseArgsFor<'bounded_type'>;
 	export type Tree = TreeFor<'bounded_type'>;
 	export type Kind = 'bounded_type';
 }
@@ -9322,6 +10028,8 @@ export namespace UseBounds {
 	export type Config = ConfigFor<'use_bounds'>;
 	export type Fluent = FluentFor<'use_bounds'>;
 	export type Loose = LooseFor<'use_bounds'>;
+	export type BuildArgs = BuildArgsFor<'use_bounds'>;
+	export type LooseArgs = LooseArgsFor<'use_bounds'>;
 	export type Tree = TreeFor<'use_bounds'>;
 	export type Kind = 'use_bounds';
 }
@@ -9329,6 +10037,8 @@ export namespace TypeArguments {
 	export type Config = ConfigFor<'type_arguments'>;
 	export type Fluent = FluentFor<'type_arguments'>;
 	export type Loose = LooseFor<'type_arguments'>;
+	export type BuildArgs = BuildArgsFor<'type_arguments'>;
+	export type LooseArgs = LooseArgsFor<'type_arguments'>;
 	export type Tree = TreeFor<'type_arguments'>;
 	export type Kind = 'type_arguments';
 }
@@ -9336,6 +10046,8 @@ export namespace TypeBinding {
 	export type Config = ConfigFor<'type_binding'>;
 	export type Fluent = FluentFor<'type_binding'>;
 	export type Loose = LooseFor<'type_binding'>;
+	export type BuildArgs = BuildArgsFor<'type_binding'>;
+	export type LooseArgs = LooseArgsFor<'type_binding'>;
 	export type Tree = TreeFor<'type_binding'>;
 	export type Kind = 'type_binding';
 }
@@ -9343,6 +10055,8 @@ export namespace ReferenceType {
 	export type Config = ConfigFor<'reference_type'>;
 	export type Fluent = FluentFor<'reference_type'>;
 	export type Loose = LooseFor<'reference_type'>;
+	export type BuildArgs = BuildArgsFor<'reference_type'>;
+	export type LooseArgs = LooseArgsFor<'reference_type'>;
 	export type Tree = TreeFor<'reference_type'>;
 	export type Kind = 'reference_type';
 }
@@ -9350,6 +10064,8 @@ export namespace PointerType {
 	export type Config = ConfigFor<'pointer_type'>;
 	export type Fluent = FluentFor<'pointer_type'>;
 	export type Loose = LooseFor<'pointer_type'>;
+	export type BuildArgs = BuildArgsFor<'pointer_type'>;
+	export type LooseArgs = LooseArgsFor<'pointer_type'>;
 	export type Tree = TreeFor<'pointer_type'>;
 	export type Kind = 'pointer_type';
 }
@@ -9357,6 +10073,8 @@ export namespace AbstractType {
 	export type Config = ConfigFor<'abstract_type'>;
 	export type Fluent = FluentFor<'abstract_type'>;
 	export type Loose = LooseFor<'abstract_type'>;
+	export type BuildArgs = BuildArgsFor<'abstract_type'>;
+	export type LooseArgs = LooseArgsFor<'abstract_type'>;
 	export type Tree = TreeFor<'abstract_type'>;
 	export type Kind = 'abstract_type';
 }
@@ -9364,6 +10082,8 @@ export namespace DynamicType {
 	export type Config = ConfigFor<'dynamic_type'>;
 	export type Fluent = FluentFor<'dynamic_type'>;
 	export type Loose = LooseFor<'dynamic_type'>;
+	export type BuildArgs = BuildArgsFor<'dynamic_type'>;
+	export type LooseArgs = LooseArgsFor<'dynamic_type'>;
 	export type Tree = TreeFor<'dynamic_type'>;
 	export type Kind = 'dynamic_type';
 }
@@ -9371,6 +10091,8 @@ export namespace MacroInvocation {
 	export type Config = ConfigFor<'macro_invocation'>;
 	export type Fluent = FluentFor<'macro_invocation'>;
 	export type Loose = LooseFor<'macro_invocation'>;
+	export type BuildArgs = BuildArgsFor<'macro_invocation'>;
+	export type LooseArgs = LooseArgsFor<'macro_invocation'>;
 	export type Tree = TreeFor<'macro_invocation'>;
 	export type Kind = 'macro_invocation';
 }
@@ -9378,6 +10100,8 @@ export namespace DelimTokenTree {
 	export type Config = ConfigFor<'delim_token_tree'>;
 	export type Fluent = FluentFor<'delim_token_tree'>;
 	export type Loose = LooseFor<'delim_token_tree'>;
+	export type BuildArgs = BuildArgsFor<'delim_token_tree'>;
+	export type LooseArgs = LooseArgsFor<'delim_token_tree'>;
 	export type Tree = TreeFor<'delim_token_tree'>;
 	export type Kind = 'delim_token_tree';
 }
@@ -9385,6 +10109,8 @@ export namespace ScopedIdentifier {
 	export type Config = ConfigFor<'scoped_identifier'>;
 	export type Fluent = FluentFor<'scoped_identifier'>;
 	export type Loose = LooseFor<'scoped_identifier'>;
+	export type BuildArgs = BuildArgsFor<'scoped_identifier'>;
+	export type LooseArgs = LooseArgsFor<'scoped_identifier'>;
 	export type Tree = TreeFor<'scoped_identifier'>;
 	export type Kind = 'scoped_identifier';
 }
@@ -9392,6 +10118,8 @@ export namespace ScopedTypeIdentifierInExpressionPosition {
 	export type Config = ConfigFor<'scoped_type_identifier_in_expression_position'>;
 	export type Fluent = FluentFor<'scoped_type_identifier_in_expression_position'>;
 	export type Loose = LooseFor<'scoped_type_identifier_in_expression_position'>;
+	export type BuildArgs = BuildArgsFor<'scoped_type_identifier_in_expression_position'>;
+	export type LooseArgs = LooseArgsFor<'scoped_type_identifier_in_expression_position'>;
 	export type Tree = TreeFor<'scoped_type_identifier_in_expression_position'>;
 	export type Kind = 'scoped_type_identifier_in_expression_position';
 }
@@ -9399,6 +10127,8 @@ export namespace ScopedTypeIdentifier {
 	export type Config = ConfigFor<'scoped_type_identifier'>;
 	export type Fluent = FluentFor<'scoped_type_identifier'>;
 	export type Loose = LooseFor<'scoped_type_identifier'>;
+	export type BuildArgs = BuildArgsFor<'scoped_type_identifier'>;
+	export type LooseArgs = LooseArgsFor<'scoped_type_identifier'>;
 	export type Tree = TreeFor<'scoped_type_identifier'>;
 	export type Kind = 'scoped_type_identifier';
 }
@@ -9406,6 +10136,8 @@ export namespace RangeExpression {
 	export type Config = ConfigFor<'range_expression'>;
 	export type Fluent = FluentFor<'range_expression'>;
 	export type Loose = LooseFor<'range_expression'>;
+	export type BuildArgs = BuildArgsFor<'range_expression'>;
+	export type LooseArgs = LooseArgsFor<'range_expression'>;
 	export type Tree = TreeFor<'range_expression'>;
 	export type Kind = 'range_expression';
 }
@@ -9413,6 +10145,8 @@ export namespace UnaryExpression {
 	export type Config = ConfigFor<'unary_expression'>;
 	export type Fluent = FluentFor<'unary_expression'>;
 	export type Loose = LooseFor<'unary_expression'>;
+	export type BuildArgs = BuildArgsFor<'unary_expression'>;
+	export type LooseArgs = LooseArgsFor<'unary_expression'>;
 	export type Tree = TreeFor<'unary_expression'>;
 	export type Kind = 'unary_expression';
 }
@@ -9420,6 +10154,8 @@ export namespace TryExpression {
 	export type Config = ConfigFor<'try_expression'>;
 	export type Fluent = FluentFor<'try_expression'>;
 	export type Loose = LooseFor<'try_expression'>;
+	export type BuildArgs = BuildArgsFor<'try_expression'>;
+	export type LooseArgs = LooseArgsFor<'try_expression'>;
 	export type Tree = TreeFor<'try_expression'>;
 	export type Kind = 'try_expression';
 }
@@ -9427,6 +10163,8 @@ export namespace ReferenceExpression {
 	export type Config = ConfigFor<'reference_expression'>;
 	export type Fluent = FluentFor<'reference_expression'>;
 	export type Loose = LooseFor<'reference_expression'>;
+	export type BuildArgs = BuildArgsFor<'reference_expression'>;
+	export type LooseArgs = LooseArgsFor<'reference_expression'>;
 	export type Tree = TreeFor<'reference_expression'>;
 	export type Kind = 'reference_expression';
 }
@@ -9434,6 +10172,8 @@ export namespace BinaryExpression {
 	export type Config = ConfigFor<'binary_expression'>;
 	export type Fluent = FluentFor<'binary_expression'>;
 	export type Loose = LooseFor<'binary_expression'>;
+	export type BuildArgs = BuildArgsFor<'binary_expression'>;
+	export type LooseArgs = LooseArgsFor<'binary_expression'>;
 	export type Tree = TreeFor<'binary_expression'>;
 	export type Kind = 'binary_expression';
 }
@@ -9441,6 +10181,8 @@ export namespace AssignmentExpression {
 	export type Config = ConfigFor<'assignment_expression'>;
 	export type Fluent = FluentFor<'assignment_expression'>;
 	export type Loose = LooseFor<'assignment_expression'>;
+	export type BuildArgs = BuildArgsFor<'assignment_expression'>;
+	export type LooseArgs = LooseArgsFor<'assignment_expression'>;
 	export type Tree = TreeFor<'assignment_expression'>;
 	export type Kind = 'assignment_expression';
 }
@@ -9448,6 +10190,8 @@ export namespace CompoundAssignmentExpr {
 	export type Config = ConfigFor<'compound_assignment_expr'>;
 	export type Fluent = FluentFor<'compound_assignment_expr'>;
 	export type Loose = LooseFor<'compound_assignment_expr'>;
+	export type BuildArgs = BuildArgsFor<'compound_assignment_expr'>;
+	export type LooseArgs = LooseArgsFor<'compound_assignment_expr'>;
 	export type Tree = TreeFor<'compound_assignment_expr'>;
 	export type Kind = 'compound_assignment_expr';
 }
@@ -9455,6 +10199,8 @@ export namespace TypeCastExpression {
 	export type Config = ConfigFor<'type_cast_expression'>;
 	export type Fluent = FluentFor<'type_cast_expression'>;
 	export type Loose = LooseFor<'type_cast_expression'>;
+	export type BuildArgs = BuildArgsFor<'type_cast_expression'>;
+	export type LooseArgs = LooseArgsFor<'type_cast_expression'>;
 	export type Tree = TreeFor<'type_cast_expression'>;
 	export type Kind = 'type_cast_expression';
 }
@@ -9462,6 +10208,8 @@ export namespace ReturnExpression {
 	export type Config = ConfigFor<'return_expression'>;
 	export type Fluent = FluentFor<'return_expression'>;
 	export type Loose = LooseFor<'return_expression'>;
+	export type BuildArgs = BuildArgsFor<'return_expression'>;
+	export type LooseArgs = LooseArgsFor<'return_expression'>;
 	export type Tree = TreeFor<'return_expression'>;
 	export type Kind = 'return_expression';
 }
@@ -9469,6 +10217,8 @@ export namespace YieldExpression {
 	export type Config = ConfigFor<'yield_expression'>;
 	export type Fluent = FluentFor<'yield_expression'>;
 	export type Loose = LooseFor<'yield_expression'>;
+	export type BuildArgs = BuildArgsFor<'yield_expression'>;
+	export type LooseArgs = LooseArgsFor<'yield_expression'>;
 	export type Tree = TreeFor<'yield_expression'>;
 	export type Kind = 'yield_expression';
 }
@@ -9476,6 +10226,8 @@ export namespace CallExpression {
 	export type Config = ConfigFor<'call_expression'>;
 	export type Fluent = FluentFor<'call_expression'>;
 	export type Loose = LooseFor<'call_expression'>;
+	export type BuildArgs = BuildArgsFor<'call_expression'>;
+	export type LooseArgs = LooseArgsFor<'call_expression'>;
 	export type Tree = TreeFor<'call_expression'>;
 	export type Kind = 'call_expression';
 }
@@ -9483,6 +10235,8 @@ export namespace Arguments {
 	export type Config = ConfigFor<'arguments'>;
 	export type Fluent = FluentFor<'arguments'>;
 	export type Loose = LooseFor<'arguments'>;
+	export type BuildArgs = BuildArgsFor<'arguments'>;
+	export type LooseArgs = LooseArgsFor<'arguments'>;
 	export type Tree = TreeFor<'arguments'>;
 	export type Kind = 'arguments';
 }
@@ -9490,6 +10244,8 @@ export namespace ArrayExpression {
 	export type Config = ConfigFor<'array_expression'>;
 	export type Fluent = FluentFor<'array_expression'>;
 	export type Loose = LooseFor<'array_expression'>;
+	export type BuildArgs = BuildArgsFor<'array_expression'>;
+	export type LooseArgs = LooseArgsFor<'array_expression'>;
 	export type Tree = TreeFor<'array_expression'>;
 	export type Kind = 'array_expression';
 }
@@ -9497,6 +10253,8 @@ export namespace ParenthesizedExpression {
 	export type Config = ConfigFor<'parenthesized_expression'>;
 	export type Fluent = FluentFor<'parenthesized_expression'>;
 	export type Loose = LooseFor<'parenthesized_expression'>;
+	export type BuildArgs = BuildArgsFor<'parenthesized_expression'>;
+	export type LooseArgs = LooseArgsFor<'parenthesized_expression'>;
 	export type Tree = TreeFor<'parenthesized_expression'>;
 	export type Kind = 'parenthesized_expression';
 }
@@ -9504,6 +10262,8 @@ export namespace TupleExpression {
 	export type Config = ConfigFor<'tuple_expression'>;
 	export type Fluent = FluentFor<'tuple_expression'>;
 	export type Loose = LooseFor<'tuple_expression'>;
+	export type BuildArgs = BuildArgsFor<'tuple_expression'>;
+	export type LooseArgs = LooseArgsFor<'tuple_expression'>;
 	export type Tree = TreeFor<'tuple_expression'>;
 	export type Kind = 'tuple_expression';
 }
@@ -9511,6 +10271,8 @@ export namespace StructExpression {
 	export type Config = ConfigFor<'struct_expression'>;
 	export type Fluent = FluentFor<'struct_expression'>;
 	export type Loose = LooseFor<'struct_expression'>;
+	export type BuildArgs = BuildArgsFor<'struct_expression'>;
+	export type LooseArgs = LooseArgsFor<'struct_expression'>;
 	export type Tree = TreeFor<'struct_expression'>;
 	export type Kind = 'struct_expression';
 }
@@ -9518,6 +10280,8 @@ export namespace FieldInitializerList {
 	export type Config = ConfigFor<'field_initializer_list'>;
 	export type Fluent = FluentFor<'field_initializer_list'>;
 	export type Loose = LooseFor<'field_initializer_list'>;
+	export type BuildArgs = BuildArgsFor<'field_initializer_list'>;
+	export type LooseArgs = LooseArgsFor<'field_initializer_list'>;
 	export type Tree = TreeFor<'field_initializer_list'>;
 	export type Kind = 'field_initializer_list';
 }
@@ -9525,6 +10289,8 @@ export namespace ShorthandFieldInitializer {
 	export type Config = ConfigFor<'shorthand_field_initializer'>;
 	export type Fluent = FluentFor<'shorthand_field_initializer'>;
 	export type Loose = LooseFor<'shorthand_field_initializer'>;
+	export type BuildArgs = BuildArgsFor<'shorthand_field_initializer'>;
+	export type LooseArgs = LooseArgsFor<'shorthand_field_initializer'>;
 	export type Tree = TreeFor<'shorthand_field_initializer'>;
 	export type Kind = 'shorthand_field_initializer';
 }
@@ -9532,6 +10298,8 @@ export namespace FieldInitializer {
 	export type Config = ConfigFor<'field_initializer'>;
 	export type Fluent = FluentFor<'field_initializer'>;
 	export type Loose = LooseFor<'field_initializer'>;
+	export type BuildArgs = BuildArgsFor<'field_initializer'>;
+	export type LooseArgs = LooseArgsFor<'field_initializer'>;
 	export type Tree = TreeFor<'field_initializer'>;
 	export type Kind = 'field_initializer';
 }
@@ -9539,6 +10307,8 @@ export namespace BaseFieldInitializer {
 	export type Config = ConfigFor<'base_field_initializer'>;
 	export type Fluent = FluentFor<'base_field_initializer'>;
 	export type Loose = LooseFor<'base_field_initializer'>;
+	export type BuildArgs = BuildArgsFor<'base_field_initializer'>;
+	export type LooseArgs = LooseArgsFor<'base_field_initializer'>;
 	export type Tree = TreeFor<'base_field_initializer'>;
 	export type Kind = 'base_field_initializer';
 }
@@ -9546,6 +10316,8 @@ export namespace IfExpression {
 	export type Config = ConfigFor<'if_expression'>;
 	export type Fluent = FluentFor<'if_expression'>;
 	export type Loose = LooseFor<'if_expression'>;
+	export type BuildArgs = BuildArgsFor<'if_expression'>;
+	export type LooseArgs = LooseArgsFor<'if_expression'>;
 	export type Tree = TreeFor<'if_expression'>;
 	export type Kind = 'if_expression';
 }
@@ -9553,6 +10325,8 @@ export namespace LetCondition {
 	export type Config = ConfigFor<'let_condition'>;
 	export type Fluent = FluentFor<'let_condition'>;
 	export type Loose = LooseFor<'let_condition'>;
+	export type BuildArgs = BuildArgsFor<'let_condition'>;
+	export type LooseArgs = LooseArgsFor<'let_condition'>;
 	export type Tree = TreeFor<'let_condition'>;
 	export type Kind = 'let_condition';
 }
@@ -9560,6 +10334,8 @@ export namespace LetChain {
 	export type Config = ConfigFor<'_let_chain'>;
 	export type Fluent = FluentFor<'_let_chain'>;
 	export type Loose = LooseFor<'_let_chain'>;
+	export type BuildArgs = BuildArgsFor<'_let_chain'>;
+	export type LooseArgs = LooseArgsFor<'_let_chain'>;
 	export type Tree = TreeFor<'_let_chain'>;
 	export type Kind = '_let_chain';
 }
@@ -9567,6 +10343,8 @@ export namespace ElseClause {
 	export type Config = ConfigFor<'else_clause'>;
 	export type Fluent = FluentFor<'else_clause'>;
 	export type Loose = LooseFor<'else_clause'>;
+	export type BuildArgs = BuildArgsFor<'else_clause'>;
+	export type LooseArgs = LooseArgsFor<'else_clause'>;
 	export type Tree = TreeFor<'else_clause'>;
 	export type Kind = 'else_clause';
 }
@@ -9574,6 +10352,8 @@ export namespace MatchExpression {
 	export type Config = ConfigFor<'match_expression'>;
 	export type Fluent = FluentFor<'match_expression'>;
 	export type Loose = LooseFor<'match_expression'>;
+	export type BuildArgs = BuildArgsFor<'match_expression'>;
+	export type LooseArgs = LooseArgsFor<'match_expression'>;
 	export type Tree = TreeFor<'match_expression'>;
 	export type Kind = 'match_expression';
 }
@@ -9581,6 +10361,8 @@ export namespace MatchBlock {
 	export type Config = ConfigFor<'match_block'>;
 	export type Fluent = FluentFor<'match_block'>;
 	export type Loose = LooseFor<'match_block'>;
+	export type BuildArgs = BuildArgsFor<'match_block'>;
+	export type LooseArgs = LooseArgsFor<'match_block'>;
 	export type Tree = TreeFor<'match_block'>;
 	export type Kind = 'match_block';
 }
@@ -9588,6 +10370,8 @@ export namespace MatchArm {
 	export type Config = ConfigFor<'match_arm'>;
 	export type Fluent = FluentFor<'match_arm'>;
 	export type Loose = LooseFor<'match_arm'>;
+	export type BuildArgs = BuildArgsFor<'match_arm'>;
+	export type LooseArgs = LooseArgsFor<'match_arm'>;
 	export type Tree = TreeFor<'match_arm'>;
 	export type Kind = 'match_arm';
 }
@@ -9595,6 +10379,8 @@ export namespace LastMatchArm {
 	export type Config = ConfigFor<'last_match_arm'>;
 	export type Fluent = FluentFor<'last_match_arm'>;
 	export type Loose = LooseFor<'last_match_arm'>;
+	export type BuildArgs = BuildArgsFor<'last_match_arm'>;
+	export type LooseArgs = LooseArgsFor<'last_match_arm'>;
 	export type Tree = TreeFor<'last_match_arm'>;
 	export type Kind = 'last_match_arm';
 }
@@ -9602,6 +10388,8 @@ export namespace MatchPattern {
 	export type Config = ConfigFor<'match_pattern'>;
 	export type Fluent = FluentFor<'match_pattern'>;
 	export type Loose = LooseFor<'match_pattern'>;
+	export type BuildArgs = BuildArgsFor<'match_pattern'>;
+	export type LooseArgs = LooseArgsFor<'match_pattern'>;
 	export type Tree = TreeFor<'match_pattern'>;
 	export type Kind = 'match_pattern';
 }
@@ -9609,6 +10397,8 @@ export namespace WhileExpression {
 	export type Config = ConfigFor<'while_expression'>;
 	export type Fluent = FluentFor<'while_expression'>;
 	export type Loose = LooseFor<'while_expression'>;
+	export type BuildArgs = BuildArgsFor<'while_expression'>;
+	export type LooseArgs = LooseArgsFor<'while_expression'>;
 	export type Tree = TreeFor<'while_expression'>;
 	export type Kind = 'while_expression';
 }
@@ -9616,6 +10406,8 @@ export namespace LoopExpression {
 	export type Config = ConfigFor<'loop_expression'>;
 	export type Fluent = FluentFor<'loop_expression'>;
 	export type Loose = LooseFor<'loop_expression'>;
+	export type BuildArgs = BuildArgsFor<'loop_expression'>;
+	export type LooseArgs = LooseArgsFor<'loop_expression'>;
 	export type Tree = TreeFor<'loop_expression'>;
 	export type Kind = 'loop_expression';
 }
@@ -9623,6 +10415,8 @@ export namespace ForExpression {
 	export type Config = ConfigFor<'for_expression'>;
 	export type Fluent = FluentFor<'for_expression'>;
 	export type Loose = LooseFor<'for_expression'>;
+	export type BuildArgs = BuildArgsFor<'for_expression'>;
+	export type LooseArgs = LooseArgsFor<'for_expression'>;
 	export type Tree = TreeFor<'for_expression'>;
 	export type Kind = 'for_expression';
 }
@@ -9630,6 +10424,8 @@ export namespace ConstBlock {
 	export type Config = ConfigFor<'const_block'>;
 	export type Fluent = FluentFor<'const_block'>;
 	export type Loose = LooseFor<'const_block'>;
+	export type BuildArgs = BuildArgsFor<'const_block'>;
+	export type LooseArgs = LooseArgsFor<'const_block'>;
 	export type Tree = TreeFor<'const_block'>;
 	export type Kind = 'const_block';
 }
@@ -9637,6 +10433,8 @@ export namespace ClosureExpression {
 	export type Config = ConfigFor<'closure_expression'>;
 	export type Fluent = FluentFor<'closure_expression'>;
 	export type Loose = LooseFor<'closure_expression'>;
+	export type BuildArgs = BuildArgsFor<'closure_expression'>;
+	export type LooseArgs = LooseArgsFor<'closure_expression'>;
 	export type Tree = TreeFor<'closure_expression'>;
 	export type Kind = 'closure_expression';
 }
@@ -9644,6 +10442,8 @@ export namespace ClosureParameters {
 	export type Config = ConfigFor<'closure_parameters'>;
 	export type Fluent = FluentFor<'closure_parameters'>;
 	export type Loose = LooseFor<'closure_parameters'>;
+	export type BuildArgs = BuildArgsFor<'closure_parameters'>;
+	export type LooseArgs = LooseArgsFor<'closure_parameters'>;
 	export type Tree = TreeFor<'closure_parameters'>;
 	export type Kind = 'closure_parameters';
 }
@@ -9651,6 +10451,8 @@ export namespace Label {
 	export type Config = ConfigFor<'label'>;
 	export type Fluent = FluentFor<'label'>;
 	export type Loose = LooseFor<'label'>;
+	export type BuildArgs = BuildArgsFor<'label'>;
+	export type LooseArgs = LooseArgsFor<'label'>;
 	export type Tree = TreeFor<'label'>;
 	export type Kind = 'label';
 }
@@ -9658,6 +10460,8 @@ export namespace BreakExpression {
 	export type Config = ConfigFor<'break_expression'>;
 	export type Fluent = FluentFor<'break_expression'>;
 	export type Loose = LooseFor<'break_expression'>;
+	export type BuildArgs = BuildArgsFor<'break_expression'>;
+	export type LooseArgs = LooseArgsFor<'break_expression'>;
 	export type Tree = TreeFor<'break_expression'>;
 	export type Kind = 'break_expression';
 }
@@ -9665,6 +10469,8 @@ export namespace ContinueExpression {
 	export type Config = ConfigFor<'continue_expression'>;
 	export type Fluent = FluentFor<'continue_expression'>;
 	export type Loose = LooseFor<'continue_expression'>;
+	export type BuildArgs = BuildArgsFor<'continue_expression'>;
+	export type LooseArgs = LooseArgsFor<'continue_expression'>;
 	export type Tree = TreeFor<'continue_expression'>;
 	export type Kind = 'continue_expression';
 }
@@ -9672,6 +10478,8 @@ export namespace IndexExpression {
 	export type Config = ConfigFor<'index_expression'>;
 	export type Fluent = FluentFor<'index_expression'>;
 	export type Loose = LooseFor<'index_expression'>;
+	export type BuildArgs = BuildArgsFor<'index_expression'>;
+	export type LooseArgs = LooseArgsFor<'index_expression'>;
 	export type Tree = TreeFor<'index_expression'>;
 	export type Kind = 'index_expression';
 }
@@ -9679,6 +10487,8 @@ export namespace AwaitExpression {
 	export type Config = ConfigFor<'await_expression'>;
 	export type Fluent = FluentFor<'await_expression'>;
 	export type Loose = LooseFor<'await_expression'>;
+	export type BuildArgs = BuildArgsFor<'await_expression'>;
+	export type LooseArgs = LooseArgsFor<'await_expression'>;
 	export type Tree = TreeFor<'await_expression'>;
 	export type Kind = 'await_expression';
 }
@@ -9686,6 +10496,8 @@ export namespace FieldExpression {
 	export type Config = ConfigFor<'field_expression'>;
 	export type Fluent = FluentFor<'field_expression'>;
 	export type Loose = LooseFor<'field_expression'>;
+	export type BuildArgs = BuildArgsFor<'field_expression'>;
+	export type LooseArgs = LooseArgsFor<'field_expression'>;
 	export type Tree = TreeFor<'field_expression'>;
 	export type Kind = 'field_expression';
 }
@@ -9693,6 +10505,8 @@ export namespace UnsafeBlock {
 	export type Config = ConfigFor<'unsafe_block'>;
 	export type Fluent = FluentFor<'unsafe_block'>;
 	export type Loose = LooseFor<'unsafe_block'>;
+	export type BuildArgs = BuildArgsFor<'unsafe_block'>;
+	export type LooseArgs = LooseArgsFor<'unsafe_block'>;
 	export type Tree = TreeFor<'unsafe_block'>;
 	export type Kind = 'unsafe_block';
 }
@@ -9700,6 +10514,8 @@ export namespace AsyncBlock {
 	export type Config = ConfigFor<'async_block'>;
 	export type Fluent = FluentFor<'async_block'>;
 	export type Loose = LooseFor<'async_block'>;
+	export type BuildArgs = BuildArgsFor<'async_block'>;
+	export type LooseArgs = LooseArgsFor<'async_block'>;
 	export type Tree = TreeFor<'async_block'>;
 	export type Kind = 'async_block';
 }
@@ -9707,6 +10523,8 @@ export namespace GenBlock {
 	export type Config = ConfigFor<'gen_block'>;
 	export type Fluent = FluentFor<'gen_block'>;
 	export type Loose = LooseFor<'gen_block'>;
+	export type BuildArgs = BuildArgsFor<'gen_block'>;
+	export type LooseArgs = LooseArgsFor<'gen_block'>;
 	export type Tree = TreeFor<'gen_block'>;
 	export type Kind = 'gen_block';
 }
@@ -9714,6 +10532,8 @@ export namespace TryBlock {
 	export type Config = ConfigFor<'try_block'>;
 	export type Fluent = FluentFor<'try_block'>;
 	export type Loose = LooseFor<'try_block'>;
+	export type BuildArgs = BuildArgsFor<'try_block'>;
+	export type LooseArgs = LooseArgsFor<'try_block'>;
 	export type Tree = TreeFor<'try_block'>;
 	export type Kind = 'try_block';
 }
@@ -9721,6 +10541,8 @@ export namespace Block {
 	export type Config = ConfigFor<'block'>;
 	export type Fluent = FluentFor<'block'>;
 	export type Loose = LooseFor<'block'>;
+	export type BuildArgs = BuildArgsFor<'block'>;
+	export type LooseArgs = LooseArgsFor<'block'>;
 	export type Tree = TreeFor<'block'>;
 	export type Kind = 'block';
 }
@@ -9728,6 +10550,8 @@ export namespace GenericPattern {
 	export type Config = ConfigFor<'generic_pattern'>;
 	export type Fluent = FluentFor<'generic_pattern'>;
 	export type Loose = LooseFor<'generic_pattern'>;
+	export type BuildArgs = BuildArgsFor<'generic_pattern'>;
+	export type LooseArgs = LooseArgsFor<'generic_pattern'>;
 	export type Tree = TreeFor<'generic_pattern'>;
 	export type Kind = 'generic_pattern';
 }
@@ -9735,6 +10559,8 @@ export namespace TuplePattern {
 	export type Config = ConfigFor<'tuple_pattern'>;
 	export type Fluent = FluentFor<'tuple_pattern'>;
 	export type Loose = LooseFor<'tuple_pattern'>;
+	export type BuildArgs = BuildArgsFor<'tuple_pattern'>;
+	export type LooseArgs = LooseArgsFor<'tuple_pattern'>;
 	export type Tree = TreeFor<'tuple_pattern'>;
 	export type Kind = 'tuple_pattern';
 }
@@ -9742,6 +10568,8 @@ export namespace SlicePattern {
 	export type Config = ConfigFor<'slice_pattern'>;
 	export type Fluent = FluentFor<'slice_pattern'>;
 	export type Loose = LooseFor<'slice_pattern'>;
+	export type BuildArgs = BuildArgsFor<'slice_pattern'>;
+	export type LooseArgs = LooseArgsFor<'slice_pattern'>;
 	export type Tree = TreeFor<'slice_pattern'>;
 	export type Kind = 'slice_pattern';
 }
@@ -9749,6 +10577,8 @@ export namespace TupleStructPattern {
 	export type Config = ConfigFor<'tuple_struct_pattern'>;
 	export type Fluent = FluentFor<'tuple_struct_pattern'>;
 	export type Loose = LooseFor<'tuple_struct_pattern'>;
+	export type BuildArgs = BuildArgsFor<'tuple_struct_pattern'>;
+	export type LooseArgs = LooseArgsFor<'tuple_struct_pattern'>;
 	export type Tree = TreeFor<'tuple_struct_pattern'>;
 	export type Kind = 'tuple_struct_pattern';
 }
@@ -9756,6 +10586,8 @@ export namespace StructPattern {
 	export type Config = ConfigFor<'struct_pattern'>;
 	export type Fluent = FluentFor<'struct_pattern'>;
 	export type Loose = LooseFor<'struct_pattern'>;
+	export type BuildArgs = BuildArgsFor<'struct_pattern'>;
+	export type LooseArgs = LooseArgsFor<'struct_pattern'>;
 	export type Tree = TreeFor<'struct_pattern'>;
 	export type Kind = 'struct_pattern';
 }
@@ -9763,6 +10595,8 @@ export namespace FieldPattern {
 	export type Config = ConfigFor<'field_pattern'>;
 	export type Fluent = FluentFor<'field_pattern'>;
 	export type Loose = LooseFor<'field_pattern'>;
+	export type BuildArgs = BuildArgsFor<'field_pattern'>;
+	export type LooseArgs = LooseArgsFor<'field_pattern'>;
 	export type Tree = TreeFor<'field_pattern'>;
 	export type Kind = 'field_pattern';
 }
@@ -9770,6 +10604,8 @@ export namespace MutPattern {
 	export type Config = ConfigFor<'mut_pattern'>;
 	export type Fluent = FluentFor<'mut_pattern'>;
 	export type Loose = LooseFor<'mut_pattern'>;
+	export type BuildArgs = BuildArgsFor<'mut_pattern'>;
+	export type LooseArgs = LooseArgsFor<'mut_pattern'>;
 	export type Tree = TreeFor<'mut_pattern'>;
 	export type Kind = 'mut_pattern';
 }
@@ -9777,6 +10613,8 @@ export namespace RangePattern {
 	export type Config = ConfigFor<'range_pattern'>;
 	export type Fluent = FluentFor<'range_pattern'>;
 	export type Loose = LooseFor<'range_pattern'>;
+	export type BuildArgs = BuildArgsFor<'range_pattern'>;
+	export type LooseArgs = LooseArgsFor<'range_pattern'>;
 	export type Tree = TreeFor<'range_pattern'>;
 	export type Kind = 'range_pattern';
 }
@@ -9784,6 +10622,8 @@ export namespace RefPattern {
 	export type Config = ConfigFor<'ref_pattern'>;
 	export type Fluent = FluentFor<'ref_pattern'>;
 	export type Loose = LooseFor<'ref_pattern'>;
+	export type BuildArgs = BuildArgsFor<'ref_pattern'>;
+	export type LooseArgs = LooseArgsFor<'ref_pattern'>;
 	export type Tree = TreeFor<'ref_pattern'>;
 	export type Kind = 'ref_pattern';
 }
@@ -9791,6 +10631,8 @@ export namespace CapturedPattern {
 	export type Config = ConfigFor<'captured_pattern'>;
 	export type Fluent = FluentFor<'captured_pattern'>;
 	export type Loose = LooseFor<'captured_pattern'>;
+	export type BuildArgs = BuildArgsFor<'captured_pattern'>;
+	export type LooseArgs = LooseArgsFor<'captured_pattern'>;
 	export type Tree = TreeFor<'captured_pattern'>;
 	export type Kind = 'captured_pattern';
 }
@@ -9798,6 +10640,8 @@ export namespace ReferencePattern {
 	export type Config = ConfigFor<'reference_pattern'>;
 	export type Fluent = FluentFor<'reference_pattern'>;
 	export type Loose = LooseFor<'reference_pattern'>;
+	export type BuildArgs = BuildArgsFor<'reference_pattern'>;
+	export type LooseArgs = LooseArgsFor<'reference_pattern'>;
 	export type Tree = TreeFor<'reference_pattern'>;
 	export type Kind = 'reference_pattern';
 }
@@ -9805,6 +10649,8 @@ export namespace OrPattern {
 	export type Config = ConfigFor<'or_pattern'>;
 	export type Fluent = FluentFor<'or_pattern'>;
 	export type Loose = LooseFor<'or_pattern'>;
+	export type BuildArgs = BuildArgsFor<'or_pattern'>;
+	export type LooseArgs = LooseArgsFor<'or_pattern'>;
 	export type Tree = TreeFor<'or_pattern'>;
 	export type Kind = 'or_pattern';
 }
@@ -9812,6 +10658,8 @@ export namespace NegativeLiteral {
 	export type Config = ConfigFor<'negative_literal'>;
 	export type Fluent = FluentFor<'negative_literal'>;
 	export type Loose = LooseFor<'negative_literal'>;
+	export type BuildArgs = BuildArgsFor<'negative_literal'>;
+	export type LooseArgs = LooseArgsFor<'negative_literal'>;
 	export type Tree = TreeFor<'negative_literal'>;
 	export type Kind = 'negative_literal';
 }
@@ -9819,6 +10667,8 @@ export namespace StringLiteral {
 	export type Config = ConfigFor<'string_literal'>;
 	export type Fluent = FluentFor<'string_literal'>;
 	export type Loose = LooseFor<'string_literal'>;
+	export type BuildArgs = BuildArgsFor<'string_literal'>;
+	export type LooseArgs = LooseArgsFor<'string_literal'>;
 	export type Tree = TreeFor<'string_literal'>;
 	export type Kind = 'string_literal';
 }
@@ -9826,6 +10676,8 @@ export namespace RawStringLiteral {
 	export type Config = ConfigFor<'raw_string_literal'>;
 	export type Fluent = FluentFor<'raw_string_literal'>;
 	export type Loose = LooseFor<'raw_string_literal'>;
+	export type BuildArgs = BuildArgsFor<'raw_string_literal'>;
+	export type LooseArgs = LooseArgsFor<'raw_string_literal'>;
 	export type Tree = TreeFor<'raw_string_literal'>;
 	export type Kind = 'raw_string_literal';
 }
@@ -9833,6 +10685,8 @@ export namespace Comment {
 	export type Config = ConfigFor<'comment'>;
 	export type Fluent = FluentFor<'comment'>;
 	export type Loose = LooseFor<'comment'>;
+	export type BuildArgs = BuildArgsFor<'comment'>;
+	export type LooseArgs = LooseArgsFor<'comment'>;
 	export type Tree = TreeFor<'comment'>;
 	export type Kind = 'comment';
 }
@@ -9840,6 +10694,8 @@ export namespace LineComment {
 	export type Config = ConfigFor<'line_comment'>;
 	export type Fluent = FluentFor<'line_comment'>;
 	export type Loose = LooseFor<'line_comment'>;
+	export type BuildArgs = BuildArgsFor<'line_comment'>;
+	export type LooseArgs = LooseArgsFor<'line_comment'>;
 	export type Tree = TreeFor<'line_comment'>;
 	export type Kind = 'line_comment';
 }
@@ -9847,6 +10703,8 @@ export namespace BlockComment {
 	export type Config = ConfigFor<'block_comment'>;
 	export type Fluent = FluentFor<'block_comment'>;
 	export type Loose = LooseFor<'block_comment'>;
+	export type BuildArgs = BuildArgsFor<'block_comment'>;
+	export type LooseArgs = LooseArgsFor<'block_comment'>;
 	export type Tree = TreeFor<'block_comment'>;
 	export type Kind = 'block_comment';
 }
@@ -9854,6 +10712,8 @@ export namespace MacroRules {
 	export type Config = ConfigFor<'_macro_rules'>;
 	export type Fluent = FluentFor<'_macro_rules'>;
 	export type Loose = LooseFor<'_macro_rules'>;
+	export type BuildArgs = BuildArgsFor<'_macro_rules'>;
+	export type LooseArgs = LooseArgsFor<'_macro_rules'>;
 	export type Tree = TreeFor<'_macro_rules'>;
 	export type Kind = '_macro_rules';
 }
@@ -9861,6 +10721,8 @@ export namespace EnumVariantListElements {
 	export type Config = ConfigFor<'_enum_variant_list_elements'>;
 	export type Fluent = FluentFor<'_enum_variant_list_elements'>;
 	export type Loose = LooseFor<'_enum_variant_list_elements'>;
+	export type BuildArgs = BuildArgsFor<'_enum_variant_list_elements'>;
+	export type LooseArgs = LooseArgsFor<'_enum_variant_list_elements'>;
 	export type Tree = TreeFor<'_enum_variant_list_elements'>;
 	export type Kind = '_enum_variant_list_elements';
 }
@@ -9868,6 +10730,8 @@ export namespace EnumVariantOptional1 {
 	export type Config = ConfigFor<'_enum_variant_optional1'>;
 	export type Fluent = FluentFor<'_enum_variant_optional1'>;
 	export type Loose = LooseFor<'_enum_variant_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_enum_variant_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_enum_variant_optional1'>;
 	export type Tree = TreeFor<'_enum_variant_optional1'>;
 	export type Kind = '_enum_variant_optional1';
 }
@@ -9875,6 +10739,8 @@ export namespace FieldDeclarationListElements {
 	export type Config = ConfigFor<'_field_declaration_list_elements'>;
 	export type Fluent = FluentFor<'_field_declaration_list_elements'>;
 	export type Loose = LooseFor<'_field_declaration_list_elements'>;
+	export type BuildArgs = BuildArgsFor<'_field_declaration_list_elements'>;
+	export type LooseArgs = LooseArgsFor<'_field_declaration_list_elements'>;
 	export type Tree = TreeFor<'_field_declaration_list_elements'>;
 	export type Kind = '_field_declaration_list_elements';
 }
@@ -9882,6 +10748,8 @@ export namespace OrderedFieldDeclarationListElements {
 	export type Config = ConfigFor<'_ordered_field_declaration_list_elements'>;
 	export type Fluent = FluentFor<'_ordered_field_declaration_list_elements'>;
 	export type Loose = LooseFor<'_ordered_field_declaration_list_elements'>;
+	export type BuildArgs = BuildArgsFor<'_ordered_field_declaration_list_elements'>;
+	export type LooseArgs = LooseArgsFor<'_ordered_field_declaration_list_elements'>;
 	export type Tree = TreeFor<'_ordered_field_declaration_list_elements'>;
 	export type Kind = '_ordered_field_declaration_list_elements';
 }
@@ -9889,6 +10757,8 @@ export namespace ExternCrateDeclarationOptional1 {
 	export type Config = ConfigFor<'_extern_crate_declaration_optional1'>;
 	export type Fluent = FluentFor<'_extern_crate_declaration_optional1'>;
 	export type Loose = LooseFor<'_extern_crate_declaration_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_extern_crate_declaration_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_extern_crate_declaration_optional1'>;
 	export type Tree = TreeFor<'_extern_crate_declaration_optional1'>;
 	export type Kind = '_extern_crate_declaration_optional1';
 }
@@ -9896,6 +10766,8 @@ export namespace FunctionItemOptional1 {
 	export type Config = ConfigFor<'_function_item_optional1'>;
 	export type Fluent = FluentFor<'_function_item_optional1'>;
 	export type Loose = LooseFor<'_function_item_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_function_item_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_function_item_optional1'>;
 	export type Tree = TreeFor<'_function_item_optional1'>;
 	export type Kind = '_function_item_optional1';
 }
@@ -9903,6 +10775,8 @@ export namespace WherePredicates {
 	export type Config = ConfigFor<'_where_predicates'>;
 	export type Fluent = FluentFor<'_where_predicates'>;
 	export type Loose = LooseFor<'_where_predicates'>;
+	export type BuildArgs = BuildArgsFor<'_where_predicates'>;
+	export type LooseArgs = LooseArgsFor<'_where_predicates'>;
 	export type Tree = TreeFor<'_where_predicates'>;
 	export type Kind = '_where_predicates';
 }
@@ -9910,6 +10784,8 @@ export namespace TypeParametersElements {
 	export type Config = ConfigFor<'_type_parameters_elements'>;
 	export type Fluent = FluentFor<'_type_parameters_elements'>;
 	export type Loose = LooseFor<'_type_parameters_elements'>;
+	export type BuildArgs = BuildArgsFor<'_type_parameters_elements'>;
+	export type LooseArgs = LooseArgsFor<'_type_parameters_elements'>;
 	export type Tree = TreeFor<'_type_parameters_elements'>;
 	export type Kind = '_type_parameters_elements';
 }
@@ -9917,6 +10793,8 @@ export namespace ConstParameterOptional1 {
 	export type Config = ConfigFor<'_const_parameter_optional1'>;
 	export type Fluent = FluentFor<'_const_parameter_optional1'>;
 	export type Loose = LooseFor<'_const_parameter_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_const_parameter_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_const_parameter_optional1'>;
 	export type Tree = TreeFor<'_const_parameter_optional1'>;
 	export type Kind = '_const_parameter_optional1';
 }
@@ -9924,6 +10802,8 @@ export namespace TypeParameterOptional1 {
 	export type Config = ConfigFor<'_type_parameter_optional1'>;
 	export type Fluent = FluentFor<'_type_parameter_optional1'>;
 	export type Loose = LooseFor<'_type_parameter_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_type_parameter_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_type_parameter_optional1'>;
 	export type Tree = TreeFor<'_type_parameter_optional1'>;
 	export type Kind = '_type_parameter_optional1';
 }
@@ -9931,6 +10811,8 @@ export namespace LetDeclarationOptional1 {
 	export type Config = ConfigFor<'_let_declaration_optional1'>;
 	export type Fluent = FluentFor<'_let_declaration_optional1'>;
 	export type Loose = LooseFor<'_let_declaration_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_let_declaration_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_let_declaration_optional1'>;
 	export type Tree = TreeFor<'_let_declaration_optional1'>;
 	export type Kind = '_let_declaration_optional1';
 }
@@ -9938,6 +10820,8 @@ export namespace LetDeclarationOptional2 {
 	export type Config = ConfigFor<'_let_declaration_optional2'>;
 	export type Fluent = FluentFor<'_let_declaration_optional2'>;
 	export type Loose = LooseFor<'_let_declaration_optional2'>;
+	export type BuildArgs = BuildArgsFor<'_let_declaration_optional2'>;
+	export type LooseArgs = LooseArgsFor<'_let_declaration_optional2'>;
 	export type Tree = TreeFor<'_let_declaration_optional2'>;
 	export type Kind = '_let_declaration_optional2';
 }
@@ -9945,6 +10829,8 @@ export namespace UseClauses {
 	export type Config = ConfigFor<'_use_clauses'>;
 	export type Fluent = FluentFor<'_use_clauses'>;
 	export type Loose = LooseFor<'_use_clauses'>;
+	export type BuildArgs = BuildArgsFor<'_use_clauses'>;
+	export type LooseArgs = LooseArgsFor<'_use_clauses'>;
 	export type Tree = TreeFor<'_use_clauses'>;
 	export type Kind = '_use_clauses';
 }
@@ -9952,6 +10838,8 @@ export namespace ParametersElements {
 	export type Config = ConfigFor<'_parameters_elements'>;
 	export type Fluent = FluentFor<'_parameters_elements'>;
 	export type Loose = LooseFor<'_parameters_elements'>;
+	export type BuildArgs = BuildArgsFor<'_parameters_elements'>;
+	export type LooseArgs = LooseArgsFor<'_parameters_elements'>;
 	export type Tree = TreeFor<'_parameters_elements'>;
 	export type Kind = '_parameters_elements';
 }
@@ -9959,6 +10847,8 @@ export namespace VariadicParameterOptional1 {
 	export type Config = ConfigFor<'_variadic_parameter_optional1'>;
 	export type Fluent = FluentFor<'_variadic_parameter_optional1'>;
 	export type Loose = LooseFor<'_variadic_parameter_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_variadic_parameter_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_variadic_parameter_optional1'>;
 	export type Tree = TreeFor<'_variadic_parameter_optional1'>;
 	export type Kind = '_variadic_parameter_optional1';
 }
@@ -9966,6 +10856,8 @@ export namespace ArrayTypeOptional1 {
 	export type Config = ConfigFor<'_array_type_optional1'>;
 	export type Fluent = FluentFor<'_array_type_optional1'>;
 	export type Loose = LooseFor<'_array_type_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_array_type_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_array_type_optional1'>;
 	export type Tree = TreeFor<'_array_type_optional1'>;
 	export type Kind = '_array_type_optional1';
 }
@@ -9973,6 +10865,8 @@ export namespace Lifetimes {
 	export type Config = ConfigFor<'_lifetimes'>;
 	export type Fluent = FluentFor<'_lifetimes'>;
 	export type Loose = LooseFor<'_lifetimes'>;
+	export type BuildArgs = BuildArgsFor<'_lifetimes'>;
+	export type LooseArgs = LooseArgsFor<'_lifetimes'>;
 	export type Tree = TreeFor<'_lifetimes'>;
 	export type Kind = '_lifetimes';
 }
@@ -9980,6 +10874,8 @@ export namespace UseBoundsElements {
 	export type Config = ConfigFor<'_use_bounds_elements'>;
 	export type Fluent = FluentFor<'_use_bounds_elements'>;
 	export type Loose = LooseFor<'_use_bounds_elements'>;
+	export type BuildArgs = BuildArgsFor<'_use_bounds_elements'>;
+	export type LooseArgs = LooseArgsFor<'_use_bounds_elements'>;
 	export type Tree = TreeFor<'_use_bounds_elements'>;
 	export type Kind = '_use_bounds_elements';
 }
@@ -9987,6 +10883,8 @@ export namespace TypeArgumentsElements {
 	export type Config = ConfigFor<'_type_arguments_elements'>;
 	export type Fluent = FluentFor<'_type_arguments_elements'>;
 	export type Loose = LooseFor<'_type_arguments_elements'>;
+	export type BuildArgs = BuildArgsFor<'_type_arguments_elements'>;
+	export type LooseArgs = LooseArgsFor<'_type_arguments_elements'>;
 	export type Tree = TreeFor<'_type_arguments_elements'>;
 	export type Kind = '_type_arguments_elements';
 }
@@ -9994,6 +10892,8 @@ export namespace AbstractTypeOptional1 {
 	export type Config = ConfigFor<'_abstract_type_optional1'>;
 	export type Fluent = FluentFor<'_abstract_type_optional1'>;
 	export type Loose = LooseFor<'_abstract_type_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_abstract_type_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_abstract_type_optional1'>;
 	export type Tree = TreeFor<'_abstract_type_optional1'>;
 	export type Kind = '_abstract_type_optional1';
 }
@@ -10001,6 +10901,8 @@ export namespace ArgumentsElements {
 	export type Config = ConfigFor<'_arguments_elements'>;
 	export type Fluent = FluentFor<'_arguments_elements'>;
 	export type Loose = LooseFor<'_arguments_elements'>;
+	export type BuildArgs = BuildArgsFor<'_arguments_elements'>;
+	export type LooseArgs = LooseArgsFor<'_arguments_elements'>;
 	export type Tree = TreeFor<'_arguments_elements'>;
 	export type Kind = '_arguments_elements';
 }
@@ -10008,6 +10910,8 @@ export namespace FieldInitializerListElements {
 	export type Config = ConfigFor<'_field_initializer_list_elements'>;
 	export type Fluent = FluentFor<'_field_initializer_list_elements'>;
 	export type Loose = LooseFor<'_field_initializer_list_elements'>;
+	export type BuildArgs = BuildArgsFor<'_field_initializer_list_elements'>;
+	export type LooseArgs = LooseArgsFor<'_field_initializer_list_elements'>;
 	export type Tree = TreeFor<'_field_initializer_list_elements'>;
 	export type Kind = '_field_initializer_list_elements';
 }
@@ -10015,6 +10919,8 @@ export namespace MatchPatternOptional1 {
 	export type Config = ConfigFor<'_match_pattern_optional1'>;
 	export type Fluent = FluentFor<'_match_pattern_optional1'>;
 	export type Loose = LooseFor<'_match_pattern_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_match_pattern_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_match_pattern_optional1'>;
 	export type Tree = TreeFor<'_match_pattern_optional1'>;
 	export type Kind = '_match_pattern_optional1';
 }
@@ -10022,6 +10928,8 @@ export namespace WhileExpressionOptional1 {
 	export type Config = ConfigFor<'_while_expression_optional1'>;
 	export type Fluent = FluentFor<'_while_expression_optional1'>;
 	export type Loose = LooseFor<'_while_expression_optional1'>;
+	export type BuildArgs = BuildArgsFor<'_while_expression_optional1'>;
+	export type LooseArgs = LooseArgsFor<'_while_expression_optional1'>;
 	export type Tree = TreeFor<'_while_expression_optional1'>;
 	export type Kind = '_while_expression_optional1';
 }
@@ -10029,6 +10937,8 @@ export namespace TuplePatternElements {
 	export type Config = ConfigFor<'_tuple_pattern_elements'>;
 	export type Fluent = FluentFor<'_tuple_pattern_elements'>;
 	export type Loose = LooseFor<'_tuple_pattern_elements'>;
+	export type BuildArgs = BuildArgsFor<'_tuple_pattern_elements'>;
+	export type LooseArgs = LooseArgsFor<'_tuple_pattern_elements'>;
 	export type Tree = TreeFor<'_tuple_pattern_elements'>;
 	export type Kind = '_tuple_pattern_elements';
 }
@@ -10036,6 +10946,8 @@ export namespace Patterns {
 	export type Config = ConfigFor<'_patterns'>;
 	export type Fluent = FluentFor<'_patterns'>;
 	export type Loose = LooseFor<'_patterns'>;
+	export type BuildArgs = BuildArgsFor<'_patterns'>;
+	export type LooseArgs = LooseArgsFor<'_patterns'>;
 	export type Tree = TreeFor<'_patterns'>;
 	export type Kind = '_patterns';
 }
@@ -10043,6 +10955,8 @@ export namespace StructPatternElements {
 	export type Config = ConfigFor<'_struct_pattern_elements'>;
 	export type Fluent = FluentFor<'_struct_pattern_elements'>;
 	export type Loose = LooseFor<'_struct_pattern_elements'>;
+	export type BuildArgs = BuildArgsFor<'_struct_pattern_elements'>;
+	export type LooseArgs = LooseArgsFor<'_struct_pattern_elements'>;
 	export type Tree = TreeFor<'_struct_pattern_elements'>;
 	export type Kind = '_struct_pattern_elements';
 }
@@ -10050,6 +10964,8 @@ export namespace RangePatternArm2 {
 	export type Config = ConfigFor<'_range_pattern_arm2'>;
 	export type Fluent = FluentFor<'_range_pattern_arm2'>;
 	export type Loose = LooseFor<'_range_pattern_arm2'>;
+	export type BuildArgs = BuildArgsFor<'_range_pattern_arm2'>;
+	export type LooseArgs = LooseArgsFor<'_range_pattern_arm2'>;
 	export type Tree = TreeFor<'_range_pattern_arm2'>;
 	export type Kind = '_range_pattern_arm2';
 }
@@ -10057,6 +10973,8 @@ export namespace AttributeArm {
 	export type Config = ConfigFor<'_attribute_arm'>;
 	export type Fluent = FluentFor<'_attribute_arm'>;
 	export type Loose = LooseFor<'_attribute_arm'>;
+	export type BuildArgs = BuildArgsFor<'_attribute_arm'>;
+	export type LooseArgs = LooseArgsFor<'_attribute_arm'>;
 	export type Tree = TreeFor<'_attribute_arm'>;
 	export type Kind = '_attribute_arm';
 }
@@ -10064,6 +10982,8 @@ export namespace VisibilityModifierGroup {
 	export type Config = ConfigFor<'_visibility_modifier_group'>;
 	export type Fluent = FluentFor<'_visibility_modifier_group'>;
 	export type Loose = LooseFor<'_visibility_modifier_group'>;
+	export type BuildArgs = BuildArgsFor<'_visibility_modifier_group'>;
+	export type LooseArgs = LooseArgsFor<'_visibility_modifier_group'>;
 	export type Tree = TreeFor<'_visibility_modifier_group'>;
 	export type Kind = '_visibility_modifier_group';
 }
@@ -10071,6 +10991,8 @@ export namespace ArrayExpressionArm {
 	export type Config = ConfigFor<'_array_expression_arm'>;
 	export type Fluent = FluentFor<'_array_expression_arm'>;
 	export type Loose = LooseFor<'_array_expression_arm'>;
+	export type BuildArgs = BuildArgsFor<'_array_expression_arm'>;
+	export type LooseArgs = LooseArgsFor<'_array_expression_arm'>;
 	export type Tree = TreeFor<'_array_expression_arm'>;
 	export type Kind = '_array_expression_arm';
 }
@@ -10078,6 +11000,8 @@ export namespace BlockCommentArm {
 	export type Config = ConfigFor<'_block_comment_arm'>;
 	export type Fluent = FluentFor<'_block_comment_arm'>;
 	export type Loose = LooseFor<'_block_comment_arm'>;
+	export type BuildArgs = BuildArgsFor<'_block_comment_arm'>;
+	export type LooseArgs = LooseArgsFor<'_block_comment_arm'>;
 	export type Tree = TreeFor<'_block_comment_arm'>;
 	export type Kind = '_block_comment_arm';
 }
@@ -10085,6 +11009,8 @@ export namespace TupleTypeElements {
 	export type Config = ConfigFor<'_tuple_type_elements'>;
 	export type Fluent = FluentFor<'_tuple_type_elements'>;
 	export type Loose = LooseFor<'_tuple_type_elements'>;
+	export type BuildArgs = BuildArgsFor<'_tuple_type_elements'>;
+	export type LooseArgs = LooseArgsFor<'_tuple_type_elements'>;
 	export type Tree = TreeFor<'_tuple_type_elements'>;
 	export type Kind = '_tuple_type_elements';
 }
@@ -10092,6 +11018,8 @@ export namespace TupleExpressionElements {
 	export type Config = ConfigFor<'_tuple_expression_elements'>;
 	export type Fluent = FluentFor<'_tuple_expression_elements'>;
 	export type Loose = LooseFor<'_tuple_expression_elements'>;
+	export type BuildArgs = BuildArgsFor<'_tuple_expression_elements'>;
+	export type LooseArgs = LooseArgsFor<'_tuple_expression_elements'>;
 	export type Tree = TreeFor<'_tuple_expression_elements'>;
 	export type Kind = '_tuple_expression_elements';
 }
@@ -10099,6 +11027,8 @@ export namespace UseWildcardClause {
 	export type Config = ConfigFor<'_use_wildcard_clause'>;
 	export type Fluent = FluentFor<'_use_wildcard_clause'>;
 	export type Loose = LooseFor<'_use_wildcard_clause'>;
+	export type BuildArgs = BuildArgsFor<'_use_wildcard_clause'>;
+	export type LooseArgs = LooseArgsFor<'_use_wildcard_clause'>;
 	export type Tree = TreeFor<'_use_wildcard_clause'>;
 	export type Kind = '_use_wildcard_clause';
 }
@@ -10106,6 +11036,8 @@ export namespace ReferenceExpressionRawMut {
 	export type Config = ConfigFor<'_reference_expression_raw_mut'>;
 	export type Fluent = FluentFor<'_reference_expression_raw_mut'>;
 	export type Loose = LooseFor<'_reference_expression_raw_mut'>;
+	export type BuildArgs = BuildArgsFor<'_reference_expression_raw_mut'>;
+	export type LooseArgs = LooseArgsFor<'_reference_expression_raw_mut'>;
 	export type Tree = TreeFor<'_reference_expression_raw_mut'>;
 	export type Kind = '_reference_expression_raw_mut';
 }
@@ -10113,6 +11045,8 @@ export namespace ImplItemBody {
 	export type Config = ConfigFor<'_impl_item_body'>;
 	export type Fluent = FluentFor<'_impl_item_body'>;
 	export type Loose = LooseFor<'_impl_item_body'>;
+	export type BuildArgs = BuildArgsFor<'_impl_item_body'>;
+	export type LooseArgs = LooseArgsFor<'_impl_item_body'>;
 	export type Tree = TreeFor<'_impl_item_body'>;
 	export type Kind = '_impl_item_body';
 }
@@ -10120,6 +11054,8 @@ export namespace ImplItemPositiveClause {
 	export type Config = ConfigFor<'_impl_item_positive_clause'>;
 	export type Fluent = FluentFor<'_impl_item_positive_clause'>;
 	export type Loose = LooseFor<'_impl_item_positive_clause'>;
+	export type BuildArgs = BuildArgsFor<'_impl_item_positive_clause'>;
+	export type LooseArgs = LooseArgsFor<'_impl_item_positive_clause'>;
 	export type Tree = TreeFor<'_impl_item_positive_clause'>;
 	export type Kind = '_impl_item_positive_clause';
 }
@@ -10127,6 +11063,8 @@ export namespace ImplItemNegativeClause {
 	export type Config = ConfigFor<'_impl_item_negative_clause'>;
 	export type Fluent = FluentFor<'_impl_item_negative_clause'>;
 	export type Loose = LooseFor<'_impl_item_negative_clause'>;
+	export type BuildArgs = BuildArgsFor<'_impl_item_negative_clause'>;
+	export type LooseArgs = LooseArgsFor<'_impl_item_negative_clause'>;
 	export type Tree = TreeFor<'_impl_item_negative_clause'>;
 	export type Kind = '_impl_item_negative_clause';
 }
@@ -10134,6 +11072,8 @@ export namespace ArrayExpressionSemi {
 	export type Config = ConfigFor<'_array_expression_semi'>;
 	export type Fluent = FluentFor<'_array_expression_semi'>;
 	export type Loose = LooseFor<'_array_expression_semi'>;
+	export type BuildArgs = BuildArgsFor<'_array_expression_semi'>;
+	export type LooseArgs = LooseArgsFor<'_array_expression_semi'>;
 	export type Tree = TreeFor<'_array_expression_semi'>;
 	export type Kind = '_array_expression_semi';
 }
@@ -10141,6 +11081,8 @@ export namespace ArrayExpressionList {
 	export type Config = ConfigFor<'_array_expression_list'>;
 	export type Fluent = FluentFor<'_array_expression_list'>;
 	export type Loose = LooseFor<'_array_expression_list'>;
+	export type BuildArgs = BuildArgsFor<'_array_expression_list'>;
+	export type LooseArgs = LooseArgsFor<'_array_expression_list'>;
 	export type Tree = TreeFor<'_array_expression_list'>;
 	export type Kind = '_array_expression_list';
 }
@@ -10148,6 +11090,8 @@ export namespace ClosureExpressionBlock {
 	export type Config = ConfigFor<'_closure_expression_block'>;
 	export type Fluent = FluentFor<'_closure_expression_block'>;
 	export type Loose = LooseFor<'_closure_expression_block'>;
+	export type BuildArgs = BuildArgsFor<'_closure_expression_block'>;
+	export type LooseArgs = LooseArgsFor<'_closure_expression_block'>;
 	export type Tree = TreeFor<'_closure_expression_block'>;
 	export type Kind = '_closure_expression_block';
 }
@@ -10155,6 +11099,8 @@ export namespace ClosureExpressionExpr {
 	export type Config = ConfigFor<'_closure_expression_expr'>;
 	export type Fluent = FluentFor<'_closure_expression_expr'>;
 	export type Loose = LooseFor<'_closure_expression_expr'>;
+	export type BuildArgs = BuildArgsFor<'_closure_expression_expr'>;
+	export type LooseArgs = LooseArgsFor<'_closure_expression_expr'>;
 	export type Tree = TreeFor<'_closure_expression_expr'>;
 	export type Kind = '_closure_expression_expr';
 }
@@ -10162,6 +11108,8 @@ export namespace FieldPatternNamed {
 	export type Config = ConfigFor<'_field_pattern_named'>;
 	export type Fluent = FluentFor<'_field_pattern_named'>;
 	export type Loose = LooseFor<'_field_pattern_named'>;
+	export type BuildArgs = BuildArgsFor<'_field_pattern_named'>;
+	export type LooseArgs = LooseArgsFor<'_field_pattern_named'>;
 	export type Tree = TreeFor<'_field_pattern_named'>;
 	export type Kind = '_field_pattern_named';
 }
@@ -10169,6 +11117,8 @@ export namespace FunctionTypeTraitForm {
 	export type Config = ConfigFor<'_function_type_trait_form'>;
 	export type Fluent = FluentFor<'_function_type_trait_form'>;
 	export type Loose = LooseFor<'_function_type_trait_form'>;
+	export type BuildArgs = BuildArgsFor<'_function_type_trait_form'>;
+	export type LooseArgs = LooseArgsFor<'_function_type_trait_form'>;
 	export type Tree = TreeFor<'_function_type_trait_form'>;
 	export type Kind = '_function_type_trait_form';
 }
@@ -10176,6 +11126,8 @@ export namespace FunctionTypeFnForm {
 	export type Config = ConfigFor<'_function_type_fn_form'>;
 	export type Fluent = FluentFor<'_function_type_fn_form'>;
 	export type Loose = LooseFor<'_function_type_fn_form'>;
+	export type BuildArgs = BuildArgsFor<'_function_type_fn_form'>;
+	export type LooseArgs = LooseArgsFor<'_function_type_fn_form'>;
 	export type Tree = TreeFor<'_function_type_fn_form'>;
 	export type Kind = '_function_type_fn_form';
 }
@@ -10183,6 +11135,8 @@ export namespace MacroDefinitionParen {
 	export type Config = ConfigFor<'_macro_definition_paren'>;
 	export type Fluent = FluentFor<'_macro_definition_paren'>;
 	export type Loose = LooseFor<'_macro_definition_paren'>;
+	export type BuildArgs = BuildArgsFor<'_macro_definition_paren'>;
+	export type LooseArgs = LooseArgsFor<'_macro_definition_paren'>;
 	export type Tree = TreeFor<'_macro_definition_paren'>;
 	export type Kind = '_macro_definition_paren';
 }
@@ -10190,6 +11144,8 @@ export namespace MacroDefinitionBracket {
 	export type Config = ConfigFor<'_macro_definition_bracket'>;
 	export type Fluent = FluentFor<'_macro_definition_bracket'>;
 	export type Loose = LooseFor<'_macro_definition_bracket'>;
+	export type BuildArgs = BuildArgsFor<'_macro_definition_bracket'>;
+	export type LooseArgs = LooseArgsFor<'_macro_definition_bracket'>;
 	export type Tree = TreeFor<'_macro_definition_bracket'>;
 	export type Kind = '_macro_definition_bracket';
 }
@@ -10197,6 +11153,8 @@ export namespace MacroDefinitionBrace {
 	export type Config = ConfigFor<'_macro_definition_brace'>;
 	export type Fluent = FluentFor<'_macro_definition_brace'>;
 	export type Loose = LooseFor<'_macro_definition_brace'>;
+	export type BuildArgs = BuildArgsFor<'_macro_definition_brace'>;
+	export type LooseArgs = LooseArgsFor<'_macro_definition_brace'>;
 	export type Tree = TreeFor<'_macro_definition_brace'>;
 	export type Kind = '_macro_definition_brace';
 }
@@ -10204,6 +11162,8 @@ export namespace OrPatternBinary {
 	export type Config = ConfigFor<'_or_pattern_binary'>;
 	export type Fluent = FluentFor<'_or_pattern_binary'>;
 	export type Loose = LooseFor<'_or_pattern_binary'>;
+	export type BuildArgs = BuildArgsFor<'_or_pattern_binary'>;
+	export type LooseArgs = LooseArgsFor<'_or_pattern_binary'>;
 	export type Tree = TreeFor<'_or_pattern_binary'>;
 	export type Kind = '_or_pattern_binary';
 }
@@ -10211,6 +11171,8 @@ export namespace OrPatternPrefix {
 	export type Config = ConfigFor<'_or_pattern_prefix'>;
 	export type Fluent = FluentFor<'_or_pattern_prefix'>;
 	export type Loose = LooseFor<'_or_pattern_prefix'>;
+	export type BuildArgs = BuildArgsFor<'_or_pattern_prefix'>;
+	export type LooseArgs = LooseArgsFor<'_or_pattern_prefix'>;
 	export type Tree = TreeFor<'_or_pattern_prefix'>;
 	export type Kind = '_or_pattern_prefix';
 }
@@ -10218,6 +11180,8 @@ export namespace RangeExpressionBinary {
 	export type Config = ConfigFor<'_range_expression_binary'>;
 	export type Fluent = FluentFor<'_range_expression_binary'>;
 	export type Loose = LooseFor<'_range_expression_binary'>;
+	export type BuildArgs = BuildArgsFor<'_range_expression_binary'>;
+	export type LooseArgs = LooseArgsFor<'_range_expression_binary'>;
 	export type Tree = TreeFor<'_range_expression_binary'>;
 	export type Kind = '_range_expression_binary';
 }
@@ -10225,6 +11189,8 @@ export namespace RangeExpressionPostfix {
 	export type Config = ConfigFor<'_range_expression_postfix'>;
 	export type Fluent = FluentFor<'_range_expression_postfix'>;
 	export type Loose = LooseFor<'_range_expression_postfix'>;
+	export type BuildArgs = BuildArgsFor<'_range_expression_postfix'>;
+	export type LooseArgs = LooseArgsFor<'_range_expression_postfix'>;
 	export type Tree = TreeFor<'_range_expression_postfix'>;
 	export type Kind = '_range_expression_postfix';
 }
@@ -10232,6 +11198,8 @@ export namespace RangeExpressionPrefix {
 	export type Config = ConfigFor<'_range_expression_prefix'>;
 	export type Fluent = FluentFor<'_range_expression_prefix'>;
 	export type Loose = LooseFor<'_range_expression_prefix'>;
+	export type BuildArgs = BuildArgsFor<'_range_expression_prefix'>;
+	export type LooseArgs = LooseArgsFor<'_range_expression_prefix'>;
 	export type Tree = TreeFor<'_range_expression_prefix'>;
 	export type Kind = '_range_expression_prefix';
 }
@@ -10239,6 +11207,8 @@ export namespace RangePatternPrefix {
 	export type Config = ConfigFor<'_range_pattern_prefix'>;
 	export type Fluent = FluentFor<'_range_pattern_prefix'>;
 	export type Loose = LooseFor<'_range_pattern_prefix'>;
+	export type BuildArgs = BuildArgsFor<'_range_pattern_prefix'>;
+	export type LooseArgs = LooseArgsFor<'_range_pattern_prefix'>;
 	export type Tree = TreeFor<'_range_pattern_prefix'>;
 	export type Kind = '_range_pattern_prefix';
 }
@@ -10246,6 +11216,8 @@ export namespace RangePatternLeftWithRight {
 	export type Config = ConfigFor<'_range_pattern_left_with_right'>;
 	export type Fluent = FluentFor<'_range_pattern_left_with_right'>;
 	export type Loose = LooseFor<'_range_pattern_left_with_right'>;
+	export type BuildArgs = BuildArgsFor<'_range_pattern_left_with_right'>;
+	export type LooseArgs = LooseArgsFor<'_range_pattern_left_with_right'>;
 	export type Tree = TreeFor<'_range_pattern_left_with_right'>;
 	export type Kind = '_range_pattern_left_with_right';
 }
@@ -10253,6 +11225,8 @@ export namespace StructItemBrace {
 	export type Config = ConfigFor<'_struct_item_brace'>;
 	export type Fluent = FluentFor<'_struct_item_brace'>;
 	export type Loose = LooseFor<'_struct_item_brace'>;
+	export type BuildArgs = BuildArgsFor<'_struct_item_brace'>;
+	export type LooseArgs = LooseArgsFor<'_struct_item_brace'>;
 	export type Tree = TreeFor<'_struct_item_brace'>;
 	export type Kind = '_struct_item_brace';
 }
@@ -10260,6 +11234,8 @@ export namespace StructItemTuple {
 	export type Config = ConfigFor<'_struct_item_tuple'>;
 	export type Fluent = FluentFor<'_struct_item_tuple'>;
 	export type Loose = LooseFor<'_struct_item_tuple'>;
+	export type BuildArgs = BuildArgsFor<'_struct_item_tuple'>;
+	export type LooseArgs = LooseArgsFor<'_struct_item_tuple'>;
 	export type Tree = TreeFor<'_struct_item_tuple'>;
 	export type Kind = '_struct_item_tuple';
 }
@@ -10267,6 +11243,8 @@ export namespace VisibilityModifierPub {
 	export type Config = ConfigFor<'_visibility_modifier_pub'>;
 	export type Fluent = FluentFor<'_visibility_modifier_pub'>;
 	export type Loose = LooseFor<'_visibility_modifier_pub'>;
+	export type BuildArgs = BuildArgsFor<'_visibility_modifier_pub'>;
+	export type LooseArgs = LooseArgsFor<'_visibility_modifier_pub'>;
 	export type Tree = TreeFor<'_visibility_modifier_pub'>;
 	export type Kind = '_visibility_modifier_pub';
 }
@@ -10274,6 +11252,8 @@ export namespace VisibilityModifierInPath {
 	export type Config = ConfigFor<'_visibility_modifier_in_path'>;
 	export type Fluent = FluentFor<'_visibility_modifier_in_path'>;
 	export type Loose = LooseFor<'_visibility_modifier_in_path'>;
+	export type BuildArgs = BuildArgsFor<'_visibility_modifier_in_path'>;
+	export type LooseArgs = LooseArgsFor<'_visibility_modifier_in_path'>;
 	export type Tree = TreeFor<'_visibility_modifier_in_path'>;
 	export type Kind = '_visibility_modifier_in_path';
 }
@@ -10281,6 +11261,8 @@ export namespace ExpressionStatementWithSemi {
 	export type Config = ConfigFor<'_expression_statement_with_semi'>;
 	export type Fluent = FluentFor<'_expression_statement_with_semi'>;
 	export type Loose = LooseFor<'_expression_statement_with_semi'>;
+	export type BuildArgs = BuildArgsFor<'_expression_statement_with_semi'>;
+	export type LooseArgs = LooseArgsFor<'_expression_statement_with_semi'>;
 	export type Tree = TreeFor<'_expression_statement_with_semi'>;
 	export type Kind = '_expression_statement_with_semi';
 }
@@ -10288,6 +11270,8 @@ export namespace MatchArmWithComma {
 	export type Config = ConfigFor<'_match_arm_with_comma'>;
 	export type Fluent = FluentFor<'_match_arm_with_comma'>;
 	export type Loose = LooseFor<'_match_arm_with_comma'>;
+	export type BuildArgs = BuildArgsFor<'_match_arm_with_comma'>;
+	export type LooseArgs = LooseArgsFor<'_match_arm_with_comma'>;
 	export type Tree = TreeFor<'_match_arm_with_comma'>;
 	export type Kind = '_match_arm_with_comma';
 }
@@ -10295,6 +11279,8 @@ export namespace LineCommentDoc {
 	export type Config = ConfigFor<'_line_comment_doc'>;
 	export type Fluent = FluentFor<'_line_comment_doc'>;
 	export type Loose = LooseFor<'_line_comment_doc'>;
+	export type BuildArgs = BuildArgsFor<'_line_comment_doc'>;
+	export type LooseArgs = LooseArgsFor<'_line_comment_doc'>;
 	export type Tree = TreeFor<'_line_comment_doc'>;
 	export type Kind = '_line_comment_doc';
 }
@@ -10302,6 +11288,8 @@ export namespace TokenTreePatternParen {
 	export type Config = ConfigFor<'_token_tree_pattern_paren'>;
 	export type Fluent = FluentFor<'_token_tree_pattern_paren'>;
 	export type Loose = LooseFor<'_token_tree_pattern_paren'>;
+	export type BuildArgs = BuildArgsFor<'_token_tree_pattern_paren'>;
+	export type LooseArgs = LooseArgsFor<'_token_tree_pattern_paren'>;
 	export type Tree = TreeFor<'_token_tree_pattern_paren'>;
 	export type Kind = '_token_tree_pattern_paren';
 }
@@ -10309,6 +11297,8 @@ export namespace TokenTreePatternBracket {
 	export type Config = ConfigFor<'_token_tree_pattern_bracket'>;
 	export type Fluent = FluentFor<'_token_tree_pattern_bracket'>;
 	export type Loose = LooseFor<'_token_tree_pattern_bracket'>;
+	export type BuildArgs = BuildArgsFor<'_token_tree_pattern_bracket'>;
+	export type LooseArgs = LooseArgsFor<'_token_tree_pattern_bracket'>;
 	export type Tree = TreeFor<'_token_tree_pattern_bracket'>;
 	export type Kind = '_token_tree_pattern_bracket';
 }
@@ -10316,6 +11306,8 @@ export namespace TokenTreePatternBrace {
 	export type Config = ConfigFor<'_token_tree_pattern_brace'>;
 	export type Fluent = FluentFor<'_token_tree_pattern_brace'>;
 	export type Loose = LooseFor<'_token_tree_pattern_brace'>;
+	export type BuildArgs = BuildArgsFor<'_token_tree_pattern_brace'>;
+	export type LooseArgs = LooseArgsFor<'_token_tree_pattern_brace'>;
 	export type Tree = TreeFor<'_token_tree_pattern_brace'>;
 	export type Kind = '_token_tree_pattern_brace';
 }
@@ -10323,6 +11315,8 @@ export namespace TokenTreeParen {
 	export type Config = ConfigFor<'_token_tree_paren'>;
 	export type Fluent = FluentFor<'_token_tree_paren'>;
 	export type Loose = LooseFor<'_token_tree_paren'>;
+	export type BuildArgs = BuildArgsFor<'_token_tree_paren'>;
+	export type LooseArgs = LooseArgsFor<'_token_tree_paren'>;
 	export type Tree = TreeFor<'_token_tree_paren'>;
 	export type Kind = '_token_tree_paren';
 }
@@ -10330,6 +11324,8 @@ export namespace TokenTreeBracket {
 	export type Config = ConfigFor<'_token_tree_bracket'>;
 	export type Fluent = FluentFor<'_token_tree_bracket'>;
 	export type Loose = LooseFor<'_token_tree_bracket'>;
+	export type BuildArgs = BuildArgsFor<'_token_tree_bracket'>;
+	export type LooseArgs = LooseArgsFor<'_token_tree_bracket'>;
 	export type Tree = TreeFor<'_token_tree_bracket'>;
 	export type Kind = '_token_tree_bracket';
 }
@@ -10337,6 +11333,8 @@ export namespace TokenTreeBrace {
 	export type Config = ConfigFor<'_token_tree_brace'>;
 	export type Fluent = FluentFor<'_token_tree_brace'>;
 	export type Loose = LooseFor<'_token_tree_brace'>;
+	export type BuildArgs = BuildArgsFor<'_token_tree_brace'>;
+	export type LooseArgs = LooseArgsFor<'_token_tree_brace'>;
 	export type Tree = TreeFor<'_token_tree_brace'>;
 	export type Kind = '_token_tree_brace';
 }
@@ -10344,6 +11342,8 @@ export namespace DelimTokenTreeParen {
 	export type Config = ConfigFor<'_delim_token_tree_paren'>;
 	export type Fluent = FluentFor<'_delim_token_tree_paren'>;
 	export type Loose = LooseFor<'_delim_token_tree_paren'>;
+	export type BuildArgs = BuildArgsFor<'_delim_token_tree_paren'>;
+	export type LooseArgs = LooseArgsFor<'_delim_token_tree_paren'>;
 	export type Tree = TreeFor<'_delim_token_tree_paren'>;
 	export type Kind = '_delim_token_tree_paren';
 }
@@ -10351,6 +11351,8 @@ export namespace DelimTokenTreeBracket {
 	export type Config = ConfigFor<'_delim_token_tree_bracket'>;
 	export type Fluent = FluentFor<'_delim_token_tree_bracket'>;
 	export type Loose = LooseFor<'_delim_token_tree_bracket'>;
+	export type BuildArgs = BuildArgsFor<'_delim_token_tree_bracket'>;
+	export type LooseArgs = LooseArgsFor<'_delim_token_tree_bracket'>;
 	export type Tree = TreeFor<'_delim_token_tree_bracket'>;
 	export type Kind = '_delim_token_tree_bracket';
 }
@@ -10358,6 +11360,8 @@ export namespace DelimTokenTreeBrace {
 	export type Config = ConfigFor<'_delim_token_tree_brace'>;
 	export type Fluent = FluentFor<'_delim_token_tree_brace'>;
 	export type Loose = LooseFor<'_delim_token_tree_brace'>;
+	export type BuildArgs = BuildArgsFor<'_delim_token_tree_brace'>;
+	export type LooseArgs = LooseArgsFor<'_delim_token_tree_brace'>;
 	export type Tree = TreeFor<'_delim_token_tree_brace'>;
 	export type Kind = '_delim_token_tree_brace';
 }
@@ -10365,6 +11369,8 @@ export namespace AttributedFieldDeclaration {
 	export type Config = ConfigFor<'_attributed_field_declaration'>;
 	export type Fluent = FluentFor<'_attributed_field_declaration'>;
 	export type Loose = LooseFor<'_attributed_field_declaration'>;
+	export type BuildArgs = BuildArgsFor<'_attributed_field_declaration'>;
+	export type LooseArgs = LooseArgsFor<'_attributed_field_declaration'>;
 	export type Tree = TreeFor<'_attributed_field_declaration'>;
 	export type Kind = '_attributed_field_declaration';
 }
@@ -10372,6 +11378,8 @@ export namespace AttributedEnumVariant {
 	export type Config = ConfigFor<'_attributed_enum_variant'>;
 	export type Fluent = FluentFor<'_attributed_enum_variant'>;
 	export type Loose = LooseFor<'_attributed_enum_variant'>;
+	export type BuildArgs = BuildArgsFor<'_attributed_enum_variant'>;
+	export type LooseArgs = LooseArgsFor<'_attributed_enum_variant'>;
 	export type Tree = TreeFor<'_attributed_enum_variant'>;
 	export type Kind = '_attributed_enum_variant';
 }
@@ -10379,6 +11387,8 @@ export namespace AttributedParameter {
 	export type Config = ConfigFor<'_attributed_parameter'>;
 	export type Fluent = FluentFor<'_attributed_parameter'>;
 	export type Loose = LooseFor<'_attributed_parameter'>;
+	export type BuildArgs = BuildArgsFor<'_attributed_parameter'>;
+	export type LooseArgs = LooseArgsFor<'_attributed_parameter'>;
 	export type Tree = TreeFor<'_attributed_parameter'>;
 	export type Kind = '_attributed_parameter';
 }
@@ -10386,6 +11396,8 @@ export namespace AttributedTypeParameter {
 	export type Config = ConfigFor<'_attributed_type_parameter'>;
 	export type Fluent = FluentFor<'_attributed_type_parameter'>;
 	export type Loose = LooseFor<'_attributed_type_parameter'>;
+	export type BuildArgs = BuildArgsFor<'_attributed_type_parameter'>;
+	export type LooseArgs = LooseArgsFor<'_attributed_type_parameter'>;
 	export type Tree = TreeFor<'_attributed_type_parameter'>;
 	export type Kind = '_attributed_type_parameter';
 }
@@ -10393,6 +11405,8 @@ export namespace AttributedArgument {
 	export type Config = ConfigFor<'_attributed_argument'>;
 	export type Fluent = FluentFor<'_attributed_argument'>;
 	export type Loose = LooseFor<'_attributed_argument'>;
+	export type BuildArgs = BuildArgsFor<'_attributed_argument'>;
+	export type LooseArgs = LooseArgsFor<'_attributed_argument'>;
 	export type Tree = TreeFor<'_attributed_argument'>;
 	export type Kind = '_attributed_argument';
 }
@@ -10400,6 +11414,8 @@ export namespace AttributedOrderedField {
 	export type Config = ConfigFor<'_attributed_ordered_field'>;
 	export type Fluent = FluentFor<'_attributed_ordered_field'>;
 	export type Loose = LooseFor<'_attributed_ordered_field'>;
+	export type BuildArgs = BuildArgsFor<'_attributed_ordered_field'>;
+	export type LooseArgs = LooseArgsFor<'_attributed_ordered_field'>;
 	export type Tree = TreeFor<'_attributed_ordered_field'>;
 	export type Kind = '_attributed_ordered_field';
 }
@@ -10407,6 +11423,8 @@ export namespace TypeArgument {
 	export type Config = ConfigFor<'_type_argument'>;
 	export type Fluent = FluentFor<'_type_argument'>;
 	export type Loose = LooseFor<'_type_argument'>;
+	export type BuildArgs = BuildArgsFor<'_type_argument'>;
+	export type LooseArgs = LooseArgsFor<'_type_argument'>;
 	export type Tree = TreeFor<'_type_argument'>;
 	export type Kind = '_type_argument';
 }
@@ -10414,6 +11432,8 @@ export namespace MatchBlockArms {
 	export type Config = ConfigFor<'_match_block_arms'>;
 	export type Fluent = FluentFor<'_match_block_arms'>;
 	export type Loose = LooseFor<'_match_block_arms'>;
+	export type BuildArgs = BuildArgsFor<'_match_block_arms'>;
+	export type LooseArgs = LooseArgsFor<'_match_block_arms'>;
 	export type Tree = TreeFor<'_match_block_arms'>;
 	export type Kind = '_match_block_arms';
 }
@@ -10421,6 +11441,8 @@ export namespace VisibilityModifierPubParens {
 	export type Config = ConfigFor<'_visibility_modifier_pub_parens'>;
 	export type Fluent = FluentFor<'_visibility_modifier_pub_parens'>;
 	export type Loose = LooseFor<'_visibility_modifier_pub_parens'>;
+	export type BuildArgs = BuildArgsFor<'_visibility_modifier_pub_parens'>;
+	export type LooseArgs = LooseArgsFor<'_visibility_modifier_pub_parens'>;
 	export type Tree = TreeFor<'_visibility_modifier_pub_parens'>;
 	export type Kind = '_visibility_modifier_pub_parens';
 }

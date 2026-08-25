@@ -588,10 +588,30 @@ type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHints
  *  never reach it. */
 type FromInputHintsOf<T> = T extends { readonly __fromInputHints__?: infer H } ? H : {};
 
-/** @internal — from()-side field input: from-hints beat config hints beat storage. */
-type FromFieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof FromInputHintsOf<T>
-	? FromInputHintsOf<T>[K]
-	: FieldInputType<T, K>;
+/** @internal — from()-side field input: a from-hint ADDS accepted shapes to
+ *  the config surface, it never removes them. The loose surface is a
+ *  superset of the strict one by construction, so a hint that mentions only
+ *  the node form (e.g. `MutableSpecifier | 'mut'`) cannot drop the config
+ *  hint's own widening (`BooleanKeyword<'mut'>` → `boolean`).
+ *
+ *  Each projection is widened on its own before the union: brands
+ *  (boolean-keyword, bitflag, kind-enum) are detected distributively, so a
+ *  pre-union `MutableSpecifier | 'mut' | BooleanKeyword<'mut'>` would answer
+ *  `boolean` to `IsBooleanKeywordSlot` and lose the brand's projection
+ *  entirely. */
+type WidenFromFieldValue<
+	T,
+	K extends keyof FieldsOf<T>,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends string[]
+> = K extends keyof FromInputHintsOf<T>
+	?
+			| WidenSlotValue<FromInputHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
+			| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
+	: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
@@ -849,11 +869,11 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]: WidenSlotValue<FromFieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]: WidenFromFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]?: WidenSlotValue<FromFieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]?: WidenFromFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }
 		? {
 				readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
@@ -1105,11 +1125,28 @@ export interface NodeNs<
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Built = FluentNodeOf<T>
+	Built = FluentNodeOf<T>,
+	Args extends readonly unknown[] = readonly [ConfigOf<T>],
+	LooseArgs extends readonly unknown[] = readonly [FromInputOf<T, Scalars, Strings, [], NsMap> | T]
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
 	readonly Fluent: Built;
+	// CONTENT (`Config` / `Loose`) is interface-rooted; ARITY is
+	// factory-rooted. `BuildArgs` is the builder's own parameter list as a
+	// tuple — how many parameters, which is rest, which is optional — with
+	// element slots that REFERENCE `Config`. The dependency runs one way:
+	// `BuildArgs` depends on `Config`, never the reverse, which is what
+	// keeps the two derivations acyclic.
+	//
+	// `Parameters<typeof build<Kind>>` is never the source: it resolves to
+	// the LAST overload, and both real overload families put a non-canonical
+	// form there — a forwarded wrapper ends with its forwarded-target form,
+	// a separated list with its options-leading form.
+	readonly BuildArgs: Args;
+	/** `BuildArgs` with each `Config` element swapped for that kind's `Loose`
+	 *  — the same arity, widened content. */
+	readonly LooseArgs: LooseArgs;
 	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
 	// `FromInputOf<U>` per arm.

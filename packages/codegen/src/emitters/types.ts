@@ -68,6 +68,7 @@ import {
 	fieldTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
+	emitsBuildArgsAlias,
 	emitsPlainBuiltAlias,
 	stringConstructibleTexts
 } from './shared.ts';
@@ -299,7 +300,12 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of nodeKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		if (!generatedTypes.has(node.typeName)) continue;
-		emitNamespaceInterfaceLine(lines, node.typeName, emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries }));
+		emitNamespaceInterfaceLine(
+			lines,
+			node.typeName,
+			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries }),
+			emitsBuildArgsAlias(kind, node, { nodeMap, kindEntries })
+		);
 	}
 	lines.push('');
 
@@ -317,6 +323,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push("export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];");
 	lines.push("export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];");
 	lines.push("export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];");
+	lines.push("export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];");
+	lines.push("export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];");
 	lines.push("export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];");
 	lines.push('');
 
@@ -868,14 +876,30 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 // Per-kind namespace interface line emission
 // ---------------------------------------------------------------------------
 
-function emitNamespaceInterfaceLine(lines: string[], typeName: string, hasBuiltAlias: boolean): void {
+function emitNamespaceInterfaceLine(
+	lines: string[],
+	typeName: string,
+	hasBuiltAlias: boolean,
+	hasBuildArgsAlias: boolean
+): void {
 	// A kind with an emitted factory pins `Fluent` to the factory's own
 	// `<TypeName>Built` alias — the exact return type, never a re-derived
 	// generic. Factory-less kinds keep NodeNs' default Fluent projection.
+	//
+	// `BuildArgs` / `LooseArgs` follow the same rule for the ARITY fact. They
+	// sit AFTER `Built` positionally, and the only kinds declaring one without
+	// the other are leaves — which have no data interface, so no Ns line at
+	// all. Fail loudly rather than emit a line whose type arguments have
+	// silently shifted.
+	if (hasBuildArgsAlias !== hasBuiltAlias) {
+		throw new Error(
+			`types emitter: '${typeName}' declares ${hasBuiltAlias ? 'Built without BuildArgs' : 'BuildArgs without Built'} — ` +
+				`NodeNs' Args parameters follow Built positionally, so the two must be emitted together.`
+		);
+	}
+	const tail = hasBuiltAlias ? `, F$.${typeName}Built, F$.${typeName}BuildArgs, F$.${typeName}LooseArgs` : '';
 	lines.push(
-		hasBuiltAlias
-			? `export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap, F$.${typeName}Built> {}`
-			: `export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
+		`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap${tail}> {}`
 	);
 }
 
@@ -1192,6 +1216,8 @@ function emitNamespaceSugarBlock(
 	}
 	lines.push(`  export type Fluent = FluentFor<'${kind}'>;`);
 	lines.push(`  export type Loose = LooseFor<'${kind}'>;`);
+	lines.push(`  export type BuildArgs = BuildArgsFor<'${kind}'>;`);
+	lines.push(`  export type LooseArgs = LooseArgsFor<'${kind}'>;`);
 	lines.push(`  export type Tree = TreeFor<'${kind}'>;`);
 	lines.push(`  export type Kind = '${kind}';`);
 	lines.push('}');

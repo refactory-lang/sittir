@@ -13,8 +13,23 @@
  */
 
 import { describe, it } from 'vitest';
-import type { FunctionItem, Comment, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
-import type { FunctionItemBuilt } from '../src/factories.ts';
+import type {
+	FunctionItem,
+	Comment,
+	ParametersElements,
+	ConfigFor,
+	FluentFor,
+	LooseFor,
+	TreeFor,
+	NamespaceMap
+} from '../src/index.ts';
+import type {
+	FunctionItemBuilt,
+	FunctionItemBuildArgs,
+	FunctionItemLooseArgs,
+	ParametersElementsBuildArgs,
+	buildParametersElements
+} from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
@@ -55,4 +70,22 @@ describe('rust NamespaceMap access-path convergence', () => {
 	// accessors (`ConfigFor<'function_item'>`, `LooseFor<'function_item'>`).
 	// `FunctionItemTree` INTERFACE is still emitted — factories use it for
 	// `replace(target: T.FunctionItemTree)` signatures.
+
+	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
+		// ARITY comes from the factory, CONTENT from the interface: the alias
+		// element REFERENCES `Config`, so the dependency runs one way only.
+		expectTrue<Equals<FunctionItem.Config, FunctionItemBuildArgs[0]>>();
+		expectTrue<Equals<FunctionItem.BuildArgs, FunctionItemBuildArgs>>();
+		expectTrue<Equals<FunctionItem.LooseArgs, FunctionItemLooseArgs>>();
+		expectTrue<Equals<FunctionItem.Loose, FunctionItemLooseArgs[0]>>();
+	});
+
+	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
+		// `Parameters<>` resolves to the LAST overload — here the
+		// options-leading form of a separated list, which is not the
+		// canonical call shape. A regression to `Parameters<>` must fail the
+		// type gate rather than silently retype the public surface.
+		expectTrue<Equals<Equals<ParametersElementsBuildArgs, Parameters<typeof buildParametersElements>>, false>>();
+		expectTrue<Equals<ParametersElements.BuildArgs, ParametersElementsBuildArgs>>();
+	});
 });

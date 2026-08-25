@@ -7,13 +7,20 @@ import type {
 	FunctionDefinition,
 	Module,
 	Suite,
+	SimpleStatementsElements,
 	ConfigFor,
 	FluentFor,
 	LooseFor,
 	TreeFor,
 	NamespaceMap
 } from '../src/index.ts';
-import type { FunctionDefinitionBuilt } from '../src/factories.ts';
+import type {
+	FunctionDefinitionBuilt,
+	FunctionDefinitionBuildArgs,
+	FunctionDefinitionLooseArgs,
+	SimpleStatementsElementsBuildArgs,
+	buildSimpleStatementsElements
+} from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
@@ -51,5 +58,25 @@ describe('python NamespaceMap access-path convergence', () => {
 		// suite has no emitted factory (no Built alias exists), so NodeNs'
 		// default Fluent projection remains in effect.
 		expectTrue<Equals<Suite.Fluent, FluentNodeOf<Suite>>>();
+	});
+
+	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
+		// ARITY comes from the factory, CONTENT from the interface: the alias
+		// element REFERENCES `Config`, so the dependency runs one way only.
+		expectTrue<Equals<FunctionDefinition.Config, FunctionDefinitionBuildArgs[0]>>();
+		expectTrue<Equals<FunctionDefinition.BuildArgs, FunctionDefinitionBuildArgs>>();
+		expectTrue<Equals<FunctionDefinition.LooseArgs, FunctionDefinitionLooseArgs>>();
+		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinitionLooseArgs[0]>>();
+	});
+
+	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
+		// `Parameters<>` resolves to the LAST overload — here the
+		// options-leading form of a separated list, which is not the
+		// canonical call shape. A regression to `Parameters<>` must fail the
+		// type gate rather than silently retype the public surface.
+		expectTrue<
+			Equals<Equals<SimpleStatementsElementsBuildArgs, Parameters<typeof buildSimpleStatementsElements>>, false>
+		>();
+		expectTrue<Equals<SimpleStatementsElements.BuildArgs, SimpleStatementsElementsBuildArgs>>();
 	});
 });

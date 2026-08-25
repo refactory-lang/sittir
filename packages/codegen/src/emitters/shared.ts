@@ -887,6 +887,25 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
 }
 
+/** ONE predicate for "this kind declares `<TypeName>BuildArgs` /
+ *  `<TypeName>LooseArgs`" — every kind whose factory is actually emitted,
+ *  leaves included. Mirrors `FactoryEmitter.dispatchNode`'s own switch so
+ *  the `NodeNs` references and the emitted aliases cannot drift. */
+export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
+	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
+	switch (node.modelType) {
+		case 'pattern':
+		case 'keyword':
+		case 'enum':
+		case 'branch':
+		case 'group':
+		case 'separatedList':
+			return true;
+		default:
+			return false;
+	}
+}
+
 export interface FromDispatchContext {
 	nodeMap: NodeMap;
 	kindEntries?: readonly KindEnumEntry[];

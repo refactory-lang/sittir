@@ -8,13 +8,20 @@ import type {
 	ClassDeclaration,
 	Program,
 	JsxElement,
+	FormalParametersElements,
 	ConfigFor,
 	FluentFor,
 	LooseFor,
 	TreeFor,
 	NamespaceMap
 } from '../src/index.ts';
-import type { ProgramBuilt } from '../src/factories.ts';
+import type {
+	ProgramBuilt,
+	ClassDeclarationBuildArgs,
+	ClassDeclarationLooseArgs,
+	FormalParametersElementsBuildArgs,
+	buildFormalParametersElements
+} from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
@@ -53,5 +60,25 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// jsx_element has no emitted factory (no Built alias exists), so
 		// NodeNs' default Fluent projection remains in effect.
 		expectTrue<Equals<JsxElement.Fluent, FluentNodeOf<JsxElement>>>();
+	});
+
+	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
+		// ARITY comes from the factory, CONTENT from the interface: the alias
+		// element REFERENCES `Config`, so the dependency runs one way only.
+		expectTrue<Equals<ClassDeclaration.Config, ClassDeclarationBuildArgs[0]>>();
+		expectTrue<Equals<ClassDeclaration.BuildArgs, ClassDeclarationBuildArgs>>();
+		expectTrue<Equals<ClassDeclaration.LooseArgs, ClassDeclarationLooseArgs>>();
+		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclarationLooseArgs[0]>>();
+	});
+
+	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
+		// `Parameters<>` resolves to the LAST overload — here the
+		// options-leading form of a separated list, which is not the
+		// canonical call shape. A regression to `Parameters<>` must fail the
+		// type gate rather than silently retype the public surface.
+		expectTrue<
+			Equals<Equals<FormalParametersElementsBuildArgs, Parameters<typeof buildFormalParametersElements>>, false>
+		>();
+		expectTrue<Equals<FormalParametersElements.BuildArgs, FormalParametersElementsBuildArgs>>();
 	});
 });

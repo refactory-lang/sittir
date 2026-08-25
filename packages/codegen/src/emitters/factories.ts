@@ -337,15 +337,15 @@ export namespace factory {
 			case 'pattern': {
 				const guards = buildLeafGuards(node, leafReConsts);
 				const guard = guards.join(' ');
-				result = emitTextFactory(node, '(text: string)', 'text', guard, kindEntries, nodeMap);
+				result = emitTextFactory(node, 'text: string', 'text', guard, kindEntries, nodeMap);
 				break;
 			}
 			case 'keyword':
-				result = emitTextFactory(node, '()', `'${escForSource(node.text)}' as const`, undefined, kindEntries, nodeMap);
+				result = emitTextFactory(node, '', `'${escForSource(node.text)}' as const`, undefined, kindEntries, nodeMap);
 				break;
 			case 'enum': {
 				const literalUnion = buildEnumLiteralUnion(node);
-				result = emitTextFactory(node, `(text: ${literalUnion})`, 'text', undefined, kindEntries, nodeMap);
+				result = emitTextFactory(node, `text: ${literalUnion}`, 'text', undefined, kindEntries, nodeMap);
 				break;
 			}
 			default:
@@ -663,6 +663,13 @@ interface FactorySurface {
 	readonly singleField: AssembledNonterminal | undefined;
 	/** Parameter list text, without the parentheses. */
 	readonly params: string;
+	/** `params` as a tuple type — labels, optional markers and the rest
+	 *  element preserved, parameter initializers dropped (a tuple element
+	 *  cannot carry one). The `<TypeName>BuildArgs` alias body. */
+	readonly paramsTuple: string;
+	/** `paramsTuple` with the kind's own `Config` element swapped for its
+	 *  `Loose`. The `<TypeName>LooseArgs` alias body. */
+	readonly looseParamsTuple: string;
 	/** Forwarding call arguments for `params` (`...children`, `config`, …). */
 	readonly args: string;
 	readonly elementType?: string;
@@ -699,10 +706,13 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			nodeMap
 		);
 		if (containerFacts.multiple) {
+			const params = `...children: ${elementType}[]`;
 			return {
 				containerFacts,
 				singleField,
-				params: `...children: ${elementType}[]`,
+				params,
+				paramsTuple: `[${params}]`,
+				looseParamsTuple: `[${params}]`,
 				args: '...children',
 				elementType,
 				directParamOptional: false,
@@ -710,10 +720,13 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			};
 		}
 		const optMark = containerFacts.required ? '' : '?';
+		const params = `child${optMark}: ${elementType}`;
 		return {
 			containerFacts,
 			singleField,
-			params: `child${optMark}: ${elementType}`,
+			params,
+			paramsTuple: `[${params}]`,
+			looseParamsTuple: `[${params}]`,
 			args: 'child',
 			elementType,
 			directParamType: elementType,
@@ -724,10 +737,13 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	if (singleField) {
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
 		const optMark = isRequired(singleField) ? '' : '?';
+		const params = `${singleField.paramName}${optMark}: ${elemType}`;
 		return {
 			containerFacts,
 			singleField,
-			params: `${singleField.paramName}${optMark}: ${elemType}`,
+			params,
+			paramsTuple: `[${params}]`,
+			looseParamsTuple: `[${params}]`,
 			args: singleField.paramName,
 			directParamType: elemType,
 			directParamOptional: !isRequired(singleField),
@@ -741,10 +757,16 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	// property access use `config.x` (no optional chaining) — only when the
 	// body actually reads from config.
 	const hasConfigReads = fields.length > 0;
+	const allOptional = opt === '?' && hasConfigReads;
+	const looseType = `T.${node.typeName}.Loose`;
 	return {
 		containerFacts,
 		singleField,
-		params: opt === '?' && hasConfigReads ? `config: Partial<${configType}> = {}` : `config${opt}: ${configType}`,
+		params: allOptional ? `config: Partial<${configType}> = {}` : `config${opt}: ${configType}`,
+		// A tuple element cannot carry an initializer, so the defaulted
+		// parameter re-declares as an optional one.
+		paramsTuple: allOptional ? `[config?: Partial<${configType}>]` : `[config${opt}: ${configType}]`,
+		looseParamsTuple: allOptional ? `[config?: ${looseType}]` : `[config${opt}: ${looseType}]`,
 		args: 'config',
 		configType,
 		directParamOptional: false,
@@ -821,6 +843,18 @@ export function constructorSurface(
 		default:
 			return undefined;
 	}
+}
+
+/** The kind's calling convention as exported tuple aliases: `BuildArgs` is
+ *  the builder's own parameter list, `LooseArgs` the same arity with each
+ *  `Config` element swapped for that kind's `Loose`. `NodeNs` consumes both,
+ *  the same way it consumes `<TypeName>Built` as `Fluent`. */
+function buildArgsAliasLines(typeName: string, paramsTuple: string, looseParamsTuple: string): string[] {
+	return [
+		`export type ${typeName}BuildArgs = ${paramsTuple};`,
+		`export type ${typeName}LooseArgs = ${looseParamsTuple};`,
+		''
+	];
 }
 
 /** The per-kind explicit factory return type: the concrete interface plus
@@ -1058,7 +1092,13 @@ function emitFieldCarryingFactory(
 	if (namespaced) {
 		lines.push('', ...emitNamespacedConstructors(node, namespace!, fn, exportName, surface, nodeMap, kindEntries));
 	}
-	return renameUnusedConfigParam(lines);
+	// Prepended AFTER the rename: the alias bodies mention `config`, and
+	// `renameUnusedConfigParam` decides on whether the name is read anywhere
+	// else in the emitted source.
+	return [
+		...buildArgsAliasLines(node.typeName, surface.paramsTuple, surface.looseParamsTuple),
+		renameUnusedConfigParam(lines)
+	].join('\n');
 }
 
 /**
@@ -1459,6 +1499,11 @@ function emitSeparatedListFactory(
 		...(hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
 		...(hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
 	];
+	// The canonical call shape is the spread form; the options-leading
+	// overload exists only so a per-instance options bag can lead, and it is
+	// the LAST overload precisely because call resolution wants it there.
+	const listArgsTuple = `[...elements: ${elementsType}]`;
+	lines.push(...buildArgsAliasLines(node.typeName, listArgsTuple, listArgsTuple));
 	lines.push(...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers));
 	if (hasOptions) {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
@@ -1583,7 +1628,7 @@ interface TextFactoryNode {
 
 function emitTextFactory(
 	node: TextFactoryNode,
-	sig: string,
+	params: string,
 	textExpr: string,
 	guard?: string,
 	kindEntries?: readonly KindEnumEntry[],
@@ -1598,7 +1643,12 @@ function emitTextFactory(
 	// Leaf/keyword/enum factories — inline literal +
 	// `withMethods<T>` wrap. No `_<name>` storage (text nodes carry only
 	// `$text`); no `$with` (no updatable slots).
-	const body: string[] = [`export function ${fn}${sig} {`];
+	// A leaf's whole calling convention is its text parameter, so `BuildArgs`
+	// and `LooseArgs` coincide — `$text` is already the loose surface.
+	const body: string[] = [
+		...buildArgsAliasLines(node.typeName, `[${params}]`, `[${params}]`),
+		`export function ${fn}(${params}) {`
+	];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
 		'  return withMethods({',

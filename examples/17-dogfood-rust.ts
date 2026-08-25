@@ -22,7 +22,7 @@ import { Delimiter, ir } from '@sittir/rust';
 // coercers accept at runtime — they reject `{ kind: … }` discriminated configs,
 // string shorthands outside leaf slots, and arrays for list slots, and they
 // admit the interface's ACCESSOR signatures (`() => Identifier`) as if those
-// were config values. Every shape below runs; 38 of them do not type-check, so
+// were config values. Every shape below runs; 72 of them do not type-check, so
 // this module is excluded from `type-check:examples` until the projection is
 // fixed. That exclusion is the marker — no casts are used to hide it.
 //
