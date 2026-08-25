@@ -21,15 +21,15 @@ import { ir } from '@sittir/python';
 /** The module docstring and shebang, which the reader carries as comments. */
 export function header() {
 	return [
-		ir.from.comment('#!/usr/bin/env python3'),
-		ir.from.comment('# """Cross-tree probe-kind sweep for regression diffing."""'),
+		ir.synonym.comment('#!/usr/bin/env python3'),
+		ir.synonym.comment('# """Cross-tree probe-kind sweep for regression diffing."""'),
 	];
 }
 
 /** `import argparse` … — GAP A (exposure): unbuildable, kept as comments. */
 export function imports() {
 	return ['argparse', 'difflib', 'json', 'os', 're', 'subprocess', 'sys'].map((name) =>
-		ir.from.comment(`# import ${name}`)
+		ir.synonym.comment(`# import ${name}`)
 	);
 }
 

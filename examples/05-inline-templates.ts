@@ -5,7 +5,7 @@ export function renderDirectlyWithoutInlineTemplates() {
 		visibilityModifier: 'pub',
 		name: 'render_config',
 		parameters: ir.parameters.strict(),
-		returnType: ir.from.type('String'),
+		returnType: ir.synonym.type('String'),
 		body: ir.block.strict(),
 	}).$render();
 }

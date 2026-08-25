@@ -63,12 +63,12 @@ export function emitIr(config: EmitIrConfig): string {
 		'// `ir.<supertype>.*` — grouped namespaces: each member re-keyed by its',
 		'//   supertype-stripped short name (e.g. `ir.expression.binary` === `ir.binaryExpression`).',
 		'//',
-		'// Both surfaces resolve to the same callable bundle: branch / polymorph',
-		'// entries default to `from()` and expose the strict factory as `.strict`.',
+		'// Both surfaces resolve to the same callable bundle: calling an entry',
+		'// coerces its input; `.strict` is the strict factory.',
 		'//',
-		'// Edge case: `readNode()` output has no `$source` provenance. If you want',
-		'// to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)',
-		'// so `.from()` sees a wrapped node and takes the identity quick-return path.',
+		'// Edge case: `readNode()` output has no `$source` provenance. To pass it',
+		'// straight to an entry, use the typed wrapper (`readTreeNode`) so the',
+		'// entry sees a wrapped node and takes the identity quick-return path.',
 		'',
 		"import * as F from './factories.js';",
 		"import * as FR from './from.js';",
@@ -86,12 +86,12 @@ export function emitIr(config: EmitIrConfig): string {
 	const groupNames: string[] = [];
 	const usedGroupNames = new Set<string>();
 
-	let hasFrom = false;
+	let hasSynonyms = false;
 	if (grammarRoles) {
-		const fromLines = emitFromNamespace(grammarRoles, nodeMap);
-		if (fromLines.length > 0) {
-			hasFrom = true;
-			body.push(...fromLines);
+		const synonymLines = emitSynonymNamespace(grammarRoles, nodeMap);
+		if (synonymLines.length > 0) {
+			hasSynonyms = true;
+			body.push(...synonymLines);
 			body.push('');
 		}
 	}
@@ -196,11 +196,11 @@ export function emitIr(config: EmitIrConfig): string {
 	}
 
 	// ------------------------------------------------------------------
-	// `from` — canonical factories for native-value → NodeData.
-	// Spec 023 US6: grammar-agnostic AST construction from boolean,
-	// number, string, comment, type, identifier values.
-	// Emitted BEFORE `ir` so it can be referenced as `ir.from`.
-	// Also exported standalone for tree-shakeable `from.boolean(...)`.
+	// Role synonyms — native JS value → this grammar's node for that role.
+	// Grammar-agnostic construction from native JS values, keyed by the
+	// semantic role a kind plays rather than by its grammar-specific name.
+	// Emitted BEFORE `ir` so it can be referenced as `ir.synonym`.
+	// Also exported standalone for tree-shakeable `synonym.boolean(...)`.
 	// ------------------------------------------------------------------
 	// ----------------------------------------------------------------------
 	// Flat `ir.*` namespace — every grammar kind by camelCase short name.
@@ -261,16 +261,16 @@ export function emitIr(config: EmitIrConfig): string {
 			irTypeMembers.push(`  readonly ${alias}: typeof ${bundle};`);
 		}
 	}
-	if (groupNames.length > 0 || hasFrom) {
+	if (groupNames.length > 0 || hasSynonyms) {
 		irValueLines.push('');
 		irValueLines.push('  // Supertype-grouped sub-namespaces (also exported standalone above)');
 		for (const g of groupNames) {
 			irValueLines.push(`  ${g},`);
 			irTypeMembers.push(`  readonly ${g}: typeof ${g};`);
 		}
-		if (hasFrom) {
-			irValueLines.push('  from,');
-			irTypeMembers.push('  readonly from: typeof from;');
+		if (hasSynonyms) {
+			irValueLines.push('  synonym,');
+			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
 	// Explicit typeof-composed surface — same TS7056 rationale as the
@@ -380,7 +380,7 @@ function toCamel(snake: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// `from` namespace — canonical factory helpers (spec 023 US6)
+// Role-synonym namespace — native JS value → node, keyed by semantic role
 // ---------------------------------------------------------------------------
 
 function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap): AssembledNode[] {
@@ -405,29 +405,29 @@ function returnTypeExpr(node: AssembledNode): string {
 	return `ReturnType<typeof F.${node.rawFactoryName}>`;
 }
 
-function emitFromNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
+function emitSynonymNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
 	const fns: string[] = [];
 
-	emitFromBoolean(grammarRoles, nodeMap, fns);
-	emitFromNumber(grammarRoles, nodeMap, fns);
-	emitFromString(grammarRoles, nodeMap, fns);
-	emitFromComment(grammarRoles, nodeMap, fns);
-	emitFromType(grammarRoles, nodeMap, fns);
-	emitFromIdentifier(grammarRoles, nodeMap, fns);
-	emitFromAliases(grammarRoles, nodeMap, fns);
+	emitSynonymBoolean(grammarRoles, nodeMap, fns);
+	emitSynonymNumber(grammarRoles, nodeMap, fns);
+	emitSynonymString(grammarRoles, nodeMap, fns);
+	emitSynonymComment(grammarRoles, nodeMap, fns);
+	emitSynonymType(grammarRoles, nodeMap, fns);
+	emitSynonymIdentifier(grammarRoles, nodeMap, fns);
+	emitSynonymAliases(grammarRoles, nodeMap, fns);
 
 	if (fns.length === 0) return [];
 
 	const lines: string[] = [];
-	lines.push('// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.');
-	lines.push('// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.');
-	lines.push('export const from = {');
+	lines.push("// Role synonyms — resolve a native JS value to this grammar's node for that role.");
+	lines.push('// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.');
+	lines.push('export const synonym = {');
 	lines.push(...fns);
 	lines.push('} as const;');
 	return lines;
 }
 
-function emitFromBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
@@ -460,7 +460,7 @@ function emitFromBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: stri
 	}
 }
 
-function emitFromNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap);
 	const leafNodes = nodes.filter(isLeafFactory);
 	if (leafNodes.length === 0) return;
@@ -499,7 +499,7 @@ function emitFromNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: strin
 	}
 }
 
-function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('string', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
@@ -531,7 +531,7 @@ function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: strin
 	// Otherwise: skip — too complex to auto-compose
 }
 
-function emitFromComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('trivia', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
@@ -581,7 +581,7 @@ function emitFromComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: stri
 	// `ir.blockComment(...)` factories directly.
 }
 
-function emitFromType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	// Get type kinds, excluding builtin types
 	const typeKinds = grammarRoles.get('type');
 	const builtinKinds = new Set(grammarRoles.get('type.builtin'));
@@ -624,7 +624,7 @@ function emitFromType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[
 	}
 }
 
-function emitFromIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const varKinds = grammarRoles.get('variable');
 
 	// Find the `identifier` kind specifically — not `this`, `super`, `self`
@@ -639,7 +639,7 @@ function emitFromIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	fns.push('  },');
 }
 
-function emitFromAliases(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
+function emitSynonymAliases(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const ALIAS_ROLES: readonly { role: Role; canonicalName: string }[] = [
 		{ role: 'definition.function', canonicalName: 'function' },
 		{ role: 'definition.class', canonicalName: 'class' },

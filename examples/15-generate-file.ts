@@ -6,7 +6,7 @@ export function generateCacheModule() {
 		statements: [
 			ir.structItem.unit({
 				visibilityModifier: 'pub',
-				name: ir.from.type('Cache'),
+				name: ir.synonym.type('Cache'),
 			}),
 			ir.functionItem({
 				visibilityModifier: 'pub',

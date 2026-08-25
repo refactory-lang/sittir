@@ -4,12 +4,12 @@
 // `ir.<supertype>.*` — grouped namespaces: each member re-keyed by its
 //   supertype-stripped short name (e.g. `ir.expression.binary` === `ir.binaryExpression`).
 //
-// Both surfaces resolve to the same callable bundle: branch / polymorph
-// entries default to `from()` and expose the strict factory as `.strict`.
+// Both surfaces resolve to the same callable bundle: calling an entry
+// coerces its input; `.strict` is the strict factory.
 //
-// Edge case: `readNode()` output has no `$source` provenance. If you want
-// to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)
-// so `.from()` sees a wrapped node and takes the identity quick-return path.
+// Edge case: `readNode()` output has no `$source` provenance. To pass it
+// straight to an entry, use the typed wrapper (`readTreeNode`) so the
+// entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories.js';
 import * as FR from './from.js';
@@ -773,9 +773,9 @@ const _b$printStatementArm2: typeof FR.coerceToPrintStatementArm2 & {
 	strict: F.buildPrintStatementArm2
 });
 
-// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
-// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
-export const from = {
+// Role synonyms — resolve a native JS value to this grammar's node for that role.
+// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
+export const synonym = {
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
@@ -1263,7 +1263,7 @@ export const ir: {
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
 	readonly keywordIdentifier: typeof keywordIdentifier;
-	readonly from: typeof from;
+	readonly synonym: typeof synonym;
 } = {
 	// Node factories
 	module: _b$module,
@@ -1461,5 +1461,5 @@ export const ir: {
 	rightHandSide,
 	fExpression,
 	keywordIdentifier,
-	from
+	synonym
 };

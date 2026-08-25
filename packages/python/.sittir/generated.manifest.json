@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "dd5f038f9f4069cd34bcc015af6d30e65d1281e174faa08aaf296ce14dcfeb73",
+  "source_hash": "a03ef0b1170efe6bcd8e3f8e4daf8a8b50f674ec6060395b9803eaf2c2017c01",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "d79d1e03183e49f956d11ea1efd02bbb7543378633526c23ad30d864214b279f",
@@ -25,7 +25,7 @@
     "packages/python/src/grammar.ts": "657f2e48204edaca177cb96fa7e9a8cbd98ec937571241352eba582546197158",
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
     "packages/python/src/index.ts": "e2d3dcf7b69dcb721c3e8760775e2147815eb5aadb4c18492eae9e054d0a04ea",
-    "packages/python/src/ir.ts": "ffddb610a4a2c893e2e0950c4c0a5c538140539b46a70eaf5490b2ea0a0d16a4",
+    "packages/python/src/ir.ts": "d656e971bd8ea7381b06e1776367c50c5037a4fb7c585ccac1944610d5dd20c9",
     "packages/python/src/is.ts": "521b910dd95b2912dd6f959929d12cd8561eafe15089a26caadc877d31b7438f",
     "packages/python/src/node-model.json5": "75343bbe6f32d281f31e7744774a4cc22ad22975a07adf1f87084bed5b5e8496",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",

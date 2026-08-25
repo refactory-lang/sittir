@@ -225,7 +225,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// plus the stamped `root` role: the start symbol is the rule record's
 	// FIRST rule (tree-sitter convention, preserved through every phase).
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
-	// The full GrammarRoles are passed to the ir emitter for `ir.from.*`.
+	// The full GrammarRoles are passed to the ir emitter for `ir.synonym.*`.
 	const rootKind = rootRuleName(normalized.rules)!;
 	const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
 	const triviaKinds = grammarRoles.get('trivia');

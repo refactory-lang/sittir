@@ -1397,7 +1397,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * Emitted as `export const from = { ... } as const` for tree-shakeable
  * standalone access (`from.boolean(...)`) and also referenced inside the
- * `ir` object for `ir.from.boolean(...)` access.
+ * `ir` object for `ir.synonym.boolean(...)` access.
  *
  * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
  */

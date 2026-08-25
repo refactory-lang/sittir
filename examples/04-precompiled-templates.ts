@@ -3,7 +3,7 @@ import { ir } from '@sittir/rust';
 export function renderPublicStruct() {
 	return ir.structItem.unit({
 		visibilityModifier: 'pub',
-		name: ir.from.type('Config'),
+		name: ir.synonym.type('Config'),
 	}).$render();
 }
 
