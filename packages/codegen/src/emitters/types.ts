@@ -323,6 +323,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push("export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];");
 	lines.push("export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];");
 	lines.push("export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];");
+	lines.push("export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];");
 	lines.push("export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];");
 	lines.push("export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];");
 	lines.push("export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];");
@@ -1216,6 +1217,7 @@ function emitNamespaceSugarBlock(
 	}
 	lines.push(`  export type Fluent = FluentFor<'${kind}'>;`);
 	lines.push(`  export type Loose = LooseFor<'${kind}'>;`);
+	lines.push(`  export type LooseConfig = LooseConfigFor<'${kind}'>;`);
 	lines.push(`  export type BuildArgs = BuildArgsFor<'${kind}'>;`);
 	lines.push(`  export type LooseArgs = LooseArgsFor<'${kind}'>;`);
 	lines.push(`  export type Tree = TreeFor<'${kind}'>;`);

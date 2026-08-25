@@ -338,9 +338,21 @@ function factoryReturnTypeExpr(factory: string): string {
 	return `ReturnType<typeof ${factory}>`;
 }
 
-function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, returnType: string): void {
-	const passGuard = inputOptional ? 'input !== undefined && ' : '';
-	lines.push(`  if (${passGuard}isNodeData(input)) return input as unknown as ${returnType};`);
+function emitBranchNodeDataPassthrough(
+	lines: string[],
+	inputOptional: boolean,
+	returnType: string,
+	typeName: string
+): void {
+	// Phrased as a negated type predicate rather than `if (isNodeData(input))`
+	// so the checker narrows the REMAINDER of the body to the config arm.
+	// A plain `isNodeData` early-return does not: negative narrowing drops a
+	// union constituent only when it is a strict subtype of the guard type,
+	// and `AnyNodeData`'s optional members defeat that for every generated
+	// kind interface — leaving the interface's accessor signatures in the
+	// type of every `input.<field>` read below.
+	const configType = `T.${typeName}.LooseConfig${inputOptional ? ' | undefined' : ''}`;
+	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
 function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): string | null {
@@ -428,6 +440,39 @@ function emitBranchFrom(
 	// direct value (a pre-built node dispatches via $type), so the same
 	// direct-call emission applies.
 	const canDirectFactoryCall = soleField && (shapeForDirect === 'direct' || shapeForDirect === 'forwarded');
+	// One exported resolver per caller-supplied field: the single derivation
+	// of what that field accepts. `coerceTo<Kind>` and the tree-node `$with`
+	// setters in wrap.ts both call it, so the two surfaces cannot drift.
+	//
+	// The parameter is `LooseConfig[key]`, never `Loose[key]`: reading a field
+	// off `Loose` picks up the interface's accessor signature from its `| T`
+	// arm, and never `LooseValue<Config[key]>`, which drops the owner and with
+	// it the field's `__fromInputHints__`.
+	// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on the
+	// factory's Config surface, so they take no non-empty hoist even when the
+	// underlying values are repeat1.
+	const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
+		isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
+	// Non-empty list fields are excluded: their value is hoisted through
+	// `_assertNonEmpty`, which narrows an inline expression to the tuple form
+	// the factory config demands. A declared resolver return type is a plain
+	// array and loses that narrowing, so those keep the inline call.
+	const resolverFields = configurableFactoryFields(fields, nodeMap).filter((f) => !needsNonEmptyHoist(f));
+	for (const f of resolverFields) {
+		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
+		const key = JSON.stringify(f.configKey);
+		lines.push(
+			`export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`,
+			`  return ${body};`,
+			'}',
+			''
+		);
+	}
+	const resolverFor = new Set(resolverFields.map((f) => f.propertyName));
+	const fieldValue = (f: AssembledNonterminal, valueExpr: string): string =>
+		resolverFor.has(f.propertyName)
+			? `${fieldResolverName(typeName, f)}(${valueExpr})`
+			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
@@ -435,7 +480,7 @@ function emitBranchFrom(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${containerTypeCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
-			emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
+			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
 		// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
@@ -443,11 +488,9 @@ function emitBranchFrom(
 		// `BooleanKeyword<T>` brand. Skip the non-empty hoist for those even
 		// when the underlying values are repeat1, otherwise we generate a
 		// `_ne_X` array hoist + `_assertNonEmpty` call against a non-array.
-		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
-			isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
 		for (const f of fields) {
 			if (needsNonEmptyHoist(f)) {
-				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
+				const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
@@ -459,6 +502,9 @@ function emitBranchFrom(
 		// and multiple (array) fields.
 		if (canDirectFactoryCall) {
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
+			// Not routed through the field resolver: this expression yields the
+			// parent's own loose input when the value was supplied bare, which is
+			// wider than what the field itself declares it accepts.
 			const call = resolveFieldCall(
 				inputExpr,
 				soleField,
@@ -481,7 +527,7 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
-					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
+					const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
@@ -502,7 +548,7 @@ function emitBranchFrom(
 		// No fields: pass-through to the factory with a boundary cast — the
 		// Loose input shape is wider than the factory's strict Config, but the
 		// structural overlap (children + leaf shape) is enough at runtime.
-		emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
+		emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
 		lines.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`);
 	}
 	lines.push('}');
@@ -921,24 +967,11 @@ function emitKeywordFrom(node: LeafFromNode): string {
 
 type KindInterner = (kinds: readonly string[]) => string;
 
-function resolveFieldFromTypedInput(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap,
-	parentTypeName: string,
-	intern: KindInterner,
-	sourceVar: string,
-	inputOptional: boolean,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	// parentTypeName is retained for signature stability with callers;
-	// the prior implementation used it to build an explicit
-	// `<NonNullable<T.X.Config['y']>>` type arg on the resolver call. Those
-	// type args were stripped in a follow-up to the from-cleanup pass —
-	// TS now infers the slot type from parameters / call context.
-	void parentTypeName;
-	const optChain = inputOptional ? '?' : '';
-	const access = `${sourceVar}${optChain}.${field.configKey}`;
-	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern, true, undefined, kindEntries);
+/** The exported per-field resolver's name: `resolve<TypeName>_<propertyName>`.
+ *  One name for one fact, so `coerceTo<Kind>` and wrap's `$with` setter
+ *  reach the same function rather than each re-deriving the expression. */
+function fieldResolverName(parentTypeName: string, field: AssembledNonterminal): string {
+	return `resolve${parentTypeName}_${field.propertyName}`;
 }
 
 function expandAndDedupeContentTypes(
@@ -1276,12 +1309,21 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('}');
 }
 
+function emitLooseConfigGuard(lines: string[]): void {
+	lines.push('/** Narrows a coercer input to its config arm. A bare `isNodeData` check');
+	lines.push(' *  cannot: the NodeData arm is not a strict subtype of the config arm, so');
+	lines.push(' *  negative narrowing leaves it in place. */');
+	lines.push('function _isLooseConfig<C>(v: C | AnyNodeData): v is C {');
+	lines.push('  return !isNodeData(v);');
+	lines.push('}');
+}
+
 function emitRequireFieldHelper(lines: string[]): void {
-	lines.push('function _requireField<T>(kind: string, slot: string, v: T): T {');
+	lines.push('function _requireField<T>(kind: string, slot: string, v: T): Exclude<T, undefined | null> {');
 	lines.push('  if (v === undefined || v === null) {');
 	lines.push("    throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);");
 	lines.push('  }');
-	lines.push('  return v;');
+	lines.push('  return v as Exclude<T, undefined | null>;');
 	lines.push('}');
 }
 
@@ -1619,6 +1661,7 @@ function emitResolverHelpers(
 
 	emitAssertNonEmptyHelper(lines);
 	lines.push('');
+	emitLooseConfigGuard(lines);
 	emitRequireFieldHelper(lines);
 }
 

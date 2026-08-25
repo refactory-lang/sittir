@@ -1109,6 +1109,24 @@ type WidenChildSlot<
 				| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
 	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
+/**
+ * The coercing-caller config bag for `T` — `Loose` without the NodeData
+ * passthrough arm.
+ *
+ * This is the only projection that both carries a field's
+ * `__fromInputHints__` and is free of the interface's accessor signatures,
+ * which makes it the correct parameter type for anything that reads a
+ * caller-supplied field by name. `LooseValue` cannot substitute: it takes an
+ * already-extracted VALUE, so the owner `T` is gone by the time it runs and
+ * `FromInputHintsOf<T>` is unreachable — a hinted field widened that way
+ * narrows instead.
+ *
+ * Named here rather than recovered downstream as `Exclude<Loose, T>` so the
+ * union has one composition site; `Loose` is defined from this alias, so the
+ * two cannot drift.
+ */
+type LooseConfigOf<T, Scalars, Strings, NsMap> = FromInputOf<T, Scalars, Strings, [], NsMap>;
+
 // ---------------------------------------------------------------------------
 // NodeNs<T> — single computed base per-kind namespace
 // ---------------------------------------------------------------------------
@@ -1145,7 +1163,7 @@ export interface NodeNs<
 	NsMap = {},
 	Built = FluentNodeOf<T>,
 	Args extends readonly unknown[] = [ConfigOf<T>],
-	LooseArgs extends readonly unknown[] = [FromInputOf<T, Scalars, Strings, [], NsMap> | T]
+	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, NsMap> | T]
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
@@ -1177,7 +1195,16 @@ export interface NodeNs<
 	// `T.${Kind} | T.${Kind}.Loose` unions added the passthrough
 	// explicitly at every call site; absorbing it into `Loose` lets the
 	// emitter write `T.${Kind}.Loose` once.
-	readonly Loose: FromInputOf<T, Scalars, Strings, [], NsMap> | T;
+	readonly Loose: LooseConfigOf<T, Scalars, Strings, NsMap> | T;
+	/** `Loose` minus the NodeData passthrough arm — the config bag alone.
+	 *
+	 *  Reading a caller-supplied field by name off `Loose` picks up the
+	 *  interface's accessor signature from the `| T` arm, because negative
+	 *  narrowing drops a union constituent only when it is a strict subtype
+	 *  of the guard, and `AnyNodeData`'s optional members defeat that for
+	 *  every kind interface. Indexing `LooseConfig` avoids the arm entirely
+	 *  while keeping each field's `__fromInputHints__`. */
+	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, NsMap>;
 	readonly Tree: TreeNodeOf<T>;
 	readonly Kind: KindOf<T>;
 }

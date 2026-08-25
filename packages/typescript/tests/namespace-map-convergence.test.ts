@@ -12,6 +12,7 @@ import type {
 	ConfigFor,
 	FluentFor,
 	LooseFor,
+	LooseConfigFor,
 	TreeFor,
 	NamespaceMap
 } from '../src/index.ts';
@@ -117,5 +118,14 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<JsxElement.BuildArgs, [JsxElement.Config]>>();
 		expectTrue<Equals<JsxElement.LooseArgs, [JsxElement.Loose]>>();
 		expectTrue<Equals<ClassDeclaration.BuildArgs, [ClassDeclaration.Config]>>();
+	});
+
+	it('Loose decomposes into LooseConfig plus the NodeData passthrough', () => {
+		// `LooseConfig` is the config arm named at the source rather than
+		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
+		// the split provably semantics-free: `Loose` still admits exactly what
+		// it admitted before, so the passthrough arm is untouched.
+		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseConfig | ClassDeclaration>>();
+		expectTrue<Equals<ClassDeclaration.LooseConfig, LooseConfigFor<'class_declaration'>>>();
 	});
 });

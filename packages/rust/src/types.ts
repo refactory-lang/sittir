@@ -9433,6 +9433,7 @@ export interface NamespaceMap {
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
 export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
+export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];
 export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
 export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];
 export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
@@ -9443,6 +9444,7 @@ export namespace SourceFile {
 	export type Config = ConfigFor<'source_file'>;
 	export type Fluent = FluentFor<'source_file'>;
 	export type Loose = LooseFor<'source_file'>;
+	export type LooseConfig = LooseConfigFor<'source_file'>;
 	export type BuildArgs = BuildArgsFor<'source_file'>;
 	export type LooseArgs = LooseArgsFor<'source_file'>;
 	export type Tree = TreeFor<'source_file'>;
@@ -9452,6 +9454,7 @@ export namespace ExpressionStatement {
 	export type Config = ConfigFor<'expression_statement'>;
 	export type Fluent = FluentFor<'expression_statement'>;
 	export type Loose = LooseFor<'expression_statement'>;
+	export type LooseConfig = LooseConfigFor<'expression_statement'>;
 	export type BuildArgs = BuildArgsFor<'expression_statement'>;
 	export type LooseArgs = LooseArgsFor<'expression_statement'>;
 	export type Tree = TreeFor<'expression_statement'>;
@@ -9461,6 +9464,7 @@ export namespace MacroDefinition {
 	export type Config = ConfigFor<'macro_definition'>;
 	export type Fluent = FluentFor<'macro_definition'>;
 	export type Loose = LooseFor<'macro_definition'>;
+	export type LooseConfig = LooseConfigFor<'macro_definition'>;
 	export type BuildArgs = BuildArgsFor<'macro_definition'>;
 	export type LooseArgs = LooseArgsFor<'macro_definition'>;
 	export type Tree = TreeFor<'macro_definition'>;
@@ -9470,6 +9474,7 @@ export namespace MacroRule {
 	export type Config = ConfigFor<'macro_rule'>;
 	export type Fluent = FluentFor<'macro_rule'>;
 	export type Loose = LooseFor<'macro_rule'>;
+	export type LooseConfig = LooseConfigFor<'macro_rule'>;
 	export type BuildArgs = BuildArgsFor<'macro_rule'>;
 	export type LooseArgs = LooseArgsFor<'macro_rule'>;
 	export type Tree = TreeFor<'macro_rule'>;
@@ -9479,6 +9484,7 @@ export namespace TokenTreePattern {
 	export type Config = ConfigFor<'token_tree_pattern'>;
 	export type Fluent = FluentFor<'token_tree_pattern'>;
 	export type Loose = LooseFor<'token_tree_pattern'>;
+	export type LooseConfig = LooseConfigFor<'token_tree_pattern'>;
 	export type BuildArgs = BuildArgsFor<'token_tree_pattern'>;
 	export type LooseArgs = LooseArgsFor<'token_tree_pattern'>;
 	export type Tree = TreeFor<'token_tree_pattern'>;
@@ -9488,6 +9494,7 @@ export namespace TokenBindingPattern {
 	export type Config = ConfigFor<'token_binding_pattern'>;
 	export type Fluent = FluentFor<'token_binding_pattern'>;
 	export type Loose = LooseFor<'token_binding_pattern'>;
+	export type LooseConfig = LooseConfigFor<'token_binding_pattern'>;
 	export type BuildArgs = BuildArgsFor<'token_binding_pattern'>;
 	export type LooseArgs = LooseArgsFor<'token_binding_pattern'>;
 	export type Tree = TreeFor<'token_binding_pattern'>;
@@ -9497,6 +9504,7 @@ export namespace TokenRepetitionPattern {
 	export type Config = ConfigFor<'token_repetition_pattern'>;
 	export type Fluent = FluentFor<'token_repetition_pattern'>;
 	export type Loose = LooseFor<'token_repetition_pattern'>;
+	export type LooseConfig = LooseConfigFor<'token_repetition_pattern'>;
 	export type BuildArgs = BuildArgsFor<'token_repetition_pattern'>;
 	export type LooseArgs = LooseArgsFor<'token_repetition_pattern'>;
 	export type Tree = TreeFor<'token_repetition_pattern'>;
@@ -9506,6 +9514,7 @@ export namespace TokenTree {
 	export type Config = ConfigFor<'token_tree'>;
 	export type Fluent = FluentFor<'token_tree'>;
 	export type Loose = LooseFor<'token_tree'>;
+	export type LooseConfig = LooseConfigFor<'token_tree'>;
 	export type BuildArgs = BuildArgsFor<'token_tree'>;
 	export type LooseArgs = LooseArgsFor<'token_tree'>;
 	export type Tree = TreeFor<'token_tree'>;
@@ -9515,6 +9524,7 @@ export namespace TokenRepetition {
 	export type Config = ConfigFor<'token_repetition'>;
 	export type Fluent = FluentFor<'token_repetition'>;
 	export type Loose = LooseFor<'token_repetition'>;
+	export type LooseConfig = LooseConfigFor<'token_repetition'>;
 	export type BuildArgs = BuildArgsFor<'token_repetition'>;
 	export type LooseArgs = LooseArgsFor<'token_repetition'>;
 	export type Tree = TreeFor<'token_repetition'>;
@@ -9524,6 +9534,7 @@ export namespace AttributeItem {
 	export type Config = ConfigFor<'attribute_item'>;
 	export type Fluent = FluentFor<'attribute_item'>;
 	export type Loose = LooseFor<'attribute_item'>;
+	export type LooseConfig = LooseConfigFor<'attribute_item'>;
 	export type BuildArgs = BuildArgsFor<'attribute_item'>;
 	export type LooseArgs = LooseArgsFor<'attribute_item'>;
 	export type Tree = TreeFor<'attribute_item'>;
@@ -9533,6 +9544,7 @@ export namespace InnerAttributeItem {
 	export type Config = ConfigFor<'inner_attribute_item'>;
 	export type Fluent = FluentFor<'inner_attribute_item'>;
 	export type Loose = LooseFor<'inner_attribute_item'>;
+	export type LooseConfig = LooseConfigFor<'inner_attribute_item'>;
 	export type BuildArgs = BuildArgsFor<'inner_attribute_item'>;
 	export type LooseArgs = LooseArgsFor<'inner_attribute_item'>;
 	export type Tree = TreeFor<'inner_attribute_item'>;
@@ -9542,6 +9554,7 @@ export namespace Attribute {
 	export type Config = ConfigFor<'attribute'>;
 	export type Fluent = FluentFor<'attribute'>;
 	export type Loose = LooseFor<'attribute'>;
+	export type LooseConfig = LooseConfigFor<'attribute'>;
 	export type BuildArgs = BuildArgsFor<'attribute'>;
 	export type LooseArgs = LooseArgsFor<'attribute'>;
 	export type Tree = TreeFor<'attribute'>;
@@ -9551,6 +9564,7 @@ export namespace ModItem {
 	export type Config = ConfigFor<'mod_item'>;
 	export type Fluent = FluentFor<'mod_item'>;
 	export type Loose = LooseFor<'mod_item'>;
+	export type LooseConfig = LooseConfigFor<'mod_item'>;
 	export type BuildArgs = BuildArgsFor<'mod_item'>;
 	export type LooseArgs = LooseArgsFor<'mod_item'>;
 	export type Tree = TreeFor<'mod_item'>;
@@ -9560,6 +9574,7 @@ export namespace ForeignModItem {
 	export type Config = ConfigFor<'foreign_mod_item'>;
 	export type Fluent = FluentFor<'foreign_mod_item'>;
 	export type Loose = LooseFor<'foreign_mod_item'>;
+	export type LooseConfig = LooseConfigFor<'foreign_mod_item'>;
 	export type BuildArgs = BuildArgsFor<'foreign_mod_item'>;
 	export type LooseArgs = LooseArgsFor<'foreign_mod_item'>;
 	export type Tree = TreeFor<'foreign_mod_item'>;
@@ -9569,6 +9584,7 @@ export namespace DeclarationList {
 	export type Config = ConfigFor<'declaration_list'>;
 	export type Fluent = FluentFor<'declaration_list'>;
 	export type Loose = LooseFor<'declaration_list'>;
+	export type LooseConfig = LooseConfigFor<'declaration_list'>;
 	export type BuildArgs = BuildArgsFor<'declaration_list'>;
 	export type LooseArgs = LooseArgsFor<'declaration_list'>;
 	export type Tree = TreeFor<'declaration_list'>;
@@ -9578,6 +9594,7 @@ export namespace StructItem {
 	export type Config = ConfigFor<'struct_item'>;
 	export type Fluent = FluentFor<'struct_item'>;
 	export type Loose = LooseFor<'struct_item'>;
+	export type LooseConfig = LooseConfigFor<'struct_item'>;
 	export type BuildArgs = BuildArgsFor<'struct_item'>;
 	export type LooseArgs = LooseArgsFor<'struct_item'>;
 	export type Tree = TreeFor<'struct_item'>;
@@ -9587,6 +9604,7 @@ export namespace UnionItem {
 	export type Config = ConfigFor<'union_item'>;
 	export type Fluent = FluentFor<'union_item'>;
 	export type Loose = LooseFor<'union_item'>;
+	export type LooseConfig = LooseConfigFor<'union_item'>;
 	export type BuildArgs = BuildArgsFor<'union_item'>;
 	export type LooseArgs = LooseArgsFor<'union_item'>;
 	export type Tree = TreeFor<'union_item'>;
@@ -9596,6 +9614,7 @@ export namespace EnumItem {
 	export type Config = ConfigFor<'enum_item'>;
 	export type Fluent = FluentFor<'enum_item'>;
 	export type Loose = LooseFor<'enum_item'>;
+	export type LooseConfig = LooseConfigFor<'enum_item'>;
 	export type BuildArgs = BuildArgsFor<'enum_item'>;
 	export type LooseArgs = LooseArgsFor<'enum_item'>;
 	export type Tree = TreeFor<'enum_item'>;
@@ -9605,6 +9624,7 @@ export namespace EnumVariantList {
 	export type Config = ConfigFor<'enum_variant_list'>;
 	export type Fluent = FluentFor<'enum_variant_list'>;
 	export type Loose = LooseFor<'enum_variant_list'>;
+	export type LooseConfig = LooseConfigFor<'enum_variant_list'>;
 	export type BuildArgs = BuildArgsFor<'enum_variant_list'>;
 	export type LooseArgs = LooseArgsFor<'enum_variant_list'>;
 	export type Tree = TreeFor<'enum_variant_list'>;
@@ -9614,6 +9634,7 @@ export namespace EnumVariant {
 	export type Config = ConfigFor<'enum_variant'>;
 	export type Fluent = FluentFor<'enum_variant'>;
 	export type Loose = LooseFor<'enum_variant'>;
+	export type LooseConfig = LooseConfigFor<'enum_variant'>;
 	export type BuildArgs = BuildArgsFor<'enum_variant'>;
 	export type LooseArgs = LooseArgsFor<'enum_variant'>;
 	export type Tree = TreeFor<'enum_variant'>;
@@ -9623,6 +9644,7 @@ export namespace FieldDeclarationList {
 	export type Config = ConfigFor<'field_declaration_list'>;
 	export type Fluent = FluentFor<'field_declaration_list'>;
 	export type Loose = LooseFor<'field_declaration_list'>;
+	export type LooseConfig = LooseConfigFor<'field_declaration_list'>;
 	export type BuildArgs = BuildArgsFor<'field_declaration_list'>;
 	export type LooseArgs = LooseArgsFor<'field_declaration_list'>;
 	export type Tree = TreeFor<'field_declaration_list'>;
@@ -9632,6 +9654,7 @@ export namespace FieldDeclaration {
 	export type Config = ConfigFor<'field_declaration'>;
 	export type Fluent = FluentFor<'field_declaration'>;
 	export type Loose = LooseFor<'field_declaration'>;
+	export type LooseConfig = LooseConfigFor<'field_declaration'>;
 	export type BuildArgs = BuildArgsFor<'field_declaration'>;
 	export type LooseArgs = LooseArgsFor<'field_declaration'>;
 	export type Tree = TreeFor<'field_declaration'>;
@@ -9641,6 +9664,7 @@ export namespace OrderedFieldDeclarationList {
 	export type Config = ConfigFor<'ordered_field_declaration_list'>;
 	export type Fluent = FluentFor<'ordered_field_declaration_list'>;
 	export type Loose = LooseFor<'ordered_field_declaration_list'>;
+	export type LooseConfig = LooseConfigFor<'ordered_field_declaration_list'>;
 	export type BuildArgs = BuildArgsFor<'ordered_field_declaration_list'>;
 	export type LooseArgs = LooseArgsFor<'ordered_field_declaration_list'>;
 	export type Tree = TreeFor<'ordered_field_declaration_list'>;
@@ -9650,6 +9674,7 @@ export namespace ExternCrateDeclaration {
 	export type Config = ConfigFor<'extern_crate_declaration'>;
 	export type Fluent = FluentFor<'extern_crate_declaration'>;
 	export type Loose = LooseFor<'extern_crate_declaration'>;
+	export type LooseConfig = LooseConfigFor<'extern_crate_declaration'>;
 	export type BuildArgs = BuildArgsFor<'extern_crate_declaration'>;
 	export type LooseArgs = LooseArgsFor<'extern_crate_declaration'>;
 	export type Tree = TreeFor<'extern_crate_declaration'>;
@@ -9659,6 +9684,7 @@ export namespace ConstItem {
 	export type Config = ConfigFor<'const_item'>;
 	export type Fluent = FluentFor<'const_item'>;
 	export type Loose = LooseFor<'const_item'>;
+	export type LooseConfig = LooseConfigFor<'const_item'>;
 	export type BuildArgs = BuildArgsFor<'const_item'>;
 	export type LooseArgs = LooseArgsFor<'const_item'>;
 	export type Tree = TreeFor<'const_item'>;
@@ -9668,6 +9694,7 @@ export namespace StaticItem {
 	export type Config = ConfigFor<'static_item'>;
 	export type Fluent = FluentFor<'static_item'>;
 	export type Loose = LooseFor<'static_item'>;
+	export type LooseConfig = LooseConfigFor<'static_item'>;
 	export type BuildArgs = BuildArgsFor<'static_item'>;
 	export type LooseArgs = LooseArgsFor<'static_item'>;
 	export type Tree = TreeFor<'static_item'>;
@@ -9677,6 +9704,7 @@ export namespace TypeItem {
 	export type Config = ConfigFor<'type_item'>;
 	export type Fluent = FluentFor<'type_item'>;
 	export type Loose = LooseFor<'type_item'>;
+	export type LooseConfig = LooseConfigFor<'type_item'>;
 	export type BuildArgs = BuildArgsFor<'type_item'>;
 	export type LooseArgs = LooseArgsFor<'type_item'>;
 	export type Tree = TreeFor<'type_item'>;
@@ -9686,6 +9714,7 @@ export namespace FunctionItem {
 	export type Config = ConfigFor<'function_item'>;
 	export type Fluent = FluentFor<'function_item'>;
 	export type Loose = LooseFor<'function_item'>;
+	export type LooseConfig = LooseConfigFor<'function_item'>;
 	export type BuildArgs = BuildArgsFor<'function_item'>;
 	export type LooseArgs = LooseArgsFor<'function_item'>;
 	export type Tree = TreeFor<'function_item'>;
@@ -9695,6 +9724,7 @@ export namespace FunctionSignatureItem {
 	export type Config = ConfigFor<'function_signature_item'>;
 	export type Fluent = FluentFor<'function_signature_item'>;
 	export type Loose = LooseFor<'function_signature_item'>;
+	export type LooseConfig = LooseConfigFor<'function_signature_item'>;
 	export type BuildArgs = BuildArgsFor<'function_signature_item'>;
 	export type LooseArgs = LooseArgsFor<'function_signature_item'>;
 	export type Tree = TreeFor<'function_signature_item'>;
@@ -9704,6 +9734,7 @@ export namespace FunctionModifiers {
 	export type Config = ConfigFor<'function_modifiers'>;
 	export type Fluent = FluentFor<'function_modifiers'>;
 	export type Loose = LooseFor<'function_modifiers'>;
+	export type LooseConfig = LooseConfigFor<'function_modifiers'>;
 	export type BuildArgs = BuildArgsFor<'function_modifiers'>;
 	export type LooseArgs = LooseArgsFor<'function_modifiers'>;
 	export type Tree = TreeFor<'function_modifiers'>;
@@ -9713,6 +9744,7 @@ export namespace WhereClause {
 	export type Config = ConfigFor<'where_clause'>;
 	export type Fluent = FluentFor<'where_clause'>;
 	export type Loose = LooseFor<'where_clause'>;
+	export type LooseConfig = LooseConfigFor<'where_clause'>;
 	export type BuildArgs = BuildArgsFor<'where_clause'>;
 	export type LooseArgs = LooseArgsFor<'where_clause'>;
 	export type Tree = TreeFor<'where_clause'>;
@@ -9722,6 +9754,7 @@ export namespace WherePredicate {
 	export type Config = ConfigFor<'where_predicate'>;
 	export type Fluent = FluentFor<'where_predicate'>;
 	export type Loose = LooseFor<'where_predicate'>;
+	export type LooseConfig = LooseConfigFor<'where_predicate'>;
 	export type BuildArgs = BuildArgsFor<'where_predicate'>;
 	export type LooseArgs = LooseArgsFor<'where_predicate'>;
 	export type Tree = TreeFor<'where_predicate'>;
@@ -9731,6 +9764,7 @@ export namespace ImplItem {
 	export type Config = ConfigFor<'impl_item'>;
 	export type Fluent = FluentFor<'impl_item'>;
 	export type Loose = LooseFor<'impl_item'>;
+	export type LooseConfig = LooseConfigFor<'impl_item'>;
 	export type BuildArgs = BuildArgsFor<'impl_item'>;
 	export type LooseArgs = LooseArgsFor<'impl_item'>;
 	export type Tree = TreeFor<'impl_item'>;
@@ -9740,6 +9774,7 @@ export namespace TraitItem {
 	export type Config = ConfigFor<'trait_item'>;
 	export type Fluent = FluentFor<'trait_item'>;
 	export type Loose = LooseFor<'trait_item'>;
+	export type LooseConfig = LooseConfigFor<'trait_item'>;
 	export type BuildArgs = BuildArgsFor<'trait_item'>;
 	export type LooseArgs = LooseArgsFor<'trait_item'>;
 	export type Tree = TreeFor<'trait_item'>;
@@ -9749,6 +9784,7 @@ export namespace AssociatedType {
 	export type Config = ConfigFor<'associated_type'>;
 	export type Fluent = FluentFor<'associated_type'>;
 	export type Loose = LooseFor<'associated_type'>;
+	export type LooseConfig = LooseConfigFor<'associated_type'>;
 	export type BuildArgs = BuildArgsFor<'associated_type'>;
 	export type LooseArgs = LooseArgsFor<'associated_type'>;
 	export type Tree = TreeFor<'associated_type'>;
@@ -9758,6 +9794,7 @@ export namespace TraitBounds {
 	export type Config = ConfigFor<'trait_bounds'>;
 	export type Fluent = FluentFor<'trait_bounds'>;
 	export type Loose = LooseFor<'trait_bounds'>;
+	export type LooseConfig = LooseConfigFor<'trait_bounds'>;
 	export type BuildArgs = BuildArgsFor<'trait_bounds'>;
 	export type LooseArgs = LooseArgsFor<'trait_bounds'>;
 	export type Tree = TreeFor<'trait_bounds'>;
@@ -9767,6 +9804,7 @@ export namespace HigherRankedTraitBound {
 	export type Config = ConfigFor<'higher_ranked_trait_bound'>;
 	export type Fluent = FluentFor<'higher_ranked_trait_bound'>;
 	export type Loose = LooseFor<'higher_ranked_trait_bound'>;
+	export type LooseConfig = LooseConfigFor<'higher_ranked_trait_bound'>;
 	export type BuildArgs = BuildArgsFor<'higher_ranked_trait_bound'>;
 	export type LooseArgs = LooseArgsFor<'higher_ranked_trait_bound'>;
 	export type Tree = TreeFor<'higher_ranked_trait_bound'>;
@@ -9776,6 +9814,7 @@ export namespace RemovedTraitBound {
 	export type Config = ConfigFor<'removed_trait_bound'>;
 	export type Fluent = FluentFor<'removed_trait_bound'>;
 	export type Loose = LooseFor<'removed_trait_bound'>;
+	export type LooseConfig = LooseConfigFor<'removed_trait_bound'>;
 	export type BuildArgs = BuildArgsFor<'removed_trait_bound'>;
 	export type LooseArgs = LooseArgsFor<'removed_trait_bound'>;
 	export type Tree = TreeFor<'removed_trait_bound'>;
@@ -9785,6 +9824,7 @@ export namespace TypeParameters {
 	export type Config = ConfigFor<'type_parameters'>;
 	export type Fluent = FluentFor<'type_parameters'>;
 	export type Loose = LooseFor<'type_parameters'>;
+	export type LooseConfig = LooseConfigFor<'type_parameters'>;
 	export type BuildArgs = BuildArgsFor<'type_parameters'>;
 	export type LooseArgs = LooseArgsFor<'type_parameters'>;
 	export type Tree = TreeFor<'type_parameters'>;
@@ -9794,6 +9834,7 @@ export namespace ConstParameter {
 	export type Config = ConfigFor<'const_parameter'>;
 	export type Fluent = FluentFor<'const_parameter'>;
 	export type Loose = LooseFor<'const_parameter'>;
+	export type LooseConfig = LooseConfigFor<'const_parameter'>;
 	export type BuildArgs = BuildArgsFor<'const_parameter'>;
 	export type LooseArgs = LooseArgsFor<'const_parameter'>;
 	export type Tree = TreeFor<'const_parameter'>;
@@ -9803,6 +9844,7 @@ export namespace TypeParameter {
 	export type Config = ConfigFor<'type_parameter'>;
 	export type Fluent = FluentFor<'type_parameter'>;
 	export type Loose = LooseFor<'type_parameter'>;
+	export type LooseConfig = LooseConfigFor<'type_parameter'>;
 	export type BuildArgs = BuildArgsFor<'type_parameter'>;
 	export type LooseArgs = LooseArgsFor<'type_parameter'>;
 	export type Tree = TreeFor<'type_parameter'>;
@@ -9812,6 +9854,7 @@ export namespace LifetimeParameter {
 	export type Config = ConfigFor<'lifetime_parameter'>;
 	export type Fluent = FluentFor<'lifetime_parameter'>;
 	export type Loose = LooseFor<'lifetime_parameter'>;
+	export type LooseConfig = LooseConfigFor<'lifetime_parameter'>;
 	export type BuildArgs = BuildArgsFor<'lifetime_parameter'>;
 	export type LooseArgs = LooseArgsFor<'lifetime_parameter'>;
 	export type Tree = TreeFor<'lifetime_parameter'>;
@@ -9821,6 +9864,7 @@ export namespace LetDeclaration {
 	export type Config = ConfigFor<'let_declaration'>;
 	export type Fluent = FluentFor<'let_declaration'>;
 	export type Loose = LooseFor<'let_declaration'>;
+	export type LooseConfig = LooseConfigFor<'let_declaration'>;
 	export type BuildArgs = BuildArgsFor<'let_declaration'>;
 	export type LooseArgs = LooseArgsFor<'let_declaration'>;
 	export type Tree = TreeFor<'let_declaration'>;
@@ -9830,6 +9874,7 @@ export namespace UseDeclaration {
 	export type Config = ConfigFor<'use_declaration'>;
 	export type Fluent = FluentFor<'use_declaration'>;
 	export type Loose = LooseFor<'use_declaration'>;
+	export type LooseConfig = LooseConfigFor<'use_declaration'>;
 	export type BuildArgs = BuildArgsFor<'use_declaration'>;
 	export type LooseArgs = LooseArgsFor<'use_declaration'>;
 	export type Tree = TreeFor<'use_declaration'>;
@@ -9839,6 +9884,7 @@ export namespace ScopedUseList {
 	export type Config = ConfigFor<'scoped_use_list'>;
 	export type Fluent = FluentFor<'scoped_use_list'>;
 	export type Loose = LooseFor<'scoped_use_list'>;
+	export type LooseConfig = LooseConfigFor<'scoped_use_list'>;
 	export type BuildArgs = BuildArgsFor<'scoped_use_list'>;
 	export type LooseArgs = LooseArgsFor<'scoped_use_list'>;
 	export type Tree = TreeFor<'scoped_use_list'>;
@@ -9848,6 +9894,7 @@ export namespace UseList {
 	export type Config = ConfigFor<'use_list'>;
 	export type Fluent = FluentFor<'use_list'>;
 	export type Loose = LooseFor<'use_list'>;
+	export type LooseConfig = LooseConfigFor<'use_list'>;
 	export type BuildArgs = BuildArgsFor<'use_list'>;
 	export type LooseArgs = LooseArgsFor<'use_list'>;
 	export type Tree = TreeFor<'use_list'>;
@@ -9857,6 +9904,7 @@ export namespace UseAsClause {
 	export type Config = ConfigFor<'use_as_clause'>;
 	export type Fluent = FluentFor<'use_as_clause'>;
 	export type Loose = LooseFor<'use_as_clause'>;
+	export type LooseConfig = LooseConfigFor<'use_as_clause'>;
 	export type BuildArgs = BuildArgsFor<'use_as_clause'>;
 	export type LooseArgs = LooseArgsFor<'use_as_clause'>;
 	export type Tree = TreeFor<'use_as_clause'>;
@@ -9866,6 +9914,7 @@ export namespace UseWildcard {
 	export type Config = ConfigFor<'use_wildcard'>;
 	export type Fluent = FluentFor<'use_wildcard'>;
 	export type Loose = LooseFor<'use_wildcard'>;
+	export type LooseConfig = LooseConfigFor<'use_wildcard'>;
 	export type BuildArgs = BuildArgsFor<'use_wildcard'>;
 	export type LooseArgs = LooseArgsFor<'use_wildcard'>;
 	export type Tree = TreeFor<'use_wildcard'>;
@@ -9875,6 +9924,7 @@ export namespace Parameters {
 	export type Config = ConfigFor<'parameters'>;
 	export type Fluent = FluentFor<'parameters'>;
 	export type Loose = LooseFor<'parameters'>;
+	export type LooseConfig = LooseConfigFor<'parameters'>;
 	export type BuildArgs = BuildArgsFor<'parameters'>;
 	export type LooseArgs = LooseArgsFor<'parameters'>;
 	export type Tree = TreeFor<'parameters'>;
@@ -9884,6 +9934,7 @@ export namespace SelfParameter {
 	export type Config = ConfigFor<'self_parameter'>;
 	export type Fluent = FluentFor<'self_parameter'>;
 	export type Loose = LooseFor<'self_parameter'>;
+	export type LooseConfig = LooseConfigFor<'self_parameter'>;
 	export type BuildArgs = BuildArgsFor<'self_parameter'>;
 	export type LooseArgs = LooseArgsFor<'self_parameter'>;
 	export type Tree = TreeFor<'self_parameter'>;
@@ -9893,6 +9944,7 @@ export namespace VariadicParameter {
 	export type Config = ConfigFor<'variadic_parameter'>;
 	export type Fluent = FluentFor<'variadic_parameter'>;
 	export type Loose = LooseFor<'variadic_parameter'>;
+	export type LooseConfig = LooseConfigFor<'variadic_parameter'>;
 	export type BuildArgs = BuildArgsFor<'variadic_parameter'>;
 	export type LooseArgs = LooseArgsFor<'variadic_parameter'>;
 	export type Tree = TreeFor<'variadic_parameter'>;
@@ -9902,6 +9954,7 @@ export namespace Parameter {
 	export type Config = ConfigFor<'parameter'>;
 	export type Fluent = FluentFor<'parameter'>;
 	export type Loose = LooseFor<'parameter'>;
+	export type LooseConfig = LooseConfigFor<'parameter'>;
 	export type BuildArgs = BuildArgsFor<'parameter'>;
 	export type LooseArgs = LooseArgsFor<'parameter'>;
 	export type Tree = TreeFor<'parameter'>;
@@ -9911,6 +9964,7 @@ export namespace ExternModifier {
 	export type Config = ConfigFor<'extern_modifier'>;
 	export type Fluent = FluentFor<'extern_modifier'>;
 	export type Loose = LooseFor<'extern_modifier'>;
+	export type LooseConfig = LooseConfigFor<'extern_modifier'>;
 	export type BuildArgs = BuildArgsFor<'extern_modifier'>;
 	export type LooseArgs = LooseArgsFor<'extern_modifier'>;
 	export type Tree = TreeFor<'extern_modifier'>;
@@ -9920,6 +9974,7 @@ export namespace VisibilityModifier {
 	export type Config = ConfigFor<'visibility_modifier'>;
 	export type Fluent = FluentFor<'visibility_modifier'>;
 	export type Loose = LooseFor<'visibility_modifier'>;
+	export type LooseConfig = LooseConfigFor<'visibility_modifier'>;
 	export type BuildArgs = BuildArgsFor<'visibility_modifier'>;
 	export type LooseArgs = LooseArgsFor<'visibility_modifier'>;
 	export type Tree = TreeFor<'visibility_modifier'>;
@@ -9929,6 +9984,7 @@ export namespace BracketedType {
 	export type Config = ConfigFor<'bracketed_type'>;
 	export type Fluent = FluentFor<'bracketed_type'>;
 	export type Loose = LooseFor<'bracketed_type'>;
+	export type LooseConfig = LooseConfigFor<'bracketed_type'>;
 	export type BuildArgs = BuildArgsFor<'bracketed_type'>;
 	export type LooseArgs = LooseArgsFor<'bracketed_type'>;
 	export type Tree = TreeFor<'bracketed_type'>;
@@ -9938,6 +9994,7 @@ export namespace QualifiedType {
 	export type Config = ConfigFor<'qualified_type'>;
 	export type Fluent = FluentFor<'qualified_type'>;
 	export type Loose = LooseFor<'qualified_type'>;
+	export type LooseConfig = LooseConfigFor<'qualified_type'>;
 	export type BuildArgs = BuildArgsFor<'qualified_type'>;
 	export type LooseArgs = LooseArgsFor<'qualified_type'>;
 	export type Tree = TreeFor<'qualified_type'>;
@@ -9947,6 +10004,7 @@ export namespace Lifetime {
 	export type Config = ConfigFor<'lifetime'>;
 	export type Fluent = FluentFor<'lifetime'>;
 	export type Loose = LooseFor<'lifetime'>;
+	export type LooseConfig = LooseConfigFor<'lifetime'>;
 	export type BuildArgs = BuildArgsFor<'lifetime'>;
 	export type LooseArgs = LooseArgsFor<'lifetime'>;
 	export type Tree = TreeFor<'lifetime'>;
@@ -9956,6 +10014,7 @@ export namespace ArrayType {
 	export type Config = ConfigFor<'array_type'>;
 	export type Fluent = FluentFor<'array_type'>;
 	export type Loose = LooseFor<'array_type'>;
+	export type LooseConfig = LooseConfigFor<'array_type'>;
 	export type BuildArgs = BuildArgsFor<'array_type'>;
 	export type LooseArgs = LooseArgsFor<'array_type'>;
 	export type Tree = TreeFor<'array_type'>;
@@ -9965,6 +10024,7 @@ export namespace ForLifetimes {
 	export type Config = ConfigFor<'for_lifetimes'>;
 	export type Fluent = FluentFor<'for_lifetimes'>;
 	export type Loose = LooseFor<'for_lifetimes'>;
+	export type LooseConfig = LooseConfigFor<'for_lifetimes'>;
 	export type BuildArgs = BuildArgsFor<'for_lifetimes'>;
 	export type LooseArgs = LooseArgsFor<'for_lifetimes'>;
 	export type Tree = TreeFor<'for_lifetimes'>;
@@ -9974,6 +10034,7 @@ export namespace FunctionType {
 	export type Config = ConfigFor<'function_type'>;
 	export type Fluent = FluentFor<'function_type'>;
 	export type Loose = LooseFor<'function_type'>;
+	export type LooseConfig = LooseConfigFor<'function_type'>;
 	export type BuildArgs = BuildArgsFor<'function_type'>;
 	export type LooseArgs = LooseArgsFor<'function_type'>;
 	export type Tree = TreeFor<'function_type'>;
@@ -9983,6 +10044,7 @@ export namespace TupleType {
 	export type Config = ConfigFor<'tuple_type'>;
 	export type Fluent = FluentFor<'tuple_type'>;
 	export type Loose = LooseFor<'tuple_type'>;
+	export type LooseConfig = LooseConfigFor<'tuple_type'>;
 	export type BuildArgs = BuildArgsFor<'tuple_type'>;
 	export type LooseArgs = LooseArgsFor<'tuple_type'>;
 	export type Tree = TreeFor<'tuple_type'>;
@@ -9992,6 +10054,7 @@ export namespace GenericFunction {
 	export type Config = ConfigFor<'generic_function'>;
 	export type Fluent = FluentFor<'generic_function'>;
 	export type Loose = LooseFor<'generic_function'>;
+	export type LooseConfig = LooseConfigFor<'generic_function'>;
 	export type BuildArgs = BuildArgsFor<'generic_function'>;
 	export type LooseArgs = LooseArgsFor<'generic_function'>;
 	export type Tree = TreeFor<'generic_function'>;
@@ -10001,6 +10064,7 @@ export namespace GenericType {
 	export type Config = ConfigFor<'generic_type'>;
 	export type Fluent = FluentFor<'generic_type'>;
 	export type Loose = LooseFor<'generic_type'>;
+	export type LooseConfig = LooseConfigFor<'generic_type'>;
 	export type BuildArgs = BuildArgsFor<'generic_type'>;
 	export type LooseArgs = LooseArgsFor<'generic_type'>;
 	export type Tree = TreeFor<'generic_type'>;
@@ -10010,6 +10074,7 @@ export namespace GenericTypeWithTurbofish {
 	export type Config = ConfigFor<'generic_type_with_turbofish'>;
 	export type Fluent = FluentFor<'generic_type_with_turbofish'>;
 	export type Loose = LooseFor<'generic_type_with_turbofish'>;
+	export type LooseConfig = LooseConfigFor<'generic_type_with_turbofish'>;
 	export type BuildArgs = BuildArgsFor<'generic_type_with_turbofish'>;
 	export type LooseArgs = LooseArgsFor<'generic_type_with_turbofish'>;
 	export type Tree = TreeFor<'generic_type_with_turbofish'>;
@@ -10019,6 +10084,7 @@ export namespace BoundedType {
 	export type Config = ConfigFor<'bounded_type'>;
 	export type Fluent = FluentFor<'bounded_type'>;
 	export type Loose = LooseFor<'bounded_type'>;
+	export type LooseConfig = LooseConfigFor<'bounded_type'>;
 	export type BuildArgs = BuildArgsFor<'bounded_type'>;
 	export type LooseArgs = LooseArgsFor<'bounded_type'>;
 	export type Tree = TreeFor<'bounded_type'>;
@@ -10028,6 +10094,7 @@ export namespace UseBounds {
 	export type Config = ConfigFor<'use_bounds'>;
 	export type Fluent = FluentFor<'use_bounds'>;
 	export type Loose = LooseFor<'use_bounds'>;
+	export type LooseConfig = LooseConfigFor<'use_bounds'>;
 	export type BuildArgs = BuildArgsFor<'use_bounds'>;
 	export type LooseArgs = LooseArgsFor<'use_bounds'>;
 	export type Tree = TreeFor<'use_bounds'>;
@@ -10037,6 +10104,7 @@ export namespace TypeArguments {
 	export type Config = ConfigFor<'type_arguments'>;
 	export type Fluent = FluentFor<'type_arguments'>;
 	export type Loose = LooseFor<'type_arguments'>;
+	export type LooseConfig = LooseConfigFor<'type_arguments'>;
 	export type BuildArgs = BuildArgsFor<'type_arguments'>;
 	export type LooseArgs = LooseArgsFor<'type_arguments'>;
 	export type Tree = TreeFor<'type_arguments'>;
@@ -10046,6 +10114,7 @@ export namespace TypeBinding {
 	export type Config = ConfigFor<'type_binding'>;
 	export type Fluent = FluentFor<'type_binding'>;
 	export type Loose = LooseFor<'type_binding'>;
+	export type LooseConfig = LooseConfigFor<'type_binding'>;
 	export type BuildArgs = BuildArgsFor<'type_binding'>;
 	export type LooseArgs = LooseArgsFor<'type_binding'>;
 	export type Tree = TreeFor<'type_binding'>;
@@ -10055,6 +10124,7 @@ export namespace ReferenceType {
 	export type Config = ConfigFor<'reference_type'>;
 	export type Fluent = FluentFor<'reference_type'>;
 	export type Loose = LooseFor<'reference_type'>;
+	export type LooseConfig = LooseConfigFor<'reference_type'>;
 	export type BuildArgs = BuildArgsFor<'reference_type'>;
 	export type LooseArgs = LooseArgsFor<'reference_type'>;
 	export type Tree = TreeFor<'reference_type'>;
@@ -10064,6 +10134,7 @@ export namespace PointerType {
 	export type Config = ConfigFor<'pointer_type'>;
 	export type Fluent = FluentFor<'pointer_type'>;
 	export type Loose = LooseFor<'pointer_type'>;
+	export type LooseConfig = LooseConfigFor<'pointer_type'>;
 	export type BuildArgs = BuildArgsFor<'pointer_type'>;
 	export type LooseArgs = LooseArgsFor<'pointer_type'>;
 	export type Tree = TreeFor<'pointer_type'>;
@@ -10073,6 +10144,7 @@ export namespace AbstractType {
 	export type Config = ConfigFor<'abstract_type'>;
 	export type Fluent = FluentFor<'abstract_type'>;
 	export type Loose = LooseFor<'abstract_type'>;
+	export type LooseConfig = LooseConfigFor<'abstract_type'>;
 	export type BuildArgs = BuildArgsFor<'abstract_type'>;
 	export type LooseArgs = LooseArgsFor<'abstract_type'>;
 	export type Tree = TreeFor<'abstract_type'>;
@@ -10082,6 +10154,7 @@ export namespace DynamicType {
 	export type Config = ConfigFor<'dynamic_type'>;
 	export type Fluent = FluentFor<'dynamic_type'>;
 	export type Loose = LooseFor<'dynamic_type'>;
+	export type LooseConfig = LooseConfigFor<'dynamic_type'>;
 	export type BuildArgs = BuildArgsFor<'dynamic_type'>;
 	export type LooseArgs = LooseArgsFor<'dynamic_type'>;
 	export type Tree = TreeFor<'dynamic_type'>;
@@ -10091,6 +10164,7 @@ export namespace MacroInvocation {
 	export type Config = ConfigFor<'macro_invocation'>;
 	export type Fluent = FluentFor<'macro_invocation'>;
 	export type Loose = LooseFor<'macro_invocation'>;
+	export type LooseConfig = LooseConfigFor<'macro_invocation'>;
 	export type BuildArgs = BuildArgsFor<'macro_invocation'>;
 	export type LooseArgs = LooseArgsFor<'macro_invocation'>;
 	export type Tree = TreeFor<'macro_invocation'>;
@@ -10100,6 +10174,7 @@ export namespace DelimTokenTree {
 	export type Config = ConfigFor<'delim_token_tree'>;
 	export type Fluent = FluentFor<'delim_token_tree'>;
 	export type Loose = LooseFor<'delim_token_tree'>;
+	export type LooseConfig = LooseConfigFor<'delim_token_tree'>;
 	export type BuildArgs = BuildArgsFor<'delim_token_tree'>;
 	export type LooseArgs = LooseArgsFor<'delim_token_tree'>;
 	export type Tree = TreeFor<'delim_token_tree'>;
@@ -10109,6 +10184,7 @@ export namespace ScopedIdentifier {
 	export type Config = ConfigFor<'scoped_identifier'>;
 	export type Fluent = FluentFor<'scoped_identifier'>;
 	export type Loose = LooseFor<'scoped_identifier'>;
+	export type LooseConfig = LooseConfigFor<'scoped_identifier'>;
 	export type BuildArgs = BuildArgsFor<'scoped_identifier'>;
 	export type LooseArgs = LooseArgsFor<'scoped_identifier'>;
 	export type Tree = TreeFor<'scoped_identifier'>;
@@ -10118,6 +10194,7 @@ export namespace ScopedTypeIdentifierInExpressionPosition {
 	export type Config = ConfigFor<'scoped_type_identifier_in_expression_position'>;
 	export type Fluent = FluentFor<'scoped_type_identifier_in_expression_position'>;
 	export type Loose = LooseFor<'scoped_type_identifier_in_expression_position'>;
+	export type LooseConfig = LooseConfigFor<'scoped_type_identifier_in_expression_position'>;
 	export type BuildArgs = BuildArgsFor<'scoped_type_identifier_in_expression_position'>;
 	export type LooseArgs = LooseArgsFor<'scoped_type_identifier_in_expression_position'>;
 	export type Tree = TreeFor<'scoped_type_identifier_in_expression_position'>;
@@ -10127,6 +10204,7 @@ export namespace ScopedTypeIdentifier {
 	export type Config = ConfigFor<'scoped_type_identifier'>;
 	export type Fluent = FluentFor<'scoped_type_identifier'>;
 	export type Loose = LooseFor<'scoped_type_identifier'>;
+	export type LooseConfig = LooseConfigFor<'scoped_type_identifier'>;
 	export type BuildArgs = BuildArgsFor<'scoped_type_identifier'>;
 	export type LooseArgs = LooseArgsFor<'scoped_type_identifier'>;
 	export type Tree = TreeFor<'scoped_type_identifier'>;
@@ -10136,6 +10214,7 @@ export namespace RangeExpression {
 	export type Config = ConfigFor<'range_expression'>;
 	export type Fluent = FluentFor<'range_expression'>;
 	export type Loose = LooseFor<'range_expression'>;
+	export type LooseConfig = LooseConfigFor<'range_expression'>;
 	export type BuildArgs = BuildArgsFor<'range_expression'>;
 	export type LooseArgs = LooseArgsFor<'range_expression'>;
 	export type Tree = TreeFor<'range_expression'>;
@@ -10145,6 +10224,7 @@ export namespace UnaryExpression {
 	export type Config = ConfigFor<'unary_expression'>;
 	export type Fluent = FluentFor<'unary_expression'>;
 	export type Loose = LooseFor<'unary_expression'>;
+	export type LooseConfig = LooseConfigFor<'unary_expression'>;
 	export type BuildArgs = BuildArgsFor<'unary_expression'>;
 	export type LooseArgs = LooseArgsFor<'unary_expression'>;
 	export type Tree = TreeFor<'unary_expression'>;
@@ -10154,6 +10234,7 @@ export namespace TryExpression {
 	export type Config = ConfigFor<'try_expression'>;
 	export type Fluent = FluentFor<'try_expression'>;
 	export type Loose = LooseFor<'try_expression'>;
+	export type LooseConfig = LooseConfigFor<'try_expression'>;
 	export type BuildArgs = BuildArgsFor<'try_expression'>;
 	export type LooseArgs = LooseArgsFor<'try_expression'>;
 	export type Tree = TreeFor<'try_expression'>;
@@ -10163,6 +10244,7 @@ export namespace ReferenceExpression {
 	export type Config = ConfigFor<'reference_expression'>;
 	export type Fluent = FluentFor<'reference_expression'>;
 	export type Loose = LooseFor<'reference_expression'>;
+	export type LooseConfig = LooseConfigFor<'reference_expression'>;
 	export type BuildArgs = BuildArgsFor<'reference_expression'>;
 	export type LooseArgs = LooseArgsFor<'reference_expression'>;
 	export type Tree = TreeFor<'reference_expression'>;
@@ -10172,6 +10254,7 @@ export namespace BinaryExpression {
 	export type Config = ConfigFor<'binary_expression'>;
 	export type Fluent = FluentFor<'binary_expression'>;
 	export type Loose = LooseFor<'binary_expression'>;
+	export type LooseConfig = LooseConfigFor<'binary_expression'>;
 	export type BuildArgs = BuildArgsFor<'binary_expression'>;
 	export type LooseArgs = LooseArgsFor<'binary_expression'>;
 	export type Tree = TreeFor<'binary_expression'>;
@@ -10181,6 +10264,7 @@ export namespace AssignmentExpression {
 	export type Config = ConfigFor<'assignment_expression'>;
 	export type Fluent = FluentFor<'assignment_expression'>;
 	export type Loose = LooseFor<'assignment_expression'>;
+	export type LooseConfig = LooseConfigFor<'assignment_expression'>;
 	export type BuildArgs = BuildArgsFor<'assignment_expression'>;
 	export type LooseArgs = LooseArgsFor<'assignment_expression'>;
 	export type Tree = TreeFor<'assignment_expression'>;
@@ -10190,6 +10274,7 @@ export namespace CompoundAssignmentExpr {
 	export type Config = ConfigFor<'compound_assignment_expr'>;
 	export type Fluent = FluentFor<'compound_assignment_expr'>;
 	export type Loose = LooseFor<'compound_assignment_expr'>;
+	export type LooseConfig = LooseConfigFor<'compound_assignment_expr'>;
 	export type BuildArgs = BuildArgsFor<'compound_assignment_expr'>;
 	export type LooseArgs = LooseArgsFor<'compound_assignment_expr'>;
 	export type Tree = TreeFor<'compound_assignment_expr'>;
@@ -10199,6 +10284,7 @@ export namespace TypeCastExpression {
 	export type Config = ConfigFor<'type_cast_expression'>;
 	export type Fluent = FluentFor<'type_cast_expression'>;
 	export type Loose = LooseFor<'type_cast_expression'>;
+	export type LooseConfig = LooseConfigFor<'type_cast_expression'>;
 	export type BuildArgs = BuildArgsFor<'type_cast_expression'>;
 	export type LooseArgs = LooseArgsFor<'type_cast_expression'>;
 	export type Tree = TreeFor<'type_cast_expression'>;
@@ -10208,6 +10294,7 @@ export namespace ReturnExpression {
 	export type Config = ConfigFor<'return_expression'>;
 	export type Fluent = FluentFor<'return_expression'>;
 	export type Loose = LooseFor<'return_expression'>;
+	export type LooseConfig = LooseConfigFor<'return_expression'>;
 	export type BuildArgs = BuildArgsFor<'return_expression'>;
 	export type LooseArgs = LooseArgsFor<'return_expression'>;
 	export type Tree = TreeFor<'return_expression'>;
@@ -10217,6 +10304,7 @@ export namespace YieldExpression {
 	export type Config = ConfigFor<'yield_expression'>;
 	export type Fluent = FluentFor<'yield_expression'>;
 	export type Loose = LooseFor<'yield_expression'>;
+	export type LooseConfig = LooseConfigFor<'yield_expression'>;
 	export type BuildArgs = BuildArgsFor<'yield_expression'>;
 	export type LooseArgs = LooseArgsFor<'yield_expression'>;
 	export type Tree = TreeFor<'yield_expression'>;
@@ -10226,6 +10314,7 @@ export namespace CallExpression {
 	export type Config = ConfigFor<'call_expression'>;
 	export type Fluent = FluentFor<'call_expression'>;
 	export type Loose = LooseFor<'call_expression'>;
+	export type LooseConfig = LooseConfigFor<'call_expression'>;
 	export type BuildArgs = BuildArgsFor<'call_expression'>;
 	export type LooseArgs = LooseArgsFor<'call_expression'>;
 	export type Tree = TreeFor<'call_expression'>;
@@ -10235,6 +10324,7 @@ export namespace Arguments {
 	export type Config = ConfigFor<'arguments'>;
 	export type Fluent = FluentFor<'arguments'>;
 	export type Loose = LooseFor<'arguments'>;
+	export type LooseConfig = LooseConfigFor<'arguments'>;
 	export type BuildArgs = BuildArgsFor<'arguments'>;
 	export type LooseArgs = LooseArgsFor<'arguments'>;
 	export type Tree = TreeFor<'arguments'>;
@@ -10244,6 +10334,7 @@ export namespace ArrayExpression {
 	export type Config = ConfigFor<'array_expression'>;
 	export type Fluent = FluentFor<'array_expression'>;
 	export type Loose = LooseFor<'array_expression'>;
+	export type LooseConfig = LooseConfigFor<'array_expression'>;
 	export type BuildArgs = BuildArgsFor<'array_expression'>;
 	export type LooseArgs = LooseArgsFor<'array_expression'>;
 	export type Tree = TreeFor<'array_expression'>;
@@ -10253,6 +10344,7 @@ export namespace ParenthesizedExpression {
 	export type Config = ConfigFor<'parenthesized_expression'>;
 	export type Fluent = FluentFor<'parenthesized_expression'>;
 	export type Loose = LooseFor<'parenthesized_expression'>;
+	export type LooseConfig = LooseConfigFor<'parenthesized_expression'>;
 	export type BuildArgs = BuildArgsFor<'parenthesized_expression'>;
 	export type LooseArgs = LooseArgsFor<'parenthesized_expression'>;
 	export type Tree = TreeFor<'parenthesized_expression'>;
@@ -10262,6 +10354,7 @@ export namespace TupleExpression {
 	export type Config = ConfigFor<'tuple_expression'>;
 	export type Fluent = FluentFor<'tuple_expression'>;
 	export type Loose = LooseFor<'tuple_expression'>;
+	export type LooseConfig = LooseConfigFor<'tuple_expression'>;
 	export type BuildArgs = BuildArgsFor<'tuple_expression'>;
 	export type LooseArgs = LooseArgsFor<'tuple_expression'>;
 	export type Tree = TreeFor<'tuple_expression'>;
@@ -10271,6 +10364,7 @@ export namespace StructExpression {
 	export type Config = ConfigFor<'struct_expression'>;
 	export type Fluent = FluentFor<'struct_expression'>;
 	export type Loose = LooseFor<'struct_expression'>;
+	export type LooseConfig = LooseConfigFor<'struct_expression'>;
 	export type BuildArgs = BuildArgsFor<'struct_expression'>;
 	export type LooseArgs = LooseArgsFor<'struct_expression'>;
 	export type Tree = TreeFor<'struct_expression'>;
@@ -10280,6 +10374,7 @@ export namespace FieldInitializerList {
 	export type Config = ConfigFor<'field_initializer_list'>;
 	export type Fluent = FluentFor<'field_initializer_list'>;
 	export type Loose = LooseFor<'field_initializer_list'>;
+	export type LooseConfig = LooseConfigFor<'field_initializer_list'>;
 	export type BuildArgs = BuildArgsFor<'field_initializer_list'>;
 	export type LooseArgs = LooseArgsFor<'field_initializer_list'>;
 	export type Tree = TreeFor<'field_initializer_list'>;
@@ -10289,6 +10384,7 @@ export namespace ShorthandFieldInitializer {
 	export type Config = ConfigFor<'shorthand_field_initializer'>;
 	export type Fluent = FluentFor<'shorthand_field_initializer'>;
 	export type Loose = LooseFor<'shorthand_field_initializer'>;
+	export type LooseConfig = LooseConfigFor<'shorthand_field_initializer'>;
 	export type BuildArgs = BuildArgsFor<'shorthand_field_initializer'>;
 	export type LooseArgs = LooseArgsFor<'shorthand_field_initializer'>;
 	export type Tree = TreeFor<'shorthand_field_initializer'>;
@@ -10298,6 +10394,7 @@ export namespace FieldInitializer {
 	export type Config = ConfigFor<'field_initializer'>;
 	export type Fluent = FluentFor<'field_initializer'>;
 	export type Loose = LooseFor<'field_initializer'>;
+	export type LooseConfig = LooseConfigFor<'field_initializer'>;
 	export type BuildArgs = BuildArgsFor<'field_initializer'>;
 	export type LooseArgs = LooseArgsFor<'field_initializer'>;
 	export type Tree = TreeFor<'field_initializer'>;
@@ -10307,6 +10404,7 @@ export namespace BaseFieldInitializer {
 	export type Config = ConfigFor<'base_field_initializer'>;
 	export type Fluent = FluentFor<'base_field_initializer'>;
 	export type Loose = LooseFor<'base_field_initializer'>;
+	export type LooseConfig = LooseConfigFor<'base_field_initializer'>;
 	export type BuildArgs = BuildArgsFor<'base_field_initializer'>;
 	export type LooseArgs = LooseArgsFor<'base_field_initializer'>;
 	export type Tree = TreeFor<'base_field_initializer'>;
@@ -10316,6 +10414,7 @@ export namespace IfExpression {
 	export type Config = ConfigFor<'if_expression'>;
 	export type Fluent = FluentFor<'if_expression'>;
 	export type Loose = LooseFor<'if_expression'>;
+	export type LooseConfig = LooseConfigFor<'if_expression'>;
 	export type BuildArgs = BuildArgsFor<'if_expression'>;
 	export type LooseArgs = LooseArgsFor<'if_expression'>;
 	export type Tree = TreeFor<'if_expression'>;
@@ -10325,6 +10424,7 @@ export namespace LetCondition {
 	export type Config = ConfigFor<'let_condition'>;
 	export type Fluent = FluentFor<'let_condition'>;
 	export type Loose = LooseFor<'let_condition'>;
+	export type LooseConfig = LooseConfigFor<'let_condition'>;
 	export type BuildArgs = BuildArgsFor<'let_condition'>;
 	export type LooseArgs = LooseArgsFor<'let_condition'>;
 	export type Tree = TreeFor<'let_condition'>;
@@ -10334,6 +10434,7 @@ export namespace LetChain {
 	export type Config = ConfigFor<'_let_chain'>;
 	export type Fluent = FluentFor<'_let_chain'>;
 	export type Loose = LooseFor<'_let_chain'>;
+	export type LooseConfig = LooseConfigFor<'_let_chain'>;
 	export type BuildArgs = BuildArgsFor<'_let_chain'>;
 	export type LooseArgs = LooseArgsFor<'_let_chain'>;
 	export type Tree = TreeFor<'_let_chain'>;
@@ -10343,6 +10444,7 @@ export namespace ElseClause {
 	export type Config = ConfigFor<'else_clause'>;
 	export type Fluent = FluentFor<'else_clause'>;
 	export type Loose = LooseFor<'else_clause'>;
+	export type LooseConfig = LooseConfigFor<'else_clause'>;
 	export type BuildArgs = BuildArgsFor<'else_clause'>;
 	export type LooseArgs = LooseArgsFor<'else_clause'>;
 	export type Tree = TreeFor<'else_clause'>;
@@ -10352,6 +10454,7 @@ export namespace MatchExpression {
 	export type Config = ConfigFor<'match_expression'>;
 	export type Fluent = FluentFor<'match_expression'>;
 	export type Loose = LooseFor<'match_expression'>;
+	export type LooseConfig = LooseConfigFor<'match_expression'>;
 	export type BuildArgs = BuildArgsFor<'match_expression'>;
 	export type LooseArgs = LooseArgsFor<'match_expression'>;
 	export type Tree = TreeFor<'match_expression'>;
@@ -10361,6 +10464,7 @@ export namespace MatchBlock {
 	export type Config = ConfigFor<'match_block'>;
 	export type Fluent = FluentFor<'match_block'>;
 	export type Loose = LooseFor<'match_block'>;
+	export type LooseConfig = LooseConfigFor<'match_block'>;
 	export type BuildArgs = BuildArgsFor<'match_block'>;
 	export type LooseArgs = LooseArgsFor<'match_block'>;
 	export type Tree = TreeFor<'match_block'>;
@@ -10370,6 +10474,7 @@ export namespace MatchArm {
 	export type Config = ConfigFor<'match_arm'>;
 	export type Fluent = FluentFor<'match_arm'>;
 	export type Loose = LooseFor<'match_arm'>;
+	export type LooseConfig = LooseConfigFor<'match_arm'>;
 	export type BuildArgs = BuildArgsFor<'match_arm'>;
 	export type LooseArgs = LooseArgsFor<'match_arm'>;
 	export type Tree = TreeFor<'match_arm'>;
@@ -10379,6 +10484,7 @@ export namespace LastMatchArm {
 	export type Config = ConfigFor<'last_match_arm'>;
 	export type Fluent = FluentFor<'last_match_arm'>;
 	export type Loose = LooseFor<'last_match_arm'>;
+	export type LooseConfig = LooseConfigFor<'last_match_arm'>;
 	export type BuildArgs = BuildArgsFor<'last_match_arm'>;
 	export type LooseArgs = LooseArgsFor<'last_match_arm'>;
 	export type Tree = TreeFor<'last_match_arm'>;
@@ -10388,6 +10494,7 @@ export namespace MatchPattern {
 	export type Config = ConfigFor<'match_pattern'>;
 	export type Fluent = FluentFor<'match_pattern'>;
 	export type Loose = LooseFor<'match_pattern'>;
+	export type LooseConfig = LooseConfigFor<'match_pattern'>;
 	export type BuildArgs = BuildArgsFor<'match_pattern'>;
 	export type LooseArgs = LooseArgsFor<'match_pattern'>;
 	export type Tree = TreeFor<'match_pattern'>;
@@ -10397,6 +10504,7 @@ export namespace WhileExpression {
 	export type Config = ConfigFor<'while_expression'>;
 	export type Fluent = FluentFor<'while_expression'>;
 	export type Loose = LooseFor<'while_expression'>;
+	export type LooseConfig = LooseConfigFor<'while_expression'>;
 	export type BuildArgs = BuildArgsFor<'while_expression'>;
 	export type LooseArgs = LooseArgsFor<'while_expression'>;
 	export type Tree = TreeFor<'while_expression'>;
@@ -10406,6 +10514,7 @@ export namespace LoopExpression {
 	export type Config = ConfigFor<'loop_expression'>;
 	export type Fluent = FluentFor<'loop_expression'>;
 	export type Loose = LooseFor<'loop_expression'>;
+	export type LooseConfig = LooseConfigFor<'loop_expression'>;
 	export type BuildArgs = BuildArgsFor<'loop_expression'>;
 	export type LooseArgs = LooseArgsFor<'loop_expression'>;
 	export type Tree = TreeFor<'loop_expression'>;
@@ -10415,6 +10524,7 @@ export namespace ForExpression {
 	export type Config = ConfigFor<'for_expression'>;
 	export type Fluent = FluentFor<'for_expression'>;
 	export type Loose = LooseFor<'for_expression'>;
+	export type LooseConfig = LooseConfigFor<'for_expression'>;
 	export type BuildArgs = BuildArgsFor<'for_expression'>;
 	export type LooseArgs = LooseArgsFor<'for_expression'>;
 	export type Tree = TreeFor<'for_expression'>;
@@ -10424,6 +10534,7 @@ export namespace ConstBlock {
 	export type Config = ConfigFor<'const_block'>;
 	export type Fluent = FluentFor<'const_block'>;
 	export type Loose = LooseFor<'const_block'>;
+	export type LooseConfig = LooseConfigFor<'const_block'>;
 	export type BuildArgs = BuildArgsFor<'const_block'>;
 	export type LooseArgs = LooseArgsFor<'const_block'>;
 	export type Tree = TreeFor<'const_block'>;
@@ -10433,6 +10544,7 @@ export namespace ClosureExpression {
 	export type Config = ConfigFor<'closure_expression'>;
 	export type Fluent = FluentFor<'closure_expression'>;
 	export type Loose = LooseFor<'closure_expression'>;
+	export type LooseConfig = LooseConfigFor<'closure_expression'>;
 	export type BuildArgs = BuildArgsFor<'closure_expression'>;
 	export type LooseArgs = LooseArgsFor<'closure_expression'>;
 	export type Tree = TreeFor<'closure_expression'>;
@@ -10442,6 +10554,7 @@ export namespace ClosureParameters {
 	export type Config = ConfigFor<'closure_parameters'>;
 	export type Fluent = FluentFor<'closure_parameters'>;
 	export type Loose = LooseFor<'closure_parameters'>;
+	export type LooseConfig = LooseConfigFor<'closure_parameters'>;
 	export type BuildArgs = BuildArgsFor<'closure_parameters'>;
 	export type LooseArgs = LooseArgsFor<'closure_parameters'>;
 	export type Tree = TreeFor<'closure_parameters'>;
@@ -10451,6 +10564,7 @@ export namespace Label {
 	export type Config = ConfigFor<'label'>;
 	export type Fluent = FluentFor<'label'>;
 	export type Loose = LooseFor<'label'>;
+	export type LooseConfig = LooseConfigFor<'label'>;
 	export type BuildArgs = BuildArgsFor<'label'>;
 	export type LooseArgs = LooseArgsFor<'label'>;
 	export type Tree = TreeFor<'label'>;
@@ -10460,6 +10574,7 @@ export namespace BreakExpression {
 	export type Config = ConfigFor<'break_expression'>;
 	export type Fluent = FluentFor<'break_expression'>;
 	export type Loose = LooseFor<'break_expression'>;
+	export type LooseConfig = LooseConfigFor<'break_expression'>;
 	export type BuildArgs = BuildArgsFor<'break_expression'>;
 	export type LooseArgs = LooseArgsFor<'break_expression'>;
 	export type Tree = TreeFor<'break_expression'>;
@@ -10469,6 +10584,7 @@ export namespace ContinueExpression {
 	export type Config = ConfigFor<'continue_expression'>;
 	export type Fluent = FluentFor<'continue_expression'>;
 	export type Loose = LooseFor<'continue_expression'>;
+	export type LooseConfig = LooseConfigFor<'continue_expression'>;
 	export type BuildArgs = BuildArgsFor<'continue_expression'>;
 	export type LooseArgs = LooseArgsFor<'continue_expression'>;
 	export type Tree = TreeFor<'continue_expression'>;
@@ -10478,6 +10594,7 @@ export namespace IndexExpression {
 	export type Config = ConfigFor<'index_expression'>;
 	export type Fluent = FluentFor<'index_expression'>;
 	export type Loose = LooseFor<'index_expression'>;
+	export type LooseConfig = LooseConfigFor<'index_expression'>;
 	export type BuildArgs = BuildArgsFor<'index_expression'>;
 	export type LooseArgs = LooseArgsFor<'index_expression'>;
 	export type Tree = TreeFor<'index_expression'>;
@@ -10487,6 +10604,7 @@ export namespace AwaitExpression {
 	export type Config = ConfigFor<'await_expression'>;
 	export type Fluent = FluentFor<'await_expression'>;
 	export type Loose = LooseFor<'await_expression'>;
+	export type LooseConfig = LooseConfigFor<'await_expression'>;
 	export type BuildArgs = BuildArgsFor<'await_expression'>;
 	export type LooseArgs = LooseArgsFor<'await_expression'>;
 	export type Tree = TreeFor<'await_expression'>;
@@ -10496,6 +10614,7 @@ export namespace FieldExpression {
 	export type Config = ConfigFor<'field_expression'>;
 	export type Fluent = FluentFor<'field_expression'>;
 	export type Loose = LooseFor<'field_expression'>;
+	export type LooseConfig = LooseConfigFor<'field_expression'>;
 	export type BuildArgs = BuildArgsFor<'field_expression'>;
 	export type LooseArgs = LooseArgsFor<'field_expression'>;
 	export type Tree = TreeFor<'field_expression'>;
@@ -10505,6 +10624,7 @@ export namespace UnsafeBlock {
 	export type Config = ConfigFor<'unsafe_block'>;
 	export type Fluent = FluentFor<'unsafe_block'>;
 	export type Loose = LooseFor<'unsafe_block'>;
+	export type LooseConfig = LooseConfigFor<'unsafe_block'>;
 	export type BuildArgs = BuildArgsFor<'unsafe_block'>;
 	export type LooseArgs = LooseArgsFor<'unsafe_block'>;
 	export type Tree = TreeFor<'unsafe_block'>;
@@ -10514,6 +10634,7 @@ export namespace AsyncBlock {
 	export type Config = ConfigFor<'async_block'>;
 	export type Fluent = FluentFor<'async_block'>;
 	export type Loose = LooseFor<'async_block'>;
+	export type LooseConfig = LooseConfigFor<'async_block'>;
 	export type BuildArgs = BuildArgsFor<'async_block'>;
 	export type LooseArgs = LooseArgsFor<'async_block'>;
 	export type Tree = TreeFor<'async_block'>;
@@ -10523,6 +10644,7 @@ export namespace GenBlock {
 	export type Config = ConfigFor<'gen_block'>;
 	export type Fluent = FluentFor<'gen_block'>;
 	export type Loose = LooseFor<'gen_block'>;
+	export type LooseConfig = LooseConfigFor<'gen_block'>;
 	export type BuildArgs = BuildArgsFor<'gen_block'>;
 	export type LooseArgs = LooseArgsFor<'gen_block'>;
 	export type Tree = TreeFor<'gen_block'>;
@@ -10532,6 +10654,7 @@ export namespace TryBlock {
 	export type Config = ConfigFor<'try_block'>;
 	export type Fluent = FluentFor<'try_block'>;
 	export type Loose = LooseFor<'try_block'>;
+	export type LooseConfig = LooseConfigFor<'try_block'>;
 	export type BuildArgs = BuildArgsFor<'try_block'>;
 	export type LooseArgs = LooseArgsFor<'try_block'>;
 	export type Tree = TreeFor<'try_block'>;
@@ -10541,6 +10664,7 @@ export namespace Block {
 	export type Config = ConfigFor<'block'>;
 	export type Fluent = FluentFor<'block'>;
 	export type Loose = LooseFor<'block'>;
+	export type LooseConfig = LooseConfigFor<'block'>;
 	export type BuildArgs = BuildArgsFor<'block'>;
 	export type LooseArgs = LooseArgsFor<'block'>;
 	export type Tree = TreeFor<'block'>;
@@ -10550,6 +10674,7 @@ export namespace GenericPattern {
 	export type Config = ConfigFor<'generic_pattern'>;
 	export type Fluent = FluentFor<'generic_pattern'>;
 	export type Loose = LooseFor<'generic_pattern'>;
+	export type LooseConfig = LooseConfigFor<'generic_pattern'>;
 	export type BuildArgs = BuildArgsFor<'generic_pattern'>;
 	export type LooseArgs = LooseArgsFor<'generic_pattern'>;
 	export type Tree = TreeFor<'generic_pattern'>;
@@ -10559,6 +10684,7 @@ export namespace TuplePattern {
 	export type Config = ConfigFor<'tuple_pattern'>;
 	export type Fluent = FluentFor<'tuple_pattern'>;
 	export type Loose = LooseFor<'tuple_pattern'>;
+	export type LooseConfig = LooseConfigFor<'tuple_pattern'>;
 	export type BuildArgs = BuildArgsFor<'tuple_pattern'>;
 	export type LooseArgs = LooseArgsFor<'tuple_pattern'>;
 	export type Tree = TreeFor<'tuple_pattern'>;
@@ -10568,6 +10694,7 @@ export namespace SlicePattern {
 	export type Config = ConfigFor<'slice_pattern'>;
 	export type Fluent = FluentFor<'slice_pattern'>;
 	export type Loose = LooseFor<'slice_pattern'>;
+	export type LooseConfig = LooseConfigFor<'slice_pattern'>;
 	export type BuildArgs = BuildArgsFor<'slice_pattern'>;
 	export type LooseArgs = LooseArgsFor<'slice_pattern'>;
 	export type Tree = TreeFor<'slice_pattern'>;
@@ -10577,6 +10704,7 @@ export namespace TupleStructPattern {
 	export type Config = ConfigFor<'tuple_struct_pattern'>;
 	export type Fluent = FluentFor<'tuple_struct_pattern'>;
 	export type Loose = LooseFor<'tuple_struct_pattern'>;
+	export type LooseConfig = LooseConfigFor<'tuple_struct_pattern'>;
 	export type BuildArgs = BuildArgsFor<'tuple_struct_pattern'>;
 	export type LooseArgs = LooseArgsFor<'tuple_struct_pattern'>;
 	export type Tree = TreeFor<'tuple_struct_pattern'>;
@@ -10586,6 +10714,7 @@ export namespace StructPattern {
 	export type Config = ConfigFor<'struct_pattern'>;
 	export type Fluent = FluentFor<'struct_pattern'>;
 	export type Loose = LooseFor<'struct_pattern'>;
+	export type LooseConfig = LooseConfigFor<'struct_pattern'>;
 	export type BuildArgs = BuildArgsFor<'struct_pattern'>;
 	export type LooseArgs = LooseArgsFor<'struct_pattern'>;
 	export type Tree = TreeFor<'struct_pattern'>;
@@ -10595,6 +10724,7 @@ export namespace FieldPattern {
 	export type Config = ConfigFor<'field_pattern'>;
 	export type Fluent = FluentFor<'field_pattern'>;
 	export type Loose = LooseFor<'field_pattern'>;
+	export type LooseConfig = LooseConfigFor<'field_pattern'>;
 	export type BuildArgs = BuildArgsFor<'field_pattern'>;
 	export type LooseArgs = LooseArgsFor<'field_pattern'>;
 	export type Tree = TreeFor<'field_pattern'>;
@@ -10604,6 +10734,7 @@ export namespace MutPattern {
 	export type Config = ConfigFor<'mut_pattern'>;
 	export type Fluent = FluentFor<'mut_pattern'>;
 	export type Loose = LooseFor<'mut_pattern'>;
+	export type LooseConfig = LooseConfigFor<'mut_pattern'>;
 	export type BuildArgs = BuildArgsFor<'mut_pattern'>;
 	export type LooseArgs = LooseArgsFor<'mut_pattern'>;
 	export type Tree = TreeFor<'mut_pattern'>;
@@ -10613,6 +10744,7 @@ export namespace RangePattern {
 	export type Config = ConfigFor<'range_pattern'>;
 	export type Fluent = FluentFor<'range_pattern'>;
 	export type Loose = LooseFor<'range_pattern'>;
+	export type LooseConfig = LooseConfigFor<'range_pattern'>;
 	export type BuildArgs = BuildArgsFor<'range_pattern'>;
 	export type LooseArgs = LooseArgsFor<'range_pattern'>;
 	export type Tree = TreeFor<'range_pattern'>;
@@ -10622,6 +10754,7 @@ export namespace RefPattern {
 	export type Config = ConfigFor<'ref_pattern'>;
 	export type Fluent = FluentFor<'ref_pattern'>;
 	export type Loose = LooseFor<'ref_pattern'>;
+	export type LooseConfig = LooseConfigFor<'ref_pattern'>;
 	export type BuildArgs = BuildArgsFor<'ref_pattern'>;
 	export type LooseArgs = LooseArgsFor<'ref_pattern'>;
 	export type Tree = TreeFor<'ref_pattern'>;
@@ -10631,6 +10764,7 @@ export namespace CapturedPattern {
 	export type Config = ConfigFor<'captured_pattern'>;
 	export type Fluent = FluentFor<'captured_pattern'>;
 	export type Loose = LooseFor<'captured_pattern'>;
+	export type LooseConfig = LooseConfigFor<'captured_pattern'>;
 	export type BuildArgs = BuildArgsFor<'captured_pattern'>;
 	export type LooseArgs = LooseArgsFor<'captured_pattern'>;
 	export type Tree = TreeFor<'captured_pattern'>;
@@ -10640,6 +10774,7 @@ export namespace ReferencePattern {
 	export type Config = ConfigFor<'reference_pattern'>;
 	export type Fluent = FluentFor<'reference_pattern'>;
 	export type Loose = LooseFor<'reference_pattern'>;
+	export type LooseConfig = LooseConfigFor<'reference_pattern'>;
 	export type BuildArgs = BuildArgsFor<'reference_pattern'>;
 	export type LooseArgs = LooseArgsFor<'reference_pattern'>;
 	export type Tree = TreeFor<'reference_pattern'>;
@@ -10649,6 +10784,7 @@ export namespace OrPattern {
 	export type Config = ConfigFor<'or_pattern'>;
 	export type Fluent = FluentFor<'or_pattern'>;
 	export type Loose = LooseFor<'or_pattern'>;
+	export type LooseConfig = LooseConfigFor<'or_pattern'>;
 	export type BuildArgs = BuildArgsFor<'or_pattern'>;
 	export type LooseArgs = LooseArgsFor<'or_pattern'>;
 	export type Tree = TreeFor<'or_pattern'>;
@@ -10658,6 +10794,7 @@ export namespace NegativeLiteral {
 	export type Config = ConfigFor<'negative_literal'>;
 	export type Fluent = FluentFor<'negative_literal'>;
 	export type Loose = LooseFor<'negative_literal'>;
+	export type LooseConfig = LooseConfigFor<'negative_literal'>;
 	export type BuildArgs = BuildArgsFor<'negative_literal'>;
 	export type LooseArgs = LooseArgsFor<'negative_literal'>;
 	export type Tree = TreeFor<'negative_literal'>;
@@ -10667,6 +10804,7 @@ export namespace StringLiteral {
 	export type Config = ConfigFor<'string_literal'>;
 	export type Fluent = FluentFor<'string_literal'>;
 	export type Loose = LooseFor<'string_literal'>;
+	export type LooseConfig = LooseConfigFor<'string_literal'>;
 	export type BuildArgs = BuildArgsFor<'string_literal'>;
 	export type LooseArgs = LooseArgsFor<'string_literal'>;
 	export type Tree = TreeFor<'string_literal'>;
@@ -10676,6 +10814,7 @@ export namespace RawStringLiteral {
 	export type Config = ConfigFor<'raw_string_literal'>;
 	export type Fluent = FluentFor<'raw_string_literal'>;
 	export type Loose = LooseFor<'raw_string_literal'>;
+	export type LooseConfig = LooseConfigFor<'raw_string_literal'>;
 	export type BuildArgs = BuildArgsFor<'raw_string_literal'>;
 	export type LooseArgs = LooseArgsFor<'raw_string_literal'>;
 	export type Tree = TreeFor<'raw_string_literal'>;
@@ -10685,6 +10824,7 @@ export namespace Comment {
 	export type Config = ConfigFor<'comment'>;
 	export type Fluent = FluentFor<'comment'>;
 	export type Loose = LooseFor<'comment'>;
+	export type LooseConfig = LooseConfigFor<'comment'>;
 	export type BuildArgs = BuildArgsFor<'comment'>;
 	export type LooseArgs = LooseArgsFor<'comment'>;
 	export type Tree = TreeFor<'comment'>;
@@ -10694,6 +10834,7 @@ export namespace LineComment {
 	export type Config = ConfigFor<'line_comment'>;
 	export type Fluent = FluentFor<'line_comment'>;
 	export type Loose = LooseFor<'line_comment'>;
+	export type LooseConfig = LooseConfigFor<'line_comment'>;
 	export type BuildArgs = BuildArgsFor<'line_comment'>;
 	export type LooseArgs = LooseArgsFor<'line_comment'>;
 	export type Tree = TreeFor<'line_comment'>;
@@ -10703,6 +10844,7 @@ export namespace BlockComment {
 	export type Config = ConfigFor<'block_comment'>;
 	export type Fluent = FluentFor<'block_comment'>;
 	export type Loose = LooseFor<'block_comment'>;
+	export type LooseConfig = LooseConfigFor<'block_comment'>;
 	export type BuildArgs = BuildArgsFor<'block_comment'>;
 	export type LooseArgs = LooseArgsFor<'block_comment'>;
 	export type Tree = TreeFor<'block_comment'>;
@@ -10712,6 +10854,7 @@ export namespace MacroRules {
 	export type Config = ConfigFor<'_macro_rules'>;
 	export type Fluent = FluentFor<'_macro_rules'>;
 	export type Loose = LooseFor<'_macro_rules'>;
+	export type LooseConfig = LooseConfigFor<'_macro_rules'>;
 	export type BuildArgs = BuildArgsFor<'_macro_rules'>;
 	export type LooseArgs = LooseArgsFor<'_macro_rules'>;
 	export type Tree = TreeFor<'_macro_rules'>;
@@ -10721,6 +10864,7 @@ export namespace EnumVariantListElements {
 	export type Config = ConfigFor<'_enum_variant_list_elements'>;
 	export type Fluent = FluentFor<'_enum_variant_list_elements'>;
 	export type Loose = LooseFor<'_enum_variant_list_elements'>;
+	export type LooseConfig = LooseConfigFor<'_enum_variant_list_elements'>;
 	export type BuildArgs = BuildArgsFor<'_enum_variant_list_elements'>;
 	export type LooseArgs = LooseArgsFor<'_enum_variant_list_elements'>;
 	export type Tree = TreeFor<'_enum_variant_list_elements'>;
@@ -10730,6 +10874,7 @@ export namespace EnumVariantOptional1 {
 	export type Config = ConfigFor<'_enum_variant_optional1'>;
 	export type Fluent = FluentFor<'_enum_variant_optional1'>;
 	export type Loose = LooseFor<'_enum_variant_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_enum_variant_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_enum_variant_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_enum_variant_optional1'>;
 	export type Tree = TreeFor<'_enum_variant_optional1'>;
@@ -10739,6 +10884,7 @@ export namespace FieldDeclarationListElements {
 	export type Config = ConfigFor<'_field_declaration_list_elements'>;
 	export type Fluent = FluentFor<'_field_declaration_list_elements'>;
 	export type Loose = LooseFor<'_field_declaration_list_elements'>;
+	export type LooseConfig = LooseConfigFor<'_field_declaration_list_elements'>;
 	export type BuildArgs = BuildArgsFor<'_field_declaration_list_elements'>;
 	export type LooseArgs = LooseArgsFor<'_field_declaration_list_elements'>;
 	export type Tree = TreeFor<'_field_declaration_list_elements'>;
@@ -10748,6 +10894,7 @@ export namespace OrderedFieldDeclarationListElements {
 	export type Config = ConfigFor<'_ordered_field_declaration_list_elements'>;
 	export type Fluent = FluentFor<'_ordered_field_declaration_list_elements'>;
 	export type Loose = LooseFor<'_ordered_field_declaration_list_elements'>;
+	export type LooseConfig = LooseConfigFor<'_ordered_field_declaration_list_elements'>;
 	export type BuildArgs = BuildArgsFor<'_ordered_field_declaration_list_elements'>;
 	export type LooseArgs = LooseArgsFor<'_ordered_field_declaration_list_elements'>;
 	export type Tree = TreeFor<'_ordered_field_declaration_list_elements'>;
@@ -10757,6 +10904,7 @@ export namespace ExternCrateDeclarationOptional1 {
 	export type Config = ConfigFor<'_extern_crate_declaration_optional1'>;
 	export type Fluent = FluentFor<'_extern_crate_declaration_optional1'>;
 	export type Loose = LooseFor<'_extern_crate_declaration_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_extern_crate_declaration_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_extern_crate_declaration_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_extern_crate_declaration_optional1'>;
 	export type Tree = TreeFor<'_extern_crate_declaration_optional1'>;
@@ -10766,6 +10914,7 @@ export namespace FunctionItemOptional1 {
 	export type Config = ConfigFor<'_function_item_optional1'>;
 	export type Fluent = FluentFor<'_function_item_optional1'>;
 	export type Loose = LooseFor<'_function_item_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_function_item_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_function_item_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_function_item_optional1'>;
 	export type Tree = TreeFor<'_function_item_optional1'>;
@@ -10775,6 +10924,7 @@ export namespace WherePredicates {
 	export type Config = ConfigFor<'_where_predicates'>;
 	export type Fluent = FluentFor<'_where_predicates'>;
 	export type Loose = LooseFor<'_where_predicates'>;
+	export type LooseConfig = LooseConfigFor<'_where_predicates'>;
 	export type BuildArgs = BuildArgsFor<'_where_predicates'>;
 	export type LooseArgs = LooseArgsFor<'_where_predicates'>;
 	export type Tree = TreeFor<'_where_predicates'>;
@@ -10784,6 +10934,7 @@ export namespace TypeParametersElements {
 	export type Config = ConfigFor<'_type_parameters_elements'>;
 	export type Fluent = FluentFor<'_type_parameters_elements'>;
 	export type Loose = LooseFor<'_type_parameters_elements'>;
+	export type LooseConfig = LooseConfigFor<'_type_parameters_elements'>;
 	export type BuildArgs = BuildArgsFor<'_type_parameters_elements'>;
 	export type LooseArgs = LooseArgsFor<'_type_parameters_elements'>;
 	export type Tree = TreeFor<'_type_parameters_elements'>;
@@ -10793,6 +10944,7 @@ export namespace ConstParameterOptional1 {
 	export type Config = ConfigFor<'_const_parameter_optional1'>;
 	export type Fluent = FluentFor<'_const_parameter_optional1'>;
 	export type Loose = LooseFor<'_const_parameter_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_const_parameter_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_const_parameter_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_const_parameter_optional1'>;
 	export type Tree = TreeFor<'_const_parameter_optional1'>;
@@ -10802,6 +10954,7 @@ export namespace TypeParameterOptional1 {
 	export type Config = ConfigFor<'_type_parameter_optional1'>;
 	export type Fluent = FluentFor<'_type_parameter_optional1'>;
 	export type Loose = LooseFor<'_type_parameter_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_type_parameter_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_type_parameter_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_type_parameter_optional1'>;
 	export type Tree = TreeFor<'_type_parameter_optional1'>;
@@ -10811,6 +10964,7 @@ export namespace LetDeclarationOptional1 {
 	export type Config = ConfigFor<'_let_declaration_optional1'>;
 	export type Fluent = FluentFor<'_let_declaration_optional1'>;
 	export type Loose = LooseFor<'_let_declaration_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_let_declaration_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_let_declaration_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_let_declaration_optional1'>;
 	export type Tree = TreeFor<'_let_declaration_optional1'>;
@@ -10820,6 +10974,7 @@ export namespace LetDeclarationOptional2 {
 	export type Config = ConfigFor<'_let_declaration_optional2'>;
 	export type Fluent = FluentFor<'_let_declaration_optional2'>;
 	export type Loose = LooseFor<'_let_declaration_optional2'>;
+	export type LooseConfig = LooseConfigFor<'_let_declaration_optional2'>;
 	export type BuildArgs = BuildArgsFor<'_let_declaration_optional2'>;
 	export type LooseArgs = LooseArgsFor<'_let_declaration_optional2'>;
 	export type Tree = TreeFor<'_let_declaration_optional2'>;
@@ -10829,6 +10984,7 @@ export namespace UseClauses {
 	export type Config = ConfigFor<'_use_clauses'>;
 	export type Fluent = FluentFor<'_use_clauses'>;
 	export type Loose = LooseFor<'_use_clauses'>;
+	export type LooseConfig = LooseConfigFor<'_use_clauses'>;
 	export type BuildArgs = BuildArgsFor<'_use_clauses'>;
 	export type LooseArgs = LooseArgsFor<'_use_clauses'>;
 	export type Tree = TreeFor<'_use_clauses'>;
@@ -10838,6 +10994,7 @@ export namespace ParametersElements {
 	export type Config = ConfigFor<'_parameters_elements'>;
 	export type Fluent = FluentFor<'_parameters_elements'>;
 	export type Loose = LooseFor<'_parameters_elements'>;
+	export type LooseConfig = LooseConfigFor<'_parameters_elements'>;
 	export type BuildArgs = BuildArgsFor<'_parameters_elements'>;
 	export type LooseArgs = LooseArgsFor<'_parameters_elements'>;
 	export type Tree = TreeFor<'_parameters_elements'>;
@@ -10847,6 +11004,7 @@ export namespace VariadicParameterOptional1 {
 	export type Config = ConfigFor<'_variadic_parameter_optional1'>;
 	export type Fluent = FluentFor<'_variadic_parameter_optional1'>;
 	export type Loose = LooseFor<'_variadic_parameter_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_variadic_parameter_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_variadic_parameter_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_variadic_parameter_optional1'>;
 	export type Tree = TreeFor<'_variadic_parameter_optional1'>;
@@ -10856,6 +11014,7 @@ export namespace ArrayTypeOptional1 {
 	export type Config = ConfigFor<'_array_type_optional1'>;
 	export type Fluent = FluentFor<'_array_type_optional1'>;
 	export type Loose = LooseFor<'_array_type_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_array_type_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_array_type_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_array_type_optional1'>;
 	export type Tree = TreeFor<'_array_type_optional1'>;
@@ -10865,6 +11024,7 @@ export namespace Lifetimes {
 	export type Config = ConfigFor<'_lifetimes'>;
 	export type Fluent = FluentFor<'_lifetimes'>;
 	export type Loose = LooseFor<'_lifetimes'>;
+	export type LooseConfig = LooseConfigFor<'_lifetimes'>;
 	export type BuildArgs = BuildArgsFor<'_lifetimes'>;
 	export type LooseArgs = LooseArgsFor<'_lifetimes'>;
 	export type Tree = TreeFor<'_lifetimes'>;
@@ -10874,6 +11034,7 @@ export namespace UseBoundsElements {
 	export type Config = ConfigFor<'_use_bounds_elements'>;
 	export type Fluent = FluentFor<'_use_bounds_elements'>;
 	export type Loose = LooseFor<'_use_bounds_elements'>;
+	export type LooseConfig = LooseConfigFor<'_use_bounds_elements'>;
 	export type BuildArgs = BuildArgsFor<'_use_bounds_elements'>;
 	export type LooseArgs = LooseArgsFor<'_use_bounds_elements'>;
 	export type Tree = TreeFor<'_use_bounds_elements'>;
@@ -10883,6 +11044,7 @@ export namespace TypeArgumentsElements {
 	export type Config = ConfigFor<'_type_arguments_elements'>;
 	export type Fluent = FluentFor<'_type_arguments_elements'>;
 	export type Loose = LooseFor<'_type_arguments_elements'>;
+	export type LooseConfig = LooseConfigFor<'_type_arguments_elements'>;
 	export type BuildArgs = BuildArgsFor<'_type_arguments_elements'>;
 	export type LooseArgs = LooseArgsFor<'_type_arguments_elements'>;
 	export type Tree = TreeFor<'_type_arguments_elements'>;
@@ -10892,6 +11054,7 @@ export namespace AbstractTypeOptional1 {
 	export type Config = ConfigFor<'_abstract_type_optional1'>;
 	export type Fluent = FluentFor<'_abstract_type_optional1'>;
 	export type Loose = LooseFor<'_abstract_type_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_abstract_type_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_abstract_type_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_abstract_type_optional1'>;
 	export type Tree = TreeFor<'_abstract_type_optional1'>;
@@ -10901,6 +11064,7 @@ export namespace ArgumentsElements {
 	export type Config = ConfigFor<'_arguments_elements'>;
 	export type Fluent = FluentFor<'_arguments_elements'>;
 	export type Loose = LooseFor<'_arguments_elements'>;
+	export type LooseConfig = LooseConfigFor<'_arguments_elements'>;
 	export type BuildArgs = BuildArgsFor<'_arguments_elements'>;
 	export type LooseArgs = LooseArgsFor<'_arguments_elements'>;
 	export type Tree = TreeFor<'_arguments_elements'>;
@@ -10910,6 +11074,7 @@ export namespace FieldInitializerListElements {
 	export type Config = ConfigFor<'_field_initializer_list_elements'>;
 	export type Fluent = FluentFor<'_field_initializer_list_elements'>;
 	export type Loose = LooseFor<'_field_initializer_list_elements'>;
+	export type LooseConfig = LooseConfigFor<'_field_initializer_list_elements'>;
 	export type BuildArgs = BuildArgsFor<'_field_initializer_list_elements'>;
 	export type LooseArgs = LooseArgsFor<'_field_initializer_list_elements'>;
 	export type Tree = TreeFor<'_field_initializer_list_elements'>;
@@ -10919,6 +11084,7 @@ export namespace MatchPatternOptional1 {
 	export type Config = ConfigFor<'_match_pattern_optional1'>;
 	export type Fluent = FluentFor<'_match_pattern_optional1'>;
 	export type Loose = LooseFor<'_match_pattern_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_match_pattern_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_match_pattern_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_match_pattern_optional1'>;
 	export type Tree = TreeFor<'_match_pattern_optional1'>;
@@ -10928,6 +11094,7 @@ export namespace WhileExpressionOptional1 {
 	export type Config = ConfigFor<'_while_expression_optional1'>;
 	export type Fluent = FluentFor<'_while_expression_optional1'>;
 	export type Loose = LooseFor<'_while_expression_optional1'>;
+	export type LooseConfig = LooseConfigFor<'_while_expression_optional1'>;
 	export type BuildArgs = BuildArgsFor<'_while_expression_optional1'>;
 	export type LooseArgs = LooseArgsFor<'_while_expression_optional1'>;
 	export type Tree = TreeFor<'_while_expression_optional1'>;
@@ -10937,6 +11104,7 @@ export namespace TuplePatternElements {
 	export type Config = ConfigFor<'_tuple_pattern_elements'>;
 	export type Fluent = FluentFor<'_tuple_pattern_elements'>;
 	export type Loose = LooseFor<'_tuple_pattern_elements'>;
+	export type LooseConfig = LooseConfigFor<'_tuple_pattern_elements'>;
 	export type BuildArgs = BuildArgsFor<'_tuple_pattern_elements'>;
 	export type LooseArgs = LooseArgsFor<'_tuple_pattern_elements'>;
 	export type Tree = TreeFor<'_tuple_pattern_elements'>;
@@ -10946,6 +11114,7 @@ export namespace Patterns {
 	export type Config = ConfigFor<'_patterns'>;
 	export type Fluent = FluentFor<'_patterns'>;
 	export type Loose = LooseFor<'_patterns'>;
+	export type LooseConfig = LooseConfigFor<'_patterns'>;
 	export type BuildArgs = BuildArgsFor<'_patterns'>;
 	export type LooseArgs = LooseArgsFor<'_patterns'>;
 	export type Tree = TreeFor<'_patterns'>;
@@ -10955,6 +11124,7 @@ export namespace StructPatternElements {
 	export type Config = ConfigFor<'_struct_pattern_elements'>;
 	export type Fluent = FluentFor<'_struct_pattern_elements'>;
 	export type Loose = LooseFor<'_struct_pattern_elements'>;
+	export type LooseConfig = LooseConfigFor<'_struct_pattern_elements'>;
 	export type BuildArgs = BuildArgsFor<'_struct_pattern_elements'>;
 	export type LooseArgs = LooseArgsFor<'_struct_pattern_elements'>;
 	export type Tree = TreeFor<'_struct_pattern_elements'>;
@@ -10964,6 +11134,7 @@ export namespace RangePatternArm2 {
 	export type Config = ConfigFor<'_range_pattern_arm2'>;
 	export type Fluent = FluentFor<'_range_pattern_arm2'>;
 	export type Loose = LooseFor<'_range_pattern_arm2'>;
+	export type LooseConfig = LooseConfigFor<'_range_pattern_arm2'>;
 	export type BuildArgs = BuildArgsFor<'_range_pattern_arm2'>;
 	export type LooseArgs = LooseArgsFor<'_range_pattern_arm2'>;
 	export type Tree = TreeFor<'_range_pattern_arm2'>;
@@ -10973,6 +11144,7 @@ export namespace AttributeArm {
 	export type Config = ConfigFor<'_attribute_arm'>;
 	export type Fluent = FluentFor<'_attribute_arm'>;
 	export type Loose = LooseFor<'_attribute_arm'>;
+	export type LooseConfig = LooseConfigFor<'_attribute_arm'>;
 	export type BuildArgs = BuildArgsFor<'_attribute_arm'>;
 	export type LooseArgs = LooseArgsFor<'_attribute_arm'>;
 	export type Tree = TreeFor<'_attribute_arm'>;
@@ -10982,6 +11154,7 @@ export namespace VisibilityModifierGroup {
 	export type Config = ConfigFor<'_visibility_modifier_group'>;
 	export type Fluent = FluentFor<'_visibility_modifier_group'>;
 	export type Loose = LooseFor<'_visibility_modifier_group'>;
+	export type LooseConfig = LooseConfigFor<'_visibility_modifier_group'>;
 	export type BuildArgs = BuildArgsFor<'_visibility_modifier_group'>;
 	export type LooseArgs = LooseArgsFor<'_visibility_modifier_group'>;
 	export type Tree = TreeFor<'_visibility_modifier_group'>;
@@ -10991,6 +11164,7 @@ export namespace ArrayExpressionArm {
 	export type Config = ConfigFor<'_array_expression_arm'>;
 	export type Fluent = FluentFor<'_array_expression_arm'>;
 	export type Loose = LooseFor<'_array_expression_arm'>;
+	export type LooseConfig = LooseConfigFor<'_array_expression_arm'>;
 	export type BuildArgs = BuildArgsFor<'_array_expression_arm'>;
 	export type LooseArgs = LooseArgsFor<'_array_expression_arm'>;
 	export type Tree = TreeFor<'_array_expression_arm'>;
@@ -11000,6 +11174,7 @@ export namespace BlockCommentArm {
 	export type Config = ConfigFor<'_block_comment_arm'>;
 	export type Fluent = FluentFor<'_block_comment_arm'>;
 	export type Loose = LooseFor<'_block_comment_arm'>;
+	export type LooseConfig = LooseConfigFor<'_block_comment_arm'>;
 	export type BuildArgs = BuildArgsFor<'_block_comment_arm'>;
 	export type LooseArgs = LooseArgsFor<'_block_comment_arm'>;
 	export type Tree = TreeFor<'_block_comment_arm'>;
@@ -11009,6 +11184,7 @@ export namespace TupleTypeElements {
 	export type Config = ConfigFor<'_tuple_type_elements'>;
 	export type Fluent = FluentFor<'_tuple_type_elements'>;
 	export type Loose = LooseFor<'_tuple_type_elements'>;
+	export type LooseConfig = LooseConfigFor<'_tuple_type_elements'>;
 	export type BuildArgs = BuildArgsFor<'_tuple_type_elements'>;
 	export type LooseArgs = LooseArgsFor<'_tuple_type_elements'>;
 	export type Tree = TreeFor<'_tuple_type_elements'>;
@@ -11018,6 +11194,7 @@ export namespace TupleExpressionElements {
 	export type Config = ConfigFor<'_tuple_expression_elements'>;
 	export type Fluent = FluentFor<'_tuple_expression_elements'>;
 	export type Loose = LooseFor<'_tuple_expression_elements'>;
+	export type LooseConfig = LooseConfigFor<'_tuple_expression_elements'>;
 	export type BuildArgs = BuildArgsFor<'_tuple_expression_elements'>;
 	export type LooseArgs = LooseArgsFor<'_tuple_expression_elements'>;
 	export type Tree = TreeFor<'_tuple_expression_elements'>;
@@ -11027,6 +11204,7 @@ export namespace UseWildcardClause {
 	export type Config = ConfigFor<'_use_wildcard_clause'>;
 	export type Fluent = FluentFor<'_use_wildcard_clause'>;
 	export type Loose = LooseFor<'_use_wildcard_clause'>;
+	export type LooseConfig = LooseConfigFor<'_use_wildcard_clause'>;
 	export type BuildArgs = BuildArgsFor<'_use_wildcard_clause'>;
 	export type LooseArgs = LooseArgsFor<'_use_wildcard_clause'>;
 	export type Tree = TreeFor<'_use_wildcard_clause'>;
@@ -11036,6 +11214,7 @@ export namespace ReferenceExpressionRawMut {
 	export type Config = ConfigFor<'_reference_expression_raw_mut'>;
 	export type Fluent = FluentFor<'_reference_expression_raw_mut'>;
 	export type Loose = LooseFor<'_reference_expression_raw_mut'>;
+	export type LooseConfig = LooseConfigFor<'_reference_expression_raw_mut'>;
 	export type BuildArgs = BuildArgsFor<'_reference_expression_raw_mut'>;
 	export type LooseArgs = LooseArgsFor<'_reference_expression_raw_mut'>;
 	export type Tree = TreeFor<'_reference_expression_raw_mut'>;
@@ -11045,6 +11224,7 @@ export namespace ImplItemBody {
 	export type Config = ConfigFor<'_impl_item_body'>;
 	export type Fluent = FluentFor<'_impl_item_body'>;
 	export type Loose = LooseFor<'_impl_item_body'>;
+	export type LooseConfig = LooseConfigFor<'_impl_item_body'>;
 	export type BuildArgs = BuildArgsFor<'_impl_item_body'>;
 	export type LooseArgs = LooseArgsFor<'_impl_item_body'>;
 	export type Tree = TreeFor<'_impl_item_body'>;
@@ -11054,6 +11234,7 @@ export namespace ImplItemPositiveClause {
 	export type Config = ConfigFor<'_impl_item_positive_clause'>;
 	export type Fluent = FluentFor<'_impl_item_positive_clause'>;
 	export type Loose = LooseFor<'_impl_item_positive_clause'>;
+	export type LooseConfig = LooseConfigFor<'_impl_item_positive_clause'>;
 	export type BuildArgs = BuildArgsFor<'_impl_item_positive_clause'>;
 	export type LooseArgs = LooseArgsFor<'_impl_item_positive_clause'>;
 	export type Tree = TreeFor<'_impl_item_positive_clause'>;
@@ -11063,6 +11244,7 @@ export namespace ImplItemNegativeClause {
 	export type Config = ConfigFor<'_impl_item_negative_clause'>;
 	export type Fluent = FluentFor<'_impl_item_negative_clause'>;
 	export type Loose = LooseFor<'_impl_item_negative_clause'>;
+	export type LooseConfig = LooseConfigFor<'_impl_item_negative_clause'>;
 	export type BuildArgs = BuildArgsFor<'_impl_item_negative_clause'>;
 	export type LooseArgs = LooseArgsFor<'_impl_item_negative_clause'>;
 	export type Tree = TreeFor<'_impl_item_negative_clause'>;
@@ -11072,6 +11254,7 @@ export namespace ArrayExpressionSemi {
 	export type Config = ConfigFor<'_array_expression_semi'>;
 	export type Fluent = FluentFor<'_array_expression_semi'>;
 	export type Loose = LooseFor<'_array_expression_semi'>;
+	export type LooseConfig = LooseConfigFor<'_array_expression_semi'>;
 	export type BuildArgs = BuildArgsFor<'_array_expression_semi'>;
 	export type LooseArgs = LooseArgsFor<'_array_expression_semi'>;
 	export type Tree = TreeFor<'_array_expression_semi'>;
@@ -11081,6 +11264,7 @@ export namespace ArrayExpressionList {
 	export type Config = ConfigFor<'_array_expression_list'>;
 	export type Fluent = FluentFor<'_array_expression_list'>;
 	export type Loose = LooseFor<'_array_expression_list'>;
+	export type LooseConfig = LooseConfigFor<'_array_expression_list'>;
 	export type BuildArgs = BuildArgsFor<'_array_expression_list'>;
 	export type LooseArgs = LooseArgsFor<'_array_expression_list'>;
 	export type Tree = TreeFor<'_array_expression_list'>;
@@ -11090,6 +11274,7 @@ export namespace ClosureExpressionBlock {
 	export type Config = ConfigFor<'_closure_expression_block'>;
 	export type Fluent = FluentFor<'_closure_expression_block'>;
 	export type Loose = LooseFor<'_closure_expression_block'>;
+	export type LooseConfig = LooseConfigFor<'_closure_expression_block'>;
 	export type BuildArgs = BuildArgsFor<'_closure_expression_block'>;
 	export type LooseArgs = LooseArgsFor<'_closure_expression_block'>;
 	export type Tree = TreeFor<'_closure_expression_block'>;
@@ -11099,6 +11284,7 @@ export namespace ClosureExpressionExpr {
 	export type Config = ConfigFor<'_closure_expression_expr'>;
 	export type Fluent = FluentFor<'_closure_expression_expr'>;
 	export type Loose = LooseFor<'_closure_expression_expr'>;
+	export type LooseConfig = LooseConfigFor<'_closure_expression_expr'>;
 	export type BuildArgs = BuildArgsFor<'_closure_expression_expr'>;
 	export type LooseArgs = LooseArgsFor<'_closure_expression_expr'>;
 	export type Tree = TreeFor<'_closure_expression_expr'>;
@@ -11108,6 +11294,7 @@ export namespace FieldPatternNamed {
 	export type Config = ConfigFor<'_field_pattern_named'>;
 	export type Fluent = FluentFor<'_field_pattern_named'>;
 	export type Loose = LooseFor<'_field_pattern_named'>;
+	export type LooseConfig = LooseConfigFor<'_field_pattern_named'>;
 	export type BuildArgs = BuildArgsFor<'_field_pattern_named'>;
 	export type LooseArgs = LooseArgsFor<'_field_pattern_named'>;
 	export type Tree = TreeFor<'_field_pattern_named'>;
@@ -11117,6 +11304,7 @@ export namespace FunctionTypeTraitForm {
 	export type Config = ConfigFor<'_function_type_trait_form'>;
 	export type Fluent = FluentFor<'_function_type_trait_form'>;
 	export type Loose = LooseFor<'_function_type_trait_form'>;
+	export type LooseConfig = LooseConfigFor<'_function_type_trait_form'>;
 	export type BuildArgs = BuildArgsFor<'_function_type_trait_form'>;
 	export type LooseArgs = LooseArgsFor<'_function_type_trait_form'>;
 	export type Tree = TreeFor<'_function_type_trait_form'>;
@@ -11126,6 +11314,7 @@ export namespace FunctionTypeFnForm {
 	export type Config = ConfigFor<'_function_type_fn_form'>;
 	export type Fluent = FluentFor<'_function_type_fn_form'>;
 	export type Loose = LooseFor<'_function_type_fn_form'>;
+	export type LooseConfig = LooseConfigFor<'_function_type_fn_form'>;
 	export type BuildArgs = BuildArgsFor<'_function_type_fn_form'>;
 	export type LooseArgs = LooseArgsFor<'_function_type_fn_form'>;
 	export type Tree = TreeFor<'_function_type_fn_form'>;
@@ -11135,6 +11324,7 @@ export namespace MacroDefinitionParen {
 	export type Config = ConfigFor<'_macro_definition_paren'>;
 	export type Fluent = FluentFor<'_macro_definition_paren'>;
 	export type Loose = LooseFor<'_macro_definition_paren'>;
+	export type LooseConfig = LooseConfigFor<'_macro_definition_paren'>;
 	export type BuildArgs = BuildArgsFor<'_macro_definition_paren'>;
 	export type LooseArgs = LooseArgsFor<'_macro_definition_paren'>;
 	export type Tree = TreeFor<'_macro_definition_paren'>;
@@ -11144,6 +11334,7 @@ export namespace MacroDefinitionBracket {
 	export type Config = ConfigFor<'_macro_definition_bracket'>;
 	export type Fluent = FluentFor<'_macro_definition_bracket'>;
 	export type Loose = LooseFor<'_macro_definition_bracket'>;
+	export type LooseConfig = LooseConfigFor<'_macro_definition_bracket'>;
 	export type BuildArgs = BuildArgsFor<'_macro_definition_bracket'>;
 	export type LooseArgs = LooseArgsFor<'_macro_definition_bracket'>;
 	export type Tree = TreeFor<'_macro_definition_bracket'>;
@@ -11153,6 +11344,7 @@ export namespace MacroDefinitionBrace {
 	export type Config = ConfigFor<'_macro_definition_brace'>;
 	export type Fluent = FluentFor<'_macro_definition_brace'>;
 	export type Loose = LooseFor<'_macro_definition_brace'>;
+	export type LooseConfig = LooseConfigFor<'_macro_definition_brace'>;
 	export type BuildArgs = BuildArgsFor<'_macro_definition_brace'>;
 	export type LooseArgs = LooseArgsFor<'_macro_definition_brace'>;
 	export type Tree = TreeFor<'_macro_definition_brace'>;
@@ -11162,6 +11354,7 @@ export namespace OrPatternBinary {
 	export type Config = ConfigFor<'_or_pattern_binary'>;
 	export type Fluent = FluentFor<'_or_pattern_binary'>;
 	export type Loose = LooseFor<'_or_pattern_binary'>;
+	export type LooseConfig = LooseConfigFor<'_or_pattern_binary'>;
 	export type BuildArgs = BuildArgsFor<'_or_pattern_binary'>;
 	export type LooseArgs = LooseArgsFor<'_or_pattern_binary'>;
 	export type Tree = TreeFor<'_or_pattern_binary'>;
@@ -11171,6 +11364,7 @@ export namespace OrPatternPrefix {
 	export type Config = ConfigFor<'_or_pattern_prefix'>;
 	export type Fluent = FluentFor<'_or_pattern_prefix'>;
 	export type Loose = LooseFor<'_or_pattern_prefix'>;
+	export type LooseConfig = LooseConfigFor<'_or_pattern_prefix'>;
 	export type BuildArgs = BuildArgsFor<'_or_pattern_prefix'>;
 	export type LooseArgs = LooseArgsFor<'_or_pattern_prefix'>;
 	export type Tree = TreeFor<'_or_pattern_prefix'>;
@@ -11180,6 +11374,7 @@ export namespace RangeExpressionBinary {
 	export type Config = ConfigFor<'_range_expression_binary'>;
 	export type Fluent = FluentFor<'_range_expression_binary'>;
 	export type Loose = LooseFor<'_range_expression_binary'>;
+	export type LooseConfig = LooseConfigFor<'_range_expression_binary'>;
 	export type BuildArgs = BuildArgsFor<'_range_expression_binary'>;
 	export type LooseArgs = LooseArgsFor<'_range_expression_binary'>;
 	export type Tree = TreeFor<'_range_expression_binary'>;
@@ -11189,6 +11384,7 @@ export namespace RangeExpressionPostfix {
 	export type Config = ConfigFor<'_range_expression_postfix'>;
 	export type Fluent = FluentFor<'_range_expression_postfix'>;
 	export type Loose = LooseFor<'_range_expression_postfix'>;
+	export type LooseConfig = LooseConfigFor<'_range_expression_postfix'>;
 	export type BuildArgs = BuildArgsFor<'_range_expression_postfix'>;
 	export type LooseArgs = LooseArgsFor<'_range_expression_postfix'>;
 	export type Tree = TreeFor<'_range_expression_postfix'>;
@@ -11198,6 +11394,7 @@ export namespace RangeExpressionPrefix {
 	export type Config = ConfigFor<'_range_expression_prefix'>;
 	export type Fluent = FluentFor<'_range_expression_prefix'>;
 	export type Loose = LooseFor<'_range_expression_prefix'>;
+	export type LooseConfig = LooseConfigFor<'_range_expression_prefix'>;
 	export type BuildArgs = BuildArgsFor<'_range_expression_prefix'>;
 	export type LooseArgs = LooseArgsFor<'_range_expression_prefix'>;
 	export type Tree = TreeFor<'_range_expression_prefix'>;
@@ -11207,6 +11404,7 @@ export namespace RangePatternPrefix {
 	export type Config = ConfigFor<'_range_pattern_prefix'>;
 	export type Fluent = FluentFor<'_range_pattern_prefix'>;
 	export type Loose = LooseFor<'_range_pattern_prefix'>;
+	export type LooseConfig = LooseConfigFor<'_range_pattern_prefix'>;
 	export type BuildArgs = BuildArgsFor<'_range_pattern_prefix'>;
 	export type LooseArgs = LooseArgsFor<'_range_pattern_prefix'>;
 	export type Tree = TreeFor<'_range_pattern_prefix'>;
@@ -11216,6 +11414,7 @@ export namespace RangePatternLeftWithRight {
 	export type Config = ConfigFor<'_range_pattern_left_with_right'>;
 	export type Fluent = FluentFor<'_range_pattern_left_with_right'>;
 	export type Loose = LooseFor<'_range_pattern_left_with_right'>;
+	export type LooseConfig = LooseConfigFor<'_range_pattern_left_with_right'>;
 	export type BuildArgs = BuildArgsFor<'_range_pattern_left_with_right'>;
 	export type LooseArgs = LooseArgsFor<'_range_pattern_left_with_right'>;
 	export type Tree = TreeFor<'_range_pattern_left_with_right'>;
@@ -11225,6 +11424,7 @@ export namespace StructItemBrace {
 	export type Config = ConfigFor<'_struct_item_brace'>;
 	export type Fluent = FluentFor<'_struct_item_brace'>;
 	export type Loose = LooseFor<'_struct_item_brace'>;
+	export type LooseConfig = LooseConfigFor<'_struct_item_brace'>;
 	export type BuildArgs = BuildArgsFor<'_struct_item_brace'>;
 	export type LooseArgs = LooseArgsFor<'_struct_item_brace'>;
 	export type Tree = TreeFor<'_struct_item_brace'>;
@@ -11234,6 +11434,7 @@ export namespace StructItemTuple {
 	export type Config = ConfigFor<'_struct_item_tuple'>;
 	export type Fluent = FluentFor<'_struct_item_tuple'>;
 	export type Loose = LooseFor<'_struct_item_tuple'>;
+	export type LooseConfig = LooseConfigFor<'_struct_item_tuple'>;
 	export type BuildArgs = BuildArgsFor<'_struct_item_tuple'>;
 	export type LooseArgs = LooseArgsFor<'_struct_item_tuple'>;
 	export type Tree = TreeFor<'_struct_item_tuple'>;
@@ -11243,6 +11444,7 @@ export namespace VisibilityModifierPub {
 	export type Config = ConfigFor<'_visibility_modifier_pub'>;
 	export type Fluent = FluentFor<'_visibility_modifier_pub'>;
 	export type Loose = LooseFor<'_visibility_modifier_pub'>;
+	export type LooseConfig = LooseConfigFor<'_visibility_modifier_pub'>;
 	export type BuildArgs = BuildArgsFor<'_visibility_modifier_pub'>;
 	export type LooseArgs = LooseArgsFor<'_visibility_modifier_pub'>;
 	export type Tree = TreeFor<'_visibility_modifier_pub'>;
@@ -11252,6 +11454,7 @@ export namespace VisibilityModifierInPath {
 	export type Config = ConfigFor<'_visibility_modifier_in_path'>;
 	export type Fluent = FluentFor<'_visibility_modifier_in_path'>;
 	export type Loose = LooseFor<'_visibility_modifier_in_path'>;
+	export type LooseConfig = LooseConfigFor<'_visibility_modifier_in_path'>;
 	export type BuildArgs = BuildArgsFor<'_visibility_modifier_in_path'>;
 	export type LooseArgs = LooseArgsFor<'_visibility_modifier_in_path'>;
 	export type Tree = TreeFor<'_visibility_modifier_in_path'>;
@@ -11261,6 +11464,7 @@ export namespace ExpressionStatementWithSemi {
 	export type Config = ConfigFor<'_expression_statement_with_semi'>;
 	export type Fluent = FluentFor<'_expression_statement_with_semi'>;
 	export type Loose = LooseFor<'_expression_statement_with_semi'>;
+	export type LooseConfig = LooseConfigFor<'_expression_statement_with_semi'>;
 	export type BuildArgs = BuildArgsFor<'_expression_statement_with_semi'>;
 	export type LooseArgs = LooseArgsFor<'_expression_statement_with_semi'>;
 	export type Tree = TreeFor<'_expression_statement_with_semi'>;
@@ -11270,6 +11474,7 @@ export namespace MatchArmWithComma {
 	export type Config = ConfigFor<'_match_arm_with_comma'>;
 	export type Fluent = FluentFor<'_match_arm_with_comma'>;
 	export type Loose = LooseFor<'_match_arm_with_comma'>;
+	export type LooseConfig = LooseConfigFor<'_match_arm_with_comma'>;
 	export type BuildArgs = BuildArgsFor<'_match_arm_with_comma'>;
 	export type LooseArgs = LooseArgsFor<'_match_arm_with_comma'>;
 	export type Tree = TreeFor<'_match_arm_with_comma'>;
@@ -11279,6 +11484,7 @@ export namespace LineCommentDoc {
 	export type Config = ConfigFor<'_line_comment_doc'>;
 	export type Fluent = FluentFor<'_line_comment_doc'>;
 	export type Loose = LooseFor<'_line_comment_doc'>;
+	export type LooseConfig = LooseConfigFor<'_line_comment_doc'>;
 	export type BuildArgs = BuildArgsFor<'_line_comment_doc'>;
 	export type LooseArgs = LooseArgsFor<'_line_comment_doc'>;
 	export type Tree = TreeFor<'_line_comment_doc'>;
@@ -11288,6 +11494,7 @@ export namespace TokenTreePatternParen {
 	export type Config = ConfigFor<'_token_tree_pattern_paren'>;
 	export type Fluent = FluentFor<'_token_tree_pattern_paren'>;
 	export type Loose = LooseFor<'_token_tree_pattern_paren'>;
+	export type LooseConfig = LooseConfigFor<'_token_tree_pattern_paren'>;
 	export type BuildArgs = BuildArgsFor<'_token_tree_pattern_paren'>;
 	export type LooseArgs = LooseArgsFor<'_token_tree_pattern_paren'>;
 	export type Tree = TreeFor<'_token_tree_pattern_paren'>;
@@ -11297,6 +11504,7 @@ export namespace TokenTreePatternBracket {
 	export type Config = ConfigFor<'_token_tree_pattern_bracket'>;
 	export type Fluent = FluentFor<'_token_tree_pattern_bracket'>;
 	export type Loose = LooseFor<'_token_tree_pattern_bracket'>;
+	export type LooseConfig = LooseConfigFor<'_token_tree_pattern_bracket'>;
 	export type BuildArgs = BuildArgsFor<'_token_tree_pattern_bracket'>;
 	export type LooseArgs = LooseArgsFor<'_token_tree_pattern_bracket'>;
 	export type Tree = TreeFor<'_token_tree_pattern_bracket'>;
@@ -11306,6 +11514,7 @@ export namespace TokenTreePatternBrace {
 	export type Config = ConfigFor<'_token_tree_pattern_brace'>;
 	export type Fluent = FluentFor<'_token_tree_pattern_brace'>;
 	export type Loose = LooseFor<'_token_tree_pattern_brace'>;
+	export type LooseConfig = LooseConfigFor<'_token_tree_pattern_brace'>;
 	export type BuildArgs = BuildArgsFor<'_token_tree_pattern_brace'>;
 	export type LooseArgs = LooseArgsFor<'_token_tree_pattern_brace'>;
 	export type Tree = TreeFor<'_token_tree_pattern_brace'>;
@@ -11315,6 +11524,7 @@ export namespace TokenTreeParen {
 	export type Config = ConfigFor<'_token_tree_paren'>;
 	export type Fluent = FluentFor<'_token_tree_paren'>;
 	export type Loose = LooseFor<'_token_tree_paren'>;
+	export type LooseConfig = LooseConfigFor<'_token_tree_paren'>;
 	export type BuildArgs = BuildArgsFor<'_token_tree_paren'>;
 	export type LooseArgs = LooseArgsFor<'_token_tree_paren'>;
 	export type Tree = TreeFor<'_token_tree_paren'>;
@@ -11324,6 +11534,7 @@ export namespace TokenTreeBracket {
 	export type Config = ConfigFor<'_token_tree_bracket'>;
 	export type Fluent = FluentFor<'_token_tree_bracket'>;
 	export type Loose = LooseFor<'_token_tree_bracket'>;
+	export type LooseConfig = LooseConfigFor<'_token_tree_bracket'>;
 	export type BuildArgs = BuildArgsFor<'_token_tree_bracket'>;
 	export type LooseArgs = LooseArgsFor<'_token_tree_bracket'>;
 	export type Tree = TreeFor<'_token_tree_bracket'>;
@@ -11333,6 +11544,7 @@ export namespace TokenTreeBrace {
 	export type Config = ConfigFor<'_token_tree_brace'>;
 	export type Fluent = FluentFor<'_token_tree_brace'>;
 	export type Loose = LooseFor<'_token_tree_brace'>;
+	export type LooseConfig = LooseConfigFor<'_token_tree_brace'>;
 	export type BuildArgs = BuildArgsFor<'_token_tree_brace'>;
 	export type LooseArgs = LooseArgsFor<'_token_tree_brace'>;
 	export type Tree = TreeFor<'_token_tree_brace'>;
@@ -11342,6 +11554,7 @@ export namespace DelimTokenTreeParen {
 	export type Config = ConfigFor<'_delim_token_tree_paren'>;
 	export type Fluent = FluentFor<'_delim_token_tree_paren'>;
 	export type Loose = LooseFor<'_delim_token_tree_paren'>;
+	export type LooseConfig = LooseConfigFor<'_delim_token_tree_paren'>;
 	export type BuildArgs = BuildArgsFor<'_delim_token_tree_paren'>;
 	export type LooseArgs = LooseArgsFor<'_delim_token_tree_paren'>;
 	export type Tree = TreeFor<'_delim_token_tree_paren'>;
@@ -11351,6 +11564,7 @@ export namespace DelimTokenTreeBracket {
 	export type Config = ConfigFor<'_delim_token_tree_bracket'>;
 	export type Fluent = FluentFor<'_delim_token_tree_bracket'>;
 	export type Loose = LooseFor<'_delim_token_tree_bracket'>;
+	export type LooseConfig = LooseConfigFor<'_delim_token_tree_bracket'>;
 	export type BuildArgs = BuildArgsFor<'_delim_token_tree_bracket'>;
 	export type LooseArgs = LooseArgsFor<'_delim_token_tree_bracket'>;
 	export type Tree = TreeFor<'_delim_token_tree_bracket'>;
@@ -11360,6 +11574,7 @@ export namespace DelimTokenTreeBrace {
 	export type Config = ConfigFor<'_delim_token_tree_brace'>;
 	export type Fluent = FluentFor<'_delim_token_tree_brace'>;
 	export type Loose = LooseFor<'_delim_token_tree_brace'>;
+	export type LooseConfig = LooseConfigFor<'_delim_token_tree_brace'>;
 	export type BuildArgs = BuildArgsFor<'_delim_token_tree_brace'>;
 	export type LooseArgs = LooseArgsFor<'_delim_token_tree_brace'>;
 	export type Tree = TreeFor<'_delim_token_tree_brace'>;
@@ -11369,6 +11584,7 @@ export namespace AttributedFieldDeclaration {
 	export type Config = ConfigFor<'_attributed_field_declaration'>;
 	export type Fluent = FluentFor<'_attributed_field_declaration'>;
 	export type Loose = LooseFor<'_attributed_field_declaration'>;
+	export type LooseConfig = LooseConfigFor<'_attributed_field_declaration'>;
 	export type BuildArgs = BuildArgsFor<'_attributed_field_declaration'>;
 	export type LooseArgs = LooseArgsFor<'_attributed_field_declaration'>;
 	export type Tree = TreeFor<'_attributed_field_declaration'>;
@@ -11378,6 +11594,7 @@ export namespace AttributedEnumVariant {
 	export type Config = ConfigFor<'_attributed_enum_variant'>;
 	export type Fluent = FluentFor<'_attributed_enum_variant'>;
 	export type Loose = LooseFor<'_attributed_enum_variant'>;
+	export type LooseConfig = LooseConfigFor<'_attributed_enum_variant'>;
 	export type BuildArgs = BuildArgsFor<'_attributed_enum_variant'>;
 	export type LooseArgs = LooseArgsFor<'_attributed_enum_variant'>;
 	export type Tree = TreeFor<'_attributed_enum_variant'>;
@@ -11387,6 +11604,7 @@ export namespace AttributedParameter {
 	export type Config = ConfigFor<'_attributed_parameter'>;
 	export type Fluent = FluentFor<'_attributed_parameter'>;
 	export type Loose = LooseFor<'_attributed_parameter'>;
+	export type LooseConfig = LooseConfigFor<'_attributed_parameter'>;
 	export type BuildArgs = BuildArgsFor<'_attributed_parameter'>;
 	export type LooseArgs = LooseArgsFor<'_attributed_parameter'>;
 	export type Tree = TreeFor<'_attributed_parameter'>;
@@ -11396,6 +11614,7 @@ export namespace AttributedTypeParameter {
 	export type Config = ConfigFor<'_attributed_type_parameter'>;
 	export type Fluent = FluentFor<'_attributed_type_parameter'>;
 	export type Loose = LooseFor<'_attributed_type_parameter'>;
+	export type LooseConfig = LooseConfigFor<'_attributed_type_parameter'>;
 	export type BuildArgs = BuildArgsFor<'_attributed_type_parameter'>;
 	export type LooseArgs = LooseArgsFor<'_attributed_type_parameter'>;
 	export type Tree = TreeFor<'_attributed_type_parameter'>;
@@ -11405,6 +11624,7 @@ export namespace AttributedArgument {
 	export type Config = ConfigFor<'_attributed_argument'>;
 	export type Fluent = FluentFor<'_attributed_argument'>;
 	export type Loose = LooseFor<'_attributed_argument'>;
+	export type LooseConfig = LooseConfigFor<'_attributed_argument'>;
 	export type BuildArgs = BuildArgsFor<'_attributed_argument'>;
 	export type LooseArgs = LooseArgsFor<'_attributed_argument'>;
 	export type Tree = TreeFor<'_attributed_argument'>;
@@ -11414,6 +11634,7 @@ export namespace AttributedOrderedField {
 	export type Config = ConfigFor<'_attributed_ordered_field'>;
 	export type Fluent = FluentFor<'_attributed_ordered_field'>;
 	export type Loose = LooseFor<'_attributed_ordered_field'>;
+	export type LooseConfig = LooseConfigFor<'_attributed_ordered_field'>;
 	export type BuildArgs = BuildArgsFor<'_attributed_ordered_field'>;
 	export type LooseArgs = LooseArgsFor<'_attributed_ordered_field'>;
 	export type Tree = TreeFor<'_attributed_ordered_field'>;
@@ -11423,6 +11644,7 @@ export namespace TypeArgument {
 	export type Config = ConfigFor<'_type_argument'>;
 	export type Fluent = FluentFor<'_type_argument'>;
 	export type Loose = LooseFor<'_type_argument'>;
+	export type LooseConfig = LooseConfigFor<'_type_argument'>;
 	export type BuildArgs = BuildArgsFor<'_type_argument'>;
 	export type LooseArgs = LooseArgsFor<'_type_argument'>;
 	export type Tree = TreeFor<'_type_argument'>;
@@ -11432,6 +11654,7 @@ export namespace MatchBlockArms {
 	export type Config = ConfigFor<'_match_block_arms'>;
 	export type Fluent = FluentFor<'_match_block_arms'>;
 	export type Loose = LooseFor<'_match_block_arms'>;
+	export type LooseConfig = LooseConfigFor<'_match_block_arms'>;
 	export type BuildArgs = BuildArgsFor<'_match_block_arms'>;
 	export type LooseArgs = LooseArgsFor<'_match_block_arms'>;
 	export type Tree = TreeFor<'_match_block_arms'>;
@@ -11441,6 +11664,7 @@ export namespace VisibilityModifierPubParens {
 	export type Config = ConfigFor<'_visibility_modifier_pub_parens'>;
 	export type Fluent = FluentFor<'_visibility_modifier_pub_parens'>;
 	export type Loose = LooseFor<'_visibility_modifier_pub_parens'>;
+	export type LooseConfig = LooseConfigFor<'_visibility_modifier_pub_parens'>;
 	export type BuildArgs = BuildArgsFor<'_visibility_modifier_pub_parens'>;
 	export type LooseArgs = LooseArgsFor<'_visibility_modifier_pub_parens'>;
 	export type Tree = TreeFor<'_visibility_modifier_pub_parens'>;

@@ -20,6 +20,7 @@ import type {
 	ConfigFor,
 	FluentFor,
 	LooseFor,
+	LooseConfigFor,
 	TreeFor,
 	NamespaceMap
 } from '../src/index.ts';
@@ -124,5 +125,14 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Comment.BuildArgs, [Comment.Config]>>();
 		expectTrue<Equals<Comment.LooseArgs, [Comment.Loose]>>();
 		expectTrue<Equals<FunctionItem.BuildArgs, [FunctionItem.Config]>>();
+	});
+
+	it('Loose decomposes into LooseConfig plus the NodeData passthrough', () => {
+		// `LooseConfig` is the config arm named at the source rather than
+		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
+		// the split provably semantics-free: `Loose` still admits exactly what
+		// it admitted before, so the passthrough arm is untouched.
+		expectTrue<Equals<FunctionItem.Loose, FunctionItem.LooseConfig | FunctionItem>>();
+		expectTrue<Equals<FunctionItem.LooseConfig, LooseConfigFor<'function_item'>>>();
 	});
 });

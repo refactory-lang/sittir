@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "abf5cb0a4c7ac61f6e5a6b85993bd2183e70c5489a497cb45b93f873bf2e04f7",
+  "source_hash": "f3716ee1fc9a20bb9729c60067186017c2bccdd7bf9855eaacb33246f4ae4480",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "2dc5211c972ab2250b7096010d31239ad3e0456f4140c5db3aa6b1448da62e54",
     "packages/rust/.sittir/grammar.js": "73f2369fb1ff3f0ec3638a0e1c06e822b0e4a727cc2d391d7a67ef560836fa51",
@@ -21,7 +21,7 @@
     "packages/rust/src/consts.ts": "bb80340ad8d05c200ad1c968ca0bc603c8c08ce03452b58431e60151d83f6c36",
     "packages/rust/src/engine.ts": "eece56e482189a9c5dd5271538a47de15c109558c1900eccab4151ff132e1eb6",
     "packages/rust/src/factories.ts": "51d56f260e3318fd04eae616e73f8030687fbe6de0297c96bebae644f0a49035",
-    "packages/rust/src/from.ts": "667508287fc4cc28b97901a0815a1e7779eb85536df4ea082742b6a29acd3e30",
+    "packages/rust/src/from.ts": "d7d8cc29e848987e746c24d0870462130b77b5832c143eaabf49412631471def",
     "packages/rust/src/grammar.ts": "ca7ca54d374dcbb8382b8f4ec03f71bc7d4ad30ffcc0bd431f15fafb011126ae",
     "packages/rust/src/hash.ts": "9ef9c879bc2d14c9bfb63248a85784d579f8f3794805990e842442c3ed700cae",
     "packages/rust/src/index.ts": "e2d3dcf7b69dcb721c3e8760775e2147815eb5aadb4c18492eae9e054d0a04ea",
@@ -29,7 +29,7 @@
     "packages/rust/src/is.ts": "3fd5ab44196cd2ea70dec1128163f1430bf9c2efb21273f98d3eb902e5bc0cfc",
     "packages/rust/src/node-model.json5": "b7733a85342f78597fd4e3ff5e331d9fe9bd1b93536654ec850136c0d1fea362",
     "packages/rust/src/type-test.ts": "791f17f546b07c90ab4a77542c4477c143bfd3a8b36de74a0d21a79033029445",
-    "packages/rust/src/types.ts": "9bf5f2c5ac3e61aab6ed635789d96e6e9f3cfe539343993d6b27265c918c45a6",
+    "packages/rust/src/types.ts": "e67c0d3267468759f233b12d1a1d8a43a313b9afc4237e107be3800e0ebe5c92",
     "packages/rust/src/utils.ts": "7615db324a958bf6f54565b083c71b9c90fbaa5ead883b45395c21c3007e9a59",
     "packages/rust/src/wrap.ts": "baa2746b292038d1c2a829eb883f637c6c5aa5cc05b94a401a15fcac67c31cc3",
     "packages/rust/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
