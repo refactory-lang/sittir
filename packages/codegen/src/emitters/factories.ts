@@ -663,13 +663,14 @@ interface FactorySurface {
 	readonly singleField: AssembledNonterminal | undefined;
 	/** Parameter list text, without the parentheses. */
 	readonly params: string;
-	/** `params` as a tuple type — labels, optional markers and the rest
-	 *  element preserved, parameter initializers dropped (a tuple element
-	 *  cannot carry one). The `<TypeName>BuildArgs` alias body. */
-	readonly paramsTuple: string;
-	/** `paramsTuple` with the kind's own `Config` element swapped for its
-	 *  `Loose`. The `<TypeName>LooseArgs` alias body. */
-	readonly looseParamsTuple: string;
+	/** `params` with every parameter's type widened to what a COERCING
+	 *  caller may hand it: a config parameter becomes the kind's `Loose`,
+	 *  a node-valued one is wrapped in `LooseValue`. Same labels, same
+	 *  optionality, same rest element — only the types differ.
+	 *
+	 *  Both tuple aliases are projections of these two strings
+	 *  (`paramsToTuple`), never independently composed. */
+	readonly looseParams: string;
 	/** Forwarding call arguments for `params` (`...children`, `config`, …). */
 	readonly args: string;
 	readonly elementType?: string;
@@ -677,6 +678,30 @@ interface FactorySurface {
 	readonly directParamOptional: boolean;
 	readonly configType?: string;
 	readonly opt: '' | '?';
+}
+
+/** A parameter list as it must appear where an INITIALIZER is illegal — an
+ *  overload declaration and a tuple element both reject `= {}`, so the
+ *  defaulted parameter re-declares as an optional one. One rewrite, both
+ *  consumers. */
+function declarationParams(params: string): string {
+	return params.replace(/(\w+)\??: (.+?) = .+$/, '$1?: $2');
+}
+
+/** A parameter list as a tuple type — labels, optional markers and the rest
+ *  element all survive verbatim. The tuple is a PROJECTION of the signature
+ *  string, so the two can never spell the calling convention differently. */
+function paramsToTuple(params: string): string {
+	return `[${declarationParams(params)}]`;
+}
+
+/** The type a COERCING caller may pass for a node-valued parameter. The
+ *  widening itself lives on the model (`LooseValue` reuses the same
+ *  projection `Loose` applies to a children slot); the emitter only names
+ *  the application, because open-coding leaf-vs-branch or brand handling
+ *  here would re-derive predicates the type layer already owns. */
+function looseValueOf(elementType: string): string {
+	return `LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 }
 
 function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): FactorySurface {
@@ -706,13 +731,11 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			nodeMap
 		);
 		if (containerFacts.multiple) {
-			const params = `...children: ${elementType}[]`;
 			return {
 				containerFacts,
 				singleField,
-				params,
-				paramsTuple: `[${params}]`,
-				looseParamsTuple: `[${params}]`,
+				params: `...children: ${elementType}[]`,
+				looseParams: `...children: ${looseValueOf(elementType)}[]`,
 				args: '...children',
 				elementType,
 				directParamOptional: false,
@@ -720,13 +743,11 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			};
 		}
 		const optMark = containerFacts.required ? '' : '?';
-		const params = `child${optMark}: ${elementType}`;
 		return {
 			containerFacts,
 			singleField,
-			params,
-			paramsTuple: `[${params}]`,
-			looseParamsTuple: `[${params}]`,
+			params: `child${optMark}: ${elementType}`,
+			looseParams: `child${optMark}: ${looseValueOf(elementType)}`,
 			args: 'child',
 			elementType,
 			directParamType: elementType,
@@ -737,13 +758,15 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	if (singleField) {
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
 		const optMark = isRequired(singleField) ? '' : '?';
-		const params = `${singleField.paramName}${optMark}: ${elemType}`;
 		return {
 			containerFacts,
 			singleField,
-			params,
-			paramsTuple: `[${params}]`,
-			looseParamsTuple: `[${params}]`,
+			params: `${singleField.paramName}${optMark}: ${elemType}`,
+			// The field's own value, widened. Indexing `Loose` instead
+			// (`T.X.Loose['key']`) would reach through its NodeData passthrough
+			// arm and re-admit the interface's accessor signature as a config
+			// value — the leak the `Loose` projection already suffers.
+			looseParams: `${singleField.paramName}${optMark}: ${looseValueOf(elemType)}`,
 			args: singleField.paramName,
 			directParamType: elemType,
 			directParamOptional: !isRequired(singleField),
@@ -758,15 +781,14 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	// body actually reads from config.
 	const hasConfigReads = fields.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
-	const looseType = `T.${node.typeName}.Loose`;
+	// A config parameter's loose counterpart is the kind's own `Loose` — the
+	// only projection that reads the from-only (`__fromInputHints__`)
+	// widenings, which a per-value widener applied to `Config` cannot reach.
 	return {
 		containerFacts,
 		singleField,
 		params: allOptional ? `config: Partial<${configType}> = {}` : `config${opt}: ${configType}`,
-		// A tuple element cannot carry an initializer, so the defaulted
-		// parameter re-declares as an optional one.
-		paramsTuple: allOptional ? `[config?: Partial<${configType}>]` : `[config${opt}: ${configType}]`,
-		looseParamsTuple: allOptional ? `[config?: ${looseType}]` : `[config${opt}: ${looseType}]`,
+		looseParams: allOptional ? `config?: T.${node.typeName}.Loose` : `config${opt}: T.${node.typeName}.Loose`,
 		args: 'config',
 		configType,
 		directParamOptional: false,
@@ -845,14 +867,26 @@ export function constructorSurface(
 	}
 }
 
-/** The kind's calling convention as exported tuple aliases: `BuildArgs` is
- *  the builder's own parameter list, `LooseArgs` the same arity with each
- *  `Config` element swapped for that kind's `Loose`. `NodeNs` consumes both,
- *  the same way it consumes `<TypeName>Built` as `Fluent`. */
-function buildArgsAliasLines(typeName: string, paramsTuple: string, looseParamsTuple: string): string[] {
+/**
+ * The kind's calling convention as exported tuple aliases. `NodeNs` consumes
+ * both, the same way it consumes `<TypeName>Built` as `Fluent`.
+ *
+ * `BuildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
+ * built through — not the full public overload set, which a tuple cannot
+ * represent. Two kinds carry an extra overload the alias deliberately does
+ * not describe: a forwarded wrapper also accepts its target's constructor
+ * arguments, and a separated list also accepts a leading options bag. Both
+ * are sugar over the canonical shape, and both are what makes
+ * `Parameters<typeof build<Kind>>` pick the wrong signature — which is the
+ * whole reason these aliases exist.
+ *
+ * `LooseArgs` is the same arity and the same labels with every parameter
+ * widened to what a coercing caller may pass.
+ */
+function buildArgsAliasLines(typeName: string, params: string, looseParams: string): string[] {
 	return [
-		`export type ${typeName}BuildArgs = ${paramsTuple};`,
-		`export type ${typeName}LooseArgs = ${looseParamsTuple};`,
+		`export type ${typeName}BuildArgs = ${paramsToTuple(params)};`,
+		`export type ${typeName}LooseArgs = ${paramsToTuple(looseParams)};`,
 		''
 	];
 }
@@ -1033,7 +1067,6 @@ function emitFieldCarryingFactory(
 	if (forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
-		const optMark = directParamOptional ? '?' : '';
 		// The forwarded overload re-declares the target's own constructor
 		// surface (its spread form for a list target) rather than
 		// `Parameters<typeof target>`, which would select the target's LAST
@@ -1052,11 +1085,12 @@ function emitFieldCarryingFactory(
 			!(targetNode?.modelType === 'separatedList' && targetNode.nonEmpty) &&
 			!targetSurfaceParams.includes('NonEmptyArray<') &&
 			(targetSurfaceParams === '' || targetSurfaceParams.startsWith('...') || /^\w+\?:/.test(targetSurfaceParams));
-		// Overload DECLARATIONS cannot carry parameter initializers — a target
-		// surface like `config: Partial<X> = {}` re-declares as `config?: Partial<X>`.
-		const targetParams = rawTargetParams.replace(/(\w+)\??: ([^=]+?) = \{\}/g, '$1?: $2');
+		const targetParams = declarationParams(rawTargetParams);
+		// The DIRECT overload is the node's own canonical shape — the same
+		// `surface.params` the private implementation and `<TypeName>BuildArgs`
+		// are spelled from, so all three carry one label and one type.
 		const wrapper: string[] = [
-			`${exportKw}function ${fn}(child${optMark}: ${directParamType}): ReturnType<typeof _${fn}>;`,
+			`${exportKw}function ${fn}(${declarationParams(surface.params)}): ReturnType<typeof _${fn}>;`,
 			`${exportKw}function ${fn}(${targetParams}): ReturnType<typeof _${fn}>;`,
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		];
@@ -1096,7 +1130,7 @@ function emitFieldCarryingFactory(
 	// `renameUnusedConfigParam` decides on whether the name is read anywhere
 	// else in the emitted source.
 	return [
-		...buildArgsAliasLines(node.typeName, surface.paramsTuple, surface.looseParamsTuple),
+		...buildArgsAliasLines(node.typeName, surface.params, surface.looseParams),
 		renameUnusedConfigParam(lines)
 	].join('\n');
 }
@@ -1502,8 +1536,11 @@ function emitSeparatedListFactory(
 	// The canonical call shape is the spread form; the options-leading
 	// overload exists only so a per-instance options bag can lead, and it is
 	// the LAST overload precisely because call resolution wants it there.
-	const listArgsTuple = `[...elements: ${elementsType}]`;
-	lines.push(...buildArgsAliasLines(node.typeName, listArgsTuple, listArgsTuple));
+	const looseElemType = looseValueOf(parenthesizeUnion(surface.elemType));
+	const looseElementsType = node.nonEmpty ? `NonEmptyArray<${looseElemType}>` : `${parenthesizeUnion(looseElemType)}[]`;
+	lines.push(
+		...buildArgsAliasLines(node.typeName, `...elements: ${elementsType}`, `...elements: ${looseElementsType}`)
+	);
 	lines.push(...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers));
 	if (hasOptions) {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
@@ -1622,6 +1659,7 @@ function emitSeparatedListFactory(
 
 interface TextFactoryNode {
 	readonly kind: string;
+	readonly typeName: string;
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
 }
@@ -1644,11 +1682,9 @@ function emitTextFactory(
 	// `withMethods<T>` wrap. No `_<name>` storage (text nodes carry only
 	// `$text`); no `$with` (no updatable slots).
 	// A leaf's whole calling convention is its text parameter, so `BuildArgs`
-	// and `LooseArgs` coincide — `$text` is already the loose surface.
-	const body: string[] = [
-		...buildArgsAliasLines(node.typeName, `[${params}]`, `[${params}]`),
-		`export function ${fn}(${params}) {`
-	];
+	// and `LooseArgs` genuinely coincide — the parameter is already the raw
+	// text (or, for a keyword, absent), with nothing left to widen.
+	const body: string[] = [...buildArgsAliasLines(node.typeName, params, params), `export function ${fn}(${params}) {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
 		'  return withMethods({',
@@ -1780,7 +1816,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				namespaceOf(node, nodeMap, kindEntries).entries.length > 0
 		);
 		const refineKindInfos = collectRefineKindInfos(nodeMap) ?? [];
-		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit'];
+		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'LooseValue'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		// resolveConfigType() emits `ConfigOf<T.X>` (rather than `T.X.Config`)
 		// for every refine-form kind's config parameter — import it whenever

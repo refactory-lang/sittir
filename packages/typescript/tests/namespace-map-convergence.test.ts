@@ -20,6 +20,13 @@ import type {
 	ClassDeclarationBuildArgs,
 	ClassDeclarationLooseArgs,
 	FormalParametersElementsBuildArgs,
+	FormalParametersElementsLooseArgs,
+	NamespaceImportBuildArgs,
+	NamespaceImportLooseArgs,
+	NamespaceExportBuildArgs,
+	NamespaceExportLooseArgs,
+	SwitchBodyBuildArgs,
+	SwitchBodyLooseArgs,
 	buildFormalParametersElements
 } from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
@@ -80,5 +87,29 @@ describe('typescript NamespaceMap access-path convergence', () => {
 			Equals<Equals<FormalParametersElementsBuildArgs, Parameters<typeof buildFormalParametersElements>>, false>
 		>();
 		expectTrue<Equals<FormalParametersElements.BuildArgs, FormalParametersElementsBuildArgs>>();
+	});
+
+	it('LooseArgs widens every parameter, on every factory shape', () => {
+		// One kind per calling convention. A `LooseArgs` that still named the
+		// STRICT element type would make these equal — which is exactly how
+		// the widening went missing on four of the six shapes while the
+		// config-shaped pins stayed green.
+		// single-field
+		expectTrue<Equals<Equals<NamespaceImportBuildArgs, NamespaceImportLooseArgs>, false>>();
+		// container-single
+		expectTrue<Equals<Equals<NamespaceExportBuildArgs, NamespaceExportLooseArgs>, false>>();
+		// container-multiple
+		expectTrue<Equals<Equals<SwitchBodyBuildArgs, SwitchBodyLooseArgs>, false>>();
+		// separated list
+		expectTrue<Equals<Equals<FormalParametersElementsBuildArgs, FormalParametersElementsLooseArgs>, false>>();
+	});
+
+	it('a factory-less kind falls back to the NodeNs defaults', () => {
+		// The defaults must be MUTABLE tuples like every emitted alias,
+		// otherwise a factory-less kind's BuildArgs is not comparable with a
+		// factory-carrying kind's.
+		expectTrue<Equals<JsxElement.BuildArgs, [JsxElement.Config]>>();
+		expectTrue<Equals<JsxElement.LooseArgs, [JsxElement.Loose]>>();
+		expectTrue<Equals<ClassDeclaration.BuildArgs, [ClassDeclaration.Config]>>();
 	});
 });

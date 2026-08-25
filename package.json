@@ -33,7 +33,7 @@
 		"probe:kind": "tsx packages/cli/src/cli.ts tool probe-kind",
 		"test:coverage": "vitest run --coverage",
 		"test:watch": "vitest --watch",
-		"type-check": "pnpm -r run type-check",
+		"type-check": "pnpm -r --no-bail run type-check",
 		"type-check:examples": "tsc -p examples/tsconfig.json --noEmit",
 		"changeset": "changeset",
 		"changeset:version": "changeset version",

@@ -28,6 +28,13 @@ import type {
 	FunctionItemBuildArgs,
 	FunctionItemLooseArgs,
 	ParametersElementsBuildArgs,
+	ParametersElementsLooseArgs,
+	AttributeItemBuildArgs,
+	AttributeItemLooseArgs,
+	ExpressionStatementBuildArgs,
+	ExpressionStatementLooseArgs,
+	DeclarationListBuildArgs,
+	DeclarationListLooseArgs,
 	buildParametersElements
 } from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
@@ -87,5 +94,29 @@ describe('rust NamespaceMap access-path convergence', () => {
 		// type gate rather than silently retype the public surface.
 		expectTrue<Equals<Equals<ParametersElementsBuildArgs, Parameters<typeof buildParametersElements>>, false>>();
 		expectTrue<Equals<ParametersElements.BuildArgs, ParametersElementsBuildArgs>>();
+	});
+
+	it('LooseArgs widens every parameter, on every factory shape', () => {
+		// One kind per calling convention. A `LooseArgs` that still named the
+		// STRICT element type would make these equal — which is exactly how
+		// the widening went missing on four of the six shapes while the
+		// config-shaped pins stayed green.
+		// single-field
+		expectTrue<Equals<Equals<AttributeItemBuildArgs, AttributeItemLooseArgs>, false>>();
+		// container-single
+		expectTrue<Equals<Equals<ExpressionStatementBuildArgs, ExpressionStatementLooseArgs>, false>>();
+		// container-multiple
+		expectTrue<Equals<Equals<DeclarationListBuildArgs, DeclarationListLooseArgs>, false>>();
+		// separated list
+		expectTrue<Equals<Equals<ParametersElementsBuildArgs, ParametersElementsLooseArgs>, false>>();
+	});
+
+	it('a factory-less kind falls back to the NodeNs defaults', () => {
+		// The defaults must be MUTABLE tuples like every emitted alias,
+		// otherwise a factory-less kind's BuildArgs is not comparable with a
+		// factory-carrying kind's.
+		expectTrue<Equals<Comment.BuildArgs, [Comment.Config]>>();
+		expectTrue<Equals<Comment.LooseArgs, [Comment.Loose]>>();
+		expectTrue<Equals<FunctionItem.BuildArgs, [FunctionItem.Config]>>();
 	});
 });

@@ -19,6 +19,13 @@ import type {
 	FunctionDefinitionBuildArgs,
 	FunctionDefinitionLooseArgs,
 	SimpleStatementsElementsBuildArgs,
+	SimpleStatementsElementsLooseArgs,
+	ChevronBuildArgs,
+	ChevronLooseArgs,
+	SimpleStatementsBuildArgs,
+	SimpleStatementsLooseArgs,
+	ModuleBuildArgs,
+	ModuleLooseArgs,
 	buildSimpleStatementsElements
 } from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
@@ -78,5 +85,29 @@ describe('python NamespaceMap access-path convergence', () => {
 			Equals<Equals<SimpleStatementsElementsBuildArgs, Parameters<typeof buildSimpleStatementsElements>>, false>
 		>();
 		expectTrue<Equals<SimpleStatementsElements.BuildArgs, SimpleStatementsElementsBuildArgs>>();
+	});
+
+	it('LooseArgs widens every parameter, on every factory shape', () => {
+		// One kind per calling convention. A `LooseArgs` that still named the
+		// STRICT element type would make these equal — which is exactly how
+		// the widening went missing on four of the six shapes while the
+		// config-shaped pins stayed green.
+		// single-field
+		expectTrue<Equals<Equals<ChevronBuildArgs, ChevronLooseArgs>, false>>();
+		// container-single
+		expectTrue<Equals<Equals<SimpleStatementsBuildArgs, SimpleStatementsLooseArgs>, false>>();
+		// container-multiple
+		expectTrue<Equals<Equals<ModuleBuildArgs, ModuleLooseArgs>, false>>();
+		// separated list
+		expectTrue<Equals<Equals<SimpleStatementsElementsBuildArgs, SimpleStatementsElementsLooseArgs>, false>>();
+	});
+
+	it('a factory-less kind falls back to the NodeNs defaults', () => {
+		// The defaults must be MUTABLE tuples like every emitted alias,
+		// otherwise a factory-less kind's BuildArgs is not comparable with a
+		// factory-carrying kind's.
+		expectTrue<Equals<Suite.BuildArgs, [Suite.Config]>>();
+		expectTrue<Equals<Suite.LooseArgs, [Suite.Loose]>>();
+		expectTrue<Equals<FunctionDefinition.BuildArgs, [FunctionDefinition.Config]>>();
 	});
 });

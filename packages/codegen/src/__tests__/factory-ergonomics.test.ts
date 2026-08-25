@@ -49,8 +49,14 @@ describe('factory ergonomics', () => {
 			// the FORWARDED refinement of the direct form: a public wrapper
 			// accepting the child or the child's constructor args, over a
 			// private direct implementation that keeps the sanitized param.
-			expect(content).toMatch(/export function buildLabel\(child\??:/);
-			expect(content).toMatch(/function _buildLabel\(identifier/);
+			//
+			// The public direct overload, the private implementation and the
+			// `BuildArgs` alias all name the slot identically — they are one
+			// projection of one calling convention, so a divergent label would
+			// mean the parameter list had been composed twice.
+			expect(content).toMatch(/export function buildLabel\(identifier: T\.Label\.Config\['identifier'\]\)/);
+			expect(content).toMatch(/function _buildLabel\(identifier: T\.Label\.Config\['identifier'\]\)/);
+			expect(content).toMatch(/export type LabelBuildArgs = \[identifier: T\.Label\.Config\['identifier'\]\]/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});

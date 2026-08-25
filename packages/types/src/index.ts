@@ -662,6 +662,24 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
 	: never;
 
 /**
+ * LooseValue<V, Scalars, Strings, NsMap> — the loose counterpart of ONE
+ * builder parameter whose value is a node slot: a container's child, a
+ * separated list's element, a single-field factory's value.
+ *
+ * The widening is the SAME one `Loose` already applies to a `children`
+ * slot — reused rather than re-spelled, so leaf kinds admit their text,
+ * branches admit their own `Loose`, and boolean-keyword / bitflag /
+ * kind-enum brands project to their config surface. An emitter that
+ * open-coded any of that would be re-deriving predicates the model
+ * already owns.
+ *
+ * A builder parameter that IS a kind's config object does NOT go through
+ * here: its loose counterpart is that kind's `Loose`, which is the only
+ * projection that reads the from-only (`__fromInputHints__`) widenings.
+ */
+export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSlot<V, Scalars, Strings, [], NsMap>;
+
+/**
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
  * field values are the raw interface types (already snake_case internally).
  *
@@ -1126,8 +1144,8 @@ export interface NodeNs<
 	Strings = {},
 	NsMap = {},
 	Built = FluentNodeOf<T>,
-	Args extends readonly unknown[] = readonly [ConfigOf<T>],
-	LooseArgs extends readonly unknown[] = readonly [FromInputOf<T, Scalars, Strings, [], NsMap> | T]
+	Args extends readonly unknown[] = [ConfigOf<T>],
+	LooseArgs extends readonly unknown[] = [FromInputOf<T, Scalars, Strings, [], NsMap> | T]
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
