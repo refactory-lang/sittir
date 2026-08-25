@@ -21,6 +21,11 @@ import {
 import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from '../compiler/model/node-map.ts';
 
 type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }>;
+/** What the branch from-emitter can render: a branch, or the hidden
+ *  polymorph-form `group` a loose form mirror coerces through. A group is
+ *  never dispatched as a kind of its own — only reached as some parent
+ *  form's child. */
+type FormChildForFrom = Extract<AssembledNode, { modelType: 'branch' | 'group' }>;
 import {
 	isRequired,
 	isMultiple,
@@ -48,6 +53,7 @@ import {
 	childElementType,
 	kindEnumTextMapExpr,
 	namespaceOf,
+	formLooseChildKind,
 	delimiterMembersFor,
 	separatedListSurface
 } from './factories.ts';
@@ -134,7 +140,7 @@ function emitNamespaceImports(
 	} else {
 		lines.push(`import { Delimiter } from './types.js';`);
 	}
-	lines.push("import type { AnyNodeData, NonEmptyArray } from '@sittir/types';");
+	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push(
 		usesAttachProps
 			? "import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';"
@@ -143,9 +149,34 @@ function emitNamespaceImports(
 	lines.push('');
 }
 
+/** The `@sittir/types` names the generated from-module may reference.
+ *  `AnyNodeData` is unconditional (every leaf-registry entry names it); the
+ *  rest depend on per-kind emission decisions made long after the preamble
+ *  is written, so `finalize` prunes whichever the body never mentions. */
+/** `Parameters<F>` resolves to `never` for a signature whose rest element is
+ *  `readonly T[]` — `infer P` in rest position matches only a mutable array —
+ *  and the rest-param coercers declare exactly that. The loose form mirrors
+ *  forward their child coercer's parameters, so they reflect through this
+ *  instead. Pushed as ONE line entry so `finalize` can drop it whole when no
+ *  mirror was emitted. */
+const ARGS_HELPER = [
+	"/** A function's parameters, including the readonly-rest signatures",
+	' *  `Parameters` cannot reflect. */',
+	'type _Args<F> = F extends (...args: infer P) => unknown',
+	'  ? P',
+	'  : F extends (...args: readonly (infer E)[]) => unknown',
+	'    ? E[]',
+	'    : never;'
+].join('\n');
+
+const TYPES_IMPORT_ALWAYS = 'AnyNodeData';
+const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray'] as const;
+
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
 	lines.push('type _LooseFieldInput = unknown;');
+	lines.push('');
+	lines.push(ARGS_HELPER);
 	lines.push('');
 }
 
@@ -217,7 +248,35 @@ function withNamespaceProps(
 	const props = entries.map((e) => {
 		const key = IDENT.test(e.name) ? e.name : JSON.stringify(e.name);
 		const access = IDENT.test(e.name) ? `F.${factory}.${e.name}` : `F.${factory}[${JSON.stringify(e.name)}]`;
-		return { key, access };
+		// A form whose child declares a loose input becomes the COERCING
+		// constructor here, carrying the factory's strict one as `.strict` —
+		// the same pairing `ir.<kind>` / `ir.<kind>.strict` already uses, one
+		// level down. Everything else re-exposes the factory prop unchanged.
+		const childKind = formLooseChildKind(e, nodeMap, kindEntries);
+		const child = childKind === undefined ? undefined : nodeMap.nodes.get(childKind);
+		if (!child?.fromFunctionName) return { key, type: `typeof ${access}`, value: access };
+		// The mirror forwards to the child's coercer, so it declares THAT
+		// function's parameters rather than re-composing a signature the two
+		// could spell differently.
+		const forward = `...args: _Args<typeof ${child.fromFunctionName}>`;
+		// Upcast the coerced child to its base interface, exactly as the
+		// factory's own form constructor does: the Built literal is deep
+		// enough to blow TS's comparison depth against the parent's input
+		// union, and the base interface IS a union member, so the compare
+		// short-circuits.
+		const coerced = `${child.fromFunctionName}(...args) as T.${child.typeName}`;
+		// How the parent's own coercer takes the slot value — the decision
+		// its signature came from. `emitBranchFrom` hands a kind with a child
+		// factory surface to `emitContainerFrom`, which takes the child
+		// POSITIONALLY; every other branch takes `T.<Parent>.Loose`, so the
+		// arm rides under its slot's config key.
+		const positional = node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null;
+		const filled = positional ? coerced : `{ ${e.slot.configKey}: ${coerced} }`;
+		return {
+			key,
+			type: `((${forward}) => ReturnType<typeof ${impl}>) & { strict: typeof ${access} }`,
+			value: `attachProps((${forward}) => ${impl}(${filled}), { strict: ${access} })`
+		};
 	});
 	// Explicit typeof-composed annotation: without it the const's INFERRED
 	// type expands every prop structurally and can blow declaration emit
@@ -226,9 +285,9 @@ function withNamespaceProps(
 		renamed,
 		'',
 		`export const ${fn}: typeof ${impl} & {`,
-		...props.map((p) => `  ${p.key}: typeof ${p.access};`),
+		...props.map((p) => `  ${p.key}: ${p.type};`),
 		`} = attachProps(${impl}, {`,
-		...props.map((p) => `  ${p.key}: ${p.access},`),
+		...props.map((p) => `  ${p.key}: ${p.value},`),
 		'});'
 	].join('\n');
 }
@@ -396,7 +455,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 }
 
 function emitBranchFrom(
-	node: BranchLikeForFrom,
+	node: FormChildForFrom,
 	nodeMap: NodeMap,
 	intern: KindInterner,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -1159,7 +1218,15 @@ function resolveFieldCall(
 			? fastPath
 			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
 	if (storageInfo?.kind === 'kindEnum') {
-		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries)})`;
+		// A kind-enum slot STORES a discriminant, so a numeric loose value is
+		// already the stored form. Leaf resolution would scalarize it into an
+		// integer / float literal first, and `coerceKindEnumStorage` would then
+		// read that literal's own kind id back — a silently wrong member, and
+		// the one way the loose surface disagreed with the strict factory,
+		// which takes the discriminant verbatim. The thunk keeps the leaf path
+		// for every other input shape.
+		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
+		return `coerceKindEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
 	}
 	return baseCall;
 }
@@ -1447,6 +1514,13 @@ function emitResolverHelpers(
 
 	emitResolveByKindHelper(lines);
 
+	lines.push("/** A kind-enum slot's loose input. A NUMBER is already the slot's own");
+	lines.push(' *  stored discriminant; every other shape resolves as a leaf. */');
+	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {');
+	lines.push('  return typeof v === "number" ? (v as T) : resolve();');
+	lines.push('}');
+	lines.push('');
+
 	const hasBool = nodeMap.nodes.has('boolean_literal');
 	const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer');
 	const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float');
@@ -1662,6 +1736,12 @@ function emitResolverHelpers(
 	emitRequireFieldHelper(lines);
 }
 
+/** `emitBranchFrom` exports the coercer and every per-field resolver beside
+ *  it; a module-local child declares neither. */
+function unexported(block: string): string {
+	return block.replace(/^export function /gm, 'function ');
+}
+
 // ---------------------------------------------------------------------------
 // Emitter protocol — init / dispatchNode / finalize
 // ---------------------------------------------------------------------------
@@ -1742,13 +1822,55 @@ export class FromEmitter implements CodegenEmitter<string> {
 		}
 	}
 
+	/**
+	 * Coercers for the form children a loose mirror routes through that no
+	 * kind's own dispatch emits. Those children are hidden polymorph-form
+	 * groups: their factory exists, but `classifyFromEmission`'s `_`-prefix
+	 * gate suppresses the matching coercer, so the parent's namespace bundle
+	 * has nothing but the strict form to re-expose.
+	 *
+	 * MODULE-LOCAL, coercer and per-field resolvers alike: the child kind is
+	 * hidden, so exporting either would widen the public surface for an
+	 * internal need. `classifyFromEmission` is read, never changed — the
+	 * from-surface `wrap.ts` consumes stays exactly what it was.
+	 */
+	#localFormChildCoercers(): string[] {
+		const context = { nodeMap: this.#nodeMap, kindEntries: this.#kindEntries };
+		const needed = new Set<string>();
+		for (const [kind, node] of this.#nodeMap.nodes) {
+			if (classifyFromEmission(kind, node, context) !== 'emit') continue;
+			for (const entry of namespaceOf(node, this.#nodeMap, this.#kindEntries).entries) {
+				const childKind = formLooseChildKind(entry, this.#nodeMap, this.#kindEntries);
+				if (childKind === undefined) continue;
+				const child = this.#nodeMap.nodes.get(childKind);
+				if (child === undefined || !child.rawFactoryName || !child.fromFunctionName) continue;
+				if (classifyFromEmission(childKind, child, context) === 'emit') continue;
+				if (child.modelType !== 'branch' && child.modelType !== 'group') continue;
+				needed.add(childKind);
+			}
+		}
+		return [...needed].map((kind) =>
+			unexported(
+				emitBranchFrom(
+					this.#nodeMap.nodes.get(kind) as FormChildForFrom,
+					this.#nodeMap,
+					this.#internKinds,
+					this.#kindEntries
+				)
+			)
+		);
+	}
+
 	finalize(): string {
+		// Interning runs while these render, so they must be built before the
+		// kind table is written out.
+		const localCoercers = this.#localFormChildCoercers();
 		const lines = [...this.#preambleLines];
 		emitFromMapDeclaration(lines, this.#nodeMap, this.#kindEntries);
 		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
 		lines.push('');
 		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
-		for (const block of this.#output) {
+		for (const block of [...localCoercers, ...this.#output]) {
 			lines.push(block);
 			lines.push('');
 		}
@@ -1756,13 +1878,18 @@ export class FromEmitter implements CodegenEmitter<string> {
 		// per-kind emission decisions that consume them (delimiter guards,
 		// NonEmptyArray spreads) run after the preamble is written.
 		const body = lines.filter((l) => !l.startsWith('import ')).join('\n');
+		// The helper's own declaration names `_Args`, so it is excluded from
+		// the scan that decides whether anything actually uses it.
+		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
+			if (!usesArgs && l === ARGS_HELPER) return [];
 			if (!/\bDelimiter\./.test(body)) {
 				if (l === `import { Delimiter } from './types.js';`) return [];
 				l = l.replace(`, Delimiter } from './types.js';`, ` } from './types.js';`);
 			}
-			if (!/\bNonEmptyArray\b/.test(body) && l === `import type { AnyNodeData, NonEmptyArray } from '@sittir/types';`) {
-				return [`import type { AnyNodeData } from '@sittir/types';`];
+			if (l.endsWith(`} from '@sittir/types';`)) {
+				const used = TYPES_IMPORT_OPTIONAL.filter((name) => new RegExp(`\\b${name}\\b`).test(body));
+				return [`import type { ${[TYPES_IMPORT_ALWAYS, ...used].join(', ')} } from '@sittir/types';`];
 			}
 			return [l];
 		});

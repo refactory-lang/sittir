@@ -71,12 +71,12 @@ const _b$matchStatement: typeof FR.coerceToMatchStatement & {
 
 const _b$futureImportStatement: typeof FR.coerceToFutureImportStatement & {
 	strict: typeof F.buildFutureImportStatement;
-	importList: typeof F.buildFutureImportStatement.importList;
-	arm: typeof F.buildFutureImportStatement.arm;
+	importList: typeof FR.coerceToFutureImportStatement.importList;
+	arm: typeof FR.coerceToFutureImportStatement.arm;
 } = attachProps(FR.coerceToFutureImportStatement, {
 	strict: F.buildFutureImportStatement,
-	importList: F.buildFutureImportStatement.importList,
-	arm: F.buildFutureImportStatement.arm
+	importList: FR.coerceToFutureImportStatement.importList,
+	arm: FR.coerceToFutureImportStatement.arm
 });
 
 const _b$importStatement: typeof FR.coerceToImportStatement & {
@@ -93,12 +93,12 @@ const _b$importFromStatement: typeof FR.coerceToImportFromStatement & {
 
 const _b$printStatement: typeof FR.coerceToPrintStatement & {
 	strict: typeof F.buildPrintStatement;
-	arm1: typeof F.buildPrintStatement.arm1;
-	arm2: typeof F.buildPrintStatement.arm2;
+	arm1: typeof FR.coerceToPrintStatement.arm1;
+	arm2: typeof FR.coerceToPrintStatement.arm2;
 } = attachProps(FR.coerceToPrintStatement, {
 	strict: F.buildPrintStatement,
-	arm1: F.buildPrintStatement.arm1,
-	arm2: F.buildPrintStatement.arm2
+	arm1: FR.coerceToPrintStatement.arm1,
+	arm2: FR.coerceToPrintStatement.arm2
 });
 
 const _b$assertStatement: typeof FR.coerceToAssertStatement & {
@@ -109,18 +109,18 @@ const _b$assertStatement: typeof FR.coerceToAssertStatement & {
 
 const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
 	strict: typeof F.buildExpressionStatement;
-	tuple: typeof F.buildExpressionStatement.tuple;
-	assignment: typeof F.buildExpressionStatement.assignment;
-	augmentedAssignment: typeof F.buildExpressionStatement.augmentedAssignment;
-	yield: typeof F.buildExpressionStatement.yield;
-	yieldFromClause: typeof F.buildExpressionStatement.yieldFromClause;
+	tuple: typeof FR.coerceToExpressionStatement.tuple;
+	assignment: typeof FR.coerceToExpressionStatement.assignment;
+	augmentedAssignment: typeof FR.coerceToExpressionStatement.augmentedAssignment;
+	yield: typeof FR.coerceToExpressionStatement.yield;
+	yieldFromClause: typeof FR.coerceToExpressionStatement.yieldFromClause;
 } = attachProps(FR.coerceToExpressionStatement, {
 	strict: F.buildExpressionStatement,
-	tuple: F.buildExpressionStatement.tuple,
-	assignment: F.buildExpressionStatement.assignment,
-	augmentedAssignment: F.buildExpressionStatement.augmentedAssignment,
-	yield: F.buildExpressionStatement.yield,
-	yieldFromClause: F.buildExpressionStatement.yieldFromClause
+	tuple: FR.coerceToExpressionStatement.tuple,
+	assignment: FR.coerceToExpressionStatement.assignment,
+	augmentedAssignment: FR.coerceToExpressionStatement.augmentedAssignment,
+	yield: FR.coerceToExpressionStatement.yield,
+	yieldFromClause: FR.coerceToExpressionStatement.yieldFromClause
 });
 
 const _b$returnStatement: typeof FR.coerceToReturnStatement & {
@@ -179,12 +179,12 @@ const _b$classPattern: typeof FR.coerceToClassPattern & {
 
 const _b$splatPattern: typeof FR.coerceToSplatPattern & {
 	strict: typeof F.buildSplatPattern;
-	star: typeof F.buildSplatPattern.star;
-	starStar: typeof F.buildSplatPattern.starStar;
+	star: typeof FR.coerceToSplatPattern.star;
+	starStar: typeof FR.coerceToSplatPattern.starStar;
 } = attachProps(FR.coerceToSplatPattern, {
 	strict: F.buildSplatPattern,
-	star: F.buildSplatPattern.star,
-	starStar: F.buildSplatPattern.starStar
+	star: FR.coerceToSplatPattern.star,
+	starStar: FR.coerceToSplatPattern.starStar
 });
 
 const _b$unionPattern: typeof FR.coerceToUnionPattern & {
@@ -225,12 +225,12 @@ const _b$concatenatedString: typeof FR.coerceToConcatenatedString & {
 
 const _b$complexPattern: typeof FR.coerceToComplexPattern & {
 	strict: typeof F.buildComplexPattern;
-	plus: typeof F.buildComplexPattern.plus;
-	dash: typeof F.buildComplexPattern.dash;
+	plus: typeof FR.coerceToComplexPattern.plus;
+	dash: typeof FR.coerceToComplexPattern.dash;
 } = attachProps(FR.coerceToComplexPattern, {
 	strict: F.buildComplexPattern,
-	plus: F.buildComplexPattern.plus,
-	dash: F.buildComplexPattern.dash
+	plus: FR.coerceToComplexPattern.plus,
+	dash: FR.coerceToComplexPattern.dash
 });
 
 const _b$dottedName: typeof FR.coerceToDottedName & {
@@ -259,14 +259,14 @@ const _b$typedDefaultParameter: typeof FR.coerceToTypedDefaultParameter & {
 
 const _b$listSplatPattern: typeof FR.coerceToListSplatPattern & {
 	strict: typeof F.buildListSplatPattern;
-	identifier: typeof F.buildListSplatPattern.identifier;
-	subscript: typeof F.buildListSplatPattern.subscript;
-	attribute: typeof F.buildListSplatPattern.attribute;
+	identifier: typeof FR.coerceToListSplatPattern.identifier;
+	subscript: typeof FR.coerceToListSplatPattern.subscript;
+	attribute: typeof FR.coerceToListSplatPattern.attribute;
 } = attachProps(FR.coerceToListSplatPattern, {
 	strict: F.buildListSplatPattern,
-	identifier: F.buildListSplatPattern.identifier,
-	subscript: F.buildListSplatPattern.subscript,
-	attribute: F.buildListSplatPattern.attribute
+	identifier: FR.coerceToListSplatPattern.identifier,
+	subscript: FR.coerceToListSplatPattern.subscript,
+	attribute: FR.coerceToListSplatPattern.attribute
 });
 
 const _b$tuplePattern: typeof FR.coerceToTuplePattern & {
@@ -277,14 +277,14 @@ const _b$tuplePattern: typeof FR.coerceToTuplePattern & {
 
 const _b$dictionarySplatPattern: typeof FR.coerceToDictionarySplatPattern & {
 	strict: typeof F.buildDictionarySplatPattern;
-	identifier: typeof F.buildDictionarySplatPattern.identifier;
-	subscript: typeof F.buildDictionarySplatPattern.subscript;
-	attribute: typeof F.buildDictionarySplatPattern.attribute;
+	identifier: typeof FR.coerceToDictionarySplatPattern.identifier;
+	subscript: typeof FR.coerceToDictionarySplatPattern.subscript;
+	attribute: typeof FR.coerceToDictionarySplatPattern.attribute;
 } = attachProps(FR.coerceToDictionarySplatPattern, {
 	strict: F.buildDictionarySplatPattern,
-	identifier: F.buildDictionarySplatPattern.identifier,
-	subscript: F.buildDictionarySplatPattern.subscript,
-	attribute: F.buildDictionarySplatPattern.attribute
+	identifier: FR.coerceToDictionarySplatPattern.identifier,
+	subscript: FR.coerceToDictionarySplatPattern.subscript,
+	attribute: FR.coerceToDictionarySplatPattern.attribute
 });
 
 const _b$subscript: typeof FR.coerceToSubscript & {
@@ -325,12 +325,12 @@ const _b$notOperator: typeof FR.coerceToNotOperator & {
 
 const _b$booleanOperator: typeof FR.coerceToBooleanOperator & {
 	strict: typeof F.buildBooleanOperator;
-	and: typeof F.buildBooleanOperator.and;
-	or: typeof F.buildBooleanOperator.or;
+	and: typeof FR.coerceToBooleanOperator.and;
+	or: typeof FR.coerceToBooleanOperator.or;
 } = attachProps(FR.coerceToBooleanOperator, {
 	strict: F.buildBooleanOperator,
-	and: F.buildBooleanOperator.and,
-	or: F.buildBooleanOperator.or
+	and: FR.coerceToBooleanOperator.and,
+	or: FR.coerceToBooleanOperator.or
 });
 
 const _b$lambda: typeof FR.coerceToLambda & {
@@ -365,34 +365,34 @@ const _b$await: typeof FR.coerceToAwait & {
 
 const _b$binaryOperator: typeof FR.coerceToBinaryOperator & {
 	strict: typeof F.buildBinaryOperator;
-	plus: typeof F.buildBinaryOperator.plus;
-	dash: typeof F.buildBinaryOperator.dash;
-	star: typeof F.buildBinaryOperator.star;
-	at: typeof F.buildBinaryOperator.at;
-	slash: typeof F.buildBinaryOperator.slash;
-	percent: typeof F.buildBinaryOperator.percent;
-	slashSlash: typeof F.buildBinaryOperator.slashSlash;
-	starStar: typeof F.buildBinaryOperator.starStar;
-	pipe: typeof F.buildBinaryOperator.pipe;
-	amp: typeof F.buildBinaryOperator.amp;
-	caret: typeof F.buildBinaryOperator.caret;
-	ltLt: typeof F.buildBinaryOperator.ltLt;
-	gtGt: typeof F.buildBinaryOperator.gtGt;
+	plus: typeof FR.coerceToBinaryOperator.plus;
+	dash: typeof FR.coerceToBinaryOperator.dash;
+	star: typeof FR.coerceToBinaryOperator.star;
+	at: typeof FR.coerceToBinaryOperator.at;
+	slash: typeof FR.coerceToBinaryOperator.slash;
+	percent: typeof FR.coerceToBinaryOperator.percent;
+	slashSlash: typeof FR.coerceToBinaryOperator.slashSlash;
+	starStar: typeof FR.coerceToBinaryOperator.starStar;
+	pipe: typeof FR.coerceToBinaryOperator.pipe;
+	amp: typeof FR.coerceToBinaryOperator.amp;
+	caret: typeof FR.coerceToBinaryOperator.caret;
+	ltLt: typeof FR.coerceToBinaryOperator.ltLt;
+	gtGt: typeof FR.coerceToBinaryOperator.gtGt;
 } = attachProps(FR.coerceToBinaryOperator, {
 	strict: F.buildBinaryOperator,
-	plus: F.buildBinaryOperator.plus,
-	dash: F.buildBinaryOperator.dash,
-	star: F.buildBinaryOperator.star,
-	at: F.buildBinaryOperator.at,
-	slash: F.buildBinaryOperator.slash,
-	percent: F.buildBinaryOperator.percent,
-	slashSlash: F.buildBinaryOperator.slashSlash,
-	starStar: F.buildBinaryOperator.starStar,
-	pipe: F.buildBinaryOperator.pipe,
-	amp: F.buildBinaryOperator.amp,
-	caret: F.buildBinaryOperator.caret,
-	ltLt: F.buildBinaryOperator.ltLt,
-	gtGt: F.buildBinaryOperator.gtGt
+	plus: FR.coerceToBinaryOperator.plus,
+	dash: FR.coerceToBinaryOperator.dash,
+	star: FR.coerceToBinaryOperator.star,
+	at: FR.coerceToBinaryOperator.at,
+	slash: FR.coerceToBinaryOperator.slash,
+	percent: FR.coerceToBinaryOperator.percent,
+	slashSlash: FR.coerceToBinaryOperator.slashSlash,
+	starStar: FR.coerceToBinaryOperator.starStar,
+	pipe: FR.coerceToBinaryOperator.pipe,
+	amp: FR.coerceToBinaryOperator.amp,
+	caret: FR.coerceToBinaryOperator.caret,
+	ltLt: FR.coerceToBinaryOperator.ltLt,
+	gtGt: FR.coerceToBinaryOperator.gtGt
 });
 
 const _b$unaryOperator: typeof FR.coerceToUnaryOperator & {
@@ -451,14 +451,14 @@ const _b$tuple: typeof FR.coerceToTuple & {
 
 const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
 	strict: typeof F.buildParenthesizedExpression;
-	yield: typeof F.buildParenthesizedExpression.yield;
-	yieldFromClause: typeof F.buildParenthesizedExpression.yieldFromClause;
-	listSplat: typeof F.buildParenthesizedExpression.listSplat;
+	yield: typeof FR.coerceToParenthesizedExpression.yield;
+	yieldFromClause: typeof FR.coerceToParenthesizedExpression.yieldFromClause;
+	listSplat: typeof FR.coerceToParenthesizedExpression.listSplat;
 } = attachProps(FR.coerceToParenthesizedExpression, {
 	strict: F.buildParenthesizedExpression,
-	yield: F.buildParenthesizedExpression.yield,
-	yieldFromClause: F.buildParenthesizedExpression.yieldFromClause,
-	listSplat: F.buildParenthesizedExpression.listSplat
+	yield: FR.coerceToParenthesizedExpression.yield,
+	yieldFromClause: FR.coerceToParenthesizedExpression.yieldFromClause,
+	listSplat: FR.coerceToParenthesizedExpression.listSplat
 });
 
 const _b$generatorExpression: typeof FR.coerceToGeneratorExpression & {
@@ -487,10 +487,10 @@ const _b$augmentedAssignment: typeof FR.coerceToAugmentedAssignment & {
 
 const _b$yield: typeof FR.coerceToYield & {
 	strict: typeof F.buildYield;
-	fromClause: typeof F.buildYield.fromClause;
+	fromClause: typeof FR.coerceToYield.fromClause;
 } = attachProps(FR.coerceToYield, {
 	strict: F.buildYield,
-	fromClause: F.buildYield.fromClause
+	fromClause: FR.coerceToYield.fromClause
 });
 
 const _b$module: typeof FR.coerceToModule & {
@@ -525,12 +525,12 @@ const _b$elifClause: typeof FR.coerceToElifClause & {
 
 const _b$elseClause: typeof FR.coerceToElseClause & {
 	strict: typeof F.buildElseClause;
-	simpleStatements: typeof F.buildElseClause.simpleStatements;
-	suiteBlockWithIndent: typeof F.buildElseClause.suiteBlockWithIndent;
+	simpleStatements: typeof FR.coerceToElseClause.simpleStatements;
+	suiteBlockWithIndent: typeof FR.coerceToElseClause.suiteBlockWithIndent;
 } = attachProps(FR.coerceToElseClause, {
 	strict: F.buildElseClause,
-	simpleStatements: F.buildElseClause.simpleStatements,
-	suiteBlockWithIndent: F.buildElseClause.suiteBlockWithIndent
+	simpleStatements: FR.coerceToElseClause.simpleStatements,
+	suiteBlockWithIndent: FR.coerceToElseClause.suiteBlockWithIndent
 });
 
 const _b$caseClause: typeof FR.coerceToCaseClause & {
@@ -547,22 +547,22 @@ const _b$exceptClause: typeof FR.coerceToExceptClause & {
 
 const _b$finallyClause: typeof FR.coerceToFinallyClause & {
 	strict: typeof F.buildFinallyClause;
-	simpleStatements: typeof F.buildFinallyClause.simpleStatements;
-	suiteBlockWithIndent: typeof F.buildFinallyClause.suiteBlockWithIndent;
+	simpleStatements: typeof FR.coerceToFinallyClause.simpleStatements;
+	suiteBlockWithIndent: typeof FR.coerceToFinallyClause.suiteBlockWithIndent;
 } = attachProps(FR.coerceToFinallyClause, {
 	strict: F.buildFinallyClause,
-	simpleStatements: F.buildFinallyClause.simpleStatements,
-	suiteBlockWithIndent: F.buildFinallyClause.suiteBlockWithIndent
+	simpleStatements: FR.coerceToFinallyClause.simpleStatements,
+	suiteBlockWithIndent: FR.coerceToFinallyClause.suiteBlockWithIndent
 });
 
 const _b$withClause: typeof FR.coerceToWithClause & {
 	strict: typeof F.buildWithClause;
-	bare: typeof F.buildWithClause.bare;
-	paren: typeof F.buildWithClause.paren;
+	bare: typeof FR.coerceToWithClause.bare;
+	paren: typeof FR.coerceToWithClause.paren;
 } = attachProps(FR.coerceToWithClause, {
 	strict: F.buildWithClause,
-	bare: F.buildWithClause.bare,
-	paren: F.buildWithClause.paren
+	bare: FR.coerceToWithClause.bare,
+	paren: FR.coerceToWithClause.paren
 });
 
 const _b$withItem: typeof FR.coerceToWithItem & {
@@ -603,12 +603,12 @@ const _b$typeParameter: typeof FR.coerceToTypeParameter & {
 
 const _b$parenthesizedListSplat: typeof FR.coerceToParenthesizedListSplat & {
 	strict: typeof F.buildParenthesizedListSplat;
-	parenthesizedListSplat: typeof F.buildParenthesizedListSplat.parenthesizedListSplat;
-	listSplat: typeof F.buildParenthesizedListSplat.listSplat;
+	parenthesizedListSplat: typeof FR.coerceToParenthesizedListSplat.parenthesizedListSplat;
+	listSplat: typeof FR.coerceToParenthesizedListSplat.listSplat;
 } = attachProps(FR.coerceToParenthesizedListSplat, {
 	strict: F.buildParenthesizedListSplat,
-	parenthesizedListSplat: F.buildParenthesizedListSplat.parenthesizedListSplat,
-	listSplat: F.buildParenthesizedListSplat.listSplat
+	parenthesizedListSplat: FR.coerceToParenthesizedListSplat.parenthesizedListSplat,
+	listSplat: FR.coerceToParenthesizedListSplat.listSplat
 });
 
 const _b$argumentList: typeof FR.coerceToArgumentList & {
@@ -631,12 +631,12 @@ const _b$block: typeof FR.coerceToBlock & {
 
 const _b$casePattern: typeof FR.coerceToCasePattern & {
 	strict: typeof F.buildCasePattern;
-	caseAsPattern: typeof F.buildCasePattern.caseAsPattern;
-	keywordPattern: typeof F.buildCasePattern.keywordPattern;
+	caseAsPattern: typeof FR.coerceToCasePattern.caseAsPattern;
+	keywordPattern: typeof FR.coerceToCasePattern.keywordPattern;
 } = attachProps(FR.coerceToCasePattern, {
 	strict: F.buildCasePattern,
-	caseAsPattern: F.buildCasePattern.caseAsPattern,
-	keywordPattern: F.buildCasePattern.keywordPattern
+	caseAsPattern: FR.coerceToCasePattern.caseAsPattern,
+	keywordPattern: FR.coerceToCasePattern.keywordPattern
 });
 
 const _b$keywordPattern: typeof FR.coerceToKeywordPattern & {
@@ -647,40 +647,40 @@ const _b$keywordPattern: typeof FR.coerceToKeywordPattern & {
 
 const _b$slice: typeof FR.coerceToSlice & {
 	strict: typeof F.buildSlice;
-	group: typeof F.buildSlice.group;
+	group: typeof FR.coerceToSlice.group;
 } = attachProps(FR.coerceToSlice, {
 	strict: F.buildSlice,
-	group: F.buildSlice.group
+	group: FR.coerceToSlice.group
 });
 
 const _b$type: typeof FR.coerceToType & {
 	strict: typeof F.buildType;
-	splatType: typeof F.buildType.splatType;
-	star: typeof F.buildType.star;
-	starStar: typeof F.buildType.starStar;
-	genericType: typeof F.buildType.genericType;
-	unionType: typeof F.buildType.unionType;
-	constrainedType: typeof F.buildType.constrainedType;
-	memberType: typeof F.buildType.memberType;
+	splatType: typeof FR.coerceToType.splatType;
+	star: typeof FR.coerceToType.star;
+	starStar: typeof FR.coerceToType.starStar;
+	genericType: typeof FR.coerceToType.genericType;
+	unionType: typeof FR.coerceToType.unionType;
+	constrainedType: typeof FR.coerceToType.constrainedType;
+	memberType: typeof FR.coerceToType.memberType;
 } = attachProps(FR.coerceToType, {
 	strict: F.buildType,
-	splatType: F.buildType.splatType,
-	star: F.buildType.star,
-	starStar: F.buildType.starStar,
-	genericType: F.buildType.genericType,
-	unionType: F.buildType.unionType,
-	constrainedType: F.buildType.constrainedType,
-	memberType: F.buildType.memberType
+	splatType: FR.coerceToType.splatType,
+	star: FR.coerceToType.star,
+	starStar: FR.coerceToType.starStar,
+	genericType: FR.coerceToType.genericType,
+	unionType: FR.coerceToType.unionType,
+	constrainedType: FR.coerceToType.constrainedType,
+	memberType: FR.coerceToType.memberType
 });
 
 const _b$splatType: typeof FR.coerceToSplatType & {
 	strict: typeof F.buildSplatType;
-	star: typeof F.buildSplatType.star;
-	starStar: typeof F.buildSplatType.starStar;
+	star: typeof FR.coerceToSplatType.star;
+	starStar: typeof FR.coerceToSplatType.starStar;
 } = attachProps(FR.coerceToSplatType, {
 	strict: F.buildSplatType,
-	star: F.buildSplatType.star,
-	starStar: F.buildSplatType.starStar
+	star: FR.coerceToSplatType.star,
+	starStar: FR.coerceToSplatType.starStar
 });
 
 const _b$genericType: typeof FR.coerceToGenericType & {

@@ -9,6 +9,14 @@ import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
 
+/** A function's parameters, including the readonly-rest signatures
+ *  `Parameters` cannot reflect. */
+type _Args<F> = F extends (...args: infer P) => unknown
+	? P
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E[]
+		: never;
+
 export const _fromMap = {
 	program: coerceToProgram,
 	hash_bang_line: coerceToHashBangLine,
@@ -247,6 +255,12 @@ function _isFromKind(k: string): k is keyof _FromMap {
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
 	return fn(rest);
+}
+
+/** A kind-enum slot's loose input. A NUMBER is already the slot's own
+ *  stored discriminant; every other shape resolves as a leaf. */
+function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
+	return typeof v === 'number' ? (v as T) : resolve();
 }
 
 function _resolveScalar(_v: boolean | number): AnyNodeData | undefined {
@@ -1033,6 +1047,698 @@ const _K63: readonly string[] = [
 	'asserts',
 	'type_predicate'
 ];
+const _K64: readonly string[] = ['_export_statement_default_from_arm', '_export_statement_default_decl_arm'];
+const _K65: readonly string[] = [
+	'subscript_expression',
+	'member_expression',
+	'parenthesized_expression',
+	'string',
+	'template_string',
+	'regex',
+	'object',
+	'array',
+	'function_expression',
+	'arrow_function',
+	'generator_function',
+	'class',
+	'meta_property',
+	'call_expression',
+	'non_null_expression',
+	'new_expression'
+];
+const _K66: readonly string[] = [
+	'undefined',
+	'identifier',
+	'_reserved_identifier',
+	'this',
+	'super',
+	'number',
+	'true',
+	'false',
+	'null',
+	'private_property_identifier'
+];
+const _K67: readonly string[] = ['unescaped_double_string_fragment', 'escape_sequence'];
+const _K68: readonly string[] = ['unescaped_single_string_fragment', 'escape_sequence'];
+const _K69: readonly string[] = [
+	'_type_query_subscript_expression',
+	'_type_query_member_expression',
+	'_type_query_call_expression'
+];
+const _K70: readonly string[] = ['predefined_type', 'number'];
+const _K71: readonly string[] = ['import', 'identifier'];
+const _K72: readonly string[] = ['_type_query_member_expression', '_type_query_subscript_expression'];
+
+function coerceToExportStatementDefault(
+	input?: (T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) | T.ExportStatementDefault
+): ReturnType<typeof F.buildExportStatementDefault> {
+	if (isNodeData(input) && input.$type === TSKindId.ExportStatementDefault) {
+		const data = input;
+		const child = (data as unknown as { _content?: unknown })._content;
+		return F.buildExportStatementDefault(child as Parameters<typeof F.buildExportStatementDefault>[0]);
+	}
+	return F.buildExportStatementDefault(
+		_resolveOne<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(input, _K0, _K64)
+	);
+}
+
+function resolveExportStatementTypeExport_exportClause(
+	value: T.ExportStatementTypeExport.LooseConfig['exportClause']
+): T.ExportStatementTypeExport['_export_clause'] {
+	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
+}
+
+function resolveExportStatementTypeExport_source(
+	value: T.ExportStatementTypeExport.LooseConfig['source']
+): T.ExportStatementTypeExport['_source'] {
+	return _resolveOneBranch<T.String>(value, 'string');
+}
+
+function resolveExportStatementTypeExport_semicolon(
+	value: T.ExportStatementTypeExport.LooseConfig['semicolon']
+): T.ExportStatementTypeExport['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+function coerceToExportStatementTypeExport(
+	input: T.ExportStatementTypeExport.Loose
+): ReturnType<typeof F.buildExportStatementTypeExport> {
+	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementTypeExport>;
+	return F.buildExportStatementTypeExport({
+		exportClause: resolveExportStatementTypeExport_exportClause(input.exportClause) ?? F.buildExportClause(),
+		source: resolveExportStatementTypeExport_source(input.source),
+		semicolon: _requireField(
+			'_export_statement_type_export',
+			'semicolon',
+			resolveExportStatementTypeExport_semicolon(input.semicolon)
+		)
+	});
+}
+
+function resolveExportStatementEqualsExport_expression(
+	value: T.ExportStatementEqualsExport.LooseConfig['expression']
+): T.ExportStatementEqualsExport['_expression'] {
+	return _resolveOne<T.Expression>(value, _K7, _K14);
+}
+
+function resolveExportStatementEqualsExport_semicolon(
+	value: T.ExportStatementEqualsExport.LooseConfig['semicolon']
+): T.ExportStatementEqualsExport['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+function coerceToExportStatementEqualsExport(
+	input: T.ExportStatementEqualsExport.Loose
+): ReturnType<typeof F.buildExportStatementEqualsExport> {
+	if (!_isLooseConfig<T.ExportStatementEqualsExport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementEqualsExport>;
+	return F.buildExportStatementEqualsExport({
+		expression: _requireField(
+			'_export_statement_equals_export',
+			'expression',
+			resolveExportStatementEqualsExport_expression(input.expression)
+		),
+		semicolon: _requireField(
+			'_export_statement_equals_export',
+			'semicolon',
+			resolveExportStatementEqualsExport_semicolon(input.semicolon)
+		)
+	});
+}
+
+function resolveExportStatementNamespaceExport_identifier(
+	value: T.ExportStatementNamespaceExport.LooseConfig['identifier']
+): T.ExportStatementNamespaceExport['_identifier'] {
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+}
+
+function resolveExportStatementNamespaceExport_semicolon(
+	value: T.ExportStatementNamespaceExport.LooseConfig['semicolon']
+): T.ExportStatementNamespaceExport['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+function coerceToExportStatementNamespaceExport(
+	input: T.ExportStatementNamespaceExport.Loose
+): ReturnType<typeof F.buildExportStatementNamespaceExport> {
+	if (!_isLooseConfig<T.ExportStatementNamespaceExport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementNamespaceExport>;
+	return F.buildExportStatementNamespaceExport({
+		identifier: _requireField(
+			'_export_statement_namespace_export',
+			'identifier',
+			resolveExportStatementNamespaceExport_identifier(input.identifier)
+		),
+		semicolon: _requireField(
+			'_export_statement_namespace_export',
+			'semicolon',
+			resolveExportStatementNamespaceExport_semicolon(input.semicolon)
+		)
+	});
+}
+
+function resolveImportClauseDefaultImport_importIdentifier(
+	value: T.ImportClauseDefaultImport.LooseConfig['importIdentifier']
+): T.ImportClauseDefaultImport['_import_identifier'] {
+	return _resolveOneLeaf<T.ImportIdentifier>(value, 'identifier');
+}
+
+function resolveImportClauseDefaultImport_importClauseGroup(
+	value: T.ImportClauseDefaultImport.LooseConfig['importClauseGroup']
+): T.ImportClauseDefaultImport['_import_clause_group'] {
+	return _resolveOneBranch<T.ImportClauseGroup>(value, '_import_clause_group');
+}
+
+function coerceToImportClauseDefaultImport(
+	input: T.ImportClauseDefaultImport.Loose
+): ReturnType<typeof F.buildImportClauseDefaultImport> {
+	if (!_isLooseConfig<T.ImportClauseDefaultImport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildImportClauseDefaultImport>;
+	return F.buildImportClauseDefaultImport({
+		importIdentifier: _requireField(
+			'_import_clause_default_import',
+			'importIdentifier',
+			resolveImportClauseDefaultImport_importIdentifier(input.importIdentifier)
+		),
+		importClauseGroup: resolveImportClauseDefaultImport_importClauseGroup(input.importClauseGroup)
+	});
+}
+
+function resolveVariableDeclaratorArm1_name(
+	value: T.VariableDeclaratorArm1.LooseConfig['name']
+): T.VariableDeclaratorArm1['_name'] {
+	return _resolveOne<T.Identifier | T.DestructuringPattern>(
+		value,
+		_super_import_identifier,
+		_super_destructuring_pattern
+	);
+}
+
+function resolveVariableDeclaratorArm1_type(
+	value: T.VariableDeclaratorArm1.LooseConfig['type']
+): T.VariableDeclaratorArm1['_type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
+}
+
+function resolveVariableDeclaratorArm1_value(
+	value: T.VariableDeclaratorArm1.LooseConfig['value']
+): T.VariableDeclaratorArm1['_value'] {
+	return _resolveOne<T.Expression>(value, _K7, _K14);
+}
+
+function coerceToVariableDeclaratorArm1(
+	input: T.VariableDeclaratorArm1.Loose
+): ReturnType<typeof F.buildVariableDeclaratorArm1> {
+	if (!_isLooseConfig<T.VariableDeclaratorArm1.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildVariableDeclaratorArm1>;
+	return F.buildVariableDeclaratorArm1({
+		name: _requireField('_variable_declarator_arm1', 'name', resolveVariableDeclaratorArm1_name(input.name)),
+		type: resolveVariableDeclaratorArm1_type(input.type),
+		value: resolveVariableDeclaratorArm1_value(input.value)
+	});
+}
+
+function resolveVariableDeclaratorArm2_name(
+	value: T.VariableDeclaratorArm2.LooseConfig['name']
+): T.VariableDeclaratorArm2['_name'] {
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+}
+
+function resolveVariableDeclaratorArm2_type(
+	value: T.VariableDeclaratorArm2.LooseConfig['type']
+): T.VariableDeclaratorArm2['_type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
+}
+
+function coerceToVariableDeclaratorArm2(
+	input: T.VariableDeclaratorArm2.Loose
+): ReturnType<typeof F.buildVariableDeclaratorArm2> {
+	if (!_isLooseConfig<T.VariableDeclaratorArm2.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildVariableDeclaratorArm2>;
+	return F.buildVariableDeclaratorArm2({
+		name: _requireField('_variable_declarator_arm2', 'name', resolveVariableDeclaratorArm2_name(input.name)),
+		type: _requireField('_variable_declarator_arm2', 'type', resolveVariableDeclaratorArm2_type(input.type))
+	});
+}
+
+function resolveParenthesizedExpressionTyped_expression(
+	value: T.ParenthesizedExpressionTyped.LooseConfig['expression']
+): T.ParenthesizedExpressionTyped['_expression'] {
+	return _resolveOne<T.Expression>(value, _K7, _K14);
+}
+
+function resolveParenthesizedExpressionTyped_type(
+	value: T.ParenthesizedExpressionTyped.LooseConfig['type']
+): T.ParenthesizedExpressionTyped['_type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
+}
+
+function coerceToParenthesizedExpressionTyped(
+	input: T.ParenthesizedExpressionTyped.Loose
+): ReturnType<typeof F.buildParenthesizedExpressionTyped> {
+	if (!_isLooseConfig<T.ParenthesizedExpressionTyped.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+	return F.buildParenthesizedExpressionTyped({
+		expression: _requireField(
+			'_parenthesized_expression_typed',
+			'expression',
+			resolveParenthesizedExpressionTyped_expression(input.expression)
+		),
+		type: resolveParenthesizedExpressionTyped_type(input.type)
+	});
+}
+
+function resolveClassHeritageExtendsClause_extendsClause(
+	value: T.ClassHeritageExtendsClause.LooseConfig['extendsClause']
+): T.ClassHeritageExtendsClause['_extends_clause'] {
+	return _resolveOneBranch<T.ExtendsClause>(value, 'extends_clause');
+}
+
+function resolveClassHeritageExtendsClause_implementsClause(
+	value: T.ClassHeritageExtendsClause.LooseConfig['implementsClause']
+): T.ClassHeritageExtendsClause['_implements_clause'] {
+	return _resolveOneBranch<T.ImplementsClause>(value, 'implements_clause');
+}
+
+function coerceToClassHeritageExtendsClause(
+	input: T.ClassHeritageExtendsClause.Loose
+): ReturnType<typeof F.buildClassHeritageExtendsClause> {
+	if (!_isLooseConfig<T.ClassHeritageExtendsClause.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildClassHeritageExtendsClause>;
+	return F.buildClassHeritageExtendsClause({
+		extendsClause: resolveClassHeritageExtendsClause_extendsClause(input.extendsClause) ?? F.buildExtendsClause(),
+		implementsClause: resolveClassHeritageExtendsClause_implementsClause(input.implementsClause)
+	});
+}
+
+function resolveCallExpressionCall_function(
+	value: T.CallExpressionCall.LooseConfig['function']
+): T.CallExpressionCall['_function'] {
+	return _resolveOne<T.Expression | T.Import>(value, _K28, _K14);
+}
+
+function resolveCallExpressionCall_typeArguments(
+	value: T.CallExpressionCall.LooseConfig['typeArguments']
+): T.CallExpressionCall['_type_arguments'] {
+	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+}
+
+function resolveCallExpressionCall_arguments(
+	value: T.CallExpressionCall.LooseConfig['arguments']
+): T.CallExpressionCall['_arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+}
+
+function coerceToCallExpressionCall(input: T.CallExpressionCall.Loose): ReturnType<typeof F.buildCallExpressionCall> {
+	if (!_isLooseConfig<T.CallExpressionCall.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildCallExpressionCall>;
+	return F.buildCallExpressionCall({
+		function: _requireField('_call_expression_call', 'function', resolveCallExpressionCall_function(input.function)),
+		typeArguments: resolveCallExpressionCall_typeArguments(input.typeArguments),
+		arguments: resolveCallExpressionCall_arguments(input.arguments) ?? F.buildArguments()
+	});
+}
+
+function resolveCallExpressionTemplateCall_function(
+	value: T.CallExpressionTemplateCall.LooseConfig['function']
+): T.CallExpressionTemplateCall['_function'] {
+	return _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K7, _K65);
+}
+
+function resolveCallExpressionTemplateCall_arguments(
+	value: T.CallExpressionTemplateCall.LooseConfig['arguments']
+): T.CallExpressionTemplateCall['_arguments'] {
+	return _resolveOneBranch<T.TemplateString>(value, 'template_string');
+}
+
+function coerceToCallExpressionTemplateCall(
+	input: T.CallExpressionTemplateCall.Loose
+): ReturnType<typeof F.buildCallExpressionTemplateCall> {
+	if (!_isLooseConfig<T.CallExpressionTemplateCall.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildCallExpressionTemplateCall>;
+	return F.buildCallExpressionTemplateCall({
+		function: _requireField(
+			'_call_expression_template_call',
+			'function',
+			resolveCallExpressionTemplateCall_function(input.function)
+		),
+		arguments: resolveCallExpressionTemplateCall_arguments(input.arguments) ?? F.buildTemplateString()
+	});
+}
+
+function resolveCallExpressionMember_function(
+	value: T.CallExpressionMember.LooseConfig['function']
+): T.CallExpressionMember['_function'] {
+	return _resolveOne<T.PrimaryExpression>(value, _K7, _K27);
+}
+
+function resolveCallExpressionMember_typeArguments(
+	value: T.CallExpressionMember.LooseConfig['typeArguments']
+): T.CallExpressionMember['_type_arguments'] {
+	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+}
+
+function resolveCallExpressionMember_arguments(
+	value: T.CallExpressionMember.LooseConfig['arguments']
+): T.CallExpressionMember['_arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+}
+
+function coerceToCallExpressionMember(
+	input: T.CallExpressionMember.Loose
+): ReturnType<typeof F.buildCallExpressionMember> {
+	if (!_isLooseConfig<T.CallExpressionMember.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildCallExpressionMember>;
+	return F.buildCallExpressionMember({
+		function: _requireField(
+			'_call_expression_member',
+			'function',
+			resolveCallExpressionMember_function(input.function)
+		),
+		typeArguments: resolveCallExpressionMember_typeArguments(input.typeArguments),
+		arguments: resolveCallExpressionMember_arguments(input.arguments) ?? F.buildArguments()
+	});
+}
+
+function resolveBinaryExpressionArm_left(
+	value: T.BinaryExpressionArm.LooseConfig['left']
+): T.BinaryExpressionArm['_left'] {
+	return _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K66, _K14);
+}
+
+function resolveBinaryExpressionArm_right(
+	value: T.BinaryExpressionArm.LooseConfig['right']
+): T.BinaryExpressionArm['_right'] {
+	return _resolveOne<T.Expression>(value, _K7, _K14);
+}
+
+function coerceToBinaryExpressionArm(
+	input: T.BinaryExpressionArm.Loose
+): ReturnType<typeof F.buildBinaryExpressionArm> {
+	if (!_isLooseConfig<T.BinaryExpressionArm.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildBinaryExpressionArm>;
+	return F.buildBinaryExpressionArm({
+		left: _requireField('_binary_expression_arm', 'left', resolveBinaryExpressionArm_left(input.left)),
+		right: _requireField('_binary_expression_arm', 'right', resolveBinaryExpressionArm_right(input.right))
+	});
+}
+
+function resolveUpdateExpressionPostfix_argument(
+	value: T.UpdateExpressionPostfix.LooseConfig['argument']
+): T.UpdateExpressionPostfix['_argument'] {
+	return _resolveOne<T.Expression>(value, _K7, _K14);
+}
+
+function resolveUpdateExpressionPostfix_operator(
+	value: T.UpdateExpressionPostfix.LooseConfig['operator']
+): T.UpdateExpressionPostfix['_operator'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Operator>(value, '_operator')),
+		[['++', TSKindId.PlusPlus] as const, ['--', TSKindId.DashDash] as const]
+	);
+}
+
+function coerceToUpdateExpressionPostfix(
+	input: T.UpdateExpressionPostfix.Loose
+): ReturnType<typeof F.buildUpdateExpressionPostfix> {
+	if (!_isLooseConfig<T.UpdateExpressionPostfix.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildUpdateExpressionPostfix>;
+	return F.buildUpdateExpressionPostfix({
+		argument: _requireField(
+			'_update_expression_postfix',
+			'argument',
+			resolveUpdateExpressionPostfix_argument(input.argument)
+		),
+		operator: _requireField(
+			'_update_expression_postfix',
+			'operator',
+			resolveUpdateExpressionPostfix_operator(input.operator)
+		)
+	});
+}
+
+function resolveUpdateExpressionPrefix_operator(
+	value: T.UpdateExpressionPrefix.LooseConfig['operator']
+): T.UpdateExpressionPrefix['_operator'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Operator>(value, '_operator')),
+		[['++', TSKindId.PlusPlus] as const, ['--', TSKindId.DashDash] as const]
+	);
+}
+
+function resolveUpdateExpressionPrefix_argument(
+	value: T.UpdateExpressionPrefix.LooseConfig['argument']
+): T.UpdateExpressionPrefix['_argument'] {
+	return _resolveOne<T.Expression>(value, _K7, _K14);
+}
+
+function coerceToUpdateExpressionPrefix(
+	input: T.UpdateExpressionPrefix.Loose
+): ReturnType<typeof F.buildUpdateExpressionPrefix> {
+	if (!_isLooseConfig<T.UpdateExpressionPrefix.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildUpdateExpressionPrefix>;
+	return F.buildUpdateExpressionPrefix({
+		operator: _requireField(
+			'_update_expression_prefix',
+			'operator',
+			resolveUpdateExpressionPrefix_operator(input.operator)
+		),
+		argument: _requireField(
+			'_update_expression_prefix',
+			'argument',
+			resolveUpdateExpressionPrefix_argument(input.argument)
+		)
+	});
+}
+
+function resolveStringDouble_elements(value: T.StringDouble.LooseConfig['elements']): T.StringDouble['_elements'] {
+	return _resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(value, _K67, _K0);
+}
+
+function coerceToStringDouble(input?: T.StringDouble.Loose): ReturnType<typeof F.buildStringDouble> {
+	if (!_isLooseConfig<T.StringDouble.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildStringDouble>;
+	return F.buildStringDouble({
+		elements: resolveStringDouble_elements(input?.elements)
+	});
+}
+
+function resolveStringSingle_elements2s(value: T.StringSingle.LooseConfig['elements2']): T.StringSingle['_elements_2'] {
+	return _resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(value, _K68, _K0);
+}
+
+function coerceToStringSingle(input?: T.StringSingle.Loose): ReturnType<typeof F.buildStringSingle> {
+	if (!_isLooseConfig<T.StringSingle.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildStringSingle>;
+	return F.buildStringSingle({
+		elements2: resolveStringSingle_elements2s(input?.elements2)
+	});
+}
+
+function resolveAmbientDeclarationGlobal_body(
+	value: T.AmbientDeclarationGlobal.LooseConfig['body']
+): T.AmbientDeclarationGlobal['_body'] {
+	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
+}
+
+function coerceToAmbientDeclarationGlobal(
+	input: T.AmbientDeclarationGlobal.Loose
+): ReturnType<typeof F.buildAmbientDeclarationGlobal> {
+	if (!_isLooseConfig<T.AmbientDeclarationGlobal.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationGlobal>;
+	return F.buildAmbientDeclarationGlobal({
+		body: resolveAmbientDeclarationGlobal_body(input.body) ?? F.buildStatementBlock()
+	});
+}
+
+function resolveAmbientDeclarationModule_name(
+	value: T.AmbientDeclarationModule.LooseConfig['name']
+): T.AmbientDeclarationModule['_name'] {
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+}
+
+function resolveAmbientDeclarationModule_type(
+	value: T.AmbientDeclarationModule.LooseConfig['type']
+): T.AmbientDeclarationModule['_type'] {
+	return _resolveOne<T.Type>(value, _K43, _K44);
+}
+
+function resolveAmbientDeclarationModule_semicolon(
+	value: T.AmbientDeclarationModule.LooseConfig['semicolon']
+): T.AmbientDeclarationModule['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+function coerceToAmbientDeclarationModule(
+	input: T.AmbientDeclarationModule.Loose
+): ReturnType<typeof F.buildAmbientDeclarationModule> {
+	if (!_isLooseConfig<T.AmbientDeclarationModule.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationModule>;
+	return F.buildAmbientDeclarationModule({
+		name: _requireField('_ambient_declaration_module', 'name', resolveAmbientDeclarationModule_name(input.name)),
+		type: _requireField('_ambient_declaration_module', 'type', resolveAmbientDeclarationModule_type(input.type)),
+		semicolon: resolveAmbientDeclarationModule_semicolon(input.semicolon)
+	});
+}
+
+function resolveTypeQuerySubscriptExpression_object(
+	value: T.TypeQuerySubscriptExpression.LooseConfig['object']
+): T.TypeQuerySubscriptExpression['_object'] {
+	return _resolveOne<
+		T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression
+	>(value, _K49, _K69);
+}
+
+function resolveTypeQuerySubscriptExpression_index(
+	value: T.TypeQuerySubscriptExpression.LooseConfig['index']
+): T.TypeQuerySubscriptExpression['_index'] {
+	return _resolveOne<T.PredefinedType | T.String | T.Number>(value, _K70, _K3);
+}
+
+function coerceToTypeQuerySubscriptExpression(
+	input: T.TypeQuerySubscriptExpression.Loose
+): ReturnType<typeof F.buildTypeQuerySubscriptExpression> {
+	if (!_isLooseConfig<T.TypeQuerySubscriptExpression.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+	return F.buildTypeQuerySubscriptExpression({
+		object: _requireField(
+			'_type_query_subscript_expression',
+			'object',
+			resolveTypeQuerySubscriptExpression_object(input.object)
+		),
+		index: _requireField(
+			'_type_query_subscript_expression',
+			'index',
+			resolveTypeQuerySubscriptExpression_index(input.index)
+		)
+	});
+}
+
+function resolveTypeQueryMemberExpression_object(
+	value: T.TypeQueryMemberExpression.LooseConfig['object']
+): T.TypeQueryMemberExpression['_object'] {
+	return _resolveOne<
+		T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression
+	>(value, _K49, _K69);
+}
+
+function resolveTypeQueryMemberExpression_content(
+	value: T.TypeQueryMemberExpression.LooseConfig['content']
+): T.TypeQueryMemberExpression['_content'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'.' | '?.'>(value, _K0, _K0)),
+		[['.', TSKindId.Dot] as const, ['?.', TSKindId.QmarkDot] as const]
+	);
+}
+
+function resolveTypeQueryMemberExpression_property(
+	value: T.TypeQueryMemberExpression.LooseConfig['property']
+): T.TypeQueryMemberExpression['_property'] {
+	return _resolveOne<T.PrivatePropertyIdentifier | T.Identifier>(value, _K29, _K0);
+}
+
+function coerceToTypeQueryMemberExpression(
+	input: T.TypeQueryMemberExpression.Loose
+): ReturnType<typeof F.buildTypeQueryMemberExpression> {
+	if (!_isLooseConfig<T.TypeQueryMemberExpression.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildTypeQueryMemberExpression>;
+	return F.buildTypeQueryMemberExpression({
+		object: _requireField(
+			'_type_query_member_expression',
+			'object',
+			resolveTypeQueryMemberExpression_object(input.object)
+		),
+		content: _requireField(
+			'_type_query_member_expression',
+			'content',
+			resolveTypeQueryMemberExpression_content(input.content)
+		),
+		property: _requireField(
+			'_type_query_member_expression',
+			'property',
+			resolveTypeQueryMemberExpression_property(input.property)
+		)
+	});
+}
+
+function resolveTypeQueryCallExpression_function(
+	value: T.TypeQueryCallExpression.LooseConfig['function']
+): T.TypeQueryCallExpression['_function'] {
+	return _resolveOne<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
+		value,
+		_K71,
+		_K72
+	);
+}
+
+function resolveTypeQueryCallExpression_arguments(
+	value: T.TypeQueryCallExpression.LooseConfig['arguments']
+): T.TypeQueryCallExpression['_arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+}
+
+function coerceToTypeQueryCallExpression(
+	input: T.TypeQueryCallExpression.Loose
+): ReturnType<typeof F.buildTypeQueryCallExpression> {
+	if (!_isLooseConfig<T.TypeQueryCallExpression.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildTypeQueryCallExpression>;
+	return F.buildTypeQueryCallExpression({
+		function: _requireField(
+			'_type_query_call_expression',
+			'function',
+			resolveTypeQueryCallExpression_function(input.function)
+		),
+		arguments: resolveTypeQueryCallExpression_arguments(input.arguments) ?? F.buildArguments()
+	});
+}
+
+function resolveTypeQueryInstantiationExpression_function(
+	value: T.TypeQueryInstantiationExpression.LooseConfig['function']
+): T.TypeQueryInstantiationExpression['_function'] {
+	return _resolveOne<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
+		value,
+		_K71,
+		_K72
+	);
+}
+
+function resolveTypeQueryInstantiationExpression_typeArguments(
+	value: T.TypeQueryInstantiationExpression.LooseConfig['typeArguments']
+): T.TypeQueryInstantiationExpression['_type_arguments'] {
+	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+}
+
+function coerceToTypeQueryInstantiationExpression(
+	input: T.TypeQueryInstantiationExpression.Loose
+): ReturnType<typeof F.buildTypeQueryInstantiationExpression> {
+	if (!_isLooseConfig<T.TypeQueryInstantiationExpression.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+	return F.buildTypeQueryInstantiationExpression({
+		function: _requireField(
+			'_type_query_instantiation_expression',
+			'function',
+			resolveTypeQueryInstantiationExpression_function(input.function)
+		),
+		typeArguments: _requireField(
+			'_type_query_instantiation_expression',
+			'typeArguments',
+			resolveTypeQueryInstantiationExpression_typeArguments(input.typeArguments)
+		)
+	});
+}
 
 export function resolveProgram_hashBangLine(
 	value: T.Program.LooseConfig['hashBangLine']
@@ -1084,19 +1790,43 @@ function coerceToExportStatement$impl(
 }
 
 export const coerceToExportStatement: typeof coerceToExportStatement$impl & {
-	default: typeof F.buildExportStatement.default;
+	default: ((
+		...args: _Args<typeof coerceToExportStatementDefault>
+	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.default };
 	defaultFromArm: typeof F.buildExportStatement.defaultFromArm;
 	defaultDeclArm: typeof F.buildExportStatement.defaultDeclArm;
-	typeExport: typeof F.buildExportStatement.typeExport;
-	equalsExport: typeof F.buildExportStatement.equalsExport;
-	namespaceExport: typeof F.buildExportStatement.namespaceExport;
+	typeExport: ((
+		...args: _Args<typeof coerceToExportStatementTypeExport>
+	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.typeExport };
+	equalsExport: ((
+		...args: _Args<typeof coerceToExportStatementEqualsExport>
+	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.equalsExport };
+	namespaceExport: ((
+		...args: _Args<typeof coerceToExportStatementNamespaceExport>
+	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.namespaceExport };
 } = attachProps(coerceToExportStatement$impl, {
-	default: F.buildExportStatement.default,
+	default: attachProps(
+		(...args: _Args<typeof coerceToExportStatementDefault>) =>
+			coerceToExportStatement$impl(coerceToExportStatementDefault(...args) as T.ExportStatementDefault),
+		{ strict: F.buildExportStatement.default }
+	),
 	defaultFromArm: F.buildExportStatement.defaultFromArm,
 	defaultDeclArm: F.buildExportStatement.defaultDeclArm,
-	typeExport: F.buildExportStatement.typeExport,
-	equalsExport: F.buildExportStatement.equalsExport,
-	namespaceExport: F.buildExportStatement.namespaceExport
+	typeExport: attachProps(
+		(...args: _Args<typeof coerceToExportStatementTypeExport>) =>
+			coerceToExportStatement$impl(coerceToExportStatementTypeExport(...args) as T.ExportStatementTypeExport),
+		{ strict: F.buildExportStatement.typeExport }
+	),
+	equalsExport: attachProps(
+		(...args: _Args<typeof coerceToExportStatementEqualsExport>) =>
+			coerceToExportStatement$impl(coerceToExportStatementEqualsExport(...args) as T.ExportStatementEqualsExport),
+		{ strict: F.buildExportStatement.equalsExport }
+	),
+	namespaceExport: attachProps(
+		(...args: _Args<typeof coerceToExportStatementNamespaceExport>) =>
+			coerceToExportStatement$impl(coerceToExportStatementNamespaceExport(...args) as T.ExportStatementNamespaceExport),
+		{ strict: F.buildExportStatement.namespaceExport }
+	)
 });
 
 export function coerceToNamespaceExport(
@@ -1124,10 +1854,10 @@ export function coerceToExportClause(
 export function resolveExportSpecifier_exportKind(
 	value: T.ExportSpecifier.LooseConfig['exportKind']
 ): T.ExportSpecifier['_export_kind'] {
-	return coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(value, _K0, _K0), [
-		['type', TSKindId.AnonType] as const,
-		['typeof', TSKindId.Typeof] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K0, _K0)),
+		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
+	);
 }
 
 export function resolveExportSpecifier_name(value: T.ExportSpecifier.LooseConfig['name']): T.ExportSpecifier['_name'] {
@@ -1166,10 +1896,10 @@ export function coerceToImport(input?: T.Import): ReturnType<typeof F.buildImpor
 export function resolveImportStatement_importClause(
 	value: T.ImportStatement.LooseConfig['importClause']
 ): T.ImportStatement['_import_clause'] {
-	return coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(value, _K0, _K0), [
-		['type', TSKindId.AnonType] as const,
-		['typeof', TSKindId.Typeof] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K0, _K0)),
+		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
+	);
 }
 
 export function resolveImportStatement_fromClause(
@@ -1187,10 +1917,10 @@ export function resolveImportStatement_importAttribute(
 export function resolveImportStatement_semicolon(
 	value: T.ImportStatement.LooseConfig['semicolon']
 ): T.ImportStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 function coerceToImportStatement$impl(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
@@ -1228,11 +1958,17 @@ function coerceToImportClause$impl(
 export const coerceToImportClause: typeof coerceToImportClause$impl & {
 	namespaceImport: typeof F.buildImportClause.namespaceImport;
 	namedImports: typeof F.buildImportClause.namedImports;
-	defaultImport: typeof F.buildImportClause.defaultImport;
+	defaultImport: ((
+		...args: _Args<typeof coerceToImportClauseDefaultImport>
+	) => ReturnType<typeof coerceToImportClause$impl>) & { strict: typeof F.buildImportClause.defaultImport };
 } = attachProps(coerceToImportClause$impl, {
 	namespaceImport: F.buildImportClause.namespaceImport,
 	namedImports: F.buildImportClause.namedImports,
-	defaultImport: F.buildImportClause.defaultImport
+	defaultImport: attachProps(
+		(...args: _Args<typeof coerceToImportClauseDefaultImport>) =>
+			coerceToImportClause$impl(coerceToImportClauseDefaultImport(...args) as T.ImportClauseDefaultImport),
+		{ strict: F.buildImportClause.defaultImport }
+	)
 });
 
 export function resolveNamespaceImport_identifier(
@@ -1272,10 +2008,10 @@ export function coerceToNamedImports(
 export function resolveImportSpecifier_importKind(
 	value: T.ImportSpecifier.LooseConfig['importKind']
 ): T.ImportSpecifier['_import_kind'] {
-	return coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(value, _K0, _K0), [
-		['type', TSKindId.AnonType] as const,
-		['typeof', TSKindId.Typeof] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K0, _K0)),
+		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
+	);
 }
 
 export function resolveImportSpecifier_content(
@@ -1304,10 +2040,10 @@ export const coerceToImportSpecifier: typeof coerceToImportSpecifier$impl & {
 export function resolveImportAttribute_attributeKind(
 	value: T.ImportAttribute.LooseConfig['attributeKind']
 ): T.ImportAttribute['_attribute_kind'] {
-	return coerceKindEnumStorage(_resolveOne<'with' | 'assert'>(value, _K0, _K0), [
-		['with', TSKindId.With] as const,
-		['assert', TSKindId.Assert] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'with' | 'assert'>(value, _K0, _K0)),
+		[['with', TSKindId.With] as const, ['assert', TSKindId.Assert] as const]
+	);
 }
 
 export function resolveImportAttribute_object(
@@ -1346,10 +2082,10 @@ export function resolveExpressionStatement_expressions(
 export function resolveExpressionStatement_semicolon(
 	value: T.ExpressionStatement.LooseConfig['semicolon']
 ): T.ExpressionStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToExpressionStatement(
@@ -1378,10 +2114,10 @@ export function resolveVariableDeclaration_declarators(
 export function resolveVariableDeclaration_semicolon(
 	value: T.VariableDeclaration.LooseConfig['semicolon']
 ): T.VariableDeclaration['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToVariableDeclaration(
@@ -1402,10 +2138,10 @@ export function coerceToVariableDeclaration(
 export function resolveLexicalDeclaration_kind(
 	value: T.LexicalDeclaration.LooseConfig['kind']
 ): T.LexicalDeclaration['_kind'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Kind>(value, '_kind'), [
-		['let', TSKindId.Let] as const,
-		['const', TSKindId.Const] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Kind>(value, '_kind')),
+		[['let', TSKindId.Let] as const, ['const', TSKindId.Const] as const]
+	);
 }
 
 export function resolveLexicalDeclaration_declarators(
@@ -1419,10 +2155,10 @@ export function resolveLexicalDeclaration_declarators(
 export function resolveLexicalDeclaration_semicolon(
 	value: T.LexicalDeclaration.LooseConfig['semicolon']
 ): T.LexicalDeclaration['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToLexicalDeclaration(
@@ -1453,11 +2189,23 @@ function coerceToVariableDeclarator$impl(
 }
 
 export const coerceToVariableDeclarator: typeof coerceToVariableDeclarator$impl & {
-	arm1: typeof F.buildVariableDeclarator.arm1;
-	arm2: typeof F.buildVariableDeclarator.arm2;
+	arm1: ((
+		...args: _Args<typeof coerceToVariableDeclaratorArm1>
+	) => ReturnType<typeof coerceToVariableDeclarator$impl>) & { strict: typeof F.buildVariableDeclarator.arm1 };
+	arm2: ((
+		...args: _Args<typeof coerceToVariableDeclaratorArm2>
+	) => ReturnType<typeof coerceToVariableDeclarator$impl>) & { strict: typeof F.buildVariableDeclarator.arm2 };
 } = attachProps(coerceToVariableDeclarator$impl, {
-	arm1: F.buildVariableDeclarator.arm1,
-	arm2: F.buildVariableDeclarator.arm2
+	arm1: attachProps(
+		(...args: _Args<typeof coerceToVariableDeclaratorArm1>) =>
+			coerceToVariableDeclarator$impl(coerceToVariableDeclaratorArm1(...args) as T.VariableDeclaratorArm1),
+		{ strict: F.buildVariableDeclarator.arm1 }
+	),
+	arm2: attachProps(
+		(...args: _Args<typeof coerceToVariableDeclaratorArm2>) =>
+			coerceToVariableDeclarator$impl(coerceToVariableDeclaratorArm2(...args) as T.VariableDeclaratorArm2),
+		{ strict: F.buildVariableDeclarator.arm2 }
+	)
 });
 
 export function resolveStatementBlock_statements(
@@ -1586,10 +2334,10 @@ export function resolveForInStatement_content(
 export function resolveForInStatement_operator(
 	value: T.ForInStatement.LooseConfig['operator']
 ): T.ForInStatement['_operator'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.ForHeaderOperator>(value, '__for_header_operator'), [
-		['in', TSKindId.In] as const,
-		['of', TSKindId.Of] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.ForHeaderOperator>(value, '__for_header_operator')),
+		[['in', TSKindId.In] as const, ['of', TSKindId.Of] as const]
+	);
 }
 
 export function resolveForInStatement_right(value: T.ForInStatement.LooseConfig['right']): T.ForInStatement['_right'] {
@@ -1644,10 +2392,10 @@ export function resolveDoStatement_condition(
 export function resolveDoStatement_semicolon(
 	value: T.DoStatement.LooseConfig['semicolon']
 ): T.DoStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<typeof F.buildDoStatement> {
@@ -1708,10 +2456,10 @@ export function resolveBreakStatement_label(value: T.BreakStatement.LooseConfig[
 export function resolveBreakStatement_semicolon(
 	value: T.BreakStatement.LooseConfig['semicolon']
 ): T.BreakStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToBreakStatement(input: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
@@ -1732,10 +2480,10 @@ export function resolveContinueStatement_label(
 export function resolveContinueStatement_semicolon(
 	value: T.ContinueStatement.LooseConfig['semicolon']
 ): T.ContinueStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToContinueStatement(
@@ -1752,10 +2500,10 @@ export function coerceToContinueStatement(
 export function resolveDebuggerStatement_semicolon(
 	value: T.DebuggerStatement.LooseConfig['semicolon']
 ): T.DebuggerStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToDebuggerStatement(
@@ -1768,11 +2516,17 @@ export function coerceToDebuggerStatement(
 			'debugger_statement',
 			'semicolon',
 			coerceKindEnumStorage(
-				_resolveOneLeaf<T.Semicolon>(
+				_resolveKindEnum(
 					input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
 						? input.semicolon
 						: input,
-					'_semicolon'
+					() =>
+						_resolveOneLeaf<T.Semicolon>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
+								? input.semicolon
+								: input,
+							'_semicolon'
+						)
 				),
 				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 			)
@@ -1789,10 +2543,10 @@ export function resolveReturnStatement_expressions(
 export function resolveReturnStatement_semicolon(
 	value: T.ReturnStatement.LooseConfig['semicolon']
 ): T.ReturnStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToReturnStatement(input: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
@@ -1813,10 +2567,10 @@ export function resolveThrowStatement_expressions(
 export function resolveThrowStatement_semicolon(
 	value: T.ThrowStatement.LooseConfig['semicolon']
 ): T.ThrowStatement['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToThrowStatement(input: T.ThrowStatement.Loose): ReturnType<typeof F.buildThrowStatement> {
@@ -1985,17 +2739,51 @@ function coerceToParenthesizedExpression$impl(
 }
 
 export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpression$impl & {
-	typed: typeof F.buildParenthesizedExpression.typed;
-	sequenceExpression: typeof F.buildParenthesizedExpression.sequenceExpression;
+	typed: ((
+		...args: _Args<typeof coerceToParenthesizedExpressionTyped>
+	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
+		strict: typeof F.buildParenthesizedExpression.typed;
+	};
+	sequenceExpression: ((
+		...args: _Args<typeof coerceToSequenceExpression>
+	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
+		strict: typeof F.buildParenthesizedExpression.sequenceExpression;
+	};
 	identifier: typeof F.buildParenthesizedExpression.identifier;
-	decoratorMemberExpression: typeof F.buildParenthesizedExpression.decoratorMemberExpression;
-	decoratorCallExpression: typeof F.buildParenthesizedExpression.decoratorCallExpression;
+	decoratorMemberExpression: ((
+		...args: _Args<typeof coerceToDecoratorMemberExpression>
+	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
+		strict: typeof F.buildParenthesizedExpression.decoratorMemberExpression;
+	};
+	decoratorCallExpression: ((
+		...args: _Args<typeof coerceToDecoratorCallExpression>
+	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
+		strict: typeof F.buildParenthesizedExpression.decoratorCallExpression;
+	};
 } = attachProps(coerceToParenthesizedExpression$impl, {
-	typed: F.buildParenthesizedExpression.typed,
-	sequenceExpression: F.buildParenthesizedExpression.sequenceExpression,
+	typed: attachProps(
+		(...args: _Args<typeof coerceToParenthesizedExpressionTyped>) =>
+			coerceToParenthesizedExpression$impl(
+				coerceToParenthesizedExpressionTyped(...args) as T.ParenthesizedExpressionTyped
+			),
+		{ strict: F.buildParenthesizedExpression.typed }
+	),
+	sequenceExpression: attachProps(
+		(...args: _Args<typeof coerceToSequenceExpression>) =>
+			coerceToParenthesizedExpression$impl(coerceToSequenceExpression(...args) as T.SequenceExpression),
+		{ strict: F.buildParenthesizedExpression.sequenceExpression }
+	),
 	identifier: F.buildParenthesizedExpression.identifier,
-	decoratorMemberExpression: F.buildParenthesizedExpression.decoratorMemberExpression,
-	decoratorCallExpression: F.buildParenthesizedExpression.decoratorCallExpression
+	decoratorMemberExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorMemberExpression>) =>
+			coerceToParenthesizedExpression$impl(coerceToDecoratorMemberExpression(...args) as T.DecoratorMemberExpression),
+		{ strict: F.buildParenthesizedExpression.decoratorMemberExpression }
+	),
+	decoratorCallExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorCallExpression>) =>
+			coerceToParenthesizedExpression$impl(coerceToDecoratorCallExpression(...args) as T.DecoratorCallExpression),
+		{ strict: F.buildParenthesizedExpression.decoratorCallExpression }
+	)
 });
 
 export function resolveYieldExpression_expression(
@@ -2262,9 +3050,15 @@ function coerceToClass$impl(input: T.Class.Loose): ReturnType<typeof F.buildClas
 }
 
 export const coerceToClass: typeof coerceToClass$impl & {
-	body: typeof F.buildClass.body;
+	body: ((...args: _Args<typeof coerceToClassBody>) => ReturnType<typeof coerceToClass$impl>) & {
+		strict: typeof F.buildClass.body;
+	};
 } = attachProps(coerceToClass$impl, {
-	body: F.buildClass.body
+	body: attachProps(
+		(...args: _Args<typeof coerceToClassBody>) =>
+			coerceToClass$impl({ body: coerceToClassBody(...args) as T.ClassBody }),
+		{ strict: F.buildClass.body }
+	)
 });
 
 export function resolveClassDeclaration_decorators(
@@ -2322,11 +3116,23 @@ function coerceToClassHeritage$impl(
 }
 
 export const coerceToClassHeritage: typeof coerceToClassHeritage$impl & {
-	extendsClause: typeof F.buildClassHeritage.extendsClause;
-	implementsClause: typeof F.buildClassHeritage.implementsClause;
+	extendsClause: ((
+		...args: _Args<typeof coerceToClassHeritageExtendsClause>
+	) => ReturnType<typeof coerceToClassHeritage$impl>) & { strict: typeof F.buildClassHeritage.extendsClause };
+	implementsClause: ((
+		...args: _Args<typeof coerceToImplementsClause>
+	) => ReturnType<typeof coerceToClassHeritage$impl>) & { strict: typeof F.buildClassHeritage.implementsClause };
 } = attachProps(coerceToClassHeritage$impl, {
-	extendsClause: F.buildClassHeritage.extendsClause,
-	implementsClause: F.buildClassHeritage.implementsClause
+	extendsClause: attachProps(
+		(...args: _Args<typeof coerceToClassHeritageExtendsClause>) =>
+			coerceToClassHeritage$impl(coerceToClassHeritageExtendsClause(...args) as T.ClassHeritageExtendsClause),
+		{ strict: F.buildClassHeritage.extendsClause }
+	),
+	implementsClause: attachProps(
+		(...args: _Args<typeof coerceToImplementsClause>) =>
+			coerceToClassHeritage$impl(coerceToImplementsClause(...args) as T.ImplementsClause),
+		{ strict: F.buildClassHeritage.implementsClause }
+	)
 });
 
 export function resolveFunctionExpression_name(
@@ -2545,13 +3351,31 @@ function coerceToCallExpression$impl(
 }
 
 export const coerceToCallExpression: typeof coerceToCallExpression$impl & {
-	call: typeof F.buildCallExpression.call;
-	templateCall: typeof F.buildCallExpression.templateCall;
-	member: typeof F.buildCallExpression.member;
+	call: ((...args: _Args<typeof coerceToCallExpressionCall>) => ReturnType<typeof coerceToCallExpression$impl>) & {
+		strict: typeof F.buildCallExpression.call;
+	};
+	templateCall: ((
+		...args: _Args<typeof coerceToCallExpressionTemplateCall>
+	) => ReturnType<typeof coerceToCallExpression$impl>) & { strict: typeof F.buildCallExpression.templateCall };
+	member: ((...args: _Args<typeof coerceToCallExpressionMember>) => ReturnType<typeof coerceToCallExpression$impl>) & {
+		strict: typeof F.buildCallExpression.member;
+	};
 } = attachProps(coerceToCallExpression$impl, {
-	call: F.buildCallExpression.call,
-	templateCall: F.buildCallExpression.templateCall,
-	member: F.buildCallExpression.member
+	call: attachProps(
+		(...args: _Args<typeof coerceToCallExpressionCall>) =>
+			coerceToCallExpression$impl(coerceToCallExpressionCall(...args) as T.CallExpressionCall),
+		{ strict: F.buildCallExpression.call }
+	),
+	templateCall: attachProps(
+		(...args: _Args<typeof coerceToCallExpressionTemplateCall>) =>
+			coerceToCallExpression$impl(coerceToCallExpressionTemplateCall(...args) as T.CallExpressionTemplateCall),
+		{ strict: F.buildCallExpression.templateCall }
+	),
+	member: attachProps(
+		(...args: _Args<typeof coerceToCallExpressionMember>) =>
+			coerceToCallExpression$impl(coerceToCallExpressionMember(...args) as T.CallExpressionMember),
+		{ strict: F.buildCallExpression.member }
+	)
 });
 
 export function resolveNewExpression_constructor_(
@@ -2619,10 +3443,10 @@ export function resolveMemberExpression_object(
 export function resolveMemberExpression_separator(
 	value: T.MemberExpression.LooseConfig['separator']
 ): T.MemberExpression['_separator'] {
-	return coerceKindEnumStorage(_resolveOne<'.' | T.OptionalChain>(value, _K0, _K0), [
-		['.', TSKindId.Dot] as const,
-		['?.', TSKindId.OptionalChain] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'.' | T.OptionalChain>(value, _K0, _K0)),
+		[['.', TSKindId.Dot] as const, ['?.', TSKindId.OptionalChain] as const]
+	);
 }
 
 export function resolveMemberExpression_property(
@@ -2699,7 +3523,9 @@ export function resolveAugmentedAssignmentExpression_operator(
 	value: T.AugmentedAssignmentExpression.LooseConfig['operator']
 ): T.AugmentedAssignmentExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveOneLeaf<T.AugmentedAssignmentExpressionOperator>(value, '_augmented_assignment_expression_operator'),
+		_resolveKindEnum(value, () =>
+			_resolveOneLeaf<T.AugmentedAssignmentExpressionOperator>(value, '_augmented_assignment_expression_operator')
+		),
 		[
 			['+=', TSKindId.PlusEq] as const,
 			['-=', TSKindId.DashEq] as const,
@@ -2822,32 +3648,34 @@ export function resolveBinaryExpression_operator(
 	value: T.BinaryExpression.LooseConfig['operator']
 ): T.BinaryExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveOne<
-			| '&&'
-			| '||'
-			| '>>'
-			| '>>>'
-			| '<<'
-			| '&'
-			| '^'
-			| '|'
-			| '+'
-			| '-'
-			| '*'
-			| '/'
-			| '%'
-			| '**'
-			| '<'
-			| '<='
-			| '=='
-			| '==='
-			| '!='
-			| '!=='
-			| '>='
-			| '>'
-			| '??'
-			| 'instanceof'
-		>(value, _K0, _K0),
+		_resolveKindEnum(value, () =>
+			_resolveOne<
+				| '&&'
+				| '||'
+				| '>>'
+				| '>>>'
+				| '<<'
+				| '&'
+				| '^'
+				| '|'
+				| '+'
+				| '-'
+				| '*'
+				| '/'
+				| '%'
+				| '**'
+				| '<'
+				| '<='
+				| '=='
+				| '==='
+				| '!='
+				| '!=='
+				| '>='
+				| '>'
+				| '??'
+				| 'instanceof'
+			>(value, _K0, _K0)
+		),
 		[
 			['&&', TSKindId.AmpAmp] as const,
 			['||', TSKindId.PipePipe] as const,
@@ -2901,7 +3729,9 @@ function coerceToBinaryExpression$impl(input?: T.BinaryExpression.Loose): Return
 }
 
 export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
-	arm: typeof F.buildBinaryExpression.arm;
+	arm: ((...args: _Args<typeof coerceToBinaryExpressionArm>) => ReturnType<typeof coerceToBinaryExpression$impl>) & {
+		strict: typeof F.buildBinaryExpression.arm;
+	};
 	ampAmp: typeof F.buildBinaryExpression.ampAmp;
 	pipePipe: typeof F.buildBinaryExpression.pipePipe;
 	gtGt: typeof F.buildBinaryExpression.gtGt;
@@ -2927,7 +3757,13 @@ export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
 	qmarkQmark: typeof F.buildBinaryExpression.qmarkQmark;
 	instanceof: typeof F.buildBinaryExpression.instanceof;
 } = attachProps(coerceToBinaryExpression$impl, {
-	arm: F.buildBinaryExpression.arm,
+	arm: attachProps(
+		(...args: _Args<typeof coerceToBinaryExpressionArm>) =>
+			coerceToBinaryExpression$impl({
+				binaryExpressionArm: coerceToBinaryExpressionArm(...args) as T.BinaryExpressionArm
+			}),
+		{ strict: F.buildBinaryExpression.arm }
+	),
 	ampAmp: F.buildBinaryExpression.ampAmp,
 	pipePipe: F.buildBinaryExpression.pipePipe,
 	gtGt: F.buildBinaryExpression.gtGt,
@@ -2957,15 +3793,18 @@ export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
 export function resolveUnaryExpression_operator(
 	value: T.UnaryExpression.LooseConfig['operator']
 ): T.UnaryExpression['_operator'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.UnaryExpressionOperator>(value, '_unary_expression_operator'), [
-		['!', TSKindId.Bang] as const,
-		['~', TSKindId.Tilde] as const,
-		['-', TSKindId.Dash] as const,
-		['+', TSKindId.Plus] as const,
-		['typeof', TSKindId.Typeof] as const,
-		['void', TSKindId.Void] as const,
-		['delete', TSKindId.Delete] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.UnaryExpressionOperator>(value, '_unary_expression_operator')),
+		[
+			['!', TSKindId.Bang] as const,
+			['~', TSKindId.Tilde] as const,
+			['-', TSKindId.Dash] as const,
+			['+', TSKindId.Plus] as const,
+			['typeof', TSKindId.Typeof] as const,
+			['void', TSKindId.Void] as const,
+			['delete', TSKindId.Delete] as const
+		]
+	);
 }
 
 export function resolveUnaryExpression_argument(
@@ -2995,11 +3834,23 @@ function coerceToUpdateExpression$impl(
 }
 
 export const coerceToUpdateExpression: typeof coerceToUpdateExpression$impl & {
-	postfix: typeof F.buildUpdateExpression.postfix;
-	prefix: typeof F.buildUpdateExpression.prefix;
+	postfix: ((
+		...args: _Args<typeof coerceToUpdateExpressionPostfix>
+	) => ReturnType<typeof coerceToUpdateExpression$impl>) & { strict: typeof F.buildUpdateExpression.postfix };
+	prefix: ((
+		...args: _Args<typeof coerceToUpdateExpressionPrefix>
+	) => ReturnType<typeof coerceToUpdateExpression$impl>) & { strict: typeof F.buildUpdateExpression.prefix };
 } = attachProps(coerceToUpdateExpression$impl, {
-	postfix: F.buildUpdateExpression.postfix,
-	prefix: F.buildUpdateExpression.prefix
+	postfix: attachProps(
+		(...args: _Args<typeof coerceToUpdateExpressionPostfix>) =>
+			coerceToUpdateExpression$impl(coerceToUpdateExpressionPostfix(...args) as T.UpdateExpressionPostfix),
+		{ strict: F.buildUpdateExpression.postfix }
+	),
+	prefix: attachProps(
+		(...args: _Args<typeof coerceToUpdateExpressionPrefix>) =>
+			coerceToUpdateExpression$impl(coerceToUpdateExpressionPrefix(...args) as T.UpdateExpressionPrefix),
+		{ strict: F.buildUpdateExpression.prefix }
+	)
 });
 
 export function coerceToSequenceExpression(
@@ -3035,11 +3886,23 @@ function coerceToString$impl(input?: (T.StringDouble | T.StringSingle) | T.Strin
 }
 
 export const coerceToString: typeof coerceToString$impl & {
-	double: typeof F.buildString.double;
-	single: typeof F.buildString.single;
+	double: ((...args: _Args<typeof coerceToStringDouble>) => ReturnType<typeof coerceToString$impl>) & {
+		strict: typeof F.buildString.double;
+	};
+	single: ((...args: _Args<typeof coerceToStringSingle>) => ReturnType<typeof coerceToString$impl>) & {
+		strict: typeof F.buildString.single;
+	};
 } = attachProps(coerceToString$impl, {
-	double: F.buildString.double,
-	single: F.buildString.single
+	double: attachProps(
+		(...args: _Args<typeof coerceToStringDouble>) =>
+			coerceToString$impl(coerceToStringDouble(...args) as T.StringDouble),
+		{ strict: F.buildString.double }
+	),
+	single: attachProps(
+		(...args: _Args<typeof coerceToStringSingle>) =>
+			coerceToString$impl(coerceToStringSingle(...args) as T.StringSingle),
+		{ strict: F.buildString.single }
+	)
 });
 
 export function coerceToUnescapedDoubleStringFragment(
@@ -3264,14 +4127,32 @@ function coerceToDecorator$impl(
 
 export const coerceToDecorator: typeof coerceToDecorator$impl & {
 	identifier: typeof F.buildDecorator.identifier;
-	memberExpression: typeof F.buildDecorator.memberExpression;
-	callExpression: typeof F.buildDecorator.callExpression;
-	parenthesizedExpression: typeof F.buildDecorator.parenthesizedExpression;
+	memberExpression: ((
+		...args: _Args<typeof coerceToDecoratorMemberExpression>
+	) => ReturnType<typeof coerceToDecorator$impl>) & { strict: typeof F.buildDecorator.memberExpression };
+	callExpression: ((
+		...args: _Args<typeof coerceToDecoratorCallExpression>
+	) => ReturnType<typeof coerceToDecorator$impl>) & { strict: typeof F.buildDecorator.callExpression };
+	parenthesizedExpression: ((
+		...args: _Args<typeof coerceToDecoratorParenthesizedExpression>
+	) => ReturnType<typeof coerceToDecorator$impl>) & { strict: typeof F.buildDecorator.parenthesizedExpression };
 } = attachProps(coerceToDecorator$impl, {
 	identifier: F.buildDecorator.identifier,
-	memberExpression: F.buildDecorator.memberExpression,
-	callExpression: F.buildDecorator.callExpression,
-	parenthesizedExpression: F.buildDecorator.parenthesizedExpression
+	memberExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorMemberExpression>) =>
+			coerceToDecorator$impl(coerceToDecoratorMemberExpression(...args) as T.DecoratorMemberExpression),
+		{ strict: F.buildDecorator.memberExpression }
+	),
+	callExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorCallExpression>) =>
+			coerceToDecorator$impl(coerceToDecoratorCallExpression(...args) as T.DecoratorCallExpression),
+		{ strict: F.buildDecorator.callExpression }
+	),
+	parenthesizedExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorParenthesizedExpression>) =>
+			coerceToDecorator$impl(coerceToDecoratorParenthesizedExpression(...args) as T.DecoratorParenthesizedExpression),
+		{ strict: F.buildDecorator.parenthesizedExpression }
+	)
 });
 
 export function resolveDecoratorMemberExpression_object(
@@ -3404,21 +4285,23 @@ export function coerceToRestPattern(input?: T._LhsExpression | T.RestPattern): R
 export function resolveMethodDefinition_accessibilityModifier(
 	value: T.MethodDefinition.LooseConfig['accessibilityModifier']
 ): T.MethodDefinition['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolveMethodDefinition_accessorKind(
 	value: T.MethodDefinition.LooseConfig['accessorKind']
 ): T.MethodDefinition['_accessor_kind'] {
-	return coerceKindEnumStorage(_resolveOne<'get' | 'set' | '*'>(value, _K0, _K0), [
-		['get', TSKindId.Get] as const,
-		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K0, _K0)),
+		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
+	);
 }
 
 export function resolveMethodDefinition_name(
@@ -3548,11 +4431,14 @@ export function resolvePublicFieldDefinition_decorators(
 export function resolvePublicFieldDefinition_accessibilityModifier(
 	value: T.PublicFieldDefinition.LooseConfig['accessibilityModifier']
 ): T.PublicFieldDefinition['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolvePublicFieldDefinition_name(
@@ -3564,10 +4450,10 @@ export function resolvePublicFieldDefinition_name(
 export function resolvePublicFieldDefinition_optionalityMarker(
 	value: T.PublicFieldDefinition.LooseConfig['optionalityMarker']
 ): T.PublicFieldDefinition['_optionality_marker'] {
-	return coerceKindEnumStorage(_resolveOne<'?' | '!'>(value, _K0, _K0), [
-		['?', TSKindId.Qmark] as const,
-		['!', TSKindId.Bang] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'?' | '!'>(value, _K0, _K0)),
+		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
+	);
 }
 
 export function resolvePublicFieldDefinition_type(
@@ -3640,21 +4526,23 @@ export function coerceToNonNullExpression(
 export function resolveMethodSignature_accessibilityModifier(
 	value: T.MethodSignature.LooseConfig['accessibilityModifier']
 ): T.MethodSignature['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolveMethodSignature_accessorKind(
 	value: T.MethodSignature.LooseConfig['accessorKind']
 ): T.MethodSignature['_accessor_kind'] {
-	return coerceKindEnumStorage(_resolveOne<'get' | 'set' | '*'>(value, _K0, _K0), [
-		['get', TSKindId.Get] as const,
-		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K0, _K0)),
+		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
+	);
 }
 
 export function resolveMethodSignature_name(value: T.MethodSignature.LooseConfig['name']): T.MethodSignature['_name'] {
@@ -3710,21 +4598,23 @@ export const coerceToMethodSignature: typeof coerceToMethodSignature$impl & {
 export function resolveAbstractMethodSignature_accessibilityModifier(
 	value: T.AbstractMethodSignature.LooseConfig['accessibilityModifier']
 ): T.AbstractMethodSignature['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolveAbstractMethodSignature_accessorKind(
 	value: T.AbstractMethodSignature.LooseConfig['accessorKind']
 ): T.AbstractMethodSignature['_accessor_kind'] {
-	return coerceKindEnumStorage(_resolveOne<'get' | 'set' | '*'>(value, _K0, _K0), [
-		['get', TSKindId.Get] as const,
-		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K0, _K0)),
+		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
+	);
 }
 
 export function resolveAbstractMethodSignature_name(
@@ -3805,11 +4695,14 @@ export function resolveFunctionSignature_returnType(
 export function resolveFunctionSignature_semicolon(
 	value: T.FunctionSignature.LooseConfig['semicolon']
 ): T.FunctionSignature['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon | '\n'>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const,
-		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon | '\n'>(value, '_semicolon')),
+		[
+			['\n', TSKindId.AutomaticSemicolon] as const,
+			[';', TSKindId.Semi] as const,
+			['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
+		]
+	);
 }
 
 export function coerceToFunctionSignature(
@@ -3848,12 +4741,32 @@ function coerceToDecoratorParenthesizedExpression$impl(
 
 export const coerceToDecoratorParenthesizedExpression: typeof coerceToDecoratorParenthesizedExpression$impl & {
 	identifier: typeof F.buildDecoratorParenthesizedExpression.identifier;
-	decoratorMemberExpression: typeof F.buildDecoratorParenthesizedExpression.decoratorMemberExpression;
-	decoratorCallExpression: typeof F.buildDecoratorParenthesizedExpression.decoratorCallExpression;
+	decoratorMemberExpression: ((
+		...args: _Args<typeof coerceToDecoratorMemberExpression>
+	) => ReturnType<typeof coerceToDecoratorParenthesizedExpression$impl>) & {
+		strict: typeof F.buildDecoratorParenthesizedExpression.decoratorMemberExpression;
+	};
+	decoratorCallExpression: ((
+		...args: _Args<typeof coerceToDecoratorCallExpression>
+	) => ReturnType<typeof coerceToDecoratorParenthesizedExpression$impl>) & {
+		strict: typeof F.buildDecoratorParenthesizedExpression.decoratorCallExpression;
+	};
 } = attachProps(coerceToDecoratorParenthesizedExpression$impl, {
 	identifier: F.buildDecoratorParenthesizedExpression.identifier,
-	decoratorMemberExpression: F.buildDecoratorParenthesizedExpression.decoratorMemberExpression,
-	decoratorCallExpression: F.buildDecoratorParenthesizedExpression.decoratorCallExpression
+	decoratorMemberExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorMemberExpression>) =>
+			coerceToDecoratorParenthesizedExpression$impl(
+				coerceToDecoratorMemberExpression(...args) as T.DecoratorMemberExpression
+			),
+		{ strict: F.buildDecoratorParenthesizedExpression.decoratorMemberExpression }
+	),
+	decoratorCallExpression: attachProps(
+		(...args: _Args<typeof coerceToDecoratorCallExpression>) =>
+			coerceToDecoratorParenthesizedExpression$impl(
+				coerceToDecoratorCallExpression(...args) as T.DecoratorCallExpression
+			),
+		{ strict: F.buildDecoratorParenthesizedExpression.decoratorCallExpression }
+	)
 });
 
 export function resolveTypeAssertion_typeArguments(
@@ -4063,11 +4976,23 @@ function coerceToAmbientDeclaration$impl(
 }
 
 export const coerceToAmbientDeclaration: typeof coerceToAmbientDeclaration$impl & {
-	global: typeof F.buildAmbientDeclaration.global;
-	module: typeof F.buildAmbientDeclaration.module;
+	global: ((
+		...args: _Args<typeof coerceToAmbientDeclarationGlobal>
+	) => ReturnType<typeof coerceToAmbientDeclaration$impl>) & { strict: typeof F.buildAmbientDeclaration.global };
+	module: ((
+		...args: _Args<typeof coerceToAmbientDeclarationModule>
+	) => ReturnType<typeof coerceToAmbientDeclaration$impl>) & { strict: typeof F.buildAmbientDeclaration.module };
 } = attachProps(coerceToAmbientDeclaration$impl, {
-	global: F.buildAmbientDeclaration.global,
-	module: F.buildAmbientDeclaration.module
+	global: attachProps(
+		(...args: _Args<typeof coerceToAmbientDeclarationGlobal>) =>
+			coerceToAmbientDeclaration$impl(coerceToAmbientDeclarationGlobal(...args) as T.AmbientDeclarationGlobal),
+		{ strict: F.buildAmbientDeclaration.global }
+	),
+	module: attachProps(
+		(...args: _Args<typeof coerceToAmbientDeclarationModule>) =>
+			coerceToAmbientDeclaration$impl(coerceToAmbientDeclarationModule(...args) as T.AmbientDeclarationModule),
+		{ strict: F.buildAmbientDeclaration.module }
+	)
 });
 
 export function resolveAbstractClassDeclaration_decorators(
@@ -4158,10 +5083,10 @@ export function resolveImportAlias_value(value: T.ImportAlias.LooseConfig['value
 export function resolveImportAlias_semicolon(
 	value: T.ImportAlias.LooseConfig['semicolon']
 ): T.ImportAlias['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<typeof F.buildImportAlias> {
@@ -4340,10 +5265,10 @@ export function resolveTypeAliasDeclaration_value(
 export function resolveTypeAliasDeclaration_semicolon(
 	value: T.TypeAliasDeclaration.LooseConfig['semicolon']
 ): T.TypeAliasDeclaration['_semicolon'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(value, '_semicolon'), [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Semicolon>(value, '_semicolon')),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToTypeAliasDeclaration(
@@ -4384,11 +5309,14 @@ export function resolveRequiredParameter_decorators(
 export function resolveRequiredParameter_accessibilityModifier(
 	value: T.RequiredParameter.LooseConfig['accessibilityModifier']
 ): T.RequiredParameter['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolveRequiredParameter_pattern(
@@ -4434,11 +5362,14 @@ export function resolveOptionalParameter_decorators(
 export function resolveOptionalParameter_accessibilityModifier(
 	value: T.OptionalParameter.LooseConfig['accessibilityModifier']
 ): T.OptionalParameter['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolveOptionalParameter_pattern(
@@ -4579,11 +5510,17 @@ function coerceToAsserts$impl(
 }
 
 export const coerceToAsserts: typeof coerceToAsserts$impl & {
-	typePredicate: typeof F.buildAsserts.typePredicate;
+	typePredicate: ((...args: _Args<typeof coerceToTypePredicate>) => ReturnType<typeof coerceToAsserts$impl>) & {
+		strict: typeof F.buildAsserts.typePredicate;
+	};
 	identifier: typeof F.buildAsserts.identifier;
 	this: typeof F.buildAsserts.this;
 } = attachProps(coerceToAsserts$impl, {
-	typePredicate: F.buildAsserts.typePredicate,
+	typePredicate: attachProps(
+		(...args: _Args<typeof coerceToTypePredicate>) =>
+			coerceToAsserts$impl(coerceToTypePredicate(...args) as T.TypePredicate),
+		{ strict: F.buildAsserts.typePredicate }
+	),
 	identifier: F.buildAsserts.identifier,
 	this: F.buildAsserts.this
 });
@@ -4738,9 +5675,14 @@ function coerceToTemplateType$impl(
 }
 
 export const coerceToTemplateType: typeof coerceToTemplateType$impl & {
-	inferType: typeof F.buildTemplateType.inferType;
+	inferType: ((...args: _Args<typeof coerceToInferType>) => ReturnType<typeof coerceToTemplateType$impl>) & {
+		strict: typeof F.buildTemplateType.inferType;
+	};
 } = attachProps(coerceToTemplateType$impl, {
-	inferType: F.buildTemplateType.inferType
+	inferType: attachProps(
+		(...args: _Args<typeof coerceToInferType>) => coerceToTemplateType$impl(coerceToInferType(...args) as T.InferType),
+		{ strict: F.buildTemplateType.inferType }
+	)
 });
 
 export function coerceToTemplateLiteralType(
@@ -4924,21 +5866,45 @@ function coerceToTypeQuery$impl(
 }
 
 export const coerceToTypeQuery: typeof coerceToTypeQuery$impl & {
-	subscriptExpression: typeof F.buildTypeQuery.subscriptExpression;
-	memberExpression: typeof F.buildTypeQuery.memberExpression;
+	subscriptExpression: ((
+		...args: _Args<typeof coerceToTypeQuerySubscriptExpression>
+	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.subscriptExpression };
+	memberExpression: ((
+		...args: _Args<typeof coerceToTypeQueryMemberExpression>
+	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.memberExpression };
 	dot: typeof F.buildTypeQuery.dot;
 	qmarkDot: typeof F.buildTypeQuery.qmarkDot;
-	callExpression: typeof F.buildTypeQuery.callExpression;
-	instantiationExpression: typeof F.buildTypeQuery.instantiationExpression;
+	callExpression: ((
+		...args: _Args<typeof coerceToTypeQueryCallExpression>
+	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.callExpression };
+	instantiationExpression: ((
+		...args: _Args<typeof coerceToTypeQueryInstantiationExpression>
+	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.instantiationExpression };
 	identifier: typeof F.buildTypeQuery.identifier;
 	this: typeof F.buildTypeQuery.this;
 } = attachProps(coerceToTypeQuery$impl, {
-	subscriptExpression: F.buildTypeQuery.subscriptExpression,
-	memberExpression: F.buildTypeQuery.memberExpression,
+	subscriptExpression: attachProps(
+		(...args: _Args<typeof coerceToTypeQuerySubscriptExpression>) =>
+			coerceToTypeQuery$impl(coerceToTypeQuerySubscriptExpression(...args) as T.TypeQuerySubscriptExpression),
+		{ strict: F.buildTypeQuery.subscriptExpression }
+	),
+	memberExpression: attachProps(
+		(...args: _Args<typeof coerceToTypeQueryMemberExpression>) =>
+			coerceToTypeQuery$impl(coerceToTypeQueryMemberExpression(...args) as T.TypeQueryMemberExpression),
+		{ strict: F.buildTypeQuery.memberExpression }
+	),
 	dot: F.buildTypeQuery.dot,
 	qmarkDot: F.buildTypeQuery.qmarkDot,
-	callExpression: F.buildTypeQuery.callExpression,
-	instantiationExpression: F.buildTypeQuery.instantiationExpression,
+	callExpression: attachProps(
+		(...args: _Args<typeof coerceToTypeQueryCallExpression>) =>
+			coerceToTypeQuery$impl(coerceToTypeQueryCallExpression(...args) as T.TypeQueryCallExpression),
+		{ strict: F.buildTypeQuery.callExpression }
+	),
+	instantiationExpression: attachProps(
+		(...args: _Args<typeof coerceToTypeQueryInstantiationExpression>) =>
+			coerceToTypeQuery$impl(coerceToTypeQueryInstantiationExpression(...args) as T.TypeQueryInstantiationExpression),
+		{ strict: F.buildTypeQuery.instantiationExpression }
+	),
 	identifier: F.buildTypeQuery.identifier,
 	this: F.buildTypeQuery.this
 });
@@ -5027,7 +5993,9 @@ function coerceToLiteralType$impl(
 }
 
 export const coerceToLiteralType: typeof coerceToLiteralType$impl & {
-	string: typeof F.buildLiteralType.string;
+	string: ((...args: _Args<typeof coerceToString>) => ReturnType<typeof coerceToLiteralType$impl>) & {
+		strict: typeof F.buildLiteralType.string;
+	};
 	stringDouble: typeof F.buildLiteralType.stringDouble;
 	stringSingle: typeof F.buildLiteralType.stringSingle;
 	true: typeof F.buildLiteralType.true;
@@ -5035,7 +6003,10 @@ export const coerceToLiteralType: typeof coerceToLiteralType$impl & {
 	null: typeof F.buildLiteralType.null;
 	undefined: typeof F.buildLiteralType.undefined;
 } = attachProps(coerceToLiteralType$impl, {
-	string: F.buildLiteralType.string,
+	string: attachProps(
+		(...args: _Args<typeof coerceToString>) => coerceToLiteralType$impl(coerceToString(...args) as T.String),
+		{ strict: F.buildLiteralType.string }
+	),
 	stringDouble: F.buildLiteralType.stringDouble,
 	stringSingle: F.buildLiteralType.stringSingle,
 	true: F.buildLiteralType.true,
@@ -5109,10 +6080,10 @@ export function coerceToTypeArguments(
 }
 
 export function resolveObjectType_opening(value: T.ObjectType.LooseConfig['opening']): T.ObjectType['_opening'] {
-	return coerceKindEnumStorage(_resolveOne<'{' | '{|'>(value, _K0, _K0), [
-		['{', TSKindId.Lbrace] as const,
-		['{|', TSKindId.LbracePipe] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'{' | '{|'>(value, _K0, _K0)),
+		[['{', TSKindId.Lbrace] as const, ['{|', TSKindId.LbracePipe] as const]
+	);
 }
 
 export function resolveObjectType_members(value: T.ObjectType.LooseConfig['members']): T.ObjectType['_members'] {
@@ -5120,10 +6091,10 @@ export function resolveObjectType_members(value: T.ObjectType.LooseConfig['membe
 }
 
 export function resolveObjectType_closing(value: T.ObjectType.LooseConfig['closing']): T.ObjectType['_closing'] {
-	return coerceKindEnumStorage(_resolveOne<'}' | '|}'>(value, _K0, _K0), [
-		['}', TSKindId.Rbrace] as const,
-		['|}', TSKindId.PipeRbrace] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'}' | '|}'>(value, _K0, _K0)),
+		[['}', TSKindId.Rbrace] as const, ['|}', TSKindId.PipeRbrace] as const]
+	);
 }
 
 export function coerceToObjectType(input: T.ObjectType.Loose): ReturnType<typeof F.buildObjectType> {
@@ -5166,11 +6137,14 @@ export function coerceToCallSignature(input: T.CallSignature.Loose): ReturnType<
 export function resolvePropertySignature_accessibilityModifier(
 	value: T.PropertySignature.LooseConfig['accessibilityModifier']
 ): T.PropertySignature['_accessibility_modifier'] {
-	return coerceKindEnumStorage(_resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier'), [
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		[
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const
+		]
+	);
 }
 
 export function resolvePropertySignature_name(
@@ -5258,10 +6232,10 @@ export function coerceToDefaultType(input: T.DefaultType.Loose): ReturnType<type
 }
 
 export function resolveConstraint_content(value: T.Constraint.LooseConfig['content']): T.Constraint['_content'] {
-	return coerceKindEnumStorage(_resolveOne<'extends' | ':'>(value, _K0, _K0), [
-		['extends', TSKindId.Extends] as const,
-		[':', TSKindId.Colon] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'extends' | ':'>(value, _K0, _K0)),
+		[['extends', TSKindId.Extends] as const, [':', TSKindId.Colon] as const]
+	);
 }
 
 export function resolveConstraint_type(value: T.Constraint.LooseConfig['type']): T.Constraint['_type'] {
@@ -5316,10 +6290,10 @@ export function coerceToConstructSignature(
 }
 
 export function resolveIndexSignature_sign(value: T.IndexSignature.LooseConfig['sign']): T.IndexSignature['_sign'] {
-	return coerceKindEnumStorage(_resolveOne<'-' | '+'>(value, _K0, _K0), [
-		['-', TSKindId.Dash] as const,
-		['+', TSKindId.Plus] as const
-	]);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'-' | '+'>(value, _K0, _K0)),
+		[['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]
+	);
 }
 
 export function resolveIndexSignature_content(

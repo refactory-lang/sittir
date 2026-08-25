@@ -709,7 +709,7 @@ interface FactorySurface {
  *  defaulted parameter re-declares as an optional one. One rewrite, for
  *  every consumer including parameter lists resolved elsewhere
  *  (`constructorSurface`) that never passed through a `FactoryParam`. */
-function declarationParams(params: string): string {
+export function declarationParams(params: string): string {
 	return params.replace(/(\w+)\??: (.+?) = .+$/, '$1?: $2');
 }
 
@@ -892,12 +892,19 @@ function chainParamOptional(kind: string, nodeMap: NodeMap): boolean {
 }
 
 /** The parameters a form constructor declares for `kind` and how it
- *  forwards them — the target factory's own surface. */
+ *  forwards them — the target factory's own surface.
+ *
+ *  `looseParams` is the same list widened to what a COERCING caller may
+ *  pass, and is present only where the target's factory surface renders
+ *  one: a text leaf accepts its own loose input already, and a separated
+ *  list has no loose element rendering to project. Absent means "no loose
+ *  form distinct from the strict one", which is what gates the loose
+ *  mirror in `formLooseSurface`. */
 export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { params: string; args: string; argOptional?: boolean } | undefined {
+): { params: string; looseParams?: string; args: string; argOptional?: boolean } | undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap));
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
@@ -920,8 +927,13 @@ export function constructorSurface(
 			// tells the caller to guard the forward — the target's own
 			// overloads need not accept undefined for this param type.
 			const optionalized = chainParamOptional(kind, nodeMap) && /^\w+: /.test(surface.params);
-			const params = optionalized ? surface.params.replace(/^(\w+): /, '$1?: ') : surface.params;
-			return { params, args: surface.args, argOptional: optionalized };
+			const relax = (text: string): string => (optionalized ? text.replace(/^(\w+): /, '$1?: ') : text);
+			return {
+				params: relax(surface.params),
+				looseParams: relax(surface.looseParams),
+				args: surface.args,
+				argOptional: optionalized
+			};
 		}
 		case 'keyword':
 			// Fixed-text leaf: its factory takes no arguments (`buildCrate()`).
@@ -1293,6 +1305,39 @@ export function namespacedEntryEligible(
 ): boolean {
 	if (entry.via !== 'form' || entry.path.length > 0) return true;
 	return constructorSurface(entry.childKind, nodeMap, kindEntries) !== undefined;
+}
+
+/** The child kind whose COERCER a form constructor's loose mirror routes
+ *  through, or undefined where no mirror is warranted.
+ *
+ *  `ir.<parent>.<form>` coerces and `.strict` is the factory's own form —
+ *  the pairing `ir.<kind>` / `ir.<kind>.strict` already uses, one level
+ *  down. The mirror declares the COERCER's parameters (`Parameters<typeof
+ *  coerceTo<Child>>`), never a projection of the factory surface: the two
+ *  disagree for a container-shaped child, whose factory takes a widened
+ *  `LooseValue<...>` while its coercer takes the positional arm union. The
+ *  factory's `looseParams` is read here only as the GATE — it says whether
+ *  the child declares a loose input distinct from its strict one at all.
+ *
+ *  No mirror when:
+ *   - the entry is a MEMBER constructor, or a form HOISTED through a hop —
+ *     a hoisted form declares the sub-constructor's own parameters, and the
+ *     coercer that matches them is the hop's, not the arm's;
+ *   - the child FORWARDS to another kind, so the coercer matching those
+ *     parameters builds the target rather than the slot's own kind;
+ *   - the child's loose parameter list IS its strict one — a text leaf
+ *     already accepts what a coercing caller would pass, so a mirror would
+ *     be a second name for one signature. */
+export function formLooseChildKind(
+	entry: NamespacedConstructorSet['entries'][number],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (entry.via !== 'form' || entry.path.length > 0) return undefined;
+	if (constructorTargetKind(entry.childKind, nodeMap) !== entry.childKind) return undefined;
+	const surface = constructorSurface(entry.childKind, nodeMap, kindEntries);
+	if (surface?.looseParams === undefined || surface.looseParams === surface.params) return undefined;
+	return entry.childKind;
 }
 
 /** The strict Config value for a kind-enum member: its kind discriminant

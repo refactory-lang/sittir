@@ -312,8 +312,12 @@ function bundleParts(
 			if (camelCase(form.name) !== form.name) keys.push(form.name);
 			for (const key of keys) props.push({ key: JSON.stringify(key), expr: `F.${factoryName}` });
 		}
-		// The factory's namespaced constructors ride along on the bundle
-		// (`ir.forHeader.var(...)`); the bundle's own keys win a clash.
+		// The namespaced constructors ride along on the bundle
+		// (`ir.forHeader.var(...)`); the bundle's own keys win a clash. Taken
+		// from the FROM surface, not the factory: `ir.<kind>` coerces and
+		// `.strict` is the factory, and a form under it keeps that same
+		// pairing — `coerceTo<Kind>` already carries whichever of the two
+		// each form resolved to.
 		const taken = new Set(props.map((p) => JSON.parse(p.key.startsWith('"') ? p.key : JSON.stringify(p.key))));
 		for (const entry of namespace) {
 			if (taken.has(entry.name)) {
@@ -322,7 +326,7 @@ function bundleParts(
 				);
 				continue;
 			}
-			props.push({ key: JSON.stringify(entry.name), expr: `F.${baseFactoryName}.${entry.name}` });
+			props.push({ key: JSON.stringify(entry.name), expr: `FR.${node.fromFunctionName}.${entry.name}` });
 		}
 		return { base: `FR.${node.fromFunctionName}`, props };
 	}
