@@ -105,9 +105,15 @@ constructed only through nested config on the slot(s) that reference them.
   single-parent and stays a builder because it is a noun of the language;
   the examples are the evidence for each entry.
 
-Known first entry: `visibility_modifier_in_path` — `pub(in crate::x)`
-becomes `ir.visibilityModifier.pub({ in: 'crate::x' })` (and the
-equivalent nested config on any slot that takes a visibility modifier).
+**What `factoryInline` is not.** It removes a top-level `ir.*` entry; it
+cannot create a construction path. A hidden (`_`-prefixed) kind has no `ir`
+entry to begin with, so declaring one is a no-op. Kinds that are unreachable
+rather than over-exposed are a `namespacedConstructors` eligibility problem
+(reached as `ir.<parent>.<form>(…)`) or a `from()` nested-config problem — not
+this mechanism. `visibility_modifier_in_path` was originally nominated as the
+first entry on that mistaken basis: it is hidden, so the declaration would do
+nothing, and `ir.visibilityModifier.pub({ in: … })` is construction work —
+`.pub` is a strict namespaced constructor that no coercion path reaches.
 
 ## 4. Loose setters on `engine.parse` nodes
 

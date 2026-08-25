@@ -24,11 +24,25 @@ Called directly they render `/// doc`, `//! doc`,
 `#[derive(Debug, Clone, PartialEq, Eq)]`, `x,` (comma-terminated match arm),
 `x;` (semicolon expression statement) and `write!(f, …)` correctly. None of
 those kinds has an `ir` entry, and `packages/rust/src/index.ts` re-exports
-**zero** `build*` functions, so no public path constructs them. Most of class A
-is one exposure fix, not six construction fixes.
+**zero** `build*` functions, so no public path constructs them.
 
-TypeScript and Python fail deeper: their defects reproduce through `.strict`,
-so they are factory/transport work.
+**Corrected after measuring against the live model.** An earlier draft of this
+list treated class A as one exposure fix routed through `factoryInline`. That
+was wrong on two counts, and both corrections matter for how the class is
+worked:
+
+- **`factoryInline` cannot expose anything — it only removes an `ir` entry.**
+  Every class-A kind is hidden (`_`-prefixed) and the `ir` emitter skips hidden
+  kinds outright, so none has an entry to remove. Declaring them is a no-op.
+- **The six need four different mechanisms, not one.** Four are blocked by
+  `namespacedConstructors` eligibility predicates (which is the root the spec
+  itself names); three multi-slot parents need `from()` nested config on the
+  slot, i.e. class B; and one row was simply stale.
+
+The reachable spelling is the namespaced form — `ir.lineComment.doc(…)`, not
+`ir.lineCommentDoc(…)` — which is also what section-E argues for: an artefact
+kind should not become a top-level builder. Fixing the eligibility predicates
+reaches them with **zero** new `ir` entries, so the shrink-only ratchet holds.
 
 ## Class A — unreachable kind (exposure)
 
@@ -38,7 +52,7 @@ Root: the `ir` namespace emitter / `namespacedConstructors` eligibility
 | kind | needed for | evidence |
 | --- | --- | --- |
 | `_line_comment_doc` | `///` and `//!` doc comments (rust) | `buildLineCommentDoc` renders `/// hi` and `//! hi`; no `ir` entry |
-| `_attribute_arm` | `#[derive(…)]` arguments (rust) | `buildAttributeArm` + `buildDelimTokenTreeParen` render `#[derive(Debug)]`; no `ir` entry |
+| `_attribute_arm` | `#[derive(…)]` arguments (rust) | `buildAttributeArm` renders `#[derive(Debug)]`; no `ir` entry. (`_delim_token_tree_paren` is NOT a gap — `ir.delimTokenTree.paren(…)` already ships) |
 | `_match_arm_with_comma` | `pattern => expr,` (rust) | `buildMatchArmWithComma` renders `x,`; no `ir` entry |
 | `_expression_statement_with_semi` | `call();` (rust) | `buildExpressionStatementWithSemi` renders `x;`; no `ir` entry |
 | `_impl_item_positive_clause` | `impl Trait for Type` (rust) | `buildImplItemPositiveClause` exists; no `ir` entry |
