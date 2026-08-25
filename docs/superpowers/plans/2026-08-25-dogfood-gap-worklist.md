@@ -118,14 +118,33 @@ Root: the `from` emitter's per-field resolver selection
 | any `kind:` discriminant | `TSKindId.StructPattern` | accepts only raw grammar strings; the stamped kind enum the package exports is rejected because it is a number |
 | `function_declaration.return_type` (ts) | a bare type | the `type_annotation` wrapper must be spelled; and `type_annotation.strict` then rejects the type node (factory) |
 
-**The `Loose` types themselves.** The emitted `T.<Kind>.Loose` projections are
-far narrower than the coercers they describe: they reject `{ kind: … }`
-configs, string shorthands outside leaf slots, and arrays for list slots, and
-they admit the interface's ACCESSOR signatures (`() => Identifier`) as if those
-were config values. `examples/17-dogfood-rust.ts` runs correctly and produces
-38 type errors, which is why it is excluded from `type-check:examples` rather
-than cast into compiling. Fixing the projection is the prerequisite for putting
-any dogfood example back under the typecheck gate.
+**The `Loose` types themselves — one root, not a list of symptoms.** The
+emitted `T.<Kind>.Loose` projections are far narrower than the coercers they
+describe: they reject `{ kind: … }` configs, string shorthands outside leaf
+slots, and arrays for list slots, and they admit the interface's ACCESSOR
+signatures (`() => Identifier`) as if those were config values.
+`examples/17-dogfood-rust.ts` runs correctly and produces 38 type errors, which
+is why it is excluded from `type-check:examples` rather than cast into
+compiling.
+
+The cause is a second derivation. `NodeNs` projects `Config: ConfigOf<T>` and
+`Loose: FromInputOf<T, …>` off the kind INTERFACE, with no reference to the
+factory that actually accepts them — so the type and the runtime drift, and the
+interface's accessor members leak into a config position because nothing says
+they are not parameters.
+
+**Direction:** declare the factory method shape in `NodeNs` and derive `Config`
+and `Loose` as mapped types off `Parameters<typeof build<Kind>>`. One source —
+the builder's own signature — for what a caller may pass.
+
+This also dissolves a conflict found while adding loose mirrors to form
+constructors: a callable-coercer takes one `Loose` argument, while the
+namespaced-form spec gives a spread-shaped form a variadic surface
+(`parent.form(...elements)`). Census of the 208 form constructors: config 97,
+single-value 85, parameterless 10, spread 16 (rust 2 / ts 6 / py 8) — only the
+16 collide. Derived off the builder's parameters the collision disappears,
+because a variadic builder yields a variadic `Loose`. Both belong in one slice
+with the shared per-field resolvers.
 
 ## Class C — ergonomic mismatch
 
