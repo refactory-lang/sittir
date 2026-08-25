@@ -1228,8 +1228,8 @@ export function wrapProgram(data: T.Program, tree: TreeHandle) {
 			$with: {
 				hashBangLine: (v: T.Program.LooseConfig['hashBangLine']) =>
 					wrapProgram({ ...data, _hash_bang_line: FR.resolveProgram_hashBangLine(v) }, tree),
-				statements: (...v: NonNullable<T.Program['_statements']>[number][]) =>
-					wrapProgram({ ...data, _statements: v }, tree)
+				statements: (...v: Extract<NonNullable<T.Program.LooseConfig['statements']>, readonly unknown[]>[number][]) =>
+					wrapProgram({ ...data, _statements: FR.resolveProgram_statements(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2003,8 +2003,11 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 				return this._semicolon;
 			},
 			$with: {
-				declarators: (...v: NonEmptyArray<NonNullable<T.VariableDeclaration['_declarators']>[number]>) =>
-					wrapVariableDeclaration({ ...data, _declarators: v }, tree),
+				declarators: (
+					...v: NonEmptyArray<
+						Extract<NonNullable<T.VariableDeclaration.LooseConfig['declarators']>, readonly unknown[]>[number]
+					>
+				) => wrapVariableDeclaration({ ...data, _declarators: FR.resolveVariableDeclaration_declarators(v) }, tree),
 				semicolon: (v: T.VariableDeclaration.LooseConfig['semicolon']) =>
 					wrapVariableDeclaration({ ...data, _semicolon: FR.resolveVariableDeclaration_semicolon(v) }, tree)
 			}
@@ -2058,8 +2061,11 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 			$with: {
 				kind: (v: T.LexicalDeclaration.LooseConfig['kind']) =>
 					wrapLexicalDeclaration({ ...data, _kind: FR.resolveLexicalDeclaration_kind(v) }, tree),
-				declarators: (...v: NonEmptyArray<NonNullable<T.LexicalDeclaration['_declarators']>[number]>) =>
-					wrapLexicalDeclaration({ ...data, _declarators: v }, tree),
+				declarators: (
+					...v: NonEmptyArray<
+						Extract<NonNullable<T.LexicalDeclaration.LooseConfig['declarators']>, readonly unknown[]>[number]
+					>
+				) => wrapLexicalDeclaration({ ...data, _declarators: FR.resolveLexicalDeclaration_declarators(v) }, tree),
 				semicolon: (v: T.LexicalDeclaration.LooseConfig['semicolon']) =>
 					wrapLexicalDeclaration({ ...data, _semicolon: FR.resolveLexicalDeclaration_semicolon(v) }, tree)
 			}
@@ -2130,8 +2136,9 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
 				return this._automatic_semicolon;
 			},
 			$with: {
-				statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) =>
-					wrapStatementBlock({ ...data, _statements: v }, tree),
+				statements: (
+					...v: Extract<NonNullable<T.StatementBlock.LooseConfig['statements']>, readonly unknown[]>[number][]
+				) => wrapStatementBlock({ ...data, _statements: FR.resolveStatementBlock_statements(v) }, tree),
 				automaticSemicolon: (v: NonNullable<T.StatementBlock['_automatic_semicolon']>) =>
 					wrapStatementBlock({ ...data, _automatic_semicolon: v }, tree)
 			}
@@ -3146,7 +3153,8 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle) {
 			$with: {
 				value: (v: T.SwitchCase.LooseConfig['value']) =>
 					wrapSwitchCase({ ...data, _value: FR.resolveSwitchCase_value(v) }, tree),
-				bodies: (...v: NonNullable<T.SwitchCase['_body']>[number][]) => wrapSwitchCase({ ...data, _body: v }, tree)
+				bodies: (...v: Extract<NonNullable<T.SwitchCase.LooseConfig['body']>, readonly unknown[]>[number][]) =>
+					wrapSwitchCase({ ...data, _body: FR.resolveSwitchCase_bodies(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3826,7 +3834,8 @@ export function wrapClass(data: T.Class, tree: TreeHandle) {
 				return drillIn<T.ClassBody>(this._body, tree);
 			},
 			$with: {
-				decorators: (...v: NonNullable<T.Class['_decorator']>[number][]) => wrapClass({ ...data, _decorator: v }, tree),
+				decorators: (...v: Extract<NonNullable<T.Class.LooseConfig['decorator']>, readonly unknown[]>[number][]) =>
+					wrapClass({ ...data, _decorator: FR.resolveClass_decorators(v) }, tree),
 				name: (v: T.Class.LooseConfig['name']) => wrapClass({ ...data, _name: FR.resolveClass_name(v) }, tree),
 				typeParameters: (v: T.Class.LooseConfig['typeParameters']) =>
 					wrapClass({ ...data, _type_parameters: FR.resolveClass_typeParameters(v) }, tree),
@@ -3905,8 +3914,9 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 				return this._automatic_semicolon;
 			},
 			$with: {
-				decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
-					wrapClassDeclaration({ ...data, _decorator: v }, tree),
+				decorators: (
+					...v: Extract<NonNullable<T.ClassDeclaration.LooseConfig['decorator']>, readonly unknown[]>[number][]
+				) => wrapClassDeclaration({ ...data, _decorator: FR.resolveClassDeclaration_decorators(v) }, tree),
 				name: (v: T.ClassDeclaration.LooseConfig['name']) =>
 					wrapClassDeclaration({ ...data, _name: FR.resolveClassDeclaration_name(v) }, tree),
 				typeParameters: (v: T.ClassDeclaration.LooseConfig['typeParameters']) =>
@@ -6531,8 +6541,9 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 				return drillIn<T.Expression | undefined>(this._value, tree);
 			},
 			$with: {
-				decorators: (...v: NonNullable<T.PublicFieldDefinition['_decorator']>[number][]) =>
-					wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
+				decorators: (
+					...v: Extract<NonNullable<T.PublicFieldDefinition.LooseConfig['decorator']>, readonly unknown[]>[number][]
+				) => wrapPublicFieldDefinition({ ...data, _decorator: FR.resolvePublicFieldDefinition_decorators(v) }, tree),
 				declareMarker: (v: NonNullable<T.PublicFieldDefinition['_declare_marker']>) =>
 					wrapPublicFieldDefinition({ ...data, _declare_marker: v }, tree),
 				accessibilityModifier: (v: T.PublicFieldDefinition.LooseConfig['accessibilityModifier']) =>
@@ -7468,8 +7479,10 @@ export function wrapAbstractClassDeclaration(data: T.AbstractClassDeclaration, t
 				return drillIn<T.ClassBody>(this._body, tree);
 			},
 			$with: {
-				decorators: (...v: NonNullable<T.AbstractClassDeclaration['_decorator']>[number][]) =>
-					wrapAbstractClassDeclaration({ ...data, _decorator: v }, tree),
+				decorators: (
+					...v: Extract<NonNullable<T.AbstractClassDeclaration.LooseConfig['decorator']>, readonly unknown[]>[number][]
+				) =>
+					wrapAbstractClassDeclaration({ ...data, _decorator: FR.resolveAbstractClassDeclaration_decorators(v) }, tree),
 				name: (v: T.AbstractClassDeclaration.LooseConfig['name']) =>
 					wrapAbstractClassDeclaration({ ...data, _name: FR.resolveAbstractClassDeclaration_name(v) }, tree),
 				typeParameters: (v: T.AbstractClassDeclaration.LooseConfig['typeParameters']) =>
@@ -8039,8 +8052,9 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 				return drillIn<T.Expression | undefined>(this._value, tree);
 			},
 			$with: {
-				decorators: (...v: NonNullable<T.RequiredParameter['_decorator']>[number][]) =>
-					wrapRequiredParameter({ ...data, _decorator: v }, tree),
+				decorators: (
+					...v: Extract<NonNullable<T.RequiredParameter.LooseConfig['decorator']>, readonly unknown[]>[number][]
+				) => wrapRequiredParameter({ ...data, _decorator: FR.resolveRequiredParameter_decorators(v) }, tree),
 				accessibilityModifier: (v: T.RequiredParameter.LooseConfig['accessibilityModifier']) =>
 					wrapRequiredParameter(
 						{ ...data, _accessibility_modifier: FR.resolveRequiredParameter_accessibilityModifier(v) },
@@ -8144,8 +8158,9 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 				return drillIn<T.Expression | undefined>(this._value, tree);
 			},
 			$with: {
-				decorators: (...v: NonNullable<T.OptionalParameter['_decorator']>[number][]) =>
-					wrapOptionalParameter({ ...data, _decorator: v }, tree),
+				decorators: (
+					...v: Extract<NonNullable<T.OptionalParameter.LooseConfig['decorator']>, readonly unknown[]>[number][]
+				) => wrapOptionalParameter({ ...data, _decorator: FR.resolveOptionalParameter_decorators(v) }, tree),
 				accessibilityModifier: (v: T.OptionalParameter.LooseConfig['accessibilityModifier']) =>
 					wrapOptionalParameter(
 						{ ...data, _accessibility_modifier: FR.resolveOptionalParameter_accessibilityModifier(v) },

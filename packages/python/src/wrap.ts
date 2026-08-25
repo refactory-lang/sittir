@@ -1936,8 +1936,9 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 					wrapIfStatement({ ...data, _condition: FR.resolveIfStatement_condition(v) }, tree),
 				consequence: (v: T.IfStatement.LooseConfig['consequence']) =>
 					wrapIfStatement({ ...data, _consequence: FR.resolveIfStatement_consequence(v) }, tree),
-				alternatives: (...v: NonNullable<T.IfStatement['_alternative']>[number][]) =>
-					wrapIfStatement({ ...data, _alternative: v }, tree)
+				alternatives: (
+					...v: Extract<NonNullable<T.IfStatement.LooseConfig['alternative']>, readonly unknown[]>[number][]
+				) => wrapIfStatement({ ...data, _alternative: FR.resolveIfStatement_alternatives(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2291,8 +2292,9 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 			$with: {
 				body: (v: T.TryStatement.LooseConfig['body']) =>
 					wrapTryStatement({ ...data, _body: FR.resolveTryStatement_body(v) }, tree),
-				exceptClauses: (...v: NonNullable<T.TryStatement['_except_clauses']>[number][]) =>
-					wrapTryStatement({ ...data, _except_clauses: v }, tree),
+				exceptClauses: (
+					...v: Extract<NonNullable<T.TryStatement.LooseConfig['exceptClauses']>, readonly unknown[]>[number][]
+				) => wrapTryStatement({ ...data, _except_clauses: FR.resolveTryStatement_exceptClauses(v) }, tree),
 				elseClause: (v: T.TryStatement.LooseConfig['elseClause']) =>
 					wrapTryStatement({ ...data, _else_clause: FR.resolveTryStatement_elseClause(v) }, tree),
 				finallyClause: (v: T.TryStatement.LooseConfig['finallyClause']) =>
@@ -2798,8 +2800,9 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 			$with: {
 				code: (v: T.ExecStatement.LooseConfig['code']) =>
 					wrapExecStatement({ ...data, _code: FR.resolveExecStatement_code(v) }, tree),
-				inClauses: (...v: NonNullable<T.ExecStatement['_in_clause']>[number][]) =>
-					wrapExecStatement({ ...data, _in_clause: v }, tree)
+				inClauses: (
+					...v: Extract<NonNullable<T.ExecStatement.LooseConfig['inClause']>, readonly unknown[]>[number][]
+				) => wrapExecStatement({ ...data, _in_clause: FR.resolveExecStatement_inClauses(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3009,8 +3012,11 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 				return drillIn<T.ClassDefinition | T.FunctionDefinition>(this._definition, tree);
 			},
 			$with: {
-				decorators: (...v: NonEmptyArray<NonNullable<T.DecoratedDefinition['_decorator']>[number]>) =>
-					wrapDecoratedDefinition({ ...data, _decorator: v }, tree),
+				decorators: (
+					...v: NonEmptyArray<
+						Extract<NonNullable<T.DecoratedDefinition.LooseConfig['decorator']>, readonly unknown[]>[number]
+					>
+				) => wrapDecoratedDefinition({ ...data, _decorator: FR.resolveDecoratedDefinition_decorators(v) }, tree),
 				definition: (v: T.DecoratedDefinition.LooseConfig['definition']) =>
 					wrapDecoratedDefinition({ ...data, _definition: FR.resolveDecoratedDefinition_definition(v) }, tree)
 			}
@@ -4397,8 +4403,11 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 			$with: {
 				left: (v: T.ComparisonOperator.LooseConfig['left']) =>
 					wrapComparisonOperator({ ...data, _left: FR.resolveComparisonOperator_left(v) }, tree),
-				comparators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) =>
-					wrapComparisonOperator({ ...data, _comparators: v }, tree)
+				comparators: (
+					...v: NonEmptyArray<
+						Extract<NonNullable<T.ComparisonOperator.LooseConfig['comparators']>, readonly unknown[]>[number]
+					>
+				) => wrapComparisonOperator({ ...data, _comparators: FR.resolveComparisonOperator_comparators(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6044,8 +6053,9 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 					wrapForInClause({ ...data, _async_marker: v }, tree),
 				left: (v: T.ForInClause.LooseConfig['left']) =>
 					wrapForInClause({ ...data, _left: FR.resolveForInClause_left(v) }, tree),
-				rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
-					wrapForInClause({ ...data, _right: v }, tree),
+				rights: (
+					...v: NonEmptyArray<Extract<NonNullable<T.ForInClause.LooseConfig['right']>, readonly unknown[]>[number]>
+				) => wrapForInClause({ ...data, _right: FR.resolveForInClause_rights(v) }, tree),
 				comma: (v: NonNullable<T.ForInClause['_comma']>) => wrapForInClause({ ...data, _comma: v }, tree)
 			}
 		},
@@ -6190,7 +6200,8 @@ export function wrapString(data: T.String, tree: TreeHandle) {
 			$with: {
 				stringStart: (v: T.String.LooseConfig['stringStart']) =>
 					wrapString({ ...data, _string_start: FR.resolveString_stringStart(v) }, tree),
-				contents: (...v: NonNullable<T.String['_content']>[number][]) => wrapString({ ...data, _content: v }, tree),
+				contents: (...v: Extract<NonNullable<T.String.LooseConfig['content']>, readonly unknown[]>[number][]) =>
+					wrapString({ ...data, _content: FR.resolveString_contents(v) }, tree),
 				stringEnd: (v: T.String.LooseConfig['stringEnd']) =>
 					wrapString({ ...data, _string_end: FR.resolveString_stringEnd(v) }, tree)
 			}

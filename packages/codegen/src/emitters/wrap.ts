@@ -1155,10 +1155,25 @@ function emitInlineWithProperty(
 		const method = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
+			// A repeated field keeps its rest-parameter calling convention, but
+			// the ELEMENT type comes from the loose config rather than storage
+			// when a resolver exists: the setter collects the rest args into the
+			// array the resolver already accepts, so `$with` and `coerceTo` take
+			// the same input.
+			const hasResolver = resolverFor.has(f.propertyName);
+			// The loose config for a repeated field is a UNION of the array
+			// forms and the single-value ones it also accepts, so it cannot be
+			// indexed directly. `Extract` narrows to the array arms first; their
+			// element types are what the rest parameter collects.
+			const setterValueType = hasResolver
+				? `Extract<NonNullable<T.${node.typeName}.LooseConfig[${JSON.stringify(f.configKey)}]>, readonly unknown[]>[number]`
+				: `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
-			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
+			const value = hasResolver ? `FR.${fieldResolverName(node.typeName, f)}(v)` : 'v';
+			lines.push(
+				`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: ${value} }, tree),`
+			);
 		} else if (resolverFor.has(f.propertyName)) {
 			const looseType = `T.${node.typeName}.LooseConfig[${JSON.stringify(f.configKey)}]`;
 			lines.push(

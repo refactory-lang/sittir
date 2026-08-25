@@ -1518,8 +1518,9 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle) {
 			$with: {
 				shebang: (v: T.SourceFile.LooseConfig['shebang']) =>
 					wrapSourceFile({ ...data, _shebang: FR.resolveSourceFile_shebang(v) }, tree),
-				statements: (...v: NonNullable<T.SourceFile['_statements']>[number][]) =>
-					wrapSourceFile({ ...data, _statements: v }, tree)
+				statements: (
+					...v: Extract<NonNullable<T.SourceFile.LooseConfig['statements']>, readonly unknown[]>[number][]
+				) => wrapSourceFile({ ...data, _statements: FR.resolveSourceFile_statements(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1977,8 +1978,16 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 				return this._operator;
 			},
 			$with: {
-				tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_patterns']>[number][]) =>
-					wrapTokenRepetitionPattern({ ...data, _token_patterns: v }, tree),
+				tokenPatterns: (
+					...v: Extract<
+						NonNullable<T.TokenRepetitionPattern.LooseConfig['tokenPatterns']>,
+						readonly unknown[]
+					>[number][]
+				) =>
+					wrapTokenRepetitionPattern(
+						{ ...data, _token_patterns: FR.resolveTokenRepetitionPattern_tokenPatterns(v) },
+						tree
+					),
 				separator: (v: NonNullable<T.TokenRepetitionPattern['_separator']>) =>
 					wrapTokenRepetitionPattern({ ...data, _separator: v }, tree),
 				operator: (v: T.TokenRepetitionPattern.LooseConfig['operator']) =>
@@ -2123,8 +2132,8 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 				return this._operator;
 			},
 			$with: {
-				tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) =>
-					wrapTokenRepetition({ ...data, _tokens: v }, tree),
+				tokens: (...v: Extract<NonNullable<T.TokenRepetition.LooseConfig['tokens']>, readonly unknown[]>[number][]) =>
+					wrapTokenRepetition({ ...data, _tokens: FR.resolveTokenRepetition_tokens(v) }, tree),
 				separator: (v: NonNullable<T.TokenRepetition['_separator']>) =>
 					wrapTokenRepetition({ ...data, _separator: v }, tree),
 				operator: (v: T.TokenRepetition.LooseConfig['operator']) =>
@@ -6355,8 +6364,9 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
 				return drillIn<T.TupleExpressionElements>(this._tuple_expression_elements, tree);
 			},
 			$with: {
-				attributes: (...v: NonNullable<T.TupleExpression['_attributes']>[number][]) =>
-					wrapTupleExpression({ ...data, _attributes: v }, tree),
+				attributes: (
+					...v: Extract<NonNullable<T.TupleExpression.LooseConfig['attributes']>, readonly unknown[]>[number][]
+				) => wrapTupleExpression({ ...data, _attributes: FR.resolveTupleExpression_attributes(v) }, tree),
 				tupleExpressionElements: (v: T.TupleExpression.LooseConfig['tupleExpressionElements']) =>
 					wrapTupleExpression(
 						{ ...data, _tuple_expression_elements: FR.resolveTupleExpression_tupleExpressionElements(v) },
@@ -6458,8 +6468,16 @@ export function wrapShorthandFieldInitializer(data: T.ShorthandFieldInitializer,
 				return drillIn<T.Identifier>(this._identifier, tree);
 			},
 			$with: {
-				attributes: (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
-					wrapShorthandFieldInitializer({ ...data, _attributes: v }, tree),
+				attributes: (
+					...v: Extract<
+						NonNullable<T.ShorthandFieldInitializer.LooseConfig['attributes']>,
+						readonly unknown[]
+					>[number][]
+				) =>
+					wrapShorthandFieldInitializer(
+						{ ...data, _attributes: FR.resolveShorthandFieldInitializer_attributes(v) },
+						tree
+					),
 				identifier: (v: T.ShorthandFieldInitializer.LooseConfig['identifier']) =>
 					wrapShorthandFieldInitializer(
 						{ ...data, _identifier: FR.resolveShorthandFieldInitializer_identifier(v) },
@@ -6506,8 +6524,9 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				attributeItems: (...v: NonNullable<T.FieldInitializer['_attribute_item']>[number][]) =>
-					wrapFieldInitializer({ ...data, _attribute_item: v }, tree),
+				attributeItems: (
+					...v: Extract<NonNullable<T.FieldInitializer.LooseConfig['attributeItem']>, readonly unknown[]>[number][]
+				) => wrapFieldInitializer({ ...data, _attribute_item: FR.resolveFieldInitializer_attributeItems(v) }, tree),
 				field: (v: T.FieldInitializer.LooseConfig['field']) =>
 					wrapFieldInitializer({ ...data, _field: FR.resolveFieldInitializer_field(v) }, tree),
 				value: (v: T.FieldInitializer.LooseConfig['value']) =>
@@ -7027,8 +7046,8 @@ export function wrapMatchArm(
 				return drillIn<T.MatchArmWithComma | T.ExpressionEndingWithBlock>(this._content, tree);
 			},
 			$with: {
-				attributes: (...v: NonNullable<T.MatchArm['_attributes']>[number][]) =>
-					wrapMatchArm({ ...data, _attributes: v }, tree),
+				attributes: (...v: Extract<NonNullable<T.MatchArm.LooseConfig['attributes']>, readonly unknown[]>[number][]) =>
+					wrapMatchArm({ ...data, _attributes: FR.resolveMatchArm_attributes(v) }, tree),
 				pattern: (v: T.MatchArm.LooseConfig['pattern']) =>
 					wrapMatchArm({ ...data, _pattern: FR.resolveMatchArm_pattern(v) }, tree),
 				content: (v: T.MatchArm.LooseConfig['content']) =>
@@ -7089,8 +7108,9 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
 				return this._comma;
 			},
 			$with: {
-				attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
-					wrapLastMatchArm({ ...data, _attributes: v }, tree),
+				attributes: (
+					...v: Extract<NonNullable<T.LastMatchArm.LooseConfig['attributes']>, readonly unknown[]>[number][]
+				) => wrapLastMatchArm({ ...data, _attributes: FR.resolveLastMatchArm_attributes(v) }, tree),
 				pattern: (v: T.LastMatchArm.LooseConfig['pattern']) =>
 					wrapLastMatchArm({ ...data, _pattern: FR.resolveLastMatchArm_pattern(v) }, tree),
 				value: (v: T.LastMatchArm.LooseConfig['value']) =>
@@ -7936,8 +7956,8 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
 			},
 			$with: {
 				label: (v: T.Block.LooseConfig['label']) => wrapBlock({ ...data, _label: FR.resolveBlock_label(v) }, tree),
-				statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
-					wrapBlock({ ...data, _statements: v }, tree),
+				statements: (...v: Extract<NonNullable<T.Block.LooseConfig['statements']>, readonly unknown[]>[number][]) =>
+					wrapBlock({ ...data, _statements: FR.resolveBlock_statements(v) }, tree),
 				trailingExpression: (v: T.Block.LooseConfig['trailingExpression']) =>
 					wrapBlock({ ...data, _trailing_expression: FR.resolveBlock_trailingExpression(v) }, tree)
 			}
@@ -8567,8 +8587,8 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 			$with: {
 				stringOpen: (v: T.StringLiteral.LooseConfig['stringOpen']) =>
 					wrapStringLiteral({ ...data, _string_open: FR.resolveStringLiteral_stringOpen(v) }, tree),
-				elements: (...v: NonNullable<T.StringLiteral['_elements']>[number][]) =>
-					wrapStringLiteral({ ...data, _elements: v }, tree)
+				elements: (...v: Extract<NonNullable<T.StringLiteral.LooseConfig['elements']>, readonly unknown[]>[number][]) =>
+					wrapStringLiteral({ ...data, _elements: FR.resolveStringLiteral_elements(v) }, tree)
 			}
 		},
 		_treeEngine(tree)
