@@ -18,10 +18,10 @@ describe('engine', () => {
 
 		// createEngine is native-only: it throws instead of silently
 		// falling back to a JS renderer-only engine.
-		expect(() => createEngine()).toThrow('createEngine: native engine unavailable');
+		expect(() => createEngine()).toThrow('createRenderEngine: native engine unavailable');
 	});
 
-	it('native engine exposes parse plus the diagnostics surface', async () => {
+	it('native engine exposes parse plus the render and reader surfaces', async () => {
 		// Mock a native backend with read support
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
@@ -72,14 +72,15 @@ describe('engine', () => {
 		const { createEngine } = await import('../src/engine.js');
 		const engine = createEngine();
 
-		// Native engine exposes the product parse surface plus render/edit/diagnostics
+		// Native engine exposes the product parse surface plus render/edit and the reader
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.applyEdits).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		expect(engine.diagnostics).toBeDefined();
-		expect(typeof engine.diagnostics.parseAndRead).toBe('function');
-		expect(typeof engine.diagnostics.readNode).toBe('function');
+		expect(engine.parseAndRead).toBeDefined();
+		expect(engine.readNode).toBeDefined();
+		expect(typeof engine.parseAndRead).toBe('function');
+		expect(typeof engine.readNode).toBe('function');
 	});
 
 	it('passes through native read payloads already in JS readNode shape', async () => {
@@ -159,7 +160,7 @@ describe('engine', () => {
 
 		const { createEngine } = await import('../src/engine.js');
 		const engine = createEngine();
-		const parsed = engine.diagnostics.parseAndRead('pub fn main');
+		const parsed = engine.parseAndRead('pub fn main');
 		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
@@ -182,7 +183,7 @@ describe('engine', () => {
 			$nodeHandle: 7,
 			$childIndex: 1
 		});
-		expect(engine.diagnostics.readNode(0, 1)).toEqual(child);
+		expect(engine.readNode(0, 1)).toEqual(child);
 	});
 
 	it('native engine rejects ignoreFormat option (Task 4 requirement)', async () => {

@@ -932,10 +932,20 @@ export function classifyFromEmission(kind: string, node: AssembledNode, context:
  *  resolver that was never emitted. Mirrors `emitBranchFrom`'s own
  *  delegation check: a kind carrying a child factory surface is handed to
  *  `emitContainerFrom`, which declares no per-field resolvers. */
-export function emitsFieldResolvers(kind: string, node: AssembledNode, context: FromDispatchContext): boolean {
+export function emitsFieldResolvers(
+	kind: string,
+	node: AssembledNode,
+	context: FromDispatchContext
+): node is Extract<AssembledNode, { modelType: 'branch' }> {
 	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
 	if (node.modelType !== 'branch') return false;
 	return classifyChildFactorySurface(node, context.nodeMap) === null;
+}
+
+/** ONE name for one fact, so `coerceTo<Kind>` and wrap's `$with` setter
+ *  reach the same function rather than each re-deriving the expression. */
+export function fieldResolverName(parentTypeName: string, field: AssembledNonterminal): string {
+	return `resolve${parentTypeName}_${field.propertyName}`;
 }
 
 /** A non-empty repeated field reaches the factory config through

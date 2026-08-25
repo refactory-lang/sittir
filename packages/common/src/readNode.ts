@@ -45,8 +45,8 @@ export interface TreeHandle {
 	 * Per-handle read dispatch. When present, the wrap layer reads
 	 * through this method instead of running `readNode(handle, childIndex)`
 	 * directly. Native-engine handles set this to a closure that
-	 * calls `engine.diagnostics.parseAndRead(source)` (root) /
-	 * `engine.diagnostics.readNode(handle, childIndex)` (drill-in) so reads
+	 * calls `engine.parseAndRead(source)` (root) /
+	 * `engine.readNode(handle, childIndex)` (drill-in) so reads
 	 * stay inside the engine that owns the tree.
 	 *
 	 * ADR-0017: signature changed from `(nodeId?)` to `(handle?, childIndex?)`.

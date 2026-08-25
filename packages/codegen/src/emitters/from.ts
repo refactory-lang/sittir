@@ -31,6 +31,7 @@ import {
 	resolveFieldStorageInfo,
 	isHiddenInfraSlot,
 	configurableFactoryFields,
+	fieldResolverName,
 	needsNonEmptyHoist,
 	type BranchSlotClass,
 	classifyFactoryShape,
@@ -969,13 +970,6 @@ function emitKeywordFrom(node: LeafFromNode): string {
 // ---------------------------------------------------------------------------
 
 type KindInterner = (kinds: readonly string[]) => string;
-
-/** The exported per-field resolver's name: `resolve<TypeName>_<propertyName>`.
- *  One name for one fact, so `coerceTo<Kind>` and wrap's `$with` setter
- *  reach the same function rather than each re-deriving the expression. */
-function fieldResolverName(parentTypeName: string, field: AssembledNonterminal): string {
-	return `resolve${parentTypeName}_${field.propertyName}`;
-}
 
 function expandAndDedupeContentTypes(
 	contentTypes: readonly string[],

@@ -9,8 +9,8 @@ export type {
 	ParseOptions,
 	ParseAndReadResult,
 	RenderHandle,
-	SittirEngineLike,
-	EngineDiagnostics
+	SittirEngine,
+	ParseEngine
 } from '@sittir/common/engine';
 
 export function resolveEngineFormat(

@@ -36,7 +36,10 @@ import {
 	warnSkippedParserSymbol,
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
-	fieldTypeComponents
+	fieldTypeComponents,
+	emitsFieldResolvers,
+	fieldResolverName,
+	configurableFactoryFields
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -1114,6 +1117,17 @@ function emitInlineWithProperty(
 
 	const spreadData = '...data';
 
+	// A setter routes its value through the field's exported resolver, so a
+	// `$with` update accepts exactly what `coerceTo<Kind>` accepts and the two
+	// surfaces cannot drift. `emitsFieldResolvers` is the single gate on
+	// whether this kind's from-emitter declared any, and the field set is read
+	// off the assembled node so it is the same list the from-emitter walked.
+	const assembled = nodeMap.nodes.get(node.kind);
+	const resolverFor = new Set<string>();
+	if (assembled !== undefined && emitsFieldResolvers(node.kind, assembled, { nodeMap, kindEntries })) {
+		for (const field of configurableFactoryFields(assembled.fields, nodeMap)) resolverFor.add(field.propertyName);
+	}
+
 	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
@@ -1145,6 +1159,11 @@ function emitInlineWithProperty(
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
 			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
+		} else if (resolverFor.has(f.propertyName)) {
+			const looseType = `T.${node.typeName}.LooseConfig[${JSON.stringify(f.configKey)}]`;
+			lines.push(
+				`      ${method}: (v: ${looseType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: FR.${fieldResolverName(node.typeName, f)}(v) }, tree),`
+			);
 		} else {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
@@ -1304,6 +1323,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
 		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource);
+		const usesFieldResolvers = /\bFR\./.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
@@ -1326,7 +1346,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type * as T from './types.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
-			"import * as _factories from './factories.js';",
+			...(usesFieldResolvers ? ["import * as FR from './from.js';"] : []),
 			'',
 			...(usesIsReadTextLeaf
 				? [

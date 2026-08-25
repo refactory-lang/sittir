@@ -28,10 +28,7 @@ export function nestedGreetFunction() {
 		parameters: ir.parameters.strict(
 			ir.parameter({ name: 'name', type: 'String' }),
 		),
-		body: ir.block.strict({
-			statements: [
-			],
-		}),
+		body: ir.block.strict(),
 	});
 }
 

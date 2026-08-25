@@ -260,8 +260,9 @@ describe('boundary', () => {
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 
 		// Diagnostics reads are always available on a native engine
-		expect(engine.diagnostics).toBeDefined();
-		const { root } = engine.diagnostics.parseAndRead('x');
+		expect(engine.parseAndRead).toBeDefined();
+		expect(engine.readNode).toBeDefined();
+		const { root } = engine.parseAndRead('x');
 		expect(root).toEqual(identifier);
 	});
 

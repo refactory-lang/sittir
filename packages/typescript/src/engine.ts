@@ -2,36 +2,23 @@
 /**
  * Grammar-specific engine factory for @sittir/typescript.
  *
- * Thin wrapper — native binding stays in @sittir/common/engine. Native-only:
- * there is no JS-engine fallback.
+ * Adds `parse()` — the half that needs `wrap.js` — on top of the
+ * render-only engine. Anything that only renders should import
+ * `./render-engine.js` directly; importing this module pulls the wrapper
+ * and, through it, the factories.
  */
-import {
-	createNativeEngine,
-	type SittirEngineLike,
-	type EngineOptions,
-	type ParseOptions
-} from '@sittir/common/engine';
-import { KIND_NAMES, type Program } from './types.js';
-import type { NodeDataOf } from '@sittir/types';
+import type { SittirEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
+import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
-import { getActiveBackend } from './backend.js';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-/** The reader's raw root: the root kind's DATA projection — its `$type`
- *  and `_<slot>` storage, whose children are reader stubs. Accessor
- *  methods live on `wrapNode(root, tree)`, which is what `parse()` returns. */
-export type ProgramRoot = NodeDataOf<Program>;
-
+export type { ProgramRoot };
 export type { EngineOptions, ParseOptions, ProgramTree };
 
 /**
  * A grammar engine: the product `parse()` surface plus the shared render /
- * edit / diagnostics surface.
+ * edit surface.
  */
-export interface ProgramEngine extends SittirEngineLike<ProgramRoot> {
+export interface ProgramEngine extends SittirEngine<ProgramRoot> {
 	/** Parse `source` and return its wrapped root. Accessors on the result
 	 *  return wrapped nodes too — no caller-side `wrapNode` re-wrapping.
 	 *  Reading is lazy by default: children expand on first access. Pass
@@ -49,22 +36,11 @@ export interface ProgramEngine extends SittirEngineLike<ProgramRoot> {
  * @returns An engine implementing ProgramEngine.
  */
 export function createEngine(options?: EngineOptions): ProgramEngine {
-	const result = createNativeEngine<ProgramRoot>(
-		{
-			templatesPath: join(__dirname, '..', 'templates'),
-			kindNames: KIND_NAMES,
-			getActiveBackend
-		},
-		options
-	);
-	if (!result.engine) {
-		throw new Error(`createEngine: native engine unavailable (no JS-engine fallback): ${result.reason}`);
-	}
-	const engine = result.engine;
+	const engine = createRenderEngine(options);
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): ProgramTree {
-			const { root, tree } = engine.diagnostics.parseAndRead(source, options);
+			const { root, tree } = engine.parseAndRead(source, options);
 			return wrapNode(root, tree);
 		}
 	};

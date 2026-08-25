@@ -44,6 +44,9 @@ packages/*/.sittir/*
 # Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)
 /tree-sitter-*.wasm
 .worktrees/
+# Ad-hoc probes and one-off debug scripts. Local only, and excluded from
+# oxlint/oxfmt too, so nothing here gates a commit. A probe worth keeping
+# belongs in packages/tools behind `sittir tool <name>`.
 scratch/
 
 # Rust workspace (spec 012)

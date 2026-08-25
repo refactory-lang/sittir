@@ -93,17 +93,36 @@ export interface ParseOptions {
  * back the reader's own output (data plus the owning tree handle) for
  * probes, validators, and anything that inspects the wire shape itself.
  */
-export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
+/**
+ * Turning source into node DATA: parsing, and the per-handle drill-in reads
+ * that expand a tree lazily. The peer of `RenderEngine` — neither half
+ * depends on the other, and a consumer should name the one it uses.
+ */
+export interface ParseEngine<TRoot extends AnyNodeData = AnyNodeData> {
 	parseAndRead(source: string, options?: ParseOptions): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
 
-export interface SittirEngineLike<TRoot extends AnyNodeData = AnyNodeData> {
+/**
+ * The render half of an engine: turning node DATA back into source, and the
+ * lifecycle that owns the native handle. Deliberately separate from
+ * `SittirEngine` so a consumer that only renders can say so in its types —
+ * notably each grammar's `boundary.ts`, which node construction reaches
+ * through `utils.ts`. Depending on the narrower contract there is what keeps
+ * rendering from dragging in the parse surface.
+ */
+export interface RenderEngine {
 	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
-	readonly diagnostics: EngineDiagnostics<TRoot>;
 }
+
+/**
+ * Both halves. The native binding supplies one object implementing each, but
+ * nothing about rendering requires parsing or vice versa — depend on
+ * `RenderEngine` or `ParseEngine` directly wherever only one is used.
+ */
+export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData> extends RenderEngine, ParseEngine<TRoot> {}
 
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
 	root: TRoot;
@@ -122,7 +141,7 @@ interface NativeParseResultShape {
  * `reason` string (the real failure cause) instead of discarding it.
  */
 export type CreateNativeEngineResult<TRoot extends AnyNodeData = AnyNodeData> =
-	| { readonly engine: SittirEngineLike<TRoot>; readonly reason?: undefined }
+	| { readonly engine: SittirEngine<TRoot>; readonly reason?: undefined }
 	| { readonly engine: null; readonly reason: string };
 
 export function createNativeEngine<
@@ -140,8 +159,8 @@ export function createNativeEngine<
 		const engine = new status.native.SittirEngine(nativeOptions);
 
 		function renderNativeNode(
-			node: Parameters<SittirEngineLike['render']>[0],
-			opts?: Parameters<SittirEngineLike['render']>[1]
+			node: Parameters<RenderEngine['render']>[0],
+			opts?: Parameters<RenderEngine['render']>[1]
 		): RenderHandle {
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
@@ -179,34 +198,32 @@ export function createNativeEngine<
 					engine.dispose();
 				},
 
-				diagnostics: {
-					parseAndRead(source: string, parseOptions?: ParseOptions) {
-						const json = engine.parseAndRead(source, parseOptions?.deep);
-						const parsed = JSON.parse(json) as NativeParseResultShape;
-						// Boundary assertion: the native reader returns the grammar's
-						// root kind for a whole-source parse.
-						const root = parsed.nodeData as TRoot;
-						return {
-							root,
-							tree: {
-								get rootNode(): never {
-									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
-								},
-								source,
-								read: (handle, childIndex, deep) => {
-									if (handle === undefined) return root;
-									const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
-									return JSON.parse(nodeJson) as AnyNodeData;
-								},
-								format: parsed.format
-							} satisfies TreeHandle
-						};
-					},
+				parseAndRead(source: string, parseOptions?: ParseOptions) {
+					const json = engine.parseAndRead(source, parseOptions?.deep);
+					const parsed = JSON.parse(json) as NativeParseResultShape;
+					// Boundary assertion: the native reader returns the grammar's
+					// root kind for a whole-source parse.
+					const root = parsed.nodeData as TRoot;
+					return {
+						root,
+						tree: {
+							get rootNode(): never {
+								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
+							},
+							source,
+							read: (handle, childIndex, deep) => {
+								if (handle === undefined) return root;
+								const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
+								return JSON.parse(nodeJson) as AnyNodeData;
+							},
+							format: parsed.format
+						} satisfies TreeHandle
+					};
+				},
 
-					readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
-						const json = engine.readNode(handle, childIndex, parseOptions?.deep);
-						return JSON.parse(json) as AnyNodeData;
-					}
+				readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
+					const json = engine.readNode(handle, childIndex, parseOptions?.deep);
+					return JSON.parse(json) as AnyNodeData;
 				}
 			}
 		};
