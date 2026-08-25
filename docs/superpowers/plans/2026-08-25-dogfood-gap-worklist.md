@@ -61,23 +61,33 @@ Root: the `ir` namespace emitter / `namespacedConstructors` eligibility
 | `_call_expression_call` | any call (typescript) | coercer cannot resolve; no public constructor |
 | `_export_statement_default` | any `export` (typescript) | coercer cannot resolve; no public constructor |
 
-**Retracted rows — reachable all along, via the namespaced form.** The original
-probe only tried the coercer (`ir.lineComment(…)`) and the `{ kind: … }`
-config, never `ir.<parent>.<form>(…)`, and wrongly concluded these were
-unreachable:
+**Three rows CLOSED by the eligibility fix; one was genuinely stale.** An
+interim edit of this file claimed all four had shipped all along and that the
+original probe was incomplete. That claim was wrong, and the retraction is
+itself retracted: the probe behind it read a working tree that contained an
+implementer's uncommitted regeneration, so it measured surface that did not
+exist at any commit. Verified against the committed history afterwards:
 
-| retracted | actually ships | renders |
+| kind | status | now reachable as |
 | --- | --- | --- |
-| `_line_comment_doc` | `ir.lineComment.doc({ outer: true, doc })` / `{ inner: true }` | `/// hi`, `//! hi` |
-| `_expression_statement_with_semi` | `ir.expressionStatement.withSemi({ expression })` | `edits.sort_by();` |
-| `_visibility_modifier_in_path` | `ir.visibilityModifier.visibilityModifierInPath(…)` | `pub(in crate)` |
-| `_delim_token_tree_paren` | `ir.delimTokenTree.paren(…)` | — |
+| `_line_comment_doc` | correctly reported unreachable; CLOSED by the eligibility fix | `ir.lineComment.doc({ outer \| inner, doc })` → `/// hi`, `//! hi` |
+| `_expression_statement_with_semi` | correctly reported unreachable; CLOSED | `ir.expressionStatement.withSemi({ expression })` → `x;` |
+| `_visibility_modifier_in_path` | correctly reported unreachable; CLOSED | `ir.visibilityModifier.visibilityModifierInPath(path)` → `pub(in crate::x)` |
+| `_delim_token_tree_paren` | genuinely stale — shipped before any of this work | `ir.delimTokenTree.paren(…)` |
 
-`examples/17-dogfood-rust.ts` now uses the real spellings for all four.
+So the dogfood exercise's original class-A evidence was sound for three of the
+four, and the exercise did what it was built to do: the gaps it recorded are
+the gaps the fix closed.
 
-The lesson is procedural: a kind is only unreachable once
-`ir.<parent>.<form>` has been enumerated (`Object.keys(ir.<parent>)`), not
-merely once the coercer has refused it.
+Two procedural lessons, both learned the hard way here:
+
+- A kind is unreachable only once `ir.<parent>.<form>` has been enumerated
+  (`Object.keys(ir.<parent>)`), not merely once the coercer has refused it —
+  that is how `_delim_token_tree_paren` was mis-filed.
+- **Probe a commit, not a working tree.** A probe run while another process
+  holds uncommitted regenerated output measures that process's work and
+  attributes it to history. Check `git status` first, or read the file out of
+  the commit (`git show <sha>:<path>`).
 
 These are artefact kinds that should be constructed through their parent
 rather than exposed as top-level builders — but `factoryInline` is not the
