@@ -21,6 +21,8 @@ import type {
 	ClassDeclarationLooseArgs,
 	FormalParametersElementsBuildArgs,
 	FormalParametersElementsLooseArgs,
+	HashBangLineBuildArgs,
+	HashBangLineLooseArgs,
 	NamespaceImportBuildArgs,
 	NamespaceImportLooseArgs,
 	NamespaceExportBuildArgs,
@@ -102,6 +104,10 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Equals<SwitchBodyBuildArgs, SwitchBodyLooseArgs>, false>>();
 		// separated list
 		expectTrue<Equals<Equals<FormalParametersElementsBuildArgs, FormalParametersElementsLooseArgs>, false>>();
+		// leaf — a free-text leaf, where the parameter IS the raw text and the
+		// two genuinely coincide. Pinned so that stays a DECISION rather than
+		// drifting back into the missing-widening it looks identical to.
+		expectTrue<Equals<HashBangLineBuildArgs, HashBangLineLooseArgs>>();
 	});
 
 	it('a factory-less kind falls back to the NodeNs defaults', () => {

@@ -652,6 +652,30 @@ function delimiterUnionFor(list: {
 }
 
 /**
+ * One factory parameter, resolved once. The label, the rest marker and the
+ * optionality have a SINGLE author here; only the type column differs
+ * between the strict signature and the loose one.
+ *
+ * Single-sourcing is the only thing that can catch a drift between the two:
+ * a tuple element's label is erased by structural comparison, so
+ * `[child: X]` and `[value: X]` are the same type. No type-level pin can
+ * see a label diverge — but a reader of the generated surface can.
+ */
+interface FactoryParam {
+	readonly label: string;
+	readonly optional: boolean;
+	readonly rest: boolean;
+	/** The type the builder itself declares. */
+	readonly strictType: string;
+	/** The type a coercing caller may pass for the same position. */
+	readonly looseType: string;
+	/** Set where the emitted signature defaults the parameter; an
+	 *  initializer already implies optionality, and TypeScript rejects
+	 *  spelling both. */
+	readonly defaultValue?: string;
+}
+
+/**
  * A field-carrying factory's calling convention, resolved once: the
  * parameter list the factory declares and how the body reads each slot.
  * `emitFieldCarryingFactory` spells its signature from this, and a
@@ -661,12 +685,12 @@ function delimiterUnionFor(list: {
 interface FactorySurface {
 	readonly containerFacts: ReturnType<typeof soleSlotFacts> | null;
 	readonly singleField: AssembledNonterminal | undefined;
+	/** The parameter the two strings below are rendered from. */
+	readonly param: FactoryParam;
 	/** Parameter list text, without the parentheses. */
 	readonly params: string;
-	/** `params` with every parameter's type widened to what a COERCING
-	 *  caller may hand it: a config parameter becomes the kind's `Loose`,
-	 *  a node-valued one is wrapped in `LooseValue`. Same labels, same
-	 *  optionality, same rest element — only the types differ.
+	/** `params` with the parameter's type widened to what a COERCING caller
+	 *  may hand it — same label, same optionality, same rest marker.
 	 *
 	 *  Both tuple aliases are projections of these two strings
 	 *  (`paramsToTuple`), never independently composed. */
@@ -682,10 +706,27 @@ interface FactorySurface {
 
 /** A parameter list as it must appear where an INITIALIZER is illegal — an
  *  overload declaration and a tuple element both reject `= {}`, so the
- *  defaulted parameter re-declares as an optional one. One rewrite, both
- *  consumers. */
+ *  defaulted parameter re-declares as an optional one. One rewrite, for
+ *  every consumer including parameter lists resolved elsewhere
+ *  (`constructorSurface`) that never passed through a `FactoryParam`. */
 function declarationParams(params: string): string {
 	return params.replace(/(\w+)\??: (.+?) = .+$/, '$1?: $2');
+}
+
+/** Render a parameter's signature text against one of its two type columns.
+ *  A rest parameter is never `?`-marked, and a defaulted one carries its
+ *  initializer instead of the marker. */
+function paramText(param: FactoryParam, type: string): string {
+	const rest = param.rest ? '...' : '';
+	const initializer = param.defaultValue === undefined ? '' : ` = ${param.defaultValue}`;
+	const optMark = param.optional && !param.rest && param.defaultValue === undefined ? '?' : '';
+	return `${rest}${param.label}${optMark}: ${type}${initializer}`;
+}
+
+/** The strict and loose renderings of one parameter — the only place either
+ *  string is composed. */
+function renderSurfaceParams(param: FactoryParam): { params: string; looseParams: string } {
+	return { params: paramText(param, param.strictType), looseParams: paramText(param, param.looseType) };
 }
 
 /** A parameter list as a tuple type — labels, optional markers and the rest
@@ -731,46 +772,65 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			nodeMap
 		);
 		if (containerFacts.multiple) {
+			const param: FactoryParam = {
+				label: 'children',
+				optional: false,
+				rest: true,
+				strictType: `${elementType}[]`,
+				looseType: `${looseValueOf(elementType)}[]`
+			};
 			return {
 				containerFacts,
 				singleField,
-				params: `...children: ${elementType}[]`,
-				looseParams: `...children: ${looseValueOf(elementType)}[]`,
+				param,
+				...renderSurfaceParams(param),
 				args: '...children',
 				elementType,
 				directParamOptional: false,
 				opt: ''
 			};
 		}
-		const optMark = containerFacts.required ? '' : '?';
+		const param: FactoryParam = {
+			label: 'child',
+			optional: !containerFacts.required,
+			rest: false,
+			strictType: elementType,
+			looseType: looseValueOf(elementType)
+		};
 		return {
 			containerFacts,
 			singleField,
-			params: `child${optMark}: ${elementType}`,
-			looseParams: `child${optMark}: ${looseValueOf(elementType)}`,
+			param,
+			...renderSurfaceParams(param),
 			args: 'child',
 			elementType,
 			directParamType: elementType,
 			directParamOptional: !containerFacts.required,
-			opt: optMark
+			opt: containerFacts.required ? '' : '?'
 		};
 	}
 	if (singleField) {
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
-		const optMark = isRequired(singleField) ? '' : '?';
-		return {
-			containerFacts,
-			singleField,
-			params: `${singleField.paramName}${optMark}: ${elemType}`,
+		const param: FactoryParam = {
+			label: singleField.paramName,
+			optional: !isRequired(singleField),
+			rest: false,
+			strictType: elemType,
 			// The field's own value, widened. Indexing `Loose` instead
 			// (`T.X.Loose['key']`) would reach through its NodeData passthrough
 			// arm and re-admit the interface's accessor signature as a config
 			// value — the leak the `Loose` projection already suffers.
-			looseParams: `${singleField.paramName}${optMark}: ${looseValueOf(elemType)}`,
+			looseType: looseValueOf(elemType)
+		};
+		return {
+			containerFacts,
+			singleField,
+			param,
+			...renderSurfaceParams(param),
 			args: singleField.paramName,
 			directParamType: elemType,
 			directParamOptional: !isRequired(singleField),
-			opt: optMark
+			opt: isRequired(singleField) ? '' : '?'
 		};
 	}
 	const fields = node.fields;
@@ -784,11 +844,21 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	// A config parameter's loose counterpart is the kind's own `Loose` — the
 	// only projection that reads the from-only (`__fromInputHints__`)
 	// widenings, which a per-value widener applied to `Config` cannot reach.
+	const param: FactoryParam = {
+		label: 'config',
+		optional: opt === '?',
+		rest: false,
+		strictType: allOptional ? `Partial<${configType}>` : configType,
+		looseType: `T.${node.typeName}.Loose`,
+		// A local default lets the body read `config.x` without optional
+		// chaining, and only pays off where the body reads config at all.
+		...(allOptional ? { defaultValue: '{}' } : {})
+	};
 	return {
 		containerFacts,
 		singleField,
-		params: allOptional ? `config: Partial<${configType}> = {}` : `config${opt}: ${configType}`,
-		looseParams: allOptional ? `config?: T.${node.typeName}.Loose` : `config${opt}: T.${node.typeName}.Loose`,
+		param,
+		...renderSurfaceParams(param),
 		args: 'config',
 		configType,
 		directParamOptional: false,
@@ -1387,6 +1457,13 @@ function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): str
 // SeparatedList factory (separator-as-slot Task 6)
 // ---------------------------------------------------------------------------
 
+/** The rest-spread type for a list of `elemType`: a `repeat1`-sourced list
+ *  demands its first element and says so on the model. ONE rule, shared by
+ *  the list factory's own signature and by its `LooseArgs` counterpart. */
+function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
+	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
+}
+
 /** `fieldElementType` doesn't parenthesize multi-member unions (unlike
  *  `childElementType`) — guard the bare-array case, or `A | B[]` binds
  *  `[]` to `B` alone. */
@@ -1448,7 +1525,7 @@ export function separatedListSurface(
 		}
 	}
 	const elemTypeForArray = parenthesizeUnion(elemType);
-	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
+	const elementsType = elementsTypeOf(node.nonEmpty, elemType);
 	// Outer gate matches wrap.ts's `emitSeparatedListWrap` and render-module.ts's
 	// `renderTransportDataStruct` exactly: `node.separatorRule !== undefined`,
 	// NOT "at least one candidate resolves in the catalog" — the catalog
@@ -1536,8 +1613,7 @@ function emitSeparatedListFactory(
 	// The canonical call shape is the spread form; the options-leading
 	// overload exists only so a per-instance options bag can lead, and it is
 	// the LAST overload precisely because call resolution wants it there.
-	const looseElemType = looseValueOf(parenthesizeUnion(surface.elemType));
-	const looseElementsType = node.nonEmpty ? `NonEmptyArray<${looseElemType}>` : `${parenthesizeUnion(looseElemType)}[]`;
+	const looseElementsType = elementsTypeOf(node.nonEmpty, looseValueOf(surface.elemTypeForArray));
 	lines.push(
 		...buildArgsAliasLines(node.typeName, `...elements: ${elementsType}`, `...elements: ${looseElementsType}`)
 	);

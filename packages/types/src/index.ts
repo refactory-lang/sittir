@@ -1162,8 +1162,10 @@ export interface NodeNs<
 	// form there — a forwarded wrapper ends with its forwarded-target form,
 	// a separated list with its options-leading form.
 	readonly BuildArgs: Args;
-	/** `BuildArgs` with each `Config` element swapped for that kind's `Loose`
-	 *  — the same arity, widened content. */
+	/** `BuildArgs` with the same arity and the same labels, each parameter
+	 *  widened to what a COERCING caller may pass: a config parameter to
+	 *  that kind's `Loose`, a node-valued one through `LooseValue`. A leaf's
+	 *  parameter is already its raw text, so there the two coincide. */
 	readonly LooseArgs: LooseArgs;
 	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting

@@ -29,6 +29,8 @@ import type {
 	FunctionItemLooseArgs,
 	ParametersElementsBuildArgs,
 	ParametersElementsLooseArgs,
+	IdentifierBuildArgs,
+	IdentifierLooseArgs,
 	AttributeItemBuildArgs,
 	AttributeItemLooseArgs,
 	ExpressionStatementBuildArgs,
@@ -109,6 +111,10 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Equals<DeclarationListBuildArgs, DeclarationListLooseArgs>, false>>();
 		// separated list
 		expectTrue<Equals<Equals<ParametersElementsBuildArgs, ParametersElementsLooseArgs>, false>>();
+		// leaf — a free-text leaf, where the parameter IS the raw text and the
+		// two genuinely coincide. Pinned so that stays a DECISION rather than
+		// drifting back into the missing-widening it looks identical to.
+		expectTrue<Equals<IdentifierBuildArgs, IdentifierLooseArgs>>();
 	});
 
 	it('a factory-less kind falls back to the NodeNs defaults', () => {

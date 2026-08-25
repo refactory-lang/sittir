@@ -20,6 +20,8 @@ import type {
 	FunctionDefinitionLooseArgs,
 	SimpleStatementsElementsBuildArgs,
 	SimpleStatementsElementsLooseArgs,
+	PassStatementBuildArgs,
+	PassStatementLooseArgs,
 	ChevronBuildArgs,
 	ChevronLooseArgs,
 	SimpleStatementsBuildArgs,
@@ -100,6 +102,10 @@ describe('python NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Equals<ModuleBuildArgs, ModuleLooseArgs>, false>>();
 		// separated list
 		expectTrue<Equals<Equals<SimpleStatementsElementsBuildArgs, SimpleStatementsElementsLooseArgs>, false>>();
+		// leaf — a parameterless keyword leaf, where the parameter IS the raw text and the
+		// two genuinely coincide. Pinned so that stays a DECISION rather than
+		// drifting back into the missing-widening it looks identical to.
+		expectTrue<Equals<PassStatementBuildArgs, PassStatementLooseArgs>>();
 	});
 
 	it('a factory-less kind falls back to the NodeNs defaults', () => {
