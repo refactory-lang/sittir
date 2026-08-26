@@ -22,6 +22,27 @@ function isUnexpandedStub(value: unknown): boolean {
 }
 
 /**
+ * Strip the fact that an edit invalidates: the text captured from the source
+ * this node was read out of.
+ *
+ * A `$with` setter spreads the node it edits, so without this the new node
+ * inherits its predecessor's `$text` — text that describes the node as it was
+ * BEFORE the edit. Downstream, {@link isUntouchedSubtree} would then take that
+ * stale capture for a current one and render it verbatim, silently discarding
+ * the edit.
+ *
+ * Recorded here, at the edit, because this is the only point that knows an
+ * edit happened. Inferring it later — "no children left, so the text must be
+ * stale" — cannot distinguish an emptied node from one that parsed childless
+ * to begin with, and gets the second case wrong.
+ */
+export function markEdited<T extends object>(data: T): T {
+	if (!('$text' in data)) return data;
+	const { $text: _stale, ...rest } = data as T & { $text?: unknown };
+	return rest as unknown as T;
+}
+
+/**
  * Nothing below this node has been expanded or replaced, so its own captured
  * `$text` still spells the whole subtree — including what lies BETWEEN its
  * children, which its template would re-spell in the canonical form. That gap
@@ -29,11 +50,15 @@ function isUnexpandedStub(value: unknown): boolean {
  * indentation-sensitive grammar it holds the block structure, so re-spelling
  * it can move a node into a different parent.
  *
- * Requires at least one stub, and requires EVERY stored value to be one. Any
- * edit puts something else in storage — a factory-built node, a replacement
- * string — which is exactly what should send the node back through its
- * template. A node with no children left (its slot emptied via `$with`) has no
- * stub either, so its now-stale `$text` cannot be mistaken for current.
+ * Requires EVERY stored value to be an unexpanded stub. Any edit puts
+ * something else in storage — a factory-built node, a replacement string —
+ * which is exactly what should send the node back through its template.
+ *
+ * A node holding no stubs at all still qualifies, because a node can be
+ * childless for two unrelated reasons: it parsed that way (a file of nothing
+ * but comments has no statements), or an edit emptied it. Only the second
+ * makes `$text` stale, and that is settled where the edit happens — a `$with`
+ * setter drops `$text` — rather than guessed at from the child count here.
  *
  * Attached trivia keeps a node out: the carrier writes verbatim text and
  * nothing else, and a node's own leading/trailing comments sit outside the
@@ -42,16 +67,14 @@ function isUnexpandedStub(value: unknown): boolean {
 function isUntouchedSubtree(record: Record<string, unknown>): boolean {
 	if (typeof record.$text !== 'string') return false;
 	if (record.$triviaData != null) return false;
-	let stubs = 0;
 	for (const [key, child] of Object.entries(record)) {
 		if (!key.startsWith('_') && key !== '$other') continue;
 		for (const entry of Array.isArray(child) ? child : [child]) {
 			if (entry === undefined || entry === null) continue;
 			if (!isUnexpandedStub(entry)) return false;
-			stubs++;
 		}
 	}
-	return stubs > 0;
+	return true;
 }
 
 /** The stub projection of an untouched node: its identity and its captured

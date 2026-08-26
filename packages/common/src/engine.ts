@@ -37,9 +37,13 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, deep?: boolean): string;
 	readNode(handle: number, childIndex: number, deep?: boolean): string;
-	render(node: TTransport): string;
-	renderToFile?(node: TTransport, path: string): void;
+	render(node: TTransport, treeId?: number): string;
+	renderToFile?(node: TTransport, path: string, treeId?: number): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
+	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
+	disposeTree(treeId: number): void;
+	/** Trees the native engine still holds. Diagnostics only. */
+	readonly liveTreeCount: number;
 	dispose(): void;
 }
 
@@ -146,7 +150,31 @@ export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
 interface NativeParseResultShape {
 	readonly nodeData: AnyNodeData;
 	readonly format?: FormatRecord;
+	readonly treeId: number;
 }
+
+/**
+ * Frees a native tree once JavaScript can no longer read from it.
+ *
+ * Reads are lazy, so a tree has to outlive the call that parsed it: every
+ * unexpanded child holds a handle the native side must still be able to
+ * answer. Nothing on the JS side knows when the last of those handles is
+ * gone — but the garbage collector does. Each tree gets a token that its
+ * `read` closure captures, so the token stays reachable exactly as long as
+ * the tree handle or any node wrapped against it; when the token is
+ * collected, the tree is dropped.
+ *
+ * The engine is held weakly. A registry entry outlives its tree by
+ * definition, and a strong reference here would keep the whole engine —
+ * parser included — alive for as long as any entry remained unswept.
+ */
+const treeDisposalRegistry = new FinalizationRegistry<{
+	readonly engineRef: WeakRef<NativeEngineLike<never>>;
+	readonly treeId: number;
+}>(({ engineRef, treeId }) => {
+	// A collected engine has already dropped every tree it owned.
+	engineRef.deref()?.disposeTree(treeId);
+});
 
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
@@ -219,6 +247,14 @@ export function createNativeEngine<
 						// Boundary assertion: the native reader returns the grammar's
 						// root kind for a whole-source parse.
 						const root = parsed.nodeData as TRoot;
+						// Captured by `read` below and by nothing else, so it stays
+						// reachable exactly as long as something can still read from
+						// this tree. Its collection is what releases the tree.
+						const liveToken = { treeId: parsed.treeId };
+						treeDisposalRegistry.register(liveToken, {
+							engineRef: new WeakRef(engine as NativeEngineLike<never>),
+							treeId: parsed.treeId
+						});
 						return {
 							root,
 							tree: {
@@ -228,6 +264,11 @@ export function createNativeEngine<
 								source,
 								read: (handle, childIndex, deep) => {
 									if (handle === undefined) return root;
+									// Handles name their own tree, so this needs no tree
+									// argument — but it must keep `liveToken` reachable,
+									// or the tree behind those handles can be collected
+									// while they are still in use.
+									void liveToken;
 									const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
 									return JSON.parse(nodeJson) as AnyNodeData;
 								},

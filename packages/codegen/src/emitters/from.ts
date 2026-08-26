@@ -42,6 +42,7 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
+	isWrapChildrenKind,
 	soleSlotFacts,
 	type SoleSlotFacts,
 	canonicalSeparatedListField,
@@ -1408,25 +1409,22 @@ function collectWrapChildrenEntries(
 ): WrapChildrenEntry[] {
 	const entries: WrapChildrenEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'branch' && node.modelType !== 'separatedList') continue;
-		if (!node.rawFactoryName) continue;
-		if (kind.startsWith('_') && !node.userFacing) continue;
-		if (!kindEntries) continue;
-		const entry = findKindEntry(kindEntries, kind);
-		if (!entry) continue;
-		let childSurface: 'direct' | 'spread' | 'array' | null;
-		if (node.modelType === 'separatedList') {
-			childSurface = 'array';
-		} else {
-			if (classifyChildFactorySurface(node, nodeMap) === null) continue;
-			// Real arity decides direct-vs-spread — see `soleSlotFacts`'s
-			// doc comment for why this reads the slot directly rather than
-			// trusting `classifyFactoryShape`'s label for the shape itself.
-			childSurface = soleSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
-		}
+		// Membership is `isWrapChildrenKind` — shared with the loose-hint
+		// emitter, which has to admit the array shape this table enables.
+		if (!isWrapChildrenKind(kind, node, nodeMap, kindEntries)) continue;
+		// Both are guaranteed by the predicate; re-read them so the narrowing
+		// is the compiler's rather than an assertion.
+		const factoryName = node.rawFactoryName;
+		const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind);
+		if (factoryName === undefined || entry === undefined) continue;
+		// Real arity decides direct-vs-spread — see `soleSlotFacts`'s doc
+		// comment for why this reads the slot directly rather than trusting
+		// `classifyFactoryShape`'s label for the shape itself.
+		const childSurface: 'direct' | 'spread' | 'array' =
+			node.modelType === 'separatedList' ? 'array' : soleSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
 		entries.push({
 			kind,
-			factoryName: node.rawFactoryName,
+			factoryName,
 			childSurface,
 			kindIdExpr: `TSKindId.${entry.member}`
 		});

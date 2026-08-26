@@ -79,8 +79,12 @@ import {
 	resolveFieldStorageInfo,
 	emitsBuildArgsAlias,
 	emitsPlainBuiltAlias,
+	isWrapChildrenKind,
 	stringConstructibleTexts
 } from './shared.ts';
+// One-way: factories never imports this module, so naming its
+// constructor-target resolution here adds no cycle.
+import { constructorTargetKind } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -969,7 +973,7 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
-		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries);
+		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries, lookupUnion);
 		// Accessor function types: `name(): T` (non-enumerable at runtime —
 		// declared here for type-safety so consumers can call node.name()).
 		for (const f of fields) {
@@ -1141,12 +1145,65 @@ function fieldInputHintTypeExpr(
 
 // Loose-only: strict factories store config values directly, so widened
 // literals must never reach Config. See glossary.
-function fieldLooseHintTypeExpr(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+/** A singular slot whose one kind can be built from a bare list of children
+ *  accepts that list directly — `_resolveOneBranch` maps the elements and
+ *  wraps them. The element type is the CONSTRUCTOR TARGET's, not the
+ *  wrapper's: a direct-surface wrapper forwards into an inner container, so
+ *  its own first parameter is that container rather than an element.
+ *
+ *  Spelled as the target's element slot type and left for `WidenSlotValue`
+ *  to widen, NOT as that kind's `LooseArgs`. The tuple would have been the
+ *  tighter derivation, but it names `NamespaceMap`, and a hint sitting on an
+ *  interface that the map's own `Loose` projections reach makes the two
+ *  mutually recursive — TS answers "excessive stack depth" across the whole
+ *  generated surface. */
+function wrapChildrenListHint(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	if (isMultiple(f)) return undefined;
+	const kinds = slotKindNames(f);
+	if (kinds.length !== 1) return undefined;
+	const kind = kinds[0]!;
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || !isWrapChildrenKind(kind, node, nodeMap, kindEntries)) return undefined;
+	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap));
+	if (target === undefined) return undefined;
+	if (target.modelType !== 'branch' && target.modelType !== 'group' && target.modelType !== 'separatedList') {
+		return undefined;
+	}
+	// Same rule `canonicalSeparatedListField` applies: the repeated slot is
+	// the element carrier, and a single-slot wrapper has only the one.
+	const elementSlot = target.fields.find((slot) => isMultiple(slot)) ?? target.fields[0];
+	if (elementSlot === undefined) return undefined;
+	// BUDGET CAP, not a rule about the surface: a union-typed element widens
+	// every container that names it, and the generated Loose surface already
+	// sits at TypeScript's structural-comparison ceiling — adding those arms
+	// puts the biggest grammar over it. Lifting this needs that ceiling
+	// addressed, not a different spelling here.
+	if (slotKindNames(elementSlot).length !== 1) return undefined;
+	// Names the same supertype ALIAS the interface's own slot uses. The
+	// expanded union is the same type, but a 37-arm union multiplies every
+	// assignability check that reaches it; a named alias compares once.
+	return `readonly (${fieldTypeExpr(elementSlot, nodeMap, lookupUnion)})[]`;
+}
+
+function fieldLooseHintTypeExpr(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const arms: string[] = [];
 	if (f.values.length === 1 && slotKindNames(f).length === 1) {
 		const texts = stringConstructibleTexts(slotKindNames(f)[0]!, nodeMap);
-		if (texts.length > 0) return `${fieldTypeExpr(f, nodeMap)} | ${stringUnion(texts)}`;
+		if (texts.length > 0) arms.push(`${fieldTypeExpr(f, nodeMap)} | ${stringUnion(texts)}`);
 	}
-	return undefined;
+	const listHint = wrapChildrenListHint(f, nodeMap, kindEntries, lookupUnion);
+	if (listHint !== undefined) arms.push(listHint);
+	return arms.length > 0 ? arms.join(' | ') : undefined;
 }
 
 function emitFieldInputHints(
@@ -1154,7 +1211,8 @@ function emitFieldInputHints(
 	fields: readonly AssembledNonterminal[],
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lookupUnion?: LookupUnion
 ): void {
 	const hintLines = fields
 		.map((field) => {
@@ -1176,7 +1234,7 @@ function emitFieldInputHints(
 	}
 	const fromHintLines = fields
 		.map((field) => {
-			const hintType = fieldLooseHintTypeExpr(field, nodeMap);
+			const hintType = fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;

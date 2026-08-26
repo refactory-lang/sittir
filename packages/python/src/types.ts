@@ -2040,6 +2040,9 @@ export interface Module {
 export interface SimpleStatements {
 	readonly $type: TSKindId.SimpleStatements;
 	readonly _simple_statements_elements: SimpleStatementsElements;
+	readonly __looseHints__?: {
+		readonly simple_statements_elements: readonly SimpleStatement[];
+	};
 	simpleStatementsElements(): SimpleStatementsElements;
 }
 
@@ -2053,6 +2056,9 @@ export interface RelativeImport {
 	readonly $type: TSKindId.RelativeImport;
 	readonly _import_prefix: ImportPrefix;
 	readonly _dotted_name?: DottedName;
+	readonly __looseHints__?: {
+		readonly dotted_name?: readonly Identifier[];
+	};
 	importPrefix(): ImportPrefix;
 	dottedName(): DottedName | undefined;
 }
@@ -2081,6 +2087,9 @@ export interface AliasedImport {
 	readonly $type: TSKindId.AliasedImport;
 	readonly _name: DottedName;
 	readonly _alias: Identifier;
+	readonly __looseHints__?: {
+		readonly name: readonly Identifier[];
+	};
 	name(): DottedName;
 	alias(): Identifier;
 }
@@ -2165,6 +2174,9 @@ export interface MatchStatement {
 	readonly $type: TSKindId.MatchStatement;
 	readonly _subjects: Subjects;
 	readonly _body: MatchBlock;
+	readonly __looseHints__?: {
+		readonly subjects: readonly Expression[];
+	};
 	subjects(): Subjects;
 	body(): MatchBlock;
 }
@@ -2180,6 +2192,9 @@ export interface CaseClause {
 	readonly _case_patterns: CasePatterns;
 	readonly _guard?: IfClause;
 	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly __looseHints__?: {
+		readonly case_patterns: readonly CasePattern[];
+	};
 	casePatterns(): CasePatterns;
 	guard(): IfClause | undefined;
 	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
@@ -2287,6 +2302,8 @@ export interface FunctionDefinition {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly Type[];
+		readonly parameters: readonly Parameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -2299,12 +2316,18 @@ export interface FunctionDefinition {
 export interface Parameters {
 	readonly $type: TSKindId.Parameters;
 	readonly _parameters?: _Parameters;
+	readonly __looseHints__?: {
+		readonly parameters?: readonly Parameter[];
+	};
 	parameters(): _Parameters | undefined;
 }
 
 export interface LambdaParameters {
 	readonly $type: TSKindId.LambdaParameters;
 	readonly _parameters: _Parameters;
+	readonly __looseHints__?: {
+		readonly parameters: readonly Parameter[];
+	};
 	parameters(): _Parameters;
 }
 
@@ -2354,6 +2377,9 @@ export interface ClassDefinition {
 	readonly _type_parameters?: TypeParameter;
 	readonly _superclasses?: ArgumentList;
 	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly Type[];
+	};
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	superclasses(): ArgumentList | undefined;
@@ -2363,6 +2389,9 @@ export interface ClassDefinition {
 export interface TypeParameter {
 	readonly $type: TSKindId.TypeParameter;
 	readonly _types: Types;
+	readonly __looseHints__?: {
+		readonly types: readonly Type[];
+	};
 	types(): Types;
 }
 
@@ -2408,6 +2437,9 @@ export interface ExpressionList {
 	readonly $type: TSKindId.ExpressionList;
 	readonly _expression: Expression;
 	readonly _tail: ',' | ExpressionListExpressions;
+	readonly __looseHints__?: {
+		readonly tail: readonly Expression[];
+	};
 	expression(): Expression;
 	tail(): ',' | ExpressionListExpressions;
 }
@@ -2467,6 +2499,10 @@ export interface ClassPattern {
 	readonly $type: TSKindId.ClassPattern;
 	readonly _dotted_name: DottedName;
 	readonly _arguments?: ListPatternCasePatterns;
+	readonly __looseHints__?: {
+		readonly dotted_name: readonly Identifier[];
+		readonly arguments?: readonly CasePattern[];
+	};
 	dottedName(): DottedName;
 	arguments(): ListPatternCasePatterns | undefined;
 }
@@ -2502,12 +2538,18 @@ export interface Patterns {
 export interface TuplePattern {
 	readonly $type: TSKindId.TuplePattern;
 	readonly _patterns?: Patterns;
+	readonly __looseHints__?: {
+		readonly patterns?: readonly Pattern[];
+	};
 	patterns(): Patterns | undefined;
 }
 
 export interface ListPattern {
 	readonly $type: TSKindId.ListPattern;
 	readonly _patterns?: Patterns;
+	readonly __looseHints__?: {
+		readonly patterns?: readonly Pattern[];
+	};
 	patterns(): Patterns | undefined;
 }
 
@@ -2619,6 +2661,9 @@ export interface Lambda {
 	readonly $type: TSKindId.Lambda;
 	readonly _parameters?: LambdaParameters;
 	readonly _body: Expression;
+	readonly __looseHints__?: {
+		readonly parameters?: readonly Parameter[];
+	};
 	parameters(): LambdaParameters | undefined;
 	body(): Expression;
 }
@@ -2627,6 +2672,9 @@ export interface LambdaWithinForInClause {
 	readonly $type: TSKindId.LambdaWithinForInClause;
 	readonly _parameters?: LambdaParameters;
 	readonly _body: ExpressionWithinForInClause;
+	readonly __looseHints__?: {
+		readonly parameters?: readonly Parameter[];
+	};
 	parameters(): LambdaParameters | undefined;
 	body(): ExpressionWithinForInClause;
 }
@@ -2671,6 +2719,9 @@ export interface PatternList {
 	readonly $type: TSKindId.PatternList;
 	readonly _pattern: Pattern;
 	readonly _tail: ',' | PatternListPatterns;
+	readonly __looseHints__?: {
+		readonly tail: readonly Pattern[];
+	};
 	pattern(): Pattern;
 	tail(): ',' | PatternListPatterns;
 }
@@ -2702,6 +2753,9 @@ export interface Slice {
 	readonly _start?: Expression;
 	readonly _stop?: Expression;
 	readonly _step?: SliceGroup;
+	readonly __looseHints__?: {
+		readonly step?: readonly Expression[];
+	};
 	start(): Expression | undefined;
 	stop(): Expression | undefined;
 	step(): SliceGroup | undefined;
@@ -2744,6 +2798,9 @@ export interface GenericType {
 	readonly $type: TSKindId.GenericType;
 	readonly _identifier: Identifier;
 	readonly _type_parameter: TypeParameter;
+	readonly __looseHints__?: {
+		readonly type_parameter: readonly Type[];
+	};
 	identifier(): Identifier;
 	typeParameter(): TypeParameter;
 }
@@ -2922,6 +2979,9 @@ export interface Interpolation {
 	readonly __inputHints__?: {
 		readonly eq_marker?: BooleanKeyword<'='>;
 	};
+	readonly __looseHints__?: {
+		readonly format_specifier?: readonly ('[^{}\\n]+' | Interpolation)[];
+	};
 	expression(): FExpression;
 	eqMarker(): boolean | undefined;
 	typeConversion(): TypeConversion | undefined;
@@ -3065,12 +3125,18 @@ export interface ExceptClauseAsOptional1 {
 export interface CaseTuplePattern {
 	readonly $type: TSKindId.CaseTuplePattern;
 	readonly _list_pattern_case_patterns?: ListPatternCasePatterns;
+	readonly __looseHints__?: {
+		readonly list_pattern_case_patterns?: readonly CasePattern[];
+	};
 	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
 
 export interface CaseListPattern {
 	readonly $type: TSKindId.CaseListPattern;
 	readonly _list_pattern_case_patterns?: ListPatternCasePatterns;
+	readonly __looseHints__?: {
+		readonly list_pattern_case_patterns?: readonly CasePattern[];
+	};
 	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
 
@@ -3104,6 +3170,9 @@ export interface PrintStatementArm1 {
 	readonly $type: TSKindId.PrintStatementArm1;
 	readonly _chevron: Chevron;
 	readonly _print_chevron_arguments?: PrintChevronArguments | ',';
+	readonly __looseHints__?: {
+		readonly print_chevron_arguments?: readonly Expression[];
+	};
 	chevron(): Chevron;
 	printChevronArguments(): PrintChevronArguments | ',' | undefined;
 }
@@ -3111,6 +3180,9 @@ export interface PrintStatementArm1 {
 export interface PrintStatementArm2 {
 	readonly $type: TSKindId.PrintStatementArm2;
 	readonly _print_arguments: PrintArguments;
+	readonly __looseHints__?: {
+		readonly print_arguments: readonly Expression[];
+	};
 	printArguments(): PrintArguments;
 }
 
@@ -3149,6 +3221,9 @@ export interface WithClauseBare {
 export interface WithClauseParen {
 	readonly $type: TSKindId.WithClauseParen;
 	readonly _with_clause_with_items: WithClauseWithItems;
+	readonly __looseHints__?: {
+		readonly with_clause_with_items: readonly WithItem[];
+	};
 	withClauseWithItems(): WithClauseWithItems;
 }
 
@@ -3161,6 +3236,9 @@ export interface MatchBlockBlock {
 export interface SuiteBlockWithIndent {
 	readonly $type: TSKindId.SuiteBlockWithIndent;
 	readonly _block: Block;
+	readonly __looseHints__?: {
+		readonly block: readonly Statement[];
+	};
 	block(): Block;
 }
 

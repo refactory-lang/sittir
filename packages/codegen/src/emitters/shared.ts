@@ -958,6 +958,27 @@ export function needsNonEmptyHoist(field: AssembledNonterminal, nodeMap: NodeMap
 	return isNonEmpty(field) && isMultiple(field) && keywordPresenceKind(field, nodeMap) === null;
 }
 
+/** Whether a kind can be built from a bare list of its children — the
+ *  membership rule behind the `_wrapKindIds` table `_resolveOneBranch`
+ *  consults before wrapping an array. A singular slot holding such a kind
+ *  therefore accepts an ARRAY of that kind's elements at runtime, which is
+ *  why the type surface has to consult the same rule rather than restate it.
+ *  Read by from's wrap table and by the loose-hint emitter. */
+export function isWrapChildrenKind(
+	kind: string,
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): boolean {
+	if (node.modelType !== 'branch' && node.modelType !== 'separatedList') return false;
+	if (!node.rawFactoryName) return false;
+	if (kind.startsWith('_') && !node.userFacing) return false;
+	if (!kindEntries || !hasCatalogEntry(kindEntries, kind)) return false;
+	// A separated list is a list by construction; any other branch qualifies
+	// only when its factory takes the children directly.
+	return node.modelType === 'separatedList' || classifyChildFactorySurface(node, nodeMap) !== null;
+}
+
 export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;
 
 export function classifyWrapEmission(

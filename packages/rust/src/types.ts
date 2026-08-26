@@ -3320,6 +3320,7 @@ export interface StructItem {
 	readonly _content: StructItemBrace | StructItemTuple | ';';
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3336,7 +3337,9 @@ export interface UnionItem {
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
-		readonly where_clause?: WhereClause | 'where';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+		readonly body: readonly AttributedFieldDeclaration[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3354,7 +3357,9 @@ export interface EnumItem {
 	readonly _body: EnumVariantList;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
-		readonly where_clause?: WhereClause | 'where';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+		readonly body: readonly AttributedEnumVariant[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3366,6 +3371,9 @@ export interface EnumItem {
 export interface EnumVariantList {
 	readonly $type: TSKindId.EnumVariantList;
 	readonly _enum_variant_list_elements?: EnumVariantListElements;
+	readonly __looseHints__?: {
+		readonly enum_variant_list_elements?: readonly AttributedEnumVariant[];
+	};
 	enumVariantListElements(): EnumVariantListElements | undefined;
 }
 
@@ -3387,6 +3395,9 @@ export interface EnumVariant {
 export interface FieldDeclarationList {
 	readonly $type: TSKindId.FieldDeclarationList;
 	readonly _field_declaration_list_elements?: FieldDeclarationListElements;
+	readonly __looseHints__?: {
+		readonly field_declaration_list_elements?: readonly AttributedFieldDeclaration[];
+	};
 	fieldDeclarationListElements(): FieldDeclarationListElements | undefined;
 }
 
@@ -3406,6 +3417,9 @@ export interface FieldDeclaration {
 export interface OrderedFieldDeclarationList {
 	readonly $type: TSKindId.OrderedFieldDeclarationList;
 	readonly _attributes?: OrderedFieldDeclarationListElements;
+	readonly __looseHints__?: {
+		readonly attributes?: readonly AttributedOrderedField[];
+	};
 	attributes(): OrderedFieldDeclarationListElements | undefined;
 }
 
@@ -3472,8 +3486,9 @@ export interface TypeItem {
 	readonly _trailing_where_clause?: WhereClause;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
-		readonly where_clause?: WhereClause | 'where';
-		readonly trailing_where_clause?: WhereClause | 'where';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+		readonly trailing_where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3495,7 +3510,10 @@ export interface FunctionItem {
 	readonly _body: Block;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
-		readonly where_clause?: WhereClause | 'where';
+		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly parameters: readonly AttributedParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	functionModifiers(): FunctionModifiers | undefined;
@@ -3518,7 +3536,10 @@ export interface FunctionSignatureItem {
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
-		readonly where_clause?: WhereClause | 'where';
+		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly parameters: readonly AttributedParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	functionModifiers(): FunctionModifiers | undefined;
@@ -3538,6 +3559,9 @@ export interface FunctionModifiers {
 export interface WhereClause {
 	readonly $type: TSKindId.WhereClause;
 	readonly _where_predicates?: WherePredicates;
+	readonly __looseHints__?: {
+		readonly where_predicates?: readonly WherePredicate[];
+	};
 	wherePredicates(): WherePredicates | undefined;
 }
 
@@ -3581,7 +3605,8 @@ export interface ImplItem {
 		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
 	};
 	readonly __looseHints__?: {
-		readonly where_clause?: WhereClause | 'where';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	unsafeMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -3605,7 +3630,9 @@ export interface TraitItem {
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
-		readonly where_clause?: WhereClause | 'where';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+		readonly body: readonly DeclarationStatement[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	unsafeMarker(): boolean | undefined;
@@ -3623,7 +3650,8 @@ export interface AssociatedType {
 	readonly _bounds?: TraitBounds;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
-		readonly where_clause?: WhereClause | 'where';
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -3641,6 +3669,9 @@ export interface HigherRankedTraitBound {
 	readonly $type: TSKindId.HigherRankedTraitBound;
 	readonly _type_parameters: TypeParameters;
 	readonly _type: _Type;
+	readonly __looseHints__?: {
+		readonly type_parameters: readonly AttributedTypeParameter[];
+	};
 	typeParameters(): TypeParameters;
 	type(): _Type;
 }
@@ -3654,6 +3685,9 @@ export interface RemovedTraitBound {
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
 	readonly _type_parameters_elements: TypeParametersElements;
+	readonly __looseHints__?: {
+		readonly type_parameters_elements: readonly AttributedTypeParameter[];
+	};
 	typeParametersElements(): TypeParametersElements;
 }
 
@@ -3720,6 +3754,9 @@ export interface ScopedUseList {
 	readonly $type: TSKindId.ScopedUseList;
 	readonly _path?: Path;
 	readonly _list: UseList;
+	readonly __looseHints__?: {
+		readonly list: readonly UseClause[];
+	};
 	path(): Path | undefined;
 	list(): UseList;
 }
@@ -3727,6 +3764,9 @@ export interface ScopedUseList {
 export interface UseList {
 	readonly $type: TSKindId.UseList;
 	readonly _use_clauses?: UseClauses;
+	readonly __looseHints__?: {
+		readonly use_clauses?: readonly UseClause[];
+	};
 	useClauses(): UseClauses | undefined;
 }
 
@@ -3747,6 +3787,9 @@ export interface UseWildcard {
 export interface Parameters {
 	readonly $type: TSKindId.Parameters;
 	readonly _parameters_elements?: ParametersElements;
+	readonly __looseHints__?: {
+		readonly parameters_elements?: readonly AttributedParameter[];
+	};
 	parametersElements(): ParametersElements | undefined;
 }
 
@@ -3840,6 +3883,9 @@ export interface ArrayType {
 export interface ForLifetimes {
 	readonly $type: TSKindId.ForLifetimes;
 	readonly _lifetimes: Lifetimes;
+	readonly __looseHints__?: {
+		readonly lifetimes: readonly Lifetime[];
+	};
 	lifetimes(): Lifetimes;
 }
 
@@ -3850,6 +3896,11 @@ export interface FunctionType {
 	readonly _function_type_trait_form?: FunctionTypeTraitForm;
 	readonly _function_type_fn_form?: FunctionTypeFnForm;
 	readonly _return_type?: _Type;
+	readonly __looseHints__?: {
+		readonly for_lifetimes?: readonly Lifetime[];
+		readonly parameters: readonly AttributedParameter[];
+		readonly function_type_fn_form?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
+	};
 	forLifetimes(): ForLifetimes | undefined;
 	parameters(): Parameters;
 	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
@@ -3860,6 +3911,9 @@ export interface FunctionType {
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
 	readonly _tuple_type_elements: TupleTypeElements;
+	readonly __looseHints__?: {
+		readonly tuple_type_elements: readonly _Type[];
+	};
 	tupleTypeElements(): TupleTypeElements;
 }
 
@@ -3867,6 +3921,9 @@ export interface GenericFunction {
 	readonly $type: TSKindId.GenericFunction;
 	readonly _function: Identifier | ScopedIdentifier | FieldExpression;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly TypeArgument[];
+	};
 	function(): Identifier | ScopedIdentifier | FieldExpression;
 	typeArguments(): TypeArguments;
 }
@@ -3875,6 +3932,9 @@ export interface GenericType {
 	readonly $type: TSKindId.GenericType;
 	readonly _type: Identifier | ScopedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly TypeArgument[];
+	};
 	type(): Identifier | ScopedTypeIdentifier;
 	typeArguments(): TypeArguments;
 }
@@ -3883,6 +3943,9 @@ export interface GenericTypeWithTurbofish {
 	readonly $type: TSKindId.GenericTypeWithTurbofish;
 	readonly _type: Identifier | ScopedIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly TypeArgument[];
+	};
 	type(): Identifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
 }
@@ -3904,6 +3967,9 @@ export interface UseBounds {
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
 	readonly _type_arguments_elements: TypeArgumentsElements;
+	readonly __looseHints__?: {
+		readonly type_arguments_elements: readonly TypeArgument[];
+	};
 	typeArgumentsElements(): TypeArgumentsElements;
 }
 
@@ -3912,6 +3978,9 @@ export interface TypeBinding {
 	readonly _name: Identifier;
 	readonly _type_arguments?: TypeArguments;
 	readonly _type: _Type;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly TypeArgument[];
+	};
 	name(): Identifier;
 	typeArguments(): TypeArguments | undefined;
 	type(): _Type;
@@ -3955,6 +4024,9 @@ export interface AbstractType {
 		| FunctionType
 		| TupleType
 		| BoundedType;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	trait(): Identifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
 }
@@ -4124,6 +4196,9 @@ export interface CallExpression {
 	readonly $type: TSKindId.CallExpression;
 	readonly _function: ExpressionExceptRange;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly arguments: readonly AttributedArgument[];
+	};
 	function(): ExpressionExceptRange;
 	arguments(): Arguments;
 }
@@ -4131,6 +4206,9 @@ export interface CallExpression {
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
 	readonly _arguments_elements?: ArgumentsElements;
+	readonly __looseHints__?: {
+		readonly arguments_elements?: readonly AttributedArgument[];
+	};
 	argumentsElements(): ArgumentsElements | undefined;
 }
 
@@ -4150,6 +4228,9 @@ export interface TupleExpression {
 	readonly $type: TSKindId.TupleExpression;
 	readonly _attributes?: readonly AttributeItem[];
 	readonly _tuple_expression_elements: TupleExpressionElements;
+	readonly __looseHints__?: {
+		readonly tuple_expression_elements: readonly Expression[];
+	};
 	attributes(): readonly AttributeItem[];
 	tupleExpressionElements(): TupleExpressionElements;
 }
@@ -4228,6 +4309,9 @@ export interface MatchExpression {
 	readonly $type: TSKindId.MatchExpression;
 	readonly _value: Expression;
 	readonly _body: MatchBlock;
+	readonly __looseHints__?: {
+		readonly body: readonly MatchArm[];
+	};
 	value(): Expression;
 	body(): MatchBlock;
 }
@@ -4431,6 +4515,9 @@ export interface GenericPattern {
 	readonly $type: TSKindId.GenericPattern;
 	readonly _content: Identifier | ScopedIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly TypeArgument[];
+	};
 	content(): Identifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
 }
@@ -4444,6 +4531,9 @@ export interface TuplePattern {
 export interface SlicePattern {
 	readonly $type: TSKindId.SlicePattern;
 	readonly _patterns?: Patterns;
+	readonly __looseHints__?: {
+		readonly patterns?: readonly Pattern[];
+	};
 	patterns(): Patterns | undefined;
 }
 
@@ -4451,6 +4541,9 @@ export interface TupleStructPattern {
 	readonly $type: TSKindId.TupleStructPattern;
 	readonly _type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
 	readonly _patterns?: Patterns;
+	readonly __looseHints__?: {
+		readonly patterns?: readonly Pattern[];
+	};
 	type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
 	patterns(): Patterns | undefined;
 }
@@ -4692,6 +4785,9 @@ export interface TypeArgumentsElements {
 export interface AbstractTypeOptional1 {
 	readonly $type: '_abstract_type_optional1';
 	readonly _type_parameters: TypeParameters;
+	readonly __looseHints__?: {
+		readonly type_parameters: readonly AttributedTypeParameter[];
+	};
 	typeParameters(): TypeParameters;
 }
 
@@ -4806,6 +4902,9 @@ export interface ReferenceExpressionRawMut {
 export interface ImplItemBody {
 	readonly $type: TSKindId.ImplItemBody;
 	readonly _declaration_list: DeclarationList;
+	readonly __looseHints__?: {
+		readonly declaration_list: readonly DeclarationStatement[];
+	};
 	declarationList(): DeclarationList;
 }
 
@@ -4833,6 +4932,9 @@ export interface ArrayExpressionList {
 	readonly $type: TSKindId.ArrayExpressionList;
 	readonly _attributes?: readonly AttributeItem[];
 	readonly _arguments_elements?: ArgumentsElements;
+	readonly __looseHints__?: {
+		readonly arguments_elements?: readonly AttributedArgument[];
+	};
 	attributes(): readonly AttributeItem[];
 	argumentsElements(): ArgumentsElements | undefined;
 }
@@ -4868,24 +4970,36 @@ export interface FunctionTypeTraitForm {
 export interface FunctionTypeFnForm {
 	readonly $type: TSKindId.FunctionTypeFnForm;
 	readonly _function_modifiers?: FunctionModifiers;
+	readonly __looseHints__?: {
+		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
+	};
 	functionModifiers(): FunctionModifiers | undefined;
 }
 
 export interface MacroDefinitionParen {
 	readonly $type: TSKindId.MacroDefinitionParen;
 	readonly _macro_rules?: MacroRules;
+	readonly __looseHints__?: {
+		readonly macro_rules?: readonly MacroRule[];
+	};
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBracket {
 	readonly $type: TSKindId.MacroDefinitionBracket;
 	readonly _macro_rules?: MacroRules;
+	readonly __looseHints__?: {
+		readonly macro_rules?: readonly MacroRule[];
+	};
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBrace {
 	readonly $type: TSKindId.MacroDefinitionBrace;
 	readonly _macro_rules?: MacroRules;
+	readonly __looseHints__?: {
+		readonly macro_rules?: readonly MacroRule[];
+	};
 	macroRules(): MacroRules | undefined;
 }
 
@@ -4955,7 +5069,8 @@ export interface StructItemBrace {
 	readonly _where_clause?: WhereClause;
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
-		readonly where_clause?: WhereClause | 'where';
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+		readonly body: readonly AttributedFieldDeclaration[];
 	};
 	whereClause(): WhereClause | undefined;
 	body(): FieldDeclarationList;
@@ -4966,7 +5081,7 @@ export interface StructItemTuple {
 	readonly _body: OrderedFieldDeclarationList;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
-		readonly where_clause?: WhereClause | 'where';
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	body(): OrderedFieldDeclarationList;
 	whereClause(): WhereClause | undefined;

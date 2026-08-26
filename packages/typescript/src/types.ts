@@ -2989,6 +2989,9 @@ export interface NamespaceExport {
 export interface ExportClause {
 	readonly $type: TSKindId.ExportClause;
 	readonly _export_specifiers?: ExportSpecifiers;
+	readonly __looseHints__?: {
+		readonly export_specifiers?: readonly ExportSpecifier[];
+	};
 	exportSpecifiers(): ExportSpecifiers | undefined;
 }
 
@@ -3042,6 +3045,9 @@ export interface NamespaceImport {
 export interface NamedImports {
 	readonly $type: TSKindId.NamedImports;
 	readonly _import_specifiers?: ImportSpecifiers;
+	readonly __looseHints__?: {
+		readonly import_specifiers?: readonly ImportSpecifier[];
+	};
 	importSpecifiers(): ImportSpecifiers | undefined;
 }
 
@@ -3468,6 +3474,9 @@ export interface Class {
 	readonly _type_parameters?: TypeParameters;
 	readonly _class_heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+	};
 	decorators(): readonly Decorator[];
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -3485,6 +3494,9 @@ export interface ClassDeclaration {
 	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
 		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
+	};
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
@@ -3513,6 +3525,8 @@ export interface FunctionExpression {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -3537,6 +3551,8 @@ export interface FunctionDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -3560,6 +3576,8 @@ export interface GeneratorFunction {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -3584,6 +3602,8 @@ export interface GeneratorFunctionDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -3615,6 +3635,10 @@ export interface _CallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -3631,6 +3655,9 @@ export interface NewExpression {
 	readonly _constructor: PrimaryExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments?: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	constructor_(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments | undefined;
@@ -3884,6 +3911,9 @@ export interface DecoratorCallExpression {
 	readonly _function: Identifier | DecoratorMemberExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	function(): Identifier | DecoratorMemberExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -3916,6 +3946,9 @@ export interface FieldDefinition {
 export interface FormalParameters {
 	readonly $type: TSKindId.FormalParameters;
 	readonly _formal_parameters_elements?: FormalParametersElements;
+	readonly __looseHints__?: {
+		readonly formal_parameters_elements?: readonly FormalParameter[];
+	};
 	formalParametersElements(): FormalParametersElements | undefined;
 }
 
@@ -3967,6 +4000,8 @@ export interface MethodDefinition {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -4094,6 +4129,8 @@ export interface MethodSignature {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -4129,6 +4166,8 @@ export interface AbstractMethodSignature {
 	};
 	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	accessibilityModifier(): number | undefined;
 	overrideModifier(): boolean | undefined;
@@ -4157,6 +4196,8 @@ export interface FunctionSignature {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4176,6 +4217,9 @@ export interface TypeAssertion {
 	readonly $type: TSKindId.TypeAssertion;
 	readonly _type_arguments: TypeArguments;
 	readonly _expression: Expression;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	typeArguments(): TypeArguments;
 	expression(): Expression;
 }
@@ -4200,6 +4244,9 @@ export interface InstantiationExpression {
 	readonly $type: TSKindId.InstantiationExpression;
 	readonly _expression: Expression;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	expression(): Expression;
 	typeArguments(): TypeArguments;
 }
@@ -4222,6 +4269,9 @@ export interface ExtendsClauseSingle {
 	readonly $type: TSKindId.ExtendsClauseSingle;
 	readonly _value: Expression;
 	readonly _type_arguments?: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	value(): Expression;
 	typeArguments(): TypeArguments | undefined;
 }
@@ -4245,6 +4295,9 @@ export interface AbstractClassDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _class_heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4303,6 +4356,9 @@ export interface InterfaceDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _extends_type_clause?: ExtendsTypeClause;
 	readonly _body: ObjectType;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	extendsTypeClause(): ExtendsTypeClause | undefined;
@@ -4353,6 +4409,9 @@ export interface TypeAliasDeclaration {
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4540,6 +4599,8 @@ export interface ConstructorType {
 	};
 	readonly __looseHints__?: {
 		readonly abstract_marker?: 'abstract' | 'abstract';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -4583,6 +4644,9 @@ export interface GenericType {
 	readonly $type: TSKindId.GenericType;
 	readonly _name: Identifier | NestedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	name(): Identifier | NestedTypeIdentifier;
 	typeArguments(): TypeArguments;
 }
@@ -4644,6 +4708,9 @@ export interface TypeQueryInstantiationExpression {
 	readonly $type: TSKindId.TypeQueryInstantiationExpression;
 	readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	function(): Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	typeArguments(): TypeArguments;
 }
@@ -4722,6 +4789,9 @@ export interface ParenthesizedType {
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
 	readonly _types: Types;
+	readonly __looseHints__?: {
+		readonly types: readonly Type[];
+	};
 	types(): Types;
 }
 
@@ -4744,6 +4814,10 @@ export interface CallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -4785,6 +4859,9 @@ export interface PropertySignature {
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
 	readonly _type_parameters_elements: TypeParametersElements;
+	readonly __looseHints__?: {
+		readonly type_parameters_elements: readonly TypeParameter[];
+	};
 	typeParametersElements(): TypeParametersElements;
 }
 
@@ -4834,6 +4911,8 @@ export interface ConstructSignature {
 	};
 	readonly __looseHints__?: {
 		readonly abstract_marker?: 'abstract' | 'abstract';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -4869,6 +4948,9 @@ export interface ArrayType {
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
 	readonly _tuple_type_members?: TupleTypeMembers;
+	readonly __looseHints__?: {
+		readonly tuple_type_members?: readonly TupleTypeMember[];
+	};
 	tupleTypeMembers(): TupleTypeMembers | undefined;
 }
 
@@ -4899,6 +4981,10 @@ export interface FunctionType {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type: Type | Asserts | TypePredicate;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): Type | Asserts | TypePredicate;
@@ -5025,6 +5111,9 @@ export interface JsxStartOpeningElementArm {
 	readonly $type: '_jsx_start_opening_element_arm';
 	readonly _name: Identifier | NestedIdentifier;
 	readonly _type_arguments?: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	name(): Identifier | NestedIdentifier;
 	typeArguments(): TypeArguments | undefined;
 }
@@ -5085,6 +5174,10 @@ export interface ArrowFunctionUCallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -5094,6 +5187,10 @@ export interface ClassHeritageExtendsClause {
 	readonly $type: TSKindId.ClassHeritageExtendsClause;
 	readonly _extends_clause: ExtendsClause;
 	readonly _implements_clause?: ImplementsClause;
+	readonly __looseHints__?: {
+		readonly extends_clause: readonly ExtendsClauseSingle[];
+		readonly implements_clause?: readonly Type[];
+	};
 	extendsClause(): ExtendsClause;
 	implementsClause(): ImplementsClause | undefined;
 }
@@ -5159,6 +5256,9 @@ export interface ExportStatementDefaultNsFrom {
 	readonly $type: TSKindId.ExportStatementDefaultNsFrom;
 	readonly _namespace_export: NamespaceExport;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly namespace_export: readonly ModuleExportName[];
+	};
 	namespaceExport(): NamespaceExport;
 	source(): String;
 }
@@ -5167,6 +5267,9 @@ export interface ExportStatementDefaultClauseFrom {
 	readonly $type: TSKindId.ExportStatementDefaultClauseFrom;
 	readonly _export_clause: ExportClause;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly export_clause: readonly ExportSpecifier[];
+	};
 	exportClause(): ExportClause;
 	source(): String;
 }
@@ -5267,6 +5370,9 @@ export interface ExportStatementTypeExport {
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __looseHints__?: {
+		readonly export_clause: readonly ExportSpecifier[];
+	};
 	exportClause(): ExportClause;
 	source(): String | undefined;
 	semicolon(): number;
@@ -5299,6 +5405,9 @@ export interface CallExpressionCall {
 	readonly _function: Expression | Import;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	function(): Expression | Import;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -5317,6 +5426,9 @@ export interface CallExpressionMember {
 	readonly _function: PrimaryExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	function(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
