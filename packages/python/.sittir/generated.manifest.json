@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "eaeab70270a807f91d3362067843a127302fb92dfb125d175b82746d8cc54589",
+  "source_hash": "8c2005c2007fac332dffc6815892bace44b91914729c9cc5724463fa05a1b7bd",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "d79d1e03183e49f956d11ea1efd02bbb7543378633526c23ad30d864214b279f",
@@ -20,7 +20,7 @@
     "packages/python/src/boundary.ts": "e1d744671e680ea737c42b1dc3376c94822b08f149174168db7c5c9588a1ad53",
     "packages/python/src/consts.ts": "c238bd4517c5392b019ee0bf06573fdfb93f5508d5c92f28717293eb83da4d67",
     "packages/python/src/engine.ts": "02d8b1a39342e7fc3e30663f618bce68186e0301f6c235948c7ba195bd79b90a",
-    "packages/python/src/factories.ts": "0a990f12e77d14eb21730c7f5cba8e1a01feb220bb1a0a958d23e6daaab94471",
+    "packages/python/src/factories.ts": "b304934dd3d07bf217522dcf23bd967c1c69f341a7badfe6fa6672977441d9f5",
     "packages/python/src/from.ts": "7c5e642b2752106623b942cccb824ee4d009007b2986cf4d1e95cc4988f9d839",
     "packages/python/src/grammar.ts": "657f2e48204edaca177cb96fa7e9a8cbd98ec937571241352eba582546197158",
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
@@ -31,7 +31,7 @@
     "packages/python/src/render-engine.ts": "26a7ef9d8ee696e8105d661478e64388c0b681ca62c0708d5d69466d979110fe",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",
     "packages/python/src/types.ts": "2a5fb6f9b8f6cee004b42541a5bb676a27fbad2761cc85795a08668632c09293",
-    "packages/python/src/utils.ts": "711eb3a09d8f24159cc6bff83f1f261c0f5ccb600bebd33247463812452fc64a",
+    "packages/python/src/utils.ts": "d519b5c8d01399622b5418c38c127cfbf2d11e5e2e45b5db0290e931e39459cf",
     "packages/python/src/wrap.ts": "e0cd26bf0a9a84b47e94c765ff8cb19f290314dc8f09c2dab5f3e9df04fb18c3",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_argument_list_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",

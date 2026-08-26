@@ -1969,12 +1969,17 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			' *  union is derived from the grammar trivia roles — the same derivation',
 			" *  behind utils.ts' withMethods signature — so this alias tail and the",
 			' *  runtime surface never diverge. */',
-			'type _NodeMethods = {',
+			'// An INTERFACE, not a type alias: `$trivia` rebuilds the node and',
+			'// hands back the same kind, which the polymorphic `this` states —',
+			'// and `this` is only available in an interface. Declaring',
+			"// `AnyNodeData` instead threw the kind away and made `$render`",
+			'// optional on everything downstream of a `$trivia` call.',
+			'interface _NodeMethods {',
 			'  $render(): string;',
 			'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 			'  $replace(target: { range(): ByteRange }): Edit;',
-			`  $trivia(...args: ${triviaParamType}[]): AnyNodeData;`,
-			'};',
+			`  $trivia(...args: ${triviaParamType}[]): this;`,
+			'}',
 			''
 		);
 		lines.push(...emitNonEmptyAssertHelper());
