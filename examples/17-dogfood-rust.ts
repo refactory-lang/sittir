@@ -103,8 +103,8 @@ export function spliceErrorEnum() {
 					// ordered_field_declaration_list`) takes no array through the
 					// coercer; only the strict variadic list builder does.
 					body: ir.fieldDeclarationList.strict(
-						ir.fieldDeclaration({ name: 'start', type: ir.synonym.type('u32') }),
-						ir.fieldDeclaration({ name: 'end', type: ir.synonym.type('u32') })
+						ir.fieldDeclaration({ name: 'start', type: 'u32' }),
+						ir.fieldDeclaration({ name: 'end', type: 'u32' })
 					),
 				})
 				.$trivia({ leading: [ir.lineComment.doc({ outer: true, doc: ' `end_pos < start_pos` — the edit range is reversed.' })] }),
@@ -112,8 +112,8 @@ export function spliceErrorEnum() {
 				.enumVariant({
 					name: 'OutOfBounds',
 					body: ir.fieldDeclarationList.strict(
-						ir.fieldDeclaration({ name: 'end', type: ir.synonym.type('u32') }),
-						ir.fieldDeclaration({ name: 'source_len', type: ir.synonym.type('usize') })
+						ir.fieldDeclaration({ name: 'end', type: 'u32' }),
+						ir.fieldDeclaration({ name: 'source_len', type: 'usize' })
 					),
 				})
 				.$trivia({ leading: [ir.lineComment.doc({ outer: true, doc: ' `end_pos > source.len()` — edit reaches past end of source.' })] }),
@@ -121,8 +121,8 @@ export function spliceErrorEnum() {
 				.enumVariant({
 					name: 'NonCharBoundary',
 					body: ir.fieldDeclarationList.strict(
-						ir.fieldDeclaration({ name: 'start', type: ir.synonym.type('u32') }),
-						ir.fieldDeclaration({ name: 'end', type: ir.synonym.type('u32') })
+						ir.fieldDeclaration({ name: 'start', type: 'u32' }),
+						ir.fieldDeclaration({ name: 'end', type: 'u32' })
 					),
 				})
 				.$trivia({ leading: [ir.lineComment.doc({ outer: true, doc: " `start_pos` or `end_pos` isn't a UTF-8 char boundary." })] })
@@ -239,20 +239,20 @@ export function applyEditsFn() {
 			visibilityModifier: 'pub',
 			name: 'apply_edits',
 			parameters: ir.parameters.strict(
-				ir.parameter({ name: 'source', type: ir.referenceType({ type: ir.synonym.type('str') }) }),
+				ir.parameter({ name: 'source', type: ir.referenceType({ type: 'str' }) }),
 				// GAP B: `mut edits: Vec<Edit>` — `parameter.mutableSpecifier` takes the
 				// boolean, but the pattern slot has no loose form that keeps the `mut`
 				// next to the name.
 				ir.parameter({
 					mutableSpecifier: true,
 					name: 'edits',
-					type: { kind: 'generic_type', type: 'Vec', typeArguments: [ir.synonym.type('Edit')] },
+					type: { kind: 'generic_type', type: 'Vec', typeArguments: ['Edit'] },
 				})
 			),
 			returnType: {
 				kind: 'generic_type',
 				type: 'Result',
-				typeArguments: [ir.synonym.type('String'), ir.synonym.type('SpliceError')],
+				typeArguments: ['String', 'SpliceError'],
 			},
 			body: ir.block.strict({
 				statements: [
