@@ -1135,16 +1135,13 @@ function emitInlineWithProperty(
 	// `$with` path above and keep their `$text`, which is their only content.
 	const spreadData = '...$edited(data)';
 
-	// A setter routes its value through the field's exported resolver, so a
-	// `$with` update accepts exactly what `coerceTo<Kind>` accepts and the two
-	// surfaces cannot drift. `emitsFieldResolvers` is the single gate on
-	// whether this kind's from-emitter declared any, and the field set is read
-	// off the assembled node so it is the same list the from-emitter walked.
-	const assembled = nodeMap.nodes.get(node.kind);
-	const resolverFor = new Set<string>();
-	if (assembled !== undefined && emitsFieldResolvers(node.kind, assembled, { nodeMap, kindEntries })) {
-		for (const field of configurableFactoryFields(assembled.fields, nodeMap)) resolverFor.add(field.propertyName);
-	}
+	// A SETTER DOES NOT COERCE. It takes the slot's own type and stores it.
+	// Coercion belongs to construction: a caller who wants it reaches for the
+	// constructor that does it — `node.$with.name(ir.identifier('run'))` — which
+	// is one composition longer and says exactly what it converts. Routing the
+	// setter through the field resolver instead would make the same key mean
+	// different things on a built node and a parsed one, which is the drift
+	// this rule exists to prevent.
 
 	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
@@ -1178,30 +1175,13 @@ function emitInlineWithProperty(
 		const method = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-			// A repeated field keeps its rest-parameter calling convention, but
-			// the ELEMENT type comes from the loose config rather than storage
-			// when a resolver exists: the setter collects the rest args into the
-			// array the resolver already accepts, so `$with` and `coerceTo` take
-			// the same input.
-			const hasResolver = resolverFor.has(f.propertyName);
-			// The loose config for a repeated field is a UNION of the array
-			// forms and the single-value ones it also accepts, so it cannot be
-			// indexed directly. `Extract` narrows to the array arms first; their
-			// element types are what the rest parameter collects.
-			const setterValueType = hasResolver
-				? `Extract<NonNullable<T.${node.typeName}.LooseConfig[${JSON.stringify(f.configKey)}]>, readonly unknown[]>[number]`
-				: `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
+			// A repeated field keeps its rest-parameter calling convention; the
+			// element type is the storage element, since the setter stores what
+			// it is given.
+			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
-			const value = hasResolver ? `FR.${fieldResolverName(node.typeName, f)}(v)` : 'v';
-			lines.push(
-				`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: ${value} }, tree),`
-			);
-		} else if (resolverFor.has(f.propertyName)) {
-			const looseType = `T.${node.typeName}.LooseConfig[${JSON.stringify(f.configKey)}]`;
-			lines.push(
-				`      ${method}: (v: ${looseType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: FR.${fieldResolverName(node.typeName, f)}(v) }, tree),`
-			);
+			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
 		} else {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);

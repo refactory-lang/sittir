@@ -10,7 +10,6 @@ import { TSKindId, KIND_NAMES } from './types.js';
 import { Delimiter } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
-import * as FR from './from.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the
@@ -912,8 +911,8 @@ export function wrapImportStatement(data: T.ImportStatement & { readonly _names?
 				return drillIn<T.ImportList>(this._import_list, tree);
 			},
 			$with: {
-				importList: (v: T.ImportStatement.LooseConfig['importList']) =>
-					wrapImportStatement({ ...$edited(data), _import_list: FR.resolveImportStatement_importList(v) }, tree)
+				importList: (v: NonNullable<T.ImportStatement['_import_list']>) =>
+					wrapImportStatement({ ...$edited(data), _import_list: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -946,10 +945,10 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle) {
 				return drillIn<T.DottedName | undefined>(this._dotted_name, tree);
 			},
 			$with: {
-				importPrefix: (v: T.RelativeImport.LooseConfig['importPrefix']) =>
-					wrapRelativeImport({ ...$edited(data), _import_prefix: FR.resolveRelativeImport_importPrefix(v) }, tree),
-				dottedName: (v: T.RelativeImport.LooseConfig['dottedName']) =>
-					wrapRelativeImport({ ...$edited(data), _dotted_name: FR.resolveRelativeImport_dottedName(v) }, tree)
+				importPrefix: (v: NonNullable<T.RelativeImport['_import_prefix']>) =>
+					wrapRelativeImport({ ...$edited(data), _import_prefix: v }, tree),
+				dottedName: (v: NonNullable<T.RelativeImport['_dotted_name']>) =>
+					wrapRelativeImport({ ...$edited(data), _dotted_name: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -980,8 +979,8 @@ export function wrapFutureImportStatement(
 				return drillIn<T.ImportList | T.FutureImportStatementArm>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.FutureImportStatement.LooseConfig['content']) =>
-					wrapFutureImportStatement({ ...$edited(data), _content: FR.resolveFutureImportStatement_content(v) }, tree)
+				content: (v: NonNullable<T.FutureImportStatement['_content']>) =>
+					wrapFutureImportStatement({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1022,13 +1021,10 @@ export function wrapImportFromStatement(
 				return drillIn<T.ImportList | T.FutureImportStatementArm | T.WildcardImport>(this._content, tree);
 			},
 			$with: {
-				moduleName: (v: T.ImportFromStatement.LooseConfig['moduleName']) =>
-					wrapImportFromStatement(
-						{ ...$edited(data), _module_name: FR.resolveImportFromStatement_moduleName(v) },
-						tree
-					),
-				content: (v: T.ImportFromStatement.LooseConfig['content']) =>
-					wrapImportFromStatement({ ...$edited(data), _content: FR.resolveImportFromStatement_content(v) }, tree)
+				moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
+					wrapImportFromStatement({ ...$edited(data), _module_name: v }, tree),
+				content: (v: NonNullable<T.ImportFromStatement['_content']>) =>
+					wrapImportFromStatement({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1092,10 +1088,8 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._alias, tree);
 			},
 			$with: {
-				name: (v: T.AliasedImport.LooseConfig['name']) =>
-					wrapAliasedImport({ ...$edited(data), _name: FR.resolveAliasedImport_name(v) }, tree),
-				alias: (v: T.AliasedImport.LooseConfig['alias']) =>
-					wrapAliasedImport({ ...$edited(data), _alias: FR.resolveAliasedImport_alias(v) }, tree)
+				name: (v: NonNullable<T.AliasedImport['_name']>) => wrapAliasedImport({ ...$edited(data), _name: v }, tree),
+				alias: (v: NonNullable<T.AliasedImport['_alias']>) => wrapAliasedImport({ ...$edited(data), _alias: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1126,8 +1120,8 @@ export function wrapPrintStatement(
 				return drillIn<T.PrintStatementArm1 | T.PrintStatementArm2>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.PrintStatement.LooseConfig['content']) =>
-					wrapPrintStatement({ ...$edited(data), _content: FR.resolvePrintStatement_content(v) }, tree)
+				content: (v: NonNullable<T.PrintStatement['_content']>) =>
+					wrapPrintStatement({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1151,8 +1145,8 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			$with: {
-				expression: (v: T.Chevron.LooseConfig['expression']) =>
-					wrapChevron({ ...$edited(data), _expression: FR.resolveChevron_expression(v) }, tree)
+				expression: (v: NonNullable<T.Chevron['_expression']>) =>
+					wrapChevron({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1429,8 +1423,8 @@ export function wrapExpressionStatement(
 				);
 			},
 			$with: {
-				content: (v: T.ExpressionStatement.LooseConfig['content']) =>
-					wrapExpressionStatement({ ...$edited(data), _content: FR.resolveExpressionStatement_content(v) }, tree)
+				content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
+					wrapExpressionStatement({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1463,10 +1457,9 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				name: (v: T.NamedExpression.LooseConfig['name']) =>
-					wrapNamedExpression({ ...$edited(data), _name: FR.resolveNamedExpression_name(v) }, tree),
-				value: (v: T.NamedExpression.LooseConfig['value']) =>
-					wrapNamedExpression({ ...$edited(data), _value: FR.resolveNamedExpression_value(v) }, tree)
+				name: (v: NonNullable<T.NamedExpression['_name']>) => wrapNamedExpression({ ...$edited(data), _name: v }, tree),
+				value: (v: NonNullable<T.NamedExpression['_value']>) =>
+					wrapNamedExpression({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1618,8 +1611,8 @@ export function wrapReturnStatement(
 				return drillIn<T.Expressions | undefined>(this._expressions, tree);
 			},
 			$with: {
-				expressions: (v: T.ReturnStatement.LooseConfig['expressions']) =>
-					wrapReturnStatement({ ...$edited(data), _expressions: FR.resolveReturnStatement_expressions(v) }, tree)
+				expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) =>
+					wrapReturnStatement({ ...$edited(data), _expressions: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1748,8 +1741,8 @@ export function wrapDeleteStatement(
 				return drillIn<T.Expressions>(this._expressions, tree);
 			},
 			$with: {
-				expressions: (v: T.DeleteStatement.LooseConfig['expressions']) =>
-					wrapDeleteStatement({ ...$edited(data), _expressions: FR.resolveDeleteStatement_expressions(v) }, tree)
+				expressions: (v: NonNullable<T.DeleteStatement['_expressions']>) =>
+					wrapDeleteStatement({ ...$edited(data), _expressions: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1887,10 +1880,9 @@ export function wrapRaiseStatement(
 				return drillIn<T.Expression | undefined>(this._cause, tree);
 			},
 			$with: {
-				expressions: (v: T.RaiseStatement.LooseConfig['expressions']) =>
-					wrapRaiseStatement({ ...$edited(data), _expressions: FR.resolveRaiseStatement_expressions(v) }, tree),
-				cause: (v: T.RaiseStatement.LooseConfig['cause']) =>
-					wrapRaiseStatement({ ...$edited(data), _cause: FR.resolveRaiseStatement_cause(v) }, tree)
+				expressions: (v: NonNullable<T.RaiseStatement['_expressions']>) =>
+					wrapRaiseStatement({ ...$edited(data), _expressions: v }, tree),
+				cause: (v: NonNullable<T.RaiseStatement['_cause']>) => wrapRaiseStatement({ ...$edited(data), _cause: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1936,13 +1928,12 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 				);
 			},
 			$with: {
-				condition: (v: T.IfStatement.LooseConfig['condition']) =>
-					wrapIfStatement({ ...$edited(data), _condition: FR.resolveIfStatement_condition(v) }, tree),
-				consequence: (v: T.IfStatement.LooseConfig['consequence']) =>
-					wrapIfStatement({ ...$edited(data), _consequence: FR.resolveIfStatement_consequence(v) }, tree),
-				alternatives: (
-					...v: Extract<NonNullable<T.IfStatement.LooseConfig['alternative']>, readonly unknown[]>[number][]
-				) => wrapIfStatement({ ...$edited(data), _alternative: FR.resolveIfStatement_alternatives(v) }, tree)
+				condition: (v: NonNullable<T.IfStatement['_condition']>) =>
+					wrapIfStatement({ ...$edited(data), _condition: v }, tree),
+				consequence: (v: NonNullable<T.IfStatement['_consequence']>) =>
+					wrapIfStatement({ ...$edited(data), _consequence: v }, tree),
+				alternatives: (...v: NonNullable<T.IfStatement['_alternative']>[number][]) =>
+					wrapIfStatement({ ...$edited(data), _alternative: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1976,10 +1967,10 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
 			},
 			$with: {
-				condition: (v: T.ElifClause.LooseConfig['condition']) =>
-					wrapElifClause({ ...$edited(data), _condition: FR.resolveElifClause_condition(v) }, tree),
-				consequence: (v: T.ElifClause.LooseConfig['consequence']) =>
-					wrapElifClause({ ...$edited(data), _consequence: FR.resolveElifClause_consequence(v) }, tree)
+				condition: (v: NonNullable<T.ElifClause['_condition']>) =>
+					wrapElifClause({ ...$edited(data), _condition: v }, tree),
+				consequence: (v: NonNullable<T.ElifClause['_consequence']>) =>
+					wrapElifClause({ ...$edited(data), _consequence: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2004,8 +1995,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			$with: {
-				body: (v: T.ElseClause.LooseConfig['body']) =>
-					wrapElseClause({ ...$edited(data), _body: FR.resolveElseClause_body(v) }, tree)
+				body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2038,10 +2028,9 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
 				return drillIn<T.MatchBlock>(this._body, tree);
 			},
 			$with: {
-				subjects: (v: T.MatchStatement.LooseConfig['subjects']) =>
-					wrapMatchStatement({ ...$edited(data), _subjects: FR.resolveMatchStatement_subjects(v) }, tree),
-				body: (v: T.MatchStatement.LooseConfig['body']) =>
-					wrapMatchStatement({ ...$edited(data), _body: FR.resolveMatchStatement_body(v) }, tree)
+				subjects: (v: NonNullable<T.MatchStatement['_subjects']>) =>
+					wrapMatchStatement({ ...$edited(data), _subjects: v }, tree),
+				body: (v: NonNullable<T.MatchStatement['_body']>) => wrapMatchStatement({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2116,12 +2105,11 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
 			},
 			$with: {
-				casePatterns: (v: T.CaseClause.LooseConfig['casePatterns']) =>
-					wrapCaseClause({ ...$edited(data), _case_patterns: FR.resolveCaseClause_casePatterns(v) }, tree),
-				guard: (v: T.CaseClause.LooseConfig['guard']) =>
-					wrapCaseClause({ ...$edited(data), _guard: FR.resolveCaseClause_guard(v) }, tree),
-				consequence: (v: T.CaseClause.LooseConfig['consequence']) =>
-					wrapCaseClause({ ...$edited(data), _consequence: FR.resolveCaseClause_consequence(v) }, tree)
+				casePatterns: (v: NonNullable<T.CaseClause['_case_patterns']>) =>
+					wrapCaseClause({ ...$edited(data), _case_patterns: v }, tree),
+				guard: (v: NonNullable<T.CaseClause['_guard']>) => wrapCaseClause({ ...$edited(data), _guard: v }, tree),
+				consequence: (v: NonNullable<T.CaseClause['_consequence']>) =>
+					wrapCaseClause({ ...$edited(data), _consequence: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2186,14 +2174,11 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 			$with: {
 				asyncMarker: (v: NonNullable<T.ForStatement['_async_marker']>) =>
 					wrapForStatement({ ...$edited(data), _async_marker: v }, tree),
-				left: (v: T.ForStatement.LooseConfig['left']) =>
-					wrapForStatement({ ...$edited(data), _left: FR.resolveForStatement_left(v) }, tree),
-				right: (v: T.ForStatement.LooseConfig['right']) =>
-					wrapForStatement({ ...$edited(data), _right: FR.resolveForStatement_right(v) }, tree),
-				body: (v: T.ForStatement.LooseConfig['body']) =>
-					wrapForStatement({ ...$edited(data), _body: FR.resolveForStatement_body(v) }, tree),
-				alternative: (v: T.ForStatement.LooseConfig['alternative']) =>
-					wrapForStatement({ ...$edited(data), _alternative: FR.resolveForStatement_alternative(v) }, tree)
+				left: (v: NonNullable<T.ForStatement['_left']>) => wrapForStatement({ ...$edited(data), _left: v }, tree),
+				right: (v: NonNullable<T.ForStatement['_right']>) => wrapForStatement({ ...$edited(data), _right: v }, tree),
+				body: (v: NonNullable<T.ForStatement['_body']>) => wrapForStatement({ ...$edited(data), _body: v }, tree),
+				alternative: (v: NonNullable<T.ForStatement['_alternative']>) =>
+					wrapForStatement({ ...$edited(data), _alternative: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2237,12 +2222,11 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 				return drillIn<T.ElseClause | undefined>(this._alternative, tree);
 			},
 			$with: {
-				condition: (v: T.WhileStatement.LooseConfig['condition']) =>
-					wrapWhileStatement({ ...$edited(data), _condition: FR.resolveWhileStatement_condition(v) }, tree),
-				body: (v: T.WhileStatement.LooseConfig['body']) =>
-					wrapWhileStatement({ ...$edited(data), _body: FR.resolveWhileStatement_body(v) }, tree),
-				alternative: (v: T.WhileStatement.LooseConfig['alternative']) =>
-					wrapWhileStatement({ ...$edited(data), _alternative: FR.resolveWhileStatement_alternative(v) }, tree)
+				condition: (v: NonNullable<T.WhileStatement['_condition']>) =>
+					wrapWhileStatement({ ...$edited(data), _condition: v }, tree),
+				body: (v: NonNullable<T.WhileStatement['_body']>) => wrapWhileStatement({ ...$edited(data), _body: v }, tree),
+				alternative: (v: NonNullable<T.WhileStatement['_alternative']>) =>
+					wrapWhileStatement({ ...$edited(data), _alternative: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2294,15 +2278,13 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 				return drillIn<T.FinallyClause | undefined>(this._finally_clause, tree);
 			},
 			$with: {
-				body: (v: T.TryStatement.LooseConfig['body']) =>
-					wrapTryStatement({ ...$edited(data), _body: FR.resolveTryStatement_body(v) }, tree),
-				exceptClauses: (
-					...v: Extract<NonNullable<T.TryStatement.LooseConfig['exceptClauses']>, readonly unknown[]>[number][]
-				) => wrapTryStatement({ ...$edited(data), _except_clauses: FR.resolveTryStatement_exceptClauses(v) }, tree),
-				elseClause: (v: T.TryStatement.LooseConfig['elseClause']) =>
-					wrapTryStatement({ ...$edited(data), _else_clause: FR.resolveTryStatement_elseClause(v) }, tree),
-				finallyClause: (v: T.TryStatement.LooseConfig['finallyClause']) =>
-					wrapTryStatement({ ...$edited(data), _finally_clause: FR.resolveTryStatement_finallyClause(v) }, tree)
+				body: (v: NonNullable<T.TryStatement['_body']>) => wrapTryStatement({ ...$edited(data), _body: v }, tree),
+				exceptClauses: (...v: NonNullable<T.TryStatement['_except_clauses']>[number][]) =>
+					wrapTryStatement({ ...$edited(data), _except_clauses: v }, tree),
+				elseClause: (v: NonNullable<T.TryStatement['_else_clause']>) =>
+					wrapTryStatement({ ...$edited(data), _else_clause: v }, tree),
+				finallyClause: (v: NonNullable<T.TryStatement['_finally_clause']>) =>
+					wrapTryStatement({ ...$edited(data), _finally_clause: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2357,10 +2339,10 @@ export function wrapExceptClause(
 			$with: {
 				starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
 					wrapExceptClause({ ...$edited(data), _star_marker: v }, tree),
-				exceptClauseArm: (v: T.ExceptClause.LooseConfig['exceptClauseArm']) =>
-					wrapExceptClause({ ...$edited(data), _except_clause_arm: FR.resolveExceptClause_exceptClauseArm(v) }, tree),
-				content: (v: T.ExceptClause.LooseConfig['content']) =>
-					wrapExceptClause({ ...$edited(data), _content: FR.resolveExceptClause_content(v) }, tree)
+				exceptClauseArm: (v: NonNullable<T.ExceptClause['_except_clause_arm']>) =>
+					wrapExceptClause({ ...$edited(data), _except_clause_arm: v }, tree),
+				content: (v: NonNullable<T.ExceptClause['_content']>) =>
+					wrapExceptClause({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2385,8 +2367,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._block, tree);
 			},
 			$with: {
-				block: (v: T.FinallyClause.LooseConfig['block']) =>
-					wrapFinallyClause({ ...$edited(data), _block: FR.resolveFinallyClause_block(v) }, tree)
+				block: (v: NonNullable<T.FinallyClause['_block']>) => wrapFinallyClause({ ...$edited(data), _block: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2433,10 +2414,9 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 			$with: {
 				asyncMarker: (v: NonNullable<T.WithStatement['_async_marker']>) =>
 					wrapWithStatement({ ...$edited(data), _async_marker: v }, tree),
-				withClause: (v: T.WithStatement.LooseConfig['withClause']) =>
-					wrapWithStatement({ ...$edited(data), _with_clause: FR.resolveWithStatement_withClause(v) }, tree),
-				body: (v: T.WithStatement.LooseConfig['body']) =>
-					wrapWithStatement({ ...$edited(data), _body: FR.resolveWithStatement_body(v) }, tree)
+				withClause: (v: NonNullable<T.WithStatement['_with_clause']>) =>
+					wrapWithStatement({ ...$edited(data), _with_clause: v }, tree),
+				body: (v: NonNullable<T.WithStatement['_body']>) => wrapWithStatement({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2467,8 +2447,7 @@ export function wrapWithClause(
 				return drillIn<T.WithClauseBare | T.WithClauseParen>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.WithClause.LooseConfig['content']) =>
-					wrapWithClause({ ...$edited(data), _content: FR.resolveWithClause_content(v) }, tree)
+				content: (v: NonNullable<T.WithClause['_content']>) => wrapWithClause({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2492,8 +2471,7 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				value: (v: T.WithItem.LooseConfig['value']) =>
-					wrapWithItem({ ...$edited(data), _value: FR.resolveWithItem_value(v) }, tree)
+				value: (v: NonNullable<T.WithItem['_value']>) => wrapWithItem({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2568,19 +2546,16 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 			$with: {
 				asyncMarker: (v: NonNullable<T.FunctionDefinition['_async_marker']>) =>
 					wrapFunctionDefinition({ ...$edited(data), _async_marker: v }, tree),
-				name: (v: T.FunctionDefinition.LooseConfig['name']) =>
-					wrapFunctionDefinition({ ...$edited(data), _name: FR.resolveFunctionDefinition_name(v) }, tree),
-				typeParameters: (v: T.FunctionDefinition.LooseConfig['typeParameters']) =>
-					wrapFunctionDefinition(
-						{ ...$edited(data), _type_parameters: FR.resolveFunctionDefinition_typeParameters(v) },
-						tree
-					),
-				parameters: (v: T.FunctionDefinition.LooseConfig['parameters']) =>
-					wrapFunctionDefinition({ ...$edited(data), _parameters: FR.resolveFunctionDefinition_parameters(v) }, tree),
-				returnType: (v: T.FunctionDefinition.LooseConfig['returnType']) =>
-					wrapFunctionDefinition({ ...$edited(data), _return_type: FR.resolveFunctionDefinition_returnType(v) }, tree),
-				body: (v: T.FunctionDefinition.LooseConfig['body']) =>
-					wrapFunctionDefinition({ ...$edited(data), _body: FR.resolveFunctionDefinition_body(v) }, tree)
+				name: (v: NonNullable<T.FunctionDefinition['_name']>) =>
+					wrapFunctionDefinition({ ...$edited(data), _name: v }, tree),
+				typeParameters: (v: NonNullable<T.FunctionDefinition['_type_parameters']>) =>
+					wrapFunctionDefinition({ ...$edited(data), _type_parameters: v }, tree),
+				parameters: (v: NonNullable<T.FunctionDefinition['_parameters']>) =>
+					wrapFunctionDefinition({ ...$edited(data), _parameters: v }, tree),
+				returnType: (v: NonNullable<T.FunctionDefinition['_return_type']>) =>
+					wrapFunctionDefinition({ ...$edited(data), _return_type: v }, tree),
+				body: (v: NonNullable<T.FunctionDefinition['_body']>) =>
+					wrapFunctionDefinition({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2608,8 +2583,8 @@ export function wrapParameters(
 				return drillIn<T._Parameters | undefined>(this._parameters, tree);
 			},
 			$with: {
-				parameters: (v: T.Parameters.LooseConfig['parameters']) =>
-					wrapParameters({ ...$edited(data), _parameters: FR.resolveParameters_parameters(v) }, tree)
+				parameters: (v: NonNullable<T.Parameters['_parameters']>) =>
+					wrapParameters({ ...$edited(data), _parameters: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2637,8 +2612,8 @@ export function wrapLambdaParameters(
 				return drillIn<T._Parameters>(this._parameters, tree);
 			},
 			$with: {
-				parameters: (v: T.LambdaParameters.LooseConfig['parameters']) =>
-					wrapLambdaParameters({ ...$edited(data), _parameters: FR.resolveLambdaParameters_parameters(v) }, tree)
+				parameters: (v: NonNullable<T.LambdaParameters['_parameters']>) =>
+					wrapLambdaParameters({ ...$edited(data), _parameters: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2662,8 +2637,8 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			$with: {
-				expression: (v: T.ListSplat.LooseConfig['expression']) =>
-					wrapListSplat({ ...$edited(data), _expression: FR.resolveListSplat_expression(v) }, tree)
+				expression: (v: NonNullable<T.ListSplat['_expression']>) =>
+					wrapListSplat({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2687,8 +2662,8 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			$with: {
-				expression: (v: T.DictionarySplat.LooseConfig['expression']) =>
-					wrapDictionarySplat({ ...$edited(data), _expression: FR.resolveDictionarySplat_expression(v) }, tree)
+				expression: (v: NonNullable<T.DictionarySplat['_expression']>) =>
+					wrapDictionarySplat({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2807,11 +2782,9 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 				return drillInAll<T.Expression>(this._in_clause as readonly T.Expression[] | undefined, tree);
 			},
 			$with: {
-				code: (v: T.ExecStatement.LooseConfig['code']) =>
-					wrapExecStatement({ ...$edited(data), _code: FR.resolveExecStatement_code(v) }, tree),
-				inClauses: (
-					...v: Extract<NonNullable<T.ExecStatement.LooseConfig['inClause']>, readonly unknown[]>[number][]
-				) => wrapExecStatement({ ...$edited(data), _in_clause: FR.resolveExecStatement_inClauses(v) }, tree)
+				code: (v: NonNullable<T.ExecStatement['_code']>) => wrapExecStatement({ ...$edited(data), _code: v }, tree),
+				inClauses: (...v: NonNullable<T.ExecStatement['_in_clause']>[number][]) =>
+					wrapExecStatement({ ...$edited(data), _in_clause: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2844,10 +2817,10 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 				return drillIn<T.Type>(this._right, tree);
 			},
 			$with: {
-				left: (v: T.TypeAliasStatement.LooseConfig['left']) =>
-					wrapTypeAliasStatement({ ...$edited(data), _left: FR.resolveTypeAliasStatement_left(v) }, tree),
-				right: (v: T.TypeAliasStatement.LooseConfig['right']) =>
-					wrapTypeAliasStatement({ ...$edited(data), _right: FR.resolveTypeAliasStatement_right(v) }, tree)
+				left: (v: NonNullable<T.TypeAliasStatement['_left']>) =>
+					wrapTypeAliasStatement({ ...$edited(data), _left: v }, tree),
+				right: (v: NonNullable<T.TypeAliasStatement['_right']>) =>
+					wrapTypeAliasStatement({ ...$edited(data), _right: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2900,17 +2873,12 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			$with: {
-				name: (v: T.ClassDefinition.LooseConfig['name']) =>
-					wrapClassDefinition({ ...$edited(data), _name: FR.resolveClassDefinition_name(v) }, tree),
-				typeParameters: (v: T.ClassDefinition.LooseConfig['typeParameters']) =>
-					wrapClassDefinition(
-						{ ...$edited(data), _type_parameters: FR.resolveClassDefinition_typeParameters(v) },
-						tree
-					),
-				superclasses: (v: T.ClassDefinition.LooseConfig['superclasses']) =>
-					wrapClassDefinition({ ...$edited(data), _superclasses: FR.resolveClassDefinition_superclasses(v) }, tree),
-				body: (v: T.ClassDefinition.LooseConfig['body']) =>
-					wrapClassDefinition({ ...$edited(data), _body: FR.resolveClassDefinition_body(v) }, tree)
+				name: (v: NonNullable<T.ClassDefinition['_name']>) => wrapClassDefinition({ ...$edited(data), _name: v }, tree),
+				typeParameters: (v: NonNullable<T.ClassDefinition['_type_parameters']>) =>
+					wrapClassDefinition({ ...$edited(data), _type_parameters: v }, tree),
+				superclasses: (v: NonNullable<T.ClassDefinition['_superclasses']>) =>
+					wrapClassDefinition({ ...$edited(data), _superclasses: v }, tree),
+				body: (v: NonNullable<T.ClassDefinition['_body']>) => wrapClassDefinition({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2934,8 +2902,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 				return drillIn<T.Types>(this._types, tree);
 			},
 			$with: {
-				types: (v: T.TypeParameter.LooseConfig['types']) =>
-					wrapTypeParameter({ ...$edited(data), _types: FR.resolveTypeParameter_types(v) }, tree)
+				types: (v: NonNullable<T.TypeParameter['_types']>) => wrapTypeParameter({ ...$edited(data), _types: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2966,8 +2933,8 @@ export function wrapParenthesizedListSplat(
 				return drillIn<T.ParenthesizedListSplat | T.ListSplat>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.ParenthesizedListSplat.LooseConfig['content']) =>
-					wrapParenthesizedListSplat({ ...$edited(data), _content: FR.resolveParenthesizedListSplat_content(v) }, tree)
+				content: (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
+					wrapParenthesizedListSplat({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2991,8 +2958,8 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
 				return drillIn<T.ArgumentListElements | undefined>(this._arguments, tree);
 			},
 			$with: {
-				arguments: (v: T.ArgumentList.LooseConfig['arguments']) =>
-					wrapArgumentList({ ...$edited(data), _arguments: FR.resolveArgumentList_arguments(v) }, tree)
+				arguments: (v: NonNullable<T.ArgumentList['_arguments']>) =>
+					wrapArgumentList({ ...$edited(data), _arguments: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3025,14 +2992,10 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 				return drillIn<T.ClassDefinition | T.FunctionDefinition>(this._definition, tree);
 			},
 			$with: {
-				decorators: (
-					...v: NonEmptyArray<
-						Extract<NonNullable<T.DecoratedDefinition.LooseConfig['decorator']>, readonly unknown[]>[number]
-					>
-				) =>
-					wrapDecoratedDefinition({ ...$edited(data), _decorator: FR.resolveDecoratedDefinition_decorators(v) }, tree),
-				definition: (v: T.DecoratedDefinition.LooseConfig['definition']) =>
-					wrapDecoratedDefinition({ ...$edited(data), _definition: FR.resolveDecoratedDefinition_definition(v) }, tree)
+				decorators: (...v: NonEmptyArray<NonNullable<T.DecoratedDefinition['_decorator']>[number]>) =>
+					wrapDecoratedDefinition({ ...$edited(data), _decorator: v }, tree),
+				definition: (v: NonNullable<T.DecoratedDefinition['_definition']>) =>
+					wrapDecoratedDefinition({ ...$edited(data), _definition: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3056,8 +3019,8 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			$with: {
-				expression: (v: T.Decorator.LooseConfig['expression']) =>
-					wrapDecorator({ ...$edited(data), _expression: FR.resolveDecorator_expression(v) }, tree)
+				expression: (v: NonNullable<T.Decorator['_expression']>) =>
+					wrapDecorator({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3219,10 +3182,9 @@ export function wrapExpressionList(
 				return drillIn<',' | T.ExpressionListExpressions>(this._tail, tree);
 			},
 			$with: {
-				expression: (v: T.ExpressionList.LooseConfig['expression']) =>
-					wrapExpressionList({ ...$edited(data), _expression: FR.resolveExpressionList_expression(v) }, tree),
-				tail: (v: T.ExpressionList.LooseConfig['tail']) =>
-					wrapExpressionList({ ...$edited(data), _tail: FR.resolveExpressionList_tail(v) }, tree)
+				expression: (v: NonNullable<T.ExpressionList['_expression']>) =>
+					wrapExpressionList({ ...$edited(data), _expression: v }, tree),
+				tail: (v: NonNullable<T.ExpressionList['_tail']>) => wrapExpressionList({ ...$edited(data), _tail: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3328,8 +3290,7 @@ export function wrapCasePattern(
 				return drillIn<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.CasePattern.LooseConfig['content']) =>
-					wrapCasePattern({ ...$edited(data), _content: FR.resolveCasePattern_content(v) }, tree)
+				content: (v: NonNullable<T.CasePattern['_content']>) => wrapCasePattern({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3454,11 +3415,8 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
 				return drillIn<T.DictPatternElements | undefined>(this._dict_pattern_elements, tree);
 			},
 			$with: {
-				dictPatternElements: (v: T.DictPattern.LooseConfig['dictPatternElements']) =>
-					wrapDictPattern(
-						{ ...$edited(data), _dict_pattern_elements: FR.resolveDictPattern_dictPatternElements(v) },
-						tree
-					)
+				dictPatternElements: (v: NonNullable<T.DictPattern['_dict_pattern_elements']>) =>
+					wrapDictPattern({ ...$edited(data), _dict_pattern_elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3526,10 +3484,10 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 				return drillIn<T.SimplePattern>(this._simple_pattern, tree);
 			},
 			$with: {
-				identifier: (v: T.KeywordPattern.LooseConfig['identifier']) =>
-					wrapKeywordPattern({ ...$edited(data), _identifier: FR.resolveKeywordPattern_identifier(v) }, tree),
-				simplePattern: (v: T.KeywordPattern.LooseConfig['simplePattern']) =>
-					wrapKeywordPattern({ ...$edited(data), _simple_pattern: FR.resolveKeywordPattern_simplePattern(v) }, tree)
+				identifier: (v: NonNullable<T.KeywordPattern['_identifier']>) =>
+					wrapKeywordPattern({ ...$edited(data), _identifier: v }, tree),
+				simplePattern: (v: NonNullable<T.KeywordPattern['_simple_pattern']>) =>
+					wrapKeywordPattern({ ...$edited(data), _simple_pattern: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3567,10 +3525,10 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 				return drillIn<T.Identifier | '_'>(this._identifier, tree);
 			},
 			$with: {
-				operator: (v: T.SplatPattern.LooseConfig['operator']) =>
-					wrapSplatPattern({ ...$edited(data), _operator: FR.resolveSplatPattern_operator(v) }, tree),
-				identifier: (v: T.SplatPattern.LooseConfig['identifier']) =>
-					wrapSplatPattern({ ...$edited(data), _identifier: FR.resolveSplatPattern_identifier(v) }, tree)
+				operator: (v: NonNullable<T.SplatPattern['_operator']>) =>
+					wrapSplatPattern({ ...$edited(data), _operator: v }, tree),
+				identifier: (v: NonNullable<T.SplatPattern['_identifier']>) =>
+					wrapSplatPattern({ ...$edited(data), _identifier: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3603,10 +3561,10 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle) {
 				return drillIn<T.ListPatternCasePatterns | undefined>(this._arguments, tree);
 			},
 			$with: {
-				dottedName: (v: T.ClassPattern.LooseConfig['dottedName']) =>
-					wrapClassPattern({ ...$edited(data), _dotted_name: FR.resolveClassPattern_dottedName(v) }, tree),
-				arguments: (v: T.ClassPattern.LooseConfig['arguments']) =>
-					wrapClassPattern({ ...$edited(data), _arguments: FR.resolveClassPattern_arguments(v) }, tree)
+				dottedName: (v: NonNullable<T.ClassPattern['_dotted_name']>) =>
+					wrapClassPattern({ ...$edited(data), _dotted_name: v }, tree),
+				arguments: (v: NonNullable<T.ClassPattern['_arguments']>) =>
+					wrapClassPattern({ ...$edited(data), _arguments: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3669,12 +3627,12 @@ export function wrapComplexPattern(
 			},
 			$with: {
 				real: (v: NonNullable<T.ComplexPattern['_real']>) => wrapComplexPattern({ ...$edited(data), _real: v }, tree),
-				imaginary: (v: T.ComplexPattern.LooseConfig['imaginary']) =>
-					wrapComplexPattern({ ...$edited(data), _imaginary: FR.resolveComplexPattern_imaginary(v) }, tree),
-				operator: (v: T.ComplexPattern.LooseConfig['operator']) =>
-					wrapComplexPattern({ ...$edited(data), _operator: FR.resolveComplexPattern_operator(v) }, tree),
-				content: (v: T.ComplexPattern.LooseConfig['content']) =>
-					wrapComplexPattern({ ...$edited(data), _content: FR.resolveComplexPattern_content(v) }, tree)
+				imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) =>
+					wrapComplexPattern({ ...$edited(data), _imaginary: v }, tree),
+				operator: (v: NonNullable<T.ComplexPattern['_operator']>) =>
+					wrapComplexPattern({ ...$edited(data), _operator: v }, tree),
+				content: (v: NonNullable<T.ComplexPattern['_content']>) =>
+					wrapComplexPattern({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3834,8 +3792,8 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 				return drillIn<T.Patterns | undefined>(this._patterns, tree);
 			},
 			$with: {
-				patterns: (v: T.TuplePattern.LooseConfig['patterns']) =>
-					wrapTuplePattern({ ...$edited(data), _patterns: FR.resolveTuplePattern_patterns(v) }, tree)
+				patterns: (v: NonNullable<T.TuplePattern['_patterns']>) =>
+					wrapTuplePattern({ ...$edited(data), _patterns: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3859,8 +3817,8 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
 				return drillIn<T.Patterns | undefined>(this._patterns, tree);
 			},
 			$with: {
-				patterns: (v: T.ListPattern.LooseConfig['patterns']) =>
-					wrapListPattern({ ...$edited(data), _patterns: FR.resolveListPattern_patterns(v) }, tree)
+				patterns: (v: NonNullable<T.ListPattern['_patterns']>) =>
+					wrapListPattern({ ...$edited(data), _patterns: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3893,10 +3851,10 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				name: (v: T.DefaultParameter.LooseConfig['name']) =>
-					wrapDefaultParameter({ ...$edited(data), _name: FR.resolveDefaultParameter_name(v) }, tree),
-				value: (v: T.DefaultParameter.LooseConfig['value']) =>
-					wrapDefaultParameter({ ...$edited(data), _value: FR.resolveDefaultParameter_value(v) }, tree)
+				name: (v: NonNullable<T.DefaultParameter['_name']>) =>
+					wrapDefaultParameter({ ...$edited(data), _name: v }, tree),
+				value: (v: NonNullable<T.DefaultParameter['_value']>) =>
+					wrapDefaultParameter({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3938,12 +3896,12 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				name: (v: T.TypedDefaultParameter.LooseConfig['name']) =>
-					wrapTypedDefaultParameter({ ...$edited(data), _name: FR.resolveTypedDefaultParameter_name(v) }, tree),
-				type: (v: T.TypedDefaultParameter.LooseConfig['type']) =>
-					wrapTypedDefaultParameter({ ...$edited(data), _type: FR.resolveTypedDefaultParameter_type(v) }, tree),
-				value: (v: T.TypedDefaultParameter.LooseConfig['value']) =>
-					wrapTypedDefaultParameter({ ...$edited(data), _value: FR.resolveTypedDefaultParameter_value(v) }, tree)
+				name: (v: NonNullable<T.TypedDefaultParameter['_name']>) =>
+					wrapTypedDefaultParameter({ ...$edited(data), _name: v }, tree),
+				type: (v: NonNullable<T.TypedDefaultParameter['_type']>) =>
+					wrapTypedDefaultParameter({ ...$edited(data), _type: v }, tree),
+				value: (v: NonNullable<T.TypedDefaultParameter['_value']>) =>
+					wrapTypedDefaultParameter({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -3975,8 +3933,8 @@ export function wrapListSplatPattern(
 				return drillIn<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.ListSplatPattern.LooseConfig['content']) =>
-					wrapListSplatPattern({ ...$edited(data), _content: FR.resolveListSplatPattern_content(v) }, tree)
+				content: (v: NonNullable<T.ListSplatPattern['_content']>) =>
+					wrapListSplatPattern({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4008,8 +3966,8 @@ export function wrapDictionarySplatPattern(
 				return drillIn<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.DictionarySplatPattern.LooseConfig['content']) =>
-					wrapDictionarySplatPattern({ ...$edited(data), _content: FR.resolveDictionarySplatPattern_content(v) }, tree)
+				content: (v: NonNullable<T.DictionarySplatPattern['_content']>) =>
+					wrapDictionarySplatPattern({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4042,10 +4000,9 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._alias, tree);
 			},
 			$with: {
-				expression: (v: T.AsPattern.LooseConfig['expression']) =>
-					wrapAsPattern({ ...$edited(data), _expression: FR.resolveAsPattern_expression(v) }, tree),
-				alias: (v: T.AsPattern.LooseConfig['alias']) =>
-					wrapAsPattern({ ...$edited(data), _alias: FR.resolveAsPattern_alias(v) }, tree)
+				expression: (v: NonNullable<T.AsPattern['_expression']>) =>
+					wrapAsPattern({ ...$edited(data), _expression: v }, tree),
+				alias: (v: NonNullable<T.AsPattern['_alias']>) => wrapAsPattern({ ...$edited(data), _alias: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4210,8 +4167,8 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._argument, tree);
 			},
 			$with: {
-				argument: (v: T.NotOperator.LooseConfig['argument']) =>
-					wrapNotOperator({ ...$edited(data), _argument: FR.resolveNotOperator_argument(v) }, tree)
+				argument: (v: NonNullable<T.NotOperator['_argument']>) =>
+					wrapNotOperator({ ...$edited(data), _argument: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4259,12 +4216,11 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._right, tree);
 			},
 			$with: {
-				left: (v: T.BooleanOperator.LooseConfig['left']) =>
-					wrapBooleanOperator({ ...$edited(data), _left: FR.resolveBooleanOperator_left(v) }, tree),
-				operator: (v: T.BooleanOperator.LooseConfig['operator']) =>
-					wrapBooleanOperator({ ...$edited(data), _operator: FR.resolveBooleanOperator_operator(v) }, tree),
-				right: (v: T.BooleanOperator.LooseConfig['right']) =>
-					wrapBooleanOperator({ ...$edited(data), _right: FR.resolveBooleanOperator_right(v) }, tree)
+				left: (v: NonNullable<T.BooleanOperator['_left']>) => wrapBooleanOperator({ ...$edited(data), _left: v }, tree),
+				operator: (v: NonNullable<T.BooleanOperator['_operator']>) =>
+					wrapBooleanOperator({ ...$edited(data), _operator: v }, tree),
+				right: (v: NonNullable<T.BooleanOperator['_right']>) =>
+					wrapBooleanOperator({ ...$edited(data), _right: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4341,12 +4297,10 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 				return drillIn<T.PrimaryExpression>(this._right, tree);
 			},
 			$with: {
-				left: (v: T.BinaryOperator.LooseConfig['left']) =>
-					wrapBinaryOperator({ ...$edited(data), _left: FR.resolveBinaryOperator_left(v) }, tree),
-				operator: (v: T.BinaryOperator.LooseConfig['operator']) =>
-					wrapBinaryOperator({ ...$edited(data), _operator: FR.resolveBinaryOperator_operator(v) }, tree),
-				right: (v: T.BinaryOperator.LooseConfig['right']) =>
-					wrapBinaryOperator({ ...$edited(data), _right: FR.resolveBinaryOperator_right(v) }, tree)
+				left: (v: NonNullable<T.BinaryOperator['_left']>) => wrapBinaryOperator({ ...$edited(data), _left: v }, tree),
+				operator: (v: NonNullable<T.BinaryOperator['_operator']>) =>
+					wrapBinaryOperator({ ...$edited(data), _operator: v }, tree),
+				right: (v: NonNullable<T.BinaryOperator['_right']>) => wrapBinaryOperator({ ...$edited(data), _right: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4383,10 +4337,10 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 				return drillIn<T.PrimaryExpression>(this._argument, tree);
 			},
 			$with: {
-				operator: (v: T.UnaryOperator.LooseConfig['operator']) =>
-					wrapUnaryOperator({ ...$edited(data), _operator: FR.resolveUnaryOperator_operator(v) }, tree),
-				argument: (v: T.UnaryOperator.LooseConfig['argument']) =>
-					wrapUnaryOperator({ ...$edited(data), _argument: FR.resolveUnaryOperator_argument(v) }, tree)
+				operator: (v: NonNullable<T.UnaryOperator['_operator']>) =>
+					wrapUnaryOperator({ ...$edited(data), _operator: v }, tree),
+				argument: (v: NonNullable<T.UnaryOperator['_argument']>) =>
+					wrapUnaryOperator({ ...$edited(data), _argument: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4422,14 +4376,10 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 				);
 			},
 			$with: {
-				left: (v: T.ComparisonOperator.LooseConfig['left']) =>
-					wrapComparisonOperator({ ...$edited(data), _left: FR.resolveComparisonOperator_left(v) }, tree),
-				comparators: (
-					...v: NonEmptyArray<
-						Extract<NonNullable<T.ComparisonOperator.LooseConfig['comparators']>, readonly unknown[]>[number]
-					>
-				) =>
-					wrapComparisonOperator({ ...$edited(data), _comparators: FR.resolveComparisonOperator_comparators(v) }, tree)
+				left: (v: NonNullable<T.ComparisonOperator['_left']>) =>
+					wrapComparisonOperator({ ...$edited(data), _left: v }, tree),
+				comparators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) =>
+					wrapComparisonOperator({ ...$edited(data), _comparators: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4462,10 +4412,8 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._body, tree);
 			},
 			$with: {
-				parameters: (v: T.Lambda.LooseConfig['parameters']) =>
-					wrapLambda({ ...$edited(data), _parameters: FR.resolveLambda_parameters(v) }, tree),
-				body: (v: T.Lambda.LooseConfig['body']) =>
-					wrapLambda({ ...$edited(data), _body: FR.resolveLambda_body(v) }, tree)
+				parameters: (v: NonNullable<T.Lambda['_parameters']>) => wrapLambda({ ...$edited(data), _parameters: v }, tree),
+				body: (v: NonNullable<T.Lambda['_body']>) => wrapLambda({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4498,13 +4446,10 @@ export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tre
 				return drillIn<T.ExpressionWithinForInClause>(this._body, tree);
 			},
 			$with: {
-				parameters: (v: T.LambdaWithinForInClause.LooseConfig['parameters']) =>
-					wrapLambdaWithinForInClause(
-						{ ...$edited(data), _parameters: FR.resolveLambdaWithinForInClause_parameters(v) },
-						tree
-					),
-				body: (v: T.LambdaWithinForInClause.LooseConfig['body']) =>
-					wrapLambdaWithinForInClause({ ...$edited(data), _body: FR.resolveLambdaWithinForInClause_body(v) }, tree)
+				parameters: (v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
+					wrapLambdaWithinForInClause({ ...$edited(data), _parameters: v }, tree),
+				body: (v: NonNullable<T.LambdaWithinForInClause['_body']>) =>
+					wrapLambdaWithinForInClause({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4545,10 +4490,8 @@ export function wrapAssignment(
 				return drillIn<T.AssignmentEq | T.AssignmentType | T.AssignmentTyped>(this._content, tree);
 			},
 			$with: {
-				left: (v: T.Assignment.LooseConfig['left']) =>
-					wrapAssignment({ ...$edited(data), _left: FR.resolveAssignment_left(v) }, tree),
-				content: (v: T.Assignment.LooseConfig['content']) =>
-					wrapAssignment({ ...$edited(data), _content: FR.resolveAssignment_content(v) }, tree)
+				left: (v: NonNullable<T.Assignment['_left']>) => wrapAssignment({ ...$edited(data), _left: v }, tree),
+				content: (v: NonNullable<T.Assignment['_content']>) => wrapAssignment({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4623,12 +4566,12 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 				return drillIn<T.RightHandSide>(this._right, tree);
 			},
 			$with: {
-				left: (v: T.AugmentedAssignment.LooseConfig['left']) =>
-					wrapAugmentedAssignment({ ...$edited(data), _left: FR.resolveAugmentedAssignment_left(v) }, tree),
-				operator: (v: T.AugmentedAssignment.LooseConfig['operator']) =>
-					wrapAugmentedAssignment({ ...$edited(data), _operator: FR.resolveAugmentedAssignment_operator(v) }, tree),
-				right: (v: T.AugmentedAssignment.LooseConfig['right']) =>
-					wrapAugmentedAssignment({ ...$edited(data), _right: FR.resolveAugmentedAssignment_right(v) }, tree)
+				left: (v: NonNullable<T.AugmentedAssignment['_left']>) =>
+					wrapAugmentedAssignment({ ...$edited(data), _left: v }, tree),
+				operator: (v: NonNullable<T.AugmentedAssignment['_operator']>) =>
+					wrapAugmentedAssignment({ ...$edited(data), _operator: v }, tree),
+				right: (v: NonNullable<T.AugmentedAssignment['_right']>) =>
+					wrapAugmentedAssignment({ ...$edited(data), _right: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4686,10 +4629,9 @@ export function wrapPatternList(
 				return drillIn<',' | T.PatternListPatterns>(this._tail, tree);
 			},
 			$with: {
-				pattern: (v: T.PatternList.LooseConfig['pattern']) =>
-					wrapPatternList({ ...$edited(data), _pattern: FR.resolvePatternList_pattern(v) }, tree),
-				tail: (v: T.PatternList.LooseConfig['tail']) =>
-					wrapPatternList({ ...$edited(data), _tail: FR.resolvePatternList_tail(v) }, tree)
+				pattern: (v: NonNullable<T.PatternList['_pattern']>) =>
+					wrapPatternList({ ...$edited(data), _pattern: v }, tree),
+				tail: (v: NonNullable<T.PatternList['_tail']>) => wrapPatternList({ ...$edited(data), _tail: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4857,8 +4799,7 @@ export function wrapYield(
 				return drillIn<T.YieldFromClause | T.Expressions | undefined>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.Yield.LooseConfig['content']) =>
-					wrapYield({ ...$edited(data), _content: FR.resolveYield_content(v) }, tree)
+				content: (v: NonNullable<T.Yield['_content']>) => wrapYield({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4891,10 +4832,9 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._attribute, tree);
 			},
 			$with: {
-				object: (v: T.Attribute.LooseConfig['object']) =>
-					wrapAttribute({ ...$edited(data), _object: FR.resolveAttribute_object(v) }, tree),
-				attribute: (v: T.Attribute.LooseConfig['attribute']) =>
-					wrapAttribute({ ...$edited(data), _attribute: FR.resolveAttribute_attribute(v) }, tree)
+				object: (v: NonNullable<T.Attribute['_object']>) => wrapAttribute({ ...$edited(data), _object: v }, tree),
+				attribute: (v: NonNullable<T.Attribute['_attribute']>) =>
+					wrapAttribute({ ...$edited(data), _attribute: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4927,10 +4867,9 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
 				return drillIn<T.Subscripts>(this._subscripts, tree);
 			},
 			$with: {
-				value: (v: T.Subscript.LooseConfig['value']) =>
-					wrapSubscript({ ...$edited(data), _value: FR.resolveSubscript_value(v) }, tree),
-				subscripts: (v: T.Subscript.LooseConfig['subscripts']) =>
-					wrapSubscript({ ...$edited(data), _subscripts: FR.resolveSubscript_subscripts(v) }, tree)
+				value: (v: NonNullable<T.Subscript['_value']>) => wrapSubscript({ ...$edited(data), _value: v }, tree),
+				subscripts: (v: NonNullable<T.Subscript['_subscripts']>) =>
+					wrapSubscript({ ...$edited(data), _subscripts: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -4972,10 +4911,9 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
 				return drillIn<T.SliceGroup | undefined>(this._step, tree);
 			},
 			$with: {
-				start: (v: T.Slice.LooseConfig['start']) =>
-					wrapSlice({ ...$edited(data), _start: FR.resolveSlice_start(v) }, tree),
-				stop: (v: T.Slice.LooseConfig['stop']) => wrapSlice({ ...$edited(data), _stop: FR.resolveSlice_stop(v) }, tree),
-				step: (v: T.Slice.LooseConfig['step']) => wrapSlice({ ...$edited(data), _step: FR.resolveSlice_step(v) }, tree)
+				start: (v: NonNullable<T.Slice['_start']>) => wrapSlice({ ...$edited(data), _start: v }, tree),
+				stop: (v: NonNullable<T.Slice['_stop']>) => wrapSlice({ ...$edited(data), _stop: v }, tree),
+				step: (v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5008,10 +4946,8 @@ export function wrapCall(data: T.Call, tree: TreeHandle) {
 				return drillIn<T.GeneratorExpression | T.ArgumentList>(this._arguments, tree);
 			},
 			$with: {
-				function: (v: T.Call.LooseConfig['function']) =>
-					wrapCall({ ...$edited(data), _function: FR.resolveCall_function(v) }, tree),
-				arguments: (v: T.Call.LooseConfig['arguments']) =>
-					wrapCall({ ...$edited(data), _arguments: FR.resolveCall_arguments(v) }, tree)
+				function: (v: NonNullable<T.Call['_function']>) => wrapCall({ ...$edited(data), _function: v }, tree),
+				arguments: (v: NonNullable<T.Call['_arguments']>) => wrapCall({ ...$edited(data), _arguments: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5052,10 +4988,9 @@ export function wrapTypedParameter(
 				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
-				content: (v: T.TypedParameter.LooseConfig['content']) =>
-					wrapTypedParameter({ ...$edited(data), _content: FR.resolveTypedParameter_content(v) }, tree),
-				type: (v: T.TypedParameter.LooseConfig['type']) =>
-					wrapTypedParameter({ ...$edited(data), _type: FR.resolveTypedParameter_type(v) }, tree)
+				content: (v: NonNullable<T.TypedParameter['_content']>) =>
+					wrapTypedParameter({ ...$edited(data), _content: v }, tree),
+				type: (v: NonNullable<T.TypedParameter['_type']>) => wrapTypedParameter({ ...$edited(data), _type: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5295,8 +5230,7 @@ export function wrapType(
 				);
 			},
 			$with: {
-				content: (v: T.Type.LooseConfig['content']) =>
-					wrapType({ ...$edited(data), _content: FR.resolveType_content(v) }, tree)
+				content: (v: NonNullable<T.Type['_content']>) => wrapType({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5334,10 +5268,9 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._identifier, tree);
 			},
 			$with: {
-				operator: (v: T.SplatType.LooseConfig['operator']) =>
-					wrapSplatType({ ...$edited(data), _operator: FR.resolveSplatType_operator(v) }, tree),
-				identifier: (v: T.SplatType.LooseConfig['identifier']) =>
-					wrapSplatType({ ...$edited(data), _identifier: FR.resolveSplatType_identifier(v) }, tree)
+				operator: (v: NonNullable<T.SplatType['_operator']>) => wrapSplatType({ ...$edited(data), _operator: v }, tree),
+				identifier: (v: NonNullable<T.SplatType['_identifier']>) =>
+					wrapSplatType({ ...$edited(data), _identifier: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5370,10 +5303,10 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 				return drillIn<T.TypeParameter>(this._type_parameter, tree);
 			},
 			$with: {
-				identifier: (v: T.GenericType.LooseConfig['identifier']) =>
-					wrapGenericType({ ...$edited(data), _identifier: FR.resolveGenericType_identifier(v) }, tree),
-				typeParameter: (v: T.GenericType.LooseConfig['typeParameter']) =>
-					wrapGenericType({ ...$edited(data), _type_parameter: FR.resolveGenericType_typeParameter(v) }, tree)
+				identifier: (v: NonNullable<T.GenericType['_identifier']>) =>
+					wrapGenericType({ ...$edited(data), _identifier: v }, tree),
+				typeParameter: (v: NonNullable<T.GenericType['_type_parameter']>) =>
+					wrapGenericType({ ...$edited(data), _type_parameter: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5406,10 +5339,8 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
 				return drillIn<T.Type>(this._right, tree);
 			},
 			$with: {
-				left: (v: T.UnionType.LooseConfig['left']) =>
-					wrapUnionType({ ...$edited(data), _left: FR.resolveUnionType_left(v) }, tree),
-				right: (v: T.UnionType.LooseConfig['right']) =>
-					wrapUnionType({ ...$edited(data), _right: FR.resolveUnionType_right(v) }, tree)
+				left: (v: NonNullable<T.UnionType['_left']>) => wrapUnionType({ ...$edited(data), _left: v }, tree),
+				right: (v: NonNullable<T.UnionType['_right']>) => wrapUnionType({ ...$edited(data), _right: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5442,10 +5373,10 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle) {
 				return drillIn<T.Type>(this._constraint, tree);
 			},
 			$with: {
-				baseType: (v: T.ConstrainedType.LooseConfig['baseType']) =>
-					wrapConstrainedType({ ...$edited(data), _base_type: FR.resolveConstrainedType_baseType(v) }, tree),
-				constraint: (v: T.ConstrainedType.LooseConfig['constraint']) =>
-					wrapConstrainedType({ ...$edited(data), _constraint: FR.resolveConstrainedType_constraint(v) }, tree)
+				baseType: (v: NonNullable<T.ConstrainedType['_base_type']>) =>
+					wrapConstrainedType({ ...$edited(data), _base_type: v }, tree),
+				constraint: (v: NonNullable<T.ConstrainedType['_constraint']>) =>
+					wrapConstrainedType({ ...$edited(data), _constraint: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5478,10 +5409,10 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._identifier, tree);
 			},
 			$with: {
-				baseType: (v: T.MemberType.LooseConfig['baseType']) =>
-					wrapMemberType({ ...$edited(data), _base_type: FR.resolveMemberType_baseType(v) }, tree),
-				identifier: (v: T.MemberType.LooseConfig['identifier']) =>
-					wrapMemberType({ ...$edited(data), _identifier: FR.resolveMemberType_identifier(v) }, tree)
+				baseType: (v: NonNullable<T.MemberType['_base_type']>) =>
+					wrapMemberType({ ...$edited(data), _base_type: v }, tree),
+				identifier: (v: NonNullable<T.MemberType['_identifier']>) =>
+					wrapMemberType({ ...$edited(data), _identifier: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5514,10 +5445,9 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				name: (v: T.KeywordArgument.LooseConfig['name']) =>
-					wrapKeywordArgument({ ...$edited(data), _name: FR.resolveKeywordArgument_name(v) }, tree),
-				value: (v: T.KeywordArgument.LooseConfig['value']) =>
-					wrapKeywordArgument({ ...$edited(data), _value: FR.resolveKeywordArgument_value(v) }, tree)
+				name: (v: NonNullable<T.KeywordArgument['_name']>) => wrapKeywordArgument({ ...$edited(data), _name: v }, tree),
+				value: (v: NonNullable<T.KeywordArgument['_value']>) =>
+					wrapKeywordArgument({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5542,8 +5472,8 @@ export function wrapList(data: T.List, tree: TreeHandle) {
 				return drillIn<T.CollectionElements | undefined>(this._collection_elements, tree);
 			},
 			$with: {
-				collectionElements: (v: T.List.LooseConfig['collectionElements']) =>
-					wrapList({ ...$edited(data), _collection_elements: FR.resolveList_collectionElements(v) }, tree)
+				collectionElements: (v: NonNullable<T.List['_collection_elements']>) =>
+					wrapList({ ...$edited(data), _collection_elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5568,8 +5498,8 @@ export function wrapSet(data: T.Set, tree: TreeHandle) {
 				return drillIn<T.CollectionElements>(this._collection_elements, tree);
 			},
 			$with: {
-				collectionElements: (v: T.Set.LooseConfig['collectionElements']) =>
-					wrapSet({ ...$edited(data), _collection_elements: FR.resolveSet_collectionElements(v) }, tree)
+				collectionElements: (v: NonNullable<T.Set['_collection_elements']>) =>
+					wrapSet({ ...$edited(data), _collection_elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5594,8 +5524,8 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
 				return drillIn<T.CollectionElements | undefined>(this._collection_elements, tree);
 			},
 			$with: {
-				collectionElements: (v: T.Tuple.LooseConfig['collectionElements']) =>
-					wrapTuple({ ...$edited(data), _collection_elements: FR.resolveTuple_collectionElements(v) }, tree)
+				collectionElements: (v: NonNullable<T.Tuple['_collection_elements']>) =>
+					wrapTuple({ ...$edited(data), _collection_elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5619,8 +5549,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
 				return drillIn<T.DictionaryElements | undefined>(this._entries, tree);
 			},
 			$with: {
-				entries: (v: T.Dictionary.LooseConfig['entries']) =>
-					wrapDictionary({ ...$edited(data), _entries: FR.resolveDictionary_entries(v) }, tree)
+				entries: (v: NonNullable<T.Dictionary['_entries']>) => wrapDictionary({ ...$edited(data), _entries: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5653,8 +5582,8 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			$with: {
-				key: (v: T.Pair.LooseConfig['key']) => wrapPair({ ...$edited(data), _key: FR.resolvePair_key(v) }, tree),
-				value: (v: T.Pair.LooseConfig['value']) => wrapPair({ ...$edited(data), _value: FR.resolvePair_value(v) }, tree)
+				key: (v: NonNullable<T.Pair['_key']>) => wrapPair({ ...$edited(data), _key: v }, tree),
+				value: (v: NonNullable<T.Pair['_value']>) => wrapPair({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5688,13 +5617,10 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 				return drillIn<T.ComprehensionClauses>(this._comprehension_clauses, tree);
 			},
 			$with: {
-				body: (v: T.ListComprehension.LooseConfig['body']) =>
-					wrapListComprehension({ ...$edited(data), _body: FR.resolveListComprehension_body(v) }, tree),
-				comprehensionClauses: (v: T.ListComprehension.LooseConfig['comprehensionClauses']) =>
-					wrapListComprehension(
-						{ ...$edited(data), _comprehension_clauses: FR.resolveListComprehension_comprehensionClauses(v) },
-						tree
-					)
+				body: (v: NonNullable<T.ListComprehension['_body']>) =>
+					wrapListComprehension({ ...$edited(data), _body: v }, tree),
+				comprehensionClauses: (v: NonNullable<T.ListComprehension['_comprehension_clauses']>) =>
+					wrapListComprehension({ ...$edited(data), _comprehension_clauses: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5728,13 +5654,10 @@ export function wrapDictionaryComprehension(data: T.DictionaryComprehension, tre
 				return drillIn<T.ComprehensionClauses>(this._comprehension_clauses, tree);
 			},
 			$with: {
-				body: (v: T.DictionaryComprehension.LooseConfig['body']) =>
-					wrapDictionaryComprehension({ ...$edited(data), _body: FR.resolveDictionaryComprehension_body(v) }, tree),
-				comprehensionClauses: (v: T.DictionaryComprehension.LooseConfig['comprehensionClauses']) =>
-					wrapDictionaryComprehension(
-						{ ...$edited(data), _comprehension_clauses: FR.resolveDictionaryComprehension_comprehensionClauses(v) },
-						tree
-					)
+				body: (v: NonNullable<T.DictionaryComprehension['_body']>) =>
+					wrapDictionaryComprehension({ ...$edited(data), _body: v }, tree),
+				comprehensionClauses: (v: NonNullable<T.DictionaryComprehension['_comprehension_clauses']>) =>
+					wrapDictionaryComprehension({ ...$edited(data), _comprehension_clauses: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5768,13 +5691,10 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 				return drillIn<T.ComprehensionClauses>(this._comprehension_clauses, tree);
 			},
 			$with: {
-				body: (v: T.SetComprehension.LooseConfig['body']) =>
-					wrapSetComprehension({ ...$edited(data), _body: FR.resolveSetComprehension_body(v) }, tree),
-				comprehensionClauses: (v: T.SetComprehension.LooseConfig['comprehensionClauses']) =>
-					wrapSetComprehension(
-						{ ...$edited(data), _comprehension_clauses: FR.resolveSetComprehension_comprehensionClauses(v) },
-						tree
-					)
+				body: (v: NonNullable<T.SetComprehension['_body']>) =>
+					wrapSetComprehension({ ...$edited(data), _body: v }, tree),
+				comprehensionClauses: (v: NonNullable<T.SetComprehension['_comprehension_clauses']>) =>
+					wrapSetComprehension({ ...$edited(data), _comprehension_clauses: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5808,13 +5728,10 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 				return drillIn<T.ComprehensionClauses>(this._comprehension_clauses, tree);
 			},
 			$with: {
-				body: (v: T.GeneratorExpression.LooseConfig['body']) =>
-					wrapGeneratorExpression({ ...$edited(data), _body: FR.resolveGeneratorExpression_body(v) }, tree),
-				comprehensionClauses: (v: T.GeneratorExpression.LooseConfig['comprehensionClauses']) =>
-					wrapGeneratorExpression(
-						{ ...$edited(data), _comprehension_clauses: FR.resolveGeneratorExpression_comprehensionClauses(v) },
-						tree
-					)
+				body: (v: NonNullable<T.GeneratorExpression['_body']>) =>
+					wrapGeneratorExpression({ ...$edited(data), _body: v }, tree),
+				comprehensionClauses: (v: NonNullable<T.GeneratorExpression['_comprehension_clauses']>) =>
+					wrapGeneratorExpression({ ...$edited(data), _comprehension_clauses: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5946,11 +5863,8 @@ export function wrapParenthesizedExpression(
 				return drillIn<T.Expression | T.Yield | T.ListSplat>(this._content, tree);
 			},
 			$with: {
-				content: (v: T.ParenthesizedExpression.LooseConfig['content']) =>
-					wrapParenthesizedExpression(
-						{ ...$edited(data), _content: FR.resolveParenthesizedExpression_content(v) },
-						tree
-					)
+				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
+					wrapParenthesizedExpression({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6083,11 +5997,9 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 			$with: {
 				asyncMarker: (v: NonNullable<T.ForInClause['_async_marker']>) =>
 					wrapForInClause({ ...$edited(data), _async_marker: v }, tree),
-				left: (v: T.ForInClause.LooseConfig['left']) =>
-					wrapForInClause({ ...$edited(data), _left: FR.resolveForInClause_left(v) }, tree),
-				rights: (
-					...v: NonEmptyArray<Extract<NonNullable<T.ForInClause.LooseConfig['right']>, readonly unknown[]>[number]>
-				) => wrapForInClause({ ...$edited(data), _right: FR.resolveForInClause_rights(v) }, tree),
+				left: (v: NonNullable<T.ForInClause['_left']>) => wrapForInClause({ ...$edited(data), _left: v }, tree),
+				rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
+					wrapForInClause({ ...$edited(data), _right: v }, tree),
 				comma: (v: NonNullable<T.ForInClause['_comma']>) => wrapForInClause({ ...$edited(data), _comma: v }, tree)
 			}
 		},
@@ -6112,8 +6024,8 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			$with: {
-				expression: (v: T.IfClause.LooseConfig['expression']) =>
-					wrapIfClause({ ...$edited(data), _expression: FR.resolveIfClause_expression(v) }, tree)
+				expression: (v: NonNullable<T.IfClause['_expression']>) =>
+					wrapIfClause({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6155,18 +6067,12 @@ export function wrapConditionalExpression(data: T.ConditionalExpression, tree: T
 				return drillIn<T.Expression>(this._alternative, tree);
 			},
 			$with: {
-				body: (v: T.ConditionalExpression.LooseConfig['body']) =>
-					wrapConditionalExpression({ ...$edited(data), _body: FR.resolveConditionalExpression_body(v) }, tree),
-				condition: (v: T.ConditionalExpression.LooseConfig['condition']) =>
-					wrapConditionalExpression(
-						{ ...$edited(data), _condition: FR.resolveConditionalExpression_condition(v) },
-						tree
-					),
-				alternative: (v: T.ConditionalExpression.LooseConfig['alternative']) =>
-					wrapConditionalExpression(
-						{ ...$edited(data), _alternative: FR.resolveConditionalExpression_alternative(v) },
-						tree
-					)
+				body: (v: NonNullable<T.ConditionalExpression['_body']>) =>
+					wrapConditionalExpression({ ...$edited(data), _body: v }, tree),
+				condition: (v: NonNullable<T.ConditionalExpression['_condition']>) =>
+					wrapConditionalExpression({ ...$edited(data), _condition: v }, tree),
+				alternative: (v: NonNullable<T.ConditionalExpression['_alternative']>) =>
+					wrapConditionalExpression({ ...$edited(data), _alternative: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6236,12 +6142,11 @@ export function wrapString(data: T.String, tree: TreeHandle) {
 				return drillIn<T.StringEnd>(this._string_end, tree);
 			},
 			$with: {
-				stringStart: (v: T.String.LooseConfig['stringStart']) =>
-					wrapString({ ...$edited(data), _string_start: FR.resolveString_stringStart(v) }, tree),
-				contents: (...v: Extract<NonNullable<T.String.LooseConfig['content']>, readonly unknown[]>[number][]) =>
-					wrapString({ ...$edited(data), _content: FR.resolveString_contents(v) }, tree),
-				stringEnd: (v: T.String.LooseConfig['stringEnd']) =>
-					wrapString({ ...$edited(data), _string_end: FR.resolveString_stringEnd(v) }, tree)
+				stringStart: (v: NonNullable<T.String['_string_start']>) =>
+					wrapString({ ...$edited(data), _string_start: v }, tree),
+				contents: (...v: NonNullable<T.String['_content']>[number][]) =>
+					wrapString({ ...$edited(data), _content: v }, tree),
+				stringEnd: (v: NonNullable<T.String['_string_end']>) => wrapString({ ...$edited(data), _string_end: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6359,14 +6264,14 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 				return drillIn<T.FormatSpecifier | undefined>(this._format_specifier, tree);
 			},
 			$with: {
-				expression: (v: T.Interpolation.LooseConfig['expression']) =>
-					wrapInterpolation({ ...$edited(data), _expression: FR.resolveInterpolation_expression(v) }, tree),
+				expression: (v: NonNullable<T.Interpolation['_expression']>) =>
+					wrapInterpolation({ ...$edited(data), _expression: v }, tree),
 				eqMarker: (v: NonNullable<T.Interpolation['_eq_marker']>) =>
 					wrapInterpolation({ ...$edited(data), _eq_marker: v }, tree),
-				typeConversion: (v: T.Interpolation.LooseConfig['typeConversion']) =>
-					wrapInterpolation({ ...$edited(data), _type_conversion: FR.resolveInterpolation_typeConversion(v) }, tree),
-				formatSpecifier: (v: T.Interpolation.LooseConfig['formatSpecifier']) =>
-					wrapInterpolation({ ...$edited(data), _format_specifier: FR.resolveInterpolation_formatSpecifier(v) }, tree)
+				typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
+					wrapInterpolation({ ...$edited(data), _type_conversion: v }, tree),
+				formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>
+					wrapInterpolation({ ...$edited(data), _format_specifier: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6451,8 +6356,8 @@ export function wrapAwait(data: T.Await, tree: TreeHandle) {
 				return drillIn<T.PrimaryExpression>(this._primary_expression, tree);
 			},
 			$with: {
-				primaryExpression: (v: T.Await.LooseConfig['primaryExpression']) =>
-					wrapAwait({ ...$edited(data), _primary_expression: FR.resolveAwait_primaryExpression(v) }, tree)
+				primaryExpression: (v: NonNullable<T.Await['_primary_expression']>) =>
+					wrapAwait({ ...$edited(data), _primary_expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -7197,11 +7102,8 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 				return drillIn<T.ListPatternCasePatterns | undefined>(this._list_pattern_case_patterns, tree);
 			},
 			$with: {
-				listPatternCasePatterns: (v: T.CaseTuplePattern.LooseConfig['listPatternCasePatterns']) =>
-					wrapCaseTuplePattern(
-						{ ...$edited(data), _list_pattern_case_patterns: FR.resolveCaseTuplePattern_listPatternCasePatterns(v) },
-						tree
-					)
+				listPatternCasePatterns: (v: NonNullable<T.CaseTuplePattern['_list_pattern_case_patterns']>) =>
+					wrapCaseTuplePattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -7226,11 +7128,8 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
 				return drillIn<T.ListPatternCasePatterns | undefined>(this._list_pattern_case_patterns, tree);
 			},
 			$with: {
-				listPatternCasePatterns: (v: T.CaseListPattern.LooseConfig['listPatternCasePatterns']) =>
-					wrapCaseListPattern(
-						{ ...$edited(data), _list_pattern_case_patterns: FR.resolveCaseListPattern_listPatternCasePatterns(v) },
-						tree
-					)
+				listPatternCasePatterns: (v: NonNullable<T.CaseListPattern['_list_pattern_case_patterns']>) =>
+					wrapCaseListPattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -7263,10 +7162,10 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._identifier, tree);
 			},
 			$with: {
-				casePattern: (v: T.CaseAsPattern.LooseConfig['casePattern']) =>
-					wrapCaseAsPattern({ ...$edited(data), _case_pattern: FR.resolveCaseAsPattern_casePattern(v) }, tree),
-				identifier: (v: T.CaseAsPattern.LooseConfig['identifier']) =>
-					wrapCaseAsPattern({ ...$edited(data), _identifier: FR.resolveCaseAsPattern_identifier(v) }, tree)
+				casePattern: (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
+					wrapCaseAsPattern({ ...$edited(data), _case_pattern: v }, tree),
+				identifier: (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
+					wrapCaseAsPattern({ ...$edited(data), _identifier: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -7392,13 +7291,10 @@ export function wrapPrintStatementArm1(
 				return drillIn<T.PrintChevronArguments | ',' | undefined>(this._print_chevron_arguments, tree);
 			},
 			$with: {
-				chevron: (v: T.PrintStatementArm1.LooseConfig['chevron']) =>
-					wrapPrintStatementArm1({ ...$edited(data), _chevron: FR.resolvePrintStatementArm1_chevron(v) }, tree),
-				printChevronArguments: (v: T.PrintStatementArm1.LooseConfig['printChevronArguments']) =>
-					wrapPrintStatementArm1(
-						{ ...$edited(data), _print_chevron_arguments: FR.resolvePrintStatementArm1_printChevronArguments(v) },
-						tree
-					)
+				chevron: (v: NonNullable<T.PrintStatementArm1['_chevron']>) =>
+					wrapPrintStatementArm1({ ...$edited(data), _chevron: v }, tree),
+				printChevronArguments: (v: NonNullable<T.PrintStatementArm1['_print_chevron_arguments']>) =>
+					wrapPrintStatementArm1({ ...$edited(data), _print_chevron_arguments: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -7422,11 +7318,8 @@ export function wrapPrintStatementArm2(data: T.PrintStatementArm2, tree: TreeHan
 				return drillIn<T.PrintArguments>(this._print_arguments, tree);
 			},
 			$with: {
-				printArguments: (v: T.PrintStatementArm2.LooseConfig['printArguments']) =>
-					wrapPrintStatementArm2(
-						{ ...$edited(data), _print_arguments: FR.resolvePrintStatementArm2_printArguments(v) },
-						tree
-					)
+				printArguments: (v: NonNullable<T.PrintStatementArm2['_print_arguments']>) =>
+					wrapPrintStatementArm2({ ...$edited(data), _print_arguments: v }, tree)
 			}
 		},
 		_treeEngine(tree)
