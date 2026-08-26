@@ -707,7 +707,7 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
  * automatically and callers should not (and cannot) supply them.
  */
 export type ConfigOf<T> = T extends unknown
-	? SimplifyDeep<
+	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
 					? never

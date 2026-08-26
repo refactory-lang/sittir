@@ -3033,6 +3033,9 @@ export interface ImportClause {
 export interface FromClause {
 	readonly $type: TSKindId.FromClause;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	source(): String;
 }
 
@@ -3068,6 +3071,9 @@ export interface ImportAttribute {
 	readonly _object: Object;
 	readonly __inputHints__?: {
 		readonly attribute_kind: KindEnum<'with' | 'assert', TSKindId.With | TSKindId.Assert>;
+	};
+	readonly __looseHints__?: {
+		readonly object: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 	};
 	attributeKind(): number;
 	object(): Object;
@@ -3137,6 +3143,15 @@ export interface IfStatement {
 	readonly _condition: ParenthesizedExpression;
 	readonly _consequence: Statement;
 	readonly _alternative?: ElseClause;
+	readonly __looseHints__?: {
+		readonly condition: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+	};
 	condition(): ParenthesizedExpression;
 	consequence(): Statement;
 	alternative(): ElseClause | undefined;
@@ -3146,6 +3161,16 @@ export interface SwitchStatement {
 	readonly $type: TSKindId.SwitchStatement;
 	readonly _value: ParenthesizedExpression;
 	readonly _body: SwitchBody;
+	readonly __looseHints__?: {
+		readonly value: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+		readonly body: readonly (SwitchCase | SwitchDefault)[];
+	};
 	value(): ParenthesizedExpression;
 	body(): SwitchBody;
 }
@@ -3197,6 +3222,15 @@ export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: ParenthesizedExpression;
 	readonly _body: Statement;
+	readonly __looseHints__?: {
+		readonly condition: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+	};
 	condition(): ParenthesizedExpression;
 	body(): Statement;
 }
@@ -3208,6 +3242,15 @@ export interface DoStatement {
 	readonly _semicolon?: number;
 	readonly __inputHints__?: {
 		readonly semicolon?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __looseHints__?: {
+		readonly condition: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
 	};
 	body(): Statement;
 	condition(): ParenthesizedExpression;
@@ -3228,6 +3271,15 @@ export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _object: ParenthesizedExpression;
 	readonly _body: Statement;
+	readonly __looseHints__?: {
+		readonly object: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+	};
 	object(): ParenthesizedExpression;
 	body(): Statement;
 }
@@ -3476,6 +3528,8 @@ export interface Class {
 	readonly _body: ClassBody;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
+		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier | undefined;
@@ -3497,6 +3551,8 @@ export interface ClassDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
+		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
@@ -3657,6 +3713,7 @@ export interface NewExpression {
 	readonly _arguments?: Arguments;
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
+		readonly arguments?: readonly (Expression | SpreadElement)[];
 	};
 	constructor_(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
@@ -3913,6 +3970,7 @@ export interface DecoratorCallExpression {
 	readonly _arguments: Arguments;
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	function(): Identifier | DecoratorMemberExpression;
 	typeArguments(): TypeArguments | undefined;
@@ -4255,6 +4313,9 @@ export interface ImportRequireClause {
 	readonly $type: TSKindId.ImportRequireClause;
 	readonly _identifier: Identifier;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	identifier(): Identifier;
 	source(): String;
 }
@@ -4297,6 +4358,8 @@ export interface AbstractClassDeclaration {
 	readonly _body: ClassBody;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
+		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
@@ -4358,6 +4421,7 @@ export interface InterfaceDeclaration {
 	readonly _body: ObjectType;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
+		readonly extends_type_clause?: readonly (Identifier | NestedTypeIdentifier | GenericType)[];
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4381,6 +4445,7 @@ export interface EnumDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly const_marker?: 'const' | 'const';
+		readonly body: readonly (EnumAssignment | PropertyName)[];
 	};
 	constMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4390,6 +4455,9 @@ export interface EnumDeclaration {
 export interface EnumBody {
 	readonly $type: TSKindId.EnumBody;
 	readonly _enum_body_elements?: EnumBodyElements;
+	readonly __looseHints__?: {
+		readonly enum_body_elements?: readonly (EnumAssignment | PropertyName)[];
+	};
 	enumBodyElements(): EnumBodyElements | undefined;
 }
 
@@ -4541,6 +4609,9 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 	readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 	readonly _function: Import | TypeQueryMemberExpressionInTypeAnnotation;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): Import | TypeQueryMemberExpressionInTypeAnnotation;
 	arguments(): Arguments;
 }
@@ -4555,7 +4626,7 @@ export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
 	readonly _asserts: Asserts;
 	readonly __looseHints__?: {
-		readonly asserts: Asserts | 'this';
+		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | This)[];
 	};
 	asserts(): Asserts;
 }
@@ -4700,6 +4771,9 @@ export interface TypeQueryCallExpression {
 	readonly $type: TSKindId.TypeQueryCallExpression;
 	readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	arguments(): Arguments;
 }
@@ -4803,6 +4877,16 @@ export interface ObjectType {
 	readonly __inputHints__?: {
 		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
 		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
+	};
+	readonly __looseHints__?: {
+		readonly members?: readonly (
+			| ExportStatement
+			| PropertySignature
+			| CallSignature
+			| ConstructSignature
+			| IndexSignature
+			| MethodSignature
+		)[];
 	};
 	opening(): number;
 	members(): ObjectTypeContent | undefined;
@@ -5081,6 +5165,10 @@ export interface ImportStatementArm {
 	readonly $type: TSKindId.ImportStatementArm;
 	readonly _import_clause: ImportClause;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	importClause(): ImportClause;
 	source(): String;
 }
@@ -5199,6 +5287,9 @@ export interface ImportClauseDefaultImport {
 	readonly $type: TSKindId.ImportClauseDefaultImport;
 	readonly _import_identifier: ImportIdentifier;
 	readonly _import_clause_group?: ImportClauseGroup;
+	readonly __looseHints__?: {
+		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
+	};
 	importIdentifier(): ImportIdentifier;
 	importClauseGroup(): ImportClauseGroup | undefined;
 }
@@ -5249,6 +5340,9 @@ export interface ExportStatementDefaultDeclArm {
 export interface ExportStatementDefaultStarFrom {
 	readonly $type: TSKindId.ExportStatementDefaultStarFrom;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	source(): String;
 }
 
@@ -5258,6 +5352,7 @@ export interface ExportStatementDefaultNsFrom {
 	readonly _source: String;
 	readonly __looseHints__?: {
 		readonly namespace_export: readonly ModuleExportName[];
+		readonly source: readonly (StringDouble | StringSingle)[];
 	};
 	namespaceExport(): NamespaceExport;
 	source(): String;
@@ -5269,6 +5364,7 @@ export interface ExportStatementDefaultClauseFrom {
 	readonly _source: String;
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
+		readonly source: readonly (StringDouble | StringSingle)[];
 	};
 	exportClause(): ExportClause;
 	source(): String;
@@ -5372,6 +5468,7 @@ export interface ExportStatementTypeExport {
 	};
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
+		readonly source?: readonly (StringDouble | StringSingle)[];
 	};
 	exportClause(): ExportClause;
 	source(): String | undefined;
@@ -5407,6 +5504,7 @@ export interface CallExpressionCall {
 	readonly _arguments: Arguments;
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	function(): Expression | Import;
 	typeArguments(): TypeArguments | undefined;
@@ -5417,6 +5515,9 @@ export interface CallExpressionTemplateCall {
 	readonly $type: TSKindId.CallExpressionTemplateCall;
 	readonly _function: PrimaryExpression | NewExpression;
 	readonly _arguments: TemplateString;
+	readonly __looseHints__?: {
+		readonly arguments: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	};
 	function(): PrimaryExpression | NewExpression;
 	arguments(): TemplateString;
 }
@@ -5428,6 +5529,7 @@ export interface CallExpressionMember {
 	readonly _arguments: Arguments;
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	function(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;

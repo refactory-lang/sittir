@@ -1178,12 +1178,6 @@ function wrapChildrenListHint(
 	// the element carrier, and a single-slot wrapper has only the one.
 	const elementSlot = target.fields.find((slot) => isMultiple(slot)) ?? target.fields[0];
 	if (elementSlot === undefined) return undefined;
-	// BUDGET CAP, not a rule about the surface: a union-typed element widens
-	// every container that names it, and the generated Loose surface already
-	// sits at TypeScript's structural-comparison ceiling — adding those arms
-	// puts the biggest grammar over it. Lifting this needs that ceiling
-	// addressed, not a different spelling here.
-	if (slotKindNames(elementSlot).length !== 1) return undefined;
 	// Names the same supertype ALIAS the interface's own slot uses. The
 	// expanded union is the same type, but a 37-arm union multiplies every
 	// assignability check that reaches it; a named alias compares once.

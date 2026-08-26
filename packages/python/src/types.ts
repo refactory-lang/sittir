@@ -2049,6 +2049,9 @@ export interface SimpleStatements {
 export interface ImportStatement {
 	readonly $type: TSKindId.ImportStatement;
 	readonly _import_list: ImportList;
+	readonly __looseHints__?: {
+		readonly import_list: readonly (DottedName | AliasedImport)[];
+	};
 	importList(): ImportList;
 }
 
@@ -2176,6 +2179,7 @@ export interface MatchStatement {
 	readonly _body: MatchBlock;
 	readonly __looseHints__?: {
 		readonly subjects: readonly Expression[];
+		readonly body: readonly (MatchBlockBlock | '\n')[];
 	};
 	subjects(): Subjects;
 	body(): MatchBlock;
@@ -2250,6 +2254,9 @@ export interface ExceptClause {
 	readonly __inputHints__?: {
 		readonly star_marker?: BooleanKeyword<'*'>;
 	};
+	readonly __looseHints__?: {
+		readonly except_clause_arm?: readonly (ExceptClauseAs | ExceptClauseList)[];
+	};
 	starMarker(): boolean | undefined;
 	exceptClauseArm(): ExceptClauseArm | undefined;
 	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
@@ -2271,6 +2278,7 @@ export interface WithStatement {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly with_clause: readonly (WithClauseBare | WithClauseParen)[];
 	};
 	asyncMarker(): boolean | undefined;
 	withClause(): WithClause;
@@ -2304,6 +2312,7 @@ export interface FunctionDefinition {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly Type[];
 		readonly parameters: readonly Parameter[];
+		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -2367,6 +2376,10 @@ export interface TypeAliasStatement {
 	readonly $type: TSKindId.TypeAliasStatement;
 	readonly _left: Type;
 	readonly _right: Type;
+	readonly __looseHints__?: {
+		readonly left: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+		readonly right: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	left(): Type;
 	right(): Type;
 }
@@ -2404,6 +2417,15 @@ export interface ParenthesizedListSplat {
 export interface ArgumentList {
 	readonly $type: TSKindId.ArgumentList;
 	readonly _arguments?: ArgumentListElements;
+	readonly __looseHints__?: {
+		readonly arguments?: readonly (
+			| Expression
+			| ListSplat
+			| DictionarySplat
+			| ParenthesizedListSplat
+			| KeywordArgument
+		)[];
+	};
 	arguments(): ArgumentListElements | undefined;
 }
 
@@ -2465,6 +2487,9 @@ export interface UnionPattern {
 export interface DictPattern {
 	readonly $type: TSKindId.DictPattern;
 	readonly _dict_pattern_elements?: DictPatternElements;
+	readonly __looseHints__?: {
+		readonly dict_pattern_elements?: readonly (KeyValuePattern | SplatPattern)[];
+	};
 	dictPatternElements(): DictPatternElements | undefined;
 }
 
@@ -2472,6 +2497,9 @@ export interface KeyValuePattern {
 	readonly $type: TSKindId.KeyValuePattern;
 	readonly _key: SimplePattern;
 	readonly _value: CasePattern;
+	readonly __looseHints__?: {
+		readonly value: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
+	};
 	key(): SimplePattern;
 	value(): CasePattern;
 }
@@ -2566,6 +2594,9 @@ export interface TypedDefaultParameter {
 	readonly _name: Identifier;
 	readonly _type: Type;
 	readonly _value: Expression;
+	readonly __looseHints__?: {
+		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	name(): Identifier;
 	type(): Type;
 	value(): Expression;
@@ -2744,6 +2775,9 @@ export interface Subscript {
 	readonly $type: TSKindId.Subscript;
 	readonly _value: PrimaryExpression;
 	readonly _subscripts: Subscripts;
+	readonly __looseHints__?: {
+		readonly subscripts: readonly (Expression | Slice)[];
+	};
 	value(): PrimaryExpression;
 	subscripts(): Subscripts;
 }
@@ -2773,6 +2807,9 @@ export interface TypedParameter {
 	readonly $type: TSKindId.TypedParameter;
 	readonly _content: Identifier | ListSplatPattern | DictionarySplatPattern;
 	readonly _type: Type;
+	readonly __looseHints__?: {
+		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	content(): Identifier | ListSplatPattern | DictionarySplatPattern;
 	type(): Type;
 }
@@ -2809,6 +2846,10 @@ export interface UnionType {
 	readonly $type: TSKindId.UnionType;
 	readonly _left: Type;
 	readonly _right: Type;
+	readonly __looseHints__?: {
+		readonly left: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+		readonly right: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	left(): Type;
 	right(): Type;
 }
@@ -2817,6 +2858,10 @@ export interface ConstrainedType {
 	readonly $type: TSKindId.ConstrainedType;
 	readonly _base_type: Type;
 	readonly _constraint: Type;
+	readonly __looseHints__?: {
+		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+		readonly constraint: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	baseType(): Type;
 	constraint(): Type;
 }
@@ -2825,6 +2870,9 @@ export interface MemberType {
 	readonly $type: TSKindId.MemberType;
 	readonly _base_type: Type;
 	readonly _identifier: Identifier;
+	readonly __looseHints__?: {
+		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	baseType(): Type;
 	identifier(): Identifier;
 }
@@ -2840,24 +2888,36 @@ export interface KeywordArgument {
 export interface List {
 	readonly $type: TSKindId.List;
 	readonly _collection_elements?: CollectionElements;
+	readonly __looseHints__?: {
+		readonly collection_elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+	};
 	collectionElements(): CollectionElements | undefined;
 }
 
 export interface Set {
 	readonly $type: TSKindId.Set;
 	readonly _collection_elements: CollectionElements;
+	readonly __looseHints__?: {
+		readonly collection_elements: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+	};
 	collectionElements(): CollectionElements;
 }
 
 export interface Tuple {
 	readonly $type: TSKindId.Tuple;
 	readonly _collection_elements?: CollectionElements;
+	readonly __looseHints__?: {
+		readonly collection_elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+	};
 	collectionElements(): CollectionElements | undefined;
 }
 
 export interface Dictionary {
 	readonly $type: TSKindId.Dictionary;
 	readonly _entries?: DictionaryElements;
+	readonly __looseHints__?: {
+		readonly entries?: readonly (Pair | DictionarySplat)[];
+	};
 	entries(): DictionaryElements | undefined;
 }
 
@@ -2873,6 +2933,9 @@ export interface ListComprehension {
 	readonly $type: TSKindId.ListComprehension;
 	readonly _body: Expression;
 	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly __looseHints__?: {
+		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+	};
 	body(): Expression;
 	comprehensionClauses(): ComprehensionClauses;
 }
@@ -2881,6 +2944,9 @@ export interface DictionaryComprehension {
 	readonly $type: TSKindId.DictionaryComprehension;
 	readonly _body: Pair;
 	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly __looseHints__?: {
+		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+	};
 	body(): Pair;
 	comprehensionClauses(): ComprehensionClauses;
 }
@@ -2889,6 +2955,9 @@ export interface SetComprehension {
 	readonly $type: TSKindId.SetComprehension;
 	readonly _body: Expression;
 	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly __looseHints__?: {
+		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+	};
 	body(): Expression;
 	comprehensionClauses(): ComprehensionClauses;
 }
@@ -2897,6 +2966,9 @@ export interface GeneratorExpression {
 	readonly $type: TSKindId.GeneratorExpression;
 	readonly _body: Expression;
 	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly __looseHints__?: {
+		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+	};
 	body(): Expression;
 	comprehensionClauses(): ComprehensionClauses;
 }
@@ -3033,6 +3105,9 @@ export interface WithClauseWithItems {
 export interface FunctionDefinitionOptional1 {
 	readonly $type: '_function_definition_optional1';
 	readonly _return_type: Type;
+	readonly __looseHints__?: {
+		readonly return_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	returnType(): Type;
 }
 
@@ -3093,6 +3168,9 @@ export interface DictionaryElements {
 export interface FutureImportStatementArm {
 	readonly $type: TSKindId.FutureImportStatementArm;
 	readonly _import_list: ImportList;
+	readonly __looseHints__?: {
+		readonly import_list: readonly (DottedName | AliasedImport)[];
+	};
 	importList(): ImportList;
 }
 
@@ -3144,6 +3222,9 @@ export interface CaseAsPattern {
 	readonly $type: TSKindId.CaseAsPattern;
 	readonly _case_pattern: CasePattern;
 	readonly _identifier: Identifier;
+	readonly __looseHints__?: {
+		readonly case_pattern: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
+	};
 	casePattern(): CasePattern;
 	identifier(): Identifier;
 }
@@ -3195,6 +3276,9 @@ export interface AssignmentEq {
 export interface AssignmentType {
 	readonly $type: TSKindId.AssignmentType;
 	readonly _type: Type;
+	readonly __looseHints__?: {
+		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	type(): Type;
 }
 
@@ -3202,6 +3286,9 @@ export interface AssignmentTyped {
 	readonly $type: TSKindId.AssignmentTyped;
 	readonly _type: Type;
 	readonly _right: RightHandSide;
+	readonly __looseHints__?: {
+		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
 	type(): Type;
 	right(): RightHandSide;
 }

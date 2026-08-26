@@ -3161,6 +3161,17 @@ export interface MacroRule {
 	readonly $type: TSKindId.MacroRule;
 	readonly _left: TokenTreePattern;
 	readonly _right: TokenTree;
+	readonly __looseHints__?: {
+		readonly left: readonly (TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace)[];
+		readonly right: readonly (
+			| TokenTreeParen
+			| TokenTreeBracket
+			| TokenTreeBrace
+			| DelimTokenTreeParen
+			| DelimTokenTreeBracket
+			| DelimTokenTreeBrace
+		)[];
+	};
 	left(): TokenTreePattern;
 	right(): TokenTree;
 }
@@ -3285,7 +3296,7 @@ export interface ModItem {
 	readonly _name: Identifier;
 	readonly _content: ';' | DeclarationList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3298,7 +3309,7 @@ export interface ForeignModItem {
 	readonly _extern_modifier: ExternModifier;
 	readonly _content: ';' | DeclarationList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly extern_modifier: ExternModifier | 'extern';
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
@@ -3319,7 +3330,7 @@ export interface StructItem {
 	readonly _type_parameters?: TypeParameters;
 	readonly _content: StructItemBrace | StructItemTuple | ';';
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
@@ -3336,7 +3347,7 @@ export interface UnionItem {
 	readonly _where_clause?: WhereClause;
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly AttributedFieldDeclaration[];
@@ -3356,7 +3367,7 @@ export interface EnumItem {
 	readonly _where_clause?: WhereClause;
 	readonly _body: EnumVariantList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly AttributedEnumVariant[];
@@ -3384,7 +3395,7 @@ export interface EnumVariant {
 	readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
 	readonly _value?: Expression;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3407,7 +3418,7 @@ export interface FieldDeclaration {
 	readonly _name: Identifier;
 	readonly _type: _Type;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3429,7 +3440,7 @@ export interface ExternCrateDeclaration {
 	readonly _name: Identifier;
 	readonly _alias?: Identifier;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3443,7 +3454,7 @@ export interface ConstItem {
 	readonly _type: _Type;
 	readonly _value?: Expression;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
@@ -3464,7 +3475,7 @@ export interface StaticItem {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly ref_marker?: 'ref' | 'ref';
 		readonly mutable_specifier?: MutableSpecifier | 'mut';
 	};
@@ -3485,7 +3496,7 @@ export interface TypeItem {
 	readonly _type: _Type;
 	readonly _trailing_where_clause?: WhereClause;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly trailing_where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -3509,7 +3520,7 @@ export interface FunctionItem {
 	readonly _where_clause?: WhereClause;
 	readonly _body: Block;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly parameters: readonly AttributedParameter[];
@@ -3535,7 +3546,7 @@ export interface FunctionSignatureItem {
 	readonly _return_type?: _Type;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly parameters: readonly AttributedParameter[];
@@ -3579,6 +3590,9 @@ export interface WherePredicate {
 		| HigherRankedTraitBound
 		| PrimitiveType;
 	readonly _bounds: TraitBounds;
+	readonly __looseHints__?: {
+		readonly bounds: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+	};
 	left():
 		| Lifetime
 		| Identifier
@@ -3629,8 +3643,9 @@ export interface TraitItem {
 		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly DeclarationStatement[];
 	};
@@ -3651,6 +3666,7 @@ export interface AssociatedType {
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	name(): Identifier;
@@ -3706,6 +3722,9 @@ export interface TypeParameter {
 	readonly _name: Identifier;
 	readonly _bounds?: TraitBounds;
 	readonly _default_type?: _Type;
+	readonly __looseHints__?: {
+		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+	};
 	name(): Identifier;
 	bounds(): TraitBounds | undefined;
 	defaultType(): _Type | undefined;
@@ -3715,6 +3734,9 @@ export interface LifetimeParameter {
 	readonly $type: TSKindId.LifetimeParameter;
 	readonly _name: Lifetime;
 	readonly _bounds?: TraitBounds;
+	readonly __looseHints__?: {
+		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+	};
 	name(): Lifetime;
 	bounds(): TraitBounds | undefined;
 }
@@ -3744,7 +3766,7 @@ export interface UseDeclaration {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _argument: UseClause;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	argument(): UseClause;
@@ -3961,6 +3983,9 @@ export interface BoundedType {
 export interface UseBounds {
 	readonly $type: TSKindId.UseBounds;
 	readonly _bounds?: UseBoundsElements;
+	readonly __looseHints__?: {
+		readonly bounds?: readonly (Lifetime | Identifier)[];
+	};
 	bounds(): UseBoundsElements | undefined;
 }
 
@@ -4041,6 +4066,9 @@ export interface MacroInvocation {
 	readonly $type: TSKindId.MacroInvocation;
 	readonly _macro: ScopedIdentifier | Identifier;
 	readonly _token_tree: DelimTokenTree;
+	readonly __looseHints__?: {
+		readonly token_tree: readonly (DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace)[];
+	};
 	macro(): ScopedIdentifier | Identifier;
 	tokenTree(): DelimTokenTree;
 }
@@ -4246,6 +4274,9 @@ export interface StructExpression {
 export interface FieldInitializerList {
 	readonly $type: TSKindId.FieldInitializerList;
 	readonly _initializers?: FieldInitializerListElements;
+	readonly __looseHints__?: {
+		readonly initializers?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+	};
 	initializers(): FieldInitializerListElements | undefined;
 }
 
@@ -4278,6 +4309,9 @@ export interface IfExpression {
 	readonly _condition: Condition;
 	readonly _consequence: Block;
 	readonly _alternative?: ElseClause;
+	readonly __looseHints__?: {
+		readonly alternative?: readonly (Block | IfExpression)[];
+	};
 	condition(): Condition;
 	consequence(): Block;
 	alternative(): ElseClause | undefined;
@@ -4405,6 +4439,7 @@ export interface ClosureExpression {
 	};
 	readonly __looseHints__?: {
 		readonly move_marker?: 'move' | 'move';
+		readonly parameters: readonly (Pattern | Parameter)[];
 	};
 	staticMarker(): boolean | undefined;
 	asyncMarker(): boolean | undefined;
@@ -4525,6 +4560,9 @@ export interface GenericPattern {
 export interface TuplePattern {
 	readonly $type: TSKindId.TuplePattern;
 	readonly _elements?: TuplePatternElements;
+	readonly __looseHints__?: {
+		readonly elements?: readonly (Pattern | ClosureExpression)[];
+	};
 	elements(): TuplePatternElements | undefined;
 }
 
@@ -4552,6 +4590,9 @@ export interface StructPattern {
 	readonly $type: TSKindId.StructPattern;
 	readonly _type: Identifier | ScopedTypeIdentifier;
 	readonly _fields?: StructPatternElements;
+	readonly __looseHints__?: {
+		readonly fields?: readonly (FieldPattern | RemainingFieldPattern)[];
+	};
 	type(): Identifier | ScopedTypeIdentifier;
 	fields(): StructPatternElements | undefined;
 }
@@ -4845,6 +4886,9 @@ export interface AttributeArm {
 	readonly $type: TSKindId.AttributeArm;
 	readonly _value?: Expression;
 	readonly _arguments?: DelimTokenTree;
+	readonly __looseHints__?: {
+		readonly arguments?: readonly (DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace)[];
+	};
 	value(): Expression | undefined;
 	arguments(): DelimTokenTree | undefined;
 }
@@ -5091,7 +5135,12 @@ export interface VisibilityModifierPub {
 	readonly $type: TSKindId.VisibilityModifierPub;
 	readonly _visibility_modifier_group?: VisibilityModifierGroup;
 	readonly __looseHints__?: {
-		readonly visibility_modifier_group?: VisibilityModifierGroup | 'self' | 'super' | 'crate';
+		readonly visibility_modifier_group?:
+			| VisibilityModifierGroup
+			| 'self'
+			| 'super'
+			| 'crate'
+			| readonly (Self | Super | Crate | VisibilityModifierInPath)[];
 	};
 	visibilityModifierGroup(): VisibilityModifierGroup | undefined;
 }
@@ -5228,7 +5277,7 @@ export interface AttributedOrderedField {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _type: _Type;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub';
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	attributeItems(): readonly AttributeItem[];
 	visibilityModifier(): VisibilityModifier | undefined;
@@ -5239,6 +5288,9 @@ export interface TypeArgument {
 	readonly $type: TSKindId.TypeArgument;
 	readonly _content: _Type | TypeBinding | Lifetime | Literal | Block;
 	readonly _trait_bounds?: TraitBounds;
+	readonly __looseHints__?: {
+		readonly trait_bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+	};
 	content(): _Type | TypeBinding | Lifetime | Literal | Block;
 	traitBounds(): TraitBounds | undefined;
 }
@@ -5255,7 +5307,12 @@ export interface VisibilityModifierPubParens {
 	readonly $type: '_visibility_modifier_pub_parens';
 	readonly _visibility_modifier_group: VisibilityModifierGroup;
 	readonly __looseHints__?: {
-		readonly visibility_modifier_group: VisibilityModifierGroup | 'self' | 'super' | 'crate';
+		readonly visibility_modifier_group:
+			| VisibilityModifierGroup
+			| 'self'
+			| 'super'
+			| 'crate'
+			| readonly (Self | Super | Crate | VisibilityModifierInPath)[];
 	};
 	visibilityModifierGroup(): VisibilityModifierGroup;
 }
