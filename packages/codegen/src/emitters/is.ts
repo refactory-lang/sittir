@@ -323,20 +323,6 @@ export function emitIs(config: EmitIsConfig): string {
 	}
 	if (supertypes.length > 0) lines.push('');
 
-	// Phase A coexistence: kind-name → numeric TSKindId map for the generic
-	// `is.kind(v, k)` guard. When `v.$type` is numeric (factory/wrap output)
-	// and `k` is a string kind-name, we need to translate `k` to its numeric
-	// form before comparing. Map drops to undefined for kinds without a parser
-	// symbol; the guard returns false in that case (TSGrammar-only kinds can
-	// never match a numeric runtime $type anyway).
-	if (kindEntries && kindEntries.length > 0) {
-		const entries = kindEntries.map((e) => `    [${JSON.stringify(e.kind)}, TSKindId.${e.member}]`).join(',\n');
-		lines.push('const _kindIdByKind = new Map<string, number>([');
-		lines.push(entries + ',');
-		lines.push(']);');
-		lines.push('');
-	}
-
 	lines.push('export const is = {');
 	for (const s of structuralKinds) {
 		if (kindEntries && s.numericId !== undefined) {
@@ -347,10 +333,9 @@ export function emitIs(config: EmitIsConfig): string {
 		}
 	}
 	if (kindEntries) {
-		lines.push(`    kind: (v: { readonly $type: number }, k: string): boolean => {`);
-		lines.push(`        const id = _kindIdByKind.get(k);`);
-		lines.push(`        return id !== undefined && v.$type === id;`);
-		lines.push(`    },`);
+		// `NamespaceMap` is keyed by the kind id, so `k` IS the discriminant —
+		// the comparison is direct and no name table stands between them.
+		lines.push(`    kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,`);
 	} else {
 		// Legacy / unit-test callers without generatedIdTables: string equality.
 		lines.push(`    kind: (v: { readonly $type: number }, k: string): boolean => (v.$type as unknown) === k,`);

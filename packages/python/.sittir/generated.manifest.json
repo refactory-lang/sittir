@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "27db9024c3d39eb249b5d58a7048f2d4b6774c0f2aab0738422202050badd775",
+  "source_hash": "d6ca69e4001f7d4e15b6b5a1300db6000821ffc65cf5820b5dbfd4e57497bb7e",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "d79d1e03183e49f956d11ea1efd02bbb7543378633526c23ad30d864214b279f",
@@ -26,12 +26,12 @@
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
     "packages/python/src/index.ts": "e2d3dcf7b69dcb721c3e8760775e2147815eb5aadb4c18492eae9e054d0a04ea",
     "packages/python/src/ir.ts": "d97f09649cb0d0d203b24991838de6c77a52d4ba165bd6c19944ac3f0ede26f3",
-    "packages/python/src/is.ts": "521b910dd95b2912dd6f959929d12cd8561eafe15089a26caadc877d31b7438f",
+    "packages/python/src/is.ts": "65ad0605a965b78b807c69ef2239b98d1e9d3cf9bd0da757651896458cfe0ca9",
     "packages/python/src/node-model.json5": "75343bbe6f32d281f31e7744774a4cc22ad22975a07adf1f87084bed5b5e8496",
     "packages/python/src/render-engine.ts": "845d93099b215b1d7a04b1ae53fddb2315d0a39e25b94cf598818d157a432d2e",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",
-    "packages/python/src/types.ts": "0c3fc56ea267be0d25cdd62400b6c3f82ad6bb3a8b1ef4935632c225be4cfb1b",
-    "packages/python/src/utils.ts": "5bb731ea32f4fe737f381ea776dd0c39c65cc78268d33b268e16c63987028a17",
+    "packages/python/src/types.ts": "05a1e579cfddc58d866c2aabb9f7e8d26b0d9d324bbf4ddac418b0a8694b0654",
+    "packages/python/src/utils.ts": "711eb3a09d8f24159cc6bff83f1f261c0f5ccb600bebd33247463812452fc64a",
     "packages/python/src/wrap.ts": "533018bedba02d778b5ab0e0f6fdea774048a96e94e8bd461d4c26c857d392a4",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_argument_list_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",

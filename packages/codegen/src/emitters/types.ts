@@ -34,6 +34,15 @@ export {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 
+/** Whether the parser issues an id for this kind. `NamespaceMap` is keyed by
+ *  that id, so a kind without one takes no entry: nothing builds it, no parse
+ *  produces it, and the per-kind family (`Config` / `Loose` / `BuildArgs`) has
+ *  no meaning for it. Its data interface still stands, so it can be read out
+ *  of a tree and named in a union. */
+function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
+	return kindEntries !== undefined && kindEntries.some((e) => e.kind === kind);
+}
+
 function kindDiscriminantOrLiteral(
 	kind: string,
 	nodeMap: NodeMap,
@@ -297,9 +306,11 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// 1. Per-kind namespace interfaces
 	lines.push('// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)');
-	for (const kind of nodeKinds) {
+	const namespaceKinds = nodeKinds.filter(
+		(kind) => generatedTypes.has(nodeMap.nodes.get(kind)!.typeName) && hasKindId(kind, kindEntries)
+	);
+	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (!generatedTypes.has(node.typeName)) continue;
 		emitNamespaceInterfaceLine(
 			lines,
 			node.typeName,
@@ -310,11 +321,13 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	// 2. NamespaceMap
+	// Keyed by the kind id, which is what a node's `$type` actually carries —
+	// so `LooseProjection` can reach a kind's cached `Loose` straight off the
+	// node type instead of re-deriving one per nesting level.
 	lines.push('export interface NamespaceMap {');
-	for (const kind of nodeKinds) {
+	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (!generatedTypes.has(node.typeName)) continue;
-		lines.push(`  '${kind}': ${node.typeName}Ns;`);
+		lines.push(`  [${kindDiscriminantExpr(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -334,10 +347,15 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
-	for (const kind of nodeKinds) {
+	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (!generatedTypes.has(node.typeName)) continue;
-		emitNamespaceSugarBlock(lines, kind, node, refineInfoByKind.get(kind));
+		emitNamespaceSugarBlock(
+			lines,
+			kind,
+			node,
+			refineInfoByKind.get(kind),
+			kindDiscriminantExpr(kind, nodeMap, kindEntries)
+		);
 	}
 	lines.push('');
 
@@ -930,14 +948,6 @@ function emitInterface(
 	// `foo` back to `_foo` before dispatch. The interface's declared
 	// `$type` is the single source of truth for both producer paths.
 	lines.push(`  readonly $type: ${kindDiscriminant};`);
-	// The kind's NAME, type-only. `$type` is the parser's discriminant where
-	// the kind has one and the kind name otherwise, so it is not a key that
-	// resolves for every kind; `NamespaceMap` is keyed by name, which is —
-	// it also carries the type-only kinds that no factory builds. Reading
-	// this is what lets `LooseProjection` reach a kind's CACHED `Loose`
-	// instead of re-deriving one per nesting level, and a named reference is
-	// what keeps that recursion finite.
-	lines.push(`  readonly __kind__?: ${JSON.stringify(node.kind)};`);
 
 	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
 	// function types at the top level instead of the old `$fields: { name: T }`
@@ -1211,24 +1221,27 @@ function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
 	node: AssembledNode,
-	refineInfo: RefineKindInfo | undefined
+	refineInfo: RefineKindInfo | undefined,
+	// The NamespaceMap key — the kind's id. `Kind` below stays the NAME,
+	// which is the grammar's own spelling and what a reader recognises.
+	nsKey: string
 ): void {
 	lines.push(`export namespace ${node.typeName} {`);
 	if (refineInfo && refineInfo.forms.length > 0) {
-		emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo);
+		emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo, nsKey);
 		const defaultForm = refineInfo.forms[0]!;
 		const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
 		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
 		lines.push(`  export type Config = ${defaultShortName}.Config;`);
 	} else {
-		lines.push(`  export type Config = ConfigFor<'${kind}'>;`);
+		lines.push(`  export type Config = ConfigFor<${nsKey}>;`);
 	}
-	lines.push(`  export type Fluent = FluentFor<'${kind}'>;`);
-	lines.push(`  export type Loose = LooseFor<'${kind}'>;`);
-	lines.push(`  export type LooseConfig = LooseConfigFor<'${kind}'>;`);
-	lines.push(`  export type BuildArgs = BuildArgsFor<'${kind}'>;`);
-	lines.push(`  export type LooseArgs = LooseArgsFor<'${kind}'>;`);
-	lines.push(`  export type Tree = TreeFor<'${kind}'>;`);
+	lines.push(`  export type Fluent = FluentFor<${nsKey}>;`);
+	lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
+	lines.push(`  export type LooseConfig = LooseConfigFor<${nsKey}>;`);
+	lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
+	lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
+	lines.push(`  export type Tree = TreeFor<${nsKey}>;`);
 	lines.push(`  export type Kind = '${kind}';`);
 	lines.push('}');
 }
@@ -1237,7 +1250,8 @@ function emitRefineFormSubNamespaces(
 	lines: string[],
 	parentTypeName: string,
 	kind: string,
-	refineInfo: RefineKindInfo
+	refineInfo: RefineKindInfo,
+	nsKey: string
 ): void {
 	for (const form of refineInfo.forms) {
 		const formType = refineFormTypeName(parentTypeName, form.name);
@@ -1246,9 +1260,9 @@ function emitRefineFormSubNamespaces(
 		const narrowed = form.narrowedFields;
 		if (narrowed.length > 0) {
 			const omitKeys = narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ');
-			lines.push(`    export type Config = Omit<ConfigFor<'${kind}'>, ${omitKeys}>;`);
+			lines.push(`    export type Config = Omit<ConfigFor<${nsKey}>, ${omitKeys}>;`);
 		} else {
-			lines.push(`    export type Config = ConfigFor<'${kind}'>;`);
+			lines.push(`    export type Config = ConfigFor<${nsKey}>;`);
 		}
 		lines.push(`    export type Tree = ${formType}Tree;`);
 		lines.push('  }');

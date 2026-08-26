@@ -3,7 +3,6 @@
 
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
 import type { Comment, NamespaceMap } from './types.js';
-import { kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -63,7 +62,7 @@ export function withMethods<T extends object>(
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(v: unknown, kind: K): v is NamespaceMap[K]['Node'] {
-	return isNodeData(v) && v.$type === kindIdFromName(kind);
+	return isNodeData(v) && v.$type === kind;
 }
 
 export function hasKindOf<K extends keyof NamespaceMap>(

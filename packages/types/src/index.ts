@@ -1019,7 +1019,7 @@ type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited exte
  */
 
 type LooseProjection<T, NsMap> = T extends {
-	readonly __kind__?: infer K extends keyof NsMap;
+	readonly $type: infer K extends keyof NsMap;
 }
 	? NsMap[K] extends { Loose: infer L }
 		? L

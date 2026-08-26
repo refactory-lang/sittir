@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "5c168b7bbd39f0e0f9ccebdced7d8ec4c40cd4963337a89dd23e555a9ff95517",
+  "source_hash": "a2e222523a205928b5b1068e21cea21aac78d877bfbdd3901e321515308415b1",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "4068ba698ec7fa651f8764b5f1c96f034feaca227a27e68099988a55f2639e69",
     "packages/typescript/.sittir/grammar.js": "e1b455a6cbd5f7f026da37364084e09476c4cea6f222fe3ae3bdd0181bbf33c3",
@@ -27,12 +27,12 @@
     "packages/typescript/src/hash.ts": "a52a9dccba87e9f3938c72e8495e7090222f660d723b8361a3ce9dfa93298fd4",
     "packages/typescript/src/index.ts": "e2d3dcf7b69dcb721c3e8760775e2147815eb5aadb4c18492eae9e054d0a04ea",
     "packages/typescript/src/ir.ts": "e7195908aa795f2a15b13283496c239e3e745dcbc34c320b4271a80578b42d41",
-    "packages/typescript/src/is.ts": "dbc9f1221b8af029ddf993561556bbc551754b2cd5003012e1d91600da4ce548",
+    "packages/typescript/src/is.ts": "738cfb1e2b23ca0ef525e6ac44d715f41eac41f9f9dbf07b693bdf2d8ae9b8f0",
     "packages/typescript/src/node-model.json5": "243abcf11d443910291e379e1c67bb2cc29a3f58aae9203ba0c1f6d8fc0cad3b",
     "packages/typescript/src/render-engine.ts": "1f01acd0e83b29140973adb51e3b7fd8ed2391f7c65eb125d29d0235ce35cfa1",
     "packages/typescript/src/type-test.ts": "ba6cf1dce376162b7bdb4f043d24681812c1c136b1109e6840ced7ac452baa21",
-    "packages/typescript/src/types.ts": "f3f4e50f8f0d663ac8ca98564e38be353b2ae62fcc9d0772ad471f00a5af5ad5",
-    "packages/typescript/src/utils.ts": "5bb731ea32f4fe737f381ea776dd0c39c65cc78268d33b268e16c63987028a17",
+    "packages/typescript/src/types.ts": "20b07f76c941a9577ac14515efe1df03fe3bdda0fc16d14e3ef68e6a04c62954",
+    "packages/typescript/src/utils.ts": "711eb3a09d8f24159cc6bff83f1f261c0f5ccb600bebd33247463812452fc64a",
     "packages/typescript/src/wrap.ts": "008dc99486f886f066ee97a7bee27a345e3c584123b8c49fe29f7a283a0b0b97",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/typescript/templates/_ambient_declaration_global.jinja": "9c78483e215a5b1f64449a4d4a6680a4c3500d608c93f5877eed3c96d09a8621",

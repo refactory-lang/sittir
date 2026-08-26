@@ -375,7 +375,9 @@ describe('types emitter — per-form namespace sugar', () => {
 		expect(typesSrc).toMatch(/export namespace IfaceBody \{[\s\S]*export namespace Curly/);
 		expect(typesSrc).toMatch(/export namespace Flow/);
 		// Per-form Config omits both narrowed fields.
-		expect(typesSrc).toMatch(/Curly \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/);
+		expect(typesSrc).toMatch(
+			/Curly \{\s+export type Config = Omit<ConfigFor<TSKindId.IfaceBody>, "opening" \| "closing">/
+		);
 		// Per-form Tree aliases point at the base Tree.
 		expect(typesSrc).toContain('export type IfaceBodyCurlyTree = IfaceBodyTree;');
 		expect(typesSrc).toContain('export type IfaceBodyFlowTree = IfaceBodyTree;');
@@ -391,8 +393,12 @@ describe('types emitter — per-form namespace sugar', () => {
 				{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 			])
 		);
-		expect(typesSrc).toMatch(/Curly \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/);
-		expect(typesSrc).toMatch(/Flow \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/);
+		expect(typesSrc).toMatch(
+			/Curly \{\s+export type Config = Omit<ConfigFor<TSKindId.IfaceBody>, "opening" \| "closing">/
+		);
+		expect(typesSrc).toMatch(
+			/Flow \{\s+export type Config = Omit<ConfigFor<TSKindId.IfaceBody>, "opening" \| "closing">/
+		);
 	});
 
 	it('leaves non-refined kinds with the original ConfigFor shape', () => {
@@ -413,7 +419,7 @@ describe('types emitter — per-form namespace sugar', () => {
 		expect(src).not.toMatch(/namespace Curly/);
 		expect(src).not.toMatch(/namespace Flow/);
 		// The plain Config line is present.
-		expect(src).toMatch(/export type Config = ConfigFor<'iface_body'>;/);
+		expect(src).toMatch(/export type Config = ConfigFor<TSKindId.IfaceBody>;/);
 	});
 });
 

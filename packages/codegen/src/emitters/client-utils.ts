@@ -23,7 +23,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	} else {
 		lines.push("import type { NamespaceMap } from './types.js';");
 	}
-	lines.push("import { kindIdFromName } from './types.js';");
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push(
 		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors } from '@sittir/common/utils';"
@@ -125,7 +124,9 @@ function emitNodeGuards(): string[] {
 		'  v: unknown,',
 		'  kind: K,',
 		"): v is NamespaceMap[K]['Node'] {",
-		'  return isNodeData(v) && v.$type === kindIdFromName(kind);',
+		// `NamespaceMap` is keyed by the kind id, so `kind` IS the discriminant —
+		// no runtime name lookup stands between the argument and the comparison.
+		'  return isNodeData(v) && v.$type === kind;',
 		'}',
 		'',
 		'export function hasKindOf<K extends keyof NamespaceMap>(',
