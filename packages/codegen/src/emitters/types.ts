@@ -930,6 +930,14 @@ function emitInterface(
 	// `foo` back to `_foo` before dispatch. The interface's declared
 	// `$type` is the single source of truth for both producer paths.
 	lines.push(`  readonly $type: ${kindDiscriminant};`);
+	// The kind's NAME, type-only. `$type` is the parser's discriminant where
+	// the kind has one and the kind name otherwise, so it is not a key that
+	// resolves for every kind; `NamespaceMap` is keyed by name, which is —
+	// it also carries the type-only kinds that no factory builds. Reading
+	// this is what lets `LooseProjection` reach a kind's CACHED `Loose`
+	// instead of re-deriving one per nesting level, and a named reference is
+	// what keeps that recursion finite.
+	lines.push(`  readonly __kind__?: ${JSON.stringify(node.kind)};`);
 
 	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
 	// function types at the top level instead of the old `$fields: { name: T }`
