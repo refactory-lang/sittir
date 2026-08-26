@@ -182,6 +182,47 @@ equivalent per slot before binding the entry; where they diverge, the field
 resolver is still the correct input and only `.strict` and the variants are
 inherited.
 
+### Two stages, so nothing refers to itself
+
+Bundles and setters are separated into two generated files rather than one:
+
+```
+namespaces.ts   per kind: attachProps(FR.coerceToX, { strict: F.buildX, …variants })
+                no setters, and no entry mentions another
+mutable.ts      imports * as NS from './namespaces.js'
+                per kind: makeMutable(NS.x, { <field>: NS.<slotKind>, … })
+```
+
+Stage one is a flat list of independent bundles. Stage two sees all of it,
+fully typed, and adds the one thing stage one deliberately lacks.
+
+**Chaining survives, and needs no self-reference.** A setter returns the
+PARENT rebuilt — `identifier(value): LabelBuilt`, and `LabelBuilt` carries its
+own `$with` — so the obvious worry is that `mutable.ts` must refer to its own
+exports to keep the result mutable. It does not. `makeMutable(ns, slots)`
+closes over both arguments, and each setter it installs rebuilds through that
+same `ns` and re-attaches from that same `slots`:
+
+```ts
+function makeMutable(ns, slots) {
+	const attach = (node) => withAccessors(node, mapValues(slots, (slotNs, field) =>
+		bind((v) => attach(ns.strict({ ...configOf(node), [field]: slotNs(v) })))));
+	return attachProps((...args) => attach(ns(...args)), ns);
+}
+```
+
+Everything the setter needs is already in the closure: the parent's own bundle
+to rebuild with, and the slot bundles to coerce the incoming value. Nothing
+reaches back into `mutable.ts`'s exports, so the module has no cycle to break
+and no live-binding subtlety to rely on.
+
+**Why two files rather than two passes in one.** The split is what keeps the
+TYPES resolvable. Stage one's types are complete before stage two names them,
+so nothing is inferred through a reference to something still being inferred —
+the failure mode item 30 records, where a projection through
+`ReturnType<typeof wrapX>` did not error but failed to terminate. A boundary
+between the stages is the same medicine as declaring a return type.
+
 ### Freeing the resolvers is a separate, smaller move
 
 There is a second route to the same convergence: put the resolvers *below*
