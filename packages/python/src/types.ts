@@ -2198,6 +2198,7 @@ export interface CaseClause {
 	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __looseHints__?: {
 		readonly case_patterns: readonly CasePattern[];
+		readonly guard?: readonly Expression[];
 	};
 	casePatterns(): CasePatterns;
 	guard(): IfClause | undefined;
@@ -2216,6 +2217,7 @@ export interface ForStatement {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly alternative?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
 	};
 	asyncMarker(): boolean | undefined;
 	left(): LeftHandSide;
@@ -2229,6 +2231,9 @@ export interface WhileStatement {
 	readonly _condition: Expression;
 	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly _alternative?: ElseClause;
+	readonly __looseHints__?: {
+		readonly alternative?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
+	};
 	condition(): Expression;
 	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 	alternative(): ElseClause | undefined;
@@ -2240,6 +2245,10 @@ export interface TryStatement {
 	readonly _except_clauses?: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
+	readonly __looseHints__?: {
+		readonly else_clause?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
+		readonly finally_clause?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
+	};
 	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 	exceptClauses(): readonly ExceptClause[];
 	elseClause(): ElseClause | undefined;
@@ -2392,6 +2401,13 @@ export interface ClassDefinition {
 	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly Type[];
+		readonly superclasses?: readonly (
+			| Expression
+			| ListSplat
+			| DictionarySplat
+			| ParenthesizedListSplat
+			| KeywordArgument
+		)[];
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
@@ -3252,6 +3268,7 @@ export interface PrintStatementArm1 {
 	readonly _chevron: Chevron;
 	readonly _print_chevron_arguments?: PrintChevronArguments | ',';
 	readonly __looseHints__?: {
+		readonly chevron: readonly Expression[];
 		readonly print_chevron_arguments?: readonly Expression[];
 	};
 	chevron(): Chevron;

@@ -630,12 +630,14 @@ export function computeSlotClasses(nodeMap: NodeMap): void {
 
 export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
-	if (node.kind.startsWith('_')) return undefined;
+	// A hidden kind is out unless it is user-facing — a namespaced constructor
+	// reaches `_visibility_modifier_pub` as `ir.visibilityModifier.pub`, and a
+	// kind callers can construct wants a constructible surface. Same predicate
+	// `isWrapChildrenKind` applies for the same reason.
+	if (node.kind.startsWith('_') && !node.userFacing) return undefined;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return undefined;
-	const slot = slotClass.slot;
-	if (slot.isUnnamed) return undefined;
-	return slot;
+	return slotClass.slot;
 }
 
 /**
@@ -652,7 +654,14 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
 	if (!slot) return undefined;
-	return structuralFieldsOf(node).length === 1 ? slot : undefined;
+	// Extras are the CALLER-SETTABLE slots, not the raw fields. A determined
+	// marker sits in `fields` and never in `slots` — it is what the kind IS,
+	// not something the caller supplies, so a positional signature has nothing
+	// to accept for it and nothing is lost by omitting it. Counting raw fields
+	// here would be a second, stricter notion of "extra" than the one
+	// `classifyFactoryShape` already applies, and the two would disagree
+	// exactly where a kind carries a marker beside its sole slot.
+	return allSlotsOf(node).every((f) => f === slot) ? slot : undefined;
 }
 
 /**
@@ -723,10 +732,12 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	if (shape === 'spread') return 'spread';
 	// 'forwarded' refines 'direct' (same positional child surface, plus the
 	// factory also accepts the child's constructor args) — the child SURFACE
-	// is 'direct' either way.
-	if (shape !== 'direct' && shape !== 'forwarded') return null;
-	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
+	// is 'direct' either way, for a named sole slot exactly as for an unnamed
+	// one. What this answers is whether the factory takes its children
+	// positionally, and that does not depend on the slot carrying a field
+	// name. The factories emitter asks a narrower question and gates on
+	// 'spread' alone.
+	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
 }
 
 export interface SoleSlotFacts {
@@ -738,11 +749,11 @@ export interface SoleSlotFacts {
 
 export function soleSlotFacts(node: AssembledNode, nodeMap: NodeMap): SoleSlotFacts | null {
 	if (!isSlotBearingCompound(node)) return null;
-	// The container's stamped slot is the classified sole user slot — NOT
+	// The stamped slot is the classified sole user slot — NOT
 	// positionally `fields[0]`, which can be a keyword-presence marker
 	// preceding the payload (e.g. rust field_pattern's [ref_marker,
 	// mutable_specifier, content]). Same derivation classifyBranchSlots
-	// uses to pick the container shape in the first place.
+	// uses to pick the sole-slot shape in the first place.
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot') return null;
 	const slot = slotClass.slot;
@@ -789,14 +800,10 @@ export function classifyFactoryShape(
 				// is how the list's spread surface hoists to its parent); a
 				// union slot has no unique constructor and stays 'direct'.
 				if (slotClass.arity !== 'singular') return 'spread';
-				if (slotClass.slot.isUnnamed) {
-					return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
-				}
-				// Named singular field: direct only when the emitter would emit
-				// the direct-value signature (sole non-stamped field, visible
-				// kind — see resolveDirectFactorySlot). Hidden kinds and
-				// marker-carrying kinds keep the config-object surface. Same
-				// forwarding refinement as the unnamed case.
+				// Direct only when the emitter would emit the direct-value
+				// signature (sole non-stamped field, visible kind — see
+				// resolveDirectFactorySlot). Hidden kinds and marker-carrying
+				// kinds keep the config-object surface.
 				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 			}

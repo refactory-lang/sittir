@@ -3151,6 +3151,7 @@ export interface IfStatement {
 			| DecoratorMemberExpression
 			| DecoratorCallExpression
 		)[];
+		readonly alternative?: readonly Statement[];
 	};
 	condition(): ParenthesizedExpression;
 	consequence(): Statement;
@@ -3262,6 +3263,9 @@ export interface TryStatement {
 	readonly _body: StatementBlock;
 	readonly _handler?: CatchClause;
 	readonly _finalizer?: FinallyClause;
+	readonly __looseHints__?: {
+		readonly finalizer?: readonly Statement[];
+	};
 	body(): StatementBlock;
 	handler(): CatchClause | undefined;
 	finalizer(): FinallyClause | undefined;
@@ -4130,6 +4134,7 @@ export interface PublicFieldDefinition {
 		readonly readonly_marker?: 'readonly' | 'readonly';
 		readonly abstract_marker?: 'abstract' | 'abstract';
 		readonly override_modifier?: OverrideModifier | 'override';
+		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	declareMarker(): boolean | undefined;
@@ -4507,6 +4512,7 @@ export interface RequiredParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
+		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -4537,6 +4543,7 @@ export interface OptionalParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
+		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -4635,6 +4642,9 @@ export interface TupleParameter {
 	readonly $type: TSKindId.TupleParameter;
 	readonly _name: Identifier | RestPattern;
 	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
 	name(): Identifier | RestPattern;
 	type(): TypeAnnotation;
 }
@@ -4643,6 +4653,9 @@ export interface OptionalTupleParameter {
 	readonly $type: TSKindId.OptionalTupleParameter;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
 	name(): Identifier;
 	type(): TypeAnnotation;
 }
@@ -4930,6 +4943,7 @@ export interface PropertySignature {
 		readonly static_marker?: 'static' | 'static';
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
+		readonly type?: readonly Type[];
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -4960,6 +4974,7 @@ export interface TypeParameter {
 	};
 	readonly __looseHints__?: {
 		readonly const_marker?: 'const' | 'const';
+		readonly value?: readonly Type[];
 	};
 	constMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4997,6 +5012,7 @@ export interface ConstructSignature {
 		readonly abstract_marker?: 'abstract' | 'abstract';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly FormalParameter[];
+		readonly type?: readonly Type[];
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -5097,6 +5113,9 @@ export interface VariableDeclaratorArm1 {
 	readonly _name: Identifier | DestructuringPattern;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
 	name(): Identifier | DestructuringPattern;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -5106,6 +5125,9 @@ export interface VariableDeclaratorArm2 {
 	readonly $type: TSKindId.VariableDeclaratorArm2;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
 	name(): Identifier;
 	type(): TypeAnnotation;
 }
@@ -5183,6 +5205,9 @@ export interface CatchClauseGroup {
 	readonly $type: TSKindId.CatchClauseGroup;
 	readonly _parameter: Identifier | DestructuringPattern;
 	readonly _type?: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
 	parameter(): Identifier | DestructuringPattern;
 	type(): TypeAnnotation | undefined;
 }
@@ -5454,6 +5479,9 @@ export interface ParenthesizedExpressionTyped {
 	readonly $type: TSKindId.ParenthesizedExpressionTyped;
 	readonly _expression: Expression;
 	readonly _type?: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
 	expression(): Expression;
 	type(): TypeAnnotation | undefined;
 }

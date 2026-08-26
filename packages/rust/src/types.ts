@@ -3310,7 +3310,7 @@ export interface ForeignModItem {
 	readonly _content: ';' | DeclarationList;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
-		readonly extern_modifier: ExternModifier | 'extern';
+		readonly extern_modifier: ExternModifier | 'extern' | readonly (EscapeSequence | StringContent)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	externModifier(): ExternModifier;
@@ -3921,6 +3921,7 @@ export interface FunctionType {
 	readonly __looseHints__?: {
 		readonly for_lifetimes?: readonly Lifetime[];
 		readonly parameters: readonly AttributedParameter[];
+		readonly function_type_trait_form?: readonly (Identifier | ScopedTypeIdentifier)[];
 		readonly function_type_fn_form?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 	};
 	forLifetimes(): ForLifetimes | undefined;
@@ -4267,6 +4268,9 @@ export interface StructExpression {
 	readonly $type: TSKindId.StructExpression;
 	readonly _name: Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
 	readonly _body: FieldInitializerList;
+	readonly __looseHints__?: {
+		readonly body: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+	};
 	name(): Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
 	body(): FieldInitializerList;
 }
@@ -5125,6 +5129,7 @@ export interface StructItemTuple {
 	readonly _body: OrderedFieldDeclarationList;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
+		readonly body: readonly AttributedOrderedField[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	body(): OrderedFieldDeclarationList;
@@ -5251,6 +5256,9 @@ export interface AttributedParameter {
 	readonly $type: TSKindId.AttributedParameter;
 	readonly _attribute_item?: AttributeItem;
 	readonly _content: Parameter | SelfParameter | VariadicParameter | '_' | _Type;
+	readonly __looseHints__?: {
+		readonly attribute_item?: readonly Path[];
+	};
 	attributeItem(): AttributeItem | undefined;
 	content(): Parameter | SelfParameter | VariadicParameter | '_' | _Type;
 }

@@ -4640,7 +4640,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "body"
       ]
@@ -5217,7 +5217,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "expression"
       ]
@@ -5494,7 +5494,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "trait"
       ],
@@ -5604,7 +5604,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "trait"
       ],
@@ -5682,7 +5682,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "trait"
       ],
@@ -6263,7 +6263,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "value"
       ]
@@ -6523,7 +6523,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "right"
       ]
@@ -6868,7 +6868,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "start"
       ],
@@ -6914,7 +6914,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "end"
       ],

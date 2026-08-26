@@ -4415,7 +4415,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "statement_block",
       "factoryFields": [
         "body"
       ]
@@ -4651,7 +4652,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "parameter"
       ],
@@ -5884,7 +5885,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "content"
       ],
@@ -6079,7 +6080,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "string",
       "factoryFields": [
         "source"
       ],
@@ -6686,7 +6688,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "left"
       ],

@@ -683,7 +683,7 @@ interface FactoryParam {
  * parameters for its child — one derivation, two consumers.
  */
 interface FactorySurface {
-	readonly containerFacts: ReturnType<typeof soleSlotFacts> | null;
+	readonly spreadFacts: ReturnType<typeof soleSlotFacts> | null;
 	readonly singleField: AssembledNonterminal | undefined;
 	/** The parameter the two strings below are rendered from. */
 	readonly param: FactoryParam;
@@ -746,12 +746,13 @@ function looseValueOf(elementType: string): string {
 }
 
 function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): FactorySurface {
-	// Container shape: unnamed single/multiple child slot, positional
-	// `child`/`...children` calling convention. Never applies to 'group' —
-	// `classifyChildFactorySurface` only recognizes 'branch' modelType, since
-	// polymorph FORM factories (group) are always field-carrying.
-	const containerFacts =
-		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null
+	// The spread surface: a sole MANY-arity slot, taking `...children`
+	// positionally. A sole SINGULAR slot takes the direct-value path below
+	// instead, named or not — the model names every slot, so the surface is
+	// chosen by arity alone. Never applies to 'group': polymorph FORM
+	// factories are always field-carrying.
+	const spreadFacts =
+		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) === 'spread'
 			? soleSlotFacts(node, nodeMap)
 			: null;
 	// Gap 5: Single-field-no-children factories take the value directly
@@ -759,19 +760,19 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	// derivation of this calling convention, shared with
 	// `classifyFactoryShape` so the emitted signature and the shape
 	// metadata can never disagree.
-	const singleField = !containerFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
-	if (containerFacts) {
-		const elementType = resolveContainerElementType(
+	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
+	if (spreadFacts) {
+		const elementType = resolveSoleSlotElementType(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
 				treeTypeName: node.treeTypeName,
 				rawFactoryName: node.rawFactoryName,
-				fields: [containerFacts.slot]
+				fields: [spreadFacts.slot]
 			},
 			nodeMap
 		);
-		if (containerFacts.multiple) {
+		if (spreadFacts.multiple) {
 			const param: FactoryParam = {
 				label: 'children',
 				optional: false,
@@ -780,7 +781,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 				looseType: `${looseValueOf(elementType)}[]`
 			};
 			return {
-				containerFacts,
+				spreadFacts,
 				singleField,
 				param,
 				...renderSurfaceParams(param),
@@ -792,25 +793,28 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 		}
 		const param: FactoryParam = {
 			label: 'child',
-			optional: !containerFacts.required,
+			optional: !spreadFacts.required,
 			rest: false,
 			strictType: elementType,
 			looseType: looseValueOf(elementType)
 		};
 		return {
-			containerFacts,
+			spreadFacts,
 			singleField,
 			param,
 			...renderSurfaceParams(param),
 			args: 'child',
 			elementType,
 			directParamType: elementType,
-			directParamOptional: !containerFacts.required,
-			opt: containerFacts.required ? '' : '?'
+			directParamOptional: !spreadFacts.required,
+			opt: spreadFacts.required ? '' : '?'
 		};
 	}
 	if (singleField) {
-		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
+		// The slot's own element type, spelled the same way the spread surface
+		// spells it. Indexing `Config` instead re-projects the slot through the
+		// config surface and loses the union of kinds it actually admits.
+		const elemType = childElementType({ children: [singleField] }, nodeMap);
 		// A POSITIONAL parameter, so its identifier is invisible to callers and
 		// carries no contract — the same reason the container surface above
 		// spells its own `child` / `...children`. `value` matches what the
@@ -832,7 +836,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			looseType: looseValueOf(elemType)
 		};
 		return {
-			containerFacts,
+			spreadFacts,
 			singleField,
 			param,
 			...renderSurfaceParams(param),
@@ -864,7 +868,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	return {
-		containerFacts,
+		spreadFacts,
 		singleField,
 		param,
 		...renderSurfaceParams(param),
@@ -1026,7 +1030,7 @@ function emitFieldCarryingFactory(
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined;
 	const surface = resolveFactorySurface(node, nodeMap);
-	const { containerFacts, singleField } = surface;
+	const { spreadFacts, singleField } = surface;
 
 	// A field with an optional delimiter flank cannot reach this emitter: a
 	// delimiter-bearing list is a separatedList KIND (classifyNode routes it
@@ -1056,17 +1060,17 @@ function emitFieldCarryingFactory(
 	// The other two shapes (single-field, config) always use every field.
 	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
-	if (containerFacts) {
+	if (spreadFacts) {
 		// The container's ONE user slot takes the positional child value.
 		// Other fields (markers the single-slot classification excluded)
 		// stay un-emitted, as before.
-		fieldsToEmit = [containerFacts.slot];
+		fieldsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
-		valueSourceFor = (f) => (f === containerFacts.slot ? (containerFacts.multiple ? 'children' : 'child') : '');
-		withLines = containerFacts.multiple
+		valueSourceFor = (f) => (f === spreadFacts.slot ? (spreadFacts.multiple ? 'children' : 'child') : '');
+		withLines = spreadFacts.multiple
 			? [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`]
 			: [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
-		withTypeMembers = containerFacts.multiple
+		withTypeMembers = spreadFacts.multiple
 			? [`    $children(...vs: ${elementType}[]): ${builtName};`]
 			: [`    $child(v: ${elementType}): ${builtName};`];
 	} else if (singleField) {
@@ -1116,7 +1120,7 @@ function emitFieldCarryingFactory(
 	// closure. `withMethods<T>` adds the four `$`-prefixed methods at the
 	// boundary — generic on T preserves the literal's type. ---
 	const lines: string[] = [signature];
-	if (containerFacts?.multiple && containerFacts.nonEmpty) {
+	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
 	for (const f of fieldsToEmit) {
@@ -1243,7 +1247,7 @@ function emitNamespacedConstructors(
 ): string[] {
 	// How the parent takes its slot value: positionally (container / direct
 	// convention) or as a config key — the decision its signature came from.
-	const positionalSlot = surface.containerFacts?.slot ?? surface.singleField;
+	const positionalSlot = surface.spreadFacts?.slot ?? surface.singleField;
 	const fill = (slot: AssembledNonterminal, value: string): string =>
 		slot === positionalSlot ? `${fn}(${value})` : `${fn}({ ${slot.configKey}: ${value} })`;
 	const lines = [`export const ${exportName} = attachProps(${fn}, {`];
@@ -1492,7 +1496,7 @@ function resolvePolymorphFormVariantName(node: AssembledGroup): string | undefin
 // Container factory (children only, no fields)
 // ---------------------------------------------------------------------------
 
-interface ContainerNode {
+interface SoleSlotNode {
 	readonly kind: string;
 	readonly typeName: string;
 	readonly treeTypeName: string;
@@ -1500,9 +1504,8 @@ interface ContainerNode {
 	readonly fields: readonly AssembledNonterminal[];
 }
 
-function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): string {
-	// The unnamed-child slot lives in `node.fields`; derive the element type
-	// from it directly.
+function resolveSoleSlotElementType(node: SoleSlotNode, nodeMap: NodeMap): string {
+	// The sole slot lives in `node.fields`; derive the element type from it.
 	return childElementType({ children: node.fields }, nodeMap);
 }
 

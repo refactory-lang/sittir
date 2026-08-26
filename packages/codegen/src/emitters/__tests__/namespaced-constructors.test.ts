@@ -184,8 +184,12 @@ describe('namespacedConstructors — factory emission', () => {
 		// The built child is upcast to its base interface — the Built literal
 		// is deep enough to blow TS's comparison depth against the parent's
 		// Config union (a shallow supertype hop, not an escape hatch).
+		// `_wrapper_a`'s only caller-settable slot is `name` (the leading
+		// literal is determined), so it takes the single-slot positional
+		// surface rather than a config object — the same rule every other
+		// one-slot kind follows.
 		expect(emitted).toContain(
-			'a: (config: T.WrapperA.Config) => buildWrapper$impl((buildWrapperA(config)) as T.WrapperA),'
+			'a: (text: string) => buildWrapper$impl((buildWrapperA(text)) as T.WrapperA),'
 		);
 		expect(emitted).toContain(
 			'let: (...args: Parameters<typeof buildWrapperB.let>) => buildWrapper$impl((buildWrapperB.let(...args)) as T.WrapperB),'

@@ -461,7 +461,13 @@ function emitBranchFrom(
 	intern: KindInterner,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	if (classifyChildFactorySurface(node, nodeMap) !== null) {
+	// Only the SPREAD surface gets the children-taking coercer. A sole
+	// singular slot falls through to the field-carrying path below, whose
+	// direct-call emission already tolerates both shapes — bare value or
+	// `{ <configKey>: value }` — keyed on the slot's own config key, which
+	// the model supplies for an unnamed slot (`content`) exactly as for a
+	// named one.
+	if (classifyChildFactorySurface(node, nodeMap) === 'spread') {
 		return emitContainerFrom(
 			{
 				kind: node.kind,
@@ -488,7 +494,6 @@ function emitBranchFrom(
 	const opt = configurableFactoryFields(fields, nodeMap).some((f) => isRequired(f)) ? '' : '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
-	const { inputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
 	const returnType = factoryReturnTypeExpr(factory);
 	const soleField = !nodeMap.polymorphFormKinds.has(node.kind)
 		? resolveSingleFieldFactorySlot(node, nodeMap)
@@ -501,6 +506,28 @@ function emitBranchFrom(
 	// direct value (a pre-built node dispatches via $type), so the same
 	// direct-call emission applies.
 	const canDirectFactoryCall = soleField && (shapeForDirect === 'direct' || shapeForDirect === 'forwarded');
+	// The direct-call body accepts the sole slot's value supplied BARE, so the
+	// signature has to admit it. `Loose` alone describes only the kind itself
+	// and its config object — the wider shape is what the caller actually has
+	// when the kind is a thin wrapper around one slot.
+	const { inputType: looseInputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
+	// A sole slot holding a separated list forwards single ELEMENTS too — the
+	// resolver wraps a bare element into the list node before the factory sees
+	// it, so the signature has to admit the element union alongside the list
+	// itself. The factory call and the resolver's type argument stay narrow.
+	const soleListElements = (() => {
+		if (!canDirectFactoryCall || isMultiple(soleField)) return undefined;
+		const kinds = slotKindNames(soleField);
+		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
+		return inner?.modelType === 'separatedList'
+			? separatedListSurface(inner, nodeMap, kindEntries).elemType
+			: undefined;
+	})();
+	const inputType = canDirectFactoryCall
+		? [childElementType({ children: [soleField] }, nodeMap), soleListElements, looseInputType]
+				.filter((part) => part !== undefined)
+				.join(' | ')
+		: looseInputType;
 	// One exported resolver per caller-supplied field: the single derivation
 	// of what that field accepts. `coerceTo<Kind>` and the tree-node `$with`
 	// setters in wrap.ts both call it, so the two surfaces cannot drift.

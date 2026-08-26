@@ -55,9 +55,12 @@ describe('factory ergonomics', () => {
 			// implementation and the `BuildArgs` alias must still agree on it.
 			// They are one projection of one calling convention, so a divergent
 			// label would mean the parameter list had been composed twice.
-			expect(content).toMatch(/export function buildLabel\(value: T\.Label\.Config\['identifier'\]\)/);
-			expect(content).toMatch(/function _buildLabel\(value: T\.Label\.Config\['identifier'\]\)/);
-			expect(content).toMatch(/export type LabelBuildArgs = \[value: T\.Label\.Config\['identifier'\]\]/);
+			// The parameter's TYPE is the slot's own element type. Indexing
+			// `Config` instead re-projects the slot through the config surface
+			// and loses the union of kinds it admits.
+			expect(content).toMatch(/export function buildLabel\(value: T\.Identifier\)/);
+			expect(content).toMatch(/function _buildLabel\(value: T\.Identifier\)/);
+			expect(content).toMatch(/export type LabelBuildArgs = \[value: T\.Identifier\]/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
