@@ -88,6 +88,10 @@ function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap):
 // not a class instance (see resolveUnnamedSlotConfig; reworked in task B).
 interface SlotModel {
 	readonly name: string;
+	/** The accessor/setter name. One contributing slot lends its own; several
+	 *  share the `$other` bucket and have no single name to lend, so they take
+	 *  the generic the model uses for a slot the grammar left unnamed. */
+	readonly propertyName: string;
 	readonly storageKey: string;
 	readonly arity: 'one' | 'many';
 }
@@ -356,11 +360,14 @@ function resolveUnnamedSlotConfig(
 	nodeMap: NodeMap
 ): UnnamedChildrenSlotConfig {
 	const cardinality = deriveUnnamedChildrenCardinality(children);
+	const arity = children.length === 1 && !cardinality.multiple ? 'one' : 'many';
+	const soleChild = children.length === 1 ? children[0] : undefined;
 	return {
 		slot: {
 			name: 'children',
+			propertyName: soleChild?.propertyName ?? (arity === 'many' ? 'contents' : 'content'),
 			storageKey: '$other',
-			arity: children.length === 1 && !cardinality.multiple ? 'one' : 'many'
+			arity
 		} satisfies SlotModel,
 		elemType: childElementType({ children }, nodeMap),
 		required: cardinality.required,
@@ -750,7 +757,12 @@ function emitSeparatedListWrap(
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
 	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
-	const contentModel: SlotModel = { name: canonical.name, storageKey: canonical.storageKey, arity: 'many' };
+	const contentModel: SlotModel = {
+		name: canonical.name,
+		propertyName: canonical.propertyName,
+		storageKey: canonical.storageKey,
+		arity: 'many'
+	};
 	const { storeExpr, accessorBody } = resolveSlotDrillExprs(contentModel, {
 		dataExpr: 'data',
 		elemType: fieldElementType(contentSlot, nodeMap),
@@ -1138,11 +1150,16 @@ function emitInlineWithProperty(
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
+		// Named after the slot, like every other setter — inside `$with` every
+		// key IS a slot name, so a sigil there would mark the namespace twice.
+		// The model names an unnamed slot too, falling back to `content` and
+		// pluralising it when the slot is repeated.
+		const setter = childrenConfig.slot.propertyName;
 		if (childrenConfig.slot.arity === 'one') {
-			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: v }, tree) },`);
+			lines.push(`    $with: { ${setter}: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: v }, tree) },`);
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
-			lines.push(`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`);
+			lines.push(`    $with: { ${setter}: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`);
 		}
 		return;
 	}

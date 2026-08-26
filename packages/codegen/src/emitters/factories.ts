@@ -1061,18 +1061,17 @@ function emitFieldCarryingFactory(
 	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
 	if (spreadFacts) {
-		// The container's ONE user slot takes the positional child value.
-		// Other fields (markers the single-slot classification excluded)
-		// stay un-emitted, as before.
+		// The ONE user slot takes the elements positionally. Other fields
+		// (markers the single-slot classification excluded) stay un-emitted.
 		fieldsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
-		valueSourceFor = (f) => (f === spreadFacts.slot ? (spreadFacts.multiple ? 'children' : 'child') : '');
-		withLines = spreadFacts.multiple
-			? [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`]
-			: [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
-		withTypeMembers = spreadFacts.multiple
-			? [`    $children(...vs: ${elementType}[]): ${builtName};`]
-			: [`    $child(v: ${elementType}): ${builtName};`];
+		// The setter is named after the slot, like every other setter. The
+		// rest PARAMETER keeps the generic `children` — it is positional, so
+		// its identifier is invisible to callers.
+		const setter = spreadFacts.slot.propertyName;
+		valueSourceFor = (f) => (f === spreadFacts.slot ? 'children' : '');
+		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
+		withTypeMembers = [`    ${setter}(...vs: ${elementType}[]): ${builtName};`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries);
@@ -1658,7 +1657,7 @@ function emitSeparatedListFactory(
 	// the options bag.
 	const listBuiltName = `${node.typeName}Built`;
 	const listWithTypeMembers = [
-		`    $children(...vs: ${elementsType}): ${listBuiltName};`,
+		`    ${contentAccessorName}(...vs: ${elementsType}): ${listBuiltName};`,
 		...(hasSeparatorKindOption ? [`    separator(v: ${separatorKindUnion}): ${listBuiltName};`] : []),
 		...(hasDelimiterOption ? [`    delimiter(v?: ${delimiterUnion}): ${listBuiltName};`] : [])
 	];
@@ -1770,7 +1769,7 @@ function emitSeparatedListFactory(
 	// values, silently diverging from the true (still-repeated) rule shape
 	// — `node.nonEmpty` has no such degenerate case since it reads directly
 	// off `rule.type`, never off the derived value count.
-	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
+	lines.push(`      ${contentAccessorName}: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
 	if (hasSeparatorKindOption) {
 		lines.push(`      separator: (v: ${separatorKindUnion}) => ${fn}({ ...options, separator: v }, ...elements),`);
 	}

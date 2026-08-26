@@ -51,7 +51,7 @@ export type ModuleBuilt = T.Module & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Statement[]): ModuleBuilt;
+		statements(...vs: T.Statement[]): ModuleBuilt;
 	};
 } & _NodeMethods;
 
@@ -64,7 +64,7 @@ export function buildModule(...children: T.Statement[]): ModuleBuilt {
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { $children: (...vs: T.Statement[]) => buildModule(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildModule(...vs) }
 			},
 			{
 				statements: () => _statements
@@ -330,7 +330,7 @@ export type ImportListBuilt = T.ImportList & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.DottedName | T.AliasedImport>): ImportListBuilt;
+		names(...vs: NonEmptyArray<T.DottedName | T.AliasedImport>): ImportListBuilt;
 		delimiter(v?: Delimiter.Trailing): ImportListBuilt;
 	};
 } & _NodeMethods;
@@ -369,7 +369,7 @@ function _buildImportList(
 				_name,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.DottedName | T.AliasedImport>) => buildImportList(options, ...vs),
+					names: (...vs: NonEmptyArray<T.DottedName | T.AliasedImport>) => buildImportList(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildImportList({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -504,7 +504,7 @@ export type AssertStatementBuilt = T.AssertStatement & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Expression[]): AssertStatementBuilt;
+		expressions(...vs: T.Expression[]): AssertStatementBuilt;
 	};
 } & _NodeMethods;
 
@@ -518,7 +518,7 @@ export function buildAssertStatement(...children: T.Expression[]): AssertStateme
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { $children: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
+				$with: { expressions: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
 			},
 			{
 				expressions: () => _expression
@@ -1626,7 +1626,7 @@ export type GlobalStatementBuilt = T.GlobalStatement & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Identifier[]): GlobalStatementBuilt;
+		identifiers(...vs: T.Identifier[]): GlobalStatementBuilt;
 	};
 } & _NodeMethods;
 
@@ -1640,7 +1640,7 @@ export function buildGlobalStatement(...children: T.Identifier[]): GlobalStateme
 				$source: 2 as const,
 				$named: true as const,
 				_identifier,
-				$with: { $children: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
+				$with: { identifiers: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
 			},
 			{
 				identifiers: () => _identifier
@@ -1659,7 +1659,7 @@ export type NonlocalStatementBuilt = T.NonlocalStatement & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Identifier[]): NonlocalStatementBuilt;
+		identifiers(...vs: T.Identifier[]): NonlocalStatementBuilt;
 	};
 } & _NodeMethods;
 
@@ -1673,7 +1673,7 @@ export function buildNonlocalStatement(...children: T.Identifier[]): NonlocalSta
 				$source: 2 as const,
 				$named: true as const,
 				_identifier,
-				$with: { $children: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
+				$with: { identifiers: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
 			},
 			{
 				identifiers: () => _identifier
@@ -2028,7 +2028,7 @@ export type BlockBuilt = T.Block & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Statement[]): BlockBuilt;
+		statements(...vs: T.Statement[]): BlockBuilt;
 	};
 } & _NodeMethods;
 
@@ -2041,7 +2041,7 @@ export function buildBlock(...children: T.Statement[]): BlockBuilt {
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { $children: (...vs: T.Statement[]) => buildBlock(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildBlock(...vs) }
 			},
 			{
 				statements: () => _statements
@@ -2097,7 +2097,7 @@ export type DottedNameBuilt = T.DottedName & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Identifier[]): DottedNameBuilt;
+		identifiers(...vs: T.Identifier[]): DottedNameBuilt;
 	};
 } & _NodeMethods;
 
@@ -2111,7 +2111,7 @@ export function buildDottedName(...children: T.Identifier[]): DottedNameBuilt {
 				$source: 2 as const,
 				$named: true as const,
 				_identifier,
-				$with: { $children: (...vs: T.Identifier[]) => buildDottedName(...vs) }
+				$with: { identifiers: (...vs: T.Identifier[]) => buildDottedName(...vs) }
 			},
 			{
 				identifiers: () => _identifier
@@ -2176,7 +2176,7 @@ export type UnionPatternBuilt = T.UnionPattern & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.SimplePattern[]): UnionPatternBuilt;
+		simplePatterns(...vs: T.SimplePattern[]): UnionPatternBuilt;
 	};
 } & _NodeMethods;
 
@@ -2190,7 +2190,7 @@ export function buildUnionPattern(...children: T.SimplePattern[]): UnionPatternB
 				$source: 2 as const,
 				$named: true as const,
 				_simple_pattern,
-				$with: { $children: (...vs: T.SimplePattern[]) => buildUnionPattern(...vs) }
+				$with: { simplePatterns: (...vs: T.SimplePattern[]) => buildUnionPattern(...vs) }
 			},
 			{
 				simplePatterns: () => _simple_pattern
@@ -2479,7 +2479,7 @@ export type _ParametersBuilt = T._Parameters & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Parameter>): _ParametersBuilt;
+		parameters(...vs: NonEmptyArray<T.Parameter>): _ParametersBuilt;
 		delimiter(v?: Delimiter.Trailing): _ParametersBuilt;
 	};
 } & _NodeMethods;
@@ -2516,7 +2516,7 @@ function _build_Parameters(
 				_parameter,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(options, ...vs),
+					parameters: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => build_Parameters({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -2538,7 +2538,7 @@ export type PatternsBuilt = T.Patterns & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Pattern>): PatternsBuilt;
+		patterns(...vs: NonEmptyArray<T.Pattern>): PatternsBuilt;
 		delimiter(v?: Delimiter.Trailing): PatternsBuilt;
 	};
 } & _NodeMethods;
@@ -2575,7 +2575,7 @@ function _buildPatterns(
 				_pattern,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
+					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -4365,7 +4365,7 @@ export type CollectionElementsBuilt = T.CollectionElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 		): CollectionElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): CollectionElementsBuilt;
@@ -4410,7 +4410,7 @@ function _buildCollectionElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
+					elements: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
 						buildCollectionElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildCollectionElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -4556,7 +4556,7 @@ export type ConcatenatedStringBuilt = T.ConcatenatedString & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.String[]): ConcatenatedStringBuilt;
+		strings(...vs: T.String[]): ConcatenatedStringBuilt;
 	};
 } & _NodeMethods;
 
@@ -4570,7 +4570,7 @@ export function buildConcatenatedString(...children: T.String[]): ConcatenatedSt
 				$source: 2 as const,
 				$named: true as const,
 				_string,
-				$with: { $children: (...vs: T.String[]) => buildConcatenatedString(...vs) }
+				$with: { strings: (...vs: T.String[]) => buildConcatenatedString(...vs) }
 			},
 			{
 				strings: () => _string
@@ -4638,7 +4638,7 @@ export type StringContentBuilt = T.StringContent & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[]): StringContentBuilt;
+		contents(...vs: (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[]): StringContentBuilt;
 	};
 } & _NodeMethods;
 
@@ -4654,7 +4654,7 @@ export function buildStringContent(
 				$named: true as const,
 				_content,
 				$with: {
-					$children: (...vs: (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[]) =>
+					contents: (...vs: (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[]) =>
 						buildStringContent(...vs)
 				}
 			},
@@ -4740,7 +4740,7 @@ export type FormatSpecifierBuilt = T.FormatSpecifier & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: ('[^{}\\n]+' | T.Interpolation)[]): FormatSpecifierBuilt;
+		contents(...vs: ('[^{}\\n]+' | T.Interpolation)[]): FormatSpecifierBuilt;
 	};
 } & _NodeMethods;
 
@@ -4753,7 +4753,7 @@ export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $children: (...vs: ('[^{}\\n]+' | T.Interpolation)[]) => buildFormatSpecifier(...vs) }
+				$with: { contents: (...vs: ('[^{}\\n]+' | T.Interpolation)[]) => buildFormatSpecifier(...vs) }
 			},
 			{
 				contents: () => _content
@@ -4956,7 +4956,7 @@ export type SimpleStatementsElementsBuilt = T.SimpleStatementsElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.SimpleStatement>): SimpleStatementsElementsBuilt;
+		simpleStatements(...vs: NonEmptyArray<T.SimpleStatement>): SimpleStatementsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): SimpleStatementsElementsBuilt;
 	};
 } & _NodeMethods;
@@ -4995,7 +4995,7 @@ function _buildSimpleStatementsElements(
 				_simple_statement,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.SimpleStatement>) => buildSimpleStatementsElements(options, ...vs),
+					simpleStatements: (...vs: NonEmptyArray<T.SimpleStatement>) => buildSimpleStatementsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -5018,7 +5018,7 @@ export type SubjectsBuilt = T.Subjects & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression>): SubjectsBuilt;
+		subjects(...vs: NonEmptyArray<T.Expression>): SubjectsBuilt;
 		delimiter(v?: Delimiter.Trailing): SubjectsBuilt;
 	};
 } & _NodeMethods;
@@ -5055,7 +5055,7 @@ function _buildSubjects(
 				_subject,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildSubjects(options, ...vs),
+					subjects: (...vs: NonEmptyArray<T.Expression>) => buildSubjects(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildSubjects({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5077,7 +5077,7 @@ export type CasePatternsBuilt = T.CasePatterns & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.CasePattern>): CasePatternsBuilt;
+		casePatterns(...vs: NonEmptyArray<T.CasePattern>): CasePatternsBuilt;
 		delimiter(v?: Delimiter.Trailing): CasePatternsBuilt;
 	};
 } & _NodeMethods;
@@ -5114,7 +5114,7 @@ function _buildCasePatterns(
 				_case_pattern,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.CasePattern>) => buildCasePatterns(options, ...vs),
+					casePatterns: (...vs: NonEmptyArray<T.CasePattern>) => buildCasePatterns(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildCasePatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5136,7 +5136,7 @@ export type WithClauseWithItemsBuilt = T.WithClauseWithItems & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.WithItem>): WithClauseWithItemsBuilt;
+		withItems(...vs: NonEmptyArray<T.WithItem>): WithClauseWithItemsBuilt;
 		delimiter(v?: Delimiter.Trailing): WithClauseWithItemsBuilt;
 	};
 } & _NodeMethods;
@@ -5175,7 +5175,7 @@ function _buildWithClauseWithItems(
 				_with_item,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseWithItems(options, ...vs),
+					withItems: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseWithItems(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5197,7 +5197,7 @@ export type TypesBuilt = T.Types & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Type>): TypesBuilt;
+		types(...vs: NonEmptyArray<T.Type>): TypesBuilt;
 		delimiter(v?: Delimiter.Trailing): TypesBuilt;
 	};
 } & _NodeMethods;
@@ -5231,7 +5231,7 @@ function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: Del
 				_type,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
+					types: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5264,7 +5264,7 @@ export type ArgumentListElementsBuilt = T.ArgumentListElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<
 				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 			>
@@ -5320,7 +5320,7 @@ function _buildArgumentListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (
+					elements: (
 						...vs: NonEmptyArray<
 							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 						>
@@ -5346,7 +5346,7 @@ export type ExpressionListExpressionsBuilt = T.ExpressionListExpressions & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression>): ExpressionListExpressionsBuilt;
+		expressions(...vs: NonEmptyArray<T.Expression>): ExpressionListExpressionsBuilt;
 		delimiter(v?: Delimiter.Trailing): ExpressionListExpressionsBuilt;
 	};
 } & _NodeMethods;
@@ -5385,7 +5385,7 @@ function _buildExpressionListExpressions(
 				_expression,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListExpressions(options, ...vs),
+					expressions: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListExpressions(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildExpressionListExpressions({ ...options, delimiter: v }, ...elements)
 				}
@@ -5408,7 +5408,7 @@ export type ListPatternCasePatternsBuilt = T.ListPatternCasePatterns & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.CasePattern>): ListPatternCasePatternsBuilt;
+		casePatterns(...vs: NonEmptyArray<T.CasePattern>): ListPatternCasePatternsBuilt;
 		delimiter(v?: Delimiter.Trailing): ListPatternCasePatternsBuilt;
 	};
 } & _NodeMethods;
@@ -5447,7 +5447,7 @@ function _buildListPatternCasePatterns(
 				_case_pattern,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.CasePattern>) => buildListPatternCasePatterns(options, ...vs),
+					casePatterns: (...vs: NonEmptyArray<T.CasePattern>) => buildListPatternCasePatterns(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5471,7 +5471,7 @@ export type DictPatternElementsBuilt = T.DictPatternElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>): DictPatternElementsBuilt;
+		elements(...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>): DictPatternElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): DictPatternElementsBuilt;
 	};
 } & _NodeMethods;
@@ -5512,7 +5512,7 @@ function _buildDictPatternElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>) =>
+					elements: (...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>) =>
 						buildDictPatternElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildDictPatternElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -5535,7 +5535,7 @@ export type PatternListPatternsBuilt = T.PatternListPatterns & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Pattern>): PatternListPatternsBuilt;
+		patterns(...vs: NonEmptyArray<T.Pattern>): PatternListPatternsBuilt;
 		delimiter(v?: Delimiter.Trailing): PatternListPatternsBuilt;
 	};
 } & _NodeMethods;
@@ -5574,7 +5574,7 @@ function _buildPatternListPatterns(
 				_pattern,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListPatterns(options, ...vs),
+					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListPatterns(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildPatternListPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5596,7 +5596,7 @@ export type SubscriptsBuilt = T.Subscripts & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression | T.Slice>): SubscriptsBuilt;
+		subscripts(...vs: NonEmptyArray<T.Expression | T.Slice>): SubscriptsBuilt;
 		delimiter(v?: Delimiter.Trailing): SubscriptsBuilt;
 	};
 } & _NodeMethods;
@@ -5635,7 +5635,7 @@ function _buildSubscripts(
 				_subscript,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression | T.Slice>) => buildSubscripts(options, ...vs),
+					subscripts: (...vs: NonEmptyArray<T.Expression | T.Slice>) => buildSubscripts(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildSubscripts({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5657,7 +5657,7 @@ export type DictionaryElementsBuilt = T.DictionaryElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Pair | T.DictionarySplat>): DictionaryElementsBuilt;
+		elements(...vs: NonEmptyArray<T.Pair | T.DictionarySplat>): DictionaryElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): DictionaryElementsBuilt;
 	};
 } & _NodeMethods;
@@ -5698,7 +5698,7 @@ function _buildDictionaryElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryElements(options, ...vs),
+					elements: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildDictionaryElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6044,7 +6044,7 @@ export type ComprehensionClausesBuilt = T.ComprehensionClauses & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.ForInClause | T.IfClause)[]): ComprehensionClausesBuilt;
+		contents(...vs: (T.ForInClause | T.IfClause)[]): ComprehensionClausesBuilt;
 	};
 } & _NodeMethods;
 
@@ -6057,7 +6057,7 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
 			},
 			{
 				contents: () => _content
@@ -6077,7 +6077,7 @@ export type PrintArgumentsBuilt = T.PrintArguments & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression>): PrintArgumentsBuilt;
+		arguments(...vs: NonEmptyArray<T.Expression>): PrintArgumentsBuilt;
 		delimiter(v?: Delimiter.Trailing): PrintArgumentsBuilt;
 	};
 } & _NodeMethods;
@@ -6114,7 +6114,7 @@ function _buildPrintArguments(
 				_argument,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildPrintArguments(options, ...vs),
+					arguments: (...vs: NonEmptyArray<T.Expression>) => buildPrintArguments(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildPrintArguments({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6136,7 +6136,7 @@ export type PrintChevronArgumentsBuilt = T.PrintChevronArguments & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression>): PrintChevronArgumentsBuilt;
+		arguments(...vs: NonEmptyArray<T.Expression>): PrintChevronArgumentsBuilt;
 		delimiter(v?: Delimiter.Trailing): PrintChevronArgumentsBuilt;
 	};
 } & _NodeMethods;
@@ -6175,7 +6175,7 @@ function _buildPrintChevronArguments(
 				_argument,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildPrintChevronArguments(options, ...vs),
+					arguments: (...vs: NonEmptyArray<T.Expression>) => buildPrintChevronArguments(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6417,7 +6417,7 @@ export type ExpressionStatementTupleBuilt = T.ExpressionStatementTuple & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression>): ExpressionStatementTupleBuilt;
+		expressions(...vs: NonEmptyArray<T.Expression>): ExpressionStatementTupleBuilt;
 		delimiter(v?: Delimiter.Trailing): ExpressionStatementTupleBuilt;
 	};
 } & _NodeMethods;
@@ -6456,7 +6456,7 @@ function _buildExpressionStatementTuple(
 				_expression,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(options, ...vs),
+					expressions: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements)
 				}
@@ -6479,7 +6479,7 @@ export type WithClauseBareBuilt = T.WithClauseBare & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.WithItem>): WithClauseBareBuilt;
+		withItems(...vs: NonEmptyArray<T.WithItem>): WithClauseBareBuilt;
 		delimiter(v?: Delimiter.Trailing): WithClauseBareBuilt;
 	};
 } & _NodeMethods;
@@ -6516,7 +6516,7 @@ function _buildWithClauseBare(
 				_with_item,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseBare(options, ...vs),
+					withItems: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseBare(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildWithClauseBare({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6719,7 +6719,7 @@ export type ExceptClauseListBuilt = T.ExceptClauseList & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Expression[]): ExceptClauseListBuilt;
+		values(...vs: T.Expression[]): ExceptClauseListBuilt;
 	};
 } & _NodeMethods;
 
@@ -6733,7 +6733,7 @@ export function buildExceptClauseList(...children: T.Expression[]): ExceptClause
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: { $children: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
 			},
 			{
 				values: () => _value

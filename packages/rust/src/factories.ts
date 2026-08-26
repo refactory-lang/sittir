@@ -821,7 +821,7 @@ export type DeclarationListBuilt = T.DeclarationList & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.DeclarationStatement[]): DeclarationListBuilt;
+		declarationStatements(...vs: T.DeclarationStatement[]): DeclarationListBuilt;
 	};
 } & _NodeMethods;
 
@@ -834,7 +834,7 @@ export function buildDeclarationList(...children: T.DeclarationStatement[]): Dec
 				$source: 2 as const,
 				$named: true as const,
 				_declaration_statements,
-				$with: { $children: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
+				$with: { declarationStatements: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
 			},
 			{
 				declarationStatements: () => _declaration_statements
@@ -1613,7 +1613,7 @@ export type FunctionModifiersBuilt = T.FunctionModifiers & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]): FunctionModifiersBuilt;
+		modifiers(...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]): FunctionModifiersBuilt;
 	};
 } & _NodeMethods;
 
@@ -1630,7 +1630,7 @@ export function buildFunctionModifiers(
 				$named: true as const,
 				_modifier,
 				$with: {
-					$children: (...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) =>
+					modifiers: (...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) =>
 						buildFunctionModifiers(...vs)
 				}
 			},
@@ -1938,7 +1938,7 @@ export type TraitBoundsBuilt = T.TraitBounds & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]): TraitBoundsBuilt;
+		bounds(...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]): TraitBoundsBuilt;
 	};
 } & _NodeMethods;
 
@@ -1952,7 +1952,7 @@ export function buildTraitBounds(...children: (T._Type | T.Lifetime | T.HigherRa
 				$source: 2 as const,
 				$named: true as const,
 				_bounds,
-				$with: { $children: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => buildTraitBounds(...vs) }
+				$with: { bounds: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => buildTraitBounds(...vs) }
 			},
 			{
 				bounds: () => _bounds
@@ -5354,7 +5354,7 @@ export type ClosureParametersBuilt = T.ClosureParameters & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.Pattern | T.Parameter)[]): ClosureParametersBuilt;
+		parameters(...vs: (T.Pattern | T.Parameter)[]): ClosureParametersBuilt;
 	};
 } & _NodeMethods;
 
@@ -5367,7 +5367,7 @@ export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[])
 				$source: 2 as const,
 				$named: true as const,
 				_parameters,
-				$with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => buildClosureParameters(...vs) }
+				$with: { parameters: (...vs: (T.Pattern | T.Parameter)[]) => buildClosureParameters(...vs) }
 			},
 			{
 				parameters: () => _parameters
@@ -6761,7 +6761,7 @@ export type MacroRulesBuilt = T.MacroRules & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.MacroRule>): MacroRulesBuilt;
+		macroRules(...vs: NonEmptyArray<T.MacroRule>): MacroRulesBuilt;
 		delimiter(v?: Delimiter.Trailing): MacroRulesBuilt;
 	};
 } & _NodeMethods;
@@ -6798,7 +6798,7 @@ function _buildMacroRules(
 				_macro_rule,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(options, ...vs),
+					macroRules: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildMacroRules({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -6822,7 +6822,7 @@ export type EnumVariantListElementsBuilt = T.EnumVariantListElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>): EnumVariantListElementsBuilt;
+		elements(...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>): EnumVariantListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): EnumVariantListElementsBuilt;
 	};
 } & _NodeMethods;
@@ -6872,7 +6872,7 @@ function _buildEnumVariantListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>) =>
+					elements: (...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>) =>
 						buildEnumVariantListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6899,7 +6899,7 @@ export type FieldDeclarationListElementsBuilt = T.FieldDeclarationListElements &
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 		): FieldDeclarationListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): FieldDeclarationListElementsBuilt;
@@ -6953,7 +6953,7 @@ function _buildFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>) =>
+					elements: (...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>) =>
 						buildFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
@@ -6981,7 +6981,7 @@ export type OrderedFieldDeclarationListElementsBuilt = T.OrderedFieldDeclaration
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>): OrderedFieldDeclarationListElementsBuilt;
+		elements(...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>): OrderedFieldDeclarationListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): OrderedFieldDeclarationListElementsBuilt;
 	};
 } & _NodeMethods;
@@ -7029,7 +7029,7 @@ function _buildOrderedFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>) =>
+					elements: (...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>) =>
 						buildOrderedFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
@@ -7053,7 +7053,7 @@ export type WherePredicatesBuilt = T.WherePredicates & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.WherePredicate>): WherePredicatesBuilt;
+		wherePredicates(...vs: NonEmptyArray<T.WherePredicate>): WherePredicatesBuilt;
 		delimiter(v?: Delimiter.Trailing): WherePredicatesBuilt;
 	};
 } & _NodeMethods;
@@ -7092,7 +7092,7 @@ function _buildWherePredicates(
 				_where_predicate,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
+					wherePredicates: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildWherePredicates({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -7125,7 +7125,7 @@ export type TypeParametersElementsBuilt = T.TypeParametersElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 			>
@@ -7188,7 +7188,7 @@ function _buildTypeParametersElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (
+					elements: (
 						...vs: NonEmptyArray<
 							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 						>
@@ -7214,7 +7214,7 @@ export type UseClausesBuilt = T.UseClauses & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.UseClause>): UseClausesBuilt;
+		useClauses(...vs: NonEmptyArray<T.UseClause>): UseClausesBuilt;
 		delimiter(v?: Delimiter.Trailing): UseClausesBuilt;
 	};
 } & _NodeMethods;
@@ -7251,7 +7251,7 @@ function _buildUseClauses(
 				_use_clause,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.UseClause>) => buildUseClauses(options, ...vs),
+					useClauses: (...vs: NonEmptyArray<T.UseClause>) => buildUseClauses(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildUseClauses({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -7284,7 +7284,7 @@ export type ParametersElementsBuilt = T.ParametersElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>
 		): ParametersElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): ParametersElementsBuilt;
@@ -7343,7 +7343,7 @@ function _buildParametersElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (
+					elements: (
 						...vs: NonEmptyArray<
 							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
 						>
@@ -7369,7 +7369,7 @@ export type LifetimesBuilt = T.Lifetimes & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Lifetime>): LifetimesBuilt;
+		lifetimes(...vs: NonEmptyArray<T.Lifetime>): LifetimesBuilt;
 		delimiter(v?: Delimiter.Trailing): LifetimesBuilt;
 	};
 } & _NodeMethods;
@@ -7406,7 +7406,7 @@ function _buildLifetimes(
 				_lifetime,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
+					lifetimes: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildLifetimes({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -7428,7 +7428,7 @@ export type UseBoundsElementsBuilt = T.UseBoundsElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Lifetime | T.Identifier>): UseBoundsElementsBuilt;
+		elements(...vs: NonEmptyArray<T.Lifetime | T.Identifier>): UseBoundsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): UseBoundsElementsBuilt;
 	};
 } & _NodeMethods;
@@ -7467,7 +7467,7 @@ function _buildUseBoundsElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Lifetime | T.Identifier>) => buildUseBoundsElements(options, ...vs),
+					elements: (...vs: NonEmptyArray<T.Lifetime | T.Identifier>) => buildUseBoundsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -7498,7 +7498,7 @@ export type TypeArgumentsElementsBuilt = T.TypeArgumentsElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 		): TypeArgumentsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TypeArgumentsElementsBuilt;
@@ -7553,7 +7553,7 @@ function _buildTypeArgumentsElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (
+					elements: (
 						...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 					) => buildTypeArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
@@ -7579,7 +7579,7 @@ export type ArgumentsElementsBuilt = T.ArgumentsElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.AttributedArgument | T.Expression>): ArgumentsElementsBuilt;
+		elements(...vs: NonEmptyArray<T.AttributedArgument | T.Expression>): ArgumentsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): ArgumentsElementsBuilt;
 	};
 } & _NodeMethods;
@@ -7627,7 +7627,7 @@ function _buildArgumentsElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.AttributedArgument | T.Expression>) =>
+					elements: (...vs: NonEmptyArray<T.AttributedArgument | T.Expression>) =>
 						buildArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -7659,7 +7659,7 @@ export type FieldInitializerListElementsBuilt = T.FieldInitializerListElements &
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		elements(
 			...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 		): FieldInitializerListElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): FieldInitializerListElementsBuilt;
@@ -7707,9 +7707,8 @@ function _buildFieldInitializerListElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (
-						...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
-					) => buildFieldInitializerListElements(options, ...vs),
+					elements: (...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>) =>
+						buildFieldInitializerListElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -7734,7 +7733,7 @@ export type TuplePatternElementsBuilt = T.TuplePatternElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>): TuplePatternElementsBuilt;
+		elements(...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>): TuplePatternElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TuplePatternElementsBuilt;
 	};
 } & _NodeMethods;
@@ -7775,7 +7774,7 @@ function _buildTuplePatternElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) =>
+					elements: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) =>
 						buildTuplePatternElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -7798,7 +7797,7 @@ export type PatternsBuilt = T.Patterns & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Pattern>): PatternsBuilt;
+		patterns(...vs: NonEmptyArray<T.Pattern>): PatternsBuilt;
 		delimiter(v?: Delimiter.Trailing): PatternsBuilt;
 	};
 } & _NodeMethods;
@@ -7835,7 +7834,7 @@ function _buildPatterns(
 				_pattern,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
+					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -7859,7 +7858,7 @@ export type StructPatternElementsBuilt = T.StructPatternElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>): StructPatternElementsBuilt;
+		elements(...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>): StructPatternElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): StructPatternElementsBuilt;
 	};
 } & _NodeMethods;
@@ -7902,7 +7901,7 @@ function _buildStructPatternElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
+					elements: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
 						buildStructPatternElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildStructPatternElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -8130,7 +8129,7 @@ export type TupleTypeElementsBuilt = T.TupleTypeElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T._Type>): TupleTypeElementsBuilt;
+		types(...vs: NonEmptyArray<T._Type>): TupleTypeElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TupleTypeElementsBuilt;
 	};
 } & _NodeMethods;
@@ -8167,7 +8166,7 @@ function _buildTupleTypeElements(
 				_type,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T._Type>) => buildTupleTypeElements(options, ...vs),
+					types: (...vs: NonEmptyArray<T._Type>) => buildTupleTypeElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -8189,7 +8188,7 @@ export type TupleExpressionElementsBuilt = T.TupleExpressionElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Expression>): TupleExpressionElementsBuilt;
+		elements(...vs: NonEmptyArray<T.Expression>): TupleExpressionElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TupleExpressionElementsBuilt;
 	};
 } & _NodeMethods;
@@ -8231,7 +8230,7 @@ function _buildTupleExpressionElements(
 				_element,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildTupleExpressionElements(options, ...vs),
+					elements: (...vs: NonEmptyArray<T.Expression>) => buildTupleExpressionElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
 				}
 			},

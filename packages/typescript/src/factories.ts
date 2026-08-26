@@ -1631,7 +1631,7 @@ export type SwitchBodyBuilt = T.SwitchBody & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.SwitchCase | T.SwitchDefault)[]): SwitchBodyBuilt;
+		cases(...vs: (T.SwitchCase | T.SwitchDefault)[]): SwitchBodyBuilt;
 	};
 } & _NodeMethods;
 
@@ -1644,7 +1644,7 @@ export function buildSwitchBody(...children: (T.SwitchCase | T.SwitchDefault)[])
 				$source: 2 as const,
 				$named: true as const,
 				_cases,
-				$with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => buildSwitchBody(...vs) }
+				$with: { cases: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => buildSwitchBody(...vs) }
 			},
 			{
 				cases: () => _cases
@@ -1700,7 +1700,7 @@ export type SwitchDefaultBuilt = T.SwitchDefault & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Statement[]): SwitchDefaultBuilt;
+		bodies(...vs: T.Statement[]): SwitchDefaultBuilt;
 	};
 } & _NodeMethods;
 
@@ -1713,7 +1713,7 @@ export function buildSwitchDefault(...children: T.Statement[]): SwitchDefaultBui
 				$source: 2 as const,
 				$named: true as const,
 				_body,
-				$with: { $children: (...vs: T.Statement[]) => buildSwitchDefault(...vs) }
+				$with: { bodies: (...vs: T.Statement[]) => buildSwitchDefault(...vs) }
 			},
 			{
 				bodies: () => _body
@@ -1942,7 +1942,7 @@ export type ObjectBuilt = T.Object & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]): ObjectBuilt;
+		properties(...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]): ObjectBuilt;
 	};
 } & _NodeMethods;
 
@@ -1958,7 +1958,7 @@ export function buildObject(
 				$named: true as const,
 				_properties,
 				$with: {
-					$children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) =>
+					properties: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) =>
 						buildObject(...vs)
 				}
 			},
@@ -1986,7 +1986,7 @@ export type ObjectPatternBuilt = T.ObjectPattern & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(
+		properties(
 			...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]
 		): ObjectPatternBuilt;
 	};
@@ -2004,7 +2004,7 @@ export function buildObjectPattern(
 				$named: true as const,
 				_properties,
 				$with: {
-					$children: (
+					properties: (
 						...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]
 					) => buildObjectPattern(...vs)
 				}
@@ -2101,7 +2101,7 @@ export type ArrayBuilt = T.Array & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.Expression | T.SpreadElement)[]): ArrayBuilt;
+		elements(...vs: (T.Expression | T.SpreadElement)[]): ArrayBuilt;
 	};
 } & _NodeMethods;
 
@@ -2114,7 +2114,7 @@ export function buildArray(...children: (T.Expression | T.SpreadElement)[]): Arr
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => buildArray(...vs) }
+				$with: { elements: (...vs: (T.Expression | T.SpreadElement)[]) => buildArray(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -2133,7 +2133,7 @@ export type ArrayPatternBuilt = T.ArrayPattern & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.Pattern | T.AssignmentPattern)[]): ArrayPatternBuilt;
+		elements(...vs: (T.Pattern | T.AssignmentPattern)[]): ArrayPatternBuilt;
 	};
 } & _NodeMethods;
 
@@ -2146,7 +2146,7 @@ export function buildArrayPattern(...children: (T.Pattern | T.AssignmentPattern)
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => buildArrayPattern(...vs) }
+				$with: { elements: (...vs: (T.Pattern | T.AssignmentPattern)[]) => buildArrayPattern(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -3376,7 +3376,7 @@ export type SequenceExpressionBuilt = T.SequenceExpression & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Expression[]): SequenceExpressionBuilt;
+		expressions(...vs: T.Expression[]): SequenceExpressionBuilt;
 	};
 } & _NodeMethods;
 
@@ -3390,7 +3390,7 @@ export function buildSequenceExpression(...children: T.Expression[]): SequenceEx
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { $children: (...vs: T.Expression[]) => buildSequenceExpression(...vs) }
+				$with: { expressions: (...vs: T.Expression[]) => buildSequenceExpression(...vs) }
 			},
 			{
 				expressions: () => _expression
@@ -3534,7 +3534,7 @@ export type TemplateStringBuilt = T.TemplateString & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): TemplateStringBuilt;
+		elements(...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): TemplateStringBuilt;
 	};
 } & _NodeMethods;
 
@@ -3550,7 +3550,7 @@ export function buildTemplateString(
 				$named: true as const,
 				_elements,
 				$with: {
-					$children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
+					elements: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
 						buildTemplateString(...vs)
 				}
 			},
@@ -3862,7 +3862,7 @@ export type ArgumentsBuilt = T.Arguments & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.Expression | T.SpreadElement)[]): ArgumentsBuilt;
+		arguments(...vs: (T.Expression | T.SpreadElement)[]): ArgumentsBuilt;
 	};
 } & _NodeMethods;
 
@@ -3875,7 +3875,7 @@ export function buildArguments(...children: (T.Expression | T.SpreadElement)[]):
 				$source: 2 as const,
 				$named: true as const,
 				_arguments,
-				$with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => buildArguments(...vs) }
+				$with: { arguments: (...vs: (T.Expression | T.SpreadElement)[]) => buildArguments(...vs) }
 			},
 			{
 				arguments: () => _arguments
@@ -4045,7 +4045,7 @@ export type ClassBodyBuilt = T.ClassBody & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(
+		contents(
 			...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
 		): ClassBodyBuilt;
 	};
@@ -4063,7 +4063,7 @@ export function buildClassBody(
 				$named: true as const,
 				_content,
 				$with: {
-					$children: (
+					contents: (
 						...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
 					) => buildClassBody(...vs)
 				}
@@ -5400,7 +5400,7 @@ export type ExtendsClauseBuilt = T.ExtendsClause & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.ExtendsClauseSingle[]): ExtendsClauseBuilt;
+		extendsClauseSingles(...vs: T.ExtendsClauseSingle[]): ExtendsClauseBuilt;
 	};
 } & _NodeMethods;
 
@@ -5414,7 +5414,7 @@ export function buildExtendsClause(...children: T.ExtendsClauseSingle[]): Extend
 				$source: 2 as const,
 				$named: true as const,
 				_extends_clause_single,
-				$with: { $children: (...vs: T.ExtendsClauseSingle[]) => buildExtendsClause(...vs) }
+				$with: { extendsClauseSingles: (...vs: T.ExtendsClauseSingle[]) => buildExtendsClause(...vs) }
 			},
 			{
 				extendsClauseSingles: () => _extends_clause_single
@@ -5470,7 +5470,7 @@ export type ImplementsClauseBuilt = T.ImplementsClause & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: T.Type[]): ImplementsClauseBuilt;
+		types(...vs: T.Type[]): ImplementsClauseBuilt;
 	};
 } & _NodeMethods;
 
@@ -5484,7 +5484,7 @@ export function buildImplementsClause(...children: T.Type[]): ImplementsClauseBu
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				$with: { $children: (...vs: T.Type[]) => buildImplementsClause(...vs) }
+				$with: { types: (...vs: T.Type[]) => buildImplementsClause(...vs) }
 			},
 			{
 				types: () => _type
@@ -5858,7 +5858,7 @@ export type ExtendsTypeClauseBuilt = T.ExtendsTypeClause & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[]): ExtendsTypeClauseBuilt;
+		types(...vs: (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[]): ExtendsTypeClauseBuilt;
 	};
 } & _NodeMethods;
 
@@ -5875,7 +5875,7 @@ export function buildExtendsTypeClause(
 				$named: true as const,
 				_type,
 				$with: {
-					$children: (...vs: (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[]) => buildExtendsTypeClause(...vs)
+					types: (...vs: (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[]) => buildExtendsTypeClause(...vs)
 				}
 			},
 			{
@@ -6880,7 +6880,7 @@ export type TemplateLiteralTypeBuilt = T.TemplateLiteralType & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		$children(...vs: (T.TemplateChars | T.TemplateType)[]): TemplateLiteralTypeBuilt;
+		elements(...vs: (T.TemplateChars | T.TemplateType)[]): TemplateLiteralTypeBuilt;
 	};
 } & _NodeMethods;
 
@@ -6893,7 +6893,7 @@ export function buildTemplateLiteralType(...children: (T.TemplateChars | T.Templ
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => buildTemplateLiteralType(...vs) }
+				$with: { elements: (...vs: (T.TemplateChars | T.TemplateType)[]) => buildTemplateLiteralType(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -8575,7 +8575,7 @@ export type ExportSpecifiersBuilt = T.ExportSpecifiers & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.ExportSpecifier | T.ModuleExportName>): ExportSpecifiersBuilt;
+		exportSpecifiers(...vs: NonEmptyArray<T.ExportSpecifier | T.ModuleExportName>): ExportSpecifiersBuilt;
 		delimiter(v?: Delimiter.Trailing): ExportSpecifiersBuilt;
 	};
 } & _NodeMethods;
@@ -8625,7 +8625,7 @@ function _buildExportSpecifiers(
 				_export_specifier,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.ExportSpecifier | T.ModuleExportName>) =>
+					exportSpecifiers: (...vs: NonEmptyArray<T.ExportSpecifier | T.ModuleExportName>) =>
 						buildExportSpecifiers(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildExportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
@@ -8657,7 +8657,7 @@ export type ImportSpecifiersBuilt = T.ImportSpecifiers & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		importSpecifiers(
 			...vs: NonEmptyArray<T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs>
 		): ImportSpecifiersBuilt;
 		delimiter(v?: Delimiter.Trailing): ImportSpecifiersBuilt;
@@ -8709,7 +8709,7 @@ function _buildImportSpecifiers(
 				_import_specifier,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs>) =>
+					importSpecifiers: (...vs: NonEmptyArray<T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs>) =>
 						buildImportSpecifiers(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
@@ -8846,7 +8846,7 @@ export type FormalParametersElementsBuilt = T.FormalParametersElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.FormalParameter>): FormalParametersElementsBuilt;
+		formalParameters(...vs: NonEmptyArray<T.FormalParameter>): FormalParametersElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): FormalParametersElementsBuilt;
 	};
 } & _NodeMethods;
@@ -8885,7 +8885,7 @@ function _buildFormalParametersElements(
 				_formal_parameter,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersElements(options, ...vs),
+					formalParameters: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) =>
 						buildFormalParametersElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -8910,7 +8910,7 @@ export type EnumBodyElementsBuilt = T.EnumBodyElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.PropertyName | T.EnumAssignment>): EnumBodyElementsBuilt;
+		contents(...vs: NonEmptyArray<T.PropertyName | T.EnumAssignment>): EnumBodyElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): EnumBodyElementsBuilt;
 	};
 } & _NodeMethods;
@@ -8951,7 +8951,7 @@ function _buildEnumBodyElements(
 				_content,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.PropertyName | T.EnumAssignment>) => buildEnumBodyElements(options, ...vs),
+					contents: (...vs: NonEmptyArray<T.PropertyName | T.EnumAssignment>) => buildEnumBodyElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -8973,7 +8973,7 @@ export type TypesBuilt = T.Types & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.Type>): TypesBuilt;
+		types(...vs: NonEmptyArray<T.Type>): TypesBuilt;
 		delimiter(v?: Delimiter.Trailing): TypesBuilt;
 	};
 } & _NodeMethods;
@@ -9007,7 +9007,7 @@ function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: Del
 				_type,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
+					types: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -9031,7 +9031,7 @@ export type TypeParametersElementsBuilt = T.TypeParametersElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.TypeParameter | T.Identifier>): TypeParametersElementsBuilt;
+		typeParameters(...vs: NonEmptyArray<T.TypeParameter | T.Identifier>): TypeParametersElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TypeParametersElementsBuilt;
 	};
 } & _NodeMethods;
@@ -9079,7 +9079,7 @@ function _buildTypeParametersElements(
 				_type_parameter,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.TypeParameter | T.Identifier>) =>
+					typeParameters: (...vs: NonEmptyArray<T.TypeParameter | T.Identifier>) =>
 						buildTypeParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -9102,7 +9102,7 @@ export type TupleTypeMembersBuilt = T.TupleTypeMembers & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(...vs: NonEmptyArray<T.TupleTypeMember>): TupleTypeMembersBuilt;
+		tupleTypeMembers(...vs: NonEmptyArray<T.TupleTypeMember>): TupleTypeMembersBuilt;
 		delimiter(v?: Delimiter.Trailing): TupleTypeMembersBuilt;
 	};
 } & _NodeMethods;
@@ -9141,7 +9141,7 @@ function _buildTupleTypeMembers(
 				_tuple_type_member,
 				_delimiter,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeMembers(options, ...vs),
+					tupleTypeMembers: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeMembers(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -9477,7 +9477,7 @@ export type ObjectTypeContentBuilt = T.ObjectTypeContent & {
 	readonly _separator: number | undefined;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		$children(
+		contents(
 			...vs: NonEmptyArray<
 				| T.ExportStatement
 				| T.PropertySignature
@@ -9574,7 +9574,7 @@ function _buildObjectTypeContent(
 				_separator,
 				_delimiter,
 				$with: {
-					$children: (
+					contents: (
 						...vs: NonEmptyArray<
 							| T.ExportStatement
 							| T.PropertySignature
