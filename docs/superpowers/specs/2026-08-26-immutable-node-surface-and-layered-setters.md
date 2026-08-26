@@ -1,6 +1,39 @@
 # The Node Surface Is Immutable; Setters Are Layered On
 
-**Status:** Designed (not realized)
+**Status:** Designed, DEPRIORITIZED — an optional enhancement, not a defect fix.
+See "What this is actually worth" below before building any of it.
+
+## What this is actually worth
+
+Read this first. The machinery below is sugar, and the case for it is weaker
+than the problem statement makes it sound.
+
+`$with.x(y)` takes `y` at the field's own type. A caller who wants coercion has
+a direct route already — call `ir.<kind>(…)`, in whichever surface they want,
+and pass the result:
+
+```ts
+node.$with.name(ir.identifier('run'));        // explicit, and always available
+node.$with.name('run');                       // what the loose setter buys
+```
+
+The second line is one composition shorter. That is the entire value. It is
+real but small, and it does not justify a restructure on its own.
+
+The one piece of sugar that would have been worth adding — variadic setters
+for array and separated-list slots — **already exists on both sides**:
+
+```ts
+statements(...values: T.Statement[]): BlockBuilt;                     // factories
+statements: (...v: Extract<…, readonly unknown[]>[number][]) => …     // wrap
+```
+
+So what remains is a cosmetic inconsistency: a built node's setter takes the
+field type, a parsed node's takes the field's loose config. Worth fixing when
+something else is already open in these emitters. Not worth opening them for.
+
+If it is built, build it in the order below, because each stage is independently
+sound and the early ones are cheap.
 
 ## Problem
 
