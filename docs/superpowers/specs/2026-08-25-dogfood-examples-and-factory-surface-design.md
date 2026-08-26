@@ -162,6 +162,5 @@ After `engine.parse` lands:
 ## Out of scope
 
 - Byte-identical full-file rebuilds.
-- Construction templates and the typed query API (ADR-0022 / ADR-0023
-  revisions are separate work).
+- Construction templates and the typed query API (both are separate work).
 - Any behaviour keyed on synthesis provenance at emit time.

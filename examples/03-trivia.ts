@@ -1,8 +1,8 @@
 import { ir } from '@sittir/rust';
 
 export function attachDocComment() {
-	const fn = ir.statement.function
-		.from({
+	const fn = ir.statement
+		.function({
 			visibilityModifier: 'pub',
 			name: 'main',
 			parameters: ir.parameters.strict(),

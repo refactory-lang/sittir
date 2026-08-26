@@ -84,9 +84,9 @@ const fn = ir.functionItem({
 });
 ```
 
-### `.from()` — the same function, simplified
+### Coercion — the same function, simplified
 
-`.from()` resolves at every level:
+Coercion resolves at every level:
 
 - Strings become appropriate leaf nodes.
 - Single values wrap in an array where an array is expected.
@@ -113,7 +113,7 @@ const fn = ir.functionItem({
 });
 ```
 
-### `.from()` — minimal
+### Coercion — minimal
 
 ```ts
 import { ir } from '@sittir/rust';
@@ -165,7 +165,7 @@ const s = ir.structItem({
 	])
 });
 
-// `.from()` API.
+// coercing API.
 const sFrom = ir.structItem({
 	visibilityModifier: 'pub',
 	name: 'Config',
@@ -205,8 +205,8 @@ comments and blank lines and indentation included.
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem
-	.from({ visibilityModifier: 'pub', name: 'main' })
+const fn = ir
+	.functionItem({ visibilityModifier: 'pub', name: 'main' })
 	.$trivia(ir.docComment('/// Entry point.'));
 
 fn.$render();
@@ -560,8 +560,8 @@ const file = ir.sourceFile({
 	statements: [
 		ir.useDeclaration({ path: 'std::collections::HashMap' }),
 
-		ir.structItem
-			.from({
+		ir
+			.structItem({
 				visibilityModifier: 'pub',
 				name: 'Cache',
 				body: { name: 'entries', type: 'HashMap<String, String>' }
@@ -616,7 +616,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 }
 ```
 
-## `.from()` resolution rules
+## Coercion resolution rules
 
 | Input                           | Field expects             | Resolution                                  |
 | ------------------------------- | ------------------------- | ------------------------------------------- |
@@ -638,7 +638,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 ## Litmus test
 
 - [ ] `ir.*()` — no-arg = empty node
-- [ ] `ir.*.from()` — string → leaf, single → array, array → wrapped, omitted → none
+- [ ] `ir.*(...)` — string → leaf, single → array, array → wrapped, omitted → none
 - [ ] `is.*()` runtime type guards
 - [ ] `$render()` producing byte-identical round-trips
 - [ ] `.$trivia()` — leading/trailing comment attachment, typed per grammar

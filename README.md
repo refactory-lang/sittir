@@ -82,7 +82,7 @@ re-parses the output. sittir collapses the two:
 - *Structurally, at compile time.* Each kind's slot signature is
   derived from its grammar rule. The TypeScript type system enforces
   that every required field is supplied, every named field gets a node
-  of the right kind (or a `.from()`-coercible value resolving to one),
+  of the right kind (or a coercible value resolving to one),
   and every list slot honors the rule's multiplicity (`optional`,
   `repeat`, `repeat1`). Trees that don't typecheck are trees the parser
   would reject.
@@ -139,7 +139,7 @@ shipped them yet but they are in scope:
 - **Render fidelity, then ergonomics.** A round-trip
   `read(source) → render` must be byte-identical for well-formed input on
   each grammar before any ergonomic surface is layered on top. Render lives
-  on the canonical rule tree; `.from()` coercion, `$with` immutability,
+  on the canonical rule tree; coercion, `$with` immutability,
   fluent getters, and `.$trivia()` are projections over the same
   `NodeData`.
 - **One engine, one contract.** An Askama-based native engine sits behind a
@@ -190,7 +190,7 @@ summary below is the contract a reader needs to navigate the source.
 | **3. Normalize**     | `compiler/normalize.ts` + `compiler/wrapper-deletion.ts` | `LinkedGrammar`                 | `SimplifiedGrammar`                 | Non-lossy structural normalization: collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Then wrapper deletion pushes `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers down to leaf attributes, producing the wrapper-free `RenderRule` view templates consume. |
 | **3.5. Simplify**    | `compiler/simplify.ts`       | `RenderRule` map                | `SimplifiedRule` map                | Derivation-only view. Inlines parser-inlined helpers, strips anonymous delimiters, merges position-equivalent choice branches, canonicalizes toward a flat seq-of-leaves. Used to derive each kind's slots — *not* used by template emission, which reads the wrapper-free render rule so delimiters survive. |
 | **4. Assemble**      | `compiler/assemble.ts`       | `SimplifiedGrammar`             | `NodeMap`                           | First materialization of nodes. Classifies each rule into a model type (branch / polymorph / supertype / group / enum / pattern / keyword / token), hydrates slot refs, marks parameterless kinds (kinds whose required slots auto-stamp from a single literal or a single parameterless ref), resolves colliding names, assigns short `ir.*` keys. |
-| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.rs` + `.jinja` files      | Renders types, factories, `.from()` resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, Jinja templates, the native render/transport modules, and per-kind tests. |
+| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.rs` + `.jinja` files      | Renders types, factories, coercion resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, Jinja templates, the native render/transport modules, and per-kind tests. |
 
 Three commitments worth flagging:
 
@@ -266,7 +266,7 @@ falling back.
   validators' `backend: 'js'` mode. It no longer hosts a
   `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
-  one exposes `createEngine()` (native-only), an `ir.*` namespace, `.from()`
+  one exposes `createEngine()` (native-only), an `ir.*` namespace, coercing
   coercion, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
   constants, and the native template-bundle hash.
 
@@ -281,15 +281,14 @@ themselves frozen.
 
 #### Construction surface
 
-Each kind ships in three forms with the same output type:
+Each kind ships in two forms with the same output type:
 
 ```ts
 ir.functionItem.strict({ /* every field explicit, no coercion */ })
-ir.functionItem({   /* loose input — strings / arrays / plain objects */ })
-ir.functionItem({         /* alias for .from() */ })
+ir.functionItem({        /* loose input — strings / arrays / plain objects */ })
 ```
 
-`.from()` coercion is closed-form: it walks the expected slot type and
+Coercion is closed-form: it walks the expected slot type and
 never guesses. The slot taxonomy splits cleanly into:
 
 - **Single-slot kinds** (one unnamed `$children` slot, no named fields):
@@ -386,8 +385,8 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | File                                          | Contents                                                                                       |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `types.ts`                                    | Per-kind interfaces, `TSKindId` const enum, `KIND_NAMES`, `ConfigFor<K>`, `NamespaceMap`, supertype unions |
-| `factories.ts`                                | One factory per kind: `kind.strict(config)` and `kind.from(input)` with shared output          |
-| `from.ts`                                     | Closed-form `.from()` resolver — no runtime inference                                          |
+| `factories.ts`                                | One factory per kind: `kind.strict(config)` and the coercing `kind(input)` with shared output          |
+| `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
 | `wrap.ts`                                     | `wrapNode(node, tree)` / `readTreeNode(node)` — typed accessors with lazy drill-in             |
 | `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
 | `is.ts`                                       | Type guards (`is.*`, `isNode`, `isTree`, `assert.*`)                                           |
@@ -424,7 +423,7 @@ fn.body();         // returns the Block NodeData
 ```
 
 ```ts
-// .from() coercion — strings, arrays, and plain objects resolve to their
+// Coercion — strings, arrays, and plain objects resolve to their
 // expected slot kind.
 import { ir } from '@sittir/rust';
 
@@ -432,7 +431,7 @@ const fn = ir.functionItem({
   visibilityModifier: 'pub',                                       // string → VisibilityModifier
   name: 'greet',                                                   // string → Identifier
   parameters: ir.parameters.strict(
-    ir.parameter({ pattern: 'name', type: 'String' })         // nested .from()
+    ir.parameter({ pattern: 'name', type: 'String' })         // nested coercion
   ),
   body: ir.block.strict()
 });

@@ -30,15 +30,15 @@ node.renderImpl(); // "fn main ( ) { println ! }"
 node.render('fast'); // same, with brace/paren validation
 ```
 
-### Declarative API (`.from()`)
+### Declarative API (coercing constructors)
 
-For deeply nested constructs, use `.from()` with a typed options object:
+For deeply nested constructs, call the constructor with a typed options object:
 
 ```ts
-const node = ir.fn({
-	name: ir.identifier('main'),
-	parameters: ir.parameters(),
-	body: ir.block()
+const node = ir.functionItem({
+	name: 'main',
+	parameters: ir.parameters.strict(),
+	body: ir.block.strict()
 });
 ```
 
@@ -110,9 +110,9 @@ Each node file (`src/nodes/*.ts`) exports:
 | Export                | Description                                 |
 | --------------------- | ------------------------------------------- |
 | `fn(name: Builder)`   | Factory function (fluent entry point)       |
-| `fn.from(options)`    | Declarative construction with precise types |
+| `ir.functionItem(opts)` | Declarative construction with precise types |
 | `FunctionBuilder`     | Builder class type (via `export type`)      |
-| `FunctionItemOptions` | Options interface for `.from()`             |
+| `FunctionItemOptions` | Options interface for the coercing form     |
 
 ### How It's Generated
 

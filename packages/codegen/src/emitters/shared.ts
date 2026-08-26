@@ -3,6 +3,7 @@
  * patterns that copy-paste across 3+ emitters, not to become a grab-bag.
  */
 
+import { assertNever } from '../polymorph-variant.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
@@ -31,7 +32,8 @@ import {
 	deriveChildrenCardinality,
 	allSlotsOf,
 	storageKindOfRef,
-	structuralFieldsOf
+	structuralFieldsOf,
+	type ModelType
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 
@@ -893,7 +895,10 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
  *  the `NodeNs` references and the emitted aliases cannot drift. */
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	switch (node.modelType) {
+	// Bound before the switch: switching on `node.modelType` narrows `node`
+	// itself, leaving nothing to name in the exhaustiveness check.
+	const modelType: ModelType = node.modelType;
+	switch (modelType) {
 		case 'pattern':
 		case 'keyword':
 		case 'enum':
@@ -901,8 +906,15 @@ export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: 
 		case 'group':
 		case 'separatedList':
 			return true;
-		default:
+		// Shapes with no aliases to declare: a token and a supertype are
+		// dispatched to rather than built, and a multi has no single shape to
+		// give arguments to.
+		case 'token':
+		case 'supertype':
+		case 'multi':
 			return false;
+		default:
+			return assertNever(modelType);
 	}
 }
 

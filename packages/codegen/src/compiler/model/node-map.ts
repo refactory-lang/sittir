@@ -1529,6 +1529,21 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
+/** Every shape an assembled node can take. A closed union so a switch over it
+ *  can be exhaustive: a new shape then fails to compile at each site that has
+ *  to say something about it, rather than falling into a `default` that
+ *  quietly answers for it. */
+export type ModelType =
+	| 'branch'
+	| 'pattern'
+	| 'keyword'
+	| 'token'
+	| 'enum'
+	| 'supertype'
+	| 'multi'
+	| 'group'
+	| 'separatedList';
+
 export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	readonly kind: string;
 	// typeName / factoryName are writable so assemble()'s post-pass
@@ -1547,7 +1562,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	 * effectively immutable.
 	 */
 	irKey?: string;
-	abstract readonly modelType: string;
+	abstract readonly modelType: ModelType;
 
 	get parameterless(): boolean {
 		return false;

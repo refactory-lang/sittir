@@ -43,7 +43,7 @@ export function useEdit() {
 		})
 		.$trivia({
 			leading: [
-				ir.lineComment.doc({ inner: true, doc: ' Byte-level `apply_edits` on a source string. Spec 012 T024.' }),
+				ir.lineComment.doc({ inner: true, doc: ' Byte-level `apply_edits` on a source string.' }),
 				ir.lineComment.doc({ inner: true, doc: '' }),
 				ir.lineComment.doc({ inner: true, doc: ' Sorts edits by `start_pos` descending, applies each as a raw byte' }),
 				ir.lineComment.doc({ inner: true, doc: ' splice on a `String`. Descending order guarantees earlier edits' }),
