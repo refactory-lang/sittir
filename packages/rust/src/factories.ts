@@ -591,9 +591,9 @@ export const buildTokenRepetition = attachProps(buildTokenRepetition$impl, {
 		buildTokenRepetition$impl({ tokens: tokens, operator: TSKindId.Qmark })
 });
 
-export type AttributeItemBuildArgs = [attribute: T.AttributeItem.Config['attribute']];
+export type AttributeItemBuildArgs = [value: T.AttributeItem.Config['attribute']];
 export type AttributeItemLooseArgs = [
-	attribute: LooseValue<T.AttributeItem.Config['attribute'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.AttributeItem.Config['attribute'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type AttributeItemBuilt = T.AttributeItem & {
@@ -604,9 +604,7 @@ export type AttributeItemBuilt = T.AttributeItem & {
 	};
 } & _NodeMethods;
 
-export function buildAttributeItem(
-	attribute: T.AttributeItem.Config['attribute']
-): ReturnType<typeof _buildAttributeItem>;
+export function buildAttributeItem(value: T.AttributeItem.Config['attribute']): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -623,8 +621,8 @@ export function buildAttributeItem(...args: unknown[]) {
 				(buildAttribute as (...a: unknown[]) => unknown)(...args) as T.AttributeItem.Config['attribute']
 			);
 }
-function _buildAttributeItem(attribute: T.AttributeItem.Config['attribute']): AttributeItemBuilt {
-	const _attribute = attribute;
+function _buildAttributeItem(value: T.AttributeItem.Config['attribute']): AttributeItemBuilt {
+	const _attribute = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -644,9 +642,9 @@ function _buildAttributeItem(attribute: T.AttributeItem.Config['attribute']): At
 	);
 }
 
-export type InnerAttributeItemBuildArgs = [attribute: T.InnerAttributeItem.Config['attribute']];
+export type InnerAttributeItemBuildArgs = [value: T.InnerAttributeItem.Config['attribute']];
 export type InnerAttributeItemLooseArgs = [
-	attribute: LooseValue<T.InnerAttributeItem.Config['attribute'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.InnerAttributeItem.Config['attribute'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type InnerAttributeItemBuilt = T.InnerAttributeItem & {
@@ -658,7 +656,7 @@ export type InnerAttributeItemBuilt = T.InnerAttributeItem & {
 } & _NodeMethods;
 
 export function buildInnerAttributeItem(
-	attribute: T.InnerAttributeItem.Config['attribute']
+	value: T.InnerAttributeItem.Config['attribute']
 ): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(...args: unknown[]) {
@@ -676,8 +674,8 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 				(buildAttribute as (...a: unknown[]) => unknown)(...args) as T.InnerAttributeItem.Config['attribute']
 			);
 }
-function _buildInnerAttributeItem(attribute: T.InnerAttributeItem.Config['attribute']): InnerAttributeItemBuilt {
-	const _attribute = attribute;
+function _buildInnerAttributeItem(value: T.InnerAttributeItem.Config['attribute']): InnerAttributeItemBuilt {
+	const _attribute = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -1201,9 +1199,9 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): FieldD
 	);
 }
 
-export type OrderedFieldDeclarationListBuildArgs = [attributes?: T.OrderedFieldDeclarationList.Config['attributes']];
+export type OrderedFieldDeclarationListBuildArgs = [value?: T.OrderedFieldDeclarationList.Config['attributes']];
 export type OrderedFieldDeclarationListLooseArgs = [
-	attributes?: LooseValue<
+	value?: LooseValue<
 		T.OrderedFieldDeclarationList.Config['attributes'],
 		T.LeafScalarMap,
 		T.LeafStringMap,
@@ -1220,7 +1218,7 @@ export type OrderedFieldDeclarationListBuilt = T.OrderedFieldDeclarationList & {
 } & _NodeMethods;
 
 export function buildOrderedFieldDeclarationList(
-	attributes?: T.OrderedFieldDeclarationList.Config['attributes']
+	value?: T.OrderedFieldDeclarationList.Config['attributes']
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
 	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
@@ -1243,9 +1241,9 @@ export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 			);
 }
 function _buildOrderedFieldDeclarationList(
-	attributes?: T.OrderedFieldDeclarationList.Config['attributes']
+	value?: T.OrderedFieldDeclarationList.Config['attributes']
 ): OrderedFieldDeclarationListBuilt {
-	const _attributes = attributes;
+	const _attributes = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -2007,9 +2005,9 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 	);
 }
 
-export type RemovedTraitBoundBuildArgs = [type: T.RemovedTraitBound.Config['type']];
+export type RemovedTraitBoundBuildArgs = [value: T.RemovedTraitBound.Config['type']];
 export type RemovedTraitBoundLooseArgs = [
-	type: LooseValue<T.RemovedTraitBound.Config['type'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.RemovedTraitBound.Config['type'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type RemovedTraitBoundBuilt = T.RemovedTraitBound & {
@@ -2020,8 +2018,8 @@ export type RemovedTraitBoundBuilt = T.RemovedTraitBound & {
 	};
 } & _NodeMethods;
 
-export function buildRemovedTraitBound(type: T.RemovedTraitBound.Config['type']): RemovedTraitBoundBuilt {
-	const _type = type;
+export function buildRemovedTraitBound(value: T.RemovedTraitBound.Config['type']): RemovedTraitBoundBuilt {
+	const _type = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -2431,9 +2429,9 @@ export function buildUseAsClause(config: T.UseAsClause.Config): UseAsClauseBuilt
 	);
 }
 
-export type UseWildcardBuildArgs = [path?: T.UseWildcard.Config['path']];
+export type UseWildcardBuildArgs = [value?: T.UseWildcard.Config['path']];
 export type UseWildcardLooseArgs = [
-	path?: LooseValue<T.UseWildcard.Config['path'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.UseWildcard.Config['path'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type UseWildcardBuilt = T.UseWildcard & {
@@ -2444,8 +2442,8 @@ export type UseWildcardBuilt = T.UseWildcard & {
 	};
 } & _NodeMethods;
 
-export function buildUseWildcard(path?: T.UseWildcard.Config['path']): UseWildcardBuilt {
-	const _path = path;
+export function buildUseWildcard(value?: T.UseWildcard.Config['path']): UseWildcardBuilt {
+	const _path = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -2646,9 +2644,9 @@ export function buildParameter(config: T.Parameter.Config): ParameterBuilt {
 	);
 }
 
-export type ExternModifierBuildArgs = [stringLiteral?: T.ExternModifier.Config['stringLiteral']];
+export type ExternModifierBuildArgs = [value?: T.ExternModifier.Config['stringLiteral']];
 export type ExternModifierLooseArgs = [
-	stringLiteral?: LooseValue<T.ExternModifier.Config['stringLiteral'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.ExternModifier.Config['stringLiteral'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ExternModifierBuilt = T.ExternModifier & {
@@ -2660,7 +2658,7 @@ export type ExternModifierBuilt = T.ExternModifier & {
 } & _NodeMethods;
 
 function buildExternModifier$impl(
-	stringLiteral?: T.ExternModifier.Config['stringLiteral']
+	value?: T.ExternModifier.Config['stringLiteral']
 ): ReturnType<typeof _buildExternModifier$impl>;
 function buildExternModifier$impl(config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier$impl>;
 function buildExternModifier$impl(...args: unknown[]) {
@@ -2678,8 +2676,8 @@ function buildExternModifier$impl(...args: unknown[]) {
 				(buildStringLiteral as (...a: unknown[]) => unknown)(...args) as T.ExternModifier.Config['stringLiteral']
 			);
 }
-function _buildExternModifier$impl(stringLiteral?: T.ExternModifier.Config['stringLiteral']): ExternModifierBuilt {
-	const _string_literal = stringLiteral;
+function _buildExternModifier$impl(value?: T.ExternModifier.Config['stringLiteral']): ExternModifierBuilt {
+	const _string_literal = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -2828,9 +2826,9 @@ export function buildQualifiedType(config: T.QualifiedType.Config): QualifiedTyp
 	);
 }
 
-export type LifetimeBuildArgs = [identifier: T.Lifetime.Config['identifier']];
+export type LifetimeBuildArgs = [value: T.Lifetime.Config['identifier']];
 export type LifetimeLooseArgs = [
-	identifier: LooseValue<T.Lifetime.Config['identifier'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.Lifetime.Config['identifier'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type LifetimeBuilt = T.Lifetime & {
@@ -2841,7 +2839,7 @@ export type LifetimeBuilt = T.Lifetime & {
 	};
 } & _NodeMethods;
 
-export function buildLifetime(identifier: T.Lifetime.Config['identifier']): ReturnType<typeof _buildLifetime>;
+export function buildLifetime(value: T.Lifetime.Config['identifier']): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(text: string): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2856,8 +2854,8 @@ export function buildLifetime(...args: unknown[]) {
 		? _buildLifetime(args[0] as T.Lifetime.Config['identifier'])
 		: _buildLifetime((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Lifetime.Config['identifier']);
 }
-function _buildLifetime(identifier: T.Lifetime.Config['identifier']): LifetimeBuilt {
-	const _identifier = identifier;
+function _buildLifetime(value: T.Lifetime.Config['identifier']): LifetimeBuilt {
+	const _identifier = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -3232,9 +3230,9 @@ export function buildBoundedType(config: T.BoundedType.Config): BoundedTypeBuilt
 	);
 }
 
-export type UseBoundsBuildArgs = [bounds?: T.UseBounds.Config['bounds']];
+export type UseBoundsBuildArgs = [value?: T.UseBounds.Config['bounds']];
 export type UseBoundsLooseArgs = [
-	bounds?: LooseValue<T.UseBounds.Config['bounds'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.UseBounds.Config['bounds'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type UseBoundsBuilt = T.UseBounds & {
@@ -3245,7 +3243,7 @@ export type UseBoundsBuilt = T.UseBounds & {
 	};
 } & _NodeMethods;
 
-export function buildUseBounds(bounds?: T.UseBounds.Config['bounds']): ReturnType<typeof _buildUseBounds>;
+export function buildUseBounds(value?: T.UseBounds.Config['bounds']): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
 	...args: ({ delimiter?: Delimiter.Trailing } | (T.Lifetime | T.Identifier))[]
 ): ReturnType<typeof _buildUseBounds>;
@@ -3264,8 +3262,8 @@ export function buildUseBounds(...args: unknown[]) {
 				(buildUseBoundsElements as (...a: unknown[]) => unknown)(...args) as T.UseBounds.Config['bounds']
 			);
 }
-function _buildUseBounds(bounds?: T.UseBounds.Config['bounds']): UseBoundsBuilt {
-	const _bounds = bounds;
+function _buildUseBounds(value?: T.UseBounds.Config['bounds']): UseBoundsBuilt {
+	const _bounds = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -3522,9 +3520,9 @@ export function buildAbstractType(config: T.AbstractType.Config): AbstractTypeBu
 	);
 }
 
-export type DynamicTypeBuildArgs = [trait: T.DynamicType.Config['trait']];
+export type DynamicTypeBuildArgs = [value: T.DynamicType.Config['trait']];
 export type DynamicTypeLooseArgs = [
-	trait: LooseValue<T.DynamicType.Config['trait'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.DynamicType.Config['trait'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type DynamicTypeBuilt = T.DynamicType & {
@@ -3535,8 +3533,8 @@ export type DynamicTypeBuilt = T.DynamicType & {
 	};
 } & _NodeMethods;
 
-function buildDynamicType$impl(trait: T.DynamicType.Config['trait']): DynamicTypeBuilt {
-	const _trait = trait;
+function buildDynamicType$impl(value: T.DynamicType.Config['trait']): DynamicTypeBuilt {
+	const _trait = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4210,9 +4208,9 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): Ty
 	);
 }
 
-export type ReturnExpressionBuildArgs = [expression?: T.ReturnExpression.Config['expression']];
+export type ReturnExpressionBuildArgs = [value?: T.ReturnExpression.Config['expression']];
 export type ReturnExpressionLooseArgs = [
-	expression?: LooseValue<T.ReturnExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.ReturnExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ReturnExpressionBuilt = T.ReturnExpression & {
@@ -4223,8 +4221,8 @@ export type ReturnExpressionBuilt = T.ReturnExpression & {
 	};
 } & _NodeMethods;
 
-export function buildReturnExpression(expression?: T.ReturnExpression.Config['expression']): ReturnExpressionBuilt {
-	const _expression = expression;
+export function buildReturnExpression(value?: T.ReturnExpression.Config['expression']): ReturnExpressionBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4244,9 +4242,9 @@ export function buildReturnExpression(expression?: T.ReturnExpression.Config['ex
 	);
 }
 
-export type YieldExpressionBuildArgs = [expression?: T.YieldExpression.Config['expression']];
+export type YieldExpressionBuildArgs = [value?: T.YieldExpression.Config['expression']];
 export type YieldExpressionLooseArgs = [
-	expression?: LooseValue<T.YieldExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.YieldExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type YieldExpressionBuilt = T.YieldExpression & {
@@ -4257,8 +4255,8 @@ export type YieldExpressionBuilt = T.YieldExpression & {
 	};
 } & _NodeMethods;
 
-export function buildYieldExpression(expression?: T.YieldExpression.Config['expression']): YieldExpressionBuilt {
-	const _expression = expression;
+export function buildYieldExpression(value?: T.YieldExpression.Config['expression']): YieldExpressionBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4403,14 +4401,9 @@ export const buildArrayExpression = attachProps(buildArrayExpression$impl, {
 		buildArrayExpression$impl(buildArrayExpressionList(config) as T.ArrayExpressionList)
 });
 
-export type ParenthesizedExpressionBuildArgs = [expression: T.ParenthesizedExpression.Config['expression']];
+export type ParenthesizedExpressionBuildArgs = [value: T.ParenthesizedExpression.Config['expression']];
 export type ParenthesizedExpressionLooseArgs = [
-	expression: LooseValue<
-		T.ParenthesizedExpression.Config['expression'],
-		T.LeafScalarMap,
-		T.LeafStringMap,
-		T.NamespaceMap
-	>
+	value: LooseValue<T.ParenthesizedExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
@@ -4422,9 +4415,9 @@ export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
 } & _NodeMethods;
 
 export function buildParenthesizedExpression(
-	expression: T.ParenthesizedExpression.Config['expression']
+	value: T.ParenthesizedExpression.Config['expression']
 ): ParenthesizedExpressionBuilt {
-	const _expression = expression;
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4548,14 +4541,9 @@ export function buildStructExpression(config: T.StructExpression.Config): Struct
 	);
 }
 
-export type FieldInitializerListBuildArgs = [initializers?: T.FieldInitializerList.Config['initializers']];
+export type FieldInitializerListBuildArgs = [value?: T.FieldInitializerList.Config['initializers']];
 export type FieldInitializerListLooseArgs = [
-	initializers?: LooseValue<
-		T.FieldInitializerList.Config['initializers'],
-		T.LeafScalarMap,
-		T.LeafStringMap,
-		T.NamespaceMap
-	>
+	value?: LooseValue<T.FieldInitializerList.Config['initializers'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type FieldInitializerListBuilt = T.FieldInitializerList & {
@@ -4567,7 +4555,7 @@ export type FieldInitializerListBuilt = T.FieldInitializerList & {
 } & _NodeMethods;
 
 export function buildFieldInitializerList(
-	initializers?: T.FieldInitializerList.Config['initializers']
+	value?: T.FieldInitializerList.Config['initializers']
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
 	...args: (
@@ -4592,10 +4580,8 @@ export function buildFieldInitializerList(...args: unknown[]) {
 				) as T.FieldInitializerList.Config['initializers']
 			);
 }
-function _buildFieldInitializerList(
-	initializers?: T.FieldInitializerList.Config['initializers']
-): FieldInitializerListBuilt {
-	const _initializers = initializers;
+function _buildFieldInitializerList(value?: T.FieldInitializerList.Config['initializers']): FieldInitializerListBuilt {
+	const _initializers = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4697,9 +4683,9 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): FieldI
 	);
 }
 
-export type BaseFieldInitializerBuildArgs = [expression: T.BaseFieldInitializer.Config['expression']];
+export type BaseFieldInitializerBuildArgs = [value: T.BaseFieldInitializer.Config['expression']];
 export type BaseFieldInitializerLooseArgs = [
-	expression: LooseValue<T.BaseFieldInitializer.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.BaseFieldInitializer.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type BaseFieldInitializerBuilt = T.BaseFieldInitializer & {
@@ -4711,9 +4697,9 @@ export type BaseFieldInitializerBuilt = T.BaseFieldInitializer & {
 } & _NodeMethods;
 
 export function buildBaseFieldInitializer(
-	expression: T.BaseFieldInitializer.Config['expression']
+	value: T.BaseFieldInitializer.Config['expression']
 ): BaseFieldInitializerBuilt {
-	const _expression = expression;
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5226,9 +5212,9 @@ export function buildForExpression(config: T.ForExpression.Config): ForExpressio
 	);
 }
 
-export type ConstBlockBuildArgs = [body: T.ConstBlock.Config['body']];
+export type ConstBlockBuildArgs = [value: T.ConstBlock.Config['body']];
 export type ConstBlockLooseArgs = [
-	body: LooseValue<T.ConstBlock.Config['body'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.ConstBlock.Config['body'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ConstBlockBuilt = T.ConstBlock & {
@@ -5239,7 +5225,7 @@ export type ConstBlockBuilt = T.ConstBlock & {
 	};
 } & _NodeMethods;
 
-export function buildConstBlock(body: T.ConstBlock.Config['body']): ReturnType<typeof _buildConstBlock>;
+export function buildConstBlock(value: T.ConstBlock.Config['body']): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5254,8 +5240,8 @@ export function buildConstBlock(...args: unknown[]) {
 		? _buildConstBlock(args[0] as T.ConstBlock.Config['body'])
 		: _buildConstBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.ConstBlock.Config['body']);
 }
-function _buildConstBlock(body: T.ConstBlock.Config['body']): ConstBlockBuilt {
-	const _body = body;
+function _buildConstBlock(value: T.ConstBlock.Config['body']): ConstBlockBuilt {
+	const _body = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5367,9 +5353,9 @@ export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[])
 	);
 }
 
-export type LabelBuildArgs = [identifier: T.Label.Config['identifier']];
+export type LabelBuildArgs = [value: T.Label.Config['identifier']];
 export type LabelLooseArgs = [
-	identifier: LooseValue<T.Label.Config['identifier'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.Label.Config['identifier'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type LabelBuilt = T.Label & {
@@ -5380,7 +5366,7 @@ export type LabelBuilt = T.Label & {
 	};
 } & _NodeMethods;
 
-export function buildLabel(identifier: T.Label.Config['identifier']): ReturnType<typeof _buildLabel>;
+export function buildLabel(value: T.Label.Config['identifier']): ReturnType<typeof _buildLabel>;
 export function buildLabel(text: string): ReturnType<typeof _buildLabel>;
 export function buildLabel(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5395,8 +5381,8 @@ export function buildLabel(...args: unknown[]) {
 		? _buildLabel(args[0] as T.Label.Config['identifier'])
 		: _buildLabel((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Label.Config['identifier']);
 }
-function _buildLabel(identifier: T.Label.Config['identifier']): LabelBuilt {
-	const _identifier = identifier;
+function _buildLabel(value: T.Label.Config['identifier']): LabelBuilt {
+	const _identifier = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5453,9 +5439,9 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 	);
 }
 
-export type ContinueExpressionBuildArgs = [label?: T.ContinueExpression.Config['label']];
+export type ContinueExpressionBuildArgs = [value?: T.ContinueExpression.Config['label']];
 export type ContinueExpressionLooseArgs = [
-	label?: LooseValue<T.ContinueExpression.Config['label'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.ContinueExpression.Config['label'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ContinueExpressionBuilt = T.ContinueExpression & {
@@ -5467,7 +5453,7 @@ export type ContinueExpressionBuilt = T.ContinueExpression & {
 } & _NodeMethods;
 
 export function buildContinueExpression(
-	label?: T.ContinueExpression.Config['label']
+	value?: T.ContinueExpression.Config['label']
 ): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(text: string): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(...args: unknown[]) {
@@ -5485,8 +5471,8 @@ export function buildContinueExpression(...args: unknown[]) {
 				(buildLabel as (...a: unknown[]) => unknown)(...args) as T.ContinueExpression.Config['label']
 			);
 }
-function _buildContinueExpression(label?: T.ContinueExpression.Config['label']): ContinueExpressionBuilt {
-	const _label = label;
+function _buildContinueExpression(value?: T.ContinueExpression.Config['label']): ContinueExpressionBuilt {
+	const _label = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5543,9 +5529,9 @@ export function buildIndexExpression(config: T.IndexExpression.Config): IndexExp
 	);
 }
 
-export type AwaitExpressionBuildArgs = [expression: T.AwaitExpression.Config['expression']];
+export type AwaitExpressionBuildArgs = [value: T.AwaitExpression.Config['expression']];
 export type AwaitExpressionLooseArgs = [
-	expression: LooseValue<T.AwaitExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.AwaitExpression.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type AwaitExpressionBuilt = T.AwaitExpression & {
@@ -5556,8 +5542,8 @@ export type AwaitExpressionBuilt = T.AwaitExpression & {
 	};
 } & _NodeMethods;
 
-export function buildAwaitExpression(expression: T.AwaitExpression.Config['expression']): AwaitExpressionBuilt {
-	const _expression = expression;
+export function buildAwaitExpression(value: T.AwaitExpression.Config['expression']): AwaitExpressionBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5614,9 +5600,9 @@ export function buildFieldExpression(config: T.FieldExpression.Config): FieldExp
 	);
 }
 
-export type UnsafeBlockBuildArgs = [block: T.UnsafeBlock.Config['block']];
+export type UnsafeBlockBuildArgs = [value: T.UnsafeBlock.Config['block']];
 export type UnsafeBlockLooseArgs = [
-	block: LooseValue<T.UnsafeBlock.Config['block'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.UnsafeBlock.Config['block'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type UnsafeBlockBuilt = T.UnsafeBlock & {
@@ -5627,7 +5613,7 @@ export type UnsafeBlockBuilt = T.UnsafeBlock & {
 	};
 } & _NodeMethods;
 
-export function buildUnsafeBlock(block: T.UnsafeBlock.Config['block']): ReturnType<typeof _buildUnsafeBlock>;
+export function buildUnsafeBlock(value: T.UnsafeBlock.Config['block']): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5642,8 +5628,8 @@ export function buildUnsafeBlock(...args: unknown[]) {
 		? _buildUnsafeBlock(args[0] as T.UnsafeBlock.Config['block'])
 		: _buildUnsafeBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.UnsafeBlock.Config['block']);
 }
-function _buildUnsafeBlock(block: T.UnsafeBlock.Config['block']): UnsafeBlockBuilt {
-	const _block = block;
+function _buildUnsafeBlock(value: T.UnsafeBlock.Config['block']): UnsafeBlockBuilt {
+	const _block = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5739,9 +5725,9 @@ export function buildGenBlock(config: T.GenBlock.Config): GenBlockBuilt {
 	);
 }
 
-export type TryBlockBuildArgs = [block: T.TryBlock.Config['block']];
+export type TryBlockBuildArgs = [value: T.TryBlock.Config['block']];
 export type TryBlockLooseArgs = [
-	block: LooseValue<T.TryBlock.Config['block'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.TryBlock.Config['block'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type TryBlockBuilt = T.TryBlock & {
@@ -5752,7 +5738,7 @@ export type TryBlockBuilt = T.TryBlock & {
 	};
 } & _NodeMethods;
 
-export function buildTryBlock(block: T.TryBlock.Config['block']): ReturnType<typeof _buildTryBlock>;
+export function buildTryBlock(value: T.TryBlock.Config['block']): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5767,8 +5753,8 @@ export function buildTryBlock(...args: unknown[]) {
 		? _buildTryBlock(args[0] as T.TryBlock.Config['block'])
 		: _buildTryBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.TryBlock.Config['block']);
 }
-function _buildTryBlock(block: T.TryBlock.Config['block']): TryBlockBuilt {
-	const _block = block;
+function _buildTryBlock(value: T.TryBlock.Config['block']): TryBlockBuilt {
+	const _block = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -5867,9 +5853,9 @@ export function buildGenericPattern(config: T.GenericPattern.Config): GenericPat
 	);
 }
 
-export type TuplePatternBuildArgs = [elements?: T.TuplePattern.Config['elements']];
+export type TuplePatternBuildArgs = [value?: T.TuplePattern.Config['elements']];
 export type TuplePatternLooseArgs = [
-	elements?: LooseValue<T.TuplePattern.Config['elements'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.TuplePattern.Config['elements'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type TuplePatternBuilt = T.TuplePattern & {
@@ -5880,7 +5866,7 @@ export type TuplePatternBuilt = T.TuplePattern & {
 	};
 } & _NodeMethods;
 
-export function buildTuplePattern(elements?: T.TuplePattern.Config['elements']): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(value?: T.TuplePattern.Config['elements']): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
 	...args: ({ delimiter?: Delimiter.Trailing } | (T.Pattern | T.ClosureExpression))[]
 ): ReturnType<typeof _buildTuplePattern>;
@@ -5899,8 +5885,8 @@ export function buildTuplePattern(...args: unknown[]) {
 				(buildTuplePatternElements as (...a: unknown[]) => unknown)(...args) as T.TuplePattern.Config['elements']
 			);
 }
-function _buildTuplePattern(elements?: T.TuplePattern.Config['elements']): TuplePatternBuilt {
-	const _elements = elements;
+function _buildTuplePattern(value?: T.TuplePattern.Config['elements']): TuplePatternBuilt {
+	const _elements = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -6094,9 +6080,9 @@ export const buildFieldPattern = attachProps(buildFieldPattern$impl, {
 		buildFieldPattern$impl({ content: buildFieldPatternNamed(config) as T.FieldPatternNamed })
 });
 
-export type MutPatternBuildArgs = [pattern: T.MutPattern.Config['pattern']];
+export type MutPatternBuildArgs = [value: T.MutPattern.Config['pattern']];
 export type MutPatternLooseArgs = [
-	pattern: LooseValue<T.MutPattern.Config['pattern'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.MutPattern.Config['pattern'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type MutPatternBuilt = T.MutPattern & {
@@ -6107,8 +6093,8 @@ export type MutPatternBuilt = T.MutPattern & {
 	};
 } & _NodeMethods;
 
-export function buildMutPattern(pattern: T.MutPattern.Config['pattern']): MutPatternBuilt {
-	const _pattern = pattern;
+export function buildMutPattern(value: T.MutPattern.Config['pattern']): MutPatternBuilt {
+	const _pattern = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -6171,9 +6157,9 @@ export const buildRangePattern = attachProps(buildRangePattern$impl, {
 		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args) as T.RangePatternPrefix)
 });
 
-export type RefPatternBuildArgs = [pattern: T.RefPattern.Config['pattern']];
+export type RefPatternBuildArgs = [value: T.RefPattern.Config['pattern']];
 export type RefPatternLooseArgs = [
-	pattern: LooseValue<T.RefPattern.Config['pattern'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.RefPattern.Config['pattern'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type RefPatternBuilt = T.RefPattern & {
@@ -6184,8 +6170,8 @@ export type RefPatternBuilt = T.RefPattern & {
 	};
 } & _NodeMethods;
 
-export function buildRefPattern(pattern: T.RefPattern.Config['pattern']): RefPatternBuilt {
-	const _pattern = pattern;
+export function buildRefPattern(value: T.RefPattern.Config['pattern']): RefPatternBuilt {
+	const _pattern = value;
 	return withMethods(
 		withAccessors(
 			{

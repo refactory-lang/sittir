@@ -455,9 +455,9 @@ export const buildPrintStatement = attachProps(buildPrintStatement$impl, {
 		)
 });
 
-export type ChevronBuildArgs = [expression: T.Chevron.Config['expression']];
+export type ChevronBuildArgs = [value: T.Chevron.Config['expression']];
 export type ChevronLooseArgs = [
-	expression: LooseValue<T.Chevron.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.Chevron.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ChevronBuilt = T.Chevron & {
@@ -468,8 +468,8 @@ export type ChevronBuilt = T.Chevron & {
 	};
 } & _NodeMethods;
 
-export function buildChevron(expression: T.Chevron.Config['expression']): ChevronBuilt {
-	const _expression = expression;
+export function buildChevron(value: T.Chevron.Config['expression']): ChevronBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -848,9 +848,9 @@ export function buildElifClause(config: T.ElifClause.Config): ElifClauseBuilt {
 	);
 }
 
-export type ElseClauseBuildArgs = [body: T.ElseClause.Config['body']];
+export type ElseClauseBuildArgs = [value: T.ElseClause.Config['body']];
 export type ElseClauseLooseArgs = [
-	body: LooseValue<T.ElseClause.Config['body'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.ElseClause.Config['body'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ElseClauseBuilt = T.ElseClause & {
@@ -861,8 +861,8 @@ export type ElseClauseBuilt = T.ElseClause & {
 	};
 } & _NodeMethods;
 
-function buildElseClause$impl(body: T.ElseClause.Config['body']): ElseClauseBuilt {
-	const _body = body;
+function buildElseClause$impl(value: T.ElseClause.Config['body']): ElseClauseBuilt {
+	const _body = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -1199,9 +1199,9 @@ export function buildExceptClause(config: T.ExceptClause.Config): ExceptClauseBu
 	);
 }
 
-export type FinallyClauseBuildArgs = [block: T.FinallyClause.Config['block']];
+export type FinallyClauseBuildArgs = [value: T.FinallyClause.Config['block']];
 export type FinallyClauseLooseArgs = [
-	block: LooseValue<T.FinallyClause.Config['block'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.FinallyClause.Config['block'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type FinallyClauseBuilt = T.FinallyClause & {
@@ -1212,8 +1212,8 @@ export type FinallyClauseBuilt = T.FinallyClause & {
 	};
 } & _NodeMethods;
 
-function buildFinallyClause$impl(block: T.FinallyClause.Config['block']): FinallyClauseBuilt {
-	const _block = block;
+function buildFinallyClause$impl(value: T.FinallyClause.Config['block']): FinallyClauseBuilt {
+	const _block = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -1524,9 +1524,9 @@ function _buildLambdaParameters(child: T._Parameters): LambdaParametersBuilt {
 	);
 }
 
-export type ListSplatBuildArgs = [expression: T.ListSplat.Config['expression']];
+export type ListSplatBuildArgs = [value: T.ListSplat.Config['expression']];
 export type ListSplatLooseArgs = [
-	expression: LooseValue<T.ListSplat.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.ListSplat.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ListSplatBuilt = T.ListSplat & {
@@ -1537,8 +1537,8 @@ export type ListSplatBuilt = T.ListSplat & {
 	};
 } & _NodeMethods;
 
-export function buildListSplat(expression: T.ListSplat.Config['expression']): ListSplatBuilt {
-	const _expression = expression;
+export function buildListSplat(value: T.ListSplat.Config['expression']): ListSplatBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -1558,9 +1558,9 @@ export function buildListSplat(expression: T.ListSplat.Config['expression']): Li
 	);
 }
 
-export type DictionarySplatBuildArgs = [expression: T.DictionarySplat.Config['expression']];
+export type DictionarySplatBuildArgs = [value: T.DictionarySplat.Config['expression']];
 export type DictionarySplatLooseArgs = [
-	expression: LooseValue<T.DictionarySplat.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.DictionarySplat.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type DictionarySplatBuilt = T.DictionarySplat & {
@@ -1571,8 +1571,8 @@ export type DictionarySplatBuilt = T.DictionarySplat & {
 	};
 } & _NodeMethods;
 
-export function buildDictionarySplat(expression: T.DictionarySplat.Config['expression']): DictionarySplatBuilt {
-	const _expression = expression;
+export function buildDictionarySplat(value: T.DictionarySplat.Config['expression']): DictionarySplatBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -1862,13 +1862,13 @@ function buildParenthesizedListSplat$impl(child: T.ParenthesizedListSplat | T.Li
 export const buildParenthesizedListSplat = attachProps(buildParenthesizedListSplat$impl, {
 	parenthesizedListSplat: (child: T.ParenthesizedListSplat | T.ListSplat) =>
 		buildParenthesizedListSplat$impl(buildParenthesizedListSplat(child) as T.ParenthesizedListSplat),
-	listSplat: (expression: T.ListSplat.Config['expression']) =>
-		buildParenthesizedListSplat$impl(buildListSplat(expression) as T.ListSplat)
+	listSplat: (value: T.ListSplat.Config['expression']) =>
+		buildParenthesizedListSplat$impl(buildListSplat(value) as T.ListSplat)
 });
 
-export type ArgumentListBuildArgs = [arguments_?: T.ArgumentList.Config['arguments']];
+export type ArgumentListBuildArgs = [value?: T.ArgumentList.Config['arguments']];
 export type ArgumentListLooseArgs = [
-	arguments_?: LooseValue<T.ArgumentList.Config['arguments'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.ArgumentList.Config['arguments'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ArgumentListBuilt = T.ArgumentList & {
@@ -1879,9 +1879,7 @@ export type ArgumentListBuilt = T.ArgumentList & {
 	};
 } & _NodeMethods;
 
-export function buildArgumentList(
-	arguments_?: T.ArgumentList.Config['arguments']
-): ReturnType<typeof _buildArgumentList>;
+export function buildArgumentList(value?: T.ArgumentList.Config['arguments']): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
@@ -1903,8 +1901,8 @@ export function buildArgumentList(...args: unknown[]) {
 				(buildArgumentListElements as (...a: unknown[]) => unknown)(...args) as T.ArgumentList.Config['arguments']
 			);
 }
-function _buildArgumentList(arguments_?: T.ArgumentList.Config['arguments']): ArgumentListBuilt {
-	const _arguments = arguments_;
+function _buildArgumentList(value?: T.ArgumentList.Config['arguments']): ArgumentListBuilt {
+	const _arguments = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -1963,9 +1961,9 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 	);
 }
 
-export type DecoratorBuildArgs = [expression: T.Decorator.Config['expression']];
+export type DecoratorBuildArgs = [value: T.Decorator.Config['expression']];
 export type DecoratorLooseArgs = [
-	expression: LooseValue<T.Decorator.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.Decorator.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type DecoratorBuilt = T.Decorator & {
@@ -1976,8 +1974,8 @@ export type DecoratorBuilt = T.Decorator & {
 	};
 } & _NodeMethods;
 
-export function buildDecorator(expression: T.Decorator.Config['expression']): DecoratorBuilt {
-	const _expression = expression;
+export function buildDecorator(value: T.Decorator.Config['expression']): DecoratorBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -2864,9 +2862,9 @@ export function buildAsPattern(config: T.AsPattern.Config): AsPatternBuilt {
 	);
 }
 
-export type NotOperatorBuildArgs = [argument: T.NotOperator.Config['argument']];
+export type NotOperatorBuildArgs = [value: T.NotOperator.Config['argument']];
 export type NotOperatorLooseArgs = [
-	argument: LooseValue<T.NotOperator.Config['argument'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.NotOperator.Config['argument'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type NotOperatorBuilt = T.NotOperator & {
@@ -2877,8 +2875,8 @@ export type NotOperatorBuilt = T.NotOperator & {
 	};
 } & _NodeMethods;
 
-export function buildNotOperator(argument: T.NotOperator.Config['argument']): NotOperatorBuilt {
-	const _argument = argument;
+export function buildNotOperator(value: T.NotOperator.Config['argument']): NotOperatorBuilt {
+	const _argument = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4023,9 +4021,9 @@ function _buildTuple(child?: T.CollectionElements): TupleBuilt {
 	);
 }
 
-export type DictionaryBuildArgs = [entries?: T.Dictionary.Config['entries']];
+export type DictionaryBuildArgs = [value?: T.Dictionary.Config['entries']];
 export type DictionaryLooseArgs = [
-	entries?: LooseValue<T.Dictionary.Config['entries'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<T.Dictionary.Config['entries'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type DictionaryBuilt = T.Dictionary & {
@@ -4036,7 +4034,7 @@ export type DictionaryBuilt = T.Dictionary & {
 	};
 } & _NodeMethods;
 
-export function buildDictionary(entries?: T.Dictionary.Config['entries']): ReturnType<typeof _buildDictionary>;
+export function buildDictionary(value?: T.Dictionary.Config['entries']): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(
 	...args: ({ delimiter?: Delimiter.Trailing } | (T.Pair | T.DictionarySplat))[]
 ): ReturnType<typeof _buildDictionary>;
@@ -4055,8 +4053,8 @@ export function buildDictionary(...args: unknown[]) {
 				(buildDictionaryElements as (...a: unknown[]) => unknown)(...args) as T.Dictionary.Config['entries']
 			);
 }
-function _buildDictionary(entries?: T.Dictionary.Config['entries']): DictionaryBuilt {
-	const _entries = entries;
+function _buildDictionary(value?: T.Dictionary.Config['entries']): DictionaryBuilt {
+	const _entries = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4301,8 +4299,8 @@ export const buildParenthesizedExpression = attachProps(buildParenthesizedExpres
 	yield: (child?: T.YieldFromClause | T.Expressions) => buildParenthesizedExpression$impl(buildYield(child) as T.Yield),
 	yieldFromClause: (...args: Parameters<typeof buildYield.fromClause>) =>
 		buildParenthesizedExpression$impl(buildYield.fromClause(...args) as T.Yield),
-	listSplat: (expression: T.ListSplat.Config['expression']) =>
-		buildParenthesizedExpression$impl(buildListSplat(expression) as T.ListSplat)
+	listSplat: (value: T.ListSplat.Config['expression']) =>
+		buildParenthesizedExpression$impl(buildListSplat(value) as T.ListSplat)
 });
 
 export type CollectionElementsBuildArgs = [
@@ -4432,9 +4430,9 @@ export function buildForInClause(config: T.ForInClause.Config): ForInClauseBuilt
 	);
 }
 
-export type IfClauseBuildArgs = [expression: T.IfClause.Config['expression']];
+export type IfClauseBuildArgs = [value: T.IfClause.Config['expression']];
 export type IfClauseLooseArgs = [
-	expression: LooseValue<T.IfClause.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.IfClause.Config['expression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type IfClauseBuilt = T.IfClause & {
@@ -4445,8 +4443,8 @@ export type IfClauseBuilt = T.IfClause & {
 	};
 } & _NodeMethods;
 
-export function buildIfClause(expression: T.IfClause.Config['expression']): IfClauseBuilt {
-	const _expression = expression;
+export function buildIfClause(value: T.IfClause.Config['expression']): IfClauseBuilt {
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4841,9 +4839,9 @@ export function buildNone() {
 	);
 }
 
-export type AwaitBuildArgs = [primaryExpression: T.Await.Config['primaryExpression']];
+export type AwaitBuildArgs = [value: T.Await.Config['primaryExpression']];
 export type AwaitLooseArgs = [
-	primaryExpression: LooseValue<T.Await.Config['primaryExpression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.Await.Config['primaryExpression'], T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type AwaitBuilt = T.Await & {
@@ -4854,8 +4852,8 @@ export type AwaitBuilt = T.Await & {
 	};
 } & _NodeMethods;
 
-export function buildAwait(primaryExpression: T.Await.Config['primaryExpression']): AwaitBuilt {
-	const _primary_expression = primaryExpression;
+export function buildAwait(value: T.Await.Config['primaryExpression']): AwaitBuilt {
+	const _primary_expression = value;
 	return withMethods(
 		withAccessors(
 			{

@@ -1,16 +1,17 @@
 /**
- * factories.ts — single-field-factory reserved-word parameter naming.
+ * factories.ts — the single-field factory's direct-value parameter.
  *
- * `emitFieldCarryingFactory`'s Gap-5 optimization (single non-stamp,
- * non-hidden, singular slot) emits a direct-value signature
- * `fn(paramName: T)` instead of a config-object wrapper. Regression test for
- * a bug where the emitted parameter used the raw `soleField.propertyName`
- * (the grammar's field name verbatim) instead of `soleField.paramName` (the
- * `safeParamName()`-sanitized spelling, e.g. `arguments` → `arguments_`) —
- * a bare `arguments` parameter is invalid in an ECMAScript module and broke
- * loading the emitted factories.ts entirely (surfaced by python's
- * `argument_list`'s newly-promoted single-field `_argument_list_elements`
- * body, whose sole slot is named `arguments`).
+ * A single non-stamp, non-hidden, singular slot gets a direct-value signature
+ * `fn(value: T)` instead of a config-object wrapper. The parameter is
+ * positional, so its identifier is invisible to callers and is spelled
+ * `value` rather than derived from the slot.
+ *
+ * The bug this guards: the parameter once used the slot's name verbatim, and
+ * a slot named for a reserved word — python's `argument_list`, whose sole
+ * slot is `arguments` — made the emitted module unloadable, because a bare
+ * `arguments` parameter is illegal in an ECMAScript module. A fixed `value`
+ * cannot collide with any slot name, so the failure is unreachable rather
+ * than escaped.
  */
 
 import { FIELD, SEQ, SYMBOL, PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -41,15 +42,16 @@ function makeReservedWordSingleFieldNodeMap() {
 	return nodeMap;
 }
 
-describe('factories emitter — single-field factory reserved-word parameter naming', () => {
-	it('emits the safeParamName-sanitized parameter (arguments_), not the raw reserved-word field name', () => {
+describe('factories emitter — single-field factory direct-value parameter', () => {
+	it('spells the parameter `value`, never the slot name', () => {
 		const nodeMap = makeReservedWordSingleFieldNodeMap();
 		const emitted = emitFactories({ grammar: 'test', nodeMap });
 
-		// `call` forwards its sole slot's single kind, so the sanitized param
-		// lives on the private direct implementation behind the forwarding
-		// wrapper.
-		expect(emitted).toContain('function _buildCall(arguments_');
-		expect(emitted).not.toMatch(/function _?buildCall\(arguments[?:]/);
+		// `call` forwards its sole slot's single kind, so the direct parameter
+		// lives on the private implementation behind the forwarding wrapper.
+		expect(emitted).toContain('function _buildCall(value');
+		// A bare `arguments` parameter would make the module unloadable; the
+		// escaped spelling would merely be noise. Neither should appear.
+		expect(emitted).not.toMatch(/function _?buildCall\(arguments_?[?:]/);
 	});
 });

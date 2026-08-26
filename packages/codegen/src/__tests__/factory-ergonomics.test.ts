@@ -48,15 +48,16 @@ describe('factory ergonomics', () => {
 			// label's sole slot holds a single concrete kind, so the factory is
 			// the FORWARDED refinement of the direct form: a public wrapper
 			// accepting the child or the child's constructor args, over a
-			// private direct implementation that keeps the sanitized param.
+			// private direct implementation.
 			//
-			// The public direct overload, the private implementation and the
-			// `BuildArgs` alias all name the slot identically — they are one
-			// projection of one calling convention, so a divergent label would
-			// mean the parameter list had been composed twice.
-			expect(content).toMatch(/export function buildLabel\(identifier: T\.Label\.Config\['identifier'\]\)/);
-			expect(content).toMatch(/function _buildLabel\(identifier: T\.Label\.Config\['identifier'\]\)/);
-			expect(content).toMatch(/export type LabelBuildArgs = \[identifier: T\.Label\.Config\['identifier'\]\]/);
+			// The parameter is positional, so it is spelled `value` rather than
+			// after the slot — but the public direct overload, the private
+			// implementation and the `BuildArgs` alias must still agree on it.
+			// They are one projection of one calling convention, so a divergent
+			// label would mean the parameter list had been composed twice.
+			expect(content).toMatch(/export function buildLabel\(value: T\.Label\.Config\['identifier'\]\)/);
+			expect(content).toMatch(/function _buildLabel\(value: T\.Label\.Config\['identifier'\]\)/);
+			expect(content).toMatch(/export type LabelBuildArgs = \[value: T\.Label\.Config\['identifier'\]\]/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
@@ -75,7 +76,7 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
 			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
 			// Find the label factory implementation and check its $with block
-			const labelMatch = content.match(/function _buildLabel\(identifier[\s\S]*?\n\}/);
+			const labelMatch = content.match(/function _buildLabel\(value[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
 			// The setter calls buildLabel(value) directly

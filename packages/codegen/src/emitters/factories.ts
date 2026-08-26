@@ -811,8 +811,17 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	}
 	if (singleField) {
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
+		// A POSITIONAL parameter, so its identifier is invisible to callers and
+		// carries no contract — the same reason the container surface above
+		// spells its own `child` / `...children`. `value` matches what the
+		// `$with` setter already calls its parameter, and it keeps a slot named
+		// for a reserved word (`arguments`, `function`) from ever reaching a
+		// binding, which is the one position where such a name is illegal.
+		//
+		// `paramName` stays on the model for a positional-parameter surface,
+		// where several parameters must be spelled apart from each other.
 		const param: FactoryParam = {
-			label: singleField.paramName,
+			label: 'value',
 			optional: !isRequired(singleField),
 			rest: false,
 			strictType: elemType,
@@ -827,7 +836,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			singleField,
 			param,
 			...renderSurfaceParams(param),
-			args: singleField.paramName,
+			args: 'value',
 			directParamType: elemType,
 			directParamOptional: !isRequired(singleField),
 			opt: isRequired(singleField) ? '' : '?'
@@ -1062,8 +1071,7 @@ function emitFieldCarryingFactory(
 			: [`    $child(v: ${elementType}): ${builtName};`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
-		const paramName = singleField.paramName;
-		valueSourceFor = (f) => slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries);
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
