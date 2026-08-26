@@ -1,0 +1,19 @@
+{
+  "languages": {
+    "TypeScript": {
+      "language_servers": ["ast-grep", "typescript-ls", "!vtsls", "!typescript-language-server", "!eslint", "!tailwindcss-language-server", "!deno", "..."]
+    },
+    "TSX": {
+      "language_servers": ["ast-grep", "typescript-ls", "!vtsls", "!typescript-language-server", "!eslint", "!tailwindcss-language-server", "!deno", "..."]
+    },
+    "JavaScript": {
+      "language_servers": ["ast-grep", "typescript-ls", "!vtsls", "!typescript-language-server", "!eslint", "!tailwindcss-language-server", "!deno", "..."]
+    },
+    "CSS": {
+      "language_servers": ["!tailwindcss-language-server", "..."]
+    },
+    "Markdown": {
+      "language_servers": ["!deno", "..."]
+    }
+  }
+}

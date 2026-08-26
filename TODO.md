@@ -12,3 +12,50 @@
 16. NEW: Consider using polymorph shape (perhaps resurrecting AssembledPolymorph as a subclass of AssembledBranch) to distinguish between top-level sequences and top-level choices (non-supertype), which permit distinct emissions for each choice arm. Consider collapsing AssembledGroup into branch.  Finally, consider using node.hidden as ssot for whether a factory emitted and SlotClass as ssot for emitting branch factories (getting rid of multiple varying interpretations of the same branch)
 18. NEW: Chip the exercise tool's post-port failure inventory (see `ki-exercise-span-transport` — the render step is native now; the remaining failures are real factory/transport gaps the legacy renderer had masked).
 20. IN PROGRESS: dependabot vulnerabilities triaged — all five flagged packages are transitive dev-toolchain deps (changesets → js-yaml/picomatch; vitest → vite → postcss/nanoid); the overrides live in `pnpm-workspace.yaml` (pnpm 10 ignores a package.json `pnpm` field) and the lockfile is regenerated so installs resolve the patched versions (picomatch was already patched in the lockfile). Alerts close once this lands on master.
+21. The hoisting rules used for factory parameters, should apply to the getters (and setters) as well. 
+22. Move conditional logic and hardcoded/magic strings into the model - e.g. unnamed slot in the model is actually given storageName of xxx and displayName of yyy... Consider moving hoisting rules to the model as well (i.e. factory shape attribute on the model, as well as the slot)
+23. Consider getting rid of AnyNodeData - it obscures the actual node data types
+24. Collapse multiplicity and arity into arity.
+25. Note from agent: Agreed on the `$`, and there's a concrete inconsistency backing you up — the same concept is emitted two different ways depending on which branch the kind takes.
+
+In the no-fields branch (`childSurface === 'spread' | 'direct'`):
+
+```ts
+$with: { $child:    (v: Elem)      => wrapX({ ...data, $other: v },  tree) }
+$with: { $children: (...vs: Rest)  => wrapX({ ...data, $other: vs }, tree) }
+```
+
+In the field-carrying branch, the very same slot is emitted **without** the sigil:
+
+```ts
+children: (item: Elem)     => wrapX({ ...data, $other: item },  tree),
+children: (...items: Rest) => wrapX({ ...data, $other: items }, tree),
+```
+
+So a kind that happens to have fields exposes `children`, and a kind that doesn't exposes `$children`. That's not a designed distinction — it's two code paths that drifted.
+
+On which way to resolve it: dropping the `$` is the consistent call. The sigil marks the *protocol* namespace — `$type`, `$text`, `$other`, `$render()`, `$toEdit()`, `$with` itself. Once you're **inside** `$with`, every key is a slot name (`typeParameters`, `trait`, `declarators`), so the namespace is already established by the container. `$child` there is a sigil applied to a slot name, which reads as a category error. The field-carrying branch already gets this right.
+
+Worth noting the same question applies to the **getter** side, not just `$with` — and those two must land on the same word, per the rule that the rule-side and slot-side vocabulary stay identical. Fixing only the setter would trade one inconsistency for another.
+
+On the generic name — you're right that it isn't settled, and I don't have a recorded decision for it. What I can see in play:
+
+- **`$other`** is the *storage* key. That's wire-level and shouldn't drive the public name.
+- **`child` / `children`** is what both branches currently gesture at, varying by `slot.arity === 'one'`.
+- **`content`** is the sanctioned name elsewhere for a union slot with no usable field name — which is arguably the same situation: an unnamed slot needing a generic handle.
+
+So the real question is whether unnamed-children and no-field-name-union are one naming problem or two. If they're one, `content` already has precedent and `children` is the redundant coinage. If they're two — children being *structurally* unnamed versus a union merely *lacking* a consistent field name — then `child`/`children` is right and should be stated as its own rule.
+
+The one thing I'd treat as already decided is the pluralization: singular for `arity === 'one'`, plural otherwise, matching the existing plural-array-slot rule. That holds under either choice of word.
+
+26. NEW: Split `$text` into slot content vs source provenance — spec at `docs/superpowers/specs/2026-08-26-text-content-vs-source-provenance.md`. `$text` currently means two unrelated things: the VALUE of a text-modeled kind (an identifier's name — survives edits) and the SPAN a structural node was read from (provenance — destroyed by any edit, kept only to replay untouched subtrees byte-exactly). Because both share a name, `hasStructure` / `isUntouchedSubtree` / `_isReadTextLeaf` / `slot.rs` each re-derive which role is in play from node shape, the JS and native readers disagree (JS omits branch `$text` behind `SITTIR_DEBUG_TEXT`, native always captures it), and structural text is ~23% of a deep read's wire — 99.9% of all `$text` bytes on an 8KB file, re-sent once per nesting level.
+
+    END STATE: `$text` means content only; provenance becomes the coordinate `(tree, $span)`, which handles already name now that they carry their tree id and the engine retains trees. ONE transport rule — unread and unedited are the same state, both coordinates-only, both short-circuit. Biggest win is CORRECTNESS not wire size: a deep read currently rebuilds every level and re-spells the source even with zero edits (`pub fn main() {\n\t// keep me\n...` → `pub fn main(){ // keep me\nlet x=1;...}`); under this rule deep and shallow render byte-identically.
+
+    CARRIER: `SlotValue` stays a two-arm enum but `Node(T)` and `Verbatim(String)` both go — it becomes `Coord(NodeCoordinate) | Transport(T)`, orthogonal on one axis (is the content in the tree, or in this message). `Verbatim`'s three meanings separate: captured span -> `Coord`, text-as-content -> `VerbatimTransport` inside `Transport`, free text in a slot admitting no text kind -> error. NOT a field on each transport struct: storage fields are mostly REQUIRED (rust 242/429, ts 306/516, py 186/261 — only the `$`-prefixed metadata is optional), and a coord-only value has no storage, so a coord field would force every required field to become `Option` — downgrading that many grammar facts to "maybe" so one unrelated state could be expressed. The enum keeps them required because a `Coord` never constructs a transport at all, makes coord+storage unrepresentable, and stays one mechanism where a field would be two (enum-typed slots need an arm regardless). `#![recursion_limit = "256"]` is the price and it is a compile-time knob already paid. `RenderRoot` is already `SlotValue<AnyTransport>` so the root is covered by the same arm.
+
+    FOLDED IN — writer-layer split: `RenderableTransport::render_into` cannot reach the tree, and `ADJACENT` exists only because askama's `fmt::Write` chain erases sink identity so per-boundary facts ride a thread-local. Same cause. Thread a custom sink end-to-end (the seam spec's optional end-state): statically-resolved render fns take a `RawWriter` and the `.jinja` text becomes final; `SpacingWriter` survives only at indeterminate seams; `mark_adjacent` dissolves; and the same sink carries the tree table so coordinates resolve in-band. NB immediacy can NEVER be baked as a character — a required space is a character to add, but immediacy is the absence of one, and `type{{ left }}` still gets a space while an inserter is running. Also: the stub is not a scalar source at all, so it moves off `slotVerbatimIsImmediate` onto the exact `isLeftImmediateKind`, and the seam residue report should ratchet.
+
+    DEAD FIELDS FOUND: every transport struct declares `$span`/`$nodeHandle`/`$childIndex`/`$source`/`$named` and reads NONE of them (0 consumer sites each, vs `$text` 149 and `$triviaData` 2) — a napi property lookup per field per node, for nothing. Drop them from the transport; `Coord` becomes the single home for a coordinate on the render path. Reader keeps emitting `$nodeHandle`/`$childIndex` (wrap needs them for drill-in). SEPARATE BUG surfaced by this: `render_transport_parts` hardcodes `TransportSource::Factory` and `resolve_render_format_from_source` only returns tree format when source is NOT Factory — so detected per-file format is UNREACHABLE on the native render path, and the `treeId` param on `render()` is inert today. Needs its own decision; not caused by spec 26.
+
+    GAPS/LOSSES: (a) tree ids are per-engine and both start at 0, so a coordinate does not identify a tree globally — render must refuse a coordinate it did not mint; (b) coordinates are not portable the way self-describing `$text` was; (c) free text in a slot admitting no text kind now errors instead of rendering as-is; (d) sequencing — byte-exact verbatim render depends on `SlotValue` today, so its removal and the coordinate mechanism must land together. Also deletes `markEdited`/`$edited` and `SITTIR_DEBUG_TEXT`, and closes a variant-trial regression in `SlotValue::from_napi_value`.
