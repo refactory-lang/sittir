@@ -241,7 +241,17 @@ macro_rules! napi_engine {
             /// and the registry has no way to know whether it already was.
             #[::napi_derive::napi]
             pub fn dispose_tree(&mut self, tree_id: f64) {
-                let tree_id = tree_id as u32;
+                // Checked for the same reason `read_node` checks its handle:
+                // `as` saturates, so `NaN` and every negative arrive as 0 —
+                // and 0 is the first tree, so an unchecked cast would let a
+                // nonsense id drop a live tree. Invalid input is a no-op
+                // rather than an error: this is called from a finalizer,
+                // where nothing is positioned to handle a throw, and
+                // disposing an id that names no tree is already a no-op.
+                let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
+                    return;
+                };
+                let Ok(tree_id) = u32::try_from(tree_id) else { return };
                 self.trees.remove(&tree_id);
                 if self.last_tree_id == Some(tree_id) {
                     self.last_tree_id = None;

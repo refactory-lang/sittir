@@ -16,7 +16,7 @@
  * ```
  */
 
-import type { CamelCase, SimplifyDeep } from 'type-fest';
+import type { CamelCase } from 'type-fest';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)

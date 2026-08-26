@@ -114,6 +114,22 @@ describe('parsed trees are released', () => {
 		expect(native.liveTreeCount).toBe(0);
 	});
 
+	it('ignores a nonsense tree id rather than dropping the first tree', () => {
+		const native = nativeEngine();
+		if (!native) return;
+
+		native.parseAndRead('fn a() {}');
+		expect(native.liveTreeCount).toBe(1);
+		// `as` saturates, so an unchecked cast would turn both of these into
+		// 0 — which names a real tree, and a live one.
+		native.disposeTree(Number.NaN);
+		native.disposeTree(-1);
+		expect(native.liveTreeCount).toBe(1);
+
+		native.disposeTree(0);
+		expect(native.liveTreeCount).toBe(0);
+	});
+
 	it('releases trees the caller no longer holds', async () => {
 		// Disposal is driven by the collector, so without a way to run it this
 		// asserts nothing. Run vitest under `--expose-gc` to exercise it.

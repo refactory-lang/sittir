@@ -266,8 +266,8 @@ falling back.
   validators' `backend: 'js'` mode. It no longer hosts a
   `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
-  one exposes `createEngine()` (native-only), an `ir.*` namespace, coercing
-  coercion, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
+  one exposes `createEngine()` (native-only), an `ir.*` namespace of coercing
+  constructors, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
   constants, and the native template-bundle hash.
 
 #### NodeData shape

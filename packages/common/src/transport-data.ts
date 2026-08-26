@@ -36,10 +36,9 @@ function isUnexpandedStub(value: unknown): boolean {
  * stale" — cannot distinguish an emptied node from one that parsed childless
  * to begin with, and gets the second case wrong.
  */
-export function markEdited<T extends object>(data: T): T {
-	if (!('$text' in data)) return data;
+export function markEdited<T extends object>(data: T): Omit<T, '$text'> {
 	const { $text: _stale, ...rest } = data as T & { $text?: unknown };
-	return rest as unknown as T;
+	return rest;
 }
 
 /**

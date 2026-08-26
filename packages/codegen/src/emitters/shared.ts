@@ -640,17 +640,10 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	return slotClass.slot;
 }
 
-/**
- * The single derivation of the direct-value factory calling convention:
- * the sole named singular user slot qualifies ONLY when it is also the
- * node's only non-stamped field. A keyword-presence marker or hidden-infra
- * slot is caller-settable surface a direct signature has nowhere to
- * accept, so its presence keeps the config-object surface. Both the
- * factories emitter (signature) and `classifyFactoryShape` (metadata)
- * consume this — they must never disagree, or every shape consumer
- * (validators, `from()` resolvers) calls the factory with the wrong
- * argument shape and marker fields silently drop.
- */
+/** The one derivation of the direct-value calling convention, consumed by
+ *  both the factories emitter and `classifyFactoryShape` — they must never
+ *  disagree, or every shape consumer calls the factory with the wrong
+ *  argument shape. See the compiler glossary for the contract. */
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
 	if (!slot) return undefined;
@@ -801,9 +794,10 @@ export function classifyFactoryShape(
 				// union slot has no unique constructor and stays 'direct'.
 				if (slotClass.arity !== 'singular') return 'spread';
 				// Direct only when the emitter would emit the direct-value
-				// signature (sole non-stamped field, visible kind — see
-				// resolveDirectFactorySlot). Hidden kinds and marker-carrying
-				// kinds keep the config-object surface.
+				// signature — see resolveDirectFactorySlot. What keeps a kind
+				// on the config surface is a hidden kind nothing user-facing
+				// reaches, or a second caller-settable slot beside the sole
+				// one; a determined marker does neither.
 				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 			}
