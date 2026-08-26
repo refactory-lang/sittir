@@ -958,7 +958,12 @@ export function emitsFieldResolvers(
 ): node is Extract<AssembledNode, { modelType: 'branch' }> {
 	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
 	if (node.modelType !== 'branch') return false;
-	return classifyChildFactorySurface(node, context.nodeMap) === null;
+	// The spread surface takes its children positionally and has no per-field
+	// config to resolve; every other branch goes through the field-carrying
+	// coercer, which is what emits these. `emitBranchFrom` routes on this same
+	// answer, so the two cannot disagree about which kinds have resolvers —
+	// and wrap's `$with` setters read it to know which ones they may call.
+	return classifyChildFactorySurface(node, context.nodeMap) !== 'spread';
 }
 
 /** ONE name for one fact, so `coerceTo<Kind>` and wrap's `$with` setter

@@ -467,6 +467,10 @@ function emitBranchFrom(
 	// `{ <configKey>: value }` — keyed on the slot's own config key, which
 	// the model supplies for an unnamed slot (`content`) exactly as for a
 	// named one.
+	//
+	// `emitsFieldResolvers` asks the same question of the SURFACE and adds its
+	// own emission conditions on top, so it is not this gate's negation — a
+	// kind that emits no `from` at all is not thereby a spread kind.
 	if (classifyChildFactorySurface(node, nodeMap) === 'spread') {
 		return emitContainerFrom(
 			{
