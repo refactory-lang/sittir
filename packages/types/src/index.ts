@@ -547,7 +547,7 @@ export type RuntimeNodeOf<T> = T extends {
  *
  * @deprecated Superseded by the emitted `<TypeName>Built` aliases (NodeNs'
  * `Built` parameter): a generic projection over `T` cannot reproduce the
- * factory surface (container `$child`/`$children`, `NonEmptyArray` rests,
+ * factory surface (slot-named child setters, `NonEmptyArray` rests,
  * enum-coercion input unions, forwarded shapes are model-derived facts
  * absent from `T`), and this shape's bare combined getter/setter methods
  * predate the runtime `$with` record. Survives only as NodeNs' default

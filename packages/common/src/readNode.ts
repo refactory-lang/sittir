@@ -22,8 +22,8 @@
 import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
 
 /**
- * Whether to emit `$text` on branch nodes (those with `$fields` or
- * `$children`). Read once at module load from the environment.
+ * Whether to emit `$text` on branch nodes (those carrying named slot storage
+ * or `$other`). Read once at module load from the environment.
  * Enable with `SITTIR_DEBUG_TEXT=1`.
  */
 const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === '1';
@@ -248,7 +248,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 		$type: resolveKindId(node.type),
 		$source: 0,
 		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
-		// Leaf nodes (no named slots / $children) always carry $text so the
+		// Leaf nodes (no named slots, no `$other`) always carry $text so the
 		// render fast-path and all leaf-consuming callers work correctly.
 		$text: !hasStructure || DEBUG_TEXT ? node.text() : undefined,
 		$other: children.length > 0 ? children : undefined,
