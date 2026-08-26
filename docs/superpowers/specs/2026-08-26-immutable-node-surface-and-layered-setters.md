@@ -144,6 +144,44 @@ indexes what is already there and expands nothing. That is the shape the
 failed to terminate. The gate is the same either way: the type-check count must
 not move.
 
+### Bind the `ir` entry, not a bare resolver
+
+A setter does not need a hand-composed `callable & { strict }` pair. `ir` has
+already composed exactly that for every kind, and a slot that admits ONE kind
+can simply bind that kind's entry:
+
+```ts
+$with.name = bindTo(node, ir.identifier);
+```
+
+Everything the entry carries comes with it — the coercing call, `.strict`, and
+the kind's named sub-factories. `ir.lineComment.doc` and
+`ir.expressionStatement.withSemi` become `$with.<field>.doc` and
+`$with.<field>.withSemi` without the setter emitter knowing those variants
+exist. The surface is inherited rather than restated, which is the whole point
+of putting setters at the layer where `ir` lives.
+
+Measured reach — slots admitting exactly one kind:
+
+| grammar | slots | single-kind | multi-kind | no kind |
+|---|---|---|---|---|
+| rust | 417 | 329 (79 %) | 73 (18 %) | 15 |
+| typescript | 510 | 387 (76 %) | 103 (20 %) | 20 |
+| python | 243 | 196 (81 %) | 36 (15 %) | 11 |
+
+So roughly four slots in five inherit the whole bundle. The remaining fifth
+admits a UNION, which no single `ir` entry describes — those bind the field's
+own resolver, which is what knows the union, with `.strict` composed the way
+the spec describes above.
+
+**Verify before assuming the majority case is free.** A single-kind slot's
+`LooseConfig[field]` and that kind's own `Loose` are close but not obviously
+identical: the field may carry `__looseHints__` the bare kind entry does not,
+and the entry may accept forms the field does not admit. Check the two are
+equivalent per slot before binding the entry; where they diverge, the field
+resolver is still the correct input and only `.strict` and the variants are
+inherited.
+
 ### Freeing the resolvers is a separate, smaller move
 
 There is a second route to the same convergence: put the resolvers *below*
