@@ -113,22 +113,36 @@ one, and the kind's per-field resolvers, and returns a factory whose nodes
 carry `$with`. One implementation, applied per kind, with the kind's own
 resolvers named at the call site rather than looked up in a table at runtime.
 
-That last distinction is what keeps the types precise. `$with`'s type is a
-DEPTH-1 mapped type over the kind's own field keys — it indexes named types and
-expands none of them:
+**Runtime is a loop; the types come from the call site.** This is not a new
+trick — it is how the node's accessors are already attached:
 
 ```ts
-type WithOf<K extends keyof NamespaceMap> = {
-	[F in keyof NamespaceMap[K]['LooseConfig']]: ((v: NamespaceMap[K]['LooseConfig'][F]) => NamespaceMap[K]['Built']) & {
-		strict: (v: NamespaceMap[K]['Config'][F]) => NamespaceMap[K]['Built'];
-	};
-};
+export function withAccessors<T extends object, A extends Record<string, unknown>>(node: T, accessors: A): T & A {
+	for (const key of Object.keys(accessors)) {
+		Object.defineProperty(node, key, { value: accessors[key], enumerable: false, … });
+	}
+	return node as T & A;
+}
 ```
 
-Depth-1 over named aliases is the shape that stays cheap; a projection that
-walks INTO those types is the shape that does not, which is the lesson the
-`SimplifyDeep` removal in `ConfigOf` paid for. Measure it against the
-type-check baseline before accepting it.
+One loop over `Object.keys`, and every accessor's type comes from the record
+literal the caller passed, inferred through `A`. `makeMutable` binds setters
+the same way: iterate the kind's resolver record, bind each to the factory,
+define the property. The generated per-kind call site supplies both halves at
+once — the runtime functions and, by inference, their types.
+
+So no projection over `NamespaceMap` is needed for `$with` at all. The earlier
+worry that a table walked at runtime would erase per-field types applies to a
+GLOBAL table keyed by kind, not to a per-kind record literal: the literal is
+the type. Prefer that, and reach for an explicit mapped type only if inference
+through `A` proves too weak in practice.
+
+The reason this matters beyond convenience: a type inferred from a literal
+indexes what is already there and expands nothing. That is the shape the
+`SimplifyDeep` removal in `ConfigOf` established as cheap, and the one the
+`_TreeOf` attempt violated — the latter did not merely slow the checker, it
+failed to terminate. The gate is the same either way: the type-check count must
+not move.
 
 ### Freeing the resolvers is a separate, smaller move
 
@@ -171,8 +185,9 @@ worth knowing regardless.
 3. The generated packages stay acyclic; `import/no-cycle` remains off only
    because the graph does not need it.
 4. Whole-repo type-check no worse than its baseline, and the examples gate at
-   0. `WithOf` must stay depth-1 over named aliases; if the count moves, it is
-   expanding something it should be indexing.
+   0. `$with`'s type should come from the per-kind record literal, as
+   `withAccessors` already does; if the count moves, something is expanding
+   that should have been inferred or indexed.
 5. Full unit suite, and `validate history` compared numerically across all
    three grammars.
 
