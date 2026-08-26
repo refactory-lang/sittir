@@ -87,19 +87,48 @@ and it already exists as the place where the two are married for construction.
 
 ### How the wiring is expressed
 
-Two options, and the spec does not pick between them without measuring:
+`ir.ts` already composes each kind out of parts:
 
-- **Declarative.** A generated table — kind → (factory, per-field resolver
-  names) — that one runtime helper walks to attach setters. Smallest generated
-  output; one implementation to read; the table is data the same way
-  `_wrapKindIds` already is.
-- **Emitted per kind.** `ir.ts` spells each setter, as `factories.ts` does
-  today. Larger output, but every setter is visible in the generated source and
-  nothing is assembled at runtime.
+```ts
+const _b$expressionStatement = attachProps(FR.coerceToExpressionStatement, {
+	strict: F.buildExpressionStatement,
+	withSemi: FR.coerceToExpressionStatement.withSemi
+});
+```
 
-Prefer the declarative form unless it costs type precision: the setter's
-parameter type must stay `LooseConfig[key]` per field, and a table walked at
-runtime must not erase that. If it does, emit per kind.
+Setters are one more stage in that pipeline, not a new mechanism:
+
+```ts
+const _b$expressionStatement = addNamespace(
+	makeMutable(FR.coerceToExpressionStatement, F.buildExpressionStatement, {
+		content: FR.resolveExpressionStatement_content
+	}),
+	{ strict: F.buildExpressionStatement, withSemi: … }
+);
+```
+
+`addNamespace` is today's `attachProps` under a name that says what it does.
+`makeMutable` is the only new part: it takes the coercing factory, the strict
+one, and the kind's per-field resolvers, and returns a factory whose nodes
+carry `$with`. One implementation, applied per kind, with the kind's own
+resolvers named at the call site rather than looked up in a table at runtime.
+
+That last distinction is what keeps the types precise. `$with`'s type is a
+DEPTH-1 mapped type over the kind's own field keys — it indexes named types and
+expands none of them:
+
+```ts
+type WithOf<K extends keyof NamespaceMap> = {
+	[F in keyof NamespaceMap[K]['LooseConfig']]: ((v: NamespaceMap[K]['LooseConfig'][F]) => NamespaceMap[K]['Built']) & {
+		strict: (v: NamespaceMap[K]['Config'][F]) => NamespaceMap[K]['Built'];
+	};
+};
+```
+
+Depth-1 over named aliases is the shape that stays cheap; a projection that
+walks INTO those types is the shape that does not, which is the lesson the
+`SimplifyDeep` removal in `ConfigOf` paid for. Measure it against the
+type-check baseline before accepting it.
 
 ### Freeing the resolvers is a separate, smaller move
 
@@ -142,8 +171,8 @@ worth knowing regardless.
 3. The generated packages stay acyclic; `import/no-cycle` remains off only
    because the graph does not need it.
 4. Whole-repo type-check no worse than its baseline, and the examples gate at
-   0. A setter surface assembled at runtime is the likely place to lose
-   precision, so this is the gate that decides declarative vs emitted.
+   0. `WithOf` must stay depth-1 over named aliases; if the count moves, it is
+   expanding something it should be indexing.
 5. Full unit suite, and `validate history` compared numerically across all
    three grammars.
 
