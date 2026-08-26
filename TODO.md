@@ -7,7 +7,7 @@
 12. Consolidate all single-phase methods (functions only ever called by one compiler phase — verify with infigraph's `find_all_references`/`trace_callers`, not grep) into the phase file they belong to. Use lsproxy (not manual edit) for the actual move. After each move, confirm the moved function is NOT exported from its new home unless something outside that phase genuinely still needs it.
 13. NEW: Please see field override logic... doesn't appear to change name of existing fields (cf. attempt to change Parameter field _pattern to _name (from value in base grammar). )
 13. NEW: Make examples realizable Refer to TODOs in example code
-14. NEW: collapse logic for "unnamed" children vs. "named" children (from factory surface PoV), broadly simplify emitter logic. 
+14. PARTIAL: collapse logic for "unnamed" children vs. "named" children (from factory surface PoV), broadly simplify emitter logic. DONE for the factory surface: a sole slot now picks its shape by ARITY alone, so `resolveSingleFieldFactorySlot`, `classifyFactoryShape` and the factories emitter no longer branch on `isUnnamed`, and both `$child` and `$children` are gone — every setter is named after its slot, unnamed slots taking the model's `content`/`contents` fallback. REMAINING is the "broadly simplify emitter logic" half: ~56 `container` mentions survive across the emitters (from.ts 21, test.ts 10, wrap.ts 8, factories.ts 7, render-module.ts 4), some of them genuine WIRE-shape facts (`$other` vs `_<slot>`) that must stay and the rest stale vocabulary. See item 29 for the predicate that blocks the rest.
 15. NEW: Refactor generated manifest logic to distinguish between native impacting codegen changes, and js impacting changes. js-only changes should not require trigger native rebuild. (Base on changes to generated output and/or core source, not changes to codegen source)
 16. NEW: Consider using polymorph shape (perhaps resurrecting AssembledPolymorph as a subclass of AssembledBranch) to distinguish between top-level sequences and top-level choices (non-supertype), which permit distinct emissions for each choice arm. Consider collapsing AssembledGroup into branch.  Finally, consider using node.hidden as ssot for whether a factory emitted and SlotClass as ssot for emitting branch factories (getting rid of multiple varying interpretations of the same branch)
 18. NEW: Chip the exercise tool's post-port failure inventory (see `ki-exercise-span-transport` — the render step is native now; the remaining failures are real factory/transport gaps the legacy renderer had masked).
@@ -16,38 +16,6 @@
 22. Move conditional logic and hardcoded/magic strings into the model - e.g. unnamed slot in the model is actually given storageName of xxx and displayName of yyy... Consider moving hoisting rules to the model as well (i.e. factory shape attribute on the model, as well as the slot)
 23. Consider getting rid of AnyNodeData - it obscures the actual node data types
 24. Collapse multiplicity and arity into arity.
-25. Note from agent: Agreed on the `$`, and there's a concrete inconsistency backing you up — the same concept is emitted two different ways depending on which branch the kind takes.
-
-In the no-fields branch (`childSurface === 'spread' | 'direct'`):
-
-```ts
-$with: { $child:    (v: Elem)      => wrapX({ ...data, $other: v },  tree) }
-$with: { $children: (...vs: Rest)  => wrapX({ ...data, $other: vs }, tree) }
-```
-
-In the field-carrying branch, the very same slot is emitted **without** the sigil:
-
-```ts
-children: (item: Elem)     => wrapX({ ...data, $other: item },  tree),
-children: (...items: Rest) => wrapX({ ...data, $other: items }, tree),
-```
-
-So a kind that happens to have fields exposes `children`, and a kind that doesn't exposes `$children`. That's not a designed distinction — it's two code paths that drifted.
-
-On which way to resolve it: dropping the `$` is the consistent call. The sigil marks the *protocol* namespace — `$type`, `$text`, `$other`, `$render()`, `$toEdit()`, `$with` itself. Once you're **inside** `$with`, every key is a slot name (`typeParameters`, `trait`, `declarators`), so the namespace is already established by the container. `$child` there is a sigil applied to a slot name, which reads as a category error. The field-carrying branch already gets this right.
-
-Worth noting the same question applies to the **getter** side, not just `$with` — and those two must land on the same word, per the rule that the rule-side and slot-side vocabulary stay identical. Fixing only the setter would trade one inconsistency for another.
-
-On the generic name — you're right that it isn't settled, and I don't have a recorded decision for it. What I can see in play:
-
-- **`$other`** is the *storage* key. That's wire-level and shouldn't drive the public name.
-- **`child` / `children`** is what both branches currently gesture at, varying by `slot.arity === 'one'`.
-- **`content`** is the sanctioned name elsewhere for a union slot with no usable field name — which is arguably the same situation: an unnamed slot needing a generic handle.
-
-So the real question is whether unnamed-children and no-field-name-union are one naming problem or two. If they're one, `content` already has precedent and `children` is the redundant coinage. If they're two — children being *structurally* unnamed versus a union merely *lacking* a consistent field name — then `child`/`children` is right and should be stated as its own rule.
-
-The one thing I'd treat as already decided is the pluralization: singular for `arity === 'one'`, plural otherwise, matching the existing plural-array-slot rule. That holds under either choice of word.
-
 26. NEW: Split `$text` into slot content vs source provenance — spec at `docs/superpowers/specs/2026-08-26-text-content-vs-source-provenance.md`. `$text` currently means two unrelated things: the VALUE of a text-modeled kind (an identifier's name — survives edits) and the SPAN a structural node was read from (provenance — destroyed by any edit, kept only to replay untouched subtrees byte-exactly). Because both share a name, `hasStructure` / `isUntouchedSubtree` / `_isReadTextLeaf` / `slot.rs` each re-derive which role is in play from node shape, the JS and native readers disagree (JS omits branch `$text` behind `SITTIR_DEBUG_TEXT`, native always captures it), and structural text is ~23% of a deep read's wire — 99.9% of all `$text` bytes on an 8KB file, re-sent once per nesting level.
 
     END STATE: `$text` means content only; provenance becomes the coordinate `(tree, $span)`, which handles already name now that they carry their tree id and the engine retains trees. ONE transport rule — unread and unedited are the same state, both coordinates-only, both short-circuit. Biggest win is CORRECTNESS not wire size: a deep read currently rebuilds every level and re-spells the source even with zero edits (`pub fn main() {\n\t// keep me\n...` → `pub fn main(){ // keep me\nlet x=1;...}`); under this rule deep and shallow render byte-identically.
@@ -63,4 +31,6 @@ The one thing I'd treat as already decided is the pluralization: singular for `a
 27. NEW: `if_statement.alternative` (python) is the ONE slot in any grammar whose values disagree on multiplicity — `[array, optional]`, where every other slot in all three grammars is uniformly `single` (684), `optional` (352), `array` (70) or `nonEmptyArray` (63). It merges `elif_clause` (repeatable) and `else_clause` (at most one) into a single slot, so the slot has no coherent cardinality: `isRequired` reads it as not-required and `isMultiple` reads it as multiple, which is accidentally survivable but means neither predicate describes it. Decide whether these are two slots (`elifClauses` array + `alternative` optional, matching what the grammar actually permits) or one slot with a documented mixed cardinality. NB `multiplicity` on a slot's VALUES is the real four-way cardinality fact — ZeroOrOne / One / ZeroOrMore / OneOrMore — and both `slot.arity` (`isMultiple(this) ? 'many' : 'one'`) and `isRequired` are derivable rollups of it; `arity` is the redundant column if the model is ever trimmed.
 
 28. NEW: `buildWithNamespace` and `freezeNodeData` (`packages/common/src/nodeData.ts`) are exported from `@sittir/common`, re-exported from `@sittir/legacy-core`, and called by NOTHING — zero call sites outside their own definition and those re-exports. They are `@forFutureUse` scaffolding for a frozen-NodeData `$with` surface, and `buildWithNamespace`'s documented convention (sigil-spelled `$child`/`$children` storage and config keys) no longer exists: every setter is named after its slot, unnamed slots included. Decide whether the scaffolding still has a future or should go; removing it is a public API change to an internal package, so it wants a deliberate call rather than a silent delete. While there, `packages/rust/tests/nodedata-shape.test.ts` carries a "CONFIRMED DEFERRED" comment asserting that "`$with` does not exist on factory output at all today" — that is now false. `factories.ts` emits `$with` inline on every factory-built node; what is deferred is only this helper being the thing that builds it.
+
+29. NEW: `classifyChildFactorySurface` (`packages/codegen/src/emitters/shared.ts`) is ONE predicate answering SIX different questions for eight call sites, and that conflation is what makes any change to the child/slot surface cascade. The callers and what each actually wants to know: `factories.ts` — which calling convention does this kind's factory take; `from.ts` (three sites) — which coercer shape to emit, children-taking or field-carrying; `wrap.ts` (two sites) — the `childSurface` that decides the `$with` shape; `test.ts` (three sites) — how a generated test should call the factory; `ir.ts` — whether a leaf factory gets namespaced; `shared.ts` `isWrapChildrenKind` — whether a bare array may auto-wrap into this kind. Those are not the same question, and widening or narrowing the predicate for one consumer silently re-shapes the others: narrowing it emptied `_wrapKindIds` and broke array auto-wrap at runtime, then re-broadening it moved named kinds like `attribute_item` into the child coercer and cost them their dual-surface tolerance. Split it into one predicate per question, each named for what it answers, and the remaining `container` vocabulary in the emitters (item 14) can go with it. NB some `isUnnamed` use is legitimate and must NOT be swept in: `render-module.ts` splits named from unnamed to decide `$other` vs `_<slot>` storage, which is the reader's actual wire shape, not a surface choice.
 
