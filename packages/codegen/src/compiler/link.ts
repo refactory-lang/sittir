@@ -47,7 +47,6 @@ import type {
 import {
 	isSeq,
 	isChoice,
-	isEnumChoiceRule,
 	literalTextOf,
 	sym,
 	replaceAtPath,
@@ -83,11 +82,12 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
-import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
+import { rulesEqual, separatorOf } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -2196,7 +2196,7 @@ function suggestSharedName(kinds: readonly string[]): string {
 // Separator-lift pass (moved from lift-separators.ts in R7 de-scatter).
 //
 // This is the TRANSFORM half of separated-list handling (the DETECTION half
-// lives in `dsl/list-patterns.ts`). It rewrites the raw shapes tree-sitter
+// lives in `dsl/rule-patterns.ts`). It rewrites the raw shapes tree-sitter
 // authors write into one canonical repeat node carrying `separator` /
 // `leading` / `trailing` markers.
 //
@@ -2219,7 +2219,7 @@ function suggestSharedName(kinds: readonly string[]): string {
  * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
  * its own separator, with an optional final unterminated element) into one
  * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
- * (`x (sep x)*`) for the opposite separator orientation; `detectRepeatSeparator`
+ * (`x (sep x)*`) for the opposite separator orientation; `separatorOf`
  * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
  * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
  * needs to recognize the two windows that ALSO carry a standalone head and/or
@@ -2421,7 +2421,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 		case REPEAT:
 		case REPEAT1: {
 			const content = liftSeparators(rule.content, ctx);
-			const sep = detectRepeatSeparator(content);
+			const sep = separatorOf(content);
 			if (sep) {
 				if (sep.separator.type !== STRING) {
 					// 0 real grammars (rust/typescript/python) hit this today — this
@@ -2438,7 +2438,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 					};
 					ctx.diagnostics.emit(diagnostic);
 				}
-				// `sep.trailing` (list-patterns.ts's `detectRepeatSeparator`) is a
+				// `sep.trailing` (rule-patterns.ts's `separatorOf`) is a
 				// POSITIONAL flag: the separator appears AFTER the content element
 				// within `repeat(seq(content, SEP))` — every iteration (including
 				// the last) unconditionally emits `SEP`, no per-instance

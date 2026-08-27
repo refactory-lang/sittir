@@ -170,8 +170,8 @@ describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 	//
 	// A former case here ("unknown rule type (e.g. legacy type: polymorph) is
 	// SILENT") constructed a `type: 'polymorph'` rule expecting the diagnostic
-	// walk to gracefully no-op on it. That's no longer satisfiable: rule-catalog
-	// .ts's ruleChildren (used transitively by isContentSlot/countContentSlots)
+	// walk to gracefully no-op on it. That's no longer satisfiable:
+	// rule-patterns.ts's ruleChildren (used transitively by isContentSlot/countContentSlots)
 	// is exhaustive over every real AnyRule variant and throws via assertNever
 	// on anything outside it — deliberately, so a genuinely-retired shape like
 	// `polymorph` resurfacing anywhere is a loud bug signal, not silently

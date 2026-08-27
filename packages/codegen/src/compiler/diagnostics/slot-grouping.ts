@@ -58,7 +58,7 @@ import {
 import type { Rule, SimplifiedRule } from '../../types/rule.ts';
 import { isAllTextShape } from '../assemble.ts';
 import { isStructuralChoice } from '../collect-slots.ts';
-import { isNonterminalRuleType } from '../rule-catalog.ts';
+import { isNonterminalRuleType } from '../../dsl/rule-patterns.ts';
 import type { Diagnostic } from '../../types/diagnostics.ts';
 
 // All-text shape predicate: `isAllTextShape` is imported from assemble.ts (the

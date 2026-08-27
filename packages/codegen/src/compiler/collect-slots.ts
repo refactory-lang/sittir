@@ -47,7 +47,7 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
-import { isNonterminalRuleType } from './rule-catalog.ts';
+import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,

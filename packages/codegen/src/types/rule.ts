@@ -272,20 +272,6 @@ export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 
-export function isEnumChoiceRule<R extends AnyRule>(
-	rule: R
-): rule is Extract<R, { type: typeof CHOICE }> & { readonly __enumShaped?: never } {
-	return (
-		rule.type === CHOICE &&
-		rule.members.length >= 2 &&
-		// STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
-		// canonicalized operators AND aliased fixed-text externals like
-		// `automatic_semicolon`) are both terminal-valued — `literalTextOf`
-		// serves both shapes uniformly downstream.
-		rule.members.every((m) => m.type === STRING || (m.type === SYMBOL && m.literal !== undefined))
-	);
-}
-
 /**
  * Normalize a closed literal set to the canonical rule shape.
  *
@@ -410,30 +396,6 @@ export function transitiveParseKinds<T extends PhaseName>(
 	return kinds;
 }
 
-/**
- * A nested `seq` member carrying none of its own `fieldName`/`separator`/
- * `multiplicity` is structurally redundant — its members are siblings of
- * whatever else shares the parent seq, not a cardinality-carrying unit — and
- * should splice (flatten) into the parent rather than surviving as its own
- * nesting level. `simplify.ts::simplifySeqRule` already applies exactly this
- * predicate; `wrapper-deletion.ts`'s SEQ case shares it so the two
- * derivations of "does this nested seq need to stay nested" agree — before
- * this was extracted, they disagreed (simplify spliced, wrapper-deletion
- * didn't), which is what `seq-with-nested-seq` (`classifyTopLevelShape`,
- * compiler/model/node-map.ts) flags: assemble's slot-derivation runs on
- * `Rule<'link'>` directly, never through simplify's splice.
- */
-export function isSpliceableBareSeq(rule: {
-	readonly type: string;
-	readonly fieldName?: unknown;
-	readonly separator?: unknown;
-	readonly multiplicity?: unknown;
-}): boolean {
-	return (
-		rule.type === SEQ && rule.fieldName === undefined && rule.separator === undefined && rule.multiplicity === undefined
-	);
-}
-
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
 	readonly name: string;
@@ -511,7 +473,7 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 // (matching tree-sitter's own dsl.js shape, and grammar-shapes/grammar-json.ts's
 // existing `ImmediateTokenRule` model of it) instead of folding straight into
 // `TokenRule`'s `immediate: true` — so a dedup/equality check running during
-// enrich (e.g. dsl/list-patterns.ts's `rulesEqual`, which dispatches purely on
+// enrich (e.g. dsl/rule-patterns.ts's `rulesEqual`, which dispatches purely on
 // `type`) sees the SAME distinct tag under both runtimes, matching tree-sitter's
 // CLI-runtime `token.immediate()` which was never foldable to sittir's shape in
 // the first place. `grammarFn`'s `normalizeImmediateTokens` folds every

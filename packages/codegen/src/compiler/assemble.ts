@@ -36,8 +36,9 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from '../types/rule.ts';
-import { isLinkSymbol, isEnumChoiceRule, subtypeParseNamesOf } from '../types/rule.ts';
-import { isNonterminalRuleType } from './rule-catalog.ts';
+import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
+import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import {

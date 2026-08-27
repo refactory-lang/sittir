@@ -40,7 +40,7 @@ import type {
 	SeqRule,
 	FieldRule
 } from '../types/rule.ts';
-import { isSpliceableBareSeq } from '../types/rule.ts';
+import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -494,7 +494,7 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
 				// Cast, not narrow: `AnyRule` distributes across every phase,
 				// while `FieldRule` (bare) defaults to a single phase — same
 				// "narrow via AnyRule, cast back" convention as
-				// rule-catalog.ts's `ruleChildren`.
+				// rule-patterns.ts's `ruleChildren`.
 				extracted = m as FieldRule;
 				continue;
 			}

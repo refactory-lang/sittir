@@ -65,7 +65,7 @@ export const structuralBuilder: RuleBuilder = {
 	// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
 	// phase, while a single-content wrapper's own `content` field wants one
 	// specific phase — same "narrow via AnyRule, cast back" convention as
-	// rule-catalog.ts's `ruleChildren`.
+	// rule-patterns.ts's `ruleChildren`.
 	optional: (content, id) => ({ type: OPTIONAL, content, ...(id !== undefined ? { id } : {}) }) as AnyRule,
 	repeat: (content, separator, id) =>
 		({
@@ -161,7 +161,7 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 		// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes REPEAT
 		// across every phase, while `RepeatRule`/`Repeat1Rule` (bare) default
 		// to the single 'link' phase — same "narrow via AnyRule, cast back"
-		// convention as rule-catalog.ts's `ruleChildren`.
+		// convention as rule-patterns.ts's `ruleChildren`.
 		case REPEAT:
 			return { repeat: rule as RepeatRule, nonEmpty: false };
 		case REPEAT1:

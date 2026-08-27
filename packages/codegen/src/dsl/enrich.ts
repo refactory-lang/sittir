@@ -99,7 +99,6 @@
  */
 
 import type { Rule, AnyRule } from '../types/rule.ts';
-import { isEnumChoiceRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
@@ -117,7 +116,15 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator, firstStringOfChoice } from './list-patterns.ts';
+import {
+	separatorOf,
+	leadingLiteralOf,
+	ruleMatchesEmpty,
+	isInlineSafe,
+	isSupertypeLike,
+	isPermutationChoice,
+	isEnumChoiceRule
+} from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
 import {
 	diagnoseParseKindCollisions,
@@ -125,7 +132,6 @@ import {
 	type ParseKindCollisionValue
 } from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
-import { ruleMatchesEmpty, isInlineSafe, isSupertypeLike, isPermutationChoice } from './group-classify.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
@@ -1040,8 +1046,8 @@ function deriveElementFieldName(elementRule: Rule): string {
 
 /**
  * A separated list — `seq(element, repeat(seq(SEP, element)), optional(SEP))`
- * (tree-sitter's `commaSep1`-style desugaring; `dsl/list-patterns.ts`'s
- * `detectRepeatSeparator` is the canonical recognizer for the repeat's own
+ * (tree-sitter's `commaSep1`-style desugaring; `dsl/rule-patterns.ts`'s
+ * `separatorOf` is the canonical recognizer for the repeat's own
  * `seq(SEP, element)` content) — routes its LEADING element and every
  * REPEATED element into separate per-kind wire buckets today (no field
  * ties them together), needing `_concatInSourceOrder` to reassemble
@@ -1099,7 +1105,7 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 			innerPrecStack.push(inner as unknown as Rule);
 			inner = (inner as unknown as { content: RuntimeRule }).content;
 		}
-		const detected = detectRepeatSeparator(inner);
+		const detected = separatorOf(inner);
 		if (!detected || detected.trailing) continue;
 		const innerElement = detected.content as unknown as Rule;
 		if (!sameElementShape(leading, innerElement)) continue;
@@ -2301,17 +2307,17 @@ function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 		// via the shared list-pattern detector (same logic evaluate's lift uses).
 		const content = (m as { content?: RuntimeRule }).content;
 		if (content) {
-			const detected = detectRepeatSeparator(content);
+			const detected = separatorOf(content);
 			if (detected) {
 				const sep = detected.separator;
 				if (typeEq(sep.type, 'STRING')) return (sep as { value?: unknown }).value as string;
 				if (typeEq(sep.type, 'CHOICE')) {
-					const lit = firstStringOfChoice(sep);
+					const lit = leadingLiteralOf(sep);
 					if (lit !== null) return lit;
 				}
 				// Falls through to the next seq member when the choice has no
 				// string arm (e.g. all-symbol/external-scanner separator position)
-				// — matches the pre-PR-S behavior, where `detectRepeatSeparator`
+				// — matches the pre-PR-S behavior, where `separatorOf`
 				// itself returned null for a stringless choice and the loop kept
 				// scanning for a real separator elsewhere in the same seq.
 			}
@@ -2419,7 +2425,7 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 	const separatorRepeatOf = (m: Rule) => {
 		if (!isRepeatType((m as { type?: string }).type)) return null;
 		const content = (m as { content?: RuntimeRule }).content;
-		return content ? detectRepeatSeparator(content) : null;
+		return content ? separatorOf(content) : null;
 	};
 
 	// Nested-head variant: [flank?, [elem, repeat(sep-run)], flank?] — splice

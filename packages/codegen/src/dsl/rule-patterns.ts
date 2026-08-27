@@ -1,5 +1,276 @@
 /**
- * dsl/group-classify.ts — shared predicates for inline-safe vs inline-unsafe
+ * dsl/rule-patterns.ts — the catalog of rule-shape recognizers.
+ *
+ * Every shape a phase reasons about is a named function here, and nowhere
+ * else: terminality (`classifyByType` / `isNonterminalRuleType`), enum and
+ * spliceable-seq shapes, separated-list detection (`separatorOf`), group
+ * classification (`isInlineSafe` / `isSupertypeLike` / `isPermutationChoice`
+ * / `ruleMatchesEmpty`), and the self-referential chain fold. Recognizers
+ * inspect and report; they never mutate. What a caller does with a
+ * recognized shape is the caller's phase concern.
+ *
+ * Each recognizer looks one level down — at the node and the attributes its
+ * children's builders already stamped — and returns the fact it recognizes,
+ * or `undefined`/`false` when the shape is absent. A phase's builders are
+ * the consumers; a pass that hand-rolls `type === … && members.length === n`
+ * is re-deriving something that belongs here.
+ *
+ * **Runtime-agnostic by design.** DSL-layer code runs under two runtimes
+ * (sittir, tree-sitter CLI) that agree on UPPERCASE discriminants; enrich in
+ * particular sees both. The list and group recognizers therefore type their
+ * input as `RuntimeRule` and compare tags through `typeEq`, while the
+ * terminality and phase-typed predicates take the `Rule` union directly.
+ *
+ * **List shapes are pre-pushdown.** Separator/trailing shapes are
+ * reconstructable only while the wrappers (`optional`/`repeat`/`repeat1`/
+ * `field`) are intact — enrich/wire/evaluate/link — not after
+ * wrapper-deletion has flattened them to `multiplicity`/`separator`
+ * attributes.
+ */
+
+import {
+	isBlankType,
+	isChoiceType,
+	isFieldType,
+	isOptionalType,
+	isPrecWrapper,
+	isRepeatType,
+	isSeqType,
+	isStringType,
+	isSymbolType,
+	typeEq,
+	type RuntimeRule
+} from '../types/runtime-shapes.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
+import type { AnyRule, PhaseName, Rule } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
+
+// ---------------------------------------------------------------------------
+// Terminality — the per-rule-type decision table and the predicate over it
+// ---------------------------------------------------------------------------
+
+export function classifyByType(
+	ruleType: Rule<'evaluate'>['type'],
+	anyChildNonterminal: boolean
+): 'terminal' | 'nonterminal' {
+	switch (ruleType) {
+		case SYMBOL:
+		case SUPERTYPE:
+		case PATTERN:
+			/* No separate ENUM case: enum-shaped ChoiceRules are classified under
+			   the CHOICE arm below. */
+			return 'nonterminal';
+		case CHOICE:
+		case REPEAT:
+		case REPEAT1:
+			/* Unconditionally nonterminal: a choice is a single union slot
+			   (literal-only = enum); a repeat captures a variable-length sequence
+			   (array slot) even when its content is terminal. */
+			return 'nonterminal';
+		case STRING:
+		/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
+		   variant. */
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			return 'terminal';
+		case TOKEN:
+		case FIELD:
+		case ALIAS:
+		case SEQ:
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
+		/* PREC family is stripped by evaluate.ts's `stripPrecedenceWrappers`
+		   before this runs — see that function's doc comment — so these
+		   cases are unreachable at runtime. Transparent single-child wrapper,
+		   same as TOKEN/FIELD above. String literals (not rule-types.ts
+		   consts): that module is deprecated for new imports — see its
+		   header. */
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by evaluate.ts's
+		   `normalizeImmediateTokens` before this runs — unreachable at
+		   runtime, transparent single-child wrapper like TOKEN. */
+		case 'IMMEDIATE_TOKEN':
+			return anyChildNonterminal ? 'nonterminal' : 'terminal';
+		default:
+			return assertNever(ruleType);
+	}
+}
+
+export function isNonterminalRuleType<Phase extends PhaseName>(rule: Rule<Phase>): boolean {
+	const anyChildNonterminal = ruleChildren(rule).some((child) => isNonterminalRuleType(child));
+	return classifyByType(rule.type, anyChildNonterminal) === 'nonterminal';
+}
+
+function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule<Phase>[] {
+	/* Narrow via AnyRule, cast back — children share the parent's phase by
+	   construction. Exhaustive over every AnyRule variant (no default
+	   fallthrough) so a newly added rule type fails compilation here instead
+	   of silently contributing no children — see classifyByType's own
+	   exhaustive switch for the sibling convention. */
+	const anyRule = rule as AnyRule;
+	switch (anyRule.type) {
+		case TOKEN:
+		case FIELD:
+		case ALIAS:
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
+		/* PREC family: stripped before this runs (see classifyByType's PREC
+		   comment) — unreachable at runtime, transparent single-child
+		   wrapper for exhaustiveness. */
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		case 'IMMEDIATE_TOKEN':
+			/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
+			   variant. */
+			return [anyRule.content as Rule<Phase>];
+		case SEQ:
+			return anyRule.members as Rule<Phase>[];
+		case CHOICE:
+		case REPEAT:
+		case REPEAT1:
+			/* Unconditionally nonterminal per classifyByType — these children
+			   never actually feed a classification decision — but returned for
+			   real (not `[]`) so `ruleChildren` stays structurally honest about
+			   what each rule type's children are. */
+			return (anyRule.type === CHOICE ? anyRule.members : [anyRule.content]) as Rule<Phase>[];
+		case SYMBOL:
+		case SUPERTYPE:
+		case PATTERN:
+		case STRING:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			/* Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE are
+			   leaves; SUPERTYPE's `subtypes` are kind-name strings, not
+			   Rule<Phase> nodes. */
+			return [];
+		default:
+			return assertNever(anyRule);
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Rule-shape predicates on the phase-typed `Rule` union
+// ---------------------------------------------------------------------------
+
+export function isEnumChoiceRule<R extends AnyRule>(
+	rule: R
+): rule is Extract<R, { type: typeof CHOICE }> & { readonly __enumShaped?: never } {
+	return (
+		rule.type === CHOICE &&
+		rule.members.length >= 2 &&
+		// STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
+		// canonicalized operators AND aliased fixed-text externals like
+		// `automatic_semicolon`) are both terminal-valued — `literalTextOf`
+		// serves both shapes uniformly downstream.
+		rule.members.every((m) => m.type === STRING || (m.type === SYMBOL && m.literal !== undefined))
+	);
+}
+
+/**
+ * A nested `seq` member carrying none of its own `fieldName`/`separator`/
+ * `multiplicity` is structurally redundant — its members are siblings of
+ * whatever else shares the parent seq, not a cardinality-carrying unit — and
+ * splices (flattens) into the parent rather than surviving as its own
+ * nesting level. `seq` applies it at construction (simplify's `buildSeq`), so
+ * every derivation of "does this nested seq need to stay nested" agrees.
+ */
+export function isSpliceableBareSeq(rule: {
+	readonly type: string;
+	readonly fieldName?: unknown;
+	readonly separator?: unknown;
+	readonly multiplicity?: unknown;
+}): boolean {
+	return (
+		rule.type === SEQ && rule.fieldName === undefined && rule.separator === undefined && rule.multiplicity === undefined
+	);
+}
+import type { DelimiterMode } from '../types/rule.ts';
+import { ruleKey } from './shared.ts';
+
+interface SeparatorFact {
+	readonly value: RuntimeRule;
+	readonly trailing?: DelimiterMode;
+	readonly leading?: DelimiterMode;
+}
+
+export function separatorFactsEqual(a: SeparatorFact | undefined, b: SeparatorFact | undefined): boolean {
+	if (a === undefined || b === undefined) return a === b;
+	return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value, b.value);
+}
+
+export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
+	return ruleKey(a) === ruleKey(b);
+}
+
+export function leadingLiteralOf(r: RuntimeRule): string | null {
+	if (!typeEq(r.type, 'CHOICE')) return null;
+	const members = ((r as { members?: RuntimeRule[] }).members ?? []) as RuntimeRule[];
+	const lit = members.find((m) => typeEq(m.type, 'STRING'));
+	return lit ? ((lit as { value?: unknown }).value as string) : null;
+}
+
+export function separatorOf<R extends RuntimeRule>(
+	resolved: R
+): { content: R; separator: R; trailing?: boolean } | null {
+	if (!typeEq(resolved.type, 'SEQ')) return null;
+	const members = (resolved as { members?: R[] }).members;
+	if (!members || members.length !== 2) return null;
+	const [first, second] = members as [R, R];
+
+	const firstIsStr = typeEq(first.type, 'STRING');
+	const secondIsStr = typeEq(second.type, 'STRING');
+
+	// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
+	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
+	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
+
+	// Choice-of-separators in the separator position — preserve the FULL
+	// choice; the caller (and everything downstream, per PR-S) now knows how
+	// to handle a non-literal separator rule. No literal-presence check here
+	// by design: a choice with zero STRING arms (all-symbol/external-scanner)
+	// still counts as a detected separator shape — it's up to the caller to
+	// decide what to do when it can't extract a literal from it.
+	const firstIsChoice = typeEq(first.type, 'CHOICE');
+	const secondIsChoice = typeEq(second.type, 'CHOICE');
+	if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
+	if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
+
+	return null;
+}
+
+// ---------------------------------------------------------------------------
+// Group classification
+// ---------------------------------------------------------------------------
+/**
+ * Group classification — shared predicates for inline-safe vs inline-unsafe
  * group classification.
  *
  * **Scope: DSL layer only.** Uses `runtime-shapes.ts` predicates so these
@@ -20,22 +291,6 @@
  *     key on that single slot; multi-slot or bare-choice bodies need to be
  *     visible (their own AssembledGroup template).
  */
-
-import {
-	isBlankType,
-	isChoiceType,
-	isFieldType,
-	isOptionalType,
-	isPrecWrapper,
-	isRepeatType,
-	isSeqType,
-	isStringType,
-	isSymbolType,
-	typeEq,
-	type RuntimeRule
-} from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator } from './list-patterns.ts';
-import { matchesWordShape } from '../util/word-matcher.ts';
 
 export function ruleMatchesEmpty(rule: unknown): boolean {
 	if (!rule || typeof rule !== 'object') return false;
@@ -152,7 +407,7 @@ function isNonterminalSeparatorType(t: string): boolean {
 function repeatHasNonterminalSeparator(repeatRule: RuntimeRule): boolean {
 	const content = (repeatRule as { content?: unknown }).content;
 	if (!content || typeof content !== 'object') return false;
-	const detected = detectRepeatSeparator(content as RuntimeRule);
+	const detected = separatorOf(content as RuntimeRule);
 	if (!detected) return false;
 	return isNonterminalSeparatorType(detected.separator.type);
 }
@@ -195,7 +450,7 @@ function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, sib
 
 	const content = (repeatRule as { content?: unknown }).content;
 	if (!content || typeof content !== 'object') return false;
-	const detected = detectRepeatSeparator(content as RuntimeRule);
+	const detected = separatorOf(content as RuntimeRule);
 	if (!detected || !isStringType(detected.separator.type)) return false;
 	const sepValue = (detected.separator as unknown as { value?: unknown }).value;
 	if (typeof sepValue !== 'string') return false;
@@ -216,7 +471,7 @@ function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
 		const ct = (core as Record<string, unknown>).type;
 		if (typeof ct !== 'string' || !isRepeatLike(ct)) continue;
 		const content = (core as { content?: unknown }).content;
-		if (content && typeof content === 'object' && detectRepeatSeparator(content as RuntimeRule) !== null) {
+		if (content && typeof content === 'object' && separatorOf(content as RuntimeRule) !== null) {
 			repeatMembers.push(core as RuntimeRule);
 		}
 	}
@@ -463,4 +718,65 @@ function resolveRuleLiteral(body: unknown): string | null {
 	if (typeEq(t, 'TOKEN')) return resolveRuleLiteral(r.content);
 	if (isStringType(t)) return typeof r.value === 'string' ? r.value : null;
 	return null;
+}
+
+// ---------------------------------------------------------------------------
+// Self-referential chain fold
+// ---------------------------------------------------------------------------
+
+/**
+ * Tree-sitter's prec.left self-referential-choice flattening: a hidden
+ * CHOICE rule whose arms are all 3-member SEQs
+ * `[field(base), STRING(separator), field(extension)]` with the SAME
+ * (base, extension) field-name pair and separator literal across every
+ * arm, where at least one arm's base field is a bare (non-alias-wrapped)
+ * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
+ * collapses the recursion into ONE FLAT node at parse time: the base field
+ * stays singular — only the true base operand carries it, since inner
+ * recursive occurrences dissolve into siblings and the leftover separator
+ * tokens are anonymous so the reader drops them — while the extension field
+ * repeats once per additional chained operand. No wrapper shape and no
+ * node-types.json entry can see this: the multiplicity is an emergent
+ * property of LR precedence-climbing over a self-referential choice.
+ * Confirmed case: rust's `_let_chain` (`a && b && c && d` parses as one
+ * node with a single `left` and a repeated `right`).
+ *
+ * Only meaningful at the TOP of a named rule's own body: the self-reference
+ * check requires the SYMBOL's name to equal the rule being processed, so a
+ * nested CHOICE inside some OTHER rule's body can never coincidentally match.
+ */
+export function selfReferentialFoldOf(
+	name: string,
+	rule: Rule<'link'>
+): { extensionFieldName: string; separator: Rule<'link'> } | undefined {
+	if (rule.type !== CHOICE) return undefined;
+	let baseFieldName: string | undefined;
+	let extensionFieldName: string | undefined;
+	let separator: Rule<'link'> | undefined;
+	let sawSelfRef = false;
+	const isSelfRef = (content: Rule<'link'>): boolean =>
+		content.type === SYMBOL &&
+		content.name === name &&
+		(content as { hidden?: boolean }).hidden === true &&
+		(content as { aliasedFrom?: string }).aliasedFrom === undefined;
+	for (const arm of rule.members) {
+		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
+		const m0 = arm.members[0];
+		const sep = arm.members[1];
+		const m2 = arm.members[2];
+		if (m0 === undefined || sep === undefined || m2 === undefined) return undefined;
+		if (m0.type !== FIELD || m2.type !== FIELD || sep.type !== STRING) return undefined;
+		if (baseFieldName === undefined) {
+			baseFieldName = m0.name;
+			extensionFieldName = m2.name;
+		} else if (m0.name !== baseFieldName || m2.name !== extensionFieldName) {
+			return undefined;
+		}
+		if (separator === undefined) separator = sep;
+		else if (separator.type !== STRING || separator.value !== sep.value) return undefined;
+		if (isSelfRef(m0.content)) sawSelfRef = true;
+		else if (isSelfRef(m2.content)) return undefined; // self-ref on the extension side — bail, don't guess
+	}
+	if (!sawSelfRef || extensionFieldName === undefined || separator === undefined) return undefined;
+	return { extensionFieldName, separator };
 }

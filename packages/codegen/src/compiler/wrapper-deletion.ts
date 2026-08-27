@@ -18,73 +18,12 @@ import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VAR
 import type { AnyRule, Rule, RenderRule, RuleBase } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { selfReferentialFoldOf } from '../dsl/rule-patterns.ts';
 import { attributeBuilder, buildOptional } from './simplify.ts';
 
 /**
- * Detects tree-sitter's prec.left self-referential-choice flattening: a
- * hidden CHOICE rule whose arms are all 3-member SEQs
- * `[field(base), STRING(separator), field(extension)]` with the SAME
- * (base, extension) field-name pair and separator literal across every
- * arm, where at least one arm's base field is a bare (non-alias-wrapped)
- * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
- * collapses the recursion into ONE FLAT node at parse time (confirmed via
- * probe-kind): the base field stays singular — only the true base operand
- * carries it, since inner recursive occurrences dissolve into siblings and
- * the leftover separator tokens are anonymous so the reader drops them —
- * while the extension field repeats once per additional chained operand.
- * Neither the REPEAT/REPEAT1 cases above nor node-types.json (never
- * consulted for arity — see project convention) can see this: the
- * multiplicity is an emergent property of LR precedence-climbing over a
- * self-referential choice, not an authored wrapper shape. Confirmed case:
- * rust's `_let_chain` (`a && b && c && d` parses as one node with a single
- * `left` and a repeated `right`, not a nested binary tree).
- *
- * Only checked at the TOP of each named rule's own body (`ownName` is
- * threaded down from `applyWrapperDeletion`'s per-rule loop and never
- * forwarded into recursive calls) — a nested CHOICE encountered deep
- * inside some OTHER rule's body can never coincidentally match, since the
- * self-reference check requires the SYMBOL's name to equal the rule
- * currently being processed.
- */
-function detectSelfReferentialFold(
-	name: string,
-	rule: Rule<'link'>
-): { extensionFieldName: string; separator: Rule<'link'> } | undefined {
-	if (rule.type !== CHOICE) return undefined;
-	let baseFieldName: string | undefined;
-	let extensionFieldName: string | undefined;
-	let separator: Rule<'link'> | undefined;
-	let sawSelfRef = false;
-	const isSelfRef = (content: Rule<'link'>): boolean =>
-		content.type === 'SYMBOL' &&
-		content.name === name &&
-		(content as { hidden?: boolean }).hidden === true &&
-		(content as { aliasedFrom?: string }).aliasedFrom === undefined;
-	for (const arm of rule.members) {
-		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
-		const m0 = arm.members[0];
-		const sep = arm.members[1];
-		const m2 = arm.members[2];
-		if (m0 === undefined || sep === undefined || m2 === undefined) return undefined;
-		if (m0.type !== FIELD || m2.type !== FIELD || sep.type !== 'STRING') return undefined;
-		if (baseFieldName === undefined) {
-			baseFieldName = m0.name;
-			extensionFieldName = m2.name;
-		} else if (m0.name !== baseFieldName || m2.name !== extensionFieldName) {
-			return undefined;
-		}
-		if (separator === undefined) separator = sep;
-		else if (separator.type !== 'STRING' || separator.value !== sep.value) return undefined;
-		if (isSelfRef(m0.content)) sawSelfRef = true;
-		else if (isSelfRef(m2.content)) return undefined; // self-ref on the extension side — bail, don't guess
-	}
-	if (!sawSelfRef || extensionFieldName === undefined || separator === undefined) return undefined;
-	return { extensionFieldName, separator };
-}
-
-/**
  * Pre-step: when `ownName`'s own top-level body is a self-referential fold
- * (see `detectSelfReferentialFold`), rewrite each arm's extension member in
+ * (see `selfReferentialFoldOf`), rewrite each arm's extension member in
  * the RAW `Rule<'link'>` tree — `field(name, content)` becomes
  * `field(name, repeat(content, separator))` — so the ordinary bottom-up
  * rebuild below produces the array-with-separator slot uniformly, with no
@@ -92,7 +31,7 @@ function detectSelfReferentialFold(
  */
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;
-	const fold = detectSelfReferentialFold(ownName, rule);
+	const fold = selfReferentialFoldOf(ownName, rule);
 	if (fold === undefined) return rule;
 	const members = rule.members.map((m) => {
 		// Re-check the SEQ discriminant here for TypeScript's narrowing, not
@@ -153,7 +92,7 @@ function rebuild(node: AnyRule): AnyRule {
 			// string, not yet lifted to the structured link-phase shape),
 			// while wrapper-deletion always operates on the 'link' view —
 			// same "narrow via AnyRule, cast back" convention as
-			// rule-catalog.ts's `ruleChildren`.
+			// rule-patterns.ts's `ruleChildren`.
 			return attributeBuilder.repeat(node.content, node.separator as RuleBase<'normalize'>['separator'], node.id);
 		case REPEAT1:
 			return attributeBuilder.repeat1(node.content, node.separator as RuleBase<'normalize'>['separator'], node.id);

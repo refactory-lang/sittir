@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ruleMatchesEmpty, isInlineSafe } from '../group-classify.ts';
+import { ruleMatchesEmpty, isInlineSafe } from '../rule-patterns.ts';
 
 const str = (v: string) => ({ type: 'STRING', value: v });
 const sym = (n: string) => ({ type: 'SYMBOL', name: n });

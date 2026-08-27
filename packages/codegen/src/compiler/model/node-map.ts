@@ -72,11 +72,11 @@ import type {
 	RuleId,
 	DelimiterMode
 } from '../../types/rule.ts';
+import { isEnumChoiceRule } from '../../dsl/rule-patterns.ts';
 import {
 	isSeq,
 	isField,
 	literalTextOf,
-	isEnumChoiceRule,
 	isLinkSymbol,
 	subtypeParseNamesOf,
 	subtypeRestampPairsOf,
@@ -3099,12 +3099,9 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	 * reference here (mirrors `separatorToString`'s same distinction,
 	 * emitters/templates.ts). Resolved by the caller (`assemble.ts`'s
 	 * `isNonterminalRuleType` check, already needed there for
-	 * `isSeparatedListShape`) rather than here — this file intentionally
-	 * does NOT import `rule-catalog.ts` for this: doing so closes an
-	 * existing cross-module cycle (node-map.ts → rule-catalog.ts →
-	 * compiler/types.ts → node-map.ts, the last leg via `AssembledNode`)
-	 * into a shorter path that broke `tsgo`'s type inference in unrelated
-	 * files (`simplify.ts`, `refine-emit.test.ts`) — confirmed by bisection.
+	 * `isSeparatedListShape`) rather than here: terminality of a separator
+	 * is the caller's classification decision, and this file only records
+	 * what the caller resolved.
 	 */
 	readonly separatorRule: Rule<'link'> | undefined;
 	/**

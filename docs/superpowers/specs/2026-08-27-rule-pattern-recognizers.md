@@ -1,8 +1,13 @@
 # Rule pattern recognizers — one catalog, one shape
 
-**Status:** written up, not started · **Depends on:** wrapper-deletion as a
-rule builder (`2026-08-27-wrapper-deletion-as-rule-builder.md`) · **Feeds:**
-routing link's `resolveRule` through the builders · **Gate:** byte-identical
+**Status:** step 1 (the catalog) landed for the shared recognizers —
+`dsl/rule-patterns.ts` holds terminality, the enum/spliceable-seq
+predicates, separated-list detection, group classification and the
+self-referential fold; `list-patterns.ts`, `group-classify.ts` and
+`compiler/rule-catalog.ts` are gone. Enrich's private helpers are the
+remaining inventory. · **Depends on:** wrapper-deletion as a rule builder
+(`2026-08-27-wrapper-deletion-as-rule-builder.md`) · **Feeds:** routing
+link's `resolveRule` through the builders · **Gate:** byte-identical
 
 ## The rule
 

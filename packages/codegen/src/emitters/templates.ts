@@ -38,7 +38,7 @@ import {
 	SYMBOL,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isNonterminalRuleType } from '../compiler/rule-catalog.ts';
+import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';

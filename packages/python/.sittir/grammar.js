@@ -525,15 +525,6 @@ var PATTERN = "PATTERN";
 var SYMBOL = "SYMBOL";
 var TOKEN = "TOKEN";
 
-// packages/codegen/src/types/rule.ts
-function isEnumChoiceRule(rule) {
-  return rule.type === CHOICE && rule.members.length >= 2 && // STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
-  // canonicalized operators AND aliased fixed-text externals like
-  // `automatic_semicolon`) are both terminal-valued — `literalTextOf`
-  // serves both shapes uniformly downstream.
-  rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
-}
-
 // packages/codegen/src/dsl/rule-walker.ts
 var RuleWalker = class {
   #rules;
@@ -650,138 +641,6 @@ function normalizeEnumMembers(members, provenance) {
   };
 }
 
-// packages/codegen/src/dsl/shared.ts
-function ruleKey(rule) {
-  return JSON.stringify(canonicalize(rule));
-}
-function canonicalize(rule) {
-  if (typeof rule !== "object" || rule === null) return rule;
-  const r = rule;
-  const type = r.type ?? null;
-  const name = typeof r.name === "string" ? r.name : null;
-  const value = typeof r.value === "string" || typeof r.value === "number" ? r.value : null;
-  const named = typeof r.named === "boolean" ? r.named : null;
-  const separator = "separator" in r ? canonicalizeSeparator(r.separator) : null;
-  const members = r.members;
-  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalize)];
-  const content = r.content;
-  if (content !== void 0) return [type, name, value, named, separator, [canonicalize(content)]];
-  return [type, name, value, named, separator, null];
-}
-function canonicalizeSeparator(separator) {
-  if (typeof separator !== "object" || separator === null) return separator;
-  const sep = separator;
-  return [
-    "fact",
-    typeof sep.trailing === "string" ? sep.trailing : null,
-    typeof sep.leading === "string" ? sep.leading : null,
-    canonicalize(sep.value)
-  ];
-}
-
-// packages/codegen/src/dsl/list-patterns.ts
-function firstStringOfChoice(r) {
-  if (!typeEq(r.type, "CHOICE")) return null;
-  const members = r.members ?? [];
-  const lit = members.find((m) => typeEq(m.type, "STRING"));
-  return lit ? lit.value : null;
-}
-function detectRepeatSeparator(resolved) {
-  if (!typeEq(resolved.type, "SEQ")) return null;
-  const members = resolved.members;
-  if (!members || members.length !== 2) return null;
-  const [first, second] = members;
-  const firstIsStr = typeEq(first.type, "STRING");
-  const secondIsStr = typeEq(second.type, "STRING");
-  if (firstIsStr && !secondIsStr) return { content: second, separator: first };
-  if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const firstIsChoice = typeEq(first.type, "CHOICE");
-  const secondIsChoice = typeEq(second.type, "CHOICE");
-  if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
-  if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
-  return null;
-}
-
-// packages/codegen/src/types/parsekind-collisions.ts
-function kindKey(id, name) {
-  return id !== void 0 ? `#${id}` : `n:${name}`;
-}
-function diagnoseParseKindCollisions(input) {
-  const byParseKind = /* @__PURE__ */ new Map();
-  for (const value of input.values) {
-    if (value.parseKind === void 0 || value.storageKind === void 0) continue;
-    const key = kindKey(value.parseKindId, value.parseKind);
-    const bucket = byParseKind.get(key) ?? [];
-    bucket.push(value);
-    byParseKind.set(key, bucket);
-  }
-  const mergedByParseKind = /* @__PURE__ */ new Map();
-  const diagnostics = [];
-  for (const [parseKey, bucket] of byParseKind) {
-    const parseKind = bucket[0].parseKind;
-    const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
-    if (storageIdentities.length <= 1) continue;
-    const signatures = distinct(bucket.map((value) => value.structuralSignature));
-    if (signatures.length === 1) {
-      mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
-      continue;
-    }
-    const byWireIdentity = /* @__PURE__ */ new Map();
-    for (const value of bucket) {
-      const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
-      const group = byWireIdentity.get(wireKey) ?? [];
-      group.push(value);
-      byWireIdentity.set(wireKey, group);
-    }
-    for (const group of byWireIdentity.values()) {
-      const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind)));
-      if (groupStorageIdentities.length <= 1) continue;
-      if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
-      const storageKinds = distinct(group.map((value) => value.storageKind));
-      diagnostics.push({
-        code: "parsekind-noninjective",
-        severity: "error",
-        message: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses [${storageKinds.join(", ")}] onto parse kind '${parseKind}'.`,
-        canProceed: true,
-        ownerKind: input.ownerKind,
-        slotName: input.slotName,
-        shape: "propose-distinct-alias",
-        parseKind,
-        storageKinds,
-        proposal: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds [${storageKinds.join(", ")}] onto parse kind '${parseKind}'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.`
-      });
-    }
-  }
-  if (mergedByParseKind.size === 0) {
-    return { values: input.values.map((value) => value.original), diagnostics };
-  }
-  const emittedParseKeys = /* @__PURE__ */ new Set();
-  const values = [];
-  for (const value of input.values) {
-    if (value.parseKind === void 0) {
-      values.push(value.original);
-      continue;
-    }
-    const parseKey = kindKey(value.parseKindId, value.parseKind);
-    const merged = mergedByParseKind.get(parseKey);
-    if (!merged) {
-      values.push(value.original);
-      continue;
-    }
-    if (emittedParseKeys.has(parseKey)) continue;
-    values.push(merged.original);
-    emittedParseKeys.add(parseKey);
-  }
-  return { values, diagnostics };
-}
-function pickRepresentative(bucket, parseKind) {
-  const preferred = bucket.find((value) => value.preferRepresentative) ?? bucket.find((value) => value.storageKind === parseKind);
-  return preferred ?? bucket[0];
-}
-function distinct(values) {
-  return [...new Set(values)];
-}
-
 // packages/codegen/src/util/word-matcher.ts
 function compileWordMatcher(word, rules) {
   if (!word) return void 0;
@@ -853,7 +712,64 @@ function escapeRegexLiteral(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// packages/codegen/src/dsl/group-classify.ts
+// packages/codegen/src/dsl/shared.ts
+function ruleKey(rule) {
+  return JSON.stringify(canonicalize(rule));
+}
+function canonicalize(rule) {
+  if (typeof rule !== "object" || rule === null) return rule;
+  const r = rule;
+  const type = r.type ?? null;
+  const name = typeof r.name === "string" ? r.name : null;
+  const value = typeof r.value === "string" || typeof r.value === "number" ? r.value : null;
+  const named = typeof r.named === "boolean" ? r.named : null;
+  const separator = "separator" in r ? canonicalizeSeparator(r.separator) : null;
+  const members = r.members;
+  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalize)];
+  const content = r.content;
+  if (content !== void 0) return [type, name, value, named, separator, [canonicalize(content)]];
+  return [type, name, value, named, separator, null];
+}
+function canonicalizeSeparator(separator) {
+  if (typeof separator !== "object" || separator === null) return separator;
+  const sep = separator;
+  return [
+    "fact",
+    typeof sep.trailing === "string" ? sep.trailing : null,
+    typeof sep.leading === "string" ? sep.leading : null,
+    canonicalize(sep.value)
+  ];
+}
+
+// packages/codegen/src/dsl/rule-patterns.ts
+function isEnumChoiceRule(rule) {
+  return rule.type === CHOICE && rule.members.length >= 2 && // STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
+  // canonicalized operators AND aliased fixed-text externals like
+  // `automatic_semicolon`) are both terminal-valued — `literalTextOf`
+  // serves both shapes uniformly downstream.
+  rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
+}
+function leadingLiteralOf(r) {
+  if (!typeEq(r.type, "CHOICE")) return null;
+  const members = r.members ?? [];
+  const lit = members.find((m) => typeEq(m.type, "STRING"));
+  return lit ? lit.value : null;
+}
+function separatorOf(resolved) {
+  if (!typeEq(resolved.type, "SEQ")) return null;
+  const members = resolved.members;
+  if (!members || members.length !== 2) return null;
+  const [first, second] = members;
+  const firstIsStr = typeEq(first.type, "STRING");
+  const secondIsStr = typeEq(second.type, "STRING");
+  if (firstIsStr && !secondIsStr) return { content: second, separator: first };
+  if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
+  const firstIsChoice = typeEq(first.type, "CHOICE");
+  const secondIsChoice = typeEq(second.type, "CHOICE");
+  if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
+  if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
+  return null;
+}
 function ruleMatchesEmpty(rule) {
   if (!rule || typeof rule !== "object") return false;
   const r = rule;
@@ -942,7 +858,7 @@ function isNonterminalSeparatorType(t) {
 function repeatHasNonterminalSeparator(repeatRule) {
   const content = repeatRule.content;
   if (!content || typeof content !== "object") return false;
-  const detected = detectRepeatSeparator(content);
+  const detected = separatorOf(content);
   if (!detected) return false;
   return isNonterminalSeparatorType(detected.separator.type);
 }
@@ -975,7 +891,7 @@ function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings) {
   if (repeatHasNonterminalSeparator(repeatRule)) return true;
   const content = repeatRule.content;
   if (!content || typeof content !== "object") return false;
-  const detected = detectRepeatSeparator(content);
+  const detected = separatorOf(content);
   if (!detected || !isStringType(detected.separator.type)) return false;
   const sepValue = detected.separator.value;
   if (typeof sepValue !== "string") return false;
@@ -993,7 +909,7 @@ function seqHasGenuineSeparatorVariability(members) {
     const ct = core.type;
     if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
     const content = core.content;
-    if (content && typeof content === "object" && detectRepeatSeparator(content) !== null) {
+    if (content && typeof content === "object" && separatorOf(content) !== null) {
       repeatMembers.push(core);
     }
   }
@@ -1131,6 +1047,86 @@ function resolveRuleLiteral(body) {
   if (typeEq(t, "TOKEN")) return resolveRuleLiteral(r.content);
   if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
   return null;
+}
+
+// packages/codegen/src/types/parsekind-collisions.ts
+function kindKey(id, name) {
+  return id !== void 0 ? `#${id}` : `n:${name}`;
+}
+function diagnoseParseKindCollisions(input) {
+  const byParseKind = /* @__PURE__ */ new Map();
+  for (const value of input.values) {
+    if (value.parseKind === void 0 || value.storageKind === void 0) continue;
+    const key = kindKey(value.parseKindId, value.parseKind);
+    const bucket = byParseKind.get(key) ?? [];
+    bucket.push(value);
+    byParseKind.set(key, bucket);
+  }
+  const mergedByParseKind = /* @__PURE__ */ new Map();
+  const diagnostics = [];
+  for (const [parseKey, bucket] of byParseKind) {
+    const parseKind = bucket[0].parseKind;
+    const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    if (storageIdentities.length <= 1) continue;
+    const signatures = distinct(bucket.map((value) => value.structuralSignature));
+    if (signatures.length === 1) {
+      mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
+      continue;
+    }
+    const byWireIdentity = /* @__PURE__ */ new Map();
+    for (const value of bucket) {
+      const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
+      const group = byWireIdentity.get(wireKey) ?? [];
+      group.push(value);
+      byWireIdentity.set(wireKey, group);
+    }
+    for (const group of byWireIdentity.values()) {
+      const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind)));
+      if (groupStorageIdentities.length <= 1) continue;
+      if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
+      const storageKinds = distinct(group.map((value) => value.storageKind));
+      diagnostics.push({
+        code: "parsekind-noninjective",
+        severity: "error",
+        message: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses [${storageKinds.join(", ")}] onto parse kind '${parseKind}'.`,
+        canProceed: true,
+        ownerKind: input.ownerKind,
+        slotName: input.slotName,
+        shape: "propose-distinct-alias",
+        parseKind,
+        storageKinds,
+        proposal: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds [${storageKinds.join(", ")}] onto parse kind '${parseKind}'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.`
+      });
+    }
+  }
+  if (mergedByParseKind.size === 0) {
+    return { values: input.values.map((value) => value.original), diagnostics };
+  }
+  const emittedParseKeys = /* @__PURE__ */ new Set();
+  const values = [];
+  for (const value of input.values) {
+    if (value.parseKind === void 0) {
+      values.push(value.original);
+      continue;
+    }
+    const parseKey = kindKey(value.parseKindId, value.parseKind);
+    const merged = mergedByParseKind.get(parseKey);
+    if (!merged) {
+      values.push(value.original);
+      continue;
+    }
+    if (emittedParseKeys.has(parseKey)) continue;
+    values.push(merged.original);
+    emittedParseKeys.add(parseKey);
+  }
+  return { values, diagnostics };
+}
+function pickRepresentative(bucket, parseKind) {
+  const preferred = bucket.find((value) => value.preferRepresentative) ?? bucket.find((value) => value.storageKind === parseKind);
+  return preferred ?? bucket[0];
+}
+function distinct(values) {
+  return [...new Set(values)];
 }
 
 // packages/codegen/src/dsl/enrich.ts
@@ -1561,7 +1557,7 @@ function fieldSeparatedListElements(seqRule, reserve) {
       innerPrecStack.push(inner);
       inner = inner.content;
     }
-    const detected = detectRepeatSeparator(inner);
+    const detected = separatorOf(inner);
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
@@ -2327,12 +2323,12 @@ function listSeparatorOfOptionalSeq(rule) {
     if (typeof sepAttr === "string") return sepAttr;
     const content = m.content;
     if (content) {
-      const detected = detectRepeatSeparator(content);
+      const detected = separatorOf(content);
       if (detected) {
         const sep = detected.separator;
         if (typeEq(sep.type, "STRING")) return sep.value;
         if (typeEq(sep.type, "CHOICE")) {
-          const lit = firstStringOfChoice(sep);
+          const lit = leadingLiteralOf(sep);
           if (lit !== null) return lit;
         }
       }
@@ -2387,7 +2383,7 @@ function separatedListBodyInfo(body) {
   const separatorRepeatOf = (m) => {
     if (!isRepeatType(m.type)) return null;
     const content = m.content;
-    return content ? detectRepeatSeparator(content) : null;
+    return content ? separatorOf(content) : null;
   };
   if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
     const nestedIdx = members.findIndex((m) => {
