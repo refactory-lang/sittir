@@ -6,7 +6,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { armsDifferOnlyByLiteralChoice } from '../enrich.ts';
+import { armsDifferOnlyByLiteralChoice } from '../rule-patterns.ts';
 import type { Rule } from '../../types/rule.ts';
 
 const sym = (name: string) => ({ type: 'SYMBOL', name }) as unknown as Rule;
