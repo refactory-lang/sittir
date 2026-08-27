@@ -129,6 +129,25 @@ function stampId<R extends AnyRule>(args: { built: R; id: RuleId | undefined; fr
  * literals can't individually carry the multiplicity, so the whole unit
  * needs it instead).
  */
+/**
+ * A seq with exactly one member IS that member — the seq's own attributes
+ * merge onto it by the same composition rules every collapse site in this
+ * codebase uses: `withAttrsFrom`'s absent-only transfer for the identity
+ * and flag attributes, `combineMultiplicity` for the composing one. This is
+ * `collapseSingleMemberSeq` + `withAttrsFrom` (simplify's own later pass
+ * over the whole tree), applied here at construction instead.
+ */
+function collapseSingletonSeq(seq: AnyRule & { members: AnyRule[] }): AnyRule {
+	const survivor = seq.members[0]!;
+	const carried = withAttrsFrom(seq, survivor);
+	const outerMult = (seq as { multiplicity?: LeafMultiplicity }).multiplicity;
+	if (outerMult !== undefined) {
+		const combined = combineMultiplicity(outerMult, (survivor as { multiplicity?: LeafMultiplicity }).multiplicity);
+		if (combined !== undefined) return { ...carried, multiplicity: combined } as AnyRule;
+	}
+	return carried;
+}
+
 function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity; id?: RuleId }): AnyRule {
 	const { members: splicedInput, multiplicity, id } = input;
 	const rawMembers = splicedInput.flatMap((m) => (isSpliceableBareSeq(m) ? (m as SeqRule).members : [m]));
@@ -142,7 +161,8 @@ function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity; 
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
 	const seq: AnyRule = { type: SEQ, members: pushed };
 	const withMult = hasBareLiteral && multToPush !== undefined ? ({ ...seq, multiplicity: multToPush } as AnyRule) : seq;
-	return id !== undefined ? ({ ...withMult, id } as AnyRule) : withMult;
+	const withId = id !== undefined ? ({ ...withMult, id } as AnyRule) : withMult;
+	return pushed.length === 1 ? collapseSingletonSeq(withId as AnyRule & { members: AnyRule[] }) : withId;
 }
 
 /**
@@ -189,11 +209,17 @@ export function buildOptional(input: { content: AnyRule; id?: RuleId }): AnyRule
 		});
 		const nonterminal = (seqRule as { nonterminal?: boolean }).nonterminal || slotShaped(content) || undefined;
 		// The seq's own stamped facts (metadata, …) ride along under
-		// `built`'s freshly-computed members/multiplicity — `buildSeq`
-		// constructs a new node and has no access to `content`'s identity.
+		// `built`'s freshly-computed shape — `buildSeq` constructs a new node
+		// and has no access to `content`'s identity. `built` may now be a
+		// collapsed singleton survivor (buildSeq's own singleton collapse),
+		// so its own `type`/`members` must win outright, not merely its
+		// stamped attrs: a plain `{...content, ...built}` spread would leave
+		// `content`'s stale `members` array on a survivor that has none.
+		const merged = { ...content, ...built } as AnyRule & { members?: AnyRule[] };
+		if (!('members' in (built as object))) delete merged.members;
 		return nonterminal !== undefined
-			? stampId({ built: { ...content, ...built, nonterminal } as AnyRule, id, from: content })
-			: stampId({ built: { ...content, ...built } as AnyRule, id, from: content });
+			? stampId({ built: { ...merged, nonterminal } as AnyRule, id, from: content })
+			: stampId({ built: merged, id, from: content });
 	}
 	const c = content as { multiplicity?: LeafMultiplicity; nonterminal?: boolean };
 	const nonterminal = c.nonterminal || slotShaped(content) || undefined;
@@ -250,8 +276,11 @@ function buildRepeatLike(input: {
 		if (resolvedSep !== undefined) patch['separator'] = resolvedSep;
 		if (optionalElement !== undefined) patch['optionalElement'] = optionalElement;
 		// See buildOptional's identical note: `built` is a fresh node from
-		// `buildSeq`, so `content`'s own stamped facts must ride along too.
-		return stampId({ built: { ...content, ...built, ...patch } as AnyRule, id, from: content });
+		// `buildSeq` and may be a collapsed singleton survivor with no
+		// `members` of its own — drop `content`'s stale array when so.
+		const merged = { ...content, ...built } as AnyRule & { members?: AnyRule[] };
+		if (!('members' in (built as object))) delete merged.members;
+		return stampId({ built: { ...merged, ...patch } as AnyRule, id, from: content });
 	}
 	const c = content as { multiplicity?: LeafMultiplicity; optionalElement?: boolean };
 	const elided = c.multiplicity === 'optional' && resolvedSep !== undefined ? true : undefined;

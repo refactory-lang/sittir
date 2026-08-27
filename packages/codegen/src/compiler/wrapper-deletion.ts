@@ -125,12 +125,20 @@ function rebuild(node: AnyRule): AnyRule {
 		// wrapper cases below, which are consumed into their content) — the
 		// original node's own stamped facts (id, metadata, …) must ride
 		// along, so spread it under attributeBuilder's freshly-built shape.
-		case SEQ:
+		case SEQ: {
 			// `attributeBuilder.seq` stamps `id` itself (id: node.id ??
 			// input.id — here there's no single input, so it's just
 			// `node.id`); the outer spread still carries any OTHER stamped
-			// facts (metadata, …) attributeBuilder has no access to.
-			return { ...node, ...attributeBuilder.seq(node.members, undefined, node.id) } as AnyRule;
+			// facts (metadata, …) attributeBuilder has no access to. `built`
+			// may be a collapsed singleton survivor (buildSeq's own
+			// singleton collapse) with no `members` of its own — a plain
+			// `{...node, ...built}` spread would leave `node`'s stale
+			// `members` array on it, so drop it when `built` doesn't own one.
+			const built = attributeBuilder.seq(node.members, undefined, node.id);
+			const merged = { ...node, ...built } as AnyRule & { members?: AnyRule[] };
+			if (!('members' in (built as object))) delete merged.members;
+			return merged;
+		}
 		case CHOICE:
 			return { ...node, ...attributeBuilder.choice(node.members, node.id) } as AnyRule;
 		case OPTIONAL:
