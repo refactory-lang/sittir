@@ -3913,33 +3913,6 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `typeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:40`)
-
-```text
-/**
- * @param isLeaf - When true, the node uses `Terminal<K>` (string-keyed `$type`);
- *   numeric discriminants are not applicable until `Terminal` itself is migrated.
- *   Phase A only migrates structural (branch/container/polymorph) interfaces.
- */
-```
-
-### `enumMemberTypeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:60`)
-
-```text
-/**
- * Build the expected discriminant for a type-test assertion on an enum kind.
- *
- * @remarks
- * Mirrors `enumMemberDiscriminant` in `types.ts`: resolves each member
- * value to its `TSKindId.X` entry and joins as a union. Falls back to
- * the string kind name when no entries resolve or `kindEntries` is absent.
- *
- * @param node - The `AssembledEnum` node.
- * @param kindEntries - Catalog entries for TSKindId lookup.
- * @returns The expected discriminant expression for the type assertion.
- */
-```
-
 ### `kindDiscriminantOrLiteral` (`packages/codegen/src/emitters/types.ts:37`)
 
 ```text
@@ -5597,33 +5570,6 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  *                     `supertypeName` is the supertype's `typeName` (PascalCase).
  * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
  *                     sittir's pipeline; retained as a compile-safety escape).
- */
-```
-
-### `generatedIdTables` (`packages/codegen/src/emitters/type-test.ts:20`)
-
-```text
-/**
-	 * Parser-symbol ID tables for numeric $type assertion emission.
-	 * When present, generated type tests emit `TSKindId.X` in extends checks.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
-```
-
-### `typeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:28`)
-
-```text
-/**
- * Returns the expected-type expression for a `_TypeExtends<X['$type'], ...>` check.
- *
- * @remarks
- * When kindEntries is present (KindID pipeline), emits `TSKindId.X`. When
- * absent (legacy / unit-test path), falls back to `'<kind>'` string literal.
- *
- * @param kind - The grammar kind string.
- * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
- * @param nodeMap - The assembled node map.
- * @returns Expression string suitable for `_TypeExtends<X['$type'], <expr>>`.
  */
 ```
 

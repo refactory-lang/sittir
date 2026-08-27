@@ -471,9 +471,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
 
-	// Write type-level tests
-	await writeFile(join(outDir, 'type-test.ts'), result.typeTests);
-
 	// Write vitest config
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 

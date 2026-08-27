@@ -22,8 +22,7 @@ const FILE_MAP: Record<string, string> = {
 	irNamespace: 'ir.ts',
 	utils: 'utils.ts',
 	wrap: 'wrap.ts',
-	from: 'from.ts',
-	typeTests: 'type-test.ts'
+	from: 'from.ts'
 };
 
 function diffSummary(
