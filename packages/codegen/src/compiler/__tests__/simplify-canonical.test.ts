@@ -30,8 +30,9 @@ import {
 import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
-import { simplifyRule, attributeBuilder, makeDefaultCtx } from '../simplify.ts';
+import { simplifyRule, makeDefaultCtx } from '../simplify.ts';
 import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../simplify.ts';
+import { attributeBuilder } from '../../dsl/builders.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
 
 const str = (value: string): Rule<'link'> => ({ type: STRING, value });

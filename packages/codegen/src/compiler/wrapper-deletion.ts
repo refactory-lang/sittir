@@ -8,7 +8,7 @@
  * accidentally re-wrap a leaf.
  *
  * `deleteWrapper` is a re-evaluation of the tree through `attributeBuilder`
- * (compiler/simplify.ts) — the RuleBuilder strategy that implements every
+ * (dsl/builders.ts) — the RuleBuilder strategy that implements every
  * constructor as attribute-push instead of node construction — not an edit
  * of the tree: `RuleWalker.map` rebuilds bottom-up so each `attributeBuilder`
  * call receives an already-finished input and looks exactly one level down.
@@ -19,16 +19,8 @@ import type { AnyRule, Rule, RenderRule, RuleBase } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { selfReferentialFoldOf } from '../dsl/rule-patterns.ts';
-import { attributeBuilder, buildOptional } from './simplify.ts';
+import { attributeBuilder, buildOptional } from '../dsl/builders.ts';
 
-/**
- * Pre-step: when `ownName`'s own top-level body is a self-referential fold
- * (see `selfReferentialFoldOf`), rewrite each arm's extension member in
- * the RAW `Rule<'link'>` tree — `field(name, content)` becomes
- * `field(name, repeat(content, separator))` — so the ordinary bottom-up
- * rebuild below produces the array-with-separator slot uniformly, with no
- * special-casing anywhere else in the walk.
- */
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;
 	const fold = selfReferentialFoldOf(ownName, rule);
@@ -51,13 +43,6 @@ function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'li
 
 const deleteWrapperWalker = new RuleWalker<AnyRule>();
 
-/**
- * Bottom-up rebuild: each case calls the matching `attributeBuilder` method
- * with the node's own parameters and its already-rebuilt content/members
- * (guaranteed by `RuleWalker.map`'s recursion order — every descendant is
- * visited before its parent). Leaves fall through the default arm
- * unchanged; the enclosing builder stamps them.
- */
 function rebuild(node: AnyRule): AnyRule {
 	switch (node.type) {
 		// SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the

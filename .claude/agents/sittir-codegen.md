@@ -46,7 +46,7 @@ Gate numbers are **necessary but not sufficient**: when the dispatcher names a c
 `tsx` + tsconfig paths resolve `@sittir/*` to source, so **NO build is needed** for unit tests or probes.
 
 1. **Type-check**: `cd packages/codegen && pnpm exec tsc --noEmit 2>&1 | grep -c 'error TS'`. The baseline is the number the dispatcher gives you (currently **4**, all pre-existing and none in files you touch). Any other error is yours.
-2. **Unit tests**: `cd packages/codegen && pnpm exec vitest run src/<dir-or-file>` — green, with old-mechanism tests updated to the new mechanism.
+2. **Unit tests, from the REPO ROOT**: `pnpm exec vitest run packages/codegen/src/<dir-or-file>` — green, with old-mechanism tests updated to the new mechanism. Never run vitest from `packages/codegen`: `loadGeneratedIdTables` resolves `packages/<g>/.sittir/src/parser.c` from `process.cwd()`, so every test that calls `generate()` (roundtrip, baseline-diff, strict-terminal) fails with "wrap emitter named no root surface" — a cwd artifact, not a regression. Never run tests while a regen is in progress either (same symptom, different cause).
 3. **Probes**: `pnpm exec tsx <scratch>.mts` running `evaluate` → `link` → `normalizeGrammar` → `assemble` on `packages/<g>/grammar.sittir.ts` (pass `generatedIdTables` when node NAMES matter — without the catalog, anonymous nodes key by raw text and any name diff is a probe artifact). `SITTIR_TRACE=<kind,…> … gen …` dumps a rule after every phase.
 4. **Finish with the comment gates, in this order, before reporting:**
    - `bash scripts/comment-slop-check.sh --working` — must report no hits (the pre-commit runs the same check on the index; a hit there refuses the commit).

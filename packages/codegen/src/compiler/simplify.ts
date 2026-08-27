@@ -29,23 +29,13 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type {
-	AnyRule,
-	RenderRule,
-	Rule,
-	RuleBase,
-	RuleId,
-	SimplifiedRule,
-	ChoiceRule,
-	SeqRule,
-	FieldRule
-} from '../types/rule.ts';
+import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
 import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
-import type { RuleBuilder } from '../dsl/rule-transforms.ts';
+import { attributeBuilder, structuralBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
@@ -80,7 +70,6 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 	};
 }
 import {
-	structuralBuilder,
 	inlineRefs,
 	fuseHeadRepeatLists,
 	combineMultiplicity,
@@ -89,248 +78,6 @@ import {
 } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { AssembledNode } from './model/node-map.ts';
-
-// ---------------------------------------------------------------------------
-// attributeBuilder — compiler-side RuleBuilder that pushes attributes instead
-// of constructing wrapper nodes, so simplify stays field/optional/repeat-free.
-// Every constructor is a pure function of its ALREADY-BUILT input, looking
-// exactly one level down — `deleteWrapper` (wrapper-deletion.ts) rebuilds a
-// raw rule tree bottom-up by calling these same methods, so this is the one
-// place wrapper-vs-attribute construction logic lives.
-// ---------------------------------------------------------------------------
-
-type Separator = RuleBase<'normalize'>['separator'];
-
-/** `id: rule.id ?? input.id` — the CURRENT wrapper rule's id wins over the
- *  survivor's own, matching `dsl/rule-attrs.ts`'s `withAttrsFrom` id
- *  discipline at collapse sites (`slotByRuleId` must resolve the wrapper's
- *  id, not whatever the innermost leaf happened to carry). */
-function stampId<R extends AnyRule>(args: { built: R; id: RuleId | undefined; from: AnyRule }): R {
-	const resolved = args.id ?? (args.from as { id?: RuleId }).id;
-	return resolved !== undefined ? ({ ...args.built, id: resolved } as R) : args.built;
-}
-
-/**
- * seq(members, mult?) — receives already-rebuilt members. Splices a bare
- * nested seq (`isSpliceableBareSeq`: no fieldName/separator/multiplicity of
- * its own) into the member list first, at THIS level — since members arrive
- * bottom-up, a member that is itself a multi-level chain of bare seqs has
- * already flattened its own nested bare seqs one level down by the time its
- * own `buildSeq` call returned, so splicing here reaches every level: a
- * three-deep `seq(seq(seq(x,y),z),w)` fully flattens to `seq(x,y,z,w)`, one
- * splice decision per level, not one pass over the whole tree. The
- * at-least-one guarantee of a repeat1 belongs to the seq as a whole, not to
- * each individual member — enclosing multiplicity is pushed onto each
- * slot-bearing member through the lattice AFTER splicing (a bare,
- * non-slot-promoted string/pattern literal is a co-optional delimiter and
- * is skipped — the template emitter drops a literal stamped
- * `multiplicity: 'optional'`), and retained on the seq node itself only
- * when a bare literal member survives (the co-optional-delimiter guard:
- * literals can't individually carry the multiplicity, so the whole unit
- * needs it instead).
- */
-/**
- * A seq with exactly one member IS that member — the seq's own attributes
- * merge onto it by the same composition rules every collapse site in this
- * codebase uses: `withAttrsFrom`'s absent-only transfer for the identity
- * and flag attributes, `combineMultiplicity` for the composing one. This is
- * `collapseSingleMemberSeq` + `withAttrsFrom` (simplify's own later pass
- * over the whole tree), applied here at construction instead.
- */
-function collapseSingletonSeq(seq: AnyRule & { members: AnyRule[] }): AnyRule {
-	const survivor = seq.members[0]!;
-	const carried = withAttrsFrom(seq, survivor);
-	const outerMult = (seq as { multiplicity?: LeafMultiplicity }).multiplicity;
-	if (outerMult !== undefined) {
-		const combined = combineMultiplicity(outerMult, (survivor as { multiplicity?: LeafMultiplicity }).multiplicity);
-		if (combined !== undefined) return { ...carried, multiplicity: combined } as AnyRule;
-	}
-	return carried;
-}
-
-function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity; id?: RuleId }): AnyRule {
-	const { members: splicedInput, multiplicity, id } = input;
-	const rawMembers = splicedInput.flatMap((m) => (isSpliceableBareSeq(m) ? (m as SeqRule).members : [m]));
-	const multToPush = multiplicity === 'nonEmptyArray' ? 'array' : multiplicity;
-	const pushed = rawMembers.map((m) => {
-		const isBareLiteral = (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m as RenderRule);
-		if (multToPush === undefined || isBareLiteral) return m;
-		const combined = combineMultiplicity(multToPush, (m as { multiplicity?: LeafMultiplicity }).multiplicity);
-		return combined !== undefined ? ({ ...m, multiplicity: combined } as AnyRule) : m;
-	});
-	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
-	const seq: AnyRule = { type: SEQ, members: pushed };
-	const withMult = hasBareLiteral && multToPush !== undefined ? ({ ...seq, multiplicity: multToPush } as AnyRule) : seq;
-	const withId = id !== undefined ? ({ ...withMult, id } as AnyRule) : withMult;
-	return pushed.length === 1 ? collapseSingletonSeq(withId as AnyRule & { members: AnyRule[] }) : withId;
-}
-
-/**
- * A wrapper directly around a seq is not a leaf spread: the enclosing
- * multiplicity must reach the seq's own slot-bearing members (Table 2's
- * per-field storage), so this re-enters `buildSeq` with the combined
- * multiplicity instead of stamping the seq node as if it were opaque.
- */
-/**
- * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
- * reference) or CHOICE/REPEAT/REPEAT1 (a union or a repetition). One level:
- * a wrapper type (FIELD/ALIAS/SEQ/TOKEN/VARIANT/GROUP) is never inspected
- * here — its own builder already stamped `nonterminal` on it when
- * applicable, so `optional` reads that stamp instead of recursing.
- */
-function slotShaped(rule: AnyRule): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-		case SUPERTYPE:
-		case PATTERN:
-		case CHOICE:
-		case REPEAT:
-		case REPEAT1:
-			return true;
-		default:
-			return false;
-	}
-}
-
-/**
- * optional(x) — the core formula, with no empty-match folding. This is what
- * `deleteWrapper` (wrapper-deletion.ts) calls directly for every OPTIONAL
- * node in a raw rule tree: RenderRule production never strips a bare
- * literal to an empty seq (only `simplifyRules`'s own construction, via
- * `foldOptionalEmptyMatch` below, does that later).
- */
-export function buildOptional(input: { content: AnyRule; id?: RuleId }): AnyRule {
-	const { content, id } = input;
-	if (content.type === SEQ) {
-		const seqRule = content as SeqRule;
-		const built = buildSeq({
-			members: seqRule.members,
-			multiplicity: combineMultiplicity('optional', seqRule.multiplicity as LeafMultiplicity)
-		});
-		const nonterminal = (seqRule as { nonterminal?: boolean }).nonterminal || slotShaped(content) || undefined;
-		// The seq's own stamped facts (metadata, …) ride along under
-		// `built`'s freshly-computed shape — `buildSeq` constructs a new node
-		// and has no access to `content`'s identity. `built` may now be a
-		// collapsed singleton survivor (buildSeq's own singleton collapse),
-		// so its own `type`/`members` must win outright, not merely its
-		// stamped attrs: a plain `{...content, ...built}` spread would leave
-		// `content`'s stale `members` array on a survivor that has none.
-		const merged = { ...content, ...built } as AnyRule & { members?: AnyRule[] };
-		if (!('members' in (built as object))) delete merged.members;
-		return nonterminal !== undefined
-			? stampId({ built: { ...merged, nonterminal } as AnyRule, id, from: content })
-			: stampId({ built: merged, id, from: content });
-	}
-	const c = content as { multiplicity?: LeafMultiplicity; nonterminal?: boolean };
-	const nonterminal = c.nonterminal || slotShaped(content) || undefined;
-	const patch: Record<string, unknown> = { multiplicity: combineMultiplicity('optional', c.multiplicity) };
-	if (nonterminal !== undefined) patch['nonterminal'] = nonterminal;
-	return stampId({ built: { ...content, ...patch } as AnyRule, id, from: content });
-}
-
-/**
- * simplify's OWN `optional` construction (empty-match choice folding, see
- * `simplifyChoiceRule`) additionally strips an empty-seq or bare
- * (non-slot-promoted) string body to the empty-seq sentinel — a delimiter
- * that can't individually carry `multiplicity: 'optional'` collapses to
- * "renders nothing" instead. `attributeBuilder.optional` is this fold;
- * `deleteWrapper` never reaches it (it calls `buildOptional` directly).
- */
-function foldOptionalEmptyMatch(input: { content: AnyRule; id?: RuleId }): AnyRule {
-	const { content, id } = input;
-	if (content.type === SEQ && content.members.length === 0)
-		return stampId({ built: { type: SEQ, members: [] }, id, from: content });
-	if (content.type === STRING && !isSlotPromotedLiteral(content))
-		return stampId({ built: { type: SEQ, members: [] }, id, from: content });
-	return buildOptional({ content, id });
-}
-
-/**
- * repeat/repeat1's own multiplicity dominates an already-optional content
- * (`repeat1(optional(x))` keeps the repeat1's `nonEmptyArray` — the repeat
- * still guarantees at least one POSITION; the individual position may be
- * blank, tracked separately via `optionalElement`) rather than composing
- * through the lattice, which would degrade `nonEmptyArray` to `array`.
- */
-function repeatCombine(input: { contentMult: LeafMultiplicity; native: 'array' | 'nonEmptyArray' }): 'array' | 'nonEmptyArray' {
-	const { contentMult, native } = input;
-	if (contentMult === 'optional') return native;
-	return (combineMultiplicity(contentMult, native) ?? native) as 'array' | 'nonEmptyArray';
-}
-
-function buildRepeatLike(input: {
-	content: AnyRule;
-	separator: Separator | undefined;
-	native: 'array' | 'nonEmptyArray';
-	id?: RuleId;
-}): AnyRule {
-	const { content, separator, native, id } = input;
-	const resolvedSep = separator ?? (content as { separator?: Separator }).separator;
-	if (content.type === SEQ) {
-		const seqRule = content as SeqRule;
-		const contentMult = seqRule.multiplicity as LeafMultiplicity;
-		const built = buildSeq({ members: seqRule.members, multiplicity: repeatCombine({ contentMult, native }) });
-		const elided = contentMult === 'optional' && resolvedSep !== undefined ? true : undefined;
-		const optionalElement = elided ?? (seqRule as { optionalElement?: boolean }).optionalElement;
-		const patch: Record<string, unknown> = { nonterminal: true };
-		if (resolvedSep !== undefined) patch['separator'] = resolvedSep;
-		if (optionalElement !== undefined) patch['optionalElement'] = optionalElement;
-		// See buildOptional's identical note: `built` is a fresh node from
-		// `buildSeq` and may be a collapsed singleton survivor with no
-		// `members` of its own — drop `content`'s stale array when so.
-		const merged = { ...content, ...built } as AnyRule & { members?: AnyRule[] };
-		if (!('members' in (built as object))) delete merged.members;
-		return stampId({ built: { ...merged, ...patch } as AnyRule, id, from: content });
-	}
-	const c = content as { multiplicity?: LeafMultiplicity; optionalElement?: boolean };
-	const elided = c.multiplicity === 'optional' && resolvedSep !== undefined ? true : undefined;
-	const optionalElement = elided ?? c.optionalElement;
-	const patch: Record<string, unknown> = {
-		multiplicity: repeatCombine({ contentMult: c.multiplicity, native }),
-		nonterminal: true
-	};
-	if (resolvedSep !== undefined) patch['separator'] = resolvedSep;
-	if (optionalElement !== undefined) patch['optionalElement'] = optionalElement;
-	return stampId({ built: { ...content, ...patch } as AnyRule, id, from: content });
-}
-
-export const attributeBuilder: RuleBuilder = {
-	seq: (members, multiplicity, id) => buildSeq({ members, multiplicity, id }),
-	choice: (members, id) => (id !== undefined ? { type: CHOICE, members, id } : { type: CHOICE, members }),
-	optional: (content, id) => foldOptionalEmptyMatch({ content, id }),
-	repeat: (content, separator, id) => buildRepeatLike({ content, separator, native: 'array', id }),
-	repeat1: (content, separator, id) => buildRepeatLike({ content, separator, native: 'nonEmptyArray', id }),
-	field: (name, content, id) =>
-		stampId({ built: { ...content, fieldName: name, nonterminal: true } as AnyRule, id, from: content }),
-	alias: (content, value, named, id) =>
-		stampId({
-			built: {
-				...content,
-				aliasedFrom: value,
-				aliasNamed: named,
-				inline: false,
-				nonterminal: (content as { nonterminal?: boolean }).nonterminal || named || undefined
-			} as AnyRule,
-			id,
-			from: content
-		}),
-	token: (content, id) => stampId({ built: { ...content, tokenized: true } as AnyRule, id, from: content }),
-	tokenImmediate: (content, id) =>
-		stampId({ built: { ...content, tokenized: true, immediate: true } as AnyRule, id, from: content }),
-	prec: (kind, value, content, id) => stampId({ built: { ...content, prec: { kind, value } } as AnyRule, id, from: content }),
-	variant: (name, content, id) =>
-		(id !== undefined ? { type: VARIANT, name, content, id } : { type: VARIANT, name, content }) as AnyRule,
-	group: (name, content, id) =>
-		(id !== undefined ? { type: GROUP, name, content, id } : { type: GROUP, name, content }) as AnyRule,
-	string: (value, id) => (id !== undefined ? { type: STRING, value, id } : { type: STRING, value }) as AnyRule,
-	pattern: (value, id) => (id !== undefined ? { type: PATTERN, value, id } : { type: PATTERN, value }) as AnyRule,
-	symbol: (name, id) => (id !== undefined ? { type: SYMBOL, name, id } : { type: SYMBOL, name }) as AnyRule,
-	supertype: (name, subtypes, id) =>
-		(id !== undefined ? { type: SUPERTYPE, name, subtypes, id } : { type: SUPERTYPE, name, subtypes }) as AnyRule,
-	indent: (id) => (id !== undefined ? { type: INDENT, id } : { type: INDENT }) as AnyRule,
-	dedent: (id) => (id !== undefined ? { type: DEDENT, id } : { type: DEDENT }) as AnyRule,
-	newline: (id) => (id !== undefined ? { type: NEWLINE, id } : { type: NEWLINE }) as AnyRule
-};
 
 // ---------------------------------------------------------------------------
 // Simplify-only helpers (relocated from dsl/rule-transforms.ts).
@@ -379,10 +126,6 @@ export function isEmptyMatchMember(rule: RenderRule): boolean {
 	if (rule.type === PATTERN && rule.value === '') return true;
 	if (rule.type === SEQ && rule.members.length === 0) return true;
 	return false;
-}
-
-export function isSlotPromotedLiteral(rule: RenderRule): boolean {
-	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
 function hasNamedSiblingOfInnerField(rule: AnyRule): boolean {
@@ -785,7 +528,7 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 // (not narrowed to RenderRule) — phase-visibility-tightening finding:
 // narrowing them forces new `as RenderRule` casts at their
 // `withAttrsFrom(rule, b.choice(...))` / `b.optional(...)` call sites, because
-// `RuleBuilder` (dsl/rule-transforms.ts) is DELIBERATELY AnyRule-generic (one
+// `RuleBuilder` (dsl/builders.ts) is DELIBERATELY AnyRule-generic (one
 // interface serving both `structuralBuilder`, which legitimately builds
 // WrapperPhase wrapper nodes, and `attributeBuilder`, which never does).
 // Forcing these call sites to a narrower phase would launder past the

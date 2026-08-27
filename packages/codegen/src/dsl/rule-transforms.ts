@@ -21,7 +21,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode, RuleId } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
@@ -29,91 +29,13 @@ import { RuleWalker } from './rule-walker.ts';
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
-// ---------------------------------------------------------------------------
-// RuleBuilder — context-injected rule construction strategy
-// ---------------------------------------------------------------------------
-
-export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
-
-type Separator = RuleBase<'normalize'>['separator'];
-
-export interface RuleBuilder {
-	seq(members: AnyRule[], multiplicity?: LeafMultiplicity, id?: RuleId): AnyRule;
-	choice(members: AnyRule[], id?: RuleId): AnyRule;
-	optional(content: AnyRule, id?: RuleId): AnyRule;
-	repeat(content: AnyRule, separator?: Separator, id?: RuleId): AnyRule;
-	repeat1(content: AnyRule, separator?: Separator, id?: RuleId): AnyRule;
-	field(name: string, content: AnyRule, id?: RuleId): AnyRule;
-	alias(content: AnyRule, value: string, named: boolean, id?: RuleId): AnyRule;
-	token(content: AnyRule, id?: RuleId): AnyRule;
-	tokenImmediate(content: AnyRule, id?: RuleId): AnyRule;
-	prec(kind: PrecKind, value: number | string, content: AnyRule, id?: RuleId): AnyRule;
-	variant(name: string, content: AnyRule, id?: RuleId): AnyRule;
-	group(name: string, content: AnyRule, id?: RuleId): AnyRule;
-	string(value: string, id?: RuleId): AnyRule;
-	pattern(value: string, id?: RuleId): AnyRule;
-	symbol(name: string, id?: RuleId): AnyRule;
-	supertype(name: string, subtypes: AnyRule[], id?: RuleId): AnyRule;
-	indent(id?: RuleId): AnyRule;
-	dedent(id?: RuleId): AnyRule;
-	newline(id?: RuleId): AnyRule;
-}
-
-export const structuralBuilder: RuleBuilder = {
-	seq: (members, _multiplicity, id) => ({ type: SEQ, members, ...(id !== undefined ? { id } : {}) }),
-	choice: (members, id) => ({ type: CHOICE, members, ...(id !== undefined ? { id } : {}) }),
-	// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
-	// phase, while a single-content wrapper's own `content` field wants one
-	// specific phase — same "narrow via AnyRule, cast back" convention as
-	// rule-patterns.ts's `ruleChildren`.
-	optional: (content, id) => ({ type: OPTIONAL, content, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	repeat: (content, separator, id) =>
-		({
-			type: REPEAT,
-			content,
-			...(separator !== undefined ? { separator } : {}),
-			...(id !== undefined ? { id } : {})
-		}) as AnyRule,
-	repeat1: (content, separator, id) =>
-		({
-			type: REPEAT1,
-			content,
-			...(separator !== undefined ? { separator } : {}),
-			...(id !== undefined ? { id } : {})
-		}) as AnyRule,
-	field: (name, content, id) => ({ type: FIELD, name, content, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	alias: (content, value, named, id) =>
-		({ type: ALIAS, content, value, named, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	token: (content, id) => ({ type: TOKEN, content, immediate: false, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	tokenImmediate: (content, id) =>
-		({ type: TOKEN, content, immediate: true, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	// The evaluate-only PREC family collapses to four distinct type tags —
-	// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
-	// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
-	prec: (kind, value, content, id) =>
-		({
-			type: kind === 'left' ? 'PREC_LEFT' : kind === 'right' ? 'PREC_RIGHT' : kind === 'dynamic' ? 'PREC_DYNAMIC' : 'PREC',
-			content,
-			value,
-			...(id !== undefined ? { id } : {})
-		}) as AnyRule,
-	variant: (name, content, id) => ({ type: VARIANT, name, content, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	group: (name, content, id) => ({ type: GROUP, name, content, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	string: (value, id) => ({ type: STRING, value, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	pattern: (value, id) => ({ type: PATTERN, value, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	symbol: (name, id) => ({ type: SYMBOL, name, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	supertype: (name, subtypes, id) => ({ type: SUPERTYPE, name, subtypes, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	indent: (id) => ({ type: INDENT, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	dedent: (id) => ({ type: DEDENT, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	newline: (id) => ({ type: NEWLINE, ...(id !== undefined ? { id } : {}) }) as AnyRule
-};
-
-/* Phase contexts live in the compiler layer: compiler/ctx.ts holds
-   `BaseCtx<R>`; per-phase classes (NormalizeCtx / SimplifyCtx / …) extend it
-   in their phase files. This dsl module keeps only the `RuleBuilder` strategy
-   + the shared transform utilities below. Helpers that need a builder take a
-   structural `{ builder?: RuleBuilder }` slice — never the compiler ctx — so
-   there is no dsl -> compiler cycle. */
+/* The `RuleBuilder` construction strategy (`structuralBuilder` /
+   `attributeBuilder`) lives in `dsl/builders.ts`, which imports the shared
+   transform utilities below (dsl -> dsl). Phase contexts live in the
+   compiler layer: compiler/ctx.ts holds `BaseCtx<R>`; per-phase classes
+   (NormalizeCtx / SimplifyCtx / …) extend it in their phase files. Helpers
+   here that need a builder take a structural `{ builder?: RuleBuilder }`
+   slice — never the compiler ctx — so there is no dsl -> compiler cycle. */
 
 // ---------------------------------------------------------------------------
 // Shared, idempotent rule transforms.

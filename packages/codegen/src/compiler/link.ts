@@ -73,7 +73,8 @@ import type {
 	RepeatedShapeEntry,
 	RefineForm
 } from './types.ts';
-import { hasAnyField, structuralBuilder } from '../dsl/rule-transforms.ts';
+import { hasAnyField } from '../dsl/rule-transforms.ts';
+import { structuralBuilder } from '../dsl/builders.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -643,15 +644,6 @@ export function canonicalizeRuleLiterals(
 	}
 }
 
-/**
- * The unstampable-leaf report — the per-build phantom-kind inventory. One row
- * per class keeps `grammar-diagnostics.json` diffs readable; the sorted name
- * lists live in `details`. Expected members today: kinds synthesized after
- * tree-sitter generate (evaluate's field-enums), `inline:`-listed rules, and
- * VAPORIZED rules — these lack a parser-issued kindId by construction, not by
- * bug (every OTHER kind name should carry one — that's the invariant this
- * report ratchets against).
- */
 export function reportKindIdStampMisses(
 	stampMisses: KindIdStampMisses,
 	kindEntries: readonly GeneratedKindEntry[],
@@ -852,17 +844,6 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: Lin
 
 const aliasLiteralWalker = new RuleWalker<Rule<'link'>>();
 
-/**
- * An enum kind's member set is its GRAMMAR-WIDE realization set, not just
- * its defining rule's literals. An alias-of-terminal occurrence
- * (`alias('$', $.token_tree_punctuation)`, collapsed by resolveRule to a
- * literal-carrying SYMBOL) realizes the enum kind with a text the defining
- * rule never lists — without folding it in, the emitted transport enum has
- * no variant for that text and every read stub carrying it fails
- * deserialization ("unknown enum payload"). Append the missing texts as
- * ordinary STRING members so AssembledEnum, the transport enum, and every
- * kindEnum consumer see one uniform member list.
- */
 function foldAliasLiteralsIntoEnumRules(rules: Record<string, Rule<'link'>>): void {
 	const extras = new Map<string, Set<string>>();
 	const considerSymbol = (r: Rule<'link'>): void => {
@@ -1056,19 +1037,6 @@ function collectTopLevelAliasBodies(
 	return out;
 }
 
-/**
- * Kind name → anon-token wire ids from `alias('tok', $.kind)` occurrences
- * anywhere in the linked rule tree. `stampSymbolRefKindIds` records each
- * such occurrence as a literal SYMBOL with `kindId` (the alias-target
- * display symbol) plus `aliasedFromId` (the token's own grammar symbol —
- * the id the wire delivers); this collects those stamps kind-wide so
- * decode arms can accept the token ids even where the occurrence itself
- * is swallowed by supertype expansion (e.g. python's inlined
- * `keyword_identifier` body: `match`-as-identifier never appears as a
- * slot value, only as the `identifier` subtype). Registered under both
- * kind spellings (occurrence name + its `_`-toggled twin) so lookups by
- * either surface find it.
- */
 function collectTerminalAliasWireIds(
 	ruleBags: readonly Record<string, Rule<'link'>>[],
 	ctx: StampKindIdsCtx
@@ -2207,29 +2175,6 @@ function suggestSharedName(kinds: readonly string[]): string {
  * `null`.
  */
 
-/**
- * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
- * its own separator, with an optional final unterminated element) into one
- * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
- * (`x (sep x)*`) for the opposite separator orientation; `separatorOf`
- * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
- * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
- * needs to recognize the two windows that ALSO carry a standalone head and/or
- * an unterminated final element beside that already-stamped repeat:
- *
- *  - `[seq(x, sep), repeat(x){sep, trailing:'mandatory'}, optional(x)]` — a
- *    mandatory first element (needed to disambiguate the construct, e.g.
- *    rust's `(x,)` single-element tuple) absorbs into the repeat's own
- *    minimum, promoting it to `repeat1`.
- *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — no standalone
- *    head (the construct is valid with zero elements, e.g. an empty
- *    `macro_rules! m {}` body); stays a plain `repeat`.
- *
- * Both windows relax `trailing` from `'mandatory'` (true only of the repeat's
- * OWN body in isolation) to `'optional'` (true of the whole merged list, once
- * the trailing unterminated element is accounted for) — the same relaxation
- * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
- */
 export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>[] | null {
 	let changed = false;
 	const out: Rule<'link'>[] = [];
