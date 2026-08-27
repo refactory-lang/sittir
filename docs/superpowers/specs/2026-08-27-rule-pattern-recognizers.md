@@ -6,20 +6,35 @@ routing link's `resolveRule` through the builders · **Gate:** byte-identical
 
 ## The rule
 
-A builder owns pattern recognition against its own contents. The
-recognizers are therefore the builders' vocabulary, and they live in one
-place with one shape:
+A builder owns pattern recognition against its own contents — and
+recognition is not a question answered for someone else, it is a
+**rewrite of the contents**. A recognizer is a transformer over a
+builder's finished children:
 
 ```ts
-recognize<Fact>(node: Rule): Fact | undefined
+transform(children: readonly Rule[]): readonly Rule[]      // for seq / choice
+transform(child: Rule): Rule                                 // for a single-content builder
 ```
 
-Every recognizer is named for the **fact it recognizes**, returns that fact
-or `undefined` (not applicable), and looks **one level down** — at the
-node and the already-built attributes of its direct children. A boolean
-predicate is the degenerate case (`Fact = true`). No pass hand-rolls a
-`type === … && members.length === 3` again; a shape that matters is a
-named recognizer or it is not a shape.
+```
+[seq(x…), seq(y…)]            → [x…, y…]                       spliceBareSeqs
+[…, choice(field a, field b), …] → choice([…a…], […b…])          distributeExclusiveFields
+[repeat(x){array}, ',']       → [x{array, separator: ','}]     absorbSeparatorLiteral
+[seq(f,'&&',g), …] on own name → chain-folded arms              foldSelfReferentialChain
+```
+
+A transformer returns its input unchanged when the pattern is not present
+— that is what "not applicable" means, and nothing is handed upward for
+a parent to interpret. It looks **one level down**: at the children and
+the attributes their own builders already stamped. A builder is then
+`construct(compose(transformers)(children))`, and a phase's builder set
+is that phase's list of transformers. Enrich's passes are the same kind
+of thing (`distributeExclusiveFieldChoices` already is one); they stop
+being a separate species.
+
+No pass hand-rolls a `type === … && members.length === 3` again; a shape
+that matters is a named transformer or it is not a shape. A boolean
+predicate survives only as the guard inside a transformer.
 
 Module: `dsl/rule-patterns.ts`, next to `rule-transforms.ts` (the builders)
 and `rule-walker.ts` (the traversal). dsl-side, so enrich, normalize and
@@ -28,9 +43,11 @@ link all import the same module; compiler → dsl is the allowed direction.
 ## Multi-level recognition composes; it does not look deeper
 
 Some current recognizers read two levels. Under bottom-up rebuilding they
-must not: the inner level has already recognized its own pattern and
-**stamped the fact** on the node it built, so the outer recognizer reads
-the child's fact, not its shape.
+must not: the inner level's transformer has already rewritten its own
+pattern into the node it built — a stamped attribute, or a shape that
+says what it is — so the outer transformer matches on the child's result,
+not on the grandchildren. Where a table row below says "stamps a fact",
+read: the inner transformer's output carries it.
 
 | today | reads | becomes |
 |---|---|---|
