@@ -14,7 +14,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

@@ -29,7 +29,17 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RenderRule, Rule, RuleBase, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
+import type {
+	AnyRule,
+	RenderRule,
+	Rule,
+	RuleBase,
+	RuleId,
+	SimplifiedRule,
+	ChoiceRule,
+	SeqRule,
+	FieldRule
+} from '../types/rule.ts';
 import { isSpliceableBareSeq } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
@@ -92,6 +102,15 @@ import type { AssembledNode } from './model/node-map.ts';
 
 type Separator = RuleBase<'normalize'>['separator'];
 
+/** `id: rule.id ?? input.id` — the CURRENT wrapper rule's id wins over the
+ *  survivor's own, matching `dsl/rule-attrs.ts`'s `withAttrsFrom` id
+ *  discipline at collapse sites (`slotByRuleId` must resolve the wrapper's
+ *  id, not whatever the innermost leaf happened to carry). */
+function stampId<R extends AnyRule>(args: { built: R; id: RuleId | undefined; from: AnyRule }): R {
+	const resolved = args.id ?? (args.from as { id?: RuleId }).id;
+	return resolved !== undefined ? ({ ...args.built, id: resolved } as R) : args.built;
+}
+
 /**
  * seq(members, mult?) — receives already-rebuilt members (bare nested-seq
  * splicing is a top-down, raw-tree-only concern owned by wrapper-deletion's
@@ -104,7 +123,7 @@ type Separator = RuleBase<'normalize'>['separator'];
  * survives (the co-optional-delimiter guard: literals can't individually
  * carry the multiplicity, so the whole unit needs it instead).
  */
-function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity }): AnyRule {
+function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity; id?: RuleId }): AnyRule {
 	// Bare-nested-seq splicing does NOT happen here: members arrive
 	// ALREADY REBUILT (bottom-up), and a raw literal nested `seq(...)`
 	// member has already been flattened by `spliceRawSeq`'s top-down
@@ -114,7 +133,7 @@ function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity }
 	// spliced into an ANCESTOR either — only a literal authored nesting is.
 	// The at-least-one guarantee of a repeat1 belongs to the seq as a
 	// whole, not to each individual member.
-	const { members: rawMembers, multiplicity } = input;
+	const { members: rawMembers, multiplicity, id } = input;
 	const multToPush = multiplicity === 'nonEmptyArray' ? 'array' : multiplicity;
 	const pushed = rawMembers.map((m) => {
 		const isBareLiteral = (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m as RenderRule);
@@ -124,7 +143,8 @@ function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity }
 	});
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
 	const seq: AnyRule = { type: SEQ, members: pushed };
-	return hasBareLiteral && multToPush !== undefined ? ({ ...seq, multiplicity: multToPush } as AnyRule) : seq;
+	const withMult = hasBareLiteral && multToPush !== undefined ? ({ ...seq, multiplicity: multToPush } as AnyRule) : seq;
+	return id !== undefined ? ({ ...withMult, id } as AnyRule) : withMult;
 }
 
 /**
@@ -140,7 +160,8 @@ function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity }
  * literal to an empty seq (only `simplifyRules`'s own construction, via
  * `foldOptionalEmptyMatch` below, does that later).
  */
-export function buildOptional(content: AnyRule): AnyRule {
+export function buildOptional(input: { content: AnyRule; id?: RuleId }): AnyRule {
+	const { content, id } = input;
 	if (content.type === SEQ) {
 		const seqRule = content as SeqRule;
 		const built = buildSeq({
@@ -149,18 +170,18 @@ export function buildOptional(content: AnyRule): AnyRule {
 		});
 		const nonterminal =
 			(seqRule as { nonterminal?: boolean }).nonterminal || isNonterminalRuleType(content as Rule<'evaluate'>) || undefined;
-		// The seq's own stamped facts (id, metadata, …) ride along under
+		// The seq's own stamped facts (metadata, …) ride along under
 		// `built`'s freshly-computed members/multiplicity — `buildSeq`
 		// constructs a new node and has no access to `content`'s identity.
 		return nonterminal !== undefined
-			? ({ ...content, ...built, nonterminal } as AnyRule)
-			: ({ ...content, ...built } as AnyRule);
+			? stampId({ built: { ...content, ...built, nonterminal } as AnyRule, id, from: content })
+			: stampId({ built: { ...content, ...built } as AnyRule, id, from: content });
 	}
 	const c = content as { multiplicity?: LeafMultiplicity; nonterminal?: boolean };
 	const nonterminal = c.nonterminal || isNonterminalRuleType(content as Rule<'evaluate'>) || undefined;
 	const patch: Record<string, unknown> = { multiplicity: combineMultiplicity('optional', c.multiplicity) };
 	if (nonterminal !== undefined) patch['nonterminal'] = nonterminal;
-	return { ...content, ...patch } as AnyRule;
+	return stampId({ built: { ...content, ...patch } as AnyRule, id, from: content });
 }
 
 /**
@@ -171,10 +192,13 @@ export function buildOptional(content: AnyRule): AnyRule {
  * "renders nothing" instead. `attributeBuilder.optional` is this fold;
  * `deleteWrapper` never reaches it (it calls `buildOptional` directly).
  */
-function foldOptionalEmptyMatch(content: AnyRule): AnyRule {
-	if (content.type === SEQ && content.members.length === 0) return { type: SEQ, members: [] };
-	if (content.type === STRING && !isSlotPromotedLiteral(content)) return { type: SEQ, members: [] };
-	return buildOptional(content);
+function foldOptionalEmptyMatch(input: { content: AnyRule; id?: RuleId }): AnyRule {
+	const { content, id } = input;
+	if (content.type === SEQ && content.members.length === 0)
+		return stampId({ built: { type: SEQ, members: [] }, id, from: content });
+	if (content.type === STRING && !isSlotPromotedLiteral(content))
+		return stampId({ built: { type: SEQ, members: [] }, id, from: content });
+	return buildOptional({ content, id });
 }
 
 /**
@@ -194,8 +218,9 @@ function buildRepeatLike(input: {
 	content: AnyRule;
 	separator: Separator | undefined;
 	native: 'array' | 'nonEmptyArray';
+	id?: RuleId;
 }): AnyRule {
-	const { content, separator, native } = input;
+	const { content, separator, native, id } = input;
 	const resolvedSep = separator ?? (content as { separator?: Separator }).separator;
 	if (content.type === SEQ) {
 		const seqRule = content as SeqRule;
@@ -208,7 +233,7 @@ function buildRepeatLike(input: {
 		if (optionalElement !== undefined) patch['optionalElement'] = optionalElement;
 		// See buildOptional's identical note: `built` is a fresh node from
 		// `buildSeq`, so `content`'s own stamped facts must ride along too.
-		return { ...content, ...built, ...patch } as AnyRule;
+		return stampId({ built: { ...content, ...built, ...patch } as AnyRule, id, from: content });
 	}
 	const c = content as { multiplicity?: LeafMultiplicity; optionalElement?: boolean };
 	const elided = c.multiplicity === 'optional' && resolvedSep !== undefined ? true : undefined;
@@ -219,36 +244,45 @@ function buildRepeatLike(input: {
 	};
 	if (resolvedSep !== undefined) patch['separator'] = resolvedSep;
 	if (optionalElement !== undefined) patch['optionalElement'] = optionalElement;
-	return { ...content, ...patch } as AnyRule;
+	return stampId({ built: { ...content, ...patch } as AnyRule, id, from: content });
 }
 
 export const attributeBuilder: RuleBuilder = {
-	seq: (members, multiplicity) => buildSeq({ members, multiplicity }),
-	choice: (members) => ({ type: CHOICE, members }),
-	optional: (content) => foldOptionalEmptyMatch(content),
-	repeat: (content, separator) => buildRepeatLike({ content, separator, native: 'array' }),
-	repeat1: (content, separator) => buildRepeatLike({ content, separator, native: 'nonEmptyArray' }),
-	field: (name, content) => ({ ...content, fieldName: name, nonterminal: true }) as AnyRule,
-	alias: (content, value, named) =>
-		({
-			...content,
-			aliasedFrom: value,
-			aliasNamed: named,
-			inline: false,
-			nonterminal: (content as { nonterminal?: boolean }).nonterminal || named || undefined
-		}) as AnyRule,
-	token: (content) => ({ ...content, tokenized: true }) as AnyRule,
-	tokenImmediate: (content) => ({ ...content, tokenized: true, immediate: true }) as AnyRule,
-	prec: (kind, value, content) => ({ ...content, prec: { kind, value } }) as AnyRule,
-	variant: (name, content) => ({ type: VARIANT, name, content }) as AnyRule,
-	group: (name, content) => ({ type: GROUP, name, content }) as AnyRule,
-	string: (value) => ({ type: STRING, value }) as AnyRule,
-	pattern: (value) => ({ type: PATTERN, value }) as AnyRule,
-	symbol: (name) => ({ type: SYMBOL, name }) as AnyRule,
-	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes }) as AnyRule,
-	indent: () => ({ type: INDENT }) as AnyRule,
-	dedent: () => ({ type: DEDENT }) as AnyRule,
-	newline: () => ({ type: NEWLINE }) as AnyRule
+	seq: (members, multiplicity, id) => buildSeq({ members, multiplicity, id }),
+	choice: (members, id) => (id !== undefined ? { type: CHOICE, members, id } : { type: CHOICE, members }),
+	optional: (content, id) => foldOptionalEmptyMatch({ content, id }),
+	repeat: (content, separator, id) => buildRepeatLike({ content, separator, native: 'array', id }),
+	repeat1: (content, separator, id) => buildRepeatLike({ content, separator, native: 'nonEmptyArray', id }),
+	field: (name, content, id) =>
+		stampId({ built: { ...content, fieldName: name, nonterminal: true } as AnyRule, id, from: content }),
+	alias: (content, value, named, id) =>
+		stampId({
+			built: {
+				...content,
+				aliasedFrom: value,
+				aliasNamed: named,
+				inline: false,
+				nonterminal: (content as { nonterminal?: boolean }).nonterminal || named || undefined
+			} as AnyRule,
+			id,
+			from: content
+		}),
+	token: (content, id) => stampId({ built: { ...content, tokenized: true } as AnyRule, id, from: content }),
+	tokenImmediate: (content, id) =>
+		stampId({ built: { ...content, tokenized: true, immediate: true } as AnyRule, id, from: content }),
+	prec: (kind, value, content, id) => stampId({ built: { ...content, prec: { kind, value } } as AnyRule, id, from: content }),
+	variant: (name, content, id) =>
+		(id !== undefined ? { type: VARIANT, name, content, id } : { type: VARIANT, name, content }) as AnyRule,
+	group: (name, content, id) =>
+		(id !== undefined ? { type: GROUP, name, content, id } : { type: GROUP, name, content }) as AnyRule,
+	string: (value, id) => (id !== undefined ? { type: STRING, value, id } : { type: STRING, value }) as AnyRule,
+	pattern: (value, id) => (id !== undefined ? { type: PATTERN, value, id } : { type: PATTERN, value }) as AnyRule,
+	symbol: (name, id) => (id !== undefined ? { type: SYMBOL, name, id } : { type: SYMBOL, name }) as AnyRule,
+	supertype: (name, subtypes, id) =>
+		(id !== undefined ? { type: SUPERTYPE, name, subtypes, id } : { type: SUPERTYPE, name, subtypes }) as AnyRule,
+	indent: (id) => (id !== undefined ? { type: INDENT, id } : { type: INDENT }) as AnyRule,
+	dedent: (id) => (id !== undefined ? { type: DEDENT, id } : { type: DEDENT }) as AnyRule,
+	newline: (id) => (id !== undefined ? { type: NEWLINE, id } : { type: NEWLINE }) as AnyRule
 };
 
 // ---------------------------------------------------------------------------

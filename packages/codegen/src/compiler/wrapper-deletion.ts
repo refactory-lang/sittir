@@ -163,15 +163,19 @@ function rebuild(node: AnyRule): AnyRule {
 		// original node's own stamped facts (id, metadata, …) must ride
 		// along, so spread it under attributeBuilder's freshly-built shape.
 		case SEQ:
-			return { ...node, ...attributeBuilder.seq(node.members) } as AnyRule;
+			// `attributeBuilder.seq` stamps `id` itself (id: node.id ??
+			// input.id — here there's no single input, so it's just
+			// `node.id`); the outer spread still carries any OTHER stamped
+			// facts (metadata, …) attributeBuilder has no access to.
+			return { ...node, ...attributeBuilder.seq(node.members, undefined, node.id) } as AnyRule;
 		case CHOICE:
-			return { ...node, ...attributeBuilder.choice(node.members) } as AnyRule;
+			return { ...node, ...attributeBuilder.choice(node.members, node.id) } as AnyRule;
 		case OPTIONAL:
 			// `buildOptional`, not `attributeBuilder.optional`: the empty-match
 			// fold (`foldOptionalEmptyMatch`) belongs to simplify's own later
 			// construction, not RenderRule production — a raw OPTIONAL over a
 			// bare literal here stays a leaf with `multiplicity: 'optional'`.
-			return buildOptional(node.content);
+			return buildOptional({ content: node.content, id: node.id });
 		case REPEAT:
 			// Cast, not narrow: `node: AnyRule` distributes REPEAT across
 			// every phase (its 'evaluate' view's `separator` is a bare
@@ -179,13 +183,13 @@ function rebuild(node: AnyRule): AnyRule {
 			// while wrapper-deletion always operates on the 'link' view —
 			// same "narrow via AnyRule, cast back" convention as
 			// rule-catalog.ts's `ruleChildren`.
-			return attributeBuilder.repeat(node.content, node.separator as RuleBase<'normalize'>['separator']);
+			return attributeBuilder.repeat(node.content, node.separator as RuleBase<'normalize'>['separator'], node.id);
 		case REPEAT1:
-			return attributeBuilder.repeat1(node.content, node.separator as RuleBase<'normalize'>['separator']);
+			return attributeBuilder.repeat1(node.content, node.separator as RuleBase<'normalize'>['separator'], node.id);
 		case FIELD:
-			return attributeBuilder.field(node.name, node.content);
+			return attributeBuilder.field(node.name, node.content, node.id);
 		case ALIAS:
-			return attributeBuilder.alias(node.content, node.value, node.named);
+			return attributeBuilder.alias(node.content, node.value, node.named, node.id);
 		case TOKEN:
 			// TOKEN survives structurally (like VARIANT/GROUP), not via
 			// attributeBuilder.token/tokenImmediate's attribute-push formula:
@@ -198,9 +202,9 @@ function rebuild(node: AnyRule): AnyRule {
 			// it without disturbing `type`/`immediate`.
 			return node;
 		case VARIANT:
-			return { ...node, ...attributeBuilder.variant(node.name, node.content) } as AnyRule;
+			return { ...node, ...attributeBuilder.variant(node.name, node.content, node.id) } as AnyRule;
 		case GROUP:
-			return { ...node, ...attributeBuilder.group(node.name, node.content) } as AnyRule;
+			return { ...node, ...attributeBuilder.group(node.name, node.content, node.id) } as AnyRule;
 		default:
 			// string / pattern / symbol / supertype / indent / dedent / newline
 			return node;
