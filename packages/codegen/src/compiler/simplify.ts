@@ -46,7 +46,6 @@ import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { RuleBuilder } from '../dsl/rule-transforms.ts';
-import { isNonterminalRuleType } from './rule-catalog.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
@@ -154,6 +153,27 @@ function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity; 
  * multiplicity instead of stamping the seq node as if it were opaque.
  */
 /**
+ * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
+ * reference) or CHOICE/REPEAT/REPEAT1 (a union or a repetition). One level:
+ * a wrapper type (FIELD/ALIAS/SEQ/TOKEN/VARIANT/GROUP) is never inspected
+ * here — its own builder already stamped `nonterminal` on it when
+ * applicable, so `optional` reads that stamp instead of recursing.
+ */
+function slotShaped(rule: AnyRule): boolean {
+	switch (rule.type) {
+		case SYMBOL:
+		case SUPERTYPE:
+		case PATTERN:
+		case CHOICE:
+		case REPEAT:
+		case REPEAT1:
+			return true;
+		default:
+			return false;
+	}
+}
+
+/**
  * optional(x) — the core formula, with no empty-match folding. This is what
  * `deleteWrapper` (wrapper-deletion.ts) calls directly for every OPTIONAL
  * node in a raw rule tree: RenderRule production never strips a bare
@@ -168,8 +188,7 @@ export function buildOptional(input: { content: AnyRule; id?: RuleId }): AnyRule
 			members: seqRule.members,
 			multiplicity: combineMultiplicity('optional', seqRule.multiplicity as LeafMultiplicity)
 		});
-		const nonterminal =
-			(seqRule as { nonterminal?: boolean }).nonterminal || isNonterminalRuleType(content as Rule<'evaluate'>) || undefined;
+		const nonterminal = (seqRule as { nonterminal?: boolean }).nonterminal || slotShaped(content) || undefined;
 		// The seq's own stamped facts (metadata, …) ride along under
 		// `built`'s freshly-computed members/multiplicity — `buildSeq`
 		// constructs a new node and has no access to `content`'s identity.
@@ -178,7 +197,7 @@ export function buildOptional(input: { content: AnyRule; id?: RuleId }): AnyRule
 			: stampId({ built: { ...content, ...built } as AnyRule, id, from: content });
 	}
 	const c = content as { multiplicity?: LeafMultiplicity; nonterminal?: boolean };
-	const nonterminal = c.nonterminal || isNonterminalRuleType(content as Rule<'evaluate'>) || undefined;
+	const nonterminal = c.nonterminal || slotShaped(content) || undefined;
 	const patch: Record<string, unknown> = { multiplicity: combineMultiplicity('optional', c.multiplicity) };
 	if (nonterminal !== undefined) patch['nonterminal'] = nonterminal;
 	return stampId({ built: { ...content, ...patch } as AnyRule, id, from: content });
