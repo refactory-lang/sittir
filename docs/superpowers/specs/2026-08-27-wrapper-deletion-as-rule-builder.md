@@ -86,9 +86,12 @@ retains the multiplicity on the seq node itself only when a bare literal
 member is present (the co-optional-delimiter guard). Both rules are `seq`'s
 own semantics and live in its body.
 
-**Two normalizations are intrinsic to `seq`, not catalog transformers**,
-because `seq`'s attribute decisions are judgement calls over a member
-list and need the list in normal form first. In order:
+**`seq` is `collapse ∘ transformers ∘ splice`.** Splice and collapse are
+intrinsic — they bracket the transformers: splice puts the member list in
+normal form, the transformers (catalog rewrites such as separator
+absorption, and `seq`'s own attribute decisions, which are transformers
+too) run once over that flat list, and collapse takes a singleton down to
+its member. In order:
 
 1. *splice* — `[…, seq(y…), …] → […, y…, …]` for bare nested seqs, giving
    one flat list; the attribute decisions (push multiplicity to
