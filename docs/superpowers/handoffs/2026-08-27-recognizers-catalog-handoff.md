@@ -20,23 +20,24 @@ they carry every ruling. Session memory: call `get_latest_session`.
   group-classify.ts and compiler/rule-catalog.ts folded in and deleted;
   `isEnumChoiceRule`/`isSpliceableBareSeq` out of types/rule.ts;
   `selfReferentialFoldOf` out of wrapper-deletion).
-- **UNCOMMITTED, gates were running at handoff — step 1b:** enrich's
-  private recognizers moved into the catalog (`exclusiveFieldChoiceBranches`,
+- **Also landed and pushed — step 1b `a65279942`:** enrich's private
+  recognizers moved into the catalog (`exclusiveFieldChoiceBranches`,
   `normalizeMember`, `peelOptional`, `peelOptionalSeq`,
   `listSeparatorOfOptionalSeq`, `optionalStringLiteral`,
   `separatedListElementName`, `peelOptionalEitherSpelling`,
   `SeparatedListBodyInfo`, `separatedListBodyInfo`, `armLeadingSymbolName`,
   `armStartsWithSymbol`, `isLiteralChoiceContent`,
-  `armsDifferOnlyByLiteralChoice`). Files: `packages/codegen/src/dsl/enrich.ts`,
-  `packages/codegen/src/dsl/rule-patterns.ts`,
-  `packages/codegen/src/dsl/__tests__/enrich-decline-literal-arm.test.ts`,
-  plus regenerated `.sittir/grammar.js`/manifests. `tsc` was at the codegen
-  baseline (4). **First job:** finish the gate — regen all three grammars
+  `armsDifferOnlyByLiteralChoice`). Gated: src diff empty ×3, validator
+  exact, suite green except the two `examples/01` WIP cases, tsc baseline.
+  Step 1 of the recognizers spec is complete; only the two constructing
+  enrich passes (`distributeExclusiveFieldChoices`,
+  `appendTrailingMemberToOptionalSeq`) remain in enrich, deliberately.
+- **Gate recipe for every step from here:** regen all three grammars
   separately, `git diff --stat packages/*/src` must be EMPTY, `validate
   history` exact (rust 146/146·208/208·134/137·1519/1519, ts
   142/143·194/194·112/114·1202/1202, py 122/122·142/142·115/116·1385/1390),
   `pnpm test` green except the two `examples/01` WIP cases, `pnpm run
-  type-check` = 49 + the user's 6 WIP. Then commit by pathspec
+  type-check` = 49 + the user's 6 WIP. Commit by pathspec
   (`--pathspec-from-file`; zsh does not split `$VAR`) and push. If any gate
   moved, it is a finding — do not adapt.
 - **User WIP, never commit:** `TODO.md`, `examples/01-construct-nodes.ts`,
