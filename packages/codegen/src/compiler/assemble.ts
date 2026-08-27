@@ -291,17 +291,20 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					);
 					break;
 				}
+				// Leaves construct off the wrapper-free `renderRule`: a kind's
+				// lexical facts (`tokenized`/`immediate`) are stamps the
+				// normalize builders put on the leaf, and the leaf reads them.
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, assemblyRule));
+					nodes.set(kind, new AssembledPattern(kind, renderRule as Rule<'link'>));
 					break;
 				}
 				case 'keyword': {
-					nodes.set(kind, new AssembledKeyword(kind, assemblyRule as StringRule<'link'>, { kindEntries }));
+					nodes.set(kind, new AssembledKeyword(kind, renderRule as StringRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'token': {
 					// Hidden — no factoryName; token kinds have StringRule<'link'> bodies
-					nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule<'link'>, { kindEntries }));
+					nodes.set(kind, new AssembledToken(kind, renderRule as StringRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'enum': {
@@ -1274,20 +1277,15 @@ function collectAnonymousNodes(
 	const seen = new Map<string, string>();
 
 	for (const rule of Object.values(rules)) {
-		// PR-P Task 2: skip COMPOUND all-text rules (SEQ/CHOICE/OPTIONAL/REPEAT/REPEAT1).
-		// These arise from tree-sitter TOKEN bodies that Link flattens to bare SEQ/CHOICE/etc.
-		// The string literals inside are token-internal fragments (e.g. the "b" byte-prefix
-		// inside `char_literal`) — they are NOT distinct CST node kinds and must not be
-		// collected as anonymous nodes. Previously Link's `promoteAndLogTerminalRules` wrapped
-		// these as TerminalRule, so `walkForStrings` hit the default case and returned without
-		// collecting anything. After Task 2 removes TerminalRule, we replicate the gate via
-		// isAllTextShape on compound rule types.
-		//
-		// We deliberately EXCLUDE bare STRING/PATTERN rules from this guard: those contribute
-		// their own literal as the first `seen` entry, preserving the collection order that
-		// was established when they were top-level STRING/PATTERN rules before TOKEN-flattening.
-		if (rule.type !== STRING && rule.type !== PATTERN && isAllTextShape(rule)) continue;
-		walkForStrings(rule, seen);
+		// A token whose whole body is one literal lexes as that literal's own
+		// anonymous symbol (`token.immediate('"')` IS the `"` node); a
+		// composite token body (`token(seq('/', '/', '/'))`) is one symbol whose
+		// parts are never CST nodes. So a bare-literal token contributes its
+		// literal like a top-level STRING/PATTERN rule does, and any other
+		// compound all-text rule is skipped.
+		const body = rule.type === TOKEN && (rule.content.type === STRING || rule.content.type === PATTERN) ? rule.content : rule;
+		if (body.type !== STRING && body.type !== PATTERN && isAllTextShape(body)) continue;
+		walkForStrings(body, seen);
 	}
 
 	for (const [kindName, literalText] of seen) {
@@ -1360,11 +1358,8 @@ function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
 			walkForStrings(rule.content, out);
 			break;
 		case FIELD:
-			walkForStrings(rule.content, out);
-			break;
+		case TOKEN:
 		case VARIANT:
-			walkForStrings(rule.content, out);
-			break;
 		case GROUP:
 			walkForStrings(rule.content, out);
 			break;

@@ -101,16 +101,9 @@ function rebuild(node: AnyRule): AnyRule {
 		case ALIAS:
 			return attributeBuilder.alias(node.content, node.value, node.named, node.id);
 		case TOKEN:
-			// TOKEN survives structurally (like VARIANT/GROUP), not via
-			// attributeBuilder.token/tokenImmediate's attribute-push formula:
-			// `collect-slots.ts`'s AssembledToken reads `.immediate` directly
-			// off a surviving TOKEN node post-`deleteWrapper` — eliminating it
-			// here would starve that reader. `node.content` is already
-			// rebuilt (RuleWalker.map patches it before this case runs); an
-			// enclosing wrapper (e.g. field) spreads over this node like any
-			// other already-built value, stamping fieldName/nonterminal onto
-			// it without disturbing `type`/`immediate`.
-			return node;
+			return node.immediate
+				? attributeBuilder.tokenImmediate(node.content, node.id)
+				: attributeBuilder.token(node.content, node.id);
 		case VARIANT:
 			return { ...node, ...attributeBuilder.variant(node.name, node.content, node.id) } as AnyRule;
 		case GROUP:

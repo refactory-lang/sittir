@@ -73,7 +73,7 @@ import type {
 	RepeatedShapeEntry,
 	RefineForm
 } from './types.ts';
-import { hasAnyField } from '../dsl/rule-transforms.ts';
+import { hasAnyField, structuralBuilder } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -441,13 +441,12 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			// External scanner symbols lex as one token by nature —
-			// `tokenized` is derivable here. `immediate` is NOT synthesized:
-			// an external whose token forbids preceding whitespace declares
-			// that via its `renderAs` body wrapped in `token.immediate(...)`
-			// (which gives it a real rule instead of this synthetic one, and
-			// the TOKEN flatten above pushes the stamp down).
-			rules[ext] = { type: PATTERN, value: '', tokenized: true } as Rule<'link'>;
+			// External scanner symbols lex as one token by nature. Immediacy
+			// is never synthesized: an external whose token forbids preceding
+			// whitespace declares that via its `renderAs` body wrapped in
+			// `token.immediate(...)`, which gives it a real rule instead of
+			// this synthetic one.
+			rules[ext] = structuralBuilder.token(structuralBuilder.pattern('')) as Rule<'link'>;
 		}
 	}
 }
@@ -1626,21 +1625,14 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				content: resolveRule(rule.content, ctx, currentName)
 			};
 
-		case TOKEN: {
-			// Flatten the wrapper, pushing its lexical facts down onto the
-			// resolved content as rule attrs (the wrapper node dies here, so
-			// without the push-down `escape_sequence`'s IMMEDIATE_TOKEN root
-			// would vanish into a bare SEQ and the immediacy fact would be
-			// unrecoverable downstream). `tokenized` always; `immediate` only
-			// when the wrapper declares it — an inner `token.immediate` nested
-			// under a plain outer `token` keeps its own stamp.
-			const content = resolveRule(rule.content, ctx, currentName);
+		case TOKEN:
+			// The wrapper survives link like every other wrapper; normalize's
+			// `token`/`tokenImmediate` builders consume it into the leaf's
+			// `tokenized`/`immediate` stamps.
 			return {
-				...content,
-				tokenized: true,
-				...(rule.immediate ? { immediate: true } : {})
+				...rule,
+				content: resolveRule(rule.content, ctx, currentName)
 			};
-		}
 
 		case ALIAS: {
 			// Every named alias routes uniformly through provenance
@@ -2909,8 +2901,10 @@ function rewriteRuleForStamp(
 	switch (rule.type) {
 		case SYMBOL: {
 			const lit = symToLit[rule.name];
-			if (lit !== undefined) return { type: STRING, value: lit };
-			if (blankStamps.has(rule.name)) return { type: CHOICE, members: [] };
+			// The literal takes the ref's place and identity; a `token(...)`
+			// wrapper around the ref survives untouched.
+			if (lit !== undefined) return structuralBuilder.string(lit, rule.id) as Rule<'link'>;
+			if (blankStamps.has(rule.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
 			return rule;
 		}
 
@@ -2918,14 +2912,14 @@ function rewriteRuleForStamp(
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const lit = symToLit[inner.name];
-				if (lit !== undefined) {
-					// Drop the field wrapper; stamp the literal inline.
-					return { type: STRING, value: lit };
-				}
+				// The field wrapper is dropped with the ref (a renderAs literal
+				// is a mandatory inline literal, never a slot); the literal
+				// takes the field's identity.
+				if (lit !== undefined) return structuralBuilder.string(lit, rule.id ?? inner.id) as Rule<'link'>;
 				// Blank-stamped: the field references a zero-width-equivalent
 				// external. Replace the whole field with blank so the parent
 				// seq/choice collapse handles cardinality.
-				if (blankStamps.has(inner.name)) return { type: CHOICE, members: [] };
+				if (blankStamps.has(inner.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 		}
@@ -2953,9 +2947,9 @@ function rewriteRuleForStamp(
 			const nonBlank = members.filter((m) => !isBlankRule(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
-			if (nonBlank.length === 0) return { type: CHOICE, members: [] };
-			if (nonBlank.length === 1) return { type: OPTIONAL, content: nonBlank[0]! };
-			return { type: OPTIONAL, content: { type: CHOICE, members: nonBlank } };
+			if (nonBlank.length === 0) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
+			if (nonBlank.length === 1) return structuralBuilder.optional(nonBlank[0]!, rule.id) as Rule<'link'>;
+			return structuralBuilder.optional(structuralBuilder.choice(nonBlank), rule.id) as Rule<'link'>;
 		}
 
 		default:
