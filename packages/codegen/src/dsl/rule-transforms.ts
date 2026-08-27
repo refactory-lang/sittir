@@ -33,13 +33,30 @@ export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray'
 // RuleBuilder — context-injected rule construction strategy
 // ---------------------------------------------------------------------------
 
+export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
+
+type Separator = RuleBase<'normalize'>['separator'];
+
 export interface RuleBuilder {
-	seq(members: AnyRule[]): AnyRule;
+	seq(members: AnyRule[], multiplicity?: LeafMultiplicity): AnyRule;
 	choice(members: AnyRule[]): AnyRule;
 	optional(content: AnyRule): AnyRule;
-	repeat(content: AnyRule): AnyRule;
-	repeat1(content: AnyRule): AnyRule;
+	repeat(content: AnyRule, separator?: Separator): AnyRule;
+	repeat1(content: AnyRule, separator?: Separator): AnyRule;
 	field(name: string, content: AnyRule): AnyRule;
+	alias(content: AnyRule, value: string, named: boolean): AnyRule;
+	token(content: AnyRule): AnyRule;
+	tokenImmediate(content: AnyRule): AnyRule;
+	prec(kind: PrecKind, value: number | string, content: AnyRule): AnyRule;
+	variant(name: string, content: AnyRule): AnyRule;
+	group(name: string, content: AnyRule): AnyRule;
+	string(value: string): AnyRule;
+	pattern(value: string): AnyRule;
+	symbol(name: string): AnyRule;
+	supertype(name: string, subtypes: AnyRule[]): AnyRule;
+	indent(): AnyRule;
+	dedent(): AnyRule;
+	newline(): AnyRule;
 }
 
 export const structuralBuilder: RuleBuilder = {
@@ -50,9 +67,32 @@ export const structuralBuilder: RuleBuilder = {
 	// specific phase — same "narrow via AnyRule, cast back" convention as
 	// rule-catalog.ts's `ruleChildren`.
 	optional: (content) => ({ type: OPTIONAL, content }) as AnyRule,
-	repeat: (content) => ({ type: REPEAT, content }) as AnyRule,
-	repeat1: (content) => ({ type: REPEAT1, content }) as AnyRule,
-	field: (name, content) => ({ type: FIELD, name, content }) as AnyRule
+	repeat: (content, separator) =>
+		(separator !== undefined ? { type: REPEAT, content, separator } : { type: REPEAT, content }) as AnyRule,
+	repeat1: (content, separator) =>
+		(separator !== undefined ? { type: REPEAT1, content, separator } : { type: REPEAT1, content }) as AnyRule,
+	field: (name, content) => ({ type: FIELD, name, content }) as AnyRule,
+	alias: (content, value, named) => ({ type: ALIAS, content, value, named }) as AnyRule,
+	token: (content) => ({ type: TOKEN, content, immediate: false }) as AnyRule,
+	tokenImmediate: (content) => ({ type: TOKEN, content, immediate: true }) as AnyRule,
+	// The evaluate-only PREC family collapses to four distinct type tags —
+	// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
+	// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
+	prec: (kind, value, content) =>
+		({
+			type: kind === 'left' ? 'PREC_LEFT' : kind === 'right' ? 'PREC_RIGHT' : kind === 'dynamic' ? 'PREC_DYNAMIC' : 'PREC',
+			content,
+			value
+		}) as AnyRule,
+	variant: (name, content) => ({ type: VARIANT, name, content }) as AnyRule,
+	group: (name, content) => ({ type: GROUP, name, content }) as AnyRule,
+	string: (value) => ({ type: STRING, value }) as AnyRule,
+	pattern: (value) => ({ type: PATTERN, value }) as AnyRule,
+	symbol: (name) => ({ type: SYMBOL, name }) as AnyRule,
+	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes }) as AnyRule,
+	indent: () => ({ type: INDENT }) as AnyRule,
+	dedent: () => ({ type: DEDENT }) as AnyRule,
+	newline: () => ({ type: NEWLINE }) as AnyRule
 };
 
 /* Phase contexts live in the compiler layer: compiler/ctx.ts holds

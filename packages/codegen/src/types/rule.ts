@@ -110,6 +110,15 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 
 			readonly aliasedFrom?: string;
 			readonly aliasNamed?: boolean;
+
+			// Precedence vocabulary stamped by the `prec` rule builder. Link
+			// still consumes PREC/PREC_LEFT/PREC_RIGHT/PREC_DYNAMIC wrapper
+			// nodes directly this step, so this attribute is reachable on the
+			// normalized view but not yet populated by the pipeline.
+			readonly prec?: {
+				readonly kind: 'left' | 'right' | 'dynamic' | undefined;
+				readonly value: number | string;
+			};
 		}
 	: {});
 

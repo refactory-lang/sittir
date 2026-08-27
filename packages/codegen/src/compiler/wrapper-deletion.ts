@@ -1,48 +1,60 @@
 /**
  * compiler/wrapper-deletion.ts — PR1 Task 2.A2
  *
- * Pushes modifier wrappers (optional / field / repeat / repeat1) down to
- * leaf attributes (fieldName, multiplicity, separator) on RuleBase.
- * The result type is RenderRule: the Rule<'link'> union minus the four wrapper
- * variants, so consumers that only see RenderRule cannot accidentally
- * re-wrap a leaf.
+ * Pushes modifier wrappers (optional / field / repeat / repeat1 / alias /
+ * token) down to leaf attributes (fieldName, multiplicity, separator, …) on
+ * RuleBase. The result type is RenderRule: the Rule<'link'> union minus the
+ * wrapper variants, so consumers that only see RenderRule cannot
+ * accidentally re-wrap a leaf.
  *
- * Design notes:
- * - Stacked wrappers are handled outside-in: the outermost wrapper's
- *   contribution is stamped first, then inner wrappers add their own.
- *   Outer multiplicity wins over inner (field-of-optional: outer=field
- *   stamps fieldName, inner=optional stamps multiplicity).
- * - Default multiplicity ('single') is NOT stamped — only non-default
- *   values are written to avoid polluting leaf rule objects.
- * - Structural rules (seq / choice / group / clause / variant / terminal /
- *   token) are recursed into so ALL wrappers in the tree are eliminated.
- * - Leaf terminals (string / pattern / symbol / enum / supertype /
- *   indent / dedent / newline / alias / token — anything not structural and
- *   not a wrapper) are returned with the accumulated modifier attributes
- *   spread onto them.
+ * `deleteWrapper` is a re-evaluation of the tree through `attributeBuilder`
+ * (compiler/simplify.ts) — the RuleBuilder strategy that implements every
+ * constructor as attribute-push instead of node construction — not an edit
+ * of the tree: `RuleWalker.map` rebuilds bottom-up so each `attributeBuilder`
+ * call receives an already-finished input and looks exactly one level down.
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RuleBase, RenderRule } from '../types/rule.ts';
+import type { AnyRule, Rule, RenderRule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isSpliceableBareSeq } from '../types/rule.ts';
-import { fuseHeadRepeatLists, combineMultiplicity } from '../dsl/rule-transforms.ts';
-import { isNonterminalRuleType } from './rule-catalog.ts';
+import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
+import { attributeBuilder, buildOptional } from './simplify.ts';
 
-interface WrapperAttrs {
-	fieldName?: string;
-	multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
-	separator?: RuleBase<'normalize'>['separator'];
-	aliasedFrom?: string;
-	aliasNamed?: boolean;
-	inline?: boolean;
-	nonterminal?: boolean;
-	optionalElement?: boolean;
-}
-
-function carrySeparatorForward(attrs: WrapperAttrs, ruleSeparator: unknown): RuleBase<'normalize'>['separator'] {
-	const rawSep = attrs.separator ?? (ruleSeparator as RuleBase<'normalize'>['separator']);
-	if (attrs.separator !== undefined || rawSep === undefined) return rawSep;
-	return { ...rawSep, value: deleteWrapperWith(rawSep.value as Rule<'link'>, {}) };
+/**
+ * Splices a raw, literally-authored nested `seq(...)` member into its
+ * parent's member list, top-down: a raw `Rule<'link'>` node structurally
+ * cannot yet carry fieldName/separator/multiplicity (those only exist on
+ * the normalize-phase view), so `isSpliceableBareSeq` here reduces to a
+ * plain `type === SEQ` check. This MUST run top-down over the raw tree: a
+ * SEQ's own flatMap
+ * decides its direct raw children's fate exactly once, then recurses
+ * into the (already-flattened) survivors independently for THEIR own
+ * one-time decision. A bottom-up equivalent (deciding a nested seq's
+ * own splice-eligibility before its parent ever looks at it) lets a
+ * grandparent re-absorb a great-grandchild the parent already
+ * absorbed, flattening levels of nesting the raw grammar never had.
+ */
+function spliceRawSeq(rule: Rule<'link'>): Rule<'link'> {
+	const bag = rule as {
+		members?: Rule<'link'>[];
+		content?: Rule<'link'>;
+		separator?: { value: Rule<'link'>; trailing?: unknown; leading?: unknown; terminated?: unknown };
+	};
+	if (rule.type === SEQ && Array.isArray(bag.members)) {
+		const flat = bag.members.flatMap((m) => (isSpliceableBareSeq(m) ? (m as SeqRule<'link'>).members : [m]));
+		return { ...rule, members: flat.map(spliceRawSeq) } as Rule<'link'>;
+	}
+	const patch: { members?: Rule<'link'>[]; content?: Rule<'link'>; separator?: typeof bag.separator } = {};
+	if (Array.isArray(bag.members)) {
+		patch.members = bag.members.map(spliceRawSeq);
+	} else if (bag.content !== undefined) {
+		patch.content = spliceRawSeq(bag.content);
+	}
+	if (bag.separator !== undefined) {
+		patch.separator = { ...bag.separator, value: spliceRawSeq(bag.separator.value) };
+	}
+	return Object.keys(patch).length > 0 ? ({ ...rule, ...patch } as Rule<'link'>) : rule;
 }
 
 /**
@@ -107,249 +119,98 @@ function detectSelfReferentialFold(
 	return { extensionFieldName, separator };
 }
 
-function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs, ownName?: string): RenderRule {
-	switch (rule.type) {
-		case OPTIONAL: {
-			// Only stamp multiplicity if not already set by an outer wrapper.
-			// Special case: optional(repeat(...)) and optional(repeat1(...)) are both
-			// array (zero-or-more) — the outer optional makes the empty case valid,
-			// overriding repeat/repeat1 semantics. repeat already produces array; the
-			// key correction is repeat1: optional(repeat1(X)) must be array, not
-			// nonEmptyArray. This mirrors the original deriveSlotsRaw `case 'optional'`
-			// special-case and collectChildFromMember behavior.
-			const innerIsRepeatVariant = rule.content.type === REPEAT || rule.content.type === REPEAT1;
-			// An optional at the ELEMENT POSITION of a separated repeat (attrs
-			// already carry a collection multiplicity AND a separator — only the
-			// repeat/repeat1 cases set both) means individual positions may be
-			// blank: `[a, , b]` array elision. The optional wrapper itself is
-			// deleted here, so record the per-position-blank fact as a stamped
-			// attribute; slot derivation projects it onto values and storage
-			// types become `Array<X | undefined>`. An optional AROUND a repeat
-			// never matches (no separator in attrs yet), nor does a seq-pushed
-			// member multiplicity (seq pushes multiplicity without separator).
-			const isElidedElementPosition =
-				(attrs.multiplicity === 'array' || attrs.multiplicity === 'nonEmptyArray') && attrs.separator !== undefined;
-			const next: WrapperAttrs = {
-				...attrs,
-				multiplicity: attrs.multiplicity ?? (innerIsRepeatVariant ? 'array' : 'optional'),
-				optionalElement: attrs.optionalElement ?? (isElidedElementPosition || undefined),
-				// optional stays recursive: it forces a slot only when its
-				// content is intrinsically nonterminal (Table 2). optional(',')
-				// → no slot; optional(symbol)/optional(repeat) → slot.
-				// isNonterminalRuleType classifies by `.type` + child shape only —
-				// phase-agnostic in practice; widen structurally (post-PR-S,
-				// RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape, so
-				// this is now an explicit phase-widening cast, not a structural
-				// coincidence — same pattern as collect-slots.ts's isSlotNode).
-				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content as Rule<'evaluate'>) || undefined)
-			};
-			return deleteWrapperWith(rule.content, next);
-		}
+/**
+ * Pre-step: when `ownName`'s own top-level body is a self-referential fold
+ * (see `detectSelfReferentialFold`), rewrite each arm's extension member in
+ * the RAW `Rule<'link'>` tree — `field(name, content)` becomes
+ * `field(name, repeat(content, separator))` — so the ordinary bottom-up
+ * rebuild below produces the array-with-separator slot uniformly, with no
+ * special-casing anywhere else in the walk.
+ */
+function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
+	if (rule.type !== CHOICE) return rule;
+	const fold = detectSelfReferentialFold(ownName, rule);
+	if (fold === undefined) return rule;
+	const members = rule.members.map((m) => {
+		// Re-check the SEQ discriminant here for TypeScript's narrowing, not
+		// as a runtime safety net (the fold's own scan already proved this).
+		if (m.type !== SEQ || m.members.length !== 3) return m;
+		const ext = m.members[2]!;
+		if (ext.type !== FIELD) return m;
+		const rewrittenExt: Rule<'link'> = {
+			type: FIELD,
+			name: ext.name,
+			content: { type: REPEAT, content: ext.content, separator: { value: fold.separator } } as Rule<'link'>
+		};
+		return { ...m, members: [m.members[0]!, m.members[1]!, rewrittenExt] };
+	});
+	return { ...rule, members };
+}
 
-		case FIELD: {
-			// Only stamp fieldName if not already set by an outer wrapper
-			const next: WrapperAttrs = {
-				...attrs,
-				fieldName: attrs.fieldName ?? rule.name,
-				// field forces a slot on its content (Table 2), incl. terminal.
-				nonterminal: true
-			};
-			return deleteWrapperWith(rule.content, next);
-		}
+const deleteWrapperWalker = new RuleWalker<AnyRule>();
 
-		case REPEAT: {
-			// Combine outer (pushed-down) multiplicity with repeat's native 'array'.
-			// combineMultiplicity('optional','array')='array'; ('nonEmptyArray','array')='array'.
-			// repeat's zero-or-more semantics always dominate an enclosing optional/nonEmptyArray.
-			// The second arg is always the 'array' collection literal here, so
-			// `combineMultiplicity`'s `isCollection(inner)` branch always applies —
-			// the result can only be 'array' | 'nonEmptyArray' (never 'single'),
-			// narrower than the function's general LeafMultiplicity return type.
-			const mult = (combineMultiplicity(attrs.multiplicity, 'array') ?? 'array') as 'array' | 'nonEmptyArray';
-			const sep = carrySeparatorForward(attrs, rule.separator);
-			// repeat forces an array slot (Table 2), incl. terminal content.
-			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
-			return deleteWrapperWith(rule.content, next);
-		}
-
-		case REPEAT1: {
-			// Same as repeat but nonEmptyArray as native.
-			// combineMultiplicity('optional','nonEmptyArray')='array' — outer optional
-			// makes the empty case valid (same as the optional case's innerIsRepeatVariant check).
-			// The second arg is always the 'nonEmptyArray' collection literal here,
-			// so the result can only be 'array' | 'nonEmptyArray' (never 'single') —
-			// see the REPEAT case above for the same narrowing rationale.
-			const mult = (combineMultiplicity(attrs.multiplicity, 'nonEmptyArray') ?? 'nonEmptyArray') as
-				| 'array'
-				| 'nonEmptyArray';
-			const sep = carrySeparatorForward(attrs, rule.separator);
-			// repeat1 forces a nonEmptyArray slot (Table 2), incl. terminal content.
-			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
-			return deleteWrapperWith(rule.content, next);
-		}
-
-		case SEQ: {
-			// Splice a nested seq carrying none of its OWN fieldName/separator/
-			// multiplicity — it's not a cardinality-carrying unit, just redundant
-			// nesting around siblings of whatever else is in this seq. Matches
-			// simplify.ts::simplifySeqRule's identical splice exactly (shared
-			// predicate — see isSpliceableBareSeq's doc comment for why the two
-			// derivations must agree).
-			const flatMembers = rule.members.flatMap((m) =>
-				isSpliceableBareSeq(m) ? (m as Rule<'link'> & { members: Rule<'link'>[] }).members : [m]
-			);
-			// Push the wrapper's multiplicity intrinsically onto each SLOT-BEARING
-			// member so collect-slots can read it directly (no seq-level inheritance
-			// needed). optional(seq(field('x',…), field('y',…))): each field gets
-			// multiplicity:'optional' pushed down; the seq node itself carries none.
-			//
-			// IMPORTANT: only push to wrappers and nonterminal references — NOT to
-			// bare string/pattern literals (co-optional literals like `'in'`, `'='`,
-			// `':'`). String members must keep rendering unconditionally alongside
-			// their slot neighbours; the template emitter drops strings with
-			// multiplicity:'optional' (line ~804 in templates.ts), which would
-			// silently lose co-optional keywords like `in` in `exec code in expr`.
-			//
-			// Relax nonEmptyArray → array when pushing to members: the at-least-one
-			// guarantee of a repeat1 applies to the seq as a WHOLE, not to each
-			// individual member.
-			const rawMult = attrs.multiplicity;
-			const multToPush = rawMult === 'nonEmptyArray' ? 'array' : rawMult;
-			const members = flatMembers.map((m) => {
-				// Only push multiplicity to potential slot-bearing members (wrappers or
-				// nonterminal rule types). String/pattern literals carry no slot; pushing
-				// would cause the template emitter to drop co-optional keywords.
-				const isSlotBearingShape =
-					m.type === FIELD ||
-					m.type === OPTIONAL ||
-					m.type === REPEAT ||
-					m.type === REPEAT1 ||
-					m.type === 'SYMBOL' ||
-					m.type === 'SUPERTYPE' ||
-					m.type === CHOICE ||
-					m.type === GROUP ||
-					m.type === VARIANT;
-				const memberAttrs: WrapperAttrs =
-					multToPush !== undefined && isSlotBearingShape ? { multiplicity: multToPush } : {};
-				return deleteWrapperWith(m, memberAttrs);
-			});
-			// Stamp the seq with accumulated attrs. Multiplicity is normally pushed
-			// onto members (above) so collect-slots reads it per-slot, and omitted
-			// from the seq node. EXCEPTION: a seq carrying BARE-LITERAL members
-			// (co-optional delimiters like `=` / `in` in `optional(seq('=', value))`)
-			// — literals can't carry multiplicity (the emitter drops optional
-			// strings), so they'd render UNCONDITIONALLY, losing co-optionality
-			// (`<div disabled>` → `disabled=`). Retain the unit multiplicity on the
-			// SEQ NODE too, so the template emitter's co-optional-unit guard gates the
-			// whole sequence on its internal slot. (Enrich's seq-stamp masked this
-			// until it was removed — see project_nonterminal_authoritative_slot_signal.)
-			const hasBareLiteral = flatMembers.some((m) => m.type === 'STRING' || m.type === 'PATTERN');
-			const seqAttrs: WrapperAttrs = {
-				fieldName: attrs.fieldName,
-				separator: attrs.separator,
-				aliasedFrom: attrs.aliasedFrom,
-				aliasNamed: attrs.aliasNamed,
-				nonterminal: attrs.nonterminal,
-				optionalElement: attrs.optionalElement,
-				multiplicity: hasBareLiteral ? multToPush : undefined
-			};
-			return stampAttrs({ ...rule, members }, seqAttrs);
-		}
-
-		case CHOICE: {
-			const fold = ownName !== undefined ? detectSelfReferentialFold(ownName, rule) : undefined;
-			const members = rule.members.map((m) => {
-				// detectSelfReferentialFold only returns a fold when every arm is
-				// confirmed to be a 3-member SEQ[field, STRING, field] — re-check
-				// the SEQ discriminant here for TypeScript's narrowing, not as a
-				// runtime safety net (the fold's own scan already proved this).
-				if (fold === undefined || m.type !== SEQ) return deleteWrapperWith(m, {});
-				const base = m.members[0]!;
-				const sepLiteral = m.members[1]!;
-				const ext = m.members[2]!;
-				const newBase = deleteWrapperWith(base, {});
-				const newSep = deleteWrapperWith(sepLiteral, {});
-				const newExt = deleteWrapperWith(ext, {
-					multiplicity: 'array',
-					separator: { value: deleteWrapperWith(fold.separator, {}) }
-				});
-				return { ...m, members: [newBase, newSep, newExt] };
-			});
-			return stampAttrs({ ...rule, members }, attrs);
-		}
-
-		case VARIANT: {
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
-		}
-
-		case GROUP: {
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
-		}
-
-		case TOKEN: {
-			// token.content is structural but not a wrapper — recurse
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
-		}
-
-		case ALIAS: {
-			// Push the alias down to the leaf, exactly like field/optional/
-			// repeat: `alias(content, value)` stamps `aliasedFrom = value`
-			// (the target name tree-sitter emits) + `aliasNamed` onto the
-			// innermost rule, and the `alias` wrapper node disappears. The
-			// wrapper-free RenderRule/SimplifiedRule then carries alias
-			// provenance as a leaf attribute — consumers no longer match a
-			// mid-tree `alias` node. Outer alias wins if already set.
-			const next: WrapperAttrs = {
-				...attrs,
-				aliasedFrom: attrs.aliasedFrom ?? rule.value,
-				aliasNamed: attrs.aliasNamed ?? rule.named,
-				// An alias confers a real visible CST kind on its content, so the
-				// inner ref must materialize, not flatten — flip inline off. Outer
-				// alias wins (??), mirroring aliasedFrom.
-				inline: attrs.inline ?? false,
-				// A named alias forces a slot on its content (Table 2).
-				nonterminal: attrs.nonterminal ?? (rule.named || undefined)
-			};
-			return deleteWrapperWith(rule.content, next);
-		}
-
-		default: {
-			// Covers: string, pattern, symbol, enum, supertype,
-			//         indent, dedent, newline
-			return stampAttrs(rule, attrs);
-		}
+/**
+ * Bottom-up rebuild: each case calls the matching `attributeBuilder` method
+ * with the node's own parameters and its already-rebuilt content/members
+ * (guaranteed by `RuleWalker.map`'s recursion order — every descendant is
+ * visited before its parent). Leaves fall through the default arm
+ * unchanged; the enclosing builder stamps them.
+ */
+function rebuild(node: AnyRule): AnyRule {
+	switch (node.type) {
+		// SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the
+		// wrapper cases below, which are consumed into their content) — the
+		// original node's own stamped facts (id, metadata, …) must ride
+		// along, so spread it under attributeBuilder's freshly-built shape.
+		case SEQ:
+			return { ...node, ...attributeBuilder.seq(node.members) } as AnyRule;
+		case CHOICE:
+			return { ...node, ...attributeBuilder.choice(node.members) } as AnyRule;
+		case OPTIONAL:
+			// `buildOptional`, not `attributeBuilder.optional`: the empty-match
+			// fold (`foldOptionalEmptyMatch`) belongs to simplify's own later
+			// construction, not RenderRule production — a raw OPTIONAL over a
+			// bare literal here stays a leaf with `multiplicity: 'optional'`.
+			return buildOptional(node.content);
+		case REPEAT:
+			// Cast, not narrow: `node: AnyRule` distributes REPEAT across
+			// every phase (its 'evaluate' view's `separator` is a bare
+			// string, not yet lifted to the structured link-phase shape),
+			// while wrapper-deletion always operates on the 'link' view —
+			// same "narrow via AnyRule, cast back" convention as
+			// rule-catalog.ts's `ruleChildren`.
+			return attributeBuilder.repeat(node.content, node.separator as RuleBase<'normalize'>['separator']);
+		case REPEAT1:
+			return attributeBuilder.repeat1(node.content, node.separator as RuleBase<'normalize'>['separator']);
+		case FIELD:
+			return attributeBuilder.field(node.name, node.content);
+		case ALIAS:
+			return attributeBuilder.alias(node.content, node.value, node.named);
+		case TOKEN:
+			// TOKEN survives structurally (like VARIANT/GROUP), not via
+			// attributeBuilder.token/tokenImmediate's attribute-push formula:
+			// `collect-slots.ts`'s AssembledToken reads `.immediate` directly
+			// off a surviving TOKEN node post-`deleteWrapper` — eliminating it
+			// here would starve that reader. `node.content` is already
+			// rebuilt (RuleWalker.map patches it before this case runs); an
+			// enclosing wrapper (e.g. field) spreads over this node like any
+			// other already-built value, stamping fieldName/nonterminal onto
+			// it without disturbing `type`/`immediate`.
+			return node;
+		case VARIANT:
+			return { ...node, ...attributeBuilder.variant(node.name, node.content) } as AnyRule;
+		case GROUP:
+			return { ...node, ...attributeBuilder.group(node.name, node.content) } as AnyRule;
+		default:
+			// string / pattern / symbol / supertype / indent / dedent / newline
+			return node;
 	}
 }
 
-function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
-	if (
-		attrs.fieldName === undefined &&
-		attrs.multiplicity === undefined &&
-		attrs.separator === undefined &&
-		attrs.aliasedFrom === undefined &&
-		attrs.aliasNamed === undefined &&
-		attrs.inline === undefined &&
-		attrs.nonterminal === undefined &&
-		attrs.optionalElement === undefined
-	) {
-		return rule as RenderRule;
-	}
-	const patch: Record<string, unknown> = {};
-	if (attrs.fieldName !== undefined) patch['fieldName'] = attrs.fieldName;
-	if (attrs.multiplicity !== undefined) patch['multiplicity'] = attrs.multiplicity;
-	if (attrs.separator !== undefined) patch['separator'] = attrs.separator;
-	if (attrs.aliasedFrom !== undefined) patch['aliasedFrom'] = attrs.aliasedFrom;
-	if (attrs.aliasNamed !== undefined) patch['aliasNamed'] = attrs.aliasNamed;
-	if (attrs.inline !== undefined) patch['inline'] = attrs.inline;
-	if (attrs.nonterminal !== undefined) patch['nonterminal'] = attrs.nonterminal;
-	if (attrs.optionalElement !== undefined) patch['optionalElement'] = attrs.optionalElement;
-	return { ...rule, ...patch } as RenderRule;
-}
 export function deleteWrapper(rule: Rule<'link'>, ownName?: string): RenderRule {
-	return deleteWrapperWith(rule, {}, ownName);
+	const folded = ownName !== undefined ? applySelfReferentialFold(ownName, rule) : rule;
+	const spliced = spliceRawSeq(folded);
+	return rebuild(deleteWrapperWalker.map(spliced as AnyRule, rebuild)) as RenderRule;
 }
 
 export function applyWrapperDeletion(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {
