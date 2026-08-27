@@ -52,6 +52,19 @@ they carry every ruling. Session memory: call `get_latest_session`.
   `examples/18-dogfood-typescript-strict.ts`, `tsconfig.json`,
   `packages/tools/validation-report.json`.
 
+- **Builders module landed — `10e12c49d`:** `dsl/builders.ts` holds the
+  `RuleBuilder` interface, `structuralBuilder` and `attributeBuilder` (+
+  `buildSeq`/`buildOptional`/`buildRepeatLike`/`isSlotPromotedLiteral`);
+  simplify, wrapper-deletion, normalize, ctx and link import from it — no
+  compiler phase imports another for construction, the wrapper-deletion ↔
+  simplify cycle is gone. `attributeBuilder.alias` follows link's form
+  (`aliasedFrom` = source, `name` = target; alias-of-literal →
+  literal-carrying SYMBOL). Byte-identical, validator exact, suite 2/2842.
+  Implemented by the `sittir-codegen` agent (Sonnet) from an exact brief;
+  its "6 pre-existing failures" were a cwd artifact — **vitest must run
+  from the repo root** (`loadGeneratedIdTables` resolves `.sittir/src/parser.c`
+  from `process.cwd()`).
+
 ## User rulings from the step-2 session (the next steps, in order)
 
 1. **Phase-typed builders.** `RuleBuilder` becomes phase-generic:
@@ -65,19 +78,13 @@ they carry every ruling. Session memory: call `get_latest_session`.
    on `RuleBase`; the type errors that produces ARE the cleanup list
    (normalize.ts's attr carries at the fan-out/factor sites, node-map's
    `deriveValuesForRule` TOKEN case, link's post-resolve TOKEN reads).
-2. **Phases never import each other; one builders module.** Create
-   `dsl/builders.ts` holding the `RuleBuilder` interface, `structuralBuilder`
-   (out of `rule-transforms.ts`) and `attributeBuilder` (+ `buildSeq` /
-   `buildOptional` / `buildRepeatLike` / `isSlotPromotedLiteral`, all
-   dsl-side deps, out of `compiler/simplify.ts`). That also ends the
-   `wrapper-deletion ↔ simplify` cycle. In the same move,
-   **`attributeBuilder.alias` follows link's convention — the canonical
-   one:** `aliasedFrom` is the SOURCE (storage) name and `name` is the
-   alias target, exactly what `resolveNamedAliasWithProvenance` produces
-   (`SYMBOL{name: target, aliasedFrom: source}`; alias-of-literal →
-   `SYMBOL{name: target, literal}`). The current `aliasedFrom: value`
-   (target-on-content) form is never produced in production (no ALIAS
-   survives link) and is simply wrong vocabulary.
+2. **Phases never import each other; one builders module.** DONE
+   (`10e12c49d`, see above). Leftover from it: `compiler/assemble.ts`
+   ~920 (`resolveHiddenRuleContent`'s "alias-of-non-symbol fallback",
+   `rule.aliasedFrom !== undefined && rule.type !== SYMBOL`) existed for
+   the old target-on-content form and is now unreachable — delete it in
+   the typing step, where the type of `aliasedFrom`'s carrier makes that
+   explicit.
 3. **Assemble never sees a wrapper.** Move the remaining `linkRules`
    consumers in assemble (branch/group construction via `inlinedRule`,
    `collectAnonymousNodes`, variant derivation, `optionalBodyKinds`) onto

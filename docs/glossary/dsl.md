@@ -1356,39 +1356,6 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 */
 ```
 
-### `armLeadingSymbolName` (`packages/codegen/src/dsl/enrich.ts:2058`)
-
-```text
-/**
- * PR 3 (2026-07-21 union-slot design): classify a bare choice-arm position
- * (unnamed — no field wrapper) and, if it is STRUCTURED (multi-slot, or a
- * symbol ref to a hidden rule whose own body is multi-slot), mint it a kind
- * identity so it can join the union-slot routing (`collect-slots.ts`'s
- * `partitionChoiceArms`) as a distinguishable member. Returns `null` when no
- * mint is needed (the arm is already a fine union member as-is — a plain
- * reference, or a single-slot body that collapses cleanly) or when minting
- * collided with an existing rule name (caller keeps the arm unchanged,
- * matching every other collision-guard in this file — no partial synthesis).
- *
- * Two cases, per the design's "mint = promote, not synthesize" distinction:
- *   - The arm is a bare `symbol(name)` ref to an EXISTING hidden rule whose
- *     body is structured — promote that rule directly (no body copy):
- *     `alias($.<existingHiddenName>, $.<freshVisibleName>)`. Exemplar:
- *     python's `dict_pattern` — the comma-separated list's REPEATED-TAIL
- *     occurrence of `choice($._key_value_pattern, $.splat_pattern)` still
- *     references the hidden `_key_value_pattern` unpromoted (the author's
- *     `dict_pattern: {'1/0/0/0': 'kv'}` override only reached the HEAD
- *     occurrence of the same choice).
- *   - The arm is itself an anonymous structured `seq`/`choice` (no separate
- *     rule name) — synthesize a fresh hidden rule from the arm's own body,
- *     same as the inline-unsafe `optional(seq)` path (`visibleGroupSynthName`).
- *
- * Deliberately NOT handled here (gate (c), a separate follow-up): a
- * FIELD-NAMED arm sitting alongside union arms in the same choice (a mixed
- * row) — this pass only mints for unnamed arms.
- */
-```
-
 ### `SeparatorFact` (`packages/codegen/src/dsl/list-patterns.ts:29`)
 
 ```text
@@ -1730,3 +1697,74 @@ reference, and the wire-facing tracking structures (`visibleGroupHiddenNames`,
 `clauseGroupOwners`). A name collision with any existing rule keeps the
 ordinal. Only the clause-group mint namespace is surveyed; a sibling that was
 registered but later unused still counts as a sibling.
+
+### `stampId` (`packages/codegen/src/dsl/builders.ts:128`)
+
+```text
+/** `id: rule.id ?? input.id` — the CURRENT wrapper rule's id wins over the
+ *  survivor's own, matching `dsl/rule-attrs.ts`'s `withAttrsFrom` id
+ *  discipline at collapse sites (`slotByRuleId` must resolve the wrapper's
+ *  id, not whatever the innermost leaf happened to carry). */
+```
+
+### `collapseSingletonSeq` (`packages/codegen/src/dsl/builders.ts:156`)
+
+```text
+/**
+ * A seq with exactly one member IS that member — the seq's own attributes
+ * merge onto it by the same composition rules every collapse site in this
+ * codebase uses: `withAttrsFrom`'s absent-only transfer for the identity
+ * and flag attributes, `combineMultiplicity` for the composing one. This is
+ * `collapseSingleMemberSeq` + `withAttrsFrom` (simplify's own later pass
+ * over the whole tree), applied here at construction instead.
+ */
+```
+
+### `slotShaped` (`packages/codegen/src/dsl/builders.ts:198`)
+
+```text
+/**
+ * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
+ * reference) or CHOICE/REPEAT/REPEAT1 (a union or a repetition). One level:
+ * a wrapper type (FIELD/ALIAS/SEQ/TOKEN/VARIANT/GROUP) is never inspected
+ * here — its own builder already stamped `nonterminal` on it when
+ * applicable, so `optional` reads that stamp instead of recursing.
+ */
+```
+
+### `buildOptional` (`packages/codegen/src/dsl/builders.ts:219`)
+
+```text
+/**
+ * optional(x) — the core formula, with no empty-match folding. This is what
+ * `deleteWrapper` (compiler/wrapper-deletion.ts) calls directly for every
+ * OPTIONAL node in a raw rule tree: RenderRule production never strips a
+ * bare literal to an empty seq (only `simplifyRules`'s own construction, via
+ * `foldOptionalEmptyMatch` below, does that later).
+ */
+```
+
+### `foldOptionalEmptyMatch` (`packages/codegen/src/dsl/builders.ts:255`)
+
+```text
+/**
+ * simplify's OWN `optional` construction (empty-match choice folding, see
+ * `simplifyChoiceRule`) additionally strips an empty-seq or bare
+ * (non-slot-promoted) string body to the empty-seq sentinel — a delimiter
+ * that can't individually carry `multiplicity: 'optional'` collapses to
+ * "renders nothing" instead. `attributeBuilder.optional` is this fold;
+ * `deleteWrapper` never reaches it (it calls `buildOptional` directly).
+ */
+```
+
+### `repeatCombine` (`packages/codegen/src/dsl/builders.ts:272`)
+
+```text
+/**
+ * repeat/repeat1's own multiplicity dominates an already-optional content
+ * (`repeat1(optional(x))` keeps the repeat1's `nonEmptyArray` — the repeat
+ * still guarantees at least one POSITION; the individual position may be
+ * blank, tracked separately via `optionalElement`) rather than composing
+ * through the lattice, which would degrade `nonEmptyArray` to `array`.
+ */
+```

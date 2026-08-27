@@ -5834,3 +5834,104 @@ source, one derivation.
  * a miss there is meaningless by construction.
  */
 ```
+
+### `applySelfReferentialFold` (`packages/codegen/src/compiler/wrapper-deletion.ts:24`)
+
+```text
+/**
+ * Pre-step: when `ownName`'s own top-level body is a self-referential fold
+ * (see `selfReferentialFoldOf`), rewrite each arm's extension member in
+ * the RAW `Rule<'link'>` tree — `field(name, content)` becomes
+ * `field(name, repeat(content, separator))` — so the ordinary bottom-up
+ * rebuild below produces the array-with-separator slot uniformly, with no
+ * special-casing anywhere else in the walk.
+ */
+```
+
+### `rebuild` (`packages/codegen/src/compiler/wrapper-deletion.ts:54`)
+
+```text
+/**
+ * Bottom-up rebuild: each case calls the matching `attributeBuilder` method
+ * with the node's own parameters and its already-rebuilt content/members
+ * (guaranteed by `RuleWalker.map`'s recursion order — every descendant is
+ * visited before its parent). Leaves fall through the default arm
+ * unchanged; the enclosing builder stamps them.
+ */
+```
+
+### `reportKindIdStampMisses` (`packages/codegen/src/compiler/link.ts:647`)
+
+```text
+/**
+ * The unstampable-leaf report — the per-build phantom-kind inventory. One row
+ * per class keeps `grammar-diagnostics.json` diffs readable; the sorted name
+ * lists live in `details`. Expected members today: kinds synthesized after
+ * tree-sitter generate (evaluate's field-enums), `inline:`-listed rules, and
+ * VAPORIZED rules — these lack a parser-issued kindId by construction, not by
+ * bug (every OTHER kind name should carry one — that's the invariant this
+ * report ratchets against).
+ */
+```
+
+### `foldAliasLiteralsIntoEnumRules` (`packages/codegen/src/compiler/link.ts:856`)
+
+```text
+/**
+ * An enum kind's member set is its GRAMMAR-WIDE realization set, not just
+ * its defining rule's literals. An alias-of-terminal occurrence
+ * (`alias('$', $.token_tree_punctuation)`, collapsed by resolveRule to a
+ * literal-carrying SYMBOL) realizes the enum kind with a text the defining
+ * rule never lists — without folding it in, the emitted transport enum has
+ * no variant for that text and every read stub carrying it fails
+ * deserialization ("unknown enum payload"). Append the missing texts as
+ * ordinary STRING members so AssembledEnum, the transport enum, and every
+ * kindEnum consumer see one uniform member list.
+ */
+```
+
+### `collectTerminalAliasWireIds` (`packages/codegen/src/compiler/link.ts:1060`)
+
+```text
+/**
+ * Kind name → anon-token wire ids from `alias('tok', $.kind)` occurrences
+ * anywhere in the linked rule tree. `stampSymbolRefKindIds` records each
+ * such occurrence as a literal SYMBOL with `kindId` (the alias-target
+ * display symbol) plus `aliasedFromId` (the token's own grammar symbol —
+ * the id the wire delivers); this collects those stamps kind-wide so
+ * decode arms can accept the token ids even where the occurrence itself
+ * is swallowed by supertype expansion (e.g. python's inlined
+ * `keyword_identifier` body: `match`-as-identifier never appears as a
+ * slot value, only as the `identifier` subtype). Registered under both
+ * kind spellings (occurrence name + its `_`-toggled twin) so lookups by
+ * either surface find it.
+ */
+```
+
+### `absorbSuffixSeparatedList` (`packages/codegen/src/compiler/link.ts:2211`)
+
+```text
+/**
+ * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
+ * its own separator, with an optional final unterminated element) into one
+ * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
+ * (`x (sep x)*`) for the opposite separator orientation; `separatorOf`
+ * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
+ * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
+ * needs to recognize the two windows that ALSO carry a standalone head and/or
+ * an unterminated final element beside that already-stamped repeat:
+ *
+ *  - `[seq(x, sep), repeat(x){sep, trailing:'mandatory'}, optional(x)]` — a
+ *    mandatory first element (needed to disambiguate the construct, e.g.
+ *    rust's `(x,)` single-element tuple) absorbs into the repeat's own
+ *    minimum, promoting it to `repeat1`.
+ *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — no standalone
+ *    head (the construct is valid with zero elements, e.g. an empty
+ *    `macro_rules! m {}` body); stays a plain `repeat`.
+ *
+ * Both windows relax `trailing` from `'mandatory'` (true only of the repeat's
+ * OWN body in isolation) to `'optional'` (true of the whole merged list, once
+ * the trailing unterminated element is accounted for) — the same relaxation
+ * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
+ */
+```
