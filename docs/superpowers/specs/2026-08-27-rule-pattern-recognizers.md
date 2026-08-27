@@ -65,6 +65,53 @@ Private today, promoted to the catalog (the four in the table above plus
 `peelOptional*`, `optionalStringLiteral`, `listSeparatorOfOptionalSeq`,
 `armStartsWithSymbol` from enrich).
 
+## Motivating consumer: separator possession moves from link into `seq`
+
+Today link lifts separators in a pass that reaches into shapes
+(`liftSeparators`, `liftCommaSep`, `absorbTrailingSeparator`,
+`absorbSuffixSeparatedList`), and normalize's `fuseHeadRepeatLists` fixes
+up what that pass left split. Under the builders the same fact is decided
+where it is created:
+
+```
+seq(repeat(x), ',')          repeat builds { ...x, multiplicity: 'array' }
+                             seq sees a finished list-shaped member next to a
+                             literal and stamps { ...x, multiplicity, separator }
+```
+
+`repeat` decides multiplicity from its content; `seq` decides possession
+from its contents — a member carrying a collection multiplicity, adjacent
+to a literal — one level down each. The literal is folded into that
+member's `separator` (`leading` / `trailing` by position, `terminated` for
+the `(x sep)+ x?` family) and dropped as a member.
+
+What this has to respect:
+
+- **Enrich needs separator facts before tree-sitter runs.** Separated-list
+  *naming* (the `_elements` mints, `collectSeparatedListNameProposals`)
+  happens in the DSL layer, which executes in both pipelines, so that
+  detection cannot move to normalize. It is the same recognizer,
+  `separatorOf`, called twice: by enrich for naming, by `seq` for
+  possession. One derivation, two call sites — today there are two
+  derivations.
+- **A promoted delimiter is a slot, not a literal.** Python's
+  `for_in_clause` trailing comma arrives at `seq` as a `FIELD`; `seq` sees
+  a slot beside the list and does not fold. That is
+  `emitFieldCarryingFactory`'s "a field-level list may not own a flank
+  delimiter" stated once at the producer instead of enforced at the
+  consumer.
+- **Link-phase consumers of the lifted `separator`** — the lift functions
+  above and normalize's `fuseHeadRepeatLists` — move with it into
+  `seq`/`repeat` or become recognizer calls. Inventory them before the
+  move; the first implementation of each recognizer is the link function
+  relocated, not rewritten.
+
+This is what the memory records as "SSOT flip blocked on the lift move":
+moving the lift is what unblocks separator ownership. It lands as its own
+step after the catalog, gated byte-identical; a kind where link and the
+builder disagree is one of the separator-possession family and gets its
+own diagnosis rather than a reconciliation inside the pass.
+
 ## What does NOT change
 
 - Builders (`structuralBuilder` / `attributeBuilder`) keep their contract;
@@ -88,8 +135,15 @@ Private today, promoted to the catalog (the four in the table above plus
 
 ## Sequencing
 
-Land after the wrapper-deletion builder PR is green. Do it as the first
-half of routing link's `resolveRule` through the builders: link's TOKEN /
-ALIAS / PREC cases are exactly the sites that need `tokenized`,
-`aliasedFrom` and `prec` as builder-stamped facts rather than push-down,
-and they need the catalog to recognize what they are consuming.
+Land after the wrapper-deletion builder PR is green, in three gated steps:
+
+1. **The catalog** — recognizers moved and renamed, call sites swapped,
+   byte-identical.
+2. **Link's `resolveRule` through the builders** — its TOKEN / ALIAS /
+   PREC cases are the sites that need `tokenized`, `aliasedFrom` and
+   `prec` as builder-stamped facts rather than push-down; the
+   wrapper-deletion TOKEN case (left structural because `collect-slots`'
+   `AssembledToken` still reads the wrapper node) is wired here.
+3. **Separator possession into `seq`** — the section above; the lift
+   functions relocate into recognizers, `fuseHeadRepeatLists` goes with
+   them.

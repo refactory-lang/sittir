@@ -23,12 +23,15 @@ Every non-structural builder is one expression over its input:
 
 ```ts
 optional(x)        → { ...x, multiplicity: combineMultiplicity('optional', x.multiplicity),
-                        nonterminal: true }
-                     // unconditional: a bare optional literal has already been
-                     // absorbed by link's separator lift as a leading/trailing
-                     // delimiter, so nothing reaching normalize needs the
-                     // content-shape check. If the gate moves, that is the
-                     // counterexample — report it, do not reinstate the check.
+                        nonterminal: x.nonterminal || slotShaped(x) || undefined }
+                     // slotShaped(x): x is a SYMBOL / SUPERTYPE / PATTERN
+                     // (a reference) or a CHOICE / REPEAT / REPEAT1 (a union or
+                     // a repetition). A literal is never a slot by itself. One
+                     // level: x's own builder already stamped x.nonterminal for
+                     // anything deeper. The unconditional form was tried and
+                     // gated: it mints a slot for typescript's `optional('?.')`
+                     // (`qmark_dot` on _type_query_subscript_expression) — a
+                     // bare co-optional literal is deliberately not a slot.
 repeat(x, sep?)    → { ...x, multiplicity: combineMultiplicity('array', x.multiplicity),
                         separator: sep ?? x.separator, nonterminal: true,
                         optionalElement: elided(x, sep) }
@@ -83,19 +86,27 @@ retains the multiplicity on the seq node itself only when a bare literal
 member is present (the co-optional-delimiter guard). Both rules are `seq`'s
 own semantics and live in its body.
 
-**Separator recognition lives in `seq`, one level above the repeat.** Because
-`optional` no longer inspects its content, a bare literal under an optional
-arrives at `seq` as a finished member with `multiplicity: 'optional'` and
-`nonterminal: true`. `seq` is the builder that can see it *next to* a
-member with a collection multiplicity and a `separator`, and that adjacency
-is the whole fact: the literal is that list's `leading` (before) or
-`trailing` (after) delimiter, folded into the neighbour's `separator` and
-dropped as a member. Link's separator lift performs the same recognition
-earlier in the pipeline today; this step makes `seq` the owner of the rule
-in normalize as well, so a shape that reaches normalize un-lifted is
-handled by the same one-level check rather than by a content-shape test
-buried in `optional`. If no such shape reaches normalize the rule is inert
-and the gate holds unchanged.
+**Splicing is `seq`'s own recognition, at every level.** A bare nested seq
+(`spliceableMembersOf`, today's `isSpliceableBareSeq`) is redundant
+nesting by definition — seq is associative — so `seq` splices such a
+finished member in, and does so at every level because every level is a
+`seq`. The previous walk spliced once, top-down, and never re-examined
+what its own splice exposed; that was a traversal quirk, not a rule about
+sequences, and a top-down pre-pass reproducing it is not kept. Where the
+full flattening changes `node-model.json5` (typescript's `number`, a
+three-deep chain) the change is accepted only if it is render-inert: the
+validator numbers and the rendered templates stay byte-identical.
+
+**`seq` does not recognize separators in this step.** By normalize every
+optional literal is already one of three finished things: lifted by link
+into a neighbour's `separator` (gone from the members); promoted by the
+grammar to a slot (arrives as `FIELD`, which `field` stamps — python's
+`for_in_clause` trailing comma — and which a field-level list may not
+absorb, as `emitFieldCarryingFactory` enforces); or a bare `STRING` with
+`multiplicity: 'optional'` and no `nonterminal`, a co-optional literal the
+seq-level multiplicity guard renders conditionally. Separator possession
+moves into `seq` when the lift itself moves (see the recognizers spec),
+not as a second decider alongside link.
 
 `choice(members)` — finished members; no attrs of its own.
 `detectSelfReferentialFold` is grammar-shape recognition, not construction:
