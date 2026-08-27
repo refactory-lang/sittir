@@ -46,6 +46,20 @@ string / pattern / symbol / supertype / indent / dedent / newline
                    → leaves: returned as-is; the enclosing builder stamps them
 ```
 
+**Rule identity is the current rule's, not the input's.** `id` is a fact
+of the node being built: every builder stamps `id: rule.id ?? input.id`,
+where `rule` is the wrapper it is replacing. A field's id is what
+`slotByRuleId` resolves against — the collapse sites' `withAttrsFrom`
+already carries the discarded wrapper's id onto the survivor for exactly
+this reason — and spreading the input alone would keep the leaf's id and
+lose the wrapper's, the gap `assemble.ts`'s back-compat name-matching walk
+over raw `FieldRule` ids exists to paper over. Slots keep every id they
+came from in `sourceRuleIds`, so nothing is lost at the slot level. With
+the id threaded through the builder the back-compat walk is dead, and it
+is removed in this step: `slotByRuleId` must resolve every `FieldRule` id
+from `sourceRuleIds` alone (`DBG_SLOT_MISS=1` reports zero misses across
+all three grammars, same as before the removal).
+
 Three composition rules, and only three:
 
 | attribute class | rule | attributes |
