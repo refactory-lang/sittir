@@ -1768,3 +1768,38 @@ registered but later unused still counts as a sibling.
  * through the lattice, which would degrade `nonEmptyArray` to `array`.
  */
 ```
+
+### `buildSeq` (`packages/codegen/src/dsl/builders.ts:144`)
+
+```text
+/**
+ * seq(members, mult?) — receives already-rebuilt members. Splices a bare
+ * nested seq (`isSpliceableBareSeq`: no fieldName/separator/multiplicity of
+ * its own) into the member list first, at THIS level — since members arrive
+ * bottom-up, a member that is itself a multi-level chain of bare seqs has
+ * already flattened its own nested bare seqs one level down by the time its
+ * own `buildSeq` call returned, so splicing here reaches every level: a
+ * three-deep `seq(seq(seq(x,y),z),w)` fully flattens to `seq(x,y,z,w)`, one
+ * splice decision per level, not one pass over the whole tree. The
+ * at-least-one guarantee of a repeat1 belongs to the seq as a whole, not to
+ * each individual member — enclosing multiplicity is pushed onto each
+ * slot-bearing member through the lattice AFTER splicing (a bare,
+ * non-slot-promoted string/pattern literal is a co-optional delimiter and
+ * is skipped — the template emitter drops a literal stamped
+ * `multiplicity: 'optional'`), and retained on the seq node itself only
+ * when a bare literal member survives (the co-optional-delimiter guard:
+ * literals can't individually carry the multiplicity, so the whole unit
+ * needs it instead).
+ */
+```
+
+### `buildRepeatLike` (`packages/codegen/src/dsl/builders.ts:219`)
+
+```text
+/**
+ * (Also the seq branch of `buildOptional`.) A wrapper directly around a seq is not a leaf spread: the enclosing
+ * multiplicity must reach the seq's own slot-bearing members (Table 2's
+ * per-field storage), so this re-enters `buildSeq` with the combined
+ * multiplicity instead of stamping the seq node as if it were opaque.
+ */
+```
