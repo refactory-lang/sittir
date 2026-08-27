@@ -263,6 +263,16 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 		if (info.flatMembers === members) continue;
 		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
 	}
+	// Exclusive field-choice distribution, BEFORE loop 2: the mint below lifts
+	// choice arms into kinds, so the alternatives have to be arms by the time
+	// it runs — afterwards they are already fused onto one kind as independent
+	// optional fields. Reads `enrichedRules` for the hidden marker helpers it
+	// inlines, so it sees them fully field-wrapped.
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule || enrichSkip.has(name)) continue;
+		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
+	}
 	// Loop 2: clause/group hoisting + base-grammar un-aliasing, per rule in the
 	// same order loop 1 ran. The separated-list name counts computed from the
 	// fully field-wrapped grammar are what let a mint claim a bare element
@@ -1323,6 +1333,110 @@ export function nativeRuleFn<F>(...names: string[]): F {
 function makeField(name: string, content: unknown): Rule {
 	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
 	return { ...field(name, content), metadata: makeRuleMetadata({ fieldSource: 'enriched' }) };
+}
+
+/** The branches of a choice whose every arm is a single, distinctly-named
+ *  field — the shape that means "exactly one of these". Reached either
+ *  directly or through a hidden rule, since such a choice is usually spelled
+ *  as a helper (`_line_doc_comment_marker`) rather than inline.
+ *
+ *  Two arms sharing a field name are ONE slot with a union value, not a set
+ *  of alternatives, so a repeated name declines. */
+function exclusiveFieldChoiceBranches(member: Rule, rulesBag: Record<string, Rule>): readonly Rule[] | undefined {
+	let target: Rule | undefined = member;
+	if (isSymbolType((member as { type?: string }).type)) {
+		const name = (member as { name?: string }).name;
+		if (typeof name !== 'string' || !name.startsWith('_')) return undefined;
+		target = rulesBag[name];
+	}
+	if (!target || !isChoiceType((target as { type?: string }).type)) return undefined;
+	const branches = (target as unknown as { members?: Rule[] }).members;
+	if (!Array.isArray(branches) || branches.length < 2) return undefined;
+	const names = new Set<string>();
+	for (const branch of branches) {
+		if (!isFieldType((branch as { type?: string }).type)) return undefined;
+		const name = (branch as { name?: string }).name;
+		if (typeof name !== 'string') return undefined;
+		names.add(name);
+	}
+	return names.size === branches.length ? branches : undefined;
+}
+
+/**
+ * Exclusive field-choice distribution — `seq(…, choice(field('a', X),
+ * field('b', Y)), …)` becomes `choice(seq(…, field('a', X), …), seq(…,
+ * field('b', Y), …))`.
+ *
+ * Arms that are each a single, distinctly-named field are ALTERNATIVES: only
+ * one of them is ever parsed. Left as a choice sitting inside a sequence they
+ * land on ONE kind as N independent optional fields, and that flattening
+ * admits combinations no parse produces — several of the fields at once, or
+ * none of them. Rust's doc comments are the case in hand: `///` and `//!` are
+ * the `outer`/`inner` marker fields of a single `line_comment` arm, so the
+ * flattened kind accepts both markers together, and also neither, the latter
+ * rendering a doc-comment kind as a plain `//` comment.
+ *
+ * Distributing the choice over its sequence gives each alternative its own
+ * arm, which the mint downstream lifts into its own kind. Exclusivity then
+ * rides on the kind rather than on a convention nothing enforces, and each
+ * alternative gains a constructor a caller can name.
+ *
+ * Language-identical: `seq(A, choice(X, Y), B)` and `choice(seq(A, X, B),
+ * seq(A, Y, B))` accept the same strings.
+ */
+function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Rule>): Rule {
+	const seqFn = nativeRuleFn<(...args: unknown[]) => Rule>('seq');
+	const choiceFn = nativeRuleFn<(...args: unknown[]) => Rule>('choice');
+
+	/** One rule again, choosing between the alternatives when there are
+	 *  several. */
+	const collapse = (alts: readonly Rule[]): Rule =>
+		alts.length === 1
+			? alts[0]!
+			: ({ ...choiceFn(...alts), metadata: makeRuleMetadata({ author: 'enrich' }) } as Rule);
+
+	/** The alternatives a node expands to — normally just itself. A sequence
+	 *  carrying an exclusive field choice expands to one alternative per
+	 *  branch, and an enclosing CHOICE absorbs them as its own arms instead of
+	 *  nesting a second choice inside one arm. That flattening is what keeps
+	 *  the arms individually addressable, both to the mint that lifts them
+	 *  into kinds and to the variant paths that name them. */
+	const expand = (node: Rule): readonly Rule[] => {
+		if (!node || typeof node !== 'object') return [node];
+		// Rebuild children first, so a choice uncovered deeper has already
+		// distributed by the time this level inspects its own members.
+		let out: Rule = node;
+		const members = (node as unknown as { members?: Rule[] }).members;
+		const content = (node as unknown as { content?: Rule }).content;
+		if (Array.isArray(members)) {
+			const next = isChoiceType((node as { type?: string }).type)
+				? members.flatMap((m) => expand(m))
+				: members.map((m) => collapse(expand(m)));
+			if (next.length !== members.length || next.some((m, i) => m !== members[i]))
+				out = { ...node, members: next } as Rule;
+		} else if (content && typeof content === 'object') {
+			const next = collapse(expand(content));
+			if (next !== content) out = { ...node, content: next } as Rule;
+		}
+
+		if (!isSeqType((out as { type?: string }).type)) return [out];
+		const seqMembers = (out as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(seqMembers)) return [out];
+		for (let i = 0; i < seqMembers.length; i += 1) {
+			const branches = exclusiveFieldChoiceBranches(seqMembers[i]!, rulesBag);
+			if (!branches) continue;
+			// Re-expand each arm, so a sequence carrying two such choices
+			// distributes over both.
+			return branches.flatMap((branch) => {
+				const swapped = [...seqMembers];
+				swapped[i] = branch;
+				return expand(seqFn(...swapped));
+			});
+		}
+		return [out];
+	};
+
+	return collapse(expand(rule));
 }
 
 /**

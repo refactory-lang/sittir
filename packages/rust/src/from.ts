@@ -164,7 +164,7 @@ export const _fromMap = {
 	escape_sequence: coerceToEscapeSequence,
 	boolean_literal: coerceToBooleanLiteral,
 	line_comment: coerceToLineComment$impl,
-	block_comment: coerceToBlockComment,
+	block_comment: coerceToBlockComment$impl,
 	identifier: coerceToIdentifier,
 	shebang: coerceToShebang,
 	self: coerceToSelf,
@@ -1135,8 +1135,10 @@ const _K59: readonly string[] = ['_or_pattern_binary', '_or_pattern_prefix'];
 const _K60: readonly string[] = ['integer_literal', 'float_literal'];
 const _K61: readonly string[] = ['escape_sequence', 'string_content'];
 const _K62: readonly string[] = ['_line_comment_regular_dslash', '_line_comment_content'];
-const _K63: readonly string[] = ['_line_comment_doc'];
-const _K64: readonly string[] = [
+const _K63: readonly string[] = ['_line_comment_doc_outer', '_line_comment_doc_inner'];
+const _K64: readonly string[] = ['_block_comment_content'];
+const _K65: readonly string[] = ['_block_comment_doc_outer', '_block_comment_doc_inner'];
+const _K66: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1150,8 +1152,8 @@ const _K64: readonly string[] = [
 	'_token_tree_punctuation',
 	'_token_keywords'
 ];
-const _K65: readonly string[] = ['string_literal', 'raw_string_literal', 'token_tree_punctuation', 'delim_token_tree'];
-const _K66: readonly string[] = [
+const _K67: readonly string[] = ['string_literal', 'raw_string_literal', 'token_tree_punctuation', 'delim_token_tree'];
+const _K68: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1163,7 +1165,7 @@ const _K66: readonly string[] = [
 	'crate',
 	'_reserved_identifier'
 ];
-const _K67: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
+const _K69: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
 
 function resolveExpressionStatementWithSemi_expression(
 	value: T.ExpressionStatementWithSemi.LooseConfig['expression']
@@ -1280,7 +1282,7 @@ function coerceToTokenTreeBrace(input?: T.TokenTreeBrace.Loose): ReturnType<type
 function resolveDelimTokenTreeParen_delimTokens(
 	value: T.DelimTokenTreeParen.LooseConfig['delimTokens']
 ): T.DelimTokenTreeParen['_delim_tokens'] {
-	return _resolveMany<T.DelimTokens>(value, _K64, _K65);
+	return _resolveMany<T.DelimTokens>(value, _K66, _K67);
 }
 
 function coerceToDelimTokenTreeParen(
@@ -1296,7 +1298,7 @@ function coerceToDelimTokenTreeParen(
 function resolveDelimTokenTreeBracket_delimTokens(
 	value: T.DelimTokenTreeBracket.LooseConfig['delimTokens']
 ): T.DelimTokenTreeBracket['_delim_tokens'] {
-	return _resolveMany<T.DelimTokens>(value, _K64, _K65);
+	return _resolveMany<T.DelimTokens>(value, _K66, _K67);
 }
 
 function coerceToDelimTokenTreeBracket(
@@ -1312,7 +1314,7 @@ function coerceToDelimTokenTreeBracket(
 function resolveDelimTokenTreeBrace_delimTokens(
 	value: T.DelimTokenTreeBrace.LooseConfig['delimTokens']
 ): T.DelimTokenTreeBrace['_delim_tokens'] {
-	return _resolveMany<T.DelimTokens>(value, _K64, _K65);
+	return _resolveMany<T.DelimTokens>(value, _K66, _K67);
 }
 
 function coerceToDelimTokenTreeBrace(
@@ -1480,7 +1482,7 @@ function coerceToFieldPatternNamed(input: T.FieldPatternNamed.Loose): ReturnType
 }
 
 function resolveRangePatternArm2_left(value: T.RangePatternArm2.LooseConfig['left']): T.RangePatternArm2['_left'] {
-	return _resolveOne<T.LiteralPattern | T.Path>(value, _K66, _K67);
+	return _resolveOne<T.LiteralPattern | T.Path>(value, _K68, _K69);
 }
 
 function resolveRangePatternArm2_content(
@@ -1512,7 +1514,7 @@ function resolveRangePatternPrefix_content(
 function resolveRangePatternPrefix_right(
 	value: T.RangePatternPrefix.LooseConfig['right']
 ): T.RangePatternPrefix['_right'] {
-	return _resolveOne<T.LiteralPattern | T.Path>(value, _K66, _K67);
+	return _resolveOne<T.LiteralPattern | T.Path>(value, _K68, _K69);
 }
 
 function coerceToRangePatternPrefix(input: T.RangePatternPrefix.Loose): ReturnType<typeof F.buildRangePatternPrefix> {
@@ -1561,20 +1563,6 @@ function coerceToOrPatternPrefix(
 			)
 		)
 	);
-}
-
-function resolveLineCommentDoc_doc(value: T.LineCommentDoc.LooseConfig['doc']): T.LineCommentDoc['_doc'] {
-	return _resolveOneLeaf<T.LineDocContent>(value, '_line_doc_content');
-}
-
-function coerceToLineCommentDoc(input: T.LineCommentDoc.Loose): ReturnType<typeof F.buildLineCommentDoc> {
-	if (!_isLooseConfig<T.LineCommentDoc.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildLineCommentDoc>;
-	return F.buildLineCommentDoc({
-		outer: _resolveBooleanKeyword(input.outer),
-		inner: _resolveBooleanKeyword(input.inner),
-		doc: _requireField('_line_comment_doc', 'doc', resolveLineCommentDoc_doc(input.doc))
-	});
 }
 
 export function resolveSourceFile_shebang(value: T.SourceFile.LooseConfig['shebang']): T.SourceFile['_shebang'] {
@@ -5490,11 +5478,17 @@ export function coerceToBooleanLiteral(input: string | T.BooleanLiteral): Return
 }
 
 export function resolveLineComment_content(value: T.LineComment.LooseConfig['content']): T.LineComment['_content'] {
-	return _resolveOne<T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent>(value, _K62, _K63);
+	return _resolveOne<T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent>(
+		value,
+		_K62,
+		_K63
+	);
 }
 
 function coerceToLineComment$impl(
-	input: (T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) | T.LineComment.Loose
+	input:
+		| (T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent)
+		| T.LineComment.Loose
 ): ReturnType<typeof F.buildLineComment> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.LineComment)
 		return input as unknown as ReturnType<typeof F.buildLineComment>;
@@ -5502,7 +5496,7 @@ function coerceToLineComment$impl(
 		_requireField(
 			'line_comment',
 			'content',
-			_resolveOne<T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent>(
+			_resolveOne<T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K62,
 				_K63
@@ -5513,40 +5507,43 @@ function coerceToLineComment$impl(
 
 export const coerceToLineComment: typeof coerceToLineComment$impl & {
 	regularDslash: typeof F.buildLineComment.regularDslash;
-	doc: ((...args: _Args<typeof coerceToLineCommentDoc>) => ReturnType<typeof coerceToLineComment$impl>) & {
-		strict: typeof F.buildLineComment.doc;
-	};
+	docOuter: typeof F.buildLineComment.docOuter;
+	docInner: typeof F.buildLineComment.docInner;
 	content: typeof F.buildLineComment.content;
 } = attachProps(coerceToLineComment$impl, {
 	regularDslash: F.buildLineComment.regularDslash,
-	doc: attachProps(
-		(...args: _Args<typeof coerceToLineCommentDoc>) =>
-			coerceToLineComment$impl(coerceToLineCommentDoc(...args) as T.LineCommentDoc),
-		{ strict: F.buildLineComment.doc }
-	),
+	docOuter: F.buildLineComment.docOuter,
+	docInner: F.buildLineComment.docInner,
 	content: F.buildLineComment.content
 });
 
-export function resolveBlockComment_blockCommentArm(
-	value: T.BlockComment.LooseConfig['blockCommentArm']
-): T.BlockComment['_block_comment_arm'] {
-	return _resolveOneBranch<T.BlockCommentArm>(value, '_block_comment_arm');
+export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['content']): T.BlockComment['_content'] {
+	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(value, _K64, _K65);
 }
 
-export function coerceToBlockComment(
-	input?: T.BlockCommentArm | T.BlockComment.Loose
+function coerceToBlockComment$impl(
+	input?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | T.BlockComment.Loose
 ): ReturnType<typeof F.buildBlockComment> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.BlockComment)
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
 	return F.buildBlockComment(
-		_resolveOneBranch<T.BlockCommentArm>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'blockCommentArm' in input
-				? input.blockCommentArm
-				: input,
-			'_block_comment_arm'
+		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+			_K64,
+			_K65
 		)
 	);
 }
+
+export const coerceToBlockComment: typeof coerceToBlockComment$impl & {
+	docOuter: typeof F.buildBlockComment.docOuter;
+	docInner: typeof F.buildBlockComment.docInner;
+	content: typeof F.buildBlockComment.content;
+} = attachProps(coerceToBlockComment$impl, {
+	docOuter: F.buildBlockComment.docOuter,
+	docInner: F.buildBlockComment.docInner,
+	content: F.buildBlockComment.content
+});
 
 export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typeof F.buildIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;

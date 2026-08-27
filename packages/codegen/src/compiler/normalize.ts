@@ -118,7 +118,9 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 
 	const walk = (rule: Rule<'link'>, ownerTwinTarget: string | undefined): void => {
 		if (rule.type === SYMBOL) {
-			const name = rule.name;
+			// The kind the ref stores under — an aliased ref keeps its
+			// `aliasedFrom` rule alive, whatever name it displays as.
+			const name = rule.aliasedFrom ?? rule.name;
 			if (isHidden(name)) {
 				refcount.set(name, (refcount.get(name) ?? 0) + 1);
 				if (ownerTwinTarget !== undefined && name === ownerTwinTarget) twinned.add(name);
@@ -823,7 +825,10 @@ function countReferences(rules: Record<string, Rule<'link'>>): Map<string, numbe
 function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 	switch (rule.type) {
 		case SYMBOL:
-			visit(rule.name);
+			// A ref depends on the kind that STORES it, not the name it
+			// displays under: an aliased ref still needs its `aliasedFrom`
+			// rule to survive, so that is the kind the reference counts for.
+			visit(rule.aliasedFrom ?? rule.name);
 			return;
 		case SEQ:
 		case CHOICE:

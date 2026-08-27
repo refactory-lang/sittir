@@ -990,19 +990,27 @@ const _b$fieldPattern: typeof FR.coerceToFieldPattern & {
 const _b$lineComment: typeof FR.coerceToLineComment & {
 	strict: typeof F.buildLineComment;
 	regularDslash: typeof FR.coerceToLineComment.regularDslash;
-	doc: typeof FR.coerceToLineComment.doc;
+	docOuter: typeof FR.coerceToLineComment.docOuter;
+	docInner: typeof FR.coerceToLineComment.docInner;
 	content: typeof FR.coerceToLineComment.content;
 } = attachProps(FR.coerceToLineComment, {
 	strict: F.buildLineComment,
 	regularDslash: FR.coerceToLineComment.regularDslash,
-	doc: FR.coerceToLineComment.doc,
+	docOuter: FR.coerceToLineComment.docOuter,
+	docInner: FR.coerceToLineComment.docInner,
 	content: FR.coerceToLineComment.content
 });
 
 const _b$blockComment: typeof FR.coerceToBlockComment & {
 	strict: typeof F.buildBlockComment;
+	docOuter: typeof FR.coerceToBlockComment.docOuter;
+	docInner: typeof FR.coerceToBlockComment.docInner;
+	content: typeof FR.coerceToBlockComment.content;
 } = attachProps(FR.coerceToBlockComment, {
-	strict: F.buildBlockComment
+	strict: F.buildBlockComment,
+	docOuter: FR.coerceToBlockComment.docOuter,
+	docInner: FR.coerceToBlockComment.docInner,
+	content: FR.coerceToBlockComment.content
 });
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.

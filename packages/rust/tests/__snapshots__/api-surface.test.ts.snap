@@ -254,7 +254,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "resolveBinaryExpression_left": "function",
   "resolveBinaryExpression_operator": "function",
   "resolveBinaryExpression_right": "function",
-  "resolveBlockComment_blockCommentArm": "function",
+  "resolveBlockComment_content": "function",
   "resolveBlock_label": "function",
   "resolveBlock_statements": "function",
   "resolveBlock_trailingExpression": "function",

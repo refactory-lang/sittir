@@ -1162,6 +1162,11 @@ function enrich(baseInput, config) {
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule || enrichSkip.has(name)) continue;
+    enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
+  }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
   separatedListEnrichSkip = enrichSkip;
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
@@ -1716,6 +1721,58 @@ function nativeRuleFn(...names) {
 function makeField(name, content) {
   const field2 = nativeRuleFn("field");
   return { ...field2(name, content), metadata: makeRuleMetadata({ fieldSource: "enriched" }) };
+}
+function exclusiveFieldChoiceBranches(member, rulesBag) {
+  let target = member;
+  if (isSymbolType(member.type)) {
+    const name = member.name;
+    if (typeof name !== "string" || !name.startsWith("_")) return void 0;
+    target = rulesBag[name];
+  }
+  if (!target || !isChoiceType(target.type)) return void 0;
+  const branches = target.members;
+  if (!Array.isArray(branches) || branches.length < 2) return void 0;
+  const names = /* @__PURE__ */ new Set();
+  for (const branch of branches) {
+    if (!isFieldType(branch.type)) return void 0;
+    const name = branch.name;
+    if (typeof name !== "string") return void 0;
+    names.add(name);
+  }
+  return names.size === branches.length ? branches : void 0;
+}
+function distributeExclusiveFieldChoices(rule, rulesBag) {
+  const seqFn = nativeRuleFn("seq");
+  const choiceFn = nativeRuleFn("choice");
+  const collapse = (alts) => alts.length === 1 ? alts[0] : { ...choiceFn(...alts), metadata: makeRuleMetadata({ author: "enrich" }) };
+  const expand = (node) => {
+    if (!node || typeof node !== "object") return [node];
+    let out = node;
+    const members = node.members;
+    const content = node.content;
+    if (Array.isArray(members)) {
+      const next = isChoiceType(node.type) ? members.flatMap((m) => expand(m)) : members.map((m) => collapse(expand(m)));
+      if (next.length !== members.length || next.some((m, i) => m !== members[i]))
+        out = { ...node, members: next };
+    } else if (content && typeof content === "object") {
+      const next = collapse(expand(content));
+      if (next !== content) out = { ...node, content: next };
+    }
+    if (!isSeqType(out.type)) return [out];
+    const seqMembers = out.members;
+    if (!Array.isArray(seqMembers)) return [out];
+    for (let i = 0; i < seqMembers.length; i += 1) {
+      const branches = exclusiveFieldChoiceBranches(seqMembers[i], rulesBag);
+      if (!branches) continue;
+      return branches.flatMap((branch) => {
+        const swapped = [...seqMembers];
+        swapped[i] = branch;
+        return expand(seqFn(...swapped));
+      });
+    }
+    return [out];
+  };
+  return collapse(expand(rule));
 }
 function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
   const preExistingFieldNames = /* @__PURE__ */ new Set();

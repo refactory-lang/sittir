@@ -420,7 +420,11 @@ export function childElementType(node: { children: readonly AssembledNonterminal
 				continue;
 			}
 			if (component.kind === 'missing') {
-				parts.add(JSON.stringify(component.rawKind));
+				// A kind with no node of its own (an external scanner token,
+				// say) still gets a stub type under this name from types.ts,
+				// so the value is typed as that stub — never as the raw kind
+				// name spelled as a string literal.
+				parts.add(`T.${component.value}`);
 				continue;
 			}
 			let ref = nodeMap.nodes.get(component.rawKind);

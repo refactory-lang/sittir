@@ -1096,9 +1096,8 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		//      them but codegen has no rule body to assemble (e.g.
 		//      `_as_pattern_target` in python). These behave like
 		//      externals from the consumer's POV.
-		//   3. Inlined-before-assemble kinds referenced by overrides —
-		//      a known deferred case (see e.g. `_block_comment_content`
-		//      in rust). Should be cleaned up at the override layer.
+		//   3. Kinds inlined before assemble that an override still
+		//      references by name.
 		//
 		// Distinguishing (1) from (2)/(3) without threading the parser
 		// kind catalog isn't possible here. Logging a single line per

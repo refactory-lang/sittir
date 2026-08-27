@@ -3026,10 +3026,13 @@ describe('line_comment namespaced constructors', () => {
 		expect(node.$type).toBe(TSKindId.LineComment);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('doc builds the parent', () => {
-		const node = ir.lineComment.doc({
-			doc: { $type: TSKindId.LineDocContent, $text: 'test', $source: 2, $named: true } as any
-		});
+	it('docOuter builds the parent', () => {
+		const node = ir.lineComment.docOuter('test');
+		expect(node.$type).toBe(TSKindId.LineComment);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('docInner builds the parent', () => {
+		const node = ir.lineComment.docInner('test');
 		expect(node.$type).toBe(TSKindId.LineComment);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -3045,6 +3048,24 @@ describe('block_comment', () => {
 		const node = ir.blockComment();
 		expect(node.$type).toBe(TSKindId.BlockComment);
 		expect(node.$source).toBe(2);
+	});
+});
+
+describe('block_comment namespaced constructors', () => {
+	it('docOuter builds the parent', () => {
+		const node = ir.blockComment.docOuter('test');
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('docInner builds the parent', () => {
+		const node = ir.blockComment.docInner('test');
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('content builds the parent', () => {
+		const node = ir.blockComment.content('test');
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

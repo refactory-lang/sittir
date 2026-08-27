@@ -404,15 +404,26 @@ export type RustGrammar = {
 		named: true;
 		extra: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'block_comment_arm'; named: true }] };
+		children: {
+			multiple: false;
+			required: false;
+			types: [{ type: 'block_comment_doc_inner'; named: true }, { type: 'block_comment_doc_outer'; named: true }];
+		};
 	};
-	readonly block_comment_arm: {
-		type: 'block_comment_arm';
+	readonly block_comment_doc_inner: {
+		type: 'block_comment_doc_inner';
 		named: true;
 		fields: {
 			doc: { multiple: false; required: false; types: [{ type: 'doc_comment'; named: true }] };
-			inner: { multiple: false; required: false; types: [{ type: 'inner_doc_comment_marker'; named: true }] };
-			outer: { multiple: false; required: false; types: [{ type: 'outer_doc_comment_marker'; named: true }] };
+			inner: { multiple: false; required: true; types: [{ type: 'inner_doc_comment_marker'; named: true }] };
+		};
+	};
+	readonly block_comment_doc_outer: {
+		type: 'block_comment_doc_outer';
+		named: true;
+		fields: {
+			doc: { multiple: false; required: false; types: [{ type: 'doc_comment'; named: true }] };
+			outer: { multiple: false; required: true; types: [{ type: 'outer_doc_comment_marker'; named: true }] };
 		};
 	};
 	readonly boolean_literal: { type: 'boolean_literal'; named: true; fields: {} };
@@ -1235,18 +1246,26 @@ export type RustGrammar = {
 			required: true;
 			types: [
 				{ type: 'line_comment_content'; named: true },
-				{ type: 'line_comment_doc'; named: true },
+				{ type: 'line_comment_doc_inner'; named: true },
+				{ type: 'line_comment_doc_outer'; named: true },
 				{ type: 'line_comment_regular_dslash'; named: true }
 			];
 		};
 	};
-	readonly line_comment_doc: {
-		type: 'line_comment_doc';
+	readonly line_comment_doc_inner: {
+		type: 'line_comment_doc_inner';
 		named: true;
 		fields: {
 			doc: { multiple: false; required: true; types: [{ type: 'doc_comment'; named: true }] };
-			inner: { multiple: false; required: false; types: [{ type: 'inner_doc_comment_marker'; named: true }] };
-			outer: { multiple: false; required: false; types: [{ type: 'outer_doc_comment_marker'; named: true }] };
+			inner: { multiple: false; required: true; types: [{ type: 'inner_doc_comment_marker'; named: true }] };
+		};
+	};
+	readonly line_comment_doc_outer: {
+		type: 'line_comment_doc_outer';
+		named: true;
+		fields: {
+			doc: { multiple: false; required: true; types: [{ type: 'doc_comment'; named: true }] };
+			outer: { multiple: false; required: true; types: [{ type: 'outer_doc_comment_marker'; named: true }] };
 		};
 	};
 	readonly line_comment_regular_dslash: { type: 'line_comment_regular_dslash'; named: true; fields: {} };

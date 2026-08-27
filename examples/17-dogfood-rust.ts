@@ -43,30 +43,30 @@ export function useEdit() {
 		})
 		.$trivia({
 			leading: [
-				ir.lineComment.doc({ inner: true, doc: ' Byte-level `apply_edits` on a source string.' }),
-				ir.lineComment.doc({ inner: true, doc: '' }),
-				ir.lineComment.doc({ inner: true, doc: ' Sorts edits by `start_pos` descending, applies each as a raw byte' }),
-				ir.lineComment.doc({ inner: true, doc: ' splice on a `String`. Descending order guarantees earlier edits' }),
-				ir.lineComment.doc({ inner: true, doc: " aren't shifted by later ones, so consumers can produce edits in any" }),
-				ir.lineComment.doc({ inner: true, doc: ' order and let us canonicalize.' }),
-				ir.lineComment.doc({ inner: true, doc: '' }),
-				ir.lineComment.doc({ inner: true, doc: ' # Overlap handling' }),
-				ir.lineComment.doc({ inner: true, doc: '' }),
-				ir.lineComment.doc({ inner: true, doc: " Overlap detection is **explicitly** the consumer's responsibility —" }),
-				ir.lineComment.doc({ inner: true, doc: ' see contracts/napi-api.md `applyEdits` contract. This function does' }),
-				ir.lineComment.doc({ inner: true, doc: ' NOT validate that edits are disjoint; overlapping edits fall through' }),
-				ir.lineComment.doc({ inner: true, doc: ' to last-wins behavior (after sort-descending, the edit with the' }),
-				ir.lineComment.doc({ inner: true, doc: ' greatest `start_pos` applies first, and subsequent edits whose' }),
-				ir.lineComment.doc({ inner: true, doc: ' ranges still reference valid offsets within the intermediate string' }),
-				ir.lineComment.doc({ inner: true, doc: ' apply afterward).' }),
-				ir.lineComment.doc({ inner: true, doc: '' }),
-				ir.lineComment.doc({ inner: true, doc: ' # Validation' }),
-				ir.lineComment.doc({ inner: true, doc: '' }),
-				ir.lineComment.doc({ inner: true, doc: ' Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).' }),
-				ir.lineComment.doc({ inner: true, doc: ' Violations return `Err` rather than panic so the napi wrapper can' }),
-				ir.lineComment.doc({ inner: true, doc: ' surface a typed error to JS. UTF-8 boundary correctness is also' }),
-				ir.lineComment.doc({ inner: true, doc: ' checked on the splice (via `String::replace_range`) — non-char-' }),
-				ir.lineComment.doc({ inner: true, doc: ' boundary ranges produce a `Result::Err` instead of panicking.' }),
+				ir.lineComment.docInner(' Byte-level `apply_edits` on a source string.'),
+				ir.lineComment.docInner(''),
+				ir.lineComment.docInner(' Sorts edits by `start_pos` descending, applies each as a raw byte'),
+				ir.lineComment.docInner(' splice on a `String`. Descending order guarantees earlier edits'),
+				ir.lineComment.docInner(" aren't shifted by later ones, so consumers can produce edits in any"),
+				ir.lineComment.docInner(' order and let us canonicalize.'),
+				ir.lineComment.docInner(''),
+				ir.lineComment.docInner(' # Overlap handling'),
+				ir.lineComment.docInner(''),
+				ir.lineComment.docInner(" Overlap detection is **explicitly** the consumer's responsibility —"),
+				ir.lineComment.docInner(' see contracts/napi-api.md `applyEdits` contract. This function does'),
+				ir.lineComment.docInner(' NOT validate that edits are disjoint; overlapping edits fall through'),
+				ir.lineComment.docInner(' to last-wins behavior (after sort-descending, the edit with the'),
+				ir.lineComment.docInner(' greatest `start_pos` applies first, and subsequent edits whose'),
+				ir.lineComment.docInner(' ranges still reference valid offsets within the intermediate string'),
+				ir.lineComment.docInner(' apply afterward).'),
+				ir.lineComment.docInner(''),
+				ir.lineComment.docInner(' # Validation'),
+				ir.lineComment.docInner(''),
+				ir.lineComment.docInner(' Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).'),
+				ir.lineComment.docInner(' Violations return `Err` rather than panic so the napi wrapper can'),
+				ir.lineComment.docInner(' surface a typed error to JS. UTF-8 boundary correctness is also'),
+				ir.lineComment.docInner(' checked on the splice (via `String::replace_range`) — non-char-'),
+				ir.lineComment.docInner(' boundary ranges produce a `Result::Err` instead of panicking.'),
 			],
 		});
 }
@@ -81,7 +81,7 @@ export function spliceErrorDerive() {
 			// from() form and no wrap-table row. `#[derive]` is the closest shape.
 			.attributeItem({ attribute: { path: 'derive' } })
 			.$trivia({
-				leading: [ir.lineComment.doc({ outer: true, doc: ' Error returned from [`apply_edits`] when an edit is invalid.' })],
+				leading: [ir.lineComment.docOuter(' Error returned from [`apply_edits`] when an edit is invalid.')],
 			})
 	);
 }
@@ -107,7 +107,7 @@ export function spliceErrorEnum() {
 						ir.fieldDeclaration({ name: 'end', type: 'u32' })
 					),
 				})
-				.$trivia({ leading: [ir.lineComment.doc({ outer: true, doc: ' `end_pos < start_pos` — the edit range is reversed.' })] }),
+				.$trivia({ leading: [ir.lineComment.docOuter(' `end_pos < start_pos` — the edit range is reversed.')] }),
 			ir
 				.enumVariant({
 					name: 'OutOfBounds',
@@ -116,7 +116,7 @@ export function spliceErrorEnum() {
 						ir.fieldDeclaration({ name: 'source_len', type: 'usize' })
 					),
 				})
-				.$trivia({ leading: [ir.lineComment.doc({ outer: true, doc: ' `end_pos > source.len()` — edit reaches past end of source.' })] }),
+				.$trivia({ leading: [ir.lineComment.docOuter(' `end_pos > source.len()` — edit reaches past end of source.')] }),
 			ir
 				.enumVariant({
 					name: 'NonCharBoundary',
@@ -125,7 +125,7 @@ export function spliceErrorEnum() {
 						ir.fieldDeclaration({ name: 'end', type: 'u32' })
 					),
 				})
-				.$trivia({ leading: [ir.lineComment.doc({ outer: true, doc: " `start_pos` or `end_pos` isn't a UTF-8 char boundary." })] })
+				.$trivia({ leading: [ir.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.")] })
 		),
 	});
 }
@@ -294,9 +294,9 @@ export function applyEditsFn() {
 		})
 		.$trivia({
 			leading: [
-				ir.lineComment.doc({ outer: true, doc: ' Apply a batch of edits to a source string, returning the modified' }),
-				ir.lineComment.doc({ outer: true, doc: ' source. See module docs for the sort-descending strategy and the' }),
-				ir.lineComment.doc({ outer: true, doc: ' consumer-owned overlap contract.' }),
+				ir.lineComment.docOuter(' Apply a batch of edits to a source string, returning the modified'),
+				ir.lineComment.docOuter(' source. See module docs for the sort-descending strategy and the'),
+				ir.lineComment.docOuter(' consumer-owned overlap contract.'),
 			],
 		});
 }

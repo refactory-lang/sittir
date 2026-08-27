@@ -381,7 +381,7 @@ export interface BinaryExpressionTransport {
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
-export interface BlockCommentArmTransport {
+export interface BlockCommentDocInnerTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -389,9 +389,18 @@ export interface BlockCommentArmTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _outer?: SlotValue<OuterBlockDocCommentMarkerTransport>
-  _inner?: SlotValue<InnerBlockDocCommentMarkerTransport>
-  _doc?: SlotValue<Box<AnyTransport>>
+  _doc?: SlotValue<BlockCommentContentTransport>
+}
+
+export interface BlockCommentDocOuterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _doc?: SlotValue<BlockCommentContentTransport>
 }
 
 export interface BlockCommentTransport {
@@ -402,7 +411,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block_comment_arm?: SlotValue<BlockCommentArmTransport>
+  _content?: SlotValue<BlockCommentContentTransportSlot>
 }
 
 export interface BlockTransport {
@@ -1330,7 +1339,7 @@ export interface LifetimeTransport {
   _identifier: SlotValue<IdentifierTransport>
 }
 
-export interface LineCommentDocTransport {
+export interface LineCommentDocInnerTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1338,8 +1347,17 @@ export interface LineCommentDocTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _outer?: SlotValue<OuterLineDocCommentMarkerTransport, true>
-  _inner?: SlotValue<InnerLineDocCommentMarkerTransport>
+  _doc: SlotValue<LineDocContentTransport>
+}
+
+export interface LineCommentDocOuterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
   _doc: SlotValue<LineDocContentTransport>
 }
 
@@ -1481,6 +1499,17 @@ export interface MatchBlockArmsTransport {
   '$triviaData'?: TransportTrivia
   _last_arm: SlotValue<Box<LastMatchArmTransport>>
   _match_arm?: Array<SlotValue<MatchArmTransport>>
+}
+
+export interface MatchBlockOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _match_block_arms: SlotValue<MatchBlockArmsTransport>
 }
 
 export interface MatchBlockTransport {

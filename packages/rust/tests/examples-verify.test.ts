@@ -182,8 +182,22 @@ describe('examples/17 dogfood rust (splice.rs)', () => {
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
 	it('builds both doc-comment forms through line_comment', () => {
-		expect(ir.lineComment.doc({ outer: true, doc: ' hi' }).$render()).toBe('/// hi');
-		expect(ir.lineComment.doc({ inner: true, doc: ' hi' }).$render()).toBe('//! hi');
+		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi');
+		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi');
+	});
+	// `///` and `//!` are alternatives, so each is its own arm kind carrying
+	// only the doc text. Were they one kind with the markers as two optional
+	// fields, a caller could set both — `///!` — or neither, which renders a
+	// doc-comment kind as a plain `//` comment.
+	it('carries the marker as the arm identity, not as a settable field', () => {
+		const outer = ir.lineComment.docOuter(' hi').content();
+		const inner = ir.lineComment.docInner(' hi').content();
+
+		expect(outer.$type).not.toBe(inner.$type);
+		for (const arm of [outer, inner]) {
+			expect(arm).not.toHaveProperty('outer');
+			expect(arm).not.toHaveProperty('inner');
+		}
 	});
 	it('builds a plain line comment through the same parent', () => {
 		expect(ir.lineComment.content(' hi').$render()).toBe('// hi');

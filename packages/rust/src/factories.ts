@@ -6518,10 +6518,12 @@ export function buildBooleanLiteral(text: 'true' | 'false') {
 	);
 }
 
-export type LineCommentBuildArgs = [value: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent];
+export type LineCommentBuildArgs = [
+	value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+];
 export type LineCommentLooseArgs = [
 	value: LooseValue<
-		T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent,
+		T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -6532,12 +6534,14 @@ export type LineCommentBuilt = T.LineComment & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent): LineCommentBuilt;
+		content(
+			value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+		): LineCommentBuilt;
 	};
 } & _NodeMethods;
 
 function buildLineComment$impl(
-	value: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent
+	value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
 ): LineCommentBuilt {
 	const _content = value;
 	return withMethods(
@@ -6548,8 +6552,9 @@ function buildLineComment$impl(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) =>
-						buildLineComment$impl(value)
+					content: (
+						value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+					) => buildLineComment$impl(value)
 				}
 			},
 			{
@@ -6563,58 +6568,58 @@ function buildLineComment$impl(
 export const buildLineComment = attachProps(buildLineComment$impl, {
 	regularDslash: (text: string) =>
 		buildLineComment$impl(buildLineCommentRegularDslash(text) as T.LineCommentRegularDslash),
-	doc: (config: T.LineCommentDoc.Config) => buildLineComment$impl(buildLineCommentDoc(config) as T.LineCommentDoc),
+	docOuter: (text: string) => buildLineComment$impl(buildLineCommentDocOuter(text) as T.LineCommentDocOuter),
+	docInner: (text: string) => buildLineComment$impl(buildLineCommentDocInner(text) as T.LineCommentDocInner),
 	content: (text: string) => buildLineComment$impl(buildLineCommentContent(text) as T.LineCommentContent)
 });
 
-export type BlockCommentBuildArgs = [value?: T.BlockCommentArm];
+export type BlockCommentBuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent];
 export type BlockCommentLooseArgs = [
-	value?: LooseValue<T.BlockCommentArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value?: LooseValue<
+		T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent,
+		T.LeafScalarMap,
+		T.LeafStringMap,
+		T.NamespaceMap
+	>
 ];
 
 export type BlockCommentBuilt = T.BlockComment & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		blockCommentArm(value?: T.BlockCommentArm): BlockCommentBuilt;
+		content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent): BlockCommentBuilt;
 	};
 } & _NodeMethods;
 
-export function buildBlockComment(value?: T.BlockCommentArm): ReturnType<typeof _buildBlockComment>;
-export function buildBlockComment(_config?: Partial<T.BlockCommentArm.Config>): ReturnType<typeof _buildBlockComment>;
-export function buildBlockComment(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildBlockComment(args[0] as T.BlockCommentArm);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentArm as const);
-	return prebuilt
-		? _buildBlockComment(args[0] as T.BlockCommentArm)
-		: _buildBlockComment((buildBlockCommentArm as (...a: unknown[]) => unknown)(...args) as T.BlockCommentArm);
-}
-function _buildBlockComment(value?: T.BlockCommentArm): BlockCommentBuilt {
-	const _block_comment_arm = value;
+function buildBlockComment$impl(
+	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent
+): BlockCommentBuilt {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.BlockComment as const,
 				$source: 2 as const,
 				$named: true as const,
-				_block_comment_arm,
+				_content,
 				$with: {
-					blockCommentArm: (value?: T.BlockCommentArm) => buildBlockComment(value)
+					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) =>
+						buildBlockComment$impl(value)
 				}
 			},
 			{
-				blockCommentArm: () => _block_comment_arm
+				content: () => _content
 			}
 		),
 		methodsEngine
 	);
 }
+
+export const buildBlockComment = attachProps(buildBlockComment$impl, {
+	docOuter: (text: string) => buildBlockComment$impl(buildBlockCommentDocOuter(text) as T.BlockCommentDocOuter),
+	docInner: (text: string) => buildBlockComment$impl(buildBlockCommentDocInner(text) as T.BlockCommentDocInner),
+	content: (text: string) => buildBlockComment$impl(buildBlockCommentContent(text) as T.BlockCommentContent)
+});
 
 export type IdentifierBuildArgs = [text: string];
 export type IdentifierLooseArgs = [text: string];
@@ -8074,50 +8079,6 @@ export function buildArrayExpressionArm(config: T.ArrayExpressionArm.Config): Ar
 			{
 				expression: () => _expression,
 				length: () => _length
-			}
-		),
-		methodsEngine
-	);
-}
-
-export type BlockCommentArmBuildArgs = [config?: Partial<T.BlockCommentArm.Config>];
-export type BlockCommentArmLooseArgs = [config?: T.BlockCommentArm.Loose];
-
-export type BlockCommentArmBuilt = T.BlockCommentArm & {
-	readonly $source: 2;
-	readonly $named: true;
-	readonly $with: {
-		outer(value?: NonNullable<Parameters<typeof buildBlockCommentArm>[0]>['outer']): BlockCommentArmBuilt;
-		inner(value?: NonNullable<Parameters<typeof buildBlockCommentArm>[0]>['inner']): BlockCommentArmBuilt;
-		doc(value?: T.BlockCommentContent): BlockCommentArmBuilt;
-	};
-} & _NodeMethods;
-
-export function buildBlockCommentArm(config: Partial<T.BlockCommentArm.Config> = {}): BlockCommentArmBuilt {
-	const _outer = coerceBooleanKeywordStorage(config.outer);
-	const _inner = coerceBooleanKeywordStorage(config.inner);
-	const _doc = config.doc;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BlockCommentArm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_outer,
-				_inner,
-				_doc,
-				$with: {
-					outer: (value?: NonNullable<Parameters<typeof buildBlockCommentArm>[0]>['outer']) =>
-						buildBlockCommentArm({ ...config, outer: value }),
-					inner: (value?: NonNullable<Parameters<typeof buildBlockCommentArm>[0]>['inner']) =>
-						buildBlockCommentArm({ ...config, inner: value }),
-					doc: (value?: T.BlockCommentContent) => buildBlockCommentArm({ ...config, doc: value })
-				}
-			},
-			{
-				outer: () => _outer,
-				inner: () => _inner,
-				doc: () => _doc
 			}
 		),
 		methodsEngine
@@ -9746,43 +9707,97 @@ export function buildLineCommentRegularDslash(text: string) {
 	);
 }
 
-export type LineCommentDocBuildArgs = [config: T.LineCommentDoc.Config];
-export type LineCommentDocLooseArgs = [config: T.LineCommentDoc.Loose];
+export type LineCommentDocOuterBuildArgs = [value: T.LineDocContent];
+export type LineCommentDocOuterLooseArgs = [
+	value: LooseValue<T.LineDocContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+];
 
-export type LineCommentDocBuilt = T.LineCommentDoc & {
+export type LineCommentDocOuterBuilt = T.LineCommentDocOuter & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		outer(value?: NonNullable<Parameters<typeof buildLineCommentDoc>[0]>['outer']): LineCommentDocBuilt;
-		inner(value?: NonNullable<Parameters<typeof buildLineCommentDoc>[0]>['inner']): LineCommentDocBuilt;
-		doc(value: T.LineDocContent): LineCommentDocBuilt;
+		doc(value: T.LineDocContent): LineCommentDocOuterBuilt;
 	};
 } & _NodeMethods;
 
-export function buildLineCommentDoc(config: T.LineCommentDoc.Config): LineCommentDocBuilt {
-	const _outer = coerceBooleanKeywordStorage(config.outer);
-	const _inner = coerceBooleanKeywordStorage(config.inner);
-	const _doc = config.doc;
+export function buildLineCommentDocOuter(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocOuter>;
+export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
+export function buildLineCommentDocOuter(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildLineCommentDocOuter(args[0] as T.LineDocContent);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
+	return prebuilt
+		? _buildLineCommentDocOuter(args[0] as T.LineDocContent)
+		: _buildLineCommentDocOuter((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+}
+function _buildLineCommentDocOuter(value: T.LineDocContent): LineCommentDocOuterBuilt {
+	const _doc = value;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.LineCommentDoc as const,
+				$type: TSKindId.LineCommentDocOuter as const,
 				$source: 2 as const,
 				$named: true as const,
-				_outer,
-				_inner,
 				_doc,
 				$with: {
-					outer: (value?: NonNullable<Parameters<typeof buildLineCommentDoc>[0]>['outer']) =>
-						buildLineCommentDoc({ ...config, outer: value }),
-					inner: (value?: NonNullable<Parameters<typeof buildLineCommentDoc>[0]>['inner']) =>
-						buildLineCommentDoc({ ...config, inner: value }),
-					doc: (value: T.LineDocContent) => buildLineCommentDoc({ ...config, doc: value })
+					doc: (value: T.LineDocContent) => buildLineCommentDocOuter(value)
 				}
 			},
 			{
-				outer: () => _outer,
-				inner: () => _inner,
+				doc: () => _doc
+			}
+		),
+		methodsEngine
+	);
+}
+
+export type LineCommentDocInnerBuildArgs = [value: T.LineDocContent];
+export type LineCommentDocInnerLooseArgs = [
+	value: LooseValue<T.LineDocContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+];
+
+export type LineCommentDocInnerBuilt = T.LineCommentDocInner & {
+	readonly $source: 2;
+	readonly $named: true;
+	readonly $with: {
+		doc(value: T.LineDocContent): LineCommentDocInnerBuilt;
+	};
+} & _NodeMethods;
+
+export function buildLineCommentDocInner(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocInner>;
+export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
+export function buildLineCommentDocInner(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildLineCommentDocInner(args[0] as T.LineDocContent);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
+	return prebuilt
+		? _buildLineCommentDocInner(args[0] as T.LineDocContent)
+		: _buildLineCommentDocInner((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+}
+function _buildLineCommentDocInner(value: T.LineDocContent): LineCommentDocInnerBuilt {
+	const _doc = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.LineCommentDocInner as const,
+				$source: 2 as const,
+				$named: true as const,
+				_doc,
+				$with: {
+					doc: (value: T.LineDocContent) => buildLineCommentDocInner(value)
+				}
+			},
+			{
 				doc: () => _doc
 			}
 		),
@@ -9805,6 +9820,108 @@ export function buildLineCommentContent(text: string) {
 			$named: true as const,
 			$text: text
 		},
+		methodsEngine
+	);
+}
+
+export type BlockCommentDocOuterBuildArgs = [value?: T.BlockCommentContent];
+export type BlockCommentDocOuterLooseArgs = [
+	value?: LooseValue<T.BlockCommentContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+];
+
+export type BlockCommentDocOuterBuilt = T.BlockCommentDocOuter & {
+	readonly $source: 2;
+	readonly $named: true;
+	readonly $with: {
+		doc(value?: T.BlockCommentContent): BlockCommentDocOuterBuilt;
+	};
+} & _NodeMethods;
+
+export function buildBlockCommentDocOuter(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocOuter>;
+export function buildBlockCommentDocOuter(text: string): ReturnType<typeof _buildBlockCommentDocOuter>;
+export function buildBlockCommentDocOuter(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
+	return prebuilt
+		? _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent)
+		: _buildBlockCommentDocOuter(
+				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
+			);
+}
+function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): BlockCommentDocOuterBuilt {
+	const _doc = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BlockCommentDocOuter as const,
+				$source: 2 as const,
+				$named: true as const,
+				_doc,
+				$with: {
+					doc: (value?: T.BlockCommentContent) => buildBlockCommentDocOuter(value)
+				}
+			},
+			{
+				doc: () => _doc
+			}
+		),
+		methodsEngine
+	);
+}
+
+export type BlockCommentDocInnerBuildArgs = [value?: T.BlockCommentContent];
+export type BlockCommentDocInnerLooseArgs = [
+	value?: LooseValue<T.BlockCommentContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+];
+
+export type BlockCommentDocInnerBuilt = T.BlockCommentDocInner & {
+	readonly $source: 2;
+	readonly $named: true;
+	readonly $with: {
+		doc(value?: T.BlockCommentContent): BlockCommentDocInnerBuilt;
+	};
+} & _NodeMethods;
+
+export function buildBlockCommentDocInner(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocInner>;
+export function buildBlockCommentDocInner(text: string): ReturnType<typeof _buildBlockCommentDocInner>;
+export function buildBlockCommentDocInner(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
+	return prebuilt
+		? _buildBlockCommentDocInner(args[0] as T.BlockCommentContent)
+		: _buildBlockCommentDocInner(
+				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
+			);
+}
+function _buildBlockCommentDocInner(value?: T.BlockCommentContent): BlockCommentDocInnerBuilt {
+	const _doc = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BlockCommentDocInner as const,
+				$source: 2 as const,
+				$named: true as const,
+				_doc,
+				$with: {
+					doc: (value?: T.BlockCommentContent) => buildBlockCommentDocInner(value)
+				}
+			},
+			{
+				doc: () => _doc
+			}
+		),
 		methodsEngine
 	);
 }
@@ -10508,6 +10625,23 @@ export function buildFloatLiteral(text: string) {
 	);
 }
 
+export type BlockCommentContentBuildArgs = [text: string];
+export type BlockCommentContentLooseArgs = [text: string];
+
+export function buildBlockCommentContent(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_block_comment_content: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.BlockCommentContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export type LineDocContentBuildArgs = [text: string];
 export type LineDocContentLooseArgs = [text: string];
 
@@ -10719,7 +10853,6 @@ export type FluentKindMap = {
 	_attribute_arm: AttributeArmBuilt;
 	_visibility_modifier_group: VisibilityModifierGroupBuilt;
 	_array_expression_arm: ArrayExpressionArmBuilt;
-	_block_comment_arm: BlockCommentArmBuilt;
 	_tuple_type_elements: TupleTypeElementsBuilt;
 	_tuple_expression_elements: TupleExpressionElementsBuilt;
 	_token_tree_punctuation: T.TokenTreePunctuation;
@@ -10755,8 +10888,11 @@ export type FluentKindMap = {
 	_expression_statement_with_semi: ExpressionStatementWithSemiBuilt;
 	_match_arm_with_comma: MatchArmWithCommaBuilt;
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
-	_line_comment_doc: LineCommentDocBuilt;
+	_line_comment_doc_outer: LineCommentDocOuterBuilt;
+	_line_comment_doc_inner: LineCommentDocInnerBuilt;
 	_line_comment_content: T.LineCommentContent;
+	_block_comment_doc_outer: BlockCommentDocOuterBuilt;
+	_block_comment_doc_inner: BlockCommentDocInnerBuilt;
 	_token_tree_pattern_paren: TokenTreePatternParenBuilt;
 	_token_tree_pattern_bracket: TokenTreePatternBracketBuilt;
 	_token_tree_pattern_brace: TokenTreePatternBraceBuilt;
@@ -10779,6 +10915,7 @@ export type FluentKindMap = {
 	raw_string_literal_content: T.RawStringLiteralContent;
 	_raw_string_literal_end: T.RawStringLiteralEnd;
 	float_literal: T.FloatLiteral;
+	_block_comment_content: T.BlockCommentContent;
 	_line_doc_content: T.LineDocContent;
 	_error_sentinel: T.ErrorSentinel;
 };
@@ -10960,7 +11097,6 @@ export const _factoryMap = {
 	_attribute_arm: buildAttributeArm,
 	_visibility_modifier_group: buildVisibilityModifierGroup,
 	_array_expression_arm: buildArrayExpressionArm,
-	_block_comment_arm: buildBlockCommentArm,
 	_tuple_type_elements: buildTupleTypeElements,
 	_tuple_expression_elements: buildTupleExpressionElements,
 	_token_tree_punctuation: buildTokenTreePunctuation,
@@ -10996,8 +11132,11 @@ export const _factoryMap = {
 	_expression_statement_with_semi: buildExpressionStatementWithSemi,
 	_match_arm_with_comma: buildMatchArmWithComma,
 	_line_comment_regular_dslash: buildLineCommentRegularDslash,
-	_line_comment_doc: buildLineCommentDoc,
+	_line_comment_doc_outer: buildLineCommentDocOuter,
+	_line_comment_doc_inner: buildLineCommentDocInner,
 	_line_comment_content: buildLineCommentContent,
+	_block_comment_doc_outer: buildBlockCommentDocOuter,
+	_block_comment_doc_inner: buildBlockCommentDocInner,
 	_token_tree_pattern_paren: buildTokenTreePatternParen,
 	_token_tree_pattern_bracket: buildTokenTreePatternBracket,
 	_token_tree_pattern_brace: buildTokenTreePatternBrace,
@@ -11020,6 +11159,7 @@ export const _factoryMap = {
 	raw_string_literal_content: buildRawStringLiteralContent,
 	_raw_string_literal_end: buildRawStringLiteralEnd,
 	float_literal: buildFloatLiteral,
+	_block_comment_content: buildBlockCommentContent,
 	_line_doc_content: buildLineDocContent,
 	_error_sentinel: buildErrorSentinel
 } as const;

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 367,
+  "nodeCount": 371,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -182,14 +182,16 @@
       "definedBy": "override",
       "childKind": {
         "line_comment_regular_dslash": "regular_dslash",
-        "line_comment_doc": "doc",
+        "line_comment_doc_outer": "doc_outer",
+        "line_comment_doc_inner": "doc_inner",
         "line_comment_content": "content"
       }
     },
     "block_comment": {
       "definedBy": "override",
       "childKind": {
-        "block_comment_arm": "arm"
+        "block_comment_doc_outer": "doc_outer",
+        "block_comment_doc_inner": "doc_inner"
       }
     }
   },
@@ -403,9 +405,6 @@
     "_attribute_arm.arguments": {
       "token_tree": "delim_token_tree"
     },
-    "_block_comment_arm.doc": {
-      "doc_comment": "_block_comment_content"
-    },
     "_tuple_type_elements.type": {
       "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
@@ -426,11 +425,11 @@
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
     },
-    "_line_comment_doc.outer": {
-      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
+    "_block_comment_doc_outer.doc": {
+      "doc_comment": "_block_comment_content"
     },
-    "_line_comment_doc.inner": {
-      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
+    "_block_comment_doc_inner.doc": {
+      "doc_comment": "_block_comment_content"
     },
     "_delim_token_tree_paren.delim_tokens": {
       "token_tree": "delim_token_tree"
@@ -2850,7 +2849,7 @@
       }
     },
     "block_comment": {
-      "block_comment_arm": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3055,29 +3054,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_block_comment_arm": {
-      "outer": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "inner": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "doc": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3411,25 +3387,38 @@
         "nonEmpty": false
       }
     },
-    "_line_comment_doc": {
-      "outer": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "inner": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
+    "_line_comment_doc_outer": {
       "doc": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_line_comment_doc_inner": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_block_comment_doc_outer": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_block_comment_doc_inner": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4454,60 +4443,24 @@
       ]
     },
     {
-      "kind": "_block_comment_arm",
-      "modelType": "group",
-      "typeName": "BlockCommentArm",
-      "factoryName": "_blockCommentArm",
-      "irKey": "blockCommentArm",
+      "kind": "_block_comment_content",
+      "modelType": "pattern",
+      "typeName": "BlockCommentContent",
+      "factoryName": "blockCommentContent",
+      "irKey": "blockCommentContent",
       "hidden": false,
-      "name": "_block_comment_arm",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_block_comment_doc_inner",
+      "modelType": "group",
+      "typeName": "BlockCommentDocInner",
+      "factoryName": "_blockCommentDocInner",
+      "irKey": "blockCommentDocInner",
+      "hidden": false,
+      "isParameterless": true,
+      "name": "_block_comment_doc_inner",
       "fields": [
-        {
-          "name": "outer",
-          "propertyName": "outer",
-          "paramName": "outer",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_outer_block_doc_comment_marker",
-              "parseKind": "outer_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_outer_block_doc_comment_marker"
-            ]
-          }
-        },
-        {
-          "name": "inner",
-          "propertyName": "inner",
-          "paramName": "inner",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_inner_block_doc_comment_marker",
-              "parseKind": "inner_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_inner_block_doc_comment_marker"
-            ]
-          }
-        },
         {
           "name": "doc",
           "propertyName": "doc",
@@ -4533,9 +4486,65 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_block_comment_content",
       "factoryFields": [
         "doc"
+      ],
+      "determinedSlots": [
+        {
+          "name": "inner",
+          "storageKey": "_inner",
+          "text": "!"
+        }
+      ]
+    },
+    {
+      "kind": "_block_comment_doc_outer",
+      "modelType": "group",
+      "typeName": "BlockCommentDocOuter",
+      "factoryName": "_blockCommentDocOuter",
+      "irKey": "blockCommentDocOuter",
+      "hidden": false,
+      "isParameterless": true,
+      "name": "_block_comment_doc_outer",
+      "fields": [
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_content",
+              "parseKind": "doc_comment",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_block_comment_content"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "forwarded",
+      "forwardsTo": "_block_comment_content",
+      "factoryFields": [
+        "doc"
+      ],
+      "determinedSlots": [
+        {
+          "name": "outer",
+          "storageKey": "_outer",
+          "text": "*"
+        }
       ]
     },
     {
@@ -5960,60 +5969,14 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_line_comment_doc",
+      "kind": "_line_comment_doc_inner",
       "modelType": "group",
-      "typeName": "LineCommentDoc",
-      "factoryName": "_lineCommentDoc",
-      "irKey": "lineCommentDoc",
+      "typeName": "LineCommentDocInner",
+      "factoryName": "_lineCommentDocInner",
+      "irKey": "lineCommentDocInner",
       "hidden": false,
-      "name": "_line_comment_doc",
+      "name": "_line_comment_doc_inner",
       "fields": [
-        {
-          "name": "outer",
-          "propertyName": "outer",
-          "paramName": "outer",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_outer_line_doc_comment_marker",
-              "parseKind": "outer_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_outer_line_doc_comment_marker"
-            ]
-          }
-        },
-        {
-          "name": "inner",
-          "propertyName": "inner",
-          "paramName": "inner",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_inner_line_doc_comment_marker",
-              "parseKind": "inner_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_inner_line_doc_comment_marker"
-            ]
-          }
-        },
         {
           "name": "doc",
           "propertyName": "doc",
@@ -6039,9 +6002,64 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_line_doc_content",
       "factoryFields": [
         "doc"
+      ],
+      "determinedSlots": [
+        {
+          "name": "inner",
+          "storageKey": "_inner",
+          "text": "!"
+        }
+      ]
+    },
+    {
+      "kind": "_line_comment_doc_outer",
+      "modelType": "group",
+      "typeName": "LineCommentDocOuter",
+      "factoryName": "_lineCommentDocOuter",
+      "irKey": "lineCommentDocOuter",
+      "hidden": false,
+      "name": "_line_comment_doc_outer",
+      "fields": [
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_line_doc_content",
+              "parseKind": "doc_comment",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_line_doc_content"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "forwarded",
+      "forwardsTo": "_line_doc_content",
+      "factoryFields": [
+        "doc"
+      ],
+      "determinedSlots": [
+        {
+          "name": "outer",
+          "storageKey": "_outer",
+          "text": "/"
+        }
       ]
     },
     {
@@ -6330,6 +6348,40 @@
         "match_arm",
         "last_arm"
       ]
+    },
+    {
+      "kind": "_match_block_optional1",
+      "modelType": "branch",
+      "typeName": "MatchBlockOptional1",
+      "factoryName": "matchBlockOptional1",
+      "irKey": "matchBlockOptional1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "match_block_arms",
+          "propertyName": "matchBlockArms",
+          "paramName": "matchBlockArms",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_match_block_arms",
+              "parseKind": "match_block_arms",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_match_block_arms"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_match_pattern_optional1",
@@ -9814,9 +9866,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block_comment_arm",
-          "propertyName": "blockCommentArm",
-          "paramName": "blockCommentArm",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9824,24 +9876,62 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_block_comment_arm",
-              "parseKind": "block_comment_arm",
+              "name": "_block_comment_doc_outer",
+              "parseKind": "block_comment_doc_outer",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_doc_inner",
+              "parseKind": "block_comment_doc_inner",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_content",
+              "parseKind": "_block_comment_content",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_block_comment_arm"
+              "_block_comment_doc_outer",
+              "_block_comment_doc_inner",
+              "_block_comment_content"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "forwarded",
-      "forwardsTo": "_block_comment_arm",
+      "factoryShape": "direct",
       "factoryFields": [
-        "block_comment_arm"
+        "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "docOuter",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_block_comment_doc_outer",
+          "path": []
+        },
+        {
+          "name": "docInner",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_block_comment_doc_inner",
+          "path": []
+        },
+        {
+          "name": "content",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_block_comment_content",
+          "path": []
+        }
       ]
     },
     {
@@ -10494,12 +10584,21 @@
           ]
         },
         {
-          "name": "lineCommentDoc",
+          "name": "lineCommentDocOuter",
           "via": "form",
           "slot": "content",
           "childKind": "line_comment",
           "path": [
-            "doc"
+            "docOuter"
+          ]
+        },
+        {
+          "name": "lineCommentDocInner",
+          "via": "form",
+          "slot": "content",
+          "childKind": "line_comment",
+          "path": [
+            "docInner"
           ]
         },
         {
@@ -10517,6 +10616,33 @@
           "slot": "content",
           "childKind": "block_comment",
           "path": []
+        },
+        {
+          "name": "blockCommentDocOuter",
+          "via": "form",
+          "slot": "content",
+          "childKind": "block_comment",
+          "path": [
+            "docOuter"
+          ]
+        },
+        {
+          "name": "blockCommentDocInner",
+          "via": "form",
+          "slot": "content",
+          "childKind": "block_comment",
+          "path": [
+            "docInner"
+          ]
+        },
+        {
+          "name": "blockCommentContent",
+          "via": "form",
+          "slot": "content",
+          "childKind": "block_comment",
+          "path": [
+            "content"
+          ]
         }
       ]
     },
@@ -14569,8 +14695,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_line_comment_doc",
-              "parseKind": "line_comment_doc",
+              "name": "_line_comment_doc_outer",
+              "parseKind": "line_comment_doc_outer",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_line_comment_doc_inner",
+              "parseKind": "line_comment_doc_inner",
               "unresolved": true
             },
             {
@@ -14585,7 +14718,8 @@
             "typeName": "",
             "kinds": [
               "_line_comment_regular_dslash",
-              "_line_comment_doc",
+              "_line_comment_doc_outer",
+              "_line_comment_doc_inner",
               "_line_comment_content"
             ]
           }
@@ -14605,10 +14739,17 @@
           "path": []
         },
         {
-          "name": "doc",
+          "name": "docOuter",
           "via": "form",
           "slot": "content",
-          "childKind": "_line_comment_doc",
+          "childKind": "_line_comment_doc_outer",
+          "path": []
+        },
+        {
+          "name": "docInner",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_line_comment_doc_inner",
           "path": []
         },
         {

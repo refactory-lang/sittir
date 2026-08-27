@@ -42,6 +42,8 @@ import type {
 	BinaryExpressionTree,
 	Block,
 	BlockComment,
+	BlockCommentContent,
+	BlockCommentContentTree,
 	BlockCommentTree,
 	BlockTree,
 	BooleanLiteral,
@@ -215,6 +217,8 @@ import type {
 	MatchArm,
 	MatchArmTree,
 	MatchBlock,
+	MatchBlockOptional1,
+	MatchBlockOptional1Tree,
 	MatchBlockTree,
 	MatchExpression,
 	MatchExpressionTree,
@@ -641,6 +645,9 @@ export type _Type_ArgumentsElements = _TypeAssert<_TypeExtends<ArgumentsElements
 export type _Type_FieldInitializerListElements = _TypeAssert<
 	_TypeExtends<FieldInitializerListElements['$type'], TSKindId.FieldInitializerListElements>
 >;
+export type _Type_MatchBlockOptional1 = _TypeAssert<
+	_TypeExtends<MatchBlockOptional1['$type'], '_match_block_optional1'>
+>;
 export type _Type_TuplePatternElements = _TypeAssert<
 	_TypeExtends<TuplePatternElements['$type'], TSKindId.TuplePatternElements>
 >;
@@ -880,6 +887,9 @@ export type _Type_RawStringLiteralEnd = _TypeAssert<
 	_TypeExtends<RawStringLiteralEnd['$type'], TSKindId.RawStringLiteralEnd>
 >;
 export type _Type_FloatLiteral = _TypeAssert<_TypeExtends<FloatLiteral['$type'], TSKindId.FloatLiteral>>;
+export type _Type_BlockCommentContent = _TypeAssert<
+	_TypeExtends<BlockCommentContent['$type'], TSKindId.BlockCommentContent>
+>;
 export type _Type_LineDocContent = _TypeAssert<_TypeExtends<LineDocContent['$type'], TSKindId.LineDocContent>>;
 export type _Type_ErrorSentinel = _TypeAssert<_TypeExtends<ErrorSentinel['$type'], TSKindId.ErrorSentinel>>;
 
@@ -1094,6 +1104,9 @@ export type _Tree_ArgumentsElements = _TypeAssert<_TypeExtends<ArgumentsElements
 export type _Tree_FieldInitializerListElements = _TypeAssert<
 	_TypeExtends<FieldInitializerListElementsTree['type'], '_field_initializer_list_elements'>
 >;
+export type _Tree_MatchBlockOptional1 = _TypeAssert<
+	_TypeExtends<MatchBlockOptional1Tree['type'], '_match_block_optional1'>
+>;
 export type _Tree_TuplePatternElements = _TypeAssert<
 	_TypeExtends<TuplePatternElementsTree['type'], '_tuple_pattern_elements'>
 >;
@@ -1201,5 +1214,8 @@ export type _Tree_RawStringLiteralEnd = _TypeAssert<
 	_TypeExtends<RawStringLiteralEndTree['type'], '_raw_string_literal_end'>
 >;
 export type _Tree_FloatLiteral = _TypeAssert<_TypeExtends<FloatLiteralTree['type'], 'float_literal'>>;
+export type _Tree_BlockCommentContent = _TypeAssert<
+	_TypeExtends<BlockCommentContentTree['type'], '_block_comment_content'>
+>;
 export type _Tree_LineDocContent = _TypeAssert<_TypeExtends<LineDocContentTree['type'], '_line_doc_content'>>;
 export type _Tree_ErrorSentinel = _TypeAssert<_TypeExtends<ErrorSentinelTree['type'], '_error_sentinel'>>;

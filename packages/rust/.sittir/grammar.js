@@ -1166,6 +1166,11 @@ function enrich(baseInput, config) {
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule || enrichSkip.has(name)) continue;
+    enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
+  }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
   separatedListEnrichSkip = enrichSkip;
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
@@ -1720,6 +1725,58 @@ function nativeRuleFn(...names) {
 function makeField(name, content) {
   const field3 = nativeRuleFn("field");
   return { ...field3(name, content), metadata: makeRuleMetadata({ fieldSource: "enriched" }) };
+}
+function exclusiveFieldChoiceBranches(member, rulesBag) {
+  let target = member;
+  if (isSymbolType(member.type)) {
+    const name = member.name;
+    if (typeof name !== "string" || !name.startsWith("_")) return void 0;
+    target = rulesBag[name];
+  }
+  if (!target || !isChoiceType(target.type)) return void 0;
+  const branches = target.members;
+  if (!Array.isArray(branches) || branches.length < 2) return void 0;
+  const names = /* @__PURE__ */ new Set();
+  for (const branch of branches) {
+    if (!isFieldType(branch.type)) return void 0;
+    const name = branch.name;
+    if (typeof name !== "string") return void 0;
+    names.add(name);
+  }
+  return names.size === branches.length ? branches : void 0;
+}
+function distributeExclusiveFieldChoices(rule, rulesBag) {
+  const seqFn = nativeRuleFn("seq");
+  const choiceFn = nativeRuleFn("choice");
+  const collapse = (alts) => alts.length === 1 ? alts[0] : { ...choiceFn(...alts), metadata: makeRuleMetadata({ author: "enrich" }) };
+  const expand = (node) => {
+    if (!node || typeof node !== "object") return [node];
+    let out = node;
+    const members = node.members;
+    const content = node.content;
+    if (Array.isArray(members)) {
+      const next = isChoiceType(node.type) ? members.flatMap((m) => expand(m)) : members.map((m) => collapse(expand(m)));
+      if (next.length !== members.length || next.some((m, i) => m !== members[i]))
+        out = { ...node, members: next };
+    } else if (content && typeof content === "object") {
+      const next = collapse(expand(content));
+      if (next !== content) out = { ...node, content: next };
+    }
+    if (!isSeqType(out.type)) return [out];
+    const seqMembers = out.members;
+    if (!Array.isArray(seqMembers)) return [out];
+    for (let i = 0; i < seqMembers.length; i += 1) {
+      const branches = exclusiveFieldChoiceBranches(seqMembers[i], rulesBag);
+      if (!branches) continue;
+      return branches.flatMap((branch) => {
+        const swapped = [...seqMembers];
+        swapped[i] = branch;
+        return expand(seqFn(...swapped));
+      });
+    }
+    return [out];
+  };
+  return collapse(expand(rule));
 }
 function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
   const preExistingFieldNames = /* @__PURE__ */ new Set();
@@ -4950,10 +5007,22 @@ var grammar_sittir_default = grammar(
           "2/1": variant("body")
         },
         match_arm: [{ 0: field2("attributes") }, { "3/0": variant("with_comma"), "3/1": variant("block_ending") }],
+        // `///` and `//!` reach this choice as separate arms: their
+        // outer/inner marker fields are alternatives, which enrich
+        // distributes over the doc sequence rather than fusing onto one
+        // kind as two independent optional markers.
         line_comment: {
           "1/0": variant("regular_dslash"),
-          "1/1": variant("doc"),
-          "1/2": variant("content")
+          "1/1": variant("doc_outer"),
+          "1/2": variant("doc_inner"),
+          "1/3": variant("content")
+        },
+        // `/**` and `/*!`, the block spelling of the same split. Only
+        // the two distributed arms are named; the third is already a
+        // reference to a named content rule.
+        block_comment: {
+          "1/0/0": variant("doc_outer"),
+          "1/0/1": variant("doc_inner")
         },
         // The token-tree repeats' element fields (`field('delim_tokens',
         // repeat($._delim_tokens))` and siblings) come from enrich's
