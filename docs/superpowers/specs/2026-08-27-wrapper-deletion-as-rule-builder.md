@@ -86,6 +86,28 @@ retains the multiplicity on the seq node itself only when a bare literal
 member is present (the co-optional-delimiter guard). Both rules are `seq`'s
 own semantics and live in its body.
 
+**Two normalizations are intrinsic to `seq`, not catalog transformers**,
+because `seq`'s attribute decisions are judgement calls over a member
+list and need the list in normal form first. In order:
+
+1. *splice* — `[…, seq(y…), …] → […, y…, …]` for bare nested seqs, giving
+   one flat list; the attribute decisions (push multiplicity to
+   slot-bearing members, retain it on the seq for a bare literal) then run
+   over that list, once.
+2. *collapse* — `seq(X) → X` afterwards: a seq with a single member is
+   that member, the seq's own attributes merged onto it by the three
+   composition rules. This is what leaves no wrapper behind when a
+   separator is absorbed into its owner: `seq(repeat(x), ',')` →
+   `seq(x{array, sep})` → `x{array, sep}`. Today the same collapse is
+   done later by simplify (`collapseSingleMemberSeq` + `withAttrsFrom`),
+   a pass repairing what `seq` should have produced. Edge to watch at the
+   gate: a singleton whose only member is a bare literal carrying the
+   retained co-optional multiplicity collapses to a literal with
+   `multiplicity: 'optional'` — the shape the template guard renders
+   conditionally, which is the intended meaning.
+
+Splice lands as its own gated step (item 5), collapse as the next (item 6).
+
 **Splicing is `seq`'s own recognition, at every level.** A bare nested seq
 (`spliceableMembersOf`, today's `isSpliceableBareSeq`) is redundant
 nesting by definition — seq is associative — so `seq` splices such a
