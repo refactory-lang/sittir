@@ -15,47 +15,10 @@
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RenderRule, RuleBase, SeqRule } from '../types/rule.ts';
-import { isSpliceableBareSeq } from '../types/rule.ts';
+import type { AnyRule, Rule, RenderRule, RuleBase } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { attributeBuilder, buildOptional } from './simplify.ts';
-
-/**
- * Splices a raw, literally-authored nested `seq(...)` member into its
- * parent's member list, top-down: a raw `Rule<'link'>` node structurally
- * cannot yet carry fieldName/separator/multiplicity (those only exist on
- * the normalize-phase view), so `isSpliceableBareSeq` here reduces to a
- * plain `type === SEQ` check. This MUST run top-down over the raw tree: a
- * SEQ's own flatMap
- * decides its direct raw children's fate exactly once, then recurses
- * into the (already-flattened) survivors independently for THEIR own
- * one-time decision. A bottom-up equivalent (deciding a nested seq's
- * own splice-eligibility before its parent ever looks at it) lets a
- * grandparent re-absorb a great-grandchild the parent already
- * absorbed, flattening levels of nesting the raw grammar never had.
- */
-function spliceRawSeq(rule: Rule<'link'>): Rule<'link'> {
-	const bag = rule as {
-		members?: Rule<'link'>[];
-		content?: Rule<'link'>;
-		separator?: { value: Rule<'link'>; trailing?: unknown; leading?: unknown; terminated?: unknown };
-	};
-	if (rule.type === SEQ && Array.isArray(bag.members)) {
-		const flat = bag.members.flatMap((m) => (isSpliceableBareSeq(m) ? (m as SeqRule<'link'>).members : [m]));
-		return { ...rule, members: flat.map(spliceRawSeq) } as Rule<'link'>;
-	}
-	const patch: { members?: Rule<'link'>[]; content?: Rule<'link'>; separator?: typeof bag.separator } = {};
-	if (Array.isArray(bag.members)) {
-		patch.members = bag.members.map(spliceRawSeq);
-	} else if (bag.content !== undefined) {
-		patch.content = spliceRawSeq(bag.content);
-	}
-	if (bag.separator !== undefined) {
-		patch.separator = { ...bag.separator, value: spliceRawSeq(bag.separator.value) };
-	}
-	return Object.keys(patch).length > 0 ? ({ ...rule, ...patch } as Rule<'link'>) : rule;
-}
 
 /**
  * Detects tree-sitter's prec.left self-referential-choice flattening: a
@@ -213,8 +176,7 @@ function rebuild(node: AnyRule): AnyRule {
 
 export function deleteWrapper(rule: Rule<'link'>, ownName?: string): RenderRule {
 	const folded = ownName !== undefined ? applySelfReferentialFold(ownName, rule) : rule;
-	const spliced = spliceRawSeq(folded);
-	return rebuild(deleteWrapperWalker.map(spliced as AnyRule, rebuild)) as RenderRule;
+	return rebuild(deleteWrapperWalker.map(folded as AnyRule, rebuild)) as RenderRule;
 }
 
 export function applyWrapperDeletion(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {

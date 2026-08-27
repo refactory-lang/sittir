@@ -111,28 +111,27 @@ function stampId<R extends AnyRule>(args: { built: R; id: RuleId | undefined; fr
 }
 
 /**
- * seq(members, mult?) — receives already-rebuilt members (bare nested-seq
- * splicing is a top-down, raw-tree-only concern owned by wrapper-deletion's
- * `spliceRawSeq` pre-pass, not this bottom-up builder — see that function's
- * doc comment). Pushes an enclosing multiplicity onto each slot-bearing
- * member through the lattice (a bare, non-slot-promoted string/pattern
- * literal is a co-optional delimiter and is skipped — the template emitter
- * drops a literal stamped `multiplicity: 'optional'`), and retains the
- * multiplicity on the seq node itself only when a bare literal member
- * survives (the co-optional-delimiter guard: literals can't individually
- * carry the multiplicity, so the whole unit needs it instead).
+ * seq(members, mult?) — receives already-rebuilt members. Splices a bare
+ * nested seq (`isSpliceableBareSeq`: no fieldName/separator/multiplicity of
+ * its own) into the member list first, at THIS level — since members arrive
+ * bottom-up, a member that is itself a multi-level chain of bare seqs has
+ * already flattened its own nested bare seqs one level down by the time its
+ * own `buildSeq` call returned, so splicing here reaches every level: a
+ * three-deep `seq(seq(seq(x,y),z),w)` fully flattens to `seq(x,y,z,w)`, one
+ * splice decision per level, not one pass over the whole tree. The
+ * at-least-one guarantee of a repeat1 belongs to the seq as a whole, not to
+ * each individual member — enclosing multiplicity is pushed onto each
+ * slot-bearing member through the lattice AFTER splicing (a bare,
+ * non-slot-promoted string/pattern literal is a co-optional delimiter and
+ * is skipped — the template emitter drops a literal stamped
+ * `multiplicity: 'optional'`), and retained on the seq node itself only
+ * when a bare literal member survives (the co-optional-delimiter guard:
+ * literals can't individually carry the multiplicity, so the whole unit
+ * needs it instead).
  */
 function buildSeq(input: { members: AnyRule[]; multiplicity?: LeafMultiplicity; id?: RuleId }): AnyRule {
-	// Bare-nested-seq splicing does NOT happen here: members arrive
-	// ALREADY REBUILT (bottom-up), and a raw literal nested `seq(...)`
-	// member has already been flattened by `spliceRawSeq`'s top-down
-	// pre-pass over the ORIGINAL tree (wrapper-deletion.ts) before this
-	// ever runs. A member that only BECOMES seq-shaped by unwrapping a
-	// wrapper at this exact position (e.g. `optional(seq(...))`) was never
-	// spliced into an ANCESTOR either — only a literal authored nesting is.
-	// The at-least-one guarantee of a repeat1 belongs to the seq as a
-	// whole, not to each individual member.
-	const { members: rawMembers, multiplicity, id } = input;
+	const { members: splicedInput, multiplicity, id } = input;
+	const rawMembers = splicedInput.flatMap((m) => (isSpliceableBareSeq(m) ? (m as SeqRule).members : [m]));
 	const multToPush = multiplicity === 'nonEmptyArray' ? 'array' : multiplicity;
 	const pushed = rawMembers.map((m) => {
 		const isBareLiteral = (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m as RenderRule);
