@@ -65,11 +65,19 @@ they carry every ruling. Session memory: call `get_latest_session`.
    on `RuleBase`; the type errors that produces ARE the cleanup list
    (normalize.ts's attr carries at the fan-out/factor sites, node-map's
    `deriveValuesForRule` TOKEN case, link's post-resolve TOKEN reads).
-2. **Phases never import each other.** Relocate `attributeBuilder` (+
-   `buildSeq` / `buildOptional` / `buildRepeatLike` /
-   `isSlotPromotedLiteral`, all dsl-side deps) from `compiler/simplify.ts`
-   to `dsl/rule-transforms.ts` beside `structuralBuilder`; that also ends
-   the `wrapper-deletion ↔ simplify` cycle.
+2. **Phases never import each other; one builders module.** Create
+   `dsl/builders.ts` holding the `RuleBuilder` interface, `structuralBuilder`
+   (out of `rule-transforms.ts`) and `attributeBuilder` (+ `buildSeq` /
+   `buildOptional` / `buildRepeatLike` / `isSlotPromotedLiteral`, all
+   dsl-side deps, out of `compiler/simplify.ts`). That also ends the
+   `wrapper-deletion ↔ simplify` cycle. In the same move,
+   **`attributeBuilder.alias` follows link's convention — the canonical
+   one:** `aliasedFrom` is the SOURCE (storage) name and `name` is the
+   alias target, exactly what `resolveNamedAliasWithProvenance` produces
+   (`SYMBOL{name: target, aliasedFrom: source}`; alias-of-literal →
+   `SYMBOL{name: target, literal}`). The current `aliasedFrom: value`
+   (target-on-content) form is never produced in production (no ALIAS
+   survives link) and is simply wrong vocabulary.
 3. **Assemble never sees a wrapper.** Move the remaining `linkRules`
    consumers in assemble (branch/group construction via `inlinedRule`,
    `collectAnonymousNodes`, variant derivation, `optionalBodyKinds`) onto
@@ -82,12 +90,9 @@ they carry every ruling. Session memory: call `get_latest_session`.
    symbols, the node map 96.
 4. **Link owns inlining** — `inlineSingleUseHidden` /
    `materializeInlinedBody` move up from normalize.
-5. **Open findings:** `attributeBuilder.alias` stamps `aliasedFrom` =
-   alias TARGET on the content while link's `SYMBOL` convention is
-   `aliasedFrom` = SOURCE — same attribute, opposite meaning; the builder
-   form is never produced in production. PREC never reaches link
-   (`stripPrecedenceWrappers` in evaluate) — the wrapper-deletion spec's
-   "link keeps consuming PREC" is inaccurate.
+5. **Open finding:** PREC never reaches link (`stripPrecedenceWrappers`
+   in evaluate) — the wrapper-deletion spec's "link keeps consuming PREC"
+   is inaccurate; `attributeBuilder.prec` is vocabulary only.
 6. Then step 3 of the recognizers spec: separator possession into `seq`.
 
 ## Tooling that works here
