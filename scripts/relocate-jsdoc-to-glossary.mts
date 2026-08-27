@@ -23,8 +23,8 @@ function glossaryHeaderFor(file: string): string {
   return (
     `# \`${dir}\` — Function Glossary\n\n` +
     `Per-function reference for \`${dir}/\`, mechanically relocated from source\n` +
-    `JSDoc by \`scripts/wave5-relocate-jsdoc.mts\` (wave 5 comment-cleanup, pass 1 —\n` +
-    `unedited, unverified). Pass 2 reformats/verifies these entries and decides\n` +
+    `JSDoc by \`scripts/relocate-jsdoc-to-glossary.mts\` (mechanical pass —\n` +
+    `unedited, unverified). A later pass reformats/verifies these entries and decides\n` +
     `what merges into docs/compiler-phase-glossary.md's phase narrative.\n\n` +
     `See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).\n\n---\n`
   );

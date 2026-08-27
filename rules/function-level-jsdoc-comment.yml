@@ -36,7 +36,7 @@ rule:
                 - kind: type_alias_declaration
                 - kind: lexical_declaration
 note: >
-  Wave 5 mechanical relocation codemod (scripts/wave5-relocate-jsdoc.mts)
+  The mechanical relocation codemod (scripts/relocate-jsdoc-to-glossary.mts)
   pairs this rule's matches 1:1 (by file, in source order) with
   function-level-jsdoc.yml's matches — each comment match is the JSDoc
   immediately preceding the declaration matched at the same index.
