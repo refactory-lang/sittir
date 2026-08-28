@@ -67,40 +67,25 @@ function makeSlotArityNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'single_parent',
-		new AssembledBranch('single_parent', singleChildRule, flatten(singleChildRule), flatten(singleChildRule))
-	);
-	nodes.set(
-		'multi_parent',
-		new AssembledBranch(
-			'multi_parent',
-			multiSingularChildRule,
-			flatten(multiSingularChildRule),
-			flatten(multiSingularChildRule)
-		)
-	);
-	nodes.set(
-		'repeat_parent',
-		new AssembledBranch('repeat_parent', repeatFieldRule, flatten(repeatFieldRule), flatten(repeatFieldRule))
-	);
+	const singleChildRender = flatten(singleChildRule);
+	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRender, singleChildRender));
+	const multiSingularChildRender = flatten(multiSingularChildRule);
+	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRender, multiSingularChildRender));
+	const repeatFieldRender = flatten(repeatFieldRule);
+	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRender, repeatFieldRender));
+	const optionalThenRequiredChildRender = flatten(optionalThenRequiredChildRule);
 	nodes.set(
 		'optional_then_required_parent',
 		new AssembledBranch(
 			'optional_then_required_parent',
-			optionalThenRequiredChildRule,
-			flatten(optionalThenRequiredChildRule),
-			flatten(optionalThenRequiredChildRule)
+			optionalThenRequiredChildRender,
+			optionalThenRequiredChildRender
 		)
 	);
+	const multiSiblingFieldRender = flatten(multiSiblingFieldRule);
 	nodes.set(
 		'ambient_like_parent',
-		new AssembledBranch(
-			'ambient_like_parent',
-			multiSiblingFieldRule,
-			flatten(multiSiblingFieldRule),
-			flatten(multiSiblingFieldRule)
-		)
+		new AssembledBranch('ambient_like_parent', multiSiblingFieldRender, multiSiblingFieldRender)
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));

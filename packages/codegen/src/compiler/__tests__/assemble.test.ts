@@ -18,7 +18,7 @@ import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../
 import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { flattenRules, flatten } from '../flatten.ts';
-import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
+import type { Rule, SymbolRule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
 import {
 	deriveSlots,
@@ -690,16 +690,17 @@ describe('Assemble — classifyNode — separatedList', () => {
 
 describe('AssembledSeparatedList — construction', () => {
 	it('derives elements/separatorRule/leadingDelimiter/trailingDelimiter for a nonterminal separator', () => {
-		const sepChoice: Rule<'link'> = {
+		const sepChoice = flatten({
 			type: CHOICE,
 			members: [
 				{ type: STRING, value: ',' },
 				{ type: STRING, value: ';' }
 			]
-		};
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		});
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
@@ -716,9 +717,10 @@ describe('AssembledSeparatedList — construction', () => {
 	});
 
 	it('derives separatorRule=undefined and trailingDelimiter=optional for a literal separator with an optional trailing flank', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
@@ -733,9 +735,10 @@ describe('AssembledSeparatedList — construction', () => {
 	});
 
 	it('derives separatorRule=undefined and leadingDelimiter=optional for a literal separator with an optional leading flank', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
@@ -749,10 +752,11 @@ describe('AssembledSeparatedList — construction', () => {
 		expect(node.trailingDelimiter).toBe('none');
 	});
 
-	it('derives nonEmptyArray-multiplicity elements for a repeat1 rule', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+	it('derives nonEmptyArray-multiplicity elements for a nonEmptyArray-multiplicity element rule', () => {
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
@@ -766,10 +770,11 @@ describe('AssembledSeparatedList — construction', () => {
 		expect(node.nonEmpty).toBe(true);
 	});
 
-	it('derives array-multiplicity elements for a plain repeat rule', () => {
-		const rule: RepeatRule = {
-			type: REPEAT,
-			content: { type: SYMBOL, name: 'member' },
+	it('derives array-multiplicity elements for an array-multiplicity element rule', () => {
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {

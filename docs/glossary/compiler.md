@@ -134,42 +134,6 @@ parents.
 #### body
 
 ```text
-// Identify rule kinds whose resolved body is wholly optional. This
-// happens primarily through `renderAs: blank()` stamping
-// (`stampStaticRenderAs` collapses `choice(X, blank)` →
-// `optional(X)` at link time), but detection is generic: any rule
-// body that's `optional(...)` or `choice(blank, ...)` qualifies. Set
-// on a module-level pointer in node-map.ts for the slot-value
-// constructors to consult during the rule walk below.
-```
-
-#### body
-
-```text
-// `inlinedRule` still uses inlineRefs here because the
-// RAW rule path (for template emission + classification) isn't
-// run through simplify. Only `simplifiedRule` (derivation view)
-// picks up inlining from the simplify fixpoint.
-//
-// `hoistInnerFieldsForTemplate` then drops outer
-// `field('outer', ...)` wrappers when their content carries an
-// inner field tree-sitter would expose at the top level of the
-// parent kind. The literal-stripping / single-member-collapsing
-// work that simplify also does is intentionally NOT applied
-// here — templates need anonymous delimiters (`,`, `(`, `;`,
-// …) to surface as template text. See
-// `project_simplify_template_walker_divergence.md`.
-// hoistInnerFieldsForTemplate's declared return type is the phase-
-// agnostic AnyRule, but `assemblyRule` (its input, through inlineRefs)
-// is Rule<'link'> and the function is shape-preserving — widen the
-// phase view back (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
-// diverge in shape, so AnyRule no longer coincidentally structurally
-// matches Rule<'link'> here).
-```
-
-#### body
-
-```text
 // `rules[kind]` (SimplifiedGrammar's phase product) and `normalizedRules[kind]`
 // are both pre-computed by normalize — alias-body kinds are now also
 // snapshotted there (PR2 Task 3.B-prereq-alias).
@@ -344,59 +308,22 @@ parents.
 // feedback_ruleid_backpointer.
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::collectOptionalBodyKinds`
-
-```text
-/**
- * Identify rule kinds whose resolved body is wholly optional — references
- * to these are effectively optional at every use site, regardless of how
- * the SYMBOL ref sits in its parent rule. See `currentOptionalBodyKinds`
- * in node-map.ts for the consumer side.
- *
- * A body counts as wholly optional when, stripping transparent wrappers
- * (alias, token, terminal — none of which change "can this match
- * invisibly?" semantics), the top-level form is one of:
- *   - `optional(X)` — the canonical post-stamp shape (DSL-time
- *     `choice(blank, X)` lowers to this; `stampStaticRenderAs`
- *     re-applies the same lowering after blank substitution).
- *   - `choice(...)` containing the blank sentinel. Defensive — the stamp
- *     pass collapses these to `optional()` already, but authored rules
- *     might use this shape directly.
- *
- * Sittir's `terminal` wrapper appears in promoted rules (e.g.
- * `_semicolon` becomes `terminal(optional(';'))` after the normalize
- * fixpoint). Without stripping it, the optionality would be hidden one
- * layer deep and the slot model would still treat references as
- * required-single.
- */
-```
-
-#### body
-
-```text
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
 
 ```text
 /**
- * Resolve the subtype kind list for a supertype node from its rule.
+ * Resolve the subtype kind list for a supertype node from its normalize-view
+ * rule.
  *
- * @param rule - The rule as it appears in `normalized.linkRules` (pre-inlining;
- *   fed by the caller's main assemble loop — see `assemble()`'s own iteration
- *   over `normalized.linkRules`, out of scope for the `ctx.normalizedRules`
- *   read below since this parameter is dictated by that caller, not by this
- *   function's own map reads).
+ * @param rule - `normalized.normalizedRules[kind]`, already narrowed by the
+ *   caller to `SupertypeRule | ChoiceRule` (the two shapes `classifyNode`
+ *   returns `'supertype'` for).
  * @param ctx - The Assemble phase context, used for hidden-rule resolution.
  * @returns The ordered list of concrete kind names that are members of this
  *   supertype union after resolving any hidden-rule indirections.
  * @remarks
- *   Sources in priority order:
- *   1. `SupertypeRule<'link'>.subtypes` — Link's pre-computed list.
- *   2. `choice` members — each `symbol` child's name (fallback).
- *   3. Empty list — for any other rule shape (best-effort).
- *
+ *   A `SupertypeRule` carries link's pre-computed `subtypes`; a `ChoiceRule`
+ *   contributes each `symbol` arm (through a `variant` wrapper if present).
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
  *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
  */
@@ -408,38 +335,15 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::unwrapGroupRuleAndSimplified`
+### `packages/codegen/src/compiler/assemble.ts::unwrapGroupViews`
 
 ```text
 /**
- * Unwrap a `GroupRule<'link'>` to obtain the inner content rule, its simplified view,
- * and its wrapper-deleted RenderRule.
- *
- * @param rule - The raw rule from `normalized.rules`.
- * @param simplifiedRule - The pre-computed simplified rule for the same kind.
- * @param renderRule - The wrapper-deleted RenderRule for the same kind (from
- *   `normalized.normalizedRules[kind]` or a per-call `flatten` fallback).
- * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
- *   the simplified view of that inner content; `groupRenderRule` — the
- *   wrapper-deleted view of the inner content.
- * @remarks
- *   When the rule is a `GroupRule<'link'>` the pre-computed `simplifiedRule` and
- *   `renderRule` apply to the OUTER group wrapper (the top-level kind entry).
- *   `flattenRules` and `simplifyRule` both recurse through group wrappers
- *   preserving the outer node, so `renderRule.content` and `simplifiedRule.content`
- *   are the wrapper-deleted / simplified inner content respectively. Non-group
- *   rules pass through as-is (the fallback path — groups that didn't get the
- *   `GroupRule<'link'>` wrapper).
+ * A group kind's two views are both stored under the outer `GROUP` wrapper
+ * (`flattenRules` and `simplifyRule` preserve it); the node is built from the
+ * inner content of each. Each view is unwrapped by its own type test — the
+ * two are not assumed to agree. Non-group shapes pass through unchanged.
  */
-```
-
-#### body
-
-```text
-// flattenRules preserves group structure: renderRule.type === GROUP
-// when the source rule was a group, with renderRule.content being the
-// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
-// through group wrappers preserving the outer group node).
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveIrKeys`
@@ -1101,12 +1005,12 @@ parents.
  * Classify a rule as `branch` based on presence of fields or children,
  * or return `null` when neither applies.
  *
- * The prior `'container'` model was collapsed into
- * `'branch'`: nodes that carry only unnamed children (no `field()` on
- * the rule) are still `AssembledBranch` instances, distinguishable at
- * the call site via `AssembledBranch.isContainerShape`. The single
- * classification arm reflects that there is one runtime class for
- * both shapes.
+ * The prior `'container'` model was collapsed into `'branch'`: nodes
+ * that carry only unnamed children (no `field()` on the rule) are still
+ * `AssembledBranch` instances — whether a slot is named is read off the
+ * slot itself (`AssembledNonterminal.isUnnamed`). The single
+ * classification arm reflects that there is one runtime class for both
+ * shapes.
  *
  * @param rule - The rule to inspect.
  * @returns `'branch'` if the rule has any named field or unnamed child,
@@ -5310,43 +5214,6 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::hasNamedSiblingOfInnerField`
-
-```text
-/**
- * Hoist guard: true when any seq inside `rule` mixes field() members
- * with named-symbol siblings.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::isNamedReference`
-
-```text
-/** True when `rule` is (or wraps) a symbol/supertype that tree-sitter would label. */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::hoistInnerFieldFromWrapperForField`
-
-```text
-/**
- * Drop an outer `field('outer', …)` wrapper when an inner `field()` sits at
- * exposable depth (tree-sitter flattens nested field paths, so the inner field
- * IS a top-level field of the parent). Bails on direct field nesting or a
- * named-symbol sibling that would lose its outer-field label.
- *
- */
-```
-
-```text
-// direct nesting handled elsewhere
-```
-
-#### body
-
-```text
-// Bail if a named-symbol sibling would lose its outer-field label.
-```
-
 ### `packages/codegen/src/compiler/simplify.ts::liftSharedArmAttrs`
 
 ```text
@@ -5697,38 +5564,6 @@ parents.
  * structural size (member count / nesting depth), so the loop converges — real
  * grammars in 2-3 iters; the 16-iter cap guards a non-converging shape.
  */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::hoistInnerFieldsForTemplate`
-
-```text
-/**
- * Bottom-up inner-field hoist for template emission. Preserves all
- * literals and structure; only drops outer field wrappers with exposable
- * inner fields. Idempotent.
- */
-```
-
-```text
-// compileWordMatcher moved to ../util/word-matcher.ts (shared by assemble, emitters, dsl).
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Template-side hoist — inner-field hoist WITHOUT stripping anonymous
-// delimiters. Templates need literals to survive; only outer field
-// wrappers with inner fields at exposable depth are dropped.
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// `hoistInnerFieldsForTemplate` widens its return to `AnyRule`
-// regardless of the phase `rule.content` narrowed to, so the
-// rebuilt object no longer structurally matches this FIELD
-// variant's own `content: Rule<P>` slot — same widening every
-// other case in this switch handles with `as AnyRule` below.
 ```
 
 ### `packages/codegen/src/compiler/simplify.ts::simplifySeqRule`

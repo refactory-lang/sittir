@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import type { CommandModule } from '../../framework/command-module.ts';
 import { registerNamespace } from '../../framework/command-module.ts';
 
+import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
 import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
@@ -34,6 +35,7 @@ import { walk } from './walk.ts';
 
 /** All developer-diagnostic tool CommandModules, registered under `sittir tool`. */
 export const toolModules: readonly CommandModule[] = [
+	assembleShapeCensus,
 	bench,
 	benchCodemod,
 	checkBaseline,

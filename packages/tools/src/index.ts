@@ -5,6 +5,12 @@ export {
 	type SeparatedListsOptions,
 	type SeparatedListsCensus
 } from './discover/separated-lists.ts';
+export {
+	run as assembleShapeCensus,
+	computeAssembleShapeCensus,
+	type AssembleShapeCensusOptions,
+	type AssembleShapeCensus
+} from './discover/assemble-shape-census.ts';
 export { run as probeKind, type ProbeKindOptions } from './probe/kind.ts';
 export { run as probeStages, type ProbeStagesOptions } from './probe/stages.ts';
 export { run as variantDerivationProbe, type VariantDerivationProbeOptions } from './probe/variant-derivation.ts';

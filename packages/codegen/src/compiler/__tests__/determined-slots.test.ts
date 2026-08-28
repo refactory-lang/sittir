@@ -68,7 +68,8 @@ describe('pruneDeterminedSlots', () => {
 			]
 		};
 		const nodes = new Map<string, AssembledNode>();
-		nodes.set('mut_pattern', new AssembledBranch('mut_pattern', rule, flatten(rule), flatten(rule)));
+		const render = flatten(rule);
+		nodes.set('mut_pattern', new AssembledBranch('mut_pattern', render, render));
 		nodes.set('mutable_specifier', new AssembledKeyword('mutable_specifier', { type: STRING, value: 'mut' }));
 		nodes.set('pattern', new AssembledPattern('pattern', { type: PATTERN, value: '[a-z]+' }));
 		return makeNodeMapWith(nodes);

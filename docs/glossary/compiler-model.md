@@ -10,27 +10,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `packages/codegen/src/compiler/model/node-map.ts::setOptionalBodyKinds`
-
-```text
-/** Set by `assemble.ts` before running the rule walk; cleared after. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isOptionalBodyKind`
-
-```text
-/** True iff `kindName` resolves to a wholly-optional rule body. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::relaxForOptionalBody`
-
-```text
-/**
- * Downgrade `'single'` → `'optional'` when the referenced kind has a
- * wholly-optional resolved body. Pass-through otherwise.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text
@@ -111,17 +90,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Pluralize a camelCase property name for array/nonEmptyArray slots.
  * Only `propertyName` and `paramName` get pluralized — `storageName`
  * stays singular (tree-sitter facing).
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::hasAnyField`
-
-```text
-/**
- * Cheap existence predicate: does this rule's tree contain any field()?
- * Used by pre-assembly phases (classifier, normalizer) that only need to
- * know IF fields exist — not the full list. Shorter-circuits than
- * deriveFields.
  */
 ```
 
@@ -227,14 +195,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Internal — fields-side walk. The exported derivation surface is
- * `deriveSlots`; this helper is its fields-portion.
+ * Internal — fields-side walk over the SIMPLIFIED rule. The exported
+ * derivation surface is `deriveSlots`; this helper is its fields-portion.
  *
- * Applies `flatten` before dispatching so test fixtures that pass raw
- * rule trees (with `field` / `optional` / `repeat` / `repeat1` wrappers) get
- * canonical input automatically. In production the rule arrives already
- * wrapper-free from `computeSimplifiedRules` — `flatten` is idempotent
- * on wrapper-free input, so this is a no-op on the hot path.
+ * Consumes the simplified tree exactly as `computeSimplifiedRules` produced
+ * it — no re-flattening. A nested bare seq that simplify left behind reaches
+ * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
+ * derive-audit is there to surface); re-splicing it here would mask that.
+ * The audit is the slot derivation's: `buildSlotsRecord`'s second call over
+ * the render rule (an id harvest, where nested seqs are legitimate render
+ * structure) passes `shapeAudit: false`.
  */
 ```
 
@@ -249,25 +219,22 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Nonterminal-driven collection (2026-05-21 design): one slot per
-// `nonterminal` node, choice = one union slot, seq distributes. Replaces
-// the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker. Same-name
-// slots that appear in multiple positions (e.g. python `if_statement`'s
-// `alternative` in both a repeat and an optional) are still folded into one
-// AssembledNonterminal by `mergeSlotsByName`.
+// Nonterminal-driven collection: one slot per `nonterminal` node, choice =
+// one union slot, seq distributes. Same-name slots that appear in multiple
+// positions (e.g. python `if_statement`'s `alternative` in both a repeat and
+// an optional) are folded into one AssembledNonterminal by
+// `mergeSlotsByName`.
 ```
 
 #### body
 
 ```text
-// Gate (a) of the union-slot design (2026-07-21): a synthesized union
-// slot's projected storageName (usually 'content', or the single member
-// kind) must be unclaimed by every sibling slot of the rule. This is the
-// only place with whole-rule visibility, so the check runs here: an
-// optimistic collection above, then — on collision — one pessimistic
-// rerun with routing disabled (status quo distribution) + a diagnostic.
-// Two qualifying choices in one rule collide with each other and both
-// fall back, which subsumes the "only one choice per rule" discipline.
+// Gate (a) of the union-slot design: a synthesized union slot's projected
+// storageName (usually 'content', or the single member kind) must be
+// unclaimed by every sibling slot of the rule. This is the
+// consumer-visible collision that would otherwise surface as a
+// storagename-collision warning; on collision, union routing is disabled
+// for the rule and the status-quo distribution is re-derived.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeSlotsByName`
@@ -338,76 +305,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Single-walk slot derivation — returns every slot on a kind in declared
- * rule order. Replaces the prior `deriveFields` + `deriveChildren` split
- * (DRY: one source, one derivation). Internally it still delegates to
- * those walkers for the actual rule traversal — they're factored to walk
- * identical input — but produces a single unified `AssembledNonterminal[]`
- * view for consumers that need declared order with full per-slot metadata.
- *
- * @remarks
- * Today the slot ordering is fields-first / children-second because
- * downstream consumers (factory emitter, types emitter) rely on that
- * ordering. A future cleanup could rewrite the walk to preserve true
- * declared-order with one unified pass over the rule tree.
- */
-```
-
-```text
-/**
- * Derive child slots from a canonical rule tree.
- *
- * Two axes of "canonical" apply to deriveChildren:
- *
- * 1. **Branch kinds** — top-level `seq` of field/symbol/wrapper members.
- *    Children are the non-field members (symbol refs, optional /
- *    repeat / repeat1 around refs, choice of refs).
- *
- * 2. **Container kinds** — top-level is a `repeat` / `repeat1` whose
- *    content may be a `seq` of refs (tree-sitter flattens the seq's
- *    elements into sibling children at parse time). `enum_variant_list`
- *    has shape `repeat(seq(repeat(attribute_item), enum_variant),
- *    separator=',', trailing=true)` — the inner seq is load-bearing
- *    template structure AND yields two array children (attribute_item,
- *    enum_variant) flattened together.
- *
- * The walker handles both by treating top-level `seq` members as the
- * canonical unit and recursing through wrappers/choices/nested-seqs
- * when the structure demands it. What it rejects:
- *
- *   - `alias` / `group` / `polymorph` — simplify strips the first two;
- *     the third is a retired IR type that no longer exists at runtime.
- *     Reaching them here is a real canonicalization gap.
- *
- *   - `variant` / `clause` — post-variant-adoption these should be
- *     either resolved to aliased symbols or promoted to polymorph
- *     forms. Retained as canonicalization-gap signals.
- */
-```
-
-#### body
-
-```text
-// The field walker handles positional symbol/supertype/choice content
-// too, so it produces every slot — no separate children walker needed.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isSyntheticFieldWrapper`
-
-```text
-/**
- * Detect an override-synthesized "outer field wrapper" that has no
- * corresponding runtime data. The autogen produced by v1's extractor
- * sometimes wraps a multi-member seq directly in an outer
- * `field('name', seq(...))` where the seq's TOP level contains another
- * named field. Tree-sitter doesn't produce a single node value for
- * such wrappers — the inner fields are the real runtime data.
- *
- * The check is deliberately narrow: only direct `field('x', seq(...))`
- * where the top-level seq contains an inner `field('y', ...)`. Deeper
- * nestings (`field('body', symbol(block))` where block's rule definition
- * contains fields) are NOT synthetic — those have real field values
- * that tree-sitter populates at parse time.
+ * Single-walk slot derivation over the simplified rule — returns every slot
+ * on a kind in declared rule order. The simplified tree is the one view that
+ * answers "what is a slot": wrappers are already attributes, literals beside
+ * slots are already stripped, so the walk is one nonterminal → one slot.
  */
 ```
 
@@ -415,19 +316,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Unified walker that produces `NodeOrTerminal[]` directly from a field's
- * content rule. Each entry carries its own per-value `multiplicity` — this
- * preserves information that the old parallel `deriveContentTypes` +
- * `deriveLiteralValues` pair silently dropped (e.g. `choice('const',
- * $.mutable_specifier)` previously produced `contentTypes=['mutable_specifier']`
- * and `literalValues=[]` because the old bail-on-mixed logic gave up;
- * now it produces `[TerminalValue('const','single'), NodeRef('mutable_specifier','single')]`).
+ * Unified walker that produces `NodeOrTerminal[]` directly from a
+ * normalize-view rule. Each entry carries its own per-value `multiplicity`,
+ * so a mixed choice such as `choice('const', $.mutable_specifier)` yields
+ * `[TerminalValue('const'), NodeRef('mutable_specifier')]` rather than
+ * collapsing to one side.
  *
- * Multiplicity is threaded through the walker:
- *   - outer `optional(...)` → entries from content get `optional` multiplicity
- *   - outer `repeat(...)` → entries from content get `array` multiplicity
- *   - outer `repeat1(...)` → entries from content get `nonEmptyArray` multiplicity
- *   - no wrapper → entries get `single` multiplicity
+ * `multiplicity` is the caller's: the slot's multiplicity is decided by the
+ * caller (`buildSlot` from the slot node's own attributes, the separated
+ * list from its element's) and threaded down unchanged through seq /
+ * choice / variant / group. A choice with a blank arm relaxes the arms
+ * (`single` → `optional`, `nonEmptyArray` → `array`).
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  */
@@ -436,205 +335,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Link-synthesized operator literal (Chunk D1): `canonicalizeRuleLiterals`
-// rewrites a field-wrapped operator literal (`'<'`) into
-// `symbol{ name: 'lt', literal: '<', metadata: {symbolSource: 'link'} }`.
-// The `name` is the alias-target kind (the runtime `$type`) and
-// `literal` is the original source string. Emit a TERMINAL of the
-// source string — `value` is what the renderer emits (`<`),
-// `resolvedKind` is the alias-target kindId read-time matching keys
-// on (`lt`). Dropping `literal` (the old behavior) leaked a PHANTOM
-// kind ref (`Lt`/`LtEq`) into the operator enum and left render
-// emitting the bare literal while read could not populate the slot.
-//
-// (debt PR-P1) Was `rule.source === 'link' && rule.literal !==
-// undefined`; `literal` is set ONLY by `canonicalizeRuleLiterals`
-// alongside the (now-deleted) `source: 'link'` stamp — its one and
-// only writer — so `literal !== undefined` alone is the exact same
-// condition, structurally, not an inference.
-```
-
-#### body
-
-```text
-// The value is the literal text; its id was stamped at link time
-// onto `kindId` by the same LITERAL chain (anon token wins a
-// same-spelled NAMED rule) — read that fact instead of
-// re-resolving it here. `resolvedKind`/`parseKind` keep the
-// link-minted alias-target NAME (`rule.name`) as before.
-```
-
-#### body
-
-```text
-// Ref kind: resolve to SOURCE kind (`aliasedFrom`, when the
-// symbol came from an alias). Only source kinds exist in
-// rules post-synthesis-removal.
-```
-
-#### body
-
-```text
-// parse-as kind = the alias TARGET (`rule.name`); `node` is the
-// render/source (`refName`). For `_suite`: node=_simple_statements,
-// parseKind=block (the CST kind).
-```
-
-#### body
-
-```text
-// `parseEntry.parseId` (falling back to `.id`) — an alias
-// occurrence carries its OWN distinct runtime symbol id,
-// separate from the source rule's storage id; dispatch must
-// key on that, not the storage identity.
-```
-
-#### body
-
-```text
-// Supertype refs expand to their subtype list — each subtype is a
-// valid concrete kind the slot can hold. Each subtype ref's own
-// kindId/aliasedFromId is stamped at link (canonicalizeRuleLiterals's
-// SUPERTYPE arm) — read that fact first, catalog fallback only for
-// refs that weren't stamped (mirrors the SYMBOL(ref) case above).
-```
-
-#### body
-
-```text
-// Aliased arm: the flatten stamped the parse name the arm
-// displays under (`aliasedFrom`/`name` on the ref itself); its
-// catalog row carries the alias occurrence's own runtime id,
-// which is what dispatch must key on — mirrors the SYMBOL
-// case's aliasedFrom/name pair above.
-```
-
-#### body
-
-```text
-// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
-// anonymous-token text it matches — a terminal value, like a `string` or an
-// `enum` member. Without this case it fell to `default: return []`, so a
-// pattern slot had no values and was elided (e.g. token_repetition's
-// separator pattern never became a slot).
-```
-
-#### body
-
-```text
-// Stamped leaf: `resolvedKindId` was already resolved through the
-// literal chain at link time — look the entry up BY that id (not by
-// re-matching `rule.value` against the catalog) to recover the
-// display name/parse id, since the id is the trusted key here.
-```
-
-#### body
-
-```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE below.
-```
-
-#### body
-
-```text
-// PR-P: handle enum-shaped ChoiceRules (all-STRING members) as enum terminal values.
-```
-
-#### body
-
-```text
-// Literal-first chain (#129); for literal-carrying SYMBOL
-// members whose text has no anon-token catalog row (an
-// aliased fixed-text external — `automatic_semicolon`'s
-// '\n' render text is not a parse literal), fall back to
-// the member's own KIND entry: the parser emits the kind,
-// so its id is the wire tag the enum must accept.
-```
-
-#### body
-
-```text
-// `choice(X, blank)` is functionally `optional(X)` — the blank arm
-// makes the entire choice optional. Downgrade nonEmptyArray → array
-// and single → optional when recursing into the non-blank arms.
-// Mirrors the fieldContentMultiplicity choice handling and the
-// rule-body lookthrough in assemble.ts.
-```
-
-#### body
-
-```text
-// Each arm is independent — union all entries. Arms may differ in
-// their own multiplicity if they wrap repeat/optional differently.
-```
-
-#### body
-
-```text
-// Union-slot design §5 (PR 1.5): this CHOICE is the SANCTIONED
-// union-routing restriction (collect-slots.ts builds it from
-// `unionArms ∪ degenerateNamedArms` only) — a member carrying its
-// OWN `fieldName` directly (post-wrapper-deletion push-down; a
-// degenerate fielded arm, not a genuine FIELD wrapper) is routed by
-// FIELD LABEL at read time, not by kind. Stamp `parseName` so
-// `projectSlotNaming`'s parseNames union in the label alongside the
-// plain union arms' kinds.
-```
-
-#### body
-
-```text
-// A fielded arm appears either as a genuine FIELD wrapper
-// (link-phase rule, e.g. a separatedList's element choice) or
-// as a pushed-down `fieldName` attribute (post-wrapper-deletion
-// members) — both route by field label at read time.
-```
-
-#### body
-
-```text
-// `optional(repeat1(X, sep))` survives evaluate when the
-// optional wraps the canonical commaSep1 lift (e.g. python's
-// `parameters: seq('(', optional(_parameters), ')')`).
-// Recursing with multiplicity 'optional' lets the inner
-// 'repeat1' case clobber it back to 'nonEmptyArray', which
-// mis-marks the slot as never-empty even though `()` is
-// valid. Downgrade to 'array' when the inner is repeat1, so
-// the outer-optional semantics survive. Mirrors the
-// `collectChildFromMember` rule for child slots.
-```
-
-#### body
-
-```text
-// For `optional(seq(..., repeat1(...), ...))` and similar nested
-// shapes (which is the form `choice(seq(...), blank)` folds to
-// during simplify), the outer optional makes the entire content
-// empty-allowed. Any `nonEmptyArray` produced by an inner repeat1
-// is therefore relaxed to `array` at the outer slot — empty inputs
-// like `{}` (object_type with zero members) are valid.
-```
-
-#### body
-
-```text
-// Nested field inside a choice — recurse into its content
-```
-
-#### body
-
-```text
-// `token(...)` / `token.immediate(...)` wrappers carry adjacency
-// metadata the inner rule alone doesn't express. Recurse, then
-// tag each produced terminal so render templates can decide
-// whether to emit adjacent or spaced.
-```
-
-#### body
-
-```text
-// Seq inside a choice arm — flatten all members (rare, but
-// handles seq-of-symbols within choice arms).
+// Link-synthesized operator literal: `canonicalizeRuleLiterals` rewrites a
+// field-wrapped operator literal (`'<'`) into
+// `symbol{ name: 'lt', literal: '<' }`. The `name` is the alias-target kind
+// (the runtime `$type`) and `literal` is the original source string. Emit a
+// TERMINAL of the source string — `value` is what the renderer emits (`<`),
+// `resolvedKind` is the alias-target kindId read-time matching keys on
+// (`lt`). `literal` is set only by `canonicalizeRuleLiterals`, so
+// `literal !== undefined` is the exact discriminator.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::dedupeValues`
@@ -1192,8 +900,17 @@ can't be unified.
 ```text
 /**
  * Build the frozen slot Record for an AssembledBranch (or any kind that
- * uses the slot-Record surface). Walks `deriveSlots(rule)` once and
- * keys each slot by its name. Insertion order = declared rule order.
+ * uses the slot-Record surface). Walks `deriveSlots(rule)` over the
+ * simplified rule and keys each slot by its name. Insertion order =
+ * declared rule order.
+ *
+ * A second `deriveSlots` over the render rule only widens each slot's
+ * `sourceRuleIds`: 33 slots across the three grammars (hidden-alias field
+ * refs such as `field('name', $._type_identifier)` and
+ * `field('body', $._suite)`) are looked up by a render-tree field id the
+ * simplified tree does not carry, and without this merge they resolve
+ * only by name recovery. The pass goes when simplify preserves those ids
+ * (`DBG_SLOT_MISS=1` must then show no new recoveries).
  *
  * Constructor-time helper for every class that exposes the unified
  * `slots` surface. The locked design's
@@ -1283,17 +1000,6 @@ can't be unified.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::members`
-
-```text
-/**
-	 * Direct access to the rule's ordered members (seq or choice).
-	 * Returns an empty array for repeat / repeat1 — those shapes don't
-	 * carry an ordered member tuple (the `content` is a single repeated
-	 * rule, surfaced via `children`).
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::separator`
 
 ```text
@@ -1310,25 +1016,6 @@ can't be unified.
 	 * Always returns `undefined` now; kept as a documented no-op rather than
 	 * deleted outright so `render-module.ts`'s fallback-chain comment (and its
 	 * call site) don't need to change in this pass.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isContainerShape`
-
-```text
-/**
-	 * `true` when this branch was the former `AssembledContainer` shape
-	 * — i.e., its raw rule contained no `field()` declaration. The
-	 * derivation matches the pre-merge `classifyBranchOrContainer`
-	 * predicate exactly so emitters that previously branched on
-	 * `modelType === 'container'` keep byte-identical output. Note that
-	 * this is *not* the same as `fields.length === 0`: a branch can
-	 * declare `field()` slots that the simplified rule strips out (e.g.
-	 * field references whose visible target was inlined away),
-	 * leaving `fields` empty while the rule still carries field markers.
-	 * Those kinds were `'branch'` originally and stay on the
-	 * field-carrying factory path; only kinds with zero `field()` in the
-	 * raw rule trigger the rest-param container factory shape.
 	 */
 ```
 
@@ -1387,40 +1074,11 @@ can't be unified.
 
 ```text
 /**
- * Peel structural passthrough wrappers off a rule until reaching a
- * non-passthrough core. Single source of truth for the "find the
- * meaningful inner rule" walk that otherwise gets re-inlined every
- * time a caller wants to ignore decorative wrappers.
- *
- * Passthroughs:
- * - `optional`, `variant`, `clause`, `group` — pure structural
- *   markers (presence/absence, polymorph variant, override clause,
- *   anonymous group). None contribute their own runtime position.
- * - `alias` — renames the kind without changing the rule's structural
- *   role.
- * - `token`, `terminal` — terminalisation wrappers; the inner rule
- *   carries the actual content shape.
- *
- * @remarks Exhaustive `switch` on `Rule<'link'>.type`; non-passthrough rules
- * (seq/choice/repeat/repeat1/field/symbol/string/pattern/etc.) are
- * returned as-is. `assertNever` locks the switch shut so adding a new
- * Rule<'link'> variant becomes a compile error here instead of silently
- * skipping the unwrap step.
- *
- * @see template-walker.ts `fieldContentIsMultiSibling`.
+ * Peel the two structural passthroughs the simplified tree still carries —
+ * `variant` and `group` — until reaching the core they decorate. Neither
+ * contributes a runtime position of its own. Single source for the "find
+ * the meaningful inner rule" step.
  */
-```
-
-#### body
-
-```text
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-#### body
-
-```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules are CHOICE now.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::pattern`
@@ -2104,18 +1762,22 @@ can't be unified.
 
 ```text
 /**
- * A repeated rule with genuine per-instance separator variability — either
- * the separator itself is nonterminal (multiple possible literal kinds), or
- * it's a literal separator with an optional leading/trailing flank. See
- * docs/superpowers/specs/2026-07-12-separator-as-slot-design.md. Classified
- * by `assemble.ts`'s `isSeparatedListShape` — distinct from `AssembledMulti`
- * (hidden repeat-shape helpers tree-sitter inlines away, an unrelated
- * concept sharing only the REPEAT/REPEAT1 rule type).
+ * A repeated element with genuine per-instance separator variability —
+ * either the separator is nonterminal (multiple possible literal kinds), or
+ * it is a literal separator with an optional leading/trailing flank.
+ * Classified by `assemble.ts`'s `isSeparatedListShape` — distinct from
+ * `AssembledMulti` (hidden repeat-shape helpers tree-sitter inlines away).
+ *
+ * The constructor's `rule` is the list ELEMENT on the normalize view — a
+ * `SymbolRule`, or a `ChoiceRule` of symbols for a union-valued element —
+ * carrying the list facts itself (`multiplicity` in array/nonEmptyArray and
+ * `separator`). Both populations exist in every grammar (rust 14 symbol /
+ * 4 choice, typescript 6 / 2, python 14 / 6); any other shape is an
+ * assemble-time error.
  *
  * Unlike `AssembledGroup`, does NOT route through
- * `buildSlotsRecord`/`deriveSlots` (the general-purpose slot-collection/
- * merge machinery this design explicitly avoids) — it has exactly two
- * fixed-purpose fields (`elements`, `separatorRule`), derived directly via
+ * `buildSlotsRecord`/`deriveSlots` for its own two fixed-purpose fields
+ * (`elements`, `separatorRule`) — they are derived directly via
  * `deriveValuesForRule`.
  */
 ```
@@ -2224,15 +1886,14 @@ can't be unified.
  * delimited by `// ===` banners:
  *
  *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
- *      accumulators + the optional-body and audit-context module pointers.
+ *      accumulators + the audit-context module pointer.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
  *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
  *      slots/values derivation (`deriveSlots`, `deriveValuesForRule`,
- *      `dedupeValues`, separators, `nameNode`). `hasAnyField` (the Rule<'link'>
- *      wrapper walker `isContainerShape` below still needs) lives in
- *      `dsl/rule-transforms.ts` — this module holds the assembled-node data
- *      model, not general rule-shape predicates.
+ *      `dedupeValues`, separators, `nameNode`) over the simplified view.
+ *      General rule-shape predicates live in `dsl/` — this module holds the
+ *      assembled-node data model.
  *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
  *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
@@ -2286,46 +1947,6 @@ can't be unified.
 // structured diagnostic payloads so they surface through the grammar-diagnostics
 // preflight rather than being silently swallowed when SITTIR_QUIET is set.
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::fieldContentIsMultiSibling`
-
-```text
-/**
- * True when a field's content would have tree-sitter emit multiple children under
- * the same field name at parse time. Uses `unwrapStructuralPassthroughs` defined
- * below (moved from field-shape.ts in R7 de-scatter; uses the node-map version).
- */
-```
-
-#### body
-
-```text
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::currentOptionalBodyKinds`
-
-```text
-// ---------------------------------------------------------------------------
-// Optional-body lookthrough (module-level current pointer)
-// ---------------------------------------------------------------------------
-//
-// Some rule kinds, after Link-phase stamping (see
-// `stampStaticRenderAs` for blank-bodied renderAs entries),
-// resolve to a body that's wholly optional — `optional(X)` or a choice
-// containing the blank sentinel. References to such a kind are
-// effectively optional even when the SYMBOL ref itself sits at a
-// non-optional position in the parent rule (e.g. tree-sitter externals
-// like `_automatic_semicolon` that fire invisibly at runtime — the
-// grammar requires them syntactically but the parser can match them
-// without producing a CST token).
-//
-// `currentOptionalBodyKinds` is set by `assemble.ts` for the duration of
-// the rule walk and consulted by the slot-value constructors to downgrade
-// the multiplicity of single-position refs to such kinds from `'single'`
-// to `'optional'`. Without this look-through, wrap-side reads would
-// assert required-singular and reject ASI-terminated corpus entries.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageInfo.enumKindsById`
@@ -2717,20 +2338,18 @@ can't be unified.
 
 ```text
 /**
-	 * The grammar rule that produced this assembled node. All 10 concrete
-	 * subclasses store their rule here. The generic parameter `R` narrows
-	 * this to the exact Rule<'link'> subset each subclass accepts — the narrowing
-	 * is truthful at runtime (not just documentation) because every
-	 * subclass constructor stores its rule argument here.
+	 * The rule the constructor received — a normalize-view rule
+	 * (`RenderRule`) or one of its subsets: each subclass's generic parameter
+	 * `R` narrows it to the shape that class's population actually has
+	 * (`sittir tool assemble-shape-census` is the evidence for each). Nothing
+	 * past assemble holds a link-phase tree.
 	 *
-	 * **Protected — no external consumer reaches in.** The project
-	 * convention: only `renderTemplate()` methods (and other in-class
-	 * behaviors) read `this.rule` directly. Outside consumers (emitters,
-	 * assemble/link phases, tests) must go through the class's public
-	 * getters (`members`, `content`, `separator`, `text`, `values`,
-	 * `subtypes`, `forms`, `pattern`, `elementRule`, `isTextTemplate`,
-	 * ...) — if a new use case needs raw rule access, add the
-	 * corresponding getter here instead of widening this field.
+	 * **Protected — no external consumer reaches in.** Only in-class
+	 * behaviours read `this.rule` directly. Outside consumers (emitters,
+	 * assemble, tests) go through the public getters (`renderRule`,
+	 * `content`, `separator`, `text`, `values`, `subtypes`, `pattern`,
+	 * `elementRule`, ...) — a new use case adds a getter here instead of
+	 * widening this field.
 	 */
 ```
 
@@ -2980,12 +2599,11 @@ can't be unified.
 
 ```text
 /**
-	 * Wrapper-deleted view of the rule, sourced from
-	 * `normalized.normalizedRules[kind]` at assemble time. Optional / field /
-	 * repeat / repeat1 wrappers are pushed down to leaf attributes;
-	 * structural rules (seq / choice / variant / group / polymorph) are
-	 * preserved. Populated alongside `simplifiedRule`; consumed by PR1
-	 * Task 2.A5 and later passes that operate on the wrapper-less shape.
+	 * The normalize view of this kind (`normalized.normalizedRules[kind]`):
+	 * what is rendered. Wrappers are attributes on the wrapped node;
+	 * seq / choice / variant / group structure is preserved. It IS the
+	 * constructor's `rule`; the getter is the public name for it. The other
+	 * view, `simplifiedRule`, answers what is a slot.
 	 */
 ```
 
@@ -3334,7 +2952,7 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.renderRule`
 
 ```text
-/** See `AssembledBranch.renderRule`. Sourced from `normalized.normalizedRules[kind]` at assemble time. */
+/** See `AssembledBranch.renderRule` — the group's inner content on the normalize view. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.name`

@@ -32,7 +32,8 @@ function makeReservedWordSingleFieldNodeMap() {
 		members: [{ type: FIELD, name: 'arguments', content: { type: SYMBOL, name: 'expr' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('call', new AssembledBranch('call', parentRule, flatten(parentRule), flatten(parentRule)));
+	const parentRender = flatten(parentRule);
+	nodes.set('call', new AssembledBranch('call', parentRender, parentRender));
 	nodes.set('expr', new AssembledPattern('expr', { type: PATTERN, value: '[a-z]+' }));
 	const nodeMap = makeNodeMapWith(nodes);
 	// Gap 5's single-field-factory path reads the pre-computed `slotClass`

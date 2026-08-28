@@ -1,15 +1,10 @@
 import {
-	ALIAS,
 	CHOICE,
 	DEDENT,
-	FIELD,
 	GROUP,
 	INDENT,
 	NEWLINE,
-	OPTIONAL,
 	PATTERN,
-	REPEAT,
-	REPEAT1,
 	SEQ,
 	STRING,
 	SUPERTYPE,
@@ -25,18 +20,15 @@ import type {
 	SimplifiedRule,
 	SeqRule,
 	ChoiceRule,
-	RepeatRule,
-	Repeat1Rule,
 	StringRule,
 	SupertypeRule,
+	SymbolRule,
 	Multiplicity,
 	RuleId,
 	DelimiterMode
 } from '../../types/rule.ts';
 import { isEnumChoiceRule } from '../../dsl/rule-patterns.ts';
 import {
-	isSeq,
-	isField,
 	literalTextOf,
 	isLinkSymbol,
 	subtypeParseNamesOf,
@@ -52,14 +44,12 @@ import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
-import { flatten } from '../flatten.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
-import { hasAnyField } from '../../dsl/rule-transforms.ts';
 
 const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
 const _parseKindCollisionSeen = new Set<string>();
@@ -145,62 +135,7 @@ export function drainAssembleWarnings(): AssembleWarning[] {
 	return out;
 }
 
-export function fieldContentIsMultiSibling(content: Rule<'link'>): boolean {
-	const core = unwrapStructuralPassthroughs(content);
-	if (core.type === CHOICE) {
-		return core.members.some((member) => fieldContentIsMultiSibling(member));
-	}
-	if (core.type !== SEQ) return false;
-	let count = 0;
-	for (const member of core.members) {
-		let unwrapped: Rule<'link'> = member;
-		while (
-			unwrapped.type === OPTIONAL ||
-			unwrapped.type === VARIANT ||
-			unwrapped.type === GROUP ||
-			unwrapped.type === TOKEN
-		) {
-			unwrapped = (unwrapped as { content: Rule<'link'> }).content;
-		}
-		switch (unwrapped.type) {
-			case SYMBOL:
-				if (isLinkSymbol(unwrapped)) break;
-				count++;
-				if (count >= 2) return true;
-				break;
-			case SUPERTYPE:
-			case ALIAS:
-			case FIELD:
-			case REPEAT:
-			case REPEAT1:
-				count++;
-				if (count >= 2) return true;
-				break;
-			default:
-				break;
-		}
-	}
-	return false;
-}
-
 export { type Multiplicity } from '../../types/rule.ts';
-
-let currentOptionalBodyKinds: ReadonlySet<string> | null = null;
-
-export function setOptionalBodyKinds(kinds: ReadonlySet<string> | null): void {
-	currentOptionalBodyKinds = kinds;
-}
-
-function isOptionalBodyKind(kindName: string): boolean {
-	return currentOptionalBodyKinds !== null && currentOptionalBodyKinds.has(kindName);
-}
-
-function relaxForOptionalBody(refName: string, multiplicity: Multiplicity): Multiplicity {
-	if (multiplicity !== 'single') return multiplicity;
-	const cleanName = refName.replace(/^_+/, '') || refName;
-	if (isOptionalBodyKind(refName) || isOptionalBodyKind(cleanName)) return 'optional';
-	return multiplicity;
-}
 
 export interface UnresolvedRef {
 	readonly kind: 'unresolved-ref';
@@ -434,7 +369,7 @@ let currentAuditKind: string | undefined;
 export function setAuditKindContext(kind: string | undefined): void {
 	currentAuditKind = kind;
 }
-function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'): void {
+function auditDerivationShape(rule: SimplifiedRule, context: 'fields' | 'children'): void {
 	const mode = deriveAuditMode();
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
@@ -460,13 +395,12 @@ function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'
 		}
 	}
 }
-function classifyTopLevelShape(rule: Rule<'link'>): string {
+function classifyTopLevelShape(rule: SimplifiedRule): string {
 	switch (rule.type) {
 		case SEQ: {
 			for (const m of rule.members) {
 				if (m.type === SEQ) {
-					const sm = m as { multiplicity?: unknown; separator?: unknown };
-					if (sm.multiplicity !== undefined || sm.separator !== undefined) continue;
+					if (m.multiplicity !== undefined || m.separator !== undefined) continue;
 					return 'seq-with-nested-seq';
 				}
 				const inner = classifyTopLevelShape(m);
@@ -474,7 +408,6 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 			}
 			return 'canonical';
 		}
-		case FIELD:
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
@@ -487,56 +420,30 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 			const inner = classifyTopLevelShape(rule.content);
 			return inner === 'canonical' ? 'canonical' : `variant-wrapping-${inner}`;
 		}
-		case TOKEN: {
-			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical' ? 'canonical' : `token-wrapping-${inner}`;
-		}
-		case REPEAT:
-		case REPEAT1: {
-			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical' ? 'canonical' : `${rule.type}-wrapping-${inner}`;
-		}
 		case CHOICE: {
 			const allTokenLike = rule.members.every(isTokenLikeChoiceMember);
 			if (allTokenLike) return 'canonical';
 			const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike);
 			if (allFlatSymbolSeq) return 'canonical';
-			const allFieldOrToken = rule.members.every((m) => m.type === FIELD || isTokenLikeChoiceMember(m));
-			if (allFieldOrToken) return 'canonical';
 			if (rule.members.every((m) => m.type === VARIANT)) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
-		case OPTIONAL: {
-			const innerShape = classifyTopLevelShape(rule.content);
-			return innerShape === 'canonical' ? 'canonical' : `optional-wrapping-${innerShape}`;
-		}
 		case GROUP:
-		case ALIAS:
 			return `wrapper-${rule.type}`;
 		default:
-			return `other-${(rule as Rule<'link'>).type}`;
+			return assertNever(rule);
 	}
 }
-function isTokenLikeChoiceMember(m: Rule<'link'>): boolean {
-	const peel = (r: Rule<'link'>): Rule<'link'> =>
-		r.type === ALIAS ? peel(r.content) : r.type === TOKEN ? peel(r.content) : r.type === VARIANT ? peel(r.content) : r;
-	const core = peel(m);
+function isTokenLikeChoiceMember(m: SimplifiedRule): boolean {
+	const core = m.type === VARIANT ? m.content : m;
 	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
 	if (core.type === STRING || core.type === PATTERN) return true;
 	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
-	if (core.type === OPTIONAL) return isTokenLikeChoiceMember(core.content);
 	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
-	if (core.type === REPEAT1 || core.type === REPEAT) {
-		const inner = peel(core.content);
-		if (isEnumChoiceRule(inner)) return true;
-		if (inner.type === STRING || inner.type === PATTERN) return true;
-		if (inner.type === SYMBOL || inner.type === SUPERTYPE) return true;
-		if (inner.type === CHOICE && inner.members.every(isTokenLikeChoiceMember)) return true;
-	}
 	return false;
 }
 
-function isFlatSymbolSeqOrTokenLike(m: Rule<'link'>): boolean {
+function isFlatSymbolSeqOrTokenLike(m: SimplifiedRule): boolean {
 	if (m.type === SEQ) {
 		return m.members.every(isTokenLikeChoiceMember);
 	}
@@ -555,14 +462,13 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 	auditKindsByShape.clear();
 }
 
-function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNonterminal[] {
-	const canonical = flatten(rule) as Rule<'link'>;
+function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledNonterminal[] {
 	const prevAuditKind = currentAuditKind;
 	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
 	try {
-		auditDerivationShape(canonical, 'fields');
+		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields');
 		const kindName = ctx?.kindName ?? currentAuditKind;
-		let slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
+		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries));
 		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 		if (unionChoiceIds.size > 0) {
 			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
@@ -581,7 +487,7 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
 				});
 				const prev = setUnionSlotRouting(false);
 				try {
-					slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
+					slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries));
 				} finally {
 					setUnionSlotRouting(prev);
 					drainSynthesizedUnionChoiceIds();
@@ -636,10 +542,11 @@ export interface ParseKindCollisionContext {
 export interface DeriveCtx {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly kindName?: string;
+	readonly shapeAudit?: false;
 	readonly collision?: ParseKindCollisionContext;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
-	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>;
+	readonly nodes?: ReadonlyMap<string, AssembledNodeBase>;
 	readonly stampArmFieldNamesAsParseName?: boolean;
 }
 
@@ -647,7 +554,7 @@ export interface KindedDeriveCtx extends DeriveCtx {
 	readonly kindName: string;
 }
 
-export function buildParseKindRuleSignatures<T extends Rule<'link'>>(
+export function buildParseKindRuleSignatures<T extends AnyRule>(
 	rules: Readonly<Record<string, T>>
 ): Readonly<Record<string, string>> {
 	return Object.fromEntries(Object.entries(rules).map(([kind, rule]) => [kind, canonicalRuleSignature(rule)]));
@@ -770,16 +677,8 @@ export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFa
 	});
 }
 
-export function deriveSlots(rule: Rule<'link'>, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
+export function deriveSlots(rule: SimplifiedRule, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
 	return _deriveSlotsInternal(rule, ctx);
-}
-
-export function isSyntheticFieldWrapper(content: Rule<'link'>): boolean {
-	if (content.type === REPEAT || content.type === REPEAT1) {
-		return isSyntheticFieldWrapper(content.content);
-	}
-	if (!isSeq(content)) return false;
-	return content.members.some(isField);
 }
 
 const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
@@ -798,7 +697,7 @@ function findKindEntryById(lookup: {
 }
 
 export function deriveValuesForRule(
-	rule: Rule<'link'>,
+	rule: RenderRule,
 	ctx: DeriveCtx | undefined,
 	multiplicity: Multiplicity
 ): NodeOrTerminal[] {
@@ -838,7 +737,7 @@ export function deriveValuesForRule(
 						storageKindId: rule.aliasedFromId ?? rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: rule.kindId,
-						multiplicity: relaxForOptionalBody(refName, multiplicity)
+						multiplicity
 					}
 				];
 			}
@@ -852,7 +751,7 @@ export function deriveValuesForRule(
 					storageKindId: storageEntry?.id,
 					parseKind: { kind: 'unresolved-ref', name: rule.name },
 					parseKindId: parseEntry?.parseId ?? parseEntry?.id,
-					multiplicity: relaxForOptionalBody(refName, multiplicity)
+					multiplicity
 				}
 			];
 		}
@@ -865,7 +764,7 @@ export function deriveValuesForRule(
 						storageKindId: subRef.aliasedFromId ?? subRef.kindId,
 						parseKind: { kind: 'unresolved-ref' as const, name: subRef.name },
 						parseKindId: subRef.kindId,
-						multiplicity: relaxForOptionalBody(name, multiplicity)
+						multiplicity
 					};
 				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
@@ -878,7 +777,7 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref' as const, name: parseName ?? name },
 					parseKindId: parseEntry?.parseId ?? parseEntry?.id ?? entry?.parseId ?? entry?.id,
-					multiplicity: relaxForOptionalBody(name, multiplicity)
+					multiplicity
 				};
 			});
 		case STRING:
@@ -912,8 +811,9 @@ export function deriveValuesForRule(
 			];
 		}
 		case CHOICE: {
+			const members = rule.members;
 			if (isEnumChoiceRule(rule)) {
-				return rule.members.map((m) => {
+				return members.map((m) => {
 					const text = literalTextOf(m) ?? '';
 					const symName = isLinkSymbol(m) ? m.name : undefined;
 					const entry =
@@ -930,10 +830,10 @@ export function deriveValuesForRule(
 					};
 				});
 			}
-			const isBlank = (r: Rule<'link'>): boolean =>
+			const isBlank = (r: RenderRule): boolean =>
 				(r.type === CHOICE && r.members.length === 0) || (r.type === SEQ && r.members.length === 0);
-			const nonBlank = rule.members.filter((m) => !isBlank(m));
-			const hasBlank = nonBlank.length < rule.members.length;
+			const nonBlank = members.filter((m) => !isBlank(m));
+			const hasBlank = nonBlank.length < members.length;
 			const armMult: Multiplicity =
 				hasBlank && nonBlank.length >= 1
 					? multiplicity === 'nonEmptyArray'
@@ -947,30 +847,13 @@ export function deriveValuesForRule(
 			}
 			return nonBlank.flatMap((m) => {
 				const values = deriveValuesForRule(m, ctx, armMult);
-				const fieldName = m.type === FIELD ? m.name : (m as { fieldName?: string }).fieldName;
+				const fieldName = m.fieldName;
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
-		case OPTIONAL: {
-			if (rule.content.type === REPEAT1) {
-				return deriveValuesForRule(rule.content.content, ctx, 'array');
-			}
-			const inner = deriveValuesForRule(rule.content, ctx, 'optional');
-			return inner.map((v) => (v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v));
-		}
-		case REPEAT:
-			return deriveValuesForRule(rule.content, ctx, 'array');
-		case REPEAT1:
-			return deriveValuesForRule(rule.content, ctx, 'nonEmptyArray');
-		case FIELD:
-			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case VARIANT:
 		case GROUP:
 			return deriveValuesForRule(rule.content, ctx, multiplicity);
-		case TOKEN:
-			return deriveValuesForRule(rule.content, ctx, multiplicity).map((v) =>
-				isTerminalValue(v) ? { ...v, immediate: rule.immediate, tokenized: true } : v
-			);
 		case SEQ:
 			return rule.members.flatMap((m) => deriveValuesForRule(m, ctx, multiplicity));
 		default:
@@ -1067,7 +950,7 @@ export type ModelType =
 	| 'group'
 	| 'separatedList';
 
-export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
+export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	typeName: string;
 	factoryName?: string;
@@ -1497,21 +1380,19 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 }
 
 function buildSlotsRecord(
-	rule: Rule<'link'>,
+	rule: SimplifiedRule,
 	ctx: KindedDeriveCtx,
-	renderRule?: RenderRule
+	renderRule: RenderRule
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const kind = ctx.kindName;
 	const slots = [...deriveSlots(rule, ctx)];
-	if (renderRule) {
-		for (const renderSlot of deriveSlots(renderRule, ctx)) {
-			const existing = slots.find((slot) => slot.name === renderSlot.name);
-			if (!existing) continue;
-			const next = existing.with({
-				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds)
-			});
-			slots.splice(slots.indexOf(existing), 1, next);
-		}
+	for (const renderSlot of deriveSlots(renderRule, { ...ctx, shapeAudit: false })) {
+		const existing = slots.find((slot) => slot.name === renderSlot.name);
+		if (!existing) continue;
+		const next = existing.with({
+			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds)
+		});
+		slots.splice(slots.indexOf(existing), 1, next);
 	}
 	let resolvedSlots = resolveParseKindCollisions(slots, ctx);
 
@@ -1585,16 +1466,9 @@ export function pruneDeterminedSlots(nodeMap: { nodes: ReadonlyMap<string, Assem
 	}
 }
 
-export class AssembledBranch<
-	R extends SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule =
-		| SeqRule<'link'>
-		| ChoiceRule<'link'>
-		| RepeatRule
-		| Repeat1Rule
-> extends AssembledNodeBase<R> {
+export class AssembledBranch extends AssembledNodeBase<RenderRule> {
 	readonly modelType = 'branch' as const;
 	readonly simplifiedRule: SimplifiedRule;
-	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly string[];
 
 	slotClass?: BranchSlotClass;
@@ -1604,7 +1478,6 @@ export class AssembledBranch<
 
 	constructor(
 		kind: string,
-		rule: R,
 		simplifiedRule: SimplifiedRule,
 		renderRule: RenderRule,
 		opts?: {
@@ -1618,9 +1491,8 @@ export class AssembledBranch<
 			simplifiedRules?: Record<string, SimplifiedRule>;
 		}
 	) {
-		super(kind, rule, opts);
+		super(kind, renderRule, opts);
 		this.simplifiedRule = simplifiedRule;
-		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots =
 			opts?.slotRecord ??
@@ -1658,9 +1530,8 @@ export class AssembledBranch<
 		if (this.#determinedSlots.length > 0) this._slots = kept;
 	}
 
-	get members(): readonly Rule<'link'>[] {
-		const r = this.rule;
-		return r.type === SEQ || r.type === CHOICE ? r.members : [];
+	get renderRule(): RenderRule {
+		return this.rule;
 	}
 
 	get keywordConstructibleText(): string | undefined {
@@ -1675,15 +1546,11 @@ export class AssembledBranch<
 		return undefined;
 	}
 
-	get isContainerShape(): boolean {
-		return !hasAnyField(this.rule);
-	}
-
 	#computing = false;
 
-	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>> | undefined = undefined;
+	#nodes: ReadonlyMap<string, AssembledNodeBase> | undefined = undefined;
 
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>): void {
+	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase>): void {
 		this.#nodes = nodes;
 	}
 
@@ -1709,34 +1576,10 @@ export class AssembledBranch<
 	}
 }
 
-export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
-	let r: Rule<'link'> = rule;
-	for (;;) {
-		switch (r.type) {
-			case OPTIONAL:
-			case VARIANT:
-			case GROUP:
-			case ALIAS:
-			case TOKEN:
-				r = r.content;
-				continue;
-			case SEQ:
-			case CHOICE:
-			case REPEAT:
-			case REPEAT1:
-			case FIELD:
-			case SUPERTYPE:
-			case STRING:
-			case PATTERN:
-			case INDENT:
-			case DEDENT:
-			case NEWLINE:
-			case SYMBOL:
-				return r;
-			default:
-				return assertNever(r);
-		}
-	}
+export function unwrapStructuralPassthroughs(rule: SimplifiedRule): SimplifiedRule {
+	let r: SimplifiedRule = rule;
+	while (r.type === VARIANT || r.type === GROUP) r = r.content;
+	return r;
 }
 
 export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
@@ -1900,7 +1743,7 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 	}
 }
 
-export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
+export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
 	readonly resolvedKindIds: readonly number[];
@@ -1908,7 +1751,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 
 	constructor(
 		kind: string,
-		rule: ChoiceRule<'link'>,
+		rule: ChoiceRule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -1935,7 +1778,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 		this.resolvedByText = byText;
 		if (this.values.length < 2) {
 			throw new Error(
-				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule<'link'>`
+				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to a StringRule`
 			);
 		}
 	}
@@ -1945,13 +1788,13 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	}
 }
 
-export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> | ChoiceRule<'link'>> {
+export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
 	readonly modelType = 'supertype' as const;
 	readonly #subtypes: readonly NodeOrTerminal[];
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 
-	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
-		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
+	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: readonly SubtypeRef[]) {
+		super(kind, rule, { hidden: true });
 		this.#subtypes = subtypes.map(
 			(s): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name: s.name },
@@ -2010,10 +1853,9 @@ export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 	}
 }
 
-export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
+export class AssembledGroup extends AssembledNodeBase<RenderRule> {
 	readonly modelType = 'group' as const;
 	readonly simplifiedRule: SimplifiedRule;
-	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
 	readonly name: string;
 	readonly parentKind?: string;
@@ -2047,7 +1889,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 
 	constructor(
 		kind: string,
-		rule: Rule<'link'>,
 		simplifiedRule: SimplifiedRule,
 		renderRule: RenderRule,
 		opts?: {
@@ -2062,9 +1903,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 		}
 	) {
 		const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, rule, { factoryName, irKey: opts?.irKey });
+		super(kind, renderRule, { factoryName, irKey: opts?.irKey });
 		this.simplifiedRule = simplifiedRule;
-		this.renderRule = renderRule;
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
@@ -2076,11 +1916,15 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 		);
 	}
 
+	get renderRule(): RenderRule {
+		return this.rule;
+	}
+
 	#computing = false;
 
-	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>> | undefined = undefined;
+	#nodes: ReadonlyMap<string, AssembledNodeBase> | undefined = undefined;
 
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>): void {
+	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase>): void {
 		this.#nodes = nodes;
 	}
 
@@ -2106,10 +1950,12 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	}
 }
 
-export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
+export type SeparatedListElementRule = SymbolRule | ChoiceRule;
+
+export class AssembledSeparatedList extends AssembledNodeBase<SeparatedListElementRule> {
 	readonly modelType = 'separatedList' as const;
 	readonly elements: readonly NodeOrTerminal[];
-	readonly separatorRule: Rule<'link'> | undefined;
+	readonly separatorRule: RenderRule | undefined;
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
 
@@ -2120,10 +1966,10 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 
 	constructor(
 		kind: string,
-		rule: RepeatRule | Repeat1Rule,
+		rule: SeparatedListElementRule,
 		ctx: DeriveCtx | undefined,
 		opts: {
-			separatorRule: Rule<'link'> | undefined;
+			separatorRule: RenderRule | undefined;
 			simplifiedRule: SimplifiedRule;
 			renderRule: RenderRule;
 			kindEntries?: readonly GeneratedKindEntry[];
@@ -2133,9 +1979,9 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 		super(kind, rule, {});
 		const sep = rule.separator;
 		this.elements = deriveValuesForRule(
-			rule.content,
+			rule,
 			{ ...ctx, stampArmFieldNamesAsParseName: true },
-			rule.type === REPEAT1 ? 'nonEmptyArray' : 'array'
+			rule.multiplicity === 'nonEmptyArray' ? 'nonEmptyArray' : 'array'
 		);
 		this.separatorRule = opts.separatorRule;
 		this.leadingDelimiter = sep?.leading ?? 'none';
@@ -2150,15 +1996,15 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	}
 
 	get nonEmpty(): boolean {
-		return this.rule.type === REPEAT1;
+		return this.rule.multiplicity === 'nonEmptyArray';
 	}
 
 	get terminatedSeparator(): boolean {
-		return (this.rule.separator as { terminated?: true } | undefined)?.terminated === true;
+		return this.rule.separator?.terminated === true;
 	}
 
 	get separator(): string | undefined {
-		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
+		return extractSeparatorString(this.rule.separator);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {

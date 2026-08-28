@@ -42,10 +42,8 @@ function makeFieldPatternNodeMap(withMarkers: boolean) {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'field_pattern',
-		new AssembledBranch('field_pattern', parentRule, flatten(parentRule), flatten(parentRule))
-	);
+	const parentRender = flatten(parentRule);
+	nodes.set('field_pattern', new AssembledBranch('field_pattern', parentRender, parentRender));
 	nodes.set('_mutable_specifier', new AssembledKeyword('_mutable_specifier', { type: STRING, value: 'mut' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('field_pattern_named', new AssembledPattern('field_pattern_named', { type: PATTERN, value: '.+' }));

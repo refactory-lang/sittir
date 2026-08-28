@@ -20,7 +20,7 @@ function makeRequiredSingleChildNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'single_parent',
-		new AssembledBranch('single_parent', parentRule, flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('single_parent', flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -34,7 +34,7 @@ function makeRequiredSingleFieldNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'single_field_parent',
-		new AssembledBranch('single_field_parent', parentRule, flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('single_field_parent', flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -57,7 +57,7 @@ function makeRepeatFieldNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'repeat_field_parent',
-		new AssembledBranch('repeat_field_parent', parentRule, flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('repeat_field_parent', flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -73,7 +73,7 @@ function makeHiddenSupertypeChildrenNodeMap() {
 			}
 		]
 	};
-	const typeRule: ChoiceRule<'link'> = {
+	const typeRule: ChoiceRule = {
 		type: CHOICE,
 		members: [{ type: SYMBOL, name: '_primitive_type' }]
 	};
@@ -85,7 +85,7 @@ function makeHiddenSupertypeChildrenNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, flatten(parentRule), flatten(parentRule)));
+	nodes.set('tuple_type', new AssembledBranch('tuple_type', flatten(parentRule), flatten(parentRule)));
 	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: '_primitive_type' }]));
 	nodes.set(
 		'_primitive_type',
@@ -106,12 +106,12 @@ function makeVisibleSupertypeChildrenNodeMap() {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'expression' }]
 	};
-	const expressionRule: ChoiceRule<'link'> = {
+	const expressionRule: ChoiceRule = {
 		type: CHOICE,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('typed_value', new AssembledBranch('typed_value', parentRule, flatten(parentRule), flatten(parentRule)));
+	nodes.set('typed_value', new AssembledBranch('typed_value', flatten(parentRule), flatten(parentRule)));
 	nodes.set('expression', new AssembledSupertype('expression', expressionRule, [{ name: 'identifier' }]));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);

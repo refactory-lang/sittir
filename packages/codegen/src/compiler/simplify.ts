@@ -102,75 +102,6 @@ export function isEmptyMatchMember(rule: RenderRule): boolean {
 	return false;
 }
 
-function hasNamedSiblingOfInnerField(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case SEQ: {
-			const containsField = rule.members.some((m) => m.type === FIELD);
-			if (containsField) {
-				for (const m of rule.members) {
-					if (m.type === FIELD) continue;
-					if (isNamedReference(m)) return true;
-				}
-			}
-			return rule.members.some(hasNamedSiblingOfInnerField);
-		}
-		case CHOICE:
-			return rule.members.some(hasNamedSiblingOfInnerField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case GROUP:
-		case VARIANT:
-			return hasNamedSiblingOfInnerField(rule.content);
-		default:
-			return false;
-	}
-}
-
-function isNamedReference(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-		case SUPERTYPE:
-			return true;
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case GROUP:
-		case VARIANT:
-		case TOKEN:
-			return isNamedReference(rule.content);
-		default:
-			return false;
-	}
-}
-
-function hasInnerFieldAtExposableDepth(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case FIELD:
-			return true;
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case GROUP:
-		case VARIANT:
-			return hasInnerFieldAtExposableDepth(rule.content);
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasInnerFieldAtExposableDepth);
-		default:
-			return false;
-	}
-}
-
-export function hoistInnerFieldFromWrapperForField(rule: Rule<'link'>): Rule<'link'> {
-	if (rule.type !== FIELD) return rule;
-	const content = rule.content;
-	if (content.type === FIELD) return rule;
-	if (!hasInnerFieldAtExposableDepth(content)) return rule;
-	if (hasNamedSiblingOfInnerField(content)) return rule;
-	return content;
-}
-
 function liftSharedArmAttrs(rule: ChoiceRule): ChoiceRule {
 	const shared = sharedArmAttrs(rule);
 	let result: ChoiceRule = rule;
@@ -416,38 +347,6 @@ function simplifyToFixpoint(
 		`[simplify] simplifyToFixpoint: ${MAX_ITERS} iterations reached without convergence — returning last iteration`
 	);
 	return current;
-}
-
-export function hoistInnerFieldsForTemplate(rule: Rule<'link'>): Rule<'link'> {
-	switch (rule.type) {
-		case SEQ:
-			return {
-				...rule,
-				members: rule.members.map(hoistInnerFieldsForTemplate)
-			};
-		case CHOICE:
-			return {
-				...rule,
-				members: rule.members.map(hoistInnerFieldsForTemplate)
-			};
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case GROUP:
-		case VARIANT:
-		case TOKEN:
-			return {
-				...rule,
-				content: hoistInnerFieldsForTemplate(rule.content)
-			};
-		case FIELD:
-			return hoistInnerFieldFromWrapperForField({
-				...rule,
-				content: hoistInnerFieldsForTemplate(rule.content)
-			});
-		default:
-			return rule;
-	}
 }
 
 function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {

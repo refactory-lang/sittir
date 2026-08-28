@@ -3,8 +3,8 @@
  * visible-list-kind migration.
  *
  * Two populations:
- *   A. kind-level lists -- kinds whose own rule is repeat/repeat1 with a
- *      separator. Flank-carrying ones (an 'optional' flank or a nonterminal
+ *   A. kind-level lists -- kinds whose own rule is a list element (array
+ *      multiplicity) with a separator. Flank-carrying ones (an 'optional' flank or a nonterminal
  *      separator) classify as modelType 'separatedList'; flankless ones stay
  *      'branch'/'group'.
  *   B. inline list slots -- array-valued slot positions on other kinds whose
@@ -85,6 +85,7 @@ interface AnyRule {
 	value?: unknown;
 	name?: unknown;
 	members?: AnyRule[];
+	multiplicity?: string;
 	separator?: { value?: AnyRule; trailing?: FlankMode; leading?: FlankMode };
 }
 
@@ -92,9 +93,8 @@ function ruleType(rule: AnyRule | undefined): string {
 	return String(rule?.type ?? '').toUpperCase();
 }
 
-function isRepeatShaped(rule: AnyRule | undefined): boolean {
-	const t = ruleType(rule);
-	return t === 'REPEAT' || t === 'REPEAT1';
+function isListMultiplicity(rule: AnyRule | undefined): boolean {
+	return rule?.multiplicity === 'array' || rule?.multiplicity === 'nonEmptyArray';
 }
 
 /** Human-readable spelling of a separator rule: literal text, or a structural
@@ -197,7 +197,7 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 		const rule = node.diagnosticRule as AnyRule;
 		const modelType = String((node as { modelType?: string }).modelType ?? '?');
 
-		if (isRepeatShaped(rule) && rule?.separator) {
+		if (isListMultiplicity(rule) && rule?.separator) {
 			const sepValue = rule.separator.value;
 			const nonterminal = isNonterminalSeparatorRule(sepValue);
 			const leading = rule.separator.leading ?? 'none';

@@ -54,7 +54,7 @@ describe('token wrapper lexical facts', () => {
 			name: 'x',
 			content: { type: STRING, value: 'foo' }
 		};
-		const slots = deriveSlots(rule);
+		const slots = deriveSlots(flatten(rule));
 		const terminal = slots.find((s) => s.name === 'x')!.values.find(isTerminalValue);
 		expect(terminal!.immediate).toBeUndefined();
 		expect(terminal!.tokenized).toBeUndefined();

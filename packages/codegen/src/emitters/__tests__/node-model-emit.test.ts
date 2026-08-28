@@ -18,9 +18,10 @@ describe('node-model emitter', () => {
 			members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 		};
 		const nodes = new Map<string, AssembledNode>();
+		const render = flatten(rule);
 		nodes.set(
 			'alias_host',
-			new AssembledBranch('alias_host', rule, flatten(rule), flatten(rule), {
+			new AssembledBranch('alias_host', render, render, {
 				slotRecord: Object.freeze({
 					value: new AssembledNonterminal({
 						fieldName: 'value',

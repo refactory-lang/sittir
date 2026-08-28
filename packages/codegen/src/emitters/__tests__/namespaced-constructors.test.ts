@@ -14,7 +14,8 @@ import { flatten } from '../../compiler/flatten.ts';
 import { namespacedConstructors } from '../namespaced-constructors.ts';
 
 function branch(kind: string, rule: SeqRule<'link'>): AssembledBranch {
-	return new AssembledBranch(kind, rule, flatten(rule), flatten(rule));
+	const render = flatten(rule);
+	return new AssembledBranch(kind, render, render);
 }
 
 function field(name: string, content: Rule<'link'>): Rule<'link'> {

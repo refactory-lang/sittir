@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { toolModules, registerTools } from '../../../src/commands/tool/index.ts';
 
 const EXPECTED = [
+	'assemble-shape-census',
 	'bench',
 	'bench-codemod',
 	'check-baseline',
@@ -35,7 +36,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 29 converted tools', () => {
+	it('registers exactly the 30 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

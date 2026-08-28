@@ -12,7 +12,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SimplifiedRule } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -103,33 +103,33 @@ function carriesNamedField(rule: AnyRule): boolean {
 	}
 }
 
-export function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): boolean {
+export function isStructuralChoice(rule: ChoiceRule<'simplify'>): boolean {
 	if (sharedArmFieldName(rule) !== undefined) return false;
 	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m));
 }
 
 export interface ChoiceArmPartition {
-	degenerateNamedArms: AnyRule[];
-	structuredNamedArms: AnyRule[];
-	unionArms: AnyRule[];
-	literalArms: AnyRule[];
-	structuredArms: AnyRule[];
+	degenerateNamedArms: SimplifiedRule[];
+	structuredNamedArms: SimplifiedRule[];
+	unionArms: SimplifiedRule[];
+	literalArms: SimplifiedRule[];
+	structuredArms: SimplifiedRule[];
 }
 
-function isDegenerateFieldArm(m: AnyRule): boolean {
+function isDegenerateFieldArm(m: SimplifiedRule): boolean {
 	let node = m;
 	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
 	if (node.type === SEQ || node.type === CHOICE) return false;
 	return (node as { fieldName?: string }).fieldName !== undefined && isSlotNode(node);
 }
 
-function degenerateArmFieldName(m: AnyRule): string | undefined {
+function degenerateArmFieldName(m: SimplifiedRule): string | undefined {
 	let node = m;
 	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
 	return (node as { fieldName?: string }).fieldName;
 }
 
-export function partitionChoiceArms(rule: Extract<AnyRule, { type: 'CHOICE' }>): ChoiceArmPartition {
+export function partitionChoiceArms(rule: ChoiceRule<'simplify'>): ChoiceArmPartition {
 	const out: ChoiceArmPartition = {
 		degenerateNamedArms: [],
 		structuredNamedArms: [],
@@ -137,7 +137,7 @@ export function partitionChoiceArms(rule: Extract<AnyRule, { type: 'CHOICE' }>):
 		literalArms: [],
 		structuredArms: []
 	};
-	const classify = (m: AnyRule): void => {
+	const classify = (m: SimplifiedRule): void => {
 		if (carriesNamedField(m)) {
 			(isDegenerateFieldArm(m) ? out.degenerateNamedArms : out.structuredNamedArms).push(m);
 			return;
@@ -184,7 +184,7 @@ export function drainSynthesizedUnionChoiceIds(): ReadonlySet<string> {
 	return out;
 }
 
-function describeArmShape(m: AnyRule): string {
+function describeArmShape(m: SimplifiedRule): string {
 	const fieldName = (m as { fieldName?: string }).fieldName;
 	const prefix = fieldName !== undefined ? `field(${fieldName}):` : '';
 	switch (m.type) {
@@ -197,7 +197,7 @@ function describeArmShape(m: AnyRule): string {
 	}
 }
 
-function describeArmLeaf(m: AnyRule): string {
+function describeArmLeaf(m: SimplifiedRule): string {
 	if (m.type === SYMBOL || m.type === SUPERTYPE) return m.name;
 	const value = (m as { value?: string }).value;
 	if (typeof value === 'string') return JSON.stringify(value);
@@ -287,9 +287,9 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 	});
 }
 
-function isSlotNode(rule: AnyRule): boolean {
-	if ((rule as { nonterminal?: boolean }).nonterminal === true) return true;
-	return isNonterminalRuleType(rule as Rule<'evaluate'>);
+function isSlotNode(rule: SimplifiedRule): boolean {
+	if (rule.nonterminal === true) return true;
+	return isNonterminalRuleType(rule);
 }
 
 function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
@@ -300,7 +300,7 @@ function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity 
 }
 
 function buildSlot(
-	rule: AnyRule,
+	rule: SimplifiedRule,
 	kindForName: string | undefined,
 	kindEntries: readonly GeneratedKindEntry[] | undefined,
 	inherited: Multiplicity,
@@ -344,7 +344,7 @@ function buildSlot(
 	}
 
 	const rawValues = deriveValuesForRule(
-		rule as Rule<'link'>,
+		rule,
 		{ kindEntries, stampArmFieldNamesAsParseName: sanctionedUnion },
 		mult
 	);
@@ -406,7 +406,7 @@ function buildSlot(
 }
 
 export function collectSlots(
-	rule: AnyRule,
+	rule: SimplifiedRule,
 	kindForName?: string,
 	kindEntries?: readonly GeneratedKindEntry[],
 	inherited: Multiplicity = 'single',

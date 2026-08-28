@@ -112,6 +112,23 @@ pnpm exec tsx packages/cli/src/cli.ts validate trace-rt <grammar> [options]
 
 Developer diagnostics
 
+### `tool assemble-shape-census`
+
+Census the rule shapes that reach each Assembled* constructor, grouped by modelType
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `--all-grammars` — Run all three grammars
+- `--format <fmt>` — Output format: table | json (default: `table`)
+- `--view <view>` — Which rule view to census: constructor | simplified | both (default: `both`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool assemble-shape-census [options]
+```
+
 ### `tool bench`
 
 Render benchmark comparing native (Askama) vs JS (Nunjucks)

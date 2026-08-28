@@ -1,16 +1,21 @@
 /**
- * Tests for `diagnoseSlotGrouping` — three-shape violation detection.
- *
- * Shapes:
- *   1. multi-slot-nested-seq   — countSlots≥2 seq in a genuine slot-creating position
- *      (inside repeat/optional, or top-level body of an inline-listed auto-group
- *      helper kind). Choice arms are SUPPRESSED (choice-distributed = handled by
- *      collectSlots union semantics, NOT a genuine group-lift violation).
- *   2. supertype-list          — repeat/repeat1 of single non-field-named symbol/supertype
- *   3. repeat-choice-with-literal — repeat(choice(..., literal, ...))
+ * Tests for `diagnoseSlotGrouping`'s multi-slot-nested-seq shape — a
+ * countSlots≥2 seq in a genuine slot-creating position (the top-level body
+ * of an inline-listed auto-group helper kind, or a choice arm). Choice arms
+ * are SUPPRESSED (choice-distributed = handled by collectSlots union
+ * semantics, NOT a genuine group-lift violation).
  *
  * KEY INVARIANT: the top-level rule body of a NORMAL grammar kind is NOT a
- * "slot" — it is the kind itself. Shape ① fires only at slot-creating positions.
+ * "slot" — it is the kind itself. The shape fires only at slot-creating
+ * positions.
+ *
+ * A repeat/optional/field-wrapped multi-slot seq never reaches this walker in
+ * the first place: flatten() converts those wrappers into `multiplicity`/
+ * `fieldName` attributes on the leaf they wrapped, and a multi-field repeated
+ * body is hoisted to its own named kind (referenced by symbol) well before
+ * simplify's canonical-shape pass runs — so the walker has no REPEAT/REPEAT1/
+ * OPTIONAL/FIELD case to dispatch on. `diagnoseSlotGrouping`'s other shape,
+ * content-collision, is covered separately in grammar-diagnostics.test.ts.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -21,27 +26,8 @@ const sym = (name: string) => ({ type: 'SYMBOL', name }) as any;
 const str = (v: string) => ({ type: 'STRING', value: v }) as any;
 const seq = (...m: any[]) => ({ type: 'SEQ', members: m }) as any;
 const choice = (...m: any[]) => ({ type: 'CHOICE', members: m }) as any;
-const repeat = (content: any) => ({ type: 'REPEAT', content }) as any;
-const repeat1 = (content: any) => ({ type: 'REPEAT1', content }) as any;
 
 describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
-	it('repeat(seq(sym a, sym b)) → one multi-slot-nested-seq record', () => {
-		// repeat sets slot position; inner seq IS in a slot position
-		const rule = repeat(seq(sym('a'), sym('b')));
-		const records = diagnoseSlotGrouping({ foo: rule as any });
-		expect(records).toHaveLength(1);
-		expect(records[0]!.code).toBe('multi-slot-nested-seq');
-		expect(records[0]!.ownerKind).toBe('foo');
-		expect(records[0]!.slotCount).toBe(2);
-	});
-
-	it('repeat(seq(str comma, sym a)) → no diagnostic (single slot)', () => {
-		// Only 1 slot (the sym); the string is terminal.
-		const rule = repeat(seq(str(','), sym('a')));
-		const records = diagnoseSlotGrouping({ bar: rule as any });
-		expect(records).toHaveLength(0);
-	});
-
 	it('top-level rule body seq(field_a, field_b) → SILENT (not in slot position)', () => {
 		// A plain multi-field rule body is NOT a slot — it is the rule itself.
 		// Bug 1 regression: must not fire for normal grammar kinds.
@@ -51,15 +37,6 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		);
 		const records = diagnoseSlotGrouping({ assignment_expression: rule as any });
 		expect(records).toHaveLength(0);
-	});
-
-	it('repeat(seq(field_a, field_b)) inside a rule → fires (slot position)', () => {
-		// The seq is inside a repeat's content → slot position → should fire.
-		const rule = repeat(
-			seq({ type: 'SYMBOL', name: 'a', fieldName: 'a' }, { type: 'SYMBOL', name: 'b', fieldName: 'b' })
-		);
-		const records = diagnoseSlotGrouping({ some_list: rule as any });
-		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(1);
 	});
 
 	it('auto-group helper body seq fires when kind is in inlineKinds', () => {
@@ -100,48 +77,6 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
 		const records = diagnoseSlotGrouping({ choice_kind: rule as any });
 		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(0);
-	});
-});
-
-describe('diagnoseSlotGrouping — supertype-list', () => {
-	it('repeat(sym _type) → supertype-list', () => {
-		const rule = repeat(sym('_type'));
-		const records = diagnoseSlotGrouping({ tuple_type: rule as any });
-		expect(records).toHaveLength(1);
-		expect(records[0]!.code).toBe('supertype-list');
-		expect(records[0]!.ownerKind).toBe('tuple_type');
-	});
-
-	it('repeat1(sym _expression) → supertype-list', () => {
-		const rule = repeat1(sym('_expression'));
-		const records = diagnoseSlotGrouping({ expr_list: rule as any });
-		expect(records).toHaveLength(1);
-		expect(records[0]!.code).toBe('supertype-list');
-	});
-
-	it('field-named repeat(sym) is SILENT (already named)', () => {
-		// When the symbol carries fieldName, it is already field-named → silent.
-		const rule = repeat({ type: 'SYMBOL', name: '_type', fieldName: 'type' } as any);
-		const records = diagnoseSlotGrouping({ named: rule as any });
-		expect(records).toHaveLength(0);
-	});
-});
-
-describe('diagnoseSlotGrouping — repeat-choice-with-literal', () => {
-	it('repeat(choice(sym a, str comma)) → repeat-choice-with-literal', () => {
-		const rule = repeat(choice(sym('a'), str(',')));
-		const records = diagnoseSlotGrouping({ obj: rule as any });
-		expect(records).toHaveLength(1);
-		expect(records[0]!.code).toBe('repeat-choice-with-literal');
-	});
-
-	it('repeat(choice(sym a, sym b)) → supertype-list (no literals)', () => {
-		// No literal in the choice → not repeat-choice-with-literal.
-		// Two symbols in a choice = one union slot → supertype-list shape.
-		const rule = repeat(choice(sym('a'), sym('b')));
-		const records = diagnoseSlotGrouping({ union: rule as any });
-		// choice(a, b) is a single union slot → supertype-list
-		expect(records.filter((r) => r.code === 'supertype-list')).toHaveLength(1);
 	});
 });
 
