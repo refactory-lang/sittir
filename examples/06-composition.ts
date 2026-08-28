@@ -6,15 +6,15 @@ interface GrammarSummary {
 }
 
 export function renderSummaryInterface(summary: GrammarSummary) {
-	return ir.interfaceDeclaration.from({
+	return ir.interfaceDeclaration({
 		name: summary.name,
 		body: {
 			members: [
-				ir.propertySignature.from({
+				ir.propertySignature({
 					name: 'kindCount',
 					type: { type: 'number' },
 				}),
-				ir.propertySignature.from({
+				ir.propertySignature({
 					name: 'hasKinds',
 					type: { type: 'boolean' },
 				}),

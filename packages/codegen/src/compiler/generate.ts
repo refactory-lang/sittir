@@ -20,14 +20,10 @@ import { emitConfig } from '../emitters/config.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitSuggested } from '../emitters/suggested.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
-import { emitEngine } from '../emitters/engine.ts';
+import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import {
-	computeFieldStorageInfo,
-	computeSlotClasses,
-	computeSupertypeTransitiveParseKinds
-} from '../emitters/shared.ts';
+import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
@@ -42,6 +38,7 @@ import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts
 import { assertEmittable } from './emit-gate.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
+import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -53,6 +50,7 @@ export interface GeneratedFiles {
 	grammar: string;
 	types: string;
 	engine: string;
+	renderEngine: string;
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
 	wrap: string;
@@ -62,7 +60,6 @@ export interface GeneratedFiles {
 	consts: string;
 	index: string;
 	tests: string;
-	typeTests: string;
 	config: string;
 	nodeModel: string;
 	suggested: string | undefined;
@@ -228,8 +225,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// plus the stamped `root` role: the start symbol is the rule record's
 	// FIRST rule (tree-sitter convention, preserved through every phase).
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
-	// The full GrammarRoles are passed to the ir emitter for `ir.from.*`.
-	const rootKind = Object.keys(normalized.rules)[0]!;
+	// The full GrammarRoles are passed to the ir emitter for `ir.synonym.*`.
+	const rootKind = rootRuleName(normalized.rules)!;
 	const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
 	const triviaKinds = grammarRoles.get('trivia');
 
@@ -264,11 +261,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// branch/group node. Runs after hydration so parameterless-kind refs
 	// resolve through the hydrated slot graph.
 	computeSlotClasses(nodeMap);
-
-	// Phase 5b⅔: Stamp each supertype's transitive parse-kind closure once
-	// (`node.transitiveParseKinds`), so `wrap.ts`'s storage-key routing reads
-	// a stamped fact instead of re-walking the closure per call site.
-	computeSupertypeTransitiveParseKinds(nodeMap);
 
 	// Phase 5b¾: Compute SCC over the singular transport-reference graph.
 	// Render-module's per-slot and supertype enum emitters consult
@@ -317,6 +309,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const result: GeneratedFiles = {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+		renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 		types: emitted.types,
 		jinjaTemplates: emitted.jinjaTemplates,
 		factories: emitted.factories,
@@ -327,7 +320,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		consts: emitted.consts,
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 		tests: emitted.tests,
-		typeTests: emitted.typeTests,
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel,
 		suggested: emitSuggested({

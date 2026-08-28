@@ -1,11 +1,11 @@
 import { ir } from '@sittir/rust';
 
 export function renderDirectlyWithoutInlineTemplates() {
-	return ir.functionItem.from({
+	return ir.statement.function({
 		visibilityModifier: 'pub',
 		name: 'render_config',
 		parameters: ir.parameters.strict(),
-		returnType: ir.from.type('String'),
+		returnType: ir.synonym.type('String'),
 		body: ir.block.strict(),
 	}).$render();
 }

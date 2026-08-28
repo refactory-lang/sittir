@@ -2,7 +2,7 @@
  * SC-012: grouped sub-namespace access produces identical output to flat access.
  *
  * `ir.expression.binary(config)` and `ir.binary(config)` must resolve to the
- * same factory bundle — same factory function, same `.from` attachment.
+ * same factory bundle — same callable, same `.strict` attachment.
  * (The flat `ir.*` already uses supertype-stripped short keys; the grouped
  * surface mirrors those under `ir.<supertype>.<member>`.)
  */
@@ -16,7 +16,7 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 		// `ir.binary` (flat) and `ir.expression.binary` (grouped) point
 		// at the same _attach bundle.
 		expect(irExpression.binary).toBe(ir.binary);
-		expect(irExpression.binary.from).toBe(ir.binary.from);
+		expect(irExpression.binary.strict).toBe(ir.binary.strict);
 	});
 
 	it('grouped namespace attached to ir is the same object as standalone export', () => {

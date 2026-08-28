@@ -37,9 +37,13 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, deep?: boolean): string;
 	readNode(handle: number, childIndex: number, deep?: boolean): string;
-	render(node: TTransport): string;
-	renderToFile?(node: TTransport, path: string): void;
+	render(node: TTransport, treeId?: number): string;
+	renderToFile?(node: TTransport, path: string, treeId?: number): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
+	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
+	disposeTree(treeId: number): void;
+	/** Trees the native engine still holds. Diagnostics only. */
+	readonly liveTreeCount: number;
 	dispose(): void;
 }
 
@@ -93,15 +97,48 @@ export interface ParseOptions {
  * back the reader's own output (data plus the owning tree handle) for
  * probes, validators, and anything that inspects the wire shape itself.
  */
+/**
+ * Engine internals, reached through the `diagnostics` property rather than
+ * the engine's own surface because they are NOT public API. These return raw
+ * node DATA with reader stubs for children; the public entry point is
+ * `ParseEngine.parse`, which wraps what these produce. Reach for these only
+ * from inside the wrap layer or from validator/diagnostic tooling.
+ */
 export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
 	parseAndRead(source: string, options?: ParseOptions): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
 
-export interface SittirEngineLike<TRoot extends AnyNodeData = AnyNodeData> {
+/**
+ * The render half of the public surface: turning node DATA back into source,
+ * and the lifecycle that owns the native handle. Deliberately separate from
+ * `ParseEngine` so a consumer that only renders can say so in its types —
+ * notably each grammar's `boundary.ts`, which node construction reaches
+ * through `utils.ts`. Depending on the narrower contract there is what keeps
+ * rendering from dragging in the parse surface, and the module graph acyclic.
+ */
+export interface RenderEngine {
 	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
+}
+
+/**
+ * The parse half of the public surface: source in, a WRAPPED tree out.
+ * `TTree` is the grammar's own root surface, so this is implemented per
+ * grammar rather than by the shared native binding — the wrapping is what
+ * makes it public, and what makes it need `wrap.ts`.
+ */
+export interface ParseEngine<TTree> {
+	parse(source: string, options?: ParseOptions): TTree;
+}
+
+/**
+ * The shared engine the native binding supplies: rendering, plus the
+ * internals under `diagnostics`. A grammar's own engine composes this with
+ * `ParseEngine<TTree>` to add the public `parse`.
+ */
+export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData> extends RenderEngine {
 	readonly diagnostics: EngineDiagnostics<TRoot>;
 }
 
@@ -113,7 +150,31 @@ export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
 interface NativeParseResultShape {
 	readonly nodeData: AnyNodeData;
 	readonly format?: FormatRecord;
+	readonly treeId: number;
 }
+
+/**
+ * Frees a native tree once JavaScript can no longer read from it.
+ *
+ * Reads are lazy, so a tree has to outlive the call that parsed it: every
+ * unexpanded child holds a handle the native side must still be able to
+ * answer. Nothing on the JS side knows when the last of those handles is
+ * gone — but the garbage collector does. Each tree gets a token that its
+ * `read` closure captures, so the token stays reachable exactly as long as
+ * the tree handle or any node wrapped against it; when the token is
+ * collected, the tree is dropped.
+ *
+ * The engine is held weakly. A registry entry outlives its tree by
+ * definition, and a strong reference here would keep the whole engine —
+ * parser included — alive for as long as any entry remained unswept.
+ */
+const treeDisposalRegistry = new FinalizationRegistry<{
+	readonly engineRef: WeakRef<NativeEngineLike<never>>;
+	readonly treeId: number;
+}>(({ engineRef, treeId }) => {
+	// A collected engine has already dropped every tree it owned.
+	engineRef.deref()?.disposeTree(treeId);
+});
 
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
@@ -122,7 +183,7 @@ interface NativeParseResultShape {
  * `reason` string (the real failure cause) instead of discarding it.
  */
 export type CreateNativeEngineResult<TRoot extends AnyNodeData = AnyNodeData> =
-	| { readonly engine: SittirEngineLike<TRoot>; readonly reason?: undefined }
+	| { readonly engine: SittirEngine<TRoot>; readonly reason?: undefined }
 	| { readonly engine: null; readonly reason: string };
 
 export function createNativeEngine<
@@ -140,8 +201,8 @@ export function createNativeEngine<
 		const engine = new status.native.SittirEngine(nativeOptions);
 
 		function renderNativeNode(
-			node: Parameters<SittirEngineLike['render']>[0],
-			opts?: Parameters<SittirEngineLike['render']>[1]
+			node: Parameters<RenderEngine['render']>[0],
+			opts?: Parameters<RenderEngine['render']>[1]
 		): RenderHandle {
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
@@ -186,6 +247,14 @@ export function createNativeEngine<
 						// Boundary assertion: the native reader returns the grammar's
 						// root kind for a whole-source parse.
 						const root = parsed.nodeData as TRoot;
+						// Captured by `read` below and by nothing else, so it stays
+						// reachable exactly as long as something can still read from
+						// this tree. Its collection is what releases the tree.
+						const liveToken = { treeId: parsed.treeId };
+						treeDisposalRegistry.register(liveToken, {
+							engineRef: new WeakRef(engine as NativeEngineLike<never>),
+							treeId: parsed.treeId
+						});
 						return {
 							root,
 							tree: {
@@ -195,6 +264,11 @@ export function createNativeEngine<
 								source,
 								read: (handle, childIndex, deep) => {
 									if (handle === undefined) return root;
+									// Handles name their own tree, so this needs no tree
+									// argument — but it must keep `liveToken` reachable,
+									// or the tree behind those handles can be collected
+									// while they are still in use.
+									void liveToken;
 									const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
 									return JSON.parse(nodeJson) as AnyNodeData;
 								},

@@ -11,7 +11,7 @@ export function addVerboseParameterToProcess(source: string) {
 	const target = wrap(processFn, tree);
 	const updatedParams = ir.parameters([
 		...target.parameters().$children,
-		ir.parameter.from({ name: 'verbose', type: 'bool' })
+		ir.parameter({ name: 'verbose', type: 'bool' })
 	]);
 
 	return engine.applyEdits(source, [replace(target.parameters(), updatedParams)]);

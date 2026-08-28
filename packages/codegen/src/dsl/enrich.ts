@@ -99,7 +99,6 @@
  */
 
 import type { Rule, AnyRule } from '../types/rule.ts';
-import { isEnumChoiceRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
@@ -117,7 +116,27 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator, firstStringOfChoice } from './list-patterns.ts';
+import {
+	separatorOf,
+	leadingLiteralOf,
+	ruleMatchesEmpty,
+	isInlineSafe,
+	isSupertypeLike,
+	isPermutationChoice,
+	isEnumChoiceRule,
+	exclusiveFieldChoiceBranches,
+	normalizeMember,
+	peelOptional,
+	peelOptionalSeq,
+	listSeparatorOfOptionalSeq,
+	optionalStringLiteral,
+	peelOptionalEitherSpelling,
+	separatedListBodyInfo,
+	armLeadingSymbolName,
+	armStartsWithSymbol,
+	armsDifferOnlyByLiteralChoice,
+	type SeparatedListBodyInfo
+} from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
 import {
 	diagnoseParseKindCollisions,
@@ -125,7 +144,6 @@ import {
 	type ParseKindCollisionValue
 } from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
-import { ruleMatchesEmpty, isInlineSafe, isSupertypeLike, isPermutationChoice } from './group-classify.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
@@ -262,6 +280,16 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 		const members = (rule as unknown as { members: Rule[] }).members;
 		if (info.flatMembers === members) continue;
 		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
+	}
+	// Exclusive field-choice distribution, BEFORE loop 2: the mint below lifts
+	// choice arms into kinds, so the alternatives have to be arms by the time
+	// it runs — afterwards they are already fused onto one kind as independent
+	// optional fields. Reads `enrichedRules` for the hidden marker helpers it
+	// inlines, so it sees them fully field-wrapped.
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule || enrichSkip.has(name)) continue;
+		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
 	// Loop 2: clause/group hoisting + base-grammar un-aliasing, per rule in the
 	// same order loop 1 ran. The separated-list name counts computed from the
@@ -1030,8 +1058,8 @@ function deriveElementFieldName(elementRule: Rule): string {
 
 /**
  * A separated list — `seq(element, repeat(seq(SEP, element)), optional(SEP))`
- * (tree-sitter's `commaSep1`-style desugaring; `dsl/list-patterns.ts`'s
- * `detectRepeatSeparator` is the canonical recognizer for the repeat's own
+ * (tree-sitter's `commaSep1`-style desugaring; `dsl/rule-patterns.ts`'s
+ * `separatorOf` is the canonical recognizer for the repeat's own
  * `seq(SEP, element)` content) — routes its LEADING element and every
  * REPEATED element into separate per-kind wire buckets today (no field
  * ties them together), needing `_concatInSourceOrder` to reassemble
@@ -1089,7 +1117,7 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 			innerPrecStack.push(inner as unknown as Rule);
 			inner = (inner as unknown as { content: RuntimeRule }).content;
 		}
-		const detected = detectRepeatSeparator(inner);
+		const detected = separatorOf(inner);
 		if (!detected || detected.trailing) continue;
 		const innerElement = detected.content as unknown as Rule;
 		if (!sameElementShape(leading, innerElement)) continue;
@@ -1326,6 +1354,83 @@ function makeField(name: string, content: unknown): Rule {
 }
 
 /**
+ * Exclusive field-choice distribution — `seq(…, choice(field('a', X),
+ * field('b', Y)), …)` becomes `choice(seq(…, field('a', X), …), seq(…,
+ * field('b', Y), …))`.
+ *
+ * Arms that are each a single, distinctly-named field are ALTERNATIVES: only
+ * one of them is ever parsed. Left as a choice sitting inside a sequence they
+ * land on ONE kind as N independent optional fields, and that flattening
+ * admits combinations no parse produces — several of the fields at once, or
+ * none of them. Rust's doc comments are the case in hand: `///` and `//!` are
+ * the `outer`/`inner` marker fields of a single `line_comment` arm, so the
+ * flattened kind accepts both markers together, and also neither, the latter
+ * rendering a doc-comment kind as a plain `//` comment.
+ *
+ * Distributing the choice over its sequence gives each alternative its own
+ * arm, which the mint downstream lifts into its own kind. Exclusivity then
+ * rides on the kind rather than on a convention nothing enforces, and each
+ * alternative gains a constructor a caller can name.
+ *
+ * Language-identical: `seq(A, choice(X, Y), B)` and `choice(seq(A, X, B),
+ * seq(A, Y, B))` accept the same strings.
+ */
+function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Rule>): Rule {
+	const seqFn = nativeRuleFn<(...args: unknown[]) => Rule>('seq');
+	const choiceFn = nativeRuleFn<(...args: unknown[]) => Rule>('choice');
+
+	/** One rule again, choosing between the alternatives when there are
+	 *  several. */
+	const collapse = (alts: readonly Rule[]): Rule =>
+		alts.length === 1
+			? alts[0]!
+			: ({ ...choiceFn(...alts), metadata: makeRuleMetadata({ author: 'enrich' }) } as Rule);
+
+	/** The alternatives a node expands to — normally just itself. A sequence
+	 *  carrying an exclusive field choice expands to one alternative per
+	 *  branch, and an enclosing CHOICE absorbs them as its own arms instead of
+	 *  nesting a second choice inside one arm. That flattening is what keeps
+	 *  the arms individually addressable, both to the mint that lifts them
+	 *  into kinds and to the variant paths that name them. */
+	const expand = (node: Rule): readonly Rule[] => {
+		if (!node || typeof node !== 'object') return [node];
+		// Rebuild children first, so a choice uncovered deeper has already
+		// distributed by the time this level inspects its own members.
+		let out: Rule = node;
+		const members = (node as unknown as { members?: Rule[] }).members;
+		const content = (node as unknown as { content?: Rule }).content;
+		if (Array.isArray(members)) {
+			const next = isChoiceType((node as { type?: string }).type)
+				? members.flatMap((m) => expand(m))
+				: members.map((m) => collapse(expand(m)));
+			if (next.length !== members.length || next.some((m, i) => m !== members[i]))
+				out = { ...node, members: next } as Rule;
+		} else if (content && typeof content === 'object') {
+			const next = collapse(expand(content));
+			if (next !== content) out = { ...node, content: next } as Rule;
+		}
+
+		if (!isSeqType((out as { type?: string }).type)) return [out];
+		const seqMembers = (out as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(seqMembers)) return [out];
+		for (let i = 0; i < seqMembers.length; i += 1) {
+			const branches = exclusiveFieldChoiceBranches(seqMembers[i]!, rulesBag);
+			if (!branches) continue;
+			// Re-expand each arm, so a sequence carrying two such choices
+			// distributes over both.
+			return branches.flatMap((branch) => {
+				const swapped = [...seqMembers];
+				swapped[i] = branch;
+				return expand(seqFn(...swapped));
+			});
+		}
+		return [out];
+	};
+
+	return collapse(expand(rule));
+}
+
+/**
  * Pass 6 — repeat-union field promotion: an un-fielded `repeat($._union)`
  * (bare hidden-CHOICE symbol content) gets the whole repeat wrapped in
  * `field('<stripped>', repeat(...))`.
@@ -1454,18 +1559,6 @@ function registerKwRule(
 // Shared helpers
 // ---------------------------------------------------------------------------
 
-function normalizeMember(m: unknown): {
-	type: string;
-	value?: string;
-	content?: unknown;
-	members?: unknown[];
-	name?: string;
-} {
-	if (typeof m === 'string') return { type: 'STRING', value: m };
-	if (m instanceof RegExp) return { type: 'PATTERN', value: m.source };
-	return (m as { type: string }) ?? { type: 'UNKNOWN' };
-}
-
 function collectFieldNamesRuntime(rule: Rule): Set<string> {
 	const names = new Set<string>();
 	if (!isSeqType(rule.type)) return names;
@@ -1485,26 +1578,6 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
 		}
 	}
 	return names;
-}
-
-function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
-	if (isOptionalType(rule.type)) {
-		return {
-			inner: (rule as unknown as { content: Rule }).content,
-			isOptional: true
-		};
-	}
-	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members: Array<{ type: string }> }).members;
-		if (members.length === 2) {
-			const blankIdx = members.findIndex((m) => m.type === 'BLANK');
-			if (blankIdx !== -1) {
-				const inner = members[1 - blankIdx] as unknown as Rule;
-				return { inner, isOptional: true };
-			}
-		}
-	}
-	return { inner: rule, isOptional: false };
 }
 
 function reportSkip(pass: string, ruleName: string, reason: string): void {
@@ -2150,282 +2223,12 @@ interface ClauseHoistCounter {
 	readonly supertypeNames?: ReadonlySet<string>;
 }
 
-function peelOptionalSeq(rule: Rule): {
-	seqBody: Rule;
-	form: 'optional' | 'choice';
-	seqIdx: number;
-} | null {
-	if (isOptionalType(rule.type)) {
-		const content = (rule as unknown as { content?: Rule }).content;
-		if (content && isSeqType((content as { type?: string }).type)) {
-			return { seqBody: content, form: 'optional', seqIdx: -1 };
-		}
-		return null;
-	}
-	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
-		if (!Array.isArray(members) || members.length !== 2) return null;
-		const blankIdx = members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
-		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
-		if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
-		return { seqBody: members[seqIdx]!, form: 'choice', seqIdx };
-	}
-	return null;
-}
-
-function listSeparatorOfOptionalSeq(rule: Rule): string | null {
-	const peeled = peelOptionalSeq(rule);
-	if (peeled === null) return null;
-	const seqMembers = (peeled.seqBody as unknown as { members?: Rule[] }).members;
-	if (!Array.isArray(seqMembers)) return null;
-	for (const m of seqMembers) {
-		if (!isRepeatType((m as { type?: string }).type)) continue;
-		// Already-lifted separator attribute.
-		const sepAttr = (m as { separator?: unknown }).separator;
-		if (typeof sepAttr === 'string') return sepAttr;
-		// Raw form: repeat(seq(SEP, x)) — detect the separator from the content
-		// via the shared list-pattern detector (same logic evaluate's lift uses).
-		const content = (m as { content?: RuntimeRule }).content;
-		if (content) {
-			const detected = detectRepeatSeparator(content);
-			if (detected) {
-				const sep = detected.separator;
-				if (typeEq(sep.type, 'STRING')) return (sep as { value?: unknown }).value as string;
-				if (typeEq(sep.type, 'CHOICE')) {
-					const lit = firstStringOfChoice(sep);
-					if (lit !== null) return lit;
-				}
-				// Falls through to the next seq member when the choice has no
-				// string arm (e.g. all-symbol/external-scanner separator position)
-				// — matches the pre-PR-S behavior, where `detectRepeatSeparator`
-				// itself returned null for a stringless choice and the loop kept
-				// scanning for a real separator elsewhere in the same seq.
-			}
-		}
-	}
-	return null;
-}
-
-function optionalStringLiteral(rule: Rule): string | null {
-	const peeled = peelOptional(rule);
-	if (!peeled.isOptional) return null;
-	const innerN = normalizeMember(peeled.inner);
-	if (isStringType(innerN.type) && typeof innerN.value === 'string') return innerN.value;
-	return null;
-}
-
 function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
 	const peeled = peelOptionalSeq(optSeqRule)!;
 	const seqBody = peeled.seqBody;
 	const seqMembers = (seqBody as unknown as { members: Rule[] }).members;
 	const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] } as Rule;
 	return rebuildOptional(optSeqRule, newSeqBody);
-}
-
-/**
- * @internal — derive the element name a separated-list position exposes from
- * mint-time-visible facts ONLY (`type`/`name`/`members`/`content`), never the
- * per-pipeline decoration stamps (`id`/`_ref`/`metadata`) — the tree-sitter CLI
- * bundle and sittir's evaluate() must derive the SAME name for the same body.
- * A single symbol (or choice-of-one, or FIELD wrapper) names the element; a
- * multi-arm choice or compound seq has no single name (`null` — the caller
- * falls back to the `elements` basis).
- */
-function separatedListElementName(rule: Rule): string | null {
-	const t = (rule as { type?: string }).type;
-	if (typeof t !== 'string') return null;
-	if (isFieldType(t)) {
-		const name = (rule as { name?: unknown }).name;
-		return typeof name === 'string' ? name : null;
-	}
-	if (isSymbolType(t)) {
-		const name = (rule as { name?: unknown }).name;
-		return typeof name === 'string' ? name.replace(/^_+/, '') : null;
-	}
-	if (isChoiceType(t)) {
-		const members = (rule as { members?: Rule[] }).members;
-		if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]!);
-		return null;
-	}
-	if (isPrecWrapper(rule as { type: string }) || typeEq(t, 'ALIAS')) {
-		const content = (rule as { content?: Rule }).content;
-		return content ? separatedListElementName(content) : null;
-	}
-	return null;
-}
-
-/** @internal — `rule` matches `optional(X)` in either runtime spelling
- *  (`OPTIONAL{content}` or the CLI-desugared `CHOICE[X, BLANK]`); returns the
- *  inner X, else null. */
-function peelOptionalEitherSpelling(rule: Rule): Rule | null {
-	const peeled = peelOptional(rule);
-	return peeled.isOptional ? peeled.inner : null;
-}
-
-interface SeparatedListBodyInfo {
-	/** Element name per {@link separatedListElementName}; null for multi-arm/compound elements. */
-	elementName: string | null;
-	/** True when a flank is per-instance data: an optional trailing/leading
-	 *  separator, an optionally-unterminated tail form, or a separator-kind
-	 *  choice. Flankless lists carry no such data and never hoist. */
-	flankCarrying: boolean;
-	/** Which spelling matched: `head` = `[elem, repeat(sep elem), opt(sep)?]`,
-	 *  `leading` = `[repeat1(sep elem), opt(sep)]` (continues a parent-side
-	 *  head), `tail` = `[repeat(elem sep), opt(elem)]` (each element
-	 *  separator-terminated, last optionally bare). */
-	form: 'head' | 'leading' | 'tail';
-	/** The element rule at the repeat position (fields/wrappers intact). */
-	element: Rule;
-	/** The separator rule (STRING literal or CHOICE). */
-	separatorRule: Rule;
-	/** The body's members with any nested-head seq spliced FLAT — the
-	 *  canonical head-form spelling link's separator lift recognizes.
-	 *  Language-identical to the original (seq nesting is associative). */
-	flatMembers: Rule[];
-}
-
-/**
- * @internal — recognize a whole seq body as ONE separated list, in the two
- * spellings the raw grammars use:
- *   head-form: `[elem, repeat(seq(sep, elem)), optional(sep)?]`
- *              (incl. the nested-head variant `[[elem, repeat(...)], optional(sep)]`)
- *   tail-form: `[repeat(seq(elem, sep)), optional(elem)?]`
- * Works on the pre-pushdown wrapper-intact rule tree (this phase has no
- * `separator`/flank attributes yet) and on both runtime spellings of
- * `optional`. Returns null when the body is not a single separated list.
- */
-function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
-	if (!isSeqType((body as { type?: string }).type)) return null;
-	const members = (body as unknown as { members?: Rule[] }).members;
-	if (!Array.isArray(members) || members.length === 0) return null;
-
-	// A list's repeat member is the one whose content is a separator run —
-	// NOT just any repeat (an attributed element is itself `seq(repeat(attr),
-	// X)`, whose inner repeat carries no separator).
-	const separatorRepeatOf = (m: Rule) => {
-		if (!isRepeatType((m as { type?: string }).type)) return null;
-		const content = (m as { content?: RuntimeRule }).content;
-		return content ? detectRepeatSeparator(content) : null;
-	};
-
-	// Nested-head variant: [flank?, [elem, repeat(sep-run)], flank?] — splice
-	// the nested seq's members into place and re-examine as the flat
-	// head-form (the nested seq may sit after a leading flank member, e.g.
-	// object_type_content's optional leading separator).
-	if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
-		const nestedIdx = members.findIndex((m) => {
-			if (!isSeqType((m as { type?: string }).type)) return false;
-			const inner = (m as unknown as { members?: Rule[] }).members;
-			return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
-		});
-		if (nestedIdx !== -1) {
-			const headMembers = (members[nestedIdx] as unknown as { members: Rule[] }).members;
-			return separatedListBodyInfo({
-				...body,
-				members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
-			} as Rule);
-		}
-	}
-
-	const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
-	if (repeatIdx === -1) return null;
-	const detected = separatorRepeatOf(members[repeatIdx]!)!;
-	const separatorIsChoice = typeEq(detected.separator.type, 'CHOICE');
-	const separatorLiteral = typeEq(detected.separator.type, 'STRING')
-		? ((detected.separator as { value?: unknown }).value as string)
-		: null;
-	const elementName = separatedListElementName(detected.content as Rule);
-
-	if (detected.trailing !== true) {
-		// Head-form: repeat is seq(SEP, elem); the member BEFORE the repeat is
-		// the head element, an optional(SEP) member after it is the trailing
-		// flank (a leading optional(SEP)/bare SEP before the head is the
-		// leading flank). A leading-run variant carries NO in-body head — the
-		// list continues a head element living in the parent
-		// (`[repeat1(seq(sep, elem)), optional(sep)]`, python's
-		// expression_list/pattern_list tail groups) — recognized only when a
-		// trailing flank follows, so a bare `repeat(seq(sep, elem))` member
-		// alone never reads as a whole-body list.
-		if (repeatIdx === 0) {
-			// REPEAT1 only: a zero-or-more repeat plus an optional flank would
-			// match the empty string — not a rule tree-sitter accepts, and not
-			// this shape (the leading run CONTINUES a mandatory head element).
-			if (!typeEq((members[0] as { type?: string }).type, 'REPEAT1')) return null;
-			if (members.length !== 2) return null;
-			const flank = peelOptionalEitherSpelling(members[1]!);
-			const flankLit =
-				flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
-			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
-			return {
-				elementName,
-				flankCarrying: true,
-				form: 'leading' as const,
-				element: detected.content as Rule,
-				separatorRule: detected.separator as Rule,
-				flatMembers: members
-			};
-		}
-		const head = members[repeatIdx - 1]!;
-		if (separatedListElementName(head) !== elementName || elementName === null) {
-			// Compound/multi-arm elements: both positions must still AGREE
-			// structurally — compare their canonical keys instead of names.
-			if (ruleKey(head as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
-		}
-		let flankCarrying = separatorIsChoice;
-		for (const [i, m] of members.entries()) {
-			if (i === repeatIdx || i === repeatIdx - 1) continue;
-			// A bare separator literal is a MANDATORY flank — part of the list
-			// shape, but compile-time-known (not per-instance data).
-			if (isStringType((m as { type?: string }).type) && (m as { value?: unknown }).value === separatorLiteral) {
-				continue;
-			}
-			const inner = peelOptionalEitherSpelling(m);
-			const innerLit =
-				inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
-			// A choice-of-separators flank next to a choice-separator list — the
-			// two spellings routinely diverge in decoration (one side may hold
-			// substituted symbol refs), so match on both being choices rather
-			// than exact keys.
-			const innerMatchesChoiceSep =
-				inner !== null && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
-			if (
-				(innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) ||
-				innerMatchesChoiceSep
-			) {
-				flankCarrying = true;
-				continue;
-			}
-			// Any member that is not the head, the repeat, or a flank breaks
-			// the "whole body is one list" reading.
-			return null;
-		}
-		return {
-			elementName,
-			flankCarrying,
-			form: 'head' as const,
-			element: detected.content as Rule,
-			separatorRule: detected.separator as Rule,
-			flatMembers: members
-		};
-	}
-
-	// Tail-form: repeat is seq(elem, SEP); the optional(elem) member after the
-	// repeat means the last element may omit its separator — per-instance
-	// trailing-separator data. A bare separator-terminated repeat with NO
-	// elem? tail is not this shape (every element is mandatorily terminated).
-	if (repeatIdx !== 0 || members.length !== 2) return null;
-	const tail = peelOptionalEitherSpelling(members[1]!);
-	if (tail === null) return null;
-	if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
-	if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
-	return {
-		elementName,
-		flankCarrying: true,
-		form: 'tail' as const,
-		element: detected.content as Rule,
-		separatorRule: detected.separator as Rule,
-		flatMembers: members
-	};
 }
 
 interface InlineSeparatedListRun {
@@ -3632,119 +3435,6 @@ function promoteExistingHiddenRuleName(
 	}
 	groupDedupeMap[existingHiddenName] = visibleName;
 	return { visibleName };
-}
-
-function armLeadingSymbolName(
-	rule: Rule,
-	rulesBag: Record<string, Rule>,
-	seen: Set<Rule> = new Set()
-): string | undefined {
-	if (seen.has(rule)) return undefined;
-	seen.add(rule);
-	const t = (rule as { type?: string }).type;
-	if (typeof t !== 'string') return undefined;
-	if (isSymbolType(t)) {
-		const name = (rule as { name?: string }).name;
-		if (typeof name !== 'string') return undefined;
-		const hidden = (rule as { hidden?: boolean }).hidden;
-		// A VISIBLE symbol is its own meaningful boundary for LR
-		// prefix-collision purposes — stop here. A HIDDEN symbol is
-		// invisible to the parser's distinguishable-item boundary, so its
-		// OWN leading symbol (descend into its body) is what matters.
-		if (!hidden) return name;
-		const body = rulesBag[name];
-		return body ? (armLeadingSymbolName(body, rulesBag, seen) ?? name) : name;
-	}
-	if (isSeqType(t)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
-		const first = Array.isArray(members) ? members[0] : undefined;
-		return first ? armLeadingSymbolName(first, rulesBag, seen) : undefined;
-	}
-	if (isChoiceType(t)) {
-		// A nested choice's own leading symbol is ambiguous (varies per
-		// branch) — conservatively report none rather than pick one arm.
-		return undefined;
-	}
-	// Single-content wrappers (optional/field/repeat/prec/token/...) — the
-	// leftmost path travels through their one child, same convention as
-	// this file's other structural walks (e.g. `countBodyAnchors`-style
-	// content fallback in dsl/transform/transform.ts).
-	const content = (rule as { content?: Rule }).content;
-	return content ? armLeadingSymbolName(content, rulesBag, seen) : undefined;
-}
-
-function armStartsWithSymbol(
-	rule: Rule,
-	collidingLeadingNames: ReadonlySet<string>,
-	rulesBag: Record<string, Rule>
-): boolean {
-	if (collidingLeadingNames.size === 0) return false;
-	const name = armLeadingSymbolName(rule, rulesBag);
-	return name !== undefined && collidingLeadingNames.has(name);
-}
-
-/** A position whose content is a literal choice: one string, or a choice
- *  of strings — the shape a kind-enum slot carries. */
-function isLiteralChoiceContent(rule: Rule): boolean {
-	if (isStringType((rule as { type?: string }).type as string)) return true;
-	if (isChoiceType((rule as { type?: string }).type as string)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
-		return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
-	}
-	return false;
-}
-
-/**
- * Two choice arms that differ ONLY at literal-choice positions must stay
- * one kind with an enum slot — splitting them would mint a form whose
- * sole difference is a cardinality-1 (determined) enum.
- * `mintStructuredChoiceArm`'s callers decline such arms. Returns true
- * when the arms are structurally identical except for at least one
- * literal-choice position whose texts differ.
- */
-export function armsDifferOnlyByLiteralChoice(a: Rule, b: Rule): boolean {
-	let literalDeltas = 0;
-	const peel = (r: Rule): Rule => {
-		while (isPrecWrapper(r as { type: string }) && (r as { content?: Rule }).content) {
-			r = (r as { content: Rule }).content;
-		}
-		return r;
-	};
-	const same = (x: Rule, y: Rule): boolean => {
-		x = peel(x);
-		y = peel(y);
-		if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
-			if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
-			return true;
-		}
-		const tx = (x as { type?: string }).type;
-		const ty = (y as { type?: string }).type;
-		if (tx !== ty || typeof tx !== 'string') return false;
-		if (isSymbolType(tx)) return (x as { name?: string }).name === (y as { name?: string }).name;
-		if (isFieldType(tx)) {
-			return (
-				(x as { name?: string }).name === (y as { name?: string }).name &&
-				same((x as unknown as { content: Rule }).content, (y as unknown as { content: Rule }).content)
-			);
-		}
-		const mx = (x as unknown as { members?: Rule[] }).members;
-		const my = (y as unknown as { members?: Rule[] }).members;
-		if (Array.isArray(mx) || Array.isArray(my)) {
-			if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
-			return mx.every((m, i) => same(m, my[i]!));
-		}
-		const cx = (x as { content?: Rule }).content;
-		const cy = (y as { content?: Rule }).content;
-		if (cx !== undefined || cy !== undefined) {
-			return cx !== undefined && cy !== undefined && same(cx, cy);
-		}
-		return JSON.stringify(x) === JSON.stringify(y);
-	};
-	// EXACTLY one differing position: the delta must be expressible as ONE
-	// enum slot. Arms differing at two literal positions (`new.target` vs
-	// `import.meta`) are distinct forms — folding them would cross-combine
-	// the literals.
-	return same(a, b) && literalDeltas === 1;
 }
 
 /**

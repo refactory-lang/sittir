@@ -1,8 +1,8 @@
 # `packages/codegen/src/scm` — Function Glossary
 
 Per-function reference for `packages/codegen/src/scm/`, mechanically relocated from source
-JSDoc by `scripts/wave5-relocate-jsdoc.mts` (wave 5 comment-cleanup, pass 1 —
-unedited, unverified). Pass 2 reformats/verifies these entries and decides
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
+unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
@@ -90,7 +90,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Some grammars don't use `@boolean` or `@number` captures — Rust
  * captures them as `@constant.builtin` which doesn't map to any
  * semantic role in our table. The probe adds well-known kind names
- * that the downstream `ir.from.*` emitter can use to construct
+ * that the downstream `ir.synonym.*` emitter can use to construct
  * canonical factories.
  *
  * Only fires when the role has zero kinds from SCM extraction.
@@ -278,7 +278,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Well-known kind names that map to semantic roles across tree-sitter
  * grammars. When SCM captures don't discover a role, these probes add
- * the canonical kind names for that role so the `ir.from.*` surface
+ * the canonical kind names for that role so the `ir.synonym.*` surface
  * can emit canonical factories.
  *
  * Each probe is a [role, candidate-kind-names] pair. The probe only

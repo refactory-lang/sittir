@@ -11,16 +11,16 @@
  */
 
 import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
-import { createEngine } from './engine.js';
-import type { SittirEngineLike } from '@sittir/common/engine';
+import { createRenderEngine } from './render-engine.js';
+import type { RenderEngine } from '@sittir/common/engine';
 import { metricsEnabled, recordFfi } from '@sittir/common';
 import { KIND_NAMES } from './types.js';
 
-let defaultEngine: SittirEngineLike | null = null;
+let defaultEngine: RenderEngine | null = null;
 
-function getDefaultEngine(): SittirEngineLike {
+function getDefaultEngine(): RenderEngine {
 	if (defaultEngine === null) {
-		defaultEngine = createEngine();
+		defaultEngine = createRenderEngine();
 	}
 	return defaultEngine;
 }

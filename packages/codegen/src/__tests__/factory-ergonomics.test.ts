@@ -48,9 +48,19 @@ describe('factory ergonomics', () => {
 			// label's sole slot holds a single concrete kind, so the factory is
 			// the FORWARDED refinement of the direct form: a public wrapper
 			// accepting the child or the child's constructor args, over a
-			// private direct implementation that keeps the sanitized param.
-			expect(content).toMatch(/export function buildLabel\(child\??:/);
-			expect(content).toMatch(/function _buildLabel\(identifier/);
+			// private direct implementation.
+			//
+			// The parameter is positional, so it is spelled `value` rather than
+			// after the slot — but the public direct overload, the private
+			// implementation and the `BuildArgs` alias must still agree on it.
+			// They are one projection of one calling convention, so a divergent
+			// label would mean the parameter list had been composed twice.
+			// The parameter's TYPE is the slot's own element type. Indexing
+			// `Config` instead re-projects the slot through the config surface
+			// and loses the union of kinds it admits.
+			expect(content).toMatch(/export function buildLabel\(value: T\.Identifier\)/);
+			expect(content).toMatch(/function _buildLabel\(value: T\.Identifier\)/);
+			expect(content).toMatch(/export type LabelBuildArgs = \[value: T\.Identifier\]/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
@@ -69,7 +79,7 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
 			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
 			// Find the label factory implementation and check its $with block
-			const labelMatch = content.match(/function _buildLabel\(identifier[\s\S]*?\n\}/);
+			const labelMatch = content.match(/function _buildLabel\(value[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
 			// The setter calls buildLabel(value) directly
@@ -95,7 +105,10 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/ir.ts'), 'utf-8');
 
 			expect(content).toContain('.strict');
-			expect(content).toContain('from: FR.');
+			// The bundle's call position IS the coercer, so a `from` prop would
+			// be the same function under a second name.
+			expect(content).toContain('const _b$');
+			expect(content).not.toContain('from: FR.');
 		});
 	});
 });

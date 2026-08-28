@@ -10,6 +10,7 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 		name: 'test',
 		rules,
 		supertypes: new Set(),
+		factoryInline: new Set(),
 		externalRoles: new Map<string, ExternalRole>(),
 		word: null,
 		references: [],

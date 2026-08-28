@@ -26,10 +26,14 @@ export const OXFMT_CONFIG: FormatConfig = {
 		'.github/**',
 		'.agents/**',
 		'.claude/**',
+		'.zed/**',
 		'.specify/**',
 		'.changeset/**',
 		'specs/**',
 		'examples/**',
+		// Ad-hoc probes and debug scripts — see scratch/README.md. Nothing
+		// there gates a commit, so the formatter has no business rewriting it.
+		'scratch/**',
 		// Producer-owned serialization: collect-baseline.ts emits a strict
 		// 4-space-indent contract — a formatter pass here breaks refresh diffs.
 		'packages/tools/baselines/**'

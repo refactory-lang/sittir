@@ -3,7 +3,7 @@ language: TypeScript
 severity: hint
 message: >
   Function/method/type/const-level JSDoc block. Per AGENTS.md "Wave-style
-  decomposition before commits" (wave 5+): this documentation should move to
+  decomposition before commits": this documentation should move to
   (or update) an entry in docs/compiler-phase-glossary.md (or the matching
   docs/glossary/<dir>.md) instead of living as a JSDoc block above the
   declaration in source. Source keeps at most a one-line comment for a
@@ -39,11 +39,6 @@ rule:
     regex: '^/\*\*'
     stopBy: neighbor
 note: >
-  Wave 5 comment-cleanup audit (2026-07-28): started narrowed to function/
-  method declarations only, then widened to interface/class/type-alias
-  declarations and interface members (`property_signature` /
-  `method_signature`), then widened again to `const`/`let` declarations
-  (`lexical_declaration`, bare and exported) once the same relocation
-  convention was confirmed to apply there too. Cross-check each match
-  against whether the target glossary doc already documents the symbol
-  before moving/rewriting anything.
+  Audit hint only. Relocation is mechanical: scripts/relocate-comments-to-glossary.mts
+  files every comment (not just JSDoc) under the declaration it precedes or
+  encloses, body comments as sub-sections, and strips it from source.

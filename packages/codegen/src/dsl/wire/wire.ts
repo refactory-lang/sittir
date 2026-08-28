@@ -272,6 +272,13 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 		// assignable here (bivariant), so known keys retain their precise shape.
 		readonly [name: string]: ($: ShapedSymbols<B>, previous?: any) => unknown;
 	};
+	/**
+	 * Kinds with no top-level `ir.*` builder: constructed only through nested
+	 * config on the slot(s) that reference them. Assemble stamps the names
+	 * listed here onto `AssembledNodeBase.factoryInline`; a listed kind with
+	 * nowhere to nest fails the `factory-inline-unnestable` diagnostic.
+	 */
+	readonly factoryInline?: ($: ShapedSymbols<B>) => unknown[];
 	readonly polymorphs?: PolymorphsConfig<B>;
 	readonly groups?: Partial<
 		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
@@ -291,6 +298,7 @@ export interface WiredOpts {
 	readonly externals?: DollarFn<unknown[]>;
 	readonly extras?: DollarFn<unknown[]>;
 	readonly supertypes?: DollarFn<unknown[]>;
+	readonly factoryInline?: DollarFn<unknown[]>;
 	readonly inline?: DollarFn<unknown[]>;
 	readonly word?: DollarFn<unknown>;
 	readonly precedences?: DollarFn<unknown[][]>;

@@ -103,5 +103,19 @@ if [ "$mode" = "--content" ]; then
   report_and_exit $?
 fi
 
-"${diff_cmd[@]}" "${paths[@]}" 2>/dev/null | scan_added_lines
+scan_tracked_and_untracked() {
+  "${diff_cmd[@]}" "${paths[@]}" 2>/dev/null
+  # --working: a brand-new file is invisible to `git diff HEAD`; every line
+  # of it is an added line, so synthesize its hunk the same way --content
+  # does for an MCP write.
+  if [ "$mode" = "--working" ]; then
+    git ls-files --others --exclude-standard -z "${paths[@]}" 2>/dev/null |
+      while IFS= read -r -d '' f; do
+        printf '+++ b/%s\n@@ -0,0 +1 @@\n' "$f"
+        sed 's/^/+/' "$f"
+      done
+  fi
+}
+
+scan_tracked_and_untracked | scan_added_lines
 report_and_exit $?

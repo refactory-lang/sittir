@@ -18,7 +18,7 @@ describe('engine', () => {
 
 		// createEngine is native-only: it throws instead of silently
 		// falling back to a JS renderer-only engine.
-		expect(() => createEngine()).toThrow('createEngine: native engine unavailable');
+		expect(() => createEngine()).toThrow('native engine unavailable');
 	});
 
 	it('native engine exposes parse plus the diagnostics surface', async () => {

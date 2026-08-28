@@ -1,4 +1,4 @@
 ruleDirs:
-  - /Users/pmouli/GitHub.nosync/refactory-lang/sittir/rules
+  - rules
 utilDirs:
-  - /Users/pmouli/GitHub.nosync/refactory-lang/sittir/utils
+  - utils

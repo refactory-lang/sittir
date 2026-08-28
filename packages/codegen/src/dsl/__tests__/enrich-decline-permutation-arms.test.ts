@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { isPermutationChoice } from '../group-classify.ts';
+import { isPermutationChoice } from '../rule-patterns.ts';
 
 const sym = (name: string) => ({ type: 'SYMBOL', name });
 const str = (value: string) => ({ type: 'STRING', value });

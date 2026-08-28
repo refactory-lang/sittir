@@ -16,6 +16,13 @@ import {
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
+import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
+import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
+import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
+import { createEngine, ir } from '@sittir/rust';
+import { writeFileSync, mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 describe('examples/01 construct nodes', () => {
 	it('explicit strict construction renders a pub main', () => {
@@ -25,7 +32,8 @@ describe('examples/01 construct nodes', () => {
 	});
 	it('nested strict construction renders greet with its parameter', () => {
 		const text = nestedGreetFunction().$render();
-		expect(text).toContain('pub fn greet');
+		expect(text).toContain('pub(in crate::x)');
+		expect(text).toContain('greet');
 		expect(text).toContain('name');
 		expect(text).toContain('String');
 	});
@@ -95,5 +103,136 @@ describe('examples/09 type guards', () => {
 			'Function: main',
 			'Struct: Config'
 		]);
+	});
+});
+
+describe('dogfoodContract helper', () => {
+	it('reports equality for a node that reproduces its own file', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
+		const target = join(dir, 'main.rs');
+		writeFileSync(target, 'pub fn main() { }\n');
+		const rebuilt = ir.sourceFile({
+			statements: [
+				ir.functionItem({
+					visibilityModifier: 'pub',
+					name: 'main',
+					parameters: ir.parameters.strict(),
+					body: ir.block.strict()
+				})
+			]
+		});
+		const result = dogfoodContract(createEngine(), rebuilt, target);
+		expect(result.reparsesEqual).toBe(true);
+		expect(result.sameModuloWhitespace).toBe(true);
+		expect(result.firstDifference).toBeUndefined();
+	});
+	it('names the first token that differs', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
+		const target = join(dir, 'main.rs');
+		writeFileSync(target, 'pub fn other() { }\n');
+		const rebuilt = ir.functionItem({
+			visibilityModifier: 'pub',
+			name: 'main',
+			parameters: ir.parameters.strict(),
+			body: ir.block.strict()
+		});
+		const result = dogfoodContract(createEngine(), rebuilt, target);
+		expect(result.sameModuloWhitespace).toBe(false);
+		expect(result.firstDifference).toContain('other');
+	});
+});
+
+describe('structuralShape trivia handling', () => {
+	it("keeps a bare leaf's $text alongside its $triviaData", () => {
+		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment('// c'));
+		const shape = structuralShape(leaf) as Record<string, unknown>;
+		expect(shape.$text).toBe('main');
+		expect(shape.$triviaData).toBeDefined();
+	});
+	it('differs when only the comment text differs', () => {
+		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment('// alpha'));
+		const beta = ir.synonym.identifier('main').$trivia(ir.lineComment('// beta'));
+		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
+	});
+	it('differs when the same comment is leading vs. trailing', () => {
+		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment('// c')] });
+		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment('// c')] });
+		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
+	});
+});
+
+// GAP inventory (examples/17): A=6 B=8 C=1 — each marked in the example at
+// the construct it blocks. Both assertions flip to `it` as the classes close.
+describe('examples/17 dogfood rust (splice.rs)', () => {
+	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	it('builds and renders the whole file through the construction surface', () => {
+		expect(rebuildSplice().$render()).toContain('pub enum SpliceError');
+	});
+	it.fails('re-parses to the same tree as the real file', () => {
+		expect(dogfoodContract(createEngine(), rebuildSplice(), target).reparsesEqual).toBe(true);
+	});
+	it.fails('is identical to the real file modulo whitespace', () => {
+		const r = dogfoodContract(createEngine(), rebuildSplice(), target);
+		expect(r.firstDifference).toBeUndefined();
+		expect(r.sameModuloWhitespace).toBe(true);
+	});
+});
+
+// Namespaced constructors are the reachable spelling for an arm kind: the
+// parent names the form, the arm keeps no top-level builder of its own.
+describe('namespaced constructors reach the arm kinds', () => {
+	it('builds both doc-comment forms through line_comment', () => {
+		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi');
+		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi');
+	});
+	// `///` and `//!` are alternatives, so each is its own arm kind carrying
+	// only the doc text. Were they one kind with the markers as two optional
+	// fields, a caller could set both — `///!` — or neither, which renders a
+	// doc-comment kind as a plain `//` comment.
+	it('carries the marker as the arm identity, not as a settable field', () => {
+		const outer = ir.lineComment.docOuter(' hi').content();
+		const inner = ir.lineComment.docInner(' hi').content();
+
+		expect(outer.$type).not.toBe(inner.$type);
+		for (const arm of [outer, inner]) {
+			expect(arm).not.toHaveProperty('outer');
+			expect(arm).not.toHaveProperty('inner');
+		}
+	});
+	it('builds a plain line comment through the same parent', () => {
+		expect(ir.lineComment.content(' hi').$render()).toBe('// hi');
+	});
+	it('builds a semicolon-terminated expression statement', () => {
+		expect(ir.expressionStatement.withSemi({ expression: ir.identifier('x') }).$render()).toBe('x;');
+	});
+	// The arm is minted under `visibility_modifier` and reaches it through two
+	// intermediate hops, but the name a caller types is the one the grammar
+	// authored for the form — never the arm's full kind name.
+	it('reaches an in-path visibility modifier under its authored name', () => {
+		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
+		expect(ir.visibilityModifier.inPath(path).$render()).toBe('pub(in crate::x)');
+		expect(ir.visibilityModifier.self().$render()).toBe('pub(self)');
+	});
+	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
+	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is
+	// dropped and this kind's own arm — never hoisted — keeps the name.
+	it('keeps the direct arm when a hoisted constructor claims its name', () => {
+		expect(ir.visibilityModifier.crate().$render()).toBe('crate');
+	});
+});
+
+// Ceiling, never a floor: an artefact kind moves off the top-level namespace
+// onto its parent, so this count only shrinks.
+describe('ir entry ratchet', () => {
+	it('exposes no more top-level builders than the recorded ceiling', () => {
+		expect(Object.keys(ir).length).toBeLessThanOrEqual(247);
+	});
+});
+
+// The strict half: the same items through `.strict` alone, so each gap lands on
+// the layer that owns it.
+describe('examples/17 dogfood rust — strict factory surface', () => {
+	it('builds the items the public surface can reach', () => {
+		expect(rebuildSpliceStrict().$render()).toContain('pub enum SpliceError');
 	});
 });

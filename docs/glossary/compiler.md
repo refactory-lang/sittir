@@ -1,13 +1,44 @@
 # `packages/codegen/src/compiler` — Function Glossary
 
 Per-function reference for `packages/codegen/src/compiler/`, mechanically relocated from source
-JSDoc by `scripts/wave5-relocate-jsdoc.mts` (wave 5 comment-cleanup, pass 1 —
-unedited, unverified). Pass 2 reformats/verifies these entries and decides
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
+unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
+
+
+### `stampSupertypeClosures` (`packages/codegen/src/compiler/supertype-closure.ts`)
+
+Flattens each supertype's membership through nested supertypes, at the end of
+assemble, in the two vocabularies a subtype reference has. It stamps
+`AssembledSupertype.transitiveParseKinds` (a plain `NodeOrTerminal[]` — the
+same reference shape `.subtypes` already uses, hidden arms normalized to the
+visible name tree-sitter reports) and returns the same walk's storage-identity
+closure, keyed by supertype kind, for the callers that ask reachability
+questions about the model rather than about parse output. One traversal
+produces both, so the two can never drift.
+
+Walks the assemble-time-RESOLVED `AssembledSupertype.subtypes` /
+`.subtypeParseNames` — hidden names already expanded to concrete kinds — NOT
+the raw `rule.subtypes`, which is less complete (`AssembledSupertype`'s own
+doc comment: do not substitute it). This is why it does its own closure walk
+instead of calling `types/rule.ts::transitiveParseKinds` (the pre-hydration
+raw-rule helper `compiler/model/node-map.ts::existingSupertypeClosureOf`
+uses) — the two representations diverge (assemble does additional hidden-name
+resolution between link and itself) and a shared walk over either one would be
+wrong, or stale, for the other's caller. Confirmed empirically: reusing the
+raw-rule path here silently dropped a real typescript discriminator kind
+(`_statement_identifier_group1`) until caught by diffing regenerated `wrap.ts`
+byte-for-byte against pre-refactor HEAD for all 3 grammars.
+
+Consumers: `wrap.ts`'s storage-key routing (`expandToConcreteParseKinds`)
+reads the parse-kind stamp instead of re-walking the closure per call site;
+`assemble.ts::stampFactoryInline` reads the storage closure to decide whether
+a `factoryInline` kind escapes through a supertype referenced outside its own
+parents.
 
 ### `rules` (`packages/codegen/src/compiler/assemble.ts:214`)
 
@@ -3897,6 +3928,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:110`)
+
+```text
+// Fuse separated-list head+repeat pairs into one multi slot AFTER
+// wrapper-deletion has pushed multiplicity/separator to leaves, so the
+// renderRule the emitter consumes already has the canonical single
+// multi slot (no head single + tail array split).
+```
+
 ### `AssembleCtx` (`packages/codegen/src/compiler/assemble.ts:81`)
 
 ```text
@@ -5802,5 +5842,181 @@ source, one derivation.
  * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
  * strings are lexeme fragments of the token, not separate anon tokens, so
  * a miss there is meaningless by construction.
+ */
+```
+
+### `applySelfReferentialFold` (`packages/codegen/src/compiler/wrapper-deletion.ts:24`)
+
+```text
+/**
+ * Pre-step: when `ownName`'s own top-level body is a self-referential fold
+ * (see `selfReferentialFoldOf`), rewrite each arm's extension member in
+ * the RAW `Rule<'link'>` tree — `field(name, content)` becomes
+ * `field(name, repeat(content, separator))` — so the ordinary bottom-up
+ * rebuild below produces the array-with-separator slot uniformly, with no
+ * special-casing anywhere else in the walk.
+ */
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:29`)
+
+```text
+// Re-check the SEQ discriminant here for TypeScript's narrowing, not
+// as a runtime safety net (the fold's own scan already proved this).
+```
+
+### `rebuild` (`packages/codegen/src/compiler/wrapper-deletion.ts:54`)
+
+```text
+/**
+ * Bottom-up rebuild: each case calls the matching `attributeBuilder` method
+ * with the node's own parameters and its already-rebuilt content/members
+ * (guaranteed by `RuleWalker.map`'s recursion order — every descendant is
+ * visited before its parent). Leaves fall through the default arm
+ * unchanged; the enclosing builder stamps them.
+ */
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:48`)
+
+```text
+// SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the
+// wrapper cases below, which are consumed into their content) — the
+// original node's own stamped facts (id, metadata, …) must ride
+// along, so spread it under attributeBuilder's freshly-built shape.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:53`)
+
+```text
+// `attributeBuilder.seq` stamps `id` itself (id: node.id ??
+// input.id — here there's no single input, so it's just
+// `node.id`); the outer spread still carries any OTHER stamped
+// facts (metadata, …) attributeBuilder has no access to. `built`
+// may be a collapsed singleton survivor (buildSeq's own
+// singleton collapse) with no `members` of its own — a plain
+// `{...node, ...built}` spread would leave `node`'s stale
+// `members` array on it, so drop it when `built` doesn't own one.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:69`)
+
+```text
+// `buildOptional`, not `attributeBuilder.optional`: the empty-match
+// fold (`foldOptionalEmptyMatch`) belongs to simplify's own later
+// construction, not RenderRule production — a raw OPTIONAL over a
+// bare literal here stays a leaf with `multiplicity: 'optional'`.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:75`)
+
+```text
+// Cast, not narrow: `node: AnyRule` distributes REPEAT across
+// every phase (its 'evaluate' view's `separator` is a bare
+// string, not yet lifted to the structured link-phase shape),
+// while wrapper-deletion always operates on the 'link' view —
+// same "narrow via AnyRule, cast back" convention as
+// rule-patterns.ts's `ruleChildren`.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:97`)
+
+```text
+// string / pattern / symbol / supertype / indent / dedent / newline
+```
+
+### `reportKindIdStampMisses` (`packages/codegen/src/compiler/link.ts:647`)
+
+```text
+/**
+ * The unstampable-leaf report — the per-build phantom-kind inventory. One row
+ * per class keeps `grammar-diagnostics.json` diffs readable; the sorted name
+ * lists live in `details`. Expected members today: kinds synthesized after
+ * tree-sitter generate (evaluate's field-enums), `inline:`-listed rules, and
+ * VAPORIZED rules — these lack a parser-issued kindId by construction, not by
+ * bug (every OTHER kind name should carry one — that's the invariant this
+ * report ratchets against).
+ */
+```
+
+### `foldAliasLiteralsIntoEnumRules` (`packages/codegen/src/compiler/link.ts:856`)
+
+```text
+/**
+ * An enum kind's member set is its GRAMMAR-WIDE realization set, not just
+ * its defining rule's literals. An alias-of-terminal occurrence
+ * (`alias('$', $.token_tree_punctuation)`, collapsed by resolveRule to a
+ * literal-carrying SYMBOL) realizes the enum kind with a text the defining
+ * rule never lists — without folding it in, the emitted transport enum has
+ * no variant for that text and every read stub carrying it fails
+ * deserialization ("unknown enum payload"). Append the missing texts as
+ * ordinary STRING members so AssembledEnum, the transport enum, and every
+ * kindEnum consumer see one uniform member list.
+ */
+```
+
+### `collectTerminalAliasWireIds` (`packages/codegen/src/compiler/link.ts:1060`)
+
+```text
+/**
+ * Kind name → anon-token wire ids from `alias('tok', $.kind)` occurrences
+ * anywhere in the linked rule tree. `stampSymbolRefKindIds` records each
+ * such occurrence as a literal SYMBOL with `kindId` (the alias-target
+ * display symbol) plus `aliasedFromId` (the token's own grammar symbol —
+ * the id the wire delivers); this collects those stamps kind-wide so
+ * decode arms can accept the token ids even where the occurrence itself
+ * is swallowed by supertype expansion (e.g. python's inlined
+ * `keyword_identifier` body: `match`-as-identifier never appears as a
+ * slot value, only as the `identifier` subtype). Registered under both
+ * kind spellings (occurrence name + its `_`-toggled twin) so lookups by
+ * either surface find it.
+ */
+```
+
+### `absorbSuffixSeparatedList` (`packages/codegen/src/compiler/link.ts:2211`)
+
+```text
+/**
+ * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
+ * its own separator, with an optional final unterminated element) into one
+ * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
+ * (`x (sep x)*`) for the opposite separator orientation; `separatorOf`
+ * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
+ * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
+ * needs to recognize the two windows that ALSO carry a standalone head and/or
+ * an unterminated final element beside that already-stamped repeat:
+ *
+ *  - `[seq(x, sep), repeat(x){sep, trailing:'mandatory'}, optional(x)]` — a
+ *    mandatory first element (needed to disambiguate the construct, e.g.
+ *    rust's `(x,)` single-element tuple) absorbs into the repeat's own
+ *    minimum, promoting it to `repeat1`.
+ *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — no standalone
+ *    head (the construct is valid with zero elements, e.g. an empty
+ *    `macro_rules! m {}` body); stays a plain `repeat`.
+ *
+ * Both windows relax `trailing` from `'mandatory'` (true only of the repeat's
+ * OWN body in isolation) to `'optional'` (true of the whole merged list, once
+ * the trailing unterminated element is accounted for) — the same relaxation
+ * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
+ */
+```
+
+### `module` (`packages/codegen/src/compiler/wrapper-deletion.ts:1`)
+
+```text
+/**
+ * compiler/wrapper-deletion.ts — PR1 Task 2.A2
+ *
+ * Pushes modifier wrappers (optional / field / repeat / repeat1 / alias /
+ * token) down to leaf attributes (fieldName, multiplicity, separator, …) on
+ * RuleBase. The result type is RenderRule: the Rule<'link'> union minus the
+ * wrapper variants, so consumers that only see RenderRule cannot
+ * accidentally re-wrap a leaf.
+ *
+ * `deleteWrapper` is a re-evaluation of the tree through `attributeBuilder`
+ * (dsl/builders.ts) — the RuleBuilder strategy that implements every
+ * constructor as attribute-push instead of node construction — not an edit
+ * of the tree: `RuleWalker.map` rebuilds bottom-up so each `attributeBuilder`
+ * call receives an already-finished input and looks exactly one level down.
  */
 ```

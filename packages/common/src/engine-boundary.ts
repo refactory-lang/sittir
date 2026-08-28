@@ -2,6 +2,7 @@ export { createNativeEngine, createRenderHandle } from './engine.ts';
 export type {
 	BackendStatusLike,
 	EngineDiagnostics,
+	ParseEngine,
 	EngineOptions,
 	ParseOptions,
 	GrammarEngineConfig,
@@ -11,5 +12,6 @@ export type {
 	NativeModuleLike,
 	ParseAndReadResult,
 	RenderHandle,
-	SittirEngineLike
+	RenderEngine,
+	SittirEngine
 } from './engine.ts';

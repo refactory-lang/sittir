@@ -13,13 +13,13 @@ function pascalCase(value: string) {
 }
 
 export function emitIsModule(grammar: GrammarModel): string {
-	return ir.program.from({
+	return ir.program({
 		statements: [
-			ir.interfaceDeclaration.from({
+			ir.interfaceDeclaration({
 				name: 'IsGuards',
 				body: {
 					members: grammar.kinds.map((kind) =>
-						ir.propertySignature.from({
+						ir.propertySignature({
 							name: `is${pascalCase(kind)}`,
 							type: { type: 'boolean' },
 						}),

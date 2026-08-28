@@ -20,6 +20,7 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []):
 		extras: [],
 		externals: [],
 		supertypes: [],
+		factoryInline: [],
 		inline,
 		conflicts: [],
 		word: null,

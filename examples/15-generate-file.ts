@@ -2,13 +2,13 @@ import { writeFileSync } from 'node:fs';
 import { ir } from '@sittir/rust';
 
 export function generateCacheModule() {
-	const file = ir.sourceFile.from({
+	const file = ir.sourceFile({
 		statements: [
-			ir.structItem.unit.from({
+			ir.statement.struct.unit({
 				visibilityModifier: 'pub',
-				name: ir.from.type('Cache'),
+				name: ir.synonym.type('Cache'),
 			}),
-			ir.functionItem.from({
+			ir.statement.function({
 				visibilityModifier: 'pub',
 				name: 'new_cache',
 				parameters: ir.parameters.strict(),

@@ -139,10 +139,6 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 			boundary.$source = typeof value === 'string' ? (SOURCE_MAP[value] ?? 0) : ((value ?? 0) as number);
 			continue;
 		}
-		if (key === '$children' && Array.isArray(value)) {
-			boundary.$children = value.map((child) => normalizeBoundaryValue(child)) as BoundaryNodeValue;
-			continue;
-		}
 		if (key === '$span' && value && typeof value === 'object') {
 			boundary.$span = cloneJsonValue(value as BoundaryNodeValue);
 			continue;
@@ -157,16 +153,17 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 }
 
 /**
- * Recursively convert a readNode-shaped NodeData (nested `$fields`) into
- * the flat transport shape expected by the napi `#[napi(object)]` structs.
+ * Make a NodeData safe to hand to the napi `#[napi(object)]` structs.
  *
- * Transform: `{ $type, $source, $fields: { a, b }, $children: [...] }`
- *         → `{ $type, $source, a, b, $children: [...] }`
+ * The reader's shape is already the transport's — named slots under
+ * `_<slot>`, unnamed children under `$other` — so nothing is restructured
+ * here. What this does is settle representation:
  *
- * Also:
- * - Coerces `$source` to numeric (0/1/2) for the napi Source enum.
- * - Ensures branch nodes always carry `$children` (empty array when absent)
- *   because napi `Vec<T>` fields cannot accept undefined.
+ * - `$source` becomes numeric (0/1/2) for the napi `Source` enum, since a
+ *   fixture may spell it `'ts'` / `'sg'` / `'factory'`.
+ * - `$type` stays a number where it is one, and a string otherwise.
+ * - Functions are dropped and the rest is deep-cloned, so what crosses is
+ *   plain JSON-shaped data.
  */
 function toNativeTransport(obj: unknown): unknown {
 	return normalizeBoundaryValue(obj);

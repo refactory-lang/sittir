@@ -292,7 +292,7 @@ cleanup`, `f72f540 codegen: wave 3 comment/decomposition cleanup`, and
 the wave 4 ADR-0009 follow-up. Match that style. Don't merge helpers
 that the directive would split — granularity per comment block.
 
-**Since wave 5:** function-level doc comments (what a function does,
+**Standing rule:** function-level doc comments (what a function does,
 why it exists, its contract) do NOT live as a JSDoc block above the
 function in source — they become (or update) an entry in
 [docs/compiler-phase-glossary.md](docs/compiler-phase-glossary.md)

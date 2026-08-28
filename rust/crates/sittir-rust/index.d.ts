@@ -34,22 +34,53 @@ export declare class SittirEngine {
   /**
    * Compile profile baked into this binary — `"debug"` or `"release"`.
    * Validators refuse debug binaries (known segfault class) unless
-   * `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes the
-   * gate immune to stale env assumptions.
+   * `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes
+   * the gate immune to stale env assumptions.
    */
   get buildProfile(): string
   findAndRead(source: string, pattern: string): string
   /**
-   * `deep` expands the whole tree in one pass instead of leaving each
-   * child with substructure as a stub. Default (absent / `false`) is the
-   * lazy one-level read.
+   * Parse `source` and read its root.
+   *
+   * `deep` expands the whole tree in one pass instead of leaving
+   * each child with substructure as a stub. Default (absent /
+   * `false`) is the lazy one-level read.
+   *
+   * The tree is retained under a fresh id so the handles this read
+   * hands out stay answerable; the id rides in those handles and is
+   * echoed as `treeId` for `disposeTree`.
    */
   parseAndRead(source: string, deep?: boolean | undefined | null): string
+  /**
+   * Expand one child of the node named by `handle`.
+   *
+   * The handle names its own tree, so a handle from a tree that has
+   * been disposed — or one never minted here — is refused rather
+   * than answered out of whichever tree happens to be present.
+   */
   readNode(handle: number, childIndex: number, deep?: boolean | undefined | null): string
-  /** Render a typed transport object (napi-native, numeric `$type`). */
-  render(transport: RenderRoot): string
-  renderToFile(transport: RenderRoot, path: string): void
+  /**
+   * Render a typed transport object (napi-native, numeric `$type`).
+   *
+   * `treeId` names the parse whose detected format applies. It is
+   * optional because factory-built nodes belong to no tree.
+   */
+  render(transport: RenderRoot, treeId?: number | undefined | null): string
+  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
+  /**
+   * Drop one tree. Called from the boundary's `FinalizationRegistry`
+   * once JavaScript has collected the last node reading from it.
+   * Unknown ids are not an error — a tree can only be dropped once,
+   * and the registry has no way to know whether it already was.
+   */
+  disposeTree(treeId: number): void
+  /**
+   * Number of trees still held. Diagnostics only — the boundary's
+   * disposal is driven by GC, so this is the way a test can observe
+   * that trees are actually being released.
+   */
+  get liveTreeCount(): number
   dispose(): void
 }
 
@@ -350,7 +381,7 @@ export interface BinaryExpressionTransport {
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
-export interface BlockCommentArmTransport {
+export interface BlockCommentDocInnerTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -358,9 +389,18 @@ export interface BlockCommentArmTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _outer?: SlotValue<OuterBlockDocCommentMarkerTransport>
-  _inner?: SlotValue<InnerBlockDocCommentMarkerTransport>
-  _doc?: SlotValue<Box<AnyTransport>>
+  _doc?: SlotValue<BlockCommentContentTransport>
+}
+
+export interface BlockCommentDocOuterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _doc?: SlotValue<BlockCommentContentTransport>
 }
 
 export interface BlockCommentTransport {
@@ -371,7 +411,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block_comment_arm?: SlotValue<BlockCommentArmTransport>
+  _content?: SlotValue<BlockCommentContentTransportSlot>
 }
 
 export interface BlockTransport {
@@ -1299,7 +1339,7 @@ export interface LifetimeTransport {
   _identifier: SlotValue<IdentifierTransport>
 }
 
-export interface LineCommentDocTransport {
+export interface LineCommentDocInnerTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1307,8 +1347,17 @@ export interface LineCommentDocTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _outer?: SlotValue<OuterLineDocCommentMarkerTransport, true>
-  _inner?: SlotValue<InnerLineDocCommentMarkerTransport>
+  _doc: SlotValue<LineDocContentTransport>
+}
+
+export interface LineCommentDocOuterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
   _doc: SlotValue<LineDocContentTransport>
 }
 
@@ -1450,6 +1499,17 @@ export interface MatchBlockArmsTransport {
   '$triviaData'?: TransportTrivia
   _last_arm: SlotValue<Box<LastMatchArmTransport>>
   _match_arm?: Array<SlotValue<MatchArmTransport>>
+}
+
+export interface MatchBlockOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _match_block_arms: SlotValue<MatchBlockArmsTransport>
 }
 
 export interface MatchBlockTransport {

@@ -139,6 +139,7 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 			extras: [],
 			externals: [],
 			supertypes: [],
+			factoryInline: [],
 			inline: [],
 			conflicts: [],
 			word: null,

@@ -2,42 +2,25 @@
 /**
  * Grammar-specific engine factory for @sittir/python.
  *
- * Thin wrapper — native binding stays in @sittir/common/engine. Native-only:
- * there is no JS-engine fallback.
+ * Adds `parse()` — the half that needs `wrap.js` — on top of the
+ * render-only engine. Anything that only renders should import
+ * `./render-engine.js` directly; importing this module pulls the wrapper
+ * and, through it, the factories.
  */
-import {
-	createNativeEngine,
-	type SittirEngineLike,
-	type EngineOptions,
-	type ParseOptions
-} from '@sittir/common/engine';
-import { KIND_NAMES, type Module } from './types.js';
-import type { NodeDataOf } from '@sittir/types';
+import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
+import { createRenderEngine, type ModuleRoot } from './render-engine.js';
 import { wrapNode, type ModuleTree } from './wrap.js';
-import { getActiveBackend } from './backend.js';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-/** The reader's raw root: the root kind's DATA projection — its `$type`
- *  and `_<slot>` storage, whose children are reader stubs. Accessor
- *  methods live on `wrapNode(root, tree)`, which is what `parse()` returns. */
-export type ModuleRoot = NodeDataOf<Module>;
-
+export type { ModuleRoot };
 export type { EngineOptions, ParseOptions, ModuleTree };
 
 /**
- * A grammar engine: the product `parse()` surface plus the shared render /
- * edit / diagnostics surface.
+ * A grammar engine: the public `parse()` surface plus the shared render /
+ * edit surface. `parse` wraps what `diagnostics.parseAndRead` returns —
+ * accessors on the result return wrapped nodes too, with children expanding
+ * lazily unless `{ deep: true }` is passed.
  */
-export interface ModuleEngine extends SittirEngineLike<ModuleRoot> {
-	/** Parse `source` and return its wrapped root. Accessors on the result
-	 *  return wrapped nodes too — no caller-side `wrapNode` re-wrapping.
-	 *  Reading is lazy by default: children expand on first access. Pass
-	 *  `{ deep: true }` to expand the whole tree up front instead. */
-	parse(source: string, options?: ParseOptions): ModuleTree;
-}
+export interface ModuleEngine extends SittirEngine<ModuleRoot>, ParseEngine<ModuleTree> {}
 
 /**
  * Create a grammar-specific engine instance.
@@ -49,18 +32,7 @@ export interface ModuleEngine extends SittirEngineLike<ModuleRoot> {
  * @returns An engine implementing ModuleEngine.
  */
 export function createEngine(options?: EngineOptions): ModuleEngine {
-	const result = createNativeEngine<ModuleRoot>(
-		{
-			templatesPath: join(__dirname, '..', 'templates'),
-			kindNames: KIND_NAMES,
-			getActiveBackend
-		},
-		options
-	);
-	if (!result.engine) {
-		throw new Error(`createEngine: native engine unavailable (no JS-engine fallback): ${result.reason}`);
-	}
-	const engine = result.engine;
+	const engine = createRenderEngine(options);
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): ModuleTree {

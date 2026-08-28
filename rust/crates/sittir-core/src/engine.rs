@@ -84,20 +84,70 @@ pub struct ParsedTree<G: EngineGrammar> {
     tree: tree_sitter::Tree,
     source: String,
     format: Option<FormatRecord>,
+    /// Identity this tree stamps into every handle it mints. Distinct per
+    /// parse, so a handle names the tree it belongs to and cannot be spent
+    /// against another one.
+    tree_id: u32,
     /// Node coordinate table for drill-in navigation. Each entry back-links
     /// to its parent handle; the root entry has `parent: None`.
     nodes: Vec<NodeCoord>,
 }
 
+/// Bits of a handle given over to the node index; the rest carry the tree id.
+///
+/// Handles cross into JavaScript as JSON numbers and come back as doubles, so
+/// the two fields together must stay inside the 53-bit range where a double
+/// still counts integers exactly. 32 bits of index (4B nodes in one tree) and
+/// 21 of tree id (2M parses on one engine) spends that budget exactly.
+const HANDLE_INDEX_BITS: u32 = 32;
+const HANDLE_INDEX_MASK: u64 = (1u64 << HANDLE_INDEX_BITS) - 1;
+/// Largest tree id that still fits beside an index in an exact double.
+pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
+
+/// Pack a tree id and a node index into one self-identifying handle.
+fn encode_handle(tree_id: u32, index: u32) -> u64 {
+    ((tree_id as u64) << HANDLE_INDEX_BITS) | index as u64
+}
+
+/// Split a handle back into the tree that minted it and the index within it.
+pub fn decode_handle(handle: u64) -> (u32, u32) {
+    (
+        (handle >> HANDLE_INDEX_BITS) as u32,
+        (handle & HANDLE_INDEX_MASK) as u32,
+    )
+}
+
 impl<G: EngineGrammar> ParsedTree<G> {
-    /// Push a node coordinate into the node table, returning its handle (index).
+    /// This tree's identity — the tag carried by every handle it mints.
+    pub fn tree_id(&self) -> u32 {
+        self.tree_id
+    }
+
+    /// Push a node coordinate into the node table, returning its tagged handle.
     ///
     /// `NodeCoord` is `Copy`, so this is O(1) with zero allocation — no
     /// O(depth) path `Vec` is cloned per node.
-    fn push_coord(&mut self, coord: NodeCoord) -> u32 {
-        let handle = self.nodes.len() as u32;
+    fn push_coord(&mut self, coord: NodeCoord) -> u64 {
+        let index = self.nodes.len() as u32;
         self.nodes.push(coord);
-        handle
+        encode_handle(self.tree_id, index)
+    }
+
+    /// Reject a handle minted by a different tree.
+    ///
+    /// Indices are dense and restart at 0 every parse, so without this an
+    /// out-of-tree handle lands in range and resolves to whatever node happens
+    /// to sit at that index — an unrelated node returned as though it were the
+    /// one asked for. The tag turns that into a refusal.
+    fn local_index(&self, handle: u64) -> Result<u32, String> {
+        let (tree_id, index) = decode_handle(handle);
+        if tree_id != self.tree_id {
+            return Err(format!(
+                "handle {handle} belongs to tree {tree_id}, not tree {}",
+                self.tree_id
+            ));
+        }
+        Ok(index)
     }
 
     /// Re-resolve the live `Node` for a handle by walking parent back-links to
@@ -112,13 +162,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     fn resolve_handle<'tree>(
         nodes: &[NodeCoord],
         tree: &'tree tree_sitter::Tree,
-        handle: u32,
+        index: u32,
     ) -> Option<tree_sitter::Node<'tree>> {
-        let coord = *nodes.get(handle as usize)?;
+        let coord = *nodes.get(index as usize)?;
         match coord.parent {
             None => Some(tree.root_node()),
-            Some(parent) => {
-                let parent_node = Self::resolve_handle(nodes, tree, parent)?;
+            Some(parent_index) => {
+                let parent_node = Self::resolve_handle(nodes, tree, parent_index)?;
                 parent_node.child(coord.child_index)
             }
         }
@@ -130,6 +180,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
         read_node(&self.tree, &self.source, None, Some(handle), depth)
     }
 
+    /// Whether this tree minted `handle`.
+    pub fn owns_handle(&self, handle: u64) -> bool {
+        decode_handle(handle).0 == self.tree_id
+    }
+
     /// Read a child node by handle + child_index.
     ///
     /// Re-resolves the parent `Node` from `self.tree` (walking parent
@@ -138,16 +193,17 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// the (already resolved) child into a `NodeData`.
     pub fn read_child(
         &mut self,
-        handle: u32,
+        handle: u64,
         child_index: u16,
         depth: ReadDepth,
     ) -> Result<String, String> {
+        let index = self.local_index(handle)?;
         // Resolve parent and child while only borrowing `self.nodes` + `self.tree`.
         // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
         // stays valid across the disjoint `&mut self.nodes` push below — no second
         // re-resolution needed.
-        let parent_node = Self::resolve_handle(&self.nodes, &self.tree, handle).ok_or_else(|| {
-            if (handle as usize) >= self.nodes.len() {
+        let parent_node = Self::resolve_handle(&self.nodes, &self.tree, index).ok_or_else(|| {
+            if (index as usize) >= self.nodes.len() {
                 format!("handle {handle} not found in node table")
             } else {
                 format!("handle {handle}: coordinate path could not be resolved")
@@ -163,12 +219,18 @@ impl<G: EngineGrammar> ParsedTree<G> {
         // to the `nodes` field rather than via `&mut self`: `child_node` borrows
         // only `self.tree`, so mutating the disjoint `self.nodes` field while it
         // is alive is sound — and avoids a redundant O(depth) re-resolution.
-        let new_handle = self.nodes.len() as u32;
+        let new_index = self.nodes.len() as u32;
         self.nodes.push(NodeCoord {
-            parent: Some(handle),
+            parent: Some(index),
             child_index: child_index as u32,
         });
-        let data = read_node(&self.tree, &self.source, Some(child_node), Some(new_handle), depth);
+        let data = read_node(
+            &self.tree,
+            &self.source,
+            Some(child_node),
+            Some(encode_handle(self.tree_id, new_index)),
+            depth,
+        );
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
 
@@ -217,6 +279,11 @@ pub struct ParseResult<'a> {
     pub node_data: &'a NodeData,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<FormatRecord>,
+    /// Which tree this parse produced. Handles already carry it, but the
+    /// boundary needs it on its own to dispose the tree once JavaScript
+    /// drops the last node reading from it.
+    #[serde(rename = "treeId")]
+    pub tree_id: u32,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -239,8 +306,12 @@ impl<G: EngineGrammar> Engine<G> {
         self.engine_format.as_ref()
     }
 
-    /// Parse source and return an owned `ParsedTree`.
-    pub fn parse(&mut self, source: String) -> Result<ParsedTree<G>, String> {
+    /// Parse source and return an owned `ParsedTree` tagged with `tree_id`.
+    ///
+    /// The caller owns id assignment because it owns the set of live trees;
+    /// ids must be distinct across every tree a caller can still reach, or
+    /// handles stop being unambiguous.
+    pub fn parse(&mut self, source: String, tree_id: u32) -> Result<ParsedTree<G>, String> {
         let tree = self.parser.parse(&source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
@@ -251,6 +322,7 @@ impl<G: EngineGrammar> Engine<G> {
             tree,
             source,
             format,
+            tree_id,
             nodes: Vec::new(),
         })
     }

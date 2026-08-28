@@ -119,12 +119,19 @@ pub struct NodeData {
 
     pub span: Option<Span>,
 
-    /// Index into the `ParsedTree.nodes` vec — O(1) lookup for the
-    /// tree-sitter `Node` that produced this `NodeData`. Stamped by
-    /// `ParsedTree::push_node` after `read_node` returns. `None` on
-    /// factory-constructed nodes and on nodes that haven't been
-    /// registered in a node table yet.
-    pub node_handle: Option<u32>,
+    /// Tagged handle for the tree-sitter `Node` that produced this
+    /// `NodeData`: the owning tree's id in the high bits, an index into that
+    /// tree's `nodes` vec in the low 32. Stamped by `ParsedTree` as it mints
+    /// coordinates. `None` on factory-constructed nodes and on nodes that
+    /// haven't been registered in a node table yet.
+    ///
+    /// The tag is what makes a handle self-identifying. Indices are dense and
+    /// restart at 0 for every parse, so an untagged handle from one tree is
+    /// silently in range in the next one — it would resolve against the wrong
+    /// tree and return an unrelated node rather than failing. Serialized as a
+    /// JSON number and read back as a JS double, so the split is sized to stay
+    /// inside the 53-bit exact-integer range (see `handle` in `engine.rs`).
+    pub node_handle: Option<u64>,
 
     /// Position of this node within its parent's children array.
     /// Set during `read_children` traversal. Enables O(1) child-index
@@ -180,7 +187,7 @@ struct NodeDataSer<'a> {
         default,
         skip_serializing_if = "Option::is_none"
     )]
-    node_handle: &'a Option<u32>,
+    node_handle: &'a Option<u64>,
     #[serde(
         rename = "$childIndex",
         default,
@@ -220,7 +227,7 @@ struct NodeDataDe {
     #[serde(rename = "$span", default)]
     span: Option<Span>,
     #[serde(rename = "$nodeHandle", default)]
-    node_handle: Option<u32>,
+    node_handle: Option<u64>,
     #[serde(rename = "$childIndex", default)]
     child_index: Option<u16>,
     #[serde(rename = "$triviaData", default)]

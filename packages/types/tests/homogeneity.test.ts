@@ -7,7 +7,7 @@
  */
 
 import { describe, it } from 'vitest';
-import type { ChildOf, ConfigOf, FromInputOf } from '../src/index.ts';
+import type { ChildOf, ConfigOf, LooseConfigOf } from '../src/index.ts';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -48,19 +48,19 @@ interface ParentHetero {
 
 interface SyntheticNamespaceMap {
 	homo_left: {
-		Loose: FromInputOf<HomoLeft, {}, {}, [], SyntheticNamespaceMap>;
+		Loose: LooseConfigOf<HomoLeft, {}, {}, [], SyntheticNamespaceMap>;
 	};
 	homo_right: {
-		Loose: FromInputOf<HomoRight, {}, {}, [], SyntheticNamespaceMap>;
+		Loose: LooseConfigOf<HomoRight, {}, {}, [], SyntheticNamespaceMap>;
 	};
 	hetero_extra: {
-		Loose: FromInputOf<HeteroExtra, {}, {}, [], SyntheticNamespaceMap>;
+		Loose: LooseConfigOf<HeteroExtra, {}, {}, [], SyntheticNamespaceMap>;
 	};
 	parent_homo: {
-		Loose: FromInputOf<ParentHomo, {}, {}, [], SyntheticNamespaceMap>;
+		Loose: LooseConfigOf<ParentHomo, {}, {}, [], SyntheticNamespaceMap>;
 	};
 	parent_hetero: {
-		Loose: FromInputOf<ParentHetero, {}, {}, [], SyntheticNamespaceMap>;
+		Loose: LooseConfigOf<ParentHetero, {}, {}, [], SyntheticNamespaceMap>;
 	};
 }
 

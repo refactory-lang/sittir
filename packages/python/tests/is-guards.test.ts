@@ -19,8 +19,8 @@ describe('python is / isTree / isNode composition', () => {
 	});
 
 	it('is.kind generic form accepts numeric kinds', () => {
-		expect(is.kind({ $type: TSKindId.IfStatement }, 'if_statement')).toBe(true);
-		expect(is.kind({ $type: TSKindId.IfStatement }, 'for_statement')).toBe(false);
+		expect(is.kind({ $type: TSKindId.IfStatement }, TSKindId.IfStatement)).toBe(true);
+		expect(is.kind({ $type: TSKindId.IfStatement }, TSKindId.ForStatement)).toBe(false);
 	});
 
 	it('isNode returns true for NodeData shapes', () => {
@@ -88,7 +88,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, 'function_definition')).toBe(true);
+		expect(is.kind(node, TSKindId.FunctionDefinition)).toBe(true);
 	});
 
 	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
@@ -98,7 +98,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
-		expect(is.kind(node as { readonly $type: number }, 'function_definition')).toBe(false);
+		expect(is.kind(node as { readonly $type: number }, TSKindId.FunctionDefinition)).toBe(false);
 	});
 
 	it('is.kind() rejects mismatched numeric $type', () => {
@@ -108,7 +108,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, 'function_definition')).toBe(false);
+		expect(is.kind(node, TSKindId.FunctionDefinition)).toBe(false);
 	});
 
 	it('supertype guard accepts numeric $type member from factory', () => {

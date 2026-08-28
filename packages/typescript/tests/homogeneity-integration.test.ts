@@ -18,7 +18,7 @@
 import { describe, it } from 'vitest';
 import type { FormalParameter } from '../src/index.ts';
 import type { NamespaceMap } from '../src/index.ts';
-import type { FromInputOf } from '@sittir/types';
+import type { LooseConfigOf } from '@sittir/types';
 
 function expectTrue<_T extends true>(): void {}
 
@@ -27,7 +27,7 @@ describe('spec 009 Layer 1 — real typescript grammar integration', () => {
 		// The Loose projection for FormalParameter after spec 009 Layer 1
 		// folds the two arms together (since their $fields are identical).
 		// A bare bag with just the shared fields should be assignable.
-		type FormalParamLoose = FromInputOf<FormalParameter, {}, {}, [], NamespaceMap>;
+		type FormalParamLoose = LooseConfigOf<FormalParameter, {}, {}, [], NamespaceMap>;
 
 		// The shared shape is `{ type?: TypeAnnotation }` + children.
 		// An empty loose bag is valid (everything optional) — it matches

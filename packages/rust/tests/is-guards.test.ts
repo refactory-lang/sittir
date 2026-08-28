@@ -32,8 +32,8 @@ describe('is / isTree / isNode guard composition', () => {
 
 	it('is.kind generic form accepts kind name strings', () => {
 		// is.kind() narrows to { $type: number } broadly (not to a specific literal).
-		expect(is.kind({ $type: TSKindId.FunctionItem }, 'function_item')).toBe(true);
-		expect(is.kind({ $type: TSKindId.Block }, 'function_item')).toBe(false);
+		expect(is.kind({ $type: TSKindId.FunctionItem }, TSKindId.FunctionItem)).toBe(true);
+		expect(is.kind({ $type: TSKindId.Block }, TSKindId.FunctionItem)).toBe(false);
 	});
 
 	it('isNode returns true for NodeData shapes, false for loose bags', () => {
@@ -81,7 +81,7 @@ describe('assert throw behavior', () => {
 	});
 
 	it('assert.kind throws with kind name in message', () => {
-		expect(() => assert.kind({ $type: TSKindId.Block }, 'function_item')).toThrow(TypeError);
+		expect(() => assert.kind({ $type: TSKindId.Block }, TSKindId.FunctionItem)).toThrow(TypeError);
 	});
 });
 
@@ -127,7 +127,7 @@ describe('Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, 'function_item')).toBe(true);
+		expect(is.kind(node, TSKindId.FunctionItem)).toBe(true);
 	});
 
 	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
@@ -137,7 +137,7 @@ describe('Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
-		expect(is.kind(node as { readonly $type: number }, 'function_item')).toBe(false);
+		expect(is.kind(node as { readonly $type: number }, TSKindId.FunctionItem)).toBe(false);
 	});
 
 	it('is.kind() rejects mismatched numeric $type', () => {
@@ -147,7 +147,7 @@ describe('Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, 'function_item')).toBe(false);
+		expect(is.kind(node, TSKindId.FunctionItem)).toBe(false);
 	});
 
 	it('supertype guard accepts numeric $type member from factory', () => {

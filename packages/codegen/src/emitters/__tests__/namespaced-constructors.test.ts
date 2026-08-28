@@ -98,9 +98,10 @@ describe('namespacedConstructors — derivation', () => {
 		}
 	});
 
-	it('drops a name two candidates claim and reports both', () => {
+	it("stops the hoist at an ambiguity but keeps the parent's own arm", () => {
 		// `_wrapper_b`'s members are `let` and `const`; a sibling arm minted
-		// as `_wrapper_let` claims `let` too — neither is hoisted.
+		// as `_wrapper_let` claims `let` too. The hoist stops, the direct arm
+		// — never hoisted — keeps the name, and the clash is still reported.
 		const nodeMap = makeFormNodeMap();
 		const nodes = new Map(nodeMap.nodes);
 		nodes.set(
@@ -123,8 +124,39 @@ describe('namespacedConstructors — derivation', () => {
 		const clashing = makeNodeMapWith(nodes);
 		computeSlotClasses(clashing);
 		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
-		expect(entries.map((e) => e.name)).toEqual(['b', 'const']);
-		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', '_wrapper_b.let'] }]);
+		expect(entries.map((e) => e.name)).toEqual(['let', 'b', 'const']);
+		expect(entries.find((e) => e.name === 'let')).toMatchObject({ childKind: '_wrapper_let', path: [] });
+		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', '_wrapper_b.let'], kept: '_wrapper_let' }]);
+	});
+
+	it('drops a name two direct arms claim and reports both', () => {
+		// Same depth, so neither outranks the other: `_wrapper_let` and a bare
+		// `let` kind both name themselves `let` on `wrapper`.
+		const nodeMap = makeFormNodeMap();
+		const nodes = new Map(nodeMap.nodes);
+		nodes.set(
+			'_wrapper_let',
+			branch('_wrapper_let', { type: SEQ, members: [{ type: STRING, value: 'x' }, field('name', NAME)] })
+		);
+		nodes.set('let', branch('let', { type: SEQ, members: [{ type: STRING, value: 'y' }, field('name', NAME)] }));
+		const rule: SeqRule<'link'> = {
+			type: SEQ,
+			members: [
+				field('content', {
+					type: CHOICE,
+					members: [
+						{ type: SYMBOL, name: '_wrapper_let' },
+						{ type: SYMBOL, name: 'let' }
+					]
+				})
+			]
+		};
+		nodes.set('wrapper', branch('wrapper', rule));
+		const clashing = makeNodeMapWith(nodes);
+		computeSlotClasses(clashing);
+		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
+		expect(entries).toEqual([]);
+		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', 'let'] }]);
 	});
 
 	it('is empty for a sole slot holding one kind (the forwarded shape)', () => {
@@ -152,8 +184,12 @@ describe('namespacedConstructors — factory emission', () => {
 		// The built child is upcast to its base interface — the Built literal
 		// is deep enough to blow TS's comparison depth against the parent's
 		// Config union (a shallow supertype hop, not an escape hatch).
+		// `_wrapper_a`'s only caller-settable slot is `name` (the leading
+		// literal is determined), so it takes the single-slot positional
+		// surface rather than a config object — the same rule every other
+		// one-slot kind follows.
 		expect(emitted).toContain(
-			'a: (config: T.WrapperA.Config) => buildWrapper$impl((buildWrapperA(config)) as T.WrapperA),'
+			'a: (text: string) => buildWrapper$impl((buildWrapperA(text)) as T.WrapperA),'
 		);
 		expect(emitted).toContain(
 			'let: (...args: Parameters<typeof buildWrapperB.let>) => buildWrapper$impl((buildWrapperB.let(...args)) as T.WrapperB),'

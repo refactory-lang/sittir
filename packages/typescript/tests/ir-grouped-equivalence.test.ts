@@ -9,7 +9,7 @@ describe('typescript ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
 		// Reserved words are valid property keys — no suffix needed.
 		expect(ir.type.function).toBe(typeGroup.function);
-		expect(ir.type.function.from).toBe(typeGroup.function.from);
+		expect(ir.type.function.strict).toBe(typeGroup.function.strict);
 	});
 
 	it('grouped namespace attached to ir is the same object as standalone export', () => {

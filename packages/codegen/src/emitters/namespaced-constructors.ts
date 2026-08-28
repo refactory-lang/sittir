@@ -28,7 +28,14 @@ import {
 	type AssembledNode,
 	type AssembledNonterminal
 } from '../compiler/model/node-map.ts';
-import { isSlotBearingCompound, isValidIdent, slotKindNames, slotLiteralValues, userSlotsOf } from './shared.ts';
+import {
+	isSlotBearingCompound,
+	isTextLeaf,
+	isValidIdent,
+	slotKindNames,
+	slotLiteralValues,
+	userSlotsOf
+} from './shared.ts';
 import { camelCase } from './refine-emit.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
 import { hasCatalogEntry, type KindEnumEntry } from './kind-discriminant.ts';
@@ -43,6 +50,12 @@ export interface FormConstructor {
 	/** Empty: call the child's factory. One name: call that namespaced
 	 *  constructor on the child's factory (a hoisted sub-constructor). */
 	readonly path: readonly string[];
+	/** The kind this constructor ultimately builds — `childKind` for a direct
+	 *  form, the originating arm for a hoisted one. The name is derived from
+	 *  it against whichever parent the constructor is attached to, so a form
+	 *  minted under the TOP parent keeps its authored variant name however
+	 *  many hops it flattens through. */
+	readonly formKind: string;
 }
 
 export interface MemberConstructor {
@@ -57,10 +70,20 @@ export interface MemberConstructor {
 
 export type NamespacedConstructor = FormConstructor | MemberConstructor;
 
+/** A name more than one candidate claims. Flattening stops at the ambiguity:
+ *  no HOISTED candidate takes the name. The parent's own direct arm was never
+ *  hoisted, so when exactly one claimant is one it keeps the name and is named
+ *  in `kept`; otherwise the name goes unclaimed. Reported either way — never a
+ *  silent resolution. */
+export interface NamespacedAmbiguity {
+	readonly name: string;
+	readonly claimants: readonly string[];
+	readonly kept?: string;
+}
+
 export interface NamespacedConstructorSet {
 	readonly entries: readonly NamespacedConstructor[];
-	/** Names claimed by more than one candidate — none of them is emitted. */
-	readonly ambiguous: readonly { readonly name: string; readonly claimants: readonly string[] }[];
+	readonly ambiguous: readonly NamespacedAmbiguity[];
 }
 
 export interface NamespacedConstructorOptions {
@@ -155,41 +178,54 @@ function derive(
 	if (formSlot !== undefined) {
 		const slot = formSlot;
 		const kinds = slotKindNames(slot);
-		const children = kinds.map((k) => nodeMap.nodes.get(k));
-		// A sole slot with one kind is the forwarded shape (the parent already
-		// IS that kind's surface); a lone arm beside optional siblings is a
-		// genuine alternative and gets its constructor.
-		const minKinds = user.length === 1 ? 2 : 1;
-		// An arm is form-capable when its factory exists: a slot-bearing
-		// compound (its own config surface) or a keyword leaf (a
-		// parameterless fixed-text factory, e.g. visibility_modifier's
-		// `crate` arm beside its `pub` branch arm).
-		const concrete =
-			!isMultiple(slot) &&
-			slotLiteralValues(slot).length === 0 &&
-			kinds.length >= minKinds &&
-			children.every(
-				(c) =>
-					c !== undefined &&
-					(isSlotBearingCompound(c) || c.modelType === 'keyword') &&
-					c.rawFactoryName !== undefined &&
-					isEmitted(c.kind)
-			);
+		// An arm is form-capable when it reaches a factory of its own: a
+		// slot-bearing compound (its own config surface) or a text leaf
+		// (keyword / pattern / enum). A supertype arm has none, so it takes no
+		// constructor — and does not disqualify the siblings that do.
+		const formable: { readonly child: AssembledNode; readonly factory: string }[] = [];
+		for (const kind of kinds) {
+			const child = nodeMap.nodes.get(kind);
+			if (child === undefined || child.rawFactoryName === undefined || !isEmitted(kind)) continue;
+			if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
+			formable.push({ child, factory: child.rawFactoryName });
+		}
+		// A sole slot with exactly one kind is the forwarded shape: the parent
+		// already IS that kind's surface, so it gets no constructor named for
+		// it. The child's own namespace still flattens through — that hop is
+		// the only route to an arm two levels down.
+		const forwarded = user.length === 1 && kinds.length === 1;
+		const concrete = !isMultiple(slot) && slotLiteralValues(slot).length === 0 && formable.length > 0;
 		if (concrete) {
 			const nextVisiting = new Set([...visiting, node.kind]);
-			for (const child of children as AssembledNode[]) {
-				const name = formName(node.kind, child);
-				const childFactory = child.rawFactoryName!;
-				candidates.push({
-					entry: { via: 'form', name, slot, childKind: child.kind, childFactory, path: [] },
-					claimant: child.kind
-				});
+			for (const { child, factory: childFactory } of formable) {
+				if (!forwarded) {
+					const name = formName(node.kind, child);
+					candidates.push({
+						entry: { via: 'form', name, slot, childKind: child.kind, childFactory, path: [], formKind: child.kind },
+						claimant: child.kind
+					});
+				}
 				if (nextVisiting.has(child.kind)) continue;
 				// Sub-constructors flatten upward, recursively: the child's
-				// namespace is already flat, so one level suffices.
+				// namespace is already flat, so one level suffices. A hoisted
+				// FORM is re-named against THIS parent — the arm it builds may
+				// be minted under this kind even though the hop it travelled
+				// through is not, which is how `visibility_modifier`'s `in_path`
+				// keeps its authored name three levels up. A hoisted enum MEMBER
+				// carries the authored member name and is never re-derived.
 				for (const sub of namespacedConstructors(child, nodeMap, options, nextVisiting).entries) {
+					const origin = sub.via === 'form' ? nodeMap.nodes.get(sub.formKind) : undefined;
+					const name = origin === undefined ? sub.name : formName(node.kind, origin);
 					candidates.push({
-						entry: { via: 'form', name: sub.name, slot, childKind: child.kind, childFactory, path: [sub.name] },
+						entry: {
+							via: 'form',
+							name,
+							slot,
+							childKind: child.kind,
+							childFactory,
+							path: [sub.name],
+							formKind: sub.via === 'form' ? sub.formKind : child.kind
+						},
 						claimant: `${child.kind}.${sub.name}`
 					});
 				}
@@ -219,10 +255,24 @@ function derive(
 		else list.push(c);
 	}
 	const entries: NamespacedConstructor[] = [];
-	const ambiguous: { name: string; claimants: string[] }[] = [];
+	const ambiguous: NamespacedAmbiguity[] = [];
 	for (const [name, list] of byName) {
-		if (list.length === 1) entries.push(list[0]!.entry);
-		else ambiguous.push({ name, claimants: list.map((c) => c.claimant) });
+		if (list.length === 1) {
+			entries.push(list[0]!.entry);
+			continue;
+		}
+		// Flattening stops at the ambiguity: no hoisted candidate takes the
+		// name. A direct arm of this parent was never hoisted, so one of those
+		// still keeps it — two of them cancel each other exactly as two hoists
+		// do. Reported in every case.
+		const direct = list.filter((c) => c.entry.via !== 'form' || c.entry.path.length === 0);
+		const claimants = list.map((c) => c.claimant);
+		if (direct.length === 1) {
+			entries.push(direct[0]!.entry);
+			ambiguous.push({ name, claimants, kept: direct[0]!.claimant });
+		} else {
+			ambiguous.push({ name, claimants });
+		}
 	}
 	return { entries, ambiguous };
 }

@@ -286,6 +286,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// Write source files
 	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
 	await writeFile(join(outDir, 'engine.ts'), result.engine);
+	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'types.ts'), result.types);
 	await writeFile(join(outDir, 'factories.ts'), result.factories);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
@@ -469,9 +470,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// Write tests
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
-
-	// Write type-level tests
-	await writeFile(join(outDir, 'type-test.ts'), result.typeTests);
 
 	// Write vitest config
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);

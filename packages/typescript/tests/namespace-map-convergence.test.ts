@@ -4,18 +4,35 @@
  */
 
 import { describe, it } from 'vitest';
+import { TSKindId } from '../src/index.ts';
 import type {
 	ClassDeclaration,
 	Program,
 	JsxElement,
+	FormalParametersElements,
 	ConfigFor,
 	FluentFor,
 	LooseFor,
+	LooseConfigFor,
 	TreeFor,
 	NamespaceMap
 } from '../src/index.ts';
-import type { ProgramBuilt } from '../src/factories.ts';
-import type { FluentNodeOf } from '@sittir/types';
+import type {
+	ProgramBuilt,
+	ClassDeclarationBuildArgs,
+	ClassDeclarationLooseArgs,
+	FormalParametersElementsBuildArgs,
+	FormalParametersElementsLooseArgs,
+	HashBangLineBuildArgs,
+	HashBangLineLooseArgs,
+	NamespaceImportBuildArgs,
+	NamespaceImportLooseArgs,
+	NamespaceExportBuildArgs,
+	NamespaceExportLooseArgs,
+	SwitchBodyBuildArgs,
+	SwitchBodyLooseArgs,
+	buildFormalParametersElements
+} from '../src/factories.ts';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -23,21 +40,21 @@ function expectTrue<_T extends true>(): void {}
 
 describe('typescript NamespaceMap access-path convergence', () => {
 	it('ClassDeclaration three-path convergence', () => {
-		expectTrue<Equals<ClassDeclaration.Config, ConfigFor<'class_declaration'>>>();
-		expectTrue<Equals<ConfigFor<'class_declaration'>, NamespaceMap['class_declaration']['Config']>>();
-		expectTrue<Equals<ClassDeclaration.Config, NamespaceMap['class_declaration']['Config']>>();
+		expectTrue<Equals<ClassDeclaration.Config, ConfigFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ConfigFor<TSKindId.ClassDeclaration>, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
+		expectTrue<Equals<ClassDeclaration.Config, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<ClassDeclaration.Fluent, FluentFor<'class_declaration'>>>();
-		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<'class_declaration'>>>();
-		expectTrue<Equals<ClassDeclaration.Tree, TreeFor<'class_declaration'>>>();
+		expectTrue<Equals<ClassDeclaration.Fluent, FluentFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ClassDeclaration.Tree, TreeFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Kind, 'class_declaration'>>();
 	});
 
 	it('Program (root kind) converges', () => {
-		expectTrue<Equals<Program.Config, ConfigFor<'program'>>>();
-		expectTrue<Equals<Program.Tree, NamespaceMap['program']['Tree']>>();
+		expectTrue<Equals<Program.Config, ConfigFor<TSKindId.Program>>>();
+		expectTrue<Equals<Program.Tree, NamespaceMap[TSKindId.Program]['Tree']>>();
 	});
 
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
@@ -45,13 +62,70 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// type (`$with` setter record, `$`-prefixed methods, named
 		// self-reference) — not a re-derived generic projection.
 		expectTrue<Equals<Program.Fluent, ProgramBuilt>>();
-		expectTrue<Equals<FluentFor<'program'>, ProgramBuilt>>();
-		expectTrue<Equals<NamespaceMap['program']['Fluent'], ProgramBuilt>>();
+		expectTrue<Equals<FluentFor<TSKindId.Program>, ProgramBuilt>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Fluent'], ProgramBuilt>>();
 	});
 
-	it('factory-less kinds keep the FluentNodeOf fallback', () => {
-		// jsx_element has no emitted factory (no Built alias exists), so
-		// NodeNs' default Fluent projection remains in effect.
-		expectTrue<Equals<JsxElement.Fluent, FluentNodeOf<JsxElement>>>();
+	it('a kind the parser issues no id for takes NO namespace entry', () => {
+		// `NamespaceMap` is keyed by the kind id. This kind is synthesized on
+		// the sittir side — no parser symbol, built by no factory — so it has
+		// no id and therefore no entry, and the per-kind family has no meaning
+		// for it. Its data interface still stands, which is what reading one
+		// out of a tree needs.
+		expectTrue<Equals<JsxElement['$type'] extends keyof NamespaceMap ? true : false, false>>();
+		expectTrue<Equals<JsxElement['$type'], 'jsx_element'>>();
+	});
+
+	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
+		// ARITY comes from the factory, CONTENT from the interface: the alias
+		// element REFERENCES `Config`, so the dependency runs one way only.
+		expectTrue<Equals<ClassDeclaration.Config, ClassDeclarationBuildArgs[0]>>();
+		expectTrue<Equals<ClassDeclaration.BuildArgs, ClassDeclarationBuildArgs>>();
+		expectTrue<Equals<ClassDeclaration.LooseArgs, ClassDeclarationLooseArgs>>();
+		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclarationLooseArgs[0]>>();
+	});
+
+	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
+		// `Parameters<>` resolves to the LAST overload — here the
+		// options-leading form of a separated list, which is not the
+		// canonical call shape. A regression to `Parameters<>` must fail the
+		// type gate rather than silently retype the public surface.
+		expectTrue<
+			Equals<Equals<FormalParametersElementsBuildArgs, Parameters<typeof buildFormalParametersElements>>, false>
+		>();
+		expectTrue<Equals<FormalParametersElements.BuildArgs, FormalParametersElementsBuildArgs>>();
+	});
+
+	it('LooseArgs widens every parameter, on every factory shape', () => {
+		// One kind per calling convention. A `LooseArgs` that still named the
+		// STRICT element type would make these equal — which is exactly how
+		// the widening went missing on four of the six shapes while the
+		// config-shaped pins stayed green.
+		// single-field
+		expectTrue<Equals<Equals<NamespaceImportBuildArgs, NamespaceImportLooseArgs>, false>>();
+		// container-single
+		expectTrue<Equals<Equals<NamespaceExportBuildArgs, NamespaceExportLooseArgs>, false>>();
+		// container-multiple
+		expectTrue<Equals<Equals<SwitchBodyBuildArgs, SwitchBodyLooseArgs>, false>>();
+		// separated list
+		expectTrue<Equals<Equals<FormalParametersElementsBuildArgs, FormalParametersElementsLooseArgs>, false>>();
+		// leaf — a free-text leaf, where the parameter IS the raw text and the
+		// two genuinely coincide. Pinned so that stays a DECISION rather than
+		// drifting back into the missing-widening it looks identical to.
+		expectTrue<Equals<HashBangLineBuildArgs, HashBangLineLooseArgs>>();
+	});
+
+	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {
+		// Comparability across kinds depends on the tuple being mutable.
+		expectTrue<Equals<ClassDeclaration.BuildArgs, [ClassDeclaration.Config]>>();
+	});
+
+	it('Loose decomposes into LooseConfig plus the NodeData passthrough', () => {
+		// `LooseConfig` is the config arm named at the source rather than
+		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
+		// the split provably semantics-free: `Loose` still admits exactly what
+		// it admitted before, so the passthrough arm is untouched.
+		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseConfig | ClassDeclaration>>();
+		expectTrue<Equals<ClassDeclaration.LooseConfig, LooseConfigFor<TSKindId.ClassDeclaration>>>();
 	});
 });

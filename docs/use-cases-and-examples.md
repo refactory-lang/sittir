@@ -84,9 +84,9 @@ const fn = ir.functionItem({
 });
 ```
 
-### `.from()` — the same function, simplified
+### Coercion — the same function, simplified
 
-`.from()` resolves at every level:
+Coercion resolves at every level:
 
 - Strings become appropriate leaf nodes.
 - Single values wrap in an array where an array is expected.
@@ -96,7 +96,7 @@ const fn = ir.functionItem({
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem.from({
+const fn = ir.functionItem({
 	visibilityModifier: 'pub',
 	name: 'greet',
 	parameters: { pattern: 'name', type: '&str' },
@@ -113,13 +113,13 @@ const fn = ir.functionItem.from({
 });
 ```
 
-### `.from()` — minimal
+### Coercion — minimal
 
 ```ts
 import { ir } from '@sittir/rust';
 
 // fn main() {}
-const fn = ir.functionItem.from({ name: 'main' });
+const fn = ir.functionItem({ name: 'main' });
 ```
 
 ### Immutable updates with `$with`
@@ -127,8 +127,8 @@ const fn = ir.functionItem.from({ name: 'main' });
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem.from({ name: 'main' });
-const stmt = ir.expressionStatement.from({ expression: 'todo!()' });
+const fn = ir.functionItem({ name: 'main' });
+const stmt = ir.expressionStatement({ expression: 'todo!()' });
 
 const renamed = fn.$with.name(ir.identifier('greet'));
 const withReturn = renamed.$with.returnType(ir.typeIdentifier('String'));
@@ -165,8 +165,8 @@ const s = ir.structItem({
 	])
 });
 
-// `.from()` API.
-const sFrom = ir.structItem.from({
+// coercing API.
+const sFrom = ir.structItem({
 	visibilityModifier: 'pub',
 	name: 'Config',
 	body: [
@@ -181,7 +181,7 @@ const sFrom = ir.structItem.from({
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem.from({ visibilityModifier: 'pub', name: 'main' });
+const fn = ir.functionItem({ visibilityModifier: 'pub', name: 'main' });
 fn.$render();
 // "pub fn main() {}"
 ```
@@ -205,8 +205,8 @@ comments and blank lines and indentation included.
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem
-	.from({ visibilityModifier: 'pub', name: 'main' })
+const fn = ir
+	.functionItem({ visibilityModifier: 'pub', name: 'main' })
 	.$trivia(ir.docComment('/// Entry point.'));
 
 fn.$render();
@@ -218,7 +218,7 @@ fn.$render();
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem.from({ visibilityModifier: 'pub', name: 'main' }).$trivia({
+const fn = ir.functionItem({ visibilityModifier: 'pub', name: 'main' }).$trivia({
 	leading: [ir.lineComment('// @generated'), ir.docComment('/// Main.')],
 	trailing: [ir.lineComment('// end main')]
 });
@@ -280,7 +280,7 @@ const source = letBinding
 	.fill({
 		NAME: ir.identifier('config'),
 		TYPE: ir.typeIdentifier('Config'),
-		VALUE: ir.structExpression.from({
+		VALUE: ir.structExpression({
 			name: 'Config',
 			body: [
 				{ name: 'host', value: '"localhost"' },
@@ -301,11 +301,11 @@ import { snippets, template, ir } from '@sittir/rust';
 const method = snippets.pubMethod
 	.fill({
 		NAME: ir.identifier('new'),
-		PARAMS: ir.parameter.from({ name: 'host', type: 'String' }),
+		PARAMS: ir.parameter({ name: 'host', type: 'String' }),
 		RET: ir.typeIdentifier('Self'),
 		BODY: template('Self { $...FIELDS }')
 			.fill({
-				FIELDS: [ir.fieldInitializer.from({ name: 'host', value: 'host' })]
+				FIELDS: [ir.fieldInitializer({ name: 'host', value: 'host' })]
 			})
 			.read()
 	})
@@ -449,7 +449,7 @@ const edits = fns.map((fn) => {
 					RET: w.returnType(),
 					BODY: w.body(),
 					FNAME: ir.stringLiteral(w.name()),
-					FALLBACK: ir.macroInvocation.from({
+					FALLBACK: ir.macroInvocation({
 						macro: 'panic!',
 						args: ['"unrecoverable"']
 					})
@@ -512,7 +512,7 @@ for (const file of glob.sync('src/**/*.rs')) {
 	const edits = matches.map((match) =>
 		replace(
 			match,
-			ir.macroInvocation.from({
+			ir.macroInvocation({
 				macro: 'log::info!',
 				args: wrap(match, tree).arguments()
 			})
@@ -541,7 +541,7 @@ const target = wrap(
 
 const updatedParams = ir.parameters([
 	...target.parameters().$children,
-	ir.parameter.from({ name: 'verbose', type: 'bool' })
+	ir.parameter({ name: 'verbose', type: 'bool' })
 ]);
 
 fs.writeFileSync(
@@ -558,10 +558,10 @@ import { ir, snippets, template } from '@sittir/rust';
 
 const file = ir.sourceFile({
 	statements: [
-		ir.useDeclaration.from({ path: 'std::collections::HashMap' }),
+		ir.useDeclaration({ path: 'std::collections::HashMap' }),
 
-		ir.structItem
-			.from({
+		ir
+			.structItem({
 				visibilityModifier: 'pub',
 				name: 'Cache',
 				body: { name: 'entries', type: 'HashMap<String, String>' }
@@ -616,7 +616,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 }
 ```
 
-## `.from()` resolution rules
+## Coercion resolution rules
 
 | Input                           | Field expects             | Resolution                                  |
 | ------------------------------- | ------------------------- | ------------------------------------------- |
@@ -624,8 +624,8 @@ export function emitIsModule(grammar: GrammarModel): string {
 | `'String'`                      | Type                      | `ir.typeIdentifier('String')`               |
 | `'pub'`                         | Visibility                | `ir.visibilityModifier()`                   |
 | `42`                            | Expression                | `ir.integerLiteral('42')`                   |
-| `{ pattern: 'x', type: 'i32' }` | Parameter                 | `ir.parameter.from(...)`                    |
-| `{ pattern: 'x', type: 'i32' }` | Parameters                | `ir.parameters(ir.parameter.from(...))`     |
+| `{ pattern: 'x', type: 'i32' }` | Parameter                 | `ir.parameter(...)`                    |
+| `{ pattern: 'x', type: 'i32' }` | Parameters                | `ir.parameters(ir.parameter(...))`     |
 | `[p1, p2]`                      | Parameters                | `ir.parameters(resolved(p1), resolved(p2))` |
 | `parameterNode`                 | Parameters                | `ir.parameters(parameterNode)`              |
 | `parametersNode`                | Parameters                | pass through                                |
@@ -638,7 +638,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 ## Litmus test
 
 - [ ] `ir.*()` — no-arg = empty node
-- [ ] `ir.*.from()` — string → leaf, single → array, array → wrapped, omitted → none
+- [ ] `ir.*(...)` — string → leaf, single → array, array → wrapped, omitted → none
 - [ ] `is.*()` runtime type guards
 - [ ] `$render()` producing byte-identical round-trips
 - [ ] `.$trivia()` — leading/trailing comment attachment, typed per grammar

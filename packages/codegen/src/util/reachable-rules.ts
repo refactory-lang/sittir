@@ -1,6 +1,8 @@
 /**
- * Reachability over a rule map — the single derivation behind pruning
- * unreferenced hidden rules from BOTH pipelines' final rule sets
+ * The rule map's two graph-level facts: its root (the start symbol every
+ * traversal begins at) and reachability from there. Reachability is the single
+ * derivation behind pruning unreferenced hidden rules from BOTH pipelines'
+ * final rule sets
  * (`transpile/prune-grammar-json.ts` for the tree-sitter CLI's grammar.json,
  * `compiler/evaluate.ts` for the sittir-evaluated rule map). The two prunes
  * MUST agree or the model diverges from the parser (the phantom-kind class),
@@ -10,6 +12,15 @@
  * `{ type: 'SYMBOL', name }` — both grammar.json's JSON shape and
  * `Rule<'evaluate'>` satisfy this.
  */
+
+/**
+ * The grammar's root kind: tree-sitter treats the FIRST declared rule as the
+ * start symbol, so insertion order of the rule map is the fact. `undefined`
+ * only for an empty rule map.
+ */
+export function rootRuleName(rules: Readonly<Record<string, unknown>>): string | undefined {
+	return Object.keys(rules)[0];
+}
 
 /** Every `{type:'SYMBOL', name}` reference inside `node`, added to `into`. */
 export function collectSymbolRefs(node: unknown, into: Set<string>): void {

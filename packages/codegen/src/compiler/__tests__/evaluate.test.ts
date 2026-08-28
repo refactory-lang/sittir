@@ -742,7 +742,7 @@ module.exports = grammar(base, {
 			byRuleType.set(entry.ruleType, list);
 		}
 
-		// Updated to the current classifyByType (rule-catalog.ts) contract:
+		// Updated to the current classifyByType (rule-patterns.ts) contract:
 		// - ruleType vocabulary is UPPERCASE everywhere (case-as-origin
 		//   signal retired) — lowercase keys no longer exist in the catalog.
 		// - PATTERN is unconditionally 'nonterminal' now: patterns/enums

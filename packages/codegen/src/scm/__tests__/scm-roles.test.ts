@@ -10,7 +10,7 @@ const TS_IR = '../../../../typescript/src/ir.ts';
 const PY_IR = '../../../../python/src/ir.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function loadFrom(path: string): Promise<{ from: any }> {
+async function loadSynonyms(path: string): Promise<{ synonym: any }> {
 	// A bare relative-string dynamic import doesn't reliably resolve across
 	// package boundaries under vitest's Vite-based module loader — resolve
 	// to an absolute file:// URL ourselves instead.
@@ -188,136 +188,136 @@ describe('GrammarRoles interface', () => {
 });
 
 // ---------------------------------------------------------------------------
-// ir.from.* canonical factory integration tests (spec 023 US6)
+// ir.synonym.* role-synonym integration tests
 // ---------------------------------------------------------------------------
 
-describe('ir.from.* canonical factories — Rust', () => {
-	it('from.boolean(true) produces boolean_literal', async () => {
-		const { from } = await loadFrom(RUST_IR);
-		const node = from.boolean(true);
+describe('ir.synonym.* canonical factories — Rust', () => {
+	it('synonym.boolean(true) produces boolean_literal', async () => {
+		const { synonym } = await loadSynonyms(RUST_IR);
+		const node = synonym.boolean(true);
 		expect(node.$text).toBe('true');
 	});
 
-	it('from.boolean(false) produces boolean_literal', async () => {
-		const { from } = await loadFrom(RUST_IR);
-		const node = from.boolean(false);
+	it('synonym.boolean(false) produces boolean_literal', async () => {
+		const { synonym } = await loadSynonyms(RUST_IR);
+		const node = synonym.boolean(false);
 		expect(node.$text).toBe('false');
 	});
 
-	it('from.number(42) produces integer_literal', async () => {
-		const { from } = await loadFrom(RUST_IR);
-		const node = from.number(42);
+	it('synonym.number(42) produces integer_literal', async () => {
+		const { synonym } = await loadSynonyms(RUST_IR);
+		const node = synonym.number(42);
 		expect(node.$text).toBe('42');
 	});
 
-	it('from.number(3.14) produces float_literal', async () => {
-		const { from } = await loadFrom(RUST_IR);
-		const node = from.number(3.14);
+	it('synonym.number(3.14) produces float_literal', async () => {
+		const { synonym } = await loadSynonyms(RUST_IR);
+		const node = synonym.number(3.14);
 		expect(node.$text).toBe('3.14');
 	});
 
-	it('from.string is not emitted — string_literal is not auto-composable', async () => {
+	it('synonym.string is not emitted — string_literal is not auto-composable', async () => {
 		// Rust's string_literal factory takes a config with an explicit
 		// `stringOpen` slot (the open-quote token variant) plus an
 		// `elements` array — there is no single-positional-child surface
 		// for emitFromString to compose, and the emitter deliberately
 		// skips rather than inventing a default quote style. If a
 		// composition rule is added later, this pin flips deliberately.
-		const { from } = await loadFrom(RUST_IR);
-		expect(from.string).toBeUndefined();
+		const { synonym } = await loadSynonyms(RUST_IR);
+		expect(synonym.string).toBeUndefined();
 	});
 
-	it('from.type("String") produces type_identifier', async () => {
-		const { from } = await loadFrom(RUST_IR);
-		const node = from.type('String');
+	it('synonym.type("String") produces type_identifier', async () => {
+		const { synonym } = await loadSynonyms(RUST_IR);
+		const node = synonym.type('String');
 		expect(node.$type).toBeTruthy();
 	});
 
-	it('from.identifier("main") produces identifier', async () => {
-		const { from } = await loadFrom(RUST_IR);
-		const node = from.identifier('main');
+	it('synonym.identifier("main") produces identifier', async () => {
+		const { synonym } = await loadSynonyms(RUST_IR);
+		const node = synonym.identifier('main');
 		expect(node.$text).toBe('main');
 	});
 });
 
-describe('ir.from.* canonical factories — TypeScript', () => {
-	it('from.boolean(true) produces true keyword', async () => {
-		const { from } = await loadFrom(TS_IR);
-		const node = from.boolean(true);
+describe('ir.synonym.* canonical factories — TypeScript', () => {
+	it('synonym.boolean(true) produces true keyword', async () => {
+		const { synonym } = await loadSynonyms(TS_IR);
+		const node = synonym.boolean(true);
 		expect(node.$text).toBe('true');
 	});
 
-	it('from.boolean(false) produces false keyword', async () => {
-		const { from } = await loadFrom(TS_IR);
-		const node = from.boolean(false);
+	it('synonym.boolean(false) produces false keyword', async () => {
+		const { synonym } = await loadSynonyms(TS_IR);
+		const node = synonym.boolean(false);
 		expect(node.$text).toBe('false');
 	});
 
-	it('from.number(42) produces number', async () => {
-		const { from } = await loadFrom(TS_IR);
-		const node = from.number(42);
+	it('synonym.number(42) produces number', async () => {
+		const { synonym } = await loadSynonyms(TS_IR);
+		const node = synonym.number(42);
 		expect(node.$text).toBe('42');
 	});
 
-	it('from.comment("// hello") produces comment', async () => {
-		const { from } = await loadFrom(TS_IR);
-		const node = from.comment('// hello');
+	it('synonym.comment("// hello") produces comment', async () => {
+		const { synonym } = await loadSynonyms(TS_IR);
+		const node = synonym.comment('// hello');
 		expect(node.$text).toBe('// hello');
 	});
 
-	it('from.type("String") produces type_identifier', async () => {
-		const { from } = await loadFrom(TS_IR);
-		const node = from.type('String');
+	it('synonym.type("String") produces type_identifier', async () => {
+		const { synonym } = await loadSynonyms(TS_IR);
+		const node = synonym.type('String');
 		expect(node.$type).toBeTruthy();
 	});
 
-	it('from.identifier("main") produces identifier', async () => {
-		const { from } = await loadFrom(TS_IR);
-		const node = from.identifier('main');
+	it('synonym.identifier("main") produces identifier', async () => {
+		const { synonym } = await loadSynonyms(TS_IR);
+		const node = synonym.identifier('main');
 		expect(node.$text).toBe('main');
 	});
 });
 
-describe('ir.from.* canonical factories — Python', () => {
-	it('from.boolean(true) produces true keyword', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.boolean(true);
+describe('ir.synonym.* canonical factories — Python', () => {
+	it('synonym.boolean(true) produces true keyword', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.boolean(true);
 		expect(node.$text).toBe('True');
 	});
 
-	it('from.boolean(false) produces false keyword', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.boolean(false);
+	it('synonym.boolean(false) produces false keyword', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.boolean(false);
 		expect(node.$text).toBe('False');
 	});
 
-	it('from.number(42) produces integer', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.number(42);
+	it('synonym.number(42) produces integer', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.number(42);
 		expect(node.$text).toBe('42');
 	});
 
-	it('from.number(3.14) produces float', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.number(3.14);
+	it('synonym.number(3.14) produces float', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.number(3.14);
 		expect(node.$text).toBe('3.14');
 	});
 
-	it('from.comment("# hello") produces comment', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.comment('# hello');
+	it('synonym.comment("# hello") produces comment', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.comment('# hello');
 		expect(node.$text).toBe('# hello');
 	});
 
-	it('from.type("str") produces identifier', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.type('str');
+	it('synonym.type("str") produces identifier', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.type('str');
 		expect(node.$text).toBe('str');
 	});
 
-	it('from.identifier("main") produces identifier', async () => {
-		const { from } = await loadFrom(PY_IR);
-		const node = from.identifier('main');
+	it('synonym.identifier("main") produces identifier', async () => {
+		const { synonym } = await loadSynonyms(PY_IR);
+		const node = synonym.identifier('main');
 		expect(node.$text).toBe('main');
 	});
 });

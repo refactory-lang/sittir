@@ -22,6 +22,10 @@ export default defineConfig({
 		// Mirror that here so root-level tests don't have a hard dependency on
 		// a fresh `dist/` build either — matches tsconfig.json's paths exactly.
 		alias: {
+			'@sittir/common/engine': fileURLToPath(new URL('./packages/common/src/engine-boundary.ts', import.meta.url)),
+			'@sittir/common/utils': fileURLToPath(new URL('./packages/common/src/utils.ts', import.meta.url)),
+			'@sittir/common': fileURLToPath(new URL('./packages/common/src/index.ts', import.meta.url)),
+			'@sittir/types': fileURLToPath(new URL('./packages/types/src/index.ts', import.meta.url)),
 			'@sittir/legacy-core/engine': fileURLToPath(
 				new URL('./packages/legacy-core/src/engine-boundary.ts', import.meta.url)
 			),

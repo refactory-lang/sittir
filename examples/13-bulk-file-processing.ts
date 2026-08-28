@@ -14,7 +14,7 @@ export function rewritePrintlnCalls(files: Iterable<string>) {
 		const edits = matches.map((match) =>
 			replace(
 				match,
-				ir.macroInvocation.from({
+				ir.macroInvocation({
 					macro: 'log::info!',
 					args: wrap(match, tree).arguments()
 				})

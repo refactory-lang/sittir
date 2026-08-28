@@ -429,7 +429,7 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		// It was folded into the hoisted list group as a 3rd (trailing) member.
 		// This absorbed body is now a genuinely separator-variable repeat body
 		// (a top-level repeat with an adjacent stranded optional(',') flank), so
-		// per group-classify.ts's `isInlineSafe` qualification it takes the
+		// per rule-patterns.ts's `isInlineSafe` qualification it takes the
 		// VISIBLE promotion path (named after its element field — `_items` —
 		// not the old hidden `_parent_optional1` inline-hoist) — same path a
 		// multi-slot/bare-choice body already uses. Absorption itself (this
@@ -501,7 +501,7 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		// A CHOICE-shaped "separator" candidate that is all-symbol (no STRING
 		// arm at all — e.g. two external-scanner tokens) sits BEFORE the real,
 		// STRING-separated repeat in the same optional-seq body. Pre-fix,
-		// `listSeparatorOfOptionalSeq` returned `firstStringOfChoice(sep)` —
+		// `listSeparatorOfOptionalSeq` returned `leadingLiteralOf(sep)` —
 		// `null` — directly from that CHOICE branch, ending the function early
 		// and never reaching the real separator later in the loop. Fixed, it
 		// falls through and keeps scanning, finding the real ',' and folding

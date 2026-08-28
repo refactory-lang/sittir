@@ -29,38 +29,13 @@ import { RuleWalker } from './rule-walker.ts';
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
-// ---------------------------------------------------------------------------
-// RuleBuilder — context-injected rule construction strategy
-// ---------------------------------------------------------------------------
-
-export interface RuleBuilder {
-	seq(members: AnyRule[]): AnyRule;
-	choice(members: AnyRule[]): AnyRule;
-	optional(content: AnyRule): AnyRule;
-	repeat(content: AnyRule): AnyRule;
-	repeat1(content: AnyRule): AnyRule;
-	field(name: string, content: AnyRule): AnyRule;
-}
-
-export const structuralBuilder: RuleBuilder = {
-	seq: (members) => ({ type: SEQ, members }),
-	choice: (members) => ({ type: CHOICE, members }),
-	// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
-	// phase, while a single-content wrapper's own `content` field wants one
-	// specific phase — same "narrow via AnyRule, cast back" convention as
-	// rule-catalog.ts's `ruleChildren`.
-	optional: (content) => ({ type: OPTIONAL, content }) as AnyRule,
-	repeat: (content) => ({ type: REPEAT, content }) as AnyRule,
-	repeat1: (content) => ({ type: REPEAT1, content }) as AnyRule,
-	field: (name, content) => ({ type: FIELD, name, content }) as AnyRule
-};
-
-/* Phase contexts live in the compiler layer: compiler/ctx.ts holds
-   `BaseCtx<R>`; per-phase classes (NormalizeCtx / SimplifyCtx / …) extend it
-   in their phase files. This dsl module keeps only the `RuleBuilder` strategy
-   + the shared transform utilities below. Helpers that need a builder take a
-   structural `{ builder?: RuleBuilder }` slice — never the compiler ctx — so
-   there is no dsl -> compiler cycle. */
+/* The `RuleBuilder` construction strategy (`structuralBuilder` /
+   `attributeBuilder`) lives in `dsl/builders.ts`, which imports the shared
+   transform utilities below (dsl -> dsl). Phase contexts live in the
+   compiler layer: compiler/ctx.ts holds `BaseCtx<R>`; per-phase classes
+   (NormalizeCtx / SimplifyCtx / …) extend it in their phase files. Helpers
+   here that need a builder take a structural `{ builder?: RuleBuilder }`
+   slice — never the compiler ctx — so there is no dsl -> compiler cycle. */
 
 // ---------------------------------------------------------------------------
 // Shared, idempotent rule transforms.
@@ -108,7 +83,7 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 		// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes REPEAT
 		// across every phase, while `RepeatRule`/`Repeat1Rule` (bare) default
 		// to the single 'link' phase — same "narrow via AnyRule, cast back"
-		// convention as rule-catalog.ts's `ruleChildren`.
+		// convention as rule-patterns.ts's `ruleChildren`.
 		case REPEAT:
 			return { repeat: rule as RepeatRule, nonEmpty: false };
 		case REPEAT1:

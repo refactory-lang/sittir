@@ -32,13 +32,15 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
-import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
+import { isChoice } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
-import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
+import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
+import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { withAttrsFrom } from '../dsl/rule-attrs.ts';
-import { separatorFactsEqual } from '../dsl/list-patterns.ts';
+import { separatorFactsEqual } from '../dsl/rule-patterns.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -118,7 +120,9 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 
 	const walk = (rule: Rule<'link'>, ownerTwinTarget: string | undefined): void => {
 		if (rule.type === SYMBOL) {
-			const name = rule.name;
+			// The kind the ref stores under — an aliased ref keeps its
+			// `aliasedFrom` rule alive, whatever name it displays as.
+			const name = rule.aliasedFrom ?? rule.name;
 			if (isHidden(name)) {
 				refcount.set(name, (refcount.get(name) ?? 0) + 1);
 				if (ownerTwinTarget !== undefined && name === ownerTwinTarget) twinned.add(name);
@@ -231,7 +235,7 @@ function spliceFoldableRefs(
 			// phase-erased `AnyRule` (dsl/rule-transforms.ts is phase-generic by
 			// design), while `target`/`body` share THIS function's 'link' phase
 			// by construction — same "narrow via AnyRule, cast back" convention
-			// as rule-catalog.ts's `ruleChildren`.
+			// as rule-patterns.ts's `ruleChildren`.
 			return materializeInlinedBody(rule, body as Rule<'link'>, rule.name);
 		}
 		case SEQ: {
@@ -470,6 +474,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
+		factoryInline: linked.factoryInline,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
 		externals: linked.externals,
@@ -822,7 +827,10 @@ function countReferences(rules: Record<string, Rule<'link'>>): Map<string, numbe
 function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 	switch (rule.type) {
 		case SYMBOL:
-			visit(rule.name);
+			// A ref depends on the kind that STORES it, not the name it
+			// displays under: an aliased ref still needs its `aliasedFrom`
+			// rule to survive, so that is the kind the reference counts for.
+			visit(rule.aliasedFrom ?? rule.name);
 			return;
 		case SEQ:
 		case CHOICE:

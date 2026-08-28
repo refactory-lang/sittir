@@ -1,8 +1,8 @@
 # `packages/codegen/src/emitters` — Function Glossary
 
 Per-function reference for `packages/codegen/src/emitters/`, mechanically relocated from source
-JSDoc by `scripts/wave5-relocate-jsdoc.mts` (wave 5 comment-cleanup, pass 1 —
-unedited, unverified). Pass 2 reformats/verifies these entries and decides
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
+unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
@@ -1397,7 +1397,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * Emitted as `export const from = { ... } as const` for tree-shakeable
  * standalone access (`from.boolean(...)`) and also referenced inside the
- * `ir` object for `ir.from.boolean(...)` access.
+ * `ir` object for `ir.synonym.boolean(...)` access.
  *
  * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
  */
@@ -3913,33 +3913,6 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `typeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:40`)
-
-```text
-/**
- * @param isLeaf - When true, the node uses `Terminal<K>` (string-keyed `$type`);
- *   numeric discriminants are not applicable until `Terminal` itself is migrated.
- *   Phase A only migrates structural (branch/container/polymorph) interfaces.
- */
-```
-
-### `enumMemberTypeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:60`)
-
-```text
-/**
- * Build the expected discriminant for a type-test assertion on an enum kind.
- *
- * @remarks
- * Mirrors `enumMemberDiscriminant` in `types.ts`: resolves each member
- * value to its `TSKindId.X` entry and joins as a union. Falls back to
- * the string kind name when no entries resolve or `kindEntries` is absent.
- *
- * @param node - The `AssembledEnum` node.
- * @param kindEntries - Catalog entries for TSKindId lookup.
- * @returns The expected discriminant expression for the type assertion.
- */
-```
-
 ### `kindDiscriminantOrLiteral` (`packages/codegen/src/emitters/types.ts:37`)
 
 ```text
@@ -4395,8 +4368,8 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  *   This helper expands each value's referenced kind through
  *   `expandToConcreteParseKinds`, which normalizes the leading underscore on
  *   supertype names and reads each supertype's stamped `transitiveParseKinds`
- *   closure (`computeSupertypeTransitiveParseKinds`, computed once
- *   post-assemble — see that entry) to enumerate concrete subtypes. The
+ *   closure (`stampSupertypeClosures`, computed once during assemble — see
+ *   `docs/glossary/compiler-model.md`) to enumerate concrete subtypes. The
  *   result is a list of concrete `_<kind>` keys — exactly one of which will
  *   be populated on the data object at runtime.
  *
@@ -5600,33 +5573,6 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `generatedIdTables` (`packages/codegen/src/emitters/type-test.ts:20`)
-
-```text
-/**
-	 * Parser-symbol ID tables for numeric $type assertion emission.
-	 * When present, generated type tests emit `TSKindId.X` in extends checks.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
-```
-
-### `typeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:28`)
-
-```text
-/**
- * Returns the expected-type expression for a `_TypeExtends<X['$type'], ...>` check.
- *
- * @remarks
- * When kindEntries is present (KindID pipeline), emits `TSKindId.X`. When
- * absent (legacy / unit-test path), falls back to `'<kind>'` string literal.
- *
- * @param kind - The grammar kind string.
- * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
- * @param nodeMap - The assembled node map.
- * @returns Expression string suitable for `_TypeExtends<X['$type'], <expr>>`.
- */
-```
-
 ### `generatedIdTables` (`packages/codegen/src/emitters/wrap.ts:71`)
 
 ```text
@@ -5990,33 +5936,13 @@ at all.
 
 Expands each name to the parser's actual emittable leaf kinds: a plain
 (non-supertype) name passes through as-is; a supertype name expands to its
-stamped `transitiveParseKinds` closure (`computeSupertypeTransitiveParseKinds`,
-below — computed once, post-assemble; this reads the stamp rather than
+stamped `transitiveParseKinds` closure
+(`compiler/supertype-closure.ts::stampSupertypeClosures` — computed once
+during assemble; this reads the stamp rather than
 re-walking the closure per call site, as the deleted `factory-map.ts::
 expandRuntimeDiscriminatorKinds`/`pushAliasMintedArmParseNames` did on every
 call). Dedupes by normalized (hidden-prefix-stripped) name across the whole
 input list.
-
-### `computeSupertypeTransitiveParseKinds` (`packages/codegen/src/emitters/shared.ts:40`)
-
-Stamps each supertype's transitive parse-kind closure once, post-hydration,
-onto `AssembledSupertype.transitiveParseKinds` (a plain `NodeOrTerminal[]` —
-the same reference shape `.subtypes` already uses). Walks the assemble-time-
-RESOLVED `AssembledSupertype.subtypes`/`.subtypeParseNames` — hidden names
-already expanded to concrete kinds — NOT the raw `rule.subtypes`, which is
-less complete (`AssembledSupertype`'s own doc comment: do not substitute
-it). This is why this function does its own closure walk instead of calling
-`types/rule.ts::transitiveParseKinds` (the pre-hydration raw-rule helper
-`compiler/model/node-map.ts::existingSupertypeClosureOf` uses) — the two
-representations diverge (assemble does additional hidden-name resolution
-between link and itself) and a shared walk over either one would be wrong,
-or stale, for the other's caller. Confirmed empirically: reusing the
-raw-rule path here silently dropped a real typescript discriminator kind
-(`_statement_identifier_group1`) until caught by diffing regenerated
-`wrap.ts` byte-for-byte against pre-refactor HEAD for all 3 grammars.
-
-`wrap.ts`'s storage-key routing (`expandToConcreteParseKinds`, above) reads
-this stamp instead of re-walking the closure per call site.
 
 ### `coversExactly` (`packages/codegen/src/emitters/transport-common.ts`)
 

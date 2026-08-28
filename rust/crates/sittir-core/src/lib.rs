@@ -16,6 +16,8 @@ pub mod engine;
 pub mod filters;
 pub mod format;
 pub mod macros;
+#[cfg(feature = "napi-bindings")]
+pub mod napi_engine;
 pub mod read_node;
 pub mod slot;
 pub mod spacing;
@@ -37,4 +39,4 @@ pub use slot::SlotValue;
 pub use read_node::ReadDepth;
 // ADR-0017: ParsedTree is the owned parse result; ParseResult is the JSON
 // envelope for parse_and_read. NodeCoords is an internal implementation detail.
-pub use engine::{apply_render_format, panic_msg, ParseResult, ParsedTree};
+pub use engine::{apply_render_format, decode_handle, panic_msg, ParseResult, ParsedTree};

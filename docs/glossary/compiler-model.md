@@ -1,8 +1,8 @@
 # `packages/codegen/src/compiler/model` — Function Glossary
 
 Per-function reference for `packages/codegen/src/compiler/model/`, mechanically relocated from source
-JSDoc by `scripts/wave5-relocate-jsdoc.mts` (wave 5 comment-cleanup, pass 1 —
-unedited, unverified). Pass 2 reformats/verifies these entries and decides
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
+unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
@@ -676,8 +676,8 @@ recursive closure walk to `types/rule.ts::transitiveParseKinds`, over
 `ctx.simplifiedRules` (the raw, pre-hydration rule bag — the only
 representation available at this point in the pipeline; `AssembledNode`
 objects for other kinds may not exist yet during this same construction
-pass). Contrast with `emitters/shared.ts::computeSupertypeTransitiveParseKinds`,
-a POST-hydration pass that walks the assemble-time-resolved `NodeMap`
+pass). Contrast with `compiler/supertype-closure.ts::stampSupertypeClosures`,
+a late-assemble pass that walks the assemble-time-resolved node map
 instead and does not share this walk — see that entry for why the two
 can't be unified.
 ```

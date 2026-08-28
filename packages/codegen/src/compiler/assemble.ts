@@ -36,8 +36,9 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from '../types/rule.ts';
-import { isLinkSymbol, isEnumChoiceRule, subtypeParseNamesOf } from '../types/rule.ts';
-import { isNonterminalRuleType } from './rule-catalog.ts';
+import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
+import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import {
@@ -87,6 +88,8 @@ import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
+import { rootRuleName } from '../util/reachable-rules.ts';
+import { stampSupertypeClosures } from './supertype-closure.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 export class AssembleCtx extends BaseCtx<'simplify'> {
@@ -288,17 +291,20 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					);
 					break;
 				}
+				// Leaves construct off the wrapper-free `renderRule`: a kind's
+				// lexical facts (`tokenized`/`immediate`) are stamps the
+				// normalize builders put on the leaf, and the leaf reads them.
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, assemblyRule));
+					nodes.set(kind, new AssembledPattern(kind, renderRule as Rule<'link'>));
 					break;
 				}
 				case 'keyword': {
-					nodes.set(kind, new AssembledKeyword(kind, assemblyRule as StringRule<'link'>, { kindEntries }));
+					nodes.set(kind, new AssembledKeyword(kind, renderRule as StringRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'token': {
 					// Hidden — no factoryName; token kinds have StringRule<'link'> bodies
-					nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule<'link'>, { kindEntries }));
+					nodes.set(kind, new AssembledToken(kind, renderRule as StringRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'enum': {
@@ -411,6 +417,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
+		stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
 		// Pre-compute the two cross-node sets once, then run the merged
 		// markUserFacing pass (M3 — one pass marks both alias-source + variant-
 		// children; see _UserFacingCtx / markUserFacing JSDoc).
@@ -505,34 +512,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			for (const slot of allSlotsOf(node)) {
 				for (const id of slot.sourceRuleIds) slotByRuleId.set(id, slot);
 			}
-		}
-
-		// Back-compat: also index raw FieldRule ids from `normalized.rules` so that
-		// consumers holding a reference to the original field-wrapper rule (before
-		// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
-		// sourceRuleIds may differ from the FieldRule's id after wrapper-deletion
-		// pushes modifier attrs down; walking the raw rules and name-matching
-		// against the assembled slots bridges the gap without requiring the
-		// pipeline to thread the FieldRule id through to the RenderRule leaf.
-		for (const [kind, rawRule] of Object.entries(normalized.linkRules)) {
-			const node = nodes.get(kind);
-			if (!node) continue;
-			const slotsByName = new Map<string, AssembledNonterminal>();
-			for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
-			// Walk the raw rule tree collecting FieldRule ids by name.
-			const walkForFieldIds = (r: Rule<'link'>): void => {
-				if (r.type === FIELD && r.id) {
-					const slot = slotsByName.get(r.name);
-					if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
-				}
-				if ('members' in r && Array.isArray((r as { members?: unknown }).members)) {
-					for (const m of (r as { members: Rule<'link'>[] }).members) walkForFieldIds(m);
-				}
-				if ('content' in r && (r as { content?: Rule<'link'> }).content) {
-					walkForFieldIds((r as { content: Rule<'link'> }).content);
-				}
-			};
-			walkForFieldIds(rawRule);
 		}
 
 		return {
@@ -640,6 +619,102 @@ function unwrapGroupRuleAndSimplified(
 	const groupRenderRule: RenderRule =
 		rule.type === GROUP ? ((renderRule as GroupRule<'normalize'>).content as RenderRule) : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
+}
+
+// ---------------------------------------------------------------------------
+// stampFactoryInline — declared no-top-level-builder kinds + nestability proof
+// ---------------------------------------------------------------------------
+
+/**
+ * Stamp `factoryInline` on every kind the grammar's `factoryInline` section
+ * declares, and prove each one has somewhere to nest.
+ *
+ * An inline kind is reachable ONLY as nested config on a referencing slot, so
+ * it needs at least one such slot, and every route to it must run through a
+ * parent that owns one. Three shapes have no such route:
+ *
+ *   - the grammar root — nothing references it;
+ *   - a kind no slot references at all;
+ *   - a supertype member whose supertype is itself referenced from a slot on
+ *     some node that is not one of the kind's own referencing parents — that
+ *     slot accepts the kind without being able to nest its config.
+ *
+ * A supertype reaches a kind at any depth, so membership is read from the
+ * flattened closure, never from the immediate `subtypeNames` list: a kind
+ * carried only by a supertype-of-a-supertype escapes through the OUTER
+ * union's referrers.
+ */
+function stampFactoryInline(
+	nodes: Map<string, AssembledNode>,
+	ctx: AssembleCtx,
+	supertypeClosures: ReadonlyMap<string, ReadonlySet<string>>
+): void {
+	const declared = ctx.grammar.factoryInline;
+	if (declared.size === 0) return;
+
+	// One walk, two maps: referenced kind -> the nodes owning a slot that
+	// references it, and member kind -> the supertypes carrying it. Supertypes
+	// are kinds too, so a supertype's own referrers are in the first map.
+	const parentsByKind = new Map<string, Set<string>>();
+	const supertypesByMember = new Map<string, string[]>();
+	for (const node of nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			for (const value of slot.values) {
+				if (!isNodeRef(value)) continue;
+				const referenced = storageKindOfRef(value.node);
+				const referrers = parentsByKind.get(referenced);
+				if (referrers) referrers.add(node.kind);
+				else parentsByKind.set(referenced, new Set([node.kind]));
+			}
+		}
+	}
+	for (const [supertype, members] of supertypeClosures) {
+		for (const member of members) {
+			const carriers = supertypesByMember.get(member);
+			if (carriers) carriers.push(supertype);
+			else supertypesByMember.set(member, [supertype]);
+		}
+	}
+
+	const rootKind = rootRuleName(ctx.grammar.rules);
+	for (const kind of declared) {
+		const node = nodes.get(kind);
+		if (!node) {
+			emitUnnestable(kind, ctx, 'no kind by that name exists in the grammar');
+			continue;
+		}
+		node.factoryInline = true;
+		if (kind === rootKind) {
+			emitUnnestable(kind, ctx, 'it is the grammar root, so no slot can carry its config');
+			continue;
+		}
+		const parents = parentsByKind.get(kind);
+		if (parents === undefined || parents.size === 0) {
+			emitUnnestable(kind, ctx, 'no slot references it');
+			continue;
+		}
+		// A supertype carrying `kind` and referenced from a slot on a node
+		// outside `parents` is a route to `kind` with no config to nest into.
+		const escaped = (supertypesByMember.get(kind) ?? []).filter((supertype) =>
+			[...(parentsByKind.get(supertype) ?? [])].some((referrer) => !parents.has(referrer))
+		);
+		if (escaped.length > 0) {
+			emitUnnestable(
+				kind,
+				ctx,
+				`it is a member of supertype ${escaped.join(', ')}, referenced from a slot outside its own parents (${[...parents].sort().join(', ')})`
+			);
+		}
+	}
+}
+
+function emitUnnestable(kind: string, ctx: AssembleCtx, reason: string): void {
+	ctx.diagnostics.fail({
+		code: 'factory-inline-unnestable',
+		scope: 'compiler',
+		phase: 'assemble',
+		message: `factoryInline kind '${kind}' has nowhere to nest: ${reason}.`
+	});
 }
 
 // ---------------------------------------------------------------------------
@@ -997,9 +1072,8 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		//      them but codegen has no rule body to assemble (e.g.
 		//      `_as_pattern_target` in python). These behave like
 		//      externals from the consumer's POV.
-		//   3. Inlined-before-assemble kinds referenced by overrides —
-		//      a known deferred case (see e.g. `_block_comment_content`
-		//      in rust). Should be cleaned up at the override layer.
+		//   3. Kinds inlined before assemble that an override still
+		//      references by name.
 		//
 		// Distinguishing (1) from (2)/(3) without threading the parser
 		// kind catalog isn't possible here. Logging a single line per
@@ -1203,20 +1277,15 @@ function collectAnonymousNodes(
 	const seen = new Map<string, string>();
 
 	for (const rule of Object.values(rules)) {
-		// PR-P Task 2: skip COMPOUND all-text rules (SEQ/CHOICE/OPTIONAL/REPEAT/REPEAT1).
-		// These arise from tree-sitter TOKEN bodies that Link flattens to bare SEQ/CHOICE/etc.
-		// The string literals inside are token-internal fragments (e.g. the "b" byte-prefix
-		// inside `char_literal`) — they are NOT distinct CST node kinds and must not be
-		// collected as anonymous nodes. Previously Link's `promoteAndLogTerminalRules` wrapped
-		// these as TerminalRule, so `walkForStrings` hit the default case and returned without
-		// collecting anything. After Task 2 removes TerminalRule, we replicate the gate via
-		// isAllTextShape on compound rule types.
-		//
-		// We deliberately EXCLUDE bare STRING/PATTERN rules from this guard: those contribute
-		// their own literal as the first `seen` entry, preserving the collection order that
-		// was established when they were top-level STRING/PATTERN rules before TOKEN-flattening.
-		if (rule.type !== STRING && rule.type !== PATTERN && isAllTextShape(rule)) continue;
-		walkForStrings(rule, seen);
+		// A token whose whole body is one literal lexes as that literal's own
+		// anonymous symbol (`token.immediate('"')` IS the `"` node); a
+		// composite token body (`token(seq('/', '/', '/'))`) is one symbol whose
+		// parts are never CST nodes. So a bare-literal token contributes its
+		// literal like a top-level STRING/PATTERN rule does, and any other
+		// compound all-text rule is skipped.
+		const body = rule.type === TOKEN && (rule.content.type === STRING || rule.content.type === PATTERN) ? rule.content : rule;
+		if (body.type !== STRING && body.type !== PATTERN && isAllTextShape(body)) continue;
+		walkForStrings(body, seen);
 	}
 
 	for (const [kindName, literalText] of seen) {
@@ -1289,11 +1358,8 @@ function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
 			walkForStrings(rule.content, out);
 			break;
 		case FIELD:
-			walkForStrings(rule.content, out);
-			break;
+		case TOKEN:
 		case VARIANT:
-			walkForStrings(rule.content, out);
-			break;
 		case GROUP:
 			walkForStrings(rule.content, out);
 			break;

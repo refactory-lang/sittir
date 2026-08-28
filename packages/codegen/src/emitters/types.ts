@@ -34,6 +34,15 @@ export {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 
+/** Whether the parser issues an id for this kind. `NamespaceMap` is keyed by
+ *  that id, so a kind without one takes no entry: nothing builds it, no parse
+ *  produces it, and the per-kind family (`Config` / `Loose` / `BuildArgs`) has
+ *  no meaning for it. Its data interface still stands, so it can be read out
+ *  of a tree and named in a union. */
+function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
+	return kindEntries !== undefined && kindEntries.some((e) => e.kind === kind);
+}
+
 function kindDiscriminantOrLiteral(
 	kind: string,
 	nodeMap: NodeMap,
@@ -68,9 +77,14 @@ import {
 	fieldTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
+	emitsBuildArgsAlias,
 	emitsPlainBuiltAlias,
+	isWrapChildrenKind,
 	stringConstructibleTexts
 } from './shared.ts';
+// One-way: factories never imports this module, so naming its
+// constructor-target resolution here adds no cycle.
+import { constructorTargetKind } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -296,19 +310,28 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// 1. Per-kind namespace interfaces
 	lines.push('// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)');
-	for (const kind of nodeKinds) {
+	const namespaceKinds = nodeKinds.filter(
+		(kind) => generatedTypes.has(nodeMap.nodes.get(kind)!.typeName) && hasKindId(kind, kindEntries)
+	);
+	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (!generatedTypes.has(node.typeName)) continue;
-		emitNamespaceInterfaceLine(lines, node.typeName, emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries }));
+		emitNamespaceInterfaceLine(
+			lines,
+			node.typeName,
+			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries }),
+			emitsBuildArgsAlias(kind, node, { nodeMap, kindEntries })
+		);
 	}
 	lines.push('');
 
 	// 2. NamespaceMap
+	// Keyed by the kind id, which is what a node's `$type` actually carries —
+	// so `LooseProjection` can reach a kind's cached `Loose` straight off the
+	// node type instead of re-deriving one per nesting level.
 	lines.push('export interface NamespaceMap {');
-	for (const kind of nodeKinds) {
+	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (!generatedTypes.has(node.typeName)) continue;
-		lines.push(`  '${kind}': ${node.typeName}Ns;`);
+		lines.push(`  [${kindDiscriminantExpr(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -317,6 +340,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push("export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];");
 	lines.push("export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];");
 	lines.push("export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];");
+	lines.push("export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];");
+	lines.push("export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];");
+	lines.push("export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];");
 	lines.push("export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];");
 	lines.push('');
 
@@ -325,10 +351,15 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
-	for (const kind of nodeKinds) {
+	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		if (!generatedTypes.has(node.typeName)) continue;
-		emitNamespaceSugarBlock(lines, kind, node, refineInfoByKind.get(kind));
+		emitNamespaceSugarBlock(
+			lines,
+			kind,
+			node,
+			refineInfoByKind.get(kind),
+			kindDiscriminantExpr(kind, nodeMap, kindEntries)
+		);
 	}
 	lines.push('');
 
@@ -868,14 +899,30 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 // Per-kind namespace interface line emission
 // ---------------------------------------------------------------------------
 
-function emitNamespaceInterfaceLine(lines: string[], typeName: string, hasBuiltAlias: boolean): void {
+function emitNamespaceInterfaceLine(
+	lines: string[],
+	typeName: string,
+	hasBuiltAlias: boolean,
+	hasBuildArgsAlias: boolean
+): void {
 	// A kind with an emitted factory pins `Fluent` to the factory's own
 	// `<TypeName>Built` alias — the exact return type, never a re-derived
 	// generic. Factory-less kinds keep NodeNs' default Fluent projection.
+	//
+	// `BuildArgs` / `LooseArgs` follow the same rule for the ARITY fact. They
+	// sit AFTER `Built` positionally, and the only kinds declaring one without
+	// the other are leaves — which have no data interface, so no Ns line at
+	// all. Fail loudly rather than emit a line whose type arguments have
+	// silently shifted.
+	if (hasBuildArgsAlias !== hasBuiltAlias) {
+		throw new Error(
+			`types emitter: '${typeName}' declares ${hasBuiltAlias ? 'Built without BuildArgs' : 'BuildArgs without Built'} — ` +
+				`NodeNs' Args parameters follow Built positionally, so the two must be emitted together.`
+		);
+	}
+	const tail = hasBuiltAlias ? `, F$.${typeName}Built, F$.${typeName}BuildArgs, F$.${typeName}LooseArgs` : '';
 	lines.push(
-		hasBuiltAlias
-			? `export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap, F$.${typeName}Built> {}`
-			: `export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
+		`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap${tail}> {}`
 	);
 }
 
@@ -926,7 +973,7 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
-		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries);
+		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries, lookupUnion);
 		// Accessor function types: `name(): T` (non-enumerable at runtime —
 		// declared here for type-safety so consumers can call node.name()).
 		for (const f of fields) {
@@ -1098,12 +1145,59 @@ function fieldInputHintTypeExpr(
 
 // Loose-only: strict factories store config values directly, so widened
 // literals must never reach Config. See glossary.
-function fieldFromInputHintTypeExpr(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+/** A singular slot whose one kind can be built from a bare list of children
+ *  accepts that list directly — `_resolveOneBranch` maps the elements and
+ *  wraps them. The element type is the CONSTRUCTOR TARGET's, not the
+ *  wrapper's: a direct-surface wrapper forwards into an inner container, so
+ *  its own first parameter is that container rather than an element.
+ *
+ *  Spelled as the target's element slot type and left for `WidenSlotValue`
+ *  to widen, NOT as that kind's `LooseArgs`. The tuple would have been the
+ *  tighter derivation, but it names `NamespaceMap`, and a hint sitting on an
+ *  interface that the map's own `Loose` projections reach makes the two
+ *  mutually recursive — TS answers "excessive stack depth" across the whole
+ *  generated surface. */
+function wrapChildrenListHint(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	if (isMultiple(f)) return undefined;
+	const kinds = slotKindNames(f);
+	if (kinds.length !== 1) return undefined;
+	const kind = kinds[0]!;
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || !isWrapChildrenKind(kind, node, nodeMap, kindEntries)) return undefined;
+	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap));
+	if (target === undefined) return undefined;
+	if (target.modelType !== 'branch' && target.modelType !== 'group' && target.modelType !== 'separatedList') {
+		return undefined;
+	}
+	// Same rule `canonicalSeparatedListField` applies: the repeated slot is
+	// the element carrier, and a single-slot wrapper has only the one.
+	const elementSlot = target.fields.find((slot) => isMultiple(slot)) ?? target.fields[0];
+	if (elementSlot === undefined) return undefined;
+	// Names the same supertype ALIAS the interface's own slot uses. The
+	// expanded union is the same type, but a 37-arm union multiplies every
+	// assignability check that reaches it; a named alias compares once.
+	return `readonly (${fieldTypeExpr(elementSlot, nodeMap, lookupUnion)})[]`;
+}
+
+function fieldLooseHintTypeExpr(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const arms: string[] = [];
 	if (f.values.length === 1 && slotKindNames(f).length === 1) {
 		const texts = stringConstructibleTexts(slotKindNames(f)[0]!, nodeMap);
-		if (texts.length > 0) return `${fieldTypeExpr(f, nodeMap)} | ${stringUnion(texts)}`;
+		if (texts.length > 0) arms.push(`${fieldTypeExpr(f, nodeMap)} | ${stringUnion(texts)}`);
 	}
-	return undefined;
+	const listHint = wrapChildrenListHint(f, nodeMap, kindEntries, lookupUnion);
+	if (listHint !== undefined) arms.push(listHint);
+	return arms.length > 0 ? arms.join(' | ') : undefined;
 }
 
 function emitFieldInputHints(
@@ -1111,7 +1205,8 @@ function emitFieldInputHints(
 	fields: readonly AssembledNonterminal[],
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lookupUnion?: LookupUnion
 ): void {
 	const hintLines = fields
 		.map((field) => {
@@ -1133,14 +1228,14 @@ function emitFieldInputHints(
 	}
 	const fromHintLines = fields
 		.map((field) => {
-			const hintType = fieldFromInputHintTypeExpr(field, nodeMap);
+			const hintType = fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;
 		})
 		.filter((line): line is string => line !== undefined);
 	if (fromHintLines.length > 0) {
-		lines.push('  readonly __fromInputHints__?: {');
+		lines.push('  readonly __looseHints__?: {');
 		lines.push(...fromHintLines);
 		lines.push('  };');
 	}
@@ -1178,21 +1273,27 @@ function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
 	node: AssembledNode,
-	refineInfo: RefineKindInfo | undefined
+	refineInfo: RefineKindInfo | undefined,
+	// The NamespaceMap key — the kind's id. `Kind` below stays the NAME,
+	// which is the grammar's own spelling and what a reader recognises.
+	nsKey: string
 ): void {
 	lines.push(`export namespace ${node.typeName} {`);
 	if (refineInfo && refineInfo.forms.length > 0) {
-		emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo);
+		emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo, nsKey);
 		const defaultForm = refineInfo.forms[0]!;
 		const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
 		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
 		lines.push(`  export type Config = ${defaultShortName}.Config;`);
 	} else {
-		lines.push(`  export type Config = ConfigFor<'${kind}'>;`);
+		lines.push(`  export type Config = ConfigFor<${nsKey}>;`);
 	}
-	lines.push(`  export type Fluent = FluentFor<'${kind}'>;`);
-	lines.push(`  export type Loose = LooseFor<'${kind}'>;`);
-	lines.push(`  export type Tree = TreeFor<'${kind}'>;`);
+	lines.push(`  export type Fluent = FluentFor<${nsKey}>;`);
+	lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
+	lines.push(`  export type LooseConfig = LooseConfigFor<${nsKey}>;`);
+	lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
+	lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
+	lines.push(`  export type Tree = TreeFor<${nsKey}>;`);
 	lines.push(`  export type Kind = '${kind}';`);
 	lines.push('}');
 }
@@ -1201,7 +1302,8 @@ function emitRefineFormSubNamespaces(
 	lines: string[],
 	parentTypeName: string,
 	kind: string,
-	refineInfo: RefineKindInfo
+	refineInfo: RefineKindInfo,
+	nsKey: string
 ): void {
 	for (const form of refineInfo.forms) {
 		const formType = refineFormTypeName(parentTypeName, form.name);
@@ -1210,9 +1312,9 @@ function emitRefineFormSubNamespaces(
 		const narrowed = form.narrowedFields;
 		if (narrowed.length > 0) {
 			const omitKeys = narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ');
-			lines.push(`    export type Config = Omit<ConfigFor<'${kind}'>, ${omitKeys}>;`);
+			lines.push(`    export type Config = Omit<ConfigFor<${nsKey}>, ${omitKeys}>;`);
 		} else {
-			lines.push(`    export type Config = ConfigFor<'${kind}'>;`);
+			lines.push(`    export type Config = ConfigFor<${nsKey}>;`);
 		}
 		lines.push(`    export type Tree = ${formType}Tree;`);
 		lines.push('  }');

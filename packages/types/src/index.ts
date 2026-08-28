@@ -16,7 +16,7 @@
  * ```
  */
 
-import type { CamelCase, SimplifyDeep } from 'type-fest';
+import type { CamelCase } from 'type-fest';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -74,7 +74,7 @@ export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
  * AutoStamp<T> — brands a storage entry as auto-stamped by the factory.
  *
  * The factory always writes a fixed constant for this field; the caller
- * never supplies it. `ConfigOf` and `FromInputOf` filter out all
+ * never supplies it. `ConfigOf` and `LooseConfigOf` filter out all
  * `AutoStamp`-branded keys so the per-kind Config/Loose interfaces do not
  * expose a slot for values the caller cannot meaningfully change.
  *
@@ -95,7 +95,7 @@ type IsAutoStamp<T> = '__autoStamp__' extends keyof T ? true : false;
 /**
  * BooleanKeyword<TText> — brands boolean storage for a keyword-presence
  * position. NodeData stores `boolean`; the brand preserves the keyword's
- * literal text so ConfigOf / FromInputOf can continue to widen to the
+ * literal text so ConfigOf / LooseConfigOf can continue to widen to the
  * ergonomic string form when desired.
  */
 export type BooleanKeyword<TText extends string = never> = boolean & {
@@ -124,7 +124,7 @@ type BitflagEnum<T> = T extends { readonly __bitflag__?: infer E } ? E : never;
 /**
  * KindEnum<TText, TStorage> — brands native-aligned KindId storage for
  * multi-member enum-backed fields while retaining the enum's string surface
- * for ConfigOf / FromInputOf widening.
+ * for ConfigOf / LooseConfigOf widening.
  */
 export type KindEnum<TText extends string, TStorage extends number = number> = TStorage & {
 	readonly __kindEnum__?: TText;
@@ -346,7 +346,7 @@ export type NodeData<G, K extends NodeKind<G>> = G[K] extends { fields: object }
 
 /**
  * The full config shape for a branch node — named fields + children.
- * Used as the factory input and the base for FromInput widening.
+ * Used as the factory input and the base for loose-config widening.
  * Only meaningful for branch nodes.
  */
 export type NodeConfig<G, K extends NodeKind<G>> = NodeData<G, K> extends { $fields: infer F } ? F : never;
@@ -547,7 +547,7 @@ export type RuntimeNodeOf<T> = T extends {
  *
  * @deprecated Superseded by the emitted `<TypeName>Built` aliases (NodeNs'
  * `Built` parameter): a generic projection over `T` cannot reproduce the
- * factory surface (container `$child`/`$children`, `NonEmptyArray` rests,
+ * factory surface (slot-named child setters, `NonEmptyArray` rests,
  * enum-coercion input unions, forwarded shapes are model-derived facts
  * absent from `T`), and this shape's bare combined getter/setter methods
  * predate the runtime `$with` record. Survives only as NodeNs' default
@@ -572,7 +572,13 @@ export type FluentNodeOf<T> = T extends { readonly $type: number }
  */
 type FieldsOf<T> = T extends { readonly $fields: infer F }
 	? F
-	: { [K in keyof T as K extends `_${infer N}` ? N : never]: T[K] };
+	: {
+			// `__inputHints__` / `__looseHints__` are generator-emitted carriers,
+			// not slots. They match the storage-key glob (`_${infer N}` binds
+			// `_inputHints__`), so without this guard they surface on every
+			// public surface derived from here as `inputHints` / `looseHints`.
+			[K in keyof T as K extends `__${string}` ? never : K extends `_${infer N}` ? N : never]: T[K];
+		};
 
 /** @internal — optional generator-emitted config/from widening hints keyed by raw field name. */
 type InputHintsOf<T> = T extends { readonly __inputHints__?: infer H } ? H : {};
@@ -582,16 +588,36 @@ type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHints
 	? InputHintsOf<T>[K]
 	: FieldsOf<T>[K];
 
-/** @internal — from()/loose-only widening hints (`__fromInputHints__`).
- *  Consumed by FromInputBody alone: the strict Config surface stores
+/** @internal — from()/loose-only widening hints (`__looseHints__`).
+ *  Consumed by LooseConfigBody alone: the strict Config surface stores
  *  config values directly into Built storage, so these widenings must
  *  never reach it. */
-type FromInputHintsOf<T> = T extends { readonly __fromInputHints__?: infer H } ? H : {};
+type LooseHintsOf<T> = T extends { readonly __looseHints__?: infer H } ? H : {};
 
-/** @internal — from()-side field input: from-hints beat config hints beat storage. */
-type FromFieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof FromInputHintsOf<T>
-	? FromInputHintsOf<T>[K]
-	: FieldInputType<T, K>;
+/** @internal — from()-side field input: a from-hint ADDS accepted shapes to
+ *  the config surface, it never removes them. The loose surface is a
+ *  superset of the strict one by construction, so a hint that mentions only
+ *  the node form (e.g. `MutableSpecifier | 'mut'`) cannot drop the config
+ *  hint's own widening (`BooleanKeyword<'mut'>` → `boolean`).
+ *
+ *  Each projection is widened on its own before the union: brands
+ *  (boolean-keyword, bitflag, kind-enum) are detected distributively, so a
+ *  pre-union `MutableSpecifier | 'mut' | BooleanKeyword<'mut'>` would answer
+ *  `boolean` to `IsBooleanKeywordSlot` and lose the brand's projection
+ *  entirely. */
+type WidenLooseFieldValue<
+	T,
+	K extends keyof FieldsOf<T>,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends string[]
+> = K extends keyof LooseHintsOf<T>
+	?
+			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
+			| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
+	: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
@@ -642,6 +668,24 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
 	: never;
 
 /**
+ * LooseValue<V, Scalars, Strings, NsMap> — the loose counterpart of ONE
+ * builder parameter whose value is a node slot: a container's child, a
+ * separated list's element, a single-field factory's value.
+ *
+ * The widening is the SAME one `Loose` already applies to a `children`
+ * slot — reused rather than re-spelled, so leaf kinds admit their text,
+ * branches admit their own `Loose`, and boolean-keyword / bitflag /
+ * kind-enum brands project to their config surface. An emitter that
+ * open-coded any of that would be re-deriving predicates the model
+ * already owns.
+ *
+ * A builder parameter that IS a kind's config object does NOT go through
+ * here: its loose counterpart is that kind's `Loose`, which is the only
+ * projection that reads the from-only (`__looseHints__`) widenings.
+ */
+export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSlot<V, Scalars, Strings, [], NsMap>;
+
+/**
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
  * field values are the raw interface types (already snake_case internally).
  *
@@ -663,7 +707,7 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
  * automatically and callers should not (and cannot) supply them.
  */
 export type ConfigOf<T> = T extends unknown
-	? SimplifyDeep<
+	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
 					? never
@@ -794,7 +838,7 @@ type OptionalNonAutoStampKeys<T> = {
 }[keyof T];
 
 /**
- * FromInputOf<T, Scalars, Strings, Depth, NsMap> — widened input type derived
+ * LooseConfigOf<T, Scalars, Strings, Depth, NsMap> — widened input type derived
  * from a concrete node interface. Accepts NodeData passthroughs, strings for
  * leaves, objects for branches. Required fields stay required; optional
  * fields stay optional. Auto-stamped fields are excluded (same as ConfigOf).
@@ -804,7 +848,7 @@ type OptionalNonAutoStampKeys<T> = {
  * @param Depth - Internal recursion counter — stops expanding at depth 3
  * @param NsMap - Optional per-grammar NamespaceMap. When supplied, `WidenValue`
  *   short-circuits multi-branch recursions to `NsMap[K]['Loose']` lookups (Layer
- *   1 of spec 009 — cached indexed access instead of fresh `FromInputOf`
+ *   1 of spec 009 — cached indexed access instead of fresh `LooseConfigOf`
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
 /**
@@ -821,7 +865,7 @@ type OptionalNonAutoStampKeys<T> = {
  *   as a literal-tuple membership check that TS resolves
  *   non-recursively.
  */
-export type FromInputOf<
+export type LooseConfigOf<
 	T,
 	Scalars = {},
 	Strings = {},
@@ -834,26 +878,26 @@ export type FromInputOf<
 		: T extends { readonly $type: infer K extends string }
 			? Contains<Visited, K> extends true
 				? T
-				: FromInputBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
-			: FromInputBody<T, Scalars, Strings, Depth, NsMap, Visited>
+				: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
+			: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, Visited>
 >;
 
-/** @internal — body of `FromInputOf`, factored out so the cycle-check
+/** @internal — body of `LooseConfigOf`, factored out so the cycle-check
  *  conditional in the parent type stays scannable. The discriminant
- *  branch happens in `FromInputOf` itself; here we just emit the
+ *  branch happens in `LooseConfigOf` itself; here we just emit the
  *  field/children projections with the (possibly extended) `Visited`. */
-type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[]> = (T extends {
+type LooseConfigBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[]> = (T extends {
 	readonly $type: infer K;
 }
 	? { readonly $type?: K }
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]: WidenSlotValue<FromFieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]?: WidenSlotValue<FromFieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]?: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }
 		? {
 				readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
@@ -938,12 +982,12 @@ type IsHomogeneous<T, NsMap> = [NsMap] extends [never]
 
 /**
  * TagEachArm<T, ...> — distributive per-arm form for heterogeneous unions.
- * Produces `U | ({kind: K} & FromInputOf<U>)` for each member of T (or the
+ * Produces `U | ({kind: K} & LooseConfigOf<U>)` for each member of T (or the
  * cached NsMap Loose projection when one exists).
  *
  * The `{ kind: K } & …` intersection tags the widened shape so callers can
  * disambiguate without re-probing `$type`. Written via the
- * `LooseOrFromInput` helper for the same precedence reason documented on
+ * `LooseOrConfigBag` helper for the same precedence reason documented on
  * that helper — inline `… extends never ? … : …` collapses under union
  * distribution.
  */
@@ -953,19 +997,19 @@ type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited exte
 			? U
 			:
 					| ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
-							? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
+							? LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
 							: LooseProjection<U, NsMap>))
 					| U
 		: never
 	: never;
 
 /**
- * Widen a value type for FromInput.
+ * Widen a value type for the loose-config surface.
  * - Arrays: accept `Element[] | Element`
  * - Leaf nodes: accept `T | narrowed-string | scalar`
- * - Single branch: accept `T | FromInputOf<T>` (bare fields, no kind needed)
+ * - Single branch: accept `T | LooseConfigOf<T>` (bare fields, no kind needed)
  * - Multi-branch homogeneous (all arms' Loose types equal): bare, no kind tag
- * - Multi-branch heterogeneous: each member needs `{ kind: K } & FromInputOf<U>`
+ * - Multi-branch heterogeneous: each member needs `{ kind: K } & LooseConfigOf<U>`
  * - Other: pass through unchanged (string literal unions, etc.)
  *
  * Branch dispatch is guarded by `[T] extends [{...}]` tuple-wraps so the
@@ -984,24 +1028,24 @@ type LooseProjection<T, NsMap> = T extends {
 
 /**
  * @internal — "if NsMap has a Loose projection for T, use `T | L`; else
- * use `T | FromInputOf<T>`". Exists because the naive inline form
- * `T | LooseProjection<T, NsMap> extends never ? FromInputOf<T> : LooseProjection<T>`
+ * use `T | LooseConfigOf<T>`". Exists because the naive inline form
+ * `T | LooseProjection<T, NsMap> extends never ? LooseConfigOf<T> : LooseProjection<T>`
  * parses as `(T | LooseProjection) extends never ? ... : ...` — TS
  * conditional-types bind `extends` over the whole union on the left. That
  * distributes per arm and, for any non-never T, collapses to just
  * `LooseProjection<T>`, silently dropping the `T` passthrough (and thus
  * the "caller already has a NodeData" escape hatch).
  */
-type LooseOrFromInput<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> = T extends {
+type LooseOrConfigBag<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> = T extends {
 	readonly $type: infer K extends string;
 }
 	? Contains<Visited, K> extends true
 		? T
 		: [LooseProjection<T, NsMap>] extends [never]
-			? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
+			? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
 			: LooseProjection<T, NsMap> | T
 	: [LooseProjection<T, NsMap>] extends [never]
-		? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
+		? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
 		: LooseProjection<T, NsMap> | T;
 
 type WidenValue<
@@ -1045,17 +1089,17 @@ type WidenValue<
 							? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 								// whole union, then emit accordingly.
 								IsSingleType<T> extends true
-								? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
+								? LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
 								: IsHomogeneous<T, NsMap> extends true
 									? // Multi-branch, but every arm's Loose projection is identical
 										// (via NsMap lookups). Runtime resolver picks any arm by
 										// field-presence — no `kind` tag needed at the type level.
-										LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
+										LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
 									: // Heterogeneous multi-branch → tag each arm for discrimination.
 										TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
 							: T;
 
-/** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
+/** Widen a child slot type for the loose-config surface (applies WidenValue to arrays and single values). */
 type WidenChildSlot<
 	T,
 	Scalars = {},
@@ -1088,7 +1132,7 @@ type WidenChildSlot<
  * all three paths resolve to the same concrete type.
  *
  * `Scalars` and `Strings` are the per-grammar leaf-kind projections required
- * by `FromInputOf`. Generated packages thread their own `<Grammar>Scalars` /
+ * by `LooseConfigOf`. Generated packages thread their own `<Grammar>Scalars` /
  * `<Grammar>Strings` into `NodeNs` at the `<Kind>Ns` declaration site.
  *
  * @param T - A concrete node interface with a literal `type` discriminant.
@@ -1105,22 +1149,50 @@ export interface NodeNs<
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Built = FluentNodeOf<T>
+	Built = FluentNodeOf<T>,
+	Args extends readonly unknown[] = [ConfigOf<T>],
+	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | T]
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
 	readonly Fluent: Built;
+	// CONTENT (`Config` / `Loose`) is interface-rooted; ARITY is
+	// factory-rooted. `BuildArgs` is the builder's own parameter list as a
+	// tuple — how many parameters, which is rest, which is optional — with
+	// element slots that REFERENCE `Config`. The dependency runs one way:
+	// `BuildArgs` depends on `Config`, never the reverse, which is what
+	// keeps the two derivations acyclic.
+	//
+	// `Parameters<typeof build<Kind>>` is never the source: it resolves to
+	// the LAST overload, and both real overload families put a non-canonical
+	// form there — a forwarded wrapper ends with its forwarded-target form,
+	// a separated list with its options-leading form.
+	readonly BuildArgs: Args;
+	/** `BuildArgs` with the same arity and the same labels, each parameter
+	 *  widened to what a COERCING caller may pass: a config parameter to
+	 *  that kind's `Loose`, a node-valued one through `LooseValue`. A leaf's
+	 *  parameter is already its raw text, so there the two coincide. */
+	readonly LooseArgs: LooseArgs;
 	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
-	// `FromInputOf<U>` per arm.
+	// `LooseConfigOf<U>` per arm.
 	//
-	// Unions the `T` NodeData passthrough with the widened `FromInputOf`
+	// Unions the `T` NodeData passthrough with the widened `LooseConfigOf`
 	// bag so callers hand a fully-realised NodeData straight to
 	// `<kind>.from(x)` without re-wrapping. Before this, per-signature
 	// `T.${Kind} | T.${Kind}.Loose` unions added the passthrough
 	// explicitly at every call site; absorbing it into `Loose` lets the
 	// emitter write `T.${Kind}.Loose` once.
-	readonly Loose: FromInputOf<T, Scalars, Strings, [], NsMap> | T;
+	readonly Loose: LooseConfigOf<T, Scalars, Strings, [], NsMap> | T;
+	/** `Loose` minus the NodeData passthrough arm — the config bag alone.
+	 *
+	 *  Reading a caller-supplied field by name off `Loose` picks up the
+	 *  interface's accessor signature from the `| T` arm, because negative
+	 *  narrowing drops a union constituent only when it is a strict subtype
+	 *  of the guard, and `AnyNodeData`'s optional members defeat that for
+	 *  every kind interface. Indexing `LooseConfig` avoids the arm entirely
+	 *  while keeping each field's `__looseHints__`. */
+	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, [], NsMap>;
 	readonly Tree: TreeNodeOf<T>;
 	readonly Kind: KindOf<T>;
 }

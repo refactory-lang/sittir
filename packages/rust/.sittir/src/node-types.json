@@ -1196,14 +1196,18 @@
       "required": false,
       "types": [
         {
-          "type": "block_comment_arm",
+          "type": "block_comment_doc_inner",
+          "named": true
+        },
+        {
+          "type": "block_comment_doc_outer",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "block_comment_arm",
+    "type": "block_comment_doc_inner",
     "named": true,
     "fields": {
       "doc": {
@@ -1218,17 +1222,33 @@
       },
       "inner": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "inner_doc_comment_marker",
             "named": true
           }
         ]
+      }
+    }
+  },
+  {
+    "type": "block_comment_doc_outer",
+    "named": true,
+    "fields": {
+      "doc": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "doc_comment",
+            "named": true
+          }
+        ]
       },
       "outer": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "outer_doc_comment_marker",
@@ -3596,7 +3616,11 @@
           "named": true
         },
         {
-          "type": "line_comment_doc",
+          "type": "line_comment_doc_inner",
+          "named": true
+        },
+        {
+          "type": "line_comment_doc_outer",
           "named": true
         },
         {
@@ -3607,7 +3631,7 @@
     }
   },
   {
-    "type": "line_comment_doc",
+    "type": "line_comment_doc_inner",
     "named": true,
     "fields": {
       "doc": {
@@ -3622,17 +3646,33 @@
       },
       "inner": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "inner_doc_comment_marker",
             "named": true
           }
         ]
+      }
+    }
+  },
+  {
+    "type": "line_comment_doc_outer",
+    "named": true,
+    "fields": {
+      "doc": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "doc_comment",
+            "named": true
+          }
+        ]
       },
       "outer": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "outer_doc_comment_marker",
