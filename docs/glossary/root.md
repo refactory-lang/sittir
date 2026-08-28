@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `loadWebTreeSitter` (`packages/codegen/src/engine-loader.ts:3`)
+### `packages/codegen/src/engine-loader.ts::loadWebTreeSitter`
 
 ```text
 /**
@@ -27,7 +27,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `assertNever` (`packages/codegen/src/polymorph-variant.ts:41`)
+### `packages/codegen/src/polymorph-variant.ts::assertNever`
 
 ```text
 /**
@@ -37,7 +37,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `writeFile` (`packages/codegen/src/run-codegen.ts:89`)
+### `packages/codegen/src/run-codegen.ts::writeFile`
 
 ```text
 /**
@@ -88,7 +88,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Unreadable existing file — fall through and overwrite.
 ```
 
-### `runTreeSitterGenerate` (`packages/codegen/src/run-codegen.ts:146`)
+### `packages/codegen/src/run-codegen.ts::runTreeSitterGenerate`
 
 ```text
 /**
@@ -100,7 +100,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runStandaloneSteps` (`packages/codegen/src/run-codegen.ts:162`)
+### `packages/codegen/src/run-codegen.ts::runStandaloneSteps`
 
 ```text
 /**
@@ -113,7 +113,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runGrammarDiagnosticsPreflight` (`packages/codegen/src/run-codegen.ts:195`)
+### `packages/codegen/src/run-codegen.ts::runGrammarDiagnosticsPreflight`
 
 ```text
 /**
@@ -172,7 +172,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // injection seam side-effect-free.
 ```
 
-### `runCodegenCli` (`packages/codegen/src/run-codegen.ts:284`)
+### `packages/codegen/src/run-codegen.ts::runCodegenCli`
 
 ```text
 /**
@@ -185,7 +185,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runCodegen` (`packages/codegen/src/run-codegen.ts:320`)
+### `packages/codegen/src/run-codegen.ts::runCodegen`
 
 ```text
 /**
@@ -431,7 +431,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // probes) — validation no longer runs inside codegen.
 ```
 
-### `runFullRegen` (`packages/codegen/src/run-codegen.ts:609`)
+### `packages/codegen/src/run-codegen.ts::runFullRegen`
 
 ```text
 /**
@@ -489,7 +489,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // orchestrator's post-generate validation.
 ```
 
-### `PolymorphVariantDescriptor` (`packages/codegen/src/polymorph-variant.ts:13`)
+### `packages/codegen/src/polymorph-variant.ts::PolymorphVariantDescriptor`
 
 ```text
 /**
@@ -522,7 +522,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `CodegenOptions` (`packages/codegen/src/run-codegen.ts:44`)
+### `packages/codegen/src/run-codegen.ts::CodegenOptions`
 
 ```text
 /**
@@ -531,61 +531,61 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `grammar` (`packages/codegen/src/run-codegen.ts:49`)
+### `packages/codegen/src/run-codegen.ts::grammar`
 
 ```text
 /** Grammar name (rust, typescript, python). */
 ```
 
-### `outputDir` (`packages/codegen/src/run-codegen.ts:51`)
+### `packages/codegen/src/run-codegen.ts::outputDir`
 
 ```text
 /** Output directory for generated TS files (e.g. packages/rust/src). */
 ```
 
-### `nodes` (`packages/codegen/src/run-codegen.ts:53`)
+### `packages/codegen/src/run-codegen.ts::nodes`
 
 ```text
 /** Specific node kinds to generate (mutually exclusive with `all`). */
 ```
 
-### `all` (`packages/codegen/src/run-codegen.ts:55`)
+### `packages/codegen/src/run-codegen.ts::all`
 
 ```text
 /** Generate full native render-module artifacts (equivalent to --all). */
 ```
 
-### `testsDir` (`packages/codegen/src/run-codegen.ts:57`)
+### `packages/codegen/src/run-codegen.ts::testsDir`
 
 ```text
 /** Output directory for test files (default: ../tests relative to outputDir). */
 ```
 
-### `compileParser` (`packages/codegen/src/run-codegen.ts:59`)
+### `packages/codegen/src/run-codegen.ts::compileParser`
 
 ```text
 /** Compile override grammar to .sittir/parser.wasm (standalone step). */
 ```
 
-### `transpile` (`packages/codegen/src/run-codegen.ts:61`)
+### `packages/codegen/src/run-codegen.ts::transpile`
 
 ```text
 /** Transpile grammar.sittir.ts to .sittir/grammar.js (standalone step). */
 ```
 
-### `tsGenerate` (`packages/codegen/src/run-codegen.ts:63`)
+### `packages/codegen/src/run-codegen.ts::tsGenerate`
 
 ```text
 /** Run 'tree-sitter generate' in .sittir/ (standalone step). */
 ```
 
-### `skipTsChain` (`packages/codegen/src/run-codegen.ts:65`)
+### `packages/codegen/src/run-codegen.ts::skipTsChain`
 
 ```text
 /** Skip the auto transpile + tree-sitter generate chain that --all normally runs. */
 ```
 
-### `buildNative` (`packages/codegen/src/run-codegen.ts:67`)
+### `packages/codegen/src/run-codegen.ts::buildNative`
 
 ```text
 /**
@@ -594,7 +594,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `workspaceCheck` (`packages/codegen/src/run-codegen.ts:72`)
+### `packages/codegen/src/run-codegen.ts::workspaceCheck`
 
 ```text
 /**
@@ -605,19 +605,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `noEmitDiff` (`packages/codegen/src/run-codegen.ts:79`)
+### `packages/codegen/src/run-codegen.ts::noEmitDiff`
 
 ```text
 /** Suppress the post-regen emit-diff report (--no-emit-diff). */
 ```
 
-### `allowDiagnostics` (`packages/codegen/src/run-codegen.ts:81`)
+### `packages/codegen/src/run-codegen.ts::allowDiagnostics`
 
 ```text
 /** List of diagnostic messages to allow (passed from CLI allowlist). */
 ```
 
-### `OXFMT_EFFECTIVE_CONFIG` (`packages/codegen/src/oxfmt-config.ts:36`)
+### `packages/codegen/src/oxfmt-config.ts::OXFMT_EFFECTIVE_CONFIG`
 
 ```text
 /**
@@ -629,7 +629,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `oxfmt-config.ts` (module)
+### `packages/codegen/src/oxfmt-config.ts::module`
 
 ```text
 /**
@@ -646,7 +646,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `OXFMT_CONFIG.ignorePatterns` (`packages/codegen/src/oxfmt-config.ts:11`)
+### `packages/codegen/src/oxfmt-config.ts::OXFMT_CONFIG.ignorePatterns`
 
 #### body
 
@@ -662,7 +662,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // 4-space-indent contract — a formatter pass here breaks refresh diffs.
 ```
 
-### `run-codegen.ts` (module)
+### `packages/codegen/src/run-codegen.ts::module`
 
 ```text
 /**
@@ -680,7 +680,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `index.ts` (module)
+### `packages/codegen/src/index.ts::module`
 
 ```text
 /**

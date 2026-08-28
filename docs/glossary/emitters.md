@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `emitBitflagConstEnums` (`packages/codegen/src/emitters/consts.ts:397`)
+### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
 /**
@@ -35,7 +35,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // type-system lie — at least one flag must be present.
 ```
 
-### `collectBitflagBindings` (`packages/codegen/src/emitters/consts.ts:430`)
+### `packages/codegen/src/emitters/consts.ts::collectBitflagBindings`
 
 ```text
 /**
@@ -54,7 +54,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // gets the prefixed form for every occurrence.
 ```
 
-### `bitflagBareConstName` (`packages/codegen/src/emitters/consts.ts:474`)
+### `packages/codegen/src/emitters/consts.ts::bitflagBareConstName`
 
 ```text
 /**
@@ -65,7 +65,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `bitflagPrefixedConstName` (`packages/codegen/src/emitters/consts.ts:484`)
+### `packages/codegen/src/emitters/consts.ts::bitflagPrefixedConstName`
 
 ```text
 /**
@@ -76,7 +76,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveBitflagConstName` (`packages/codegen/src/emitters/consts.ts:494`)
+### `packages/codegen/src/emitters/consts.ts::resolveBitflagConstName`
 
 ```text
 /**
@@ -100,14 +100,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Ignore k/n unused warning — bareCounts only cares about collisions.
 ```
 
-### `fieldsOfNode` (`packages/codegen/src/emitters/consts.ts:640`)
+### `packages/codegen/src/emitters/consts.ts::fieldsOfNode`
 
 ```text
 /** Yield the fields of a node — branch, group, or (TEMPORARY, see
  * isSlotBearingCompound's doc comment, shared.ts) separatedList. */
 ```
 
-### `emitAll` (`packages/codegen/src/emitters/emit.ts:82`)
+### `packages/codegen/src/emitters/emit.ts::emitAll`
 
 ```text
 /**
@@ -119,7 +119,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitEngine` (`packages/codegen/src/emitters/engine.ts:11`)
+### `packages/codegen/src/emitters/engine.ts::emitEngine`
 
 ```text
 /**
@@ -133,7 +133,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectUsesNonEmptyArray` (`packages/codegen/src/emitters/factories.ts:89`)
+### `packages/codegen/src/emitters/factories.ts::collectUsesNonEmptyArray`
 
 ```text
 /**
@@ -161,7 +161,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `emitFluentSetterHelpers` (`packages/codegen/src/emitters/factories.ts:149`)
+### `packages/codegen/src/emitters/factories.ts::emitFluentSetterHelpers`
 
 ```text
 /**
@@ -178,7 +178,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitNonEmptyAssertHelper` (`packages/codegen/src/emitters/factories.ts:165`)
+### `packages/codegen/src/emitters/factories.ts::emitNonEmptyAssertHelper`
 
 ```text
 /**
@@ -194,7 +194,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildLeafReConsts` (`packages/codegen/src/emitters/factories.ts:190`)
+### `packages/codegen/src/emitters/factories.ts::buildLeafReConsts`
 
 ```text
 /**
@@ -240,7 +240,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (which would break the literal delimiter). Escape `/` if present.
 ```
 
-### `factoryTypeDiscriminant` (`packages/codegen/src/emitters/factories.ts:249`)
+### `packages/codegen/src/emitters/factories.ts::factoryTypeDiscriminant`
 
 ```text
 /**
@@ -274,7 +274,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // path doesn't widen.
 ```
 
-### `emitsPlainBuiltAlias` (`packages/codegen/src/emitters/shared.ts:858`)
+### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
 ```text
 /**
@@ -301,7 +301,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  actually-emitted aliases drift. */
 ```
 
-### `namespaceOf` (`packages/codegen/src/emitters/factories.ts:297`)
+### `packages/codegen/src/emitters/factories.ts::namespaceOf`
 
 ```text
 /**
@@ -334,7 +334,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  surface. */
 ```
 
-### `buildFactoryMapEntries` (`packages/codegen/src/emitters/factories.ts:296`)
+### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
 /**
@@ -397,7 +397,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // classifyFactoryShape without this remap.
 ```
 
-### `emitFluentKindMap` (`packages/codegen/src/emitters/factories.ts:351`)
+### `packages/codegen/src/emitters/factories.ts::emitFluentKindMap`
 
 ```text
 /**
@@ -420,7 +420,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // shape from the Config surface.
 ```
 
-### `emitFactoryMapConst` (`packages/codegen/src/emitters/factories.ts:377`)
+### `packages/codegen/src/emitters/factories.ts::emitFactoryMapConst`
 
 ```text
 /**
@@ -436,7 +436,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `leaf` (`packages/codegen/src/emitters/factories.ts:410`)
+### `packages/codegen/src/emitters/factories.ts::leaf`
 
 ```text
 /**
@@ -444,7 +444,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `branch` (`packages/codegen/src/emitters/factories.ts:443`)
+### `packages/codegen/src/emitters/factories.ts::branch`
 
 ```text
 /**
@@ -462,7 +462,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // getters like `rawFactoryName`.
 ```
 
-### `group` (`packages/codegen/src/emitters/factories.ts:457`)
+### `packages/codegen/src/emitters/factories.ts::group`
 
 ```text
 /**
@@ -471,7 +471,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `separatedList` (`packages/codegen/src/emitters/factories.ts:471`)
+### `packages/codegen/src/emitters/factories.ts::separatedList`
 
 ```text
 /**
@@ -484,7 +484,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `buildLeafGuards` (`packages/codegen/src/emitters/factories.ts:490`)
+### `packages/codegen/src/emitters/factories.ts::buildLeafGuards`
 
 ```text
 /**
@@ -515,7 +515,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildEnumLiteralUnion` (`packages/codegen/src/emitters/factories.ts:530`)
+### `packages/codegen/src/emitters/factories.ts::buildEnumLiteralUnion`
 
 ```text
 /**
@@ -531,7 +531,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `childElementType` (`packages/codegen/src/emitters/factories.ts:551`)
+### `packages/codegen/src/emitters/factories.ts::childElementType`
 
 ```text
 /** Resolve a container node's children element type to a concrete TS type expression. */
@@ -559,7 +559,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // compatible (same fields/children).
 ```
 
-### `autoStampExpression` (`packages/codegen/src/emitters/factories.ts:590`)
+### `packages/codegen/src/emitters/factories.ts::autoStampExpression`
 
 ```text
 /**
@@ -581,7 +581,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `setterValueSignature` (`packages/codegen/src/emitters/factories.ts:713`)
+### `packages/codegen/src/emitters/factories.ts::setterValueSignature`
 
 ```text
 /**
@@ -593,7 +593,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `setterElemType` (`packages/codegen/src/emitters/factories.ts:725`)
+### `packages/codegen/src/emitters/factories.ts::setterElemType`
 
 ```text
 /**
@@ -612,7 +612,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // would reach into the value's own (non-object) type instead.
 ```
 
-### `emitFieldCarryingFactory` (`packages/codegen/src/emitters/factories.ts:764`)
+### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
 
 ```text
 /**
@@ -785,7 +785,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // else in the emitted source.
 ```
 
-### `childrenSetterRestType` (`packages/codegen/src/emitters/factories.ts:943`)
+### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
 ```text
 /**
@@ -803,7 +803,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `renameUnusedConfigParam` (`packages/codegen/src/emitters/factories.ts:968`)
+### `packages/codegen/src/emitters/factories.ts::renameUnusedConfigParam`
 
 ```text
 /**
@@ -825,7 +825,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // implementation's own header.
 ```
 
-### `emitRefineFormFactory` (`packages/codegen/src/emitters/factories.ts:990`)
+### `packages/codegen/src/emitters/factories.ts::emitRefineFormFactory`
 
 ```text
 /**
@@ -891,7 +891,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // alias lines are prepended (the rename inspects lines[0] as the header).
 ```
 
-### `resolveRefineFormConfigOptional` (`packages/codegen/src/emitters/factories.ts:1088`)
+### `packages/codegen/src/emitters/factories.ts::resolveRefineFormConfigOptional`
 
 ```text
 /**
@@ -901,7 +901,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveConfigOptional` (`packages/codegen/src/emitters/factories.ts:1104`)
+### `packages/codegen/src/emitters/factories.ts::resolveConfigOptional`
 
 ```text
 /**
@@ -918,7 +918,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveConfigType` (`packages/codegen/src/emitters/factories.ts:1122`)
+### `packages/codegen/src/emitters/factories.ts::resolveConfigType`
 
 ```text
 /**
@@ -942,7 +942,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolvePolymorphFormVariantName` (`packages/codegen/src/emitters/factories.ts:1146`)
+### `packages/codegen/src/emitters/factories.ts::resolvePolymorphFormVariantName`
 
 ```text
 /**
@@ -966,7 +966,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveContainerElementType` (`packages/codegen/src/emitters/factories.ts:1181`)
+### `packages/codegen/src/emitters/factories.ts::resolveContainerElementType`
 
 ```text
 /**
@@ -982,7 +982,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitSeparatedListFactory` (`packages/codegen/src/emitters/factories.ts:1202`)
+### `packages/codegen/src/emitters/factories.ts::emitSeparatedListFactory`
 
 ```text
 /**
@@ -1116,7 +1116,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // off `rule.type`, never off the derived value count.
 ```
 
-### `stripUselessEscapes` (`packages/codegen/src/emitters/factories.ts:1415`)
+### `packages/codegen/src/emitters/factories.ts::stripUselessEscapes`
 
 ```text
 /**
@@ -1177,7 +1177,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // otherwise this function wouldn't have been called).
 ```
 
-### `buildSupertypeByKey` (`packages/codegen/src/emitters/from.ts:66`)
+### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
 ```text
 /**
@@ -1209,7 +1209,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `buildKindInterner` (`packages/codegen/src/emitters/from.ts:101`)
+### `packages/codegen/src/emitters/from.ts::buildKindInterner`
 
 ```text
 /**
@@ -1228,7 +1228,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitNamespaceImports` (`packages/codegen/src/emitters/from.ts:145`)
+### `packages/codegen/src/emitters/from.ts::emitNamespaceImports`
 
 ```text
 /**
@@ -1262,7 +1262,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // guard depends on per-kind emission decisions made after this preamble.
 ```
 
-### `emitFromFieldInputType` (`packages/codegen/src/emitters/from.ts:169`)
+### `packages/codegen/src/emitters/from.ts::emitFromFieldInputType`
 
 ```text
 /**
@@ -1287,7 +1287,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `withNamespaceProps` (`packages/codegen/src/emitters/from.ts:198`)
+### `packages/codegen/src/emitters/from.ts::withNamespaceProps`
 
 ```text
 /**
@@ -1371,7 +1371,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (TS7056); typeof references keep the .d.ts one line per member.
 ```
 
-### `emitFromMapDeclaration` (`packages/codegen/src/emitters/from.ts:195`)
+### `packages/codegen/src/emitters/from.ts::emitFromMapDeclaration`
 
 ```text
 /**
@@ -1409,7 +1409,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // top-of-module literal must reference the hoisted $impl declaration.
 ```
 
-### `emitInternedKindTable` (`packages/codegen/src/emitters/from.ts:235`)
+### `packages/codegen/src/emitters/from.ts::emitInternedKindTable`
 
 ```text
 /**
@@ -1423,7 +1423,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `leaf` (`packages/codegen/src/emitters/from.ts:268`)
+### `packages/codegen/src/emitters/from.ts::leaf`
 
 ```text
 /**
@@ -1431,7 +1431,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `branch` (`packages/codegen/src/emitters/from.ts:295`)
+### `packages/codegen/src/emitters/from.ts::branch`
 
 ```text
 /**
@@ -1440,7 +1440,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `separatedList` (`packages/codegen/src/emitters/from.ts:309`)
+### `packages/codegen/src/emitters/from.ts::separatedList`
 
 ```text
 /**
@@ -1449,7 +1449,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `buildBranchSignatureParts` (`packages/codegen/src/emitters/from.ts:341`)
+### `packages/codegen/src/emitters/from.ts::buildBranchSignatureParts`
 
 ```text
 /**
@@ -1458,7 +1458,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `canDefaultToEmpty` (`packages/codegen/src/emitters/from.ts:364`)
+### `packages/codegen/src/emitters/from.ts::canDefaultToEmpty`
 
 ```text
 /**
@@ -1505,7 +1505,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // 'separatedList' excluded — see this function's doc comment above.
 ```
 
-### `emitBranchFrom` (`packages/codegen/src/emitters/from.ts:420`)
+### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
 ```text
 /**
@@ -1649,7 +1649,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // structural overlap (children + leaf shape) is enough at runtime.
 ```
 
-### `containerTypeCheck` (`packages/codegen/src/emitters/from.ts:553`)
+### `packages/codegen/src/emitters/from.ts::containerTypeCheck`
 
 ```text
 /**
@@ -1669,7 +1669,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitRestParamFromResolver` (`packages/codegen/src/emitters/from.ts:574`)
+### `packages/codegen/src/emitters/from.ts::emitRestParamFromResolver`
 
 ```text
 /**
@@ -1745,7 +1745,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // boundary cast.
 ```
 
-### `emitRepeatedContainerFrom` (`packages/codegen/src/emitters/from.ts:659`)
+### `packages/codegen/src/emitters/from.ts::emitRepeatedContainerFrom`
 
 ```text
 /**
@@ -1783,7 +1783,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // element. Route through unknown.
 ```
 
-### `emitSingularContainerFrom` (`packages/codegen/src/emitters/from.ts:703`)
+### `packages/codegen/src/emitters/from.ts::emitSingularContainerFrom`
 
 ```text
 /**
@@ -1843,7 +1843,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // cast would force the LAST overload — the forwarding-args form).
 ```
 
-### `emitSeparatedListFrom` (`packages/codegen/src/emitters/from.ts:795`)
+### `packages/codegen/src/emitters/from.ts::emitSeparatedListFrom`
 
 ```text
 /**
@@ -1965,7 +1965,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // narrow with the same member list the option type is built from.
 ```
 
-### `resolveFieldFromTypedInput` (`packages/codegen/src/emitters/from.ts:977`)
+### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
 
 ```text
 /**
@@ -1978,7 +1978,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `expandAndDedupeContentTypes` (`packages/codegen/src/emitters/from.ts:1013`)
+### `packages/codegen/src/emitters/from.ts::expandAndDedupeContentTypes`
 
 ```text
 /**
@@ -2011,7 +2011,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // names. Name key for stamp-less kinds (incl. supertype expansions).
 ```
 
-### `classifyKindsForResolver` (`packages/codegen/src/emitters/from.ts:1059`)
+### `packages/codegen/src/emitters/from.ts::classifyKindsForResolver`
 
 ```text
 /**
@@ -2052,7 +2052,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // dispatch — see isSlotBearingCompound's doc comment (shared.ts).
 ```
 
-### `buildSingleKindFastPath` (`packages/codegen/src/emitters/from.ts:1113`)
+### `packages/codegen/src/emitters/from.ts::buildSingleKindFastPath`
 
 ```text
 /**
@@ -2090,7 +2090,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
 ```
 
-### `altKindDiscriminants` (`packages/codegen/src/emitters/from.ts:1165`)
+### `packages/codegen/src/emitters/from.ts::altKindDiscriminants`
 
 ```text
 /**
@@ -2104,7 +2104,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildInternedArrayResolverCall` (`packages/codegen/src/emitters/from.ts:1192`)
+### `packages/codegen/src/emitters/from.ts::buildInternedArrayResolverCall`
 
 ```text
 /**
@@ -2135,7 +2135,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // generic helpers, so call sites that have field metadata provide it.
 ```
 
-### `keywordPresenceResolverCall` (`packages/codegen/src/emitters/from.ts:1293`)
+### `packages/codegen/src/emitters/from.ts::keywordPresenceResolverCall`
 
 ```text
 /**
@@ -2160,7 +2160,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // bitflag — pass through; the factory handles number expansion via _bf.
 ```
 
-### `buildLeafRegistryEntries` (`packages/codegen/src/emitters/from.ts:1315`)
+### `packages/codegen/src/emitters/from.ts::buildLeafRegistryEntries`
 
 ```text
 /**
@@ -2200,7 +2200,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // signature stays uniform.
 ```
 
-### `emitResolveByKindHelper` (`packages/codegen/src/emitters/from.ts:1357`)
+### `packages/codegen/src/emitters/from.ts::emitResolveByKindHelper`
 
 ```text
 /**
@@ -2226,7 +2226,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // narrow the string parameter without an unchecked cast.
 ```
 
-### `resolveScalarParamName` (`packages/codegen/src/emitters/from.ts:1388`)
+### `packages/codegen/src/emitters/from.ts::resolveScalarParamName`
 
 ```text
 /**
@@ -2246,7 +2246,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitResolveOneHelper` (`packages/codegen/src/emitters/from.ts:1407`)
+### `packages/codegen/src/emitters/from.ts::emitResolveOneHelper`
 
 ```text
 /**
@@ -2288,7 +2288,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // deliberately rely on scalar passthrough to coerceKindEnumStorage.
 ```
 
-### `emitAssertNonEmptyHelper` (`packages/codegen/src/emitters/from.ts:1468`)
+### `packages/codegen/src/emitters/from.ts::emitAssertNonEmptyHelper`
 
 ```text
 /**
@@ -2306,7 +2306,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitRequireFieldHelper` (`packages/codegen/src/emitters/from.ts:1492`)
+### `packages/codegen/src/emitters/from.ts::emitRequireFieldHelper`
 
 ```text
 /**
@@ -2324,7 +2324,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectWrapChildrenEntries` (`packages/codegen/src/emitters/from.ts:1525`)
+### `packages/codegen/src/emitters/from.ts::collectWrapChildrenEntries`
 
 ```text
 /**
@@ -2372,7 +2372,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `classifyFactoryShape`'s label for the shape itself.
 ```
 
-### `emitWrapWithChildrenTable` (`packages/codegen/src/emitters/from.ts:1578`)
+### `packages/codegen/src/emitters/from.ts::emitWrapWithChildrenTable`
 
 ```text
 /**
@@ -2416,7 +2416,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // options-leading overload, not the rest tuple).
 ```
 
-### `bundleExpr` (`packages/codegen/src/emitters/ir.ts:270`)
+### `packages/codegen/src/emitters/ir.ts::bundleExpr`
 
 ```text
 /**
@@ -2427,7 +2427,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `groupNameFor` (`packages/codegen/src/emitters/ir.ts:298`)
+### `packages/codegen/src/emitters/ir.ts::groupNameFor`
 
 ```text
 /**
@@ -2438,7 +2438,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `memberKeyFor` (`packages/codegen/src/emitters/ir.ts:309`)
+### `packages/codegen/src/emitters/ir.ts::memberKeyFor`
 
 ```text
 /**
@@ -2480,7 +2480,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // A member that reduces to the group's own name would read as a stutter.
 ```
 
-### `resolveRoleNodes` (`packages/codegen/src/emitters/ir.ts:348`)
+### `packages/codegen/src/emitters/ir.ts::resolveRoleNodes`
 
 ```text
 /**
@@ -2500,7 +2500,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `isLeafFactory` (`packages/codegen/src/emitters/ir.ts:371`)
+### `packages/codegen/src/emitters/ir.ts::isLeafFactory`
 
 ```text
 /**
@@ -2509,7 +2509,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `returnTypeExpr` (`packages/codegen/src/emitters/ir.ts:379`)
+### `packages/codegen/src/emitters/ir.ts::returnTypeExpr`
 
 ```text
 /**
@@ -2518,7 +2518,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromNamespace` (`packages/codegen/src/emitters/ir.ts:387`)
+### `packages/codegen/src/emitters/ir.ts::emitFromNamespace`
 
 ```text
 /**
@@ -2533,7 +2533,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromBoolean` (`packages/codegen/src/emitters/ir.ts:419`)
+### `packages/codegen/src/emitters/ir.ts::emitFromBoolean`
 
 ```text
 /**
@@ -2545,7 +2545,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromNumber` (`packages/codegen/src/emitters/ir.ts:459`)
+### `packages/codegen/src/emitters/ir.ts::emitFromNumber`
 
 ```text
 /**
@@ -2554,7 +2554,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromString` (`packages/codegen/src/emitters/ir.ts:502`)
+### `packages/codegen/src/emitters/ir.ts::emitFromString`
 
 ```text
 /**
@@ -2571,7 +2571,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromComment` (`packages/codegen/src/emitters/ir.ts:546`)
+### `packages/codegen/src/emitters/ir.ts::emitFromComment`
 
 ```text
 /**
@@ -2581,7 +2581,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromType` (`packages/codegen/src/emitters/ir.ts:601`)
+### `packages/codegen/src/emitters/ir.ts::emitFromType`
 
 ```text
 /**
@@ -2591,7 +2591,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromIdentifier` (`packages/codegen/src/emitters/ir.ts:649`)
+### `packages/codegen/src/emitters/ir.ts::emitFromIdentifier`
 
 ```text
 /**
@@ -2603,7 +2603,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `emitFromAliases` (`packages/codegen/src/emitters/ir.ts:671`)
+### `packages/codegen/src/emitters/ir.ts::emitFromAliases`
 
 ```text
 /**
@@ -2613,7 +2613,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `kindIdMemberName` (`packages/codegen/src/emitters/kind-discriminant.ts:52`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::kindIdMemberName`
 
 ```text
 /**
@@ -2639,7 +2639,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   `_Literal`, `_primitive_type` → `_PrimitiveType`. */
 ```
 
-### `collectCatalogKinds` (`packages/codegen/src/emitters/kind-discriminant.ts:75`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::collectCatalogKinds`
 
 ```text
 /**
@@ -2653,7 +2653,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectKindEntries` (`packages/codegen/src/emitters/kind-discriminant.ts:88`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::collectKindEntries`
 
 ```text
 /**
@@ -2682,7 +2682,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 		   second occurrence so the enum compiles. */
 ```
 
-### `findKindEntry` (`packages/codegen/src/emitters/kind-discriminant.ts:129`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::findKindEntry`
 
 ```text
 /**
@@ -2713,7 +2713,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   `_is_not` ← `"is not"`) is reachable only when steps 1-3 all miss. */
 ```
 
-### `findKindEntryForLiteral` (`packages/codegen/src/emitters/kind-discriminant.ts:157`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::findKindEntryForLiteral`
 
 ```text
 /**
@@ -2739,7 +2739,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `hasCatalogEntry` (`packages/codegen/src/emitters/kind-discriminant.ts:186`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::hasCatalogEntry`
 
 ```text
 /**
@@ -2756,7 +2756,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `kindDiscriminantExpr` (`packages/codegen/src/emitters/kind-discriminant.ts:203`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExpr`
 
 ```text
 /**
@@ -2779,7 +2779,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `kindDiscriminantExprForId` (`packages/codegen/src/emitters/kind-discriminant.ts:247`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExprForId`
 
 ```text
 /**
@@ -2792,7 +2792,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `toIdMap` (`packages/codegen/src/emitters/kind-discriminant.ts:274`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::toIdMap`
 
 ```text
 /**
@@ -2805,7 +2805,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `toScreamingSnakeCase` (`packages/codegen/src/emitters/kind-id-rust.ts:31`)
+### `packages/codegen/src/emitters/kind-id-rust.ts::toScreamingSnakeCase`
 
 ```text
 /**
@@ -2851,7 +2851,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // remove leading underscore added by replace
 ```
 
-### `emitKindIdRust` (`packages/codegen/src/emitters/kind-id-rust.ts:76`)
+### `packages/codegen/src/emitters/kind-id-rust.ts::emitKindIdRust`
 
 ```text
 /**
@@ -2888,7 +2888,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // otherwise fall back to the canonical kind string.
 ```
 
-### `extractElementKinds` (`packages/codegen/src/emitters/node-model.ts:416`)
+### `packages/codegen/src/emitters/node-model.ts::extractElementKinds`
 
 ```text
 /**
@@ -2906,7 +2906,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // directly on whatever leaf wrapper-deletion left in place.
 ```
 
-### `collectRefineKindInfos` (`packages/codegen/src/emitters/refine-emit.ts:39`)
+### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
 ```text
 /**
@@ -2925,7 +2925,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `pascalCase` (`packages/codegen/src/emitters/refine-emit.ts:71`)
+### `packages/codegen/src/emitters/refine-emit.ts::pascalCase`
 
 ```text
 /**
@@ -2934,7 +2934,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `camelCase` (`packages/codegen/src/emitters/refine-emit.ts:83`)
+### `packages/codegen/src/emitters/refine-emit.ts::camelCase`
 
 ```text
 /**
@@ -2943,7 +2943,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `refineFormTypeName` (`packages/codegen/src/emitters/refine-emit.ts:100`)
+### `packages/codegen/src/emitters/refine-emit.ts::refineFormTypeName`
 
 ```text
 /**
@@ -2952,7 +2952,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `refineFormFactoryName` (`packages/codegen/src/emitters/refine-emit.ts:108`)
+### `packages/codegen/src/emitters/refine-emit.ts::refineFormFactoryName`
 
 ```text
 /**
@@ -2961,7 +2961,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runRenderModuleEmitter` (`packages/codegen/src/emitters/render-module-runner.ts:24`)
+### `packages/codegen/src/emitters/render-module-runner.ts::runRenderModuleEmitter`
 
 ```text
 /**
@@ -2979,7 +2979,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // isSlotBearingCompound's doc comment (shared.ts, emitters).
 ```
 
-### `rustFieldIdent` (`packages/codegen/src/emitters/render-module.ts:395`)
+### `packages/codegen/src/emitters/render-module.ts::rustFieldIdent`
 
 ```text
 /** Rust field identifier mapping for generated render/transport structs.
@@ -2988,7 +2988,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  `crate_`, etc.) across the Rust render module. */
 ```
 
-### `structNameFor` (`packages/codegen/src/emitters/render-module.ts:438`)
+### `packages/codegen/src/emitters/render-module.ts::structNameFor`
 
 ```text
 /** Struct name: PascalCase(kind). Mirrors the AssembledNode.typeName
@@ -3000,9 +3000,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  to a pascal conversion for bare kinds. */
 ```
 
-### `build
+### `packages/codegen/src/emitters/render-module.ts::build
 
-Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
+Surface`
 
 ```text
 /**
@@ -3015,7 +3015,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `slotFieldType` (`packages/codegen/src/emitters/render-module.ts:854`)
+### `packages/codegen/src/emitters/render-module.ts::slotFieldType`
 
 ```text
 /**
@@ -3047,7 +3047,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // scalar OR field-view-single, non-multiple
 ```
 
-### `classifySlotForEmit` (`packages/codegen/src/emitters/render-module.ts:943`)
+### `packages/codegen/src/emitters/render-module.ts::classifySlotForEmit`
 
 ```text
 /**
@@ -3105,7 +3105,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // `heterogeneous`: pass through unchanged.
 ```
 
-### `buildSlotWriteCall` (`packages/codegen/src/emitters/render-module.ts:989`)
+### `packages/codegen/src/emitters/render-module.ts::buildSlotWriteCall`
 
 ```text
 /**
@@ -3129,7 +3129,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderTypedDispatch` (`packages/codegen/src/emitters/render-module.ts:1017`)
+### `packages/codegen/src/emitters/render-module.ts::renderTypedDispatch`
 
 ```text
 /**
@@ -3249,7 +3249,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Literal unit variant — static text known at codegen time; write directly.
 ```
 
-### `renderTypedKindFn` (`packages/codegen/src/emitters/render-module.ts:1177`)
+### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
 
 ```text
 /**
@@ -3275,7 +3275,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // No template for this kind — fall back to joining children/text.
 ```
 
-### `renderTypedBranchFallbackFn` (`packages/codegen/src/emitters/render-module.ts:1215`)
+### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFallbackFn`
 
 ```text
 /**
@@ -3292,7 +3292,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // No template — render each slot in declaration order.
 ```
 
-### `renderTypedLeafFn` (`packages/codegen/src/emitters/render-module.ts:1272`)
+### `packages/codegen/src/emitters/render-module.ts::renderTypedLeafFn`
 
 ```text
 /**
@@ -3316,7 +3316,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // normally before the mark applies to the token text itself.
 ```
 
-### `buildFieldKindsByName` (`packages/codegen/src/emitters/render-module.ts:1295`)
+### `packages/codegen/src/emitters/render-module.ts::buildFieldKindsByName`
 
 ```text
 /**
@@ -3327,13 +3327,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `buildFieldMixedByName` (`packages/codegen/src/emitters/render-module.ts:1309`)
+### `packages/codegen/src/emitters/render-module.ts::buildFieldMixedByName`
 
 ```text
 /** Returns the set of field names whose slots contain mixed named+anonymous content. */
 ```
 
-### `renderTypedBranchFn` (`packages/codegen/src/emitters/render-module.ts:1320`)
+### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFn`
 
 ```text
 /**
@@ -3356,7 +3356,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // unnamed slots are symmetric (cleanup-rules §E1).
 ```
 
-### `emitIterCollectBuffer` (`packages/codegen/src/emitters/render-module.ts:1375`)
+### `packages/codegen/src/emitters/render-module.ts::emitIterCollectBuffer`
 
 ```text
 /**
@@ -3370,7 +3370,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitListSlotBuffer` (`packages/codegen/src/emitters/render-module.ts:1394`)
+### `packages/codegen/src/emitters/render-module.ts::emitListSlotBuffer`
 
 ```text
 /**
@@ -3398,7 +3398,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // around it (`[a, , b]` reproduces its bytes).
 ```
 
-### `buildSeparatorKindMatchLines` (`packages/codegen/src/emitters/render-module.ts:1421`)
+### `packages/codegen/src/emitters/render-module.ts::buildSeparatorKindMatchLines`
 
 ```text
 /**
@@ -3423,7 +3423,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `buildTypedTemplateBody` (`packages/codegen/src/emitters/render-module.ts:1462`)
+### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
 ```text
 /**
@@ -3746,7 +3746,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Concrete / supertype / per-slot enum — Rust auto-coerces &T.
 ```
 
-### `emitHashFiles` (`packages/codegen/src/emitters/render-module.ts:1845`)
+### `packages/codegen/src/emitters/render-module.ts::emitHashFiles`
 
 ```text
 /**
@@ -3763,7 +3763,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ----------------------------------------------------------------------
 ```
 
-### `emitRenderModule` (`packages/codegen/src/emitters/render-module.ts:1871`)
+### `packages/codegen/src/emitters/render-module.ts::emitRenderModule`
 
 ```text
 /**
@@ -3813,7 +3813,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // typed dispatch + transport bridge helpers.
 ```
 
-### `pruneUnreferencedBridges` (`packages/codegen/src/emitters/render-module.ts:2059`)
+### `packages/codegen/src/emitters/render-module.ts::pruneUnreferencedBridges`
 
 ```text
 /**
@@ -3831,7 +3831,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // swallow the trailing blank line
 ```
 
-### `commonRustUseImports` (`packages/codegen/src/emitters/render-module.ts:2093`)
+### `packages/codegen/src/emitters/render-module.ts::commonRustUseImports`
 
 ```text
 /**
@@ -3842,7 +3842,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `filtersModule` (`packages/codegen/src/emitters/render-module.ts:2121`)
+### `packages/codegen/src/emitters/render-module.ts::filtersModule`
 
 ```text
 /**
@@ -3851,7 +3851,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectUsedSupertypeNames` (`packages/codegen/src/emitters/render-module.ts:2193`)
+### `packages/codegen/src/emitters/render-module.ts::collectUsedSupertypeNames`
 
 ```text
 /**
@@ -3872,7 +3872,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // then KeywordIdentifierTransport must also be emitted. Expand to fixed point.
 ```
 
-### `buildKindIdByKind` (`packages/codegen/src/emitters/render-module.ts:2242`)
+### `packages/codegen/src/emitters/render-module.ts::buildKindIdByKind`
 
 ```text
 /**
@@ -3882,7 +3882,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `enumMemberAcceptedIds` (`packages/codegen/src/emitters/render-module.ts:2258`)
+### `packages/codegen/src/emitters/render-module.ts::enumMemberAcceptedIds`
 
 ```text
 /**
@@ -3896,7 +3896,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderAnyTransportWithStringTag` (`packages/codegen/src/emitters/render-module.ts:2271`)
+### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithStringTag`
 
 ```text
 /**
@@ -3905,7 +3905,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `nodeTransportHasRequiredField` (`packages/codegen/src/emitters/render-module.ts:2325`)
+### `packages/codegen/src/emitters/render-module.ts::nodeTransportHasRequiredField`
 
 ```text
 /**
@@ -3971,7 +3971,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // slot is required (non-optional). All-optional nodes are the greedy ones.
 ```
 
-### `isLeafLikeNode` (`packages/codegen/src/emitters/render-module.ts:2362`)
+### `packages/codegen/src/emitters/render-module.ts::isLeafLikeNode`
 
 ```text
 /**
@@ -3996,7 +3996,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderTransportValueTypeHelper` (`packages/codegen/src/emitters/render-module.ts:2405`)
+### `packages/codegen/src/emitters/render-module.ts::renderTransportValueTypeHelper`
 
 ```text
 /**
@@ -4015,7 +4015,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitTransportEnumFromNapiValueBody` (`packages/codegen/src/emitters/render-module.ts:2442`)
+### `packages/codegen/src/emitters/render-module.ts::emitTransportEnumFromNapiValueBody`
 
 ```text
 /**
@@ -4052,7 +4052,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 //     `SlotValue` carrier takes it as verbatim text instead.
 ```
 
-### `emitAliasUnwrapRecurseArm` (`packages/codegen/src/emitters/render-module.ts:2502`)
+### `packages/codegen/src/emitters/render-module.ts::emitAliasUnwrapRecurseArm`
 
 ```text
 /**
@@ -4093,7 +4093,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // its own $text either way), but the enum's membership check is exact.
 ```
 
-### `emitSupertypeRenderHelper` (`packages/codegen/src/emitters/render-module.ts:2807`)
+### `packages/codegen/src/emitters/render-module.ts::emitSupertypeRenderHelper`
 
 ```text
 /**
@@ -4118,7 +4118,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // subtype's own render_with_trivia!-wrapped impl fires.
 ```
 
-### `admitsVerbatimCollapse` (`packages/codegen/src/emitters/render-module.ts:2863`)
+### `packages/codegen/src/emitters/render-module.ts::admitsVerbatimCollapse`
 
 ```text
 /**
@@ -4157,7 +4157,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `hasAnyConcreteChildKind` (`packages/codegen/src/emitters/render-module.ts:2992`)
+### `packages/codegen/src/emitters/render-module.ts::hasAnyConcreteChildKind`
 
 ```text
 /**
@@ -4168,7 +4168,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectPerSlotChildEnums` (`packages/codegen/src/emitters/render-module.ts:3002`)
+### `packages/codegen/src/emitters/render-module.ts::collectPerSlotChildEnums`
 
 ```text
 /**
@@ -4243,7 +4243,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Symmetric — named and unnamed slots both flow through `consider`.
 ```
 
-### `emitPerSlotChildEnum` (`packages/codegen/src/emitters/render-module.ts:3080`)
+### `packages/codegen/src/emitters/render-module.ts::emitPerSlotChildEnum`
 
 ```text
 /**
@@ -4385,7 +4385,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // their kind.
 ```
 
-### `renderAnyTransportWithNapiFromValue` (`packages/codegen/src/emitters/render-module.ts:3338`)
+### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
 ```text
 /**
@@ -4493,7 +4493,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // napi-rs does not provide a blanket impl for Box<T>.
 ```
 
-### `renderGrammarRenderable` (`packages/codegen/src/emitters/render-module.ts:3515`)
+### `packages/codegen/src/emitters/render-module.ts::renderGrammarRenderable`
 
 ```text
 /**
@@ -4511,7 +4511,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // keep FQ — inside local enum, not in scope
 ```
 
-### `renderLiteralTransportStruct` (`packages/codegen/src/emitters/render-module.ts:3572`)
+### `packages/codegen/src/emitters/render-module.ts::renderLiteralTransportStruct`
 
 ```text
 /**
@@ -4525,7 +4525,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitTriviaKindIdArm` (`packages/codegen/src/emitters/render-module.ts:3213`)
+### `packages/codegen/src/emitters/render-module.ts::emitTriviaKindIdArm`
 
 ```text
 /**
@@ -4545,7 +4545,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderTriviaTransportSupport` (`packages/codegen/src/emitters/render-module.ts:3228`)
+### `packages/codegen/src/emitters/render-module.ts::renderTriviaTransportSupport`
 
 ```text
 /**
@@ -4572,7 +4572,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderVerbatimTransportStruct` (`packages/codegen/src/emitters/render-module.ts:3585`)
+### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransportStruct`
 
 ```text
 /**
@@ -4594,7 +4594,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `declareLeafTriviaCapture` (`packages/codegen/src/emitters/render-module.ts:3611`)
+### `packages/codegen/src/emitters/render-module.ts::declareLeafTriviaCapture`
 
 ```text
 /**
@@ -4607,7 +4607,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderLeafTransportNapiImpls` (`packages/codegen/src/emitters/render-module.ts:3836`)
+### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportNapiImpls`
 
 ```text
 /**
@@ -4666,7 +4666,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // fields embed this leaf transport type.
 ```
 
-### `renderTransportMetadataFields` (`packages/codegen/src/emitters/render-module.ts:4088`)
+### `packages/codegen/src/emitters/render-module.ts::renderTransportMetadataFields`
 
 ```text
 /**
@@ -4690,7 +4690,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // remaining fields: span, nodeHandle, childIndex, triviaData
 ```
 
-### `renderLeafTransportPlainFields` (`packages/codegen/src/emitters/render-module.ts:4122`)
+### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
 
 ```text
 /**
@@ -4704,7 +4704,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `rustTransportSlotType` (`packages/codegen/src/emitters/render-module.ts:4190`)
+### `packages/codegen/src/emitters/render-module.ts::rustTransportSlotType`
 
 ```text
 /**
@@ -4797,7 +4797,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // this slot. Fall back to AnyTransport.
 ```
 
-### `renderBoxedEnumNapiImpls` (`packages/codegen/src/emitters/render-module.ts:4312`)
+### `packages/codegen/src/emitters/render-module.ts::renderBoxedEnumNapiImpls`
 
 ```text
 /**
@@ -4812,7 +4812,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `concreteTransportTypeName` (`packages/codegen/src/emitters/render-module.ts:4347`)
+### `packages/codegen/src/emitters/render-module.ts::concreteTransportTypeName`
 
 ```text
 /**
@@ -4838,7 +4838,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Unknown kind — conservative fallback.
 ```
 
-### `perSlotEnumName` (`packages/codegen/src/emitters/render-module.ts:4372`)
+### `packages/codegen/src/emitters/render-module.ts::perSlotEnumName`
 
 ```text
 /**
@@ -4862,7 +4862,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // PascalCase them so the resulting enum name reads correctly.
 ```
 
-### `rustTransportStructName` (`packages/codegen/src/emitters/render-module.ts:4394`)
+### `packages/codegen/src/emitters/render-module.ts::rustTransportStructName`
 
 ```text
 /**
@@ -4873,7 +4873,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `literalToVariantName` (`packages/codegen/src/emitters/render-module.ts:4647`)
+### `packages/codegen/src/emitters/render-module.ts::literalToVariantName`
 
 ```text
 /**
@@ -4900,7 +4900,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Fallback: encode each code-point as hex with a leading `V` prefix.
 ```
 
-### `enumTypeName` (`packages/codegen/src/emitters/render-module.ts:4688`)
+### `packages/codegen/src/emitters/render-module.ts::enumTypeName`
 
 ```text
 /**
@@ -4912,7 +4912,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `renderEnumType` (`packages/codegen/src/emitters/render-module.ts:4699`)
+### `packages/codegen/src/emitters/render-module.ts::renderEnumType`
 
 ```text
 /**
@@ -4991,7 +4991,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // --- impl RenderableTransport ---
 ```
 
-### `isSlotBearingCompound` (`packages/codegen/src/emitters/shared.ts:33`)
+### `packages/codegen/src/emitters/shared.ts::isSlotBearingCompound`
 
 ```text
 /**
@@ -5007,7 +5007,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `canonicalSeparatedListField` (`packages/codegen/src/emitters/shared.ts:50`)
+### `packages/codegen/src/emitters/shared.ts::canonicalSeparatedListField`
 
 ```text
 /**
@@ -5028,7 +5028,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectAliasSourceKinds` (`packages/codegen/src/emitters/shared.ts:94`)
+### `packages/codegen/src/emitters/shared.ts::collectAliasSourceKinds`
 
 ```text
 /**
@@ -5040,7 +5040,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectAliasTargetToSourceMap` (`packages/codegen/src/emitters/shared.ts:115`)
+### `packages/codegen/src/emitters/shared.ts::collectAliasTargetToSourceMap`
 
 ```text
 /**
@@ -5075,7 +5075,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // leave its own wrap dispatch in charge.
 ```
 
-### `slotKindNames` (`packages/codegen/src/emitters/shared.ts:174`)
+### `packages/codegen/src/emitters/shared.ts::slotKindNames`
 
 ```text
 /**
@@ -5085,7 +5085,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `slotLiteralValues` (`packages/codegen/src/emitters/shared.ts:189`)
+### `packages/codegen/src/emitters/shared.ts::slotLiteralValues`
 
 ```text
 /**
@@ -5093,13 +5093,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `isValidIdent` (`packages/codegen/src/emitters/shared.ts:201`)
+### `packages/codegen/src/emitters/shared.ts::isValidIdent`
 
 ```text
 /** True when `s` is a valid unquoted TypeScript identifier. */
 ```
 
-### `_identOrQuoted` (`packages/codegen/src/emitters/shared.ts:206`)
+### `packages/codegen/src/emitters/shared.ts::_identOrQuoted`
 
 ```text
 /** If `name` is a valid identifier, return `name`. Otherwise return its
@@ -5108,7 +5108,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  * error. */
 ```
 
-### `resolveEffectiveLiteral` (`packages/codegen/src/emitters/shared.ts:214`)
+### `packages/codegen/src/emitters/shared.ts::resolveEffectiveLiteral`
 
 ```text
 /**
@@ -5139,7 +5139,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `isAutoStampField` (`packages/codegen/src/emitters/shared.ts:277`)
+### `packages/codegen/src/emitters/shared.ts::isAutoStampField`
 
 ```text
 /**
@@ -5148,7 +5148,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `resolveHiddenKeywordLiteral` (`packages/codegen/src/emitters/shared.ts:285`)
+### `packages/codegen/src/emitters/shared.ts::resolveHiddenKeywordLiteral`
 
 ```text
 /**
@@ -5178,7 +5178,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `isHiddenInfraSlot` (`packages/codegen/src/emitters/shared.ts:329`)
+### `packages/codegen/src/emitters/shared.ts::isHiddenInfraSlot`
 
 ```text
 /**
@@ -5189,7 +5189,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `stampExpressionFor` (`packages/codegen/src/emitters/shared.ts:355`)
+### `packages/codegen/src/emitters/shared.ts::stampExpressionFor`
 
 ```text
 /**
@@ -5214,7 +5214,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `fieldTypeComponents` (`packages/codegen/src/emitters/shared.ts:455`)
+### `packages/codegen/src/emitters/shared.ts::fieldTypeComponents`
 
 ```text
 /**
@@ -5255,7 +5255,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // have no parser symbol of their own).
 ```
 
-### `childTypeComponents` (`packages/codegen/src/emitters/shared.ts:497`)
+### `packages/codegen/src/emitters/shared.ts::childTypeComponents`
 
 ```text
 /**
@@ -5280,7 +5280,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // would make those grammar-valid members unconstructible type-safely.
 ```
 
-### `resolveEntryLiteral` (`packages/codegen/src/emitters/shared.ts:531`)
+### `packages/codegen/src/emitters/shared.ts::resolveEntryLiteral`
 
 ```text
 /**
@@ -5316,7 +5316,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // returns for `_`-prefixed kinds).
 ```
 
-### `keywordPresenceKind` (`packages/codegen/src/emitters/shared.ts:560`)
+### `packages/codegen/src/emitters/shared.ts::keywordPresenceKind`
 
 ```text
 /**
@@ -5364,7 +5364,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // degenerate repeat(single-literal)
 ```
 
-### `keywordPresenceValue` (`packages/codegen/src/emitters/shared.ts:612`)
+### `packages/codegen/src/emitters/shared.ts::keywordPresenceValue`
 
 ```text
 /**
@@ -5380,7 +5380,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // repeat(single-literal): the one distinct literal.
 ```
 
-### `keywordPresenceValues` (`packages/codegen/src/emitters/shared.ts:627`)
+### `packages/codegen/src/emitters/shared.ts::keywordPresenceValues`
 
 ```text
 /**
@@ -5391,7 +5391,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `keywordPresenceIsNonEmptyRepeat` (`packages/codegen/src/emitters/shared.ts:647`)
+### `packages/codegen/src/emitters/shared.ts::keywordPresenceIsNonEmptyRepeat`
 
 ```text
 /**
@@ -5401,7 +5401,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `classifyPrimitiveField` (`packages/codegen/src/emitters/shared.ts:660`)
+### `packages/codegen/src/emitters/shared.ts::classifyPrimitiveField`
 
 ```text
 /**
@@ -5475,7 +5475,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // hidden kindEnum / bitflag — existing per-slot/AnyTransport path already handles these correctly.
 ```
 
-### `kindEnumTextIdPairs` (`packages/codegen/src/emitters/shared.ts:836`)
+### `packages/codegen/src/emitters/shared.ts::kindEnumTextIdPairs`
 
 ```text
 /**
@@ -5497,7 +5497,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // kindEnumTextMapExpr — see keywordRefWireIdentity.
 ```
 
-### `resolveFieldStorageInfo` (`packages/codegen/src/emitters/shared.ts:876`)
+### `packages/codegen/src/emitters/shared.ts::resolveFieldStorageInfo`
 
 ```text
 /**
@@ -5506,7 +5506,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `classifyBranchSlots` (`packages/codegen/src/emitters/shared.ts:897`)
+### `packages/codegen/src/emitters/shared.ts::classifyBranchSlots`
 
 ```text
 /**
@@ -5533,7 +5533,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `computeSlotClasses` (`packages/codegen/src/emitters/shared.ts:946`)
+### `packages/codegen/src/emitters/shared.ts::computeSlotClasses`
 
 ```text
 /**
@@ -5543,7 +5543,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `resolveSingleFieldFactorySlot` (`packages/codegen/src/emitters/shared.ts:959`)
+### `packages/codegen/src/emitters/shared.ts::resolveSingleFieldFactorySlot`
 
 ```text
 /**
@@ -5566,7 +5566,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // `isWrapChildrenKind` applies for the same reason.
 ```
 
-### `resolveFactoryFieldNames` (`packages/codegen/src/emitters/shared.ts:987`)
+### `packages/codegen/src/emitters/shared.ts::resolveFactoryFieldNames`
 
 ```text
 /**
@@ -5580,7 +5580,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `classifyChildFactorySurface` (`packages/codegen/src/emitters/shared.ts:1009`)
+### `packages/codegen/src/emitters/shared.ts::classifyChildFactorySurface`
 
 ```text
 /**
@@ -5619,7 +5619,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // 'spread' alone.
 ```
 
-### `unnamedChildSlotFacts` (`packages/codegen/src/emitters/shared.ts:1043`)
+### `packages/codegen/src/emitters/shared.ts::unnamedChildSlotFacts`
 
 ```text
 /**
@@ -5643,7 +5643,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `classifyFactoryShape` (`packages/codegen/src/emitters/shared.ts:1068`)
+### `packages/codegen/src/emitters/shared.ts::classifyFactoryShape`
 
 ```text
 /**
@@ -5702,7 +5702,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // one; a determined marker does neither.
 ```
 
-### `wordCharAsciiTable` (`packages/codegen/src/emitters/shared.ts:1245`)
+### `packages/codegen/src/emitters/shared.ts::wordCharAsciiTable`
 
 ```text
 /**
@@ -5719,7 +5719,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `deriveArmNameFromRule` (`packages/codegen/src/emitters/suggested.ts:39`)
+### `packages/codegen/src/emitters/suggested.ts::deriveArmNameFromRule`
 
 ```text
 /**
@@ -5752,7 +5752,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // the caller can rename).
 ```
 
-### `deduplicateArmNames` (`packages/codegen/src/emitters/suggested.ts:77`)
+### `packages/codegen/src/emitters/suggested.ts::deduplicateArmNames`
 
 ```text
 /**
@@ -5767,7 +5767,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `_locateTopLevelChoice` (`packages/codegen/src/emitters/suggested.ts:100`)
+### `packages/codegen/src/emitters/suggested.ts::_locateTopLevelChoice`
 
 ```text
 /**
@@ -5794,7 +5794,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // and the author can optionally drop the outer field wrapper.
 ```
 
-### `findSymbolPosition` (`packages/codegen/src/emitters/suggested.ts:142`)
+### `packages/codegen/src/emitters/suggested.ts::findSymbolPosition`
 
 ```text
 /**
@@ -5806,7 +5806,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `createDeduplicatingEmitter` (`packages/codegen/src/emitters/suggested.ts:665`)
+### `packages/codegen/src/emitters/suggested.ts::createDeduplicatingEmitter`
 
 ```text
 /**
@@ -5821,7 +5821,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `groupInferencesByKind` (`packages/codegen/src/emitters/suggested.ts:690`)
+### `packages/codegen/src/emitters/suggested.ts::groupInferencesByKind`
 
 ```text
 /**
@@ -5832,7 +5832,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `detectGroupCandidates` (`packages/codegen/src/emitters/suggested.ts:719`)
+### `packages/codegen/src/emitters/suggested.ts::detectGroupCandidates`
 
 ```text
 /**
@@ -5843,7 +5843,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitSuggestedGroupsBlock` (`packages/codegen/src/emitters/suggested.ts:867`)
+### `packages/codegen/src/emitters/suggested.ts::emitSuggestedGroupsBlock`
 
 ```text
 /**
@@ -5858,7 +5858,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Group candidates by parent kind for readability.
 ```
 
-### `computeTemplateBundleHash` (`packages/codegen/src/emitters/template-hash.ts:58`)
+### `packages/codegen/src/emitters/template-hash.ts::computeTemplateBundleHash`
 
 ```text
 /**
@@ -5870,7 +5870,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `stringifyRule` (`packages/codegen/src/emitters/templates.ts:170`)
+### `packages/codegen/src/emitters/templates.ts::stringifyRule`
 
 ```text
 /**
@@ -5887,7 +5887,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `firstBoundaryCharOfFragment` (`packages/codegen/src/emitters/templates.ts:397`)
+### `packages/codegen/src/emitters/templates.ts::firstBoundaryCharOfFragment`
 
 ```text
 /**
@@ -5897,7 +5897,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `isTopLevelMultiConditional` (`packages/codegen/src/emitters/templates.ts:424`)
+### `packages/codegen/src/emitters/templates.ts::isTopLevelMultiConditional`
 
 ```text
 /**
@@ -5928,7 +5928,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `_insertAfterTopLevelIfTags` (`packages/codegen/src/emitters/templates.ts:479`)
+### `packages/codegen/src/emitters/templates.ts::_insertAfterTopLevelIfTags`
 
 ```text
 /**
@@ -5937,7 +5937,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `_insertBeforeTopLevelEndifTags` (`packages/codegen/src/emitters/templates.ts:509`)
+### `packages/codegen/src/emitters/templates.ts::_insertBeforeTopLevelEndifTags`
 
 ```text
 /**
@@ -5946,7 +5946,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `lookupSlot` (`packages/codegen/src/emitters/templates.ts:698`)
+### `packages/codegen/src/emitters/templates.ts::lookupSlot`
 
 ```text
 /**
@@ -6019,7 +6019,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // join on `aliasedFrom` instead of the alias's display name.
 ```
 
-### `separatorToString` (`packages/codegen/src/emitters/templates.ts:771`)
+### `packages/codegen/src/emitters/templates.ts::separatorToString`
 
 ```text
 /**
@@ -6043,7 +6043,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `isNonterminalSeparatorRule` (`packages/codegen/src/emitters/templates.ts:797`)
+### `packages/codegen/src/emitters/templates.ts::isNonterminalSeparatorRule`
 
 ```text
 /**
@@ -6059,7 +6059,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `selectJoinFilter` (`packages/codegen/src/emitters/templates.ts:813`)
+### `packages/codegen/src/emitters/templates.ts::selectJoinFilter`
 
 ```text
 /**
@@ -6107,7 +6107,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Also check the AssembledNonterminal's own hasTrailingDelimiter/hasLeadingDelimiter flags.
 ```
 
-### `emitListSlot` (`packages/codegen/src/emitters/templates.ts:876`)
+### `packages/codegen/src/emitters/templates.ts::emitListSlot`
 
 ```text
 /**
@@ -6174,7 +6174,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // text against the separator, which must stay the grammar's own.
 ```
 
-### `emitScalarSlot` (`packages/codegen/src/emitters/templates.ts:934`)
+### `packages/codegen/src/emitters/templates.ts::emitScalarSlot`
 
 ```text
 /**
@@ -6183,7 +6183,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitSlotReference` (`packages/codegen/src/emitters/templates.ts:942`)
+### `packages/codegen/src/emitters/templates.ts::emitSlotReference`
 
 ```text
 /**
@@ -6216,7 +6216,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // this SAME merged slot — emit the reference only once per kind.
 ```
 
-### `emitFieldNameSlot` (`packages/codegen/src/emitters/templates.ts:963`)
+### `packages/codegen/src/emitters/templates.ts::emitFieldNameSlot`
 
 ```text
 /**
@@ -6234,7 +6234,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // reference per kind — see EmitCtx.emittedSlotNames).
 ```
 
-### `emitSymbol` (`packages/codegen/src/emitters/templates.ts:990`)
+### `packages/codegen/src/emitters/templates.ts::emitSymbol`
 
 ```text
 /**
@@ -6473,7 +6473,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Fallback: bare kind-named scalar slot.
 ```
 
-### `pickConditionalKey` (`packages/codegen/src/emitters/templates.ts:1201`)
+### `packages/codegen/src/emitters/templates.ts::pickConditionalKey`
 
 ```text
 /**
@@ -6545,7 +6545,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // A symbol with a slot back-pointer — gate on its kind slot name.
 ```
 
-### `scanArmBody` (`packages/codegen/src/emitters/templates.ts:1252`)
+### `packages/codegen/src/emitters/templates.ts::scanArmBody`
 
 ```text
 /**
@@ -6567,7 +6567,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `assertSlotPreservation` (`packages/codegen/src/emitters/templates.ts:1449`)
+### `packages/codegen/src/emitters/templates.ts::assertSlotPreservation`
 
 ```text
 /**
@@ -6677,7 +6677,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Include slot details for debugging
 ```
 
-### `runTemplateEmitter` (`packages/codegen/src/emitters/templates.ts:1558`)
+### `packages/codegen/src/emitters/templates.ts::runTemplateEmitter`
 
 ```text
 /**
@@ -6720,7 +6720,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // see isSlotBearingCompound's doc comment (shared.ts).
 ```
 
-### `writeJinjaTemplates` (`packages/codegen/src/emitters/templates.ts:1610`)
+### `packages/codegen/src/emitters/templates.ts::writeJinjaTemplates`
 
 ```text
 /**
@@ -6744,7 +6744,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // now, so the sidecar is dead data.
 ```
 
-### `testTypeDiscriminant` (`packages/codegen/src/emitters/test.ts:49`)
+### `packages/codegen/src/emitters/test.ts::testTypeDiscriminant`
 
 ```text
 /**
@@ -6761,7 +6761,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitBranchTest` (`packages/codegen/src/emitters/test.ts:155`)
+### `packages/codegen/src/emitters/test.ts::emitBranchTest`
 
 ```text
 /**
@@ -6791,7 +6791,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 //   output is the correct behavior.
 ```
 
-### `emitSeparatedListTest` (`packages/codegen/src/emitters/test.ts:289`)
+### `packages/codegen/src/emitters/test.ts::emitSeparatedListTest`
 
 ```text
 /**
@@ -6822,7 +6822,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // TS sees a lone `T[]` argument failing to match the first rest slot's `T`.
 ```
 
-### `pickSampleForPattern` (`packages/codegen/src/emitters/test.ts:372`)
+### `packages/codegen/src/emitters/test.ts::pickSampleForPattern`
 
 ```text
 /**
@@ -6841,7 +6841,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // an identifier-ish leaf" to "specific token shapes".
 ```
 
-### `resolveConcreteKind` (`packages/codegen/src/emitters/test.ts:459`)
+### `packages/codegen/src/emitters/test.ts::resolveConcreteKind`
 
 ```text
 /**
@@ -6906,7 +6906,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // (e.g. an entirely TSGrammar-only candidate set).
 ```
 
-### `dummyValueForField` (`packages/codegen/src/emitters/test.ts:538`)
+### `packages/codegen/src/emitters/test.ts::dummyValueForField`
 
 ```text
 /**
@@ -6942,7 +6942,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // numeric discriminant instead in that position.
 ```
 
-### `buildDummyStub` (`packages/codegen/src/emitters/test.ts:598`)
+### `packages/codegen/src/emitters/test.ts::buildDummyStub`
 
 ```text
 /**
@@ -7007,7 +7007,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // `base` always ends in `} as any`; insert before the closing brace.
 ```
 
-### `dummyTextForKind` (`packages/codegen/src/emitters/test.ts:687`)
+### `packages/codegen/src/emitters/test.ts::dummyTextForKind`
 
 ```text
 /**
@@ -7022,7 +7022,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `classifySlot` (`packages/codegen/src/emitters/transport-common.ts:29`)
+### `packages/codegen/src/emitters/transport-common.ts::classifySlot`
 
 ```text
 /**
@@ -7042,7 +7042,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `buildSupertypeTransportSet` (`packages/codegen/src/emitters/transport-common.ts:80`)
+### `packages/codegen/src/emitters/transport-common.ts::buildSupertypeTransportSet`
 
 ```text
 /**
@@ -7053,7 +7053,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `acceptedTransportKinds` (`packages/codegen/src/emitters/transport-common.ts:124`)
+### `packages/codegen/src/emitters/transport-common.ts::acceptedTransportKinds`
 
 ```text
 /**
@@ -7075,7 +7075,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `deriveChildrenKinds` (`packages/codegen/src/emitters/transport-common.ts:168`)
+### `packages/codegen/src/emitters/transport-common.ts::deriveChildrenKinds`
 
 ```text
 /**
@@ -7093,7 +7093,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `kindDiscriminantOrLiteral` (`packages/codegen/src/emitters/types.ts:37`)
+### `packages/codegen/src/emitters/types.ts::kindDiscriminantOrLiteral`
 
 ```text
 /**
@@ -7112,7 +7112,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // annotation stays as a string literal instead of a TSKindId reference.
 ```
 
-### `buildGrammarKeySet` (`packages/codegen/src/emitters/types.ts:373`)
+### `packages/codegen/src/emitters/types.ts::buildGrammarKeySet`
 
 ```text
 /**
@@ -7140,7 +7140,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // No node-types.json available — emit all Tree interfaces as AnyTreeNode.
 ```
 
-### `collectNodesByCategory` (`packages/codegen/src/emitters/types.ts:409`)
+### `packages/codegen/src/emitters/types.ts::collectNodesByCategory`
 
 ```text
 /**
@@ -7182,7 +7182,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // TSKindId or appears in the type emitter's output.
 ```
 
-### `collectAllKinds` (`packages/codegen/src/emitters/types.ts:473`)
+### `packages/codegen/src/emitters/types.ts::collectAllKinds`
 
 ```text
 /**
@@ -7200,7 +7200,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitKindIdEnumAndLookups` (`packages/codegen/src/emitters/types.ts:523`)
+### `packages/codegen/src/emitters/types.ts::emitKindIdEnumAndLookups`
 
 ```text
 /**
@@ -7300,7 +7300,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // `"as_pattern"` shadowing the real `as_pattern` entry.
 ```
 
-### `makeInliningLookupUnion` (`packages/codegen/src/emitters/types.ts:641`)
+### `packages/codegen/src/emitters/types.ts::makeInliningLookupUnion`
 
 ```text
 /**
@@ -7323,7 +7323,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ---------------------------------------------------------------------------
 ```
 
-### `enumMemberDiscriminant` (`packages/codegen/src/emitters/types.ts:661`)
+### `packages/codegen/src/emitters/types.ts::enumMemberDiscriminant`
 
 ```text
 /**
@@ -7364,7 +7364,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // fallback covers nodes constructed without a catalog (fixtures).
 ```
 
-### `emitLeafTerminalAliases` (`packages/codegen/src/emitters/types.ts:704`)
+### `packages/codegen/src/emitters/types.ts::emitLeafTerminalAliases`
 
 ```text
 /**
@@ -7414,7 +7414,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // code mentions `KwAsync` / `KwMove` / `KwOperator` anywhere.
 ```
 
-### `emitTreeInterfaceDeclarations` (`packages/codegen/src/emitters/types.ts:770`)
+### `packages/codegen/src/emitters/types.ts::emitTreeInterfaceDeclarations`
 
 ```text
 /**
@@ -7454,7 +7454,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Skip in lockstep with `emitLeafTerminalAliases`.
 ```
 
-### `emitSupertypeUnionDeclarations` (`packages/codegen/src/emitters/types.ts:831`)
+### `packages/codegen/src/emitters/types.ts::emitSupertypeUnionDeclarations`
 
 ```text
 /**
@@ -7528,7 +7528,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // through generic helpers rather than a flat alias.
 ```
 
-### `collectAndEmitTokenTypeAliases` (`packages/codegen/src/emitters/types.ts:909`)
+### `packages/codegen/src/emitters/types.ts::collectAndEmitTokenTypeAliases`
 
 ```text
 /**
@@ -7575,7 +7575,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // references resolve directly to the literal string.
 ```
 
-### `assertNoCamelCaseCollisions` (`packages/codegen/src/emitters/types.ts:973`)
+### `packages/codegen/src/emitters/types.ts::assertNoCamelCaseCollisions`
 
 ```text
 /**
@@ -7599,7 +7599,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ---------------------------------------------------------------------------
 ```
 
-### `emitNamespaceInterfaceLine` (`packages/codegen/src/emitters/types.ts:1005`)
+### `packages/codegen/src/emitters/types.ts::emitNamespaceInterfaceLine`
 
 ```text
 /**
@@ -7636,7 +7636,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // silently shifted.
 ```
 
-### `emitFieldArrayDeclaration` (`packages/codegen/src/emitters/types.ts:1094`)
+### `packages/codegen/src/emitters/types.ts::emitFieldArrayDeclaration`
 
 ```text
 /**
@@ -7672,7 +7672,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // fields are now declared directly on the interface, not inside $fields: {}.
 ```
 
-### `_fieldTypeParts` (`packages/codegen/src/emitters/types.ts:1128`)
+### `packages/codegen/src/emitters/types.ts::_fieldTypeParts`
 
 ```text
 /**
@@ -7684,7 +7684,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `fieldTypeExpr` (`packages/codegen/src/emitters/types.ts:1148`)
+### `packages/codegen/src/emitters/types.ts::fieldTypeExpr`
 
 ```text
 /**
@@ -7715,7 +7715,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // PascalCase fallback name (bare, no prefix).
 ```
 
-### `stringUnion` (`packages/codegen/src/emitters/types.ts:1188`)
+### `packages/codegen/src/emitters/types.ts::stringUnion`
 
 ```text
 /**
@@ -7735,13 +7735,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `quoteKey` (`packages/codegen/src/emitters/types.ts:1327`)
+### `packages/codegen/src/emitters/types.ts::quoteKey`
 
 ```text
 /** Quote a type/object key if it is not a plain identifier. */
 ```
 
-### `emitRefineFormTreeAliases` (`packages/codegen/src/emitters/types.ts:1336`)
+### `packages/codegen/src/emitters/types.ts::emitRefineFormTreeAliases`
 
 ```text
 /**
@@ -7763,7 +7763,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ---------------------------------------------------------------------------
 ```
 
-### `emitNamespaceSugarBlock` (`packages/codegen/src/emitters/types.ts:1359`)
+### `packages/codegen/src/emitters/types.ts::emitNamespaceSugarBlock`
 
 ```text
 /**
@@ -7790,7 +7790,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // which is the grammar's own spelling and what a reader recognises.
 ```
 
-### `emitRefineFormSubNamespaces` (`packages/codegen/src/emitters/types.ts:1397`)
+### `packages/codegen/src/emitters/types.ts::emitRefineFormSubNamespaces`
 
 ```text
 /**
@@ -7805,7 +7805,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectTypeImports` (`packages/codegen/src/emitters/wrap.ts:96`)
+### `packages/codegen/src/emitters/wrap.ts::collectTypeImports`
 
 ```text
 /**
@@ -7832,7 +7832,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // imports required.
 ```
 
-### `branch` (`packages/codegen/src/emitters/wrap.ts:122`)
+### `packages/codegen/src/emitters/wrap.ts::branch`
 
 ```text
 /**
@@ -7841,7 +7841,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `group` (`packages/codegen/src/emitters/wrap.ts:151`)
+### `packages/codegen/src/emitters/wrap.ts::group`
 
 ```text
 /**
@@ -7850,7 +7850,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `separatedList` (`packages/codegen/src/emitters/wrap.ts:184`)
+### `packages/codegen/src/emitters/wrap.ts::separatedList`
 
 ```text
 /**
@@ -7860,7 +7860,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `buildSupertypeMembersMap` (`packages/codegen/src/emitters/wrap.ts:213`)
+### `packages/codegen/src/emitters/wrap.ts::buildSupertypeMembersMap`
 
 ```text
 /**
@@ -7871,7 +7871,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectConcreteStorageKeys` (`packages/codegen/src/emitters/wrap.ts:429`)
+### `packages/codegen/src/emitters/wrap.ts::collectConcreteStorageKeys`
 
 ```text
 /**
@@ -7926,7 +7926,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // REPLACED base with target, mis-routing the validation-only case.
 ```
 
-### `computeConsumedCandidateKeys` (`packages/codegen/src/emitters/wrap.ts:487`)
+### `packages/codegen/src/emitters/wrap.ts::computeConsumedCandidateKeys`
 
 ```text
 /**
@@ -7940,7 +7940,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectWrapWireKeyTypes` (`packages/codegen/src/emitters/wrap.ts:508`)
+### `packages/codegen/src/emitters/wrap.ts::collectWrapWireKeyTypes`
 
 ```text
 /**
@@ -7989,7 +7989,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // would be narrower than what the runtime actually delivers.
 ```
 
-### `buildWrapParamType` (`packages/codegen/src/emitters/wrap.ts:568`)
+### `packages/codegen/src/emitters/wrap.ts::buildWrapParamType`
 
 ```text
 /**
@@ -8013,7 +8013,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectSeparatorCandidateKindNames` (`packages/codegen/src/emitters/wrap.ts:721`)
+### `packages/codegen/src/emitters/wrap.ts::collectSeparatorCandidateKindNames`
 
 ```text
 /**
@@ -8044,7 +8044,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `buildSeparatedListContentSlot` (`packages/codegen/src/emitters/wrap.ts:767`)
+### `packages/codegen/src/emitters/wrap.ts::buildSeparatedListContentSlot`
 
 ```text
 /**
@@ -8068,7 +8068,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectSeparatedListContentStorageKeys` (`packages/codegen/src/emitters/wrap.ts:796`)
+### `packages/codegen/src/emitters/wrap.ts::collectSeparatedListContentStorageKeys`
 
 ```text
 /**
@@ -8092,7 +8092,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // `parseName`), so the label is a capture key alongside the kind buckets.
 ```
 
-### `collectSeparatedListWireKeyTypes` (`packages/codegen/src/emitters/wrap.ts:817`)
+### `packages/codegen/src/emitters/wrap.ts::collectSeparatedListWireKeyTypes`
 
 ```text
 /**
@@ -8138,7 +8138,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // `_slots`-derived naming already fell back to the same generic name).
 ```
 
-### `buildSeparatedListWrapParamType` (`packages/codegen/src/emitters/wrap.ts:871`)
+### `packages/codegen/src/emitters/wrap.ts::buildSeparatedListWrapParamType`
 
 ```text
 /**
@@ -8154,7 +8154,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitSeparatedListWrap` (`packages/codegen/src/emitters/wrap.ts:891`)
+### `packages/codegen/src/emitters/wrap.ts::emitSeparatedListWrap`
 
 ```text
 /**
@@ -8282,7 +8282,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // method — a materialization gap for separatedList content accessors.
 ```
 
-### `computeCollidedReclaimKinds` (`packages/codegen/src/emitters/wrap.ts:1079`)
+### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
 ```text
 /**
@@ -8294,7 +8294,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitFieldStorageLines` (`packages/codegen/src/emitters/wrap.ts:1116`)
+### `packages/codegen/src/emitters/wrap.ts::emitFieldStorageLines`
 
 ```text
 /**
@@ -8342,7 +8342,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // catalog-resolvable members (real parser symbols) can appear in $other.
 ```
 
-### `emitFieldAccessorLines` (`packages/codegen/src/emitters/wrap.ts:1184`)
+### `packages/codegen/src/emitters/wrap.ts::emitFieldAccessorLines`
 
 ```text
 /**
@@ -8353,7 +8353,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `emitInlineWithProperty` (`packages/codegen/src/emitters/wrap.ts:1315`)
+### `packages/codegen/src/emitters/wrap.ts::emitInlineWithProperty`
 
 ```text
 /**
@@ -8427,32 +8427,32 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // it is given.
 ```
 
-### `triviaKinds` (`packages/codegen/src/emitters/client-utils.ts:11`)
+### `packages/codegen/src/emitters/client-utils.ts::triviaKinds`
 
 ```text
 /** Trivia kind names (e.g. `['line_comment', 'block_comment']`). */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/emitters/emit.ts:54`)
+### `packages/codegen/src/emitters/emit.ts::expectTestFailures`
 
 ```text
 /** Kind → reason for known-failing generated tests (`expectTestFailures:`
 	 *  in grammar.sittir.ts) — threaded to `emitTests` for `describe.skip` emission. */
 ```
 
-### `CodegenEmitter` (`packages/codegen/src/emitters/emitter.ts:3`)
+### `packages/codegen/src/emitters/emitter.ts::CodegenEmitter`
 
 ```text
 /** Constructor-based emitter with no init() lifecycle phase. */
 ```
 
-### `strict` (`packages/codegen/src/emitters/factories.ts:62`)
+### `packages/codegen/src/emitters/factories.ts::strict`
 
 ```text
 /** Emit runtime leaf pattern validation. Default `false`. */
 ```
 
-### `generatedIdTables` (`packages/codegen/src/emitters/factories.ts:64`)
+### `packages/codegen/src/emitters/factories.ts::generatedIdTables`
 
 ```text
 /**
@@ -8462,7 +8462,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `inlineKinds` (`packages/codegen/src/emitters/factories.ts:71`)
+### `packages/codegen/src/emitters/factories.ts::inlineKinds`
 
 ```text
 /**
@@ -8472,7 +8472,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `synthesizedKinds` (`packages/codegen/src/emitters/factories.ts:77`)
+### `packages/codegen/src/emitters/factories.ts::synthesizedKinds`
 
 ```text
 /**
@@ -8482,7 +8482,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `buildFactoryMapEntries` (`packages/codegen/src/emitters/factories.ts:219`)
+### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
 /**
@@ -8500,7 +8500,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `MapEntry` (`packages/codegen/src/emitters/factories.ts:1126`)
+### `packages/codegen/src/emitters/factories.ts::MapEntry`
 
 ```text
 /**
@@ -8520,7 +8520,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ---------------------------------------------------------------------------
 ```
 
-### `polymorphVariants` (`packages/codegen/src/emitters/factory-map.ts:45`)
+### `packages/codegen/src/emitters/factory-map.ts::polymorphVariants`
 
 ```text
 /**
@@ -8540,7 +8540,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `generatedIdTables` (`packages/codegen/src/emitters/from.ts:53`)
+### `packages/codegen/src/emitters/from.ts::generatedIdTables`
 
 ```text
 /**
@@ -8550,13 +8550,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `enumValues` (`packages/codegen/src/emitters/from.ts:661`)
+### `packages/codegen/src/emitters/from.ts::enumValues`
 
 ```text
 /** Enum value list when the underlying node is an enum. */
 ```
 
-### `KindInterner` (`packages/codegen/src/emitters/from.ts:703`)
+### `packages/codegen/src/emitters/from.ts::KindInterner`
 
 ```text
 /** Interner signature passed through the resolver emitter calls. */
@@ -8568,7 +8568,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ---------------------------------------------------------------------------
 ```
 
-### `generatedIdTables` (`packages/codegen/src/emitters/is.ts:34`)
+### `packages/codegen/src/emitters/is.ts::generatedIdTables`
 
 ```text
 /**
@@ -8580,25 +8580,25 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `member` (`packages/codegen/src/emitters/is.ts:139`)
+### `packages/codegen/src/emitters/is.ts::member`
 
 ```text
 /** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
 ```
 
-### `numericId` (`packages/codegen/src/emitters/is.ts:141`)
+### `packages/codegen/src/emitters/is.ts::numericId`
 
 ```text
 /** Numeric TSKindId; undefined when kind has no parser symbol. */
 ```
 
-### `memberIds` (`packages/codegen/src/emitters/is.ts:201`)
+### `packages/codegen/src/emitters/is.ts::memberIds`
 
 ```text
 /** Numeric IDs of member kinds (Phase A coexistence); empty = string-only. */
 ```
 
-### `parseId` (`packages/codegen/src/emitters/kind-discriminant.ts:32`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::parseId`
 
 ```text
 /**
@@ -8610,7 +8610,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `symbolName` (`packages/codegen/src/emitters/kind-discriminant.ts:40`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::symbolName`
 
 ```text
 /**
@@ -8622,13 +8622,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `anon` (`packages/codegen/src/emitters/kind-discriminant.ts:48`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::anon`
 
 ```text
 /** True when this entry came from an `anon_sym_*` parser symbol. */
 ```
 
-### `kindDiscriminantExprForId` (`packages/codegen/src/emitters/kind-discriminant.ts:141`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExprForId`
 
 ```text
 /**
@@ -8641,43 +8641,43 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `parseId` (`packages/codegen/src/emitters/kind-discriminant.ts:175`)
+### `packages/codegen/src/emitters/kind-discriminant.ts::parseId`
 
 ```text
 /** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
 ```
 
-### `grammar` (`packages/codegen/src/emitters/kind-id-rust.ts:25`)
+### `packages/codegen/src/emitters/kind-id-rust.ts::grammar`
 
 ```text
 /** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */
 ```
 
-### `name` (`packages/codegen/src/emitters/node-model.ts:57`)
+### `packages/codegen/src/emitters/node-model.ts::name`
 
 ```text
 /** for node-ref: target kind name */
 ```
 
-### `parseKind` (`packages/codegen/src/emitters/node-model.ts:59`)
+### `packages/codegen/src/emitters/node-model.ts::parseKind`
 
 ```text
 /** CST kind / alias target when it differs from the storage kind */
 ```
 
-### `unresolved` (`packages/codegen/src/emitters/node-model.ts:61`)
+### `packages/codegen/src/emitters/node-model.ts::unresolved`
 
 ```text
 /** for node-ref: true when the ref was not resolved to an AssembledNode */
 ```
 
-### `value` (`packages/codegen/src/emitters/node-model.ts:63`)
+### `packages/codegen/src/emitters/node-model.ts::value`
 
 ```text
 /** for terminal: string value */
 ```
 
-### `factoryShape` (`packages/codegen/src/emitters/node-model.ts:90`)
+### `packages/codegen/src/emitters/node-model.ts::factoryShape`
 
 ```text
 /**
@@ -8687,7 +8687,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `factoryFields` (`packages/codegen/src/emitters/node-model.ts:96`)
+### `packages/codegen/src/emitters/node-model.ts::factoryFields`
 
 ```text
 /**
@@ -8696,7 +8696,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `separator` (`packages/codegen/src/emitters/node-model.ts:107`)
+### `packages/codegen/src/emitters/node-model.ts::separator`
 
 ```text
 /**
@@ -8708,7 +8708,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `text` (`packages/codegen/src/emitters/node-model.ts:129`)
+### `packages/codegen/src/emitters/node-model.ts::text`
 
 ```text
 /**
@@ -8719,7 +8719,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `SerializedSeparatedList` (`packages/codegen/src/emitters/node-model.ts:167`)
+### `packages/codegen/src/emitters/node-model.ts::SerializedSeparatedList`
 
 ```text
 /**
@@ -8731,7 +8731,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `polymorphVariants` (`packages/codegen/src/emitters/node-model.ts:201`)
+### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
 
 ```text
 /**
@@ -8743,7 +8743,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `fieldAliasMap` (`packages/codegen/src/emitters/node-model.ts:209`)
+### `packages/codegen/src/emitters/node-model.ts::fieldAliasMap`
 
 ```text
 /**
@@ -8758,7 +8758,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `factorySlots` (`packages/codegen/src/emitters/node-model.ts:220`)
+### `packages/codegen/src/emitters/node-model.ts::factorySlots`
 
 ```text
 /**
@@ -8770,7 +8770,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `RefineKindInfo` (`packages/codegen/src/emitters/refine-emit.ts:16`)
+### `packages/codegen/src/emitters/refine-emit.ts::RefineKindInfo`
 
 ```text
 /**
@@ -8780,26 +8780,26 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `narrowedFields` (`packages/codegen/src/emitters/refine-emit.ts:31`)
+### `packages/codegen/src/emitters/refine-emit.ts::narrowedFields`
 
 ```text
 /** Per-form field narrowings: each entry says "in this form, field
 	 *  `fieldName` should be narrowed to the literal `literal`". */
 ```
 
-### `jinjaTemplates` (`packages/codegen/src/emitters/render-module-runner.ts:20`)
+### `packages/codegen/src/emitters/render-module-runner.ts::jinjaTemplates`
 
 ```text
 /** Pre-computed jinja templates. When omitted, a fresh TemplateEmitter drives the loop. */
 ```
 
-### `Grammar` (`packages/codegen/src/emitters/render-module.ts:81`)
+### `packages/codegen/src/emitters/render-module.ts::Grammar`
 
 ```text
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 ```
 
-### `RustRenderModuleEmit` (`packages/codegen/src/emitters/render-module.ts:89`)
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
 
 ```text
 /**
@@ -8810,37 +8810,37 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `hashRs` (`packages/codegen/src/emitters/render-module.ts:96`)
+### `packages/codegen/src/emitters/render-module.ts::hashRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/hash.rs` */
 ```
 
-### `hashTs` (`packages/codegen/src/emitters/render-module.ts:98`)
+### `packages/codegen/src/emitters/render-module.ts::hashTs`
 
 ```text
 /** `packages/{lang}/src/hash.ts` */
 ```
 
-### `templatesRs` (`packages/codegen/src/emitters/render-module.ts:100`)
+### `packages/codegen/src/emitters/render-module.ts::templatesRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
 ```
 
-### `transportRs` (`packages/codegen/src/emitters/render-module.ts:102`)
+### `packages/codegen/src/emitters/render-module.ts::transportRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/transport.rs` — AnyTransport + FromNapiValue + typed dispatch + transport bridge */
 ```
 
-### `libRs` (`packages/codegen/src/emitters/render-module.ts:104`)
+### `packages/codegen/src/emitters/render-module.ts::libRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes transport render entrypoints */
 ```
 
-### `parseNames` (`packages/codegen/src/emitters/render-module.ts:329`)
+### `packages/codegen/src/emitters/render-module.ts::parseNames`
 
 ```text
 /** Storage→parse pairs merged from every walked supertype (the owner AND
@@ -8848,7 +8848,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 * Keyed by `subtypes[].subKind`; first-stamped pair wins on collision. */
 ```
 
-### `hasTransportField` (`packages/codegen/src/emitters/render-module.ts:457`)
+### `packages/codegen/src/emitters/render-module.ts::hasTransportField`
 
 ```text
 /** True when this slot has a corresponding field in the transport struct.
@@ -8856,14 +8856,14 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 *  template walker) must be defaulted to "" in the typed dispatch path. */
 ```
 
-### `storageName` (`packages/codegen/src/emitters/render-module.ts:461`)
+### `packages/codegen/src/emitters/render-module.ts::storageName`
 
 ```text
 /** Rust struct storage identifier for this slot — used to build `node.<storageName>`
 	 *  access expressions. Defaults to `name` when no assembled slot exists. */
 ```
 
-### `isUnnamed` (`packages/codegen/src/emitters/render-module.ts:464`)
+### `packages/codegen/src/emitters/render-module.ts::isUnnamed`
 
 ```text
 /** True when this slot was inferred (not declared via `field(...)`) — i.e. it
@@ -8871,7 +8871,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 *  route lookups through `node.children` instead of `node.fields[name]`. */
 ```
 
-### `separator` (`packages/codegen/src/emitters/render-module.ts:470`)
+### `packages/codegen/src/emitters/render-module.ts::separator`
 
 ```text
 /** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
@@ -8879,7 +8879,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 *  gets its own separator (rather than a node-wide first-match). */
 ```
 
-### `backingTransportField` (`packages/codegen/src/emitters/render-module.ts:474`)
+### `packages/codegen/src/emitters/render-module.ts::backingTransportField`
 
 ```text
 /**
@@ -8895,7 +8895,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `backingInnerRequired` (`packages/codegen/src/emitters/render-module.ts:486`)
+### `packages/codegen/src/emitters/render-module.ts::backingInnerRequired`
 
 ```text
 /**
@@ -8908,7 +8908,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `backingDirectField` (`packages/codegen/src/emitters/render-module.ts:495`)
+### `packages/codegen/src/emitters/render-module.ts::backingDirectField`
 
 ```text
 /**
@@ -8921,7 +8921,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `transportHasChildren` (`packages/codegen/src/emitters/render-module.ts:511`)
+### `packages/codegen/src/emitters/render-module.ts::transportHasChildren`
 
 ```text
 /** True when the transport struct actually has a `children` field (structuralChildren.length > 0).
@@ -8929,20 +8929,20 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 *  in that case we emit an empty ListNonterminalView instead of accessing node.children. */
 ```
 
-### `childrenRequired` (`packages/codegen/src/emitters/render-module.ts:515`)
+### `packages/codegen/src/emitters/render-module.ts::childrenRequired`
 
 ```text
 /** True when the transport struct's `children` field is `Vec<...>` (not `Option<Vec<...>>`). */
 ```
 
-### `childrenMultiple` (`packages/codegen/src/emitters/render-module.ts:517`)
+### `packages/codegen/src/emitters/render-module.ts::childrenMultiple`
 
 ```text
 /** True when the transport struct's `children` field is `Vec<T>` (multiple elements possible).
 	 *  When false, the field is scalar: `T` (required) or `Option<T>` (optional). */
 ```
 
-### `PerSlotChildEnum` (`packages/codegen/src/emitters/render-module.ts:2544`)
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum`
 
 ```text
 /**
@@ -8956,37 +8956,37 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `typeName` (`packages/codegen/src/emitters/render-module.ts:2554`)
+### `packages/codegen/src/emitters/render-module.ts::typeName`
 
 ```text
 /** PascalCase typeName of the parent node. */
 ```
 
-### `ownerKind` (`packages/codegen/src/emitters/render-module.ts:2556`)
+### `packages/codegen/src/emitters/render-module.ts::ownerKind`
 
 ```text
 /** Raw grammar kind of the parent node — owner key for SCC lookup. */
 ```
 
-### `fieldName` (`packages/codegen/src/emitters/render-module.ts:2558`)
+### `packages/codegen/src/emitters/render-module.ts::fieldName`
 
 ```text
 /** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
 ```
 
-### `kinds` (`packages/codegen/src/emitters/render-module.ts:2560`)
+### `packages/codegen/src/emitters/render-module.ts::kinds`
 
 ```text
 /** Concrete kinds in this slot. */
 ```
 
-### `literals` (`packages/codegen/src/emitters/render-module.ts:2562`)
+### `packages/codegen/src/emitters/render-module.ts::literals`
 
 ```text
 /** Terminal literal children that may appear in runtime `$children`. */
 ```
 
-### `parseAliases` (`packages/codegen/src/emitters/render-module.ts:2564`)
+### `packages/codegen/src/emitters/render-module.ts::parseAliases`
 
 ```text
 /**
@@ -9009,7 +9009,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `acceptedIdsByKind` (`packages/codegen/src/emitters/render-module.ts:2583`)
+### `packages/codegen/src/emitters/render-module.ts::acceptedIdsByKind`
 
 ```text
 /**
@@ -9020,7 +9020,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `TransportMetadataField` (`packages/codegen/src/emitters/render-module.ts:3506`)
+### `packages/codegen/src/emitters/render-module.ts::TransportMetadataField`
 
 ```text
 /**
@@ -9043,7 +9043,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `enumTypeName` (`packages/codegen/src/emitters/render-module.ts:4081`)
+### `packages/codegen/src/emitters/render-module.ts::enumTypeName`
 
 ```text
 /**
@@ -9058,7 +9058,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectAliasSourceKinds` (`packages/codegen/src/emitters/shared.ts:48`)
+### `packages/codegen/src/emitters/shared.ts::collectAliasSourceKinds`
 
 ```text
 /**
@@ -9082,7 +9082,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `TypeComponent` (`packages/codegen/src/emitters/shared.ts:285`)
+### `packages/codegen/src/emitters/shared.ts::TypeComponent`
 
 ```text
 /**
@@ -9119,19 +9119,19 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // ---------------------------------------------------------------------------
 ```
 
-### `PrimitiveFieldStorage` (`packages/codegen/src/emitters/shared.ts:441`)
+### `packages/codegen/src/emitters/shared.ts::PrimitiveFieldStorage`
 
 ```text
 /** Rust struct-field storage for a `classifyPrimitiveField` verdict. */
 ```
 
-### `UnnamedChildSlotFacts` (`packages/codegen/src/emitters/shared.ts:686`)
+### `packages/codegen/src/emitters/shared.ts::UnnamedChildSlotFacts`
 
 ```text
 /** Real facts about a container-shape branch's single unnamed child slot. */
 ```
 
-### `RoundTripDiagnostic` (`packages/codegen/src/emitters/suggested.ts:127`)
+### `packages/codegen/src/emitters/suggested.ts::RoundTripDiagnostic`
 
 ```text
 /**
@@ -9145,19 +9145,19 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `entry` (`packages/codegen/src/emitters/suggested.ts:137`)
+### `packages/codegen/src/emitters/suggested.ts::entry`
 
 ```text
 /** Corpus entry name (e.g., "Async / await used as identifiers"). */
 ```
 
-### `kind` (`packages/codegen/src/emitters/suggested.ts:139`)
+### `packages/codegen/src/emitters/suggested.ts::kind`
 
 ```text
 /** Rule<'link'> kind the validator was testing. */
 ```
 
-### `source` (`packages/codegen/src/emitters/suggested.ts:141`)
+### `packages/codegen/src/emitters/suggested.ts::source`
 
 ```text
 /**
@@ -9169,55 +9169,55 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `category` (`packages/codegen/src/emitters/suggested.ts:149`)
+### `packages/codegen/src/emitters/suggested.ts::category`
 
 ```text
 /** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
 ```
 
-### `input` (`packages/codegen/src/emitters/suggested.ts:151`)
+### `packages/codegen/src/emitters/suggested.ts::input`
 
 ```text
 /** Input source text. */
 ```
 
-### `rendered` (`packages/codegen/src/emitters/suggested.ts:153`)
+### `packages/codegen/src/emitters/suggested.ts::rendered`
 
 ```text
 /** Rendered text (what the renderer emitted). Absent when parse-error occurs before render. */
 ```
 
-### `message` (`packages/codegen/src/emitters/suggested.ts:155`)
+### `packages/codegen/src/emitters/suggested.ts::message`
 
 ```text
 /** Human-readable message from the validator. */
 ```
 
-### `roundTripFailures` (`packages/codegen/src/emitters/suggested.ts:162`)
+### `packages/codegen/src/emitters/suggested.ts::roundTripFailures`
 
 ```text
 /** Corpus round-trip diagnostics, collected by CLI --roundtrip. */
 ```
 
-### `kind` (`packages/codegen/src/emitters/suggested.ts:646`)
+### `packages/codegen/src/emitters/suggested.ts::kind`
 
 ```text
 /** Parent rule kind whose body contains the nested seq. */
 ```
 
-### `path` (`packages/codegen/src/emitters/suggested.ts:648`)
+### `packages/codegen/src/emitters/suggested.ts::path`
 
 ```text
 /** Slash-separated positional path to the seq within the rule body. */
 ```
 
-### `discriminatorGuess` (`packages/codegen/src/emitters/suggested.ts:650`)
+### `packages/codegen/src/emitters/suggested.ts::discriminatorGuess`
 
 ```text
 /** Heuristic discriminator guess — first structural member's name, or position-based fallback. */
 ```
 
-### `TemplateFile` (`packages/codegen/src/emitters/template-hash.ts:39`)
+### `packages/codegen/src/emitters/template-hash.ts::TemplateFile`
 
 ```text
 /**
@@ -9226,7 +9226,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `filename` (`packages/codegen/src/emitters/template-hash.ts:44`)
+### `packages/codegen/src/emitters/template-hash.ts::filename`
 
 ```text
 /**
@@ -9237,7 +9237,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `content` (`packages/codegen/src/emitters/template-hash.ts:51`)
+### `packages/codegen/src/emitters/template-hash.ts::content`
 
 ```text
 /**
@@ -9246,7 +9246,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `isWordChar` (`packages/codegen/src/emitters/templates.ts:77`)
+### `packages/codegen/src/emitters/templates.ts::isWordChar`
 
 ```text
 /** Grammar-faithful word-class test for a single char (ASCII table from
@@ -9255,7 +9255,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 *  runtime SpacingWriter with the same class. */
 ```
 
-### `rules` (`packages/codegen/src/emitters/templates.ts:83`)
+### `packages/codegen/src/emitters/templates.ts::rules`
 
 ```text
 /**
@@ -9268,7 +9268,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `visitingHelpers` (`packages/codegen/src/emitters/templates.ts:92`)
+### `packages/codegen/src/emitters/templates.ts::visitingHelpers`
 
 ```text
 /**
@@ -9278,7 +9278,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `ownerSlots` (`packages/codegen/src/emitters/templates.ts:98`)
+### `packages/codegen/src/emitters/templates.ts::ownerSlots`
 
 ```text
 /**
@@ -9292,7 +9292,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `currentKind` (`packages/codegen/src/emitters/templates.ts:108`)
+### `packages/codegen/src/emitters/templates.ts::currentKind`
 
 ```text
 /**
@@ -9301,7 +9301,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `generatedIdTables` (`packages/codegen/src/emitters/test.ts:34`)
+### `packages/codegen/src/emitters/test.ts::generatedIdTables`
 
 ```text
 /**
@@ -9311,7 +9311,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/emitters/test.ts:40`)
+### `packages/codegen/src/emitters/test.ts::expectTestFailures`
 
 ```text
 /**
@@ -9322,7 +9322,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `SlotClass` (`packages/codegen/src/emitters/transport-common.ts:10`)
+### `packages/codegen/src/emitters/transport-common.ts::SlotClass`
 
 ```text
 /**
@@ -9341,7 +9341,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `generatedIdTables` (`packages/codegen/src/emitters/wrap.ts:71`)
+### `packages/codegen/src/emitters/wrap.ts::generatedIdTables`
 
 ```text
 /**
@@ -9352,7 +9352,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `inlineKinds` (`packages/codegen/src/emitters/wrap.ts:78`)
+### `packages/codegen/src/emitters/wrap.ts::inlineKinds`
 
 ```text
 /**
@@ -9362,7 +9362,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `synthesizedKinds` (`packages/codegen/src/emitters/wrap.ts:84`)
+### `packages/codegen/src/emitters/wrap.ts::synthesizedKinds`
 
 ```text
 /**
@@ -9371,19 +9371,19 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `rawFactoryName` (`packages/codegen/src/emitters/wrap.ts:185`)
+### `packages/codegen/src/emitters/wrap.ts::rawFactoryName`
 
 ```text
 /** rawFactoryName for $with — null when the kind has no factory. */
 ```
 
-### `childSurface` (`packages/codegen/src/emitters/wrap.ts:187`)
+### `packages/codegen/src/emitters/wrap.ts::childSurface`
 
 ```text
 /** Child-factory surface when the node exposes positional child factories. */
 ```
 
-### `ResolveSlotDrillConfig` (`packages/codegen/src/emitters/wrap.ts:220`)
+### `packages/codegen/src/emitters/wrap.ts::ResolveSlotDrillConfig`
 
 ```text
 /**
@@ -9401,7 +9401,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `candidateStorageKeys` (`packages/codegen/src/emitters/wrap.ts:241`)
+### `packages/codegen/src/emitters/wrap.ts::candidateStorageKeys`
 
 ```text
 /**
@@ -9411,7 +9411,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `reclaimKindIdsExpr` (`packages/codegen/src/emitters/wrap.ts:247`)
+### `packages/codegen/src/emitters/wrap.ts::reclaimKindIdsExpr`
 
 ```text
 /**
@@ -9422,7 +9422,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `kindEnumTextIdPairs` (`packages/codegen/src/emitters/wrap.ts:254`)
+### `packages/codegen/src/emitters/wrap.ts::kindEnumTextIdPairs`
 
 ```text
 /**
@@ -9433,7 +9433,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `forceUnknownElement` (`packages/codegen/src/emitters/wrap.ts:261`)
+### `packages/codegen/src/emitters/wrap.ts::forceUnknownElement`
 
 ```text
 /**
@@ -9452,7 +9452,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `computeCollidedReclaimKinds` (`packages/codegen/src/emitters/wrap.ts:819`)
+### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
 ```text
 /**
@@ -9471,7 +9471,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `PUNCT_MNEMONIC` (`packages/codegen/src/emitters/consts.ts:491`)
+### `packages/codegen/src/emitters/consts.ts::PUNCT_MNEMONIC`
 
 ```text
 /**
@@ -9494,7 +9494,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `optChain` (`packages/codegen/src/emitters/from.ts:714`)
+### `packages/codegen/src/emitters/from.ts::optChain`
 
 ```text
 /**
@@ -9507,7 +9507,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 	 */
 ```
 
-### `RESERVED` (`packages/codegen/src/emitters/is.ts:39`)
+### `packages/codegen/src/emitters/is.ts::RESERVED`
 
 ```text
 /** JS reserved words that need a trailing `_` when used as a guard key. */
@@ -9519,13 +9519,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Also reserve `is` method names so kind keys don't shadow them
 ```
 
-### `RESERVED_GUARD_NAMES` (`packages/codegen/src/emitters/is.ts:90`)
+### `packages/codegen/src/emitters/is.ts::RESERVED_GUARD_NAMES`
 
 ```text
 /** Methods on the `is` / `assert` namespaces beyond per-kind entries. */
 ```
 
-### `RESERVED_SUPERTYPE_ENUM_NAMES` (`packages/codegen/src/emitters/render-module.ts:269`)
+### `packages/codegen/src/emitters/render-module.ts::RESERVED_SUPERTYPE_ENUM_NAMES`
 
 ```text
 /**
@@ -9538,7 +9538,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `RESERVED_TRANSPORT_STRUCT_NAMES` (`packages/codegen/src/emitters/render-module.ts:279`)
+### `packages/codegen/src/emitters/render-module.ts::RESERVED_TRANSPORT_STRUCT_NAMES`
 
 ```text
 /**
@@ -9560,7 +9560,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `RENDERABLE_PREFIX` (`packages/codegen/src/emitters/render-module.ts:1195`)
+### `packages/codegen/src/emitters/render-module.ts::RENDERABLE_PREFIX`
 
 ```text
 /**
@@ -9574,14 +9574,14 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `collectFromSlots` (`packages/codegen/src/emitters/render-module.ts:1907`)
+### `packages/codegen/src/emitters/render-module.ts::collectFromSlots`
 
 ```text
 /** Accumulate supertype names from a single node's slots — named and
 	 *  unnamed flow through one path (cleanup-rules §E1). */
 ```
 
-### `TRANSPORT_METADATA_FIELDS` (`packages/codegen/src/emitters/render-module.ts:3417`)
+### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS`
 
 ```text
 /**
@@ -9601,7 +9601,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // napi-rs 3 passes these as f64 from JS; converted at the transport boundary.
 ```
 
-### `TRANSPORT_TEXT_FIELD` (`packages/codegen/src/emitters/render-module.ts:3448`)
+### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_TEXT_FIELD`
 
 ```text
 /**
@@ -9611,7 +9611,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `LITERAL_TO_VARIANT_NAME` (`packages/codegen/src/emitters/render-module.ts:3737`)
+### `packages/codegen/src/emitters/render-module.ts::LITERAL_TO_VARIANT_NAME`
 
 ```text
 /**
@@ -9724,7 +9724,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 // Fragment specifiers
 ```
 
-### `IDENT_RE` (`packages/codegen/src/emitters/shared.ts:127`)
+### `packages/codegen/src/emitters/shared.ts::IDENT_RE`
 
 ```text
 /** TypeScript identifier pattern — starts with letter/underscore/dollar,
@@ -9732,13 +9732,13 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  * a kind name can be emitted as a bare identifier vs. a quoted literal. */
 ```
 
-### `JINJA_COND_FULL_RE` (`packages/codegen/src/emitters/templates.ts:342`)
+### `packages/codegen/src/emitters/templates.ts::JINJA_COND_FULL_RE`
 
 ```text
 /** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
 ```
 
-### `SLOT_WORDLIKE_CHAR` (`packages/codegen/src/emitters/templates.ts:345`)
+### `packages/codegen/src/emitters/templates.ts::SLOT_WORDLIKE_CHAR`
 
 ```text
 /**
@@ -9750,7 +9750,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `DEFAULT_JOIN_SEPARATOR` (`packages/codegen/src/emitters/templates.ts:724`)
+### `packages/codegen/src/emitters/templates.ts::DEFAULT_JOIN_SEPARATOR`
 
 ```text
 /**
@@ -9767,7 +9767,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
-### `MAX_DUMMY_DEPTH` (`packages/codegen/src/emitters/test.ts:444`)
+### `packages/codegen/src/emitters/test.ts::MAX_DUMMY_DEPTH`
 
 ```text
 /** Maximum branch-recursion depth for synthesized dummy stubs. Bounds
@@ -9777,7 +9777,7 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  * see its docstring) rather than looping forever. */
 ```
 
-### `TransportLiteral.resolvedKindId` (`packages/codegen/src/emitters/transport-projection.ts`)
+### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.resolvedKindId`
 
 The mint-time literal-chain id (`NodeRef.resolvedKindId`) carried through from
 the terminal value. Absent for kind-derived literals (keyword/token model
@@ -9797,7 +9797,7 @@ factory-emitting-kind FILTER live only in `buildFactoryMap`. Serializing that
 builder's finished output is what keeps the filtering logic single-sourced and
 the validator maps byte-identical to the factory-map output.
 
-### `collectVariantAdoptedBranches` (`packages/codegen/src/emitters/factory-map.ts`)
+### `packages/codegen/src/emitters/factory-map.ts::collectVariantAdoptedBranches`
 
 Variant-adopted branches are kinds that went through Link's push-down
 (`pushAmbientScaffoldIntoVariantChildren`): they classify as `branch` but still
@@ -9805,7 +9805,7 @@ carry the variant-child kinds on `variantChildKinds`. They must land in
 `polymorphVariants` so that `.from()`-dispatch and the validator's deep-read
 path both know which kinds participate in `variant()` adoption.
 
-### `mapVariantChildKindsToSuffixes` (`packages/codegen/src/emitters/factory-map.ts`)
+### `packages/codegen/src/emitters/factory-map.ts::mapVariantChildKindsToSuffixes`
 
 Uses `prefixNamedSuffix` (`compiler/variant-structural.ts`) rather than a raw
 `${kind}_` slice. The raw slice is unsound when `kind` is hidden: a hidden
@@ -9815,7 +9815,7 @@ parent's, per `polymorphVisibleName`'s convention — `_match_block` yields
 only for the (currently unobserved) shape where the target doesn't prefix-match
 at all.
 
-### `expandToConcreteParseKinds` (`packages/codegen/src/emitters/wrap.ts:57`)
+### `packages/codegen/src/emitters/wrap.ts::expandToConcreteParseKinds`
 
 Expands each name to the parser's actual emittable leaf kinds: a plain
 (non-supertype) name passes through as-is; a supertype name expands to its
@@ -9832,7 +9832,7 @@ input list.
 // computes once, during assemble — see glossary.
 ```
 
-### `coversExactly` (`packages/codegen/src/emitters/transport-common.ts`)
+### `packages/codegen/src/emitters/transport-common.ts::coversExactly`
 
 A slot only collapses onto a supertype transport when its kind set EQUALS the
 supertype's full resolved subtype set — a proper subset is not enough.
@@ -9846,7 +9846,7 @@ the generated `FromNapiValue` recurses through the whole statement graph.
 Subset slots instead fall through to `heterogeneous`, which emits a per-slot
 enum of exactly their kinds.
 
-### `addVisibleAliasNameOfHiddenKind` (`packages/codegen/src/emitters/transport-common.ts`)
+### `packages/codegen/src/emitters/transport-common.ts::addVisibleAliasNameOfHiddenKind`
 
 A hidden kind that is also the CONTENT of a named alias
 (`alias(symbol(_X), $.visible)`) shares its runtime kind id with that alias's
@@ -10035,7 +10035,7 @@ pipeline — which falls back to string equality.
 // Leaf nodes have `$text` instead.
 ```
 
-### `resolveLiteralKindId` (`packages/codegen/src/emitters/render-module.ts:2624`)
+### `packages/codegen/src/emitters/render-module.ts::resolveLiteralKindId`
 
 ```text
 /**
@@ -10065,7 +10065,7 @@ pipeline — which falls back to string equality.
 // error at runtime.
 ```
 
-### `stringConstructibleTexts` (`packages/codegen/src/emitters/shared.ts:590`)
+### `packages/codegen/src/emitters/shared.ts::stringConstructibleTexts`
 
 ```text
 /**
@@ -10083,7 +10083,7 @@ pipeline — which falls back to string equality.
 // config-literal widening — see glossary.
 ```
 
-### `wordConstructibleText` (`packages/codegen/src/emitters/shared.ts:614`)
+### `packages/codegen/src/emitters/shared.ts::wordConstructibleText`
 
 ```text
 /**
@@ -10099,7 +10099,7 @@ pipeline — which falls back to string equality.
 // STRING — only a WORD keyword claims a bare-string route.
 ```
 
-### `transparentWrapperContentSlot` (`packages/codegen/src/emitters/shared.ts:626`)
+### `packages/codegen/src/emitters/shared.ts::transparentWrapperContentSlot`
 
 ```text
 /**
@@ -10126,7 +10126,7 @@ pipeline — which falls back to string equality.
 // value (text form), not a config object, so it never qualifies.
 ```
 
-### `chainParamOptional` (`packages/codegen/src/emitters/factories.ts:768`)
+### `packages/codegen/src/emitters/factories.ts::chainParamOptional`
 
 ```text
 /**
@@ -10143,7 +10143,7 @@ pipeline — which falls back to string equality.
 // optionality — see glossary.
 ```
 
-### `fieldFromInputHintTypeExpr` (`packages/codegen/src/emitters/types.ts:1103`)
+### `packages/codegen/src/emitters/types.ts::fieldFromInputHintTypeExpr`
 
 ```text
 /**
@@ -10156,7 +10156,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/namespaced-constructors.ts` (module)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::module`
 
 ```text
 /**
@@ -10179,20 +10179,20 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `FormConstructor.slot` (`packages/codegen/src/emitters/namespaced-constructors.ts:27`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::FormConstructor.slot`
 
 ```text
 /** The parent slot the built form fills. */
 ```
 
-### `FormConstructor.path` (`packages/codegen/src/emitters/namespaced-constructors.ts:30`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::FormConstructor.path`
 
 ```text
 /** Empty: call the child's factory. One name: call that namespaced
 	 *  constructor on the child's factory (a hoisted sub-constructor). */
 ```
 
-### `FormConstructor.formKind` (`packages/codegen/src/emitters/namespaced-constructors.ts:31`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::FormConstructor.formKind`
 
 ```text
 /** The kind this constructor ultimately builds — `childKind` for a direct
@@ -10202,19 +10202,19 @@ pipeline — which falls back to string equality.
 	 *  many hops it flattens through. */
 ```
 
-### `MemberConstructor.slot` (`packages/codegen/src/emitters/namespaced-constructors.ts:37`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::MemberConstructor.slot`
 
 ```text
 /** The kind-enum slot this constructor fixes. */
 ```
 
-### `MemberConstructor.params` (`packages/codegen/src/emitters/namespaced-constructors.ts:39`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::MemberConstructor.params`
 
 ```text
 /** Remaining user slots, in slot order — the constructor's parameters. */
 ```
 
-### `NamespacedAmbiguity` (`packages/codegen/src/emitters/namespaced-constructors.ts:44`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::NamespacedAmbiguity`
 
 ```text
 /** A name more than one candidate claims. Flattening stops at the ambiguity:
@@ -10224,7 +10224,7 @@ pipeline — which falls back to string equality.
  *  silent resolution. */
 ```
 
-### `NamespacedConstructorOptions.isEmitted` (`packages/codegen/src/emitters/namespaced-constructors.ts:56`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::NamespacedConstructorOptions.isEmitted`
 
 ```text
 /** Whether a kind's factory is actually emitted (catalog-backed). A
@@ -10232,21 +10232,21 @@ pipeline — which falls back to string equality.
 	 *  parent. Defaults to every kind. */
 ```
 
-### `isArmOf` (`packages/codegen/src/emitters/namespaced-constructors.ts:61`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::isArmOf`
 
 ```text
 /** Whether `kind` is one of `parentKind`'s own arms: a registered polymorph
  *  form, or a kind minted under the parent's name (`_<parent>_<arm>`). */
 ```
 
-### `isFormSlot` (`packages/codegen/src/emitters/namespaced-constructors.ts:67`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::isFormSlot`
 
 ```text
 /** A slot holding only the parent's own arms — an alternative to the
  *  parent's other slots, never a parameter beside them. */
 ```
 
-### `namespacedConstructors` (`packages/codegen/src/emitters/namespaced-constructors.ts:97`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::namespacedConstructors`
 
 #### body
 
@@ -10255,7 +10255,7 @@ pipeline — which falls back to string equality.
 // is not the node's full namespace — only top-level derivations cache.
 ```
 
-### `derive` (`packages/codegen/src/emitters/namespaced-constructors.ts:115`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::derive`
 
 #### body
 
@@ -10313,14 +10313,14 @@ pipeline — which falls back to string equality.
 // do. Reported in every case.
 ```
 
-### `emittedByCatalog` (`packages/codegen/src/emitters/namespaced-constructors.ts:211`)
+### `packages/codegen/src/emitters/namespaced-constructors.ts::emittedByCatalog`
 
 ```text
 /** The factory-emission predicate every consumer shares: a kind's factory
  *  exists iff the kind is catalog-backed (or no catalog is in play). */
 ```
 
-### `EmitConfigConfig` (`packages/codegen/src/emitters/config.ts:1`)
+### `packages/codegen/src/emitters/config.ts::EmitConfigConfig`
 
 ```text
 /**
@@ -10328,7 +10328,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitConfig` (`packages/codegen/src/emitters/config.ts:5`)
+### `packages/codegen/src/emitters/config.ts::emitConfig`
 
 #### body
 
@@ -10341,7 +10341,7 @@ pipeline — which falls back to string equality.
 // the deprecated engine.
 ```
 
-### `emitters/is.ts` (module)
+### `packages/codegen/src/emitters/is.ts::module`
 
 ```text
 /**
@@ -10367,7 +10367,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/shared.ts` (module)
+### `packages/codegen/src/emitters/shared.ts::module`
 
 ```text
 /**
@@ -10386,7 +10386,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `isTextLeaf` (`packages/codegen/src/emitters/shared.ts:41`)
+### `packages/codegen/src/emitters/shared.ts::isTextLeaf`
 
 ```text
 /** The three model types whose factory is a text leaf (`factory.leaf`): a
@@ -10395,7 +10395,7 @@ pipeline — which falls back to string equality.
  *  own — a supertype does not. */
 ```
 
-### `resolveHiddenKeywordLeaf` (`packages/codegen/src/emitters/shared.ts:130`)
+### `packages/codegen/src/emitters/shared.ts::resolveHiddenKeywordLeaf`
 
 #### body
 
@@ -10415,7 +10415,7 @@ pipeline — which falls back to string equality.
 // leaf/keyword/token literal for auto-stamp detection.
 ```
 
-### `TypeComponent.kind` (`packages/codegen/src/emitters/shared.ts:165`)
+### `packages/codegen/src/emitters/shared.ts::TypeComponent.kind`
 
 ```text
 // `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
@@ -10427,7 +10427,7 @@ pipeline — which falls back to string equality.
 // same catalog (two different kinds can render identical text).
 ```
 
-### `classifyFieldStorageInfo` (`packages/codegen/src/emitters/shared.ts:289`)
+### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
 #### body
 
@@ -10442,7 +10442,7 @@ pipeline — which falls back to string equality.
 // canonical AssembledKeyword instance shared across all sites).
 ```
 
-### `keywordRefWireIdentity` (`packages/codegen/src/emitters/shared.ts:389`)
+### `packages/codegen/src/emitters/shared.ts::keywordRefWireIdentity`
 
 ```text
 /**
@@ -10461,7 +10461,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `userSlotsOf` (`packages/codegen/src/emitters/shared.ts:451`)
+### `packages/codegen/src/emitters/shared.ts::userSlotsOf`
 
 ```text
 /**
@@ -10472,7 +10472,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `resolveDirectFactorySlot` (`packages/codegen/src/emitters/shared.ts:529`)
+### `packages/codegen/src/emitters/shared.ts::resolveDirectFactorySlot`
 
 ```text
 /** The one derivation of the direct-value calling convention, consumed by
@@ -10493,7 +10493,7 @@ pipeline — which falls back to string equality.
 // exactly where a kind carries a marker beside its sole slot.
 ```
 
-### `forwardedTargetKind` (`packages/codegen/src/emitters/shared.ts:535`)
+### `packages/codegen/src/emitters/shared.ts::forwardedTargetKind`
 
 ```text
 /**
@@ -10530,7 +10530,7 @@ pipeline — which falls back to string equality.
 // The target must itself emit a factory to forward to.
 ```
 
-### `soleSlotFacts` (`packages/codegen/src/emitters/shared.ts:586`)
+### `packages/codegen/src/emitters/shared.ts::soleSlotFacts`
 
 #### body
 
@@ -10542,7 +10542,7 @@ pipeline — which falls back to string equality.
 // uses to pick the sole-slot shape in the first place.
 ```
 
-### `emitsBuildArgsAlias` (`packages/codegen/src/emitters/shared.ts:703`)
+### `packages/codegen/src/emitters/shared.ts::emitsBuildArgsAlias`
 
 ```text
 /** ONE predicate for "this kind declares `<TypeName>BuildArgs` /
@@ -10566,7 +10566,7 @@ pipeline — which falls back to string equality.
 // give arguments to.
 ```
 
-### `emitsFieldResolvers` (`packages/codegen/src/emitters/shared.ts:743`)
+### `packages/codegen/src/emitters/shared.ts::emitsFieldResolvers`
 
 ```text
 /** ONE predicate for "this kind's from-emitter declares per-field
@@ -10587,14 +10587,14 @@ pipeline — which falls back to string equality.
 // and wrap's `$with` setters read it to know which ones they may call.
 ```
 
-### `fieldResolverName` (`packages/codegen/src/emitters/shared.ts:753`)
+### `packages/codegen/src/emitters/shared.ts::fieldResolverName`
 
 ```text
 /** ONE name for one fact, so `coerceTo<Kind>` and wrap's `$with` setter
  *  reach the same function rather than each re-deriving the expression. */
 ```
 
-### `needsNonEmptyHoist` (`packages/codegen/src/emitters/shared.ts:757`)
+### `packages/codegen/src/emitters/shared.ts::needsNonEmptyHoist`
 
 ```text
 /** A non-empty repeated field reaches the factory config through
@@ -10605,7 +10605,7 @@ pipeline — which falls back to string equality.
  *  even when the underlying values are repeat1. */
 ```
 
-### `isWrapChildrenKind` (`packages/codegen/src/emitters/shared.ts:761`)
+### `packages/codegen/src/emitters/shared.ts::isWrapChildrenKind`
 
 ```text
 /** Whether a kind can be built from a bare list of its children — the
@@ -10623,7 +10623,7 @@ pipeline — which falls back to string equality.
 // only when its factory takes the children directly.
 ```
 
-### `classifyTemplateEmission` (`packages/codegen/src/emitters/shared.ts:788`)
+### `packages/codegen/src/emitters/shared.ts::classifyTemplateEmission`
 
 #### body
 
@@ -10633,7 +10633,7 @@ pipeline — which falls back to string equality.
 // behaviour so classifyTemplateEmission is a strict superset of the legacy gate.
 ```
 
-### `literalMergePairs` (`packages/codegen/src/emitters/shared.ts:825`)
+### `packages/codegen/src/emitters/shared.ts::literalMergePairs`
 
 ```text
 /**
@@ -10673,7 +10673,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `escForSource` (`packages/codegen/src/emitters/shared.ts:841`)
+### `packages/codegen/src/emitters/shared.ts::escForSource`
 
 ```text
 /**
@@ -10685,7 +10685,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/refine-emit.ts` (module)
+### `packages/codegen/src/emitters/refine-emit.ts::module`
 
 ```text
 /**
@@ -10700,7 +10700,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/factory-map.ts` (module)
+### `packages/codegen/src/emitters/factory-map.ts::module`
 
 ```text
 /**
@@ -10720,7 +10720,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `FactoryMapData.forwardsTo` (`packages/codegen/src/emitters/factory-map.ts:31`)
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData.forwardsTo`
 
 ```text
 /** Companion fact to a `'forwarded'` factoryShape: the kind whose
@@ -10728,7 +10728,7 @@ pipeline — which falls back to string equality.
 	 *  'forwarded'; transitive chains resolve by following entries. */
 ```
 
-### `emitters/suggested.ts` (module)
+### `packages/codegen/src/emitters/suggested.ts::module`
 
 ```text
 /**
@@ -10750,7 +10750,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitSuggested` (`packages/codegen/src/emitters/suggested.ts:117`)
+### `packages/codegen/src/emitters/suggested.ts::emitSuggested`
 
 #### body
 
@@ -10896,7 +10896,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------
 ```
 
-### `sortedPromotions` (`packages/codegen/src/emitters/suggested.ts:470`)
+### `packages/codegen/src/emitters/suggested.ts::sortedPromotions`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10904,7 +10904,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `GroupCandidate` (`packages/codegen/src/emitters/suggested.ts:519`)
+### `packages/codegen/src/emitters/suggested.ts::GroupCandidate`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10912,7 +10912,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `walkBodyForGroups` (`packages/codegen/src/emitters/suggested.ts:533`)
+### `packages/codegen/src/emitters/suggested.ts::walkBodyForGroups`
 
 #### body
 
@@ -10977,7 +10977,7 @@ pipeline — which falls back to string equality.
 // string / blank / pattern / supertype / symbol — no children to walk
 ```
 
-### `guessGroupDiscriminator` (`packages/codegen/src/emitters/suggested.ts:611`)
+### `packages/codegen/src/emitters/suggested.ts::guessGroupDiscriminator`
 
 #### body
 
@@ -10985,7 +10985,7 @@ pipeline — which falls back to string equality.
 // Position-based fallback: 'g' + underscore-joined path (e.g. g1_1)
 ```
 
-### `emitters/types.ts` (module)
+### `packages/codegen/src/emitters/types.ts::module`
 
 ```text
 /**
@@ -11009,7 +11009,7 @@ pipeline — which falls back to string equality.
 // constructor-target resolution here adds no cycle.
 ```
 
-### `hasKindId` (`packages/codegen/src/emitters/types.ts:22`)
+### `packages/codegen/src/emitters/types.ts::hasKindId`
 
 ```text
 /** Whether the parser issues an id for this kind. `NamespaceMap` is keyed by
@@ -11019,14 +11019,14 @@ pipeline — which falls back to string equality.
  *  of a tree and named in a union. */
 ```
 
-### `StructuralNode` (`packages/codegen/src/emitters/types.ts:68`)
+### `packages/codegen/src/emitters/types.ts::StructuralNode`
 
 ```text
 // TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
-### `emitTypes` (`packages/codegen/src/emitters/types.ts:79`)
+### `packages/codegen/src/emitters/types.ts::emitTypes`
 
 #### body
 
@@ -11246,7 +11246,7 @@ pipeline — which falls back to string equality.
 // generated interface name can ever contain `$`.
 ```
 
-### `NodeCategories` (`packages/codegen/src/emitters/types.ts:314`)
+### `packages/codegen/src/emitters/types.ts::NodeCategories`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11254,7 +11254,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `LookupUnion` (`packages/codegen/src/emitters/types.ts:655`)
+### `packages/codegen/src/emitters/types.ts::LookupUnion`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11268,7 +11268,7 @@ pipeline — which falls back to string equality.
 // its own interface surface.
 ```
 
-### `emitInterface` (`packages/codegen/src/emitters/types.ts:657`)
+### `packages/codegen/src/emitters/types.ts::emitInterface`
 
 #### body
 
@@ -11315,7 +11315,7 @@ pipeline — which falls back to string equality.
 // Multiple accessor returns the array type (same as storage type).
 ```
 
-### `enumStorageDiscriminantExpr` (`packages/codegen/src/emitters/types.ts:762`)
+### `packages/codegen/src/emitters/types.ts::enumStorageDiscriminantExpr`
 
 #### body
 
@@ -11329,7 +11329,7 @@ pipeline — which falls back to string equality.
 // Config type and the runtime stamp diverge.
 ```
 
-### `fieldInputHintTypeExpr` (`packages/codegen/src/emitters/types.ts:807`)
+### `packages/codegen/src/emitters/types.ts::fieldInputHintTypeExpr`
 
 #### body
 
@@ -11340,7 +11340,7 @@ pipeline — which falls back to string equality.
 // stays consistent with the (now-excluded) Config/Loose key.
 ```
 
-### `wrapChildrenListHint` (`packages/codegen/src/emitters/types.ts:829`)
+### `packages/codegen/src/emitters/types.ts::wrapChildrenListHint`
 
 ```text
 // Loose-only: strict factories store config values directly, so widened
@@ -11377,7 +11377,7 @@ pipeline — which falls back to string equality.
 // assignability check that reaches it; a named alias compares once.
 ```
 
-### `emitters/template-hash.ts` (module)
+### `packages/codegen/src/emitters/template-hash.ts::module`
 
 ```text
 /**
@@ -11417,7 +11417,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/templates.ts` (module)
+### `packages/codegen/src/emitters/templates.ts::module`
 
 ```text
 /**
@@ -11448,7 +11448,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `SeamBoundaryRecord` (`packages/codegen/src/emitters/templates.ts:55`)
+### `packages/codegen/src/emitters/templates.ts::SeamBoundaryRecord`
 
 ```text
 /**
@@ -11466,14 +11466,14 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `SeamCensusSummary` (`packages/codegen/src/emitters/templates.ts:62`)
+### `packages/codegen/src/emitters/templates.ts::SeamCensusSummary`
 
 ```text
 /** Per-grammar census of template-boundary seam resolutions — the
  *  static-seam-resolution spec's residue report. */
 ```
 
-### `EmitCtx.isLiteralMergePair` (`packages/codegen/src/emitters/templates.ts:74`)
+### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
 
 ```text
 // Same merge-hazard pairs the emitted SpacingWriter table uses (one
@@ -11483,7 +11483,7 @@ pipeline — which falls back to string equality.
 // inside some real token of the grammar.
 ```
 
-### `EmitCtx.emittedSlotNames` (`packages/codegen/src/emitters/templates.ts:78`)
+### `packages/codegen/src/emitters/templates.ts::EmitCtx.emittedSlotNames`
 
 ```text
 // Slot storage names already emitted during this kind's tree walk. Two
@@ -11506,14 +11506,14 @@ pipeline — which falls back to string equality.
 // `visitingHelpers`).
 ```
 
-### `EmitCtx.seamBoundaries` (`packages/codegen/src/emitters/templates.ts:79`)
+### `packages/codegen/src/emitters/templates.ts::EmitCtx.seamBoundaries`
 
 ```text
 // Seam-census sink (optional so hand-built test ctx literals stay valid):
 // the SEQ join appends one record per boundary it classifies.
 ```
 
-### `EmitCtx.mergePairClassCombos` (`packages/codegen/src/emitters/templates.ts:80`)
+### `packages/codegen/src/emitters/templates.ts::EmitCtx.mergePairClassCombos`
 
 ```text
 // Class combos (`${leftClass}\0${rightClass}`) for which at least one
@@ -11522,7 +11522,7 @@ pipeline — which falls back to string equality.
 // so it stays `runtime-varying`. Optional for hand-built test ctx.
 ```
 
-### `EmitCtx.mergePairLeftChars` (`packages/codegen/src/emitters/templates.ts:81`)
+### `packages/codegen/src/emitters/templates.ts::EmitCtx.mergePairLeftChars`
 
 ```text
 // The pair table's left/right character projections: a char absent from
@@ -11532,7 +11532,7 @@ pipeline — which falls back to string equality.
 // these instead of unknown element edges. Optional for hand-built ctx.
 ```
 
-### `SlotLookupMiss` (`packages/codegen/src/emitters/templates.ts:87`)
+### `packages/codegen/src/emitters/templates.ts::SlotLookupMiss`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11547,7 +11547,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `GENERATED_HEADER` (`packages/codegen/src/emitters/templates.ts:115`)
+### `packages/codegen/src/emitters/templates.ts::GENERATED_HEADER`
 
 ```text
 // Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
@@ -11558,7 +11558,7 @@ pipeline — which falls back to string equality.
 // top-level `.trim()` that handles the outermost render.
 ```
 
-### `TemplateEmitter.constructor` (`packages/codegen/src/emitters/templates.ts:147`)
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
 
 #### body
 
@@ -11580,7 +11580,7 @@ pipeline — which falls back to string equality.
 // back-pointer lookup via `slotByRuleId`).
 ```
 
-### `TemplateEmitter.<unknown>` (`packages/codegen/src/emitters/templates.ts:141`)
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.<unknown>`
 
 #### body
 
@@ -11607,7 +11607,7 @@ pipeline — which falls back to string equality.
 // byte-equivalence diff gate. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
 ```
 
-### `seamNeedsSpace` (`packages/codegen/src/emitters/templates.ts:230`)
+### `packages/codegen/src/emitters/templates.ts::seamNeedsSpace`
 
 ```text
 /**
@@ -11622,7 +11622,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `renderRuleEdge` (`packages/codegen/src/emitters/templates.ts:234`)
+### `packages/codegen/src/emitters/templates.ts::renderRuleEdge`
 
 ```text
 /**
@@ -11650,7 +11650,7 @@ pipeline — which falls back to string equality.
 // Per-arm cycle-guard fork — see the SEQ case above.
 ```
 
-### `ownerSlotsFor` (`packages/codegen/src/emitters/templates.ts:285`)
+### `packages/codegen/src/emitters/templates.ts::ownerSlotsFor`
 
 ```text
 /** The owner's slots keyed by name for `lookupSlot`'s fallbacks —
@@ -11658,7 +11658,7 @@ pipeline — which falls back to string equality.
  *  field's slot at their template position. */
 ```
 
-### `emitOne` (`packages/codegen/src/emitters/templates.ts:295`)
+### `packages/codegen/src/emitters/templates.ts::emitOne`
 
 #### body
 
@@ -11683,7 +11683,7 @@ pipeline — which falls back to string equality.
 // Tasks 4-6's real per-instance capture.
 ```
 
-### `emitBranchTemplate` (`packages/codegen/src/emitters/templates.ts:321`)
+### `packages/codegen/src/emitters/templates.ts::emitBranchTemplate`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11715,7 +11715,7 @@ pipeline — which falls back to string equality.
 // new rule objects without preserving IDs, breaking slotByRuleId).
 ```
 
-### `emitGroupTemplate` (`packages/codegen/src/emitters/templates.ts:326`)
+### `packages/codegen/src/emitters/templates.ts::emitGroupTemplate`
 
 #### body
 
@@ -11724,7 +11724,7 @@ pipeline — which falls back to string equality.
 // Populate ownerSlots for the same reason as emitBranchTemplate.
 ```
 
-### `emitRule` (`packages/codegen/src/emitters/templates.ts:331`)
+### `packages/codegen/src/emitters/templates.ts::emitRule`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11990,7 +11990,7 @@ pipeline — which falls back to string equality.
 // reference; defer to per-modelType emit by returning empty.
 ```
 
-### `staticListInterior` (`packages/codegen/src/emitters/templates.ts:551`)
+### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
 ```text
 /**
@@ -12019,7 +12019,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `warnedMultiSlotGroups` (`packages/codegen/src/emitters/templates.ts:780`)
+### `packages/codegen/src/emitters/templates.ts::warnedMultiSlotGroups`
 
 ```text
 // §D-2a/§2d — one-time warning when a seq-unit multiplicity group (the inlined
@@ -12030,7 +12030,7 @@ pipeline — which falls back to string equality.
 // inline hoist deliberately does not pre-count. Diagnostic only — never throws.
 ```
 
-### `warnMultiSlotMultiplicityGroup` (`packages/codegen/src/emitters/templates.ts:781`)
+### `packages/codegen/src/emitters/templates.ts::warnMultiSlotMultiplicityGroup`
 
 #### body
 
@@ -12050,14 +12050,14 @@ pipeline — which falls back to string equality.
 // the site, and dedup below is still keyed uniquely per kind + slot set).
 ```
 
-### `isTagBalanced` (`packages/codegen/src/emitters/templates.ts:836`)
+### `packages/codegen/src/emitters/templates.ts::isTagBalanced`
 
 ```text
 // True when the fragment can stand alone as a template: it never closes an
 // `{% if %}` it didn't open, and closes every one it did.
 ```
 
-### `commonBalancedTrailingTail` (`packages/codegen/src/emitters/templates.ts:846`)
+### `packages/codegen/src/emitters/templates.ts::commonBalancedTrailingTail`
 
 ```text
 // Longest common trailing suffix across all bodies, trimmed forward to the
@@ -12066,7 +12066,7 @@ pipeline — which falls back to string equality.
 // emitted as a standalone template fragment.
 ```
 
-### `restoreEmittedSlotNames` (`packages/codegen/src/emitters/templates.ts:893`)
+### `packages/codegen/src/emitters/templates.ts::restoreEmittedSlotNames`
 
 ```text
 // emitOptional and emitRepeat were deleted in PR2 Task 3.B3.
@@ -12083,7 +12083,7 @@ pipeline — which falls back to string equality.
 // another arm) would wrongly see it as already-emitted and produce ''.
 ```
 
-### `emitChoice` (`packages/codegen/src/emitters/templates.ts:898`)
+### `packages/codegen/src/emitters/templates.ts::emitChoice`
 
 #### body
 
@@ -12331,7 +12331,7 @@ pipeline — which falls back to string equality.
 // Pure-literal or unregistered choice — emit the first non-empty arm's text.
 ```
 
-### `selfGatedSlotUnits` (`packages/codegen/src/emitters/templates.ts:1091`)
+### `packages/codegen/src/emitters/templates.ts::selfGatedSlotUnits`
 
 ```text
 /** Split an arm body into pure self-gated slot units
@@ -12350,7 +12350,7 @@ pipeline — which falls back to string equality.
 // present slot).
 ```
 
-### `escapeRegex` (`packages/codegen/src/emitters/templates.ts:1111`)
+### `packages/codegen/src/emitters/templates.ts::escapeRegex`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -12364,7 +12364,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `emitters/client-utils.ts` (module)
+### `packages/codegen/src/emitters/client-utils.ts::module`
 
 ```text
 /**
@@ -12373,7 +12373,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitAttachProps` (`packages/codegen/src/emitters/client-utils.ts:45`)
+### `packages/codegen/src/emitters/client-utils.ts::emitAttachProps`
 
 #### body
 
@@ -12383,7 +12383,7 @@ pipeline — which falls back to string equality.
 // throw, and a namespaced constructor may legitimately be called `name`.
 ```
 
-### `emitNodeGuards` (`packages/codegen/src/emitters/client-utils.ts:115`)
+### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
 
 #### body
 
@@ -12392,7 +12392,7 @@ pipeline — which falls back to string equality.
 // no runtime name lookup stands between the argument and the comparison.
 ```
 
-### `emitters/emit.ts` (module)
+### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
 /**
@@ -12412,14 +12412,14 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `EmitAllResult.rootTreeTypeName` (`packages/codegen/src/emitters/emit.ts:52`)
+### `packages/codegen/src/emitters/emit.ts::EmitAllResult.rootTreeTypeName`
 
 ```text
 /** Name of the `wrap.ts` alias for the root kind's wrapped surface — the
 	 *  return type `engine.ts` gives `parse()`. */
 ```
 
-### `dispatchNodeMapByTaxonomy` (`packages/codegen/src/emitters/emit.ts:169`)
+### `packages/codegen/src/emitters/emit.ts::dispatchNodeMapByTaxonomy`
 
 #### body
 
@@ -12434,7 +12434,7 @@ pipeline — which falls back to string equality.
 			   `emitSeparatedListFrom`'s doc comment (from.ts). */
 ```
 
-### `EmitEngineConfig` (`packages/codegen/src/emitters/engine.ts:1`)
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig`
 
 ```text
 /**
@@ -12450,14 +12450,14 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `EmitEngineConfig.rootTypeName` (`packages/codegen/src/emitters/engine.ts:3`)
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTypeName`
 
 ```text
 /** The grammar's root kind interface name (e.g. `SourceFile`) — types
 	 *  `createEngine`'s diagnostics so `parseAndRead(...).root` needs no cast. */
 ```
 
-### `EmitEngineConfig.rootTreeTypeName` (`packages/codegen/src/emitters/engine.ts:4`)
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTreeTypeName`
 
 ```text
 /** The `wrap.ts` alias for the root kind's wrapped surface (e.g.
@@ -12465,7 +12465,7 @@ pipeline — which falls back to string equality.
 	 *  emitter from the same table that types `wrapNode`. */
 ```
 
-### `emitters/node-model.ts` (module)
+### `packages/codegen/src/emitters/node-model.ts::module`
 
 ```text
 /**
@@ -12488,21 +12488,21 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `SerializedNodeBase.forwardsTo` (`packages/codegen/src/emitters/node-model.ts:80`)
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.forwardsTo`
 
 ```text
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
 
-### `SerializedNodeBase.determinedSlots` (`packages/codegen/src/emitters/node-model.ts:82`)
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.determinedSlots`
 
 ```text
 /** Grammar-fixed slots `pruneDeterminedSlots` removed from the record —
 	 *  each renders as template text, never stored on the wire. */
 ```
 
-### `SerializedNodeBase.namespacedConstructors` (`packages/codegen/src/emitters/node-model.ts:83`)
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.namespacedConstructors`
 
 ```text
 /** The factory's namespaced constructors (`buildX.<name>(...)`) — see
@@ -12511,7 +12511,7 @@ pipeline — which falls back to string equality.
 	 *  entry fixes `slot` to `literal` and takes `params` positionally. */
 ```
 
-### `serializeNode` (`packages/codegen/src/emitters/node-model.ts:235`)
+### `packages/codegen/src/emitters/node-model.ts::serializeNode`
 
 #### body
 
@@ -12522,7 +12522,7 @@ pipeline — which falls back to string equality.
 			   only when present. */
 ```
 
-### `serializeField` (`packages/codegen/src/emitters/node-model.ts:321`)
+### `packages/codegen/src/emitters/node-model.ts::serializeField`
 
 #### body
 
@@ -12532,7 +12532,7 @@ pipeline — which falls back to string equality.
 		   kinds: [...]) for byte-identity of node-model.json5 output. */
 ```
 
-### `emitters/kind-discriminant.ts` (module)
+### `packages/codegen/src/emitters/kind-discriminant.ts::module`
 
 ```text
 /**
@@ -12551,7 +12551,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/grammar.ts` (module)
+### `packages/codegen/src/emitters/grammar.ts::module`
 
 ```text
 /**
@@ -12560,7 +12560,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/index-file.ts` (module)
+### `packages/codegen/src/emitters/index-file.ts::module`
 
 ```text
 /**
@@ -12569,7 +12569,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `TransportLiteral.immediate` (`packages/codegen/src/emitters/transport-projection.ts:11`)
+### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 
 ```text
 /** Grammar-immediacy stamp of an INLINE terminal value (`token.immediate`
@@ -12578,7 +12578,7 @@ pipeline — which falls back to string equality.
 	 *  look up, so the stamp must ride the literal itself. */
 ```
 
-### `isConcreteTransportNode` (`packages/codegen/src/emitters/transport-projection.ts:39`)
+### `packages/codegen/src/emitters/transport-projection.ts::isConcreteTransportNode`
 
 #### body
 
@@ -12588,7 +12588,7 @@ pipeline — which falls back to string equality.
 		   see isSlotBearingCompound's doc comment (shared.ts). */
 ```
 
-### `collectTransportLiterals` (`packages/codegen/src/emitters/transport-projection.ts:58`)
+### `packages/codegen/src/emitters/transport-projection.ts::collectTransportLiterals`
 
 #### body
 
@@ -12603,7 +12603,7 @@ pipeline — which falls back to string equality.
 		   at arm emission (emittedNodeIds). */
 ```
 
-### `emitters/consts.ts` (module)
+### `packages/codegen/src/emitters/consts.ts::module`
 
 ```text
 /**
@@ -12613,7 +12613,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitConsts` (`packages/codegen/src/emitters/consts.ts:13`)
+### `packages/codegen/src/emitters/consts.ts::emitConsts`
 
 ```text
 // branch + polymorph
@@ -12691,7 +12691,7 @@ pipeline — which falls back to string equality.
 // Emitting both would produce a duplicate identifier TS2300 error.
 ```
 
-### `bitflagMemberName` (`packages/codegen/src/emitters/consts.ts:470`)
+### `packages/codegen/src/emitters/consts.ts::bitflagMemberName`
 
 #### body
 
@@ -12714,7 +12714,7 @@ pipeline — which falls back to string equality.
 // Prefix a leading digit so the name is a valid identifier.
 ```
 
-### `emitters/render-module-runner.ts` (module)
+### `packages/codegen/src/emitters/render-module-runner.ts::module`
 
 ```text
 /**
@@ -12726,7 +12726,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/kind-id-rust.ts` (module)
+### `packages/codegen/src/emitters/kind-id-rust.ts::module`
 
 ```text
 /**
@@ -12749,7 +12749,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitters/factories.ts` (module)
+### `packages/codegen/src/emitters/factories.ts::module`
 
 ```text
 /**
@@ -12771,7 +12771,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `FieldCarryingNode` (`packages/codegen/src/emitters/factories.ts:335`)
+### `packages/codegen/src/emitters/factories.ts::FieldCarryingNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -12779,7 +12779,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `kindEnumTextMapExpr` (`packages/codegen/src/emitters/factories.ts:371`)
+### `packages/codegen/src/emitters/factories.ts::kindEnumTextMapExpr`
 
 ```text
 // Exported: from.ts's resolver emission shares this map builder (it
@@ -12827,7 +12827,7 @@ pipeline — which falls back to string equality.
 // (fixtures); genuinely kindless literals skip.
 ```
 
-### `slotStorageFromValueExpr` (`packages/codegen/src/emitters/factories.ts:425`)
+### `packages/codegen/src/emitters/factories.ts::slotStorageFromValueExpr`
 
 #### body
 
@@ -12836,7 +12836,7 @@ pipeline — which falls back to string equality.
 // (types.ts: a kind-enum member id, or an array of them).
 ```
 
-### `slotStorageExpr` (`packages/codegen/src/emitters/factories.ts:448`)
+### `packages/codegen/src/emitters/factories.ts::slotStorageExpr`
 
 #### body
 
@@ -12850,7 +12850,7 @@ pipeline — which falls back to string equality.
 // bypassed/omitted value still stores `[]` rather than `undefined`.
 ```
 
-### `fieldElementType` (`packages/codegen/src/emitters/factories.ts:479`)
+### `packages/codegen/src/emitters/factories.ts::fieldElementType`
 
 #### body
 
@@ -12861,7 +12861,7 @@ pipeline — which falls back to string equality.
 // emits for its own missing kind.
 ```
 
-### `delimiterMembersFor` (`packages/codegen/src/emitters/factories.ts:502`)
+### `packages/codegen/src/emitters/factories.ts::delimiterMembersFor`
 
 ```text
 /** The `delimiter` bitflag members the grammar permits a caller to select
@@ -12870,13 +12870,13 @@ pipeline — which falls back to string equality.
  *  the from() coercer's runtime narrowing guard. */
 ```
 
-### `delimiterUnionFor` (`packages/codegen/src/emitters/factories.ts:515`)
+### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 
 ```text
 /** The `delimiter` option's type for a list with these flank modes. */
 ```
 
-### `FactoryParam` (`packages/codegen/src/emitters/factories.ts:522`)
+### `packages/codegen/src/emitters/factories.ts::FactoryParam`
 
 ```text
 /**
@@ -12891,19 +12891,19 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `FactoryParam.strictType` (`packages/codegen/src/emitters/factories.ts:526`)
+### `packages/codegen/src/emitters/factories.ts::FactoryParam.strictType`
 
 ```text
 /** The type the builder itself declares. */
 ```
 
-### `FactoryParam.looseType` (`packages/codegen/src/emitters/factories.ts:527`)
+### `packages/codegen/src/emitters/factories.ts::FactoryParam.looseType`
 
 ```text
 /** The type a coercing caller may pass for the same position. */
 ```
 
-### `FactoryParam.defaultValue` (`packages/codegen/src/emitters/factories.ts:528`)
+### `packages/codegen/src/emitters/factories.ts::FactoryParam.defaultValue`
 
 ```text
 /** Set where the emitted signature defaults the parameter; an
@@ -12911,7 +12911,7 @@ pipeline — which falls back to string equality.
 	 *  spelling both. */
 ```
 
-### `FactorySurface` (`packages/codegen/src/emitters/factories.ts:531`)
+### `packages/codegen/src/emitters/factories.ts::FactorySurface`
 
 ```text
 /**
@@ -12923,19 +12923,19 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `FactorySurface.param` (`packages/codegen/src/emitters/factories.ts:534`)
+### `packages/codegen/src/emitters/factories.ts::FactorySurface.param`
 
 ```text
 /** The parameter the two strings below are rendered from. */
 ```
 
-### `FactorySurface.params` (`packages/codegen/src/emitters/factories.ts:535`)
+### `packages/codegen/src/emitters/factories.ts::FactorySurface.params`
 
 ```text
 /** Parameter list text, without the parentheses. */
 ```
 
-### `FactorySurface.looseParams` (`packages/codegen/src/emitters/factories.ts:536`)
+### `packages/codegen/src/emitters/factories.ts::FactorySurface.looseParams`
 
 ```text
 /** `params` with the parameter's type widened to what a COERCING caller
@@ -12945,13 +12945,13 @@ pipeline — which falls back to string equality.
 	 *  (`paramsToTuple`), never independently composed. */
 ```
 
-### `FactorySurface.args` (`packages/codegen/src/emitters/factories.ts:537`)
+### `packages/codegen/src/emitters/factories.ts::FactorySurface.args`
 
 ```text
 /** Forwarding call arguments for `params` (`...children`, `config`, …). */
 ```
 
-### `declarationParams` (`packages/codegen/src/emitters/factories.ts:545`)
+### `packages/codegen/src/emitters/factories.ts::declarationParams`
 
 ```text
 /** A parameter list as it must appear where an INITIALIZER is illegal — an
@@ -12961,7 +12961,7 @@ pipeline — which falls back to string equality.
  *  (`constructorSurface`) that never passed through a `FactoryParam`. */
 ```
 
-### `paramText` (`packages/codegen/src/emitters/factories.ts:549`)
+### `packages/codegen/src/emitters/factories.ts::paramText`
 
 ```text
 /** Render a parameter's signature text against one of its two type columns.
@@ -12969,14 +12969,14 @@ pipeline — which falls back to string equality.
  *  initializer instead of the marker. */
 ```
 
-### `renderSurfaceParams` (`packages/codegen/src/emitters/factories.ts:556`)
+### `packages/codegen/src/emitters/factories.ts::renderSurfaceParams`
 
 ```text
 /** The strict and loose renderings of one parameter — the only place either
  *  string is composed. */
 ```
 
-### `paramsToTuple` (`packages/codegen/src/emitters/factories.ts:560`)
+### `packages/codegen/src/emitters/factories.ts::paramsToTuple`
 
 ```text
 /** A parameter list as a tuple type — labels, optional markers and the rest
@@ -12984,7 +12984,7 @@ pipeline — which falls back to string equality.
  *  string, so the two can never spell the calling convention differently. */
 ```
 
-### `looseValueOf` (`packages/codegen/src/emitters/factories.ts:564`)
+### `packages/codegen/src/emitters/factories.ts::looseValueOf`
 
 ```text
 /** The type a COERCING caller may pass for a node-valued parameter. The
@@ -12994,7 +12994,7 @@ pipeline — which falls back to string equality.
  *  here would re-derive predicates the type layer already owns. */
 ```
 
-### `resolveFactorySurface` (`packages/codegen/src/emitters/factories.ts:568`)
+### `packages/codegen/src/emitters/factories.ts::resolveFactorySurface`
 
 #### body
 
@@ -13070,7 +13070,7 @@ pipeline — which falls back to string equality.
 // chaining, and only pays off where the body reads config at all.
 ```
 
-### `constructorTargetKind` (`packages/codegen/src/emitters/factories.ts:668`)
+### `packages/codegen/src/emitters/factories.ts::constructorTargetKind`
 
 ```text
 /**
@@ -13080,7 +13080,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `constructorSurface` (`packages/codegen/src/emitters/factories.ts:686`)
+### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
 ```text
 /** The parameters a form constructor declares for `kind` and how it
@@ -13131,7 +13131,7 @@ pipeline — which falls back to string equality.
 // Literal-union leaf: same shape, narrowed to the declared values.
 ```
 
-### `buildArgsAliasLines` (`packages/codegen/src/emitters/factories.ts:723`)
+### `packages/codegen/src/emitters/factories.ts::buildArgsAliasLines`
 
 ```text
 /**
@@ -13152,7 +13152,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `builtAliasLines` (`packages/codegen/src/emitters/factories.ts:731`)
+### `packages/codegen/src/emitters/factories.ts::builtAliasLines`
 
 ```text
 /** The per-kind explicit factory return type: the concrete interface plus
@@ -13160,7 +13160,7 @@ pipeline — which falls back to string equality.
  *  NAME — what keeps declaration emit finite), and the shared method tail. */
 ```
 
-### `emitNamespacedConstructors` (`packages/codegen/src/emitters/factories.ts:898`)
+### `packages/codegen/src/emitters/factories.ts::emitNamespacedConstructors`
 
 ```text
 /**
@@ -13219,7 +13219,7 @@ pipeline — which falls back to string equality.
 // otherwise it is required with an explicit `| undefined`.
 ```
 
-### `namespacedEntryEligible` (`packages/codegen/src/emitters/factories.ts:951`)
+### `packages/codegen/src/emitters/factories.ts::namespacedEntryEligible`
 
 ```text
 /** Whether a namespaced constructor entry can actually be emitted as a
@@ -13228,7 +13228,7 @@ pipeline — which falls back to string equality.
  *  set the factory carries, so all three consult this one predicate. */
 ```
 
-### `formLooseChildKind` (`packages/codegen/src/emitters/factories.ts:960`)
+### `packages/codegen/src/emitters/factories.ts::formLooseChildKind`
 
 ```text
 /** The child kind whose COERCER a form constructor's loose mirror routes
@@ -13254,14 +13254,14 @@ pipeline — which falls back to string equality.
  *     be a second name for one signature. */
 ```
 
-### `kindEnumConfigValue` (`packages/codegen/src/emitters/factories.ts:972`)
+### `packages/codegen/src/emitters/factories.ts::kindEnumConfigValue`
 
 ```text
 /** The strict Config value for a kind-enum member: its kind discriminant
  *  when the catalog knows the literal, else the text. */
 ```
 
-### `SoleSlotNode` (`packages/codegen/src/emitters/factories.ts:1091`)
+### `packages/codegen/src/emitters/factories.ts::SoleSlotNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -13269,7 +13269,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `resolveSoleSlotElementType` (`packages/codegen/src/emitters/factories.ts:1099`)
+### `packages/codegen/src/emitters/factories.ts::resolveSoleSlotElementType`
 
 #### body
 
@@ -13277,7 +13277,7 @@ pipeline — which falls back to string equality.
 // The sole slot lives in `node.fields`; derive the element type from it.
 ```
 
-### `elementsTypeOf` (`packages/codegen/src/emitters/factories.ts:1103`)
+### `packages/codegen/src/emitters/factories.ts::elementsTypeOf`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -13291,7 +13291,7 @@ pipeline — which falls back to string equality.
  *  the list factory's own signature and by its `LooseArgs` counterpart. */
 ```
 
-### `parenthesizeUnion` (`packages/codegen/src/emitters/factories.ts:1107`)
+### `packages/codegen/src/emitters/factories.ts::parenthesizeUnion`
 
 ```text
 /** `fieldElementType` doesn't parenthesize multi-member unions (unlike
@@ -13299,7 +13299,7 @@ pipeline — which falls back to string equality.
  *  `[]` to `B` alone. */
 ```
 
-### `separatedListSurface` (`packages/codegen/src/emitters/factories.ts:1111`)
+### `packages/codegen/src/emitters/factories.ts::separatedListSurface`
 
 ```text
 /**
@@ -13347,7 +13347,7 @@ pipeline — which falls back to string equality.
 // choice exists" rather than emitting an invalid empty union.
 ```
 
-### `TextFactoryNode` (`packages/codegen/src/emitters/factories.ts:1301`)
+### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -13355,7 +13355,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `emitTextFactory` (`packages/codegen/src/emitters/factories.ts:1308`)
+### `packages/codegen/src/emitters/factories.ts::emitTextFactory`
 
 #### body
 
@@ -13377,7 +13377,7 @@ pipeline — which falls back to string equality.
 // text (or, for a keyword, absent), with nothing left to widen.
 ```
 
-### `FactoryEmitter` (`packages/codegen/src/emitters/factories.ts:1385`)
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -13385,7 +13385,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `FactoryEmitter.constructor` (`packages/codegen/src/emitters/factories.ts:1396`)
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.constructor`
 
 #### body
 
@@ -13395,7 +13395,7 @@ pipeline — which falls back to string equality.
 // at least one such kind exists.
 ```
 
-### `emitters/test.ts` (module)
+### `packages/codegen/src/emitters/test.ts::module`
 
 ```text
 /**
@@ -13404,7 +13404,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitTests` (`packages/codegen/src/emitters/test.ts:56`)
+### `packages/codegen/src/emitters/test.ts::emitTests`
 
 #### body
 
@@ -13449,7 +13449,7 @@ pipeline — which falls back to string equality.
 // per-`it`) keeps the override surface to one kind→reason entry.
 ```
 
-### `factoryCallArgs` (`packages/codegen/src/emitters/test.ts:156`)
+### `packages/codegen/src/emitters/test.ts::factoryCallArgs`
 
 ```text
 /**
@@ -13503,7 +13503,7 @@ pipeline — which falls back to string equality.
 // Optional field: type test passes no arg; render test passes dummy.
 ```
 
-### `containerCallArgs` (`packages/codegen/src/emitters/test.ts:188`)
+### `packages/codegen/src/emitters/test.ts::containerCallArgs`
 
 ```text
 /** The positional argument a container-shape factory call takes in the
@@ -13532,7 +13532,7 @@ pipeline — which falls back to string equality.
 // a type tag.
 ```
 
-### `emitContainerTest` (`packages/codegen/src/emitters/test.ts:211`)
+### `packages/codegen/src/emitters/test.ts::emitContainerTest`
 
 #### body
 
@@ -13552,7 +13552,7 @@ pipeline — which falls back to string equality.
 // factory actually requires.
 ```
 
-### `namespacedCallArgs` (`packages/codegen/src/emitters/test.ts:232`)
+### `packages/codegen/src/emitters/test.ts::namespacedCallArgs`
 
 ```text
 /**
@@ -13593,7 +13593,7 @@ pipeline — which falls back to string equality.
 // the constructor goes untested rather than known-failing.
 ```
 
-### `emitNamespacedTests` (`packages/codegen/src/emitters/test.ts:275`)
+### `packages/codegen/src/emitters/test.ts::emitNamespacedTests`
 
 #### body
 
@@ -13610,7 +13610,7 @@ pipeline — which falls back to string equality.
 // stub every child shape), without skipping the kind's own tests.
 ```
 
-### `emitLeafTest` (`packages/codegen/src/emitters/test.ts:336`)
+### `packages/codegen/src/emitters/test.ts::emitLeafTest`
 
 #### body
 
@@ -13632,7 +13632,7 @@ pipeline — which falls back to string equality.
 // pattern guard is exercised by other tests anyway.
 ```
 
-### `dummyValue` (`packages/codegen/src/emitters/test.ts:534`)
+### `packages/codegen/src/emitters/test.ts::dummyValue`
 
 ```text
 /**
@@ -13660,7 +13660,7 @@ pipeline — which falls back to string equality.
 // every required field is multiple.
 ```
 
-### `emitters/ir.ts` (module)
+### `packages/codegen/src/emitters/ir.ts::module`
 
 ```text
 /**
@@ -13677,7 +13677,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitIr` (`packages/codegen/src/emitters/ir.ts:19`)
+### `packages/codegen/src/emitters/ir.ts::emitIr`
 
 #### body
 
@@ -13732,7 +13732,7 @@ pipeline — which falls back to string equality.
 // hoisted bundle consts above.
 ```
 
-### `BundleParts` (`packages/codegen/src/emitters/ir.ts:239`)
+### `packages/codegen/src/emitters/ir.ts::BundleParts`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -13740,7 +13740,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `bundleParts` (`packages/codegen/src/emitters/ir.ts:244`)
+### `packages/codegen/src/emitters/ir.ts::bundleParts`
 
 #### body
 
@@ -13768,7 +13768,7 @@ pipeline — which falls back to string equality.
 // second name.
 ```
 
-### `hoistedBundleLines` (`packages/codegen/src/emitters/ir.ts:276`)
+### `packages/codegen/src/emitters/ir.ts::hoistedBundleLines`
 
 ```text
 /** Hoisted, explicitly-annotated bundle const. The typeof-composed
@@ -13777,7 +13777,7 @@ pipeline — which falls back to string equality.
  *  the whole surface structurally (TS7056). */
 ```
 
-### `GROUP_TOKEN_SYNONYMS` (`packages/codegen/src/emitters/ir.ts:291`)
+### `packages/codegen/src/emitters/ir.ts::GROUP_TOKEN_SYNONYMS`
 
 ```text
 /** Kind-name tokens that mean the same thing as a token in a group's name.
@@ -13786,7 +13786,7 @@ pipeline — which falls back to string equality.
  *  `function_item`, `struct_item`. */
 ```
 
-### `CATEGORY_TOKENS` (`packages/codegen/src/emitters/ir.ts:299`)
+### `packages/codegen/src/emitters/ir.ts::CATEGORY_TOKENS`
 
 ```text
 /** Tokens naming a syntactic CATEGORY rather than the construct itself.
@@ -13795,7 +13795,7 @@ pipeline — which falls back to string equality.
  *  `comment` because a comment is the construct, not a category. */
 ```
 
-### `emitSynonymBoolean` (`packages/codegen/src/emitters/ir.ts:391`)
+### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
 
 #### body
 
@@ -13815,7 +13815,7 @@ pipeline — which falls back to string equality.
 // Strategy 3: single factory (whatever it is)
 ```
 
-### `emitSynonymNumber` (`packages/codegen/src/emitters/ir.ts:421`)
+### `packages/codegen/src/emitters/ir.ts::emitSynonymNumber`
 
 #### body
 
@@ -13823,7 +13823,7 @@ pipeline — which falls back to string equality.
 // Identify integer and float kinds via the number.float sub-role
 ```
 
-### `emitSynonymString` (`packages/codegen/src/emitters/ir.ts:459`)
+### `packages/codegen/src/emitters/ir.ts::emitSynonymString`
 
 #### body
 
@@ -13855,7 +13855,7 @@ pipeline — which falls back to string equality.
 // Otherwise: skip — too complex to auto-compose
 ```
 
-### `emitSynonymComment` (`packages/codegen/src/emitters/ir.ts:481`)
+### `packages/codegen/src/emitters/ir.ts::emitSynonymComment`
 
 #### body
 
@@ -13879,7 +13879,7 @@ pipeline — which falls back to string equality.
 // `ir.blockComment(...)` factories directly.
 ```
 
-### `emitSynonymType` (`packages/codegen/src/emitters/ir.ts:524`)
+### `packages/codegen/src/emitters/ir.ts::emitSynonymType`
 
 #### body
 
@@ -13913,7 +13913,7 @@ pipeline — which falls back to string equality.
 // Branch type-identifier — compose with identifier factory
 ```
 
-### `emitSynonymIdentifier` (`packages/codegen/src/emitters/ir.ts:560`)
+### `packages/codegen/src/emitters/ir.ts::emitSynonymIdentifier`
 
 #### body
 
@@ -13921,7 +13921,7 @@ pipeline — which falls back to string equality.
 // Find the `identifier` kind specifically — not `this`, `super`, `self`
 ```
 
-### `emitters/from.ts` (module)
+### `packages/codegen/src/emitters/from.ts::module`
 
 ```text
 /**
@@ -13943,7 +13943,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `FormChildForFrom` (`packages/codegen/src/emitters/from.ts:15`)
+### `packages/codegen/src/emitters/from.ts::FormChildForFrom`
 
 ```text
 /** What the branch from-emitter can render: a branch, or the hidden
@@ -13952,7 +13952,7 @@ pipeline — which falls back to string equality.
  *  form's child. */
 ```
 
-### `ARGS_HELPER` (`packages/codegen/src/emitters/from.ts:125`)
+### `packages/codegen/src/emitters/from.ts::ARGS_HELPER`
 
 ```text
 /** The `@sittir/types` names the generated from-module may reference.
@@ -13970,14 +13970,14 @@ pipeline — which falls back to string equality.
  *  mirror was emitted. */
 ```
 
-### `fromUsesAttachProps` (`packages/codegen/src/emitters/from.ts:225`)
+### `packages/codegen/src/emitters/from.ts::fromUsesAttachProps`
 
 ```text
 /** True when any emitted from() function carries namespaced props (drives
  *  the generated attachProps import). */
 ```
 
-### `BranchLikeNode` (`packages/codegen/src/emitters/from.ts:292`)
+### `packages/codegen/src/emitters/from.ts::BranchLikeNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -13985,14 +13985,14 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `BranchLikeNode.modelType` (`packages/codegen/src/emitters/from.ts:294`)
+### `packages/codegen/src/emitters/from.ts::BranchLikeNode.modelType`
 
 ```text
 // TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
-### `emitBranchNodeDataPassthrough` (`packages/codegen/src/emitters/from.ts:317`)
+### `packages/codegen/src/emitters/from.ts::emitBranchNodeDataPassthrough`
 
 #### body
 
@@ -14006,7 +14006,7 @@ pipeline — which falls back to string equality.
 // type of every `input.<field>` read below.
 ```
 
-### `ContainerFromNode` (`packages/codegen/src/emitters/from.ts:489`)
+### `packages/codegen/src/emitters/from.ts::ContainerFromNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14014,7 +14014,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `ContainerFromNode.childSlotFacts` (`packages/codegen/src/emitters/from.ts:495`)
+### `packages/codegen/src/emitters/from.ts::ContainerFromNode.childSlotFacts`
 
 ```text
 // The container's classified sole user slot (soleSlotFacts) —
@@ -14022,7 +14022,7 @@ pipeline — which falls back to string equality.
 // by the caller from the full node; not derivable from `fields` alone.
 ```
 
-### `looseElementType` (`packages/codegen/src/emitters/from.ts:591`)
+### `packages/codegen/src/emitters/from.ts::looseElementType`
 
 ```text
 /**
@@ -14033,7 +14033,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `emitContainerFrom` (`packages/codegen/src/emitters/from.ts:638`)
+### `packages/codegen/src/emitters/from.ts::emitContainerFrom`
 
 #### body
 
@@ -14060,7 +14060,7 @@ pipeline — which falls back to string equality.
 // slot whose resolver could coerce; keep the direct call.
 ```
 
-### `LeafFromNode` (`packages/codegen/src/emitters/from.ts:758`)
+### `packages/codegen/src/emitters/from.ts::LeafFromNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14068,7 +14068,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `emitStringLikeFrom` (`packages/codegen/src/emitters/from.ts:765`)
+### `packages/codegen/src/emitters/from.ts::emitStringLikeFrom`
 
 #### body
 
@@ -14088,7 +14088,7 @@ pipeline — which falls back to string equality.
 // Cast at the boundary funnels the `string` to the narrow shape.
 ```
 
-### `emitKeywordFrom` (`packages/codegen/src/emitters/from.ts:776`)
+### `packages/codegen/src/emitters/from.ts::emitKeywordFrom`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14096,7 +14096,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `resolveFieldCall` (`packages/codegen/src/emitters/from.ts:902`)
+### `packages/codegen/src/emitters/from.ts::resolveFieldCall`
 
 #### body
 
@@ -14153,7 +14153,7 @@ pipeline — which falls back to string equality.
 // for every other input shape.
 ```
 
-### `WrapChildrenEntry` (`packages/codegen/src/emitters/from.ts:1072`)
+### `packages/codegen/src/emitters/from.ts::WrapChildrenEntry`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14161,7 +14161,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `emitResolverHelpers` (`packages/codegen/src/emitters/from.ts:1139`)
+### `packages/codegen/src/emitters/from.ts::emitResolverHelpers`
 
 #### body
 
@@ -14233,14 +14233,14 @@ pipeline — which falls back to string equality.
 // a `boolean_literal` factory call.
 ```
 
-### `unexported` (`packages/codegen/src/emitters/from.ts:1365`)
+### `packages/codegen/src/emitters/from.ts::unexported`
 
 ```text
 /** `emitBranchFrom` exports the coercer and every per-field resolver beside
  *  it; a module-local child declares neither. */
 ```
 
-### `FromEmitter` (`packages/codegen/src/emitters/from.ts:1369`)
+### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14248,7 +14248,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `FromEmitter.<unknown>` (`packages/codegen/src/emitters/from.ts:1370`)
+### `packages/codegen/src/emitters/from.ts::FromEmitter.<unknown>`
 
 ```text
 /**
@@ -14265,7 +14265,7 @@ pipeline — which falls back to string equality.
 	 */
 ```
 
-### `FromEmitter.finalize` (`packages/codegen/src/emitters/from.ts:1472`)
+### `packages/codegen/src/emitters/from.ts::FromEmitter.finalize`
 
 #### body
 
@@ -14289,7 +14289,7 @@ pipeline — which falls back to string equality.
 // the scan that decides whether anything actually uses it.
 ```
 
-### `emitters/wrap.ts` (module)
+### `packages/codegen/src/emitters/wrap.ts::module`
 
 ```text
 /**
@@ -14318,7 +14318,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `SlotModel` (`packages/codegen/src/emitters/wrap.ts:65`)
+### `packages/codegen/src/emitters/wrap.ts::SlotModel`
 
 ```text
 // Local view-layer slot descriptor: the minimal `{ name, storageKey, arity }`
@@ -14329,7 +14329,7 @@ pipeline — which falls back to string equality.
 // not a class instance (see resolveUnnamedSlotConfig; reworked in task B).
 ```
 
-### `SlotModel.propertyName` (`packages/codegen/src/emitters/wrap.ts:67`)
+### `packages/codegen/src/emitters/wrap.ts::SlotModel.propertyName`
 
 ```text
 /** The accessor/setter name. One contributing slot lends its own; several
@@ -14337,7 +14337,7 @@ pipeline — which falls back to string equality.
 	 *  the generic the model uses for a slot the grammar left unnamed. */
 ```
 
-### `EmitWrapConfig.rootKind` (`packages/codegen/src/emitters/wrap.ts:79`)
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig.rootKind`
 
 ```text
 /** The grammar's `root` role kind. Names that kind's wrapped surface as an
@@ -14345,7 +14345,7 @@ pipeline — which falls back to string equality.
 	 *  re-deriving the wrap table's row for it. */
 ```
 
-### `renameUnusedTreeParam` (`packages/codegen/src/emitters/wrap.ts:86`)
+### `packages/codegen/src/emitters/wrap.ts::renameUnusedTreeParam`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14358,7 +14358,7 @@ pipeline — which falls back to string equality.
 // so the generated package lints clean.
 ```
 
-### `WrapNode` (`packages/codegen/src/emitters/wrap.ts:156`)
+### `packages/codegen/src/emitters/wrap.ts::WrapNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14366,7 +14366,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `ResolveSlotDrillConfig.elidedSeparatorIdsExpr` (`packages/codegen/src/emitters/wrap.ts:203`)
+### `packages/codegen/src/emitters/wrap.ts::ResolveSlotDrillConfig.elidedSeparatorIdsExpr`
 
 ```text
 // Elidable separated-list slot (`hasOptionalElements`): emitted expression
@@ -14374,7 +14374,7 @@ pipeline — which falls back to string equality.
 // position-splitting store path over filter+normalize.
 ```
 
-### `resolveSlotDrillExprs` (`packages/codegen/src/emitters/wrap.ts:206`)
+### `packages/codegen/src/emitters/wrap.ts::resolveSlotDrillExprs`
 
 #### body
 
@@ -14408,7 +14408,7 @@ pipeline — which falls back to string equality.
 // text. Text survives only as the fallback for unstamped members.
 ```
 
-### `SAFE_IDENT_KEY` (`packages/codegen/src/emitters/wrap.ts:367`)
+### `packages/codegen/src/emitters/wrap.ts::SAFE_IDENT_KEY`
 
 ```text
 // `_<ident>` where ident is a valid JS identifier suffix. Keys outside this
@@ -14417,7 +14417,7 @@ pipeline — which falls back to string equality.
 // `_'` / `_$` / `_.` — all valid object keys but invalid dotted accessors.
 ```
 
-### `resolveSlotStoreExpr` (`packages/codegen/src/emitters/wrap.ts:376`)
+### `packages/codegen/src/emitters/wrap.ts::resolveSlotStoreExpr`
 
 #### body
 
@@ -14487,7 +14487,7 @@ pipeline — which falls back to string equality.
 // read; the canonical key wins outright once a `$with` setter patches it.
 ```
 
-### `emitTransparentSupertypeWrap` (`packages/codegen/src/emitters/wrap.ts:412`)
+### `packages/codegen/src/emitters/wrap.ts::emitTransparentSupertypeWrap`
 
 #### body
 
@@ -14523,7 +14523,7 @@ pipeline — which falls back to string equality.
 // child that will never surface.
 ```
 
-### `isFieldBackedSeparatedList` (`packages/codegen/src/emitters/wrap.ts:460`)
+### `packages/codegen/src/emitters/wrap.ts::isFieldBackedSeparatedList`
 
 ```text
 // A separatedList's content position is genuinely field-backed when
@@ -14542,7 +14542,7 @@ pipeline — which falls back to string equality.
 // kinds that fall in the second bucket — verified the hard way.
 ```
 
-### `elidedSeparatorIdsExprOf` (`packages/codegen/src/emitters/wrap.ts:682`)
+### `packages/codegen/src/emitters/wrap.ts::elidedSeparatorIdsExprOf`
 
 ```text
 /**
@@ -14554,7 +14554,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `wrapsAnonLiteralContent` (`packages/codegen/src/emitters/wrap.ts:724`)
+### `packages/codegen/src/emitters/wrap.ts::wrapsAnonLiteralContent`
 
 ```text
 // The `_isReadTextLeaf` pass-through applies only to kinds that declare
@@ -14568,7 +14568,7 @@ pipeline — which falls back to string equality.
 // comparison.
 ```
 
-### `wrapTextLeafTypeStamp` (`packages/codegen/src/emitters/wrap.ts:728`)
+### `packages/codegen/src/emitters/wrap.ts::wrapTextLeafTypeStamp`
 
 ```text
 // `$type` restamp for the `_isReadTextLeaf` pass-through — same numeric
@@ -14576,7 +14576,7 @@ pipeline — which falls back to string equality.
 // and structural output dispatch identically downstream.
 ```
 
-### `emitFieldCarryingWrap` (`packages/codegen/src/emitters/wrap.ts:736`)
+### `packages/codegen/src/emitters/wrap.ts::emitFieldCarryingWrap`
 
 #### body
 
@@ -14644,7 +14644,7 @@ pipeline — which falls back to string equality.
 // $with — calls the corresponding factory for update operations.
 ```
 
-### `WrapEmitter` (`packages/codegen/src/emitters/wrap.ts:872`)
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -14652,14 +14652,14 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `WrapEmitter.rootTreeTypeName` (`packages/codegen/src/emitters/wrap.ts:884`)
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.rootTreeTypeName`
 
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
 	 *  has run. `undefined` when no root kind was configured. */
 ```
 
-### `WrapEmitter.finalize` (`packages/codegen/src/emitters/wrap.ts:974`)
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
 #### body
 
@@ -14794,7 +14794,7 @@ pipeline — which falls back to string equality.
 // inference site would union every constituent's discriminant.
 ```
 
-### `emitters/render-module.ts` (module)
+### `packages/codegen/src/emitters/render-module.ts::module`
 
 ```text
 /**
@@ -14816,20 +14816,20 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `RenderModuleEmitter.emitLeaf` (`packages/codegen/src/emitters/render-module.ts:128`)
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitLeaf`
 
 ```text
 // No per-node accumulation needed — emitRenderModule reads the full nodeMap.
 ```
 
-### `RenderModuleEmitter.emitBranch` (`packages/codegen/src/emitters/render-module.ts:130`)
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitBranch`
 
 ```text
 // TEMPORARY: 'separatedList' widened in alongside 'branch' (no-op body,
 // same as 'branch') — see isSlotBearingCompound's doc comment (shared.ts).
 ```
 
-### `RUST_KEYWORDS` (`packages/codegen/src/emitters/render-module.ts:196`)
+### `packages/codegen/src/emitters/render-module.ts::RUST_KEYWORDS`
 
 ```text
 // ----------------------------------------------------------------------
@@ -14837,13 +14837,13 @@ pipeline — which falls back to string equality.
 // ----------------------------------------------------------------------
 ```
 
-### `pascal` (`packages/codegen/src/emitters/render-module.ts:376`)
+### `packages/codegen/src/emitters/render-module.ts::pascal`
 
 ```text
 // strip leading underscores (hidden-kind marker)
 ```
 
-### `EmittedField` (`packages/codegen/src/emitters/render-module.ts:385`)
+### `packages/codegen/src/emitters/render-module.ts::EmittedField`
 
 ```text
 // ----------------------------------------------------------------------
@@ -14851,19 +14851,19 @@ pipeline — which falls back to string equality.
 // ----------------------------------------------------------------------
 ```
 
-### `EmittedField.name` (`packages/codegen/src/emitters/render-module.ts:386`)
+### `packages/codegen/src/emitters/render-module.ts::EmittedField.name`
 
 ```text
 // raw grammar field name
 ```
 
-### `EmittedField.multiple` (`packages/codegen/src/emitters/render-module.ts:389`)
+### `packages/codegen/src/emitters/render-module.ts::EmittedField.multiple`
 
 ```text
 // true when the transport-side field is Vec<Box<AnyTransport>>
 ```
 
-### `renderSlotAuditKey` (`packages/codegen/src/emitters/render-module.ts:443`)
+### `packages/codegen/src/emitters/render-module.ts::renderSlotAuditKey`
 
 #### body
 
@@ -14872,7 +14872,7 @@ pipeline — which falls back to string equality.
 // slots use the `_<storageName>` form — the storage key the JS factory writes.
 ```
 
-### `emitStruct` (`packages/codegen/src/emitters/render-module.ts:495`)
+### `packages/codegen/src/emitters/render-module.ts::emitStruct`
 
 #### body
 
@@ -14952,7 +14952,7 @@ pipeline — which falls back to string equality.
 // render fn can try it first (before the helper path).
 ```
 
-### `renderStructDefs` (`packages/codegen/src/emitters/render-module.ts:627`)
+### `packages/codegen/src/emitters/render-module.ts::renderStructDefs`
 
 #### body
 
@@ -14961,7 +14961,7 @@ pipeline — which falls back to string equality.
 // fields — an unused lifetime parameter is a hard rustc error (E0392).
 ```
 
-### `MetaData` (`packages/codegen/src/emitters/render-module.ts:665`)
+### `packages/codegen/src/emitters/render-module.ts::MetaData`
 
 ```text
 // ----------------------------------------------------------------------
@@ -14969,13 +14969,13 @@ pipeline — which falls back to string equality.
 // ----------------------------------------------------------------------
 ```
 
-### `MetaData.separators` (`packages/codegen/src/emitters/render-module.ts:666`)
+### `packages/codegen/src/emitters/render-module.ts::MetaData.separators`
 
 ```text
 // kind → separator (fallback for inferred slots)
 ```
 
-### `collectMetaData` (`packages/codegen/src/emitters/render-module.ts:669`)
+### `packages/codegen/src/emitters/render-module.ts::collectMetaData`
 
 #### body
 
@@ -15015,7 +15015,7 @@ pipeline — which falls back to string equality.
 //    path).
 ```
 
-### `libRsContents` (`packages/codegen/src/emitters/render-module.ts:1236`)
+### `packages/codegen/src/emitters/render-module.ts::libRsContents`
 
 ```text
 // ----------------------------------------------------------------------
@@ -15023,7 +15023,7 @@ pipeline — which falls back to string equality.
 // ----------------------------------------------------------------------
 ```
 
-### `renderTransportSupport` (`packages/codegen/src/emitters/render-module.ts:1329`)
+### `packages/codegen/src/emitters/render-module.ts::renderTransportSupport`
 
 #### body
 
@@ -15089,7 +15089,7 @@ pipeline — which falls back to string equality.
 // and BEFORE renderTransportEntry() so render_transport can call render_transport_dispatch.
 ```
 
-### `boxedInEnum` (`packages/codegen/src/emitters/render-module.ts:1612`)
+### `packages/codegen/src/emitters/render-module.ts::boxedInEnum`
 
 #### body
 
@@ -15102,21 +15102,21 @@ pipeline — which falls back to string equality.
 // creates the size cycle, not every variant of the enum.
 ```
 
-### `aliasLeafTrialOrder` (`packages/codegen/src/emitters/render-module.ts:1694`)
+### `packages/codegen/src/emitters/render-module.ts::aliasLeafTrialOrder`
 
 ```text
 /** Leaf modelTypes an alias occurrence can scalar-collapse into — the trial
  *  set for {@link emitAliasUnwrapRecurseArm}, text-validated enums first. */
 ```
 
-### `supertypeClosureOf` (`packages/codegen/src/emitters/render-module.ts:1709`)
+### `packages/codegen/src/emitters/render-module.ts::supertypeClosureOf`
 
 ```text
 /** The supertype closure of `kinds`: every kind reachable by walking
  *  supertype subtype lists transitively (the kinds themselves included). */
 ```
 
-### `emitSupertypeTransportEnum` (`packages/codegen/src/emitters/render-module.ts:1722`)
+### `packages/codegen/src/emitters/render-module.ts::emitSupertypeTransportEnum`
 
 #### body
 
@@ -15222,7 +15222,7 @@ pipeline — which falls back to string equality.
 // references are fine at Rust module scope).
 ```
 
-### `collectConcreteTransportKindIds` (`packages/codegen/src/emitters/render-module.ts:1971`)
+### `packages/codegen/src/emitters/render-module.ts::collectConcreteTransportKindIds`
 
 ```text
 /**
@@ -15236,27 +15236,27 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `AcceptedTransportIdsInput.stampedIds` (`packages/codegen/src/emitters/render-module.ts:1995`)
+### `packages/codegen/src/emitters/render-module.ts::AcceptedTransportIdsInput.stampedIds`
 
 ```text
 /** Per-reference-site mint stamp (slot values only) — authoritative when present. */
 ```
 
-### `AcceptedTransportIdsInput.parseAliases` (`packages/codegen/src/emitters/render-module.ts:1996`)
+### `packages/codegen/src/emitters/render-module.ts::AcceptedTransportIdsInput.parseAliases`
 
 ```text
 /** Name-derived alias map for this slot/field (`aliasTargetToSourceMapOf`), used to
 	 *  expand `kind`'s alias-site names when no mint stamp is available. */
 ```
 
-### `AcceptedTransportIdsInput.parseName` (`packages/codegen/src/emitters/render-module.ts:1997`)
+### `packages/codegen/src/emitters/render-module.ts::AcceptedTransportIdsInput.parseName`
 
 ```text
 /** This kind's own alias-occurrence parse name (e.g. supertype `subtypeParseNames`),
 	 *  when it's reached only via `alias($.kind, $.parseName)` at this position. */
 ```
 
-### `DBG_KINDID_FASTPATH` (`packages/codegen/src/emitters/render-module.ts:2000`)
+### `packages/codegen/src/emitters/render-module.ts::DBG_KINDID_FASTPATH`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -15268,7 +15268,7 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `registerKindIdFastPathDump` (`packages/codegen/src/emitters/render-module.ts:2006`)
+### `packages/codegen/src/emitters/render-module.ts::registerKindIdFastPathDump`
 
 #### body
 
@@ -15280,7 +15280,7 @@ pipeline — which falls back to string equality.
 // stream's buffering entirely.
 ```
 
-### `resolveAcceptedTransportIds` (`packages/codegen/src/emitters/render-module.ts:2018`)
+### `packages/codegen/src/emitters/render-module.ts::resolveAcceptedTransportIds`
 
 ```text
 /**
@@ -15325,7 +15325,7 @@ pipeline — which falls back to string equality.
 // ids reach decode arms only through this kind-level stamp.
 ```
 
-### `assertRoutableTransportIds` (`packages/codegen/src/emitters/render-module.ts:2056`)
+### `packages/codegen/src/emitters/render-module.ts::assertRoutableTransportIds`
 
 ```text
 /**
@@ -15341,7 +15341,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `collectSlotEmissionMetadata` (`packages/codegen/src/emitters/render-module.ts:2112`)
+### `packages/codegen/src/emitters/render-module.ts::collectSlotEmissionMetadata`
 
 ```text
 /**
@@ -15388,7 +15388,7 @@ pipeline — which falls back to string equality.
 // unnamed slot — see the storageByName guard above.
 ```
 
-### `slotVerbatimIsImmediate` (`packages/codegen/src/emitters/render-module.ts:2192`)
+### `packages/codegen/src/emitters/render-module.ts::slotVerbatimIsImmediate`
 
 ```text
 /**
@@ -15405,7 +15405,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `renderTransportStruct` (`packages/codegen/src/emitters/render-module.ts:2788`)
+### `packages/codegen/src/emitters/render-module.ts::renderTransportStruct`
 
 #### body
 
@@ -15413,7 +15413,7 @@ pipeline — which falls back to string equality.
 // Enum modelType: emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
 ```
 
-### `renderTransportDataStruct` (`packages/codegen/src/emitters/render-module.ts:2801`)
+### `packages/codegen/src/emitters/render-module.ts::renderTransportDataStruct`
 
 #### body
 
@@ -15579,7 +15579,7 @@ pipeline — which falls back to string equality.
 // never actually boxed get DCE'd by the compiler.
 ```
 
-### `leafDefaultTextLiteral` (`packages/codegen/src/emitters/render-module.ts:3041`)
+### `packages/codegen/src/emitters/render-module.ts::leafDefaultTextLiteral`
 
 #### body
 
@@ -15593,7 +15593,7 @@ pipeline — which falls back to string equality.
 // constant — they come in on the String path and must stay on that path.
 ```
 
-### `TRANSPORT_METADATA_FIELDS.jsName` (`packages/codegen/src/emitters/render-module.ts:3056`)
+### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS.jsName`
 
 ```text
 // $triviaData carries leading/trailing comment nodes. TransportTrivia's
@@ -15601,7 +15601,7 @@ pipeline — which falls back to string equality.
 // tries the entry's own typed struct before falling back to verbatim text.
 ```
 
-### `renderTransportField` (`packages/codegen/src/emitters/render-module.ts:3109`)
+### `packages/codegen/src/emitters/render-module.ts::renderTransportField`
 
 #### body
 
@@ -15647,7 +15647,7 @@ pipeline — which falls back to string equality.
 // `None` the same as `Some(false)` (`unwrap_or(false)`).
 ```
 
-### `slotCarrier` (`packages/codegen/src/emitters/render-module.ts:3148`)
+### `packages/codegen/src/emitters/render-module.ts::slotCarrier`
 
 ```text
 /**
@@ -15659,7 +15659,7 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `supertypeKindByTypeNameCache` (`packages/codegen/src/emitters/render-module.ts:3210`)
+### `packages/codegen/src/emitters/render-module.ts::supertypeKindByTypeNameCache`
 
 ```text
 // Memoized lookup: supertype typeName → supertype kind. Used by back-edge

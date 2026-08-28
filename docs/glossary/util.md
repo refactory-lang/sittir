@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `isAsciiIdentifier` (`packages/codegen/src/util/identifier-shape.ts:18`)
+### `packages/codegen/src/util/identifier-shape.ts::isAsciiIdentifier`
 
 ```text
 /**
@@ -19,7 +19,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `compileWordMatcher` (`packages/codegen/src/util/word-matcher.ts:37`)
+### `packages/codegen/src/util/word-matcher.ts::compileWordMatcher`
 
 ```text
 /**
@@ -40,7 +40,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `matchesWordShape` (`packages/codegen/src/util/word-matcher.ts:74`)
+### `packages/codegen/src/util/word-matcher.ts::matchesWordShape`
 
 ```text
 /**
@@ -60,7 +60,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ruleToRegexSource` (`packages/codegen/src/util/word-matcher.ts:93`)
+### `packages/codegen/src/util/word-matcher.ts::ruleToRegexSource`
 
 ```text
 /**
@@ -95,7 +95,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			   without additional context. */
 ```
 
-### `util/word-matcher.ts` (module)
+### `packages/codegen/src/util/word-matcher.ts::module`
 
 ```text
 /**
@@ -132,7 +132,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ASCII_IDENTIFIER_RE` (`packages/codegen/src/util/identifier-shape.ts:1`)
+### `packages/codegen/src/util/identifier-shape.ts::ASCII_IDENTIFIER_RE`
 
 ```text
 /**
@@ -151,7 +151,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `rootRuleName` (`packages/codegen/src/util/reachable-rules.ts:1`)
+### `packages/codegen/src/util/reachable-rules.ts::rootRuleName`
 
 ```text
 /**
@@ -178,13 +178,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectSymbolRefs` (`packages/codegen/src/util/reachable-rules.ts:5`)
+### `packages/codegen/src/util/reachable-rules.ts::collectSymbolRefs`
 
 ```text
 /** Every `{type:'SYMBOL', name}` reference inside `node`, added to `into`. */
 ```
 
-### `collectUnreachableHiddenRules` (`packages/codegen/src/util/reachable-rules.ts:16`)
+### `packages/codegen/src/util/reachable-rules.ts::collectUnreachableHiddenRules`
 
 ```text
 /**

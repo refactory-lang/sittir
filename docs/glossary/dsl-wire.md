@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `getCurrentWireContext` (`packages/codegen/src/dsl/wire/wire.ts:193`)
+### `packages/codegen/src/dsl/wire/wire.ts::getCurrentWireContext`
 
 ```text
 /** Read the active wire context, or null if no `wire()`-wrapped rule
@@ -19,7 +19,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  accumulator in `synthetic-rules.ts`. */
 ```
 
-### `wireRegisterSyntheticRule` (`packages/codegen/src/dsl/wire/wire.ts:201`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticRule`
 
 ```text
 /**
@@ -29,7 +29,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireRegisterSyntheticInline` (`packages/codegen/src/dsl/wire/wire.ts:212`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticInline`
 
 ```text
 /**
@@ -41,7 +41,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireRegisterConflict` (`packages/codegen/src/dsl/wire/wire.ts:226`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterConflict`
 
 ```text
 /**
@@ -50,7 +50,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireRegisterRefineForms` (`packages/codegen/src/dsl/wire/wire.ts:241`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterRefineForms`
 
 ```text
 /**
@@ -69,13 +69,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireGetCurrentRuleKind` (`packages/codegen/src/dsl/wire/wire.ts:261`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetCurrentRuleKind`
 
 ```text
 /** Current rule kind on the active wire context, or null when inactive. */
 ```
 
-### `withWireContext` (`packages/codegen/src/dsl/wire/wire.ts:266`)
+### `packages/codegen/src/dsl/wire/wire.ts::withWireContext`
 
 ```text
 /**
@@ -89,7 +89,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `composeOrSynthesizePolymorphParents` (`packages/codegen/src/dsl/wire/wire.ts:857`)
+### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizePolymorphParents`
 
 ```text
 /**
@@ -113,7 +113,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `buildPolymorphParentFn` (`packages/codegen/src/dsl/wire/wire.ts:882`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildPolymorphParentFn`
 
 ```text
 /**
@@ -132,7 +132,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `injectHiddenRulePlaceholders` (`packages/codegen/src/dsl/wire/wire.ts:920`)
+### `packages/codegen/src/dsl/wire/wire.ts::injectHiddenRulePlaceholders`
 
 ```text
 /**
@@ -151,7 +151,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `polymorphVisibleName` (`packages/codegen/src/dsl/wire/wire.ts:949`)
+### `packages/codegen/src/dsl/wire/wire.ts::polymorphVisibleName`
 
 ```text
 /**
@@ -169,13 +169,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `polymorphHiddenName` (`packages/codegen/src/dsl/wire/wire.ts:967`)
+### `packages/codegen/src/dsl/wire/wire.ts::polymorphHiddenName`
 
 ```text
 /** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
 ```
 
-### `composeOrSynthesizeTransformParents` (`packages/codegen/src/dsl/wire/wire.ts:972`)
+### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizeTransformParents`
 
 ```text
 /**
@@ -186,7 +186,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildTransformParentFn` (`packages/codegen/src/dsl/wire/wire.ts:987`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildTransformParentFn`
 
 ```text
 /**
@@ -198,7 +198,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `injectTransformHiddenRulePlaceholders` (`packages/codegen/src/dsl/wire/wire.ts:1001`)
+### `packages/codegen/src/dsl/wire/wire.ts::injectTransformHiddenRulePlaceholders`
 
 ```text
 /**
@@ -220,7 +220,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `registerHiddenRuleForPlaceholder` (`packages/codegen/src/dsl/wire/wire.ts:1034`)
+### `packages/codegen/src/dsl/wire/wire.ts::registerHiddenRuleForPlaceholder`
 
 ```text
 /**
@@ -234,7 +234,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `makeDeferredContentFn` (`packages/codegen/src/dsl/wire/wire.ts:1066`)
+### `packages/codegen/src/dsl/wire/wire.ts::makeDeferredContentFn`
 
 ```text
 /**
@@ -265,7 +265,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapAllRuleFns` (`packages/codegen/src/dsl/wire/wire.ts:1102`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapAllRuleFns`
 
 ```text
 /**
@@ -276,7 +276,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapOneRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:1114`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapOneRuleFn`
 
 ```text
 /**
@@ -285,7 +285,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapConflictsCallback` (`packages/codegen/src/dsl/wire/wire.ts:1133`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapConflictsCallback`
 
 ```text
 /**
@@ -300,7 +300,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapInlineCallback` (`packages/codegen/src/dsl/wire/wire.ts:1147`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
 ```text
 /**
@@ -314,7 +314,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildWiredConflictsFn` (`packages/codegen/src/dsl/wire/wire.ts:1160`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildWiredConflictsFn`
 
 ```text
 /**
@@ -335,7 +335,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildWiredInlineFn` (`packages/codegen/src/dsl/wire/wire.ts:1185`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildWiredInlineFn`
 
 ```text
 /**
@@ -367,7 +367,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // not defined` and discards it (typescript's `_object_arm1`).
 ```
 
-### `collectInlineNames` (`packages/codegen/src/dsl/wire/wire.ts:1225`)
+### `packages/codegen/src/dsl/wire/wire.ts::collectInlineNames`
 
 ```text
 /**
@@ -376,7 +376,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `nativeInlineRef` (`packages/codegen/src/dsl/wire/wire.ts:1241`)
+### `packages/codegen/src/dsl/wire/wire.ts::nativeInlineRef`
 
 ```text
 /**
@@ -389,7 +389,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `symbolizeRef` (`packages/codegen/src/dsl/wire/wire.ts:1255`)
+### `packages/codegen/src/dsl/wire/wire.ts::symbolizeRef`
 
 ```text
 /**
@@ -415,7 +415,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `hasBodyPatternGroups` (`packages/codegen/src/dsl/wire/wire.ts:1284`)
+### `packages/codegen/src/dsl/wire/wire.ts::hasBodyPatternGroups`
 
 ```text
 /** True when any value in `groups` is a function (body-pattern entry). */
@@ -427,7 +427,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `makeSimpleDollarProxy` (`packages/codegen/src/dsl/wire/wire.ts:1312`)
+### `packages/codegen/src/dsl/wire/wire.ts::makeSimpleDollarProxy`
 
 ```text
 /**
@@ -443,7 +443,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isComplexBodyRt` (`packages/codegen/src/dsl/wire/wire.ts:1331`)
+### `packages/codegen/src/dsl/wire/wire.ts::isComplexBodyRt`
 
 ```text
 /**
@@ -468,7 +468,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `unwrapOptionalChoiceRt` (`packages/codegen/src/dsl/wire/wire.ts:1382`)
+### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
 
 ```text
 /**
@@ -489,7 +489,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // passes recognize the tree-sitter-lowered optional form identically.
 ```
 
-### `replaceInBodyRt` (`packages/codegen/src/dsl/wire/wire.ts:1440`)
+### `packages/codegen/src/dsl/wire/wire.ts::replaceInBodyRt`
 
 ```text
 /**
@@ -530,7 +530,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Recurse into children.
 ```
 
-### `buildPatternReplacingFn` (`packages/codegen/src/dsl/wire/wire.ts:1506`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildPatternReplacingFn`
 
 ```text
 /**
@@ -538,7 +538,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `withStringGlobalShim` (`packages/codegen/src/dsl/wire/wire.ts:1520`)
+### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
 ```text
 /**
@@ -564,7 +564,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `rewriteVisibleExternalRefsRt` (`packages/codegen/src/dsl/wire/wire.ts:1550`)
+### `packages/codegen/src/dsl/wire/wire.ts::rewriteVisibleExternalRefsRt`
 
 ```text
 /**
@@ -577,13 +577,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildVisibleExternalsRewritingFn` (`packages/codegen/src/dsl/wire/wire.ts:1596`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildVisibleExternalsRewritingFn`
 
 ```text
 /** Wrap a rule fn so its return value has visibleExternals refs rewritten. */
 ```
 
-### `applyWireVisibleExternalsRewrite` (`packages/codegen/src/dsl/wire/wire.ts:1604`)
+### `packages/codegen/src/dsl/wire/wire.ts::applyWireVisibleExternalsRewrite`
 
 ```text
 /**
@@ -595,7 +595,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyWirePatternReplacement` (`packages/codegen/src/dsl/wire/wire.ts:1626`)
+### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
 ```text
 /**
@@ -655,7 +655,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the body fn evaluates inside a proper wire context.
 ```
 
-### `RenderAsConfig` (`packages/codegen/src/dsl/wire/wire.ts:52`)
+### `packages/codegen/src/dsl/wire/wire.ts::RenderAsConfig`
 
 ```text
 /**
@@ -702,7 +702,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `VisibleExternalsConfig` (`packages/codegen/src/dsl/wire/wire.ts:76`)
+### `packages/codegen/src/dsl/wire/wire.ts::VisibleExternalsConfig`
 
 ```text
 /**
@@ -750,7 +750,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `WireContext` (`packages/codegen/src/dsl/wire/wire.ts:105`)
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext`
 
 ```text
 /**
@@ -766,20 +766,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `deposits` (`packages/codegen/src/dsl/wire/wire.ts:111`)
+### `packages/codegen/src/dsl/wire/wire.ts::deposits`
 
 ```text
 /** Hidden-rule name → captured content body. */
 ```
 
-### `syntheticInline` (`packages/codegen/src/dsl/wire/wire.ts:113`)
+### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`
 
 ```text
 /** Hidden `_kw_*` helper names that should be appended to the
 	 *  grammar's inline list after rule evaluation deposits their body. */
 ```
 
-### `inlineRemovals` (`packages/codegen/src/dsl/wire/wire.ts:116`)
+### `packages/codegen/src/dsl/wire/wire.ts::inlineRemovals`
 
 ```text
 /** Hidden source names behind enrich visible-group mints
@@ -792,7 +792,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  callback. */
 ```
 
-### `orphanedSyntheticGroups` (`packages/codegen/src/dsl/wire/wire.ts:125`)
+### `packages/codegen/src/dsl/wire/wire.ts::orphanedSyntheticGroups`
 
 ```text
 /** Enrich-synthesized clause-hoist names (both inline-safe and
@@ -807,7 +807,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  would otherwise raise for a kind that can never occur in a parse. */
 ```
 
-### `conflictGroups` (`packages/codegen/src/dsl/wire/wire.ts:136`)
+### `packages/codegen/src/dsl/wire/wire.ts::conflictGroups`
 
 ```text
 /** Conflict groups (rule-name arrays) registered by variant() for
@@ -815,7 +815,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  callback when tree-sitter invokes it. */
 ```
 
-### `refineForms` (`packages/codegen/src/dsl/wire/wire.ts:140`)
+### `packages/codegen/src/dsl/wire/wire.ts::refineForms`
 
 ```text
 /** Per-rule form declarations registered by refine(). Ordered list
@@ -826,7 +826,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  the original shape. */
 ```
 
-### `groups` (`packages/codegen/src/dsl/wire/wire.ts:147`)
+### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
 ```text
 /** Per-kind group-lift map from config. Link reads this to synthesize
@@ -834,7 +834,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
 ```
 
-### `polymorphsConfig` (`packages/codegen/src/dsl/wire/wire.ts:151`)
+### `packages/codegen/src/dsl/wire/wire.ts::polymorphsConfig`
 
 ```text
 /** Raw polymorphs path→variant-name config. Link passes this to
@@ -842,7 +842,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  ancestor context segments. */
 ```
 
-### `renderAs` (`packages/codegen/src/dsl/wire/wire.ts:155`)
+### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
 /** Sittir-side rule bodies for external scanner symbols. Each entry
@@ -853,28 +853,28 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  See: renderAs mechanism. */
 ```
 
-### `visibleExternals` (`packages/codegen/src/dsl/wire/wire.ts:162`)
+### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
 
 ```text
 /** Hidden-external → sittir-side render body map from `visibleExternals:`.
 	 *  See {@link VisibleExternalsConfig} for the full mechanism. */
 ```
 
-### `expectDiagnostics` (`packages/codegen/src/dsl/wire/wire.ts:165`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectDiagnostics`
 
 ```text
 /** Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:`.
 	 *  See `WireConfig.expectDiagnostics` for the full description. */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/dsl/wire/wire.ts:168`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectTestFailures`
 
 ```text
 /** Per-kind known-failing generated-test declarations from
 	 *  `expectTestFailures:`. See `WireConfig.expectTestFailures`. */
 ```
 
-### `currentRuleKind` (`packages/codegen/src/dsl/wire/wire.ts:171`)
+### `packages/codegen/src/dsl/wire/wire.ts::currentRuleKind`
 
 ```text
 /** Name of the rule currently being evaluated, for variant()'s
@@ -882,14 +882,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
 ```
 
-### `authoredRuleNames` (`packages/codegen/src/dsl/wire/wire.ts:175`)
+### `packages/codegen/src/dsl/wire/wire.ts::authoredRuleNames`
 
 ```text
 /** Rule<'evaluate'> names explicitly authored in `config.rules`. Synthetic `_kw_*`
 	 *  auto-inline only applies to helpers wire synthesized itself. */
 ```
 
-### `RefineForm` (`packages/codegen/src/dsl/wire/wire.ts:180`)
+### `packages/codegen/src/dsl/wire/wire.ts::RefineForm`
 
 ```text
 /**
@@ -900,7 +900,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `BaseKind` (`packages/codegen/src/dsl/wire/wire.ts:284`)
+### `packages/codegen/src/dsl/wire/wire.ts::BaseKind`
 
 ```text
 /** @internal — extract the rule-kind string union from a base grammar.
@@ -938,7 +938,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PolymorphsConfig` (`packages/codegen/src/dsl/wire/wire.ts:293`)
+### `packages/codegen/src/dsl/wire/wire.ts::PolymorphsConfig`
 
 ```text
 /**
@@ -954,7 +954,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `GroupsConfigValue` (`packages/codegen/src/dsl/wire/wire.ts:308`)
+### `packages/codegen/src/dsl/wire/wire.ts::GroupsConfigValue`
 
 ```text
 /**
@@ -988,7 +988,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `TransformsConfig` (`packages/codegen/src/dsl/wire/wire.ts:340`)
+### `packages/codegen/src/dsl/wire/wire.ts::TransformsConfig`
 
 ```text
 /**
@@ -1044,13 +1044,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (which is the TS2589 source). Array form = multi-patchset rules.
 ```
 
-### `PatchMap` (`packages/codegen/src/dsl/wire/wire.ts:390`)
+### `packages/codegen/src/dsl/wire/wire.ts::PatchMap`
 
 ```text
 /** A single patch-map — path-in-original → patch value. */
 ```
 
-### `ShapedSymbols` (`packages/codegen/src/dsl/wire/wire.ts:405`)
+### `packages/codegen/src/dsl/wire/wire.ts::ShapedSymbols`
 
 ```text
 /**
@@ -1072,7 +1072,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // hit this index.
 ```
 
-### `conflicts` (`packages/codegen/src/dsl/wire/wire.ts:427`)
+### `packages/codegen/src/dsl/wire/wire.ts::conflicts`
 
 ```text
 /**
@@ -1081,7 +1081,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `rules` (`packages/codegen/src/dsl/wire/wire.ts:435`)
+### `packages/codegen/src/dsl/wire/wire.ts::rules`
 
 ```text
 /**
@@ -1095,7 +1095,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `groups` (`packages/codegen/src/dsl/wire/wire.ts:454`)
+### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
 ```text
 /**
@@ -1105,13 +1105,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `__enrichOverrides__` (`packages/codegen/src/dsl/wire/wire.ts:463`)
+### `packages/codegen/src/dsl/wire/wire.ts::__enrichOverrides__`
 
 ```text
 /** Side-channel from `enrich()` — preserved unchanged. */
 ```
 
-### `renderAs` (`packages/codegen/src/dsl/wire/wire.ts:465`)
+### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
 /**
@@ -1132,7 +1132,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `visibleExternals` (`packages/codegen/src/dsl/wire/wire.ts:482`)
+### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
 
 ```text
 /**
@@ -1146,7 +1146,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `expectDiagnostics` (`packages/codegen/src/dsl/wire/wire.ts:492`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectDiagnostics`
 
 ```text
 /**
@@ -1162,7 +1162,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/dsl/wire/wire.ts:504`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectTestFailures`
 
 ```text
 /**
@@ -1181,7 +1181,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `__wireContext__` (`packages/codegen/src/dsl/wire/wire.ts:533`)
+### `packages/codegen/src/dsl/wire/wire.ts::__wireContext__`
 
 ```text
 /**
@@ -1192,19 +1192,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `RuleFn` (`packages/codegen/src/dsl/wire/wire.ts:563`)
+### `packages/codegen/src/dsl/wire/wire.ts::RuleFn`
 
 ```text
 /** @internal alias for the internal rules-map element type (the dual-runtime seam). */
 ```
 
-### `WirePatternCandidate` (`packages/codegen/src/dsl/wire/wire.ts:1050`)
+### `packages/codegen/src/dsl/wire/wire.ts::WirePatternCandidate`
 
 ```text
 /** Minimal candidate record for wire-phase pattern replacement. */
 ```
 
-### `aliasAs` (`packages/codegen/src/dsl/wire/wire.ts:1054`)
+### `packages/codegen/src/dsl/wire/wire.ts::aliasAs`
 
 ```text
 /** When set, every replacement site emits
@@ -1213,7 +1213,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  pattern entries; absent for legacy `_`-prefix candidates. */
 ```
 
-### `unwrapOptionalChoiceRt` (`packages/codegen/src/dsl/wire/wire.ts:1083`)
+### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
 
 ```text
 /**
@@ -1235,7 +1235,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ShapedSymbols` (`packages/codegen/src/dsl/wire/wire.ts:222`)
+### `packages/codegen/src/dsl/wire/wire.ts::ShapedSymbols`
 
 ```text
 /**
@@ -1252,7 +1252,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `passthroughBaseRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:786`)
+### `packages/codegen/src/dsl/wire/wire.ts::passthroughBaseRuleFn`
 
 ```text
 /**
@@ -1262,7 +1262,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dsl/wire/wire.ts` (module)
+### `packages/codegen/src/dsl/wire/wire.ts::module`
 
 ```text
 /**
@@ -1305,7 +1305,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 ```
 
-### `WireConfig.rules` (`packages/codegen/src/dsl/wire/wire.ts:147`)
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.rules`
 
 #### body
 
@@ -1316,7 +1316,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // assignable here (bivariant), so known keys retain their precise shape.
 ```
 
-### `WireConfig.factoryInline` (`packages/codegen/src/dsl/wire/wire.ts:152`)
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.factoryInline`
 
 ```text
 /**
@@ -1327,7 +1327,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `SittirRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:181`)
+### `packages/codegen/src/dsl/wire/wire.ts::SittirRuleFn`
 
 ```text
 // LOOSE-INTERNAL / NARROW-PUBLIC split (Phase-4 resolution to the
@@ -1352,7 +1352,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // loose type unchanged.
 ```
 
-### `wire` (`packages/codegen/src/dsl/wire/wire.ts:186`)
+### `packages/codegen/src/dsl/wire/wire.ts::wire`
 
 ```text
 /**
@@ -1586,7 +1586,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
-### `patternBodyEqual` (`packages/codegen/src/dsl/wire/wire.ts:532`)
+### `packages/codegen/src/dsl/wire/wire.ts::patternBodyEqual`
 
 #### body
 

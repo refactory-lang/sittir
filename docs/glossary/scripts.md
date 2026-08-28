@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `emitterFor` (`packages/codegen/src/scripts/emit-diff.ts:51`)
+### `packages/codegen/src/scripts/emit-diff.ts::emitterFor`
 
 ```text
 /**
@@ -30,13 +30,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // backend / boundary / engine / hash / ir / is / index / utils, etc.
 ```
 
-### `isCollapsed` (`packages/codegen/src/scripts/emit-diff.ts:89`)
+### `packages/codegen/src/scripts/emit-diff.ts::isCollapsed`
 
 ```text
 /** parser/binary artifacts: counts only, line ranges suppressed (they churn). */
 ```
 
-### `formatRange` (`packages/codegen/src/scripts/emit-diff.ts:95`)
+### `packages/codegen/src/scripts/emit-diff.ts::formatRange`
 
 ```text
 /** Compress a new-file hunk header `@@ -_ +start,count @@` into "L120-131". */
@@ -46,13 +46,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // pure deletion: anchor at the deletion point
 ```
 
-### `beginFileChange` (`packages/codegen/src/scripts/emit-diff.ts:106`)
+### `packages/codegen/src/scripts/emit-diff.ts::beginFileChange`
 
 ```text
 /** Build a fresh `FileChange` record for a newly-seen `diff --git` section. */
 ```
 
-### `parseDiff` (`packages/codegen/src/scripts/emit-diff.ts:119`)
+### `packages/codegen/src/scripts/emit-diff.ts::parseDiff`
 
 ```text
 /** Parse `git diff --unified=0` output into per-file change records. */
@@ -82,13 +82,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Content lines (no context, since --unified=0).
 ```
 
-### `joinRanges` (`packages/codegen/src/scripts/emit-diff.ts:175`)
+### `packages/codegen/src/scripts/emit-diff.ts::joinRanges`
 
 ```text
 /** At most `max` ranges, then a `+N more` tail, to keep one line per file. */
 ```
 
-### `formatEmitDiff` (`packages/codegen/src/scripts/emit-diff.ts:182`)
+### `packages/codegen/src/scripts/emit-diff.ts::formatEmitDiff`
 
 ```text
 /**
@@ -108,7 +108,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Align the file column across all rows for scannability.
 ```
 
-### `generatedRootsFor` (`packages/codegen/src/scripts/generated-manifest.ts:57`)
+### `packages/codegen/src/scripts/generated-manifest.ts::generatedRootsFor`
 
 ```text
 /**
@@ -127,7 +127,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isJunkFile` (`packages/codegen/src/scripts/generated-manifest.ts:107`)
+### `packages/codegen/src/scripts/generated-manifest.ts::isJunkFile`
 
 ```text
 /**
@@ -141,7 +141,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isManifestUntracked` (`packages/codegen/src/scripts/generated-manifest.ts:137`)
+### `packages/codegen/src/scripts/generated-manifest.ts::isManifestUntracked`
 
 ```text
 /**
@@ -158,7 +158,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `assertGeneratedManifestsClean` (`packages/codegen/src/scripts/generated-manifest.ts:365`)
+### `packages/codegen/src/scripts/generated-manifest.ts::assertGeneratedManifestsClean`
 
 ```text
 /**
@@ -185,7 +185,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `hostBinaryFreshnessFor` (`packages/codegen/src/scripts/native-binary-freshness.ts:48`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::hostBinaryFreshnessFor`
 
 ```text
 /**
@@ -195,7 +195,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `assertNativeBinaryFresh` (`packages/codegen/src/scripts/native-binary-freshness.ts:75`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::assertNativeBinaryFresh`
 
 ```text
 /**
@@ -205,13 +205,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isAllowlisted` (`packages/codegen/src/scripts/reconcile-naming.ts:117`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::isAllowlisted`
 
 ```text
 /** A divergence is allowlisted only if it matches an expected rename on ALL fields. */
 ```
 
-### `diffSlotNames` (`packages/codegen/src/scripts/reconcile-naming.ts:129`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::diffSlotNames`
 
 ```text
 /**
@@ -232,19 +232,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ranges` (`packages/codegen/src/scripts/emit-diff.ts:44`)
+### `packages/codegen/src/scripts/emit-diff.ts::ranges`
 
 ```text
 /** New-file line ranges, e.g. "L120-207", "L410". Empty for collapsed/binary. */
 ```
 
-### `collapsed` (`packages/codegen/src/scripts/emit-diff.ts:46`)
+### `packages/codegen/src/scripts/emit-diff.ts::collapsed`
 
 ```text
 /** parser/binary artifact — counts only, no line ranges (kept terse). */
 ```
 
-### `source_hash` (`packages/codegen/src/scripts/generated-manifest.ts:130`)
+### `packages/codegen/src/scripts/generated-manifest.ts::source_hash`
 
 ```text
 /**
@@ -259,7 +259,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `host_files` (`packages/codegen/src/scripts/generated-manifest.ts:142`)
+### `packages/codegen/src/scripts/generated-manifest.ts::host_files`
 
 ```text
 /**
@@ -274,7 +274,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `stale` (`packages/codegen/src/scripts/generated-manifest.ts:265`)
+### `packages/codegen/src/scripts/generated-manifest.ts::stale`
 
 ```text
 /**
@@ -284,49 +284,49 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `HostBinaryFreshness` (`packages/codegen/src/scripts/native-binary-freshness.ts:20`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::HostBinaryFreshness`
 
 ```text
 /** Freshness report for one host binary. */
 ```
 
-### `rel` (`packages/codegen/src/scripts/native-binary-freshness.ts:22`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::rel`
 
 ```text
 /** Repo-relative binary path, e.g. `rust/crates/sittir-rust/sittir-rust.darwin-arm64.node`. */
 ```
 
-### `newestInputMtimeMs` (`packages/codegen/src/scripts/native-binary-freshness.ts:25`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::newestInputMtimeMs`
 
 ```text
 /** Newest mtime across the crate's `src/**` + `templates/**` inputs. */
 ```
 
-### `newestInputRel` (`packages/codegen/src/scripts/native-binary-freshness.ts:27`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::newestInputRel`
 
 ```text
 /** Repo-relative path of the newest input (diagnostic). */
 ```
 
-### `stale` (`packages/codegen/src/scripts/native-binary-freshness.ts:29`)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::stale`
 
 ```text
 /** True when the binary is OLDER than at least one compiled-in input. */
 ```
 
-### `EMITTER_ORDER` (`packages/codegen/src/scripts/emit-diff.ts:23`)
+### `packages/codegen/src/scripts/emit-diff.ts::EMITTER_ORDER`
 
 ```text
 /** Emitter buckets, in display order. */
 ```
 
-### `HOST_BINARY_SENTINEL` (`packages/codegen/src/scripts/generated-manifest.ts:135`)
+### `packages/codegen/src/scripts/generated-manifest.ts::HOST_BINARY_SENTINEL`
 
 ```text
 /** Sentinel value for `host_files` entries — see {@link Manifest.host_files}. */
 ```
 
-### `cachedCodegenHash` (`packages/codegen/src/scripts/generated-manifest.ts:142`)
+### `packages/codegen/src/scripts/generated-manifest.ts::cachedCodegenHash`
 
 ```text
 /**
@@ -346,7 +346,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ALLOWLISTED_RENAMES` (`packages/codegen/src/scripts/reconcile-naming.ts:44`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::ALLOWLISTED_RENAMES`
 
 ```text
 /**
@@ -369,7 +369,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ALLOWLISTED_RENAMES` (`packages/codegen/src/scripts/reconcile-naming.ts`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::ALLOWLISTED_RENAMES`
 
 Each entry records a slot-name divergence between the legacy identity and the
 recomputed projection that is EXPECTED and therefore must not fail the
@@ -390,7 +390,7 @@ reconciliation gate. Three clusters, one per root cause:
   `last_match_arm` SHOULD be unified with `match_arm` so the slot reads
   `matchArms` is a separate open design question, not part of this allowlist.
 
-### `scripts/generated-manifest.ts` (module)
+### `packages/codegen/src/scripts/generated-manifest.ts::module`
 
 ```text
 /**
@@ -432,7 +432,7 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
-### `hostFilesFor` (`packages/codegen/src/scripts/generated-manifest.ts:34`)
+### `packages/codegen/src/scripts/generated-manifest.ts::hostFilesFor`
 
 #### body
 
@@ -446,7 +446,7 @@ reconciliation gate. Three clusters, one per root cause:
 // binaries that exist on the current host.
 ```
 
-### `codegenSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:99`)
+### `packages/codegen/src/scripts/generated-manifest.ts::codegenSourceHash`
 
 #### body
 
@@ -454,7 +454,7 @@ reconciliation gate. Three clusters, one per root cause:
 // Consumer-side validators don't affect generated output.
 ```
 
-### `computeSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:118`)
+### `packages/codegen/src/scripts/generated-manifest.ts::computeSourceHash`
 
 #### body
 
@@ -463,7 +463,7 @@ reconciliation gate. Three clusters, one per root cause:
 // produce different output, so codegen state IS part of the source.
 ```
 
-### `writeManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:133`)
+### `packages/codegen/src/scripts/generated-manifest.ts::writeManifestForGrammar`
 
 #### body
 
@@ -475,7 +475,7 @@ reconciliation gate. Three clusters, one per root cause:
 // hash — see the Manifest.host_files docs.
 ```
 
-### `verifyManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:178`)
+### `packages/codegen/src/scripts/generated-manifest.ts::verifyManifestForGrammar`
 
 #### body
 
@@ -496,7 +496,7 @@ reconciliation gate. Three clusters, one per root cause:
 // manifest-listed ones, so a never-committed local build is gated too.
 ```
 
-### `scripts/native-binary-freshness.ts` (module)
+### `packages/codegen/src/scripts/native-binary-freshness.ts::module`
 
 ```text
 /**
@@ -517,7 +517,7 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
-### `scripts/reconcile-naming.ts` (module)
+### `packages/codegen/src/scripts/reconcile-naming.ts::module`
 
 ```text
 /**
@@ -541,13 +541,13 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
-### `Divergence.slot` (`packages/codegen/src/scripts/reconcile-naming.ts:19`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::Divergence.slot`
 
 ```text
 // the legacy slot.name (its current identity)
 ```
 
-### `run` (`packages/codegen/src/scripts/reconcile-naming.ts:116`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::run`
 
 #### body
 
@@ -562,7 +562,7 @@ reconciliation gate. Three clusters, one per root cause:
 // renames are accepted) — lets CI/the gate fail on genuine regressions.
 ```
 
-### `_isMain` (`packages/codegen/src/scripts/reconcile-naming.ts:157`)
+### `packages/codegen/src/scripts/reconcile-naming.ts::_isMain`
 
 ```text
 // `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
@@ -570,7 +570,7 @@ reconciliation gate. Three clusters, one per root cause:
 // `npx tsx reconcile-naming.ts` invocation is detected reliably.
 ```
 
-### `scripts/regen-templates-rs.ts` (module)
+### `packages/codegen/src/scripts/regen-templates-rs.ts::module`
 
 ```text
 /**
@@ -586,7 +586,7 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
-### `scripts/emit-diff.ts` (module)
+### `packages/codegen/src/scripts/emit-diff.ts::module`
 
 ```text
 /**
@@ -609,13 +609,13 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
-### `FileChange.path` (`packages/codegen/src/scripts/emit-diff.ts:20`)
+### `packages/codegen/src/scripts/emit-diff.ts::FileChange.path`
 
 ```text
 // repo-relative
 ```
 
-### `scripts/verify-manifests-cli.ts` (module)
+### `packages/codegen/src/scripts/verify-manifests-cli.ts::module`
 
 ```text
 /**

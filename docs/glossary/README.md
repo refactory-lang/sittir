@@ -23,7 +23,7 @@ Inside a file, one `###` section per declaration, qualified by its enclosing
 class / interface / enum / object literal:
 
 ```
-### `attributeBuilder.alias` (`packages/codegen/src/dsl/builders.ts:263`)
+### `packages/codegen/src/dsl/builders.ts::attributeBuilder.alias`
 
 ```text
 <the comment that stood above the declaration, verbatim>
@@ -36,9 +36,10 @@ class / interface / enum / object literal:
 ```
 ```
 
-File-level comments (a module header) sit under `### \`<file>\` (module)`.
-The `file:line` in a heading is the declaration's line when the entry was
-written; it drifts, so match on the **name**, not the line.
+The heading is the symbol id — `<file>::<qualified name>` — and nothing
+else: no line numbers, so a heading never goes stale and joins to the code
+graph by identity. File-level comments (a module header) sit under
+`### \`<file>::module\``.
 
 ## Looking a comment up
 
@@ -47,7 +48,7 @@ written; it drifts, so match on the **name**, not the line.
   you the code side. (Symbol-keyed retrieval inside `get_doc_context` is the
   infigraph enhancement tracked upstream; until it lands, this two-call
   pattern is the lookup.)
-- **By hand:** open the directory's file and find `### \`<qualified name>\``.
+- **By hand:** open the directory's file and find `### \`<file>::<qualified name>\``.
 - **Before editing a function**, read its entry — it is the rationale the
   source no longer shows.
 

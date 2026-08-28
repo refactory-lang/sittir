@@ -11,7 +11,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
-### `stampSupertypeClosures` (`packages/codegen/src/compiler/supertype-closure.ts`)
+### `packages/codegen/src/compiler/supertype-closure.ts::stampSupertypeClosures`
 
 Flattens each supertype's membership through nested supertypes, at the end of
 assemble, in the two vocabularies a subtype reference has. It stamps
@@ -41,13 +41,13 @@ reads the parse-kind stamp instead of re-walking the closure per call site;
 a `factoryInline` kind escapes through a supertype referenced outside its own
 parents.
 
-### `rules` (`packages/codegen/src/compiler/assemble.ts:214`)
+### `packages/codegen/src/compiler/assemble.ts::rules`
 
 ```text
 /** `grammar.rules` — `SimplifiedGrammar`'s phase product (see class doc comment). */
 ```
 
-### `normalizedRules` (`packages/codegen/src/compiler/assemble.ts:219`)
+### `packages/codegen/src/compiler/assemble.ts::normalizedRules`
 
 ```text
 /**
@@ -66,13 +66,13 @@ parents.
 	 */
 ```
 
-### `nodes` (`packages/codegen/src/compiler/assemble.ts:237`)
+### `packages/codegen/src/compiler/assemble.ts::nodes`
 
 ```text
 /** Live node-map accumulator built during assemble(); post-passes read peers from it. */
 ```
 
-### `from` (`packages/codegen/src/compiler/assemble.ts:242`)
+### `packages/codegen/src/compiler/assemble.ts::from`
 
 ```text
 /**
@@ -87,7 +87,7 @@ parents.
 	 */
 ```
 
-### `assemble` (`packages/codegen/src/compiler/assemble.ts:278`)
+### `packages/codegen/src/compiler/assemble.ts::assemble`
 
 ```text
 /**
@@ -357,7 +357,7 @@ parents.
 // feedback_ruleid_backpointer.
 ```
 
-### `collectOptionalBodyKinds` (`packages/codegen/src/compiler/assemble.ts:665`)
+### `packages/codegen/src/compiler/assemble.ts::collectOptionalBodyKinds`
 
 ```text
 /**
@@ -390,7 +390,7 @@ parents.
 // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 ```
 
-### `resolveSupertypeSubtypes` (`packages/codegen/src/compiler/assemble.ts:715`)
+### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
 
 ```text
 /**
@@ -421,7 +421,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `unwrapGroupRuleAndSimplified` (`packages/codegen/src/compiler/assemble.ts:755`)
+### `packages/codegen/src/compiler/assemble.ts::unwrapGroupRuleAndSimplified`
 
 ```text
 /**
@@ -455,7 +455,7 @@ parents.
 // through group wrappers preserving the outer group node).
 ```
 
-### `resolveIrKeys` (`packages/codegen/src/compiler/assemble.ts:795`)
+### `packages/codegen/src/compiler/assemble.ts::resolveIrKeys`
 
 ```text
 /**
@@ -480,7 +480,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `resolveHiddenSubtypes` (`packages/codegen/src/compiler/assemble.ts:817`)
+### `packages/codegen/src/compiler/assemble.ts::resolveHiddenSubtypes`
 
 ```text
 /**
@@ -588,7 +588,7 @@ parents.
 // Recurse in case a hidden rule resolves to another hidden rule.
 ```
 
-### `resolveHiddenRuleContent` (`packages/codegen/src/compiler/assemble.ts:1013`)
+### `packages/codegen/src/compiler/assemble.ts::resolveHiddenRuleContent`
 
 ```text
 /**
@@ -754,7 +754,7 @@ parents.
 // noticing the case is gone.
 ```
 
-### `hydrateSlotRefs` (`packages/codegen/src/compiler/assemble.ts:1213`)
+### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
 ```text
 /**
@@ -783,7 +783,7 @@ parents.
  */
 ```
 
-### `markUserFacing` (`packages/codegen/src/compiler/assemble.ts:1322`)
+### `packages/codegen/src/compiler/assemble.ts::markUserFacing`
 
 ```text
 /**
@@ -833,7 +833,7 @@ parents.
 // Hidden — user-facing when any of the conditions above hold (b/c/d).
 ```
 
-### `renameCollidingHiddenKinds` (`packages/codegen/src/compiler/assemble.ts:1387`)
+### `packages/codegen/src/compiler/assemble.ts::renameCollidingHiddenKinds`
 
 ```text
 /**
@@ -861,7 +861,7 @@ parents.
 // _TypeName → _typeName (camelCase with leading _)
 ```
 
-### `renameCollidingVisibleKinds` (`packages/codegen/src/compiler/assemble.ts:1425`)
+### `packages/codegen/src/compiler/assemble.ts::renameCollidingVisibleKinds`
 
 ```text
 /**
@@ -878,7 +878,7 @@ parents.
  */
 ```
 
-### `renameCollidingHiddenOnlyKinds` (`packages/codegen/src/compiler/assemble.ts:1460`)
+### `packages/codegen/src/compiler/assemble.ts::renameCollidingHiddenOnlyKinds`
 
 ```text
 /**
@@ -893,7 +893,7 @@ parents.
  */
 ```
 
-### `preclaimSupertypeIrKeys` (`packages/codegen/src/compiler/assemble.ts:1487`)
+### `packages/codegen/src/compiler/assemble.ts::preclaimSupertypeIrKeys`
 
 ```text
 /**
@@ -909,7 +909,7 @@ parents.
  */
 ```
 
-### `partitionNodesIntoIrKeyPhases` (`packages/codegen/src/compiler/assemble.ts:1505`)
+### `packages/codegen/src/compiler/assemble.ts::partitionNodesIntoIrKeyPhases`
 
 ```text
 /**
@@ -932,7 +932,7 @@ parents.
  */
 ```
 
-### `assignIrKeyWithFallback` (`packages/codegen/src/compiler/assemble.ts:1546`)
+### `packages/codegen/src/compiler/assemble.ts::assignIrKeyWithFallback`
 
 ```text
 /**
@@ -949,7 +949,7 @@ parents.
  */
 ```
 
-### `walkForStrings` (`packages/codegen/src/compiler/assemble.ts:1635`)
+### `packages/codegen/src/compiler/assemble.ts::walkForStrings`
 
 ```text
 /**
@@ -980,7 +980,7 @@ parents.
 // 2. Post-link: all members are LINK-SYMBOL nodes (canonicalizeRuleLiterals).
 ```
 
-### `classifyNode` (`packages/codegen/src/compiler/assemble.ts:1698`)
+### `packages/codegen/src/compiler/assemble.ts::classifyNode`
 
 ```text
 /**
@@ -1046,7 +1046,7 @@ parents.
 // keyword vs token honours the grammar's `word` rule — see matchesWordShape.
 ```
 
-### `isSeparatedListShape` (`packages/codegen/src/compiler/assemble.ts:1742`)
+### `packages/codegen/src/compiler/assemble.ts::isSeparatedListShape`
 
 ```text
 /**
@@ -1073,7 +1073,7 @@ parents.
 // 'branch' via the pre-existing hasTrailingDelimiter/hasLeadingDelimiter mechanism.
 ```
 
-### `isHiddenRepeatHelper` (`packages/codegen/src/compiler/assemble.ts:1767`)
+### `packages/codegen/src/compiler/assemble.ts::isHiddenRepeatHelper`
 
 ```text
 /**
@@ -1107,7 +1107,7 @@ parents.
 // it produces a real runtime CST node — do NOT classify as multi.
 ```
 
-### `classifyBranchOrContainer` (`packages/codegen/src/compiler/assemble.ts:1798`)
+### `packages/codegen/src/compiler/assemble.ts::classifyBranchOrContainer`
 
 ```text
 /**
@@ -1130,7 +1130,7 @@ parents.
  */
 ```
 
-### `classifyTerminalFallback` (`packages/codegen/src/compiler/assemble.ts:1821`)
+### `packages/codegen/src/compiler/assemble.ts::classifyTerminalFallback`
 
 ```text
 /**
@@ -1155,7 +1155,7 @@ parents.
 // passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
 ```
 
-### `isAllTextShape` (`packages/codegen/src/compiler/assemble.ts:1845`)
+### `packages/codegen/src/compiler/assemble.ts::isAllTextShape`
 
 ```text
 /**
@@ -1176,7 +1176,7 @@ parents.
 // correctly serves all three real callers.
 ```
 
-### `findNestedSeparator` (`packages/codegen/src/compiler/collect-slots.ts:64`)
+### `packages/codegen/src/compiler/collect-slots.ts::findNestedSeparator`
 
 ```text
 /**
@@ -1190,7 +1190,7 @@ parents.
  */
 ```
 
-### `addUnnamedChoiceListener` (`packages/codegen/src/compiler/collect-slots.ts:117`)
+### `packages/codegen/src/compiler/collect-slots.ts::addUnnamedChoiceListener`
 
 ```text
 /**
@@ -1201,7 +1201,7 @@ parents.
  */
 ```
 
-### `drainUnnamedChoiceSlots` (`packages/codegen/src/compiler/collect-slots.ts:131`)
+### `packages/codegen/src/compiler/collect-slots.ts::drainUnnamedChoiceSlots`
 
 ```text
 /**
@@ -1211,7 +1211,7 @@ parents.
  */
 ```
 
-### `sharedArmFieldName` (`packages/codegen/src/compiler/collect-slots.ts:142`)
+### `packages/codegen/src/compiler/collect-slots.ts::sharedArmFieldName`
 
 ```text
 /**
@@ -1224,7 +1224,7 @@ parents.
  */
 ```
 
-### `strongestArmMultiplicity` (`packages/codegen/src/compiler/collect-slots.ts:154`)
+### `packages/codegen/src/compiler/collect-slots.ts::strongestArmMultiplicity`
 
 ```text
 /**
@@ -1236,7 +1236,7 @@ parents.
  */
 ```
 
-### `carriesNamedField` (`packages/codegen/src/compiler/collect-slots.ts:165`)
+### `packages/codegen/src/compiler/collect-slots.ts::carriesNamedField`
 
 ```text
 /**
@@ -1246,7 +1246,7 @@ parents.
  */
 ```
 
-### `isStructuralChoice` (`packages/codegen/src/compiler/collect-slots.ts:190`)
+### `packages/codegen/src/compiler/collect-slots.ts::isStructuralChoice`
 
 ```text
 /**
@@ -1264,7 +1264,7 @@ parents.
 // single slot recovered by `sharedArmFieldName`, NOT structural.
 ```
 
-### `isDegenerateFieldArm` (`packages/codegen/src/compiler/collect-slots.ts:245`)
+### `packages/codegen/src/compiler/collect-slots.ts::isDegenerateFieldArm`
 
 ```text
 /**
@@ -1277,7 +1277,7 @@ parents.
  */
 ```
 
-### `partitionChoiceArms` (`packages/codegen/src/compiler/collect-slots.ts:260`)
+### `packages/codegen/src/compiler/collect-slots.ts::partitionChoiceArms`
 
 ```text
 /**
@@ -1290,7 +1290,7 @@ parents.
  */
 ```
 
-### `unionRoutingGateB` (`packages/codegen/src/compiler/collect-slots.ts:303`)
+### `packages/codegen/src/compiler/collect-slots.ts::unionRoutingGateB`
 
 ```text
 /**
@@ -1303,31 +1303,31 @@ parents.
  */
 ```
 
-### `setUnionSlotRouting` (`packages/codegen/src/compiler/collect-slots.ts:327`)
+### `packages/codegen/src/compiler/collect-slots.ts::setUnionSlotRouting`
 
 ```text
 /** Toggle union-slot routing; returns the previous value (for save/restore). */
 ```
 
-### `drainSynthesizedUnionChoiceIds` (`packages/codegen/src/compiler/collect-slots.ts:343`)
+### `packages/codegen/src/compiler/collect-slots.ts::drainSynthesizedUnionChoiceIds`
 
 ```text
 /** Return + clear the choice rule-ids that synthesized a union slot. */
 ```
 
-### `describeArmShape` (`packages/codegen/src/compiler/collect-slots.ts:350`)
+### `packages/codegen/src/compiler/collect-slots.ts::describeArmShape`
 
 ```text
 /** Compact one-line shape label for a choice arm (diagnostic messages only). */
 ```
 
-### `describeArmLeaf` (`packages/codegen/src/compiler/collect-slots.ts:364`)
+### `packages/codegen/src/compiler/collect-slots.ts::describeArmLeaf`
 
 ```text
 /** Depth-1 leaf label for {@link describeArmShape}. */
 ```
 
-### `mergeByName` (`packages/codegen/src/compiler/collect-slots.ts:372`)
+### `packages/codegen/src/compiler/collect-slots.ts::mergeByName`
 
 ```text
 /** Merge same-named slots within one arm (collapse duplicate field positions). */
@@ -1344,7 +1344,7 @@ parents.
 // their values and erase the fact they were ever distinct.
 ```
 
-### `mergeChoiceArms` (`packages/codegen/src/compiler/collect-slots.ts:405`)
+### `packages/codegen/src/compiler/collect-slots.ts::mergeChoiceArms`
 
 ```text
 /**
@@ -1370,13 +1370,13 @@ parents.
 // presence is fully counted across all arms.
 ```
 
-### `relaxToOptional` (`packages/codegen/src/compiler/collect-slots.ts:462`)
+### `packages/codegen/src/compiler/collect-slots.ts::relaxToOptional`
 
 ```text
 /** Relax a slot's singular/required values to optional (cross-arm absence). */
 ```
 
-### `isSlotNode` (`packages/codegen/src/compiler/collect-slots.ts:475`)
+### `packages/codegen/src/compiler/collect-slots.ts::isSlotNode`
 
 ```text
 /** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
@@ -1393,7 +1393,7 @@ parents.
 // it's an explicit phase-widening read, same pattern as `findRepeatFlag`.)
 ```
 
-### `slotMultiplicity` (`packages/codegen/src/compiler/collect-slots.ts:487`)
+### `packages/codegen/src/compiler/collect-slots.ts::slotMultiplicity`
 
 ```text
 /**
@@ -1423,7 +1423,7 @@ parents.
 // not itself guaranteed ≥1 occurrences at the individual-field level.
 ```
 
-### `buildSlot` (`packages/codegen/src/compiler/collect-slots.ts:514`)
+### `packages/codegen/src/compiler/collect-slots.ts::buildSlot`
 
 ```text
 /**
@@ -1593,7 +1593,7 @@ parents.
 // (diagnostics / node-model serialization) may open this bag.
 ```
 
-### `collectSlots` (`packages/codegen/src/compiler/collect-slots.ts:696`)
+### `packages/codegen/src/compiler/collect-slots.ts::collectSlots`
 
 ```text
 /**
@@ -1740,7 +1740,7 @@ parents.
 // recursed. A non-nonterminal leaf contributes nothing.
 ```
 
-### `walker` (`packages/codegen/src/compiler/ctx.ts:101`)
+### `packages/codegen/src/compiler/ctx.ts::walker`
 
 ```text
 /**
@@ -1754,7 +1754,7 @@ parents.
 	 */
 ```
 
-### `assertEmittable` (`packages/codegen/src/compiler/emit-gate.ts:21`)
+### `packages/codegen/src/compiler/emit-gate.ts::assertEmittable`
 
 ```text
 /**
@@ -1765,7 +1765,7 @@ parents.
  */
 ```
 
-### `seq` (`packages/codegen/src/compiler/evaluate.ts:96`)
+### `packages/codegen/src/compiler/evaluate.ts::seq`
 
 ```text
 /**
@@ -1791,7 +1791,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `choice` (`packages/codegen/src/compiler/evaluate.ts:119`)
+### `packages/codegen/src/compiler/evaluate.ts::choice`
 
 ```text
 /**
@@ -1827,7 +1827,7 @@ parents.
 // Detect all-string choice → EnumRule<'evaluate'>
 ```
 
-### `collapseAllFieldChoiceMembers` (`packages/codegen/src/compiler/evaluate.ts:164`)
+### `packages/codegen/src/compiler/evaluate.ts::collapseAllFieldChoiceMembers`
 
 ```text
 /**
@@ -1886,7 +1886,7 @@ parents.
 // heterogeneous fielded choice.
 ```
 
-### `optional` (`packages/codegen/src/compiler/evaluate.ts:227`)
+### `packages/codegen/src/compiler/evaluate.ts::optional`
 
 ```text
 /**
@@ -1910,7 +1910,7 @@ parents.
  */
 ```
 
-### `repeat` (`packages/codegen/src/compiler/evaluate.ts:265`)
+### `packages/codegen/src/compiler/evaluate.ts::repeat`
 
 ```text
 /**
@@ -1933,7 +1933,7 @@ parents.
 // link pass, not here — see seq() and compiler/lift-separators.ts.
 ```
 
-### `repeat1` (`packages/codegen/src/compiler/evaluate.ts:294`)
+### `packages/codegen/src/compiler/evaluate.ts::repeat1`
 
 ```text
 /**
@@ -1959,7 +1959,7 @@ parents.
 // compiler/lift-separators.ts.
 ```
 
-### `isHiddenKind` (`packages/codegen/src/compiler/evaluate.ts:343`)
+### `packages/codegen/src/compiler/evaluate.ts::isHiddenKind`
 
 ```text
 /**
@@ -1976,7 +1976,7 @@ parents.
  */
 ```
 
-### `walkRefs` (`packages/codegen/src/compiler/evaluate.ts:369`)
+### `packages/codegen/src/compiler/evaluate.ts::walkRefs`
 
 ```text
 /**
@@ -2004,7 +2004,7 @@ parents.
 // Stop — inner refs belong to the inner wrapper.
 ```
 
-### `field` (`packages/codegen/src/compiler/evaluate.ts:409`)
+### `packages/codegen/src/compiler/evaluate.ts::field`
 
 ```text
 /**
@@ -2039,7 +2039,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `collapseOptionalRepeatInField` (`packages/codegen/src/compiler/evaluate.ts:450`)
+### `packages/codegen/src/compiler/evaluate.ts::collapseOptionalRepeatInField`
 
 ```text
 /**
@@ -2058,7 +2058,7 @@ parents.
  */
 ```
 
-### `string` (`packages/codegen/src/compiler/evaluate.ts:573`)
+### `packages/codegen/src/compiler/evaluate.ts::string`
 
 ```text
 /**
@@ -2076,7 +2076,7 @@ parents.
  */
 ```
 
-### `synthesizeInlineAliasSources` (`packages/codegen/src/compiler/evaluate.ts:784`)
+### `packages/codegen/src/compiler/evaluate.ts::synthesizeInlineAliasSources`
 
 ```text
 /**
@@ -2114,7 +2114,7 @@ parents.
  */
 ```
 
-### `synthesizeFieldEnumRules` (`packages/codegen/src/compiler/evaluate.ts:902`)
+### `packages/codegen/src/compiler/evaluate.ts::synthesizeFieldEnumRules`
 
 ```text
 /**
@@ -2150,7 +2150,7 @@ parents.
  */
 ```
 
-### `purgeSupersededEnumRules` (`packages/codegen/src/compiler/evaluate.ts:975`)
+### `packages/codegen/src/compiler/evaluate.ts::purgeSupersededEnumRules`
 
 ```text
 /**
@@ -2179,7 +2179,7 @@ parents.
  */
 ```
 
-### `collectFieldEnumOccurrences` (`packages/codegen/src/compiler/evaluate.ts:1036`)
+### `packages/codegen/src/compiler/evaluate.ts::collectFieldEnumOccurrences`
 
 ```text
 /**
@@ -2191,7 +2191,7 @@ parents.
  */
 ```
 
-### `walkFieldEnums` (`packages/codegen/src/compiler/evaluate.ts:1051`)
+### `packages/codegen/src/compiler/evaluate.ts::walkFieldEnums`
 
 ```text
 /**
@@ -2204,7 +2204,7 @@ parents.
  */
 ```
 
-### `buildCanonicalEnumNames` (`packages/codegen/src/compiler/evaluate.ts:1098`)
+### `packages/codegen/src/compiler/evaluate.ts::buildCanonicalEnumNames`
 
 ```text
 /**
@@ -2226,7 +2226,7 @@ parents.
  */
 ```
 
-### `fallbackName` (`packages/codegen/src/compiler/evaluate.ts:1146`)
+### `packages/codegen/src/compiler/evaluate.ts::fallbackName`
 
 ```text
 /**
@@ -2235,7 +2235,7 @@ parents.
  */
 ```
 
-### `collectConflictingFieldEnumSites` (`packages/codegen/src/compiler/evaluate.ts:1158`)
+### `packages/codegen/src/compiler/evaluate.ts::collectConflictingFieldEnumSites`
 
 ```text
 /**
@@ -2248,7 +2248,7 @@ parents.
  */
 ```
 
-### `claimUniqueEnumName` (`packages/codegen/src/compiler/evaluate.ts:1184`)
+### `packages/codegen/src/compiler/evaluate.ts::claimUniqueEnumName`
 
 ```text
 /**
@@ -2261,7 +2261,7 @@ parents.
  */
 ```
 
-### `canReuseExistingEnumName` (`packages/codegen/src/compiler/evaluate.ts:1214`)
+### `packages/codegen/src/compiler/evaluate.ts::canReuseExistingEnumName`
 
 ```text
 /**
@@ -2271,7 +2271,7 @@ parents.
  */
 ```
 
-### `buildEnumMemberKey` (`packages/codegen/src/compiler/evaluate.ts:1227`)
+### `packages/codegen/src/compiler/evaluate.ts::buildEnumMemberKey`
 
 ```text
 /**
@@ -2279,7 +2279,7 @@ parents.
  */
 ```
 
-### `enumMemberKeySlug` (`packages/codegen/src/compiler/evaluate.ts:1237`)
+### `packages/codegen/src/compiler/evaluate.ts::enumMemberKeySlug`
 
 ```text
 /**
@@ -2290,7 +2290,7 @@ parents.
  */
 ```
 
-### `deriveCandidateName` (`packages/codegen/src/compiler/evaluate.ts:1255`)
+### `packages/codegen/src/compiler/evaluate.ts::deriveCandidateName`
 
 ```text
 /**
@@ -2311,7 +2311,7 @@ parents.
  */
 ```
 
-### `fieldNameMatchesGrammarRule` (`packages/codegen/src/compiler/evaluate.ts:1296`)
+### `packages/codegen/src/compiler/evaluate.ts::fieldNameMatchesGrammarRule`
 
 ```text
 /**
@@ -2327,7 +2327,7 @@ parents.
  */
 ```
 
-### `rewriteFieldEnums` (`packages/codegen/src/compiler/evaluate.ts:1332`)
+### `packages/codegen/src/compiler/evaluate.ts::rewriteFieldEnums`
 
 ```text
 /**
@@ -2343,7 +2343,7 @@ parents.
  */
 ```
 
-### `tryExtractFieldEnum` (`packages/codegen/src/compiler/evaluate.ts:1402`)
+### `packages/codegen/src/compiler/evaluate.ts::tryExtractFieldEnum`
 
 ```text
 /**
@@ -2382,7 +2382,7 @@ parents.
  */
 ```
 
-### `peelRepeatWrapper` (`packages/codegen/src/compiler/evaluate.ts:1468`)
+### `packages/codegen/src/compiler/evaluate.ts::peelRepeatWrapper`
 
 ```text
 /**
@@ -2397,7 +2397,7 @@ parents.
  */
 ```
 
-### `resolveToEnumMembers` (`packages/codegen/src/compiler/evaluate.ts:1483`)
+### `packages/codegen/src/compiler/evaluate.ts::resolveToEnumMembers`
 
 ```text
 /**
@@ -2416,7 +2416,7 @@ parents.
  */
 ```
 
-### `resolveToEnumMembersOneLevelDeep` (`packages/codegen/src/compiler/evaluate.ts:1516`)
+### `packages/codegen/src/compiler/evaluate.ts::resolveToEnumMembersOneLevelDeep`
 
 ```text
 /**
@@ -2434,7 +2434,7 @@ parents.
  */
 ```
 
-### `getWireContext` (`packages/codegen/src/compiler/evaluate.ts:1546`)
+### `packages/codegen/src/compiler/evaluate.ts::getWireContext`
 
 ```text
 /**
@@ -2443,7 +2443,7 @@ parents.
  */
 ```
 
-### `drainRefineMetadata` (`packages/codegen/src/compiler/evaluate.ts:1554`)
+### `packages/codegen/src/compiler/evaluate.ts::drainRefineMetadata`
 
 ```text
 /**
@@ -2454,7 +2454,7 @@ parents.
  */
 ```
 
-### `drainGroupsMetadata` (`packages/codegen/src/compiler/evaluate.ts:1566`)
+### `packages/codegen/src/compiler/evaluate.ts::drainGroupsMetadata`
 
 ```text
 /**
@@ -2473,7 +2473,7 @@ parents.
 // applyGroupOverrides.
 ```
 
-### `drainPolymorphsConfigMetadata` (`packages/codegen/src/compiler/evaluate.ts:1588`)
+### `packages/codegen/src/compiler/evaluate.ts::drainPolymorphsConfigMetadata`
 
 ```text
 /**
@@ -2482,7 +2482,7 @@ parents.
  */
 ```
 
-### `drainExpectDiagnosticsMetadata` (`packages/codegen/src/compiler/evaluate.ts:1602`)
+### `packages/codegen/src/compiler/evaluate.ts::drainExpectDiagnosticsMetadata`
 
 ```text
 /**
@@ -2501,7 +2501,7 @@ parents.
 // RawGrammar.expectDiagnostics carries only defined kind lists.
 ```
 
-### `drainExpectTestFailuresMetadata` (`packages/codegen/src/compiler/evaluate.ts:1622`)
+### `packages/codegen/src/compiler/evaluate.ts::drainExpectTestFailuresMetadata`
 
 ```text
 /**
@@ -2513,7 +2513,7 @@ parents.
  */
 ```
 
-### `drainOrphanedSyntheticGroupsMetadata` (`packages/codegen/src/compiler/evaluate.ts:1640`)
+### `packages/codegen/src/compiler/evaluate.ts::drainOrphanedSyntheticGroupsMetadata`
 
 ```text
 /**
@@ -2526,7 +2526,7 @@ parents.
  */
 ```
 
-### `drainRenderAsMetadata` (`packages/codegen/src/compiler/evaluate.ts:1654`)
+### `packages/codegen/src/compiler/evaluate.ts::drainRenderAsMetadata`
 
 ```text
 /**
@@ -2579,7 +2579,7 @@ parents.
 // the intentional overwrite: renderAs wins over base-grammar body.
 ```
 
-### `drainVisibleExternalsMetadata` (`packages/codegen/src/compiler/evaluate.ts:1701`)
+### `packages/codegen/src/compiler/evaluate.ts::drainVisibleExternalsMetadata`
 
 ```text
 /**
@@ -2623,7 +2623,7 @@ parents.
 // wrap on references; the whole mint modeling path handles the rest.
 ```
 
-### `mergeEnrichOverridesIntoOptions` (`packages/codegen/src/compiler/evaluate.ts:1747`)
+### `packages/codegen/src/compiler/evaluate.ts::mergeEnrichOverridesIntoOptions`
 
 ```text
 /**
@@ -2651,7 +2651,7 @@ parents.
  */
 ```
 
-### `seedRefsFromBaseGrammar` (`packages/codegen/src/compiler/evaluate.ts:1784`)
+### `packages/codegen/src/compiler/evaluate.ts::seedRefsFromBaseGrammar`
 
 ```text
 /**
@@ -2669,7 +2669,7 @@ parents.
  */
 ```
 
-### `evaluateRulesAndInjectSynthetics` (`packages/codegen/src/compiler/evaluate.ts:1801`)
+### `packages/codegen/src/compiler/evaluate.ts::evaluateRulesAndInjectSynthetics`
 
 ```text
 /**
@@ -2730,7 +2730,7 @@ parents.
 // body fn failed to evaluate in sittir context — skip; wire path handles it
 ```
 
-### `adoptFinalBaseRules` (`packages/codegen/src/compiler/evaluate.ts:1860`)
+### `packages/codegen/src/compiler/evaluate.ts::adoptFinalBaseRules`
 
 ```text
 /**
@@ -2782,7 +2782,7 @@ parents.
 // the wire/parser side already does.
 ```
 
-### `prunePlaceholderOrphans` (`packages/codegen/src/compiler/evaluate.ts:1901`)
+### `packages/codegen/src/compiler/evaluate.ts::prunePlaceholderOrphans`
 
 ```text
 /**
@@ -2826,7 +2826,7 @@ parents.
 // mint would keep itself alive through its own entries).
 ```
 
-### `isBlankRule` (`packages/codegen/src/compiler/evaluate.ts:1937`)
+### `packages/codegen/src/compiler/evaluate.ts::isBlankRule`
 
 ```text
 /**
@@ -2834,7 +2834,7 @@ parents.
  */
 ```
 
-### `applyPatternReplacement` (`packages/codegen/src/compiler/evaluate.ts:1964`)
+### `packages/codegen/src/compiler/evaluate.ts::applyPatternReplacement`
 
 ```text
 /**
@@ -2922,7 +2922,7 @@ parents.
 // Ensure pattern candidates themselves have provenance recorded.
 ```
 
-### `isComplexBody` (`packages/codegen/src/compiler/evaluate.ts:2076`)
+### `packages/codegen/src/compiler/evaluate.ts::isComplexBody`
 
 ```text
 /**
@@ -2941,7 +2941,7 @@ parents.
 // (not a bare string or symbol).
 ```
 
-### `deriveComplexAliasTargetHidden` (`packages/codegen/src/compiler/evaluate.ts:2101`)
+### `packages/codegen/src/compiler/evaluate.ts::deriveComplexAliasTargetHidden`
 
 ```text
 /**
@@ -2989,7 +2989,7 @@ parents.
 // so AnyRule no longer coincidentally structurally matches Rule<'evaluate'>).
 ```
 
-### `replacePatterns` (`packages/codegen/src/compiler/evaluate.ts:2152`)
+### `packages/codegen/src/compiler/evaluate.ts::replacePatterns`
 
 ```text
 /**
@@ -3019,7 +3019,7 @@ parents.
 // Otherwise recurse into children.
 ```
 
-### `replaceInArray` (`packages/codegen/src/compiler/evaluate.ts:2208`)
+### `packages/codegen/src/compiler/evaluate.ts::replaceInArray`
 
 ```text
 /**
@@ -3028,7 +3028,7 @@ parents.
  */
 ```
 
-### `patternRulesEqual` (`packages/codegen/src/compiler/evaluate.ts:2222`)
+### `packages/codegen/src/compiler/evaluate.ts::patternRulesEqual`
 
 ```text
 /**
@@ -3054,7 +3054,7 @@ parents.
 // PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 ```
 
-### `rewriteVisibleExternalRefsInArray` (`packages/codegen/src/compiler/evaluate.ts:2341`)
+### `packages/codegen/src/compiler/evaluate.ts::rewriteVisibleExternalRefsInArray`
 
 ```text
 /**
@@ -3064,7 +3064,7 @@ parents.
  */
 ```
 
-### `evaluateMetadataCallbacksInScope` (`packages/codegen/src/compiler/evaluate.ts:2390`)
+### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacksInScope`
 
 ```text
 /**
@@ -3084,7 +3084,7 @@ parents.
  */
 ```
 
-### `evaluateRuleFunctions` (`packages/codegen/src/compiler/evaluate.ts:2409`)
+### `packages/codegen/src/compiler/evaluate.ts::evaluateRuleFunctions`
 
 ```text
 /**
@@ -3105,7 +3105,7 @@ parents.
  */
 ```
 
-### `injectSyntheticRules` (`packages/codegen/src/compiler/evaluate.ts:2436`)
+### `packages/codegen/src/compiler/evaluate.ts::injectSyntheticRules`
 
 ```text
 /**
@@ -3130,7 +3130,7 @@ parents.
  */
 ```
 
-### `inheritBaseGrammarMetadata` (`packages/codegen/src/compiler/evaluate.ts:2468`)
+### `packages/codegen/src/compiler/evaluate.ts::inheritBaseGrammarMetadata`
 
 ```text
 /**
@@ -3151,7 +3151,7 @@ parents.
  */
 ```
 
-### `appendDedup` (`packages/codegen/src/compiler/evaluate.ts:2504`)
+### `packages/codegen/src/compiler/evaluate.ts::appendDedup`
 
 ```text
 /**
@@ -3169,7 +3169,7 @@ parents.
  */
 ```
 
-### `evaluateMetadataCallbacks` (`packages/codegen/src/compiler/evaluate.ts:2521`)
+### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
 
 ```text
 /**
@@ -3184,7 +3184,7 @@ parents.
  */
 ```
 
-### `evaluate` (`packages/codegen/src/compiler/evaluate.ts:2629`)
+### `packages/codegen/src/compiler/evaluate.ts::evaluate`
 
 ```text
 /**
@@ -3195,7 +3195,7 @@ parents.
  */
 ```
 
-### `saveAndInjectDslGlobals` (`packages/codegen/src/compiler/evaluate.ts:2646`)
+### `packages/codegen/src/compiler/evaluate.ts::saveAndInjectDslGlobals`
 
 ```text
 /**
@@ -3217,7 +3217,7 @@ parents.
  */
 ```
 
-### `importAndExtractGrammar` (`packages/codegen/src/compiler/evaluate.ts:2687`)
+### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
 ```text
 /**
@@ -3229,7 +3229,7 @@ parents.
  */
 ```
 
-### `restoreSavedGlobals` (`packages/codegen/src/compiler/evaluate.ts:2704`)
+### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
 ```text
 /**
@@ -3241,7 +3241,7 @@ parents.
  */
 ```
 
-### `computeReachableRuleNames` (`packages/codegen/src/compiler/evaluate.ts:2752`)
+### `packages/codegen/src/compiler/evaluate.ts::computeReachableRuleNames`
 
 ```text
 /**
@@ -3278,7 +3278,7 @@ parents.
 // (classification happens at Assemble). Keep every top-level rule.
 ```
 
-### `classifyIntrinsic` (`packages/codegen/src/compiler/evaluate.ts:3010`)
+### `packages/codegen/src/compiler/evaluate.ts::classifyIntrinsic`
 
 ```text
 /**
@@ -3290,7 +3290,7 @@ parents.
  */
 ```
 
-### `generate` (`packages/codegen/src/compiler/generate.ts:138`)
+### `packages/codegen/src/compiler/generate.ts::generate`
 
 ```text
 /**
@@ -3558,7 +3558,7 @@ parents.
 // subsequent generate() calls in long-lived processes.
 ```
 
-### `collectEvaluateSynthesizedKinds` (`packages/codegen/src/compiler/generate.ts:377`)
+### `packages/codegen/src/compiler/generate.ts::collectEvaluateSynthesizedKinds`
 
 ```text
 /**
@@ -3577,7 +3577,7 @@ parents.
  */
 ```
 
-### `findEntryForKindName` (`packages/codegen/src/compiler/generated-metadata.ts:147`)
+### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForKindName`
 
 ```text
 /**
@@ -3600,7 +3600,7 @@ parents.
  */
 ```
 
-### `findEntryForLiteralText` (`packages/codegen/src/compiler/generated-metadata.ts:175`)
+### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForLiteralText`
 
 ```text
 /**
@@ -3614,7 +3614,7 @@ parents.
  */
 ```
 
-### `loadGrammarJsonInlineList` (`packages/codegen/src/compiler/inline-sets.ts:22`)
+### `packages/codegen/src/compiler/inline-sets.ts::loadGrammarJsonInlineList`
 
 ```text
 /**
@@ -3631,7 +3631,7 @@ parents.
  */
 ```
 
-### `danglingInlineNames` (`packages/codegen/src/compiler/inline-sets.ts:50`)
+### `packages/codegen/src/compiler/inline-sets.ts::danglingInlineNames`
 
 ```text
 /**
@@ -3652,7 +3652,7 @@ parents.
 // name per run — later dangling entries hide behind it.
 ```
 
-### `assertGrammarJsonInlineIntegrity` (`packages/codegen/src/compiler/inline-sets.ts:56`)
+### `packages/codegen/src/compiler/inline-sets.ts::assertGrammarJsonInlineIntegrity`
 
 ```text
 /**
@@ -3664,7 +3664,7 @@ parents.
  */
 ```
 
-### `loadGrammarJsonAliasMap` (`packages/codegen/src/compiler/inline-sets.ts:63`)
+### `packages/codegen/src/compiler/inline-sets.ts::loadGrammarJsonAliasMap`
 
 ```text
 /**
@@ -3692,7 +3692,7 @@ parents.
  */
 ```
 
-### `buildPolymorphsConfigSkip` (`packages/codegen/src/compiler/inline-sets.ts:145`)
+### `packages/codegen/src/compiler/inline-sets.ts::buildPolymorphsConfigSkip`
 
 ```text
 /**
@@ -3709,7 +3709,7 @@ parents.
  */
 ```
 
-### `buildExternalRolesMap` (`packages/codegen/src/compiler/link.ts:457`)
+### `packages/codegen/src/compiler/link.ts::buildExternalRolesMap`
 
 ```text
 /**
@@ -3729,7 +3729,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `stripResolvedRoleRules` (`packages/codegen/src/compiler/link.ts:470`)
+### `packages/codegen/src/compiler/link.ts::stripResolvedRoleRules`
 
 ```text
 /**
@@ -3745,7 +3745,7 @@ parents.
  */
 ```
 
-### `createSyntheticExternalRules` (`packages/codegen/src/compiler/link.ts:490`)
+### `packages/codegen/src/compiler/link.ts::createSyntheticExternalRules`
 
 ```text
 /**
@@ -3770,7 +3770,7 @@ parents.
 // this synthetic one.
 ```
 
-### `classifyAndLogHiddenRules` (`packages/codegen/src/compiler/link.ts:574`)
+### `packages/codegen/src/compiler/link.ts::classifyAndLogHiddenRules`
 
 ```text
 /**
@@ -3801,7 +3801,7 @@ parents.
 // never re-read a stamp off `classified.rule`. See ClassifyResult.
 ```
 
-### `markSupertypeRefsNonInline` (`packages/codegen/src/compiler/link.ts:614`)
+### `packages/codegen/src/compiler/link.ts::markSupertypeRefsNonInline`
 
 ```text
 /**
@@ -3832,7 +3832,7 @@ parents.
  */
 ```
 
-### `referencesSelf` (`packages/codegen/src/compiler/link.ts:660`)
+### `packages/codegen/src/compiler/link.ts::referencesSelf`
 
 ```text
 /** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`.
@@ -3841,7 +3841,7 @@ parents.
  *  matching the original hand-rolled walk's members/content-only descent). */
 ```
 
-### `collectAliasedHiddenKinds` (`packages/codegen/src/compiler/link.ts:668`)
+### `packages/codegen/src/compiler/link.ts::collectAliasedHiddenKinds`
 
 ```text
 /**
@@ -3862,7 +3862,7 @@ parents.
 // alias, present in both phases — widen the phase view (post-PR-S cast).
 ```
 
-### `collectHiddenChoicesWithNamedAliasMembers` (`packages/codegen/src/compiler/link.ts:697`)
+### `packages/codegen/src/compiler/link.ts::collectHiddenChoicesWithNamedAliasMembers`
 
 ```text
 /**
@@ -3901,7 +3901,7 @@ parents.
 // repeat slot's per-kind wrap routing).
 ```
 
-### `collectAliasedByParents` (`packages/codegen/src/compiler/link.ts:730`)
+### `packages/codegen/src/compiler/link.ts::collectAliasedByParents`
 
 ```text
 /**
@@ -3934,7 +3934,7 @@ parents.
 // view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
 ```
 
-### `extractAliasedFromName` (`packages/codegen/src/compiler/link.ts:856`)
+### `packages/codegen/src/compiler/link.ts::extractAliasedFromName`
 
 ```text
 /**
@@ -3976,7 +3976,7 @@ parents.
 // survives as the symbol `name` (the CST `$type` the reader matches).
 ```
 
-### `_wouldInlineAtAssemble` (`packages/codegen/src/compiler/link.ts:904`)
+### `packages/codegen/src/compiler/link.ts::_wouldInlineAtAssemble`
 
 ```text
 /**
@@ -4006,7 +4006,7 @@ parents.
 // Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
 ```
 
-### `emitVariantChildDerivations` (`packages/codegen/src/compiler/link.ts:1019`)
+### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
 
 ```text
 /**
@@ -4026,7 +4026,7 @@ parents.
  */
 ```
 
-### `pushAmbientScaffoldIntoVariantChildren` (`packages/codegen/src/compiler/link.ts:1045`)
+### `packages/codegen/src/compiler/link.ts::pushAmbientScaffoldIntoVariantChildren`
 
 ```text
 /**
@@ -4066,7 +4066,7 @@ parents.
 // to wrap with the same prefix/suffix.
 ```
 
-### `rewriteSeqWithVariantAliasChoice` (`packages/codegen/src/compiler/link.ts:1088`)
+### `packages/codegen/src/compiler/link.ts::rewriteSeqWithVariantAliasChoice`
 
 ```text
 /**
@@ -4086,7 +4086,7 @@ parents.
 // Does this seq directly contain the alias-choice?
 ```
 
-### `isAllAliasChoice` (`packages/codegen/src/compiler/link.ts:1135`)
+### `packages/codegen/src/compiler/link.ts::isAllAliasChoice`
 
 ```text
 /**
@@ -4099,7 +4099,7 @@ parents.
  */
 ```
 
-### `applyVariantScaffoldPushDown` (`packages/codegen/src/compiler/link.ts:1153`)
+### `packages/codegen/src/compiler/link.ts::applyVariantScaffoldPushDown`
 
 ```text
 /**
@@ -4138,13 +4138,13 @@ parents.
 // choice itself plus any non-string members).
 ```
 
-### `charFallback` (`packages/codegen/src/compiler/link.ts:1331`)
+### `packages/codegen/src/compiler/link.ts::charFallback`
 
 ```text
 /** Char-by-char fallback for arbitrary punctuation (e.g. "\\n", "~@"). */
 ```
 
-### `resolveRepeat1PreservingNonEmpty` (`packages/codegen/src/compiler/link.ts:1491`)
+### `packages/codegen/src/compiler/link.ts::resolveRepeat1PreservingNonEmpty`
 
 ```text
 /**
@@ -4163,7 +4163,7 @@ parents.
  */
 ```
 
-### `resolveNamedAliasWithProvenance` (`packages/codegen/src/compiler/link.ts:1512`)
+### `packages/codegen/src/compiler/link.ts::resolveNamedAliasWithProvenance`
 
 ```text
 /**
@@ -4210,7 +4210,7 @@ parents.
 // is correct for link-minted literals but wrong for this shape.
 ```
 
-### `classifyHiddenChoiceRule` (`packages/codegen/src/compiler/link.ts:1634`)
+### `packages/codegen/src/compiler/link.ts::classifyHiddenChoiceRule`
 
 ```text
 /**
@@ -4344,7 +4344,7 @@ parents.
 // Mixed/structural hidden choice — survive as-is.
 ```
 
-### `classifyHiddenSeqRule` (`packages/codegen/src/compiler/link.ts:1797`)
+### `packages/codegen/src/compiler/link.ts::classifyHiddenSeqRule`
 
 ```text
 /**
@@ -4363,7 +4363,7 @@ parents.
  */
 ```
 
-### `collectSubtypeNames` (`packages/codegen/src/compiler/link.ts:1822`)
+### `packages/codegen/src/compiler/link.ts::collectSubtypeNames`
 
 ```text
 /**
@@ -4394,7 +4394,7 @@ parents.
  */
 ```
 
-### `assignRepeatSeparator` (`packages/codegen/src/compiler/link.ts:2002`)
+### `packages/codegen/src/compiler/link.ts::assignRepeatSeparator`
 
 ```text
 /**
@@ -4406,7 +4406,7 @@ parents.
  */
 ```
 
-### `computeHiddenBearerSet` (`packages/codegen/src/compiler/link.ts:2050`)
+### `packages/codegen/src/compiler/link.ts::computeHiddenBearerSet`
 
 ```text
 /**
@@ -4426,7 +4426,7 @@ parents.
  */
 ```
 
-### `collectRepeatedShapes` (`packages/codegen/src/compiler/link.ts:2167`)
+### `packages/codegen/src/compiler/link.ts::collectRepeatedShapes`
 
 ```text
 /**
@@ -4480,7 +4480,7 @@ parents.
 // punctuation). Otherwise fall back to `group`.
 ```
 
-### `collectFieldKindSets` (`packages/codegen/src/compiler/link.ts:2231`)
+### `packages/codegen/src/compiler/link.ts::collectFieldKindSets`
 
 ```text
 /**
@@ -4498,7 +4498,7 @@ parents.
 // on their own.
 ```
 
-### `directContentKinds` (`packages/codegen/src/compiler/link.ts:2261`)
+### `packages/codegen/src/compiler/link.ts::directContentKinds`
 
 ```text
 /**
@@ -4508,7 +4508,7 @@ parents.
  */
 ```
 
-### `suggestSharedName` (`packages/codegen/src/compiler/link.ts:2285`)
+### `packages/codegen/src/compiler/link.ts::suggestSharedName`
 
 ```text
 /** Suggest a readable shared name from the kind set. */
@@ -4523,7 +4523,7 @@ parents.
 // nothing common sticks out.
 ```
 
-### `findRepeatWithSeparator` (`packages/codegen/src/compiler/link.ts:2421`)
+### `packages/codegen/src/compiler/link.ts::findRepeatWithSeparator`
 
 ```text
 /**
@@ -4536,7 +4536,7 @@ parents.
  */
 ```
 
-### `liftSeqMembers` (`packages/codegen/src/compiler/link.ts:2432`)
+### `packages/codegen/src/compiler/link.ts::liftSeqMembers`
 
 ```text
 /**
@@ -4550,14 +4550,14 @@ parents.
  */
 ```
 
-### `carrySeqAttrs` (`packages/codegen/src/compiler/link.ts:2447`)
+### `packages/codegen/src/compiler/link.ts::carrySeqAttrs`
 
 ```text
 /** Pick the position-carried modifier attrs a seq passes to a repeat that
  *  replaces it (id/fieldName/multiplicity/nonterminal/metadata) — NOT `members`. */
 ```
 
-### `resolveGroupsConfigKey` (`packages/codegen/src/compiler/link.ts:2647`)
+### `packages/codegen/src/compiler/link.ts::resolveGroupsConfigKey`
 
 ```text
 /**
@@ -4585,7 +4585,7 @@ parents.
  */
 ```
 
-### `isBlankRule` (`packages/codegen/src/compiler/link.ts:2965`)
+### `packages/codegen/src/compiler/link.ts::isBlankRule`
 
 ```text
 /**
@@ -4594,7 +4594,7 @@ parents.
  */
 ```
 
-### `unwrapAliasForCheck` (`packages/codegen/src/compiler/link.ts:3033`)
+### `packages/codegen/src/compiler/link.ts::unwrapAliasForCheck`
 
 ```text
 /**
@@ -4604,7 +4604,7 @@ parents.
  */
 ```
 
-### `stepPath` (`packages/codegen/src/compiler/link.ts:3139`)
+### `packages/codegen/src/compiler/link.ts::stepPath`
 
 ```text
 /**
@@ -4617,7 +4617,7 @@ parents.
  */
 ```
 
-### `unwrapToChoice` (`packages/codegen/src/compiler/link.ts:3208`)
+### `packages/codegen/src/compiler/link.ts::unwrapToChoice`
 
 ```text
 /**
@@ -4641,7 +4641,7 @@ parents.
 // literal choices to hidden symbol refs during evaluate.
 ```
 
-### `findFieldByName` (`packages/codegen/src/compiler/link.ts:3246`)
+### `packages/codegen/src/compiler/link.ts::findFieldByName`
 
 ```text
 /**
@@ -4652,7 +4652,7 @@ parents.
  */
 ```
 
-### `validateSelection` (`packages/codegen/src/compiler/link.ts:3266`)
+### `packages/codegen/src/compiler/link.ts::validateSelection`
 
 ```text
 /**
@@ -4667,7 +4667,7 @@ parents.
  */
 ```
 
-### `unwrapToStringValue` (`packages/codegen/src/compiler/link.ts:3299`)
+### `packages/codegen/src/compiler/link.ts::unwrapToStringValue`
 
 ```text
 /**
@@ -4687,7 +4687,7 @@ parents.
 // both shapes uniformly, same as isEnumChoiceRule's own member check.
 ```
 
-### `computeKeepRef` (`packages/codegen/src/compiler/normalize.ts:112`)
+### `packages/codegen/src/compiler/normalize.ts::computeKeepRef`
 
 ```text
 /**
@@ -4743,7 +4743,7 @@ parents.
 // A visible rule `x` is the potential name-twin owner of hidden `_x`.
 ```
 
-### `inlineHiddenSeqRefs` (`packages/codegen/src/compiler/normalize.ts:185`)
+### `packages/codegen/src/compiler/normalize.ts::inlineHiddenSeqRefs`
 
 ```text
 /**
@@ -4808,7 +4808,7 @@ parents.
 // not here.
 ```
 
-### `spliceFoldableRefs` (`packages/codegen/src/compiler/normalize.ts:245`)
+### `packages/codegen/src/compiler/normalize.ts::spliceFoldableRefs`
 
 ```text
 /**
@@ -4865,7 +4865,7 @@ parents.
 // as rule-patterns.ts's `ruleChildren`.
 ```
 
-### `materializeInlinedBody` (`packages/codegen/src/compiler/normalize.ts:325`)
+### `packages/codegen/src/compiler/normalize.ts::materializeInlinedBody`
 
 ```text
 /**
@@ -4893,7 +4893,7 @@ parents.
 // See `RuleBase.splicedBody`'s doc comment (types/rule.ts).
 ```
 
-### `fanOutSeqChoices` (`packages/codegen/src/compiler/normalize.ts:548`)
+### `packages/codegen/src/compiler/normalize.ts::fanOutSeqChoices`
 
 ```text
 /**
@@ -4950,7 +4950,7 @@ parents.
 // `escape_sequence` dies in this rebuild.
 ```
 
-### `isAtomForFactoring` (`packages/codegen/src/compiler/normalize.ts:611`)
+### `packages/codegen/src/compiler/normalize.ts::isAtomForFactoring`
 
 ```text
 /**
@@ -4981,7 +4981,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `extractFactoredChoiceBody` (`packages/codegen/src/compiler/normalize.ts:644`)
+### `packages/codegen/src/compiler/normalize.ts::extractFactoredChoiceBody`
 
 ```text
 /**
@@ -5000,7 +5000,7 @@ parents.
  */
 ```
 
-### `factorChoiceBranches` (`packages/codegen/src/compiler/normalize.ts:682`)
+### `packages/codegen/src/compiler/normalize.ts::factorChoiceBranches`
 
 ```text
 /**
@@ -5039,7 +5039,7 @@ parents.
 // skip the choice wrapper (shape is already correct).
 ```
 
-### `dedupeSeqMembers` (`packages/codegen/src/compiler/normalize.ts:737`)
+### `packages/codegen/src/compiler/normalize.ts::dedupeSeqMembers`
 
 ```text
 /**
@@ -5059,7 +5059,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `inlineSingleUseHidden` (`packages/codegen/src/compiler/normalize.ts:776`)
+### `packages/codegen/src/compiler/normalize.ts::inlineSingleUseHidden`
 
 ```text
 /**
@@ -5096,7 +5096,7 @@ parents.
 // future trace wrapper (#14) can intercept all normalize passes.
 ```
 
-### `iterateInliningToFixedPoint` (`packages/codegen/src/compiler/normalize.ts:808`)
+### `packages/codegen/src/compiler/normalize.ts::iterateInliningToFixedPoint`
 
 ```text
 /**
@@ -5124,7 +5124,7 @@ parents.
 // downstream phases can treat them as atomic grouping units.
 ```
 
-### `isTerminalShape` (`packages/codegen/src/compiler/normalize.ts:839`)
+### `packages/codegen/src/compiler/normalize.ts::isTerminalShape`
 
 ```text
 /**
@@ -5179,7 +5179,7 @@ parents.
 // Should be resolved by Link, but handle defensively
 ```
 
-### `isTerminalShape_allowBareTerm` (`packages/codegen/src/compiler/normalize.ts:895`)
+### `packages/codegen/src/compiler/normalize.ts::isTerminalShape_allowBareTerm`
 
 ```text
 /**
@@ -5195,7 +5195,7 @@ parents.
 // All-STRING ChoiceRules are terminal-like but classified as enum, not terminal.
 ```
 
-### `isStructurallyMeaningfulHiddenRule` (`packages/codegen/src/compiler/normalize.ts:933`)
+### `packages/codegen/src/compiler/normalize.ts::isStructurallyMeaningfulHiddenRule`
 
 ```text
 /**
@@ -5220,7 +5220,7 @@ parents.
 // during normalize so they remain top-level kinds for Assemble to dispatch on.
 ```
 
-### `spliceHiddenRuleIntoSingleParent` (`packages/codegen/src/compiler/normalize.ts:952`)
+### `packages/codegen/src/compiler/normalize.ts::spliceHiddenRuleIntoSingleParent`
 
 ```text
 /**
@@ -5235,7 +5235,7 @@ parents.
  */
 ```
 
-### `countReferences` (`packages/codegen/src/compiler/normalize.ts:979`)
+### `packages/codegen/src/compiler/normalize.ts::countReferences`
 
 ```text
 /**
@@ -5246,7 +5246,7 @@ parents.
  */
 ```
 
-### `replaceSymbolRef` (`packages/codegen/src/compiler/normalize.ts:1019`)
+### `packages/codegen/src/compiler/normalize.ts::replaceSymbolRef`
 
 ```text
 /**
@@ -5256,7 +5256,7 @@ parents.
  */
 ```
 
-### `collapseWrappers` (`packages/codegen/src/compiler/normalize.ts:1061`)
+### `packages/codegen/src/compiler/normalize.ts::collapseWrappers`
 
 ```text
 /**
@@ -5306,13 +5306,13 @@ parents.
 // Only stamp when non-default (single → undefined per combineMultiplicity).
 ```
 
-### `opaqueFacts` (`packages/codegen/src/compiler/opaque-facts.ts:24`)
+### `packages/codegen/src/compiler/opaque-facts.ts::opaqueFacts`
 
 ```text
 /** Construct opaque facts from a plain record — the single write seam. */
 ```
 
-### `readFacts` (`packages/codegen/src/compiler/opaque-facts.ts:29`)
+### `packages/codegen/src/compiler/opaque-facts.ts::readFacts`
 
 ```text
 /**
@@ -5321,7 +5321,7 @@ parents.
  */
 ```
 
-### `resolveGrammarJsPath` (`packages/codegen/src/compiler/resolve-grammar.ts:22`)
+### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 
 ```text
 /**
@@ -5329,7 +5329,7 @@ parents.
  */
 ```
 
-### `resolveOverridesPath` (`packages/codegen/src/compiler/resolve-grammar.ts:33`)
+### `packages/codegen/src/compiler/resolve-grammar.ts::resolveOverridesPath`
 
 ```text
 /**
@@ -5338,7 +5338,7 @@ parents.
  */
 ```
 
-### `classifyByType` (`packages/codegen/src/compiler/rule-catalog.ts:35`)
+### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
 
 ```text
 /**
@@ -5352,7 +5352,7 @@ parents.
  */
 ```
 
-### `isNonterminalRuleType` (`packages/codegen/src/compiler/rule-catalog.ts:81`)
+### `packages/codegen/src/compiler/rule-catalog.ts::isNonterminalRuleType`
 
 ```text
 /**
@@ -5384,7 +5384,7 @@ parents.
  */
 ```
 
-### `computeTransportSCC` (`packages/codegen/src/compiler/scc.ts:70`)
+### `packages/codegen/src/compiler/scc.ts::computeTransportSCC`
 
 ```text
 /**
@@ -5394,7 +5394,7 @@ parents.
  */
 ```
 
-### `buildSingularAdjacency` (`packages/codegen/src/compiler/scc.ts:105`)
+### `packages/codegen/src/compiler/scc.ts::buildSingularAdjacency`
 
 ```text
 /**
@@ -5434,7 +5434,7 @@ parents.
 					   resolvable (shouldn't happen in practice). */
 ```
 
-### `structuralSingularSlots` (`packages/codegen/src/compiler/scc.ts:185`)
+### `packages/codegen/src/compiler/scc.ts::structuralSingularSlots`
 
 ```text
 /**
@@ -5453,7 +5453,7 @@ parents.
 // `rustTransportSlotType`'s own box-decision model.
 ```
 
-### `tarjanSCC` (`packages/codegen/src/compiler/scc.ts:201`)
+### `packages/codegen/src/compiler/scc.ts::tarjanSCC`
 
 ```text
 /**
@@ -5473,7 +5473,7 @@ parents.
 					   on the stack, so this always terminates. */
 ```
 
-### `makeNormalizedGrammar` (`packages/codegen/src/compiler/simplify.ts:72`)
+### `packages/codegen/src/compiler/simplify.ts::makeNormalizedGrammar`
 
 ```text
 /**
@@ -5491,7 +5491,7 @@ parents.
  */
 ```
 
-### `isLeaf` (`packages/codegen/src/compiler/simplify.ts:210`)
+### `packages/codegen/src/compiler/simplify.ts::isLeaf`
 
 ```text
 /**
@@ -5506,7 +5506,7 @@ parents.
  */
 ```
 
-### `isEmptyMatchMember` (`packages/codegen/src/compiler/simplify.ts:234`)
+### `packages/codegen/src/compiler/simplify.ts::isEmptyMatchMember`
 
 ```text
 /**
@@ -5516,7 +5516,7 @@ parents.
  */
 ```
 
-### `isSlotPromotedLiteral` (`packages/codegen/src/compiler/simplify.ts:245`)
+### `packages/codegen/src/compiler/simplify.ts::isSlotPromotedLiteral`
 
 ```text
 /**
@@ -5526,7 +5526,7 @@ parents.
  */
 ```
 
-### `hasNamedSiblingOfInnerField` (`packages/codegen/src/compiler/simplify.ts:254`)
+### `packages/codegen/src/compiler/simplify.ts::hasNamedSiblingOfInnerField`
 
 ```text
 /**
@@ -5535,13 +5535,13 @@ parents.
  */
 ```
 
-### `isNamedReference` (`packages/codegen/src/compiler/simplify.ts:283`)
+### `packages/codegen/src/compiler/simplify.ts::isNamedReference`
 
 ```text
 /** True when `rule` is (or wraps) a symbol/supertype that tree-sitter would label. */
 ```
 
-### `hoistInnerFieldFromWrapperForField` (`packages/codegen/src/compiler/simplify.ts:319`)
+### `packages/codegen/src/compiler/simplify.ts::hoistInnerFieldFromWrapperForField`
 
 ```text
 /**
@@ -5563,7 +5563,7 @@ parents.
 // Bail if a named-symbol sibling would lose its outer-field label.
 ```
 
-### `normalizeBranchToMembers` (`packages/codegen/src/compiler/simplify.ts:336`)
+### `packages/codegen/src/compiler/simplify.ts::normalizeBranchToMembers`
 
 ```text
 /**
@@ -5571,7 +5571,7 @@ parents.
  */
 ```
 
-### `countFieldNames` (`packages/codegen/src/compiler/simplify.ts:344`)
+### `packages/codegen/src/compiler/simplify.ts::countFieldNames`
 
 ```text
 /**
@@ -5579,7 +5579,7 @@ parents.
  */
 ```
 
-### `firstFieldNameSharedExactlyOncePerBranch` (`packages/codegen/src/compiler/simplify.ts:355`)
+### `packages/codegen/src/compiler/simplify.ts::firstFieldNameSharedExactlyOncePerBranch`
 
 ```text
 /**
@@ -5588,7 +5588,7 @@ parents.
  */
 ```
 
-### `extractFieldFromBranchesForChoice` (`packages/codegen/src/compiler/simplify.ts:372`)
+### `packages/codegen/src/compiler/simplify.ts::extractFieldFromBranchesForChoice`
 
 ```text
 /**
@@ -5619,7 +5619,7 @@ parents.
 // rule-patterns.ts's `ruleChildren`.
 ```
 
-### `hoistSharedFieldFromBranchesForChoice` (`packages/codegen/src/compiler/simplify.ts:427`)
+### `packages/codegen/src/compiler/simplify.ts::hoistSharedFieldFromBranchesForChoice`
 
 ```text
 /**
@@ -5630,7 +5630,7 @@ parents.
  */
 ```
 
-### `liftSharedArmAttrs` (`packages/codegen/src/compiler/simplify.ts:443`)
+### `packages/codegen/src/compiler/simplify.ts::liftSharedArmAttrs`
 
 ```text
 /**
@@ -5638,7 +5638,7 @@ parents.
  */
 ```
 
-### `unwrapForMerge` (`packages/codegen/src/compiler/simplify.ts:460`)
+### `packages/codegen/src/compiler/simplify.ts::unwrapForMerge`
 
 ```text
 /**
@@ -5646,7 +5646,7 @@ parents.
  */
 ```
 
-### `positionsAreMergeable` (`packages/codegen/src/compiler/simplify.ts:468`)
+### `packages/codegen/src/compiler/simplify.ts::positionsAreMergeable`
 
 ```text
 /**
@@ -5655,7 +5655,7 @@ parents.
  */
 ```
 
-### `mergePositionForChoice` (`packages/codegen/src/compiler/simplify.ts:491`)
+### `packages/codegen/src/compiler/simplify.ts::mergePositionForChoice`
 
 ```text
 /**
@@ -5664,13 +5664,13 @@ parents.
  */
 ```
 
-### `dedupeByJson` (`packages/codegen/src/compiler/simplify.ts:507`)
+### `packages/codegen/src/compiler/simplify.ts::dedupeByJson`
 
 ```text
 /** Deduplicate rules by JSON equality, preserving first-seen order. */
 ```
 
-### `rulesStructurallyEqual` (`packages/codegen/src/compiler/simplify.ts:520`)
+### `packages/codegen/src/compiler/simplify.ts::rulesStructurallyEqual`
 
 ```text
 /**
@@ -5678,7 +5678,7 @@ parents.
  */
 ```
 
-### `mergeBranchesForChoice` (`packages/codegen/src/compiler/simplify.ts:527`)
+### `packages/codegen/src/compiler/simplify.ts::mergeBranchesForChoice`
 
 ```text
 /**
@@ -5742,7 +5742,7 @@ parents.
 // All positions mergeable. Build the merged seq.
 ```
 
-### `assertUniversalShape` (`packages/codegen/src/compiler/simplify.ts:587`)
+### `packages/codegen/src/compiler/simplify.ts::assertUniversalShape`
 
 ```text
 /**
@@ -5751,7 +5751,7 @@ parents.
  */
 ```
 
-### `assertUniversalShapeRule` (`packages/codegen/src/compiler/simplify.ts:612`)
+### `packages/codegen/src/compiler/simplify.ts::assertUniversalShapeRule`
 
 ```text
 /**
@@ -5762,7 +5762,7 @@ parents.
  */
 ```
 
-### `recordSlotGroupingDiagnostic` (`packages/codegen/src/compiler/simplify.ts:648`)
+### `packages/codegen/src/compiler/simplify.ts::recordSlotGroupingDiagnostic`
 
 ```text
 /**
@@ -5771,7 +5771,7 @@ parents.
  */
 ```
 
-### `resetSlotGroupingDiagnostics` (`packages/codegen/src/compiler/simplify.ts:660`)
+### `packages/codegen/src/compiler/simplify.ts::resetSlotGroupingDiagnostics`
 
 ```text
 /**
@@ -5781,7 +5781,7 @@ parents.
  */
 ```
 
-### `drainSlotGroupingDiagnostics` (`packages/codegen/src/compiler/simplify.ts:670`)
+### `packages/codegen/src/compiler/simplify.ts::drainSlotGroupingDiagnostics`
 
 ```text
 /**
@@ -5791,7 +5791,7 @@ parents.
  */
 ```
 
-### `makeDefaultCtx` (`packages/codegen/src/compiler/simplify.ts:681`)
+### `packages/codegen/src/compiler/simplify.ts::makeDefaultCtx`
 
 ```text
 /**
@@ -5803,7 +5803,7 @@ parents.
  */
 ```
 
-### `simplifyRule` (`packages/codegen/src/compiler/simplify.ts:696`)
+### `packages/codegen/src/compiler/simplify.ts::simplifyRule`
 
 ```text
 /**
@@ -5832,7 +5832,7 @@ parents.
  */
 ```
 
-### `simplifyDispatch` (`packages/codegen/src/compiler/simplify.ts:725`)
+### `packages/codegen/src/compiler/simplify.ts::simplifyDispatch`
 
 ```text
 /**
@@ -5908,13 +5908,13 @@ parents.
 // which pushes attributes rather than creating wrapper nodes.
 ```
 
-### `simplifyRules` (`packages/codegen/src/compiler/simplify.ts:848`)
+### `packages/codegen/src/compiler/simplify.ts::simplifyRules`
 
 ```text
 /** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
 ```
 
-### `computeSimplifiedRules` (`packages/codegen/src/compiler/simplify.ts:857`)
+### `packages/codegen/src/compiler/simplify.ts::computeSimplifiedRules`
 
 ```text
 /**
@@ -5984,7 +5984,7 @@ parents.
 // module-level dedup's effect on the sink.
 ```
 
-### `normalizeToFixpoint` (`packages/codegen/src/compiler/simplify.ts:926`)
+### `packages/codegen/src/compiler/simplify.ts::normalizeToFixpoint`
 
 ```text
 /**
@@ -5996,7 +5996,7 @@ parents.
  */
 ```
 
-### `hoistInnerFieldsForTemplate` (`packages/codegen/src/compiler/simplify.ts:960`)
+### `packages/codegen/src/compiler/simplify.ts::hoistInnerFieldsForTemplate`
 
 ```text
 /**
@@ -6028,7 +6028,7 @@ parents.
 // other case in this switch handles with `as AnyRule` below.
 ```
 
-### `simplifySeqRule` (`packages/codegen/src/compiler/simplify.ts:1009`)
+### `packages/codegen/src/compiler/simplify.ts::simplifySeqRule`
 
 ```text
 /**
@@ -6076,7 +6076,7 @@ parents.
 // Only stamp when non-default (single → undefined per combineMultiplicity).
 ```
 
-### `tracePhaseRules` (`packages/codegen/src/compiler/trace.ts:27`)
+### `packages/codegen/src/compiler/trace.ts::tracePhaseRules`
 
 ```text
 /**
@@ -6088,7 +6088,7 @@ parents.
  */
 ```
 
-### `traceAssembleNodes` (`packages/codegen/src/compiler/trace.ts:48`)
+### `packages/codegen/src/compiler/trace.ts::traceAssembleNodes`
 
 ```text
 /**
@@ -6099,13 +6099,13 @@ parents.
  */
 ```
 
-### `stripHiddenPrefix` (`packages/codegen/src/compiler/variant-structural.ts:181`)
+### `packages/codegen/src/compiler/variant-structural.ts::stripHiddenPrefix`
 
 ```text
 /** Strip a single leading `_` (hidden-kind marker), if present. */
 ```
 
-### `isAliasMintedRef` (`packages/codegen/src/compiler/variant-structural.ts:186`)
+### `packages/codegen/src/compiler/variant-structural.ts::isAliasMintedRef`
 
 ```text
 /**
@@ -6133,7 +6133,7 @@ parents.
  */
 ```
 
-### `namedKindRefTarget` (`packages/codegen/src/compiler/variant-structural.ts:215`)
+### `packages/codegen/src/compiler/variant-structural.ts::namedKindRefTarget`
 
 ```text
 /**
@@ -6148,7 +6148,7 @@ parents.
  */
 ```
 
-### `namedKindArmTarget` (`packages/codegen/src/compiler/variant-structural.ts:236`)
+### `packages/codegen/src/compiler/variant-structural.ts::namedKindArmTarget`
 
 ```text
 /**
@@ -6163,7 +6163,7 @@ parents.
  */
 ```
 
-### `prefixNamedSuffix` (`packages/codegen/src/compiler/variant-structural.ts:257`)
+### `packages/codegen/src/compiler/variant-structural.ts::prefixNamedSuffix`
 
 ```text
 /**
@@ -6181,7 +6181,7 @@ parents.
  */
 ```
 
-### `matchStructuralVariantChoice` (`packages/codegen/src/compiler/variant-structural.ts:288`)
+### `packages/codegen/src/compiler/variant-structural.ts::matchStructuralVariantChoice`
 
 ```text
 /**
@@ -6200,7 +6200,7 @@ parents.
  */
 ```
 
-### `collectStructuralVariantChoices` (`packages/codegen/src/compiler/variant-structural.ts:325`)
+### `packages/codegen/src/compiler/variant-structural.ts::collectStructuralVariantChoices`
 
 ```text
 /**
@@ -6218,7 +6218,7 @@ parents.
  */
 ```
 
-### `findStructuralVariantChoices` (`packages/codegen/src/compiler/variant-structural.ts:368`)
+### `packages/codegen/src/compiler/variant-structural.ts::findStructuralVariantChoices`
 
 ```text
 /**
@@ -6235,7 +6235,7 @@ parents.
  */
 ```
 
-### `deriveStructuralVariantChildren` (`packages/codegen/src/compiler/variant-structural.ts:394`)
+### `packages/codegen/src/compiler/variant-structural.ts::deriveStructuralVariantChildren`
 
 ```text
 /**
@@ -6264,7 +6264,7 @@ parents.
  */
 ```
 
-### `deleteWrapperWith` (`packages/codegen/src/compiler/wrapper-deletion.ts:48`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::deleteWrapperWith`
 
 ```text
 /**
@@ -6274,7 +6274,7 @@ parents.
  */
 ```
 
-### `stampAttrs` (`packages/codegen/src/compiler/wrapper-deletion.ts:270`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::stampAttrs`
 
 ```text
 /**
@@ -6284,7 +6284,7 @@ parents.
  */
 ```
 
-### `deleteWrapper` (`packages/codegen/src/compiler/wrapper-deletion.ts:302`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::deleteWrapper`
 
 ```text
 /**
@@ -6296,7 +6296,7 @@ parents.
  */
 ```
 
-### `applyWrapperDeletion` (`packages/codegen/src/compiler/wrapper-deletion.ts:313`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::applyWrapperDeletion`
 
 ```text
 /**
@@ -6317,7 +6317,7 @@ parents.
 // multi slot (no head single + tail array split).
 ```
 
-### `AssembleCtx` (`packages/codegen/src/compiler/assemble.ts:81`)
+### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`
 
 ```text
 /**
@@ -6410,7 +6410,7 @@ parents.
  */
 ```
 
-### `hydrateSlotRefs` (`packages/codegen/src/compiler/assemble.ts:968`)
+### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
 ```text
 /**
@@ -6432,7 +6432,7 @@ parents.
  */
 ```
 
-### `_UserFacingCtx` (`packages/codegen/src/compiler/assemble.ts:1052`)
+### `packages/codegen/src/compiler/assemble.ts::_UserFacingCtx`
 
 ```text
 /**
@@ -6444,13 +6444,13 @@ parents.
  */
 ```
 
-### `aliasSourceKinds` (`packages/codegen/src/compiler/assemble.ts:1060`)
+### `packages/codegen/src/compiler/assemble.ts::aliasSourceKinds`
 
 ```text
 /** Hidden kinds that appear as alias sources in at least one other node's slot. */
 ```
 
-### `variantChildKinds` (`packages/codegen/src/compiler/assemble.ts:1062`)
+### `packages/codegen/src/compiler/assemble.ts::variantChildKinds`
 
 ```text
 /**
@@ -6460,13 +6460,13 @@ parents.
 	 */
 ```
 
-### `ChoiceArmPartition` (`packages/codegen/src/compiler/collect-slots.ts:169`)
+### `packages/codegen/src/compiler/collect-slots.ts::ChoiceArmPartition`
 
 ```text
 /** Per-arm partition of a fieldless structural choice (union-slot design §2). */
 ```
 
-### `degenerateNamedArms` (`packages/codegen/src/compiler/collect-slots.ts:171`)
+### `packages/codegen/src/compiler/collect-slots.ts::degenerateNamedArms`
 
 ```text
 /**
@@ -6478,7 +6478,7 @@ parents.
 	 */
 ```
 
-### `structuredNamedArms` (`packages/codegen/src/compiler/collect-slots.ts:179`)
+### `packages/codegen/src/compiler/collect-slots.ts::structuredNamedArms`
 
 ```text
 /**
@@ -6490,19 +6490,19 @@ parents.
 	 */
 ```
 
-### `unionArms` (`packages/codegen/src/compiler/collect-slots.ts:187`)
+### `packages/codegen/src/compiler/collect-slots.ts::unionArms`
 
 ```text
 /** Unnamed single-nonterminal reference arms — union-member kind identity. */
 ```
 
-### `literalArms` (`packages/codegen/src/compiler/collect-slots.ts:189`)
+### `packages/codegen/src/compiler/collect-slots.ts::literalArms`
 
 ```text
 /** Bare terminal arms (literal string/token) — no slot or kind identity. */
 ```
 
-### `structuredArms` (`packages/codegen/src/compiler/collect-slots.ts:191`)
+### `packages/codegen/src/compiler/collect-slots.ts::structuredArms`
 
 ```text
 /**
@@ -6512,7 +6512,7 @@ parents.
 	 */
 ```
 
-### `BaseCtxInit` (`packages/codegen/src/compiler/ctx.ts:38`)
+### `packages/codegen/src/compiler/ctx.ts::BaseCtxInit`
 
 ```text
 /**
@@ -6527,7 +6527,7 @@ parents.
  */
 ```
 
-### `wordMatcher` (`packages/codegen/src/compiler/ctx.ts:51`)
+### `packages/codegen/src/compiler/ctx.ts::wordMatcher`
 
 ```text
 /**
@@ -6537,19 +6537,19 @@ parents.
 	 */
 ```
 
-### `builder` (`packages/codegen/src/compiler/ctx.ts:57`)
+### `packages/codegen/src/compiler/ctx.ts::builder`
 
 ```text
 /** Rule-construction strategy (structural vs attribute); falls back to structuralBuilder. */
 ```
 
-### `MetadataSinks` (`packages/codegen/src/compiler/evaluate.ts:429`)
+### `packages/codegen/src/compiler/evaluate.ts::MetadataSinks`
 
 ```text
 /** Metadata accumulator sinks filled by grammar() metadata callbacks. */
 ```
 
-### `EvaluateCtx` (`packages/codegen/src/compiler/evaluate.ts:438`)
+### `packages/codegen/src/compiler/evaluate.ts::EvaluateCtx`
 
 ```text
 /**
@@ -6560,67 +6560,67 @@ parents.
  */
 ```
 
-### `rules` (`packages/codegen/src/compiler/evaluate.ts:445`)
+### `packages/codegen/src/compiler/evaluate.ts::rules`
 
 ```text
 /** The rule record under evaluation (mutated by passes). */
 ```
 
-### `provenanceByKind` (`packages/codegen/src/compiler/evaluate.ts:447`)
+### `packages/codegen/src/compiler/evaluate.ts::provenanceByKind`
 
 ```text
 /** Per-kind provenance (mutated as synthetic rules are injected). */
 ```
 
-### `refs` (`packages/codegen/src/compiler/evaluate.ts:449`)
+### `packages/codegen/src/compiler/evaluate.ts::refs`
 
 ```text
 /** Symbol-reference accumulator shared across all rule evaluations. */
 ```
 
-### `opts` (`packages/codegen/src/compiler/evaluate.ts:451`)
+### `packages/codegen/src/compiler/evaluate.ts::opts`
 
 ```text
 /** The grammar options under evaluation. */
 ```
 
-### `baseRules` (`packages/codegen/src/compiler/evaluate.ts:453`)
+### `packages/codegen/src/compiler/evaluate.ts::baseRules`
 
 ```text
 /** Base-grammar rules snapshot (empty for fresh grammars). */
 ```
 
-### `baseGrammar` (`packages/codegen/src/compiler/evaluate.ts:455`)
+### `packages/codegen/src/compiler/evaluate.ts::baseGrammar`
 
 ```text
 /** The evaluated base grammar object, or null for fresh grammars. */
 ```
 
-### `externals` (`packages/codegen/src/compiler/evaluate.ts:457`)
+### `packages/codegen/src/compiler/evaluate.ts::externals`
 
 ```text
 /** The externals metadata sink (same live array as sinks.externals). */
 ```
 
-### `isExtension` (`packages/codegen/src/compiler/evaluate.ts:459`)
+### `packages/codegen/src/compiler/evaluate.ts::isExtension`
 
 ```text
 /** True when extending a base grammar. */
 ```
 
-### `sinks` (`packages/codegen/src/compiler/evaluate.ts:461`)
+### `packages/codegen/src/compiler/evaluate.ts::sinks`
 
 ```text
 /** Metadata accumulator sinks. */
 ```
 
-### `setWord` (`packages/codegen/src/compiler/evaluate.ts:463`)
+### `packages/codegen/src/compiler/evaluate.ts::setWord`
 
 ```text
 /** Setter for the word-rule name. */
 ```
 
-### `bodyPatternZeroMatches` (`packages/codegen/src/compiler/evaluate.ts:465`)
+### `packages/codegen/src/compiler/evaluate.ts::bodyPatternZeroMatches`
 
 ```text
 /** Body-pattern (`groups:`) hidden names whose pattern matched zero
@@ -6628,61 +6628,61 @@ parents.
 	 *  `body-pattern-zero-match` diagnostic. Mutated in place (mirrors `refs`). */
 ```
 
-### `FieldEnumOccurrence` (`packages/codegen/src/compiler/evaluate.ts:752`)
+### `packages/codegen/src/compiler/evaluate.ts::FieldEnumOccurrence`
 
 ```text
 /** A field-enum candidate discovered during the first collection pass. */
 ```
 
-### `parentKind` (`packages/codegen/src/compiler/evaluate.ts:754`)
+### `packages/codegen/src/compiler/evaluate.ts::parentKind`
 
 ```text
 /** The grammar kind that owns the field. */
 ```
 
-### `fieldName` (`packages/codegen/src/compiler/evaluate.ts:756`)
+### `packages/codegen/src/compiler/evaluate.ts::fieldName`
 
 ```text
 /** The field name (e.g. `'mutable_specifier'`). */
 ```
 
-### `memberKey` (`packages/codegen/src/compiler/evaluate.ts:758`)
+### `packages/codegen/src/compiler/evaluate.ts::memberKey`
 
 ```text
 /** The sorted, comma-joined literal values — used as the dedup key. */
 ```
 
-### `members` (`packages/codegen/src/compiler/evaluate.ts:760`)
+### `packages/codegen/src/compiler/evaluate.ts::members`
 
 ```text
 /** The actual member list for constructing the EnumRule<'evaluate'>. */
 ```
 
-### `FieldEnumSweepState` (`packages/codegen/src/compiler/evaluate.ts:957`)
+### `packages/codegen/src/compiler/evaluate.ts::FieldEnumSweepState`
 
 ```text
 /** Pass-local state for one synthesizeFieldEnumRules sweep (CW6: explicit param, not ctx). */
 ```
 
-### `newRules` (`packages/codegen/src/compiler/evaluate.ts:959`)
+### `packages/codegen/src/compiler/evaluate.ts::newRules`
 
 ```text
 /** Accumulator for synthesized literal-set rule entries. */
 ```
 
-### `memberKeyToCanonicalName` (`packages/codegen/src/compiler/evaluate.ts:961`)
+### `packages/codegen/src/compiler/evaluate.ts::memberKeyToCanonicalName`
 
 ```text
 /** Pre-computed dedup map from the first pass. */
 ```
 
-### `conflictingSites` (`packages/codegen/src/compiler/evaluate.ts:963`)
+### `packages/codegen/src/compiler/evaluate.ts::conflictingSites`
 
 ```text
 /** Field sites with conflicting member sets — left inline. */
 ```
 
-### `PatternCandidate` (`packages/codegen/src/compiler/evaluate.ts:1311`)
+### `packages/codegen/src/compiler/evaluate.ts::PatternCandidate`
 
 ```text
 /**
@@ -6703,7 +6703,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `VisibleExternalsRewriteCtx` (`packages/codegen/src/compiler/evaluate.ts:1569`)
+### `packages/codegen/src/compiler/evaluate.ts::VisibleExternalsRewriteCtx`
 
 ```text
 /**
@@ -6721,13 +6721,13 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `hiddenToVisible` (`packages/codegen/src/compiler/evaluate.ts:1577`)
+### `packages/codegen/src/compiler/evaluate.ts::hiddenToVisible`
 
 ```text
 /** hidden external name → visible (underscore-trimmed) alias name. */
 ```
 
-### `ApplyVisibleExternalsCtx` (`packages/codegen/src/compiler/evaluate.ts:1637`)
+### `packages/codegen/src/compiler/evaluate.ts::ApplyVisibleExternalsCtx`
 
 ```text
 /**
@@ -6740,25 +6740,25 @@ parents.
  */
 ```
 
-### `BuildRuleCatalogCtx` (`packages/codegen/src/compiler/evaluate.ts:1898`)
+### `packages/codegen/src/compiler/evaluate.ts::BuildRuleCatalogCtx`
 
 ```text
 /** Ctx for {@link buildRuleCatalog} — just the provenance map it needs. */
 ```
 
-### `AttachReferenceRuleIdsCtx` (`packages/codegen/src/compiler/evaluate.ts:1977`)
+### `packages/codegen/src/compiler/evaluate.ts::AttachReferenceRuleIdsCtx`
 
 ```text
 /** Ctx for {@link attachReferenceRuleIds}. */
 ```
 
-### `engine` (`packages/codegen/src/compiler/generate.ts:49`)
+### `packages/codegen/src/compiler/generate.ts::engine`
 
 ```text
 /** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine. Native-only; no JS-engine fallback (see emitters/engine.ts). */
 ```
 
-### `jinjaTemplates` (`packages/codegen/src/compiler/generate.ts:51`)
+### `packages/codegen/src/compiler/generate.ts::jinjaTemplates`
 
 ```text
 /** Per-rule `.jinja` files. `EmittedTemplates.bodies`
@@ -6769,44 +6769,44 @@ parents.
 	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 ```
 
-### `suggested` (`packages/codegen/src/compiler/generate.ts:69`)
+### `packages/codegen/src/compiler/generate.ts::suggested`
 
 ```text
 /** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
 ```
 
-### `is` (`packages/codegen/src/compiler/generate.ts:71`)
+### `packages/codegen/src/compiler/generate.ts::is`
 
 ```text
 /** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
 ```
 
-### `kindIds` (`packages/codegen/src/compiler/generate.ts:73`)
+### `packages/codegen/src/compiler/generate.ts::kindIds`
 
 ```text
 /** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
 ```
 
-### `nodeMap` (`packages/codegen/src/compiler/generate.ts:75`)
+### `packages/codegen/src/compiler/generate.ts::nodeMap`
 
 ```text
 /** The intermediate NodeMap — available for inspection */
 ```
 
-### `generatedIdTables` (`packages/codegen/src/compiler/generate.ts:77`)
+### `packages/codegen/src/compiler/generate.ts::generatedIdTables`
 
 ```text
 /** Generated ID tables (from parser.c) — exposed for CLI callers that need
 	 *  to pass them to Rust-render emitters such as render-module emission. */
 ```
 
-### `renderModule` (`packages/codegen/src/compiler/generate.ts:80`)
+### `packages/codegen/src/compiler/generate.ts::renderModule`
 
 ```text
 /** Grammar-owned Rust render-module outputs, when requested by the caller. */
 ```
 
-### `slotGroupingDiagnostics` (`packages/codegen/src/compiler/generate.ts:82`)
+### `packages/codegen/src/compiler/generate.ts::slotGroupingDiagnostics`
 
 ```text
 /**
@@ -6816,7 +6816,7 @@ parents.
 	 */
 ```
 
-### `include` (`packages/codegen/src/compiler/generate.ts:94`)
+### `packages/codegen/src/compiler/generate.ts::include`
 
 ```text
 /**
@@ -6843,7 +6843,7 @@ parents.
 	 */
 ```
 
-### `strict` (`packages/codegen/src/compiler/generate.ts:117`)
+### `packages/codegen/src/compiler/generate.ts::strict`
 
 ```text
 /**
@@ -6856,7 +6856,7 @@ parents.
 	 */
 ```
 
-### `roundTripFailures` (`packages/codegen/src/compiler/generate.ts:126`)
+### `packages/codegen/src/compiler/generate.ts::roundTripFailures`
 
 ```text
 /**
@@ -6868,13 +6868,13 @@ parents.
 	 */
 ```
 
-### `emitRenderModule` (`packages/codegen/src/compiler/generate.ts:134`)
+### `packages/codegen/src/compiler/generate.ts::emitRenderModule`
 
 ```text
 /** Emit grammar-owned Rust render-module artifacts in emit.ts. */
 ```
 
-### `GeneratedIdEntry` (`packages/codegen/src/compiler/generated-metadata.ts:16`)
+### `packages/codegen/src/compiler/generated-metadata.ts::GeneratedIdEntry`
 
 ```text
 /**
@@ -6888,13 +6888,13 @@ parents.
  */
 ```
 
-### `id` (`packages/codegen/src/compiler/generated-metadata.ts:26`)
+### `packages/codegen/src/compiler/generated-metadata.ts::id`
 
 ```text
 /** STORAGE kind id — the rule's own truth, independent of aliasing. */
 ```
 
-### `parseId` (`packages/codegen/src/compiler/generated-metadata.ts:28`)
+### `packages/codegen/src/compiler/generated-metadata.ts::parseId`
 
 ```text
 /**
@@ -6909,19 +6909,19 @@ parents.
 	 */
 ```
 
-### `parser` (`packages/codegen/src/compiler/generated-metadata.ts:39`)
+### `packages/codegen/src/compiler/generated-metadata.ts::parser`
 
 ```text
 /** Parser-origin metadata; absent iff the kind has no parser symbol. */
 ```
 
-### `parseId` (`packages/codegen/src/compiler/generated-metadata.ts:56`)
+### `packages/codegen/src/compiler/generated-metadata.ts::parseId`
 
 ```text
 /** See `GeneratedIdEntry.parseId` — the id to key render/read dispatch on, when it differs from `id`. */
 ```
 
-### `KindEntryLike` (`packages/codegen/src/compiler/generated-metadata.ts:132`)
+### `packages/codegen/src/compiler/generated-metadata.ts::KindEntryLike`
 
 ```text
 /**
@@ -6935,7 +6935,7 @@ parents.
  */
 ```
 
-### `GrammarJsonNode` (`packages/codegen/src/compiler/inline-sets.ts:38`)
+### `packages/codegen/src/compiler/inline-sets.ts::GrammarJsonNode`
 
 ```text
 /**
@@ -6944,7 +6944,7 @@ parents.
  */
 ```
 
-### `LinkOptions` (`packages/codegen/src/compiler/link.ts:93`)
+### `packages/codegen/src/compiler/link.ts::LinkOptions`
 
 ```text
 /**
@@ -6965,7 +6965,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `diagnostics` (`packages/codegen/src/compiler/link.ts:106`)
+### `packages/codegen/src/compiler/link.ts::diagnostics`
 
 ```text
 /**
@@ -6980,7 +6980,7 @@ parents.
 	 */
 ```
 
-### `LinkCtx` (`packages/codegen/src/compiler/link.ts:119`)
+### `packages/codegen/src/compiler/link.ts::LinkCtx`
 
 ```text
 /**
@@ -7042,19 +7042,19 @@ parents.
  */
 ```
 
-### `prefix` (`packages/codegen/src/compiler/link.ts:768`)
+### `packages/codegen/src/compiler/link.ts::prefix`
 
 ```text
 /** Members of the outer seq that appear before the choice. */
 ```
 
-### `suffix` (`packages/codegen/src/compiler/link.ts:770`)
+### `packages/codegen/src/compiler/link.ts::suffix`
 
 ```text
 /** Members of the outer seq that appear after the choice. */
 ```
 
-### `ClassifyResult` (`packages/codegen/src/compiler/link.ts:1328`)
+### `packages/codegen/src/compiler/link.ts::ClassifyResult`
 
 ```text
 /**
@@ -7077,13 +7077,13 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `classification` (`packages/codegen/src/compiler/link.ts:1342`)
+### `packages/codegen/src/compiler/link.ts::classification`
 
 ```text
 /** Set only when `rule` was newly classified this call (enum or supertype). */
 ```
 
-### `classifiedBy` (`packages/codegen/src/compiler/link.ts:1344`)
+### `packages/codegen/src/compiler/link.ts::classifiedBy`
 
 ```text
 /**
@@ -7095,7 +7095,7 @@ parents.
 	 */
 ```
 
-### `fieldName` (`packages/codegen/src/compiler/link.ts:2630`)
+### `packages/codegen/src/compiler/link.ts::fieldName`
 
 ```text
 /** The field name whose content resolves to the choice, when the
@@ -7106,7 +7106,7 @@ parents.
 	 *  sites don't need a schema change). */
 ```
 
-### `choice` (`packages/codegen/src/compiler/link.ts:2637`)
+### `packages/codegen/src/compiler/link.ts::choice`
 
 ```text
 /** The resolved choice rule — either a `ChoiceRule<'link'>` or an `EnumRule<'link'>`
@@ -7114,7 +7114,7 @@ parents.
 	 *  consumers that walk them uniformly work without adapting. */
 ```
 
-### `unwrapToChoice` (`packages/codegen/src/compiler/link.ts:2759`)
+### `packages/codegen/src/compiler/link.ts::unwrapToChoice`
 
 ```text
 /**
@@ -7131,7 +7131,7 @@ parents.
  */
 ```
 
-### `NormalizeCtx` (`packages/codegen/src/compiler/normalize.ts:47`)
+### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx`
 
 ```text
 /**
@@ -7144,7 +7144,7 @@ parents.
  */
 ```
 
-### `SimplifyCtx` (`packages/codegen/src/compiler/simplify.ts:41`)
+### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx`
 
 ```text
 /**
@@ -7160,7 +7160,7 @@ parents.
  */
 ```
 
-### `RuleProvenance` (`packages/codegen/src/compiler/types.ts:36`)
+### `packages/codegen/src/compiler/types.ts::RuleProvenance`
 
 ```text
 /**
@@ -7191,7 +7191,7 @@ parents.
  */
 ```
 
-### `KindParserMetadata` (`packages/codegen/src/compiler/types.ts:124`)
+### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 
 ```text
 /**
@@ -7202,25 +7202,25 @@ parents.
  */
 ```
 
-### `presence` (`packages/codegen/src/compiler/types.ts:144`)
+### `packages/codegen/src/compiler/types.ts::presence`
 
 ```text
 /** Presence bitfield (`TSGrammar | TSNodeTypes | TSInternals`). */
 ```
 
-### `uses` (`packages/codegen/src/compiler/types.ts:146`)
+### `packages/codegen/src/compiler/types.ts::uses`
 
 ```text
 /** Use bitfield (`Readable | Buildable | Renderable`). */
 ```
 
-### `parser` (`packages/codegen/src/compiler/types.ts:148`)
+### `packages/codegen/src/compiler/types.ts::parser`
 
 ```text
 /** Parser-origin metadata; absent when the kind has no parser symbol. */
 ```
 
-### `externalRoles` (`packages/codegen/src/compiler/types.ts:172`)
+### `packages/codegen/src/compiler/types.ts::externalRoles`
 
 ```text
 /**
@@ -7234,7 +7234,7 @@ parents.
 	 */
 ```
 
-### `refineForms` (`packages/codegen/src/compiler/types.ts:182`)
+### `packages/codegen/src/compiler/types.ts::refineForms`
 
 ```text
 /**
@@ -7246,7 +7246,7 @@ parents.
 	 */
 ```
 
-### `groups` (`packages/codegen/src/compiler/types.ts:190`)
+### `packages/codegen/src/compiler/types.ts::groups`
 
 ```text
 /**
@@ -7257,7 +7257,7 @@ parents.
 	 */
 ```
 
-### `polymorphsConfig` (`packages/codegen/src/compiler/types.ts:197`)
+### `packages/codegen/src/compiler/types.ts::polymorphsConfig`
 
 ```text
 /**
@@ -7267,7 +7267,7 @@ parents.
 	 */
 ```
 
-### `renderAs` (`packages/codegen/src/compiler/types.ts:203`)
+### `packages/codegen/src/compiler/types.ts::renderAs`
 
 ```text
 /**
@@ -7283,7 +7283,7 @@ parents.
 	 */
 ```
 
-### `visibleExternals` (`packages/codegen/src/compiler/types.ts:215`)
+### `packages/codegen/src/compiler/types.ts::visibleExternals`
 
 ```text
 /**
@@ -7302,7 +7302,7 @@ parents.
 	 */
 ```
 
-### `expectDiagnostics` (`packages/codegen/src/compiler/types.ts:230`)
+### `packages/codegen/src/compiler/types.ts::expectDiagnostics`
 
 ```text
 /**
@@ -7318,7 +7318,7 @@ parents.
 	 */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/compiler/types.ts:242`)
+### `packages/codegen/src/compiler/types.ts::expectTestFailures`
 
 ```text
 /**
@@ -7330,7 +7330,7 @@ parents.
 	 */
 ```
 
-### `orphanedSyntheticGroups` (`packages/codegen/src/compiler/types.ts:250`)
+### `packages/codegen/src/compiler/types.ts::orphanedSyntheticGroups`
 
 ```text
 /**
@@ -7346,7 +7346,7 @@ parents.
 	 */
 ```
 
-### `bodyPatternZeroMatches` (`packages/codegen/src/compiler/types.ts:263`)
+### `packages/codegen/src/compiler/types.ts::bodyPatternZeroMatches`
 
 ```text
 /**
@@ -7358,7 +7358,7 @@ parents.
 	 */
 ```
 
-### `RefineForm` (`packages/codegen/src/compiler/types.ts:273`)
+### `packages/codegen/src/compiler/types.ts::RefineForm`
 
 ```text
 /**
@@ -7367,7 +7367,7 @@ parents.
  */
 ```
 
-### `DerivationLog` (`packages/codegen/src/compiler/types.ts:286`)
+### `packages/codegen/src/compiler/types.ts::DerivationLog`
 
 ```text
 /**
@@ -7384,19 +7384,19 @@ parents.
  */
 ```
 
-### `inferredFields` (`packages/codegen/src/compiler/types.ts:299`)
+### `packages/codegen/src/compiler/types.ts::inferredFields`
 
 ```text
 /** Field-name inferences: parent wants a bare symbol wrapped in field(). */
 ```
 
-### `promotedRules` (`packages/codegen/src/compiler/types.ts:301`)
+### `packages/codegen/src/compiler/types.ts::promotedRules`
 
 ```text
 /** Rule-level promotions: enum, supertype, terminal, polymorph classifications. */
 ```
 
-### `repeatedShapes` (`packages/codegen/src/compiler/types.ts:303`)
+### `packages/codegen/src/compiler/types.ts::repeatedShapes`
 
 ```text
 /**
@@ -7408,91 +7408,91 @@ parents.
 	 */
 ```
 
-### `kind` (`packages/codegen/src/compiler/types.ts:314`)
+### `packages/codegen/src/compiler/types.ts::kind`
 
 ```text
 /** The parent rule kind that contains the bare reference. */
 ```
 
-### `fieldName` (`packages/codegen/src/compiler/types.ts:316`)
+### `packages/codegen/src/compiler/types.ts::fieldName`
 
 ```text
 /** Name of the field to wrap the reference in. */
 ```
 
-### `targetSymbol` (`packages/codegen/src/compiler/types.ts:318`)
+### `packages/codegen/src/compiler/types.ts::targetSymbol`
 
 ```text
 /** Symbol being wrapped (the `to` in `field('name', $.to)`). */
 ```
 
-### `confidence` (`packages/codegen/src/compiler/types.ts:320`)
+### `packages/codegen/src/compiler/types.ts::confidence`
 
 ```text
 /** Confidence tier based on cross-parent agreement ratio. */
 ```
 
-### `agreement` (`packages/codegen/src/compiler/types.ts:322`)
+### `packages/codegen/src/compiler/types.ts::agreement`
 
 ```text
 /** Numeric agreement — e.g. 10/10 → 1.0, 6/7 → ~0.857. */
 ```
 
-### `sampleSize` (`packages/codegen/src/compiler/types.ts:324`)
+### `packages/codegen/src/compiler/types.ts::sampleSize`
 
 ```text
 /** Total named refs that the inference was measured against. */
 ```
 
-### `applied` (`packages/codegen/src/compiler/types.ts:326`)
+### `packages/codegen/src/compiler/types.ts::applied`
 
 ```text
 /** True if Link mutated the rule tree; false if held back by `include`. */
 ```
 
-### `suggestedName` (`packages/codegen/src/compiler/types.ts:331`)
+### `packages/codegen/src/compiler/types.ts::suggestedName`
 
 ```text
 /** Suggested name for the shared supertype/group (readable stub). */
 ```
 
-### `kinds` (`packages/codegen/src/compiler/types.ts:333`)
+### `packages/codegen/src/compiler/types.ts::kinds`
 
 ```text
 /** The kind set — sorted, canonicalized. */
 ```
 
-### `parents` (`packages/codegen/src/compiler/types.ts:335`)
+### `packages/codegen/src/compiler/types.ts::parents`
 
 ```text
 /** Parent rules whose fields carry this exact kind set. */
 ```
 
-### `shape` (`packages/codegen/src/compiler/types.ts:337`)
+### `packages/codegen/src/compiler/types.ts::shape`
 
 ```text
 /** Suggested shape: 'supertype' for choice-of-named, 'group' for heterogeneous. */
 ```
 
-### `kind` (`packages/codegen/src/compiler/types.ts:342`)
+### `packages/codegen/src/compiler/types.ts::kind`
 
 ```text
 /** Kind whose rule was classified via promotion. */
 ```
 
-### `classification` (`packages/codegen/src/compiler/types.ts:344`)
+### `packages/codegen/src/compiler/types.ts::classification`
 
 ```text
 /** What it was promoted to. */
 ```
 
-### `applied` (`packages/codegen/src/compiler/types.ts:346`)
+### `packages/codegen/src/compiler/types.ts::applied`
 
 ```text
 /** True if Link kept the promotion; false if held back by `include`. */
 ```
 
-### `polymorphCandidates` (`packages/codegen/src/compiler/types.ts:348`)
+### `packages/codegen/src/compiler/types.ts::polymorphCandidates`
 
 ```text
 /**
@@ -7506,7 +7506,7 @@ parents.
 	 */
 ```
 
-### `aliasedHiddenKinds` (`packages/codegen/src/compiler/types.ts:378`)
+### `packages/codegen/src/compiler/types.ts::aliasedHiddenKinds`
 
 ```text
 /**
@@ -7522,7 +7522,7 @@ parents.
 	 */
 ```
 
-### `topLevelAliasBodies` (`packages/codegen/src/compiler/types.ts:390`)
+### `packages/codegen/src/compiler/types.ts::topLevelAliasBodies`
 
 ```text
 /**
@@ -7541,7 +7541,7 @@ parents.
 	 */
 ```
 
-### `parentAliasedKinds` (`packages/codegen/src/compiler/types.ts:406`)
+### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
 
 ```text
 /**
@@ -7558,7 +7558,7 @@ parents.
 	 */
 ```
 
-### `visibleAliasTargets` (`packages/codegen/src/compiler/types.ts:419`)
+### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
 
 ```text
 /**
@@ -7576,7 +7576,7 @@ parents.
 	 */
 ```
 
-### `contentAliasedFrom` (`packages/codegen/src/compiler/types.ts:433`)
+### `packages/codegen/src/compiler/types.ts::contentAliasedFrom`
 
 ```text
 /**
@@ -7590,7 +7590,7 @@ parents.
 	 */
 ```
 
-### `wordMatcher` (`packages/codegen/src/compiler/types.ts:444`)
+### `packages/codegen/src/compiler/types.ts::wordMatcher`
 
 ```text
 /**
@@ -7615,7 +7615,7 @@ parents.
 	 */
 ```
 
-### `DerivedFieldSource` (`packages/codegen/src/compiler/types.ts:467`)
+### `packages/codegen/src/compiler/types.ts::DerivedFieldSource`
 
 ```text
 /**
@@ -7632,19 +7632,19 @@ parents.
  */
 ```
 
-### `rules` (`packages/codegen/src/compiler/types.ts:482`)
+### `packages/codegen/src/compiler/types.ts::rules`
 
 ```text
 /** Derived rule classifications to KEEP. Defaults to all. */
 ```
 
-### `fields` (`packages/codegen/src/compiler/types.ts:484`)
+### `packages/codegen/src/compiler/types.ts::fields`
 
 ```text
 /** Derived field provenances to KEEP. Defaults to all. */
 ```
 
-### `NormalizedGrammar` (`packages/codegen/src/compiler/types.ts:492`)
+### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
 ```text
 /**
@@ -7664,25 +7664,25 @@ parents.
  */
 ```
 
-### `rules` (`packages/codegen/src/compiler/types.ts:509`)
+### `packages/codegen/src/compiler/types.ts::rules`
 
 ```text
 /** The normalize-phase rules — wrapper-free, attribute-stamped. */
 ```
 
-### `linkRules` (`packages/codegen/src/compiler/types.ts:511`)
+### `packages/codegen/src/compiler/types.ts::linkRules`
 
 ```text
 /** Carried mid-normalize link-phase view (wrappers intact). */
 ```
 
-### `wordMatcher` (`packages/codegen/src/compiler/types.ts:515`)
+### `packages/codegen/src/compiler/types.ts::wordMatcher`
 
 ```text
 /** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
 ```
 
-### `linkRules` (`packages/codegen/src/compiler/types.ts:528`)
+### `packages/codegen/src/compiler/types.ts::linkRules`
 
 ```text
 /**
@@ -7701,19 +7701,19 @@ parents.
 	 */
 ```
 
-### `parentAliasedKinds` (`packages/codegen/src/compiler/types.ts:545`)
+### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
 
 ```text
 /** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
 ```
 
-### `visibleAliasTargets` (`packages/codegen/src/compiler/types.ts:547`)
+### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
 
 ```text
 /** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
 ```
 
-### `rules` (`packages/codegen/src/compiler/types.ts:549`)
+### `packages/codegen/src/compiler/types.ts::rules`
 
 ```text
 /**
@@ -7730,7 +7730,7 @@ parents.
 	 */
 ```
 
-### `normalizedRules` (`packages/codegen/src/compiler/types.ts:562`)
+### `packages/codegen/src/compiler/types.ts::normalizedRules`
 
 ```text
 /**
@@ -7748,13 +7748,13 @@ parents.
 	 */
 ```
 
-### `wordMatcher` (`packages/codegen/src/compiler/types.ts:578`)
+### `packages/codegen/src/compiler/types.ts::wordMatcher`
 
 ```text
 /** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
 ```
 
-### `PhaseRuleOf` (`packages/codegen/src/compiler/types.ts:589`)
+### `packages/codegen/src/compiler/types.ts::PhaseRuleOf`
 
 ```text
 /**
@@ -7764,7 +7764,7 @@ parents.
  */
 ```
 
-### `Grammar` (`packages/codegen/src/compiler/types.ts:600`)
+### `packages/codegen/src/compiler/types.ts::Grammar`
 
 ```text
 /**
@@ -7791,7 +7791,7 @@ parents.
  */
 ```
 
-### `nodeByRuleId` (`packages/codegen/src/compiler/types.ts:647`)
+### `packages/codegen/src/compiler/types.ts::nodeByRuleId`
 
 ```text
 /**
@@ -7802,7 +7802,7 @@ parents.
 	 */
 ```
 
-### `slotByRuleId` (`packages/codegen/src/compiler/types.ts:654`)
+### `packages/codegen/src/compiler/types.ts::slotByRuleId`
 
 ```text
 /**
@@ -7813,7 +7813,7 @@ parents.
 	 */
 ```
 
-### `aliasedHiddenKinds` (`packages/codegen/src/compiler/types.ts:661`)
+### `packages/codegen/src/compiler/types.ts::aliasedHiddenKinds`
 
 ```text
 /**
@@ -7832,7 +7832,7 @@ parents.
 	 */
 ```
 
-### `derivations` (`packages/codegen/src/compiler/types.ts:677`)
+### `packages/codegen/src/compiler/types.ts::derivations`
 
 ```text
 /**
@@ -7842,7 +7842,7 @@ parents.
 	 */
 ```
 
-### `linkRules` (`packages/codegen/src/compiler/types.ts:683`)
+### `packages/codegen/src/compiler/types.ts::linkRules`
 
 ```text
 /**
@@ -7900,7 +7900,7 @@ parents.
 	 */
 ```
 
-### `normalizedRules` (`packages/codegen/src/compiler/types.ts:737`)
+### `packages/codegen/src/compiler/types.ts::normalizedRules`
 
 ```text
 /**
@@ -7915,7 +7915,7 @@ parents.
 	 */
 ```
 
-### `word` (`packages/codegen/src/compiler/types.ts:748`)
+### `packages/codegen/src/compiler/types.ts::word`
 
 ```text
 /**
@@ -7929,7 +7929,7 @@ parents.
 	 */
 ```
 
-### `wordMatcher` (`packages/codegen/src/compiler/types.ts:758`)
+### `packages/codegen/src/compiler/types.ts::wordMatcher`
 
 ```text
 /**
@@ -7942,7 +7942,7 @@ parents.
 	 */
 ```
 
-### `externals` (`packages/codegen/src/compiler/types.ts:768`)
+### `packages/codegen/src/compiler/types.ts::externals`
 
 ```text
 /**
@@ -7955,7 +7955,7 @@ parents.
 	 */
 ```
 
-### `refineForms` (`packages/codegen/src/compiler/types.ts:777`)
+### `packages/codegen/src/compiler/types.ts::refineForms`
 
 ```text
 /**
@@ -7966,7 +7966,7 @@ parents.
 	 */
 ```
 
-### `scc` (`packages/codegen/src/compiler/types.ts:784`)
+### `packages/codegen/src/compiler/types.ts::scc`
 
 ```text
 /**
@@ -7978,7 +7978,7 @@ parents.
 	 */
 ```
 
-### `StructuralVariantChoice` (`packages/codegen/src/compiler/variant-structural.ts:221`)
+### `packages/codegen/src/compiler/variant-structural.ts::StructuralVariantChoice`
 
 ```text
 /**
@@ -7988,7 +7988,7 @@ parents.
  */
 ```
 
-### `hydrateSlotRefs` (`packages/codegen/src/compiler/assemble.ts:865`)
+### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
 ```text
 /**
@@ -8008,7 +8008,7 @@ parents.
  */
 ```
 
-### `collectedUnnamedChoiceKinds` (`packages/codegen/src/compiler/collect-slots.ts:85`)
+### `packages/codegen/src/compiler/collect-slots.ts::collectedUnnamedChoiceKinds`
 
 ```text
 /**
@@ -8022,7 +8022,7 @@ parents.
  */
 ```
 
-### `unionSlotRouting` (`packages/codegen/src/compiler/collect-slots.ts:223`)
+### `packages/codegen/src/compiler/collect-slots.ts::unionSlotRouting`
 
 ```text
 /**
@@ -8035,7 +8035,7 @@ parents.
  */
 ```
 
-### `_synthesizedUnionChoiceIds` (`packages/codegen/src/compiler/collect-slots.ts:239`)
+### `packages/codegen/src/compiler/collect-slots.ts::_synthesizedUnionChoiceIds`
 
 ```text
 /**
@@ -8047,7 +8047,7 @@ parents.
  */
 ```
 
-### `MetadataSinks` (`packages/codegen/src/compiler/evaluate.ts:424`)
+### `packages/codegen/src/compiler/evaluate.ts::MetadataSinks`
 
 ```text
 /**
@@ -8057,7 +8057,7 @@ parents.
  */
 ```
 
-### `NON_INLINABLE_MODEL_TYPES` (`packages/codegen/src/compiler/inline-sets.ts:78`)
+### `packages/codegen/src/compiler/inline-sets.ts::NON_INLINABLE_MODEL_TYPES`
 
 ```text
 /**
@@ -8078,7 +8078,7 @@ parents.
  */
 ```
 
-### `ROLE_TO_RULE_TYPE` (`packages/codegen/src/compiler/link.ts:1200`)
+### `packages/codegen/src/compiler/link.ts::ROLE_TO_RULE_TYPE`
 
 ```text
 /**
@@ -8103,7 +8103,7 @@ parents.
  */
 ```
 
-### `GRAMMAR_JS_PATHS` (`packages/codegen/src/compiler/resolve-grammar.ts:13`)
+### `packages/codegen/src/compiler/resolve-grammar.ts::GRAMMAR_JS_PATHS`
 
 ```text
 /**
@@ -8112,7 +8112,7 @@ parents.
  */
 ```
 
-### `attributeBuilder` (`packages/codegen/src/compiler/simplify.ts:87`)
+### `packages/codegen/src/compiler/simplify.ts::attributeBuilder`
 
 ```text
 /**
@@ -8130,7 +8130,7 @@ parents.
  */
 ```
 
-### `seqOfLeavesWalker` (`packages/codegen/src/compiler/simplify.ts:125`)
+### `packages/codegen/src/compiler/simplify.ts::seqOfLeavesWalker`
 
 ```text
 /**
@@ -8179,7 +8179,7 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `KindPresenceFlag` (`packages/codegen/src/compiler/types.ts:67`)
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag`
 
 ```text
 /**
@@ -8189,7 +8189,7 @@ parents.
  */
 ```
 
-### `KindUseFlag` (`packages/codegen/src/compiler/types.ts:83`)
+### `packages/codegen/src/compiler/types.ts::KindUseFlag`
 
 ```text
 /**
@@ -8198,7 +8198,7 @@ parents.
  */
 ```
 
-### `carrySeparatorForward` (`packages/codegen/src/compiler/wrapper-deletion.ts`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::carrySeparatorForward`
 
 Shared by the `REPEAT` and `REPEAT1` cases of `deleteWrapperWith`, which
 previously carried byte-identical copies of this logic.
@@ -8229,7 +8229,7 @@ The partition is the SINGLE predicate behind both the census tool
 (`sittir tool union-slot-census`) and the CHOICE-case routing decision: one
 source, one derivation.
 
-### `KindIdStampMisses` (`packages/codegen/src/compiler/link.ts:401`)
+### `packages/codegen/src/compiler/link.ts::KindIdStampMisses`
 
 ```text
 /**
@@ -8240,7 +8240,7 @@ source, one derivation.
  */
 ```
 
-### `canonicalizeRuleLiterals` (`packages/codegen/src/compiler/link.ts:426`)
+### `packages/codegen/src/compiler/link.ts::canonicalizeRuleLiterals`
 
 ```text
 /**
@@ -8264,7 +8264,7 @@ source, one derivation.
 // before this pass runs and doesn't stamp them itself.
 ```
 
-### `applySelfReferentialFold` (`packages/codegen/src/compiler/wrapper-deletion.ts:24`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::applySelfReferentialFold`
 
 ```text
 /**
@@ -8284,7 +8284,7 @@ source, one derivation.
 // as a runtime safety net (the fold's own scan already proved this).
 ```
 
-### `rebuild` (`packages/codegen/src/compiler/wrapper-deletion.ts:54`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::rebuild`
 
 ```text
 /**
@@ -8344,7 +8344,7 @@ source, one derivation.
 // string / pattern / symbol / supertype / indent / dedent / newline
 ```
 
-### `reportKindIdStampMisses` (`packages/codegen/src/compiler/link.ts:647`)
+### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
 ```text
 /**
@@ -8366,7 +8366,7 @@ source, one derivation.
 // rationale.
 ```
 
-### `foldAliasLiteralsIntoEnumRules` (`packages/codegen/src/compiler/link.ts:856`)
+### `packages/codegen/src/compiler/link.ts::foldAliasLiteralsIntoEnumRules`
 
 ```text
 /**
@@ -8394,7 +8394,7 @@ source, one derivation.
 // exhaustive walk — never short-circuit
 ```
 
-### `collectTerminalAliasWireIds` (`packages/codegen/src/compiler/link.ts:1060`)
+### `packages/codegen/src/compiler/link.ts::collectTerminalAliasWireIds`
 
 ```text
 /**
@@ -8428,7 +8428,7 @@ source, one derivation.
 // minted as a literal SYMBOL carrying both ids.
 ```
 
-### `absorbSuffixSeparatedList` (`packages/codegen/src/compiler/link.ts:2211`)
+### `packages/codegen/src/compiler/link.ts::absorbSuffixSeparatedList`
 
 ```text
 /**
@@ -8498,7 +8498,7 @@ source, one derivation.
 // require its separator the way the 3-window's mandatory head does.
 ```
 
-### `module` (`packages/codegen/src/compiler/wrapper-deletion.ts:1`)
+### `packages/codegen/src/compiler/wrapper-deletion.ts::module`
 
 ```text
 /**
@@ -8518,7 +8518,7 @@ source, one derivation.
  */
 ```
 
-### `OPAQUE_FACTS` (`packages/codegen/src/compiler/opaque-facts.ts:1`)
+### `packages/codegen/src/compiler/opaque-facts.ts::OPAQUE_FACTS`
 
 ```text
 /**
@@ -8542,7 +8542,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/supertype-closure.ts` (module)
+### `packages/codegen/src/compiler/supertype-closure.ts::module`
 
 ```text
 /**
@@ -8562,7 +8562,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/generate.ts` (module)
+### `packages/codegen/src/compiler/generate.ts::module`
 
 ```text
 /**
@@ -8576,7 +8576,7 @@ source, one derivation.
 // exposed via GeneratedFiles
 ```
 
-### `compiler/collect-slots.ts` (module)
+### `packages/codegen/src/compiler/collect-slots.ts::module`
 
 ```text
 /**
@@ -8613,7 +8613,7 @@ source, one derivation.
  */
 ```
 
-### `_extraUnnamedChoiceListeners` (`packages/codegen/src/compiler/collect-slots.ts:54`)
+### `packages/codegen/src/compiler/collect-slots.ts::_extraUnnamedChoiceListeners`
 
 ```text
 // Extra listeners registered via addUnnamedChoiceListener (e.g. the DiagnosticSink
@@ -8621,13 +8621,13 @@ source, one derivation.
 // drainUnnamedChoiceSlots() still returns the accumulated kinds correctly.
 ```
 
-### `degenerateArmFieldName` (`packages/codegen/src/compiler/collect-slots.ts:126`)
+### `packages/codegen/src/compiler/collect-slots.ts::degenerateArmFieldName`
 
 ```text
 /** The field name a degenerate arm (per `isDegenerateFieldArm`) carries, unwrapping the same single-member seq nesting. */
 ```
 
-### `compiler/emit-gate.ts` (module)
+### `packages/codegen/src/compiler/emit-gate.ts::module`
 
 ```text
 /**
@@ -8648,7 +8648,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/variant-structural.ts` (module)
+### `packages/codegen/src/compiler/variant-structural.ts::module`
 
 ```text
 /**
@@ -8822,7 +8822,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/ctx.ts` (module)
+### `packages/codegen/src/compiler/ctx.ts::module`
 
 ```text
 /**
@@ -8857,7 +8857,7 @@ source, one derivation.
  */
 ```
 
-### `BaseCtx` (`packages/codegen/src/compiler/ctx.ts:14`)
+### `packages/codegen/src/compiler/ctx.ts::BaseCtx`
 
 ```text
 /**
@@ -8884,14 +8884,14 @@ source, one derivation.
  */
 ```
 
-### `BaseCtx.rules` (`packages/codegen/src/compiler/ctx.ts:21`)
+### `packages/codegen/src/compiler/ctx.ts::BaseCtx.rules`
 
 ```text
 /** Derived accessor over `grammar` — see class doc comment for why this is
 	 *  abstract rather than one generic implementation. */
 ```
 
-### `compiler/evaluate.ts` (module)
+### `packages/codegen/src/compiler/evaluate.ts::module`
 
 ```text
 /**
@@ -8903,7 +8903,7 @@ source, one derivation.
  */
 ```
 
-### `Input` (`packages/codegen/src/compiler/evaluate.ts:49`)
+### `packages/codegen/src/compiler/evaluate.ts::Input`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -8911,13 +8911,13 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `SymbolRuleWithRef` (`packages/codegen/src/compiler/evaluate.ts:51`)
+### `packages/codegen/src/compiler/evaluate.ts::SymbolRuleWithRef`
 
 ```text
 // Augmented SymbolRule<'evaluate'> that carries a ref for in-place enrichment
 ```
 
-### `coerceToRule` (`packages/codegen/src/compiler/evaluate.ts:55`)
+### `packages/codegen/src/compiler/evaluate.ts::coerceToRule`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -8925,7 +8925,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `createProxy` (`packages/codegen/src/compiler/evaluate.ts:170`)
+### `packages/codegen/src/compiler/evaluate.ts::createProxy`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -8942,7 +8942,7 @@ source, one derivation.
 // convention and tree-sitter's explicit `inline` list.
 ```
 
-### `getRef` (`packages/codegen/src/compiler/evaluate.ts:192`)
+### `packages/codegen/src/compiler/evaluate.ts::getRef`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -8950,7 +8950,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `TokenFn` (`packages/codegen/src/compiler/evaluate.ts:253`)
+### `packages/codegen/src/compiler/evaluate.ts::TokenFn`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -8967,7 +8967,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `token.immediate` (`packages/codegen/src/compiler/evaluate.ts:263`)
+### `packages/codegen/src/compiler/evaluate.ts::token.immediate`
 
 ```text
 // Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
@@ -8977,7 +8977,7 @@ source, one derivation.
 // (which must see the same arm shape under both runtimes) are locked in.
 ```
 
-### `PrecFn` (`packages/codegen/src/compiler/evaluate.ts:269`)
+### `packages/codegen/src/compiler/evaluate.ts::PrecFn`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -8990,7 +8990,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `stripPrecedenceWrappers` (`packages/codegen/src/compiler/evaluate.ts:305`)
+### `packages/codegen/src/compiler/evaluate.ts::stripPrecedenceWrappers`
 
 ```text
 // Sittir-runtime-exclusive cleanup: by the time `grammarFn` calls this (right
@@ -9006,7 +9006,7 @@ source, one derivation.
 // `visibleGroupSynthName`'s `ambientPrec` re-wrap).
 ```
 
-### `foldImmediateTokenRule` (`packages/codegen/src/compiler/evaluate.ts:322`)
+### `packages/codegen/src/compiler/evaluate.ts::foldImmediateTokenRule`
 
 ```text
 // Sittir-runtime-exclusive normalization: folds every real IMMEDIATE_TOKEN
@@ -9019,7 +9019,7 @@ source, one derivation.
 // see docs/glossary/compiler-model.md's `NodeRef.immediate`.
 ```
 
-### `alias` (`packages/codegen/src/compiler/evaluate.ts:344`)
+### `packages/codegen/src/compiler/evaluate.ts::alias`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9034,7 +9034,7 @@ source, one derivation.
 // uppercase SYMBOL $ references, so this is a plain equality check.
 ```
 
-### `blank` (`packages/codegen/src/compiler/evaluate.ts:365`)
+### `packages/codegen/src/compiler/evaluate.ts::blank`
 
 #### body
 
@@ -9042,7 +9042,7 @@ source, one derivation.
 // BLANK is represented as choice() with no members — absorbed by choice()
 ```
 
-### `GrammarOptions` (`packages/codegen/src/compiler/evaluate.ts:373`)
+### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9050,7 +9050,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `GrammarOptions.rules` (`packages/codegen/src/compiler/evaluate.ts:375`)
+### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions.rules`
 
 ```text
 // tree-sitter's DSL passes `($, previous)` to every rule / metadata
@@ -9059,7 +9059,7 @@ source, one derivation.
 // callbacks that forward it (`previous.concat([...])`) compile.
 ```
 
-### `grammarFn` (`packages/codegen/src/compiler/evaluate.ts:410`)
+### `packages/codegen/src/compiler/evaluate.ts::grammarFn`
 
 #### body
 
@@ -9125,7 +9125,7 @@ source, one derivation.
 // accumulator. Non-enumerable, matching enrich()'s own attachment.
 ```
 
-### `rewriteInlineAliases` (`packages/codegen/src/compiler/evaluate.ts:521`)
+### `packages/codegen/src/compiler/evaluate.ts::rewriteInlineAliases`
 
 #### body
 
@@ -9185,7 +9185,7 @@ source, one derivation.
 // `syntheticHiddenName`, so it phantoms by construction.
 ```
 
-### `appendCallbackMetadataNames` (`packages/codegen/src/compiler/evaluate.ts:1096`)
+### `packages/codegen/src/compiler/evaluate.ts::appendCallbackMetadataNames`
 
 ```text
 // Shared by the `supertypes`, `factoryInline` and `inline` callback results:
@@ -9198,7 +9198,7 @@ source, one derivation.
 // `n.type === SYMBOL` is always false for them).
 ```
 
-### `BuildResult` (`packages/codegen/src/compiler/evaluate.ts:1245`)
+### `packages/codegen/src/compiler/evaluate.ts::BuildResult`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9211,7 +9211,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `buildRuleCatalog` (`packages/codegen/src/compiler/evaluate.ts:1285`)
+### `packages/codegen/src/compiler/evaluate.ts::buildRuleCatalog`
 
 #### body
 
@@ -9243,7 +9243,7 @@ source, one derivation.
 // view.
 ```
 
-### `identifyChildren` (`packages/codegen/src/compiler/evaluate.ts:1364`)
+### `packages/codegen/src/compiler/evaluate.ts::identifyChildren`
 
 #### body
 
@@ -9267,7 +9267,7 @@ source, one derivation.
 		   unreachable at runtime, transparent single-child wrapper. */
 ```
 
-### `withIdentifiedChildren` (`packages/codegen/src/compiler/evaluate.ts:1432`)
+### `packages/codegen/src/compiler/evaluate.ts::withIdentifiedChildren`
 
 #### body
 
@@ -9282,7 +9282,7 @@ source, one derivation.
 		   transparent single-child wrapper for exhaustiveness. */
 ```
 
-### `compiler/link.ts` (module)
+### `packages/codegen/src/compiler/link.ts::module`
 
 ```text
 /**
@@ -9298,7 +9298,7 @@ source, one derivation.
  */
 ```
 
-### `LinkCtx.kindEntries` (`packages/codegen/src/compiler/link.ts:94`)
+### `packages/codegen/src/compiler/link.ts::LinkCtx.kindEntries`
 
 ```text
 /** Same catalog `canonicalizeRuleLiterals` stamps ids from — carried here so
@@ -9307,7 +9307,7 @@ source, one derivation.
 	 *  same resolution `collectAnonymousNodes` (assemble.ts) applies. */
 ```
 
-### `link` (`packages/codegen/src/compiler/link.ts:122`)
+### `packages/codegen/src/compiler/link.ts::link`
 
 #### body
 
@@ -9558,7 +9558,7 @@ source, one derivation.
 // Validate refine() forms against the linked rule tree.
 ```
 
-### `stampSymbolRefKindIds` (`packages/codegen/src/compiler/link.ts:313`)
+### `packages/codegen/src/compiler/link.ts::stampSymbolRefKindIds`
 
 #### body
 
@@ -9591,7 +9591,7 @@ source, one derivation.
 // needs the effective storage id).
 ```
 
-### `computeReachableFromRoot` (`packages/codegen/src/compiler/link.ts:490`)
+### `packages/codegen/src/compiler/link.ts::computeReachableFromRoot`
 
 ```text
 // Walks the grammar's own rule reference graph from its root rule (the
@@ -9608,7 +9608,7 @@ source, one derivation.
 // signal directly rather than re-deriving it from an unrelated proxy).
 ```
 
-### `walkRuleRefs` (`packages/codegen/src/compiler/link.ts:506`)
+### `packages/codegen/src/compiler/link.ts::walkRuleRefs`
 
 ```text
 // Same case list as resolveHiddenRuleContent (assemble.ts): collects every
@@ -9618,7 +9618,7 @@ source, one derivation.
 // through.
 ```
 
-### `reportVaporizedKinds` (`packages/codegen/src/compiler/link.ts:547`)
+### `packages/codegen/src/compiler/link.ts::reportVaporizedKinds`
 
 ```text
 // A stamp miss is VAPORIZED (dead grammar surface, e.g. jsx nodes
@@ -9639,7 +9639,7 @@ source, one derivation.
 // that accidental-collision case.
 ```
 
-### `collectTopLevelAliasBodies` (`packages/codegen/src/compiler/link.ts:758`)
+### `packages/codegen/src/compiler/link.ts::collectTopLevelAliasBodies`
 
 #### body
 
@@ -9674,7 +9674,7 @@ source, one derivation.
 // derivation, not a cached set). See project_pr_e_spec_premises_false.
 ```
 
-### `VariantChoiceLocation` (`packages/codegen/src/compiler/link.ts:878`)
+### `packages/codegen/src/compiler/link.ts::VariantChoiceLocation`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9683,7 +9683,7 @@ source, one derivation.
 //
 ```
 
-### `applyOverridePolymorphs` (`packages/codegen/src/compiler/link.ts:884`)
+### `packages/codegen/src/compiler/link.ts::applyOverridePolymorphs`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9757,7 +9757,7 @@ source, one derivation.
 //   source:'override' }.)
 ```
 
-### `findVariantChoice` (`packages/codegen/src/compiler/link.ts:1028`)
+### `packages/codegen/src/compiler/link.ts::findVariantChoice`
 
 #### body
 
@@ -9803,7 +9803,7 @@ source, one derivation.
 // Merge outer prefix/suffix with the inner seq's non-choice members.
 ```
 
-### `TOKEN_NAMES` (`packages/codegen/src/compiler/link.ts:1071`)
+### `packages/codegen/src/compiler/link.ts::TOKEN_NAMES`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9815,13 +9815,13 @@ source, one derivation.
 // do we call this token in TypeScript identifier space".
 ```
 
-### `TOKEN_NAMES.<unknown>` (`packages/codegen/src/compiler/link.ts:1072`)
+### `packages/codegen/src/compiler/link.ts::TOKEN_NAMES.<unknown>`
 
 ```text
 // Multi-char tokens
 ```
 
-### `resolveRule` (`packages/codegen/src/compiler/link.ts:1186`)
+### `packages/codegen/src/compiler/link.ts::resolveRule`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9892,7 +9892,7 @@ source, one derivation.
 // PR-P: ENUM case removed — enum-shaped choices are CHOICE type now.
 ```
 
-### `classifyHiddenRule` (`packages/codegen/src/compiler/link.ts:1318`)
+### `packages/codegen/src/compiler/link.ts::classifyHiddenRule`
 
 #### body
 
@@ -9907,7 +9907,7 @@ source, one derivation.
 // Other hidden rules survive as-is — Assemble classifies by structure
 ```
 
-### `flattenNestedChoiceMembers` (`packages/codegen/src/compiler/link.ts:1339`)
+### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 
 ```text
 // Grammar-inheritance idioms (`choice(previous, $.new_arm)`) nest a CHOICE
@@ -9917,7 +9917,7 @@ source, one derivation.
 // list, not the authored nesting.
 ```
 
-### `collectSubtypeRefs` (`packages/codegen/src/compiler/link.ts:1438`)
+### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
 
 #### body
 
@@ -9966,7 +9966,7 @@ source, one derivation.
 // PR-P: ENUM case removed — handled by CHOICE arm above.
 ```
 
-### `enrichPositions` (`packages/codegen/src/compiler/link.ts:1488`)
+### `packages/codegen/src/compiler/link.ts::enrichPositions`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9974,7 +9974,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `computeParentSets` (`packages/codegen/src/compiler/link.ts:1497`)
+### `packages/codegen/src/compiler/link.ts::computeParentSets`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9982,7 +9982,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `absorbTrailingSeparator` (`packages/codegen/src/compiler/link.ts:1658`)
+### `packages/codegen/src/compiler/link.ts::absorbTrailingSeparator`
 
 #### body
 
@@ -9992,7 +9992,7 @@ source, one derivation.
 // way a plain literal one is.
 ```
 
-### `liftCommaSep` (`packages/codegen/src/compiler/link.ts:1681`)
+### `packages/codegen/src/compiler/link.ts::liftCommaSep`
 
 ```text
 /**
@@ -10056,7 +10056,7 @@ source, one derivation.
 // structural separator).
 ```
 
-### `liftSeparators` (`packages/codegen/src/compiler/link.ts:1730`)
+### `packages/codegen/src/compiler/link.ts::liftSeparators`
 
 ```text
 /**
@@ -10114,7 +10114,7 @@ source, one derivation.
 // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
 ```
 
-### `resolveGroupPath` (`packages/codegen/src/compiler/link.ts:1777`)
+### `packages/codegen/src/compiler/link.ts::resolveGroupPath`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10139,7 +10139,7 @@ source, one derivation.
  */
 ```
 
-### `deriveSynthesizedName` (`packages/codegen/src/compiler/link.ts:1828`)
+### `packages/codegen/src/compiler/link.ts::deriveSynthesizedName`
 
 ```text
 /**
@@ -10161,7 +10161,7 @@ source, one derivation.
 // as the base; otherwise prepend '_' to canonicalize.
 ```
 
-### `applyGroupOverrides` (`packages/codegen/src/compiler/link.ts:1973`)
+### `packages/codegen/src/compiler/link.ts::applyGroupOverrides`
 
 ```text
 /**
@@ -10193,7 +10193,7 @@ source, one derivation.
 // deep first
 ```
 
-### `liftRule` (`packages/codegen/src/compiler/link.ts:2006`)
+### `packages/codegen/src/compiler/link.ts::liftRule`
 
 #### body
 
@@ -10220,7 +10220,7 @@ source, one derivation.
 // along for free (same pattern as wrapper-deletion.ts's REPEAT case).
 ```
 
-### `stampStaticRenderAs` (`packages/codegen/src/compiler/link.ts:2036`)
+### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10315,7 +10315,7 @@ source, one derivation.
 // throw.
 ```
 
-### `rewriteRuleForStamp` (`packages/codegen/src/compiler/link.ts:2071`)
+### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`
 
 #### body
 
@@ -10349,7 +10349,7 @@ source, one derivation.
 // synthesized new blank members the DSL-time pass didn't see.
 ```
 
-### `RefinePathResolution` (`packages/codegen/src/compiler/link.ts:2127`)
+### `packages/codegen/src/compiler/link.ts::RefinePathResolution`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10371,7 +10371,7 @@ source, one derivation.
  */
 ```
 
-### `validateRefineForms` (`packages/codegen/src/compiler/link.ts:2132`)
+### `packages/codegen/src/compiler/link.ts::validateRefineForms`
 
 ```text
 /**
@@ -10389,7 +10389,7 @@ source, one derivation.
  */
 ```
 
-### `resolveRefinePath` (`packages/codegen/src/compiler/link.ts:2146`)
+### `packages/codegen/src/compiler/link.ts::resolveRefinePath`
 
 ```text
 /**
@@ -10407,7 +10407,7 @@ source, one derivation.
  */
 ```
 
-### `narrowedFieldLiteralsForForm` (`packages/codegen/src/compiler/link.ts:2293`)
+### `packages/codegen/src/compiler/link.ts::narrowedFieldLiteralsForForm`
 
 ```text
 /**
@@ -10428,7 +10428,7 @@ source, one derivation.
  */
 ```
 
-### `resolveSelectionLiteral` (`packages/codegen/src/compiler/link.ts:2309`)
+### `packages/codegen/src/compiler/link.ts::resolveSelectionLiteral`
 
 ```text
 /**
@@ -10438,7 +10438,7 @@ source, one derivation.
  */
 ```
 
-### `membersOf` (`packages/codegen/src/compiler/link.ts:2318`)
+### `packages/codegen/src/compiler/link.ts::membersOf`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10447,7 +10447,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `singleContentOf` (`packages/codegen/src/compiler/link.ts:2322`)
+### `packages/codegen/src/compiler/link.ts::singleContentOf`
 
 #### body
 
@@ -10455,7 +10455,7 @@ source, one derivation.
 // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 ```
 
-### `compiler/generated-metadata.ts` (module)
+### `packages/codegen/src/compiler/generated-metadata.ts::module`
 
 ```text
 /**
@@ -10467,7 +10467,7 @@ source, one derivation.
  */
 ```
 
-### `joinIdNames` (`packages/codegen/src/compiler/generated-metadata.ts:237`)
+### `packages/codegen/src/compiler/generated-metadata.ts::joinIdNames`
 
 #### body
 
@@ -10516,7 +10516,7 @@ source, one derivation.
 				   on, since that's what tree-sitter really emits. */
 ```
 
-### `deriveSymbolRuntimeName` (`packages/codegen/src/compiler/generated-metadata.ts:322`)
+### `packages/codegen/src/compiler/generated-metadata.ts::deriveSymbolRuntimeName`
 
 #### body
 
@@ -10544,7 +10544,7 @@ source, one derivation.
 	   the join hits the codegen-side rule key. */
 ```
 
-### `compiler/types.ts` (module)
+### `packages/codegen/src/compiler/types.ts::module`
 
 ```text
 /**
@@ -10574,43 +10574,43 @@ source, one derivation.
 // compiler-side importers keep working.
 ```
 
-### `KindPresenceFlag.TSGrammar` (`packages/codegen/src/compiler/types.ts:41`)
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSGrammar`
 
 ```text
 /** Rule appears in `grammar.js` (codegen rule catalog). */
 ```
 
-### `KindPresenceFlag.TSNodeTypes` (`packages/codegen/src/compiler/types.ts:42`)
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSNodeTypes`
 
 ```text
 /** Kind appears in `node-types.json`. */
 ```
 
-### `KindPresenceFlag.TSInternals` (`packages/codegen/src/compiler/types.ts:43`)
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSInternals`
 
 ```text
 /** Kind has a parser symbol — IDs come from `parser.c` internal metadata. */
 ```
 
-### `KindUseFlag.Readable` (`packages/codegen/src/compiler/types.ts:49`)
+### `packages/codegen/src/compiler/types.ts::KindUseFlag.Readable`
 
 ```text
 /** Sittir can ingest/hydrate the kind from parsed runtime nodes. */
 ```
 
-### `KindUseFlag.Buildable` (`packages/codegen/src/compiler/types.ts:50`)
+### `packages/codegen/src/compiler/types.ts::KindUseFlag.Buildable`
 
 ```text
 /** Sittir can produce/build it from factories or `.from()`. */
 ```
 
-### `KindUseFlag.Renderable` (`packages/codegen/src/compiler/types.ts:51`)
+### `packages/codegen/src/compiler/types.ts::KindUseFlag.Renderable`
 
 ```text
 /** Sittir can render/dispatch it. */
 ```
 
-### `RawGrammar.factoryInline` (`packages/codegen/src/compiler/types.ts:86`)
+### `packages/codegen/src/compiler/types.ts::RawGrammar.factoryInline`
 
 ```text
 /**
@@ -10620,7 +10620,7 @@ source, one derivation.
 	 */
 ```
 
-### `DesugarDivergenceEvent` (`packages/codegen/src/compiler/types.ts:105`)
+### `packages/codegen/src/compiler/types.ts::DesugarDivergenceEvent`
 
 ```text
 /**
@@ -10632,7 +10632,7 @@ source, one derivation.
  */
 ```
 
-### `LinkedGrammar.terminalAliasWireIds` (`packages/codegen/src/compiler/types.ts:168`)
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar.terminalAliasWireIds`
 
 ```text
 /**
@@ -10645,7 +10645,7 @@ source, one derivation.
 	 */
 ```
 
-### `compiler/simplify.ts` (module)
+### `packages/codegen/src/compiler/simplify.ts::module`
 
 ```text
 /**
@@ -10662,13 +10662,13 @@ source, one derivation.
  */
 ```
 
-### `SimplifyCtx.polymorphSkipExtra` (`packages/codegen/src/compiler/simplify.ts:31`)
+### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.polymorphSkipExtra`
 
 ```text
 /** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
 ```
 
-### `SimplifyCtx.constructor` (`packages/codegen/src/compiler/simplify.ts:32`)
+### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.constructor`
 
 #### body
 
@@ -10678,7 +10678,7 @@ source, one derivation.
 // init.builder; the construction sites read ctx.builder, never a direct ref.
 ```
 
-### `collapseSingleMemberSeq` (`packages/codegen/src/compiler/simplify.ts:67`)
+### `packages/codegen/src/compiler/simplify.ts::collapseSingleMemberSeq`
 
 #### body
 
@@ -10694,7 +10694,7 @@ source, one derivation.
 // Only stamp when non-default (single → undefined per combineMultiplicity).
 ```
 
-### `_slotGroupingDiagnostics` (`packages/codegen/src/compiler/simplify.ts:384`)
+### `packages/codegen/src/compiler/simplify.ts::_slotGroupingDiagnostics`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10709,7 +10709,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `simplifyChoiceRule` (`packages/codegen/src/compiler/simplify.ts:446`)
+### `packages/codegen/src/compiler/simplify.ts::simplifyChoiceRule`
 
 ```text
 /**
@@ -10759,7 +10759,7 @@ source, one derivation.
 // it actually produces for a CHOICE-shaped input.
 ```
 
-### `compiler/trace.ts` (module)
+### `packages/codegen/src/compiler/trace.ts::module`
 
 ```text
 /**
@@ -10776,7 +10776,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/inline-sets.ts` (module)
+### `packages/codegen/src/compiler/inline-sets.ts::module`
 
 ```text
 /**
@@ -10796,7 +10796,7 @@ source, one derivation.
  */
 ```
 
-### `readGrammarJson` (`packages/codegen/src/compiler/inline-sets.ts:11`)
+### `packages/codegen/src/compiler/inline-sets.ts::readGrammarJson`
 
 #### body
 
@@ -10806,13 +10806,13 @@ source, one derivation.
 // would let generation continue with empty inline/alias metadata.
 ```
 
-### `buildInlinableKinds` (`packages/codegen/src/compiler/inline-sets.ts:84`)
+### `packages/codegen/src/compiler/inline-sets.ts::buildInlinableKinds`
 
 ```text
 // un-classifiable (no IR rule) — leave inlinable
 ```
 
-### `compiler/scc.ts` (module)
+### `packages/codegen/src/compiler/scc.ts::module`
 
 ```text
 /**
@@ -10869,7 +10869,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/resolve-grammar.ts` (module)
+### `packages/codegen/src/compiler/resolve-grammar.ts::module`
 
 ```text
 /**
@@ -10880,7 +10880,7 @@ source, one derivation.
  */
 ```
 
-### `compiler/assemble.ts` (module)
+### `packages/codegen/src/compiler/assemble.ts::module`
 
 ```text
 /**
@@ -10920,7 +10920,7 @@ source, one derivation.
 // import it from this module.
 ```
 
-### `AssembleCtx.grammarJsonAliasMap` (`packages/codegen/src/compiler/assemble.ts:92`)
+### `packages/codegen/src/compiler/assemble.ts::AssembleCtx.grammarJsonAliasMap`
 
 ```text
 /**
@@ -10946,14 +10946,14 @@ source, one derivation.
 	 */
 ```
 
-### `computePolymorphFormKinds` (`packages/codegen/src/compiler/assemble.ts:355`)
+### `packages/codegen/src/compiler/assemble.ts::computePolymorphFormKinds`
 
 ```text
 // No PolymorphRule/AssembledPolymorph model types exist at runtime —
 // polymorphFormKinds is always empty. Kept in NodeMap for API stability.
 ```
 
-### `stampFactoryInline` (`packages/codegen/src/compiler/assemble.ts:422`)
+### `packages/codegen/src/compiler/assemble.ts::stampFactoryInline`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10998,7 +10998,7 @@ source, one derivation.
 // outside `parents` is a route to `kind` with no config to nest into.
 ```
 
-### `includeAliasMemberKinds` (`packages/codegen/src/compiler/assemble.ts:572`)
+### `packages/codegen/src/compiler/assemble.ts::includeAliasMemberKinds`
 
 #### body
 
@@ -11007,7 +11007,7 @@ source, one derivation.
 // supertype) — a catalog lookup is the only available stamp source.
 ```
 
-### `hydrateValues` (`packages/codegen/src/compiler/assemble.ts:720`)
+### `packages/codegen/src/compiler/assemble.ts::hydrateValues`
 
 #### body
 
@@ -11040,7 +11040,7 @@ source, one derivation.
 // behavior.
 ```
 
-### `resolveCollidingNames` (`packages/codegen/src/compiler/assemble.ts:763`)
+### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 
 #### body
 
@@ -11048,7 +11048,7 @@ source, one derivation.
 // Group nodes by typeName. Preferred winner: the non-hidden kind.
 ```
 
-### `collectAnonymousNodes` (`packages/codegen/src/compiler/assemble.ts:899`)
+### `packages/codegen/src/compiler/assemble.ts::collectAnonymousNodes`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11116,7 +11116,7 @@ source, one derivation.
 // Operator/punctuation token (e.g., "+", "->", "{")
 ```
 
-### `ModelType` (`packages/codegen/src/compiler/assemble.ts:973`)
+### `packages/codegen/src/compiler/assemble.ts::ModelType`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11124,7 +11124,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `isNonInlinableLeafShape` (`packages/codegen/src/compiler/assemble.ts:975`)
+### `packages/codegen/src/compiler/assemble.ts::isNonInlinableLeafShape`
 
 ```text
 // `inlineRefs` / `resolveGroupOrMultiInlineTarget` moved to
@@ -11139,7 +11139,7 @@ source, one derivation.
 // design" in docs/compiler-phase-glossary.md.
 ```
 
-### `peelSeparatedListCore` (`packages/codegen/src/compiler/assemble.ts:1007`)
+### `packages/codegen/src/compiler/assemble.ts::peelSeparatedListCore`
 
 ```text
 /**
@@ -11152,7 +11152,7 @@ source, one derivation.
  */
 ```
 
-### `hasSlotBearingContent` (`packages/codegen/src/compiler/assemble.ts:1033`)
+### `packages/codegen/src/compiler/assemble.ts::hasSlotBearingContent`
 
 ```text
 // Replaces the link-phase `hasAnyField(rule) || hasAnyChild(rule)` walk with
@@ -11160,7 +11160,7 @@ source, one derivation.
 // in docs/compiler-phase-glossary.md.
 ```
 
-### `computeSignatures` (`packages/codegen/src/compiler/assemble.ts:1086`)
+### `packages/codegen/src/compiler/assemble.ts::computeSignatures`
 
 ```text
 // `extractRepeatShape` moved to `simplify.ts` (needed by the inlining
@@ -11175,7 +11175,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `compiler/normalize.ts` (module)
+### `packages/codegen/src/compiler/normalize.ts::module`
 
 ```text
 /**
@@ -11199,19 +11199,19 @@ source, one derivation.
 // Re-export from there if test files or callers still need them.
 ```
 
-### `NormalizeCtx.inlineKinds` (`packages/codegen/src/compiler/normalize.ts:36`)
+### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.inlineKinds`
 
 ```text
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
 ```
 
-### `NormalizeCtx.polymorphSkip` (`packages/codegen/src/compiler/normalize.ts:37`)
+### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.polymorphSkip`
 
 ```text
 /** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
 ```
 
-### `dbgChoiceId` (`packages/codegen/src/compiler/normalize.ts:49`)
+### `packages/codegen/src/compiler/normalize.ts::dbgChoiceId`
 
 ```text
 /**
@@ -11242,7 +11242,7 @@ source, one derivation.
 // after each normalization pass, to pinpoint where a rule id gets dropped.
 ```
 
-### `normalizeGrammar` (`packages/codegen/src/compiler/normalize.ts:249`)
+### `packages/codegen/src/compiler/normalize.ts::normalizeGrammar`
 
 #### body
 
@@ -11318,7 +11318,7 @@ source, one derivation.
 // assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 ```
 
-### `walkSymbols` (`packages/codegen/src/compiler/normalize.ts:628`)
+### `packages/codegen/src/compiler/normalize.ts::walkSymbols`
 
 #### body
 
@@ -11328,7 +11328,7 @@ source, one derivation.
 // rule to survive, so that is the kind the reference counts for.
 ```
 
-### `outerFromParts` (`packages/codegen/src/compiler/normalize.ts:735`)
+### `packages/codegen/src/compiler/normalize.ts::outerFromParts`
 
 #### body
 
@@ -11338,7 +11338,7 @@ source, one derivation.
 // never calls this.
 ```
 
-### `rulesEqual` (`packages/codegen/src/compiler/normalize.ts:744`)
+### `packages/codegen/src/compiler/normalize.ts::rulesEqual`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -11374,7 +11374,7 @@ source, one derivation.
 // PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
 ```
 
-### `factorSeqChoice` (`packages/codegen/src/compiler/normalize.ts:785`)
+### `packages/codegen/src/compiler/normalize.ts::factorSeqChoice`
 
 ```text
 // ---------------------------------------------------------------------------

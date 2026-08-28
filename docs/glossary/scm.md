@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `resolveGrammarRoot` (`packages/codegen/src/scm/extract-roles.ts:143`)
+### `packages/codegen/src/scm/extract-roles.ts::resolveGrammarRoot`
 
 ```text
 /**
@@ -21,7 +21,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `readIfExists` (`packages/codegen/src/scm/extract-roles.ts:158`)
+### `packages/codegen/src/scm/extract-roles.ts::readIfExists`
 
 ```text
 /**
@@ -29,7 +29,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveParentGrammarsFromConfig` (`packages/codegen/src/scm/extract-roles.ts:168`)
+### `packages/codegen/src/scm/extract-roles.ts::resolveParentGrammarsFromConfig`
 
 ```text
 /**
@@ -58,7 +58,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Match patterns like "node_modules/tree-sitter-<lang>/queries/<file>.scm"
 ```
 
-### `collectCaptures` (`packages/codegen/src/scm/extract-roles.ts:214`)
+### `packages/codegen/src/scm/extract-roles.ts::collectCaptures`
 
 ```text
 /**
@@ -77,7 +77,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // tags.scm is optional — only warn for highlights.scm
 ```
 
-### `captureMatchesMapping` (`packages/codegen/src/scm/extract-roles.ts:259`)
+### `packages/codegen/src/scm/extract-roles.ts::captureMatchesMapping`
 
 ```text
 /**
@@ -89,7 +89,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `baseRoleOf` (`packages/codegen/src/scm/extract-roles.ts:270`)
+### `packages/codegen/src/scm/extract-roles.ts::baseRoleOf`
 
 ```text
 /**
@@ -99,7 +99,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyFallbackProbes` (`packages/codegen/src/scm/extract-roles.ts:300`)
+### `packages/codegen/src/scm/extract-roles.ts::applyFallbackProbes`
 
 ```text
 /**
@@ -117,7 +117,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `extractGrammarRoles` (`packages/codegen/src/scm/extract-roles.ts:333`)
+### `packages/codegen/src/scm/extract-roles.ts::extractGrammarRoles`
 
 ```text
 /**
@@ -145,13 +145,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // universally recognized as belonging to a role.
 ```
 
-### `addToRole` (`packages/codegen/src/scm/extract-roles.ts:358`)
+### `packages/codegen/src/scm/extract-roles.ts::addToRole`
 
 ```text
 /** Add a kind to a role's set, creating the set if needed. */
 ```
 
-### `tokenise` (`packages/codegen/src/scm/parse.ts:44`)
+### `packages/codegen/src/scm/parse.ts::tokenise`
 
 ```text
 /**
@@ -216,31 +216,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Anchors (`.`) and other unknown chars — skip
 ```
 
-### `peek` (`packages/codegen/src/scm/parse.ts:186`)
+### `packages/codegen/src/scm/parse.ts::peek`
 
 ```text
 /** Return current token without advancing, or `undefined` at end. */
 ```
 
-### `advance` (`packages/codegen/src/scm/parse.ts:191`)
+### `packages/codegen/src/scm/parse.ts::advance`
 
 ```text
 /** Return current token and advance, or `undefined` at end. */
 ```
 
-### `is` (`packages/codegen/src/scm/parse.ts:196`)
+### `packages/codegen/src/scm/parse.ts::is`
 
 ```text
 /** Check if current token has the given kind. */
 ```
 
-### `eat` (`packages/codegen/src/scm/parse.ts:202`)
+### `packages/codegen/src/scm/parse.ts::eat`
 
 ```text
 /** Consume the current token if it matches `kind`. Returns true if consumed. */
 ```
 
-### `parseSCMQuery` (`packages/codegen/src/scm/parse.ts:217`)
+### `packages/codegen/src/scm/parse.ts::parseSCMQuery`
 
 ```text
 /**
@@ -293,7 +293,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // skip the capture — anonymous node, no kind name
 ```
 
-### `parsePattern` (`packages/codegen/src/scm/parse.ts:231`)
+### `packages/codegen/src/scm/parse.ts::parsePattern`
 
 ```text
 /**
@@ -303,25 +303,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `skipBracketGroup` (`packages/codegen/src/scm/parse.ts:276`)
+### `packages/codegen/src/scm/parse.ts::skipBracketGroup`
 
 ```text
 /** Skip past a bracket group `[...]`, handling nesting. */
 ```
 
-### `skipToClose` (`packages/codegen/src/scm/parse.ts:288`)
+### `packages/codegen/src/scm/parse.ts::skipToClose`
 
 ```text
 /** Skip tokens to the matching `)` for the current `(`. */
 ```
 
-### `tryCapture` (`packages/codegen/src/scm/parse.ts:299`)
+### `packages/codegen/src/scm/parse.ts::tryCapture`
 
 ```text
 /** Try to consume a capture token; returns the capture value or undefined. */
 ```
 
-### `parseInheritsDirective` (`packages/codegen/src/scm/parse.ts:444`)
+### `packages/codegen/src/scm/parse.ts::parseInheritsDirective`
 
 ```text
 /**
@@ -336,7 +336,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `Role` (`packages/codegen/src/scm/extract-roles.ts:29`)
+### `packages/codegen/src/scm/extract-roles.ts::Role`
 
 ```text
 /**
@@ -348,19 +348,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `get` (`packages/codegen/src/scm/extract-roles.ts:67`)
+### `packages/codegen/src/scm/extract-roles.ts::get`
 
 ```text
 /** Convenience accessor — get kinds for a specific role */
 ```
 
-### `captureBase` (`packages/codegen/src/scm/extract-roles.ts:78`)
+### `packages/codegen/src/scm/extract-roles.ts::captureBase`
 
 ```text
 /** Base capture name — matches the capture itself or any sub-captures. */
 ```
 
-### `TokenCursor` (`packages/codegen/src/scm/parse.ts:156`)
+### `packages/codegen/src/scm/parse.ts::TokenCursor`
 
 ```text
 /**
@@ -370,7 +370,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `CAPTURE_TO_ROLE` (`packages/codegen/src/scm/extract-roles.ts:75`)
+### `packages/codegen/src/scm/extract-roles.ts::CAPTURE_TO_ROLE`
 
 ```text
 /**
@@ -387,7 +387,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `FALLBACK_PROBES` (`packages/codegen/src/scm/extract-roles.ts:235`)
+### `packages/codegen/src/scm/extract-roles.ts::FALLBACK_PROBES`
 
 ```text
 /**
@@ -403,7 +403,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `withRootRole` (`packages/codegen/src/scm/extract-roles.ts:64`)
+### `packages/codegen/src/scm/extract-roles.ts::withRootRole`
 
 ```text
 /**
@@ -418,7 +418,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // rule-record owner stamps it.
 ```
 
-### `scm/extract-roles.ts` (module)
+### `packages/codegen/src/scm/extract-roles.ts::module`
 
 ```text
 /**
@@ -440,7 +440,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `CAPTURE_TO_ROLE.captureBase` (`packages/codegen/src/scm/extract-roles.ts:60`)
+### `packages/codegen/src/scm/extract-roles.ts::CAPTURE_TO_ROLE.captureBase`
 
 ```text
 // trivia
@@ -478,7 +478,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // tags.scm references
 ```
 
-### `assignCapturesToRoles` (`packages/codegen/src/scm/extract-roles.ts:207`)
+### `packages/codegen/src/scm/extract-roles.ts::assignCapturesToRoles`
 
 #### body
 
@@ -490,7 +490,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // first match wins per capture
 ```
 
-### `SCMCapture` (`packages/codegen/src/scm/parse.ts:1`)
+### `packages/codegen/src/scm/parse.ts::SCMCapture`
 
 ```text
 /**

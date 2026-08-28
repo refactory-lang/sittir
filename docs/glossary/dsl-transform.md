@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `parsePath` (`packages/codegen/src/dsl/transform/transform-path.ts:122`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::parsePath`
 
 ```text
 /**
@@ -56,7 +56,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
 ```
 
-### `descendThroughPrecWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:271`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughPrecWrapper`
 
 ```text
 /**
@@ -77,7 +77,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isEnrichGroupLiftSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:298`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichGroupLiftSymbol`
 
 ```text
 /**
@@ -101,7 +101,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // would throw "group-lift symbol has no name" (an alias has no `.name`).
 ```
 
-### `setGroupLiftRuleMap` (`packages/codegen/src/dsl/transform/transform-path.ts:335`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::setGroupLiftRuleMap`
 
 ```text
 /**
@@ -111,7 +111,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `getGroupLiftRuleBody` (`packages/codegen/src/dsl/transform/transform-path.ts:344`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::getGroupLiftRuleBody`
 
 ```text
 /**
@@ -130,7 +130,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughGroupLiftSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:362`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughGroupLiftSymbol`
 
 ```text
 /**
@@ -146,7 +146,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isEnrichContentAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:395`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichContentAlias`
 
 ```text
 /**
@@ -161,7 +161,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughEnrichContentAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:412`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 
 ```text
 /**
@@ -173,7 +173,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughSingleWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:433`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughSingleWrapper`
 
 ```text
 /**
@@ -200,7 +200,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Dispatched before reaching descendThroughSingleWrapper — should never arrive here.
 ```
 
-### `descendThroughAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:486`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughAlias`
 
 ```text
 /**
@@ -218,7 +218,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:535`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructAlias`
 
 ```text
 /**
@@ -232,7 +232,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughNamedField` (`packages/codegen/src/dsl/transform/transform-path.ts:551`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughNamedField`
 
 ```text
 /**
@@ -255,7 +255,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dispatchKindMatch` (`packages/codegen/src/dsl/transform/transform-path.ts:591`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::dispatchKindMatch`
 
 ```text
 /**
@@ -279,7 +279,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyKindMatch` (`packages/codegen/src/dsl/transform/transform-path.ts:620`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatch`
 
 ```text
 /**
@@ -301,7 +301,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Track whether we matched anything so callers can error on zero.
 ```
 
-### `applyKindMatchToSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:647`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToSymbol`
 
 ```text
 /**
@@ -325,7 +325,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isWalkableNode` (`packages/codegen/src/dsl/transform/transform-path.ts:754`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::isWalkableNode`
 
 ```text
 /**
@@ -343,7 +343,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructContainer` (`packages/codegen/src/dsl/transform/transform-path.ts:776`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructContainer`
 
 ```text
 /**
@@ -354,7 +354,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:789`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructWrapper`
 
 ```text
 /**
@@ -372,7 +372,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructRepeatWithMetadata` (`packages/codegen/src/dsl/transform/transform-path.ts:817`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructRepeatWithMetadata`
 
 ```text
 /**
@@ -394,7 +394,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapInPrecStack` (`packages/codegen/src/dsl/transform/transform-path.ts:874`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::wrapInPrecStack`
 
 ```text
 /**
@@ -405,7 +405,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyToIndexedMember` (`packages/codegen/src/dsl/transform/transform-path.ts:927`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyToIndexedMember`
 
 ```text
 /**
@@ -427,7 +427,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyWildcardToMembers` (`packages/codegen/src/dsl/transform/transform-path.ts:960`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyWildcardToMembers`
 
 ```text
 /**
@@ -451,7 +451,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `makePolymorphAliasNode` (`packages/codegen/src/dsl/transform/transform.ts:61`)
+### `packages/codegen/src/dsl/transform/transform.ts::makePolymorphAliasNode`
 
 ```text
 /**
@@ -475,7 +475,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `transform` (`packages/codegen/src/dsl/transform/transform.ts:118`)
+### `packages/codegen/src/dsl/transform/transform.ts::transform`
 
 ```text
 /**
@@ -488,7 +488,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `requiresPathMode` (`packages/codegen/src/dsl/transform/transform.ts:140`)
+### `packages/codegen/src/dsl/transform/transform.ts::requiresPathMode`
 
 ```text
 /**
@@ -509,7 +509,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `partitionPatchesByVariant` (`packages/codegen/src/dsl/transform/transform.ts:176`)
+### `packages/codegen/src/dsl/transform/transform.ts::partitionPatchesByVariant`
 
 ```text
 /**
@@ -528,7 +528,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyVariantPatches` (`packages/codegen/src/dsl/transform/transform.ts:206`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
 ```text
 /**
@@ -561,7 +561,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // specified ordering isn't portable.
 ```
 
-### `tryHoistSiblingVariants` (`packages/codegen/src/dsl/transform/transform.ts:252`)
+### `packages/codegen/src/dsl/transform/transform.ts::tryHoistSiblingVariants`
 
 ```text
 /**
@@ -584,7 +584,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
 ```
 
-### `peelPrecWrappersFromRule` (`packages/codegen/src/dsl/transform/transform.ts:296`)
+### `packages/codegen/src/dsl/transform/transform.ts::peelPrecWrappersFromRule`
 
 ```text
 /**
@@ -608,7 +608,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `parseVariantPathsForHoist` (`packages/codegen/src/dsl/transform/transform.ts:335`)
+### `packages/codegen/src/dsl/transform/transform.ts::parseVariantPathsForHoist`
 
 ```text
 /**
@@ -626,7 +626,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildHoistedVariants` (`packages/codegen/src/dsl/transform/transform.ts:373`)
+### `packages/codegen/src/dsl/transform/transform.ts::buildHoistedVariants`
 
 ```text
 /**
@@ -694,7 +694,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // declared via wire's placeholder injection.
 ```
 
-### `registerHoistedVariantConflicts` (`packages/codegen/src/dsl/transform/transform.ts:455`)
+### `packages/codegen/src/dsl/transform/transform.ts::registerHoistedVariantConflicts`
 
 ```text
 /**
@@ -713,7 +713,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `countBodyAnchors` (`packages/codegen/src/dsl/transform/transform.ts:486`)
+### `packages/codegen/src/dsl/transform/transform.ts::countBodyAnchors`
 
 ```text
 /**
@@ -725,7 +725,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `variantBranchIsUnmaterializable` (`packages/codegen/src/dsl/transform/transform.ts:512`)
+### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
 
 ```text
 /**
@@ -739,7 +739,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `deField` (`packages/codegen/src/dsl/transform/transform.ts:526`)
+### `packages/codegen/src/dsl/transform/transform.ts::deField`
 
 ```text
 /**
@@ -751,7 +751,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyFlatPatchesThroughPrec` (`packages/codegen/src/dsl/transform/transform.ts:579`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyFlatPatchesThroughPrec`
 
 ```text
 /**
@@ -771,7 +771,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyFlatPatchesToSeq` (`packages/codegen/src/dsl/transform/transform.ts:602`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyFlatPatchesToSeq`
 
 ```text
 /**
@@ -811,7 +811,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // before — genuinely out-of-bounds against the ONE target shape.
 ```
 
-### `wrapVariantBodyInParentPrec` (`packages/codegen/src/dsl/transform/transform.ts:644`)
+### `packages/codegen/src/dsl/transform/transform.ts::wrapVariantBodyInParentPrec`
 
 ```text
 /**
@@ -833,7 +833,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `findEnrichShapedFieldThroughTransparentWrappers` (`packages/codegen/src/dsl/transform/transform.ts:799`)
+### `packages/codegen/src/dsl/transform/transform.ts::findEnrichShapedFieldThroughTransparentWrappers`
 
 ```text
 /**
@@ -884,7 +884,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // uppercase spellings ever appear here.
 ```
 
-### `resolveAliasPlaceholder` (`packages/codegen/src/dsl/transform/transform.ts:984`)
+### `packages/codegen/src/dsl/transform/transform.ts::resolveAliasPlaceholder`
 
 ```text
 /**
@@ -904,7 +904,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `registerAliasedVariant` (`packages/codegen/src/dsl/transform/transform.ts:1016`)
+### `packages/codegen/src/dsl/transform/transform.ts::registerAliasedVariant`
 
 ```text
 /**
@@ -935,7 +935,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `matchesEmpty` (`packages/codegen/src/dsl/transform/transform.ts:1063`)
+### `packages/codegen/src/dsl/transform/transform.ts::matchesEmpty`
 
 ```text
 /**
@@ -947,7 +947,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `factorOutEmptiness` (`packages/codegen/src/dsl/transform/transform.ts:1084`)
+### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`
 
 ```text
 /**
@@ -958,7 +958,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `extractNonEmpty` (`packages/codegen/src/dsl/transform/transform.ts:1095`)
+### `packages/codegen/src/dsl/transform/transform.ts::extractNonEmpty`
 
 ```text
 /**
@@ -970,7 +970,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `kind` (`packages/codegen/src/dsl/transform/transform-path.ts:83`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::kind`
 
 ```text
 /**
@@ -984,7 +984,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `kind` (`packages/codegen/src/dsl/transform/transform-path.ts:96`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::kind`
 
 ```text
 /**
@@ -996,7 +996,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `ApplyPathSkip` (`packages/codegen/src/dsl/transform/transform-path.ts:107`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::ApplyPathSkip`
 
 ```text
 /**
@@ -1009,7 +1009,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `GroupLiftRuleMap` (`packages/codegen/src/dsl/transform/transform-path.ts:277`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::GroupLiftRuleMap`
 
 ```text
 /**
@@ -1023,7 +1023,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PatchSet` (`packages/codegen/src/dsl/transform/transform.ts:67`)
+### `packages/codegen/src/dsl/transform/transform.ts::PatchSet`
 
 ```text
 /**
@@ -1058,7 +1058,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `findEnrichShapedFieldThroughTransparentWrappers` (`packages/codegen/src/dsl/transform/transform.ts:531`)
+### `packages/codegen/src/dsl/transform/transform.ts::findEnrichShapedFieldThroughTransparentWrappers`
 
 ```text
 /**
@@ -1093,7 +1093,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PREC_VARIANT_MAP` (`packages/codegen/src/dsl/transform/transform-path.ts:573`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::PREC_VARIANT_MAP`
 
 ```text
 /**
@@ -1104,7 +1104,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `unifyChoiceArmFieldNames` (`packages/codegen/src/dsl/transform/transform.ts:630`)
+### `packages/codegen/src/dsl/transform/transform.ts::unifyChoiceArmFieldNames`
 
 ```text
 /**
@@ -1143,7 +1143,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // callers) is to unify those under the override's chosen name.
 ```
 
-### `dsl/transform/transform.ts` (module)
+### `packages/codegen/src/dsl/transform/transform.ts::module`
 
 ```text
 /**
@@ -1170,7 +1170,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `membersOf` (`packages/codegen/src/dsl/transform/transform.ts:242`)
+### `packages/codegen/src/dsl/transform/transform.ts::membersOf`
 
 ```text
 // Local accessors for the container/wrapper field shapes RuntimeRule
@@ -1197,7 +1197,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // spot rather than scattered through applyPath's branches.
 ```
 
-### `applyFlatPatches` (`packages/codegen/src/dsl/transform/transform.ts:287`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyFlatPatches`
 
 #### body
 
@@ -1226,7 +1226,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // For other types, return as-is (patches don't apply)
 ```
 
-### `resolvePatch` (`packages/codegen/src/dsl/transform/transform.ts:360`)
+### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
 
 #### body
 
@@ -1312,7 +1312,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the template would drop.
 ```
 
-### `relabelUniformFieldSet` (`packages/codegen/src/dsl/transform/transform.ts:510`)
+### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 
 ```text
 /**
@@ -1351,7 +1351,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the outer aggregate: wrap, don't rename.
 ```
 
-### `resolveFieldPlaceholder` (`packages/codegen/src/dsl/transform/transform.ts:563`)
+### `packages/codegen/src/dsl/transform/transform.ts::resolveFieldPlaceholder`
 
 #### body
 
@@ -1427,7 +1427,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // fielded under their own (differing) names.
 ```
 
-### `dsl/transform/transform-path.ts` (module)
+### `packages/codegen/src/dsl/transform/transform-path.ts::module`
 
 ```text
 /**
@@ -1468,7 +1468,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // shared predicates through the canonical path-related module.
 ```
 
-### `RuntimeDsl` (`packages/codegen/src/dsl/transform/transform-path.ts:11`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::RuntimeDsl`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -1480,7 +1480,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `applyPath` (`packages/codegen/src/dsl/transform/transform-path.ts:94`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyPath`
 
 #### body
 
@@ -1546,7 +1546,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Exhaustiveness guard — TypeScript narrows `head` to `never` here.
 ```
 
-### `walkKindMatch` (`packages/codegen/src/dsl/transform/transform-path.ts:375`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::walkKindMatch`
 
 #### body
 
@@ -1580,7 +1580,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Leaf types we don't descend into (string, pattern, blank, etc.).
 ```
 
-### `applyToMembers` (`packages/codegen/src/dsl/transform/transform-path.ts:516`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyToMembers`
 
 #### body
 

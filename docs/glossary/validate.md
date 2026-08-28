@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `validateRenderableFromNodeMap` (`packages/codegen/src/validate/renderable.ts:50`)
+### `packages/codegen/src/validate/renderable.ts::validateRenderableFromNodeMap`
 
 ```text
 /**
@@ -32,7 +32,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isPureLeafEntry` (`packages/codegen/src/validate/renderable.ts:97`)
+### `packages/codegen/src/validate/renderable.ts::isPureLeafEntry`
 
 ```text
 /**
@@ -44,7 +44,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildRuleLookup` (`packages/codegen/src/validate/rule-lookup.ts:42`)
+### `packages/codegen/src/validate/rule-lookup.ts::buildRuleLookup`
 
 ```text
 /**
@@ -85,19 +85,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // labeled reference, when one exists, takes precedence above.
 ```
 
-### `renderable` (`packages/codegen/src/validate/renderable.ts:35`)
+### `packages/codegen/src/validate/renderable.ts::renderable`
 
 ```text
 /** Count of kinds that are renderable via one of the three paths. */
 ```
 
-### `missing` (`packages/codegen/src/validate/renderable.ts:37`)
+### `packages/codegen/src/validate/renderable.ts::missing`
 
 ```text
 /** Kinds that have NO viable path. */
 ```
 
-### `RenderKindPath` (`packages/codegen/src/validate/rule-lookup.ts:16`)
+### `packages/codegen/src/validate/rule-lookup.ts::RenderKindPath`
 
 ```text
 /**
@@ -115,31 +115,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `kinds` (`packages/codegen/src/validate/rule-lookup.ts:32`)
+### `packages/codegen/src/validate/rule-lookup.ts::kinds`
 
 ```text
 /** All kinds known to the NodeMap, keyed by string. */
 ```
 
-### `renderable` (`packages/codegen/src/validate/rule-lookup.ts:34`)
+### `packages/codegen/src/validate/rule-lookup.ts::renderable`
 
 ```text
 /** Kinds that reach a render path: template | text | dispatch. */
 ```
 
-### `templated` (`packages/codegen/src/validate/rule-lookup.ts:36`)
+### `packages/codegen/src/validate/rule-lookup.ts::templated`
 
 ```text
 /** Kinds with a template.yaml rule entry (templates only). */
 ```
 
-### `path` (`packages/codegen/src/validate/rule-lookup.ts:38`)
+### `packages/codegen/src/validate/rule-lookup.ts::path`
 
 ```text
 /** Classification per kind. */
 ```
 
-### `GRAMMAR_PATHS` (`packages/codegen/src/validate/node-types-loader.ts:43`)
+### `packages/codegen/src/validate/node-types-loader.ts::GRAMMAR_PATHS`
 
 ```text
 /**
@@ -149,7 +149,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `validate/renderable.ts` (module)
+### `packages/codegen/src/validate/renderable.ts::module`
 
 ```text
 /**
@@ -175,7 +175,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `validate/rule-lookup.ts` (module)
+### `packages/codegen/src/validate/rule-lookup.ts::module`
 
 ```text
 /**
@@ -191,7 +191,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `classify` (`packages/codegen/src/validate/rule-lookup.ts:55`)
+### `packages/codegen/src/validate/rule-lookup.ts::classify`
 
 #### body
 
@@ -201,7 +201,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 		   capture — see isSlotBearingCompound's doc comment (emitters/shared.ts). */
 ```
 
-### `validate/node-types-loader.ts` (module)
+### `packages/codegen/src/validate/node-types-loader.ts::module`
 
 ```text
 /**
@@ -221,7 +221,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packagesDir` (`packages/codegen/src/validate/node-types-loader.ts:5`)
+### `packages/codegen/src/validate/node-types-loader.ts::packagesDir`
 
 ```text
 // `new URL(...).pathname` is not portable on Windows and leaks URL-encoded

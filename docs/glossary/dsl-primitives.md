@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `maybeKeywordSymbol` (`packages/codegen/src/dsl/primitives/field.ts:32`)
+### `packages/codegen/src/dsl/primitives/field.ts::maybeKeywordSymbol`
 
 ```text
 /**
@@ -62,7 +62,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   `optional(STRING)`. */
 ```
 
-### `synthesizeKwSymbol` (`packages/codegen/src/dsl/primitives/field.ts:102`)
+### `packages/codegen/src/dsl/primitives/field.ts::synthesizeKwSymbol`
 
 ```text
 /**
@@ -71,7 +71,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendOptional` (`packages/codegen/src/dsl/primitives/field.ts:126`)
+### `packages/codegen/src/dsl/primitives/field.ts::descendOptional`
 
 ```text
 /**
@@ -90,7 +90,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `field` (`packages/codegen/src/dsl/primitives/field.ts:182`)
+### `packages/codegen/src/dsl/primitives/field.ts::field`
 
 ```text
 /**
@@ -111,7 +111,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildTwoArgFieldResult` (`packages/codegen/src/dsl/primitives/field.ts:214`)
+### `packages/codegen/src/dsl/primitives/field.ts::buildTwoArgFieldResult`
 
 ```text
 /**
@@ -137,7 +137,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `refine` (`packages/codegen/src/dsl/primitives/refine.ts:49`)
+### `packages/codegen/src/dsl/primitives/refine.ts::refine`
 
 ```text
 /**
@@ -154,7 +154,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `withRoleScope` (`packages/codegen/src/dsl/primitives/role.ts:77`)
+### `packages/codegen/src/dsl/primitives/role.ts::withRoleScope`
 
 ```text
 /**
@@ -166,19 +166,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `FieldPlaceholder` (`packages/codegen/src/dsl/primitives/field.ts:121`)
+### `packages/codegen/src/dsl/primitives/field.ts::FieldPlaceholder`
 
 ```text
 /** Marker emitted by `field('name')` — a placeholder for transform patches. */
 ```
 
-### `FormMap` (`packages/codegen/src/dsl/primitives/refine.ts:46`)
+### `packages/codegen/src/dsl/primitives/refine.ts::FormMap`
 
 ```text
 /** `{ formName → { path → branchIndex | literal } }`. */
 ```
 
-### `VALID_ROLE_NAMES` (`packages/codegen/src/dsl/primitives/role.ts:41`)
+### `packages/codegen/src/dsl/primitives/role.ts::VALID_ROLE_NAMES`
 
 ```text
 /**
@@ -197,7 +197,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `currentRoles` (`packages/codegen/src/dsl/primitives/role.ts:39`)
+### `packages/codegen/src/dsl/primitives/role.ts::currentRoles`
 
 ```text
 /**
@@ -207,7 +207,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dsl/primitives/field.ts` (module)
+### `packages/codegen/src/dsl/primitives/field.ts::module`
 
 ```text
 /**
@@ -235,7 +235,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dsl/primitives/alias.ts` (module)
+### `packages/codegen/src/dsl/primitives/alias.ts::module`
 
 ```text
 /**
@@ -263,7 +263,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dsl/primitives/refine.ts` (module)
+### `packages/codegen/src/dsl/primitives/refine.ts::module`
 
 ```text
 /**
@@ -308,7 +308,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dsl/primitives/role.ts` (module)
+### `packages/codegen/src/dsl/primitives/role.ts::module`
 
 ```text
 /**
@@ -343,7 +343,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `role` (`packages/codegen/src/dsl/primitives/role.ts:9`)
+### `packages/codegen/src/dsl/primitives/role.ts::role`
 
 #### body
 
@@ -353,7 +353,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // otherwise silently store a wrong binding.
 ```
 
-### `VariantPlaceholder` (`packages/codegen/src/dsl/primitives/variant.ts:1`)
+### `packages/codegen/src/dsl/primitives/variant.ts::VariantPlaceholder`
 
 ```text
 /**

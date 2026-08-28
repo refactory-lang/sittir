@@ -11,14 +11,15 @@
  *     declaration;
  *   - a comment inside a declaration's range documents that declaration's
  *     body: a `####` sub-section inside the declaration's section;
- *   - anything else is file-level: a `### \`<file>\` (module)` section.
+ *   - anything else is file-level: the file's `module` section.
  * Names are qualified by their enclosing class / interface / enum / object
  * (`Outer.inner`). Directive comments (`@ts-*`, `eslint`, `prettier-ignore`,
  * `biome-ignore`, `@rule-type-consts`, `/// <reference>`) are tooling, not
  * documentation, and stay in source.
  *
- * Headings anchor to the declaration's line AFTER the strip (the stripped
- * files are rescanned), so the anchors are live, not pre-removal.
+ * Sections are keyed `### \`<file>::<qualified name>\`` — the symbol id, no
+ * line number — so a heading never goes stale and joins to the code graph
+ * by identity.
  *
  * Re-running is idempotent: a comment whose text is already in the target
  * glossary is neither duplicated nor removed twice.
@@ -292,28 +293,12 @@ function stripFromSource(file: string, entries: Entry[]): void {
 	writeFileSync(abs, lines.join('\n'));
 }
 
-/** Post-strip line (1-based) of every glossary target, per file, by qualified name. */
-function liveAnchors(files: string[]): Map<string, Map<string, number>> {
-	const out = new Map<string, Map<string, number>>();
-	if (files.length === 0) return out;
-	for (const [file, list] of groupByFile(scan(files))) {
-		const decls = targetsOf(list);
-		const byName = new Map<string, number>();
-		for (const d of decls) {
-			const name = qualify(decls, d);
-			if (!byName.has(name)) byName.set(name, d.start.line + 1);
-		}
-		out.set(file, byName);
-	}
-	return out;
-}
-
 /**
  * A glossary doc is a header followed by `### <name> (...)` sections; body
  * comments nest as `#### body` sub-sections inside their declaration's
  * section, so the doc is rewritten section-wise rather than appended to.
  */
-function writeGlossary(entries: Entry[], anchors: Map<string, Map<string, number>>): Set<string> {
+function writeGlossary(entries: Entry[]): Set<string> {
 	mkdirSync(REPO_ROOT + GLOSSARY_DIR, { recursive: true });
 	const targets = new Set<string>();
 	const byGlossary = new Map<string, Entry[]>();
@@ -329,15 +314,11 @@ function writeGlossary(entries: Entry[], anchors: Map<string, Map<string, number
 		let changed = false;
 		for (const e of list) {
 			const isModule = e.section === srcRelative(e.file);
-			const key = isModule ? `${e.section} (module)` : e.section;
+			const key = `${e.file}::${isModule ? 'module' : e.section}`;
 			const block = `\`\`\`text\n${e.text}\n\`\`\``;
 			let section = sections.find((s) => s.key === key);
 			if (!section) {
-				const line = anchors.get(e.file)?.get(e.section);
-				const heading = isModule
-					? `### \`${e.section}\` (module)`
-					: `### \`${e.section}\` (\`${e.file}${line !== undefined ? `:${line}` : ''}\`)`;
-				section = { key, text: `${heading}\n` };
+				section = { key, text: `### \`${key}\`\n` };
 				sections.push(section);
 				changed = true;
 			}
@@ -354,8 +335,8 @@ function writeGlossary(entries: Entry[], anchors: Map<string, Map<string, number
 }
 
 function sectionKey(sectionText: string): string {
-	const m = /^### `([^`]+)`( \(module\))?/.exec(sectionText);
-	return m ? m[1]! + (m[2] ?? '') : sectionText.split('\n')[0]!;
+	const m = /^### `([^`]+)`/.exec(sectionText);
+	return m ? m[1]! : sectionText.split('\n')[0]!;
 }
 
 const args = process.argv.slice(2);
@@ -375,6 +356,6 @@ if (!apply) {
 	const byFile = new Map<string, Entry[]>();
 	for (const e of entries) byFile.set(e.file, [...(byFile.get(e.file) ?? []), e]);
 	for (const [file, list] of byFile) stripFromSource(file, list);
-	const targets = writeGlossary(entries, liveAnchors([...byFile.keys()]));
+	const targets = writeGlossary(entries);
 	console.log(`Applied: removed ${entries.length} comment(s) from ${byFile.size} file(s); wrote ${targets.size} glossary doc(s) under ${GLOSSARY_DIR}/`);
 }

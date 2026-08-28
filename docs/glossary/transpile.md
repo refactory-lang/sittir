@@ -10,7 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `syncExternalScanner` (`packages/codegen/src/transpile/compile-parser.ts:50`)
+### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
 ```text
 /**
@@ -22,7 +22,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `transpileOverrides` (`packages/codegen/src/transpile/transpile-overrides.ts:51`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::transpileOverrides`
 
 ```text
 /**
@@ -106,7 +106,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // synthesized helpers and re-exports can precede it.
 ```
 
-### `copyExternalScannerSources` (`packages/codegen/src/transpile/transpile-overrides.ts:183`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::copyExternalScannerSources`
 
 ```text
 /**
@@ -135,7 +135,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // about to be produced.
 ```
 
-### `externalizeTreeSitterBases` (`packages/codegen/src/transpile/transpile-overrides.ts:220`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::externalizeTreeSitterBases`
 
 ```text
 /**
@@ -173,37 +173,37 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // sub-path (or default to /grammar.js).
 ```
 
-### `grammar` (`packages/codegen/src/transpile/transpile-overrides.ts:36`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::grammar`
 
 ```text
 /** Grammar name — e.g. 'rust', 'python', 'typescript'. */
 ```
 
-### `packagesRoot` (`packages/codegen/src/transpile/transpile-overrides.ts:38`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::packagesRoot`
 
 ```text
 /** Override the default packages root (used in tests). */
 ```
 
-### `outputPath` (`packages/codegen/src/transpile/transpile-overrides.ts:43`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::outputPath`
 
 ```text
 /** Absolute path to the generated `.sittir/grammar.js`. */
 ```
 
-### `sourceBytes` (`packages/codegen/src/transpile/transpile-overrides.ts:45`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::sourceBytes`
 
 ```text
 /** Source size in bytes. */
 ```
 
-### `outputBytes` (`packages/codegen/src/transpile/transpile-overrides.ts:47`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::outputBytes`
 
 ```text
 /** Output size in bytes. */
 ```
 
-### `syncExternalScanner` (`packages/codegen/src/transpile/compile-parser.ts`)
+### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
 Some grammars — tree-sitter-typescript among them — bundle a custom external
 scanner that `tree-sitter generate` does not materialize. Without it the WASM
@@ -212,7 +212,7 @@ build fails with "Missing symbols" for the
 `scanner.c` (and any header it relatively-includes) is copied into
 `.sittir/src/` before building.
 
-### `copyRelativeScannerIncludes` (`packages/codegen/src/transpile/compile-parser.ts:63`)
+### `packages/codegen/src/transpile/compile-parser.ts::copyRelativeScannerIncludes`
 
 ```text
 /**
@@ -223,7 +223,7 @@ build fails with "Missing symbols" for the
  */
 ```
 
-### `pruneOrphanedPlaceholderRules` (`packages/codegen/src/transpile/prune-grammar-json.ts:6`)
+### `packages/codegen/src/transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules`
 
 ```text
 /**
@@ -264,7 +264,7 @@ build fails with "Missing symbols" for the
 // the rule and are filtered below instead.
 ```
 
-### `transpile/transpile-overrides.ts` (module)
+### `packages/codegen/src/transpile/transpile-overrides.ts::module`
 
 ```text
 /**
@@ -290,7 +290,7 @@ build fails with "Missing symbols" for the
  */
 ```
 
-### `writeFileIfChanged` (`packages/codegen/src/transpile/transpile-overrides.ts:7`)
+### `packages/codegen/src/transpile/transpile-overrides.ts::writeFileIfChanged`
 
 ```text
 /**

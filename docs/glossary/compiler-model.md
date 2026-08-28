@@ -10,19 +10,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `setOptionalBodyKinds` (`packages/codegen/src/compiler/model/node-map.ts:270`)
+### `packages/codegen/src/compiler/model/node-map.ts::setOptionalBodyKinds`
 
 ```text
 /** Set by `assemble.ts` before running the rule walk; cleared after. */
 ```
 
-### `isOptionalBodyKind` (`packages/codegen/src/compiler/model/node-map.ts:275`)
+### `packages/codegen/src/compiler/model/node-map.ts::isOptionalBodyKind`
 
 ```text
 /** True iff `kindName` resolves to a wholly-optional rule body. */
 ```
 
-### `relaxForOptionalBody` (`packages/codegen/src/compiler/model/node-map.ts:280`)
+### `packages/codegen/src/compiler/model/node-map.ts::relaxForOptionalBody`
 
 ```text
 /**
@@ -31,19 +31,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isNodeRef` (`packages/codegen/src/compiler/model/node-map.ts:414`)
+### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text
 /** True when this entry is a node reference (carries a `node`). */
 ```
 
-### `isTerminalValue` (`packages/codegen/src/compiler/model/node-map.ts:419`)
+### `packages/codegen/src/compiler/model/node-map.ts::isTerminalValue`
 
 ```text
 /** True when this entry is an inline string literal (carries a `value`). */
 ```
 
-### `isRequired` (`packages/codegen/src/compiler/model/node-map.ts:432`)
+### `packages/codegen/src/compiler/model/node-map.ts::isRequired`
 
 ```text
 /**
@@ -62,7 +62,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `isMultiple` (`packages/codegen/src/compiler/model/node-map.ts:447`)
+### `packages/codegen/src/compiler/model/node-map.ts::isMultiple`
 
 ```text
 /**
@@ -70,7 +70,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isNonEmpty` (`packages/codegen/src/compiler/model/node-map.ts:454`)
+### `packages/codegen/src/compiler/model/node-map.ts::isNonEmpty`
 
 ```text
 /**
@@ -80,7 +80,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `snakeToCamel` (`packages/codegen/src/compiler/model/node-map.ts:542`)
+### `packages/codegen/src/compiler/model/node-map.ts::snakeToCamel`
 
 ```text
 /**
@@ -104,7 +104,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // key must spell exactly what the Config type declares.
 ```
 
-### `pluralize` (`packages/codegen/src/compiler/model/node-map.ts:558`)
+### `packages/codegen/src/compiler/model/node-map.ts::pluralize`
 
 ```text
 /**
@@ -114,7 +114,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `hasAnyField` (`packages/codegen/src/compiler/model/node-map.ts:626`)
+### `packages/codegen/src/compiler/model/node-map.ts::hasAnyField`
 
 ```text
 /**
@@ -125,7 +125,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `hasAnyChild` (`packages/codegen/src/compiler/model/node-map.ts:650`)
+### `packages/codegen/src/compiler/model/node-map.ts::hasAnyChild`
 
 ```text
 /**
@@ -135,7 +135,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isTokenLikeChoiceMember` (`packages/codegen/src/compiler/model/node-map.ts:865`)
+### `packages/codegen/src/compiler/model/node-map.ts::isTokenLikeChoiceMember`
 
 ```text
 /**
@@ -197,7 +197,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // with a nested `choice(choice(sym, sym, ...), sym, ...)`.
 ```
 
-### `isFlatSymbolSeqOrTokenLike` (`packages/codegen/src/compiler/model/node-map.ts:921`)
+### `packages/codegen/src/compiler/model/node-map.ts::isFlatSymbolSeqOrTokenLike`
 
 ```text
 /**
@@ -217,13 +217,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dumpDerivationAudit` (`packages/codegen/src/compiler/model/node-map.ts:943`)
+### `packages/codegen/src/compiler/model/node-map.ts::dumpDerivationAudit`
 
 ```text
 /** Log accumulated audit counts. Called by codegen entry points. */
 ```
 
-### `_deriveSlotsInternal` (`packages/codegen/src/compiler/model/node-map.ts:956`)
+### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
 ```text
 /**
@@ -270,7 +270,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // fall back, which subsumes the "only one choice per rule" discipline.
 ```
 
-### `mergeSlotsByName` (`packages/codegen/src/compiler/model/node-map.ts:1023`)
+### `packages/codegen/src/compiler/model/node-map.ts::mergeSlotsByName`
 
 ```text
 /**
@@ -303,7 +303,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // purpose — see the if_statement.alternative example above).
 ```
 
-### `storageKindOfRef` (`packages/codegen/src/compiler/model/node-map.ts:1123`)
+### `packages/codegen/src/compiler/model/node-map.ts::storageKindOfRef`
 
 ```text
 /**
@@ -313,7 +313,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `extractSeparatorString` (`packages/codegen/src/compiler/model/node-map.ts:1214`)
+### `packages/codegen/src/compiler/model/node-map.ts::extractSeparatorString`
 
 ```text
 /**
@@ -325,7 +325,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `stampSeparatorOnValues` (`packages/codegen/src/compiler/model/node-map.ts:1230`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampSeparatorOnValues`
 
 ```text
 /**
@@ -334,7 +334,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `deriveSlots` (`packages/codegen/src/compiler/model/node-map.ts:1271`)
+### `packages/codegen/src/compiler/model/node-map.ts::deriveSlots`
 
 ```text
 /**
@@ -392,7 +392,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // too, so it produces every slot — no separate children walker needed.
 ```
 
-### `isSyntheticFieldWrapper` (`packages/codegen/src/compiler/model/node-map.ts:1291`)
+### `packages/codegen/src/compiler/model/node-map.ts::isSyntheticFieldWrapper`
 
 ```text
 /**
@@ -411,7 +411,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `deriveValuesForRule` (`packages/codegen/src/compiler/model/node-map.ts:1313`)
+### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
 ```text
 /**
@@ -637,7 +637,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // handles seq-of-symbols within choice arms).
 ```
 
-### `dedupeValues` (`packages/codegen/src/compiler/model/node-map.ts:1548`)
+### `packages/codegen/src/compiler/model/node-map.ts::dedupeValues`
 
 ```text
 /**
@@ -662,7 +662,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // every pre-PR-1.5 value, so existing dedup behavior is unchanged.
 ```
 
-### `prepareKindForPascalCase` (`packages/codegen/src/compiler/model/node-map.ts:1627`)
+### `packages/codegen/src/compiler/model/node-map.ts::prepareKindForPascalCase`
 
 ```text
 /**
@@ -672,7 +672,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `nameNode` (`packages/codegen/src/compiler/model/node-map.ts:1636`)
+### `packages/codegen/src/compiler/model/node-map.ts::nameNode`
 
 ```text
 /**
@@ -684,7 +684,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `parameterless` (`packages/codegen/src/compiler/model/node-map.ts:1683`)
+### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
 /**
@@ -710,7 +710,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `stampExpression` (`packages/codegen/src/compiler/model/node-map.ts:1708`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
 
 ```text
 /**
@@ -730,7 +730,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `stampChildExpression` (`packages/codegen/src/compiler/model/node-map.ts:1727`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
 
 ```text
 /**
@@ -747,7 +747,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `ruleMetadata` (`packages/codegen/src/compiler/model/node-map.ts:1760`)
+### `packages/codegen/src/compiler/model/node-map.ts::ruleMetadata`
 
 ```text
 /**
@@ -762,13 +762,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `hidden` (`packages/codegen/src/compiler/model/node-map.ts:1815`)
+### `packages/codegen/src/compiler/model/node-map.ts::hidden`
 
 ```text
 /** A node is hidden when it has no factory (supertype, group, token). */
 ```
 
-### `rawFactoryName` (`packages/codegen/src/compiler/model/node-map.ts:1831`)
+### `packages/codegen/src/compiler/model/node-map.ts::rawFactoryName`
 
 ```text
 /**
@@ -779,38 +779,38 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `treeTypeName` (`packages/codegen/src/compiler/model/node-map.ts:1842`)
+### `packages/codegen/src/compiler/model/node-map.ts::treeTypeName`
 
 ```text
 /** Tree interface name: `${typeName}Tree`. */
 ```
 
-### `configTypeName` (`packages/codegen/src/compiler/model/node-map.ts:1847`)
+### `packages/codegen/src/compiler/model/node-map.ts::configTypeName`
 
 ```text
 /** Config type alias: `${typeName}Config`. */
 ```
 
-### `fromInputTypeName` (`packages/codegen/src/compiler/model/node-map.ts:1852`)
+### `packages/codegen/src/compiler/model/node-map.ts::fromInputTypeName`
 
 ```text
 /** Loose-input type alias: `Loose${typeName}` — the camelCase
 	 *  bag shape accepted by `from()` for programmatic construction. */
 ```
 
-### `fromFunctionName` (`packages/codegen/src/compiler/model/node-map.ts:1858`)
+### `packages/codegen/src/compiler/model/node-map.ts::fromFunctionName`
 
 ```text
 /** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
 ```
 
-### `configKey` (`packages/codegen/src/compiler/model/node-map.ts:1953`)
+### `packages/codegen/src/compiler/model/node-map.ts::configKey`
 
 ```text
 /** Config key — matches ConfigOf projection (camelCase of storageName). Always singular. */
 ```
 
-### `isUnnamed` (`packages/codegen/src/compiler/model/node-map.ts:1966`)
+### `packages/codegen/src/compiler/model/node-map.ts::isUnnamed`
 
 ```text
 /**
@@ -824,25 +824,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `arity` (`packages/codegen/src/compiler/model/node-map.ts:1978`)
+### `packages/codegen/src/compiler/model/node-map.ts::arity`
 
 ```text
 /** Multiplicity: 'many' when any value has array/nonEmptyArray multiplicity, 'one' otherwise. */
 ```
 
-### `storageKey` (`packages/codegen/src/compiler/model/node-map.ts:1982`)
+### `packages/codegen/src/compiler/model/node-map.ts::storageKey`
 
 ```text
 /** Canonical `_<storageName>` storage key (single source of truth for the `_` prefix convention). */
 ```
 
-### `with` (`packages/codegen/src/compiler/model/node-map.ts:1998`)
+### `packages/codegen/src/compiler/model/node-map.ts::with`
 
 ```text
 /** Return a new instance with the given fields overridden; naming recomputed. */
 ```
 
-### `kindsOf` (`packages/codegen/src/compiler/model/node-map.ts:2014`)
+### `packages/codegen/src/compiler/model/node-map.ts::kindsOf`
 
 ```text
 /**
@@ -863,7 +863,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `storageKindIdByNameOf` (`packages/codegen/src/compiler/model/node-map.ts:2044`)
+### `packages/codegen/src/compiler/model/node-map.ts::storageKindIdByNameOf`
 
 ```text
 /**
@@ -875,7 +875,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `valueParseKindsOf` (`packages/codegen/src/compiler/model/node-map.ts:2063`)
+### `packages/codegen/src/compiler/model/node-map.ts::valueParseKindsOf`
 
 ```text
 /**
@@ -887,7 +887,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `valueParseNamesOf` (`packages/codegen/src/compiler/model/node-map.ts:2082`)
+### `packages/codegen/src/compiler/model/node-map.ts::valueParseNamesOf`
 
 ```text
 /**
@@ -900,7 +900,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `valueParseLabelsOf` (`packages/codegen/src/compiler/model/node-map.ts:2102`)
+### `packages/codegen/src/compiler/model/node-map.ts::valueParseLabelsOf`
 
 ```text
 /**
@@ -917,7 +917,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `aliasTargetToSourceMapOf` (`packages/codegen/src/compiler/model/node-map.ts:2126`)
+### `packages/codegen/src/compiler/model/node-map.ts::aliasTargetToSourceMapOf`
 
 ```text
 /**
@@ -926,7 +926,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `acceptedIdPairsByKindOf` (`packages/codegen/src/compiler/model/node-map.ts:2144`)
+### `packages/codegen/src/compiler/model/node-map.ts::acceptedIdPairsByKindOf`
 
 ```text
 /**
@@ -943,7 +943,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `projectSlotNaming` (`packages/codegen/src/compiler/model/node-map.ts:2182`)
+### `packages/codegen/src/compiler/model/node-map.ts::projectSlotNaming`
 
 ```text
 /**
@@ -1005,7 +1005,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // lone ref (`splat_pattern.content` → `identifier`).
 ```
 
-### `foldParseKindDuplicateSingularSlots` (`packages/codegen/src/compiler/model/node-map.ts:2259`)
+### `packages/codegen/src/compiler/model/node-map.ts::foldParseKindDuplicateSingularSlots`
 
 ```text
 /**
@@ -1078,7 +1078,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // suppress unused-var lint: map is populated below if needed
 ```
 
-### `expandSlotWithVisibleAliasSources` (`packages/codegen/src/compiler/model/node-map.ts:2323`)
+### `packages/codegen/src/compiler/model/node-map.ts::expandSlotWithVisibleAliasSources`
 
 ```text
 /**
@@ -1155,7 +1155,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // through an existing value's supertype erasure closure.
 ```
 
-### `existingSupertypeClosureOf` (`packages/codegen/src/compiler/model/node-map.ts:1954`)
+### `packages/codegen/src/compiler/model/node-map.ts::existingSupertypeClosureOf`
 
 ```text
 A slot value referencing a declared supertype (e.g. `expression`) is stored
@@ -1187,7 +1187,7 @@ can't be unified.
 // See glossary — full rationale.
 ```
 
-### `buildSlotsRecord` (`packages/codegen/src/compiler/model/node-map.ts:2391`)
+### `packages/codegen/src/compiler/model/node-map.ts::buildSlotsRecord`
 
 ```text
 /**
@@ -1256,7 +1256,7 @@ can't be unified.
 // slip through during development.
 ```
 
-### `_isAutoStampSlotForParameterless` (`packages/codegen/src/compiler/model/node-map.ts:2501`)
+### `packages/codegen/src/compiler/model/node-map.ts::_isAutoStampSlotForParameterless`
 
 ```text
 /**
@@ -1283,7 +1283,7 @@ can't be unified.
  */
 ```
 
-### `members` (`packages/codegen/src/compiler/model/node-map.ts:2664`)
+### `packages/codegen/src/compiler/model/node-map.ts::members`
 
 ```text
 /**
@@ -1294,7 +1294,7 @@ can't be unified.
 	 */
 ```
 
-### `separator` (`packages/codegen/src/compiler/model/node-map.ts:2675`)
+### `packages/codegen/src/compiler/model/node-map.ts::separator`
 
 ```text
 /**
@@ -1313,7 +1313,7 @@ can't be unified.
 	 */
 ```
 
-### `isContainerShape` (`packages/codegen/src/compiler/model/node-map.ts:2693`)
+### `packages/codegen/src/compiler/model/node-map.ts::isContainerShape`
 
 ```text
 /**
@@ -1332,7 +1332,7 @@ can't be unified.
 	 */
 ```
 
-### `attachNodeMap` (`packages/codegen/src/compiler/model/node-map.ts:2724`)
+### `packages/codegen/src/compiler/model/node-map.ts::attachNodeMap`
 
 ```text
 /**
@@ -1343,7 +1343,7 @@ can't be unified.
 	 */
 ```
 
-### `parameterless` (`packages/codegen/src/compiler/model/node-map.ts:2734`)
+### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
 /**
@@ -1362,7 +1362,7 @@ can't be unified.
 	 */
 ```
 
-### `stampExpression` (`packages/codegen/src/compiler/model/node-map.ts:2766`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
 
 ```text
 /**
@@ -1371,7 +1371,7 @@ can't be unified.
 	 */
 ```
 
-### `fields` (`packages/codegen/src/compiler/model/node-map.ts:2775`)
+### `packages/codegen/src/compiler/model/node-map.ts::fields`
 
 ```text
 /**
@@ -1383,7 +1383,7 @@ can't be unified.
 	 */
 ```
 
-### `unwrapStructuralPassthroughs` (`packages/codegen/src/compiler/model/node-map.ts:2787`)
+### `packages/codegen/src/compiler/model/node-map.ts::unwrapStructuralPassthroughs`
 
 ```text
 /**
@@ -1423,13 +1423,13 @@ can't be unified.
 // PR-P: ENUM case removed — enum-shaped ChoiceRules are CHOICE now.
 ```
 
-### `pattern` (`packages/codegen/src/compiler/model/node-map.ts:2885`)
+### `packages/codegen/src/compiler/model/node-map.ts::pattern`
 
 ```text
 /** The leaf's regex pattern value when the rule is a PatternRule<'link'>; undefined otherwise. */
 ```
 
-### `fixedLiteralText` (`packages/codegen/src/compiler/model/node-map.ts:2890`)
+### `packages/codegen/src/compiler/model/node-map.ts::fixedLiteralText`
 
 ```text
 /**
@@ -1447,7 +1447,7 @@ can't be unified.
 	 */
 ```
 
-### `collectFixedLiteral` (`packages/codegen/src/compiler/model/node-map.ts:2910`)
+### `packages/codegen/src/compiler/model/node-map.ts::collectFixedLiteral`
 
 ```text
 /**
@@ -1501,25 +1501,25 @@ can't be unified.
 // symbol, pattern, variant, group, … — content-bearing or structural
 ```
 
-### `text` (`packages/codegen/src/compiler/model/node-map.ts:2980`)
+### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text
 /** The literal text this keyword produces (read from the StringRule<'link'>). */
 ```
 
-### `parameterless` (`packages/codegen/src/compiler/model/node-map.ts:2985`)
+### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
 /** Keywords are always parameterless — they produce a fixed single text value. */
 ```
 
-### `stampExpression` (`packages/codegen/src/compiler/model/node-map.ts:2990`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
 
 ```text
 /** Field-context stamp: JSON literal with `as const`. */
 ```
 
-### `stampChildExpression` (`packages/codegen/src/compiler/model/node-map.ts:2995`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
 
 ```text
 /**
@@ -1531,7 +1531,7 @@ can't be unified.
 	 */
 ```
 
-### `parameterless` (`packages/codegen/src/compiler/model/node-map.ts:3024`)
+### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
 /**
@@ -1542,7 +1542,7 @@ can't be unified.
 	 */
 ```
 
-### `stampExpression` (`packages/codegen/src/compiler/model/node-map.ts:3034`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
 
 ```text
 /**
@@ -1551,7 +1551,7 @@ can't be unified.
 	 */
 ```
 
-### `text` (`packages/codegen/src/compiler/model/node-map.ts:3049`)
+### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text
 /**
@@ -1563,7 +1563,7 @@ can't be unified.
 	 */
 ```
 
-### `immediate` (`packages/codegen/src/compiler/model/node-map.ts:3061`)
+### `packages/codegen/src/compiler/model/node-map.ts::immediate`
 
 ```text
 /**
@@ -1579,7 +1579,7 @@ can't be unified.
 	 */
 ```
 
-### `tokenized` (`packages/codegen/src/compiler/model/node-map.ts:3076`)
+### `packages/codegen/src/compiler/model/node-map.ts::tokenized`
 
 ```text
 /**
@@ -1591,7 +1591,7 @@ can't be unified.
 	 */
 ```
 
-### `stampChildExpression` (`packages/codegen/src/compiler/model/node-map.ts:3087`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
 
 ```text
 /**
@@ -1602,19 +1602,19 @@ can't be unified.
 	 */
 ```
 
-### `values` (`packages/codegen/src/compiler/model/node-map.ts:3155`)
+### `packages/codegen/src/compiler/model/node-map.ts::values`
 
 ```text
 /** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
 ```
 
-### `subtypes` (`packages/codegen/src/compiler/model/node-map.ts:3174`)
+### `packages/codegen/src/compiler/model/node-map.ts::subtypes`
 
 ```text
 /** Resolved concrete kind names in this supertype union. */
 ```
 
-### `subtypeParseNames` (`packages/codegen/src/compiler/model/node-map.ts:3179`)
+### `packages/codegen/src/compiler/model/node-map.ts::subtypeParseNames`
 
 ```text
 /** Storage→parse name pairs for aliased subtype arms — see
@@ -1623,7 +1623,7 @@ can't be unified.
 	 * flatten saw aliased arms. */
 ```
 
-### `elementRule` (`packages/codegen/src/compiler/model/node-map.ts:3224`)
+### `packages/codegen/src/compiler/model/node-map.ts::elementRule`
 
 ```text
 /** The repeat's inner content type — raw Rule<'link'>, for downstream
@@ -1632,7 +1632,7 @@ can't be unified.
 	 * back to referrers). */
 ```
 
-### `nonEmpty` (`packages/codegen/src/compiler/model/node-map.ts:3232`)
+### `packages/codegen/src/compiler/model/node-map.ts::nonEmpty`
 
 ```text
 /** `true` when the source rule is `repeat1` (at least one element);
@@ -1640,25 +1640,25 @@ can't be unified.
 	 * into AssembledNonterminal.nonEmpty. */
 ```
 
-### `separator` (`packages/codegen/src/compiler/model/node-map.ts:3239`)
+### `packages/codegen/src/compiler/model/node-map.ts::separator`
 
 ```text
 /** Separator string from the repeat rule, if any. */
 ```
 
-### `trailing` (`packages/codegen/src/compiler/model/node-map.ts:3248`)
+### `packages/codegen/src/compiler/model/node-map.ts::trailing`
 
 ```text
 /** Whether a trailing separator is permitted. */
 ```
 
-### `leading` (`packages/codegen/src/compiler/model/node-map.ts:3253`)
+### `packages/codegen/src/compiler/model/node-map.ts::leading`
 
 ```text
 /** Whether a leading separator is permitted. */
 ```
 
-### `attachNodeMap` (`packages/codegen/src/compiler/model/node-map.ts:3344`)
+### `packages/codegen/src/compiler/model/node-map.ts::attachNodeMap`
 
 ```text
 /**
@@ -1668,7 +1668,7 @@ can't be unified.
 	 */
 ```
 
-### `parameterless` (`packages/codegen/src/compiler/model/node-map.ts:3353`)
+### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
 /**
@@ -1677,7 +1677,7 @@ can't be unified.
 	 */
 ```
 
-### `stampExpression` (`packages/codegen/src/compiler/model/node-map.ts:3375`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
 
 ```text
 /**
@@ -1686,7 +1686,7 @@ can't be unified.
 	 */
 ```
 
-### `fields` (`packages/codegen/src/compiler/model/node-map.ts:3384`)
+### `packages/codegen/src/compiler/model/node-map.ts::fields`
 
 ```text
 /**
@@ -1697,7 +1697,7 @@ can't be unified.
 	 */
 ```
 
-### `nonEmpty` (`packages/codegen/src/compiler/model/node-map.ts:3509`)
+### `packages/codegen/src/compiler/model/node-map.ts::nonEmpty`
 
 ```text
 /** `true` when the source rule is `repeat1` (at least one element);
@@ -1705,7 +1705,7 @@ can't be unified.
 	 * `AssembledMulti.nonEmpty`. */
 ```
 
-### `separator` (`packages/codegen/src/compiler/model/node-map.ts:3516`)
+### `packages/codegen/src/compiler/model/node-map.ts::separator`
 
 ```text
 /**
@@ -1724,19 +1724,19 @@ can't be unified.
 	 */
 ```
 
-### `slots` (`packages/codegen/src/compiler/model/node-map.ts:3534`)
+### `packages/codegen/src/compiler/model/node-map.ts::slots`
 
 ```text
 /** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.slots`. */
 ```
 
-### `fields` (`packages/codegen/src/compiler/model/node-map.ts:3539`)
+### `packages/codegen/src/compiler/model/node-map.ts::fields`
 
 ```text
 /** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.fields`. */
 ```
 
-### `structuralFieldsOf` (`packages/codegen/src/compiler/model/node-map.ts:3565`)
+### `packages/codegen/src/compiler/model/node-map.ts::structuralFieldsOf`
 
 ```text
 /**
@@ -1766,7 +1766,7 @@ can't be unified.
 // isSlotBearingCompound's doc comment (emitters/shared.ts).
 ```
 
-### `allFormFieldsOf` (`packages/codegen/src/compiler/model/node-map.ts:3580`)
+### `packages/codegen/src/compiler/model/node-map.ts::allFormFieldsOf`
 
 ```text
 /**
@@ -1784,7 +1784,7 @@ can't be unified.
 // isSlotBearingCompound's doc comment (emitters/shared.ts).
 ```
 
-### `allSlotsOf` (`packages/codegen/src/compiler/model/node-map.ts:3594`)
+### `packages/codegen/src/compiler/model/node-map.ts::allSlotsOf`
 
 ```text
 /**
@@ -1803,7 +1803,7 @@ can't be unified.
 // isSlotBearingCompound's doc comment (emitters/shared.ts).
 ```
 
-### `allStructuralSlotsOf` (`packages/codegen/src/compiler/model/node-map.ts:3609`)
+### `packages/codegen/src/compiler/model/node-map.ts::allStructuralSlotsOf`
 
 ```text
 /**
@@ -1819,7 +1819,7 @@ can't be unified.
 // isSlotBearingCompound's doc comment (emitters/shared.ts).
 ```
 
-### `UnresolvedRef` (`packages/codegen/src/compiler/model/node-map.ts:289`)
+### `packages/codegen/src/compiler/model/node-map.ts::UnresolvedRef`
 
 ```text
 /**
@@ -1836,7 +1836,7 @@ can't be unified.
 // ============================================================================
 ```
 
-### `BranchSlotClass` (`packages/codegen/src/compiler/model/node-map.ts:312`)
+### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
 
 ```text
 /**
@@ -1845,7 +1845,7 @@ can't be unified.
  */
 ```
 
-### `NodeRef` (`packages/codegen/src/compiler/model/node-map.ts:335`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef`
 
 ```text
 /**
@@ -1867,7 +1867,7 @@ can't be unified.
  */
 ```
 
-### `NodeOrTerminal` (`packages/codegen/src/compiler/model/node-map.ts:401`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeOrTerminal`
 
 ```text
 /**
@@ -1877,7 +1877,7 @@ can't be unified.
  */
 ```
 
-### `DeriveCtx` (`packages/codegen/src/compiler/model/node-map.ts:964`)
+### `packages/codegen/src/compiler/model/node-map.ts::DeriveCtx`
 
 ```text
 /**
@@ -1890,43 +1890,43 @@ can't be unified.
  */
 ```
 
-### `kindEntries` (`packages/codegen/src/compiler/model/node-map.ts:973`)
+### `packages/codegen/src/compiler/model/node-map.ts::kindEntries`
 
 ```text
 /** Generated kind-id table — resolves anonymous-token kinds. */
 ```
 
-### `kindName` (`packages/codegen/src/compiler/model/node-map.ts:975`)
+### `packages/codegen/src/compiler/model/node-map.ts::kindName`
 
 ```text
 /** Owning kind under derivation — audit + diagnostics attribution. */
 ```
 
-### `collision` (`packages/codegen/src/compiler/model/node-map.ts:977`)
+### `packages/codegen/src/compiler/model/node-map.ts::collision`
 
 ```text
 /** Canonical rule signatures for parse-kind collision resolution. */
 ```
 
-### `visibleAliasTargets` (`packages/codegen/src/compiler/model/node-map.ts:979`)
+### `packages/codegen/src/compiler/model/node-map.ts::visibleAliasTargets`
 
 ```text
 /** Visible alias target → source kinds (alias-source slot expansion). */
 ```
 
-### `simplifiedRules` (`packages/codegen/src/compiler/model/node-map.ts:981`)
+### `packages/codegen/src/compiler/model/node-map.ts::simplifiedRules`
 
 ```text
 /** Post-simplify rules, for alias-source value derivation. */
 ```
 
-### `nodes` (`packages/codegen/src/compiler/model/node-map.ts:983`)
+### `packages/codegen/src/compiler/model/node-map.ts::nodes`
 
 ```text
 /** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 ```
 
-### `stampArmFieldNamesAsParseName` (`packages/codegen/src/compiler/model/node-map.ts:985`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampArmFieldNamesAsParseName`
 
 ```text
 /**
@@ -1943,13 +1943,13 @@ can't be unified.
 	 */
 ```
 
-### `KindedDeriveCtx` (`packages/codegen/src/compiler/model/node-map.ts:1000`)
+### `packages/codegen/src/compiler/model/node-map.ts::KindedDeriveCtx`
 
 ```text
 /** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
 ```
 
-### `rawFactoryName` (`packages/codegen/src/compiler/model/node-map.ts:1564`)
+### `packages/codegen/src/compiler/model/node-map.ts::rawFactoryName`
 
 ```text
 /**
@@ -1965,7 +1965,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNonterminalInit` (`packages/codegen/src/compiler/model/node-map.ts:1612`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit`
 
 ```text
 /** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
@@ -1990,7 +1990,7 @@ can't be unified.
 // ============================================================================
 ```
 
-### `sourceRuleIds` (`packages/codegen/src/compiler/model/node-map.ts:1618`)
+### `packages/codegen/src/compiler/model/node-map.ts::sourceRuleIds`
 
 ```text
 /**
@@ -1999,14 +1999,14 @@ can't be unified.
 	 */
 ```
 
-### `metadata` (`packages/codegen/src/compiler/model/node-map.ts:1623`)
+### `packages/codegen/src/compiler/model/node-map.ts::metadata`
 
 ```text
 /** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
 	 *  never read here to drive logic or emission; defaults to empty. */
 ```
 
-### `ruleMetadata` (`packages/codegen/src/compiler/model/node-map.ts:1626`)
+### `packages/codegen/src/compiler/model/node-map.ts::ruleMetadata`
 
 ```text
 /**
@@ -2019,7 +2019,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNonterminal` (`packages/codegen/src/compiler/model/node-map.ts:1651`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal`
 
 ```text
 /**
@@ -2032,13 +2032,13 @@ can't be unified.
  */
 ```
 
-### `SlotNamingInputs` (`packages/codegen/src/compiler/model/node-map.ts:1828`)
+### `packages/codegen/src/compiler/model/node-map.ts::SlotNamingInputs`
 
 ```text
 /** The slot-naming inputs a projection needs (the only stored facts). */
 ```
 
-### `AssembledPattern` (`packages/codegen/src/compiler/model/node-map.ts:2340`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern`
 
 ```text
 /**
@@ -2059,7 +2059,7 @@ can't be unified.
  */
 ```
 
-### `text` (`packages/codegen/src/compiler/model/node-map.ts:2478`)
+### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text
 /**
@@ -2070,7 +2070,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledMulti` (`packages/codegen/src/compiler/model/node-map.ts:2586`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledMulti`
 
 ```text
 /**
@@ -2100,7 +2100,7 @@ can't be unified.
  */
 ```
 
-### `AssembledSeparatedList` (`packages/codegen/src/compiler/model/node-map.ts:2764`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList`
 
 ```text
 /**
@@ -2120,7 +2120,7 @@ can't be unified.
  */
 ```
 
-### `BranchSlotClass` (`packages/codegen/src/compiler/model/node-map.ts:294`)
+### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
 
 ```text
 /**
@@ -2137,7 +2137,7 @@ can't be unified.
  */
 ```
 
-### `RESERVED_ACCESSOR_NAMES` (`packages/codegen/src/compiler/model/node-map.ts:467`)
+### `packages/codegen/src/compiler/model/node-map.ts::RESERVED_ACCESSOR_NAMES`
 
 ```text
 /**
@@ -2156,7 +2156,7 @@ can't be unified.
 // ---------------------------------------------------------------------------
 ```
 
-### `DERIVE_AUDIT` (`packages/codegen/src/compiler/model/node-map.ts:591`)
+### `packages/codegen/src/compiler/model/node-map.ts::DERIVE_AUDIT`
 
 ```text
 /**
@@ -2174,7 +2174,7 @@ can't be unified.
  */
 ```
 
-### `currentAuditKind` (`packages/codegen/src/compiler/model/node-map.ts:625`)
+### `packages/codegen/src/compiler/model/node-map.ts::currentAuditKind`
 
 ```text
 /** Transient — each AssembledNode's constructor sets this before the lazy
@@ -2184,7 +2184,7 @@ can't be unified.
 
 ---
 
-### `AssembledBranch.keywordConstructibleText` (`packages/codegen/src/compiler/model/node-map.ts:2419`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.keywordConstructibleText`
 
 ```text
 /**
@@ -2202,7 +2202,7 @@ can't be unified.
 // string→branch coercion. See glossary.
 ```
 
-### `compiler/model/node-map.ts` (module)
+### `packages/codegen/src/compiler/model/node-map.ts::module`
 
 ```text
 /**
@@ -2260,7 +2260,7 @@ can't be unified.
  */
 ```
 
-### `_parseKindCollisionDiagnostics` (`packages/codegen/src/compiler/model/node-map.ts:64`)
+### `packages/codegen/src/compiler/model/node-map.ts::_parseKindCollisionDiagnostics`
 
 ```text
 // ============================================================================
@@ -2268,7 +2268,7 @@ can't be unified.
 // ============================================================================
 ```
 
-### `_deriveShapeDiagnostics` (`packages/codegen/src/compiler/model/node-map.ts:95`)
+### `packages/codegen/src/compiler/model/node-map.ts::_deriveShapeDiagnostics`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2276,7 +2276,7 @@ can't be unified.
 // ---------------------------------------------------------------------------
 ```
 
-### `AssembleWarning` (`packages/codegen/src/compiler/model/node-map.ts:116`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembleWarning`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2288,7 +2288,7 @@ can't be unified.
 // ---------------------------------------------------------------------------
 ```
 
-### `fieldContentIsMultiSibling` (`packages/codegen/src/compiler/model/node-map.ts:148`)
+### `packages/codegen/src/compiler/model/node-map.ts::fieldContentIsMultiSibling`
 
 ```text
 /**
@@ -2304,7 +2304,7 @@ can't be unified.
 // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 ```
 
-### `currentOptionalBodyKinds` (`packages/codegen/src/compiler/model/node-map.ts:188`)
+### `packages/codegen/src/compiler/model/node-map.ts::currentOptionalBodyKinds`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2328,7 +2328,7 @@ can't be unified.
 // assert required-singular and reject ASI-terminated corpus entries.
 ```
 
-### `FieldStorageInfo.enumKindsById` (`packages/codegen/src/compiler/model/node-map.ts:226`)
+### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageInfo.enumKindsById`
 
 ```text
 /**
@@ -2340,14 +2340,14 @@ can't be unified.
 	 */
 ```
 
-### `NodeRef.node` (`packages/codegen/src/compiler/model/node-map.ts:231`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.node`
 
 ```text
 // Node-reference target. Present for true references; absent for inline
 // literals (which carry `value` instead). Mutually exclusive with `value`.
 ```
 
-### `NodeRef.storageKindId` (`packages/codegen/src/compiler/model/node-map.ts:232`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.storageKindId`
 
 ```text
 // Parser kind id of the storage/render kind (`node`'s name), stamped at
@@ -2358,14 +2358,14 @@ can't be unified.
 // serialization (node-model.json5) never carries ids.
 ```
 
-### `NodeRef.value` (`packages/codegen/src/compiler/model/node-map.ts:233`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`
 
 ```text
 // Inline string literal text (e.g. `'const'`, `'pub'`, an enum member /
 // pattern-matched anonymous token). Mutually exclusive with `node`.
 ```
 
-### `NodeRef.resolvedKind` (`packages/codegen/src/compiler/model/node-map.ts:234`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.resolvedKind`
 
 ```text
 // For a literal: the resolved CST kind name the literal text maps to (a
@@ -2374,7 +2374,7 @@ can't be unified.
 // render still emits from `value`.
 ```
 
-### `NodeRef.resolvedKindId` (`packages/codegen/src/compiler/model/node-map.ts:235`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.resolvedKindId`
 
 ```text
 // Parser kind id alongside `resolvedKind`, resolved through the LITERAL
@@ -2383,7 +2383,7 @@ can't be unified.
 // `storageKindId`.
 ```
 
-### `NodeRef.parseKind` (`packages/codegen/src/compiler/model/node-map.ts:236`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseKind`
 
 ```text
 // Parse-as kind ref: the CST kind this value
@@ -2392,14 +2392,14 @@ can't be unified.
 // only for aliased/variant values. `storageName`/`parseNames` project this.
 ```
 
-### `NodeRef.parseKindId` (`packages/codegen/src/compiler/model/node-map.ts:237`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseKindId`
 
 ```text
 // Parser kind id of the wire `$type` (`parseKind`'s name). Same stamped-
 // fact semantics as `storageKindId`.
 ```
 
-### `NodeRef.parseName` (`packages/codegen/src/compiler/model/node-map.ts:238`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseName`
 
 ```text
 // Field-label routing key (union-slot design §5, PR 1.5): set when this
@@ -2411,7 +2411,7 @@ can't be unified.
 // routing keys become `fieldLabels ∪ kinds`.
 ```
 
-### `NodeRef.optionalElement` (`packages/codegen/src/compiler/model/node-map.ts:243`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.optionalElement`
 
 ```text
 // Separated-list positions may be individually blank (array elision,
@@ -2421,13 +2421,13 @@ can't be unified.
 // array/nonEmptyArray multiplicities.
 ```
 
-### `NodeRef.immediate` (`packages/codegen/src/compiler/model/node-map.ts:244`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.immediate`
 
 ```text
 // Literal-only token-wrapper flags (see interface doc).
 ```
 
-### `SubtypeRef` (`packages/codegen/src/compiler/model/node-map.ts:250`)
+### `packages/codegen/src/compiler/model/node-map.ts::SubtypeRef`
 
 ```text
 // A subtype name paired with its OWN storage-side kindId, stamped once at
@@ -2438,14 +2438,14 @@ can't be unified.
 // with no catalog entry (typed absence, not a bug).
 ```
 
-### `NodeBackedRef` (`packages/codegen/src/compiler/model/node-map.ts:255`)
+### `packages/codegen/src/compiler/model/node-map.ts::NodeBackedRef`
 
 ```text
 // A NodeRef that actually targets a node — the non-literal arm of the
 // node/value mutual exclusion documented on NodeRef.
 ```
 
-### `hasOptionalElements` (`packages/codegen/src/compiler/model/node-map.ts:285`)
+### `packages/codegen/src/compiler/model/node-map.ts::hasOptionalElements`
 
 ```text
 /** Separated-list slot whose positions may be individually blank (array
@@ -2453,25 +2453,25 @@ can't be unified.
  *  `undefined` entries. See `NodeRef.optionalElement`. */
 ```
 
-### `RenderTemplateSlot.trailingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:342`)
+### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot.trailingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
 ```
 
-### `RenderTemplateSlot.leadingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:343`)
+### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot.leadingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
 ```
 
-### `TS_RESERVED` (`packages/codegen/src/compiler/model/node-map.ts:370`)
+### `packages/codegen/src/compiler/model/node-map.ts::TS_RESERVED`
 
 ```text
 // TypeScript reserved words that must be avoided as parameter names.
 ```
 
-### `deriveAuditMode` (`packages/codegen/src/compiler/model/node-map.ts:425`)
+### `packages/codegen/src/compiler/model/node-map.ts::deriveAuditMode`
 
 ```text
 // Audit default is now 'strict' — every non-canonical shape across the
@@ -2488,7 +2488,7 @@ can't be unified.
 //   SITTIR_AUDIT_DERIVE=off      → 'off' mode (no audit at all).
 ```
 
-### `auditDerivationShape` (`packages/codegen/src/compiler/model/node-map.ts:437`)
+### `packages/codegen/src/compiler/model/node-map.ts::auditDerivationShape`
 
 #### body
 
@@ -2505,7 +2505,7 @@ can't be unified.
 // SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
 ```
 
-### `classifyTopLevelShape` (`packages/codegen/src/compiler/model/node-map.ts:463`)
+### `packages/codegen/src/compiler/model/node-map.ts::classifyTopLevelShape`
 
 #### body
 
@@ -2604,7 +2604,7 @@ can't be unified.
 // with fields.
 ```
 
-### `mergeDelimiterMode` (`packages/codegen/src/compiler/model/node-map.ts:597`)
+### `packages/codegen/src/compiler/model/node-map.ts::mergeDelimiterMode`
 
 ```text
 /**
@@ -2620,7 +2620,7 @@ can't be unified.
  */
 ```
 
-### `resolveParseKindCollisionsInSlot` (`packages/codegen/src/compiler/model/node-map.ts:675`)
+### `packages/codegen/src/compiler/model/node-map.ts::resolveParseKindCollisionsInSlot`
 
 #### body
 
@@ -2634,7 +2634,7 @@ can't be unified.
 // actually tells apart.
 ```
 
-### `stampListFactsOnValues` (`packages/codegen/src/compiler/model/node-map.ts:760`)
+### `packages/codegen/src/compiler/model/node-map.ts::stampListFactsOnValues`
 
 ```text
 /**
@@ -2644,7 +2644,7 @@ can't be unified.
  */
 ```
 
-### `DBG_KINDID_FALLBACK` (`packages/codegen/src/compiler/model/node-map.ts:785`)
+### `packages/codegen/src/compiler/model/node-map.ts::DBG_KINDID_FALLBACK`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2664,7 +2664,7 @@ can't be unified.
 // ---------------------------------------------------------------------------
 ```
 
-### `FACTORY_NAME_RESERVED` (`packages/codegen/src/compiler/model/node-map.ts:998`)
+### `packages/codegen/src/compiler/model/node-map.ts::FACTORY_NAME_RESERVED`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2681,7 +2681,7 @@ can't be unified.
 // in strict-mode TypeScript (or would shadow globals in problematic ways).
 ```
 
-### `ModelType` (`packages/codegen/src/compiler/model/node-map.ts:1059`)
+### `packages/codegen/src/compiler/model/node-map.ts::ModelType`
 
 ```text
 /** Every shape an assembled node can take. A closed union so a switch over it
@@ -2690,7 +2690,7 @@ can't be unified.
  *  quietly answers for it. */
 ```
 
-### `AssembledNodeBase.typeName` (`packages/codegen/src/compiler/model/node-map.ts:1072`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.typeName`
 
 ```text
 // typeName / factoryName are writable so assemble()'s post-pass
@@ -2698,7 +2698,7 @@ can't be unified.
 // a visible sibling — same pattern as `irKey`.
 ```
 
-### `AssembledNodeBase.irKey` (`packages/codegen/src/compiler/model/node-map.ts:1074`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.irKey`
 
 ```text
 /**
@@ -2713,7 +2713,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNodeBase.rule` (`packages/codegen/src/compiler/model/node-map.ts:1088`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.rule`
 
 ```text
 /**
@@ -2734,14 +2734,14 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNodeBase.diagnosticRule` (`packages/codegen/src/compiler/model/node-map.ts:1094`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
 
 ```text
 // Diagnostics-only raw view — behavior must never key off it (the
 // protected-rule convention above stands for every live consumer).
 ```
 
-### `AssembledNodeBase.userFacing` (`packages/codegen/src/compiler/model/node-map.ts:1098`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.userFacing`
 
 ```text
 /**
@@ -2765,7 +2765,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNodeBase.factoryInline` (`packages/codegen/src/compiler/model/node-map.ts:1100`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.factoryInline`
 
 ```text
 /**
@@ -2783,7 +2783,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNodeBase.constructor` (`packages/codegen/src/compiler/model/node-map.ts:1102`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.constructor`
 
 #### body
 
@@ -2793,7 +2793,7 @@ can't be unified.
 // Default: use the derived factoryName.
 ```
 
-### `AssembledNonterminalInit.trailingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:1151`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit.trailingDelimiter`
 
 ```text
 /**
@@ -2810,32 +2810,32 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNonterminalInit.leadingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:1152`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit.leadingDelimiter`
 
 ```text
 /** See `trailingDelimiter`'s doc comment — same rationale, `leading` side. */
 ```
 
-### `AssembledNonterminal.determined` (`packages/codegen/src/compiler/model/node-map.ts:1173`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.determined`
 
 ```text
 /** Stamped by `pruneDeterminedSlots`: this slot's value is grammar-fixed
 	 *  and it renders as template text — it is no longer in any slot record. */
 ```
 
-### `AssembledNonterminal.trailingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:1178`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.trailingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
 ```
 
-### `AssembledNonterminal.leadingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:1179`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.leadingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
 ```
 
-### `AssembledNonterminal.sourceRuleIds` (`packages/codegen/src/compiler/model/node-map.ts:1180`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.sourceRuleIds`
 
 ```text
 /**
@@ -2847,21 +2847,21 @@ can't be unified.
 	 */
 ```
 
-### `AssembledNonterminal.metadata` (`packages/codegen/src/compiler/model/node-map.ts:1181`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.metadata`
 
 ```text
 /** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
 	 *  never read here to drive logic or emission. */
 ```
 
-### `AssembledNonterminal.ruleMetadata` (`packages/codegen/src/compiler/model/node-map.ts:1182`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.ruleMetadata`
 
 ```text
 /** (debt PR-P1) Blind passthrough of the owning rule's opaque
 	 *  `RuleMetadata` — see {@link AssembledNonterminalInit.ruleMetadata}. */
 ```
 
-### `SlotAliasPairsCtx` (`packages/codegen/src/compiler/model/node-map.ts:1317`)
+### `packages/codegen/src/compiler/model/node-map.ts::SlotAliasPairsCtx`
 
 ```text
 /**
@@ -2895,7 +2895,7 @@ can't be unified.
  */
 ```
 
-### `isDeterminedSlot` (`packages/codegen/src/compiler/model/node-map.ts:1565`)
+### `packages/codegen/src/compiler/model/node-map.ts::isDeterminedSlot`
 
 ```text
 /**
@@ -2909,7 +2909,7 @@ can't be unified.
  */
 ```
 
-### `determinedSlotText` (`packages/codegen/src/compiler/model/node-map.ts:1569`)
+### `packages/codegen/src/compiler/model/node-map.ts::determinedSlotText`
 
 ```text
 /** The constant text a determined slot renders as — `undefined` when the
@@ -2932,7 +2932,7 @@ can't be unified.
 // A token is parameterless exactly when its body is a single string.
 ```
 
-### `pruneDeterminedSlots` (`packages/codegen/src/compiler/model/node-map.ts:1581`)
+### `packages/codegen/src/compiler/model/node-map.ts::pruneDeterminedSlots`
 
 ```text
 /**
@@ -2945,7 +2945,7 @@ can't be unified.
  */
 ```
 
-### `AssembledBranch` (`packages/codegen/src/compiler/model/node-map.ts:1588`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
 
 ```text
 // ============================================================================
@@ -2953,7 +2953,7 @@ can't be unified.
 // ============================================================================
 ```
 
-### `AssembledBranch.simplifiedRule` (`packages/codegen/src/compiler/model/node-map.ts:1596`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.simplifiedRule`
 
 ```text
 // rule narrowed to SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule —
@@ -2976,7 +2976,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledBranch.renderRule` (`packages/codegen/src/compiler/model/node-map.ts:1597`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.renderRule`
 
 ```text
 /**
@@ -2989,7 +2989,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledBranch.variantChildKinds` (`packages/codegen/src/compiler/model/node-map.ts:1598`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.variantChildKinds`
 
 ```text
 /**
@@ -3003,7 +3003,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledBranch.slotClass` (`packages/codegen/src/compiler/model/node-map.ts:1600`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.slotClass`
 
 ```text
 /**
@@ -3014,7 +3014,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledBranch._slots` (`packages/codegen/src/compiler/model/node-map.ts:1602`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch._slots`
 
 ```text
 /**
@@ -3038,14 +3038,14 @@ can't be unified.
 	 */
 ```
 
-### `AssembledBranch.determinedSlots` (`packages/codegen/src/compiler/model/node-map.ts:1644`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.determinedSlots`
 
 ```text
 /** The slots `pruneDeterminedSlots` removed from the record — their
 	 *  value is grammar-fixed and renders as template text. */
 ```
 
-### `AssembledBranch.<unknown>` (`packages/codegen/src/compiler/model/node-map.ts:1603`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.<unknown>`
 
 ```text
 // Cycle guard for the parameterless getter. Breaks re-entrant calls
@@ -3075,13 +3075,13 @@ can't be unified.
 // in place.
 ```
 
-### `AssembledBranch.parameterless` (`packages/codegen/src/compiler/model/node-map.ts:1690`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.parameterless`
 
 ```text
 // cycle — conservative false
 ```
 
-### `AssembledLeaf` (`packages/codegen/src/compiler/model/node-map.ts:1742`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf`
 
 ```text
 /**
@@ -3104,7 +3104,7 @@ can't be unified.
  */
 ```
 
-### `AssembledLeaf.immediate` (`packages/codegen/src/compiler/model/node-map.ts:1743`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.immediate`
 
 ```text
 /**
@@ -3116,14 +3116,14 @@ can't be unified.
 	 */
 ```
 
-### `AssembledLeaf.tokenized` (`packages/codegen/src/compiler/model/node-map.ts:1747`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.tokenized`
 
 ```text
 /** This kind's rule lexes as one token (a consumed `token(...)`
 	 * wrapper's stamp, or an external scanner symbol). */
 ```
 
-### `AssembledPattern.fixedLiteralText` (`packages/codegen/src/compiler/model/node-map.ts:1763`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
 
 ```text
 // regex — always content-bearing
@@ -3135,7 +3135,7 @@ can't be unified.
 // Terminal-shape rule: walk the content tree collecting all non-blank string leaves.
 ```
 
-### `FixedLiteralCtx` (`packages/codegen/src/compiler/model/node-map.ts:1769`)
+### `packages/codegen/src/compiler/model/node-map.ts::FixedLiteralCtx`
 
 ```text
 /**
@@ -3169,7 +3169,7 @@ can't be unified.
  */
 ```
 
-### `AssembledKeyword.resolvedKindId` (`packages/codegen/src/compiler/model/node-map.ts:1824`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.resolvedKindId`
 
 ```text
 /** Catalog id of `resolvedKind` — stamped once here, at construction, from
@@ -3177,7 +3177,7 @@ can't be unified.
 	 *  re-deriving one from the keyword's text later. */
 ```
 
-### `AssembledKeyword.constructor` (`packages/codegen/src/compiler/model/node-map.ts:1826`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.constructor`
 
 #### body
 
@@ -3196,13 +3196,13 @@ can't be unified.
 // stamping) — the literal-text lookup genuinely still fires here.
 ```
 
-### `AssembledToken.resolvedKindId` (`packages/codegen/src/compiler/model/node-map.ts:1870`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.resolvedKindId`
 
 ```text
 /** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
 ```
 
-### `AssembledToken.constructor` (`packages/codegen/src/compiler/model/node-map.ts:1872`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.constructor`
 
 #### body
 
@@ -3210,13 +3210,13 @@ can't be unified.
 // SYNTHESIZED StringRule (never link-stamped) — literal-text lookup.
 ```
 
-### `AssembledToken.parameterless` (`packages/codegen/src/compiler/model/node-map.ts:1885`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.parameterless`
 
 ```text
 // No emitFactory — tokens are always hidden, no factoryName.
 ```
 
-### `AssembledEnum.resolvedKindIds` (`packages/codegen/src/compiler/model/node-map.ts:1907`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.resolvedKindIds`
 
 ```text
 /**
@@ -3226,7 +3226,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledEnum.resolvedByText` (`packages/codegen/src/compiler/model/node-map.ts:1908`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.resolvedByText`
 
 ```text
 /**
@@ -3240,7 +3240,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledEnum.constructor` (`packages/codegen/src/compiler/model/node-map.ts:1910`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
 
 #### body
 
@@ -3261,7 +3261,7 @@ can't be unified.
 // id is the wire tag the enum dispatches on.
 ```
 
-### `AssembledSupertype.<unknown>` (`packages/codegen/src/compiler/model/node-map.ts:1951`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
 
 ```text
 // #subtypes stores the RESOLVED subtype list (hidden names expanded to
@@ -3278,7 +3278,7 @@ can't be unified.
 // constructor never re-derives it.
 ```
 
-### `AssembledSupertype.transitiveParseKinds` (`packages/codegen/src/compiler/model/node-map.ts:1952`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.transitiveParseKinds`
 
 ```text
 // Transitive parse-kind closure through nested supertypes — e.g. python's
@@ -3294,7 +3294,7 @@ can't be unified.
 // answer "is this parse kind reachable here", by name.
 ```
 
-### `AssembledSupertype.constructor` (`packages/codegen/src/compiler/model/node-map.ts:1954`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
 
 #### body
 
@@ -3302,7 +3302,7 @@ can't be unified.
 // Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 ```
 
-### `AssembledMulti.constructor` (`packages/codegen/src/compiler/model/node-map.ts:1989`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledMulti.constructor`
 
 ```text
 // rule is the normalize-phase RenderRule: wrapper-deletion already pushed
@@ -3318,7 +3318,7 @@ can't be unified.
 // Multi nodes are always hidden (no factoryName)
 ```
 
-### `AssembledGroup.simplifiedRule` (`packages/codegen/src/compiler/model/node-map.ts:2016`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.simplifiedRule`
 
 ```text
 // rule typed as Rule<'link'> — groups can carry GroupRule<'link'> (pre-unwrap),
@@ -3331,19 +3331,19 @@ can't be unified.
 /** See `AssembledBranch.simplifiedRule`. */
 ```
 
-### `AssembledGroup.renderRule` (`packages/codegen/src/compiler/model/node-map.ts:2017`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.renderRule`
 
 ```text
 /** See `AssembledBranch.renderRule`. Sourced from `normalized.normalizedRules[kind]` at assemble time. */
 ```
 
-### `AssembledGroup.name` (`packages/codegen/src/compiler/model/node-map.ts:2019`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.name`
 
 ```text
 /** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
 ```
 
-### `AssembledGroup.parentKind` (`packages/codegen/src/compiler/model/node-map.ts:2020`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.parentKind`
 
 ```text
 /**
@@ -3355,13 +3355,13 @@ can't be unified.
 	 */
 ```
 
-### `AssembledGroup.slotClass` (`packages/codegen/src/compiler/model/node-map.ts:2023`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.slotClass`
 
 ```text
 /** See {@link AssembledBranch.slotClass}. */
 ```
 
-### `AssembledGroup._slots` (`packages/codegen/src/compiler/model/node-map.ts:2025`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup._slots`
 
 ```text
 /**
@@ -3375,13 +3375,13 @@ can't be unified.
 	 */
 ```
 
-### `AssembledGroup.determinedSlots` (`packages/codegen/src/compiler/model/node-map.ts:2032`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.determinedSlots`
 
 ```text
 /** See {@link AssembledBranch.determinedSlots}. */
 ```
 
-### `AssembledGroup.constructor` (`packages/codegen/src/compiler/model/node-map.ts:2049`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.constructor`
 
 #### body
 
@@ -3397,7 +3397,7 @@ can't be unified.
 // re-derive and prefix here when no explicit factoryName was provided.
 ```
 
-### `AssembledGroup.<unknown>` (`packages/codegen/src/compiler/model/node-map.ts:2026`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.<unknown>`
 
 ```text
 // Cycle guard for the parameterless getter. Same rationale as AssembledBranch.
@@ -3419,13 +3419,13 @@ can't be unified.
 // See AssembledBranch.#computeParameterless.
 ```
 
-### `AssembledGroup.parameterless` (`packages/codegen/src/compiler/model/node-map.ts:2088`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.parameterless`
 
 ```text
 // cycle — conservative false
 ```
 
-### `AssembledSeparatedList.separatorRule` (`packages/codegen/src/compiler/model/node-map.ts:2113`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.separatorRule`
 
 ```text
 /**
@@ -3441,7 +3441,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledSeparatedList.leadingDelimiter` (`packages/codegen/src/compiler/model/node-map.ts:2114`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.leadingDelimiter`
 
 ```text
 /**
@@ -3469,7 +3469,7 @@ can't be unified.
 	 */
 ```
 
-### `AssembledSeparatedList.simplifiedRule` (`packages/codegen/src/compiler/model/node-map.ts:2117`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.simplifiedRule`
 
 ```text
 /**
@@ -3494,25 +3494,25 @@ can't be unified.
 	 */
 ```
 
-### `AssembledSeparatedList.renderRule` (`packages/codegen/src/compiler/model/node-map.ts:2118`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.renderRule`
 
 ```text
 /** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
 ```
 
-### `AssembledSeparatedList._slots` (`packages/codegen/src/compiler/model/node-map.ts:2119`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList._slots`
 
 ```text
 /** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
 ```
 
-### `AssembledSeparatedList.slotClass` (`packages/codegen/src/compiler/model/node-map.ts:2120`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.slotClass`
 
 ```text
 /** See `AssembledBranch.slotClass` — set post-assembly by `computeSlotClasses()`. */
 ```
 
-### `AssembledSeparatedList.constructor` (`packages/codegen/src/compiler/model/node-map.ts:2122`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.constructor`
 
 #### body
 
@@ -3522,7 +3522,7 @@ can't be unified.
 // so the wrap capture keys can include it.
 ```
 
-### `AssembledSeparatedList.terminatedSeparator` (`packages/codegen/src/compiler/model/node-map.ts:2157`)
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.terminatedSeparator`
 
 ```text
 /**
@@ -3534,7 +3534,7 @@ can't be unified.
 	 */
 ```
 
-### `LeftImmediateCtx` (`packages/codegen/src/compiler/model/node-map.ts:2209`)
+### `packages/codegen/src/compiler/model/node-map.ts::LeftImmediateCtx`
 
 ```text
 /**
@@ -3544,7 +3544,7 @@ can't be unified.
  */
 ```
 
-### `isLeftImmediateKind` (`packages/codegen/src/compiler/model/node-map.ts:2214`)
+### `packages/codegen/src/compiler/model/node-map.ts::isLeftImmediateKind`
 
 ```text
 /**
@@ -3562,7 +3562,7 @@ can't be unified.
  */
 ```
 
-### `leftmostTerminalImmediate` (`packages/codegen/src/compiler/model/node-map.ts:2227`)
+### `packages/codegen/src/compiler/model/node-map.ts::leftmostTerminalImmediate`
 
 #### body
 
@@ -3581,7 +3581,7 @@ can't be unified.
 // compound forms with no single leftmost path.
 ```
 
-### `SeamEdgeClass` (`packages/codegen/src/compiler/model/node-map.ts:2254`)
+### `packages/codegen/src/compiler/model/node-map.ts::SeamEdgeClass`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -3596,21 +3596,21 @@ can't be unified.
  *  established (nullable edges, unparsed pattern tails, unresolved refs). */
 ```
 
-### `EdgeClassCtx` (`packages/codegen/src/compiler/model/node-map.ts:2261`)
+### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
 
 ```text
 /** Duck-typed against `NodeMap` (same circularity rationale as
  *  `LeftImmediateCtx`), plus the word predicate the classes are relative to. */
 ```
 
-### `REGEX_CONTROL_ESCAPES` (`packages/codegen/src/compiler/model/node-map.ts:2276`)
+### `packages/codegen/src/compiler/model/node-map.ts::REGEX_CONTROL_ESCAPES`
 
 ```text
 /** Control escapes decoded to the character they match — classifying by
  *  the escape LETTER gives the wrong class (`\r` is not word-class 'r'). */
 ```
 
-### `patternLeadingEdgeClass` (`packages/codegen/src/compiler/model/node-map.ts:2285`)
+### `packages/codegen/src/compiler/model/node-map.ts::patternLeadingEdgeClass`
 
 ```text
 /**
@@ -3630,7 +3630,7 @@ can't be unified.
 // escaped punctuation ('\.', '\[') matches itself.
 ```
 
-### `edgeClassesOfKind` (`packages/codegen/src/compiler/model/node-map.ts:2336`)
+### `packages/codegen/src/compiler/model/node-map.ts::edgeClassesOfKind`
 
 ```text
 /**
@@ -3644,7 +3644,7 @@ can't be unified.
  */
 ```
 
-### `ruleEdgeClass` (`packages/codegen/src/compiler/model/node-map.ts:2367`)
+### `packages/codegen/src/compiler/model/node-map.ts::ruleEdgeClass`
 
 #### body
 
@@ -3659,7 +3659,7 @@ can't be unified.
 // terminal on this side.
 ```
 
-### `KindEdgeCharSets` (`packages/codegen/src/compiler/model/node-map.ts:2407`)
+### `packages/codegen/src/compiler/model/node-map.ts::KindEdgeCharSets`
 
 ```text
 /** Concrete edge character sets of a kind's rendered text — `undefined`
@@ -3668,7 +3668,7 @@ can't be unified.
  *  CLASSES above are their projection. */
 ```
 
-### `ruleEdgeCharSet` (`packages/codegen/src/compiler/model/node-map.ts:2441`)
+### `packages/codegen/src/compiler/model/node-map.ts::ruleEdgeCharSet`
 
 #### body
 
@@ -3698,7 +3698,7 @@ can't be unified.
 // forms with no single terminal on this side.
 ```
 
-### `DelimiterFlags` (`packages/codegen/src/compiler/model/node-map.ts:2499`)
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFlags`
 
 ```text
 // ---------------------------------------------------------------------------

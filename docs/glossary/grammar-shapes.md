@@ -10,31 +10,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `RustSupertypes` (`packages/codegen/src/grammar-shapes/enrich-type.ts:68`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::RustSupertypes`
 
 ```text
 /** tree-sitter-rust declared supertypes (from grammar.json `supertypes`). */
 ```
 
-### `RewrapPrec` (`packages/codegen/src/grammar-shapes/enrich-type.ts:83`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::RewrapPrec`
 
 ```text
 /** Wrap `Inner` back in the prec rule `P`'s shape (preserve value+type). */
 ```
 
-### `OptionalInner` (`packages/codegen/src/grammar-shapes/enrich-type.ts:92`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::OptionalInner`
 
 ```text
 /** If `C` is `CHOICE(X, BLANK)`, yields `X`; else `never`. */
 ```
 
-### `BaseFieldName` (`packages/codegen/src/grammar-shapes/enrich-type.ts:117`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::BaseFieldName`
 
 ```text
 /** Base field name for a symbol name (supertype prefix stripped). */
 ```
 
-### `Shape3Symbol` (`packages/codegen/src/grammar-shapes/enrich-type.ts:126`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::Shape3Symbol`
 
 ```text
 /** Shape 3: SEQ whose members are exactly one SYMBOL + anon (STRING/PATTERN). */
@@ -48,7 +48,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `MemberWrapName` (`packages/codegen/src/grammar-shapes/enrich-type.ts:148`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::MemberWrapName`
 
 ```text
 /**
@@ -69,13 +69,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Shape 3 (optional seq with lone symbol): `_`-names NEVER.
 ```
 
-### `FieldNameFor` (`packages/codegen/src/grammar-shapes/enrich-type.ts:198`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::FieldNameFor`
 
 ```text
 /** Field name to emit: base name if unique among siblings, else `string`. */
 ```
 
-### `ReplaceOptionalMembers` (`packages/codegen/src/grammar-shapes/enrich-type.ts:212`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::ReplaceOptionalMembers`
 
 ```text
 /**
@@ -88,13 +88,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `WrapShape3Members` (`packages/codegen/src/grammar-shapes/enrich-type.ts:224`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::WrapShape3Members`
 
 ```text
 /** Rebuild a Shape-3 SEQ members tuple with its lone SYMBOL FIELD-wrapped. */
 ```
 
-### `EnrichMember` (`packages/codegen/src/grammar-shapes/enrich-type.ts:229`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichMember`
 
 ```text
 /**
@@ -122,13 +122,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Shape 3
 ```
 
-### `EnrichSeqMembers` (`packages/codegen/src/grammar-shapes/enrich-type.ts:270`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichSeqMembers`
 
 ```text
 /** Map every member of a top-level seq through EnrichMember. */
 ```
 
-### `SymbolRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:63`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::SymbolRule`
 
 ```text
 /** SYMBOL leaf — structurally mirrors tree-sitter's ambient `SymbolRule<Name>`
@@ -140,13 +140,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  changed. */
 ```
 
-### `GrammarRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:134`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::GrammarRule`
 
 ```text
 /** Union of every compiled-grammar.json rule shape (loose any-rule alias). */
 ```
 
-### `AuthoringRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:153`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::AuthoringRule`
 
 ```text
 /**
@@ -160,13 +160,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `GrammarJson` (`packages/codegen/src/grammar-shapes/grammar-json.ts:179`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::GrammarJson`
 
 ```text
 /** Top-level compiled grammar.json shape (the subset we type off). */
 ```
 
-### `supertypeNames` (`packages/codegen/src/grammar-shapes/grammar-json.ts:183`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::supertypeNames`
 
 ```text
 /** Compiled supertype-name array. Named `supertypeNames` (not
@@ -174,31 +174,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  of the same name — see the file header. */
 ```
 
-### `PrecRuleUnion` (`packages/codegen/src/grammar-shapes/grammar-json.ts:193`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::PrecRuleUnion`
 
 ```text
 /** PREC wrappers are transparent to path addressing (skip a segment). */
 ```
 
-### `SingleContentWrapper` (`packages/codegen/src/grammar-shapes/grammar-json.ts:196`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::SingleContentWrapper`
 
 ```text
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 ```
 
-### `PeelPrec` (`packages/codegen/src/grammar-shapes/path-type.ts:48`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::PeelPrec`
 
 ```text
 /** Peel all leading PREC wrappers (transparent) to the structural rule. */
 ```
 
-### `TopLevelKeys` (`packages/codegen/src/grammar-shapes/path-type.ts:59`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::TopLevelKeys`
 
 ```text
 /** Valid first-segment index strings for rule `N` (top-level). */
 ```
 
-### `NonNumericFirstSegment` (`packages/codegen/src/grammar-shapes/path-type.ts:89`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::NonNumericFirstSegment`
 
 ```text
 /** Non-numeric first-segment forms from `parsePath` that the type model
@@ -206,7 +206,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  `'5:'` — TS can't cheaply require a letter-initial; permissive is fine.) */
 ```
 
-### `TransformPatchValue` (`packages/codegen/src/grammar-shapes/path-type.ts:119`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchValue`
 
 ```text
 /** Patch values accepted in a transform patch-map: tree-sitter `RuleOrLiteral`
@@ -225,13 +225,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  the whole value type and accept anything). */
 ```
 
-### `TransformPatchMap` (`packages/codegen/src/grammar-shapes/path-type.ts:135`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 
 ```text
 /** A single patch-map for one rule: path-key → patch value. */
 ```
 
-### `FastKeys` (`packages/codegen/src/grammar-shapes/path-type.ts:138`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::FastKeys`
 
 ```text
 /** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
@@ -248,7 +248,7 @@ tree-sitter union.
 `PrecRuleUnion` and `SingleContentWrapper` are the discriminant guards used by
 the purely type-level `Enrich<>` and path types.
 
-### `MutableDeep` (`packages/codegen/src/grammar-shapes/grammar-json.ts`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::MutableDeep`
 
 The readonly→mutable bridge, used ONLY to PROVE the subtyping ladder
 `GrammarJson ⊑ GrammarSchema<string>` (modulo readonly). It recursively strips
@@ -265,7 +265,7 @@ transparently peeling PREC wrappers.
 one. It is the union of valid top-level index segments for a rule (after the
 PREC peel), and editors offer these as completions for the first path segment.
 
-### `PathKey` (`packages/codegen/src/grammar-shapes/path-type.ts`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::PathKey`
 
 The type a transform patch-object KEY should have for rule `N`.
 
@@ -304,7 +304,7 @@ The type-only imports of the DSL primitive return interfaces keep the value
 axis DRY and introduce no runtime cycle — the primitives don't import
 `grammar-shapes`.
 
-### `grammar-shapes/path-type.ts` (module)
+### `packages/codegen/src/grammar-shapes/path-type.ts::module`
 
 ```text
 /**
@@ -342,7 +342,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
  */
 ```
 
-### `grammar-shapes/enrich-type.ts` (module)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::module`
 
 ```text
 /**
@@ -401,7 +401,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
  */
 ```
 
-### `IsPrec` (`packages/codegen/src/grammar-shapes/enrich-type.ts:21`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::IsPrec`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -409,7 +409,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `IsBlank` (`packages/codegen/src/grammar-shapes/enrich-type.ts:25`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::IsBlank`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -417,7 +417,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `StripUnderscore` (`packages/codegen/src/grammar-shapes/enrich-type.ts:39`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::StripUnderscore`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -434,7 +434,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
    CountBaseName over the members tuple. */
 ```
 
-### `ExtractLoneSymbol` (`packages/codegen/src/grammar-shapes/enrich-type.ts:45`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::ExtractLoneSymbol`
 
 ```text
 // >1 SYMBOL -> too complex
@@ -444,13 +444,13 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // non-anon, non-symbol -> too complex
 ```
 
-### `CountBase` (`packages/codegen/src/grammar-shapes/enrich-type.ts:91`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::CountBase`
 
 ```text
 // Count how many members share a given base field name (for uniqueness).
 ```
 
-### `WrapShape1` (`packages/codegen/src/grammar-shapes/enrich-type.ts:112`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::WrapShape1`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -458,13 +458,13 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `EnrichMember.type` (`packages/codegen/src/grammar-shapes/enrich-type.ts:140`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichMember.type`
 
 ```text
 // Shape 2
 ```
 
-### `EnrichRepeatContent` (`packages/codegen/src/grammar-shapes/enrich-type.ts:164`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRepeatContent`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -474,7 +474,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `EnrichRule` (`packages/codegen/src/grammar-shapes/enrich-type.ts:168`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRule`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -487,7 +487,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `SeqRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:1`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::SeqRule`
 
 ```text
 /**
@@ -539,7 +539,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
  */
 ```
 
-### `grammar-shapes/grammar-shape.rust.ts` (module)
+### `packages/codegen/src/grammar-shapes/grammar-shape.rust.ts::module`
 
 ```text
 /**
