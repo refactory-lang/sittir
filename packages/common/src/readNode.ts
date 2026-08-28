@@ -45,21 +45,13 @@ export interface TreeHandle {
 	 * Per-handle read dispatch. When present, the wrap layer reads
 	 * through this method instead of running `readNode(handle, childIndex)`
 	 * directly. Native-engine handles set this to a closure that
-	 * calls `engine.reader.parseAndRead(source)` (root) /
-	 * `engine.reader.readNode(handle, childIndex)` (drill-in) so reads stay
-	 * inside the engine that owns the tree.
+	 * calls `engine.diagnostics.parseAndRead(source)` (root) /
+	 * `engine.diagnostics.readNode(handle, childIndex)` (drill-in) so reads
+	 * stay inside the engine that owns the tree.
 	 *
 	 * ADR-0017: signature changed from `(nodeId?)` to `(handle?, childIndex?)`.
 	 */
-	read?(handle?: number, childIndex?: number): AnyNodeData;
-	/**
-	 * Per-handle render dispatch. When present, the wrap layer renders
-	 * through this method instead of calling a separate renderer. Engine
-	 * handles set this to a closure that calls `engine.render(node, options)`
-	 * so renders stay inside the engine that owns the tree (preserving
-	 * engine-level format config).
-	 */
-	render?(handle?: number, options?: { ignoreFormat?: boolean }): string;
+	read?(handle?: number, childIndex?: number, deep?: boolean): AnyNodeData;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).

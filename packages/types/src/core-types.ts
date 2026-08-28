@@ -410,3 +410,11 @@ export interface ParseAndReadResult {
 	readonly nodeData: AnyNodeData;
 	readonly format?: FormatRecord;
 }
+
+/**
+ * The data projection of a generated kind interface: `$type` plus its
+ * `_<slot>` storage, without the accessor methods that only the wrap
+ * surface installs. This is the shape the reader returns and the render
+ * transport accepts.
+ */
+export type NodeDataOf<T> = Pick<T, Extract<keyof T, '$type' | `_${string}`>> & AnyNodeData;

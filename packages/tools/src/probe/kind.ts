@@ -86,7 +86,6 @@ import {
 	adaptNode,
 	nativeTreeHandle,
 	materializeWrappedNodeData,
-	stripStructuralNodeText,
 	loadReadTreeNode,
 	walkNativeForKind,
 	buildKindToSupertypes,
@@ -109,7 +108,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
-
+import { stripStructuralNodeText } from '@sittir/common';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------

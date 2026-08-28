@@ -14,7 +14,7 @@
 
 use std::marker::PhantomData;
 use crate::format::{apply_format, extract_format};
-use crate::read_node::read_node;
+use crate::read_node::{read_node, ReadDepth};
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
 
@@ -125,9 +125,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Read the root node of the parsed tree into a `NodeData`.
-    pub fn read_root(&mut self) -> NodeData {
+    pub fn read_root(&mut self, depth: ReadDepth) -> NodeData {
         let handle = self.push_coord(NodeCoord::root());
-        read_node(&self.tree, &self.source, None, Some(handle))
+        read_node(&self.tree, &self.source, None, Some(handle), depth)
     }
 
     /// Read a child node by handle + child_index.
@@ -136,7 +136,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// back-links), takes `parent.child(child_index)` to confirm the child
     /// exists, records an O(1) `(handle, child_index)` coordinate, and reads
     /// the (already resolved) child into a `NodeData`.
-    pub fn read_child(&mut self, handle: u32, child_index: u16) -> Result<String, String> {
+    pub fn read_child(
+        &mut self,
+        handle: u32,
+        child_index: u16,
+        depth: ReadDepth,
+    ) -> Result<String, String> {
         // Resolve parent and child while only borrowing `self.nodes` + `self.tree`.
         // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
         // stays valid across the disjoint `&mut self.nodes` push below — no second
@@ -163,7 +168,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             parent: Some(handle),
             child_index: child_index as u32,
         });
-        let data = read_node(&self.tree, &self.source, Some(child_node), Some(new_handle));
+        let data = read_node(&self.tree, &self.source, Some(child_node), Some(new_handle), depth);
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
 

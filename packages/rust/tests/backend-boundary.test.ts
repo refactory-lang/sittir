@@ -248,7 +248,7 @@ describe('boundary', () => {
 			}
 		);
 
-		// Engine created with reader support
+		// Engine created with read support
 		const { createEngine } = await import('../src/engine.ts');
 		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
@@ -259,12 +259,10 @@ describe('boundary', () => {
 		expect(engine.render(identifier).toString()).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 
-		// Reader should be available on native engine
-		expect(engine.reader).toBeDefined();
-		if (engine.reader) {
-			const { root } = engine.reader.parseAndRead('x');
-			expect(root).toEqual(identifier);
-		}
+		// Diagnostics reads are always available on a native engine
+		expect(engine.diagnostics).toBeDefined();
+		const { root } = engine.diagnostics.parseAndRead('x');
+		expect(root).toEqual(identifier);
 	});
 
 	it('falls back when native render transport ABI is stale', async () => {

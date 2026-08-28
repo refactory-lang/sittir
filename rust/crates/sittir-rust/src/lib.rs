@@ -1,5 +1,11 @@
 //! Thin N-API binding for the Rust grammar.
 
+// Every transport slot position wraps its value in `SlotValue`, which adds a
+// layer to an already deeply nested generated type graph. Auto-trait
+// resolution (`Unpin` on the innermost `Vec`) exceeds the default limit on
+// the larger grammars.
+#![recursion_limit = "256"]
+
 pub mod render;
 
 use tree_sitter_language::LanguageFn;
@@ -24,10 +30,10 @@ use sittir_core::engine::{Engine, EngineGrammar};
 #[cfg(feature = "napi-bindings")]
 use sittir_core::types::{Edit, FormatRecord};
 #[cfg(feature = "napi-bindings")]
-use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree};
+use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree, ReadDepth};
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
+use render::{render_transport_parts, RenderRoot, TEMPLATE_BUNDLE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
@@ -107,9 +113,14 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn parse_and_read(&mut self, source: String) -> Result<String> {
+    /// `deep` expands the whole tree in one pass instead of leaving each
+    /// child with substructure as a stub. Default (absent / `false`) is the
+    /// lazy one-level read.
+    pub fn parse_and_read(&mut self, source: String, deep: Option<bool>) -> Result<String> {
+        let depth = read_depth(deep);
         let mut parsed = self.engine.parse(source).map_err(Error::from_reason)?;
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| parsed.read_root()));
+        let result =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| parsed.read_root(depth)));
         match result {
             Ok(data) => {
                 let format = parsed.format().cloned();
@@ -128,18 +139,23 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn read_node(&mut self, handle: f64, child_index: f64) -> Result<String> {
+    pub fn read_node(
+        &mut self,
+        handle: f64,
+        child_index: f64,
+        deep: Option<bool>,
+    ) -> Result<String> {
         let parsed = self.parsed.as_mut().ok_or_else(|| {
             Error::from_reason("no tree parsed — call parseAndRead first".to_string())
         })?;
         parsed
-            .read_child(handle as u32, child_index as u16)
+            .read_child(handle as u32, child_index as u16, read_depth(deep))
             .map_err(Error::from_reason)
     }
 
     /// Render a typed transport object (napi-native, numeric `$type`).
     #[napi]
-    pub fn render(&self, transport: AnyTransport) -> Result<String> {
+    pub fn render(&self, transport: RenderRoot) -> Result<String> {
         let (source, canonical) = render_transport_parts(transport)
             .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
         let tree_format = self.parsed.as_ref().and_then(|pt| pt.format());
@@ -152,7 +168,7 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn render_to_file(&self, transport: AnyTransport, path: String) -> Result<()> {
+    pub fn render_to_file(&self, transport: RenderRoot, path: String) -> Result<()> {
         let rendered = self.render(transport)?;
         std::fs::write(&path, rendered)
             .map_err(|e| Error::from_reason(format!("render_to_file failed for {path}: {e}")))
@@ -168,6 +184,15 @@ impl SittirEngine {
     #[napi]
     pub fn dispose(&mut self) {
         self.parsed = None;
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+fn read_depth(deep: Option<bool>) -> ReadDepth {
+    if deep == Some(true) {
+        ReadDepth::Deep
+    } else {
+        ReadDepth::Shallow
     }
 }
 

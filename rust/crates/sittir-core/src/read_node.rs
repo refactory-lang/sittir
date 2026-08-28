@@ -30,6 +30,24 @@
 use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
 
+/// How far one read expands.
+///
+/// `Shallow` is the default and the lazy path: a child with substructure
+/// comes back as a stub carrying its parent handle and child index, and a
+/// later `read_child` expands it on demand. `Deep` expands everything in
+/// one pass instead.
+///
+/// A deep descendant keeps its `$childIndex` but gets NO `$nodeHandle`:
+/// nothing needs to re-read it, and a handle would invite exactly that —
+/// the wrap layer's drill-in would go back to the tree and replace the
+/// expansion it already has with a fresh shallow read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ReadDepth {
+    #[default]
+    Shallow,
+    Deep,
+}
+
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
 /// `NodeData`. See module docs for the shape contract.
 ///
@@ -40,6 +58,8 @@ use indexmap::IndexMap;
 ///   extracting leaf `$text` via byte-range slicing.
 /// * `target` — the tree-sitter `Node` to read. `None` reads the root.
 /// * `node_handle` — handle assigned by `ParsedTree` for the returned node.
+/// * `depth` — whether children with substructure come back as stubs
+///   (`Shallow`) or fully expanded (`Deep`).
 ///
 /// The caller supplies the `Node` directly (obtained via
 /// `ParsedTree.nodes[handle]` + `parent.child(child_index)`), so no
@@ -49,9 +69,10 @@ pub fn read_node(
     source: &str,
     target: Option<tree_sitter::Node>,
     node_handle: Option<u32>,
+    depth: ReadDepth,
 ) -> NodeData {
     let node = target.unwrap_or_else(|| tree.root_node());
-    read_ts_node(node, source, node_handle)
+    read_ts_node(node, source, node_handle, depth)
 }
 
 /// The `$type` every read stamps: tree-sitter's pre-alias GRAMMAR symbol —
@@ -66,8 +87,13 @@ fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
 
-/// One-level read core — converts a tree-sitter `Node` into `NodeData`.
-fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u32>) -> NodeData {
+/// Read core — converts a tree-sitter `Node` into `NodeData`.
+fn read_ts_node(
+    node: tree_sitter::Node<'_>,
+    source: &str,
+    node_handle: Option<u32>,
+    depth: ReadDepth,
+) -> NodeData {
     // Phase B-inverse: numeric ids directly instead of the string kind()
     // so NodeData.type_: KindId flows end-to-end without a heap-allocated
     // String per node; identity comes from the grammar symbol (see
@@ -81,7 +107,7 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
         end: byte_range.end as u32,
     };
 
-    let (fields, children, slot_order) = read_children(node, source, node_handle);
+    let (fields, children, slot_order) = read_children(node, source, node_handle, depth);
 
     // Leaf heuristic: no named fields AND no (named) children. The
     // tree-sitter convention is that purely-anonymous terminals are
@@ -159,7 +185,7 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
     let mut cursor = node.prev_sibling();
     while let Some(sib) = cursor {
         if sib.is_extra() {
-            leading.push(read_ts_node(sib, source, None));
+            leading.push(read_ts_node(sib, source, None, ReadDepth::Deep));
             cursor = sib.prev_sibling();
         } else if sib.is_named() {
             break;
@@ -174,7 +200,7 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
     let mut cursor = node.next_sibling();
     while let Some(sib) = cursor {
         if sib.is_extra() {
-            trailing.push(read_ts_node(sib, source, None));
+            trailing.push(read_ts_node(sib, source, None, ReadDepth::Deep));
             cursor = sib.next_sibling();
         } else if sib.is_named() {
             is_last_named = false;
@@ -219,6 +245,7 @@ fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u32>,
+    depth: ReadDepth,
 ) -> (
     Option<IndexMap<String, FieldValue>>,
     Option<Vec<NodeData>>,
@@ -241,7 +268,13 @@ fn read_children(
         let data = if child.child_count() == 0 {
             read_materialized_leaf(child, source)
         } else {
-            read_child_stub(child, source, node_handle, i as u16)
+            match depth {
+                ReadDepth::Shallow => read_child_stub(child, source, node_handle, i as u16),
+                ReadDepth::Deep => NodeData {
+                    child_index: Some(i as u16),
+                    ..read_ts_node(child, source, None, ReadDepth::Deep)
+                },
+            }
         };
         match field_name {
             Some(name) => {

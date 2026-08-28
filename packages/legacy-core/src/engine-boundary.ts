@@ -3,8 +3,9 @@
 export { resolveEngineFormat } from './engine.ts';
 export type {
 	EngineOptions,
+	ParseOptions,
 	ParseAndReadResult,
 	RenderHandle,
 	SittirEngineLike,
-	SittirEngineReader
+	EngineDiagnostics
 } from '@sittir/common/engine';

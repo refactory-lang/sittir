@@ -1238,45 +1238,6 @@ export function materializeWrappedNodeData(
 	return materializeWrappedValue(root, onAccessorThrow) as AnyNodeData;
 }
 
-export function stripStructuralNodeText<T>(root: T): T {
-	const seen = new WeakSet<object>();
-	const isNodeData = (value: unknown): value is AnyNodeData =>
-		typeof value === 'object' && value !== null && '$type' in value;
-	const hasStructure = (record: Record<string, unknown>): boolean =>
-		Object.keys(record).some((key) => key.startsWith('_')) ||
-		(record.$fields != null && typeof record.$fields === 'object') ||
-		record.$other != null;
-	const recurse = (value: unknown): void => {
-		if (!isNodeData(value)) return;
-		if (seen.has(value)) return;
-		seen.add(value);
-		const record = value as unknown as Record<string, unknown>;
-		if (hasStructure(record)) {
-			delete record.$text;
-		}
-		for (const [key, child] of Object.entries(record)) {
-			if (key === '$with') continue;
-			if (key === '$other') {
-				if (Array.isArray(child)) {
-					for (const entry of child) recurse(entry);
-				} else {
-					recurse(child);
-				}
-				continue;
-			}
-			if (key.startsWith('_')) {
-				if (Array.isArray(child)) {
-					for (const entry of child) recurse(entry);
-				} else {
-					recurse(child);
-				}
-			}
-		}
-	};
-	recurse(root);
-	return root;
-}
-
 /**
  * One accessor-throw occurrence — a slot's declared getter threw instead of
  * returning a value, so `resolveWrappedStorageValue` fell back to the raw,

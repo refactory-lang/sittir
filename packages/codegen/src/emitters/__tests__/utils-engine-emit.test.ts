@@ -17,14 +17,17 @@ describe('utils engine facade emission', () => {
 		expect(contents).not.toContain('$render(this: AnyNodeData): string { return render(this); }');
 	});
 
-	it('emits factory and wrap call sites with the explicit methodsEngine argument', () => {
+	it('emits factory and wrap call sites with an explicit engine argument', () => {
 		const nodeMap = makeMinimalNodeMap();
 		const factoriesSrc = emitFactories({ grammar: 'synth', nodeMap });
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap });
 
+		// Factory-built nodes own their storage outright — the shared engine renders them as-is.
 		expect(factoriesSrc).toContain('import { withMethods, withAccessors, methodsEngine');
 		expect(factoriesSrc).toContain('}, methodsEngine);');
+		// Wrapped nodes carry accessor methods over reader-shaped storage, so they
+		// bind the tree-scoped engine that projects to plain data before the boundary.
 		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
-		expect(wrapSrc).toContain('}, methodsEngine);');
+		expect(wrapSrc).toContain('}, _treeEngine(tree));');
 	});
 });

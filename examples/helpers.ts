@@ -1,17 +1,6 @@
-import type { ParseAndReadResult, SittirEngineLike } from '@sittir/common/engine';
 import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData, Edit } from '@sittir/types';
 export type { TreeHandle };
-
-export function parseSource<TRoot extends AnyNodeData>(
-	engine: SittirEngineLike<TRoot>,
-	source: string
-): ParseAndReadResult<TRoot> {
-	if (!engine.reader) {
-		throw new Error('This example requires an engine reader. The current backend is render-only.');
-	}
-	return engine.reader.parseAndRead(source);
-}
 
 export function nodeText(value: unknown): string {
 	if (typeof value === 'string') return value;
@@ -51,4 +40,25 @@ export function replaceAtSpan(
 		endPos: target.$span.end,
 		insertedText: replacement.$render(),
 	};
+}
+
+/**
+ * The kind tree of a wrapped node — `$type` plus each `_<slot>` storage
+ * value, drilled through the wrap accessors — with source positions and
+ * text dropped, so two parses of differently-formatted equivalent source
+ * compare equal.
+ */
+export function structuralShape(node: unknown): unknown {
+	if (Array.isArray(node)) return node.map(structuralShape);
+	if (node === null || typeof node !== 'object') return node;
+	const record = node as Record<string, unknown>;
+	const shape: Record<string, unknown> = { $type: record.$type };
+	for (const key of Object.keys(record)) {
+		if (!key.startsWith('_')) continue;
+		const accessor = record[key.slice(1).replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())];
+		const value = typeof accessor === 'function' ? (accessor as () => unknown).call(record) : record[key];
+		shape[key] = structuralShape(value);
+	}
+	if (typeof record.$text === 'string' && Object.keys(shape).length === 1) shape.$text = record.$text;
+	return shape;
 }

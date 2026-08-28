@@ -253,7 +253,7 @@ describe('wrapped tree materialization', () => {
 		expect(materialized).not.toHaveProperty('$with');
 	});
 
-	it('preserves raw nested field storage when factory-style children are already materialized', async () => {
+	it('normalizes nested field storage when children are already materialized', async () => {
 		const wrapModulePath = new URL('../../../rust/src/wrap.ts', import.meta.url).pathname;
 		const typesModulePath = new URL('../../../rust/src/types.ts', import.meta.url).pathname;
 		const { wrapFunctionItem } = (await import(wrapModulePath)) as {
@@ -293,9 +293,13 @@ describe('wrapped tree materialization', () => {
 
 		const materialized = asRecord(materializeWrappedNodeData(wrapped));
 
+		// A nested child with no reader coordinates to re-read by still goes
+		// through its own wrap function, which reconciles the reader's shape
+		// with the model's: `modifier` is a repeated slot, so a lone value
+		// becomes a one-element array — the shape the transport's `Vec` needs.
 		expect(materialized._function_modifiers).toMatchObject({
 			$type: TSKindId.FunctionModifiers,
-			_modifier: TSKindId.Async
+			_modifier: [TSKindId.Async]
 		});
 	});
 

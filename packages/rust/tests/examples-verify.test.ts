@@ -13,7 +13,7 @@ import {
 	immutableFunctionUpdates,
 	structSideBySide
 } from '../../../examples/01-construct-nodes.ts';
-import { renderMainFunction, roundTripIsByteIdentical } from '../../../examples/02-render-round-trip.ts';
+import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 
@@ -48,13 +48,31 @@ describe('examples/02 render round trip', () => {
 	it('renders a pub main function', () => {
 		expect(renderMainFunction()).toContain('pub fn main');
 	});
-	// Pinned gap: rendering a RAW parsed root sends the reader's shallow
-	// child stubs into the native transport unhydrated ("Missing field
-	// `_name`") — the boundary render needs to drill stubs (or the wrap
-	// surface's $render must hydrate) before transport. Flips to green
-	// when that lands.
-	it.fails('round-trips its own render byte-identically', () => {
-		expect(roundTripIsByteIdentical(renderMainFunction())).toBe(true);
+	it('re-parses a rendered parsed root to the same tree', () => {
+		const { rendered, reparsesEqual } = roundTrip(renderMainFunction());
+		expect(rendered).toContain('pub fn main');
+		expect(reparsesEqual).toBe(true);
+	});
+	it('re-parses a multi-item source file to the same tree', () => {
+		const source = 'struct A { a: u8, b: String }\nfn f(a: &A) -> u8 { a.a + 1 }\n';
+		expect(roundTrip(source).reparsesEqual).toBe(true);
+	});
+
+	// A freshly parsed root has nothing expanded below it, so nothing is
+	// rebuilt and nothing is re-spelled — the source comes back byte for byte.
+	it('reproduces an untouched parse byte-for-byte', () => {
+		const source = 'pub fn main() { }\n';
+		expect(renderUntouched(source)).toBe(source);
+	});
+	it("keeps an untouched parse's own irregular spacing", () => {
+		const source = 'fn   weird ( ) {   }\n';
+		expect(renderUntouched(source)).toBe(source);
+	});
+	it('keeps what sits BETWEEN items, not just the items themselves', () => {
+		// The gap is where the comments and blank lines live — and in an
+		// indentation-sensitive grammar, the block structure.
+		const source = 'struct A { a: u8, b: String }\n\n// gap\nfn f(a: &A) -> u8 { a.a + 1 }\n';
+		expect(renderUntouched(source)).toBe(source);
 	});
 });
 

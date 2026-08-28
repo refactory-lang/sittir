@@ -12,7 +12,7 @@
 //! recursive `$fields` payloads no longer appear on native reads.
 
 use serde_json::Value;
-use sittir_core::read_node::read_node;
+use sittir_core::read_node::{read_node, ReadDepth};
 use sittir_core::types::{NodeData, Source};
 
 /// Recursively assert that every object-shaped JSON node in `value`
@@ -63,7 +63,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    read_node(&tree, source, None, Some(0))
+    read_node(&tree, source, None, Some(0), ReadDepth::Shallow)
 }
 
 fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -157,7 +157,7 @@ fn anonymous_leaf_children_do_not_invent_fields() {
     let tree = parse_tree(lang, source);
     let params = find_first_ts_node_by_kind(tree.root_node(), "closure_parameters")
         .expect("closure_parameters cst node");
-    let node = read_node(&tree, source, Some(params), Some(0));
+    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::Shallow);
     let json = serde_json::to_value(&node).expect("serialize");
     let params = json.as_object().expect("closure_parameters object");
     assert!(
@@ -174,7 +174,7 @@ fn raw_native_children_payload_stays_array_shaped() {
     let source = "fn f() { g(x); }";
     let tree = parse_tree(lang, source);
     let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
-    let node = read_node(&tree, source, Some(args), Some(0));
+    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::Shallow);
     let json = serde_json::to_value(&node).expect("serialize");
 
     assert!(

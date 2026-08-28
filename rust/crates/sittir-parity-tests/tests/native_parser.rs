@@ -1,4 +1,4 @@
-use sittir_core::read_node::read_node;
+use sittir_core::read_node::{read_node, ReadDepth};
 use sittir_core::types::FieldValue;
 use sittir_typescript::render::{CONST, LEXICAL_DECLARATION, SEMI};
 use tree_sitter::Parser;
@@ -18,7 +18,7 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
 
     assert_eq!(node.kind(), "lexical_declaration");
 
-    let data = read_node(&tree, source, Some(node), Some(0));
+    let data = read_node(&tree, source, Some(node), Some(0), ReadDepth::Shallow);
     let fields = data.fields.expect("named fields");
 
     assert_eq!(data.type_, LEXICAL_DECLARATION);
@@ -72,7 +72,7 @@ fn typescript_enum_body_elements_stamps_slot_order() {
     }
     let elements = elements.expect("enum_body_elements node");
 
-    let data = read_node(&tree, source, Some(elements), Some(0));
+    let data = read_node(&tree, source, Some(elements), Some(0), ReadDepth::Shallow);
     let fields = data.fields.as_ref().expect("named fields");
     assert!(fields.len() >= 2, "expected multi-bucket parent, got {fields:?}");
 
@@ -91,6 +91,7 @@ fn typescript_enum_body_elements_stamps_slot_order() {
         source,
         Some(elements.child(0).expect("first member")),
         Some(0),
+        ReadDepth::Shallow,
     );
     assert!(leaf.slot_order.is_none(), "leaf must not stamp $slotOrder");
 }
