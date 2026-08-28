@@ -1,19 +1,3 @@
-/**
- * `buildFactoryMap` — the single derivation for validator-only factory
- * metadata (factory shapes, field-alias map, factory field lists, per-kind
- * slot metadata, polymorph variant dispatch tables).
- *
- * PR-K: this metadata is no longer emitted to a standalone `factory-map.json5`.
- * `emitters/node-model.ts` calls `buildFactoryMap` ONCE and folds its output
- * into `node-model.json5` (per-node `factoryShape`/`factoryFields`; top-level
- * `polymorphVariants`/`factorySlots`/`fieldAliasMap`). The validators read it
- * back via `validate/common.ts`'s `loadNodeModel`. This module is therefore a
- * pure derivation library — it produces no on-disk artifact of its own.
- *
- * The function-valued `_factoryMap` stays in `factories.ts` — it can't
- * round-trip through JSON.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -44,9 +28,6 @@ export interface FactorySlotMeta {
 
 export interface FactoryMapData {
 	readonly factoryShapes: Readonly<Record<string, FactoryShape>>;
-	/** Companion fact to a `'forwarded'` factoryShape: the kind whose
-	 *  constructor the factory forwards. Present iff the shape is
-	 *  'forwarded'; transitive chains resolve by following entries. */
 	readonly forwardsTo: Readonly<Record<string, string>>;
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;

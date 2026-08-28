@@ -1,25 +1,3 @@
-/**
- * validate-renderable — every named kind in tree-sitter's node-types.json
- * must be renderable by @sittir/legacy-core.
- *
- * A kind is renderable when one of these holds:
- *
- *   1. Supertype   — has `subtypes` in node-types.json. Supertypes are
- *                    abstract; `render()` dispatches to the concrete subtype,
- *                    so the supertype itself never reaches the rules lookup.
- *
- *   2. Pure leaf   — has no `fields` AND no `children` in node-types.json.
- *                    `render()` returns `node.text` directly without any
- *                    template lookup.
- *
- *   3. Has rule    — kind appears in the `rules` map of templates directory
- *                    (either as a top-level entry or as a variant target).
- *
- * Anything else is un-renderable: calling `render()` on an instance will
- * throw `No render rule for '<kind>'`. That's a codegen regression we
- * want surfaced as a first-class validation error.
- */
-
 import { loadRawEntries } from './node-types-loader.ts';
 import type { RawNodeEntry } from './node-types-loader.ts';
 import type { NodeMap } from '../compiler/types.ts';

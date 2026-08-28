@@ -1,17 +1,3 @@
-/**
- * Codegen library surface — programmatic entry points for running the codegen
- * pipeline without going through the CLI argument parser.
- *
- * `runCodegen`    — core path: generate IR → write all output files → renderable
- *                   check → manifest write → optional emit-diff → optional roundtrip.
- * `runFullRegen`  — `--all` chain: transpile → tree-sitter generate →
- *                   compile-parser → runCodegen → optional native rebuild.
- *
- * Error handling: instead of calling `process.exit()` (as the CLI does for
- * missing arguments), these functions throw `Error` with the same messages.
- * The CLI caller catches and converts to `process.exit(1)`.
- */
-
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
@@ -60,10 +46,6 @@ export interface CodegenOptions {
 	allowDiagnostics?: string[];
 }
 
-// ---------------------------------------------------------------------------
-// Internal helpers — co-located with cli.ts originally
-// ---------------------------------------------------------------------------
-
 export async function writeFile(path: string, content: string): Promise<void> {
 	let finalContent = content;
 	if (path.endsWith('.ts')) {
@@ -80,7 +62,6 @@ export async function writeFile(path: string, content: string): Promise<void> {
 		try {
 			if (readFileSync(path, 'utf8') === finalContent) return;
 		} catch {
-			// Unreadable existing file — fall through and overwrite.
 		}
 	}
 	mkdirSync(dirname(path), { recursive: true });
@@ -118,10 +99,6 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 
 export const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
-// ---------------------------------------------------------------------------
-// Grammar-diagnostics preflight gate
-// ---------------------------------------------------------------------------
-
 export async function runGrammarDiagnosticsPreflight(input: {
 	grammar: string;
 	allowDiagnostics: ReadonlySet<string>;
@@ -137,14 +114,6 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		const grammarJsPath = resolveGrammarJsPath(input.grammar);
 		const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 		const rawGrammar = await evaluate(entryPath);
-		// enrich() ran as part of producing `rawGrammar` above and attached its
-		// downgraded parsekind-noninjective diagnostics to that grammar object
-		// (evaluate propagates them from the enriched base). Read them off
-		// `rawGrammar`'s own return value — NOT a module-global accumulator — so
-		// they are correct even on a repeated evaluate() of the same grammar in
-		// one process, and never interleave across concurrent grammar
-		// evaluations. They land in the same persisted grammar-diagnostics.json
-		// as every other grammar diagnostic source.
 		const unaliasDiagnostics = getEnrichUnaliasDiagnostics(rawGrammar).map((d) =>
 			fromParseKindCollision(input.grammar, d)
 		);
@@ -158,25 +127,10 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
 	const blocked = [...blockedSet];
 
-	// Non-blocking (and allow-listed) diagnostics are always surfaced as
-	// visible, non-fatal output so every collected grammar condition prints
-	// during `sittir gen`/regen, even when none are blocking.
 	const nonBlocking = diagnostics.filter((d) => !blockedSet.has(d));
 	if (nonBlocking.length > 0) {
 		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
 	}
-	// Persist the COMPLETE diagnostic set (blocking + non-blocking) — writing
-	// only `nonBlocking` silently dropped blocking diagnostics from the
-	// persisted artifact even when the run went on to proceed (allow-listed,
-	// or confirmed interactively).
-	//
-	// Only write when running against a REAL loaded grammar. `injectedDiagnostics`
-	// is a test-only seam (`cli-grammar-diagnostics.test.ts` injects diagnostics
-	// for an arbitrary/fake grammar to exercise the gate's allow-list/confirm
-	// logic in isolation, bypassing real grammar loading) — writing through to
-	// the tracked `packages/<grammar>/.sittir/grammar-diagnostics.json` in that
-	// case would contaminate the real artifact with test fixtures. Keep the
-	// injection seam side-effect-free.
 	if (input.injectedDiagnostics === undefined) {
 		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
 	}
@@ -229,19 +183,7 @@ export async function runCodegenCli(
 	return 0;
 }
 
-// ---------------------------------------------------------------------------
-// Core codegen function
-// ---------------------------------------------------------------------------
-
 export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
-	// Codegen IS the writer of the per-grammar manifest. Internal validator runs
-	// invoked from inside this function (e.g. extractParityFixtures uses
-	// validateReadRenderParse to extract parity fixtures BEFORE the manifest is
-	// rewritten) would otherwise verify the manifest mid-write — checking the
-	// codegen process against its own incomplete output, which is meaningless.
-	// Set the env so `loadLanguageForGrammar` skips verification for these
-	// internal calls. External callers (validator CLI, probe-validate, etc.) do
-	// not run this function and therefore do not inherit this env.
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
 	const { grammar, outputDir, all, nodes, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
@@ -253,11 +195,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		throw new Error('Must provide --nodes or --all. Use --help for usage.');
 	}
 
-	// Grammar-diagnostics preflight gate. Blocking diagnostics (canProceed ===
-	// false) not covered by `allowDiagnostics` throw GrammarDiagnosticError in
-	// non-interactive mode, or prompt on a TTY. Known-debt diagnostics are
-	// currently non-blocking (canProceed: true), so this surfaces them without
-	// halting; --allow-diagnostic remains available for any future blocking code.
 	await runGrammarDiagnosticsPreflight({
 		grammar,
 		allowDiagnostics: new Set(opts.allowDiagnostics ?? []),
@@ -272,10 +209,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		emitRenderModule: all
 	});
 
-	// Surface slot-grouping diagnostics from the normalize phase. These are
-	// non-blocking propose-promotion suggestions; printing them here (after
-	// generate()) ensures they appear during `sittir gen --all` even when
-	// the preflight and generate() pipelines are separate.
 	if (result.slotGroupingDiagnostics.length > 0) {
 		const mapped = result.slotGroupingDiagnostics.map((d) => fromSlotGrouping(grammar, d));
 		process.stderr.write(formatGrammarDiagnostics(mapped) + '\n');
@@ -283,7 +216,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	const outDir = outputDir;
 
-	// Write source files
 	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
 	await writeFile(join(outDir, 'engine.ts'), result.engine);
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
@@ -297,18 +229,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'is.ts'), result.is);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
-	// Write per-rule `.jinja` files to packages/<grammar>/templates/
-	// (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
-	// whose rule kind is no longer in the grammar.
 	writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
-	// Static-seam-resolution residue report: how many template boundaries
-	// the SEQ join resolved statically, how many runtime checks have a
-	// statically-knowable outcome (derivable — the static-resolution
-	// candidate pool), and how many genuinely vary per instance (the true
-	// residue the spec ratchets on). The full per-boundary record list is
-	// persisted beside the other generated grammar artifacts so a ratchet
-	// (and a reviewer) can see WHICH sites changed, not just the counts.
 	{
 		const census = result.jinjaTemplates.seamCensus;
 		const total = census.boundaries.length;
@@ -337,12 +259,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
-	// --- grammar-owned Rust render-module emission (spec 012 T017) ---
-	// When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
-	// so the native backend and the TS backend can detect template-bundle drift
-	// at runtime (FR-020). The hash is computed over the same `.jinja`
-	// bodies that were just written above — this keeps the TS-side and
-	// Rust-side derivations in lockstep.
 	const shouldEmitRustRender = all && (RUST_RENDER_GRAMMARS as readonly string[]).includes(grammar);
 
 	if (shouldEmitRustRender) {
@@ -357,10 +273,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		await writeFile(emit.templatesRs.path, emit.templatesRs.contents);
 		await writeFile(emit.transportRs.path, emit.transportRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
-		// Copy the per-kind `.jinja` files into the grammar crate's templates/
-		// directory so askama's build-time `#[template(path = ...)]` can
-		// resolve them (T030). Stale files (no longer in the generated copy
-		// plan) are removed so regenerations don't accumulate dead templates.
 		const dstTemplatesDir = renderModule.templateCopies.directory;
 		mkdirSync(dstTemplatesDir, { recursive: true });
 		const emittedNames = new Set<string>();
@@ -372,8 +284,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 			if (!existing.endsWith('.jinja')) continue;
 			if (!emittedNames.has(existing)) rmSync(join(dstTemplatesDir, existing), { force: true });
 		}
-		// Write per-grammar kind_ids.rs (Phase B: KindID runtime migration).
-		// This file exports one pub const per kind matching the TS-side TSKindId enum.
 		if (result.kindIds) {
 			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
 			await writeFile(kindIdsPath, result.kindIds);
@@ -386,23 +296,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 
-		// Rebuild the corresponding N-API binding so the native render path
-		// picks up the new templates. Askama compiles templates at the
-		// crate's build time via proc macro; without a rebuild, native
-		// baseline collection silently falls back to TS render with the
-		// previous templates baked in. Opt out with --no-build-native.
 		if (buildNative !== false) {
 			const nativeCrate = `rust/crates/sittir-${grammar}`;
-			// Dev/gate loop can build the napi crate in DEBUG via --native-debug.
-			// The validate gate only needs a CORRECT .node (AST-match), not an optimized
-			// one — and the debug profile enables incremental compilation (the release
-			// profile has `incremental = false`), so a codegen edit → regen recompiles
-			// only the changed crate + relinks instead of a full from-scratch optimized
-			// build. Keep the default `build` (`--release`) for CI / production artifacts.
-			// Explicit opt-in only (--native-debug, not an env var): build-profile
-			// choice affects the shared, historically-compared validate:native
-			// numbers, so it must be visible in the invocation, never inherited
-			// from ambient shell state.
 			const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build';
 			console.log(
 				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
@@ -421,18 +316,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 				throw e;
 			}
 
-			// Workspace-wide compile check — codegen changes in render-module.ts
-			// affect all three grammars' emitted transport.rs. Without a check
-			// across the whole workspace, breakage in non-targeted grammars
-			// (e.g. python or typescript) would silently persist until the next
-			// per-grammar regen. cargo check is incremental: a no-op for the
-			// crate just rebuilt by napi, and only compiles other crates whose
-			// source changed since their last build.
-			//
-			// Skippable via --no-workspace-check: a multi-grammar driver
-			// (`regen:all`) runs the check once on its LAST grammar instead of
-			// once per grammar — the final check still covers the whole
-			// workspace, the earlier ones were redundant.
 			if (workspaceCheck !== false) {
 				console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
 				try {
@@ -451,15 +334,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		}
 	}
 
-	// Write node model (single on-disk metadata source — PR-K folded the
-	// former factory-map.json5 sections in here).
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
-	// Write suggested overrides log (T042f) next to grammar.sittir.ts at the
-	// package root. This is a documentation file — not runnable. `undefined`
-	// means the emitter has nothing to suggest (emission disabled or empty
-	// result) — skip the write, and remove any stale file left by a prior
-	// run so re-enabling the emitter later naturally recreates it.
 	const suggestedPath = join(dirname(outDir), 'overrides.suggested.ts');
 	if (result.suggested !== undefined) {
 		await writeFile(suggestedPath, result.suggested);
@@ -467,24 +343,16 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		rmSync(suggestedPath);
 	}
 
-	// Write tests
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
 
-	// Write vitest config
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	// --- Renderability check: every named kind in node-types.json must be
-	// reachable by @sittir/legacy-core's render() function (supertype, leaf, or rule).
-	// Uses the NodeMap directly for a structural truth check.
 	const config = { grammar, nodes: all ? undefined : nodes, outputDir };
 	const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
 	console.log('');
 	console.log(formatRenderableReport(renderable));
 
-	// Collected diagnostic: kinds whose CHOICE slot has no grammar field name.
-	// A naked choice falls back to an unresolvable `content` slot; the author must
-	// give it an explicit `field('<name>', ...)` in `packages/<lang>/grammar.sittir.ts`.
 	const unnamedChoiceKinds = drainUnnamedChoiceSlots();
 	if (unnamedChoiceKinds.length > 0) {
 		console.warn(
@@ -493,30 +361,14 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 	if (renderable.missing.length > 0) {
-		// Warning-only: these are typically anonymous / alias-target kinds that
-		// never get rendered as top-level nodes (e.g. `empty_statement`,
-		// `doc_comment`). If user code DOES call render() on them, it will
-		// throw — but that's a real consumer bug, not a codegen failure.
 		console.warn(
 			`\n${renderable.missing.length} un-renderable kind(s) — render() will throw if called on these instances.`
 		);
 	}
 
-	// Write the per-grammar generated.manifest.json after all bulk writes complete
-	// and before any validation runs. Always happens regardless of --roundtrip,
-	// because the manifest needs to track the current on-disk state for any
-	// downstream validator (this function's roundtrip probes OR the external
-	// validator CLI). The only post-validation write is overrides.suggested.ts,
-	// which is intentionally excluded from the manifest (see pathsFor()).
 	writeManifestForGrammar(grammar as Grammar);
 	console.log(`  → packages/${grammar}/.sittir/generated.manifest.json updated`);
 
-	// Post-regen emit diff: show what THIS run changed in the generated output,
-	// grouped by emitter, working tree vs HEAD. Convenience only — skipped under
-	// --no-emit-diff and silently when git is unavailable. Printed here (right
-	// after the manifest write, before validation) so it reflects the same on-disk
-	// state the manifest just captured; overrides.suggested.ts is excluded from
-	// the tracked roots, so the later validation write does not muddy the report.
 	if (all && !noEmitDiff) {
 		const emitDiff = formatEmitDiff(grammar as Grammar);
 		if (emitDiff) console.log(`\n${emitDiff}`);
@@ -527,41 +379,16 @@ Done! Generated:
   templates/*.jinja, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
-	// Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
-	// No-op otherwise. Used to validate simplify's canonicalization before
-	// shrinking `deriveFields` / `deriveChildren` to trivial walks.
 	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
 
-	// Return the assembled NodeMap so the cli orchestrator can thread it into the
-	// tools-side post-generate validation passes (parity fixtures, round-trip
-	// probes) — validation no longer runs inside codegen.
 	return result.nodeMap;
 }
 
-// ---------------------------------------------------------------------------
-// Full regen (--all chain: transpile → ts-generate → compile-parser → runCodegen
-// → native rebuild)
-// ---------------------------------------------------------------------------
-
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	// Set BEFORE any generate/validate work (mirrors the top-level set in cli.ts).
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 
-	// Auto-chain: with --all, by default run transpile + tree-sitter generate
-	// + compile-parser BEFORE sittir codegen. This produces fresh
-	// .sittir/grammar.js, .sittir/src/{grammar,node-types}.json, AND a
-	// fresh .sittir/parser.wasm — sittir codegen then reads those to emit
-	// packages/<grammar>/src/*. Opt out with --skip-ts-chain if you only
-	// want the sittir codegen phase (e.g., rapid iteration when the upstream
-	// grammar hasn't changed).
-	//
-	// parser.wasm MUST be rebuilt alongside grammar.js / node-types.json —
-	// otherwise validators that consult the override parser (via
-	// loadLanguageForGrammar) see a stale parser that doesn't know about
-	// recent `field(...)` / `variant(...)` additions, producing silent
-	// AST mismatches in round-trip tests.
 	if (!skipTsChain && !transpile && !tsGenerate) {
 		console.log(`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
 		const grammarDir = resolve('packages', grammar);
@@ -575,11 +402,5 @@ export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`  → ${wasmPath}`);
 	}
 
-	// Run the core codegen (generate → write all files → renderable → manifest
-	// → emit-diff → native rebuild (if applicable)). The native rebuild lives
-	// inside runCodegen (within the shouldEmitRustRender block) so it runs BEFORE
-	// manifest write — matching the original ordering from mainCli where cargo
-	// build preceded writeManifestForGrammar. Returns the NodeMap for the
-	// orchestrator's post-generate validation.
 	return runCodegen(opts);
 }

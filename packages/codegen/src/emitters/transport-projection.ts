@@ -8,10 +8,6 @@ export interface TransportLiteral {
 	readonly kind: string;
 	readonly text: string;
 	readonly resolvedKindId?: number;
-	/** Grammar-immediacy stamp of an INLINE terminal value (`token.immediate`
-	 *  threading) — kind-named literals resolve immediacy via their kind
-	 *  instead (`isImmediateLeafKind`); inline terminals have no kind to
-	 *  look up, so the stamp must ride the literal itself. */
 	readonly immediate?: boolean;
 }
 
@@ -47,9 +43,6 @@ function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean
 		case 'keyword':
 		case 'token':
 		case 'enum':
-		/* TEMPORARY: 'separatedList' shares 'branch's transport-concreteness for
-		   byte-identical output pending real per-instance separator capture —
-		   see isSlotBearingCompound's doc comment (shared.ts). */
 		case 'separatedList':
 			return true;
 		case 'group':
@@ -70,14 +63,6 @@ function collectTransportLiterals(
 	const literals: TransportLiteral[] = [];
 	const seen = new Set<string>();
 	const add = (literal: TransportLiteral, skipIfNodeKind: boolean): void => {
-		/* The node-kind guard only applies to KIND-DERIVED literals (their `kind`
-		   names a real transport node, whose struct already covers the value — a
-		   Literal unit variant would duplicate it). Bare literal TEXTS must not
-		   be name-matched against node kinds: a keyword text that happens to
-		   spell a rule name (e.g. python's `'type'`) is a DIFFERENT parser
-		   identity (anon token) and dropping it here left the anon token's kind
-		   id with no AnyTransport arm at all. Genuine id collisions are deduped
-		   at arm emission (emittedNodeIds). */
 		if (skipIfNodeKind && nodeKinds.has(literal.kind)) return;
 		const key = `${literal.kind}\0${literal.text}`;
 		if (seen.has(key)) return;

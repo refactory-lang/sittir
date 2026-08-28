@@ -1,27 +1,3 @@
-/**
- * dsl/field.ts — sittir field shadow with one-arg placeholder form.
- *
- * Tree-sitter's baseline `field()` takes two args: `field(name, content)`.
- * Sittir's transform() patches need a one-arg form so authors can write:
- *
- *     transform(original, { 0: field('expression') })
- *
- * Two-arg calls delegate to whichever `field` is provided as a global
- * by the runtime — sittir's grammarFn-injected field (`{type:'FIELD'}`)
- * in sittir's pipeline, or tree-sitter's native field (same shape) when
- * the transpiled grammar.js is loaded by tree-sitter's CLI. This keeps
- * the same call site valid for both consumers.
- *
- * One-arg calls return a sittir-only placeholder marker that
- * `transform()`'s resolvePatch swaps out before the result reaches
- * the runtime's grammar() processing. The marker never escapes into
- * a final grammar tree.
- *
- * Import explicitly when you want the one-arg form:
- *
- *     import { field } from '@sittir/codegen/dsl'
- */
-
 import type { Rule } from '../../types/rule.ts';
 import type { FieldLike } from '../../types/runtime-shapes.ts';
 import { wireRegisterSyntheticInline, wireRegisterSyntheticRule } from '../wire/wire.ts';
@@ -41,14 +17,10 @@ export function maybeKeywordSymbol(
 		return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
 	}
 
-	/* Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
-	   may not. */
 	if (isOptionalType(c.type)) {
 		return descendOptional(fieldName, content, wrapSyntheticBody, 'optional');
 	}
 
-	/* CHOICE(STRING, BLANK) is tree-sitter's normalized form for
-	   `optional(STRING)`. */
 	if (isChoiceType(c.type)) {
 		const members = (content as { members?: Array<{ type?: string }> }).members;
 		if (Array.isArray(members) && members.length === 2) {

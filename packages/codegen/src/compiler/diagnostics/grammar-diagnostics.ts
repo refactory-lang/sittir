@@ -39,8 +39,6 @@ export function fromParseKindCollision(grammar: string, diagnostic: ParseKindCol
 		grammar,
 		ownerKind: diagnostic.ownerKind,
 		slotName: diagnostic.slotName,
-		// Forward the producer's message/severity/canProceed verbatim rather than
-		// regenerating — keeps the wording single-sourced in the producer.
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
 		canProceed: diagnostic.canProceed,
@@ -61,17 +59,12 @@ export function fromDeriveShape(grammar: string, diagnostic: DeriveShapeDiagnost
 		ruleId: diagnostic.ruleId,
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
-		// canProceed: true — derive-shape issues are surfaced as informational
-		// warnings; codegen continues so all issues are visible in one pass.
 		canProceed: true,
 		details: diagnostic.details
 	};
 }
 
 export function fromAssembleWarning(grammar: string, warning: AssembleWarning): GrammarDiagnostic {
-	// typename-collision is auto-resolved at assemble time (the rename already
-	// succeeded). Downgrade to 'info' so the channel stays signal-only; genuine
-	// unresolved collisions keep 'warning'.
 	const severity = warning.code === 'typename-collision' ? 'info' : 'warning';
 	return {
 		scope: 'grammar',
@@ -80,7 +73,6 @@ export function fromAssembleWarning(grammar: string, warning: AssembleWarning): 
 		grammar,
 		ownerKind: warning.ownerKind,
 		message: warning.message,
-		// Assemble warnings are observational — codegen continues.
 		canProceed: true,
 		details: warning.details
 	};
@@ -185,15 +177,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	nodeMap: AssembledNodeMap;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	// Link's own sink carries the kindId stamp-miss report (the per-build
-	// phantom-kind inventory) when id tables are supplied.
 	const linkSink = new DiagnosticSink();
 	const linked = link(input.rawGrammar, { generatedIdTables: input.generatedIdTables, diagnostics: linkSink });
-	// Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
-	// inlineKinds, diagnoseSlotGrouping's shape-①b (auto-group helper bodies,
-	// e.g. rust `_match_block_optional1`) never fires on this path, so
-	// `multi-slot-nested-seq` violations were console-only during regen and
-	// absent from the persisted grammar-diagnostics.json / validation report.
 	const inlineKinds = new Set(loadGrammarJsonInlineList(input.rawGrammar.name) ?? []);
 	const normalized = normalizeGrammar(
 		linked,
@@ -208,8 +193,6 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		AssembleCtx.from(normalized, input.generatedIdTables, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
 	);
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
-	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
-	// contentAliasedTo map (empty today; guards a future violation).
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: input.rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
@@ -243,10 +226,6 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	];
 	return {
 		nodeMap,
-		// Drop diagnostics for a kind this grammar's own override provably
-		// orphaned (see `RawGrammar.orphanedSyntheticGroups`) — it can never
-		// occur in a real parse, so any diagnostic about it is phantom
-		// regardless of code.
 		diagnostics:
 			orphanedSyntheticGroups.size === 0
 				? allDiagnostics
@@ -288,7 +267,6 @@ export function diagnoseContentAliasInjectivity(input: {
 	const { contentAliasedTo } = input;
 	if (!contentAliasedTo || contentAliasedTo.size === 0) return [];
 
-	// Invert to twin → distinct hidden bodies.
 	const bodiesByTwin = new Map<string, Set<string>>();
 	for (const [body, twins] of contentAliasedTo) {
 		for (const twin of twins) {

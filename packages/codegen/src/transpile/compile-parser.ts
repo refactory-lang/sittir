@@ -60,12 +60,6 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 	copyRelativeScannerIncludes(baseScanner, sittirScanner);
 }
 
-/**
- * Mirrors any header the scanner reaches via a relative `#include "..."`
- * alongside the copied scanner, at the same relative position from the new
- * .sittir/src/scanner.c location. Same-directory includes and tree-sitter's
- * own runtime headers are already resolvable and don't need copying.
- */
 function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string): void {
 	const src = readFileSync(baseScanner, 'utf8');
 	const includeRe = /#include\s+"([^"]+)"/g;

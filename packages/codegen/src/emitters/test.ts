@@ -1,8 +1,3 @@
-/**
- * Test scaffold emitter — consumes NodeMap directly.
- * Generates per-kind tests: factory produces correct type, render returns non-empty.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { allSlotsOf, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
@@ -60,9 +55,6 @@ function dummyNodeLiteral(
 
 export function emitTests(config: EmitTestsConfig): string {
 	const { nodeMap } = config;
-	// Use catalog kinds (parser-symbol universe) as the basis for kindEntries.
-	// TSGrammar-only kinds (no parser symbol) are excluded from the catalog
-	// and therefore have no factory to test.
 	const allKinds = config.generatedIdTables
 		? collectCatalogKinds(config.generatedIdTables)
 		: Array.from(nodeMap.nodes.keys());
@@ -80,26 +72,15 @@ export function emitTests(config: EmitTestsConfig): string {
 	}
 	lines.push('');
 
-	// Branch/container/polymorph tests
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (!node.factoryName) continue;
-		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
-		// never appear at runtime; no factory was emitted for them, so no test.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const key = node.irKey;
-		if (!key) continue; // synthesised group or skipped kind
-		// Skip kinds whose irKey isn't a valid JS identifier — those are
-		// anonymous tokens that surface as leaves but can't be accessed
-		// via `ir.<key>(...)` syntax. The external externals-inheritance
-		// pass surfaces new such kinds for grammars that declare them.
+		if (!key) continue;
 		if (!isValidIdent(key)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
-		// Known-failing kind (`expectTestFailures:` in grammar.sittir.ts): emit the
-		// tests into a scratch buffer, then splice them in as `describe.skip`
-		// with the declared reason. Skipping at the describe level (rather than
-		// per-`it`) keeps the override surface to one kind→reason entry.
 		const knownFailure = config.expectTestFailures?.[kind];
 		const target = knownFailure ? [] : lines;
 
@@ -155,19 +136,6 @@ function emitBranchTest(
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 
-	// Render test. Two variants depending on whether the minimal config
-	// produces renderable content:
-	//
-	// - If renderConfig has any injected content (required fields,
-	//   required children, or a dummy child for kinds with a children
-	//   slot), the render output is expected to be non-empty.
-	//
-	// - If renderConfig is `{}` (no required content and no children
-	//   slot — kinds whose fields are ALL optional, like self_parameter
-	//   or field_pattern_shorthand), rendering with no input legitimately
-	//   produces an empty string. We still invoke render() to catch
-	//   template-walker crashes, but don't assert non-empty — the empty
-	//   output is the correct behavior.
 	const hasRenderContent = renderConfigArg !== '{}';
 	if (hasRenderContent) {
 		lines.push(`  it('render produces non-empty string', () => {`);
@@ -185,28 +153,12 @@ function emitBranchTest(
 	lines.push('');
 }
 
-/**
- * The arguments a kind's factory call takes in the emitted tests: the
- * minimal (required-only) form for the type check and the render form.
- * Shared by the kind's own test and by the namespaced-constructor tests
- * that build a child through its parent.
- */
 function factoryCallArgs(
 	node: Extract<AssembledNode, { modelType: 'branch' | 'group' }>,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	strict = false
 ): { typeConfigArg: string; renderConfigArg: string } {
-	// Build two configs. The type-check test uses the minimal config — only
-	// required, non-auto-stamp fields/children. Auto-stamp slots are excluded
-	// (the factory stamps them directly; supplying would be a type error).
-	//
-	// The render test needs NON-EMPTY output, which the minimal config can
-	// fail to produce for kinds whose children are all optional (repeat(...)
-	// with every alt optional — calling ir.k({}) produces an empty repeat
-	// that renders to ""). So the render test unconditionally injects a dummy
-	// children element when the kind has a children slot at all, escaping
-	// the type via `as any`.
 	const typeConfigParts: string[] = [];
 	for (const f of node.fields) {
 		if (isRequired(f)) {
@@ -215,23 +167,6 @@ function factoryCallArgs(
 	}
 	const renderConfigParts = [...typeConfigParts];
 
-	// Gap 5: single-field-no-children factories take the value directly.
-	// Detect and emit a direct-value call instead of a config-object.
-	// `resolveDirectFactorySlot` is the same derivation the factories and
-	// from emitters use for the calling convention — a marker-carrying kind
-	// (e.g. class_static_block's automatic_semicolon) is config-shaped, and
-	// a direct-value call against its config coercion would hit the
-	// NodeData passthrough and return the child unchanged.
-	//
-	// Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
-	// `semicolon`, coerced via coerceKindEnumStorage in the emitted
-	// coerceToXxx — kindEnumTextIdPairs is non-empty for it): `ir.<key>`
-	// resolves to that coerce function, whose declared parameter type is
-	// `Xxx | {config}` (no bare-value variant), even though `Xxx`'s own
-	// builder does take the value directly — only `ir.<key>.strict(...)`
-	// (untested here) matches Gap 5's premise for that shape. The
-	// object-config form below is always type-correct regardless of field
-	// shape, since coerceToXxx checks `input.<fieldName>` first.
 	const singleFieldSlot = resolveDirectFactorySlot(node, nodeMap);
 	const singleFieldIsKindEnum =
 		!strict && singleFieldSlot !== undefined && kindEnumTextIdPairs(singleFieldSlot, nodeMap, kindEntries).length > 0;
@@ -241,7 +176,6 @@ function factoryCallArgs(
 	if (singleFieldSlot && !singleFieldIsKindEnum) {
 		const sole = singleFieldSlot;
 		const dummy = dummyValue(sole, nodeMap, kindEntries, strict);
-		// Optional field: type test passes no arg; render test passes dummy.
 		typeConfigArg = isRequired(sole) ? dummy : '';
 		renderConfigArg = dummy;
 	} else {
@@ -251,8 +185,6 @@ function factoryCallArgs(
 	return { typeConfigArg, renderConfigArg };
 }
 
-/** The positional argument a container-shape factory call takes in the
- *  emitted tests — a recursively-built dummy when the slot demands one. */
 function containerCallArgs(
 	node: Extract<AssembledNode, { modelType: 'branch' }>,
 	nodeMap: NodeMap,
@@ -261,14 +193,6 @@ function containerCallArgs(
 	const facts = soleSlotFacts(node, nodeMap);
 	const requiredSingular = facts && !facts.multiple && facts.required;
 	const anyNonEmpty = facts?.nonEmpty ?? false;
-	// Candidate kind names for the slot, preferring each value's `parseKind`
-	// (the tree-sitter-facing, constructable name) over `slotKindNames`'
-	// storage kind: for an alias-promoted slot (e.g. a hidden rule later
-	// exposed as its own visible kind), the storage kind is the
-	// pre-promotion hidden name, which the factory surface no longer
-	// accepts. Routed through `resolveConcreteKind` exactly like
-	// `dummyValueForField` — a bare supertype name (e.g. `type`) isn't
-	// itself constructable; it needs expanding to one of its subtypes.
 	const candidateKindNames = facts
 		? facts.slot.values
 				.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined))
@@ -276,10 +200,6 @@ function containerCallArgs(
 		: [];
 	const firstKindName =
 		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
-	// A recursively-built dummy (populating the child's own required fields,
-	// not just its type discriminant) rather than a bare `{ type: X }` —
-	// the factory's real signature expects full NodeData for this slot, not
-	// a type tag.
 	const placeholder =
 		(requiredSingular || anyNonEmpty) && firstKindName
 			? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set())
@@ -298,19 +218,6 @@ function emitContainerTest(
 ): void {
 	if (node.modelType !== 'branch' || classifyChildFactorySurface(node, nodeMap) === null) return;
 
-	// Container-shape branch factories take positional args: singular-
-	// child containers require one `child?` and repeated containers take
-	// `...children` rest args. We need a placeholder element when:
-	//   - the singular child is required, OR
-	//   - the multi children slot is `nonEmpty` (repeat1-sourced)
-	//     — the factory's `_assertNonEmpty` helper throws on empty
-	//     input, so the no-arg form `ir.kind()` would fail at
-	//     runtime even though it type-checks.
-	//
-	// `soleSlotFacts` is the same canonical derivation
-	// `emitFieldCarryingFactory` (factories.ts) bases its real signature
-	// on. Read it here too, so the test placeholder matches what the
-	// factory actually requires.
 	const placeholder = containerCallArgs(node, nodeMap, kindEntries);
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -322,12 +229,6 @@ function emitContainerTest(
 	lines.push('');
 }
 
-/**
- * The arguments a namespaced constructor takes in the emitted tests — a
- * form constructor takes what its child's factory (or hoisted
- * sub-constructor) takes; a member constructor takes its parameters'
- * dummies positionally.
- */
 function namespacedCallArgs(
 	entry: NamespacedConstructor,
 	nodeMap: NodeMap,
@@ -343,13 +244,8 @@ function namespacedCallArgs(
 				: namespacedConstructors(child, nodeMap, { isEmitted }).entries.find((e) => e.name === entry.path[0]);
 		return sub === undefined ? undefined : namespacedCallArgs(sub, nodeMap, kindEntries, isEmitted);
 	}
-	// A zero-arg call is the honest test when the surface allows it (a
-	// parameterless keyword arm, or a single OPTIONAL param) — no dummy
-	// literal, no cast.
 	const sig = constructorSurface(entry.childKind, nodeMap, kindEntries);
 	if (sig !== undefined && (sig.params === '' || /^\w+\?:/.test(sig.params))) return '';
-	// A form constructor declares its forwarding target's parameters
-	// (`constructorTargetKind`, factories.ts) — build the dummies for that.
 	const target = nodeMap.nodes.get(constructorTargetKind(entry.childKind, nodeMap));
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
@@ -360,15 +256,10 @@ function namespacedCallArgs(
 		case 'group':
 			return factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
 		case 'separatedList': {
-			// Two elements: a lone element can be a grammar's special case
-			// (rust's single-element tuple demands a trailing comma).
 			const element = dummyValueForField(buildSeparatedListContentSlot(target), nodeMap, kindEntries, 0, new Set());
 			return `${element}, ${element}`;
 		}
 		case 'pattern': {
-			// A text leaf's factory enforces its own pattern at construction,
-			// so the sample has to satisfy it; an exotic shape yields none and
-			// the constructor goes untested rather than known-failing.
 			const sample = pickSampleForPattern(target.pattern);
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
@@ -392,16 +283,11 @@ function emitNamespacedTests(
 ): void {
 	const isEmitted = emittedByCatalog(kindEntries);
 	const entries = namespacedConstructors(node, nodeMap, { isEmitted }).entries;
-	// Collected first: a constructor whose arguments cannot be synthesized is
-	// skipped, and a describe with no `it` left in it is a suite failure.
 	const cases: string[] = [];
 	for (const entry of entries) {
 		const args = namespacedCallArgs(entry, nodeMap, kindEntries, isEmitted);
 		if (args === undefined) continue;
 		const access = isValidIdent(entry.name) ? `.${entry.name}` : `[${JSON.stringify(entry.name)}]`;
-		// A `<kind>.<constructor>` key in `expectTestFailures:` pins one
-		// constructor's test as known-failing (the dummy builder cannot
-		// stub every child shape), without skipping the kind's own tests.
 		const knownFailure = expectTestFailures?.[`${kind}.${entry.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
 		cases.push(
@@ -431,10 +317,6 @@ function emitSeparatedListTest(
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elementsArg = `[${dummyValueForField(contentSlot, nodeMap, kindEntries, 0, new Set())}]`;
-	// `ir.<key>` resolves to the coerceTo* resolver (see emitRestParamFromResolver,
-	// from.ts), whose signature is `...input: readonly T[]` — rest params, not a
-	// single array param like the underlying factory. Spread the elements here or
-	// TS sees a lone `T[]` argument failing to match the first rest slot's `T`.
 	const callArgs = `...${elementsArg}`;
 
 	lines.push(`describe('${kind}', () => {`);
@@ -459,19 +341,9 @@ function emitLeafTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	// Find a sample text that satisfies the leaf's regex pattern (if
-	// any). The factory enforces patterns at runtime now — passing
-	// `'test'` to a shebang or metavariable factory would throw at
-	// construction time. Try a list of common shapes against the
-	// pattern and pick the first match; if none match, the leaf has
-	// an exotic shape and we skip the construction test (the regex
-	// check itself is the test).
 	const pattern = node.modelType === 'pattern' ? node.pattern : undefined;
 	const sample = pickSampleForPattern(pattern);
 	if (sample === null) {
-		// No working sample found — skip this leaf's construction
-		// test rather than emit a known-failing assertion. The
-		// pattern guard is exercised by other tests anyway.
 		return;
 	}
 	lines.push(`describe('${kind}', () => {`);
@@ -487,8 +359,6 @@ function emitLeafTest(
 
 function pickSampleForPattern(pattern: string | undefined): string | null {
 	if (!pattern) return 'test';
-	// Common candidates ordered loosely from "most likely to match
-	// an identifier-ish leaf" to "specific token shapes".
 	const candidates = [
 		'test',
 		'a',
@@ -579,14 +449,11 @@ function resolveConcreteKind(
 		seen.add(current);
 		const node = nodeMap.nodes.get(current);
 		if (!node) continue;
-		// Supertypes: expand to subtypes.
 		if (node.modelType === 'supertype') {
 			queue.push(...node.subtypeNames);
 			continue;
 		}
-		// TSGrammar-only: skip when kindEntries present and this kind has no parser symbol.
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
-		// Prefer text-only-compatible kinds — safe as `$text`-only stubs.
 		if (
 			node.modelType === 'pattern' ||
 			node.modelType === 'keyword' ||
@@ -597,10 +464,6 @@ function resolveConcreteKind(
 		}
 		nonLeafCandidates.push(current);
 	}
-	// No leaf-shaped candidate anywhere in the field's own kind set: use the
-	// first concrete (branch-shaped) candidate — the caller will recurse
-	// into it — or fall back to the raw input when nothing resolved at all
-	// (e.g. an entirely TSGrammar-only candidate set).
 	return nonLeafCandidates[0] ?? candidates[0] ?? '';
 }
 
@@ -614,16 +477,6 @@ function dummyValueForField(
 	visiting: ReadonlySet<string>
 ): string {
 	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
-	// `boolean` / `bitflag` / `kindEnum` bare-literal shortcuts are only valid
-	// at depth 0 (the top-level Config object passed to `ir.<kind>(...)`) —
-	// the FACTORY's `coerceBooleanKeywordStorage` / `coerceBitflagStorage` /
-	// `coerceKindEnumStorage` calls are what turn those literals into the
-	// numeric/transport shape the native wire expects. At depth > 0 we are
-	// splicing a RAW object literal directly (see {@link buildDummyStub}) —
-	// there is no factory call to do that coercion, so a bare string/`0`
-	// reaches native's `AnyTransport::from_napi_value` as-is and is rejected
-	// ("expected u16 kind_id or object with $type"). Emit the pre-coerced
-	// numeric discriminant instead in that position.
 	if (depth === 0) {
 		if (storageInfo.kind === 'boolean') return 'true';
 		if (storageInfo.kind === 'bitflag') return '0 as never';
@@ -657,16 +510,9 @@ function buildDummyStub(
 	depth: number,
 	visiting: ReadonlySet<string>
 ): string {
-	// Canonical-hidden architecture (Option Y): an alias-promoted kind's own
-	// fields live on the pre-promotion hidden node (`_<kind>`), not on a
-	// separate model entry under the visible name — same fallback
-	// `template-coverage.ts::validateTemplateCoverage` uses for the same
-	// reason.
 	const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
 	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
-	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-	// isSlotBearingCompound's doc comment (shared.ts).
 	if (!node || (node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'separatedList'))
 		return base;
 	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
@@ -679,37 +525,18 @@ function buildDummyStub(
 		const value = isMultiple(f)
 			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
 			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting);
-		// Nested stubs are raw object literals passed directly as
-		// `NodeData` — NOT routed through the field's factory (which is
-		// what translates a Config's `configKey` into `_<storageKey>` at
-		// runtime). Native's transport `FromNapiValue` reads the storage
-		// key straight off the object (`napi(js_name = "_pattern")`), so
-		// the literal must use `storageKey` here, unlike the top-level
-		// `emitBranchTest` config object (which legitimately uses
-		// `configKey` because it IS passed through `ir.<kind>(...)`).
 		fieldParts.push(`${f.storageKey}: ${value}`);
 	}
 	if (fieldParts.length === 0) return base;
-	// Splice the recursively-built required fields into the base literal —
-	// `base` always ends in `} as any`; insert before the closing brace.
 	return base.replace(/\}\s*as any$/, `, ${fieldParts.join(', ')} } as any`);
 }
 
-/**
- * A Config-surface dummy for one field. `strict` targets the factory's own
- * Config (a namespaced constructor calls `F.buildX` directly), where a
- * kind-enum slot takes its member's discriminant; the `ir.<kind>` coerce
- * path also accepts the member text.
- */
 function dummyValue(
 	field: AssembledNonterminal,
 	nodeMap?: NodeMap,
 	kindEntries?: readonly KindEnumEntry[],
 	strict = false
 ): string {
-	// Keyword-presence brands (boolean / bitflag) take a number / scalar at
-	// the Config surface, not a NodeData / array. Pre-empt the generic
-	// structural fallback below.
 	if (nodeMap) {
 		const kw = keywordPresenceKind(field, nodeMap);
 		if (kw === 'boolean') return 'true';
@@ -720,10 +547,6 @@ function dummyValue(
 			if (storageInfo.kind === 'kindEnum' && text !== undefined) return kindEnumConfigValue(text, kindEntries);
 		}
 	}
-	// Multiple fields need a non-empty dummy array so templates with
-	// `$FIELD`/`joinBy` produce non-empty output; otherwise the generated
-	// `render produces non-empty string` test fails for kinds where
-	// every required field is multiple.
 	if (!nodeMap) {
 		const kinds = slotKindNames(field);
 		if (isMultiple(field)) {

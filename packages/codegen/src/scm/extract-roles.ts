@@ -1,21 +1,3 @@
-/**
- * Semantic role extractor — reads tree-sitter `highlights.scm` and `tags.scm`
- * query files and identifies which grammar kinds serve specific semantic roles.
- *
- * Resolution strategy:
- * 1. Locate the grammar package via `createRequire`.
- * 2. Read `queries/highlights.scm` and `queries/tags.scm`.
- * 3. Check for `; inherits: <lang>` directive in each file.
- * 4. If not found, check `tree-sitter.json` `highlights`/`tags` arrays for
- *    parent grammar references (e.g. TypeScript → JavaScript).
- * 5. Parse all sources with {@link parseSCMQuery}.
- * 6. Map captures to semantic roles via {@link CAPTURE_TO_ROLE}.
- * 7. Deduplicate kind names per role.
- *
- * Phase 1 (shipped) extracted `@comment` captures for trivia.
- * Phase 2 extends this to ALL semantic roles from both query files.
- */
-
 import { createRequire } from 'node:module';
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -57,8 +39,6 @@ export interface GrammarRoles {
 	get(role: Role): string[];
 }
 
-// The start symbol is a rule-record fact, not an scm capture — the
-// rule-record owner stamps it.
 export function withRootRole(roles: GrammarRoles, rootKind: string): GrammarRoles {
 	const entries: RoleEntry[] = [...roles.entries, { role: 'root', kinds: [rootKind] }];
 	return {
@@ -77,43 +57,34 @@ interface CaptureRoleMapping {
 }
 
 const CAPTURE_TO_ROLE: readonly CaptureRoleMapping[] = [
-	// trivia
 	{ captureBase: 'comment', role: 'trivia', source: 'highlights' },
 
-	// string sub-roles before base
 	{ captureBase: 'string.special', role: 'string.special', source: 'highlights' },
 	{ captureBase: 'string', role: 'string', source: 'highlights' },
 
-	// number sub-roles before base
 	{ captureBase: 'number.float', role: 'number.float', source: 'highlights' },
 	{ captureBase: 'number', role: 'number', source: 'highlights' },
 
-	// boolean
 	{ captureBase: 'boolean', role: 'boolean', source: 'highlights' },
 
-	// type sub-roles before base
 	{ captureBase: 'type.builtin', role: 'type.builtin', source: 'highlights' },
 	{ captureBase: 'type', role: 'type', source: 'highlights' },
 
-	// variable sub-roles before base
 	{ captureBase: 'variable.builtin', role: 'variable.builtin', source: 'highlights' },
 	{ captureBase: 'variable.parameter', role: 'variable.parameter', source: 'highlights' },
 	{ captureBase: 'variable', role: 'variable', source: 'highlights' },
 
-	// function sub-roles before base
 	{ captureBase: 'function.method', role: 'function.method', source: 'highlights' },
 	{ captureBase: 'function.builtin', role: 'function.builtin', source: 'highlights' },
 	{ captureBase: 'function.macro', role: 'function.macro', source: 'highlights' },
 	{ captureBase: 'function', role: 'function', source: 'highlights' },
 
-	// tags.scm definitions
 	{ captureBase: 'definition.function', role: 'definition.function', source: 'tags' },
 	{ captureBase: 'definition.class', role: 'definition.class', source: 'tags' },
 	{ captureBase: 'definition.method', role: 'definition.method', source: 'tags' },
 	{ captureBase: 'definition.module', role: 'definition.module', source: 'tags' },
 	{ captureBase: 'definition.interface', role: 'definition.interface', source: 'tags' },
 
-	// tags.scm references
 	{ captureBase: 'reference.call', role: 'reference.call', source: 'tags' }
 ];
 
@@ -150,11 +121,9 @@ function resolveParentGrammarsFromConfig(grammarRoot: string, queryFile: QueryFi
 			const entries = grammar[queryFile];
 			if (!entries) continue;
 
-			// The field can be a string or an array of strings.
 			const entryList = Array.isArray(entries) ? (entries as string[]) : [entries as string];
 
 			for (const entry of entryList) {
-				// Match patterns like "node_modules/tree-sitter-<lang>/queries/<file>.scm"
 				const pattern = new RegExp(`tree-sitter-([\\w-]+)/queries/${queryFile}\\.scm`);
 				const match = pattern.exec(entry);
 				if (match && match[1]) {
@@ -182,7 +151,6 @@ function collectCaptures(grammarName: string, visited: Set<string>, queryFile: Q
 	const filePath = join(grammarRoot, 'queries', `${queryFile}.scm`);
 	const source = readIfExists(filePath);
 	if (!source) {
-		// tags.scm is optional — only warn for highlights.scm
 		if (queryFile === 'highlights') {
 			console.warn(`[sittir] highlights.scm not found at ${filePath}`);
 		}
@@ -247,10 +215,9 @@ function assignCapturesToRoles(
 			if (!captureMatchesMapping(capture.captureName, mapping)) continue;
 
 			addToRole(mapping.role, capture.kindName);
-			// Sub-roles also contribute to their base role.
 			const base = baseRoleOf(mapping.role);
 			if (base) addToRole(base, capture.kindName);
-			break; // first match wins per capture
+			break;
 		}
 	}
 }
@@ -276,11 +243,6 @@ export function extractGrammarRoles(grammar: string): GrammarRoles {
 	assignCapturesToRoles(highlightsCaptures, 'highlights', addToRole);
 	assignCapturesToRoles(tagsCaptures, 'tags', addToRole);
 
-	// Fallback: probe for well-known kind names when SCM captures didn't
-	// discover them. Some grammars (e.g. Rust) use @constant.builtin for
-	// booleans / numbers instead of @boolean / @number, so the capture-
-	// based extraction misses them. These probes add kinds that are
-	// universally recognized as belonging to a role.
 	applyFallbackProbes(roleKinds, addToRole);
 
 	const entries: RoleEntry[] = [];

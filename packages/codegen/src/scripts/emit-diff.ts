@@ -1,22 +1,3 @@
-/**
- * emit-diff — post-regen report of what the current codegen run changed in the
- * generated output, grouped by emitter.
- *
- * Called by `packages/codegen/src/cli.ts` at the end of a `--all` run (unless
- * `--no-emit-diff`). It diffs the **working tree vs HEAD** over the same roots
- * the manifest tracks (`generatedRootsFor`), so the report and the manifest
- * never disagree about what counts as generated.
- *
- * Baseline rationale: working-tree-vs-HEAD answers "what did THIS regen
- * produce relative to the last commit" — the question you actually have while
- * iterating on codegen. It is intentionally not a commit-range diff; for
- * historical drift across commits, the committed manifest is the mechanism.
- *
- * Grouping is by emitter, derived purely from the output file path (each
- * emitter owns one file, per the emitter-pattern-consistency convention), so
- * no provenance instrumentation is needed inside the emitters themselves.
- */
-
 import { execFileSync } from 'node:child_process';
 import { REPO_ROOT, generatedRootsFor, type Grammar } from './generated-manifest.ts';
 
@@ -36,7 +17,7 @@ const EMITTER_ORDER = [
 type Emitter = (typeof EMITTER_ORDER)[number];
 
 interface FileChange {
-	path: string; // repo-relative
+	path: string;
 	emitter: Emitter;
 	added: number;
 	removed: number;
@@ -51,7 +32,7 @@ function emitterFor(rel: string): Emitter {
 		if (rel.includes('/render/')) return 'render';
 		if (rel.includes('/templates/')) return 'templates';
 		if (base === 'test-fixtures.json') return 'metadata';
-		return 'native'; // lib.rs, index.{js,d.ts}, *.node
+		return 'native';
 	}
 	if (rel.includes('/templates/')) return 'templates';
 	if (rel.includes('/.sittir/')) return 'metadata';
@@ -72,7 +53,6 @@ function emitterFor(rel: string): Emitter {
 		case 'render-module.ts':
 			return 'render';
 		default:
-			// backend / boundary / engine / hash / ir / is / index / utils, etc.
 			return 'runtime';
 	}
 }
@@ -83,7 +63,7 @@ function isCollapsed(rel: string): boolean {
 }
 
 function formatRange(start: number, count: number): string {
-	if (count <= 0) return `L${start}`; // pure deletion: anchor at the deletion point
+	if (count <= 0) return `L${start}`;
 	if (count === 1) return `L${start}`;
 	return `L${start}-${start + count - 1}`;
 }
@@ -110,13 +90,6 @@ function parseDiff(diff: string): FileChange[] {
 
 	for (const line of diff.split('\n')) {
 		if (line.startsWith('diff --git ')) {
-			// New file section. The authoritative path comes from the +++/---
-			// lines below; seed from `b/<path>` here so deletions (which have
-			// `+++ /dev/null`) still attribute to the removed file.
-			// `cur` is reassigned directly here (not via a closure over `cur`,
-			// which — confirmed in isolation — breaks the `if (!cur) continue`
-			// narrowing below back to `never`) so `beginFileChange` stays a pure
-			// factory function.
 			const m = line.match(/ b\/(.+)$/);
 			cur = beginFileChange(m ? m[1]! : line.slice('diff --git '.length));
 			files.push(cur);
@@ -137,7 +110,6 @@ function parseDiff(diff: string): FileChange[] {
 		}
 		const oldPath = line.match(OLD_PATH_RE);
 		if (oldPath) {
-			// Deletion: +++ is /dev/null, so keep the old path as the identity.
 			if (cur.path.endsWith('/dev/null') || cur.path === '/dev/null') {
 				cur.path = oldPath[1]!;
 				cur.emitter = emitterFor(cur.path);
@@ -152,7 +124,6 @@ function parseDiff(diff: string): FileChange[] {
 			if (!cur.collapsed) cur.ranges.push(formatRange(start, count));
 			continue;
 		}
-		// Content lines (no context, since --unified=0).
 		if (line.startsWith('+') && !line.startsWith('+++')) cur.added++;
 		else if (line.startsWith('-') && !line.startsWith('---')) cur.removed++;
 	}
@@ -174,7 +145,7 @@ export function formatEmitDiff(grammar: Grammar): string | null {
 			maxBuffer: 64 * 1024 * 1024
 		});
 	} catch {
-		return null; // not a git repo / git absent / no HEAD — skip silently
+		return null;
 	}
 
 	const changes = parseDiff(raw).filter((c) => c.path && !c.path.endsWith('/dev/null'));
@@ -191,7 +162,6 @@ export function formatEmitDiff(grammar: Grammar): string | null {
 			`${touched.size} emitter${touched.size === 1 ? '' : 's'}, +${totalAdded} -${totalRemoved})`
 	];
 
-	// Align the file column across all rows for scannability.
 	const pathWidth = Math.min(48, Math.max(...changes.map((c) => c.path.length)));
 	const fmtCounts = (c: FileChange): string => (c.binary ? 'binary' : `+${c.added} -${c.removed}`);
 

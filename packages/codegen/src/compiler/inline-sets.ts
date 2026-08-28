@@ -1,19 +1,3 @@
-/**
- * compiler/inline-sets.ts — shared derivation of the normalize-pipeline's
- * inline-decision and diagnostic-skip sets.
- *
- * Extracted from generate.ts so `collectGrammarDiagnosticsForGrammar`
- * (diagnostics/grammar-diagnostics.ts) can build the SAME NormalizeCtx inputs
- * the real pipeline uses. generate.ts imports grammar-diagnostics.ts (for
- * formatCompilerDiagnostics), so the diagnostics module cannot import
- * generate.ts back — this neutral module breaks the cycle. Without shared
- * inputs the preflight's normalize ran ctx-less, `diagnoseSlotGrouping` never
- * saw `inlineKinds`, and every shape-①b `multi-slot-nested-seq` violation
- * (auto-group helper bodies like rust `_match_block_optional1`) was invisible
- * in the persisted grammar-diagnostics.json / validation report — console-only
- * during regen.
- */
-
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isNonInlinableLeafShape } from './assemble.ts';
@@ -30,9 +14,6 @@ function readGrammarJson(grammar: string): GrammarJsonFile | undefined {
 	try {
 		return JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as GrammarJsonFile;
 	} catch (e) {
-		// An ABSENT file is tolerated (early return above); an existing
-		// file that fails to read or parse must surface — swallowing it
-		// would let generation continue with empty inline/alias metadata.
 		throw new Error(
 			`readGrammarJson[${grammar}]: failed to read/parse ${grammarJsonPath}: ${e instanceof Error ? e.message : String(e)}`
 		);
@@ -48,8 +29,6 @@ export function loadGrammarJsonInlineList(grammar: string): readonly string[] | 
 	return undefined;
 }
 
-// tree-sitter's generate step warns about only the FIRST undefined inline
-// name per run — later dangling entries hide behind it.
 export function danglingInlineNames(parsed: GrammarJsonFile): string[] {
 	if (!Array.isArray(parsed.inline)) return [];
 	const rules = new Set(Object.keys(parsed.rules ?? {}));
@@ -106,7 +85,7 @@ export function buildInlinableKinds(inlineKinds: ReadonlySet<string>, linked: Li
 	return new Set(
 		[...inlineKinds].filter((k) => {
 			const rule = linked.rules[k];
-			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
+			if (!rule) return true;
 			return !isNonInlinableLeafShape(rule);
 		})
 	);

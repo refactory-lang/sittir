@@ -1,56 +1,3 @@
-/**
- * compiler/scc.ts — Strongly Connected Components over the
- * "singular transport reference" graph.
- *
- * Purpose: replace the conservative Box-everything-non-leaf rule used by
- * render-module.ts for per-slot and supertype transport enum variants
- * with a precise rule:
- *
- *     Box variant V in enum E iff V and E's owner kind are in the same
- *     SCC of the singular-reference graph.
- *
- * Background
- * ----------
- * Rust enum variants need `Box<T>` only to break size cycles. A field
- * typed `Vec<T>` is sized regardless of `T` (Vec = three pointers), so
- * Vec slots never propagate size dependencies and are excluded from the
- * graph. Per-slot enums are unique per (parent_kind, slot_name) — so
- * `TuplePatternPatternTransportSlot` (used by `tuple_pattern`'s patterns
- * slot) and `ParameterPatternTransportSlot` (used by `parameter`'s
- * pattern slot) are DISTINCT types, and a non-leaf variant in one need
- * not be boxed merely because its struct could indirectly contain "some
- * pattern enum" — it only matters if it can reach back to the
- * particular enum's owner via singular references.
- *
- * Graph construction
- * ------------------
- * Nodes: every kind in `nodeMap.nodes`. The graph models *singular*
- * (non-Vec) transport references; Vec-shaped slots are excluded
- * because `Vec<T>` has fixed size regardless of `T`.
- *
- * Slot classification follows `transport-common.ts::classifySlot`, the
- * authoritative renderer-side decision:
- *   1. Single-kind slot → concrete; add edge A → k.
- *   2. Multi-kind subset of supertype S → supertype enum; add edge A → S
- *      (supertype acts as a relay; the supertype's own subtype edges
- *      below carry it to the concrete subkinds).
- *   3. Multi-kind, no covering supertype → per-slot enum owned by A;
- *      add edge A → each variant kind directly. Per-slot enums are
- *      unique per (A, slot), so the cycle question is "does V reach A?"
- *      and the SCC predicate `sameSCC(V, A)` resolves it.
- *
- * Supertype relay edges:
- *   - For each supertype S in the NodeMap, add S → sub for every
- *     resolved subtype `sub`. A field typed `<S>Transport` is
- *     effectively a singular reference to any subkind of S — the
- *     supertype kind acts as a relay node so per-variant SCC analysis
- *     correctly captures size cycles passing through supertype enums.
- *
- * SCC: Tarjan's classic algorithm (iterative). A kind is "recursive"
- * iff its SCC has size > 1, OR it forms a singleton SCC with a
- * self-edge (A → A).
- */
-
 import type { NodeMap } from './types.ts';
 import {
 	kindsOf,
@@ -107,13 +54,8 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 		outs.add(to);
 	};
 
-	/* supertype map: typeName → resolved subtype set. Authoritative
-	   renderer-side mapping; we re-use it so the graph matches what
-	   `classifySlot` actually emits at the field-type site. */
 	const supertypeMap = buildSupertypeTransportSet(nodeMap);
 
-	// `classifySlot` returns supertype results keyed by `typeName`; this
-	// index resolves that back to a kind for edge emission.
 	const kindOfTypeName = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType === 'supertype') {
@@ -141,14 +83,10 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 				continue;
 			}
 			if (cls.tag === 'supertype') {
-				/* Field type is the supertype enum — graph edge points at the
-				   supertype kind, which carries onward relay edges to subkinds. */
 				const supertypeKind = kindOfTypeName.get(cls.supertypeName);
 				if (supertypeKind !== undefined) {
 					addEdge(kind, supertypeKind);
 				} else {
-					/* Fall back to direct edges if the supertype kind isn't
-					   resolvable (shouldn't happen in practice). */
 					for (const k of slotKinds) addEdge(kind, k);
 				}
 				continue;
@@ -160,11 +98,6 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	return adjacency;
 }
 
-// `Vec<T>` is heap-indirect regardless of T's size, so a Vec-typed slot
-// never contributes to a real struct-size cycle. Including it in the graph
-// would falsely merge kinds into the same SCC whenever the only path
-// between them ran through a Vec — this filter keeps the graph aligned with
-// `rustTransportSlotType`'s own box-decision model.
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
 	if (node.modelType === 'branch' || node.modelType === 'group') {
 		return Object.values(node.slots).filter((slot) => !isMultiple(slot));
@@ -224,8 +157,6 @@ function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {
 				if (lowlink.get(v) === index.get(v)) {
 					const component: string[] = [];
 					const componentId = sccs.length;
-					/* Pop until we get v — bounded by the stack invariant that v is
-					   on the stack, so this always terminates. */
 					// eslint-disable-next-line no-constant-condition
 					while (true) {
 						const w = stack.pop()!;

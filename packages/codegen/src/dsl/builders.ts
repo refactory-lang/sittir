@@ -97,8 +97,6 @@ function stampId<R extends AnyRule>(args: { built: R; id: RuleId | undefined; fr
 
 function collapseSingletonSeq(seq: AnyRule & { members: AnyRule[] }): AnyRule {
 	const survivor = seq.members[0]!;
-	// The seq is the current rule: its identity wins over the survivor's,
-	// the same `id: rule.id ?? input.id` every builder stamps.
 	const carried = stampId({ built: withAttrsFrom(seq, survivor), id: (seq as { id?: RuleId }).id, from: survivor });
 	const outerMult = (seq as { multiplicity?: LeafMultiplicity }).multiplicity;
 	if (outerMult !== undefined) {

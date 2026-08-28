@@ -1,10 +1,3 @@
-/**
- * resolve-grammar.ts — resolve grammar name to grammar.js path
- *
- * Maps grammar names (e.g., "rust", "typescript", "python") to the
- * grammar.js file paths in node_modules.
- */
-
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 

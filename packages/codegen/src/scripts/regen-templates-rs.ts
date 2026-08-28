@@ -1,15 +1,3 @@
-/**
- * regen-templates-rs — regenerate only templates.rs for one or more grammars.
- *
- * Usage:
- *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust
- *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust,typescript,python
- *
- * This bypasses the full generate() pipeline (which calls all emitters
- * including factories.ts / wrap.ts). Use when you only need templates.rs
- * regenerated without touching TS output files.
- */
-
 import { writeFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { existsSync } from 'node:fs';

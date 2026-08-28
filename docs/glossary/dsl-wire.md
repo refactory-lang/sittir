@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `getCurrentWireContext` (`packages/codegen/src/dsl/wire/wire.ts:193`)
 
 ```text
@@ -104,6 +105,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * polymorph parent). The outer runs first at iteration time and deposits
  * its arm body; the inner's parent fn reads that deposit as its base.
  */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// wire() helpers
+// ---------------------------------------------------------------------------
 ```
 
 ### `buildPolymorphParentFn` (`packages/codegen/src/dsl/wire/wire.ts:882`)
@@ -341,6 +348,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/wire/wire.ts:750`)
+
+```text
+// Filter OUT visible-group mint sources (see WireContext.inlineRemovals):
+// leaving `_src` in `inline:` makes tree-sitter erase the rule before
+// table construction, vaporizing `alias($._src, $.visible)` — and with
+// it the minted kind's entire parser identity — while the IR still
+// models the kind. Un-inlining keeps the mint real on both sides.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:773`)
+
+```text
+// An orphaned synthetic (its owner was redeclared by an authored
+// `rules:` override, dropping the mint's only reference) must not
+// reach `inline:` — tree-sitter warns `inline rule '<name>' is
+// not defined` and discards it (typescript's `_object_arm1`).
+```
+
 ### `collectInlineNames` (`packages/codegen/src/dsl/wire/wire.ts:1225`)
 
 ```text
@@ -393,6 +419,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** True when any value in `groups` is a function (body-pattern entry). */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Wire-phase pattern find-and-replace
+// ---------------------------------------------------------------------------
 ```
 
 ### `makeSimpleDollarProxy` (`packages/codegen/src/dsl/wire/wire.ts:1312`)
@@ -449,6 +481,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/wire/wire.ts:852`)
+
+```text
+// Shared detection (same `isChoiceType`/`isBlankType` that auto-groups.ts
+// uses for its `CHOICE[seq, BLANK]` → optional handling), so the two wire
+// passes recognize the tree-sitter-lowered optional form identically.
+```
+
 ### `replaceInBodyRt` (`packages/codegen/src/dsl/wire/wire.ts:1440`)
 
 ```text
@@ -466,6 +506,28 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @param rule - The rule body to search (RuntimeRule, any shape).
  * @param candidates - The list of detected pattern candidates.
  */
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:902`)
+
+```text
+// Check if THIS node matches any candidate.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:905`)
+
+```text
+// Emit a SYMBOL reference in the shape matching the candidate's body.
+// When the candidate has an aliasAs target, wrap the symbol in an
+// ALIAS so tree-sitter emits the visible kind at every match site
+// (otherwise tree-sitter inlines the hidden `_<name>` body and the
+// kind never appears as a CST node).
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:921`)
+
+```text
+// Recurse into children.
 ```
 
 ### `buildPatternReplacingFn` (`packages/codegen/src/dsl/wire/wire.ts:1506`)
@@ -494,6 +556,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * not defined` with no shim. Injected only when absent so sittir's own
  * evaluate.ts-provided `string` (identical shape) is never shadowed.
  */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// visibleExternals — SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path)
+// ---------------------------------------------------------------------------
 ```
 
 ### `rewriteVisibleExternalRefsRt` (`packages/codegen/src/dsl/wire/wire.ts:1550`)
@@ -551,6 +619,42 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/wire/wire.ts:1049`)
+
+```text
+// Legacy auto-detection: any `_`-prefixed rule the author declared in
+// `rules:` is a structural pattern candidate. Maintained for the
+// TypeScript `_ambient_declaration_*` entries that still rely on this
+// path; new patterns should go in `groups:` with a body fn.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:1057`)
+
+```text
+// Eagerly evaluate with a null previous. Rules whose body depends on
+// `original` (transform-based overrides) will likely return undefined,
+// null, or throw — all safely skipped.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:1072`)
+
+```text
+// New body-pattern groups path: each `groups:` entry whose value is a
+// function is a body-pattern candidate. The KEY is the visible kind
+// name; internally we synthesize a hidden `_<key>` rule with the body,
+// and emit `alias($._<key>, $.<key>)` at every match site so tree-
+// sitter exposes the visible kind as a CST node.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:1102`)
+
+```text
+// Register the hidden rule body so tree-sitter has a definition
+// for the symbol the alias() wrappers will reference. Wrap via
+// wrapOneRuleFn directly (this fn runs after wrapAllRuleFns) so
+// the body fn evaluates inside a proper wire context.
+```
+
 ### `RenderAsConfig` (`packages/codegen/src/dsl/wire/wire.ts:52`)
 
 ```text
@@ -570,6 +674,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     _outer_block_doc_comment_marker: string('!'),
  *     _automatic_semicolon: blank(),
  *   })
+ */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// RenderAsConfig — sittir-side rule bodies for external scanner symbols
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * External-scanner symbol → nominal render body, sittir-side ONLY. The parser
+ * is untouched: the symbol keeps its CST visibility exactly as the base
+ * grammar declares it. Bodies are nominal shapes — read-produced leaves render
+ * verbatim from wire text; the body's job is to give factory-built nodes a
+ * render rule and to carry declared token facts. `token.immediate(...)` is the
+ * one wrapper a body may use (the drain folds it into the rule's
+ * `immediate`/`tokenized` attrs); `prec()` and other wrappers leak past the
+ * drain folds and must not appear.
+ *
+ * Deliberately separate from {@link VisibleExternalsConfig}: a render body and
+ * CST visibility are independent facts. A hidden external may carry a
+ * `renderAs:` body while its visible name comes from a rules-block alias
+ * (python's `_string_content` → `string_fragment`) — deriving visibility from
+ * body presence would mint a second, competing alias for such symbols.
  */
 ```
 
@@ -601,6 +730,26 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+```text
+// ---------------------------------------------------------------------------
+// VisibleExternalsConfig — materialize hidden external-scanner symbols as
+// named CST-visible aliases
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * Hidden (`_`-prefixed) external-scanner symbol → render body, PLUS a parser
+ * rewrite: every `SYMBOL` reference to the key is wrapped in a named `ALIAS`
+ * of the underscore-stripped name, in both grammar pipelines (tree-sitter CLI
+ * via {@link applyWireVisibleExternalsRewrite}, sittir evaluate via its
+ * `rewriteVisibleExternalRefs`). The parser then materializes real CST nodes
+ * for the symbol (python `_newline` → visible `newline`). Use this when the
+ * external must be visible; use {@link RenderAsConfig} when it only needs a
+ * sittir-side body — the two keys carry independent facts and both stay.
+ */
+```
+
 ### `WireContext` (`packages/codegen/src/dsl/wire/wire.ts:105`)
 
 ```text
@@ -609,6 +758,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * (variant/alias/conflict registration) can push into them while the
  * rule-fn wrapper has this context installed.
  */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// WireContext + module-level current pointer
+// ---------------------------------------------------------------------------
 ```
 
 ### `deposits` (`packages/codegen/src/dsl/wire/wire.ts:111`)
@@ -753,6 +908,36 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
 ```
 
+```text
+// ---------------------------------------------------------------------------
+// Public API: `wire(config)` — opts wrapper
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * Shape of the type parameter to `wire()` / `transform()` / the
+ * polymorph & transform config interfaces. Two shapes accepted:
+ *
+ * 1. **Flat sittir-emitted grammar type** (preferred) — the
+ *    `RustGrammar` / `TypeScriptGrammar` / `PythonGrammar` types
+ *    emitted at `packages/{lang}/src/grammar.ts`. Top-level keys are
+ *    the kind names (visible AND hidden, e.g. `_expression`,
+ *    `_visibility_modifier_pub`). Authors write `wire<RustGrammar>(...)`.
+ *
+ * 2. **Tree-sitter native base grammar** — `typeof base` from
+ *    `tree-sitter-<lang>/grammar.js`, shape `{ rules: { … } }`.
+ *    Less authoritative (no hidden kinds added by overrides), but
+ *    works for authors that already have `import base from
+ *    '…/grammar.js'` in scope and want to bind to it directly.
+ *
+ * `BaseKind<Base>` projects the kind-name union out of either shape.
+ * The default (`Record<string, unknown>`) collapses to plain `string`
+ * keys, preserving the pre-generics behaviour of every call site that
+ * doesn't supply a base type.
+ */
+```
+
 ### `PolymorphsConfig` (`packages/codegen/src/dsl/wire/wire.ts:293`)
 
 ```text
@@ -831,6 +1016,36 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/wire/wire.ts:222`)
+
+```text
+// Loose default (`Base = GrammarJson`, rule values are the open
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:223`)
+
+```text
+// `GrammarRule` union): use the plain `PatchMap` form. Mapping
+// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
+// per-rule precise form is only meaningful — and only safe — when
+// `Base` is a CONCRETE `as const` schema (tuple rule bodies). The
+// internal pipeline always sees this loose form.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:231`)
+
+```text
+// Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
+// segment-1-precise path strings. We derive them from the RAW rule
+// (`FastKeys` = PathKey<R[K]>) rather than the post-Enrich shape:
+// `PathKey` only consumes the FIRST segment (`TopLevelKeys`), and
+// enrich wraps top-level members IN PLACE (never adds/removes one),
+// so `PathKey<EnrichRule<X>> ≡ PathKey<X>` (proven in
+// wire-transforms.test-d.ts). FastKeys is therefore LOSSLESS for
+// keys and avoids instantiating EnrichRule over the loose union
+// (which is the TS2589 source). Array form = multi-patchset rules.
+```
+
 ### `PatchMap` (`packages/codegen/src/dsl/wire/wire.ts:390`)
 
 ```text
@@ -848,6 +1063,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * index-signature leak makes `$.x: SymbolRule<'evaluate'> | undefined` and breaks
  * composition (`undefined ⊄ AuthoringRule`) in grammar.sittir.ts authoring.
  */
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:251`)
+
+```text
+// Permissive fallback for alias-target / synthesized names not in the base
+// grammar.json (e.g. `$.wildcard_pattern`). Known rules resolve via the
+// mapped member above (precise `SymbolRule<R>`, no `undefined`); only unknown names
+// hit this index.
 ```
 
 ### `conflicts` (`packages/codegen/src/dsl/wire/wire.ts:427`)
@@ -1038,4 +1262,350 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Returns `previous` unchanged; the pattern-replacement pass wraps this
  * fn so the returned body is structurally walked and substituted.
  */
+```
+
+### `module` (`packages/codegen/src/dsl/wire/wire.ts:1`)
+
+```text
+/**
+ * dsl/wire.ts — opts-wrapping helper for grammar() invocations.
+ *
+ * See `docs/adr/0007-wire-opts-declarative-polymorphs.md` for the full
+ * design.
+ *
+ * `wire(config)` is a synchronous transformation of the options object
+ * the author passes to `grammar()`. It:
+ *
+ *   1. Reads a declarative `polymorphs: { parent: { path: suffix } }`
+ *      map and injects deferred-content placeholder rule fns for every
+ *      `_<parent>_<suffix>` hidden rule into `opts.rules`. When the
+ *      tree-sitter runtime later iterates those entries, each one
+ *      reads captured content from the wire-scoped `deposits` map.
+ *   2. Synthesizes or composes `opts.rules[parent]` so its body calls
+ *      `transform(original, { path → variant(suffix) })` automatically.
+ *   3. Wraps every rule fn so the wire context (and `currentRuleKind`)
+ *      are set while the fn executes — `variant()` / `alias()` /
+ *      `transform()` read those during their dispatch.
+ *   4. Wraps the user's `conflicts` callback so accumulated variant
+ *      conflict groups are symbolized through `$` and appended to the
+ *      returned conflict list.
+ *
+ * State lives in a per-invocation `WireContext` captured in the closure
+ * `wire()` creates. A module-level `currentContext` pointer is set by
+ * the rule-fn wrapper so DSL helpers invoked synchronously during that
+ * rule's evaluation can reach the context. No `globalThis` mutations.
+ *
+ * Fallback during migration: until all three grammars move to `wire()`,
+ * the existing `dsl/synthetic-rules.ts` module state still handles
+ * variant/alias for ungated paths. When `currentContext` is set, the
+ * synthetic-rules helpers route to it instead. This lets each grammar
+ * migrate independently.
+ */
+```
+
+```text
+// Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
+```
+
+### `WireConfig.rules` (`packages/codegen/src/dsl/wire/wire.ts:269`)
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:269`)
+
+```text
+// New rules the override ADDS (not in the base grammar.json, e.g. a
+// synthesized `_wildcard_pattern`): `$` stays typed; no base `previous`.
+// `any`-typed `previous` keeps the precise base-rule callbacks above
+// assignable here (bivariant), so known keys retain their precise shape.
+```
+
+### `WireConfig.factoryInline` (`packages/codegen/src/dsl/wire/wire.ts:275`)
+
+```text
+/**
+	 * Kinds with no top-level `ir.*` builder: constructed only through nested
+	 * config on the slot(s) that reference them. Assemble stamps the names
+	 * listed here onto `AssembledNodeBase.factoryInline`; a listed kind with
+	 * nowhere to nest fails the `factory-inline-unnestable` diagnostic.
+	 */
+```
+
+### `SittirRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:310`)
+
+```text
+// LOOSE-INTERNAL / NARROW-PUBLIC split (Phase-4 resolution to the
+// contravariance wall):
+//
+// `SittirRuleFn` is the INTERNAL rules-map element type. wire's own builder
+// fns — `makeDeferredContentFn`, `buildTransformParentFn`, `wiredPolymorphParent`,
+// `patternReplacingRuleFn`, and auto-groups' `makeStaticRuleFn` — return
+// sittir's dual-runtime raw rule shapes (lowercase + sittir-only variants,
+// heterogeneous literals, typed `unknown`/`RuntimeRule`), BROADER than
+// tree-sitter's `RuleOrLiteral`, so the return MUST stay `unknown`.
+//
+// The PARAMS are `any`, NOT `unknown` — this is load-bearing. The PUBLIC
+// authoring callbacks `WireConfig.rules` exposes are narrow
+// (`($: GrammarSymbols<…>) => unknown`). A narrow `$: GrammarSymbols` fn is
+// assignable to a loose `$: any` param (any is bivariant-compatible) but NOT
+// to `$: unknown` (function params are contravariant — `unknown` demands the
+// fn accept anything, which a `GrammarSymbols`-typed `$` does not). With
+// `$: unknown` the narrow public fns wouldn't flow into
+// `WireContext.rules: Record<string, SittirRuleFn>` without a cast; `$: any`
+// lets them flow with zero cast. The internal machinery still consumes this
+// loose type unchanged.
+```
+
+### `wire` (`packages/codegen/src/dsl/wire/wire.ts:335`)
+
+```text
+/**
+ * Wrap the user's grammar options with wire-managed polymorph plumbing.
+ *
+ * @param config - Options to pass to `grammar()` plus an optional
+ *   `polymorphs` declaration.
+ * @param base - Optional enriched-base grammar object. When supplied AND
+ *   `config.groups` declares body-pattern entries (function values), wire
+ *   walks every base rule and injects a pattern-replacing override for it.
+ *   This is necessary because tree-sitter only invokes override rule fns
+ *   for entries the author put in `config.rules`; unoverridden base rules
+ *   would otherwise bypass pattern replacement entirely. Passing `base`
+ *   keeps the body-pattern groups mechanism honest for grammars where the
+ *   matching positions live in base rules. Pass `enrich(base)` (the same
+ *   value handed to `grammar()` as the base arg) so the patterns match
+ *   the same evaluated rule bodies tree-sitter will see.
+ * @returns A new options object suitable for `grammar()`. Tree-sitter's
+ *   own iteration observes the injected hidden-rule entries at its
+ *   `Object.keys()` snapshot; content resolves via deferred-content fns
+ *   as tree-sitter iterates.
+ */
+```
+
+```text
+// `B` infers from `base` (the enriched-base grammar), so the config
+// literal is contextually typed — and IntelliSense'd — against the
+// precise `WireConfig<B>` (typed `$`, per-rule `previous`/`original`).
+// No explicit `WireConfig` annotation is needed at the call site. When
+// `base` is omitted, `B` defaults to `any` (the loose form, identical to
+// the prior `C extends WireConfig<any>` behavior — there is nothing to
+// infer grammar precision from).
+//
+// NOTE on TS2589: routing the literal through the generic `WireConfig<B>`
+// is REQUIRED for base-present precision — but at a no-`base` call site
+// (where `B` reaches the generic with nothing to pin it) TS may eagerly
+// instantiate the precise `TransformsConfig<B>` mapped-type branch and
+// report "excessively deep". A call site that pins `B` to a lazy alias —
+// an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
+// grammar.sittir.ts) or a concrete `base` — evaluates that branch lazily and
+// stays shallow. The residual no-base artifact is editor-only typecheck
+// noise; runtime is unaffected (`config` is aliased to a loose
+// `WireConfig<any>` in the body below).
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:374`)
+
+```text
+// Generics are contained to the SIGNATURE so `B` infers from `base`
+// and the literal `config` is contextually checked against
+// `WireConfig<B>`. The BODY operates on the loose runtime shapes wire
+// has always worked on — alias to non-generic internal types ONCE
+// here so the body never instantiates `WireConfig<B>['rules']`
+// generically (which trips TS2589) nor reads `base.grammar` off a
+// generic `B`. The runtime is unchanged; these are the sanctioned
+// boundary casts (see the LOOSE-INTERNAL / NARROW-PUBLIC note above).
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:405`)
+
+```text
+// `outRules` holds rule-authoring FUNCTIONS (tree-sitter invokes each with
+// `$`/`previous` to produce the rule body at grammar-compile time), not
+// `Rule<'evaluate'>` data nodes — see the SittirRuleFn "LOOSE-INTERNAL /
+// NARROW-PUBLIC" note above. The R12 sweep over-annotated this as
+// `Record<string, Rule<'evaluate'>>`, which doesn't structurally overlap
+// with the function-map shape `cfg.rules` actually has.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:413`)
+
+```text
+// Transforms first, polymorphs second — transforms wrap the user
+// fn innermost and see the base-shape rule tree; polymorphs wrap
+// the transforms-wrapped fn outermost and split what remains.
+// Reversing this (polymorphs first) made inline transforms that
+// address base-shape paths (e.g. 'N/_expression' kind-match) break
+// because the polymorph already aliased the choice arms.
+//
+// Compose runs BEFORE inject so iteration order at runtime puts
+// polymorph parents ahead of their hidden arms — parents populate
+// deposits via transformFn; arms read those deposits when their
+// deferred-content fn later runs. The injection pass is careful not
+// to clobber a polymorph-parent fn already installed by compose:
+// when a hidden name is BOTH an arm of one polymorph AND itself a
+// polymorph parent (e.g. `_visibility_modifier_pub`), compose wins
+// and the parent fn reads the outer's deposit at run time (see
+// `buildPolymorphParentFn`).
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:433`)
+
+```text
+// Body-pattern groups: when `base` is supplied AND the groups config has
+// function-valued entries, scan base rule names and inject a passthrough
+// override for any base rule not already overridden. Tree-sitter calls
+// each override with `previous` (the base body); our passthrough returns
+// `previous` unchanged but then `applyWirePatternReplacement` wraps the
+// passthrough so the body undergoes pattern replacement. Without this,
+// unoverridden base rules bypass replacement entirely.
+// visibleExternals needs the SAME passthrough treatment as body-pattern
+// groups: its SYMBOL→ALIAS rewrite (applyWireVisibleExternalsRewrite,
+// below) only reaches rule fns present in `outRules` — an unoverridden
+// base rule with no entry here never gets wrapped, so a `$._x` reference
+// buried in an un-overridden base rule would silently escape the
+// rewrite (the exact phantom-kind divergence class this file guards
+// against elsewhere).
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:455`)
+
+```text
+// Wire-phase pattern find-and-replace: runs after wrapAllRuleFns so
+// each candidate fn executes inside a proper wire context when eagerly
+// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
+// own post-evaluation pass for the sittir-pipeline path.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:460`)
+
+```text
+// visibleExternals: SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path).
+// evaluate.ts's applyVisibleExternalsRewrite is the sittir-pipeline twin
+// — both MUST produce structurally identical output.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:465`)
+
+```text
+// Drain enrich-hoisted clause-group names into syntheticInline so they
+// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
+// rules directly into base.grammar.rules before wire runs; without
+// inlining, tree-sitter creates LR conflicts for those hidden rules.
+// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
+// property that enrich() attaches to the grammar result.
+//
+// (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
+// auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
+// `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
+// desugaring, per `peelOptionalSeq`): inline-SAFE into a hidden
+// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
+// `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
+// registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
+// only descends through them transparently to reach a nested `optional(seq)`;
+// a bare `repeat(seq(...))` with no `optional` wrapper is untouched. The old
+// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe
+// seqs link must see as inline content.)
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:487`)
+
+```text
+// Visible-group mint SOURCES must not be inlined away — see
+// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:492`)
+
+```text
+// A synthesized clause-hoist name (recorded owner = the parent kind
+// enrich() hoisted it FROM) is orphaned once THIS grammar's own
+// `rules:` config redeclares that owner — the override text could
+// never reference a name that didn't exist until this enrich() call
+// minted it from the base grammar's pre-override shape, so replacing
+// the owner's body necessarily drops the only reference. See
+// `WireContext.orphanedSyntheticGroups`.
+// PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
+// mint (the inline-UNSAFE category — excluded from `syntheticInline`
+// above precisely because we WANT it to stay a distinguishable kind,
+// not get inlined away) can share a structural prefix with its own
+// owning parent rule (e.g. python's `expression_statement`, whose
+// arm 0 is `$.expression` and whose newly-hoisted arm 1
+// `_expression_statement_group1` also starts with `commaSep1($.expression)`
+// — both begin `expression • …`, an unresolved tree-sitter LR
+// conflict without an explicit GLR fork). Proactively register a
+// conflict between the owner and every such mint, mirroring the
+// hand-authored `conflicts: [$.expression_statement,
+// $._expression_statement_tuple]` pattern this codebase already used
+// for the pre-existing variant()-only mint path — but automatic, so
+// it covers every clause-hoist visible-group mint (this widened
+// bare-choice-arm gate included) without per-grammar hand-maintenance.
+// Harmless when the two rules don't actually conflict in a given
+// grammar: tree-sitter's `conflicts:` only enables a GLR fork; it
+// doesn't change accepted language and costs a little parse-table
+// size, not correctness, when unused.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:528`)
+
+```text
+// A minted group's own body can ALSO self-conflict — e.g. a
+// shared comma/element shape recurring across sibling rules
+// (python's `_expression_list_expressions` vs `assert_statement`'s
+// own `commaSep1` repeat) confuses tree-sitter's LALR merge
+// independent of the owner pairing above. A single-rule
+// `conflicts` entry is tree-sitter's own documented way to
+// request a GLR self-fork for a rule (see its own error
+// resolution list: "Add a conflict for these rules:
+// `<rule>`" with just the one name).
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:543`)
+
+```text
+// Re-run body-pattern replacement so any `groups:` body-pattern can match
+// rule bodies wrapped by the first pass above. Idempotent on already-aliased
+// bodies.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:549`)
+
+```text
+// Boundary casts to the internal loose (`unknown`-$, mutable-array)
+// callback shapes — same LOOSE-INTERNAL / NARROW-PUBLIC split as `cfg`
+// itself (see the block comment above `wire()`): the public config's
+// `conflicts`/`inline` callbacks are typed against the precise
+// `ShapedSymbols<B>` $ and readonly-array shapes for author ergonomics;
+// `wrapConflictsCallback`/`wrapInlineCallback` are internal machinery
+// that only ever calls them positionally, so the wider internal param
+// types are a safe narrowing-away, not a behavior change.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:560`)
+
+```text
+// `...cfg` carries `cfg`'s own (narrow, public) `conflicts` field into the
+// inferred object-literal type even though the later spreads unconditionally
+// override it with the internal-shape `conflicts`/`inline` computed above;
+// TS still unions both possible shapes when inferring the literal's type,
+// so an explicit `WiredOpts` boundary cast is needed here (same pattern as
+// `cfg = config as unknown as WireConfig<any>` above).
+```
+
+### `patternBodyEqual` (`packages/codegen/src/dsl/wire/wire.ts:869`)
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:869`)
+
+```text
+// Types must match.
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:874`)
+
+```text
+// BLANK is a singleton — type match is sufficient
+```
+
+#### body (`packages/codegen/src/dsl/wire/wire.ts:889`)
+
+```text
+// ALIAS nodes carry `named` (bool) and `value` (the visible name string)
+// in addition to `content`. Two aliases are structurally equal when all
+// three match — e.g. `alias($._not_in, 'not in')` vs itself.
 ```

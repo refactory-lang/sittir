@@ -18,29 +18,6 @@ import {
 	TOKEN
 } from './rule-types.ts';
 import type { RuleMetadata } from './rule-metadata-brand.ts';
-/**
- * compiler/rule.ts — Shared IR
- *
- * One type throughout the pipeline. Defined once, never extended.
- * Rule type presence varies by phase:
- *   - After Evaluate: symbol, alias, token, repeat1 present
- *   - After Link: symbol, alias, token gone; group, indent/dedent/newline added.
- *     `repeat1` is preserved so downstream field/child derivation can stamp the
- *     `nonEmpty` flag on the resulting slot for emitter tuple-type rendering.
- *   - After Normalize: variant added; structural grouping may be restructured
- *
- * @generated — do not add derived metadata (required, multiple, contentTypes, etc.)
- *              Those are derived from tree context at Assemble time.
- */
-
-// tokenToName is defined locally below to avoid a circular import with
-// compiler/link.ts (which imports helpers from this file). A small map
-// covering the common non-word optionals (`!`, `?`) is enough; bail to
-// null for anything else and the caller falls back to existing behavior.
-
-// ---------------------------------------------------------------------------
-// Rule — the shared intermediate representation
-// ---------------------------------------------------------------------------
 
 export type RuleId = string;
 
@@ -64,29 +41,10 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 
 	readonly variantArms?: readonly string[];
 
-	/**
-	 * Lexical token facts, pushed down onto the content when a
-	 * `token(...)` / `token.immediate(...)` wrapper is flattened (Link's
-	 * TOKEN case) or stamped on synthetic external-scanner rules at
-	 * creation — same push-down discipline as the wrapper-deletion attrs
-	 * below: the fact is stamped where the wrapper dies so it survives it.
-	 * `tokenized` — this subtree lexes as ONE token. `immediate` — the
-	 * grammar forbids whitespace before this token (`token.immediate`, or
-	 * a declared-immediate external): its rendered text must never receive
-	 * a seam space.
-	 */
 	readonly tokenized?: boolean;
 	readonly immediate?: boolean;
 } & (Phase extends NormalizedPhase
 	? {
-			// All stamped attributes below are populated by
-			// `applyWrapperDeletion` (Normalize) — the structured `separator`
-			// object included: wrapper-deletion carries the repeat node's own
-			// link-lifted `separator` object across unchanged as it deletes
-			// the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>
-			// share this identical nested shape). None of them exist on
-			// evaluate/link views' RuleBase (they exist on the repeat/repeat1
-			// wrapper nodes themselves pre-deletion).
 			readonly fieldName?: string;
 			readonly multiplicity?: Multiplicity;
 			readonly nonterminal?: boolean;
@@ -95,26 +53,14 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 				readonly value: Rule<Phase>;
 				readonly trailing?: DelimiterMode;
 				readonly leading?: DelimiterMode;
-				// Comma-TERMINATED list family (`(x sep)+ x?`): every element
-				// trails its own separator, so a single element REQUIRES the
-				// trailing delimiter (rust `(1,)` vs parenthesized `(1)`).
 				readonly terminated?: true;
 			};
 
-			// The deleted wrapper was an optional at the ELEMENT POSITION of a
-			// separated repeat: individual list positions may be blank (array
-			// elision, `[a, , b]`). Storage for such a slot is
-			// `Array<X | undefined>` — a hole is a real position holding no
-			// element, distinct from absence of the position.
 			readonly optionalElement?: boolean;
 
 			readonly aliasedFrom?: string;
 			readonly aliasNamed?: boolean;
 
-			// Precedence vocabulary stamped by the `prec` rule builder. Link
-			// still consumes PREC/PREC_LEFT/PREC_RIGHT/PREC_DYNAMIC wrapper
-			// nodes directly this step, so this attribute is reachable on the
-			// normalized view but not yet populated by the pipeline.
 			readonly prec?: {
 				readonly kind: 'left' | 'right' | 'dynamic' | undefined;
 				readonly value: number | string;
@@ -123,35 +69,22 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	: {});
 
 export type Rule<Phase extends PhaseName = 'normalize'> =
-	// Structural grouping — Normalize restructures these
 	| SeqRule<Phase>
 	| ChoiceRule<Phase>
 
-	// Named patterns — clean wrappers, no derived metadata
 	| VariantRule<Phase>
-	// EnumRule is now ChoiceRule (PR-P): removed from union to avoid duplicate
 	| SupertypeRule<Phase>
 	| GroupRule<Phase>
-	// TerminalRule removed (PR-P Task 2): terminals classify by shape at Assemble
 
-	// Terminals
 	| StringRule<Phase>
 	| PatternRule<Phase>
 
-	// Structural whitespace
 	| IndentRule<Phase>
 	| DedentRule<Phase>
 	| NewlineRule<Phase>
 
-	// References — symbol refs persist through every phase (they are the
-	// cross-rule reference mechanism all the way to emit)
 	| SymbolRule<Phase>
 
-	// Bounded-lifetime nodes — each collapses to `never` outside its phase
-	// window (see the per-type conditionals): alias/token are consumed by
-	// Link (surviving into the 'link' view only defensively);
-	// optional/field/repeat/repeat1 are consumed by Normalize's
-	// applyWrapperDeletion. None appear in the wrapper-free views.
 	| OptionalRule<Phase>
 	| FieldRule<Phase>
 	| RepeatRule<Phase>
@@ -172,10 +105,6 @@ export type SimplifiedRule = Rule<'simplify'> & {
 	readonly __renderRule?: never;
 	readonly __simplifiedRule?: never;
 };
-
-// ---------------------------------------------------------------------------
-// Structural grouping
-// ---------------------------------------------------------------------------
 
 export type SeqRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SEQ;
@@ -204,7 +133,6 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly value: Rule<T>;
 				readonly trailing?: DelimiterMode;
 				readonly leading?: DelimiterMode;
-				/** See RuleBase.separator — comma-terminated list family. */
 				readonly terminated?: true;
 			};
 		}
@@ -226,7 +154,6 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly value: Rule<T>;
 				readonly trailing?: DelimiterMode;
 				readonly leading?: DelimiterMode;
-				/** See RuleBase.separator — comma-terminated list family. */
 				readonly terminated?: true;
 			};
 		}
@@ -239,10 +166,6 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly leading?: DelimiterMode;
 			}
 		: never;
-
-// ---------------------------------------------------------------------------
-// Named patterns
-// ---------------------------------------------------------------------------
 
 export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 	? RuleBase<T> & {
@@ -259,48 +182,14 @@ export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly content: Rule<T>;
 };
 
-/**
- * (debt: source-homonym resolution, decision 6) `RuleSource` ('grammar' |
- * 'promoted' | 'override') is DELETED. It wore two different facts under
- * one name: WHO authored a rule's text (grammar / override — now
- * `RuleMetadataShape.author`, which also covers 'enrich' and 'evaluate'),
- * and WHETHER a classification was declared or inferred by link's
- * structural classifier (the former 'promoted' value — now
- * `RuleMetadataShape.classifiedBy: 'grammar' | 'link'`, a separate axis,
- * not an authorship fact). See `dsl/rule-metadata.ts`.
- */
-
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
-
-/**
- * Normalize a closed literal set to the canonical rule shape.
- *
- * (debt PR-P1) Relocated to `dsl/rule-metadata.ts` — it constructs the
- * `metadata.source` bag, and `types/` cannot import the dsl-owned
- * `makeRuleMetadata` write seam (layering: dsl → types ← compiler). See that
- * module for the implementation; re-exported here is NOT done deliberately —
- * callers (compiler/link.ts, compiler/evaluate.ts) already import from
- * `dsl/`, so they import `normalizeEnumMembers` from its new home directly.
- */
 
 export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
-	// Each subtype is a real SymbolRule reference (or, for a bare STRING
-	// choice arm with no natural symbol, one synthesized from its catalog
-	// entry) — never a name string. This is the same convention every other
-	// rule-tree reference to another kind uses (SeqRule/ChoiceRule members),
-	// so subtype kindId/aliasedFromId stamp inline on the ref itself
-	// (`kindId`, `aliasedFrom`, `aliasedFromId`) instead of a parallel
-	// name-keyed table — `aliasedFrom ?? name` recovers the storage name.
 	readonly subtypes: SymbolRule<T>[];
 };
 
-/**
- * Storage→parse name pairs for the aliased arms of a supertype's subtypes —
- * projected on demand from `SupertypeRule.subtypes` (single source of truth;
- * replaces the former separately-stored `subtypeParseNames` field).
- */
 export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>): Readonly<Record<string, string>> {
 	const pairs: Record<string, string> = {};
 	for (const s of rule.subtypes) {
@@ -309,30 +198,10 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	return pairs;
 }
 
-/**
- * Whether an aliased reference's display (parse) name genuinely diverges
- * from its storage kind. tree-sitter merges a hidden rule that is referenced
- * ONLY through a single alias name into the alias symbol at generate time —
- * one parser id serves both spellings, the wire `$type` already IS the
- * storage kind, and a normalization pair would remap a node to itself.
- * Distinct stamped ids mean the parser kept two symbols (the alias is not
- * globally 1:1 with its source rule), so the display name genuinely differs
- * from the storage kind. Missing ids keep the pair — the merge cannot be
- * proven from an absent stamp.
- */
 export function aliasRestampRequired(parseKindId: number | undefined, storageKindId: number | undefined): boolean {
 	return parseKindId === undefined || storageKindId === undefined || parseKindId !== storageKindId;
 }
 
-/**
- * `subtypeParseNamesOf` narrowed to the arms whose display (parse) name
- * genuinely differs from the storage kind on the wire (see
- * {@link aliasRestampRequired}), as `[parseName, storageName]` pairs.
- * Serialized into the node model's `fieldAliasMap` and consumed by the
- * corpus validators (`validate/factory-render-parse.ts`, `validate/from.ts`)
- * to normalize display names against storage kinds; the wire `$type` itself
- * is the grammar symbol stamped by the native read and needs no restamp.
- */
 export function subtypeRestampPairsOf<T extends PhaseName>(
 	rule: SupertypeRule<T>
 ): ReadonlyArray<readonly [string, string]> {
@@ -345,15 +214,12 @@ export function subtypeRestampPairsOf<T extends PhaseName>(
 	return pairs;
 }
 
-// Narrower pair than `NodeOrTerminal` because `types/` sits below `compiler/`
-// in the module layering and cannot import it — see glossary.
 export interface TransitiveSubtypeRef {
 	readonly storageKind: string;
 	readonly storageKindId?: number;
 	readonly kindId?: number;
 }
 
-// See glossary — full contract.
 export function transitiveParseKinds<T extends PhaseName>(
 	startName: string,
 	lookup: (name: string) => SupertypeRule<T> | undefined
@@ -369,18 +235,11 @@ export function transitiveParseKinds<T extends PhaseName>(
 		visited.add(name);
 		const rule = lookup(name);
 		if (!rule) return;
-		// Pass 1: every ALIASED arm's parse (display) identity is reachable
-		// here regardless of whether its storage side is itself a nested
-		// supertype — in declaration order, before any recursion below.
 		for (const s of rule.subtypes) {
 			if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) {
 				add(s.name, s.aliasedFrom, s.aliasedFromId, s.kindId);
 			}
 		}
-		// Pass 2: recurse into every subtype's OWN storage identity, in
-		// declaration order — a nested supertype expands to its leaves
-		// (never its own name); a plain leaf (aliased or not) lands in the
-		// output under its bare storage name.
 		for (const s of rule.subtypes) {
 			const aliased = s.aliasedFrom !== undefined && s.aliasedFrom !== s.name;
 			const storageKind = aliased ? s.aliasedFrom! : s.name;
@@ -402,10 +261,6 @@ export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly content: Rule<T>;
 };
 
-// ---------------------------------------------------------------------------
-// Terminals
-// ---------------------------------------------------------------------------
-
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
@@ -418,10 +273,6 @@ export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly resolvedKindId?: number;
 };
 
-// ---------------------------------------------------------------------------
-// Structural whitespace
-// ---------------------------------------------------------------------------
-
 export type IndentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof INDENT;
 };
@@ -433,13 +284,6 @@ export type DedentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof NEWLINE;
 };
-
-// ---------------------------------------------------------------------------
-// References. Symbol refs persist through EVERY phase (wrapper-deletion
-// stamps fieldName/multiplicity/separator onto them as leaves — that is the
-// core of the RenderRule design). alias/token are consumed by Link and only
-// exist in the WrapperPhase views.
-// ---------------------------------------------------------------------------
 
 export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;
@@ -468,34 +312,10 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 		}
 	: never;
 
-// ImmediateTokenRule exists ONLY within the 'evaluate' phase view.
-// `token.immediate()` constructs this real IMMEDIATE_TOKEN-tagged node
-// (matching tree-sitter's own dsl.js shape, and grammar-shapes/grammar-json.ts's
-// existing `ImmediateTokenRule` model of it) instead of folding straight into
-// `TokenRule`'s `immediate: true` — so a dedup/equality check running during
-// enrich (e.g. dsl/rule-patterns.ts's `rulesEqual`, which dispatches purely on
-// `type`) sees the SAME distinct tag under both runtimes, matching tree-sitter's
-// CLI-runtime `token.immediate()` which was never foldable to sittir's shape in
-// the first place. `grammarFn`'s `normalizeImmediateTokens` folds every
-// remaining IMMEDIATE_TOKEN into `TokenRule` + `immediate: true` once enrich's
-// decisions are locked in, matching what the compiler pipeline (Link onward)
-// already expects — see docs/glossary/compiler-model.md's `NodeRef.immediate`.
 export type ImmediateTokenRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
 	? RuleBase<Phase> & { readonly type: 'IMMEDIATE_TOKEN'; readonly content: Rule<Phase> }
 	: never;
 
-// Prec*Rule exist ONLY within the 'evaluate' phase view. `prec`/`prec.left`/
-// `prec.right`/`prec.dynamic` construct these (mirroring the PREC/PREC_LEFT/
-// PREC_RIGHT/PREC_DYNAMIC shape `grammar-shapes/grammar-json.ts` already
-// models for tree-sitter's own dsl.js prec, and that `isPrecWrapper`
-// — types/runtime-shapes.ts — already recognizes) so a choice arm's
-// precedence wrapping is visible to enrich's minting decisions under BOTH
-// runtimes identically. `enrich`'s existing `applyClauseHoist` already
-// descends through this exact shape and threads `ambientPrec` — that path
-// was previously dead on sittir's own runtime because sittir's `prec` never
-// produced a shape it could match. Downstream phases (Link onward) never see
-// these — every remaining Prec*Rule collapses back to its content once
-// enrich's minting pass completes.
 export type PrecRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
 	? RuleBase<Phase> & { readonly type: 'PREC'; readonly content: Rule<Phase>; readonly value: number }
 	: never;
@@ -509,20 +329,6 @@ export type PrecDynamicRule<Phase extends PhaseName = 'evaluate'> = Phase extend
 	? RuleBase<Phase> & { readonly type: 'PREC_DYNAMIC'; readonly content: Rule<Phase>; readonly value: number }
 	: never;
 
-// ---------------------------------------------------------------------------
-// Per-variant type guards
-//
-// Prefer these over inline `r.type === 'SEQ'` checks in `.filter()`,
-// `.find()`, `.some()`, `.every()`, and standalone predicates — they
-// narrow the rule type through the callback (no `as SeqRule` casts
-// downstream). Inside a `switch (rule.type)` stay with literal case
-// arms so TS exhaustiveness checking catches missing variants when
-// new Rule types are added.
-// ---------------------------------------------------------------------------
-
-// Phase-generic: each guard narrows WITHIN the caller's phase view (for a
-// view where the variant cannot exist — e.g. isOptional on Rule<'normalize'>
-// — the narrowed type is `never`, surfacing the dead check at compile time).
 export const isSeq = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SEQ }> => r.type === SEQ;
 export const isChoice = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof CHOICE }> => r.type === CHOICE;
 export const isOptional = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof OPTIONAL }> => r.type === OPTIONAL;
@@ -531,7 +337,6 @@ export const isRepeat1 = <R extends AnyRule>(r: R): r is Extract<R, { type: type
 export const isField = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof FIELD }> => r.type === FIELD;
 
 export const isGroup = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof GROUP }> => r.type === GROUP;
-// isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
 export const isString = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof STRING }> => r.type === STRING;
 export const isSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> => r.type === SYMBOL;
 export const isAlias = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof ALIAS }> => r.type === ALIAS;
@@ -539,10 +344,6 @@ export const isLinkSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: t
 	r.type === SYMBOL && r.literal !== undefined;
 export const literalTextOf = (r: AnyRule): string | undefined =>
 	r.type === STRING ? r.value : isLinkSymbol(r) ? r.literal : undefined;
-
-// ---------------------------------------------------------------------------
-// Tree walkers — pure Rule-tree projections, no AssembledNode concepts
-// ---------------------------------------------------------------------------
 
 export function collectFieldNames(rule: AnyRule): Set<string> {
 	const names = new Set<string>();
@@ -572,10 +373,6 @@ function walkFieldNames(rule: AnyRule, out: Set<string>): void {
 	}
 }
 
-// ---------------------------------------------------------------------------
-// Reference graph
-// ---------------------------------------------------------------------------
-
 export interface SymbolRef {
 	refType: 'symbol' | 'alias' | 'token';
 	from: string;
@@ -584,17 +381,8 @@ export interface SymbolRef {
 	fieldName?: string;
 	optional?: boolean;
 	repeated?: boolean;
-	position?: number; // Link adds: index within parent's SEQ
+	position?: number;
 }
-
-// ---------------------------------------------------------------
-// Path-addressed rule rewriting
-//
-// Slash-separated positional paths (e.g. '1/1/0/1/3') used by
-// `polymorphs:` / `transforms:` / `groups:` in grammar.sittir.ts. See
-// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
-// for the path semantics.
-// ---------------------------------------------------------------
 
 export function replaceAtPath<R extends AnyRule>(rule: R, path: string, replacement: R): R {
 	const segments = path.split('/').filter((s) => s.length > 0);

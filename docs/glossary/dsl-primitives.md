@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `maybeKeywordSymbol` (`packages/codegen/src/dsl/primitives/field.ts:32`)
 
 ```text
@@ -45,6 +46,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * rule's body before registration. Returns the content unchanged
  * when no STRING is reachable through the recognized shapes.
  */
+```
+
+#### body (`packages/codegen/src/dsl/primitives/field.ts:44`)
+
+```text
+/* Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
+	   may not. */
+```
+
+#### body (`packages/codegen/src/dsl/primitives/field.ts:50`)
+
+```text
+/* CHOICE(STRING, BLANK) is tree-sitter's normalized form for
+	   `optional(STRING)`. */
 ```
 
 ### `synthesizeKwSymbol` (`packages/codegen/src/dsl/primitives/field.ts:102`)
@@ -189,5 +204,171 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Module-local accumulator. Null when no `grammar(...)` call is on
  * the stack — calling `role()` in that state is an error because we
  * have no scope to attach the binding to.
+ */
+```
+
+### `module` (`packages/codegen/src/dsl/primitives/field.ts:1`)
+
+```text
+/**
+ * dsl/field.ts — sittir field shadow with one-arg placeholder form.
+ *
+ * Tree-sitter's baseline `field()` takes two args: `field(name, content)`.
+ * Sittir's transform() patches need a one-arg form so authors can write:
+ *
+ *     transform(original, { 0: field('expression') })
+ *
+ * Two-arg calls delegate to whichever `field` is provided as a global
+ * by the runtime — sittir's grammarFn-injected field (`{type:'FIELD'}`)
+ * in sittir's pipeline, or tree-sitter's native field (same shape) when
+ * the transpiled grammar.js is loaded by tree-sitter's CLI. This keeps
+ * the same call site valid for both consumers.
+ *
+ * One-arg calls return a sittir-only placeholder marker that
+ * `transform()`'s resolvePatch swaps out before the result reaches
+ * the runtime's grammar() processing. The marker never escapes into
+ * a final grammar tree.
+ *
+ * Import explicitly when you want the one-arg form:
+ *
+ *     import { field } from '@sittir/codegen/dsl'
+ */
+```
+
+```text
+/**
+ * dsl/alias.ts — sittir alias shadow with placeholder form.
+ *
+ * Two authoring modes:
+ *
+ *   1. **Two-arg** — `alias(rule, $.name)` or `alias(rule, 'name')`:
+ *      delegates directly to the runtime's native `alias()`.
+ *
+ *   2. **One-arg placeholder** — `alias('assignment_eq')`:
+ *      returns an `AliasPlaceholder` that `transform()`'s
+ *      `resolvePatch` fills in with the original content at the
+ *      patch target. Same pattern as `field('name')`.
+ *
+ *      In the override file:
+ *        transform(original, { '1/0': alias('assignment_eq') })
+ *
+ *      resolvePatch produces:
+ *        alias(original_content_at_1_0, { type: 'SYMBOL', name: 'assignment_eq' })
+ *
+ * Import explicitly when you want the placeholder form:
+ *
+ *     import { alias } from '@sittir/codegen/dsl'
+ */
+```
+
+```text
+/**
+ * dsl/primitives/refine.ts — declare correlated choice selections
+ * across non-adjacent positions as named forms.
+ *
+ * Authoring-only primitive: produces codegen metadata via the active
+ * wire context; the rule tree is unchanged. Tree-sitter parses using
+ * the original shape.
+ *
+ * Use case: a rule whose choice positions are correlated — picking one
+ * alternative in position A implies picking a specific alternative in
+ * position B. TypeScript's `interface_body` is the motivating example:
+ *
+ *     interface_body: ($, original) => refine(original, {
+ *         curly: { 'opening:': '{',  'closing:': '}'  },
+ *         flow:  { 'opening:': '{|', 'closing:': '|}' },
+ *     }),
+ *
+ * Read as: "`curly` form selects `{` at the `opening` field and `}` at
+ * the `closing` field; `flow` form selects `{|` and `|}`." Each outer
+ * key names a form; each inner key is a path to a choice node; each
+ * inner value picks one branch (numeric index or literal-matching
+ * string).
+ *
+ * Codegen emits per-form namespace-keyed factories — `ir.interfaceBody
+ * .curly(config)`, `ir.interfaceBody.flow(config)` — with narrowed
+ * Config types for the refined positions. The auto-stamp rule
+ * then collapses the now-single-literal fields to absent Config keys,
+ * so callers don't restate the literals that were implied by the form.
+ *
+ * The bare call `ir.interfaceBody(config)` routes to the
+ * **first-declared** form. Authors order entries so the common case
+ * comes first.
+ *
+ * Round-trip: readNode output and refine-factory output produce
+ * identical NodeData shapes — no `$variant` tag, no discriminator.
+ * Consumers that need "which form is this?" inspect
+ * `$fields.opening` (or any refined position) directly.
+ *
+ * @see packages/codegen/src/dsl/wire/wire.ts — WireContext.refineForms
+ */
+```
+
+```text
+/**
+ * dsl/role.ts — structural-whitespace role primitive for override files.
+ *
+ * Sittir-specific DSL addition. Indent-sensitive grammars annotate
+ * external tokens with their structural role (`indent` / `dedent` /
+ * `newline`) inline in the externals callback:
+ *
+ *     externals: ($, prev) => [
+ *         ...prev,
+ *         role($._indent,  'indent'),
+ *         role($._dedent,  'dedent'),
+ *         role($._newline, 'newline'),
+ *     ],
+ *
+ * `role()` returns the symbol reference UNCHANGED so the externals
+ * array still receives a valid token reference. As a side effect it
+ * pushes the binding onto a per-grammar accumulator that
+ * `evaluate.ts`'s `grammarFn` consumes and attaches to the resulting
+ * grammar as `externalRoles`. Link reads it from `raw.externalRoles`
+ * to drive its symbol-resolution behavior.
+ *
+ * The accumulator is scoped to the enclosing `grammar(...)` call via
+ * a save/restore pattern (see `withRoleScope`), so nested
+ * `grammar(enrich(base), {...})` evaluations don't leak roles between
+ * scopes.
+ *
+ * Import explicitly:
+ *
+ *     import { role } from '@sittir/codegen/dsl'
+ */
+```
+
+### `role` (`packages/codegen/src/dsl/primitives/role.ts:46`)
+
+#### body (`packages/codegen/src/dsl/primitives/role.ts:46`)
+
+```text
+// Runtime validation — the TS type parameter doesn't flow through
+// override files' @ts-nocheck imports, so a typo like 'indet' would
+// otherwise silently store a wrong binding.
+```
+
+### `VariantPlaceholder` (`packages/codegen/src/dsl/primitives/variant.ts:1`)
+
+```text
+/**
+ * dsl/variant.ts — nested-alias polymorph sugar.
+ *
+ * `variant('block')` inside a rule callback for `closure_expression` mints a
+ * kind name for that anonymous choice arm — equivalent to an author writing
+ * an explicit `alias('closure_expression_block')` — and registers the hidden
+ * rule plus a GLR conflict group so the arms remain distinguishable. It
+ * carries NO classification metadata: the `WireContext` has no
+ * `polymorphVariants`-style channel (deleted in the V2 wire-channel-deletion
+ * work; see `dsl/wire/wire.ts`'s `WireContext`, which has only `deposits` /
+ * `syntheticInline` / `conflictGroups` / `refineForms` / `groups`), per
+ * `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`
+ * decision 7.
+ *
+ * Usage in grammar.sittir.ts:
+ *
+ *     closure_expression: ($, original) => transform(original,
+ *         { 0: field('static'), 1: field('async'), 2: field('move') },
+ *         { '4/0': variant('block'), '4/1': variant('expr') },
+ *     ),
  */
 ```

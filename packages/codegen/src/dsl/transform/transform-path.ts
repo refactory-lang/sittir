@@ -1,35 +1,3 @@
-/**
- * dsl/transform-path.ts — path addressing for transform() patches.
- *
- * Path strings use forward-slash delimiters. Segment forms:
- *
- *   'N'         → positional index (0-based)
- *   '-N'        → reverse index from the end (-1 = last member)
- *   '_'         → wildcard — matches every sibling at this level
- *   '(name)'    → kind-match — finds every occurrence of symbol `name`
- *                 in the current subtree, skipping pre-fielded ones
- *   'name:'     → field traversal — descends through a field('name', ...)
- *                 wrapper at the current position (hard-errors on mismatch)
- *
- * Examples:
- *   '0'              → first position of the top-level seq
- *   '0/1/2'          → nested descent by positional indices
- *   '0/_/1'          → position 1 of every branch at level 1 under pos 0
- *   '(_expression)'  → every `_expression` symbol in the subtree
- *   '2/elements:'    → descend into field('elements', ...) at position 2
- *
- * Migration notes:
- *   '*' → '_'         (wildcard)
- *   'name' → '(name)' (kind-match)
- *
- * Rules:
- * - No leading slash (`/0` is invalid).
- * - No trailing slash.
- * - `_` wildcard matches a single level only — not recursive.
- * - Out-of-bounds paths and zero-match wildcards are hard errors at
- *   apply time (with the path + actual rule shape in the message).
- */
-
 import {
 	isPrecWrapper as isPrecWrapperShape,
 	isContainerType,
@@ -39,14 +7,6 @@ import {
 	isFieldType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
-
-// ---------------------------------------------------------------------------
-// Native DSL accessors — we call the runtime-injected DSL functions
-// (sittir's grammarFn-injected globals OR tree-sitter CLI's native
-// globals) instead of reconstructing rule objects directly. This keeps
-// the rule shape consistent with whichever runtime is processing the
-// transform call, and runs whatever normalization the runtime does.
-// ---------------------------------------------------------------------------
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -106,19 +66,15 @@ export function parsePath(pathStr: string): PathSegment[] {
 	const segments: PathSegment[] = [];
 	for (const part of parts) {
 		if (part === '_') {
-			// Wildcard syntax.
 			segments.push({ kind: 'wildcard' });
 		} else if (/^-?\d+$/.test(part)) {
 			segments.push({ kind: 'index', value: Number(part) });
 		} else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
-			// Kind-match syntax: (name).
 			segments.push({ kind: 'kind-match', name: part.slice(1, -1) });
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
-			// Field-traversal syntax: name:.
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
 			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard; see ADR-0010`);
-			// ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
 			throw new Error(
 				`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead; see ADR-0010`
@@ -132,19 +88,6 @@ export function parsePath(pathStr: string): PathSegment[] {
 	return segments;
 }
 
-/**
- * Apply a patch at one or more positions inside a rule tree, addressed
- * by a parsed path. Returns a new rule (no mutation). Wildcards expand
- * to every matching sibling at that level.
- *
- * The patch may be either a Rule (replace the target) or a function
- * `(originalMember: Rule) => Rule` for in-place wrapping.
- *
- * Throws on out-of-bounds indices or zero-match wildcards.
- */
-// Local accessors for the container/wrapper field shapes RuntimeRule
-// doesn't expose structurally. Consolidated so the casts live in one
-// spot rather than scattered through applyPath's branches.
 const membersOf = (r: RuntimeRule): RuntimeRule[] => (r as unknown as { members: RuntimeRule[] }).members;
 const contentOf = (r: RuntimeRule): RuntimeRule => (r as unknown as { content: RuntimeRule }).content;
 
@@ -154,49 +97,18 @@ export function applyPath(
 	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
-	// Precedence wrappers are transparent to path addressing EVEN AT THE TARGET
-	// POSITION (segments.length === 0), same as the group-lift-symbol and
-	// content-alias transparency below — a patch path resolves against the
-	// pre-mint structure, and enrich's PREC-descent mint (mintStructuredChoiceArm)
-	// now produces PREC(ALIAS(...)) arms whose precedence must ride through to
-	// the rebuilt result (descendThroughPrecWrapper's own recursion already
-	// re-wraps correctly; this check only needed to come BEFORE the
-	// segments.length === 0 leaf case below it used to fall through to, handing
-	// callers like resolvePatch's variant() branch the raw unpeeled PREC node
-	// instead of its content — see typescript's call_expression regression).
 	if (isPrecWrapperShape(rule)) {
 		return descendThroughPrecWrapper(rule, segments, patch, precStack);
 	}
 
 	if (segments.length === 0) {
-		// Reached the target position — apply the patch.
 		return typeof patch === 'function' ? patch(rule, precStack) : patch;
 	}
 
-	// Enrich group-lift symbols are transparent to path addressing, like prec
-	// wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
-	// tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
-	// decision 6 — was `metadata.source === 'enrich'`) that carries the hoisted
-	// seq body on `content`. An authored patch whose path was written against the pre-hoist
-	// seq must travel THROUGH the symbol into that body. We descend without
-	// consuming a segment (transparent) and rebuild the symbol around the patched
-	// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
-	// because the tag + body ride the symbol object itself — no rule-map resolver.
 	if (isEnrichGroupLiftSymbol(rule)) {
 		return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
 	}
 
-	// Enrich content-aliases are ALSO transparent to path addressing. enrich
-	// wraps an inline-unsafe `optional(seq)` / bare `choice` in
-	// `alias(<content>, $.<name>)` (the visible-kind form) tagged
-	// `metadata.author === 'enrich'` (was `metadata.source === 'enrich'`,
-	// decision 6). enrich runs BEFORE the authored
-	// transform()/variant()/groups path-patches, so a patch whose path was
-	// written against the pre-alias content must travel THROUGH the alias into
-	// that content. Without this, `descendThroughAlias` (single-content, index 0
-	// only) rejects any index ≥1 a real patch uses (e.g. rust visibility_modifier
-	// `1/1/0/1/3`). We descend into `content` WITHOUT consuming a segment
-	// (transparent, like prec / the group-lift symbol) and rebuild the alias.
 	if (isEnrichContentAlias(rule)) {
 		return descendThroughEnrichContentAlias(rule, segments, patch, precStack);
 	}
@@ -213,8 +125,6 @@ export function applyPath(
 
 		case 'index':
 		case 'wildcard': {
-			// Containers we can descend into — predicates in runtime-shapes.ts
-			// work across both the sittir and tree-sitter-CLI runtimes.
 			if (isContainerType(t)) {
 				return applyToMembers(rule, head!, rest, patch, precStack);
 			}
@@ -230,7 +140,6 @@ export function applyPath(
 		}
 
 		default: {
-			// Exhaustiveness guard — TypeScript narrows `head` to `never` here.
 			const _exhaustive: never = head;
 			throw new Error(`applyPath: unknown segment kind '${(_exhaustive as PathSegment).kind}'`);
 		}
@@ -249,11 +158,6 @@ function descendThroughPrecWrapper(
 }
 
 export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
-	// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
-	// also carries `metadata.author === 'enrich'` but is handled separately by
-	// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
-	// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
-	// would throw "group-lift symbol has no name" (an alias has no `.name`).
 	const t = (rule as { type?: string }).type;
 	if (t !== 'SYMBOL') return false;
 	const meta = (rule as unknown as { metadata?: { author?: string } }).metadata;
@@ -345,7 +249,6 @@ function descendThroughSingleWrapper(
 		}
 		case 'kind-match':
 		case 'fieldName': {
-			// Dispatched before reaching descendThroughSingleWrapper — should never arrive here.
 			throw new Error(
 				`descendThroughSingleWrapper: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`
 			);
@@ -442,7 +345,6 @@ function applyKindMatch(
 	precStack: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
 ): RuntimeRule {
-	// Track whether we matched anything so callers can error on zero.
 	const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
 	if (!result.matched) {
 		throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
@@ -483,7 +385,6 @@ function walkKindMatch(
 	}
 	const t = rule.type;
 
-	// Prec wrappers are transparent.
 	if (isPrecWrapperShape(rule)) {
 		const stack = precStack ? [...precStack, rule] : [rule];
 		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, stack, insideNamedField);
@@ -497,9 +398,6 @@ function walkKindMatch(
 		return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
 	}
 
-	// Field: descend into content but mark insideNamedField=true so nested
-	// `_expression` references inside already-fielded symbols don't get
-	// re-wrapped.
 	if (t === 'FIELD') {
 		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
 		return {
@@ -508,7 +406,6 @@ function walkKindMatch(
 		};
 	}
 
-	// Other wrappers — descend transparently.
 	if (isWrapperType(t)) {
 		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, insideNamedField);
 		return {
@@ -517,7 +414,6 @@ function walkKindMatch(
 		};
 	}
 
-	// Containers — descend into every member.
 	if (isContainerType(t)) {
 		const members = [...membersOf(rule)];
 		let anyMatched = false;
@@ -534,7 +430,6 @@ function walkKindMatch(
 		};
 	}
 
-	// Leaf types we don't descend into (string, pattern, blank, etc.).
 	return { rule, matched: false };
 }
 
@@ -616,8 +511,6 @@ export function wrapInPrecStack(
 	return result;
 }
 
-// Re-export so transform.ts's `applyFlatPatches` can reach the
-// shared predicates through the canonical path-related module.
 export { isContainerType, isWrapperType, isPrecWrapperShape as isPrecWrapper };
 
 function applyToMembers(
@@ -638,7 +531,6 @@ function applyToMembers(
 
 		case 'kind-match':
 		case 'fieldName': {
-			// Dispatched before reaching applyToMembers — should never arrive here.
 			throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`);
 		}
 		default: {

@@ -1,19 +1,3 @@
-/**
- * Supertype membership flattened through nested supertypes.
- *
- * A supertype arm may itself be a supertype (python's
- * `expression → primary_expression → parenthesized_expression`), so
- * `subtypeNames` — the immediate arm list — answers "is this an arm of THIS
- * union", never "does this union reach that kind". Both facts below come from
- * one walk, so the two vocabularies of a subtype reference can never drift:
- *
- *   - the storage identity of every kind reachable at any depth, returned to
- *     the callers that ask reachability questions about the model;
- *   - the parse (`$type`) identity of the same set, stamped on the supertype
- *     as `transitiveParseKinds` for wrap's storage-key routing — hidden arms
- *     normalized to the visible name tree-sitter actually reports.
- */
-
 import type { AssembledNode, NodeOrTerminal } from './model/node-map.ts';
 
 export function stampSupertypeClosures(

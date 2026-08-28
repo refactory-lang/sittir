@@ -1,22 +1,3 @@
-/**
- * Emits node-model.json5 — a structural dump of the assembled `NodeMap`.
- *
- * Consumers (external tooling, fixture-based tests, downstream analyzers)
- * can parse this JSON5 file to get a structural view of each grammar
- * node's shape — kind, modelType, fields with per-value multiplicities,
- * children, supertype subtypes, polymorph forms, etc. — without re-running
- * the codegen pipeline.
- *
- * The serializer deliberately mirrors the public shape of `NodeMap` /
- * `AssembledNode` (plus their subclass-specific accessors) rather than
- * inventing a bespoke wire format. That way it tracks the source model
- * automatically: adding a new getter on `AssembledBranch` only needs a
- * one-line addition here to surface in the dump.
- *
- * Output is plain JSON (which is valid JSON5) with 2-space indent,
- * deterministically sorted by kind so diffs are stable.
- */
-
 import {
 	CHOICE,
 	FIELD,
@@ -96,17 +77,9 @@ interface SerializedNodeBase {
 	isParameterless?: boolean;
 	stampExpression?: string;
 	factoryShape?: FactoryShape;
-	/** Companion fact to factoryShape 'forwarded': the kind whose constructor
-	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 	forwardsTo?: string;
 	factoryFields?: string[];
-	/** Grammar-fixed slots `pruneDeterminedSlots` removed from the record —
-	 *  each renders as template text, never stored on the wire. */
 	determinedSlots?: { name: string; storageKey: string; text: string }[];
-	/** The factory's namespaced constructors (`buildX.<name>(...)`) — see
-	 *  `namespacedConstructors`. A form entry builds the parent around the
-	 *  child kind's factory (or its own `path` sub-constructor); a member
-	 *  entry fixes `slot` to `literal` and takes `params` positionally. */
 	namespacedConstructors?: SerializedNamespacedConstructor[];
 }
 
@@ -272,10 +245,6 @@ function serializeNode(node: AssembledNode): SerializedNode {
 	};
 	switch (node.modelType) {
 		case 'branch': {
-			/* Container-shape branches (no fields) carry their runtime separator
-			   data on `AssembledBranch.separator`, for branches whose simplified
-			   rule is a `repeat` / `repeat1`. Surface it on the branch payload
-			   only when present. */
 			const out: SerializedBranch = {
 				...base,
 				modelType: 'branch',
@@ -358,9 +327,6 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 		multiple: isMultiple(field),
 		nonEmpty: isNonEmpty(field),
 		values: field.values.map(serializeValue),
-		/* projection: derived from values via kindsOf(), not read from a
-		   stored cache. The serialized JSON shape is preserved (typeName: '',
-		   kinds: [...]) for byte-identity of node-model.json5 output. */
 		projection: {
 			typeName: '',
 			kinds: [...kindsOf(field)]
@@ -390,11 +356,6 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 	return out;
 }
 
-// Phase-invariant, same convention as assemble.ts's isAllTextShape: at
-// normalize/simplify, OPTIONAL/REPEAT/REPEAT1/FIELD collapse to `never`, so
-// this switch simply never reaches those cases when called on a
-// wrapper-deleted RenderRule (AssembledMulti.elementRule) — it bottoms out
-// directly on whatever leaf wrapper-deletion left in place.
 function extractElementKinds(rule: AnyRule): string[] {
 	const out = new Set<string>();
 	const walk = (r: AnyRule): void => {

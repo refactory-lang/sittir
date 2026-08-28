@@ -1,28 +1,7 @@
-/**
- * The rule map's two graph-level facts: its root (the start symbol every
- * traversal begins at) and reachability from there. Reachability is the single
- * derivation behind pruning unreferenced hidden rules from BOTH pipelines'
- * final rule sets
- * (`transpile/prune-grammar-json.ts` for the tree-sitter CLI's grammar.json,
- * `compiler/evaluate.ts` for the sittir-evaluated rule map). The two prunes
- * MUST agree or the model diverges from the parser (the phantom-kind class),
- * which is why the traversal lives here once.
- *
- * Rules are duck-typed: any object tree whose SYMBOL nodes carry
- * `{ type: 'SYMBOL', name }` — both grammar.json's JSON shape and
- * `Rule<'evaluate'>` satisfy this.
- */
-
-/**
- * The grammar's root kind: tree-sitter treats the FIRST declared rule as the
- * start symbol, so insertion order of the rule map is the fact. `undefined`
- * only for an empty rule map.
- */
 export function rootRuleName(rules: Readonly<Record<string, unknown>>): string | undefined {
 	return Object.keys(rules)[0];
 }
 
-/** Every `{type:'SYMBOL', name}` reference inside `node`, added to `into`. */
 export function collectSymbolRefs(node: unknown, into: Set<string>): void {
 	if (Array.isArray(node)) {
 		for (const item of node) collectSymbolRefs(item, into);
@@ -34,14 +13,6 @@ export function collectSymbolRefs(node: unknown, into: Set<string>): void {
 	for (const value of Object.values(obj)) collectSymbolRefs(value, into);
 }
 
-/**
- * Hidden (`_`-prefixed) rules unreachable from the grammar's roots: every
- * VISIBLE rule plus `protectedNames` (externals/extras/inline/conflicts/
- * supertypes/word — names the grammar machinery references outside rule
- * bodies). Reachability — not per-rule reference counting — so a hidden rule
- * kept alive only by other dead hidden rules (or by itself) is still
- * reported. Callers delete the returned names.
- */
 export function collectUnreachableHiddenRules(
 	rules: Readonly<Record<string, unknown>>,
 	protectedNames: ReadonlySet<string>

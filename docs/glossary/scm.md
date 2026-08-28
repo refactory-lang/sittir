@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `resolveGrammarRoot` (`packages/codegen/src/scm/extract-roles.ts:143`)
 
 ```text
@@ -45,6 +46,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/scm/extract-roles.ts:153`)
+
+```text
+// The field can be a string or an array of strings.
+```
+
+#### body (`packages/codegen/src/scm/extract-roles.ts:157`)
+
+```text
+// Match patterns like "node_modules/tree-sitter-<lang>/queries/<file>.scm"
+```
+
 ### `collectCaptures` (`packages/codegen/src/scm/extract-roles.ts:214`)
 
 ```text
@@ -56,6 +69,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @param visited - Set of already-visited grammar names (prevents cycles).
  * @param queryFile - Which query file to read (`'highlights'` or `'tags'`).
  */
+```
+
+#### body (`packages/codegen/src/scm/extract-roles.ts:185`)
+
+```text
+// tags.scm is optional — only warn for highlights.scm
 ```
 
 ### `captureMatchesMapping` (`packages/codegen/src/scm/extract-roles.ts:259`)
@@ -116,6 +135,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/scm/extract-roles.ts:279`)
+
+```text
+// Fallback: probe for well-known kind names when SCM captures didn't
+// discover them. Some grammars (e.g. Rust) use @constant.builtin for
+// booleans / numbers instead of @boolean / @number, so the capture-
+// based extraction misses them. These probes add kinds that are
+// universally recognized as belonging to a role.
+```
+
 ### `addToRole` (`packages/codegen/src/scm/extract-roles.ts:358`)
 
 ```text
@@ -137,6 +166,54 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * - `?` / `*` / `+` — quantifier (skipped downstream)
  * - `identifier` — kind name or other bareword
  */
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:45`)
+
+```text
+// Line comments: ; ...
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:52`)
+
+```text
+// Check for predicate: (#name? ...)
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:85`)
+
+```text
+// Quantifiers
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:92`)
+
+```text
+// Captures: @name.sub
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:101`)
+
+```text
+// String literals: "..."
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:114`)
+
+```text
+// Identifiers (kind names, field names)
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:120`)
+
+```text
+// Field colon: `name:`
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:131`)
+
+```text
+// Anchors (`.`) and other unknown chars — skip
 ```
 
 ### `peek` (`packages/codegen/src/scm/parse.ts:186`)
@@ -176,6 +253,48 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * @returns Array of `{ kindName, captureName }` pairs.
  */
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:253`)
+
+```text
+// Check for double-paren: ((kind) @cap (#pred? ...))
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:276`)
+
+```text
+// Bracket alternation inside predicate group: ([ ... ] @cap (#pred? ...))
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:292`)
+
+```text
+// skip string literals, etc.
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:316`)
+
+```text
+// Normal pattern: (kind ...) @cap
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:327`)
+
+```text
+// Bracket alternation at top level: [ (kind1) (kind2) ] @cap
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:357`)
+
+```text
+// String literal at top level: ";" @punctuation.delimiter
+```
+
+#### body (`packages/codegen/src/scm/parse.ts:360`)
+
+```text
+// skip the capture — anonymous node, no kind name
 ```
 
 ### `parsePattern` (`packages/codegen/src/scm/parse.ts:231`)
@@ -296,4 +415,95 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * symbol is a grammar fact — the rule record's first rule — not an scm
  * capture, so the caller that owns the rule record stamps it here.
  */
+```
+
+```text
+// The start symbol is a rule-record fact, not an scm capture — the
+// rule-record owner stamps it.
+```
+
+### `SCMCapture` (`packages/codegen/src/scm/parse.ts:1`)
+
+```text
+/**
+ * Minimal S-expression query parser for tree-sitter `highlights.scm` files.
+ *
+ * Parses enough of the SCM query syntax to extract `@capture_name` bindings
+ * attached to `(kind_name)` node patterns. Predicates, field names, quantifiers,
+ * string literals, and alternation brackets are recognised and skipped.
+ */
+```
+
+### `module` (`packages/codegen/src/scm/extract-roles.ts:1`)
+
+```text
+/**
+ * Semantic role extractor — reads tree-sitter `highlights.scm` and `tags.scm`
+ * query files and identifies which grammar kinds serve specific semantic roles.
+ *
+ * Resolution strategy:
+ * 1. Locate the grammar package via `createRequire`.
+ * 2. Read `queries/highlights.scm` and `queries/tags.scm`.
+ * 3. Check for `; inherits: <lang>` directive in each file.
+ * 4. If not found, check `tree-sitter.json` `highlights`/`tags` arrays for
+ *    parent grammar references (e.g. TypeScript → JavaScript).
+ * 5. Parse all sources with {@link parseSCMQuery}.
+ * 6. Map captures to semantic roles via {@link CAPTURE_TO_ROLE}.
+ * 7. Deduplicate kind names per role.
+ *
+ * Phase 1 (shipped) extracted `@comment` captures for trivia.
+ * Phase 2 extends this to ALL semantic roles from both query files.
+ */
+```
+
+### `CAPTURE_TO_ROLE.captureBase` (`packages/codegen/src/scm/extract-roles.ts:80`)
+
+```text
+// trivia
+```
+
+```text
+// string sub-roles before base
+```
+
+```text
+// number sub-roles before base
+```
+
+```text
+// boolean
+```
+
+```text
+// type sub-roles before base
+```
+
+```text
+// variable sub-roles before base
+```
+
+```text
+// function sub-roles before base
+```
+
+```text
+// tags.scm definitions
+```
+
+```text
+// tags.scm references
+```
+
+### `assignCapturesToRoles` (`packages/codegen/src/scm/extract-roles.ts:250`)
+
+#### body (`packages/codegen/src/scm/extract-roles.ts:250`)
+
+```text
+// Sub-roles also contribute to their base role.
+```
+
+#### body (`packages/codegen/src/scm/extract-roles.ts:253`)
+
+```text
+// first match wins per capture
 ```

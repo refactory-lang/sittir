@@ -1,19 +1,3 @@
-/**
- * emit.ts — single-loop orchestrator for all codegen emitters.
- *
- * Replaces the independent `emitXxx()` calls in `generate.ts` with ONE
- * entry point (`emitAll`) that iterates `nodeMap.nodes` once and
- * dispatches to every emitter per node.
- *
- * Emitters that already have `collect()` namespace APIs
- * (factory, from, wrap, templates) get true per-node dispatch in the loop.
- * Emitters that use category collection or complex multi-pass patterns
- * (types, ir, is, consts, test, clientUtils,
- * typeTests) run their existing `emitXxx()` function during finalize —
- * they keep their own internal loops for now, but the architecture is
- * set up for future migration to per-node dispatch.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
@@ -65,8 +49,6 @@ export interface EmitAllResult {
 	jinjaTemplates: EmittedTemplates;
 	utils: string;
 	renderModule?: RenderModuleBundle;
-	/** Name of the `wrap.ts` alias for the root kind's wrapped surface — the
-	 *  return type `engine.ts` gives `parse()`. */
 	rootTreeTypeName?: string;
 }
 
@@ -249,14 +231,6 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			case 'token':
 			case 'multi':
 				break;
-			/* TEMPORARY: template/render-module still share 'branch's full
-			   emission for byte-identical output — see isSlotBearingCompound's doc
-			   comment (shared.ts). Remove once 'separatedList' gets its own
-			   dedicated emission there too; wrap.ts, factories.ts, and from.ts
-			   already have their own dedicated emission — see
-			   `emitSeparatedListWrap`'s doc comment (wrap.ts),
-			   `emitSeparatedListFactory`'s doc comment (factories.ts), and
-			   `emitSeparatedListFrom`'s doc comment (from.ts). */
 			case 'separatedList':
 				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
 				if (fromEmission === 'emit') fromEmitter.emitSeparatedList(node);

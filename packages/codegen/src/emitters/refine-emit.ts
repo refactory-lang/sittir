@@ -1,14 +1,3 @@
-/**
- * emitters/refine-emit.ts — shared helpers for ADR-0010 phase 2
- * per-form factory + Config emission.
- *
- * Both types.ts and factories.ts need the same naming scheme for
- * per-form types (`InterfaceBodyCurly`), fluent-case short names,
- * and the narrowed-field computation (which field names the form's
- * selections auto-stamp). Living in a small shared module avoids a
- * walker-per-emitter duplication.
- */
-
 import type { NodeMap, RefineForm } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { narrowedFieldLiteralsForForm } from '../compiler/link.ts';

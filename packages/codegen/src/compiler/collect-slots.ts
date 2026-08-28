@@ -1,36 +1,3 @@
-/**
- * compiler/collect-slots.ts — nonterminal-driven slot enumeration.
- *
- * Replaces the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker
- * (node-map.ts) with the simple model from the
- * 2026-05-21-nonterminal-driven-slot-derivation design:
- *
- *   **A slot IS a `nonterminal`-flagged node.**
- *
- * Walk a wrapper-free RenderRule; emit one `AssembledNonterminal` per
- * `nonterminal` node:
- *  - `symbol` / `supertype` / `choice` / `pattern` / `enum` (intrinsic
- *    nonterminals, Table 1) or any node carrying a pushed-down
- *    `nonterminal: true` (Table 2) → ONE slot. A choice is a single UNION
- *    slot — its arms are NOT recursed into separate slots.
- *  - `seq` → distribute: flat-collect the slots of its members. The seq
- *    itself emits no slot.
- *  - `variant` / `clause` / `group` → transparent: recurse into content.
- *  - non-nonterminal leaf (terminal `string` / `token('lit')` / indent / …) → [].
- *
- * Removed vs the old walker: `effectiveMultiplicity` threading,
- * `deriveSlotsRawFromLeafAttr` folding, `armSlots` / `mergeChoiceArmSlots`,
- * first-arm naming. All slot facts (`fieldName` / `multiplicity` /
- * `separator` / `aliasedFrom` / `nonterminal`) already live ON the leaf
- * after `applyWrapperDeletion`, so collection just reads them.
- *
- * The produced `AssembledNonterminal` shape is identical to the old walker's
- * (four emitters depend on `storageName` / `propertyName` / `paramName` /
- * `values`). storageName-from-kind is synthesized in assemble; this collector
- * sets `name` / `storageName` from `fieldName` ?? the kind, and lets assemble
- * own final naming.
- */
-
 import {
 	ALIAS,
 	CHOICE,
@@ -84,9 +51,6 @@ function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] 
 }
 
 const collectedUnnamedChoiceKinds = new Set<string>();
-// Extra listeners registered via addUnnamedChoiceListener (e.g. the DiagnosticSink
-// forwarder in generate.ts). These run IN ADDITION to the primary warner, so
-// drainUnnamedChoiceSlots() still returns the accumulated kinds correctly.
 const _extraUnnamedChoiceListeners: Array<(kind: string | undefined) => void> = [];
 let unnamedChoiceWarner: (kind: string | undefined) => void = (kind) => {
 	collectedUnnamedChoiceKinds.add(kind ?? '(unknown)');
@@ -140,8 +104,6 @@ function carriesNamedField(rule: AnyRule): boolean {
 }
 
 export function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): boolean {
-	// All arms field-named with the SAME name → operator-enum style; that is a
-	// single slot recovered by `sharedArmFieldName`, NOT structural.
 	if (sharedArmFieldName(rule) !== undefined) return false;
 	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m));
 }
@@ -161,7 +123,6 @@ function isDegenerateFieldArm(m: AnyRule): boolean {
 	return (node as { fieldName?: string }).fieldName !== undefined && isSlotNode(node);
 }
 
-/** The field name a degenerate arm (per `isDegenerateFieldArm`) carries, unwrapping the same single-member seq nesting. */
 function degenerateArmFieldName(m: AnyRule): string | undefined {
 	let node = m;
 	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
@@ -249,12 +210,6 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	const namedIndexByName = new Map<string, number>();
 	for (const s of slots) {
 		if (s.isUnnamed) {
-			// Positional/kind-derived name: never silently merge with anything else
-			// sharing that name, even another unnamed slot — that IS a genuine
-			// storageName collision (two structurally distinct positions), and
-			// downstream diagnostics (buildSlotsRecord's storagename-collision
-			// check) must see both entries to catch it. Merging here would union
-			// their values and erase the fact they were ever distinct.
 			out.push(s);
 			continue;
 		}
@@ -289,16 +244,6 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				presence.set(slot.name, (presence.get(slot.name) ?? 0) + 1);
 			}
 			if (slot.isUnnamed) {
-				// Positional/kind-derived name: never union this slot's values with
-				// another instance sharing its name — arms (or repeated positions
-				// within one arm) are structurally distinct, and unioning would
-				// silently discard that distinction. It STILL needs the same
-				// cross-arm presence-based optionality relaxation a named slot gets
-				// below (a kind-derived name that only appears in SOME arms — e.g. a
-				// polymorph form's own unnamed child — must become optional, or a
-				// parse that takes a different arm produces "requires one value; got
-				// undefined" downstream). Applied per-instance after the loop, once
-				// presence is fully counted across all arms.
 				const list = unnamedByName.get(slot.name) ?? [];
 				list.push(slot);
 				unnamedByName.set(slot.name, list);
@@ -344,20 +289,12 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 
 function isSlotNode(rule: AnyRule): boolean {
 	if ((rule as { nonterminal?: boolean }).nonterminal === true) return true;
-	// isNonterminalRuleType classifies purely by `.type` + child shape — phase-
-	// agnostic in practice (evaluate/link/normalize rules share the type tags
-	// it switches on); widen structurally rather than narrow the caller's
-	// AnyRule param. (Post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
-	// diverge in shape, so this cast is no longer a structural coincidence —
-	// it's an explicit phase-widening read, same pattern as `findRepeatFlag`.)
 	return isNonterminalRuleType(rule as Rule<'evaluate'>);
 }
 
 function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
 	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (own !== undefined) return own;
-	// Relax an inherited nonEmptyArray: a member of a repeat1-wrapped group is
-	// not itself guaranteed ≥1 occurrences at the individual-field level.
 	if (inherited === 'nonEmptyArray') return 'array';
 	return inherited;
 }
@@ -370,23 +307,12 @@ function buildSlot(
 	inheritedSeparator: RuleBase<'normalize'>['separator'],
 	sanctionedUnion = false
 ): AssembledNonterminal | null {
-	// A choice that carries no multiplicity of its own may still be an array
-	// slot: simplify folds `choice(commaSep1(X), X)` into a nested
-	// `choice(choice(X..){nonEmptyArray}, choice(X..))` where the array
-	// multiplicity lives on an ARM, not the outer choice. `deriveValuesForRule`
-	// clobbers each arm with the multiplicity it is passed, so if we passed the
-	// outer choice's `single` the array would be lost (e.g. python
-	// `future_import_statement.name` mis-typed singular → render struct
-	// `SingleNonterminalView` while the template joins → build error). Lift the
-	// strongest arm multiplicity onto the choice before deriving values.
 	const armLifted =
 		rule.type === CHOICE && (rule as { multiplicity?: Multiplicity }).multiplicity === undefined
 			? strongestArmMultiplicity(rule)
 			: undefined;
 	const mult = armLifted ?? slotMultiplicity(rule, inherited);
 
-	// Named-vs-positional is derived directly from `fieldName` presence at read
-	// time (`AssembledNonterminal.isUnnamed`) — no stored classification here.
 	let baseName: string | undefined = (rule as { fieldName?: string }).fieldName;
 
 	if (baseName === undefined) {
@@ -400,53 +326,23 @@ function buildSlot(
 				break;
 			}
 			case CHOICE: {
-				// A field-wrapped choice loses its OWN `fieldName` to simplify
-				// (which strips it from operator choices) while the field is
-				// preserved on the choice's ARMS (the renderRule emits e.g.
-				// `{{ operator }}`). Recover the slot name from a fieldName
-				// shared by all arms before falling back to `content` — this
-				// keeps `binary_expression.operator` / `comparison_operator`
-				// named correctly under the operator-enum shape (link-symbol
-				// arms each carry `fieldName: 'operator'`). Without this the
-				// choice mis-names to `content`, the template's `{{ operator }}`
-				// is unresolvable, and read cannot populate the slot.
 				const sharedArm = sharedArmFieldName(rule);
 				if (sharedArm !== undefined) {
 					baseName = sharedArm;
 					break;
 				}
-				// Unnamed choice → `content`. Warn unless this is a
-				// registered polymorph (polymorph metadata drives the TYPE
-				// surface only; render just renders `content`) — or a sanctioned
-				// union slot (for a qualifying union the `content` name
-				// is the intended model, not a missing-name smell).
 				if (rule.type === CHOICE && !sanctionedUnion) {
-					// Prefer rule.id (encodes owning-kind + rule-tree path provenance)
-					// as the warning key; fall back to kindForName for callers (e.g.
-					// unit tests) that create bare rules without an id.
 					unnamedChoiceWarner(rule.id ?? kindForName);
 				}
 				baseName = 'content';
 				break;
 			}
 			default:
-				// Any OTHER nonterminal slot (per `classifyByType`) with no
-				// fieldName and no nameable kind — `pattern` / `enum` / aliased
-				// leaf → `content`, like an unnamed choice. `buildSlot` is only
-				// reached for nonterminal positions, so we must NOT elide based on
-				// rule.type: patterns and enums are structural slots (the catalog
-				// classifies them nonterminal). Eliding here dropped real slots
-				// (e.g. token_repetition's operator enum + separator pattern).
 				baseName = 'content';
 				break;
 		}
 	}
 
-	// buildSlot's `rule` param is AnyRule but is, at runtime, always the
-	// post-wrapper-deletion (link-derived) shape deriveValuesForRule expects —
-	// same phase-widening read as isSlotNode above (post-PR-S, RepeatRule's
-	// per-phase shapes genuinely diverge, so this is now an explicit cast
-	// rather than a structural coincidence).
 	const rawValues = deriveValuesForRule(
 		rule as Rule<'link'>,
 		{ kindEntries, stampArmFieldNamesAsParseName: sanctionedUnion },
@@ -455,12 +351,6 @@ function buildSlot(
 	let dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
-	// An unnamed-choice `content` catch-all slot (e.g. `object_type`'s body, a
-	// mapped/parenthesized type's inner) is a structural container that may be
-	// EMPTY (`{}`, `()`), so a `nonEmptyArray` requirement is wrong — the native
-	// reader rejects a legitimately-empty parse ("repeated slot content requires
-	// at least one value"). Relax content arrays to plain `array`. Named slots
-	// keep their derived cardinality.
 	if (baseName === 'content') {
 		dedupedValues = dedupedValues.map((v) =>
 			v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v
@@ -469,32 +359,10 @@ function buildSlot(
 
 	const isMultiSlot = dedupedValues.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 
-	// A member that inherits its array multiplicity from an enclosing seq also
-	// inherits that seq's separator (the member itself carries none).
-	// When sep is still undefined, fall back to a nested-arm scan so that outer
-	// choices rebuilt by `fanOutSeqChoices`/`factorChoiceBranches` (which carry
-	// only the rule id, not the separator) still inherit the separator from the
-	// arm that has it (e.g. the inlined `_import_list` arm with `sep=",trailing"`).
 	const ownOrInheritedSep =
 		(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 	const nestedScanSep = ownOrInheritedSep === undefined && isMultiSlot ? findNestedSeparator(rule) : undefined;
 	const sep = ownOrInheritedSep ?? nestedScanSep;
-	// `sep` is always the nested {value, trailing?, leading?} object (or
-	// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
-	// OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
-	// (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
-	// `isSeparatedListShape` (assemble.ts) only routes a rule to
-	// `'separatedList'` classification when the rule's OWN top-level
-	// structure IS the array (the kind's whole identity is a list) — a slot
-	// that is merely ONE array-multiplicity field among several in a larger
-	// branch/seq (e.g. a paren-wrapped tuple's inner repeat field) never
-	// reaches that check, so `sep?.trailing`/`.leading` here can genuinely be
-	// `'optional'`, not just `'mandatory'`. Preserve that tri-state via
-	// `trailingDelimiter`/`leadingDelimiter` (mirrors `AssembledSeparatedList`'s own
-	// fields) instead of collapsing straight to a presence boolean — the
-	// `findRepeatFlag` fallback has no mode granularity of its own, so a flag
-	// found only that way is treated as `'mandatory'` (preserves prior
-	// behavior for that path; no known case needs `'optional'` there).
 	const trailingDelimiter: 'mandatory' | 'optional' | 'none' = !isMultiSlot
 		? 'none'
 		: (sep?.trailing ?? (findRepeatFlag(rule, 'trailing') ? 'mandatory' : 'none'));
@@ -505,20 +373,6 @@ function buildSlot(
 	const hasLeadingDelimiter = leadingDelimiter !== 'none';
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
-	// A NESTED-SCAN separator (the fanOutSeqChoices/factorChoiceBranches rebuild
-	// path — the rule-level separator was stripped, so the slot-value stamp is
-	// the ONLY carrier left) that extractSeparatorString cannot render to a
-	// literal string is nonterminal (rule-shaped). Nothing gets stamped for it,
-	// and emitListSlot's `slotValueSep` fallback would silently render a
-	// hardcoded space where the real separator belongs. Own/inherited separators
-	// are exempt: those survive to emit time as the rule-level separator, where
-	// emitListSlot's `ruleSep` path already handles the nonterminal case (e.g.
-	// object_type_content renders via the transport's runtime `.separator`
-	// field). No kind in any current grammar routes a nonterminal separator
-	// through the rebuild path, so fail loudly instead of silently
-	// mis-rendering if one ever does. Fix shape if this fires: thread that same
-	// `ruleSep`-path nonterminal handling (templates.ts) into the slot-value
-	// stamp path here.
 	if (isMultiSlot && nestedScanSep !== undefined && separatorStr === undefined) {
 		recordAssembleWarning({
 			code: 'nonterminal-separator-unstamped',
@@ -535,14 +389,6 @@ function buildSlot(
 		optionalElement: (rule as { optionalElement?: boolean }).optionalElement
 	});
 
-	// A sanctioned union slot's addressable positions are every one of its
-	// arms, not just the CHOICE root — the render-rule's per-arm scan
-	// (`emitChoice`'s union-backed path in templates.ts) resolves EACH arm
-	// symbol independently via `lookupSlot`'s primary `slotByRuleId` path,
-	// so each arm's own id must also back-point to this slot. Scoped to the
-	// union-slot path only (never the general case) — a non-union rule's
-	// members belong to their OWN slots, and merging their ids in here would
-	// misroute `slotByRuleId` for them.
 	const memberIds =
 		sanctionedUnion && rule.type === CHOICE ? rule.members.map((m) => m.id).filter((id): id is string => !!id) : [];
 	const sourceRuleIds = [...(rule.id ? [rule.id] : []), ...memberIds];
@@ -555,9 +401,6 @@ function buildSlot(
 		trailingDelimiter,
 		leadingDelimiter,
 		sourceRuleIds,
-		// Blind opaque passthrough — never read/branched
-		// on here or by any compiler consumer. Only a dsl-sanctioned reader
-		// (diagnostics / node-model serialization) may open this bag.
 		ruleMetadata: rule.metadata
 	});
 }
@@ -571,19 +414,6 @@ export function collectSlots(
 ): AssembledNonterminal[] {
 	switch (rule.type) {
 		case SEQ: {
-			// Distribute: the seq is not a slot; its members are.
-			// Members usually carry their own multiplicity intrinsically (pushed
-			// down by wrapper-deletion's seq case via combineMultiplicity), and a
-			// member's own stamp always wins (`slotMultiplicity`). But a seq NODE
-			// can itself carry a unit multiplicity: the co-optional-literal
-			// retention in wrapper-deletion, and an optional hidden-group ref
-			// spliced open by inlining (`withAttrsFrom` stamps the ref's
-			// multiplicity on the spliced seq, not its leaves). A member with no
-			// own stamp inside such a unit is only as required as the unit —
-			// thread the seq's multiplicity as the inherited default, or a
-			// mandatory member of an optional unit mis-derives as a required
-			// single (e.g. index_signature's `readonly` marker inside its
-			// optional modifier group).
 			const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 			const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, seqMult, seqSep));
@@ -591,8 +421,6 @@ export function collectSlots(
 
 		case VARIANT:
 		case GROUP:
-			// Transparent recursive wrappers — not slots themselves. Recurse
-			// to surface their slot-bearing content.
 			return collectSlots(
 				rule.content,
 				kindForName,
@@ -602,44 +430,13 @@ export function collectSlots(
 			);
 
 		case CHOICE: {
-			// A choice whose arms are STRUCTURAL (multi-member seqs and/or carry
-			// distinct named fields) is NOT a single union slot — each arm
-			// contributes its own named fields, and the same field name across
-			// arms folds into one slot (e.g. ts `variable_declarator` =
-			// `choice(seq(field('name'), type?, field('value')?), seq(...))` →
-			// `name` / `type` / `value`, not one opaque `content`). Distribute
-			// into the arms and merge by name; relax a field absent from some arm
-			// to optional. A choice whose arms are all bare kinds / literals
-			// (`choice(<,>,...)`, `choice(symA, symB)`) is a true union → ONE slot
-			// (handled by `buildSlot` in the default case below).
-			// A FIELD-named choice (`field('body', choice(...))`, e.g. python
-			// `function_definition.body` over the inlined `_suite` choice) is ONE
-			// slot named by the field — do NOT distribute its arms. Distribution
-			// drops the field name and splits the choice into per-arm slots (the
-			// arms all alias to `block`, so the body slot mis-derives to `block`).
 			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
 				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-				// Union-slot routing: unnamed single-
-				// nonterminal arms collectively form ONE union slot; field-named
-				// arms keep distributing into named slots. Diagnostics fire on the
-				// predicate even when routing is switched off (census dry-runs).
 				const partition = partitionChoiceArms(rule);
 				if (partition.unionArms.length > 0) {
 					const ruleId = (rule as { id?: string }).id;
 					const site = `choice ${ruleId ?? '(no id)'}`;
-					// Mixed rows do not route:
-					// a field-named arm alongside union arms is as heterogeneous
-					// as an ambient-literal structured arm — its END-STATE is an
-					// INLINED KIND from the choice-arm mint (dict_pattern's
-					// `_key_value_pattern` is the exemplar), joining the union BY
-					// KIND so the choice resolves to ONE kind-dispatched slot.
-					// Two reasons, one rule: REPEATED mixed rows are order-lossy
-					// in the model itself (per-slot lists destroy the cross-arm
-					// interleaving of `A, B = 1, C`), and even SINGULAR mixed
-					// rows make a worse factory surface (N parallel optionals vs
-					// one union member). Until the mint lands: diagnose + status
-					// quo. Routing admits PURE unions only.
 					const effectiveMult =
 						((rule as { multiplicity?: Multiplicity }).multiplicity === undefined
 							? strongestArmMultiplicity(rule)
@@ -661,12 +458,6 @@ export function collectSlots(
 								`(PR 3 mint) and join one kind-dispatched union slot.`
 						});
 					} else if (unionRoutingGateB(partition) && ruleId === undefined) {
-						// A rebuilt choice with no rule id cannot back-pointer its union
-						// slot (emitChoice resolves via slotByRuleId; gate (a) tracks by
-						// id) — synthesizing here would produce a slot the template can
-						// never reference (observed: public_field_definition's ungated,
-						// mis-named emission). Keep status quo until the rebuild
-						// preserves ids.
 						recordAssembleWarning({
 							code: 'union-slot-unaddressable',
 							ownerKind: kindForName,
@@ -688,13 +479,6 @@ export function collectSlots(
 									? ` alongside ${partition.degenerateNamedArms.length} label-routed arm(s) ` +
 										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}] (PR 1.5)`
 									: ' (pure union)'),
-							// Stamped fact for downstream consumers (e.g. the tools
-							// package's template-coverage validator) that cannot
-							// re-derive union-slot membership themselves: which
-							// field-labeled arms actually merged into which union
-							// slot, so a field absent from the template's own
-							// placeholders but covered by the union slot isn't
-							// misreported as unreferenced.
 							details: {
 								unionSlot: 'content',
 								degenerateFields: partition.degenerateNamedArms
@@ -703,17 +487,9 @@ export function collectSlots(
 							}
 						});
 						if (unionSlotRouting) {
-							// structuredNamedArms is empty here by construction (the
-							// mixed-row branch above already handled the >0 case) —
-							// mapped for shape symmetry with the mixed-row/nondegenerate
-							// branches, not because it can be non-empty at this point.
 							const namedArmSlots = partition.structuredNamedArms.map((m) =>
 								mergeByName(collectSlots(m, kindForName, kindEntries, armMult, choiceSep))
 							);
-							// Degenerate fielded arms join the union by FIELD LABEL —
-							// restrict to the unnamed union arms PLUS the
-							// degenerate arms — deriveValuesForRule stamps each
-							// degenerate arm's values with parseName = its fieldName.
 							const restricted = {
 								...rule,
 								members: [...partition.unionArms, ...partition.degenerateNamedArms]
@@ -724,15 +500,10 @@ export function collectSlots(
 								kindEntries,
 								inherited,
 								inheritedSeparator,
-								/* sanctionedUnion */ true
+								 true
 							);
 							if (unionSlot === null) return mergeChoiceArms(namedArmSlots);
 							if (ruleId !== undefined) _synthesizedUnionChoiceIds.add(ruleId);
-							// The union slot participates in the cross-arm merge as ONE
-							// arm: presence counting relaxes it to optional when named
-							// arms exist (a parse may take a named arm), and relaxes
-							// named slots absent from the union arm — both directions
-							// via the existing mergeChoiceArms machinery.
 							return mergeChoiceArms([...namedArmSlots, [unionSlot]]);
 						}
 					} else {
@@ -763,8 +534,6 @@ export function collectSlots(
 		}
 
 		default: {
-			// A nonterminal node IS one slot — its arms / children are NOT
-			// recursed. A non-nonterminal leaf contributes nothing.
 			if (!isSlotNode(rule)) return [];
 			const slot = buildSlot(rule, kindForName, kindEntries, inherited, inheritedSeparator);
 			return slot ? [slot] : [];

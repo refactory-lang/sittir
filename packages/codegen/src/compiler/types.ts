@@ -1,30 +1,7 @@
-/**
- * compiler/types.ts — compiler pipeline output contracts.
- *
- * Each pipeline phase produces a typed container; this file collects
- * them.
- *
- * - Evaluate  produces {@link RawGrammar}.
- * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
- * - Normalize produces {@link NormalizedGrammar}.
- * - Simplify  (a sub-stage of Normalize) produces {@link SimplifiedGrammar}.
- * - Assemble  produces {@link NodeMap}.
- *
- * Diagnostic / suggester-input types live here too ({@link DerivationLog}
- * and its entry types, {@link IncludeFilter}) because they flow between
- * Link and the suggester emitter, not through the rule tree itself.
- *
- * The Rule model (Rule union + type guards + SymbolRef) stays in
- * `./rule.ts`. The AssembledNode hierarchy currently stays in `rule.ts`
- * too; splitting it into `./node-map.ts` is a later step.
- */
-
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
-// ExternalRole lives in the IR type layer — re-exported here so existing
-// compiler-side importers keep working.
 import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 
@@ -61,22 +38,16 @@ export interface RuleCatalog {
 
 export const KindPresenceFlag = {
 	None: 0,
-	/** Rule appears in `grammar.js` (codegen rule catalog). */
 	TSGrammar: 1 << 0,
-	/** Kind appears in `node-types.json`. */
 	TSNodeTypes: 1 << 1,
-	/** Kind has a parser symbol — IDs come from `parser.c` internal metadata. */
 	TSInternals: 1 << 2
 } as const;
 export type KindPresenceFlag = number;
 
 const KindUseFlag = {
 	None: 0,
-	/** Sittir can ingest/hydrate the kind from parsed runtime nodes. */
 	Readable: 1 << 0,
-	/** Sittir can produce/build it from factories or `.from()`. */
 	Buildable: 1 << 1,
-	/** Sittir can render/dispatch it. */
 	Renderable: 1 << 2
 } as const;
 type KindUseFlag = number;
@@ -112,11 +83,6 @@ export interface RawGrammar {
 	readonly extras: string[];
 	readonly externals: string[];
 	readonly supertypes: string[];
-	/**
-	 * Kinds the grammar declares as having no top-level `ir.*` builder — see
-	 * `WireConfig.factoryInline`. Carried by name through link and stamped
-	 * onto the assembled node as `factoryInline`.
-	 */
 	readonly factoryInline: string[];
 	readonly inline: string[];
 	readonly conflicts: string[][];
@@ -136,13 +102,6 @@ export interface RawGrammar {
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 }
 
-/**
- * A mint at an evaluate-only synthesis site (`synthesizeInlineAliasSources`,
- * or the body-pattern-group fallback in `evaluateRulesAndInjectSynthetics`)
- * that fired without a matching wire-side deposit for the same name — the
- * dual-execution divergence the kindid invariant depends on these sites
- * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
- */
 export interface DesugarDivergenceEvent {
 	readonly site: 'inline-alias-source' | 'body-pattern-group';
 	readonly name: string;
@@ -206,14 +165,6 @@ export interface LinkedGrammar {
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
-	/**
-	 * Anon-token wire ids that can wear a kind: `alias('tok', $.kind)`
-	 * occurrences (soft keywords used as identifiers, punctuation aliased
-	 * into a named wrapper). The wire (`$type` = grammar symbol) delivers
-	 * the TOKEN's own id at such occurrences, so any union decode arm for
-	 * `kind` must accept these ids alongside the kind's own. Keyed by the
-	 * alias-target kind name in both its spellings (visible + `_`-hidden).
-	 */
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
 }

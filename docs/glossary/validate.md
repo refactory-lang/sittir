@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `validateRenderableFromNodeMap` (`packages/codegen/src/validate/renderable.ts:50`)
 
 ```text
@@ -50,6 +51,38 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Build a rule inventory from a NodeMap. Cheap — no YAML parsing,
  * no file I/O.
  */
+```
+
+#### body (`packages/codegen/src/validate/rule-lookup.ts:40`)
+
+```text
+// Alias labels: a reference site may surface a kind under a different
+// CST name (`alias($._import_list, $.names)`). node-types.json lists the
+// LABEL, while storage, wrap, and render are all keyed by the source
+// kind (wrap normalizes the label's raw key into the source's storage
+// key), so a label is renderable exactly when its source kind is. Read
+// the stamped per-reference pair (`parseKind` = label, `node` = storage)
+// rather than re-deriving it from spelling — a label need not be the
+// source's stripped name. A label that is itself a real kind keeps its
+// own classification.
+```
+
+#### body (`packages/codegen/src/validate/rule-lookup.ts:51`)
+
+```text
+// A bare (unaliased) reference carries no label — only a differing
+// label records the source as labeled.
+```
+
+#### body (`packages/codegen/src/validate/rule-lookup.ts:70`)
+
+```text
+// User-facing hidden kinds reached by no labeled reference — polymorph
+// variant children (dispatched, never a slot value) and top-level alias
+// bodies. Their CST name is the stripped hidden name by construction:
+// enrich's mints register the hidden rule AS `_<visibleName>`, and a
+// base-authored alias body surfaces under its own stripped name. A
+// labeled reference, when one exists, takes precedence above.
 ```
 
 ### `renderable` (`packages/codegen/src/validate/renderable.ts:35`)
@@ -114,4 +147,79 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `tree-sitter-{name}/src/node-types.json` convention; this table
  * lists the exceptions (typescript ships two grammars per package).
  */
+```
+
+### `module` (`packages/codegen/src/validate/renderable.ts:1`)
+
+```text
+/**
+ * validate-renderable — every named kind in tree-sitter's node-types.json
+ * must be renderable by @sittir/legacy-core.
+ *
+ * A kind is renderable when one of these holds:
+ *
+ *   1. Supertype   — has `subtypes` in node-types.json. Supertypes are
+ *                    abstract; `render()` dispatches to the concrete subtype,
+ *                    so the supertype itself never reaches the rules lookup.
+ *
+ *   2. Pure leaf   — has no `fields` AND no `children` in node-types.json.
+ *                    `render()` returns `node.text` directly without any
+ *                    template lookup.
+ *
+ *   3. Has rule    — kind appears in the `rules` map of templates directory
+ *                    (either as a top-level entry or as a variant target).
+ *
+ * Anything else is un-renderable: calling `render()` on an instance will
+ * throw `No render rule for '<kind>'`. That's a codegen regression we
+ * want surfaced as a first-class validation error.
+ */
+```
+
+```text
+/**
+ * validate/rule-lookup.ts — shared rule-kind inventory.
+ *
+ * `validate-renderable` needs to answer "which kinds have a rule emit
+ * path?" This module builds the inventory from a NodeMap — the
+ * authoritative output of Assemble — rather than walking the generated
+ * YAML's `rules:` map directly: that view is lossy (variant subtypes,
+ * supertypes, and leaves that render via `node.text` aren't in the YAML at
+ * all) and would be circular, since the YAML itself is the thing under
+ * test.
+ */
+```
+
+```text
+/**
+ * validate/node-types-loader.ts — thin loader for tree-sitter
+ * node-types.json.
+ *
+ * Consumed by both validators and emitters (grammar.ts, types.ts),
+ * so it lives at validate/ rather than under any one consumer's
+ * directory. Takes a grammar name and returns the parsed raw entry
+ * array from that grammar's `node-types.json` file (or a
+ * `.sittir/src/node-types.json` override if present). No caches,
+ * no mutable state (FR-022).
+ *
+ * If a consumer needs to point at a non-standard file (e.g. test
+ * fixtures), they pass the resolved path directly via the
+ * `explicitPath` argument — there is no module-level path registry.
+ */
+```
+
+### `classify` (`packages/codegen/src/validate/rule-lookup.ts:88`)
+
+#### body (`packages/codegen/src/validate/rule-lookup.ts:88`)
+
+```text
+/* TEMPORARY: 'separatedList' shares 'branch'/'group's template render
+		   path for byte-identical output pending real per-instance separator
+		   capture — see isSlotBearingCompound's doc comment (emitters/shared.ts). */
+```
+
+### `packagesDir` (`packages/codegen/src/validate/node-types-loader.ts:21`)
+
+```text
+// `new URL(...).pathname` is not portable on Windows and leaks URL-encoded
+// escape sequences; `fileURLToPath` produces a correct platform path.
 ```

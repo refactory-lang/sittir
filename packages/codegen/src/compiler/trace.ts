@@ -1,15 +1,3 @@
-/**
- * Permanent diagnostic trace logging for the compiler pipeline.
- *
- * Enable by setting `SITTIR_TRACE=<kind1>,<kind2>,...` in the environment.
- * Each listed kind is emitted as structured JSON after every pipeline
- * phase (Evaluate, Link, Normalize, Assemble), letting authors see exactly
- * where a rule changes shape — or fails to.
- *
- *   SITTIR_TRACE=import_statement,_import_list npx tsx cli.ts --grammar python --all
- *
- * Noise-free when unset: the env-var lookup is O(1) and returns early.
- */
 import type { AnyRule } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 

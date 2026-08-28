@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `emitterFor` (`packages/codegen/src/scripts/emit-diff.ts:51`)
 
 ```text
@@ -17,6 +18,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * one file == one emitter (render-module.ts and the rust render crate are the
  * two halves of the render emitter; lib.rs/index.* are the native bindings).
  */
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:54`)
+
+```text
+// lib.rs, index.{js,d.ts}, *.node
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:75`)
+
+```text
+// backend / boundary / engine / hash / ir / is / index / utils, etc.
 ```
 
 ### `isCollapsed` (`packages/codegen/src/scripts/emit-diff.ts:89`)
@@ -31,6 +44,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Compress a new-file hunk header `@@ -_ +start,count @@` into "L120-131". */
 ```
 
+#### body (`packages/codegen/src/scripts/emit-diff.ts:86`)
+
+```text
+// pure deletion: anchor at the deletion point
+```
+
 ### `beginFileChange` (`packages/codegen/src/scripts/emit-diff.ts:106`)
 
 ```text
@@ -41,6 +60,30 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Parse `git diff --unified=0` output into per-file change records. */
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:113`)
+
+```text
+// New file section. The authoritative path comes from the +++/---
+// lines below; seed from `b/<path>` here so deletions (which have
+// `+++ /dev/null`) still attribute to the removed file.
+// `cur` is reassigned directly here (not via a closure over `cur`,
+// which — confirmed in isolation — breaks the `if (!cur) continue`
+// narrowing below back to `never`) so `beginFileChange` stays a pure
+// factory function.
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:140`)
+
+```text
+// Deletion: +++ is /dev/null, so keep the old path as the identity.
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:155`)
+
+```text
+// Content lines (no context, since --unified=0).
 ```
 
 ### `joinRanges` (`packages/codegen/src/scripts/emit-diff.ts:175`)
@@ -57,6 +100,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * unavailable or this is not a working tree (the report is a convenience, never
  * a hard dependency — a missing git must not fail codegen).
  */
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:177`)
+
+```text
+// not a git repo / git absent / no HEAD — skip silently
+```
+
+#### body (`packages/codegen/src/scripts/emit-diff.ts:194`)
+
+```text
+// Align the file column across all rows for scannability.
 ```
 
 ### `generatedRootsFor` (`packages/codegen/src/scripts/generated-manifest.ts:57`)
@@ -340,3 +395,230 @@ reconciliation gate. Three clusters, one per root cause:
   legacy name was cross-wired to the kind name `match_arm`. Whether
   `last_match_arm` SHOULD be unified with `match_arm` so the slot reads
   `matchArms` is a separate open design question, not part of this allowlist.
+
+### `module` (`packages/codegen/src/scripts/generated-manifest.ts:1`)
+
+```text
+/**
+ * generated-manifest — module that writes/verifies per-grammar SHA256
+ * manifests for every generated file.
+ *
+ * Manifest lives at `packages/<grammar>/.sittir/generated.manifest.json`.
+ *
+ * ## Lifecycle
+ *
+ * - `writeManifestForGrammar(grammar)` is called by `packages/codegen/src/cli.ts`
+ *   at the end of each successful per-grammar regen. There is intentionally no
+ *   separate CLI for writing — the manifest must always be in lockstep with the
+ *   codegen output it describes.
+ * - `assertGeneratedManifestsClean()` is called by the validator
+ *   (`packages/tools/src/validate/common.ts`) at startup, before any
+ *   counts/probe-factory work. Verification failure aborts the validator;
+ *   the only legitimate way to update a manifest is to re-run codegen.
+ *
+ * The manifest excludes itself (would otherwise be a chicken-and-egg).
+ *
+ * ## Tracked in git
+ *
+ * The manifest file is force-added to git despite `packages/*\/.sittir/`
+ * being gitignored — same pattern as `grammar.js`, `package.json`,
+ * `tree-sitter.json` inside the same directory. Tracking the manifest is
+ * what makes cross-commit drift detectable: if a commit changes a generated
+ * file without re-running codegen, the committed file hash diverges from
+ * the committed manifest entry and `verifyManifestForGrammar` flags it.
+ *
+ * ## Limits
+ *
+ * The manifest catches honest-mistake hand-edits AND cross-commit drift
+ * (since the manifest is itself committed). It does NOT catch a coordinated
+ * commit that updates both the file and its manifest entry but ships an
+ * INTERNALLY inconsistent codegen output (e.g., wrap.ts and templates that
+ * disagree on slot optionality). That class of bug requires a CI gate that
+ * re-runs codegen and diffs the on-disk content.
+ */
+```
+
+```text
+/**
+ * Freshness predicate for grammar-owned napi binaries (`*.node`).
+ *
+ * Askama bakes the per-kind `.jinja` templates into the binary at compile
+ * time, and the transport/dispatch code is compiled from the generated
+ * `src/render/*.rs` — so a `.node` older than ANY of those inputs renders
+ * with stale templates or stale transport logic. Historically this failed
+ * SILENTLY (validators ran against the stale engine; in the worst case the
+ * stale binary segfaulted mid-gate). Every native consumer should assert
+ * freshness before loading the engine.
+ *
+ * Shared leaf module: consumed by `generated-manifest.ts` (manifest
+ * verification of host binaries) and `validate/common.ts`
+ * (`loadNativeEngineForGrammar`). Keep it dependency-free so neither
+ * consumer picks up import cycles.
+ */
+```
+
+```text
+/**
+ * reconcile-naming — PR-A WIDE divergence probe.
+ *
+ * For every AssembledNonterminal in each grammar's NodeMap, assert each legacy
+ * projected slot name equals the value the §2 PROJECTION computes from the slot's
+ * `values` + `fieldName` (`projectSlotNaming`): storageName, name, configKey,
+ * propertyName, paramName. The probe drives `collect-slots` until 0 — proving
+ * PR-B's getter swap is byte-identical.
+ *
+ * Projections, not stored `_new` fields: `parseNames` is the live set of CST
+ * kinds tree-sitter emits (per-value `parseKind.name`), so it can't go stale
+ * across `mergeSlotsByName`'s value-union (the old stored `parseNamesNew` did).
+ * No emitter reads the projection yet — this is the acceptance probe.
+ *
+ * ## Usage
+ *   npx tsx packages/codegen/src/scripts/reconcile-naming.ts            # all grammars
+ *   npx tsx packages/codegen/src/scripts/reconcile-naming.ts --grammar rust
+ *   npx tsx packages/codegen/src/scripts/reconcile-naming.ts --first 20 # first-N per grammar
+ */
+```
+
+```text
+/**
+ * regen-templates-rs — regenerate only templates.rs for one or more grammars.
+ *
+ * Usage:
+ *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust
+ *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust,typescript,python
+ *
+ * This bypasses the full generate() pipeline (which calls all emitters
+ * including factories.ts / wrap.ts). Use when you only need templates.rs
+ * regenerated without touching TS output files.
+ */
+```
+
+```text
+/**
+ * emit-diff — post-regen report of what the current codegen run changed in the
+ * generated output, grouped by emitter.
+ *
+ * Called by `packages/codegen/src/cli.ts` at the end of a `--all` run (unless
+ * `--no-emit-diff`). It diffs the **working tree vs HEAD** over the same roots
+ * the manifest tracks (`generatedRootsFor`), so the report and the manifest
+ * never disagree about what counts as generated.
+ *
+ * Baseline rationale: working-tree-vs-HEAD answers "what did THIS regen
+ * produce relative to the last commit" — the question you actually have while
+ * iterating on codegen. It is intentionally not a commit-range diff; for
+ * historical drift across commits, the committed manifest is the mechanism.
+ *
+ * Grouping is by emitter, derived purely from the output file path (each
+ * emitter owns one file, per the emitter-pattern-consistency convention), so
+ * no provenance instrumentation is needed inside the emitters themselves.
+ */
+```
+
+```text
+/**
+ * Standalone manifest-verification CLI — used by the git pre-commit hook.
+ * Exits non-zero (with the formatted MODIFIED/MISSING/SOURCE-CHANGED report) when
+ * any grammar's generated artifacts no longer match its committed manifest, so an
+ * inconsistent generated state (e.g. a staged manifest without its regenerated
+ * test-fixtures.json) can't be committed. Fast: hash comparison only, no cargo.
+ */
+```
+
+### `hostFilesFor` (`packages/codegen/src/scripts/generated-manifest.ts:73`)
+
+#### body (`packages/codegen/src/scripts/generated-manifest.ts:73`)
+
+```text
+// Platform-specific build artifacts (napi-emitted compiled binaries).
+// Tracked in the `host_files` section: hashed and verified, but
+// missing-locally is tolerated because different developers / CI runners
+// produce different per-platform binaries (`*.darwin-arm64.node`,
+// `*.linux-x64.node`, etc.). The manifest will accumulate every binary
+// every developer commits; verification only enforces matches for the
+// binaries that exist on the current host.
+```
+
+### `codegenSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:153`)
+
+#### body (`packages/codegen/src/scripts/generated-manifest.ts:153`)
+
+```text
+// Consumer-side validators don't affect generated output.
+```
+
+### `computeSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:173`)
+
+#### body (`packages/codegen/src/scripts/generated-manifest.ts:173`)
+
+```text
+// 2. Codegen source — same per-grammar inputs against a different codegen
+// produce different output, so codegen state IS part of the source.
+```
+
+### `writeManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:188`)
+
+#### body (`packages/codegen/src/scripts/generated-manifest.ts:188`)
+
+```text
+// Preserve previously-recorded host_files entries from other platforms,
+// then overwrite/add this host's binaries. This way commits from a
+// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
+// by another dev. Entries carry the freshness sentinel, not a content
+// hash — see the Manifest.host_files docs.
+```
+
+### `verifyManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:247`)
+
+#### body (`packages/codegen/src/scripts/generated-manifest.ts:247`)
+
+```text
+// Source-hash cross-layer synchronicity check: did the source inputs
+// (grammar.sittir.ts + package.json) change since this manifest was written?
+// If yes, the generated content is stale relative to current inputs and
+// the user needs to re-run codegen.
+```
+
+#### body (`packages/codegen/src/scripts/generated-manifest.ts:269`)
+
+```text
+// Platform-specific `host_files`: FRESHNESS check, not content hashes
+// (see Manifest.host_files docs). Missing binaries are silently
+// tolerated (per-platform); present-but-stale binaries fail — they
+// would validate stale code. Checks ALL binaries on this host, not just
+// manifest-listed ones, so a never-committed local build is gated too.
+```
+
+### `Divergence.projection` (`packages/codegen/src/scripts/reconcile-naming.ts:38`)
+
+```text
+// the legacy slot.name (its current identity)
+```
+
+### `run` (`packages/codegen/src/scripts/reconcile-naming.ts:147`)
+
+#### body (`packages/codegen/src/scripts/reconcile-naming.ts:147`)
+
+```text
+// Phase passes log via console.log/warn — route to stderr so stdout stays clean.
+```
+
+#### body (`packages/codegen/src/scripts/reconcile-naming.ts:174`)
+
+```text
+// Non-zero exit only when an UNEXPECTED divergence remains (allowlisted §2
+// renames are accepted) — lets CI/the gate fail on genuine regressions.
+```
+
+### `_isMain` (`packages/codegen/src/scripts/reconcile-naming.ts:179`)
+
+```text
+// `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
+// (handles absolute paths / escaping) rather than string-interpolating, so the
+// `npx tsx reconcile-naming.ts` invocation is detected reliably.
+```
+
+### `FileChange.emitter` (`packages/codegen/src/scripts/emit-diff.ts:39`)
+
+```text
+// repo-relative
+```

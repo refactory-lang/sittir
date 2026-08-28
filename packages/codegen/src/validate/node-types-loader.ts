@@ -1,25 +1,7 @@
-/**
- * validate/node-types-loader.ts — thin loader for tree-sitter
- * node-types.json.
- *
- * Consumed by both validators and emitters (grammar.ts, types.ts),
- * so it lives at validate/ rather than under any one consumer's
- * directory. Takes a grammar name and returns the parsed raw entry
- * array from that grammar's `node-types.json` file (or a
- * `.sittir/src/node-types.json` override if present). No caches,
- * no mutable state (FR-022).
- *
- * If a consumer needs to point at a non-standard file (e.g. test
- * fixtures), they pass the resolved path directly via the
- * `explicitPath` argument — there is no module-level path registry.
- */
-
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// `new URL(...).pathname` is not portable on Windows and leaks URL-encoded
-// escape sequences; `fileURLToPath` produces a correct platform path.
 const packagesDir = fileURLToPath(new URL('../../../', import.meta.url));
 
 function loadJson(filePath: string): RawNodeEntry[] {

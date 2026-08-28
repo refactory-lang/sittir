@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `parsePath` (`packages/codegen/src/dsl/transform/transform-path.ts:122`)
 
 ```text
@@ -29,6 +30,30 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   - `*`       — use `_` instead
  *   - bare kind name — use `(name)` instead
  */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:109`)
+
+```text
+// Wildcard syntax.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:114`)
+
+```text
+// Kind-match syntax: (name).
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:117`)
+
+```text
+// Field-traversal syntax: name:.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:121`)
+
+```text
+// ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
 ```
 
 ### `descendThroughPrecWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:271`)
@@ -64,6 +89,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `descendThroughGroupLiftSymbol`). The tag is the canonical provenance
  * marker (the legacy top-level `source: 'group-lift'` field is retired).
  */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:252`)
+
+```text
+// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
+// also carries `metadata.author === 'enrich'` but is handled separately by
+// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
+// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
+// would throw "group-lift symbol has no name" (an alias has no `.name`).
 ```
 
 ### `setGroupLiftRuleMap` (`packages/codegen/src/dsl/transform/transform-path.ts:335`)
@@ -159,6 +194,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:348`)
+
+```text
+// Dispatched before reaching descendThroughSingleWrapper — should never arrive here.
+```
+
 ### `descendThroughAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:486`)
 
 ```text
@@ -252,6 +293,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Throws `ApplyPathSkip` when zero matches are found — a kind-match
  * that reaches nothing is a typo magnet, same as wildcard.
  */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:445`)
+
+```text
+// Track whether we matched anything so callers can error on zero.
 ```
 
 ### `applyKindMatchToSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:647`)
@@ -501,6 +548,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/transform/transform.ts:126`)
+
+```text
+// Sort deepest-first so variants at greater path depth run before
+// shallower ones. Without this, a shallower variant that aliases
+// an ancestor position would block later descents through it
+// (ALIAS wrappers only allow index 0/-1). Also unblocks the common
+// case where mixed numeric + path keys coexist in one polymorph:
+// JS object iteration places pure-numeric keys first in numeric
+// order regardless of insertion order, so relying on author-
+// specified ordering isn't portable.
+```
+
 ### `tryHoistSiblingVariants` (`packages/codegen/src/dsl/transform/transform.ts:252`)
 
 ```text
@@ -518,6 +578,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * the same `N` (the choice's position in the seq). For more complex
  * nestings, the caller falls back to per-patch variant extraction.
  */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:177`)
+
+```text
+// non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
 ```
 
 ### `peelPrecWrappersFromRule` (`packages/codegen/src/dsl/transform/transform.ts:296`)
@@ -592,6 +658,42 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @returns The collapsed choice rule replacing the old seq member, plus
  *   the set of path keys consumed by hoisting.
  */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:250`)
+
+```text
+// Hidden rule name (underscore-prefixed) — MUST match wire's
+// `injectHiddenRulePlaceholders` naming (`_<parent>_<suffix>`)
+// so the deferred-content fn can read this deposit. Previously
+// this code deposited under the VISIBLE name (`parent_suffix`)
+// which wire's placeholder never looked up, leaving the hidden
+// rule BLANK → tree-sitter "Undefined symbol" on compile.
+// Nested-variant naming: when `parentKind` is already a hidden
+// rule (e.g. `_visibility_modifier_pub`, produced as an arm of
+// an outer polymorph), strip its leading underscore before
+// building the variant's visible kind name. Without stripping,
+// the inner visible name inherits the leading `_` and
+// tree-sitter treats the alias target as hidden, collapsing
+// the variant's contribution.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:268`)
+
+```text
+// Emit `alias($._hidden, $.visible)` so tree-sitter matches the
+// hidden rule but surfaces the visible kind name in parse trees.
+// Mirrors `registerAliasedVariant`'s output shape used by the
+// non-hoisted variant placeholder path.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:274`)
+
+```text
+// Conflicts MUST reference declared rules (tree-sitter rejects
+// symbol references to alias targets in the conflicts array with
+// "Undefined symbol"). Use the hidden rule names — those ARE
+// declared via wire's placeholder injection.
 ```
 
 ### `registerHoistedVariantConflicts` (`packages/codegen/src/dsl/transform/transform.ts:455`)
@@ -698,6 +800,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/transform/transform.ts:411`)
+
+```text
+// Skippable (not a hard Error): when this seq is one arm of an
+// enclosing choice's flat-patch fan-out, an out-of-bounds index
+// here just means THIS arm doesn't have that position — the
+// choice-level recursion above catches ApplyPathSkip and leaves
+// the arm unchanged. If this seq is the top-level patch target
+// (no enclosing choice fan-out), ApplyPathSkip is never caught
+// and still propagates out of transform() as an error, same as
+// before — genuinely out-of-bounds against the ONE target shape.
+```
+
 ### `wrapVariantBodyInParentPrec` (`packages/codegen/src/dsl/transform/transform.ts:644`)
 
 ```text
@@ -742,6 +857,37 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body (`packages/codegen/src/dsl/transform/transform.ts:545`)
+
+```text
+// Shape A: the sittir/tree-sitter-native optional { type: 'OPTIONAL', content: ... }.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:566`)
+
+```text
+// Shape B: tree-sitter CLI's CHOICE-with-BLANK — the canonical encoding of
+// optional(x) in tree-sitter's runtime: { type: 'CHOICE', members: [x, BLANK] }
+// or [BLANK, x]. Enrich's rebuildOptional preserves this shape.
+// Only treat as transparent when exactly 2 members and one is BLANK.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:577`)
+
+```text
+// a real choice, not an optional
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:605`)
+
+```text
+// Shape C: prec wrappers — transparent in path-addressing; content carries
+// the actual rule (value is separate). PREC/PREC_LEFT/PREC_RIGHT/
+// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
+// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
+// uppercase spellings ever appear here.
+```
+
 ### `resolveAliasPlaceholder` (`packages/codegen/src/dsl/transform/transform.ts:984`)
 
 ```text
@@ -781,6 +927,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * The language is preserved (`optional(repeat1(X))` = `repeat(X)`) and
  * the hidden rule is guaranteed non-empty so tree-sitter accepts it.
  */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Aliased-variant synthesis — shared between variant() and alias()
+// placeholders. Handles the mechanics of "extract an arbitrary sub-rule
+// into a hidden named rule, return an alias node that points at it,
+// wrap in prec where needed, and factor out empty-matching content
+// tree-sitter won't accept as a syntactic rule."
+// ---------------------------------------------------------------------------
 ```
 
 ### `matchesEmpty` (`packages/codegen/src/dsl/transform/transform.ts:1063`)
@@ -978,4 +1134,458 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `applyChoiceArmFieldWrap` convention; arms that are themselves nested
  * choices are left alone.
  */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:639`)
+
+```text
+// Any field-wrapped arm gets unified, not just enrich-shaped ones
+// (name === symbol name) — a hand-authored, meaningfully-named field
+// from the base grammar (e.g. `field('source', $.string)`) is just as
+// much "already fielded under its own differing name" as an
+// enrich-numbered one, and this function's whole job (per its
+// callers) is to unify those under the override's chosen name.
+```
+
+### `module` (`packages/codegen/src/dsl/transform/transform.ts:1`)
+
+```text
+/**
+ * dsl/transform.ts — sittir override primitives for rule patching.
+ *
+ * These are NOT tree-sitter baseline DSL. They are sittir-specific
+ * extensions that operate on the `original` rule passed by tree-sitter's
+ * `grammar(base)` mechanism to each rule callback.
+ *
+ * Override files import these explicitly:
+ *
+ *     import { transform, insert, replace } from '@sittir/codegen/dsl'
+ *
+ * The baseline shadow functions (`grammar`, `seq`, `choice`, `field`, ...)
+ * are still injected as globals by `evaluate.ts` — don't import those.
+ *
+ * Types are deliberately `RuntimeRule` (not sittir's `Rule` union).
+ * The `original` argument comes from tree-sitter's extension mechanism
+ * at runtime — that's sittir-shaped under sittir's pipeline but
+ * tree-sitter-native (uppercase types) under the CLI runtime. Typing
+ * as `RuntimeRule` is honest in both directions and forces callers
+ * that inspect the result to narrow via guards in `runtime-shapes.ts`.
+ * Override files are `@ts-nocheck` so they're unaffected.
+ */
+```
+
+```text
+/**
+ * dsl/transform-path.ts — path addressing for transform() patches.
+ *
+ * Path strings use forward-slash delimiters. Segment forms:
+ *
+ *   'N'         → positional index (0-based)
+ *   '-N'        → reverse index from the end (-1 = last member)
+ *   '_'         → wildcard — matches every sibling at this level
+ *   '(name)'    → kind-match — finds every occurrence of symbol `name`
+ *                 in the current subtree, skipping pre-fielded ones
+ *   'name:'     → field traversal — descends through a field('name', ...)
+ *                 wrapper at the current position (hard-errors on mismatch)
+ *
+ * Examples:
+ *   '0'              → first position of the top-level seq
+ *   '0/1/2'          → nested descent by positional indices
+ *   '0/_/1'          → position 1 of every branch at level 1 under pos 0
+ *   '(_expression)'  → every `_expression` symbol in the subtree
+ *   '2/elements:'    → descend into field('elements', ...) at position 2
+ *
+ * Migration notes:
+ *   '*' → '_'         (wildcard)
+ *   'name' → '(name)' (kind-match)
+ *
+ * Rules:
+ * - No leading slash (`/0` is invalid).
+ * - No trailing slash.
+ * - `_` wildcard matches a single level only — not recursive.
+ * - Out-of-bounds paths and zero-match wildcards are hard errors at
+ *   apply time (with the path + actual rule shape in the message).
+ */
+```
+
+```text
+// Re-export so transform.ts's `applyFlatPatches` can reach the
+// shared predicates through the canonical path-related module.
+```
+
+### `membersOf` (`packages/codegen/src/dsl/transform/transform.ts:294`)
+
+```text
+// Local accessors for the container/wrapper field shapes RuntimeRule
+// doesn't expose structurally. Consolidated so the casts live in one
+// spot rather than scattered through the function body.
+```
+
+```text
+/**
+ * Apply a patch at one or more positions inside a rule tree, addressed
+ * by a parsed path. Returns a new rule (no mutation). Wildcards expand
+ * to every matching sibling at that level.
+ *
+ * The patch may be either a Rule (replace the target) or a function
+ * `(originalMember: Rule) => Rule` for in-place wrapping.
+ *
+ * Throws on out-of-bounds indices or zero-match wildcards.
+ */
+```
+
+```text
+// Local accessors for the container/wrapper field shapes RuntimeRule
+// doesn't expose structurally. Consolidated so the casts live in one
+// spot rather than scattered through applyPath's branches.
+```
+
+### `applyFlatPatches` (`packages/codegen/src/dsl/transform/transform.ts:348`)
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:348`)
+
+```text
+// Choice: apply transform to each member recursively, uniformly — the
+// same flat positions are attempted on every arm. Arms are heterogeneous
+// by construction (different lengths/shapes), so a member that doesn't
+// have one of the target positions is left UNCHANGED rather than
+// aborting the whole patch (mirrors applyWildcardToMembers's per-member
+// skip/require-at-least-one-match contract in transform-path.ts — same
+// "some siblings won't match, that's fine" semantics, just for flat
+// positional keys instead of path wildcards). Reconstruct via native
+// dsl so the choice keeps its runtime-correct shape.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:382`)
+
+```text
+// Single-content wrappers (optional/repeat/repeat1/field) — descend
+// and reconstruct via native dsl.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:389`)
+
+```text
+// For other types, return as-is (patches don't apply)
+```
+
+### `resolvePatch` (`packages/codegen/src/dsl/transform/transform.ts:443`)
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:443`)
+
+```text
+// Two-arg field passed through directly — accept either case.
+// Tag `metadata.fieldSource: 'override'` (debt PR-P1) so diagnostics
+// recognize it as user-authored.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:449`)
+
+```text
+// Variant placeholder — variant('suffix'): auto-prefix with current
+// rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:457`)
+
+```text
+// PR 3 (2026-07-21 union-slot design): the arm may already be an
+// enrich-minted visible-group alias (`mintStructuredChoiceArm` /
+// `applyClauseHoist`, widened to fire at bare choice-arm positions —
+// see dsl/enrich.ts) by the time variant() sees it. Its target is,
+// by construction of that mint gate, already a materializing named
+// kind — checked here BEFORE `variantBranchIsUnmaterializable`
+// below, which can't see through a SYMBOL content to the hidden
+// rule's own body and would misjudge an alias-wrapped symbol ref as
+// a unit production. variant() just RENAMES the alias to the
+// friendlier `<parent>_<suffix>` identity instead of wrapping a
+// second hidden rule around the same content ("mint = promote, not
+// synthesize" — matches enrich's own convention, avoids a double mint).
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:470`)
+
+```text
+// Label-only rename: we can't safely delete a rule from the base
+// grammar's rules map (tree-sitter tolerates dead/unreferenced
+// entries, but relocating-then-deleting risks stranding OTHER
+// consumers keyed by the old name — e.g. enrich's own
+// getEnrichClauseGroupOwners snapshot, taken before this rename
+// runs). Just relabel the outer alias's visible identity to what
+// variant()/polymorphs intends; the underlying enrich-minted
+// hidden rule keeps its own name. Double-mint collisions this
+// could otherwise cause are prevented upstream now — enrich's
+// mintStructuredChoiceArm skips minting for a choice arm that
+// structurally recurses through a bare-symbol sibling arm (see
+// armStartsWithSymbol in dsl/enrich.ts) — so this rename only
+// ever relabels a mint that has no competing identity to collide
+// with.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:488`)
+
+```text
+// Deposit under the NESTED polymorph's own hidden name (not the
+// original enrich group-lift name) and repoint the alias's
+// `content` there too — a nested `polymorphs:` config keyed on
+// this exact deposit name (e.g. typescript's cascaded
+// `_export_statement_default_from_arm: {...}`) further splits the
+// deposited body IN PLACE under that name. Leaving `content`
+// pointing at the original group-lift symbol would strand this
+// alias on the pre-split raw mint while the real, fully-split
+// content lives — unreferenced by this alias — under the deposit
+// name (confirmed: `_export_statement_group2` vs. the properly
+// split `_export_statement_default_from_arm`, PR 3 storagename-
+// collision root cause).
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:511`)
+
+```text
+// A transparent unit-production branch (single named symbol via
+// fields/prec, no anonymous token) cannot become a CST node:
+// tree-sitter inlines it and bubbles the inner field up to the
+// parent. Skip the alias + polymorph registration and leave the
+// branch as its bare content, so we never promise a
+// `<parent>_<name>` kind that no parse tree contains. De-field it
+// (strip a leading `field(name, X)`): the field can't survive on
+// the CST anyway, and stripping it lets the bare nonterminal unify
+// with its materializable sibling into ONE unnamed body slot
+// (rendered `content`) instead of leaking a stray `value` field
+// the template would drop.
+```
+
+### `relabelUniformFieldSet` (`packages/codegen/src/dsl/transform/transform.ts:655`)
+
+```text
+/**
+ * When the subtree under an override's `field(name)` position carries
+ * FIELDs of exactly ONE distinct name — one logical slot occurring at
+ * several structural positions (a separated list's head + per-iteration
+ * element, a repeat's per-arm fields) — rename every occurrence to the
+ * override's name and return the rewritten subtree. Returns null when the
+ * subtree has no fields, more than one distinct field name (ambiguous —
+ * the override can't know which slot it means), or the single name already
+ * matches (nothing to do; the duplicate-name diagnostic path owns that).
+ * Field content is not descended into: a field's interior belongs to the
+ * referenced node's own shape, not to this slot.
+ */
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:668`)
+
+```text
+// Enrich group-lift symbols are transparent here the same way they are
+// to path addressing: the slot's fields live in the hoisted rule's body,
+// reached through the registered rule map and written back in place.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:705`)
+
+```text
+// Relabel only when the field set IS the slot the override names: an
+// ARRAY-valued set (at least one occurrence inside a repeat — a
+// separated list's per-iteration element) with no unfielded
+// symbol/alias positions alongside (an unfielded symbol means the
+// override is naming THOSE, or an aggregate of both — e.g.
+// comparison_operator's fielded operators interleaved with unfielded
+// comparand expressions). A singular field inside a composite (a
+// marker sub-slot within a group) likewise means the override names
+// the outer aggregate: wrap, don't rename.
+```
+
+### `resolveFieldPlaceholder` (`packages/codegen/src/dsl/transform/transform.ts:739`)
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:739`)
+
+```text
+// Override landing on a position that already carries a FIELD —
+// whether from enrich's auto-inference or straight from the base
+// grammar (e.g. tree-sitter-rust's `field('pattern', choice(...))`
+// on `parameter`) — replaces that field rather than nesting a new
+// one around it. Nesting (`field('name', field('pattern', ...))`)
+// is what a one-arg `field(name)` placeholder degenerates to if the
+// existing FIELD isn't unwrapped first; even where tree-sitter's own
+// field-resolution happens to prefer the outer name and the parser
+// ends up correct, the emitted grammar.json still carries the dead
+// inner field, which is wrong on its own terms. Per the 2026-07-02
+// user decision, transparency is structural: a user-authored wrapper
+// shape-identical to enrich's output is treated the same as one
+// enrich actually produced — neither should leak into the override
+// result as a nested wrapper.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:756`)
+
+```text
+// Only warn for the redundant-duplicate case (override matches the
+// existing field's name). The rename case (override picks a
+// different name like 'object'/'index'/'name' instead of the
+// existing 'expression1'/'expression2'/'pattern') is the intended
+// override-trumps-existing behavior — silent by design.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:772`)
+
+```text
+// Not a direct enrich-shaped field — check for one nested inside
+// field-transparent wrappers (optional, prec/*). This handles the case
+// where enrich placed an auto-numbered field INSIDE an optional:
+//   optional(field('where_clause1', $.where_clause))
+// and the override wants to rename it via field('where_clause') at
+// that position. Without this descent, resolveFieldPlaceholder wraps
+// the entire optional with the new field name, producing:
+//   field('where_clause', optional(field('where_clause1', ...)))
+// tree-sitter collapses nested field wrappers to the innermost name,
+// so the intended rename never reaches the parser.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:785`)
+
+```text
+// findEnrichShapedFieldThroughTransparentWrappers only returns for
+// structurally enrich-shaped fields, so this is always a safe rename.
+// Rename the inferred field in place and reconstruct the wrappers.
+// Result: optional(field('trailing_where_clause', $.where_clause))
+// instead of: field('trailing_where_clause', optional(field('where_clause2', ...)))
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:798`)
+
+```text
+// A uniform sibling field set — every FIELD in the subtree carries
+// the SAME name (one logical slot spread across positions, e.g. the
+// separated-list element fields enrich mints on the head and the
+// repeat's per-iteration element). The override names that slot:
+// relabel every occurrence in place instead of nesting an outer
+// field around the structure (tree-sitter keeps only the innermost
+// field name, so the wrap would never reach the parser).
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform.ts:809`)
+
+```text
+// Not optional-shaped either — unifyChoiceArmFieldNames covers the
+// remaining case: an override-wrapped choice whose arms are already
+// fielded under their own (differing) names.
+```
+
+### `RuntimeDsl` (`packages/codegen/src/dsl/transform/transform-path.ts:43`)
+
+```text
+// ---------------------------------------------------------------------------
+// Native DSL accessors — we call the runtime-injected DSL functions
+// (sittir's grammarFn-injected globals OR tree-sitter CLI's native
+// globals) instead of reconstructing rule objects directly. This keeps
+// the rule shape consistent with whichever runtime is processing the
+// transform call, and runs whatever normalization the runtime does.
+// ---------------------------------------------------------------------------
+```
+
+### `applyPath` (`packages/codegen/src/dsl/transform/transform-path.ts:157`)
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:157`)
+
+```text
+// Precedence wrappers are transparent to path addressing EVEN AT THE TARGET
+// POSITION (segments.length === 0), same as the group-lift-symbol and
+// content-alias transparency below — a patch path resolves against the
+// pre-mint structure, and enrich's PREC-descent mint (mintStructuredChoiceArm)
+// now produces PREC(ALIAS(...)) arms whose precedence must ride through to
+// the rebuilt result (descendThroughPrecWrapper's own recursion already
+// re-wraps correctly; this check only needed to come BEFORE the
+// segments.length === 0 leaf case below it used to fall through to, handing
+// callers like resolvePatch's variant() branch the raw unpeeled PREC node
+// instead of its content — see typescript's call_expression regression).
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:172`)
+
+```text
+// Reached the target position — apply the patch.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:176`)
+
+```text
+// Enrich group-lift symbols are transparent to path addressing, like prec
+// wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
+// tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
+// decision 6 — was `metadata.source === 'enrich'`) that carries the hoisted
+// seq body on `content`. An authored patch whose path was written against the pre-hoist
+// seq must travel THROUGH the symbol into that body. We descend without
+// consuming a segment (transparent) and rebuild the symbol around the patched
+// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
+// because the tag + body ride the symbol object itself — no rule-map resolver.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:189`)
+
+```text
+// Enrich content-aliases are ALSO transparent to path addressing. enrich
+// wraps an inline-unsafe `optional(seq)` / bare `choice` in
+// `alias(<content>, $.<name>)` (the visible-kind form) tagged
+// `metadata.author === 'enrich'` (was `metadata.source === 'enrich'`,
+// decision 6). enrich runs BEFORE the authored
+// transform()/variant()/groups path-patches, so a patch whose path was
+// written against the pre-alias content must travel THROUGH the alias into
+// that content. Without this, `descendThroughAlias` (single-content, index 0
+// only) rejects any index ≥1 a real patch uses (e.g. rust visibility_modifier
+// `1/1/0/1/3`). We descend into `content` WITHOUT consuming a segment
+// (transparent, like prec / the group-lift symbol) and rebuild the alias.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:216`)
+
+```text
+// Containers we can descend into — predicates in runtime-shapes.ts
+// work across both the sittir and tree-sitter-CLI runtimes.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:233`)
+
+```text
+// Exhaustiveness guard — TypeScript narrows `head` to `never` here.
+```
+
+### `walkKindMatch` (`packages/codegen/src/dsl/transform/transform-path.ts:486`)
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:486`)
+
+```text
+// Prec wrappers are transparent.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:500`)
+
+```text
+// Field: descend into content but mark insideNamedField=true so nested
+// `_expression` references inside already-fielded symbols don't get
+// re-wrapped.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:511`)
+
+```text
+// Other wrappers — descend transparently.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:520`)
+
+```text
+// Containers — descend into every member.
+```
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:537`)
+
+```text
+// Leaf types we don't descend into (string, pattern, blank, etc.).
+```
+
+### `applyToMembers` (`packages/codegen/src/dsl/transform/transform-path.ts:641`)
+
+#### body (`packages/codegen/src/dsl/transform/transform-path.ts:641`)
+
+```text
+// Dispatched before reaching applyToMembers — should never arrive here.
 ```

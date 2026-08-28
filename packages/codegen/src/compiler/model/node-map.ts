@@ -1,41 +1,3 @@
-/**
- * compiler/model/node-map.ts — the AssembledNode model: the assembled-node
- * class hierarchy plus the slot derivation and naming projection that build it.
- *
- * Split from the Rule<'link'> IR file (now `types/rule.ts`, R11). The classes here
- * represent what an assembled grammar node looks like after the full pipeline
- * has classified and enriched the Rule<'link'> — each subclass corresponds to one
- * ModelType (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
- * `supertype`, `group`, `multi`). `container` was merged into `branch`
- * (slot-surface distinctions derived from `slotClass`).
- *
- * Organized in place (R6 follow-up — reorg decision 1: a large module is
- * structured with internal sections, not split into a second file). The
- * `AssembledNonterminal` slot class and the derivation/naming it computes
- * (`projectSlotNaming`, `nameNode`) are mutually coupled, so they stay
- * co-located rather than forming a cyclic two-file pair. Major sections are
- * delimited by `// ===` banners:
- *
- *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
- *      accumulators + the optional-body and audit-context module pointers.
- *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
- *      content types, cardinality (`deriveSlotCardinality`…), value guards,
- *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
- *      slots/values derivation (`deriveSlots`, `deriveValuesForRule`,
- *      `dedupeValues`, separators, `nameNode`). `hasAnyField` (the Rule<'link'>
- *      wrapper walker `isContainerShape` below still needs) lives in
- *      `dsl/rule-transforms.ts` — this module holds the assembled-node data
- *      model, not general rule-shape predicates.
- *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
- *      `valueParseKindsOf` + the `projectSlotNaming` projection.
- *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
- *      `Keyword`/`Token`/`Enum`/`Supertype`/`Multi`/`Group` + the `AssembledNode` union.
- *   5. Canonical structural-view helpers — `structuralFieldsOf`/`allSlotsOf`/….
- *
- * `isSyntheticFieldWrapper` is a classification hint used by template-walker.ts.
- * Backward compatibility: `rule.ts` re-exports everything from this file.
- */
-
 import {
 	ALIAS,
 	CHOICE,
@@ -99,10 +61,6 @@ import {
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import { hasAnyField } from '../../dsl/rule-transforms.ts';
 
-// ============================================================================
-// 1. Diagnostics & module state
-// ============================================================================
-
 const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
 const _parseKindCollisionSeen = new Set<string>();
 
@@ -134,10 +92,6 @@ export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnost
 	return out;
 }
 
-// ---------------------------------------------------------------------------
-// Derive-shape diagnostic accumulator (mirrors parseKindCollisions pattern)
-// ---------------------------------------------------------------------------
-
 const _deriveShapeDiagnostics: DeriveShapeDiagnostic[] = [];
 const _deriveShapeSeen = new Set<string>();
 
@@ -158,14 +112,6 @@ export function drainDeriveShapeDiagnostics(): DeriveShapeDiagnostic[] {
 	resetDeriveShapeDiagnostics();
 	return out;
 }
-
-// ---------------------------------------------------------------------------
-// Assemble warning accumulator — mirrors parseKindCollisions pattern.
-// Records compiler-phase conditions discovered during the assemble pass
-// (typeName collisions, storageName collisions, unresolved slot refs) as
-// structured diagnostic payloads so they surface through the grammar-diagnostics
-// preflight rather than being silently swallowed when SITTIR_QUIET is set.
-// ---------------------------------------------------------------------------
 
 export interface AssembleWarning {
 	readonly code: string;
@@ -199,12 +145,6 @@ export function drainAssembleWarnings(): AssembleWarning[] {
 	return out;
 }
 
-/**
- * True when a field's content would have tree-sitter emit multiple children under
- * the same field name at parse time. Uses `unwrapStructuralPassthroughs` defined
- * below (moved from field-shape.ts in R7 de-scatter; uses the node-map version).
- */
-
 export function fieldContentIsMultiSibling(content: Rule<'link'>): boolean {
 	const core = unwrapStructuralPassthroughs(content);
 	if (core.type === CHOICE) {
@@ -219,7 +159,6 @@ export function fieldContentIsMultiSibling(content: Rule<'link'>): boolean {
 			unwrapped.type === VARIANT ||
 			unwrapped.type === GROUP ||
 			unwrapped.type === TOKEN
-			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 		) {
 			unwrapped = (unwrapped as { content: Rule<'link'> }).content;
 		}
@@ -244,40 +183,8 @@ export function fieldContentIsMultiSibling(content: Rule<'link'>): boolean {
 	return false;
 }
 
-/**
- * Per-value multiplicity tag. Each entry in a slot's `values` array carries
- * its own multiplicity derived from the grammar rule that produced it.
- *
- * - `optional`      → `T | undefined`        (field: `readonly x?: T`)
- * - `single`        → `T`                    (field: `readonly x: T`)
- * - `array`         → `readonly T[]`          (field: `readonly x: readonly T[]`)
- * - `nonEmptyArray` → `NonEmptyArray<T>`      (field: `readonly x: NonEmptyArray<T>`)
- *
- * Defined in `./rule.ts` so RuleBase can reference it without circularity
- * (rule.ts → node-map.ts is the layering direction). Re-exported here for
- * existing consumers; new code may import from either location.
- */
 export { type Multiplicity } from '../../types/rule.ts';
 
-// ---------------------------------------------------------------------------
-// Optional-body lookthrough (module-level current pointer)
-// ---------------------------------------------------------------------------
-//
-// Some rule kinds, after Link-phase stamping (see
-// `stampStaticRenderAs` for blank-bodied renderAs entries),
-// resolve to a body that's wholly optional — `optional(X)` or a choice
-// containing the blank sentinel. References to such a kind are
-// effectively optional even when the SYMBOL ref itself sits at a
-// non-optional position in the parent rule (e.g. tree-sitter externals
-// like `_automatic_semicolon` that fire invisibly at runtime — the
-// grammar requires them syntactically but the parser can match them
-// without producing a CST token).
-//
-// `currentOptionalBodyKinds` is set by `assemble.ts` for the duration of
-// the rule walk and consulted by the slot-value constructors to downgrade
-// the multiplicity of single-position refs to such kinds from `'single'`
-// to `'optional'`. Without this look-through, wrap-side reads would
-// assert required-singular and reject ASI-terminated corpus entries.
 let currentOptionalBodyKinds: ReadonlySet<string> | null = null;
 
 export function setOptionalBodyKinds(kinds: ReadonlySet<string> | null): void {
@@ -294,10 +201,6 @@ function relaxForOptionalBody(refName: string, multiplicity: Multiplicity): Mult
 	if (isOptionalBodyKind(refName) || isOptionalBodyKind(cleanName)) return 'optional';
 	return multiplicity;
 }
-
-// ============================================================================
-// 2. Slot model & derivation
-// ============================================================================
 
 export interface UnresolvedRef {
 	readonly kind: 'unresolved-ref';
@@ -320,87 +223,35 @@ export interface FieldStorageInfo {
 	readonly kind: FieldStorageKind;
 	readonly texts: readonly string[];
 	readonly enumKinds: readonly string[];
-	/**
-	 * Stamped catalog id per `enumKinds` member, keyed by kind name — same
-	 * stamped-fact discipline as `NodeRef.resolvedKindId`; absent only for a
-	 * kind with no catalog entry. Consumers that need a numeric id for one
-	 * of these kinds (transport dispatch, `$other` reclamation) read this
-	 * instead of re-deriving one via a fresh name-keyed catalog scan.
-	 */
 	readonly enumKindsById: ReadonlyMap<string, number>;
 	readonly collapsesMultiplicity: boolean;
 }
 
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
-	// Node-reference target. Present for true references; absent for inline
-	// literals (which carry `value` instead). Mutually exclusive with `value`.
 	readonly node?: T | UnresolvedRef;
-	// Parser kind id of the storage/render kind (`node`'s name), stamped at
-	// mint through the shared name chain (KindId-NodeRefs design §2.1/PR-K2).
-	// Absent for id-less targets by design: enrich-synthesized markers,
-	// IR-only enum kinds, tree-sitter-erased hidden supertypes. Ids are
-	// stamped FACTS, never identity — node identity stays the name, and
-	// serialization (node-model.json5) never carries ids.
 	readonly storageKindId?: number;
-	// Inline string literal text (e.g. `'const'`, `'pub'`, an enum member /
-	// pattern-matched anonymous token). Mutually exclusive with `node`.
 	readonly value?: string;
-	// For a literal: the resolved CST kind name the literal text maps to (a
-	// catalog anon/hidden kind), when one exists. Absent for genuinely-kindless
-	// literals (regex patterns / residual). Carried for transport/typing;
-	// render still emits from `value`.
 	readonly resolvedKind?: string;
-	// Parser kind id alongside `resolvedKind`, resolved through the LITERAL
-	// (anon-scoped) chain at mint — the anon token wins over a same-spelled
-	// NAMED rule (#129 class). Same stamped-fact semantics as
-	// `storageKindId`.
 	readonly resolvedKindId?: number;
-	// Parse-as kind ref: the CST kind this value
-	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
-	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
-	// only for aliased/variant values. `storageName`/`parseNames` project this.
 	readonly parseKind?: UnresolvedRef;
-	// Parser kind id of the wire `$type` (`parseKind`'s name). Same stamped-
-	// fact semantics as `storageKindId`.
 	readonly parseKindId?: number;
-	// Field-label routing key (union-slot design §5, PR 1.5): set when this
-	// value came from a DEGENERATE fielded arm of a union-routed choice
-	// (`partitionChoiceArms`'s `degenerateNamedArms`) — tree-sitter labels
-	// this child by FIELD NAME, not by kind, so `parseKind` alone would route
-	// it wrong. Absent for plain union-member (by-kind) values. `parseNames`
-	// projects `parseName ?? parseKind?.name` per value, so the union slot's
-	// routing keys become `fieldLabels ∪ kinds`.
 	readonly parseName?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
 	readonly leading?: boolean;
-	// Separated-list positions may be individually blank (array elision,
-	// `[a, , b]`): storage is `Array<X | undefined>`, holes are `undefined`
-	// entries. Projected from the rule-level `optionalElement` stamp
-	// (wrapper-deletion) exactly as `separator` is; only meaningful on
-	// array/nonEmptyArray multiplicities.
 	readonly optionalElement?: boolean;
-	// Literal-only token-wrapper flags (see interface doc).
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
 }
 
 export type NodeOrTerminal = NodeRef;
 
-// A subtype name paired with its OWN storage-side kindId, stamped once at
-// the point assemble.ts's supertype-resolution helpers discover the name
-// (a direct SymbolRule ref, a nested supertype arm, or a catalog lookup for
-// a structurally-discovered alias member with no ref at all) — never
-// re-derived downstream. `storageKindId` is legitimately absent for names
-// with no catalog entry (typed absence, not a bug).
 export interface SubtypeRef {
 	readonly name: string;
 	readonly storageKindId?: number;
 }
 
-// A NodeRef that actually targets a node — the non-literal arm of the
-// node/value mutual exclusion documented on NodeRef.
 export type NodeBackedRef = NodeRef & { node: AssembledNode | UnresolvedRef };
 
 export function isNodeRef(v: NodeOrTerminal): v is NodeBackedRef {
@@ -414,10 +265,6 @@ export function isTerminalValue(v: NodeOrTerminal): v is NodeRef & { value: stri
 export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
 	return typeof v === 'object' && (v as { kind?: unknown }).kind === 'unresolved-ref';
 }
-
-// ---------------------------------------------------------------------------
-// Derived slot-level helpers (DRY: one derivation, not stored flags)
-// ---------------------------------------------------------------------------
 
 export function isRequired(slot: { values: readonly NodeOrTerminal[] }): boolean {
 	return (
@@ -435,9 +282,6 @@ export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean
 	return multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
-/** Separated-list slot whose positions may be individually blank (array
- *  elision, `[a, , b]`): storage is `Array<X | undefined>`, holes are
- *  `undefined` entries. See `NodeRef.optionalElement`. */
 export function hasOptionalElements(slot: { values: readonly NodeOrTerminal[] }): boolean {
 	return slot.values.some((v) => v.optionalElement === true);
 }
@@ -495,15 +339,9 @@ export interface RenderTemplateSlot {
 	readonly required: boolean;
 	readonly hasLeadingDelimiter: boolean;
 	readonly hasTrailingDelimiter: boolean;
-	/** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
-	/** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 }
-
-// ---------------------------------------------------------------------------
-// Derivation helpers — walk a Rule<'link'> to produce fields, children, content types
-// ---------------------------------------------------------------------------
 
 const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
 	'constructor',
@@ -517,9 +355,6 @@ const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
 ]);
 
 export function snakeToCamel(name: string): string {
-	// Digit segments fold too ('elements_2' → 'elements2') — the type-level
-	// key mapping (type-fest CamelCase) folds them, and the runtime config
-	// key must spell exactly what the Config type declares.
 	const camel = name.replace(/_([a-z])/g, (_, c) => c.toUpperCase()).replace(/_(\d)/g, '$1');
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
@@ -532,7 +367,6 @@ export function pluralize(name: string): string {
 	return name + 's';
 }
 
-// TypeScript reserved words that must be avoided as parameter names.
 const TS_RESERVED = new Set([
 	'arguments',
 	'await',
@@ -588,18 +422,6 @@ export function safeParamName(name: string): string {
 }
 
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
-// Audit default is now 'strict' — every non-canonical shape across the
-// curated grammars has been drained via variant adoption + inline
-// (`rust`, `python`, `typescript` all audit clean). Any non-canonical
-// rule reaching derivation throws with a diagnostic so the walker can
-// safely assume canonical input.
-//
-// Opt-outs:
-//   SITTIR_AUDIT_DERIVE=1        → 'report' mode (log + accumulate,
-//                                   don't throw). Used by tests that
-//                                   consume raw base grammars without
-//                                   override() / variant() applied.
-//   SITTIR_AUDIT_DERIVE=off      → 'off' mode (no audit at all).
 function deriveAuditMode(): 'strict' | 'report' | 'off' {
 	const v = process.env.SITTIR_AUDIT_DERIVE;
 	if (v === '1') return 'report';
@@ -617,10 +439,6 @@ function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
 	if (shape === 'canonical') return;
-	// Record a structured diagnostic and continue — the old strict-mode throw
-	// is replaced by accumulation so codegen completes and the preflight can
-	// surface all derive-shape issues in a single pass. drainDeriveShapeDiagnostics()
-	// is called by assemble() to attach them to AssembledNodeMap.
 	recordDeriveShapeDiagnostic(
 		describeDeriveShape({
 			rawShape: shape,
@@ -636,7 +454,6 @@ function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'
 		const kinds = auditKindsByShape.get(key) ?? [];
 		if (!kinds.includes(currentAuditKind)) kinds.push(currentAuditKind);
 		auditKindsByShape.set(key, kinds);
-		// SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
 		if (process.env.SITTIR_AUDIT_DUMP === currentAuditKind) {
 			console.error(`[audit-dump] ${currentAuditKind} (${key}):`);
 			console.error(JSON.stringify(rule, null, 2));
@@ -644,44 +461,10 @@ function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'
 	}
 }
 function classifyTopLevelShape(rule: Rule<'link'>): string {
-	// Canonical for the trivial walk: the tree rooted at `rule`
-	// — traversed through the structural wrappers the walker descends
-	// (seq, optional, repeat, repeat1, choice, clause, variant) — must
-	// satisfy:
-	//
-	//  - Every choice encountered during the traversal is "union-shaped"
-	//    (token-like or flat-symbol-seq). No choice anywhere in the
-	//    field/child-finding path has heterogeneous structural branches.
-	//    A heterogeneous choice is a polymorph by any other name; the
-	//    walker would have to case-analyze it, so flag it for variant()
-	//    adoption (or hoisting into a proper polymorph parent).
-	//  - Field contents are opaque to this classifier — `deriveValuesForRule`
-	//    owns that subtree and its own simplification.
-	//
-	// Non-canonical shapes:
-	//
-	//  - `seq-with-nested-seq`: flattening gap (should be caught by the
-	//     simplify fixpoint + flatten).
-	//  - `*-with-heterogeneous-choice`: an inner choice with field-bearing
-	//     branches. Needs variant() adoption at the parent kind or the
-	//     branches hoisted / merged.
-	//  - `group` / `alias` / `token` wrappers mid-tree: simplify should
-	//     peel them.
-	//  - `polymorph` anywhere: the PolymorphRule IR type (and its
-	//     AssembledPolymorph node class) are retired. Reaching derivation
-	//     with one means a legacy/synthetic rule object leaked in.
 	switch (rule.type) {
 		case SEQ: {
 			for (const m of rule.members) {
 				if (m.type === SEQ) {
-					// A nested seq that carries its OWN cardinality
-					// (multiplicity / separator) is a canonical repeated /
-					// optional GROUP, not a flattening gap. simplify deliberately
-					// does NOT splice such a seq (splicing would lose the shared
-					// cardinality and hoist any inner choice to this seq's
-					// position). `deriveSlotsRaw` threads the group's multiplicity
-					// into its members and handles an inner choice via its own
-					// choice case, so we accept it here WITHOUT recursing.
 					const sm = m as { multiplicity?: unknown; separator?: unknown };
 					if (sm.multiplicity !== undefined || sm.separator !== undefined) continue;
 					return 'seq-with-nested-seq';
@@ -695,19 +478,12 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above.
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
 			return 'canonical';
 		case VARIANT: {
-			// `variant` wrappers below the top level — usually a
-			// polymorph discriminator that simplify couldn't hoist
-			// (e.g. buried under an optional). The walker unwraps
-			// them without structural consequence; treat inner as
-			// the canonicality check.
 			const inner = classifyTopLevelShape(rule.content);
 			return inner === 'canonical' ? 'canonical' : `variant-wrapping-${inner}`;
 		}
@@ -721,33 +497,12 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 			return inner === 'canonical' ? 'canonical' : `${rule.type}-wrapping-${inner}`;
 		}
 		case CHOICE: {
-			// Every choice in the traversal must be a simple union — no
-			// structural branches with fields. Flag heterogeneous
-			// choices here instead of leaving the walker to merge them:
-			// they are polymorphs in all but declaration.
 			const allTokenLike = rule.members.every(isTokenLikeChoiceMember);
 			if (allTokenLike) return 'canonical';
 			const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike);
 			if (allFlatSymbolSeq) return 'canonical';
-			// Distinct-named-fields choice: every branch is either a
-			// `field(A, ...)` with its own name or a token-like atom.
-			// Rust's `function_modifiers` (`choice(field('async', …),
-			// field('const', …), field('unsafe', …), extern_modifier)`)
-			// is the canonical example — the branches contribute
-			// different fields to the enclosing kind rather than
-			// different kinds themselves, so this is a legitimate
-			// "one-of-these-fields" shape, NOT a polymorph. The walker's
-			// choice case enumerates each branch and downgrades every
-			// field to `optional` multiplicity; that's correct behavior.
 			const allFieldOrToken = rule.members.every((m) => m.type === FIELD || isTokenLikeChoiceMember(m));
 			if (allFieldOrToken) return 'canonical';
-			// Polymorph surface: every branch wraps its content in a
-			// `variant()` tag (from override-declared variant() adoption).
-			// Variant-wrapped branches are never merged or hoisted —
-			// they preserve polymorph identity — so the walker descends
-			// into each independently and dispatches via `$variant`.
-			// Canonical even when the inner content is a structural seq
-			// with fields.
 			if (rule.members.every((m) => m.type === VARIANT)) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
@@ -767,29 +522,9 @@ function isTokenLikeChoiceMember(m: Rule<'link'>): boolean {
 		r.type === ALIAS ? peel(r.content) : r.type === TOKEN ? peel(r.content) : r.type === VARIANT ? peel(r.content) : r;
 	const core = peel(m);
 	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
-	// Bare `string` / `pattern` members — token-literal alternatives.
-	// `_non_special_token` has a choice containing dozens of bare
-	// keyword strings alongside symbol refs; each contributes a
-	// single-token alternative to the union, not a structural branch.
 	if (core.type === STRING || core.type === PATTERN) return true;
-	// Structural-whitespace tokens (python-style indent/dedent/newline).
-	// These behave as anonymous token separators — they don't surface
-	// as addressable children, so they never contribute structural
-	// branching to a choice arm.
 	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
-	// PR-P Task 2: TERMINAL case removed — terminal-shaped rules now arrive as their original
-	// unwrapped type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
-	// `optional(token-like)` preserves the union shape — the branch
-	// contributes either the wrapped token or nothing. Rust's
-	// `reference_expression` has `choice(choice-of-syms, optional(sym))`
-	// for the raw-pointer-modifier spot; both arms are union-safe even
-	// though one is an optional. Recurse to classify the inner.
 	if (core.type === OPTIONAL) return isTokenLikeChoiceMember(core.content);
-	// Nested choice of token-like members — simplify should have
-	// flattened this, but when flattening is blocked (e.g. by a
-	// variant wrapper on the inner choice), the nested shape is still
-	// structurally a union of tokens. `_lhs_expression` hits this
-	// with a nested `choice(choice(sym, sym, ...), sym, ...)`.
 	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
 	if (core.type === REPEAT1 || core.type === REPEAT) {
 		const inner = peel(core.content);
@@ -822,29 +557,12 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 
 function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNonterminal[] {
 	const canonical = deleteWrapper(rule) as Rule<'link'>;
-	// Set the audit kind context for the duration of this derivation so
-	// auditDerivationShape() can attribute shapes to their originating kind.
-	// Save/restore guards against cross-kind bleed if derivations nest.
 	const prevAuditKind = currentAuditKind;
 	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
 	try {
 		auditDerivationShape(canonical, 'fields');
-		// Nonterminal-driven collection (2026-05-21 design): one slot per
-		// `nonterminal` node, choice = one union slot, seq distributes. Replaces
-		// the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker. Same-name
-		// slots that appear in multiple positions (e.g. python `if_statement`'s
-		// `alternative` in both a repeat and an optional) are still folded into one
-		// AssembledNonterminal by `mergeSlotsByName`.
 		const kindName = ctx?.kindName ?? currentAuditKind;
 		let slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
-		// Gate (a) of the union-slot design (2026-07-21): a synthesized union
-		// slot's projected storageName (usually 'content', or the single member
-		// kind) must be unclaimed by every sibling slot of the rule. This is the
-		// only place with whole-rule visibility, so the check runs here: an
-		// optimistic collection above, then — on collision — one pessimistic
-		// rerun with routing disabled (status quo distribution) + a diagnostic.
-		// Two qualifying choices in one rule collide with each other and both
-		// fall back, which subsumes the "only one choice per rule" discipline.
 		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 		if (unionChoiceIds.size > 0) {
 			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
@@ -876,17 +594,6 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
 	}
 }
 
-/**
- * Merge a same-named slot's flank mode across two occurrences of the same
- * field within one rule (e.g. python `if_statement`'s `alternative` in both
- * a repeat and an optional). Widen to `'optional'` on any disagreement: the
- * merged field's actual flank presence then genuinely varies depending on
- * which occurrence a real parse reached — picking either single
- * occurrence's fixed mode would be wrong for a parse that reached the
- * other. Defined here (not `collect-slots.ts`, its other call site) since
- * `collect-slots.ts` already imports `AssembledNonterminal` from this file
- * — the reverse import would cycle.
- */
 export function mergeDelimiterMode(
 	modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']
 ): 'mandatory' | 'optional' | 'none' {
@@ -900,12 +607,6 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 	const namedIndexByName = new Map<string, number>();
 	for (const f of fields) {
 		if (f.isUnnamed) {
-			// Positional/kind-derived name: never silently merge with anything else
-			// sharing that name — mirrors collect-slots.ts's mergeByName (same bug
-			// class, a different location in the pipeline). Two unnamed slots
-			// sharing a kind-derived name are genuinely distinct positions, not
-			// "the same field appearing twice" (this function's actual documented
-			// purpose — see the if_statement.alternative example above).
 			out.push(f);
 			continue;
 		}
@@ -974,13 +675,6 @@ function resolveParseKindCollisions(
 function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {
 	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
 		const storageKind = storageKindOfValue(value);
-		// Mint stamps as collision-free identities — terminals carry theirs on
-		// resolvedKindId (the literal-chain stamp), node refs on storageKindId.
-		// Unstamped values resolve through the catalog: the collision check
-		// decides WIRE-identity injectivity (the grammar symbol the read stamps
-		// as `$type`), so an id must be recovered wherever one exists — a
-		// name-only fallback would conservatively re-flag arms the wire
-		// actually tells apart.
 		const stampedStorageKindId = isNodeRef(value) ? value.storageKindId : value.resolvedKindId;
 		const storageKindId =
 			stampedStorageKindId ??
@@ -1063,11 +757,6 @@ export interface ListSlotFactsCtx {
 	readonly optionalElement?: boolean;
 }
 
-/**
- * Stamp separated-list facts (separator literal, per-position elidability)
- * onto array/nonEmptyArray multiplicity values. Single-value slots are left
- * unchanged.
- */
 export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFactsCtx): NodeOrTerminal[] {
 	const { separator, optionalElement } = ctx;
 	if (!separator && optionalElement !== true) return values;
@@ -1081,39 +770,7 @@ export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFa
 	});
 }
 
-/**
- * Derive child slots from a canonical rule tree.
- *
- * Two axes of "canonical" apply to deriveChildren:
- *
- * 1. **Branch kinds** — top-level `seq` of field/symbol/wrapper members.
- *    Children are the non-field members (symbol refs, optional /
- *    repeat / repeat1 around refs, choice of refs).
- *
- * 2. **Container kinds** — top-level is a `repeat` / `repeat1` whose
- *    content may be a `seq` of refs (tree-sitter flattens the seq's
- *    elements into sibling children at parse time). `enum_variant_list`
- *    has shape `repeat(seq(repeat(attribute_item), enum_variant),
- *    separator=',', trailing=true)` — the inner seq is load-bearing
- *    template structure AND yields two array children (attribute_item,
- *    enum_variant) flattened together.
- *
- * The walker handles both by treating top-level `seq` members as the
- * canonical unit and recursing through wrappers/choices/nested-seqs
- * when the structure demands it. What it rejects:
- *
- *   - `alias` / `group` / `polymorph` — simplify strips the first two;
- *     the third is a retired IR type that no longer exists at runtime.
- *     Reaching them here is a real canonicalization gap.
- *
- *   - `variant` / `clause` — post-variant-adoption these should be
- *     either resolved to aliased symbols or promoted to polymorph
- *     forms. Retained as canonicalization-gap signals.
- */
-
 export function deriveSlots(rule: Rule<'link'>, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
-	// The field walker handles positional symbol/supertype/choice content
-	// too, so it produces every slot — no separate children walker needed.
 	return _deriveSlotsInternal(rule, ctx);
 }
 
@@ -1125,21 +782,6 @@ export function isSyntheticFieldWrapper(content: Rule<'link'>): boolean {
 	return content.members.some(isField);
 }
 
-// ---------------------------------------------------------------------------
-// `deriveValuesForRule`'s SYMBOL/SUPERTYPE/STRING/PATTERN cases read the ids
-// `canonicalizeRuleLiterals` (link.ts) already stamped onto the leaf instead
-// of re-deriving them from `ctx.kindEntries`. The catalog lookup survives
-// ONLY as a fallback for a rule that never passed through that stamping pass
-// — legitimately, that includes every hand-built `Rule` fixture this same
-// function is unit-tested against (see `derive-values-kindid-stamps.test.ts`,
-// which deliberately constructs UNSTAMPED rules to exercise this exact path),
-// so this function has no way to tell "expected test fixture" from "a real
-// post-link rule link.ts failed to stamp" — it cannot assert here without
-// breaking the former. `noteKindIdFallbackHit` stays a log, opt-in via
-// DBG_KINDID_FALLBACK; link.ts's `reportKindIdStampMisses` diagnostic is the
-// actual hard gate for a genuinely missing stamp, checked where the context
-// (a real generation run vs. a fixture) is actually known.
-// ---------------------------------------------------------------------------
 const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
 function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
 	if (!DBG_KINDID_FALLBACK) return;
@@ -1162,28 +804,7 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
-			// Link-synthesized operator literal (Chunk D1): `canonicalizeRuleLiterals`
-			// rewrites a field-wrapped operator literal (`'<'`) into
-			// `symbol{ name: 'lt', literal: '<', metadata: {symbolSource: 'link'} }`.
-			// The `name` is the alias-target kind (the runtime `$type`) and
-			// `literal` is the original source string. Emit a TERMINAL of the
-			// source string — `value` is what the renderer emits (`<`),
-			// `resolvedKind` is the alias-target kindId read-time matching keys
-			// on (`lt`). Dropping `literal` (the old behavior) leaked a PHANTOM
-			// kind ref (`Lt`/`LtEq`) into the operator enum and left render
-			// emitting the bare literal while read could not populate the slot.
-			//
-			// (debt PR-P1) Was `rule.source === 'link' && rule.literal !==
-			// undefined`; `literal` is set ONLY by `canonicalizeRuleLiterals`
-			// alongside the (now-deleted) `source: 'link'` stamp — its one and
-			// only writer — so `literal !== undefined` alone is the exact same
-			// condition, structurally, not an inference.
 			if (rule.literal !== undefined) {
-				// The value is the literal text; its id was stamped at link time
-				// onto `kindId` by the same LITERAL chain (anon token wins a
-				// same-spelled NAMED rule) — read that fact instead of
-				// re-resolving it here. `resolvedKind`/`parseKind` keep the
-				// link-minted alias-target NAME (`rule.name`) as before.
 				if (rule.kindId !== undefined || rule.aliasedFromId !== undefined) {
 					return [
 						{
@@ -1209,18 +830,12 @@ export function deriveValuesForRule(
 					}
 				];
 			}
-			// Ref kind: resolve to SOURCE kind (`aliasedFrom`, when the
-			// symbol came from an alias). Only source kinds exist in
-			// rules post-synthesis-removal.
 			const refName = rule.aliasedFrom ?? rule.name;
 			if (rule.kindId !== undefined || rule.aliasedFromId !== undefined) {
 				return [
 					{
 						node: { kind: 'unresolved-ref', name: refName },
 						storageKindId: rule.aliasedFromId ?? rule.kindId,
-						// parse-as kind = the alias TARGET (`rule.name`); `node` is the
-						// render/source (`refName`). For `_suite`: node=_simple_statements,
-						// parseKind=block (the CST kind).
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: rule.kindId,
 						multiplicity: relaxForOptionalBody(refName, multiplicity)
@@ -1235,10 +850,6 @@ export function deriveValuesForRule(
 				{
 					node: { kind: 'unresolved-ref', name: refName },
 					storageKindId: storageEntry?.id,
-					// `parseEntry.parseId` (falling back to `.id`) — an alias
-					// occurrence carries its OWN distinct runtime symbol id,
-					// separate from the source rule's storage id; dispatch must
-					// key on that, not the storage identity.
 					parseKind: { kind: 'unresolved-ref', name: rule.name },
 					parseKindId: parseEntry?.parseId ?? parseEntry?.id,
 					multiplicity: relaxForOptionalBody(refName, multiplicity)
@@ -1246,11 +857,6 @@ export function deriveValuesForRule(
 			];
 		}
 		case SUPERTYPE:
-			// Supertype refs expand to their subtype list — each subtype is a
-			// valid concrete kind the slot can hold. Each subtype ref's own
-			// kindId/aliasedFromId is stamped at link (canonicalizeRuleLiterals's
-			// SUPERTYPE arm) — read that fact first, catalog fallback only for
-			// refs that weren't stamped (mirrors the SYMBOL(ref) case above).
 			return rule.subtypes.map((subRef) => {
 				const name = subRef.aliasedFrom ?? subRef.name;
 				if (subRef.kindId !== undefined || subRef.aliasedFromId !== undefined) {
@@ -1263,11 +869,6 @@ export function deriveValuesForRule(
 					};
 				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
-				// Aliased arm: the flatten stamped the parse name the arm
-				// displays under (`aliasedFrom`/`name` on the ref itself); its
-				// catalog row carries the alias occurrence's own runtime id,
-				// which is what dispatch must key on — mirrors the SYMBOL
-				// case's aliasedFrom/name pair above.
 				const parseName = subRef.name !== name ? subRef.name : undefined;
 				const parseEntry = parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
 				if (entry !== undefined || parseEntry !== undefined)
@@ -1281,16 +882,7 @@ export function deriveValuesForRule(
 				};
 			});
 		case STRING:
-		// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
-		// anonymous-token text it matches — a terminal value, like a `string` or an
-		// `enum` member. Without this case it fell to `default: return []`, so a
-		// pattern slot had no values and was elided (e.g. token_repetition's
-		// separator pattern never became a slot).
 		case PATTERN: {
-			// Stamped leaf: `resolvedKindId` was already resolved through the
-			// literal chain at link time — look the entry up BY that id (not by
-			// re-matching `rule.value` against the catalog) to recover the
-			// display name/parse id, since the id is the trusted key here.
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
 				const rk = entry?.kind;
@@ -1319,18 +911,10 @@ export function deriveValuesForRule(
 				}
 			];
 		}
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE below.
 		case CHOICE: {
-			// PR-P: handle enum-shaped ChoiceRules (all-STRING members) as enum terminal values.
 			if (isEnumChoiceRule(rule)) {
 				return rule.members.map((m) => {
 					const text = literalTextOf(m) ?? '';
-					// Literal-first chain (#129); for literal-carrying SYMBOL
-					// members whose text has no anon-token catalog row (an
-					// aliased fixed-text external — `automatic_semicolon`'s
-					// '\n' render text is not a parse literal), fall back to
-					// the member's own KIND entry: the parser emits the kind,
-					// so its id is the wire tag the enum must accept.
 					const symName = isLinkSymbol(m) ? m.name : undefined;
 					const entry =
 						(text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined) ??
@@ -1346,11 +930,6 @@ export function deriveValuesForRule(
 					};
 				});
 			}
-			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
-			// makes the entire choice optional. Downgrade nonEmptyArray → array
-			// and single → optional when recursing into the non-blank arms.
-			// Mirrors the fieldContentMultiplicity choice handling and the
-			// rule-body lookthrough in assemble.ts.
 			const isBlank = (r: Rule<'link'>): boolean =>
 				(r.type === CHOICE && r.members.length === 0) || (r.type === SEQ && r.members.length === 0);
 			const nonBlank = rule.members.filter((m) => !isBlank(m));
@@ -1363,48 +942,19 @@ export function deriveValuesForRule(
 							? 'optional'
 							: multiplicity
 					: multiplicity;
-			// Each arm is independent — union all entries. Arms may differ in
-			// their own multiplicity if they wrap repeat/optional differently.
 			if (!ctx?.stampArmFieldNamesAsParseName) {
 				return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
 			}
-			// Union-slot design §5 (PR 1.5): this CHOICE is the SANCTIONED
-			// union-routing restriction (collect-slots.ts builds it from
-			// `unionArms ∪ degenerateNamedArms` only) — a member carrying its
-			// OWN `fieldName` directly (post-wrapper-deletion push-down; a
-			// degenerate fielded arm, not a genuine FIELD wrapper) is routed by
-			// FIELD LABEL at read time, not by kind. Stamp `parseName` so
-			// `projectSlotNaming`'s parseNames union in the label alongside the
-			// plain union arms' kinds.
 			return nonBlank.flatMap((m) => {
 				const values = deriveValuesForRule(m, ctx, armMult);
-				// A fielded arm appears either as a genuine FIELD wrapper
-				// (link-phase rule, e.g. a separatedList's element choice) or
-				// as a pushed-down `fieldName` attribute (post-wrapper-deletion
-				// members) — both route by field label at read time.
 				const fieldName = m.type === FIELD ? m.name : (m as { fieldName?: string }).fieldName;
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
 		case OPTIONAL: {
-			// `optional(repeat1(X, sep))` survives evaluate when the
-			// optional wraps the canonical commaSep1 lift (e.g. python's
-			// `parameters: seq('(', optional(_parameters), ')')`).
-			// Recursing with multiplicity 'optional' lets the inner
-			// 'repeat1' case clobber it back to 'nonEmptyArray', which
-			// mis-marks the slot as never-empty even though `()` is
-			// valid. Downgrade to 'array' when the inner is repeat1, so
-			// the outer-optional semantics survive. Mirrors the
-			// `collectChildFromMember` rule for child slots.
 			if (rule.content.type === REPEAT1) {
 				return deriveValuesForRule(rule.content.content, ctx, 'array');
 			}
-			// For `optional(seq(..., repeat1(...), ...))` and similar nested
-			// shapes (which is the form `choice(seq(...), blank)` folds to
-			// during simplify), the outer optional makes the entire content
-			// empty-allowed. Any `nonEmptyArray` produced by an inner repeat1
-			// is therefore relaxed to `array` at the outer slot — empty inputs
-			// like `{}` (object_type with zero members) are valid.
 			const inner = deriveValuesForRule(rule.content, ctx, 'optional');
 			return inner.map((v) => (v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v));
 		}
@@ -1413,22 +963,15 @@ export function deriveValuesForRule(
 		case REPEAT1:
 			return deriveValuesForRule(rule.content, ctx, 'nonEmptyArray');
 		case FIELD:
-			// Nested field inside a choice — recurse into its content
 			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case VARIANT:
 		case GROUP:
 			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case TOKEN:
-			// `token(...)` / `token.immediate(...)` wrappers carry adjacency
-			// metadata the inner rule alone doesn't express. Recurse, then
-			// tag each produced terminal so render templates can decide
-			// whether to emit adjacent or spaced.
 			return deriveValuesForRule(rule.content, ctx, multiplicity).map((v) =>
 				isTerminalValue(v) ? { ...v, immediate: rule.immediate, tokenized: true } : v
 			);
 		case SEQ:
-			// Seq inside a choice arm — flatten all members (rare, but
-			// handles seq-of-symbols within choice arms).
 			return rule.members.flatMap((m) => deriveValuesForRule(m, ctx, multiplicity));
 		default:
 			return [];
@@ -1441,11 +984,6 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	for (const v of values) {
 		const parseKind = v.parseKind?.name ?? '';
 		const nodeName = isNodeRef(v) ? storageKindOfRef(v.node) : undefined;
-		// `parseName` (union-slot design §5, PR 1.5) is a SEPARATE routing key
-		// from `parseKind` — two degenerate arms of the same kind but different
-		// field labels are distinct entries (tree-sitter routes them by field,
-		// not by kind), so it must ride in the dedup key too. Always `''` for
-		// every pre-PR-1.5 value, so existing dedup behavior is unchanged.
 		const key = isNodeRef(v)
 			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}:${v.parseName ?? ''}`
 			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}:${v.parseName ?? ''}`;
@@ -1457,16 +995,6 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	return result;
 }
 
-// ---------------------------------------------------------------------------
-// Assembled node types — class hierarchy
-//
-// Abstract base + concrete subclasses per model type.
-// Shape matches the previous interfaces exactly; methods/getters will be added
-// as we collapse logic into the classes.
-// ---------------------------------------------------------------------------
-
-// Reserved or restricted identifiers that cannot be top-level function names
-// in strict-mode TypeScript (or would shadow globals in problematic ways).
 const FACTORY_NAME_RESERVED = new Set([
 	'arguments',
 	'eval',
@@ -1528,10 +1056,6 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-/** Every shape an assembled node can take. A closed union so a switch over it
- *  can be exhaustive: a new shape then fails to compile at each site that has
- *  to say something about it, rather than falling into a `default` that
- *  quietly answers for it. */
 export type ModelType =
 	| 'branch'
 	| 'pattern'
@@ -1545,21 +1069,8 @@ export type ModelType =
 
 export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	readonly kind: string;
-	// typeName / factoryName are writable so assemble()'s post-pass
-	// (resolveCollidingNames) can rename hidden kinds that clashed with
-	// a visible sibling — same pattern as `irKey`.
 	typeName: string;
 	factoryName?: string;
-	/**
-	 * Short key for the ir namespace (`ir.x`). Populated by assemble()
-	 * via resolveIrKeys() AFTER every node is constructed so that the
-	 * collision-resolution pass sees the whole NodeMap at once. Emitters
-	 * should read this rather than recomputing their own shortening.
-	 *
-	 * Writable (not readonly) so assemble's post-pass can install the
-	 * resolved key — the rest of the pipeline should treat it as
-	 * effectively immutable.
-	 */
 	irKey?: string;
 	abstract readonly modelType: ModelType;
 
@@ -1574,68 +1085,18 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	get stampChildExpression(): string | undefined {
 		return this.stampExpression;
 	}
-	/**
-	 * The grammar rule that produced this assembled node. All 10 concrete
-	 * subclasses store their rule here. The generic parameter `R` narrows
-	 * this to the exact Rule<'link'> subset each subclass accepts — the narrowing
-	 * is truthful at runtime (not just documentation) because every
-	 * subclass constructor stores its rule argument here.
-	 *
-	 * **Protected — no external consumer reaches in.** The project
-	 * convention: only `renderTemplate()` methods (and other in-class
-	 * behaviors) read `this.rule` directly. Outside consumers (emitters,
-	 * assemble/link phases, tests) must go through the class's public
-	 * getters (`members`, `content`, `separator`, `text`, `values`,
-	 * `subtypes`, `forms`, `pattern`, `elementRule`, `isTextTemplate`,
-	 * ...) — if a new use case needs raw rule access, add the
-	 * corresponding getter here instead of widening this field.
-	 */
 	protected readonly rule: R;
 
 	get ruleMetadata(): RuleMetadata | undefined {
 		return this.rule.metadata;
 	}
 
-	// Diagnostics-only raw view — behavior must never key off it (the
-	// protected-rule convention above stands for every live consumer).
 	get diagnosticRule(): R {
 		return this.rule;
 	}
 
-	/**
-	 * User-facing eligibility: set at assemble time after alias-source
-	 * analysis completes. Determines whether template, factory, type,
-	 * and IR emitters should produce output for this node.
-	 *
-	 * Rules:
-	 * - Visible kinds (not `_`-prefixed) — always user-facing UNLESS
-	 *   modelType is `token` or `multi` (structural helpers with no
-	 *   API surface).
-	 * - Hidden kinds (`_`-prefixed) — user-facing ONLY when the kind
-	 *   is an alias source (some symbol ref elsewhere points at it
-	 *   via `aliasedFrom`, meaning factories stamp this kind as
-	 *   `$type` per the source-kind identity model). Otherwise hidden
-	 *   kinds are inlined / never surface at runtime.
-	 *
-	 * Populated by `assemble()`'s `markUserFacing` pass. Defaults to
-	 * `true` so hand-constructed test fixtures that bypass assemble
-	 * still have their nodes appear in emitter output.
-	 */
 	userFacing: boolean = true;
 
-	/**
-	 * No top-level `ir.*` builder: this kind is constructed only through
-	 * nested config on the slot(s) that reference it, and its `build*`
-	 * function is called by the referencing parent's factory. Reading a
-	 * parsed tree is unaffected — the `is.*` guard and the node interface
-	 * stay.
-	 *
-	 * Declared by the grammar's `factoryInline` section and stamped by
-	 * assemble()'s post-pass, which also proves every listed kind has a slot
-	 * to nest in. Writable so that post-pass can install it; the rest of the
-	 * pipeline treats it as immutable. Defaults to `false` so hand-built test
-	 * fixtures that bypass assemble keep their top-level builders.
-	 */
 	factoryInline: boolean = false;
 
 	constructor(
@@ -1651,9 +1112,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		this.rule = rule;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
-		// `hidden: true` suppresses factoryName derivation (node has no factory).
-		// `factoryName: string` overrides the derived name.
-		// Default: use the derived factoryName.
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 	}
@@ -1685,39 +1143,12 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	}
 }
 
-/**
- * Unified slot descriptor — covers both named grammar-field slots
- * (source != 'inferred') and inferred positional slots (source == 'inferred').
- * Produced by `deriveSlots` and stored in `AssembledBranch.slots` /
- * `AssembledGroup.slots`. The `source` discriminant replaces the old
- * `AssembledField` / `AssembledChild` split.
- *
- * `AssembledField` and `AssembledChild` have been removed; all consumers
- * use `AssembledNonterminal` directly.
- */
-// ============================================================================
-// 3. AssembledNonterminal & naming projection
-// ============================================================================
-
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
 	readonly hasTrailingDelimiter: boolean;
 	readonly hasLeadingDelimiter: boolean;
-	/**
-	 * Tri-state flank mode backing `hasTrailingDelimiter`/`hasLeadingDelimiter`'s boolean
-	 * presence check, when the producer has it — `AssembledSeparatedList`'s
-	 * `trailingDelimiter`/`leadingDelimiter` counterpart, for a per-*slot* (not
-	 * per-kind) array field. Optional so every existing constructor caller
-	 * (test fixtures, merge helpers that only ever OR the booleans) keeps
-	 * working unchanged; `collect-slots.ts::buildSlot` — the sole real
-	 * derivation site — stamps it from the same `sep` it already reads to
-	 * compute `hasTrailingDelimiter`/`hasLeadingDelimiter`, so the two facts can't disagree at
-	 * the point of truth. Defaults to `hasTrailingDelimiter ? 'mandatory' : 'none'`
-	 * when omitted, matching today's collapsed-boolean behavior exactly.
-	 */
 	readonly trailingDelimiter?: 'mandatory' | 'optional' | 'none';
-	/** See `trailingDelimiter`'s doc comment — same rationale, `leading` side. */
 	readonly leadingDelimiter?: 'mandatory' | 'optional' | 'none';
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata?: OpaqueFacts;
@@ -1739,30 +1170,15 @@ export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | unde
 }
 
 export class AssembledNonterminal {
-	/** Stamped by `pruneDeterminedSlots`: this slot's value is grammar-fixed
-	 *  and it renders as template text — it is no longer in any slot record. */
 	determined?: true;
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
 	readonly hasTrailingDelimiter: boolean;
 	readonly hasLeadingDelimiter: boolean;
-	/** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
-	/** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
-	/**
-	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
-	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
-	 * view a consumer walks to the owning slot without owner traversal. Empty
-	 * when the source rules carry no ids (hand-constructed test fixtures that
-	 * bypass `buildRuleCatalog`). See feedback_ruleid_backpointer / FOLD-1.
-	 */
 	readonly sourceRuleIds: readonly RuleId[];
-	/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
-	 *  never read here to drive logic or emission. */
 	readonly metadata: OpaqueFacts;
-	/** (debt PR-P1) Blind passthrough of the owning rule's opaque
-	 *  `RuleMetadata` — see {@link AssembledNonterminalInit.ruleMetadata}. */
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 
@@ -1898,35 +1314,6 @@ export function aliasTargetToSourceMapOf(slot: {
 	return out;
 }
 
-/**
- * Resolve every {parseName -> storageName} pair a slot's runtime value can
- * present — the display (parse) names that diverge from the storage kind.
- * Serialized as the node model's `fieldAliasMap` and consumed by the corpus
- * validators to normalize display names against storage kinds (the wire
- * `$type` is the grammar symbol stamped by the native read, so no runtime
- * restamp exists). Two sources, unioned:
- *
- * 1. The slot's own values, where a NodeRef's stamped parse-kind differs
- *    from its storage kind (a directly-aliased arm, e.g. a polymorphic
- *    choice where several arms each alias onto their own shared canonical
- *    name).
- * 2. A slot whose value is a single opaque reference to a hidden
- *    supertype-modeled node (e.g. `_tuple_type_member`) rather than
- *    expanding directly into concrete arm NodeRefs — the per-arm alias
- *    info there lives one level down, in that node's own
- *    `subtypeRestampPairs` projection, which already records exactly
- *    which arms diverge (e.g. `tuple_parameter` -> `required_parameter`).
- *
- * Both sources admit only aliases the parser kept two symbols for
- * ({@link aliasRestampRequired}): a hidden rule merged into its sole alias
- * name arrives on the wire ALREADY under the storage kind's id, so a
- * pair for it would remap every occurrence to itself.
- *
- * `ctx.nodes` is duck-typed against `NodeMap['nodes']` rather than
- * importing the `NodeMap` type directly — `NodeMap` (in
- * `compiler/types.ts`) references `AssembledNode`, which is defined in
- * THIS module, so a direct import here would be circular.
- */
 export interface SlotAliasPairsCtx {
 	readonly nodes: ReadonlyMap<
 		string,
@@ -1990,30 +1377,8 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	paramName: string;
 	parseNames: readonly string[];
 } {
-	// parseNames = the names tree-sitter routes this slot's children by. A FIELDED
-	// slot routes by its field name (`childByFieldName('body')`) — so the field
-	// name IS the parse name. An UNNAMED slot routes by child kind — so the parse
-	// names are the distinct value parse-as (CST / alias-target) kinds.
 	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseNamesOf(slot);
-	// storageName derives from the STORAGE / render-source kind (`value.node` —
-	// the kind the value is stored and typed under), NOT `parseKind`. The two
-	// projections are parallel and must NOT cross: storageKind→storageName,
-	// parseKind→parseNames. `distinctStorageKinds` mirrors `kindsOf` (node-ref
-	// values' source kind). A slot whose values share ONE storage kind is named
-	// after it; a multi-storage-kind slot — e.g. `_suite`'s
-	// `{_simple_statements, block, _newline}` (all `parseKind=block`) — falls back
-	// to the generic `content` (the parseName `block` is NOT its storage name).
-	// Storage kinds from node-ref values (the render-source kind via `value.node`).
 	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map((v) => storageKindOfRef(v.node)))];
-	// When a slot is PURELY inline literals (no node-refs), its storage kind is
-	// the literal's resolved catalog kind — so a slot holding a single resolved
-	// literal is named after that kind instead of the generic `content`
-	// (`content` is reserved for genuinely-anonymous multi-kind unions).
-	// A MIXED ref+literal slot keeps its ref-based naming (the literal is
-	// incidental punctuation, not the storage identity) — e.g. `splat_pattern`'s
-	// `{identifier, _}` stays `identifier`, not `content`. Unresolved literals
-	// (regex / residual, no resolvedKind) contribute nothing AND trip
-	// `hasUnnamedValue` → `content`.
 	const literalStorageKinds = [
 		...new Set(
 			slot.values
@@ -2023,12 +1388,6 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		)
 	];
 	const distinctStorageKinds = nodeRefStorageKinds.length > 0 ? nodeRefStorageKinds : literalStorageKinds;
-	// A value with no parseKind is a literal / anonymous token (e.g.
-	// splat_pattern's `_`). Its presence means the slot is NOT a single named
-	// kind, so storageName falls back to the generic `content` — even when
-	// exactly one NAMED storage kind is present. Without this guard a 2-value
-	// slot (named ref + literal) is mis-read as single-kind and named after the
-	// lone ref (`splat_pattern.content` → `identifier`).
 	const hasUnnamedValue = slot.fieldName === undefined && slot.values.some((v) => v.parseKind?.name === undefined);
 	const storageName =
 		slot.fieldName ??
@@ -2048,10 +1407,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	};
 }
 
-// --- Concrete classes per model type ---
-
 function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNonterminal[]): AssembledNonterminal[] {
-	// Build a map from parseKind → array slot(s) that already cover it.
 	const arrayParseKinds = new Set<string>();
 	for (const slot of slots) {
 		if (slot.arity !== 'many' || slot.fieldName !== undefined) continue;
@@ -2063,15 +1419,13 @@ function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNontermina
 	if (arrayParseKinds.size === 0) return [...slots];
 
 	const out: AssembledNonterminal[] = [];
-	const toMergeIntoArraySlot = new Map<string, NodeOrTerminal[]>(); // arraySlotName → values
+	const toMergeIntoArraySlot = new Map<string, NodeOrTerminal[]>();
 
 	for (const slot of slots) {
-		// Only consider unnamed singular slots as candidates for folding.
 		if (slot.arity !== 'one' || slot.fieldName !== undefined || slot.values.length === 0) {
 			out.push(slot);
 			continue;
 		}
-		// A singular slot is foldable when ALL its parseKinds are covered by an array slot.
 		const allCovered = slot.values.every((v) => {
 			const pk = v.parseKind?.name;
 			return pk !== undefined && arrayParseKinds.has(pk);
@@ -2080,63 +1434,41 @@ function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNontermina
 			out.push(slot);
 			continue;
 		}
-		// Find the array slot that covers this slot's first parseKind.
 		const pk0 = slot.values[0]?.parseKind?.name;
 		if (pk0 === undefined) {
 			out.push(slot);
 			continue;
 		}
-		// Drop this slot — values are already covered by the array slot.
-		// Nothing to merge since the parseKinds are identical and the array
-		// slot already accepts them at the native reader level.
 		void pk0;
-		// Intentionally not pushing to out — this slot is folded away.
-		void toMergeIntoArraySlot; // suppress unused-var lint: map is populated below if needed
+		void toMergeIntoArraySlot;
 	}
 	return out;
 }
 
 function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {
-	// Only expand unnamed (kind-routed) slots.
 	if (slot.fieldName !== undefined) return slot;
 
-	// Look up the owning kind as a VISIBLE ALIAS TARGET.
-	// `token_tree → [delim_token_tree]` means `delim_token_tree` is aliased TO `token_tree`.
-	// We need to derive the concrete children of each source kind and add them as extra values.
 	const sources = ctx.visibleAliasTargets?.get(ctx.kindName);
 	if (!sources || sources.length === 0) return slot;
 
-	// Use the dominant multiplicity of this slot's values for the expansion.
 	const dominantMult = slot.values.reduce<Multiplicity>((acc, v) => {
 		if (v.multiplicity === 'nonEmptyArray' || v.multiplicity === 'array') return v.multiplicity;
 		if (acc === 'single' && v.multiplicity === 'optional') return 'optional';
 		return acc;
 	}, 'single');
 
-	// Guards against re-widening a collision this expansion already erased once — see glossary.
 	const existingSupertypeClosure = existingSupertypeClosureOf(slot, ctx);
 
 	const extraValues: NodeOrTerminal[] = [];
 	for (const sourceKind of sources) {
 		const sourceRule = ctx.simplifiedRules?.[sourceKind];
 		if (!sourceRule) continue;
-		// Only expand when the source kind's rule is a top-level CHOICE or
-		// a sequence of wrappers around a choice — i.e., the source kind IS
-		// itself a choice of sub-kinds (like `delim_token_tree` which is a
-		// choice of `delim_token_tree_paren/bracket/brace`). SEQ-bodied kinds
-		// (like `last_match_arm`) are NOT expanded here — their alias relationship
-		// is handled by the `foldParseKindDuplicateSingularSlots` pass instead.
-		// This prevents spuriously injecting all of `last_match_arm`'s fields
-		// (attributes, pattern, body) into `match_arm.content`.
 		const unwrappedSource = unwrapStructuralPassthroughs(sourceRule);
 		if (unwrappedSource.type !== CHOICE) continue;
-		// Derive values from the source kind's simplified rule.
 		const derived = deriveValuesForRule(sourceRule, ctx, dominantMult);
 		for (const d of derived) {
 			const dpk = d.parseKind?.name;
 			if (dpk === undefined) continue;
-			// Only add if this parseKind is not already present, directly OR
-			// through an existing value's supertype erasure closure.
 			const alreadyPresent =
 				slot.values.some((existing) => existing.parseKind?.name === dpk) ||
 				extraValues.some((existing) => existing.parseKind?.name === dpk) ||
@@ -2149,7 +1481,6 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 	return slot.with({ values: dedupeValues([...slot.values, ...extraValues]) });
 }
 
-// See glossary — full rationale.
 function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriveCtx): ReadonlySet<string> {
 	const closure = new Set<string>();
 	for (const existing of slot.values) {
@@ -2184,44 +1515,17 @@ function buildSlotsRecord(
 	}
 	let resolvedSlots = resolveParseKindCollisions(slots, ctx);
 
-	// Fold singular slots whose every parseKind is already covered by a sibling
-	// array slot into that array slot. This handles the visible→visible alias case
-	// where `alias($.last_match_arm, $.match_arm)` mints a separate `last_match_arm`
-	// singular slot with parseKind `match_arm` — identical to the existing array slot.
-	// At parse time there IS no `last_match_arm` kind; all nodes appear as `match_arm`.
-	// Keeping a separate singular slot causes the native reader to route ALL match_arm
-	// nodes (including the repeated ones) into it → "received N values; got array".
 	resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
 
-	// Augment slot values with the concrete parse-surface children of any visible
-	// rule aliased TO the owning kind. Example: `alias($.delim_token_tree, $.token_tree)`
-	// means the `token_tree.content` slot must also accept `delim_token_tree_paren/
-	// bracket/brace` parseKinds, which are the concrete children that the native reader
-	// delivers when a macro_invocation's `token_tree` field holds a delim_token_tree.
 	if (ctx.visibleAliasTargets && ctx.simplifiedRules) {
 		resolvedSlots = resolvedSlots.map((slot) => expandSlotWithVisibleAliasSources(slot, ctx));
 	}
 
 	const out: Record<string, AssembledNonterminal> = {};
 	for (const slot of resolvedSlots) {
-		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
-		// keys and at most one unnamed slot per branch is permitted. Empirical
-		// check confirms 14 kinds across 3 grammars currently have >1 unnamed
-		// positional slot. Enforcement requires either (a) collapse of choice-
-		// of-distinct-kinds into one slot with multi-value `values[]`, or (b)
-		// grammar overrides to explicitly name the positions ("Owner A"
-		// migration). Until then: keep the kind-derived name as the Record
-		// key, no collision throw, no >1-unnamed throw.
 		out[slot.name] = slot;
 	}
 
-	// storageName collision check. Multiple slots sharing the same NodeData
-	// storage key means the emitters can't distinguish them — the override
-	// layer must name N-1 children to eliminate the collision.
-	// Warn (not throw) because assemble runs on base grammars in tests
-	// before overrides apply. The generate() pipeline enforces zero
-	// collisions via the override layer; this warning surfaces any that
-	// slip through during development.
 	const byStorageName = new Map<string, AssembledNonterminal[]>();
 	for (const slot of resolvedSlots) {
 		const list = byStorageName.get(slot.storageName) ?? [];
@@ -2258,21 +1562,10 @@ function buildSlotsRecord(
 	return Object.freeze(out);
 }
 
-/**
- * A determined slot is an enum of cardinality 1: a required, singular slot
- * whose value set has exactly one member — an inline literal, or a
- * reference to a leaf whose rendered text is a constant (keyword, or a
- * string-bodied token). Such a slot carries zero information per instance;
- * it is not a slot: `pruneDeterminedSlots` moves it out of the slot record
- * (no storage, transport, wrap capture, accessor, or `from()` handling) and
- * its text renders as template text (`determinedSlotText`).
- */
 export function isDeterminedSlot(slot: AssembledNonterminal, ctx?: DeriveCtx): boolean {
 	return determinedSlotText(slot, ctx) !== undefined;
 }
 
-/** The constant text a determined slot renders as — `undefined` when the
- *  slot is not determined. The single classification AND text source. */
 export function determinedSlotText(slot: AssembledNonterminal, ctx?: DeriveCtx): string | undefined {
 	if (!isRequired(slot) || isMultiple(slot)) return undefined;
 	if (slot.values.length !== 1) return undefined;
@@ -2280,35 +1573,17 @@ export function determinedSlotText(slot: AssembledNonterminal, ctx?: DeriveCtx):
 	if (isTerminalValue(v)) return v.value;
 	if (!isNodeRef(v)) return undefined;
 	const target = isUnresolvedRef(v.node) ? ctx?.nodes?.get(v.node.name) : v.node;
-	// Leaf targets only: a keyword or a string-bodied token has one constant
-	// render. A parameterless COMPOUND target is deliberately excluded — its
-	// render is its own template, and inlining that here would re-derive it;
-	// no current grammar has such a slot, and one that appears stays a real
-	// (caller-supplied) slot, surfacing loudly in the factory Config.
 	if (target instanceof AssembledKeyword) return target.text;
-	// A token is parameterless exactly when its body is a single string.
 	if (target instanceof AssembledToken && target.parameterless) return target.text;
 	return undefined;
 }
 
-/**
- * The determined-slot pruning pass — runs post-hydration (a ref target is
- * not resolvable at construction). Determined slots leave the slot record
- * (every record-driven emitter drops them atomically) and land on the
- * node's `determinedSlots`, each stamped `determined` so the template
- * emitter — which still reaches them through `slotByRuleId` — inlines
- * their text instead of a slot reference.
- */
 export function pruneDeterminedSlots(nodeMap: { nodes: ReadonlyMap<string, AssembledNode> }): void {
 	for (const node of nodeMap.nodes.values()) {
 		if (node.modelType !== 'branch' && node.modelType !== 'group') continue;
 		node.pruneDeterminedSlots(nodeMap.nodes);
 	}
 }
-
-// ============================================================================
-// 4. AssembledNode class hierarchy
-// ============================================================================
 
 export class AssembledBranch<
 	R extends SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule =
@@ -2318,69 +1593,12 @@ export class AssembledBranch<
 		| Repeat1Rule
 > extends AssembledNodeBase<R> {
 	readonly modelType = 'branch' as const;
-	// rule narrowed to SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule —
-	// branches classify from compositional rules that carry fields and/or
-	// ordered children. The prior `AssembledContainer` class was absorbed —
-	// repeat / repeat1 shapes (no `field()` on the rule) now route here too.
-	// Emitter behavior should key off `slotClass` / slot facts rather than a
-	// separate branch-global shape discriminator.
-	/**
-	 * SimplifiedRule with anonymous tokens / structural wrappers stripped
-	 * (`normalized.rules[kind]` — SimplifiedGrammar's phase product, sourced
-	 * from `computeSimplifiedRules`). Stored here so derivation walks
-	 * (`deriveFields`, `deriveChildren`, separator discovery) don't have to
-	 * re-navigate past delimiter literals on every call. Template emission
-	 * still reads the raw `rule` because templates need the literals to
-	 * surface as template text. Stage 1: populated but not yet read.
-	 */
 	readonly simplifiedRule: SimplifiedRule;
-	/**
-	 * Wrapper-deleted view of the rule, sourced from
-	 * `normalized.normalizedRules[kind]` at assemble time. Optional / field /
-	 * repeat / repeat1 wrappers are pushed down to leaf attributes;
-	 * structural rules (seq / choice / variant / group / polymorph) are
-	 * preserved. Populated alongside `simplifiedRule`; consumed by PR1
-	 * Task 2.A5 and later passes that operate on the wrapper-less shape.
-	 */
 	readonly renderRule: RenderRule;
-	/**
-	 * Visible variant-child kinds registered via `variant()` adoption in
-	 * grammar.sittir.ts (empty on non-override-polymorph parents). Populated
-	 * for parents whose variant children live deep in the rule and were
-	 * handled by Link's push-down path — they classify as branches
-	 * rather than polymorphs but still need the metadata for `.from()`
-	 * dispatch and from.ts generation. Pure metadata; template emission
-	 * doesn't consult it.
-	 */
 	readonly variantChildKinds: readonly string[];
 
-	/**
-	 * Slot taxonomy — `singleSlot` when exactly one user-facing slot
-	 * survives after filtering auto-stamp, hidden-infra, and keyword-
-	 * presence fields; `multiSlot` otherwise. Set post-assembly by
-	 * `computeSlotClasses()`.
-	 */
 	slotClass?: BranchSlotClass;
 
-	/**
-	 * The unified slot Record — every constituent of this branch keyed
-	 * by its grammar field name (for `field()`-derived slots) or its
-	 * kind-derived positional name (for inferred slots). Insertion order
-	 * matches the order produced by `deriveSlots`. Frozen at construction.
-	 *
-	 * Canonical slot surface; the per-class `fields` / `children` getters
-	 * below are convenience views.
-	 *
-	 * Two pieces of the locked design are NOT yet enforced here:
-	 *   - Key remap to `'child'` / `'children'` for unnamed (`isUnnamed`)
-	 *     slots is deferred until grammar overrides explicitly name every
-	 *     unnamed positional position (Owner A migration). Today, unnamed
-	 *     slots keep their kind-derived name to preserve byte-identity.
-	 *   - Eager validation (collision throw, >1 unnamed throw, mixed-arity
-	 *     warn) is deferred to the same future sub-phase. With kind-derived
-	 *     keys retained, collisions don't naturally occur in the current
-	 *     grammars.
-	 */
 	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
 	#determinedSlots: AssembledNonterminal[] = [];
 
@@ -2423,8 +1641,6 @@ export class AssembledBranch<
 		return this._slots;
 	}
 
-	/** The slots `pruneDeterminedSlots` removed from the record — their
-	 *  value is grammar-fixed and renders as template text. */
 	get determinedSlots(): readonly AssembledNonterminal[] {
 		return this.#determinedSlots;
 	}
@@ -2447,8 +1663,6 @@ export class AssembledBranch<
 		return r.type === SEQ || r.type === CHOICE ? r.members : [];
 	}
 
-	// An empty build renders the keyword alone — drives from()'s
-	// string→branch coercion. See glossary.
 	get keywordConstructibleText(): string | undefined {
 		const r = this.rule;
 		const lead = r.type === SEQ ? r.members[0] : r;
@@ -2465,17 +1679,8 @@ export class AssembledBranch<
 		return !hasAnyField(this.rule);
 	}
 
-	// Cycle guard for the parameterless getter. Breaks re-entrant calls
-	// (cyclic slot graphs) conservatively, replicating LFP-from-false semantics.
-	// No memoization — results must not be cached pre-hydration (before
-	// hydrateSlotRefs runs, slot values are UnresolvedRef and would produce a
-	// false-negative that would be incorrectly cached for the post-hydration call).
 	#computing = false;
 
-	// Node map back-reference for pre-hydration UnresolvedRef resolution in the
-	// parameterless getter. Attached by assemble() after all nodes are constructed
-	// (via attachNodeMap). Not set in test fixtures — those resolve false.
-	// Private to prevent serialization walks from descending into the whole map.
 	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>> | undefined = undefined;
 
 	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>): void {
@@ -2483,7 +1688,7 @@ export class AssembledBranch<
 	}
 
 	override get parameterless(): boolean {
-		if (this.#computing) return false; // cycle — conservative false
+		if (this.#computing) return false;
 		this.#computing = true;
 		try {
 			return this.#computeParameterless();
@@ -2493,11 +1698,7 @@ export class AssembledBranch<
 	}
 
 	#computeParameterless(): boolean {
-		if (!this.rawFactoryName) return false; // hidden nodes have no factory
-		// Determined content is the whole point: with none, an all-optional
-		// kind is configurable, not parameterless. Pre-prune (or in a test
-		// fixture) determined slots still sit in the record — classify them
-		// in place.
+		if (!this.rawFactoryName) return false;
 		const pending = Object.values(this._slots).filter((s) => isDeterminedSlot(s, { nodes: this.#nodes }));
 		if (this.determinedSlots.length + pending.length === 0) return false;
 		return Object.values(this._slots).every((s) => !isRequired(s) || isDeterminedSlot(s, { nodes: this.#nodes }));
@@ -2517,7 +1718,6 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 			case GROUP:
 			case ALIAS:
 			case TOKEN:
-				// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 				r = r.content;
 				continue;
 			case SEQ:
@@ -2525,7 +1725,6 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 			case REPEAT:
 			case REPEAT1:
 			case FIELD:
-			// PR-P: ENUM case removed — enum-shaped ChoiceRules are CHOICE now.
 			case SUPERTYPE:
 			case STRING:
 			case PATTERN:
@@ -2540,38 +1739,11 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 	}
 }
 
-/**
- * Abstract base for non-branch ("leaf") kinds — those that have no
- * constituent slots and render as `$text`. Concrete subtypes:
- *
- *   - `AssembledPattern` — open text, optionally regex-validated
- *     (e.g. `identifier`, `integer_literal`)
- *   - `AssembledKeyword` — single fixed named string (e.g. `"fn"`)
- *   - `AssembledToken` — single fixed anonymous delimiter (e.g. `"{"`)
- *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
- *
- * The base intentionally has no `modelType` — each concrete subclass
- * keeps its own discriminant string (`'pattern'` for Pattern, `'keyword'`,
- * `'token'`, `'enum'`) so byte-identity of generated output is preserved
- * during the taxonomy refactor.
- *
- * Introduced alongside the rename of the previous
- * open-text `AssembledLeaf` class to `AssembledPattern`.
- */
 export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends AssembledNodeBase<R> {
-	/**
-	 * Grammar-declared immediacy: this kind's token forbids preceding
-	 * whitespace, so its rendered text must never receive a seam space.
-	 * A `token.immediate(...)` wrapper never survives link — the
-	 * `tokenImmediate` builder stamps the fact on the leaf that replaces
-	 * it; declared-immediate synthetic externals are stamped at creation.
-	 */
 	get immediate(): boolean {
 		return (this.rule as { immediate?: boolean }).immediate === true;
 	}
 
-	/** This kind's rule lexes as one token (a consumed `token(...)`
-	 * wrapper's stamp, or an external scanner symbol). */
 	get tokenized(): boolean {
 		return (this.rule as { tokenized?: boolean }).tokenized === true;
 	}
@@ -2589,41 +1761,11 @@ export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
 	}
 
 	get fixedLiteralText(): string | undefined {
-		if (this.rule.type === PATTERN) return undefined; // regex — always content-bearing
-		// Terminal-shape rule: walk the content tree collecting all non-blank string leaves.
+		if (this.rule.type === PATTERN) return undefined;
 		return collectFixedLiteral(this.rule);
 	}
 }
 
-/**
- * Walk a rule subtree collecting leaf `string` values.
- * Returns the single distinct string if every non-blank reachable leaf is
- * the same fixed literal, or `undefined` the moment any content-bearing
- * external (symbol) or multi-value divergence is encountered.
- *
- * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
- * represent the "omit" arm of an `optional`.
- *
- * Multi-member SEQs of fixed literals (e.g. python's `_not_in` =
- * `seq('not', 'in')`, aliased to `'not in'`) ARE a fixed realisation: every
- * parse of the rule produces exactly the same token sequence. Their members
- * are collected in `deterministic` mode (no optional member / blank-arm
- * CHOICE allowed — optionality inside a seq means divergent realisations)
- * and joined with `joiner`: a single space at grammar level (canonical
- * token separation), an empty string under a `tokenized` stamp (contiguous
- * by construction).
- *
- * The rule is the wrapper-free normalize view: optionality, repetition and
- * slot promotion are the leaf's own `multiplicity` / `nonterminal` stamps,
- * read one level at a time.
- *
- * @param ctx.joiner - separator used when concatenating a multi-member SEQ's
- *   literals. `' '` outside a tokenized subtree, `''` inside.
- * @param ctx.deterministic - when true, any optionality (`multiplicity:
- *   'optional'`, blank CHOICE arm) makes the subtree non-fixed. Used for
- *   members of a multi-member SEQ, where "same text OR absent" is no longer
- *   a single fixed realisation.
- */
 interface FixedLiteralCtx {
 	joiner: string;
 	deterministic: boolean;
@@ -2634,8 +1776,6 @@ function collectFixedLiteral(
 	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
 ): string | undefined {
 	const attrs = rule as { multiplicity?: Multiplicity; nonterminal?: boolean; tokenized?: boolean };
-	// A slot (promoted literal, ref) is content-bearing; a repeated literal
-	// has no single realisation; an optional one has two in deterministic mode.
 	if (attrs.nonterminal || attrs.multiplicity === 'array' || attrs.multiplicity === 'nonEmptyArray') return undefined;
 	if (attrs.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
 	const ctx = attrs.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
@@ -2643,30 +1783,28 @@ function collectFixedLiteral(
 		case STRING:
 			return rule.value || undefined;
 		case CHOICE: {
-			if (rule.members.length === 0) return undefined; // blank sentinel
+			if (rule.members.length === 0) return undefined;
 			let found: string | undefined;
 			for (const m of rule.members) {
 				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
 				if (isBlank) {
-					if (ctx.deterministic) return undefined; // blank arm = optionality
-					continue; // blank arm — ignore
+					if (ctx.deterministic) return undefined;
+					continue;
 				}
 				const v = collectFixedLiteral(m, ctx);
-				if (v === undefined) return undefined; // non-literal or divergent branch
+				if (v === undefined) return undefined;
 				if (found === undefined) found = v;
-				else if (found !== v) return undefined; // two different literals
+				else if (found !== v) return undefined;
 			}
 			return found;
 		}
 		case SEQ: {
-			if (rule.members.length === 0) return undefined; // blank sentinel
+			if (rule.members.length === 0) return undefined;
 			const nonBlanks = rule.members.filter(
 				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
 			);
 			const [only] = nonBlanks;
 			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
-			// Multi-member seq: fixed iff every member is itself a deterministic
-			// fixed literal; the realisation is their joined concatenation.
 			const parts: string[] = [];
 			for (const m of nonBlanks) {
 				const v = collectFixedLiteral(m, { ...ctx, deterministic: true });
@@ -2676,7 +1814,6 @@ function collectFixedLiteral(
 			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
 		}
 		default:
-			// symbol, pattern, variant, group, … — content-bearing or structural
 			return undefined;
 	}
 }
@@ -2684,9 +1821,6 @@ function collectFixedLiteral(
 export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
-	/** Catalog id of `resolvedKind` — stamped once here, at construction, from
-	 *  the same literal-text lookup; consumers dispatch on this id instead of
-	 *  re-deriving one from the keyword's text later. */
 	readonly resolvedKindId?: number;
 
 	constructor(
@@ -2700,17 +1834,10 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		// Stamped leaf: `rule.resolvedKindId` was already resolved through the
-		// literal chain at link time — look the catalog entry up BY that id
-		// (unambiguous) to recover the display kind name, instead of re-matching
-		// `rule.value` against the catalog.
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
-			// SYNTHESIZED StringRule (e.g. assemble's anonymous-node collection
-			// builds `{ type: STRING, value }` fresh, never reaching link-time
-			// stamping) — the literal-text lookup genuinely still fires here.
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
 			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledKeyword', name: rule.value });
 			this.resolvedKind = entry?.kind;
@@ -2740,7 +1867,6 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 export class AssembledToken extends AssembledLeaf<StringRule<'link'>> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
-	/** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
 	readonly resolvedKindId?: number;
 
 	constructor(kind: string, rule: StringRule<'link'>, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
@@ -2749,14 +1875,12 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'>> {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
-			// SYNTHESIZED StringRule (never link-stamped) — literal-text lookup.
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
 			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
 	}
-	// No emitFactory — tokens are always hidden, no factoryName.
 
 	override get parameterless(): boolean {
 		return true;
@@ -2780,21 +1904,7 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'>> {
 export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
-	/**
-	 * Catalog id per `resolvedKinds` entry, same index, same construction
-	 * pass — the id counterpart consumers should read instead of re-deriving
-	 * one from `resolvedKinds`' member name via a fresh catalog scan.
-	 */
 	readonly resolvedKindIds: readonly number[];
-	/**
-	 * Per-member-TEXT catalog resolution, derived ONCE at construction
-	 * through the literal chain (PR-K3a). Key = member text; value = the
-	 * resolved catalog kind + parser id. First-wins on duplicate texts
-	 * (mirrors the `values` getter's Set dedupe). Emitters read this
-	 * instead of re-running `findKindEntryForLiteral` per site — the same
-	 * stamped-fact discipline as `NodeRef.resolvedKindId` (spec §2.3),
-	 * carried node-level because enum members are not NodeRefs.
-	 */
 	readonly resolvedByText: ReadonlyMap<string, { readonly kind: string; readonly id: number }>;
 
 	constructor(
@@ -2807,21 +1917,12 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		// PR-P: members are StringRule<'link'> (pre-link) or LINK-SYMBOL (post-link);
-		// use literalTextOf for both forms. ONE literal-chain pass feeds both
-		// the legacy resolvedKinds list (duplicates preserved) and the
-		// per-text map.
 		const resolved: string[] = [];
 		const resolvedIds: number[] = [];
 		const byText = new Map<string, { kind: string; id: number }>();
 		for (const member of rule.members) {
 			const text = literalTextOf(member);
 			if (text === undefined) continue;
-			// Literal-first chain (#129); literal-carrying SYMBOL members whose
-			// text is a RENDER literal with no anon-token row (aliased fixed-
-			// text externals — `automatic_semicolon`'s '\n') resolve through
-			// their own KIND entry instead: the parser emits the kind, so its
-			// id is the wire tag the enum dispatches on.
 			const entry =
 				findEntryForLiteralText(opts?.kindEntries ?? [], text) ??
 				(isLinkSymbol(member) ? findEntryForKindName(opts?.kindEntries ?? [], member.name) : undefined);
@@ -2847,34 +1948,10 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 
 export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> | ChoiceRule<'link'>> {
 	readonly modelType = 'supertype' as const;
-	// #subtypes stores the RESOLVED subtype list (hidden names expanded to
-	// their concrete kinds) — this differs from rule.subtypes which carries
-	// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
-	//
-	// Each entry's `.node` starts as an `UnresolvedRef` — supertypes are
-	// constructed in the same single forward-referencing pass as every other
-	// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
-	// — and is hydrated to the real node by `hydrateSlotRefs` once the full
-	// node map exists, the same two-pass pattern branch/group slot values
-	// already use. `storageKindId` is read directly off each `SubtypeRef` —
-	// assemble.ts's resolution helpers stamp it once, at discovery; this
-	// constructor never re-derives it.
 	readonly #subtypes: readonly NodeOrTerminal[];
-	// Transitive parse-kind closure through nested supertypes — e.g. python's
-	// `expression → primary_expression → parenthesized_expression`. Stamped
-	// once, at the end of assemble (`stampSupertypeClosures`), since a nested
-	// supertype's own subtypes aren't resolvable until every kind's node
-	// exists. `undefined` before that pass runs. Each
-	// entry is a plain `NodeOrTerminal` — `.parseKind.name`/`.node`'s name
-	// carry the parse (`$type`) and storage identity respectively, the same
-	// shape `.subtypes` already uses, so downstream readers don't need a
-	// second reference vocabulary for the same kind of fact. No stamped ids
-	// (`storageKindId`/`parseKindId` absent) — this closure only needs to
-	// answer "is this parse kind reachable here", by name.
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 
 	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
-		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
 		this.#subtypes = subtypes.map(
 			(s): NodeOrTerminal => ({
@@ -2908,14 +1985,8 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 
 export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 	readonly modelType = 'multi' as const;
-	// rule is the normalize-phase RenderRule: wrapper-deletion already pushed
-	// the REPEAT/REPEAT1 wrapper's own multiplicity/separator down onto its
-	// content, so the wrapper-bearing node no longer exists to hold — the
-	// same facts these getters used to read off the wrapper live on `rule`
-	// itself now.
 
 	constructor(kind: string, rule: RenderRule, opts?: { irKey?: string }) {
-		// Multi nodes are always hidden (no factoryName)
 		super(kind, rule, { hidden: true, irKey: opts?.irKey });
 	}
 
@@ -2942,39 +2013,15 @@ export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 
 export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	readonly modelType = 'group' as const;
-	// rule typed as Rule<'link'> — groups can carry GroupRule<'link'> (pre-unwrap),
-	// SeqRule<'link'>/ChoiceRule<'link'> after unwrapGroupRuleAndSimplified(), or any
-	// Rule<'link'> when constructed as polymorph forms (form.content can be
-	// any Rule<'link'> type).
-	/** See `AssembledBranch.simplifiedRule`. */
 	readonly simplifiedRule: SimplifiedRule;
-	/** See `AssembledBranch.renderRule`. Sourced from `normalized.normalizedRules[kind]` at assemble time. */
 	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
-	/** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
 	readonly name: string;
-	/**
-	 * When this group is a polymorph form, the parent polymorph's kind —
-	 * what tree-sitter actually produces for this node. Form factories
-	 * must emit `type: parentKind` so the runtime NodeData matches the
-	 * tree-sitter kind, not the synthesized form kind. Undefined for
-	 * standalone groups (inlined hidden seqs).
-	 */
 	readonly parentKind?: string;
 	readonly overridePassthrough?: boolean;
 
-	/** See {@link AssembledBranch.slotClass}. */
 	slotClass?: BranchSlotClass;
 
-	/**
-	 * The unified slot Record — every constituent of this group keyed by
-	 * its grammar field name (for `field()`-derived slots) or its
-	 * kind-derived positional name (for inferred slots). Insertion order
-	 * matches the order produced by `deriveSlots`. Frozen at construction.
-	 *
-	 * Mirrors `AssembledBranch.slots` — group consumers use this instead
-	 * of `.fields` directly.
-	 */
 	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
 	#determinedSlots: AssembledNonterminal[] = [];
 
@@ -2982,7 +2029,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 		return this._slots;
 	}
 
-	/** See {@link AssembledBranch.determinedSlots}. */
 	get determinedSlots(): readonly AssembledNonterminal[] {
 		return this.#determinedSlots;
 	}
@@ -3016,15 +2062,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
-		// Groups always derive a factoryName — hidden groups emit fragment factories
-		// for composition (hidden-group-factories). Polymorph form groups
-		// still use the explicitly provided factoryName so their emitted name matches
-		// the form name (e.g. `rangePatternUFormLeftWithRight`), not the raw kind.
-		//
-		// Hidden groups (kind starts with `_`) need the leading `_` preserved in
-		// the factory name so the emitted function is `_fooBar`, not `fooBar`.
-		// `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
-		// re-derive and prefix here when no explicit factoryName was provided.
 		const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
 		super(kind, rule, { factoryName, irKey: opts?.irKey });
 		this.simplifiedRule = simplifiedRule;
@@ -3040,12 +2077,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 		);
 	}
 
-	// Cycle guard for the parameterless getter. Same rationale as AssembledBranch.
-	// No memoization — see AssembledBranch comment.
 	#computing = false;
 
-	// Node map back-reference for pre-hydration UnresolvedRef resolution.
-	// See AssembledBranch.#nodes for full rationale.
 	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>> | undefined = undefined;
 
 	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>): void {
@@ -3053,7 +2086,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	}
 
 	override get parameterless(): boolean {
-		if (this.#computing) return false; // cycle — conservative false
+		if (this.#computing) return false;
 		this.#computing = true;
 		try {
 			return this.#computeParameterless();
@@ -3063,8 +2096,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	}
 
 	#computeParameterless(): boolean {
-		if (!this.rawFactoryName) return false; // hidden nodes have no factory
-		// See AssembledBranch.#computeParameterless.
+		if (!this.rawFactoryName) return false;
 		const pending = Object.values(this._slots).filter((s) => isDeterminedSlot(s, { nodes: this.#nodes }));
 		if (this.determinedSlots.length + pending.length === 0) return false;
 		return Object.values(this._slots).every((s) => !isRequired(s) || isDeterminedSlot(s, { nodes: this.#nodes }));
@@ -3078,70 +2110,13 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
 	readonly modelType = 'separatedList' as const;
 	readonly elements: readonly NodeOrTerminal[];
-	/**
-	 * Set only when the separator is nonterminal (multiple possible literal
-	 * kinds) — the rule later tasks project onto a slot. A literal
-	 * separator has fixed, compile-time-known text and needs no rule
-	 * reference here (mirrors `separatorToString`'s same distinction,
-	 * emitters/templates.ts). Resolved by the caller (`assemble.ts`'s
-	 * `isNonterminalRuleType` check, already needed there for
-	 * `isSeparatedListShape`) rather than here: terminality of a separator
-	 * is the caller's classification decision, and this file only records
-	 * what the caller resolved.
-	 */
 	readonly separatorRule: Rule<'link'> | undefined;
-	/**
-	 * Leading/trailing flank state — a direct passthrough of
-	 * `RuleBase.separator`'s own `leading`/`trailing` (`DelimiterMode`,
-	 * types/rule.ts): `'mandatory'`/`'optional'` when link.ts's
-	 * `liftCommaSep`/`absorbTrailingSeparator` absorbed a bare vs.
-	 * `optional(sepLit)`-wrapped flank member into the repeat, `'none'` when
-	 * the field is absent (no flank at all). `'mandatory'` and `'none'` are
-	 * identical from wrap/factory/from's point of view (neither needs
-	 * runtime capture or a factory option — both are compile-time known);
-	 * they differ only at render time, where `'mandatory'` must always emit
-	 * the separator and `'none'` must never emit it — see
-	 * `render-module.ts`'s `leadingExpr`/`trailingExpr` construction.
-	 * `isSeparatedListShape` (assemble.ts) only routes a rule here for a
-	 * literal separator when at least one flank is genuinely `'optional'`
-	 * (a nonterminal separator routes here regardless of flank state) — a
-	 * literal separator with ONLY `'mandatory'`/`'none'` flanks stays
-	 * classified as `'branch'`, rendered by the pre-existing
-	 * `hasTrailingDelimiter`/`hasLeadingDelimiter` boolean mechanism instead. So a
-	 * literal-separator kind reaching this class always has at least one
-	 * `'optional'` flank; `'mandatory'` is only reachable here in
-	 * combination with a nonterminal separator or the OTHER flank being
-	 * `'optional'`.
-	 */
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
 
-	/**
-	 * TEMPORARY behavior-preserving stub (separator-as-slot Task 2 follow-up,
-	 * see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
-	 * `simplifiedRule`/`renderRule`/`slots`/`fields`/`slotClass` exist ONLY so
-	 * the wrap/render/factory emitters can route a `'separatedList'` node
-	 * through the EXACT SAME code paths they already use for `'branch'`/
-	 * `'group'` — `_slots` is built via the identical
-	 * `buildSlotsRecord(simplifiedRule, ctx, renderRule)` call
-	 * `AssembledBranch`/`AssembledGroup` make, with the SAME `simplifiedRule`/
-	 * `renderRule` `assemble()` would have passed had this kind stayed
-	 * classified as `'branch'`. This guarantees real grammar kinds that now
-	 * classify as `'separatedList'` (e.g. python's `_with_clause_bare`,
-	 * `_expression_statement_tuple`, `lambda_parameters`) keep rendering
-	 * byte-identically to their pre-Task-2 `'branch'` output, so `cargo
-	 * build` stays green and existing corpus round-trips don't regress.
-	 * Tasks 4-6 replace this with real per-instance separator capture
-	 * (`_separator`/`_leading_sep`/`_trailing_sep`); at that point this
-	 * slot-bearing surface goes away — do NOT build new capture logic on
-	 * top of it.
-	 */
 	readonly simplifiedRule: SimplifiedRule;
-	/** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
 	readonly renderRule: RenderRule;
-	/** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
 	protected readonly _slots: Readonly<Record<string, AssembledNonterminal>>;
-	/** See `AssembledBranch.slotClass` — set post-assembly by `computeSlotClasses()`. */
 	slotClass?: BranchSlotClass;
 
 	constructor(
@@ -3158,9 +2133,6 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	) {
 		super(kind, rule, {});
 		const sep = rule.separator;
-		// Fielded element arms (`choice(field('name', …), enum_assignment)`)
-		// route by field label at read time — stamp the label as `parseName`
-		// so the wrap capture keys can include it.
 		this.elements = deriveValuesForRule(
 			rule.content,
 			{ ...ctx, stampArmFieldNamesAsParseName: true },
@@ -3182,13 +2154,6 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 		return this.rule.type === REPEAT1;
 	}
 
-	/**
-	 * Comma-TERMINATED list family (the lift's mandatory-head suffix window,
-	 * `x sep (x sep)* x?`): every element trails its own separator, so a
-	 * SINGLE element requires the trailing delimiter — the undelimited
-	 * one-element form belongs to a different construct (rust `(1,)` vs
-	 * parenthesized `(1)`). The factory asserts this validity invariant.
-	 */
 	get terminatedSeparator(): boolean {
 		return (this.rule.separator as { terminated?: true } | undefined)?.terminated === true;
 	}
@@ -3217,70 +2182,35 @@ export type AssembledNode =
 	| AssembledMulti
 	| AssembledSeparatedList;
 
-// ============================================================================
-// 5. Canonical structural-view helpers
-// ============================================================================
-//
-// Branch and Group expose `.fields` directly; non-structural kinds
-// (leaf/keyword/token/enum/supertype/multi) have no structural surface.
-// These helpers narrow over `AssembledNode` and give consumers one
-// canonical entry point per fact.
-
 export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-	// isSlotBearingCompound's doc comment (emitters/shared.ts).
 	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
 		return node.fields;
 	return [];
 }
 
 export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-	// isSlotBearingCompound's doc comment (emitters/shared.ts).
 	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
 		return node.fields;
 	return [];
 }
 
 export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-	// isSlotBearingCompound's doc comment (emitters/shared.ts).
 	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
 		return Object.values(node.slots);
 	return [];
 }
 
 export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-	// isSlotBearingCompound's doc comment (emitters/shared.ts).
 	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
 		return Object.values(node.slots);
 	return [];
 }
 
-/**
- * Duck-typed against `NodeMap` rather than importing it — `NodeMap` (in
- * `compiler/types.ts`) references `AssembledNode`, defined in THIS module,
- * so a direct import would be circular (same pattern as `SlotAliasPairsCtx`).
- */
 export interface LeftImmediateCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly linkRules?: Record<string, Rule<'link'>>;
 }
 
-/**
- * Grammar-declared LEFT-immediacy of a kind: true when every leftmost
- * terminal of the kind's rule forbids preceding whitespace
- * (`token.immediate`), making every reference to the kind seam-free on its
- * left in every context — the structural counterpart of
- * `AssembledLeaf.immediate`. Walks the link-phase rule leftmost-first: a
- * pushed `immediate` attr anywhere on the leftmost path decides true; a
- * CHOICE requires every arm; a nullable leftmost item (OPTIONAL/REPEAT)
- * decides false because the true left edge then varies per instance; an
- * unresolvable reference decides false. A conservative false never costs
- * correctness — only a runtime seam check that static resolution could
- * have skipped.
- */
 export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
 	const node = ctx.nodes.get(kind);
 	if (node instanceof AssembledLeaf) return node.immediate;
@@ -3301,11 +2231,6 @@ function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: Leftmost
 		case 'SEQ':
 			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
 		case 'CHOICE':
-			// Fork the cycle guard per arm: `visiting` is an ancestor-path set,
-			// and sibling arms are separate paths — a shared set would make a
-			// symbol resolved in one arm look recursive in the next, an
-			// order-dependent false negative (and a missing mark is a missed
-			// immediacy suppression, not just census noise).
 			return (
 				rule.members.length > 0 &&
 				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
@@ -3322,20 +2247,10 @@ function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: Leftmost
 			return leftmostTerminalImmediate(ctx.rules[rule.name], ctx);
 		}
 		default:
-			// OPTIONAL/REPEAT (nullable left edge), unstamped terminals, and
-			// compound forms with no single leftmost path.
 			return false;
 	}
 }
 
-// ---------------------------------------------------------------------------
-// Seam edge classes — static-seam-resolution's class-derivable inputs
-// ---------------------------------------------------------------------------
-
-/** Boundary character class of a kind's rendered edge: `word`/`not-word`
- *  when every instance's edge character has that class under the grammar's
- *  `wordMatcher`, `varies` when the class differs per instance or cannot be
- *  established (nullable edges, unparsed pattern tails, unresolved refs). */
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
 
 export interface KindEdgeClasses {
@@ -3343,8 +2258,6 @@ export interface KindEdgeClasses {
 	readonly ends: SeamEdgeClass;
 }
 
-/** Duck-typed against `NodeMap` (same circularity rationale as
- *  `LeftImmediateCtx`), plus the word predicate the classes are relative to. */
 export interface EdgeClassCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly linkRules?: Record<string, Rule<'link'>>;
@@ -3360,8 +2273,6 @@ const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
 const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
 	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
 
-/** Control escapes decoded to the character they match — classifying by
- *  the escape LETTER gives the wrong class (`\r` is not word-class 'r'). */
 const REGEX_CONTROL_ESCAPES: Record<string, string> = {
 	n: '\n',
 	r: '\r',
@@ -3371,12 +2282,6 @@ const REGEX_CONTROL_ESCAPES: Record<string, string> = {
 	'0': '\0'
 };
 
-/**
- * Leading character class of a regex source, or `varies` when the leading
- * atom is not one of the shapes this understands (a positive character
- * class, an escape class, or a literal character). A negated class or an
- * alternation/group head bails to `varies` — conservative, never wrong.
- */
 export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
 	if (source.length === 0) return 'varies';
 	const c0 = source[0]!;
@@ -3394,10 +2299,6 @@ export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: s
 				}
 				if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
 					return 'varies';
-				// Decode control escapes to the character they MATCH — the
-				// escape letter itself has the wrong class ('r' is word,
-				// '\r' is not). Other letter escapes stay the letter:
-				// escaped punctuation ('\.', '\[') matches itself.
 				ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
 			}
 			if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
@@ -3432,15 +2333,6 @@ export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: s
 	return charEdgeClass(c0, ctx);
 }
 
-/**
- * Edge character classes of a kind's rendered text. Leaves answer from
- * their own literal text (keyword), literal value set (enum), or pattern
- * source (leading atom only — a pattern's trailing class is `varies` in
- * this cut); structural kinds walk their link-phase rule to the leftmost/
- * rightmost terminal, with nullable edges and cycles deciding `varies`.
- * `varies` never causes a wrong static decision — only a boundary left to
- * the runtime writer.
- */
 export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
 	const node = ctx.nodes.get(kind);
 	if (node instanceof AssembledKeyword) {
@@ -3491,7 +2383,6 @@ function ruleEdgeClass(
 			return ruleEdgeClass(member, side, ctx, visiting);
 		}
 		case 'CHOICE':
-			// Per-arm cycle-guard fork — see leftmostTerminalImmediate's CHOICE case.
 			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, new Set(visiting))));
 		case 'REPEAT1':
 		case 'FIELD':
@@ -3509,16 +2400,10 @@ function ruleEdgeClass(
 			return ruleEdgeClass(ctx.linkRules?.[rule.name], side, ctx, visiting);
 		}
 		default:
-			// OPTIONAL/REPEAT (nullable edge) and forms with no single
-			// terminal on this side.
 			return 'varies';
 	}
 }
 
-/** Concrete edge character sets of a kind's rendered text — `undefined`
- *  side = not statically enumerable (patterns, nullable edges, cycles).
- *  These are the inputs the static seam law quantifies over; the edge
- *  CLASSES above are their projection. */
 export interface KindEdgeCharSets {
 	readonly starts?: ReadonlySet<string>;
 	readonly ends?: ReadonlySet<string>;
@@ -3566,15 +2451,10 @@ function ruleEdgeCharSet(
 			return c === undefined ? undefined : new Set([c]);
 		}
 		case 'SEQ': {
-			// A nullable edge member (OPTIONAL/REPEAT) contributes its
-			// content's edge chars AND falls through to the next member
-			// inward — both are possible edges depending on presence.
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			const union = new Set<string>();
 			for (const m of members) {
 				const nullable = m.type === 'OPTIONAL' || m.type === 'REPEAT';
-				// Each explored member is its own recursion path — fork the
-				// cycle guard (see leftmostTerminalImmediate's CHOICE case).
 				const s = ruleEdgeCharSet(
 					nullable ? (m as { content: Rule<'link'> }).content : m,
 					side,
@@ -3588,7 +2468,6 @@ function ruleEdgeCharSet(
 			return union.size > 0 ? union : undefined;
 		}
 		case 'CHOICE': {
-			// Per-arm cycle-guard fork — see leftmostTerminalImmediate's CHOICE case.
 			const union = new Set<string>();
 			for (const m of rule.members) {
 				const s = ruleEdgeCharSet(m, side, ctx, new Set(visiting));
@@ -3613,20 +2492,10 @@ function ruleEdgeCharSet(
 			return ruleEdgeCharSet(ctx.linkRules?.[rule.name], side, ctx, visiting);
 		}
 		default:
-			// PATTERN (not enumerable), OPTIONAL/REPEAT (nullable edge), and
-			// forms with no single terminal on this side.
 			return undefined;
 	}
 }
 
-// ---------------------------------------------------------------------------
-// Delimiter flags — the separated-list options struct's instance value
-// ---------------------------------------------------------------------------
-
-/** Bitflag encoding of a separated list's OPTIONAL flank state — the
- *  `delimiter` member of the list options struct. Mandatory flanks are
- *  template text and never encoded; a slot's permitted values are exactly
- *  the grammar's optional flanks (see `permittedDelimiters`). */
 export const DelimiterFlags = {
 	none: 0,
 	leading: 1,

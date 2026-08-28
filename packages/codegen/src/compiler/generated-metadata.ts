@@ -1,11 +1,3 @@
-/**
- * compiler/generated-metadata.ts — late tree-sitter artifact metadata.
- *
- * Rule identity and classification are built earlier from Evaluate's rule
- * tree; generated IDs are a secondary layer and never participate in that
- * foundational catalog construction.
- */
-
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
@@ -247,14 +239,6 @@ function joinIdNames(
 	names: ReadonlyMap<string, string>,
 	fallbackName: (cName: string) => string
 ): Map<string, GeneratedIdEntry> {
-	/* The join key is the **prefix-stripped C symbol name**:
-	   `sym__array_expression_list` becomes `_array_expression_list`, distinct
-	   from the visible `sym_array_expression_list` (would-be
-	   `array_expression_list`). The lookup table `ts_symbol_names[]` is
-	   intentionally lossy — it canonicalizes display labels and collapses
-	   `sym__as_pattern` and `sym_as_pattern` to the same `"as_pattern"` string —
-	   so it can NOT be used as the identity key. The symbol name survives as a
-	   diagnostic label on the catalog row. */
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
 		const key = fallbackName(entry.cName);
@@ -294,31 +278,7 @@ function joinIdNames(
 			continue;
 		}
 		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
-			/* `_newline`'s `sym__newline` (kept as `existing`, id 101,
-			   `ts_symbol_names` label `"_newline"`) and `alias_sym_newline` (this
-			   `entry`, id 294, label `"newline"`) both join to key `_newline` —
-			   same underlying rule, but the alias occurrence is the ONLY thing
-			   that ever displays under the visible name `"newline"` (no plain
-			   `sym_newline` exists in this grammar).
-
-			   A node parsed at THIS alias's grammar position always carries the
-			   alias's OWN numeric id at runtime (294), never the hidden rule's id
-			   (101) — aliasing creates a genuinely distinct parser symbol, not
-			   just a cosmetic rename. So when an alias introduces a display name
-			   not already covered by `existing`, the alias's id — not the hidden
-			   rule's — is what `$type` dispatch must key on for that name.
-			   (Cascade: prefer a real `sym_<name>` under that exact visible name
-			   if one exists elsewhere in the catalog —
-			   `shouldReplaceSymbol`/the anon-swap branch above already handle
-			   that case before we ever get here — falling back to the alias's id
-			   only when nothing else claims the name.) */
 			if (parser.alias && parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
-				/* `id` stays the STORAGE kind id (101, the rule's own truth —
-				   `_newline` as a rule, regardless of how/whether it's ever
-				   aliased). `parseId` is the separate PARSE/dispatch id: what a
-				   node actually carries at runtime when produced through THIS
-				   alias (294) — the id every render-dispatch match arm must key
-				   on, since that's what tree-sitter really emits. */
 				result.set(key, {
 					id: existing.id,
 					parseId: entry.id,
@@ -361,26 +321,10 @@ function shouldReplaceSymbol(existingCName: string | undefined, nextCName: strin
 
 function deriveSymbolRuntimeName(cName: string): string {
 	if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
-	/* Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
-	   arrive in parser.c with all-caps tail names. Lowercase them so the
-	   catalog `key` is consistently snake-case across all kinds (aligns with
-	   `call_expression`, `_array_expression_list`, etc.) and the downstream
-	   PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
-	   Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase`
-	   regex inserts `_` before every letter, and the emitted Rust constant
-	   becomes `L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is
-	   preserved in `parser.cSymbol`; the literal punctuation text is
-	   preserved in `parser.symbolName`. */
 	if (cName.startsWith('anon_sym_')) {
 		return cName.slice('anon_sym_'.length).toLowerCase();
 	}
 	if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
-	/* `alias_sym_<target>` is the parser symbol for an aliased kind. The
-	   codegen rule that produces it is the hidden source (leading
-	   underscore) — e.g. tree-sitter-rust aliases `_field_identifier` →
-	   `field_identifier`, which appears in parser.c as
-	   `alias_sym_field_identifier`. Map back to the hidden source name so
-	   the join hits the codegen-side rule key. */
 	if (cName.startsWith('alias_sym_')) return `_${cName.slice('alias_sym_'.length)}`;
 	return cName;
 }

@@ -166,8 +166,13 @@ function qualify(targets: Decl[], d: Decl): string {
 	return [...outer.map((o) => o.name), d.name].join('.');
 }
 
-/** Consecutive `//` lines at one indentation are one comment. */
-function mergeLineComments(comments: Match[]): Match[] {
+/**
+ * Consecutive whole-line `//` comments at one indentation are one comment.
+ * A trailing comment after code never merges: the strip would take the
+ * code between two of them.
+ */
+function mergeLineComments(comments: Match[], lines: string[]): Match[] {
+	const wholeLine = (c: Match): boolean => lines[c.range.start.line]!.slice(0, c.range.start.column).trim() === '';
 	const out: Match[] = [];
 	for (const c of comments) {
 		const prev = out[out.length - 1];
@@ -176,7 +181,9 @@ function mergeLineComments(comments: Match[]): Match[] {
 			prev.text.startsWith('//') &&
 			c.text.startsWith('//') &&
 			c.range.start.line === prev.range.end.line + 1 &&
-			c.range.start.column === prev.range.start.column
+			c.range.start.column === prev.range.start.column &&
+			wholeLine(prev) &&
+			wholeLine(c)
 		) {
 			prev.text += '\n' + c.text;
 			prev.range = { start: prev.range.start, end: c.range.end };
@@ -202,14 +209,15 @@ function buildEntries(matches: Match[], declarationsOnly: boolean): Entry[] {
 		const decls = all.filter(
 			(d) => DECL_KINDS.includes(d.kind) && !bodies.some((b) => b !== d && contains(b, d.start, d.end))
 		);
+		const lines = readFileSync(REPO_ROOT + file, 'utf8').split('\n');
 		const comments = mergeLineComments(
 			list
 				.filter((m) => m.ruleId === 'comment' && !DIRECTIVE.test(m.text))
-				.sort((a, b) => a.range.start.line - b.range.start.line || a.range.start.column - b.range.start.column)
+				.sort((a, b) => a.range.start.line - b.range.start.line || a.range.start.column - b.range.start.column),
+			lines
 		);
 		const commentLines = new Set<number>();
 		for (const c of comments) for (let l = c.range.start.line; l <= c.range.end.line; l++) commentLines.add(l);
-		const lines = readFileSync(REPO_ROOT + file, 'utf8').split('\n');
 
 		for (const c of comments) {
 			// Directly above a declaration: every line between is blank or comment.
