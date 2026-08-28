@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { alias, buildRuleCatalog, choice, seq } from '../../compiler/evaluate.ts';
+import { structuralBuilder } from '../../dsl/builders.ts';
+import { buildRuleCatalog } from '../../compiler/rule-catalog.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -96,10 +97,10 @@ describe('diagnoseParseKindCollisions', () => {
 
 	it('assemble wires the pass and collapses identical parseKind collisions before slot naming', () => {
 		const nodeMap = buildNodeMap({
-			host: choice(
-				alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+			host: structuralBuilder.choice(
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 				{ type: 'SYMBOL', name: 'shared' },
-				alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 			),
 			left: { type: 'PATTERN', value: '[a-z]+' },
 			shared: { type: 'PATTERN', value: '[a-z]+' },
@@ -117,10 +118,10 @@ describe('diagnoseParseKindCollisions', () => {
 
 	it('assemble preserves non-mergeable parseKind collisions as distinct slot values', () => {
 		const nodeMap = buildNodeMap({
-			host: choice(
-				alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+			host: structuralBuilder.choice(
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 				{ type: 'SYMBOL', name: 'shared' },
-				alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 			),
 			left: { type: 'PATTERN', value: '[a-z]+' },
 			shared: {
@@ -143,14 +144,26 @@ describe('diagnoseParseKindCollisions', () => {
 
 	it('assemble preserves collisions that differ only by anonymous delimiters', () => {
 		const nodeMap = buildNodeMap({
-			host: choice(
-				alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+			host: structuralBuilder.choice(
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 				{ type: 'SYMBOL', name: 'shared' },
-				alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 			),
-			left: seq('(', { type: 'SYMBOL', name: 'identifier' }, ')'),
-			shared: seq('[', { type: 'SYMBOL', name: 'identifier' }, ']'),
-			right: seq('{', { type: 'SYMBOL', name: 'identifier' }, '}'),
+			left: structuralBuilder.seq(
+				{ type: 'STRING', value: '(' },
+				{ type: 'SYMBOL', name: 'identifier' },
+				{ type: 'STRING', value: ')' }
+			),
+			shared: structuralBuilder.seq(
+				{ type: 'STRING', value: '[' },
+				{ type: 'SYMBOL', name: 'identifier' },
+				{ type: 'STRING', value: ']' }
+			),
+			right: structuralBuilder.seq(
+				{ type: 'STRING', value: '{' },
+				{ type: 'SYMBOL', name: 'identifier' },
+				{ type: 'STRING', value: '}' }
+			),
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 

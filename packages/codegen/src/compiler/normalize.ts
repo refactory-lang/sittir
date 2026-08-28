@@ -19,15 +19,13 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
-import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
+import { deriveComplexAliasTargetHidden, isEnumChoiceRule, separatorFactsEqual } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
 import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { withAttrsFrom } from '../dsl/rule-attrs.ts';
-import { separatorFactsEqual } from '../dsl/rule-patterns.ts';
-import { deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
