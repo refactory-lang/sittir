@@ -3121,9 +3121,10 @@ registered but later unused still counts as a sibling.
  * attribute-built children (bottom-up) and `structuralBuilder` receives
  * evaluate-phase nodes. The identity constructors (variant, group, the
  * leaves) return their exact node type — both strategies build exactly
- * that node. `choice` returns `Rule<P>` because the structural strategy
- * recognizes on it; each strategy's own interface (`StructuralBuilder`,
- * `AttributeBuilder`) narrows what it really returns. The content-consuming constructors
+ * that node. `choice` and the content-consuming constructors return
+ * `Rule<P>` at this level because a strategy may recognize on them; each
+ * strategy's own interface (`StructuralBuilder`, `AttributeBuilder`)
+ * states what it really returns. The content-consuming constructors
  * (optional, repeat, field, alias, token, prec) return `Rule<P>` because
  * the attribute strategy returns its content, of whatever type that was.
  * `alias`'s target is a string (anonymous alias) or a symbol (named), as
@@ -3134,13 +3135,17 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/builders.ts::StructuralBuilder`
 
 ```text
-/** `RuleBuilder<'evaluate'>` narrowed to what the structural strategy
- *  actually returns: `field` always builds a FieldRule, `alias` an
- *  AliasRule, `token` a TokenRule and `token.immediate` tree-sitter's own
- *  IMMEDIATE_TOKEN shape (enrich runs before the fold and must see the
- *  same tag in both pipelines). Evaluate's private DSL wrappers read
- *  those results without asserting. `choice` stays `Rule<'evaluate'>`: it
- *  recognizes an all-same-name-field choice into one field. */
+/** `RuleBuilder<'evaluate'>` with the node each constructor actually
+ *  builds: `seq` a SeqRule, `field` a FieldRule, `alias` an AliasRule,
+ *  `repeat`/`repeat1` their repeat node, `token` a TokenRule and
+ *  `token.immediate` tree-sitter's own IMMEDIATE_TOKEN shape (enrich runs
+ *  before the fold and must see the same tag in both pipelines), the
+ *  `prec` family its four PREC nodes. Where recognition can change the
+ *  node the return is the honest union: `choice` is a ChoiceRule or the
+ *  FieldRule an all-same-name-field choice collapses to; `optional` is an
+ *  OptionalRule or the RepeatRule that `optional(repeat…)` becomes. Unions
+ *  rather than input-conditional overloads: a wide `Rule<'evaluate'>`
+ *  argument would pick the catch-all overload and lie about the result. */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::StructuralToken`
@@ -3149,13 +3154,53 @@ registered but later unused still counts as a sibling.
 /** `token` / `token.immediate` with their exact evaluate-phase node types. */
 ```
 
+### `packages/codegen/src/dsl/builders.ts::StructuralPrec`
+
+```text
+/** `prec` / `prec.left` / `prec.right` / `prec.dynamic` with their exact
+ *  evaluate-phase node types. */
+```
+
 ### `packages/codegen/src/dsl/builders.ts::AttributeBuilder`
 
 ```text
-/** `RuleBuilder<'normalize'>` narrowed to what the attribute strategy
- *  actually returns: `choice` is always a ChoiceRule on this view (there is
- *  no FIELD to recognize), which is what `flatten`'s CHOICE case and
- *  simplify's branch merging spread over. */
+/** `RuleBuilder<'normalize'>` with what the attribute strategy actually
+ *  returns. An attribute constructor only stamps attributes on its input,
+ *  so it is identity-preserving in the type: `field`, `token`,
+ *  `token.immediate` and `prec` are `<R>(…, content: R): R`. The
+ *  exceptions are exactly the recognitions, spelled as overloads on the
+ *  INPUT type (never as a conditional return type — a deferred conditional
+ *  cannot be checked against the implementation's literals and would force
+ *  casts back into the builders): `optional`/`repeat`/`repeat1` re-enter
+ *  `buildSeq` for a SEQ (→ `Rule`) and `optional` folds a bare literal to
+ *  the empty seq (→ `Rule`), otherwise `R`; `alias` turns a STRING into a
+ *  literal-carrying SymbolRule, otherwise `R`; `choice` is always a
+ *  ChoiceRule (no FIELD exists on this view). A catch-all `(Rule) → Rule`
+ *  overload closes each set so a wide argument stays honest. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::AttributeToken`
+
+```text
+/** Identity-preserving `token` / `token.immediate`: a tokenized leaf is the
+ *  same leaf with `tokenized` (and `immediate`) stamped. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::AttributePrec`
+
+```text
+/** Identity-preserving `prec` family: the input with `prec` stamped. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::attributeOptional`
+
+```text
+/** The overload set is the type-level statement of `foldOptionalEmptyMatch`
+ *  + `buildOptional`: identity for anything that is not a SEQ or a bare
+ *  literal. Declared as functions (not arrows in the object literal)
+ *  because an arrow cannot be contextually typed against an overloaded
+ *  property; `attributeRepeat`, `attributeRepeat1`, `attributeField` and
+ *  `attributeAlias` are the same shape. */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::withId`
