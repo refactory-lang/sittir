@@ -569,7 +569,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 
 describe('clusterSignatures', () => {
 	// rulesEqual itself is pre-existing and already used/tested elsewhere
-	// (dsl/list-patterns.ts) — this only tests the new clustering wrapper
+	// (dsl/rule-patterns.ts) — this only tests the new clustering wrapper
 	// applyUnaliasDistinct actually relies on: 3+ values, some equal to
 	// each other and some not, must land in the correct number of distinct
 	// clusters using rulesEqual's own equality, not any other proxy.

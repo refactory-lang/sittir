@@ -27,10 +27,7 @@ rule:
   not:
     regex: '^/\*\*'
 note: >
-  Wave 5 comment-cleanup audit (2026-07-28): scoped to non-JSDoc comments
-  first — `//` lines and non-`/** */` block comments — since `/** */` blocks
-  immediately preceding a function/method declaration are already handled
-  mechanically by scripts/wave5-relocate-jsdoc.mts (rules/function-level-jsdoc.yml
-  + rules/function-level-jsdoc-comment.yml). Remaining `/** */` blocks (module
-  headers, type/interface/const docs, or JSDoc not immediately adjacent to a
-  declaration) are a separate, lower-priority follow-up — not yet queried.
+  Audit hint only. scripts/relocate-comments-to-glossary.mts relocates every
+  comment in scope — JSDoc or not, above a declaration or inside its body —
+  into docs/glossary/<dir>.md; directive comments (@ts-*, eslint,
+  @rule-type-consts, /// <reference>) are the only ones it leaves.

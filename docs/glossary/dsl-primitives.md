@@ -1,8 +1,8 @@
 # `packages/codegen/src/dsl/primitives` — Function Glossary
 
 Per-function reference for `packages/codegen/src/dsl/primitives/`, mechanically relocated from source
-JSDoc by `scripts/wave5-relocate-jsdoc.mts` (wave 5 comment-cleanup, pass 1 —
-unedited, unverified). Pass 2 reformats/verifies these entries and decides
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
+unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).

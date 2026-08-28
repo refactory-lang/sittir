@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "e44e33a51a958dd094ee3c5cd9a303999c3a9513587eb81b35e221d2d240a6fe",
+  "source_hash": "aee1e0a3a58634a734acdd5387cc1d62f88d0b7f1ea128d52e077f51ead7f008",
   "files": {
-    "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
-    "packages/python/.sittir/grammar.js": "2a01b85a3bcfb5dc352cd874c7f94d2ef949897e600cf5ed2bb96b90601713c7",
+    "packages/python/.sittir/grammar-diagnostics.json": "d6a38bbd66d02ab325e896f52d1b7229ef7c92afe5e57a2a554f0fd965c8958f",
+    "packages/python/.sittir/grammar.js": "66c0b4b4404472137cb187cb45771d7999018c9a5459cbb20cc8a59a42efc60e",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "895f645a5059b5de3ccccf8b7c88daa0ca3c8d77e2914e9433104872cf0762d2",
     "packages/python/.sittir/seam-census.json": "be7abc7935f2e9ab6b38ddef3a877d5d61160656df143127485ffecc696a1f86",

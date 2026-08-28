@@ -14,7 +14,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -308,28 +308,13 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "18 literal(s) resolved no parser kindId",
+    "message": "3 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
         "\n",
-        "#",
-        "/*",
-        "//",
         "/>",
-        "0",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
-        "</",
-        "E",
-        "\\",
-        "_",
-        "e",
-        "n"
+        "</"
       ]
     },
     "severity": "warning",
@@ -396,29 +381,14 @@
   },
   {
     "code": "kindid-vaporized-literals",
-    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "3 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
         "\n",
-        "#",
-        "/*",
-        "//",
         "/>",
-        "0",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
-        "</",
-        "E",
-        "\\",
-        "_",
-        "e",
-        "n"
+        "</"
       ]
     },
     "scope": "grammar",

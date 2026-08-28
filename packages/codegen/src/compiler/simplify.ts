@@ -30,12 +30,12 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
-import { isSpliceableBareSeq } from '../types/rule.ts';
+import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
-import type { RuleBuilder } from '../dsl/rule-transforms.ts';
+import { attributeBuilder, structuralBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
@@ -70,7 +70,6 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 	};
 }
 import {
-	structuralBuilder,
 	inlineRefs,
 	fuseHeadRepeatLists,
 	combineMultiplicity,
@@ -79,34 +78,6 @@ import {
 } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { AssembledNode } from './model/node-map.ts';
-
-// ---------------------------------------------------------------------------
-// attributeBuilder — compiler-side RuleBuilder that pushes attributes instead
-// of constructing wrapper nodes, so simplify stays field/optional/repeat-free.
-// ---------------------------------------------------------------------------
-
-export const attributeBuilder: RuleBuilder = {
-	seq: (members) => ({ type: SEQ, members }),
-	choice: (members) => ({ type: CHOICE, members }),
-	optional: (content) => {
-		// Mirror simplifyOptionalRule semantics (the handler this replaces):
-		// empty-seq body → keep empty-seq; bare anonymous string → strip to empty-seq;
-		// otherwise deleteWrapper pushes multiplicity:'optional' onto leaves.
-		if (content.type === SEQ && content.members.length === 0) {
-			return { type: SEQ, members: [] };
-		}
-		if (content.type === STRING && !isSlotPromotedLiteral(content)) {
-			return { type: SEQ, members: [] };
-		}
-		// Cast, not narrow: `content: AnyRule` (RuleBuilder's phase-generic
-		// param) vs `deleteWrapper`'s `Rule<'link'>` — same "narrow via
-		// AnyRule, cast back" convention as rule-catalog.ts's `ruleChildren`.
-		return deleteWrapper({ type: OPTIONAL, content } as Rule<'link'>) as RenderRule;
-	},
-	repeat: (content) => deleteWrapper({ type: REPEAT, content } as Rule<'link'>) as RenderRule,
-	repeat1: (content) => deleteWrapper({ type: REPEAT1, content } as Rule<'link'>) as RenderRule,
-	field: (name, content) => deleteWrapper({ type: FIELD, name, content } as Rule<'link'>) as RenderRule
-};
 
 // ---------------------------------------------------------------------------
 // Simplify-only helpers (relocated from dsl/rule-transforms.ts).
@@ -155,10 +126,6 @@ export function isEmptyMatchMember(rule: RenderRule): boolean {
 	if (rule.type === PATTERN && rule.value === '') return true;
 	if (rule.type === SEQ && rule.members.length === 0) return true;
 	return false;
-}
-
-export function isSlotPromotedLiteral(rule: RenderRule): boolean {
-	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
 function hasNamedSiblingOfInnerField(rule: AnyRule): boolean {
@@ -270,7 +237,7 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
 				// Cast, not narrow: `AnyRule` distributes across every phase,
 				// while `FieldRule` (bare) defaults to a single phase — same
 				// "narrow via AnyRule, cast back" convention as
-				// rule-catalog.ts's `ruleChildren`.
+				// rule-patterns.ts's `ruleChildren`.
 				extracted = m as FieldRule;
 				continue;
 			}
@@ -561,7 +528,7 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 // (not narrowed to RenderRule) — phase-visibility-tightening finding:
 // narrowing them forces new `as RenderRule` casts at their
 // `withAttrsFrom(rule, b.choice(...))` / `b.optional(...)` call sites, because
-// `RuleBuilder` (dsl/rule-transforms.ts) is DELIBERATELY AnyRule-generic (one
+// `RuleBuilder` (dsl/builders.ts) is DELIBERATELY AnyRule-generic (one
 // interface serving both `structuralBuilder`, which legitimately builds
 // WrapperPhase wrapper nodes, and `attributeBuilder`, which never does).
 // Forcing these call sites to a narrower phase would launder past the

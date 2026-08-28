@@ -1,9 +1,9 @@
 {
   "grammar": "rust",
-  "source_hash": "c582e36a83df1edd67d369eafc386a800a6f1dca8579e142e37332ab114c217d",
+  "source_hash": "e396e150d86816c221f23d783303604d56c96c92499f33f01ed4b47568d38a7a",
   "files": {
-    "packages/rust/.sittir/grammar-diagnostics.json": "2dc5211c972ab2250b7096010d31239ad3e0456f4140c5db3aa6b1448da62e54",
-    "packages/rust/.sittir/grammar.js": "30597fe0bce9e4b85d82971b94dffab3b5438bf1de652f6b8d9618693c1f7741",
+    "packages/rust/.sittir/grammar-diagnostics.json": "75d499e60e116b14fc401698cc9603c587d935914935af71a1ff22f6463f73a8",
+    "packages/rust/.sittir/grammar.js": "a105e1c9f6af174b6df47f3dcbe0ab011c545f564d2fd5d8a8e5a1243248a481",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
     "packages/rust/.sittir/parser.wasm": "b71b09a54b9256908c1c34ddbc693832feda18685f779adfcd5b91d929e231c0",
     "packages/rust/.sittir/seam-census.json": "79f2b82d093b3c49e9b76d322e745f5b9f23ea0c86edecb6a61a762d5c989e09",

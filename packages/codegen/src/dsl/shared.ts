@@ -4,7 +4,7 @@
  * `ruleKey` gives every distinguishable rule shape a stable string, so a
  * many-way "have I already seen a rule structurally identical to this one"
  * lookup is a single `Map<string, ...>` pass (O(n)) instead of a pairwise
- * scan against every candidate seen so far (O(n^2)). `list-patterns.ts`'s
+ * scan against every candidate seen so far (O(n^2)). `rule-patterns.ts`'s
  * `rulesEqual` is defined in terms of it: `ruleKey(a) === ruleKey(b)` iff
  * `rulesEqual(a, b)`. `enrich.ts`'s group/clause-hoist dedupe
  * (`visibleGroupSynthName`/`clauseHoistSynthName`) key their dedupe maps

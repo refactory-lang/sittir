@@ -32,13 +32,15 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
-import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
+import { isChoice } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
-import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
+import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
+import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { withAttrsFrom } from '../dsl/rule-attrs.ts';
-import { separatorFactsEqual } from '../dsl/list-patterns.ts';
+import { separatorFactsEqual } from '../dsl/rule-patterns.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -233,7 +235,7 @@ function spliceFoldableRefs(
 			// phase-erased `AnyRule` (dsl/rule-transforms.ts is phase-generic by
 			// design), while `target`/`body` share THIS function's 'link' phase
 			// by construction — same "narrow via AnyRule, cast back" convention
-			// as rule-catalog.ts's `ruleChildren`.
+			// as rule-patterns.ts's `ruleChildren`.
 			return materializeInlinedBody(rule, body as Rule<'link'>, rule.name);
 		}
 		case SEQ: {

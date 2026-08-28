@@ -66,17 +66,16 @@ import type {
 	RepeatRule,
 	Repeat1Rule,
 	StringRule,
-	TokenRule,
 	SupertypeRule,
 	Multiplicity,
 	RuleId,
 	DelimiterMode
 } from '../../types/rule.ts';
+import { isEnumChoiceRule } from '../../dsl/rule-patterns.ts';
 import {
 	isSeq,
 	isField,
 	literalTextOf,
-	isEnumChoiceRule,
 	isLinkSymbol,
 	subtypeParseNamesOf,
 	subtypeRestampPairsOf,
@@ -2563,22 +2562,18 @@ export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends As
 	/**
 	 * Grammar-declared immediacy: this kind's token forbids preceding
 	 * whitespace, so its rendered text must never receive a seam space.
-	 * Read from the rule attrs Link pushes down when flattening a
-	 * `token.immediate(...)` wrapper (or stamps on declared-immediate
-	 * synthetic externals) — the wrapper node itself no longer exists at
-	 * this phase. The TOKEN-wrapper check covers rules whose wrapper
-	 * survives (inline/unflattened positions).
+	 * A `token.immediate(...)` wrapper never survives link — the
+	 * `tokenImmediate` builder stamps the fact on the leaf that replaces
+	 * it; declared-immediate synthetic externals are stamped at creation.
 	 */
 	get immediate(): boolean {
-		const rule = this.rule as { immediate?: boolean; type?: string };
-		return rule.immediate === true || (this.rule.type === TOKEN && (this.rule as TokenRule).immediate);
+		return (this.rule as { immediate?: boolean }).immediate === true;
 	}
 
-	/** This kind's rule lexes as one token (`token(...)` wrapper, pushed
-	 * attr, or external scanner symbol). */
+	/** This kind's rule lexes as one token (a consumed `token(...)`
+	 * wrapper's stamp, or an external scanner symbol). */
 	get tokenized(): boolean {
-		const rule = this.rule as { tokenized?: boolean };
-		return rule.tokenized === true || this.rule.type === TOKEN;
+		return (this.rule as { tokenized?: boolean }).tokenized === true;
 	}
 }
 
@@ -2612,18 +2607,22 @@ export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
  * Multi-member SEQs of fixed literals (e.g. python's `_not_in` =
  * `seq('not', 'in')`, aliased to `'not in'`) ARE a fixed realisation: every
  * parse of the rule produces exactly the same token sequence. Their members
- * are collected in `deterministic` mode (no OPTIONAL / blank-arm CHOICE
- * allowed — optionality inside a seq means divergent realisations) and
- * joined with `joiner`: a single space at grammar level (canonical token
- * separation), an empty string inside `token(...)` (contiguous by
- * construction).
+ * are collected in `deterministic` mode (no optional member / blank-arm
+ * CHOICE allowed — optionality inside a seq means divergent realisations)
+ * and joined with `joiner`: a single space at grammar level (canonical
+ * token separation), an empty string under a `tokenized` stamp (contiguous
+ * by construction).
+ *
+ * The rule is the wrapper-free normalize view: optionality, repetition and
+ * slot promotion are the leaf's own `multiplicity` / `nonterminal` stamps,
+ * read one level at a time.
  *
  * @param ctx.joiner - separator used when concatenating a multi-member SEQ's
- *   literals. `' '` outside `token()`, `''` inside.
- * @param ctx.deterministic - when true, any optionality (OPTIONAL, blank
- *   CHOICE arm) makes the subtree non-fixed. Used for members of a
- *   multi-member SEQ, where "same text OR absent" is no longer a single
- *   fixed realisation.
+ *   literals. `' '` outside a tokenized subtree, `''` inside.
+ * @param ctx.deterministic - when true, any optionality (`multiplicity:
+ *   'optional'`, blank CHOICE arm) makes the subtree non-fixed. Used for
+ *   members of a multi-member SEQ, where "same text OR absent" is no longer
+ *   a single fixed realisation.
  */
 interface FixedLiteralCtx {
 	joiner: string;
@@ -2632,15 +2631,17 @@ interface FixedLiteralCtx {
 
 function collectFixedLiteral(
 	rule: Rule<'link'>,
-	ctx: FixedLiteralCtx = { joiner: ' ', deterministic: false }
+	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
 ): string | undefined {
+	const attrs = rule as { multiplicity?: Multiplicity; nonterminal?: boolean; tokenized?: boolean };
+	// A slot (promoted literal, ref) is content-bearing; a repeated literal
+	// has no single realisation; an optional one has two in deterministic mode.
+	if (attrs.nonterminal || attrs.multiplicity === 'array' || attrs.multiplicity === 'nonEmptyArray') return undefined;
+	if (attrs.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
+	const ctx = attrs.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
 	switch (rule.type) {
 		case STRING:
 			return rule.value || undefined;
-		case OPTIONAL:
-			// optional(X): the blank arm contributes nothing; X may yield a fixed
-			// literal. In deterministic mode optionality means two realisations.
-			return ctx.deterministic ? undefined : collectFixedLiteral(rule.content, ctx);
 		case CHOICE: {
 			if (rule.members.length === 0) return undefined; // blank sentinel
 			let found: string | undefined;
@@ -2674,14 +2675,8 @@ function collectFixedLiteral(
 			}
 			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
 		}
-		case TOKEN:
-			// token(X) wrapper — recurse into content. Token content is contiguous
-			// source text, so inner seq members join with no separator.
-			return collectFixedLiteral((rule as { content: Rule<'link'> }).content, { ...ctx, joiner: '' });
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; collectFixedLiteral
-		// called on the unwrapped rule directly now (see AssembledPattern.fixedLiteralText).
 		default:
-			// symbol, alias, pattern, field, repeat, etc. — content-bearing or structural
+			// symbol, pattern, variant, group, … — content-bearing or structural
 			return undefined;
 	}
 }
@@ -2742,27 +2737,21 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 	}
 }
 
-export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule> {
+export class AssembledToken extends AssembledLeaf<StringRule<'link'>> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
 	/** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
 	readonly resolvedKindId?: number;
 
-	constructor(
-		kind: string,
-		rule: StringRule<'link'> | TokenRule,
-		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
-	) {
+	constructor(kind: string, rule: StringRule<'link'>, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
 		super(kind, rule, { hidden: true });
-		if (rule.type === STRING && rule.resolvedKindId !== undefined) {
+		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
-			// SYNTHESIZED StringRule (never link-stamped) or a TOKEN rule (no
-			// `resolvedKindId` field at all) — literal-text lookup as before.
-			const entry = rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value) : undefined;
-			if (entry !== undefined)
-				noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.type === STRING ? rule.value : '' });
+			// SYNTHESIZED StringRule (never link-stamped) — literal-text lookup.
+			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
+			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -2770,21 +2759,18 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 	// No emitFactory — tokens are always hidden, no factoryName.
 
 	override get parameterless(): boolean {
-		return this.rule.type === STRING;
+		return true;
 	}
 
-	override get stampExpression(): string | undefined {
-		if (this.rule.type !== STRING) return undefined;
+	override get stampExpression(): string {
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
 
-	get text(): string | undefined {
-		if (this.rule.type === STRING) return this.rule.value;
-		return undefined;
+	get text(): string {
+		return this.rule.value;
 	}
 
-	override get stampChildExpression(): string | undefined {
-		if (this.rule.type !== STRING) return undefined;
+	override get stampChildExpression(): string {
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
 		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
@@ -3099,12 +3085,9 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	 * reference here (mirrors `separatorToString`'s same distinction,
 	 * emitters/templates.ts). Resolved by the caller (`assemble.ts`'s
 	 * `isNonterminalRuleType` check, already needed there for
-	 * `isSeparatedListShape`) rather than here — this file intentionally
-	 * does NOT import `rule-catalog.ts` for this: doing so closes an
-	 * existing cross-module cycle (node-map.ts → rule-catalog.ts →
-	 * compiler/types.ts → node-map.ts, the last leg via `AssembledNode`)
-	 * into a shorter path that broke `tsgo`'s type inference in unrelated
-	 * files (`simplify.ts`, `refine-emit.test.ts`) — confirmed by bisection.
+	 * `isSeparatedListShape`) rather than here: terminality of a separator
+	 * is the caller's classification decision, and this file only records
+	 * what the caller resolved.
 	 */
 	readonly separatorRule: Rule<'link'> | undefined;
 	/**
