@@ -355,13 +355,13 @@ function resolveSupertypeSubtypes(
 	const subtypes: SubtypeRef[] =
 		rule.type === SUPERTYPE
 			? rule.subtypes.map((s) => ({
-					name: s.aliasedFrom ?? s.name,
-					storageKindId: s.aliasedFromId ?? s.kindId
+					name: s.name,
+					storageKindId: s.kindId
 				}))
 			: rule.members
 					.map((m) => (m.type === VARIANT ? m.content : m))
 					.filter((m): m is SymbolRule => m.type === SYMBOL)
-					.map((m) => ({ name: m.name, storageKindId: m.aliasedFromId ?? m.kindId }));
+					.map((m) => ({ name: m.name, storageKindId: m.kindId }));
 	return resolveHiddenSubtypes(
 		subtypes,
 		ctx,
@@ -488,8 +488,8 @@ function resolveHiddenSubtypes(
 			out.push(ref);
 			const nestedParseNames = subtypeParseNamesOf(rule);
 			for (const subRef of rule.subtypes) {
-				const sub = subRef.aliasedFrom ?? subRef.name;
-				const subStamp = subRef.aliasedFromId ?? subRef.kindId;
+				const sub = subRef.name;
+				const subStamp = subRef.kindId;
 				const parseName = nestedParseNames[sub];
 				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
 				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
@@ -608,8 +608,8 @@ function resolveHiddenRuleContent(
 	}
 	switch (rule.type) {
 		case SYMBOL: {
-			const refName = rule.aliasedFrom ?? rule.name;
-			const refStamp = rule.aliasedFromId ?? rule.kindId;
+			const refName = rule.name;
+			const refStamp = rule.kindId;
 			if (!refName.startsWith('_')) return [{ name: refName, storageKindId: refStamp }];
 			if (seen.has(refName)) return [];
 			seen.add(refName);
@@ -620,8 +620,8 @@ function resolveHiddenRuleContent(
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((symbolRef) => {
-				const s = symbolRef.aliasedFrom ?? symbolRef.name;
-				const sStamp = symbolRef.aliasedFromId ?? symbolRef.kindId;
+				const s = symbolRef.name;
+				const sStamp = symbolRef.kindId;
 				if (seen.has(s)) return [];
 				seen.add(s);
 				if (!s.startsWith('_')) return [{ name: s, storageKindId: sStamp }];

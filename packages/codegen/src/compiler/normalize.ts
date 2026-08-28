@@ -71,7 +71,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 
 	const walk = (rule: Rule<'link'>, ownerTwinTarget: string | undefined): void => {
 		if (rule.type === SYMBOL) {
-			const name = rule.aliasedFrom ?? rule.name;
+			const name = rule.name;
 			if (isHidden(name)) {
 				refcount.set(name, (refcount.get(name) ?? 0) + 1);
 				if (ownerTwinTarget !== undefined && name === ownerTwinTarget) twinned.add(name);
@@ -80,7 +80,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 		}
 		if (rule.type === SUPERTYPE) {
 			for (const subRef of rule.subtypes) {
-				const sub = subRef.aliasedFrom ?? subRef.name;
+				const sub = subRef.name;
 				if (isHidden(sub)) supertypeNamed.add(sub);
 			}
 			return;
@@ -624,7 +624,7 @@ function countReferences(rules: Record<string, Rule<'link'>>): Map<string, numbe
 function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 	switch (rule.type) {
 		case SYMBOL:
-			visit(rule.aliasedFrom ?? rule.name);
+			visit(rule.name);
 			return;
 		case SEQ:
 		case CHOICE:
@@ -640,7 +640,7 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 			walkSymbols(rule.content, visit);
 			return;
 		case SUPERTYPE:
-			for (const subRef of rule.subtypes) visit(subRef.aliasedFrom ?? subRef.name);
+			for (const subRef of rule.subtypes) visit(subRef.name);
 			return;
 	}
 }
@@ -746,7 +746,7 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 		case PATTERN:
 			return a.value === (b as typeof a).value;
 		case SYMBOL:
-			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
+			return a.name === (b as typeof a).name && a.aliasedTo === (b as typeof a).aliasedTo;
 		case SEQ:
 			return (
 				a.members.length === (b as typeof a).members.length &&

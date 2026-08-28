@@ -217,13 +217,24 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
-	const aliasBodySourceNames = new Map<string, string>();
+	const aliasBodySourceNames = new Map<string, AliasBody>();
 	for (const [name, rawRule] of Object.entries(raw.rules)) {
 		if (!name.startsWith('_')) continue;
-		const content = extractTopLevelNamedAliasContent(rawRule as Rule<'link'>);
-		if (!content) continue;
-		const source = extractAliasedFromName(content, linkCtx.supertypes);
-		if (source !== undefined && source !== name) aliasBodySourceNames.set(name, source);
+		const alias = extractTopLevelNamedAlias(rawRule as Rule<'link'>);
+		if (!alias) continue;
+		const source = extractAliasedFromName(alias.content, linkCtx.supertypes);
+		if (source !== undefined && source !== name) aliasBodySourceNames.set(name, { name: source, aliasedTo: alias.value });
+	}
+	for (const [name, body] of aliasBodySourceNames) {
+		let end = body;
+		const seen = new Set([name]);
+		for (;;) {
+			const next = aliasBodySourceNames.get(end.name);
+			if (next === undefined || seen.has(end.name)) break;
+			seen.add(end.name);
+			end = { name: next.name, aliasedTo: body.aliasedTo };
+		}
+		if (end !== body) aliasBodySourceNames.set(name, end);
 	}
 	const stampCtx: StampKindIdsCtx = { kindEntries, misses: stampMisses, aliasBodySourceNames };
 	canonicalizeCatalogLiteralRefs(rules, stampCtx);
@@ -299,7 +310,12 @@ export interface KindIdStampMisses {
 export interface StampKindIdsCtx {
 	readonly kindEntries: readonly GeneratedKindEntry[];
 	readonly misses: KindIdStampMisses;
-	readonly aliasBodySourceNames?: ReadonlyMap<string, string>;
+	readonly aliasBodySourceNames?: ReadonlyMap<string, AliasBody>;
+}
+
+interface AliasBody {
+	readonly name: string;
+	readonly aliasedTo: string;
 }
 
 function canonicalizeCatalogLiteralRefs(rules: Record<string, Rule<'link'>>, ctx: StampKindIdsCtx): void {
@@ -317,15 +333,7 @@ function canonicalizeCatalogLiteralRefsInMap(rules: Map<string, Rule<'link'>>, c
 function stampSymbolRefKindIds(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): SymbolRule<'link'> {
 	const { kindEntries, misses, aliasBodySourceNames } = ctx;
 	if (rule.literal !== undefined) {
-		if (rule.kindId !== undefined) {
-			if (rule.aliasedFromId !== undefined) return rule;
-			const entry = findEntryForLiteralText(kindEntries, rule.literal);
-			if (entry === undefined) {
-				misses.literals.add(rule.literal);
-				return rule;
-			}
-			return { ...rule, aliasedFromId: entry.parseId ?? entry.id };
-		}
+		if (rule.kindId !== undefined) return rule;
 		const entry = findEntryForLiteralText(kindEntries, rule.literal);
 		if (entry === undefined) {
 			misses.literals.add(rule.literal);
@@ -333,35 +341,33 @@ function stampSymbolRefKindIds(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): 
 		}
 		return { ...rule, kindId: entry.parseId ?? entry.id };
 	}
-	const nameEntry = findEntryForKindName(kindEntries, rule.name);
-	if (nameEntry === undefined) misses.symbols.add(rule.name);
-	let aliasedFrom = rule.aliasedFrom;
-	if (aliasedFrom === undefined && aliasBodySourceNames !== undefined) {
-		let current = rule.name;
-		const seen = new Set([current]);
-		for (;;) {
-			const next = aliasBodySourceNames.get(current);
-			if (next === undefined || seen.has(next)) break;
-			seen.add(next);
-			current = next;
+	let name = rule.name;
+	let aliasedTo = rule.aliasedTo;
+	if (aliasedTo === undefined && aliasBodySourceNames !== undefined) {
+		const body = aliasBodySourceNames.get(name);
+		if (body !== undefined) {
+			aliasedTo = body.aliasedTo;
+			name = body.name;
 		}
-		if (current !== rule.name) aliasedFrom = current;
 	}
-	let aliasedFromId: number | undefined;
-	if (aliasedFrom !== undefined) {
-		const aliasedFromEntry = findEntryForKindName(kindEntries, aliasedFrom);
-		if (aliasedFromEntry === undefined) {
-			misses.symbols.add(aliasedFrom);
+	const nameEntry = findEntryForKindName(kindEntries, name);
+	if (nameEntry === undefined) misses.symbols.add(name);
+	let aliasedToId: number | undefined;
+	if (aliasedTo !== undefined) {
+		const targetEntry = findEntryForKindName(kindEntries, aliasedTo);
+		if (targetEntry === undefined) {
+			misses.symbols.add(aliasedTo);
 		} else {
-			aliasedFromId = aliasedFromEntry.id;
+			aliasedToId = targetEntry.parseId ?? targetEntry.id;
 		}
 	}
-	if (nameEntry === undefined && aliasedFromId === undefined) return rule;
+	if (nameEntry === undefined && aliasedToId === undefined && name === rule.name) return rule;
 	return {
 		...rule,
-		kindId: nameEntry?.parseId ?? nameEntry?.id,
-		aliasedFrom,
-		aliasedFromId
+		name,
+		kindId: nameEntry?.id,
+		aliasedTo,
+		aliasedToId
 	};
 }
 
@@ -371,7 +377,7 @@ export function canonicalizeRuleLiterals(
 	allowLiteralRewrite: boolean,
 	misses: KindIdStampMisses,
 	stampable = true,
-	aliasBodySourceNames?: ReadonlyMap<string, string>
+	aliasBodySourceNames?: ReadonlyMap<string, AliasBody>
 ): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
@@ -510,9 +516,9 @@ function computeReachableFromRoot(input: {
 function walkRuleRefs(rule: Rule<'link'>): readonly string[] {
 	switch (rule.type) {
 		case SYMBOL:
-			return [rule.aliasedFrom ?? rule.name];
+			return [rule.name];
 		case SUPERTYPE:
-			return rule.subtypes.map((s) => s.aliasedFrom ?? s.name);
+			return rule.subtypes.map((s) => s.name);
 		case SEQ:
 		case CHOICE:
 			return rule.members.flatMap(walkRuleRefs);
@@ -768,7 +774,7 @@ function collectTopLevelAliasBodies(
 	const out = new Map<string, Rule<'link'>>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		const content = extractTopLevelNamedAliasContent(rule as Rule<'link'>);
+		const content = extractTopLevelNamedAlias(rule as Rule<'link'>)?.content;
 		if (!content) continue;
 		if (complexAliasTargetHidden && content.type === SYMBOL && complexAliasTargetHidden.has(content.name)) {
 			continue;
@@ -811,8 +817,8 @@ function collectTerminalAliasWireIds(
 	};
 	const visit = (rule: Rule<'link'>): void => {
 		if (rule.type === SYMBOL) {
-			if (rule.literal !== undefined && rule.kindId !== undefined && rule.aliasedFromId !== undefined) {
-				addBothSpellings(rule.name, rule.aliasedFromId);
+			if (rule.literal !== undefined && rule.kindId !== undefined) {
+				addBothSpellings(rule.name, rule.kindId);
 			}
 			return;
 		}
@@ -835,10 +841,10 @@ function collectTerminalAliasWireIds(
 	return out;
 }
 
-function extractTopLevelNamedAliasContent(rule: Rule<'link'>): Rule<'link'> | undefined {
-	if (rule.type === ALIAS && rule.named) return rule.content;
+function extractTopLevelNamedAlias(rule: Rule<'link'>): Extract<Rule<'link'>, { type: typeof ALIAS }> | undefined {
+	if (rule.type === ALIAS && rule.named) return rule;
 	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
-		return extractTopLevelNamedAliasContent((rule as { content: Rule<'link'> }).content);
+		return extractTopLevelNamedAlias((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
 }
@@ -851,7 +857,7 @@ function dereferenceTopLevelAliasBody(
 ): Rule<'link'> {
 	const supertypes = ctx.supertypes;
 	if (rule.type !== SYMBOL) return rule;
-	const refName = rule.aliasedFrom ?? rule.name;
+	const refName = rule.name;
 	if (supertypes.has(refName)) return rule;
 	if (seen.has(refName)) return rule;
 	const target = resolvedRules[refName];
@@ -1280,9 +1286,9 @@ function resolveNamedAliasWithProvenance(
 		const kindIdAttrs = nameEntry !== undefined ? { kindId: nameEntry.parseId ?? nameEntry.id } : {};
 		return { type: SYMBOL, name: targetName, literal: content.value, inline: false, ...kindIdAttrs, ...idAttrs };
 	}
-	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
-	const sym: SymbolRule<'link'> = aliasedFrom
-		? { type: SYMBOL, name: targetName, aliasedFrom, inline: false, ...idAttrs }
+	const source = extractAliasedFromName(content, ctx.supertypes);
+	const sym: SymbolRule<'link'> = source
+		? { type: SYMBOL, name: source, aliasedTo: targetName, inline: false, ...idAttrs }
 		: { type: SYMBOL, name: targetName, inline: false, ...idAttrs };
 	return sym;
 }
@@ -1363,7 +1369,7 @@ function classifyHiddenChoiceRule(
 		if (m.type === SYMBOL) {
 			const sym = m as SymbolRule<'link'>;
 			if (sym.literal !== undefined) return sym;
-			const storageName = sym.aliasedFrom;
+			const storageName = sym.aliasedTo !== undefined ? sym.name : undefined;
 			if (storageName !== undefined) {
 				const storageBody = rules[storageName];
 				if (storageBody !== undefined && storageBody.type === STRING) {
@@ -1407,7 +1413,7 @@ function classifyHiddenChoiceRule(
 					if (core.type === ALIAS) {
 						return core.named && core.content.type === SYMBOL ? core.content.name : null;
 					}
-					if (core.type === SYMBOL) return core.aliasedFrom ?? core.name;
+					if (core.type === SYMBOL) return core.name;
 					return null;
 				})
 				.filter((n): n is string => n !== null);
@@ -1452,7 +1458,7 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 					const parseName = typeof current.value === 'string' && current.value.length > 0 ? current.value : undefined;
 					subtypes.push(
 						parseName !== undefined && parseName !== storageName
-							? { type: SYMBOL, name: parseName, aliasedFrom: storageName }
+							? { type: SYMBOL, name: storageName, aliasedTo: parseName }
 							: { type: SYMBOL, name: storageName }
 					);
 				} else {
@@ -1516,7 +1522,7 @@ function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: Repeate
 		if (rule.type === SUPERTYPE) {
 			existingSupertypeKeys.add(
 				rule.subtypes
-					.map((s) => s.aliasedFrom ?? s.name)
+					.map((s) => s.name)
 					.sort()
 					.join('\n')
 			);
@@ -1578,7 +1584,7 @@ function directContentKinds(rule: Rule<'link'>): string[] {
 		case SYMBOL:
 			return [rule.name];
 		case SUPERTYPE:
-			return rule.subtypes.map((s) => s.aliasedFrom ?? s.name);
+			return rule.subtypes.map((s) => s.name);
 		case CHOICE:
 			return rule.members.flatMap(directContentKinds);
 		case OPTIONAL:

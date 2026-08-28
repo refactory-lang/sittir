@@ -179,7 +179,7 @@ export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>): Readonly<Record<string, string>> {
 	const pairs: Record<string, string> = {};
 	for (const s of rule.subtypes) {
-		if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) pairs[s.aliasedFrom] = s.name;
+		if (s.aliasedTo !== undefined && s.aliasedTo !== s.name) pairs[s.name] = s.aliasedTo;
 	}
 	return pairs;
 }
@@ -193,9 +193,9 @@ export function subtypeRestampPairsOf<T extends PhaseName>(
 ): ReadonlyArray<readonly [string, string]> {
 	const pairs: (readonly [string, string])[] = [];
 	for (const s of rule.subtypes) {
-		if (s.aliasedFrom === undefined || s.aliasedFrom === s.name) continue;
-		if (!aliasRestampRequired(s.kindId, s.aliasedFromId)) continue;
-		pairs.push([s.name, s.aliasedFrom]);
+		if (s.aliasedTo === undefined || s.aliasedTo === s.name) continue;
+		if (!aliasRestampRequired(s.aliasedToId, s.kindId)) continue;
+		pairs.push([s.aliasedTo, s.name]);
 	}
 	return pairs;
 }
@@ -222,18 +222,15 @@ export function transitiveParseKinds<T extends PhaseName>(
 		const rule = lookup(name);
 		if (!rule) return;
 		for (const s of rule.subtypes) {
-			if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) {
-				add(s.name, s.aliasedFrom, s.aliasedFromId, s.kindId);
+			if (s.aliasedTo !== undefined && s.aliasedTo !== s.name) {
+				add(s.aliasedTo, s.name, s.kindId, s.aliasedToId);
 			}
 		}
 		for (const s of rule.subtypes) {
-			const aliased = s.aliasedFrom !== undefined && s.aliasedFrom !== s.name;
-			const storageKind = aliased ? s.aliasedFrom! : s.name;
-			if (lookup(storageKind)) {
-				visit(storageKind);
+			if (lookup(s.name)) {
+				visit(s.name);
 			} else {
-				const id = aliased ? s.aliasedFromId : s.kindId;
-				add(storageKind, storageKind, id, id);
+				add(s.name, s.name, s.kindId, s.kindId);
 			}
 		}
 	}
@@ -276,9 +273,9 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly name: string;
 	readonly literal?: string;
 	readonly hidden?: boolean;
-	readonly aliasedFrom?: string;
+	readonly aliasedTo?: string;
 	readonly kindId?: number;
-	readonly aliasedFromId?: number;
+	readonly aliasedToId?: number;
 };
 
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase

@@ -406,7 +406,7 @@ function attributeAlias(content: Built, target: string | SymbolRule<'normalize'>
 	const name = typeof target === 'string' ? target : target.name;
 	const nonterminal = content.nonterminal || named || undefined;
 	if (content.type === SYMBOL) {
-		return { ...content, name, aliasedFrom: content.name, aliasNamed: named, inline: false, nonterminal };
+		return { ...content, aliasedTo: name, aliasNamed: named, inline: false, nonterminal };
 	}
 	if (content.type === STRING) {
 		const { value: literal, ...rest } = content;

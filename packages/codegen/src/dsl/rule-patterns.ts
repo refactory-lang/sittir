@@ -525,7 +525,7 @@ export function selfReferentialFoldOf(
 		content.type === SYMBOL &&
 		content.name === name &&
 		(content as { hidden?: boolean }).hidden === true &&
-		(content as { aliasedFrom?: string }).aliasedFrom === undefined;
+		(content as { aliasedTo?: string }).aliasedTo === undefined;
 	for (const arm of rule.members) {
 		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
 		const m0 = arm.members[0];
@@ -877,8 +877,8 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
 				acc.add(r.content.name);
 			}
-			if (r.type === SYMBOL && (r as { aliasedFrom?: string }).aliasedFrom?.startsWith('_')) {
-				acc.add((r as { aliasedFrom?: string }).aliasedFrom!);
+			if (r.type === SYMBOL && (r as { aliasedTo?: string }).aliasedTo !== undefined && r.name.startsWith('_')) {
+				acc.add(r.name);
 			}
 			return acc;
 		});

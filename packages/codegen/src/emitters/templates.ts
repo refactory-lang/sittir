@@ -482,12 +482,8 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 				recoveredBy = 'symbol-name';
 			}
 		}
-		if (
-			recovered === undefined &&
-			rule.type === SYMBOL &&
-			(rule as { aliasedFrom?: string }).aliasedFrom !== undefined
-		) {
-			const aliasSourceName = (rule as { aliasedFrom: string }).aliasedFrom.replace(/^_+/, '').toLowerCase();
+		if (recovered === undefined && rule.type === SYMBOL && rule.aliasedTo !== undefined) {
+			const aliasSourceName = rule.name.replace(/^_+/, '').toLowerCase();
 			const byAliasSource = ctx.ownerSlots[aliasSourceName];
 			if (byAliasSource) {
 				recovered = byAliasSource;

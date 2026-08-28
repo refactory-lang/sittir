@@ -228,7 +228,7 @@ function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
 		case SYMBOL:
-			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
+			return a.name === (b as typeof a).name && a.aliasedTo === (b as typeof a).aliasedTo;
 		case STRING:
 		case PATTERN:
 			return a.value === (b as typeof a).value;

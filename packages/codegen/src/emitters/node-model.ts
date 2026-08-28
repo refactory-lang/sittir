@@ -364,7 +364,7 @@ function extractElementKinds(rule: AnyRule): string[] {
 				out.add(r.name);
 				return;
 			case SUPERTYPE:
-				for (const s of r.subtypes) out.add(s.aliasedFrom ?? s.name);
+				for (const s of r.subtypes) out.add(s.name);
 				return;
 			case CHOICE:
 			case SEQ:
