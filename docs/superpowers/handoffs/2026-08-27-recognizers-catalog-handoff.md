@@ -101,6 +101,12 @@ they carry every ruling. Session memory: call `get_latest_session`.
    narrow each strategy's exact return types (`RuleBuilder<P>.choice` is
    `Rule<P>`). Enrich keeps calling the globals — under tree-sitter's bundle
    they are tree-sitter's DSL.
+8. DONE (`77f742750`, branch `typed-builder-outputs` stacked on
+   `evaluate-through-builder`, PR #243): each strategy states the node it
+   returns — `StructuralBuilder` exact nodes / honest unions,
+   `AttributeBuilder` identity-preserving `<R>(…): R` with input-type
+   overloads for the recognitions; never conditional return types (they
+   force casts back into the builders). Stack: master ← #241 ← #242 ← #243.
 
 ## Tooling that works here
 
