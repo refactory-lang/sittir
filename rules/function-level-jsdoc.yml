@@ -39,11 +39,6 @@ rule:
     regex: '^/\*\*'
     stopBy: neighbor
 note: >
-  Comment-cleanup audit: started narrowed to function/
-  method declarations only, then widened to interface/class/type-alias
-  declarations and interface members (`property_signature` /
-  `method_signature`), then widened again to `const`/`let` declarations
-  (`lexical_declaration`, bare and exported) once the same relocation
-  convention was confirmed to apply there too. Cross-check each match
-  against whether the target glossary doc already documents the symbol
-  before moving/rewriting anything.
+  Audit hint only. Relocation is mechanical: scripts/relocate-comments-to-glossary.mts
+  files every comment (not just JSDoc) under the declaration it precedes or
+  encloses, body comments as sub-sections, and strips it from source.

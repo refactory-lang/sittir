@@ -1,18 +1,3 @@
-/**
- * dsl/builders.ts — the `RuleBuilder` construction strategies shared across
- * normalize/simplify: `structuralBuilder` (builds real wrapper nodes) and
- * `attributeBuilder` (pushes modifiers onto leaf attributes instead of
- * wrapping). Every `attributeBuilder` constructor is a pure function of its
- * ALREADY-BUILT input, looking exactly one level down — `deleteWrapper`
- * (compiler/wrapper-deletion.ts) rebuilds a raw rule tree bottom-up by
- * calling these same methods, so this is the one place wrapper-vs-attribute
- * construction logic lives.
- *
- * dsl-side: the transforms that need a builder take a structural
- * `{ builder?: RuleBuilder }` slice, never a compiler ctx, so this module has
- * no dsl -> compiler dependency and no compiler phase module needs to import
- * another compiler phase module for builder code.
- */
 import {
 	ALIAS,
 	CHOICE,
@@ -36,10 +21,6 @@ import type { AnyRule, RenderRule, RuleBase, RuleId, SeqRule } from '../types/ru
 import { isSpliceableBareSeq } from './rule-patterns.ts';
 import { withAttrsFrom } from './rule-attrs.ts';
 import { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
-
-// ---------------------------------------------------------------------------
-// RuleBuilder — context-injected rule construction strategy
-// ---------------------------------------------------------------------------
 
 export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
 
@@ -70,10 +51,6 @@ export interface RuleBuilder {
 export const structuralBuilder: RuleBuilder = {
 	seq: (members, _multiplicity, id) => ({ type: SEQ, members, ...(id !== undefined ? { id } : {}) }),
 	choice: (members, id) => ({ type: CHOICE, members, ...(id !== undefined ? { id } : {}) }),
-	// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
-	// phase, while a single-content wrapper's own `content` field wants one
-	// specific phase — same "narrow via AnyRule, cast back" convention as
-	// rule-patterns.ts's `ruleChildren`.
 	optional: (content, id) => ({ type: OPTIONAL, content, ...(id !== undefined ? { id } : {}) }) as AnyRule,
 	repeat: (content, separator, id) =>
 		({
@@ -95,9 +72,6 @@ export const structuralBuilder: RuleBuilder = {
 	token: (content, id) => ({ type: TOKEN, content, immediate: false, ...(id !== undefined ? { id } : {}) }) as AnyRule,
 	tokenImmediate: (content, id) =>
 		({ type: TOKEN, content, immediate: true, ...(id !== undefined ? { id } : {}) }) as AnyRule,
-	// The evaluate-only PREC family collapses to four distinct type tags —
-	// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
-	// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
 	prec: (kind, value, content, id) =>
 		({
 			type: kind === 'left' ? 'PREC_LEFT' : kind === 'right' ? 'PREC_RIGHT' : kind === 'dynamic' ? 'PREC_DYNAMIC' : 'PREC',
@@ -115,15 +89,6 @@ export const structuralBuilder: RuleBuilder = {
 	dedent: (id) => ({ type: DEDENT, ...(id !== undefined ? { id } : {}) }) as AnyRule,
 	newline: (id) => ({ type: NEWLINE, ...(id !== undefined ? { id } : {}) }) as AnyRule
 };
-
-// ---------------------------------------------------------------------------
-// attributeBuilder — the RuleBuilder that pushes attributes instead of
-// constructing wrapper nodes, so simplify stays field/optional/repeat-free.
-// Every constructor is a pure function of its ALREADY-BUILT input, looking
-// exactly one level down — `deleteWrapper` (compiler/wrapper-deletion.ts)
-// rebuilds a raw rule tree bottom-up by calling these same methods, so this
-// is the one place wrapper-vs-attribute construction logic lives.
-// ---------------------------------------------------------------------------
 
 function stampId<R extends AnyRule>(args: { built: R; id: RuleId | undefined; from: AnyRule }): R {
 	const resolved = args.id ?? (args.from as { id?: RuleId }).id;
@@ -181,13 +146,6 @@ export function buildOptional(input: { content: AnyRule; id?: RuleId }): AnyRule
 			multiplicity: combineMultiplicity('optional', seqRule.multiplicity as LeafMultiplicity)
 		});
 		const nonterminal = (seqRule as { nonterminal?: boolean }).nonterminal || slotShaped(content) || undefined;
-		// The seq's own stamped facts (metadata, …) ride along under
-		// `built`'s freshly-computed shape — `buildSeq` constructs a new node
-		// and has no access to `content`'s identity. `built` may now be a
-		// collapsed singleton survivor (buildSeq's own singleton collapse),
-		// so its own `type`/`members` must win outright, not merely its
-		// stamped attrs: a plain `{...content, ...built}` spread would leave
-		// `content`'s stale `members` array on a survivor that has none.
 		const merged = { ...content, ...built } as AnyRule & { members?: AnyRule[] };
 		if (!('members' in (built as object))) delete merged.members;
 		return nonterminal !== undefined
@@ -233,9 +191,6 @@ function buildRepeatLike(input: {
 		const patch: Record<string, unknown> = { nonterminal: true };
 		if (resolvedSep !== undefined) patch['separator'] = resolvedSep;
 		if (optionalElement !== undefined) patch['optionalElement'] = optionalElement;
-		// See buildOptional's identical note: `built` is a fresh node from
-		// `buildSeq` and may be a collapsed singleton survivor with no
-		// `members` of its own — drop `content`'s stale array when so.
 		const merged = { ...content, ...built } as AnyRule & { members?: AnyRule[] };
 		if (!('members' in (built as object))) delete merged.members;
 		return stampId({ built: { ...merged, ...patch } as AnyRule, id, from: content });
@@ -260,11 +215,6 @@ export const attributeBuilder: RuleBuilder = {
 	repeat1: (content, separator, id) => buildRepeatLike({ content, separator, native: 'nonEmptyArray', id }),
 	field: (name, content, id) =>
 		stampId({ built: { ...content, fieldName: name, nonterminal: true } as AnyRule, id, from: content }),
-	// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
-	// TARGET — the same provenance form link's own
-	// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
-	// one level down here: a SYMBOL content's own `.name` becomes
-	// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
 	alias: (content, value, named, id) => {
 		if (content.type === SYMBOL) {
 			const c = content as { name: string; nonterminal?: boolean };
@@ -282,10 +232,6 @@ export const attributeBuilder: RuleBuilder = {
 			});
 		}
 		if (content.type === STRING) {
-			// Alias of a literal: there is no storage rule to name (mirrors
-			// link's own STRING-content branch, which stamps no
-			// `aliasedFrom` either) — the literal text becomes the new
-			// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
 			const { value: literalValue, ...rest } = content as { value: string } & Record<string, unknown>;
 			const c = content as { nonterminal?: boolean };
 			return stampId({
@@ -302,9 +248,6 @@ export const attributeBuilder: RuleBuilder = {
 				from: content
 			});
 		}
-		// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
-		// record — link never produces this shape (it collapses named
-		// aliases to a SYMBOL ref before this point is reached).
 		const c = content as { nonterminal?: boolean };
 		return stampId({
 			built: {

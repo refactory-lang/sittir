@@ -1,7 +1,7 @@
 # `packages/codegen/src/scripts` — Function Glossary
 
 Per-function reference for `packages/codegen/src/scripts/`, mechanically relocated from source
-JSDoc by `scripts/relocate-jsdoc-to-glossary.mts` (mechanical pass —
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
 unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 

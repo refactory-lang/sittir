@@ -1,13 +1,14 @@
 # `packages/codegen/src/dsl` — Function Glossary
 
 Per-function reference for `packages/codegen/src/dsl/`, mechanically relocated from source
-JSDoc by `scripts/relocate-jsdoc-to-glossary.mts` (mechanical pass —
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
 unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
+
 
 ### `getEnrichClauseGroups` (`packages/codegen/src/dsl/enrich.ts:314`)
 
@@ -871,7 +872,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-
 ### `isPermutationChoice` (`packages/codegen/src/dsl/group-classify.ts`)
 
 A choice whose arms are permutations of one modifier-slot set — every arm is
@@ -1707,6 +1707,17 @@ registered but later unused still counts as a sibling.
  *  id, not whatever the innermost leaf happened to carry). */
 ```
 
+```text
+// ---------------------------------------------------------------------------
+// attributeBuilder — the RuleBuilder that pushes attributes instead of
+// constructing wrapper nodes, so simplify stays field/optional/repeat-free.
+// Every constructor is a pure function of its ALREADY-BUILT input, looking
+// exactly one level down — `deleteWrapper` (compiler/wrapper-deletion.ts)
+// rebuilds a raw rule tree bottom-up by calling these same methods, so this
+// is the one place wrapper-vs-attribute construction logic lives.
+// ---------------------------------------------------------------------------
+```
+
 ### `collapseSingletonSeq` (`packages/codegen/src/dsl/builders.ts:156`)
 
 ```text
@@ -1742,6 +1753,18 @@ registered but later unused still counts as a sibling.
  * bare literal to an empty seq (only `simplifyRules`'s own construction, via
  * `foldOptionalEmptyMatch` below, does that later).
  */
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:184`)
+
+```text
+// The seq's own stamped facts (metadata, …) ride along under
+// `built`'s freshly-computed shape — `buildSeq` constructs a new node
+// and has no access to `content`'s identity. `built` may now be a
+// collapsed singleton survivor (buildSeq's own singleton collapse),
+// so its own `type`/`members` must win outright, not merely its
+// stamped attrs: a plain `{...content, ...built}` spread would leave
+// `content`'s stale `members` array on a survivor that has none.
 ```
 
 ### `foldOptionalEmptyMatch` (`packages/codegen/src/dsl/builders.ts:255`)
@@ -1802,4 +1825,84 @@ registered but later unused still counts as a sibling.
  * per-field storage), so this re-enters `buildSeq` with the combined
  * multiplicity instead of stamping the seq node as if it were opaque.
  */
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:236`)
+
+```text
+// See buildOptional's identical note: `built` is a fresh node from
+// `buildSeq` and may be a collapsed singleton survivor with no
+// `members` of its own — drop `content`'s stale array when so.
+```
+
+### `module` (`packages/codegen/src/dsl/builders.ts:1`)
+
+```text
+/**
+ * dsl/builders.ts — the `RuleBuilder` construction strategies shared across
+ * normalize/simplify: `structuralBuilder` (builds real wrapper nodes) and
+ * `attributeBuilder` (pushes modifiers onto leaf attributes instead of
+ * wrapping). Every `attributeBuilder` constructor is a pure function of its
+ * ALREADY-BUILT input, looking exactly one level down — `deleteWrapper`
+ * (compiler/wrapper-deletion.ts) rebuilds a raw rule tree bottom-up by
+ * calling these same methods, so this is the one place wrapper-vs-attribute
+ * construction logic lives.
+ *
+ * dsl-side: the transforms that need a builder take a structural
+ * `{ builder?: RuleBuilder }` slice, never a compiler ctx, so this module has
+ * no dsl -> compiler dependency and no compiler phase module needs to import
+ * another compiler phase module for builder code.
+ */
+```
+
+### `PrecKind` (`packages/codegen/src/dsl/builders.ts:40`)
+
+```text
+// ---------------------------------------------------------------------------
+// RuleBuilder — context-injected rule construction strategy
+// ---------------------------------------------------------------------------
+```
+
+### `structuralBuilder.optional` (`packages/codegen/src/dsl/builders.ts:73`)
+
+```text
+// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
+// phase, while a single-content wrapper's own `content` field wants one
+// specific phase — same "narrow via AnyRule, cast back" convention as
+// rule-patterns.ts's `ruleChildren`.
+```
+
+### `structuralBuilder.prec` (`packages/codegen/src/dsl/builders.ts:98`)
+
+```text
+// The evaluate-only PREC family collapses to four distinct type tags —
+// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
+// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
+```
+
+### `attributeBuilder.alias` (`packages/codegen/src/dsl/builders.ts:263`)
+
+```text
+// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
+// TARGET — the same provenance form link's own
+// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
+// one level down here: a SYMBOL content's own `.name` becomes
+// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:285`)
+
+```text
+// Alias of a literal: there is no storage rule to name (mirrors
+// link's own STRING-content branch, which stamps no
+// `aliasedFrom` either) — the literal text becomes the new
+// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:305`)
+
+```text
+// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
+// record — link never produces this shape (it collapses named
+// aliases to a SYMBOL ref before this point is reached).
 ```

@@ -1,13 +1,14 @@
 # `packages/codegen/src/compiler` — Function Glossary
 
 Per-function reference for `packages/codegen/src/compiler/`, mechanically relocated from source
-JSDoc by `scripts/relocate-jsdoc-to-glossary.mts` (mechanical pass —
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
 unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
+
 
 ### `stampSupertypeClosures` (`packages/codegen/src/compiler/supertype-closure.ts`)
 
@@ -3927,6 +3928,15 @@ parents.
  */
 ```
 
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:110`)
+
+```text
+// Fuse separated-list head+repeat pairs into one multi slot AFTER
+// wrapper-deletion has pushed multiplicity/separator to leaves, so the
+// renderRule the emitter consumes already has the canonical single
+// multi slot (no head single + tail array split).
+```
+
 ### `AssembleCtx` (`packages/codegen/src/compiler/assemble.ts:81`)
 
 ```text
@@ -5848,6 +5858,13 @@ source, one derivation.
  */
 ```
 
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:29`)
+
+```text
+// Re-check the SEQ discriminant here for TypeScript's narrowing, not
+// as a runtime safety net (the fold's own scan already proved this).
+```
+
 ### `rebuild` (`packages/codegen/src/compiler/wrapper-deletion.ts:54`)
 
 ```text
@@ -5858,6 +5875,54 @@ source, one derivation.
  * visited before its parent). Leaves fall through the default arm
  * unchanged; the enclosing builder stamps them.
  */
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:48`)
+
+```text
+// SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the
+// wrapper cases below, which are consumed into their content) — the
+// original node's own stamped facts (id, metadata, …) must ride
+// along, so spread it under attributeBuilder's freshly-built shape.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:53`)
+
+```text
+// `attributeBuilder.seq` stamps `id` itself (id: node.id ??
+// input.id — here there's no single input, so it's just
+// `node.id`); the outer spread still carries any OTHER stamped
+// facts (metadata, …) attributeBuilder has no access to. `built`
+// may be a collapsed singleton survivor (buildSeq's own
+// singleton collapse) with no `members` of its own — a plain
+// `{...node, ...built}` spread would leave `node`'s stale
+// `members` array on it, so drop it when `built` doesn't own one.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:69`)
+
+```text
+// `buildOptional`, not `attributeBuilder.optional`: the empty-match
+// fold (`foldOptionalEmptyMatch`) belongs to simplify's own later
+// construction, not RenderRule production — a raw OPTIONAL over a
+// bare literal here stays a leaf with `multiplicity: 'optional'`.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:75`)
+
+```text
+// Cast, not narrow: `node: AnyRule` distributes REPEAT across
+// every phase (its 'evaluate' view's `separator` is a bare
+// string, not yet lifted to the structured link-phase shape),
+// while wrapper-deletion always operates on the 'link' view —
+// same "narrow via AnyRule, cast back" convention as
+// rule-patterns.ts's `ruleChildren`.
+```
+
+#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:97`)
+
+```text
+// string / pattern / symbol / supertype / indent / dedent / newline
 ```
 
 ### `reportKindIdStampMisses` (`packages/codegen/src/compiler/link.ts:647`)
@@ -5933,5 +5998,25 @@ source, one derivation.
  * OWN body in isolation) to `'optional'` (true of the whole merged list, once
  * the trailing unterminated element is accounted for) — the same relaxation
  * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
+ */
+```
+
+### `module` (`packages/codegen/src/compiler/wrapper-deletion.ts:1`)
+
+```text
+/**
+ * compiler/wrapper-deletion.ts — PR1 Task 2.A2
+ *
+ * Pushes modifier wrappers (optional / field / repeat / repeat1 / alias /
+ * token) down to leaf attributes (fieldName, multiplicity, separator, …) on
+ * RuleBase. The result type is RenderRule: the Rule<'link'> union minus the
+ * wrapper variants, so consumers that only see RenderRule cannot
+ * accidentally re-wrap a leaf.
+ *
+ * `deleteWrapper` is a re-evaluation of the tree through `attributeBuilder`
+ * (dsl/builders.ts) — the RuleBuilder strategy that implements every
+ * constructor as attribute-push instead of node construction — not an edit
+ * of the tree: `RuleWalker.map` rebuilds bottom-up so each `attributeBuilder`
+ * call receives an already-finished input and looks exactly one level down.
  */
 ```
