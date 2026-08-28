@@ -77,7 +77,10 @@ slot; normalized = what is rendered); node types are the simplified rule
 types (`AssembledSymbol` / `AssembledBranch<SeqRule>` / `AssembledPolymorph`
 / `AssembledEnum` / leaf / list) with `hidden` / `transparent` / `word` as
 facts; VARIANT and GROUP leave the rule vocabulary (they are not in the
-tree-sitter DSL — `armName` and hoist stamps replace them); `classifyNode`
+tree-sitter DSL); override-layer facts (variant arm names, role, refine,
+factoryInline) live in `AssembledNode.enrichment` — enrich itself is base
+(parser-visible) — and enriching emitters produce overlay modules
+(`variants.ts`) that extend the core emitters' output; `classifyNode`
 default → `unclassifiable-shape` diagnostic ratchet; simplify folds
 literal-only seqs to a `STRING` via the fixed-literal join; static spacing
 in normalize only where the seam census is static. Steps 3a → 3c → 3d → 3e

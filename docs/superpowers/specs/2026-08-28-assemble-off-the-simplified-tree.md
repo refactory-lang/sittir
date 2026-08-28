@@ -79,33 +79,64 @@ a ratchet — and is skipped downstream. Never thrown on, never
 special-cased. `assertUniversalShape` is that diagnostic's producer, not
 an opt-in throw.
 
-## VARIANT and GROUP leave the rule vocabulary
+## VARIANT and GROUP leave the rule vocabulary; override facts live in `enrichment`
 
 They are not part of tree-sitter's DSL and never were rules: `variant()`
 is an override placeholder (`dsl/primitives/variant.ts`) resolved by
 transform; `GROUP` is minted only by link when it hoists. Both are facts a
-sittir layer decided, spelled as wrapper nodes. Under this ruling:
+sittir layer decided, spelled as wrapper nodes.
+
+The line that decides where a fact lives is **what tree-sitter saw**. The
+grammar executes twice, so everything enrich does is parser-visible by
+design — fields, hidden helpers, aliases, supertypes, promoted markers are
+in `grammar.json` and are BASE. The sittir-only facts are the override
+layer's: `variant()` arm names, `role`, `refine`, `factoryInline`, spacing.
+Those are not tree nodes and not stamps on the tree; each `AssembledNode`
+carries an **`enrichment` block** holding them for that kind — arm names
+indexed by the polymorph's member, sub-factory sugar, roles, refinements.
+The rule tree stays exactly what the parser saw.
+
+Under this ruling:
 
 - `RuleBuilder<P>` is exactly the DSL — `variant` / `group` leave the
   interface; `VARIANT` / `GROUP` leave `rule-types.ts` and every phase's
   `Rule` union.
-- `variant(name)` resolves to `armName: name` stamped on the arm it
-  patches. The polymorph reads its arms' names off its members; an arm
-  without one is a plain kind ref.
-- Link's hoist records its decision as stamps on the hoisted body
-  (`hidden`, the minted name when it becomes a real hidden rule with a
-  parser symbol) or does nothing when the body stays inline as a nested
-  seq member. A tree-sitter hidden rule referenced from several parents is
-  a real kind (`hidden: true`), not a group.
+- `variant(name)` resolves to `AssembledPolymorph.enrichment.arms[i].name`,
+  transform matching the arm by index. An arm without a name is a plain
+  kind ref.
+- A hoist that became a parser rule is a hidden kind (`hidden: true`, a
+  real kindId). One that did not is a nested seq member of its parent —
+  nothing to name, nothing to stamp. A tree-sitter hidden rule referenced
+  from several parents is a real kind, not a group.
 - Everything that walked through VARIANT/GROUP (`fanOutSeqChoices` /
   `factorChoiceBranches` re-wrapping in normalize, `unwrapForMerge`,
   `peelSeparatedListCore`, `hasSlotBearingContent`, polymorph detection
-  reading `variantArms`) reads the stamps or the nested shape instead.
+  reading `variantArms`) reads the nested shape or the block instead.
 - The `_…_optional1` / `_…_arm` kinds stop existing: they are sub-shapes
   of their parent (nested seq member / named arm), typed inline in the
   parent's generated type, with sub-factories on the parent. This is the
   bulk of the phantom-kind population; the "every kind has a kindId"
-  invariant closes with it.
+  invariant becomes structural — nothing in the enrichment block mints a
+  kind.
+
+### Two emitter pipelines over one model
+
+- **Core emitters** (`types.ts`, `factories.ts`, `from.ts`, templates,
+  transport) read the node and never the block. Their output is derivable
+  from the parser's own `grammar.json`.
+- **Enriching emitters** read `node.enrichment` and emit overlay modules
+  that import the base and EXTEND it: `variants.ts` attaches
+  `binaryExpression.add = …` sub-factories (a callable with properties —
+  the DSL's own `token.immediate` pattern, never a rewritten function),
+  exports the narrowed arm types, re-exports the decorated factory; the
+  same shape for role / refine / inline sugar. Base types are never
+  mutated, only extended or narrowed in the overlay's exports.
+- `node-model.json5` serializes the block under each node, so the
+  base/enrichment split is visible per kind and the ratchets read the
+  base.
+- A block fact that would change rendering is either promoted to a
+  normalized-tree literal (the seam work below) or a bug: render reads the
+  base.
 
 ## Simplify pre-work (byte-identical, lands first)
 
@@ -154,8 +185,10 @@ folded.
   resurrected; `deriveSlots` → per-member resolution; `BranchSlotClass`,
   `buildSlotsRecord`'s render pass and `multi`/`separatedList`/`group`/
   `keyword`/`token` model types become facts.
-- **3e** — VARIANT/GROUP leave the rule vocabulary; `armName` and hoist
-  stamps; sub-factories; phantom-kind ratchet drops accordingly.
+- **3e** — VARIANT/GROUP leave the rule vocabulary; override facts move
+  into `AssembledNode.enrichment`; core vs enriching emitters, overlay
+  modules (`variants.ts`); sub-factories; phantom-kind ratchet drops
+  accordingly.
 - **3f** — normalize static spacing, bounded by the seam census; residue
   diagnosis.
 
