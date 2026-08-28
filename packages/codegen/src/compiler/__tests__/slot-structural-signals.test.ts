@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildRuleCatalog, seq } from '../evaluate.ts';
+import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -43,7 +43,7 @@ function getBranch(nodeMap: ReturnType<typeof buildNodeMap>, kind: string): Asse
 describe('slot structural signals', () => {
 	it('treats fieldless slots as unnamed without consulting origin', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({ type: 'SYMBOL', name: 'identifier' }),
+			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
@@ -53,13 +53,13 @@ describe('slot structural signals', () => {
 
 	it('projects unnamed-slot parseNames from per-value parseKind, not slot aliasSources', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({
+			box: {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: 'interface_body' },
 				named: true,
 				value: 'object_type'
-			}),
-			interface_body: seq({ type: 'SYMBOL', name: 'identifier' }),
+			},
+			interface_body: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
@@ -76,7 +76,7 @@ describe('slot structural signals', () => {
 		// one does, and `isUnnamed` survives as a wire fact rather than a
 		// surface one.
 		const nodeMap = buildNodeMap({
-			box: seq({ type: 'SYMBOL', name: 'identifier' }),
+			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getBranch(nodeMap, 'box');
@@ -87,7 +87,7 @@ describe('slot structural signals', () => {
 
 	it('classifies the child surface from arity, for an unnamed sole slot too', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({ type: 'SYMBOL', name: 'identifier' }),
+			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getBranch(nodeMap, 'box');
@@ -101,10 +101,10 @@ describe('slot structural signals', () => {
 
 	it('shared factory classifiers key unnamed-child spread surfaces off isUnnamed', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({
+			box: {
 				type: 'REPEAT1',
 				content: { type: 'SYMBOL', name: 'identifier' }
-			}),
+			},
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getBranch(nodeMap, 'box');
@@ -116,13 +116,13 @@ describe('slot structural signals', () => {
 
 	it('template preservation treats unnamed alias-carried helper slots structurally', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({
+			box: {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: '_helper' },
 				named: true,
 				value: 'obj'
-			}),
-			_helper: seq({ type: 'SYMBOL', name: 'identifier' }),
+			},
+			_helper: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];

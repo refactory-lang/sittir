@@ -31,8 +31,9 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, ChoiceRule, PhaseName, Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, PhaseName, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { RuleWalker } from './rule-walker.ts';
 
 export function classifyByType(
 	ruleType: Rule<'evaluate'>['type'],
@@ -844,6 +845,51 @@ export function isLiteralChoiceContent<P extends PhaseName>(rule: Rule<P>): bool
 		return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
 	}
 	return false;
+}
+
+export function isHiddenKind(name: string, inlineList?: readonly string[]): boolean {
+	if (name.startsWith('_')) return true;
+	if (inlineList && inlineList.includes(name)) return true;
+	return false;
+}
+
+export function isComplexBody(rule: Rule<'evaluate'>): boolean {
+	switch (rule.type) {
+		case SEQ:
+			return (rule as SeqRule<'evaluate'>).members.length >= 2;
+		case CHOICE:
+			return (rule as ChoiceRule<'evaluate'>).members.length >= 2;
+		case REPEAT:
+		case REPEAT1: {
+			const content = (rule as RepeatRule<'evaluate'>).content;
+			return content.type !== STRING && content.type !== SYMBOL && content.type !== PATTERN;
+		}
+		default:
+			return false;
+	}
+}
+
+export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): ReadonlySet<string> {
+	const walker = new RuleWalker<AnyRule>();
+	const candidates = new Set<string>();
+	for (const rule of Object.values(rules)) {
+		walker.fold(rule, candidates, (acc, r) => {
+			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
+				acc.add(r.content.name);
+			}
+			if (r.type === SYMBOL && (r as { aliasedFrom?: string }).aliasedFrom?.startsWith('_')) {
+				acc.add((r as { aliasedFrom?: string }).aliasedFrom!);
+			}
+			return acc;
+		});
+	}
+
+	const out = new Set<string>();
+	for (const name of candidates) {
+		const body = rules[name];
+		if (body && isComplexBody(body as Rule<'evaluate'>)) out.add(name);
+	}
+	return out;
 }
 
 export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {

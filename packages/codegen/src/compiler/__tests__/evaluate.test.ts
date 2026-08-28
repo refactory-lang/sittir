@@ -1,77 +1,37 @@
-import { CHOICE, REPEAT1, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, OPTIONAL, REPEAT, REPEAT1, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-	seq,
-	choice,
-	optional,
-	repeat,
-	repeat1,
-	field,
-	token,
-	prec,
-	coerceToRule,
-	createProxy,
-	evaluate
-} from '../evaluate.ts';
+import { structuralBuilder } from '../../dsl/builders.ts';
+import { installFakeDsl, restoreFakeDsl } from '../../dsl/__tests__/_test-helpers.ts';
+import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { transform } from '../../dsl/transform/transform.ts';
-import type { SymbolRef } from '../../types/rule.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from '../../__tests__/helpers/rule-catalog.ts';
 import { readRuleMetadata } from '../../dsl/rule-metadata.ts';
 
-// Install sittir's lowercase DSL primitives as globals so transform()'s
-// native-dsl delegation paths can reach them when this test imports
-// transform directly (bypassing evaluate.ts's runtime injection).
-const g = globalThis as Record<string, unknown>;
-const savedGlobals: Record<string, unknown> = {};
-beforeAll(() => {
-	const fns = { seq, choice, optional, repeat, repeat1, field, token, prec };
-	for (const [k, v] of Object.entries(fns)) {
-		savedGlobals[k] = g[k];
-		g[k] = v;
-	}
-});
-afterAll(() => {
-	for (const [k, v] of Object.entries(savedGlobals)) {
-		if (v === undefined) delete g[k];
-		else g[k] = v;
-	}
-});
+// transform()'s native-dsl delegation path (the one-arg field() form) reaches
+// through globalThis.field when this test imports transform directly,
+// bypassing evaluate.ts's runtime injection — install the shared DSL fakes
+// for that.
+beforeAll(() => installFakeDsl());
+afterAll(() => restoreFakeDsl());
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const fixture = (name: string) => resolve(__dirname, '../../__tests__/fixtures', name);
 
-describe('Evaluate — DSL functions', () => {
-	describe('normalize', () => {
-		it('converts a string to a StringRule', () => {
-			const rule = coerceToRule('hello');
-			expect(rule).toEqual({ type: 'STRING', value: 'hello' });
-		});
-
-		it('converts a RegExp to a PatternRule', () => {
-			const rule = coerceToRule(/[a-z]+/);
-			expect(rule).toEqual({ type: 'PATTERN', value: '[a-z]+' });
-		});
-
-		it('passes through an existing Rule object', () => {
-			const existing = { type: 'STRING' as const, value: 'x' };
-			expect(coerceToRule(existing)).toBe(existing);
-		});
-
-		it('throws on undefined', () => {
-			expect(() => coerceToRule(undefined as any)).toThrow();
-		});
-	});
-
+describe('structuralBuilder — the grammar DSL construction phase', () => {
 	describe('seq', () => {
-		it('produces a SeqRule with normalized members', () => {
-			const rule = seq('a', 'b', 'c');
+		it('produces a SeqRule with all members', () => {
+			const rule = structuralBuilder.seq(
+				{ type: 'STRING', value: 'a' },
+				{ type: 'STRING', value: 'b' },
+				{ type: 'STRING', value: 'c' }
+			);
 			expect(rule).toEqual({
 				type: 'SEQ',
 				members: [
@@ -86,7 +46,7 @@ describe('Evaluate — DSL functions', () => {
 	describe('choice', () => {
 		it('produces a ChoiceRule with mixed members', () => {
 			const sym = { type: 'SYMBOL' as const, name: 'x' };
-			const rule = choice(sym, 'b');
+			const rule = structuralBuilder.choice(sym, { type: 'STRING', value: 'b' });
 			expect(rule).toEqual({
 				type: 'CHOICE',
 				members: [
@@ -96,188 +56,186 @@ describe('Evaluate — DSL functions', () => {
 			});
 		});
 
-		it('detects all-string choice as EnumRule', () => {
-			// PR-P: EnumRule = ChoiceRule; type is now 'choice', source moved to metadata.
-			// (debt: source-homonym resolution, decision 6) metadata.source → metadata.author.
-			const rule = choice('pub', 'crate', 'super');
+		it('does not collapse mixed non-FIELD members', () => {
+			const sym = { type: 'SYMBOL' as const, name: 'x' };
+			const rule = structuralBuilder.choice({ type: 'STRING', value: 'a' }, sym);
+			expect(rule.type).toBe(CHOICE);
+		});
+
+		it('collapses all-same-name FIELD members into one FIELD wrapping a CHOICE', () => {
+			const a = structuralBuilder.field('operator', { type: 'STRING', value: '+' });
+			const b = structuralBuilder.field('operator', { type: 'STRING', value: '-' });
+			const rule = structuralBuilder.choice(a, b);
 			expect(rule).toEqual({
-				type: 'CHOICE',
-				members: [
-					{ type: 'STRING', value: 'pub' },
-					{ type: 'STRING', value: 'crate' },
-					{ type: 'STRING', value: 'super' }
-				],
-				metadata: { author: 'grammar' }
+				type: 'FIELD',
+				name: 'operator',
+				content: {
+					type: 'CHOICE',
+					members: [
+						{ type: 'STRING', value: '+' },
+						{ type: 'STRING', value: '-' }
+					]
+				},
+				metadata: { fieldSource: 'grammar' }
 			});
 		});
 
-		it('does not produce enum when mixed with non-strings', () => {
-			const sym = { type: 'SYMBOL' as const, name: 'x' };
-			const rule = choice('a', sym);
-			expect(rule.type).toBe('CHOICE');
+		it('does not collapse FIELD members with different names', () => {
+			const a = structuralBuilder.field('left', { type: 'STRING', value: '+' });
+			const b = structuralBuilder.field('right', { type: 'STRING', value: '-' });
+			expect(structuralBuilder.choice(a, b)).toEqual({ type: 'CHOICE', members: [a, b] });
+		});
+
+		it('bails to plain CHOICE when any same-name FIELD member wraps an ALIAS', () => {
+			const a = structuralBuilder.field('operator', { type: 'STRING', value: '+' });
+			const b = structuralBuilder.field('operator', structuralBuilder.alias({ type: 'STRING', value: '-' }, 'minus'));
+			expect(structuralBuilder.choice(a, b)).toEqual({ type: 'CHOICE', members: [a, b] });
 		});
 	});
 
 	describe('optional', () => {
-		it('produces an OptionalRule with normalized content', () => {
-			const rule = optional('x');
-			expect(rule).toEqual({
-				type: 'OPTIONAL',
-				content: { type: 'STRING', value: 'x' }
+		it('produces an OptionalRule with the given content', () => {
+			const rule = structuralBuilder.optional({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'OPTIONAL', content: { type: 'STRING', value: 'x' } });
+		});
+
+		it('collapses optional(optional(x)) to the inner OPTIONAL', () => {
+			const inner = structuralBuilder.optional({ type: 'STRING', value: 'x' });
+			expect(structuralBuilder.optional(inner)).toBe(inner);
+		});
+
+		it('collapses optional(repeat(x)) to the inner REPEAT', () => {
+			const inner = structuralBuilder.repeat({ type: 'STRING', value: 'x' });
+			expect(structuralBuilder.optional(inner)).toBe(inner);
+		});
+
+		it('collapses optional(repeat1(x)) to a REPEAT carrying the separator shape', () => {
+			const inner = {
+				type: REPEAT1,
+				content: { type: 'STRING', value: 'x' },
+				separator: ',',
+				trailing: 'optional',
+				leading: undefined
+			} as const;
+			expect(structuralBuilder.optional(inner)).toEqual({
+				type: 'REPEAT',
+				content: inner.content,
+				separator: inner.separator,
+				trailing: inner.trailing,
+				leading: inner.leading
 			});
 		});
 	});
 
 	describe('repeat', () => {
-		it('produces a RepeatRule with normalized content', () => {
-			const rule = repeat('x');
-			expect(rule).toEqual({
-				type: 'REPEAT',
-				content: { type: 'STRING', value: 'x' }
-			});
+		it('produces a RepeatRule with the given content', () => {
+			const rule = structuralBuilder.repeat({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'REPEAT', content: { type: 'STRING', value: 'x' } });
 		});
 
-		// Separator detection deliberately moved OUT of evaluate: the
-		// separated-list LIFT (commaSep1 -> repeat1{separator} and
-		// trailing-separator absorption) now runs ONCE in the link pass
-		// (liftSeparators in compiler/link.ts), after wire and enrich-injection,
-		// so author callbacks see the un-lifted shape — see the @remarks on
-		// evaluate.ts's seq(). These two cases now pin evaluate's
-		// preserve-the-raw-shape contract instead of the old eager lift.
-		it('preserves leading-separator seq(STRING, x) un-lifted (lift happens at link)', () => {
-			const sym = { type: 'SYMBOL' as const, name: 'item' };
-			const rule = repeat(seq(',', sym));
-			expect(rule).toEqual({
-				type: 'REPEAT',
-				content: {
-					type: 'SEQ',
-					members: [{ type: 'STRING', value: ',' }, expect.objectContaining({ type: 'SYMBOL', name: 'item' })]
-				}
-			});
+		it('preserves a leading-separator SEQ content un-lifted (lift happens at link)', () => {
+			const content = structuralBuilder.seq({ type: 'STRING', value: ',' }, { type: 'SYMBOL', name: 'item' });
+			expect(structuralBuilder.repeat(content)).toEqual({ type: 'REPEAT', content });
 		});
 
-		it('preserves trailing-separator seq(x, STRING) un-lifted (lift happens at link)', () => {
-			const sym = { type: 'SYMBOL' as const, name: 'item' };
-			const rule = repeat(seq(sym, ';'));
-			expect(rule).toEqual({
-				type: 'REPEAT',
-				content: {
-					type: 'SEQ',
-					members: [expect.objectContaining({ type: 'SYMBOL', name: 'item' }), { type: 'STRING', value: ';' }]
-				}
-			});
+		it('preserves a trailing-separator SEQ content un-lifted (lift happens at link)', () => {
+			const content = structuralBuilder.seq({ type: 'SYMBOL', name: 'item' }, { type: 'STRING', value: ';' });
+			expect(structuralBuilder.repeat(content)).toEqual({ type: 'REPEAT', content });
+		});
+
+		it('collapses repeat(repeat(x)) without a separator to the inner REPEAT', () => {
+			const inner = structuralBuilder.repeat({ type: 'STRING', value: 'x' });
+			expect(structuralBuilder.repeat(inner)).toBe(inner);
+		});
+
+		it('does not collapse repeat(repeat(x)) when the inner REPEAT has a separator', () => {
+			const inner = { type: REPEAT, content: { type: 'STRING', value: 'x' }, separator: ',' } as const;
+			expect(structuralBuilder.repeat(inner)).toEqual({ type: 'REPEAT', content: inner });
+		});
+
+		it('collapses repeat(optional(x)) to repeat(x)', () => {
+			const rule = structuralBuilder.repeat(structuralBuilder.optional({ type: 'STRING', value: 'x' }));
+			expect(rule).toEqual({ type: 'REPEAT', content: { type: 'STRING', value: 'x' } });
 		});
 	});
 
 	describe('repeat1', () => {
-		it('produces a Repeat1Rule with normalized content', () => {
-			const rule = repeat1('x');
-			expect(rule).toEqual({
-				type: 'REPEAT1',
-				content: { type: 'STRING', value: 'x' }
-			});
+		it('produces a Repeat1Rule with the given content', () => {
+			const rule = structuralBuilder.repeat1({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'REPEAT1', content: { type: 'STRING', value: 'x' } });
+		});
+
+		it('collapses repeat1(repeat1(x)) without a separator to the inner REPEAT1', () => {
+			const inner = structuralBuilder.repeat1({ type: 'STRING', value: 'x' });
+			expect(structuralBuilder.repeat1(inner)).toBe(inner);
 		});
 	});
 
 	describe('field', () => {
-		it('produces a FieldRule with name and normalized content', () => {
-			const rule = field('body', 'x');
+		it('produces a FieldRule with name and content', () => {
+			const rule = structuralBuilder.field('body', { type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'FIELD', name: 'body', content: { type: 'STRING', value: 'x' } });
+		});
+
+		it('collapses an OPTIONAL(REPEAT(x)) field body to REPEAT(x)', () => {
+			const repeatRule = structuralBuilder.repeat({ type: 'SYMBOL', name: 'item' });
+			const rule = structuralBuilder.field('items', { type: OPTIONAL, content: repeatRule });
+			expect(rule).toEqual({ type: 'FIELD', name: 'items', content: repeatRule });
+		});
+
+		it('collapses an OPTIONAL(REPEAT1(x)) field body to a REPEAT carrying the separator shape', () => {
+			const repeat1Rule = { type: REPEAT1, content: { type: SYMBOL, name: 'item' }, separator: ',' } as const;
+			const rule = structuralBuilder.field('items', { type: OPTIONAL, content: repeat1Rule });
 			expect(rule).toEqual({
 				type: 'FIELD',
-				name: 'body',
-				content: { type: 'STRING', value: 'x' }
+				name: 'items',
+				content: {
+					type: 'REPEAT',
+					content: repeat1Rule.content,
+					separator: repeat1Rule.separator,
+					trailing: undefined,
+					leading: undefined
+				}
 			});
 		});
 	});
 
 	describe('token', () => {
 		it('produces a TokenRule with immediate=false', () => {
-			const rule = token('x');
-			expect(rule).toEqual({
-				type: 'TOKEN',
-				content: { type: 'STRING', value: 'x' },
-				immediate: false
-			});
+			const rule = structuralBuilder.token({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'TOKEN', content: { type: 'STRING', value: 'x' }, immediate: false });
 		});
 
 		it('token.immediate produces a real IMMEDIATE_TOKEN node', () => {
 			// Real IMMEDIATE_TOKEN tag (tree-sitter's own dsl.js shape), not
-			// `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule
-			// doc comment in types/rule.ts. grammarFn's normalizeImmediateTokens
-			// folds this into TOKEN+immediate once enrich's minting/dedup
-			// decisions (which need the distinct tag to tell token.immediate(x)
-			// apart from token(x)) are locked in.
-			const rule = token.immediate('x');
-			expect(rule).toEqual({
-				type: 'IMMEDIATE_TOKEN',
-				content: { type: 'STRING', value: 'x' }
-			});
+			// `{type: TOKEN, immediate: true}` — enrich's minting/dedup decisions
+			// need the distinct tag to tell token.immediate(x) apart from
+			// token(x); grammarFn's normalizeImmediateTokens folds this into
+			// TOKEN+immediate once those decisions are locked in.
+			const rule = structuralBuilder.token.immediate({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'IMMEDIATE_TOKEN', content: { type: 'STRING', value: 'x' } });
 		});
 	});
 
-	describe('createProxy — $ reference tracking', () => {
-		it('returns a SymbolRule when a property is accessed', () => {
-			const refs: SymbolRef[] = [];
-			const $ = createProxy('source_rule', refs);
-			const sym = $.block;
-			expect(sym).toEqual(
-				expect.objectContaining({
-					type: 'SYMBOL',
-					name: 'block'
-				})
-			);
+	describe('prec', () => {
+		it('wraps content in a PREC node, preserving the precedence value', () => {
+			const rule = structuralBuilder.prec(1, { type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 
-		it('marks hidden symbols (underscore-prefixed)', () => {
-			const refs: SymbolRef[] = [];
-			const $ = createProxy('source_rule', refs);
-			const sym = $._expression;
-			expect(sym).toEqual(
-				expect.objectContaining({
-					type: 'SYMBOL',
-					name: '_expression',
-					hidden: true
-				})
-			);
+		it('prec.left wraps content in a PREC_LEFT node', () => {
+			const rule = structuralBuilder.prec.left(1, { type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC_LEFT', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 
-		it('records a SymbolRef for each property access', () => {
-			const refs: SymbolRef[] = [];
-			const $ = createProxy('function_item', refs);
-			void $.block;
-			void $.parameters;
-			expect(refs).toHaveLength(2);
-			expect(refs[0]).toEqual({
-				refType: 'symbol',
-				from: 'function_item',
-				to: 'block'
-			});
-			expect(refs[1]).toEqual({
-				refType: 'symbol',
-				from: 'function_item',
-				to: 'parameters'
-			});
+		it('prec.right wraps content in a PREC_RIGHT node', () => {
+			const rule = structuralBuilder.prec.right(1, { type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC_RIGHT', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 
-		it('enriches ref with fieldName when used inside field()', () => {
-			const refs: SymbolRef[] = [];
-			const $ = createProxy('function_item', refs);
-			field('body', $.block);
-			expect(refs[0]!.fieldName).toBe('body');
-		});
-
-		it('enriches ref with optional when used inside optional()', () => {
-			const refs: SymbolRef[] = [];
-			const $ = createProxy('function_item', refs);
-			optional($.block!);
-			expect(refs[0]!.optional).toBe(true);
-		});
-
-		it('enriches ref with repeated when used inside repeat()', () => {
-			const refs: SymbolRef[] = [];
-			const $ = createProxy('function_item', refs);
-			repeat($.block!);
-			expect(refs[0]!.repeated).toBe(true);
+		it('prec.dynamic wraps content in a PREC_DYNAMIC node', () => {
+			const rule = structuralBuilder.prec.dynamic(1, { type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC_DYNAMIC', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 	});
 
@@ -298,7 +256,7 @@ describe('Evaluate — DSL functions', () => {
 
 		it('wraps a positional member with a field via numeric index', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'SYMBOL', name: 'block' })
+				1: structuralBuilder.field('body', { type: 'SYMBOL', name: 'block' })
 			});
 			expect(result.type).toBe('SEQ');
 			const member = (result as any).members[1];
@@ -316,7 +274,7 @@ describe('Evaluate — DSL functions', () => {
 
 		it('preserves members not targeted by patches', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'SYMBOL', name: 'block' })
+				1: structuralBuilder.field('body', { type: 'SYMBOL', name: 'block' })
 			});
 			expect((result as any).members[0]).toEqual({
 				type: 'STRING',
@@ -334,45 +292,18 @@ describe('Evaluate — DSL functions', () => {
 
 		it('marks transformed fields with metadata.fieldSource override', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'SYMBOL', name: 'block' })
+				1: structuralBuilder.field('body', { type: 'SYMBOL', name: 'block' })
 			});
 			expect(readRuleMetadata((result as any).members[1].metadata)?.fieldSource).toBe('override');
 		});
 
 		it('supports multiple patches in one call', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'SYMBOL', name: 'block' }),
-				2: field('parameters', { type: 'SYMBOL', name: 'params' })
+				1: structuralBuilder.field('body', { type: 'SYMBOL', name: 'block' }),
+				2: structuralBuilder.field('parameters', { type: 'SYMBOL', name: 'params' })
 			});
 			expect((result as any).members[1].name).toBe('body');
 			expect((result as any).members[2].name).toBe('parameters');
-		});
-	});
-
-	describe('prec', () => {
-		// Constructs a real PREC*-tagged node (matching tree-sitter's own
-		// dsl.js prec shape) rather than stripping immediately — enrich's
-		// choice-arm minting must see the same arm shape under both runtimes.
-		// `grammarFn`'s `stripPrecedenceWrappers` removes the wrapper once
-		// minting decisions are locked in (see its doc comment).
-		it('wraps content in a PREC node, preserving the precedence value', () => {
-			const rule = prec(1, 'x');
-			expect(rule).toEqual({ type: 'PREC', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('prec.left wraps content in a PREC_LEFT node', () => {
-			const rule = prec.left(1, 'x');
-			expect(rule).toEqual({ type: 'PREC_LEFT', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('prec.right wraps content in a PREC_RIGHT node', () => {
-			const rule = prec.right(1, 'x');
-			expect(rule).toEqual({ type: 'PREC_RIGHT', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('prec.dynamic wraps content in a PREC_DYNAMIC node', () => {
-			const rule = prec.dynamic(1, 'x');
-			expect(rule).toEqual({ type: 'PREC_DYNAMIC', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 	});
 });
@@ -390,7 +321,9 @@ describe('Evaluate — edge cases', () => {
 					{ type: 'STRING', value: 'b' }
 				]
 			};
-			expect(() => transform(original, { 99: field('x', 'y') })).toThrow(/index 99 out of bounds/);
+			expect(() => transform(original, { 99: structuralBuilder.field('x', { type: 'STRING', value: 'y' }) })).toThrow(
+				/index 99 out of bounds/
+			);
 		});
 
 		it('throws on non-numeric flat keys', () => {
@@ -401,7 +334,9 @@ describe('Evaluate — edge cases', () => {
 			// After kind-match was added to parsePath, keys that aren't
 			// pure integers route through the path parser, which catches
 			// the malformed segment with its own error message.
-			expect(() => transform(original, { '1a': field('x', 'y') })).toThrow(/invalid segment '1a'/);
+			expect(() => transform(original, { '1a': structuralBuilder.field('x', { type: 'STRING', value: 'y' }) })).toThrow(
+				/invalid segment '1a'/
+			);
 		});
 	});
 
@@ -416,7 +351,7 @@ describe('Evaluate — edge cases', () => {
 			};
 			// JS object keys: later entries overwrite earlier for same key
 			const result = transform(original, {
-				1: field('first', { type: 'SYMBOL', name: 'b' })
+				1: structuralBuilder.field('first', { type: 'SYMBOL', name: 'b' })
 				// @ts-ignore — intentional duplicate key test via Object.entries ordering
 			});
 			expect((result as any).members[1].name).toBe('first');
@@ -453,6 +388,64 @@ describe('Evaluate — edge cases', () => {
 			// event itself is the proof the fallback fired, independent of
 			// whether the minted rule survives reachability pruning.
 			expect(raw.desugarDivergences).toEqual([{ site: 'body-pattern-group', name: '_orphan_group' }]);
+		});
+	});
+
+	describe('coerceToRule — invalid input (private helper, exercised through evaluate())', () => {
+		it('rejects a grammar body that resolves to an undefined rule', async () => {
+			const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
+			const entry = resolve(dir, 'grammar.js');
+			writeFileSync(
+				entry,
+				`module.exports = grammar({
+  name: "undefined_rule_input",
+  rules: {
+    source_file: ($) => seq($.a, undefined),
+    a: ($) => 'a',
+  },
+});\n`,
+				'utf8'
+			);
+			try {
+				await expect(evaluate(entry)).rejects.toThrow();
+			} finally {
+				rmSync(dir, { recursive: true, force: true });
+			}
+		});
+	});
+
+	describe('createProxy — hidden-symbol and optional-ref stamping (private helper, exercised through evaluate())', () => {
+		it('marks hidden (underscore-prefixed) symbol references via the proxy', async () => {
+			const raw = await evaluate(fixture('test-grammar.js'));
+			const expressionStatement = raw.rules['expression_statement'] as {
+				members: readonly { type: string; name?: string; hidden?: boolean; inline?: boolean }[];
+			};
+			const hiddenRef = expressionStatement.members.find((m) => m.type === 'SYMBOL' && m.name === '_expression');
+			expect(hiddenRef).toEqual(expect.objectContaining({ hidden: true, inline: true }));
+		});
+
+		it('enriches references with optional=true when the ref is wrapped in optional()', async () => {
+			const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
+			const entry = resolve(dir, 'grammar.js');
+			writeFileSync(
+				entry,
+				`module.exports = grammar({
+  name: "optional_ref_test",
+  rules: {
+    source_file: ($) => seq(optional($.modifier), $.body),
+    modifier: ($) => 'mod',
+    body: ($) => 'b',
+  },
+});\n`,
+				'utf8'
+			);
+			try {
+				const raw = await evaluate(entry);
+				const ref = raw.references.find((r) => r.from === 'source_file' && r.to === 'modifier');
+				expect(ref?.optional).toBe(true);
+			} finally {
+				rmSync(dir, { recursive: true, force: true });
+			}
 		});
 	});
 });

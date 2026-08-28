@@ -20,7 +20,7 @@ import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule } f
 import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
-import type { RuleBuilder } from '../dsl/builders.ts';
+import type { AttributeBuilder } from '../dsl/builders.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { attributeBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
@@ -28,12 +28,12 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
 export class SimplifyCtx extends BaseCtx<'normalize'> {
-	readonly builder: RuleBuilder<'normalize'>;
+	readonly builder: AttributeBuilder;
 	readonly inlineKinds: ReadonlySet<string>;
 	readonly polymorphSkipExtra?: ReadonlySet<string>;
 	constructor(
 		init: BaseCtxInit<'normalize'> & {
-			builder?: RuleBuilder<'normalize'>;
+			builder?: AttributeBuilder;
 			inlineKinds?: ReadonlySet<string>;
 			polymorphSkipExtra?: ReadonlySet<string>;
 		}

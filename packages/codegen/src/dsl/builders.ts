@@ -18,10 +18,13 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
+	AliasRule,
 	AnyRule,
 	ChoiceRule,
 	DedentRule,
+	FieldRule,
 	GroupRule,
+	ImmediateTokenRule,
 	IndentRule,
 	NewlineRule,
 	PatternRule,
@@ -32,11 +35,13 @@ import type {
 	StringRule,
 	SupertypeRule,
 	SymbolRule,
+	TokenRule,
 	VariantRule
 } from '../types/rule.ts';
 import { isSpliceableBareSeq } from './rule-patterns.ts';
 import { withAttrsFrom } from './rule-attrs.ts';
 import { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
+import { makeRuleMetadata } from './rule-metadata.ts';
 
 export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
 
@@ -54,7 +59,7 @@ export interface PrecBuilder<P extends PhaseName> {
 
 export interface RuleBuilder<P extends PhaseName> {
 	seq(...members: Rule<P>[]): Rule<P>;
-	choice(...members: Rule<P>[]): ChoiceRule<P>;
+	choice(...members: Rule<P>[]): Rule<P>;
 	optional(content: Rule<P>): Rule<P>;
 	repeat(content: Rule<P>): Rule<P>;
 	repeat1(content: Rule<P>): Rule<P>;
@@ -73,15 +78,30 @@ export interface RuleBuilder<P extends PhaseName> {
 	newline(): NewlineRule<P>;
 }
 
+export interface StructuralToken extends TokenBuilder<'evaluate'> {
+	(content: Rule<'evaluate'>): TokenRule<'evaluate'>;
+	immediate(content: Rule<'evaluate'>): ImmediateTokenRule<'evaluate'>;
+}
+
+export interface StructuralBuilder extends RuleBuilder<'evaluate'> {
+	field(name: string, content: Rule<'evaluate'>): FieldRule<'evaluate'>;
+	alias(content: Rule<'evaluate'>, target: string | SymbolRule<'evaluate'>): AliasRule<'evaluate'>;
+	token: StructuralToken;
+}
+
+export interface AttributeBuilder extends RuleBuilder<'normalize'> {
+	choice(...members: Rule<'normalize'>[]): ChoiceRule<'normalize'>;
+}
+
 export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
 	return id !== undefined ? { ...rule, id } : rule;
 }
 
 type Structural = Rule<'evaluate'>;
 
-const structuralToken: TokenBuilder<'evaluate'> = Object.assign(
-	(content: Structural): Structural => ({ type: TOKEN, content, immediate: false }),
-	{ immediate: (content: Structural): Structural => ({ type: TOKEN, content, immediate: true }) }
+const structuralToken: StructuralToken = Object.assign(
+	(content: Structural): TokenRule<'evaluate'> => ({ type: TOKEN, content, immediate: false }),
+	{ immediate: (content: Structural): ImmediateTokenRule<'evaluate'> => ({ type: 'IMMEDIATE_TOKEN', content }) }
 );
 
 const structuralPrecOf =
@@ -99,18 +119,83 @@ const structuralPrec: PrecBuilder<'evaluate'> = Object.assign(structuralPrecOf(u
 	dynamic: structuralPrecOf('dynamic')
 });
 
-export const structuralBuilder: RuleBuilder<'evaluate'> = {
+function collapseStructuralOptional(content: Structural): Structural {
+	if (content.type === OPTIONAL) return content;
+	if (content.type === REPEAT) return content;
+	if (content.type === REPEAT1) {
+		return {
+			type: REPEAT,
+			content: content.content,
+			separator: content.separator,
+			trailing: content.trailing,
+			leading: content.leading
+		};
+	}
+	return { type: OPTIONAL, content };
+}
+
+function collapseStructuralRepeat(content: Structural): Structural {
+	if (content.type === REPEAT && !content.separator) return content;
+	if (content.type === OPTIONAL) return { type: REPEAT, content: content.content };
+	return { type: REPEAT, content };
+}
+
+function collapseStructuralRepeat1(content: Structural): Structural {
+	if (content.type === REPEAT1 && !content.separator) return content;
+	return { type: REPEAT1, content };
+}
+
+function collapseOptionalRepeatInFieldContent(content: Structural): Structural {
+	if (content.type !== OPTIONAL) return content;
+	const inner = content.content;
+	if (inner.type === REPEAT) return inner;
+	if (inner.type === REPEAT1) {
+		return {
+			type: REPEAT,
+			content: inner.content,
+			separator: inner.separator,
+			trailing: inner.trailing,
+			leading: inner.leading
+		};
+	}
+	return content;
+}
+
+function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): Structural {
+	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
+	if (anyAlias) return { type: CHOICE, members: fieldMembers };
+	const names = fieldMembers.map((f) => f.name);
+	const allSameName = names.every((n) => n === names[0]);
+	if (allSameName) {
+		return {
+			type: FIELD,
+			name: names[0]!,
+			content: { type: CHOICE, members: fieldMembers.map((f) => f.content) },
+			metadata: makeRuleMetadata({ fieldSource: 'grammar' })
+		};
+	}
+	return { type: CHOICE, members: fieldMembers };
+}
+
+function structuralChoice(...members: Structural[]): Structural {
+	if (members.length >= 2 && members.every((m) => m.type === FIELD)) {
+		return collapseAllFieldChoiceMembers(members);
+	}
+	return { type: CHOICE, members };
+}
+
+export const structuralBuilder: StructuralBuilder = {
 	seq: (...members) => ({ type: SEQ, members }),
-	choice: (...members) => ({ type: CHOICE, members }),
-	optional: (content) => ({ type: OPTIONAL, content }),
-	repeat: (content) => ({ type: REPEAT, content }),
-	repeat1: (content) => ({ type: REPEAT1, content }),
-	field: (name, content) => ({ type: FIELD, name, content }),
+	choice: structuralChoice,
+	optional: collapseStructuralOptional,
+	repeat: collapseStructuralRepeat,
+	repeat1: collapseStructuralRepeat1,
+	field: (name, content) => ({ type: FIELD, name, content: collapseOptionalRepeatInFieldContent(content) }),
 	alias: (content, target) => ({
 		type: ALIAS,
 		content,
-		value: typeof target === 'string' ? target : target.name,
-		named: typeof target !== 'string'
+		named: typeof target !== 'string',
+		value: typeof target === 'string' ? target : target.name
 	}),
 	token: structuralToken,
 	prec: structuralPrec,
@@ -241,7 +326,7 @@ const attributePrec: PrecBuilder<'normalize'> = Object.assign(attributePrecOf(un
 	dynamic: attributePrecOf('dynamic')
 });
 
-export const attributeBuilder: RuleBuilder<'normalize'> = {
+export const attributeBuilder: AttributeBuilder = {
 	seq: (...members) => buildSeq({ members }),
 	choice: (...members) => ({ type: CHOICE, members }),
 	optional: (content) => foldOptionalEmptyMatch(content),
