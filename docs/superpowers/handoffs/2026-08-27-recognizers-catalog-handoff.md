@@ -4,7 +4,14 @@ Paste this as the opening prompt of the next session.
 
 ---
 
-Continue the rule-builder / recognizers work on `rule-builders` (PR #239, stacked on `engine-tree-identity` #238 → `dogfood-examples` #237 → `parse-api` #236). Never `--delete-branch` when merging a stacked PR.
+Continue the rule-builder / recognizers work on `phase-typed-builders`, a
+fresh branch off `master` (`5c4ef590f`). Everything before it is merged:
+the engine/dogfood/tree-identity stack, the rule-builders series (#239),
+and the comment relocation (#240 — `packages/codegen/src` carries no
+explanatory comments; a declaration's rationale is its
+`### \`<file>::<qualified name>\`` entry in `docs/glossary/<dir>.md`, see
+`docs/glossary/README.md`; read it before editing, write there, never a
+source comment). Open a PR against `master` when the step lands.
 Read `docs/superpowers/specs/2026-08-27-wrapper-deletion-as-rule-builder.md`
 and `docs/superpowers/specs/2026-08-27-rule-pattern-recognizers.md` first —
 they carry every ruling. Session memory: call `get_latest_session`.
