@@ -2,7 +2,8 @@ import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VAR
 import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf } from '../dsl/rule-patterns.ts';
-import { attributeBuilder, buildOptional, overlaySeq, withId } from '../dsl/builders.ts';
+import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
+import { withId } from '../dsl/rule-attrs.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;

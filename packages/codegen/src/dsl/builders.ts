@@ -48,6 +48,7 @@ import type {
 import { isSpliceableBareSeq } from './rule-patterns.ts';
 import { withAttrsFrom } from './rule-attrs.ts';
 import { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
+import { withId } from './rule-attrs.ts';
 import { makeRuleMetadata } from './rule-metadata.ts';
 
 export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
@@ -144,10 +145,6 @@ export interface AttributeBuilder extends RuleBuilder<'normalize'> {
 	alias(content: Built, target: string | SymbolRule<'normalize'>): Built;
 	token: AttributeToken;
 	prec: AttributePrec;
-}
-
-export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
-	return id !== undefined ? { ...rule, id } : rule;
 }
 
 type Structural = Rule<'evaluate'>;

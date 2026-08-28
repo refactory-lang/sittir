@@ -2002,6 +2002,17 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // primary slot lookup) resolve instead of degrading to fragile fallbacks.
 ```
 
+### `packages/codegen/src/dsl/rule-attrs.ts::withId`
+
+```text
+/** Stamp a rule id onto a built rule when there is one to stamp. Identity
+ *  is not a DSL parameter, so no constructor takes it: `flatten` applies
+ *  `id: node.id ?? built.id` once per rebuilt node (the wrapper's own id
+ *  wins over the survivor's — `slotByRuleId` resolves the wrapper's id),
+ *  `inlineRefs` keeps the reference's id over the inlined body's, and
+ *  link's mints stamp the rule they replace. */
+```
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::armsOf`
 
 ```text
@@ -2193,97 +2204,24 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * Inline hidden symbol references by substituting their content. Two inlining
  * paths are applied in priority order:
  *
- *  1. GROUP / MULTI path (existing): hidden group rules (seq-with-fields) and
- *     hidden multi helpers (repeat / repeat1 wrappers) are always inlined so
- *     the referrer's field walker sees the fields / multi-slot directly.
+ *  1. GROUP / MULTI path: hidden group rules (seq-with-fields) and hidden
+ *     multi helpers (repeat / repeat1 wrappers) are always inlined so the
+ *     referrer's field walker sees the fields / multi-slot directly.
  *
- *  2. grammar.inline path (new): hidden symbol refs whose target appears in the
+ *  2. grammar.inline path: hidden symbol refs whose target appears in the
  *     grammar's `inline:` array are inlined unconditionally — these are
- *     helpers tree-sitter itself expands at parse time (e.g., auto-synthesized
- *     `_type_arguments_repeat1` from applyAutoGroups). Sittir's derivation
- *     view must match what tree-sitter produces: if the parser inlines a helper,
- *     the simplified rule must too. References with `source === 'group-lift'` are
- *     still inlined when `inlineKinds` contains the target — the group-lift guard
- *     only applies to the group/multi path (where the assemble-side AssembledGroup
- *     should materialise as its own node rather than being collapsed away).
+ *     helpers tree-sitter itself expands at parse time. Sittir's derivation
+ *     view must match what tree-sitter produces: if the parser inlines a
+ *     helper, the simplified rule must too.
+ *
+ * The inlined body takes the REFERENCE's id (`id: ref.id ?? body.id`) — the
+ * parent's identity survives a nesting that disappears, the same rule
+ * `flatten` applies to a deleted wrapper. The render view keeps the
+ * reference, so both views name the slot by one id and `slotByRuleId`
+ * resolves the template walk's lookups without a second derivation.
  *
  * Cycle-safe via visited set.
  */
-```
-
-#### body
-
-```text
-/* grammar.inline is the single source of truth for inlining. Any
-			   symbol ref whose target is listed in `grammar.inline` is inlined
-			   here — REGARDLESS of `source` (group-lift or not) or `hidden` —
-			   because tree-sitter inlines exactly those kinds at parse time. If
-			   sittir's derivation view doesn't match (i.e. it keeps a ref to a
-			   kind the parser expands away), `deriveSlots` mints a slot for a
-			   node that never materialises at runtime → singular-vs-multi and
-			   non-canonical-shape mismatches. Matching the parser's inlining is
-			   a correctness invariant.
-
-			   Resolution: group/multi targets inline their CONTENT (the seq /
-			   repeat wrapper) so the referrer's walker sees the fields / multi
-			   slot directly and no bare `group` rule leaks into simplified
-			   output; every other target inlines its body verbatim.
-			   `inlineKinds` here is the pre-filtered inline-DECISION set (built in
-			   generate.ts): grammar.inline membership minus supertype / keyword /
-			   token / pattern / enum modelTypes. So a plain membership test is the
-			   gate — supertypes and lexeme leaves were already excluded upstream. */
-```
-
-#### body
-
-```text
-/* Preserve the referring symbol's pushed-down leaf attributes
-				   (multiplicity / separator / fieldName) onto the inlined body.
-				   wrapper-deletion stamped e.g. `repeat1(SYMBOL(_x_repeat1))` down
-				   to `SYMBOL{multiplicity:nonEmptyArray, separator}`; replacing the
-				   symbol with the target body would otherwise DROP that
-				   multiplicity, collapsing a multi slot to singular. Re-wrap the
-				   inlined body in the equivalent modifier and re-run the
-				   (idempotent) flatten to re-push the attributes onto the
-				   inlined leaves.
-
-				   `inlined` comes back typed `AnyRule` (via the internal `recurse`
-				   closure, which type-erases to keep the recursive call generic),
-				   but is structurally the same phase-view shape as `rule: R` —
-				   `inlineRefs` never changes which phase's rule shape it operates
-				   over, only rewrites refs within it. */
-```
-
-#### body
-
-```text
-/* Not inline-listed. Inline EVERY hidden helper ref, mirroring what
-			   tree-sitter does at parse time: a `_`-prefixed rule produces no CST
-			   node — its children flatten into the parent. So the derivation view
-			   must inline hidden refs regardless of multiplicity or provenance.
-
-			   Hiddenness is AUTHORITATIVE via isHiddenKind (the `_`-convention
-			   oracle in evaluate.ts), NOT the non-authoritative stamped `hidden`
-			   flag nor the `source:'group-lift'` provenance tag. The inner seq of
-			   a `repeat(seq(...))` still becomes a group for slot pairing, but an
-			   INLINE group with no named CST kind — matching the flattened CST.
-
-			   Read the authoritative per-ref `inline` flag (hidden && !aliased &&
-			   !supertype && !self-recursive) rather than re-deriving hiddenness —
-			   the same oracle the templates emit path uses. The GROUP/MULTI shape
-			   gate below still excludes non-foldable shapes. */
-```
-
-#### body
-
-```text
-/* Combine the referring symbol's pushed-down attributes (multiplicity /
-			   separator / fieldName) with the inlined target — same as the
-			   inline-listed path above. wrapper-deletion stamps e.g.
-			   `optional(SYMBOL(_initializer))` to `SYMBOL{multiplicity:'optional'}`;
-			   without this the optional is dropped on inline and the spliced leaf
-			   (e.g. required_parameter's `value`) collapses to a required single.
-			   See the same-shape rationale on the inline-listed path's cast above. */
 ```
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::resolveGroupOrMultiInlineTarget`
@@ -3201,16 +3139,6 @@ registered but later unused still counts as a sibling.
  *  because an arrow cannot be contextually typed against an overloaded
  *  property; `attributeRepeat`, `attributeRepeat1`, `attributeField` and
  *  `attributeAlias` are the same shape. */
-```
-
-### `packages/codegen/src/dsl/builders.ts::withId`
-
-```text
-/** Stamp a rule id onto a built rule when there is one to stamp. Identity
- *  is not a DSL parameter, so no constructor takes it: `flatten` applies
- *  `id: node.id ?? built.id` once per rebuilt node (the wrapper's own id
- *  wins over the survivor's — `slotByRuleId` resolves the wrapper's id),
- *  and link's mints stamp the rule they replace. */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::structuralBuilder.choice`

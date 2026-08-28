@@ -79,7 +79,7 @@ import {
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
-import { withId } from '../dsl/builders.ts';
+import { withId } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 
 export interface LinkOptions {

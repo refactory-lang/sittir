@@ -202,9 +202,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * it — no re-flattening. A nested bare seq that simplify left behind reaches
  * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
  * derive-audit is there to surface); re-splicing it here would mask that.
- * The audit is the slot derivation's: `buildSlotsRecord`'s second call over
- * the render rule (an id harvest, where nested seqs are legitimate render
- * structure) passes `shapeAudit: false`.
+ * The audit is the slot derivation's: `buildSlotsRecord`'s id harvest over
+ * the render rule (where nested seqs are legitimate render structure)
+ * passes `shapeAudit: false`.
  */
 ```
 
@@ -901,28 +901,19 @@ can't be unified.
 /**
  * Build the frozen slot Record for an AssembledBranch (or any kind that
  * uses the slot-Record surface). Walks `deriveSlots(rule)` over the
- * simplified rule and keys each slot by its name. Insertion order =
- * declared rule order.
+ * simplified rule — the one derivation of what is a slot — and keys each
+ * slot by its name. Insertion order = declared rule order.
  *
- * A second `deriveSlots` over the render rule only widens each slot's
- * `sourceRuleIds`: 33 slots across the three grammars (hidden-alias field
- * refs such as `field('name', $._type_identifier)` and
- * `field('body', $._suite)`) are looked up by a render-tree field id the
- * simplified tree does not carry, and without this merge they resolve
- * only by name recovery. The pass goes when simplify preserves those ids
- * (`DBG_SLOT_MISS=1` must then show no new recoveries).
- *
- * Constructor-time helper for every class that exposes the unified
- * `slots` surface. The locked design's
- * eager validation (collision throw, >1 unnamed slot throw, mixed-arity
- * warn, key remap to 'child'/'children' for inferred slots) is NOT
- * enforced here yet — see the JSDoc on `AssembledBranch.slots` for the
- * rationale. When the grammar-override migration lands ("Owner A"), this
- * helper picks up the strict checks and the remap.
- *
- * @param rule - Simplified rule to walk for slots.
- * @param ctx - Kinded derive context: owning kind + the grammar-wide
- *   inputs (kind entries, collision signatures, alias targets, rules).
+ * A second `deriveSlots` over the render rule (an id harvest, not a shape
+ * derivation: `shapeAudit: false`) only widens each slot's `sourceRuleIds`.
+ * An inlined reference already keeps its own id (`inlineRefs`) and a
+ * discarded wrapper's id lands on its survivor (`flatten`, `withAttrsFrom`);
+ * what the harvest still supplies is the ids of choice ARMS that simplify
+ * merged into one slot (`'+' field rhs` / `'-' field rhs` → one `rhs`;
+ * rust `_let_chain.left`) — the merged member carries one id, the render
+ * tree keeps every arm's. The harvest goes when the arm merge accumulates
+ * the merged ids (`node-map-backpointers.test.ts` pins the invariant;
+ * `DBG_SLOT_MISS=1` must then show no new recoveries).
  */
 ```
 
@@ -944,33 +935,6 @@ can't be unified.
 // Augment slot values with the concrete parse-surface children of any visible
 // rule aliased TO the owning kind. Example: `alias($.delim_token_tree, $.token_tree)`
 // means the `token_tree.content` slot must also accept `delim_token_tree_paren/
-// bracket/brace` parseKinds, which are the concrete children that the native reader
-// delivers when a macro_invocation's `token_tree` field holds a delim_token_tree.
-```
-
-#### body
-
-```text
-// Strict design (FR-T05): inferred slots remap to 'child'/'children'
-// keys and at most one unnamed slot per branch is permitted. Empirical
-// check confirms 14 kinds across 3 grammars currently have >1 unnamed
-// positional slot. Enforcement requires either (a) collapse of choice-
-// of-distinct-kinds into one slot with multi-value `values[]`, or (b)
-// grammar overrides to explicitly name the positions ("Owner A"
-// migration). Until then: keep the kind-derived name as the Record
-// key, no collision throw, no >1-unnamed throw.
-```
-
-#### body
-
-```text
-// storageName collision check. Multiple slots sharing the same NodeData
-// storage key means the emitters can't distinguish them — the override
-// layer must name N-1 children to eliminate the collision.
-// Warn (not throw) because assemble runs on base grammars in tests
-// before overrides apply. The generate() pipeline enforces zero
-// collisions via the override layer; this warning surfaces any that
-// slip through during development.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::_isAutoStampSlotForParameterless`

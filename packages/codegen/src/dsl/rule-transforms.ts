@@ -20,6 +20,7 @@ import {
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
+import { withId } from './rule-attrs.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -165,7 +166,7 @@ export function inlineRefs<R extends AnyRule>(
 				next.add(rule.name);
 				const inlineTarget = resolveGroupOrMultiInlineTarget(target);
 				const inlined = inlineRefs(inlineTarget ?? target, ctx, next);
-				return reapplyInlinedLeafAttrs(rule, inlined) as unknown as R;
+				return withId(reapplyInlinedLeafAttrs(rule, inlined), rule.id ?? inlined.id) as unknown as R;
 			}
 
 			if (rule.inline !== true) return rule;
@@ -177,7 +178,8 @@ export function inlineRefs<R extends AnyRule>(
 			if (!inlineTarget) return rule;
 			const next = new Set(visited);
 			next.add(rule.name);
-			return reapplyInlinedLeafAttrs(rule, inlineRefs(inlineTarget, ctx, next)) as unknown as R;
+			const inlined = inlineRefs(inlineTarget, ctx, next);
+			return withId(reapplyInlinedLeafAttrs(rule, inlined), rule.id ?? inlined.id) as unknown as R;
 		}
 		case SEQ:
 			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) } as unknown as R;

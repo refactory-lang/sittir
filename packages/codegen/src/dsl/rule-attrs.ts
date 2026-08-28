@@ -1,5 +1,5 @@
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId } from '../types/rule.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
@@ -69,4 +69,8 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 		separator,
 		strongestMultiplicity
 	};
+}
+
+export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
+	return id !== undefined ? { ...rule, id } : rule;
 }
