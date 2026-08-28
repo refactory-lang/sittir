@@ -14,8 +14,7 @@ function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'li
 		const ext = m.members[2]!;
 		if (ext.type !== FIELD) return m;
 		const rewrittenExt: Rule<'link'> = {
-			type: FIELD,
-			name: ext.name,
+			...ext,
 			content: { type: REPEAT, content: ext.content, separator: { value: fold.separator } } as Rule<'link'>
 		};
 		return { ...m, members: [m.members[0]!, m.members[1]!, rewrittenExt] };

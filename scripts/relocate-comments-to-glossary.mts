@@ -248,12 +248,14 @@ function stripFromSource(file: string, entries: Entry[]): void {
 		const head = lines[e.start.line]!.slice(0, e.start.column);
 		const tail = lines[e.end.line]!.slice(e.end.column);
 		const joined = head + tail;
-		lines.splice(e.start.line, e.end.line - e.start.line + 1, ...(joined.trim() === '' ? [] : [joined.replace(/\s+$/, '')]));
+		const at = e.start.line;
+		lines.splice(at, e.end.line - at + 1, ...(joined.trim() === '' ? [] : [joined.replace(/\s+$/, '')]));
+		// A removed whole-line comment must not leave a blank line where it
+		// stood next to another blank (or at the top of the file) — only
+		// around this edit, nothing elsewhere in the file is touched.
+		if (joined.trim() === '' && lines[at] === '' && (at === 0 || lines[at - 1] === '')) lines.splice(at, 1);
 	}
-	// A removed header or paragraph comment must not leave a leading blank
-	// line or a run of them behind.
-	const text = lines.join('\n').replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n');
-	writeFileSync(abs, text);
+	writeFileSync(abs, lines.join('\n'));
 }
 
 /**
