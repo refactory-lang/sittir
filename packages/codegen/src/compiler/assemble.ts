@@ -163,9 +163,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	try {
 		for (const [kind, rule] of Object.entries(normalized.linkRules)) {
 			const assemblyRule = normalized.topLevelAliasBodies?.get(kind) ?? rule;
-			const inlinedRule = hoistInnerFieldsForTemplate(
-				inlineRefs(assemblyRule, { rules: normalized.linkRules })
-			) as Rule<'link'>;
+			const inlinedRule = hoistInnerFieldsForTemplate(inlineRefs(assemblyRule, { rules: normalized.linkRules }));
 			const simplifiedRule = normalized.rules[kind]!;
 			const renderRule: RenderRule = normalized.normalizedRules![kind]!;
 			const modelType = classifyNode(kind, renderRule, {
@@ -196,15 +194,22 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, renderRule as Rule<'link'>));
+					nodes.set(kind, new AssembledPattern(kind, renderRule));
 					break;
 				}
-				case 'keyword': {
-					nodes.set(kind, new AssembledKeyword(kind, renderRule as StringRule<'link'>, { kindEntries }));
-					break;
-				}
+				case 'keyword':
 				case 'token': {
-					nodes.set(kind, new AssembledToken(kind, renderRule as StringRule<'link'>, { kindEntries }));
+					if (renderRule.type !== STRING) {
+						throw new Error(
+							`[assemble] ${modelType} kind '${kind}' must be a single literal; found ${renderRule.type}`
+						);
+					}
+					nodes.set(
+						kind,
+						modelType === 'keyword'
+							? new AssembledKeyword(kind, renderRule, { kindEntries })
+							: new AssembledToken(kind, renderRule, { kindEntries })
+					);
 					break;
 				}
 				case 'enum': {
@@ -641,9 +646,6 @@ function resolveHiddenRuleContent(
 	if (rule.fieldName !== undefined) {
 		return [];
 	}
-	if (rule.aliasedFrom !== undefined && rule.type !== SYMBOL) {
-		return [{ name: rule.aliasedFrom }];
-	}
 	if (isEnumChoiceRule(rule)) {
 		return [];
 	}
@@ -905,7 +907,8 @@ function collectAnonymousNodes(
 	const seen = new Map<string, string>();
 
 	for (const rule of Object.values(rules)) {
-		const body = rule.type === TOKEN && (rule.content.type === STRING || rule.content.type === PATTERN) ? rule.content : rule;
+		const body =
+			rule.type === TOKEN && (rule.content.type === STRING || rule.content.type === PATTERN) ? rule.content : rule;
 		if (body.type !== STRING && body.type !== PATTERN && isAllTextShape(body)) continue;
 		walkForStrings(body, seen);
 	}
@@ -927,7 +930,7 @@ function collectAnonymousNodes(
 		}
 
 		const isWordShape = matchesWordShape(literalText, wordMatcher);
-		const syntheticStringRule: StringRule<'link'> = { type: STRING, value: literalText };
+		const syntheticStringRule: StringRule = { type: STRING, value: literalText };
 
 		if (isWordShape) {
 			nodes.set(resolvedKind, new AssembledKeyword(resolvedKind, syntheticStringRule, { hidden: true, kindEntries }));

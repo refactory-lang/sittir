@@ -21,7 +21,7 @@ import {
 import type { Repeat1Rule, RepeatRule, Rule, SeqRule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 import { emitRenderModule } from '../render-module.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
@@ -71,7 +71,7 @@ function makeBranchWithListFieldNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'branch_with_list_field',
-		new AssembledBranch('branch_with_list_field', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+		new AssembledBranch('branch_with_list_field', parentRule, flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);

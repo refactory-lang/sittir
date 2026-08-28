@@ -431,14 +431,14 @@ parents.
  * @param rule - The raw rule from `normalized.rules`.
  * @param simplifiedRule - The pre-computed simplified rule for the same kind.
  * @param renderRule - The wrapper-deleted RenderRule for the same kind (from
- *   `normalized.normalizedRules[kind]` or a per-call `deleteWrapper` fallback).
+ *   `normalized.normalizedRules[kind]` or a per-call `flatten` fallback).
  * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
  *   the simplified view of that inner content; `groupRenderRule` — the
  *   wrapper-deleted view of the inner content.
  * @remarks
  *   When the rule is a `GroupRule<'link'>` the pre-computed `simplifiedRule` and
  *   `renderRule` apply to the OUTER group wrapper (the top-level kind entry).
- *   `applyWrapperDeletion` and `simplifyRule` both recurse through group wrappers
+ *   `flattenRules` and `simplifyRule` both recurse through group wrappers
  *   preserving the outer node, so `renderRule.content` and `simplifiedRule.content`
  *   are the wrapper-deleted / simplified inner content respectively. Non-group
  *   rules pass through as-is (the fallback path — groups that didn't get the
@@ -449,7 +449,7 @@ parents.
 #### body
 
 ```text
-// applyWrapperDeletion preserves group structure: renderRule.type === GROUP
+// flattenRules preserves group structure: renderRule.type === GROUP
 // when the source rule was a group, with renderRule.content being the
 // wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
 // through group wrappers preserving the outer group node).
@@ -518,7 +518,7 @@ parents.
  *   attributes the way the wrapper shapes could. Its VALUES, however, are now
  *   redundant with `normalizedRules[name]` (verified empirically: every
  *   alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
- *   applyWrapperDeletion(topLevelAliasBodies.get(name))`, since
+ *   flattenRules(topLevelAliasBodies.get(name))`, since
  *   `normalizeGrammar` already threads alias-target bodies through the same
  *   wrapper-deletion pipeline and merges them into `normalizedRules` under the
  *   identical hidden-kind key) — so the `body` lookup below reads
@@ -597,8 +597,8 @@ parents.
  * `AssembleCtx.normalizedRules`'s doc comment). `rule` is a `RenderRule`
  * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
  * exist as `rule.type` values on this view — their meaning is stamped onto
- * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedFrom`/
- * `aliasNamed`. The link-view switch enforced wrapper opacity by SIMPLY HAVING
+ * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasNamed`
+ * (an alias of a symbol is a SymbolRule carrying `aliasedFrom`; no other rule type does). The link-view switch enforced wrapper opacity by SIMPLY HAVING
  * NO CASE for REPEAT/REPEAT1/OPTIONAL/FIELD (falling to `default: []`); the
  * equivalent here is an explicit attribute check BEFORE the type switch,
  * covering every rule type uniformly (a repeat/optional can wrap ANY rule
@@ -632,7 +632,7 @@ parents.
  *     arms, never seq-internal field slots).
  *
  * `ALIAS` is dropped as a switch case (not translated): unlike `token`,
- * `alias` is fully consumed by `applyWrapperDeletion` (it never survives as
+ * `alias` is fully consumed by `flattenRules` (it never survives as
  * its own node — the wrapper disappears and `aliasedFrom`/`aliasNamed` land on
  * its content), so `RenderRule` can never have `type === 'ALIAS'` at runtime,
  * not just by static type (`AliasRule<'normalize'> = never`). Its resolution
@@ -654,7 +654,7 @@ parents.
  *
  * `TOKEN` is dropped as a switch case (matching `emitters/templates.ts`'s
  * `isLeftmostTerminalImmediate` precedent — see its NOTE comment,
- * `project_preserve_token_wrappers`): `applyWrapperDeletion`'s TOKEN case
+ * `project_preserve_token_wrappers`): `flattenRules`'s TOKEN case
  * technically PRESERVES the node (`{...rule, content}`, not deleted like
  * ALIAS), so `RenderRule`'s `never` for TOKEN is a type-level assertion, not a
  * runtime guarantee — but it's backed by the same EMPIRICAL fact that
@@ -1186,7 +1186,7 @@ parents.
  * slot-rule itself has no separator (e.g. an outer choice rebuilt by
  * `fanOutSeqChoices`/`factorChoiceBranches` carries only the rule id, not the
  * separator), but an inner arm carries the structured separator object set by
- * `applyWrapperDeletion`.
+ * `flattenRules`.
  */
 ```
 
@@ -1599,7 +1599,7 @@ parents.
 /**
  * Walk a wrapper-free RenderRule and collect one slot per nonterminal node.
  *
- * @param rule        wrapper-free rule (post `applyWrapperDeletion`)
+ * @param rule        wrapper-free rule (post `flattenRules`)
  * @param kindForName owning branch kind name (for unnamed-choice warnings)
  * @param kindEntries generated kind table (for literal → kind resolution)
  */
@@ -5502,7 +5502,7 @@ parents.
  * ALIAS/TOKEN cases deleted (phase-visibility-tightening): both are
  * WrapperPhase-only (types/rule.ts) and collapse to `never` under the
  * RenderRule/SimplifiedRule values this function actually receives (always
- * post-`applyWrapperDeletion`) — `default: false` already covers them.
+ * post-`flattenRules`) — `default: false` already covers them.
  */
 ```
 
@@ -5563,73 +5563,6 @@ parents.
 // Bail if a named-symbol sibling would lose its outer-field label.
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::normalizeBranchToMembers`
-
-```text
-/**
- * Expand a choice branch into a flat array of its top-level members.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::countFieldNames`
-
-```text
-/**
- * Count occurrences of each field name in a branch's top-level members.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::firstFieldNameSharedExactlyOncePerBranch`
-
-```text
-/**
- * Return the first field name that appears EXACTLY ONCE in every
- * branch's top-level members, or null if no such name exists.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::extractFieldFromBranchesForChoice`
-
-```text
-/**
- * Extract `field(name, ...)` from each branch, union their contents
- * into a single hoisted field, and keep branch-specific residuals as
- * a side choice wrapped in optional when any branch has nothing left.
- *
- * Stays AnyRule-typed (phase-visibility-tightening finding): its
- * `m.type === FIELD` check is production-dead (0 hits, all 3 grammars,
- * instrumented regen) — every production caller reaches this only through
- * `simplifyRule`'s FIELD-free guarantee — but `simplify-canonical.test.ts`
- * calls the exported `hoistSharedFieldFromBranchesForChoice` (and therefore
- * this) directly with FIELD-bearing fixtures, bypassing that guarantee by
- * design (its header comment documents the intent: exercise this function
- * on pre-wrapper-deleted input). Narrowing to RenderRule would break a
- * genuine, intentional test surface, not just a dead branch — same
- * classification as the sibling `mergeBranchesForChoice`/
- * `mergePositionForChoice`/`liftSharedArmAttrs` family.
- */
-```
-
-#### body
-
-```text
-// Cast, not narrow: `AnyRule` distributes across every phase,
-// while `FieldRule` (bare) defaults to a single phase — same
-// "narrow via AnyRule, cast back" convention as
-// rule-patterns.ts's `ruleChildren`.
-```
-
-### `packages/codegen/src/compiler/simplify.ts::hoistSharedFieldFromBranchesForChoice`
-
-```text
-/**
- * Lift a field name shared by every choice branch into an enclosing seq,
- * unioning field contents across branches. Residuals become optional choice.
- *
- * AnyRule-typed for the same reason as {@link extractFieldFromBranchesForChoice}.
- */
-```
-
 ### `packages/codegen/src/compiler/simplify.ts::liftSharedArmAttrs`
 
 ```text
@@ -5655,15 +5588,6 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::mergePositionForChoice`
-
-```text
-/**
- * Merge N same-position rules (already verified as mergeable) into a single canonical rule.
- *
- */
-```
-
 ### `packages/codegen/src/compiler/simplify.ts::dedupeByJson`
 
 ```text
@@ -5682,18 +5606,13 @@ parents.
 
 ```text
 /**
- * Merge a choice of structurally-equivalent branches into a flat seq with
- * per-position unioned field contents. Bails (→ `liftSharedArmAttrs`) when
- * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`.
- *
- * AnyRule-typed (phase-visibility-tightening finding, verified empirically):
- * its `br.type === FIELD` check is production-dead (0 hits across all 3
- * grammars, instrumented regen), but `simplify-canonical.test.ts` calls this
- * exported function directly with FIELD-bearing fixtures, bypassing
- * `simplifyRule`'s FIELD-free guarantee by design — a genuine, intentional
- * test surface (not just dead code), so narrowing to RenderRule would break
- * it. `mergePositionForChoice` (called from here) and `liftSharedArmAttrs`
- * (the bail-out path) share this classification.
+ * Merge a choice of structurally-equivalent branches into one flat seq: every
+ * position must be pairwise mergeable (same symbol / supertype / literal, or
+ * JSON-equal) and at most one position may vary, in which case the first
+ * branch's member stands for it. Bails (→ `liftSharedArmAttrs`) otherwise;
+ * NEVER unwraps `variant()`. Typed on the wrapper-free view: a field arrives
+ * as `fieldName` on its content, never as a FieldRule, so a differing
+ * slot-promoted literal is simply a non-mergeable STRING position.
  */
 ```
 
@@ -5838,7 +5757,7 @@ parents.
 /**
  * Dispatch a single, already-child-simplified rule to its per-type simplify
  * handler. Thin switch over the RenderRule union (the wrapper-free view
- * `applyWrapperDeletion` produces — see `SimplifyCtx extends BaseCtx<'normalize'>`).
+ * `flattenRules` produces — see `SimplifyCtx extends BaseCtx<'normalize'>`).
  * This function is deliberately NON-RECURSIVE — it must never call
  * `ctx.walker.map` (or `simplifyRule`) itself. It is used two ways: as the
  * `visit` callback `simplifyRule` passes to `ctx.walker.map` (applied once per
@@ -5854,11 +5773,11 @@ parents.
  *
  * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 / ALIAS / TOKEN nodes
  * must never appear in the input:
- *  - `applyWrapperDeletion` (which runs before this in the production pipeline)
+ *  - `flattenRules` (which runs before this in the production pipeline)
  *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
  *    attributes and pushes ALIAS down to `aliasedFrom`+`aliasNamed` leaf
  *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
- *    (`{...rule, content}`, wrapper-deletion.ts) — its absence here is a
+ *    (`{...rule, content}`, flatten.ts) — its absence here is a
  *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
  *    empirically (0 surviving top-level token rules across all 3 grammars),
  *    not a mechanism guarantee; see the preserve-token-wrappers debt. All
@@ -5903,7 +5822,7 @@ parents.
 ```text
 // FIELD / OPTIONAL / REPEAT / REPEAT1 and any unknown type hitting this
 // branch is a bug: all wrappers must be converted to fieldName/multiplicity
-// attributes by applyWrapperDeletion before reaching simplify, and
+// attributes by flattenRules before reaching simplify, and
 // construction sites within simplify use ctx.builder (attributeBuilder)
 // which pushes attributes rather than creating wrapper nodes.
 ```
@@ -5921,10 +5840,10 @@ parents.
  * Compute the derivation-only simplified view of every rule in the map.
  *
  * Relocated from normalize.ts as part of PR1 — all simplification logic lives
- * in simplify.ts. Input type widened to RenderRule: applyWrapperDeletion in
+ * in simplify.ts. Input type widened to RenderRule: flattenRules in
  * normalize.ts produces a wrapper-less map, and simplify operates on that.
  *
- * @param normalizedRules - Wrapper-less rule map (output of applyWrapperDeletion).
+ * @param normalizedRules - Wrapper-less rule map (output of flattenRules).
  * @returns A new map containing the simplified form of each rule.
  */
 ```
@@ -5942,7 +5861,7 @@ parents.
 
 ```text
 // Final wrapper-free pass: simplify's hoists + choice-folding can
-// re-introduce wrapper nodes, so deleteWrapper pushes them back to leaf
+// re-introduce wrapper nodes, so flatten pushes them back to leaf
 // attrs (SimplifiedRule = wrapper-free; idempotent on wrapper-free input).
 // Re-fuse head+repeat list pairs too — inlineRefs can splice a helper body
 // and re-expose a non-adjacent head-single + tail-array of the same element.
@@ -6067,7 +5986,7 @@ parents.
 // splicing would lose that cardinality and hoist an inner choice to
 // the parent's seq position (a non-canonical choice-at-seq). A bare
 // seq (no own attrs) is spliced/flattened — shared predicate with
-// wrapper-deletion.ts's SEQ case (see isSpliceableBareSeq's doc).
+// flatten.ts's SEQ case (see isSpliceableBareSeq's doc).
 ```
 
 #### body
@@ -6264,55 +6183,36 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::deleteWrapperWith`
+### `packages/codegen/src/compiler/flatten.ts::flatten`
 
 ```text
 /**
- * Walk a rule tree collecting wrapper attributes as we descend through
- * consecutive wrappers, then recurse structurally and stamp collected
- * attrs onto the leaf.
+ * Re-evaluate one rule tree through `attributeBuilder`, bottom-up: every
+ * modifier wrapper (optional / field / repeat / repeat1 / alias / token) is
+ * consumed into attributes on what it wrapped, every bare nested seq is
+ * spliced into its parent, and a singleton seq collapses to its member. The
+ * input is a link-phase tree or an already-flat normalize-phase tree —
+ * simplify re-runs `flatten` over its own output so the seq normal form
+ * (splice, collapse, multiplicity push) is re-established after its hoists.
+ * The result is `Rule<'normalize'>`: a view with no wrapper node types.
  */
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::stampAttrs`
+### `packages/codegen/src/compiler/flatten.ts::flattenRules`
 
 ```text
 /**
- * Spread non-undefined wrapper attrs onto a rule object.
- * We only include keys that have actual values to avoid polluting the object
- * with `undefined`-valued fields.
+ * `flatten` over a whole rule map — the map-form `normalizeGrammar()` uses
+ * to produce the `normalizedRules` snapshot. Applies the self-referential
+ * fold keyed on each rule's own name before flattening.
  */
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::deleteWrapper`
-
-```text
-/**
- * Delete all modifier wrappers from a single rule, pushing their attributes
- * down to the innermost non-wrapper rule.
- *
- * Structural rules (seq / choice / variant / group / clause / terminal /
- * polymorph) are recursed into so the entire rule tree is wrapper-free.
- */
-```
-
-### `packages/codegen/src/compiler/wrapper-deletion.ts::applyWrapperDeletion`
-
-```text
-/**
- * Apply `deleteWrapper` to every entry in a rule map, returning a new map
- * typed as `Record<string, RenderRule>`.
- *
- * This is the map-form used by `normalizeGrammar()` to produce the `normalizedRules`
- * snapshot.
- */
-```
-
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:110`)
+#### body
 
 ```text
 // Fuse separated-list head+repeat pairs into one multi slot AFTER
-// wrapper-deletion has pushed multiplicity/separator to leaves, so the
+// flattening has pushed multiplicity/separator to leaves, so the
 // renderRule the emitter consumes already has the canonical single
 // multi slot (no head single + tail array split).
 ```
@@ -6389,7 +6289,7 @@ parents.
  * `topLevelAliasBodies` stays as a distinct field: it isn't a body cache (its
  * VALUES are fully reproducible from `normalizedRules[name]` — verified
  * empirically, every alias-body kind across all 3 grammars satisfies
- * `normalizedRules[name] === applyWrapperDeletion(topLevelAliasBodies.get(name))`),
+ * `normalizedRules[name] === flattenRules(topLevelAliasBodies.get(name))`),
  * it's a *presence* table (which hidden kinds are alias-mint targets at all)
  * with no rule-level attribute equivalent — a hidden kind's own rule body
  * carries no trace of being aliased-TO by some other rule elsewhere in the
@@ -7649,7 +7549,7 @@ parents.
 ```text
 /**
  * Normalize-phase view of the grammar (`Grammar<'normalize'>`): `rules` IS
- * the wrapper-deleted set (`applyWrapperDeletion` output + the §D-2a inline
+ * the wrapper-deleted set (`flattenRules` output + the §D-2a inline
  * hoist), i.e. what the phase PRODUCES — per the 2026-07-04 design decision
  * that "normalize's output rules are the normalized rules" (the map formerly
  * known as `renderRules`). `linkRules` is the carried mid-normalize
@@ -7735,7 +7635,7 @@ parents.
 ```text
 /**
 	 * Wrapper-deleted view of every rule in `rules`, produced by
-	 * `applyWrapperDeletion` as the new last pass in `normalizeGrammar()`.
+	 * `flattenRules` as the new last pass in `normalizeGrammar()`.
 	 * Modifier wrappers (optional / field / repeat / repeat1) have been
 	 * pushed down to leaf attributes (fieldName / multiplicity / separator)
 	 * on RuleBase. Structural rules (seq / choice / variant / group /
@@ -7848,7 +7748,7 @@ parents.
 /**
 	 * `SimplifiedGrammar.linkRules` carried through assemble — the
 	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
-	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers).
+	 * output, BEFORE `flattenRules` strips modifier wrappers).
 	 *
 	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers; the PR-137
 	 * follow-on-3 migration (2026-07-05) closed out the LAST render/derivation
@@ -7909,7 +7809,7 @@ parents.
 	 * leaf attributes). PR-137: added so `emitters/templates.ts`'s
 	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) can
 	 * read the honest post-normalize view directly instead of bridging
-	 * through `deleteWrapper(linkRules[name])` per call — verified
+	 * through `flatten(linkRules[name])` per call — verified
 	 * byte-identical to the former bridge for every hidden ref the
 	 * fallback actually reaches, across all 3 grammars.
 	 */
@@ -8117,15 +8017,15 @@ parents.
 ```text
 /**
  * Compiler-side `RuleBuilder` that converts wrapper-construction calls into
- * attribute pushes (via `deleteWrapper`), keeping simplify's output
+ * attribute pushes (via `flatten`), keeping simplify's output
  * field/optional/repeat/repeat1-node-free. Structural constructors (`seq` /
  * `choice`) delegate to the structural builder (same plain node literals).
  *
  * - `field(name, X)` → push `fieldName` + `nonterminal:true` onto X.
  * - `optional(X)` → empty-seq sentinel when X is already empty; strip bare
- *   anonymous delimiter string; otherwise `deleteWrapper(optional(X))` which
+ *   anonymous delimiter string; otherwise `flatten(optional(X))` which
  *   pushes `multiplicity: 'optional'` onto the leaves.
- * - `repeat(X)` / `repeat1(X)` → `deleteWrapper({type:REPEAT|REPEAT1, content:X})`.
+ * - `repeat(X)` / `repeat1(X)` → `flatten({type:REPEAT|REPEAT1, content:X})`.
  * - `seq` / `choice` → plain structural nodes (same as structuralBuilder).
  */
 ```
@@ -8138,7 +8038,7 @@ parents.
  *   - Recursively canonicalize children.
  *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
  *
- * Does NOT perform attribute push-down — applyWrapperDeletion in normalize
+ * Does NOT perform attribute push-down — flattenRules in normalize
  * already did that. Does NOT synthesize groups — applyAutoGroups (wire
  * phase) already did that.
  *
@@ -8198,25 +8098,6 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::carrySeparatorForward`
-
-Shared by the `REPEAT` and `REPEAT1` cases of `deleteWrapperWith`, which
-previously carried byte-identical copies of this logic.
-
-`rule.separator` is already the nested `{ value, trailing?, leading? }` shape —
-`RepeatRule<'link'>` shares `RuleBase<'normalize'>.separator`'s shape — so the
-fact is carried across unchanged rather than reconstructed. The two are
-parameterized over different phases but are structurally identical, which is
-the "rides along for free" design; the cast just changes the phase view.
-
-The separator's inner rule can itself contain wrapper nodes — a synthetic or
-non-literal separator such as a CHOICE containing a FIELD — that need the same
-push-down as any other rule position. The recursion only fires when the
-separator is being carried forward for the FIRST time, i.e. it came from
-`rule.separator` rather than an already-processed `attrs.separator` from an
-outer wrapper. Reprocessing an already-deleted separator would be wasted work
-rather than incorrect, but this keeps it to exactly once.
-
 ### `ChoiceArmPartition` / union-slot routing predicate (`packages/codegen/src/compiler/collect-slots.ts`)
 
 Slot identity has exactly two sources, with disjoint parse routing:
@@ -8228,6 +8109,16 @@ Slot identity has exactly two sources, with disjoint parse routing:
 The partition is the SINGLE predicate behind both the census tool
 (`sittir tool union-slot-census`) and the CHOICE-case routing decision: one
 source, one derivation.
+
+### `packages/codegen/src/compiler/link.ts::stampLiteral`
+
+```text
+/** Link's own mints — a catalog literal at a symbol position, a blank for a
+ *  vaporized kind, the optional that a blank-bearing choice becomes — are
+ *  link-phase literals written as such. The structural builder is the
+ *  evaluate phase's (`RuleBuilder<'evaluate'>`); a link node built through
+ *  it could only become `Rule<'link'>` by assertion. */
+```
 
 ### `packages/codegen/src/compiler/link.ts::KindIdStampMisses`
 
@@ -8264,7 +8155,7 @@ source, one derivation.
 // before this pass runs and doesn't stamp them itself.
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::applySelfReferentialFold`
+### `packages/codegen/src/compiler/flatten.ts::applySelfReferentialFold`
 
 ```text
 /**
@@ -8277,48 +8168,64 @@ source, one derivation.
  */
 ```
 
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:29`)
+#### body (`packages/codegen/src/compiler/flatten.ts:29`)
 
 ```text
 // Re-check the SEQ discriminant here for TypeScript's narrowing, not
 // as a runtime safety net (the fold's own scan already proved this).
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::rebuild`
+### `packages/codegen/src/compiler/flatten.ts::rebuild`
 
 ```text
 /**
- * Bottom-up rebuild: each case calls the matching `attributeBuilder` method
- * with the node's own parameters and its already-rebuilt content/members
- * (guaranteed by `RuleWalker.map`'s recursion order — every descendant is
- * visited before its parent). Leaves fall through the default arm
- * unchanged; the enclosing builder stamps them.
+ * `construct`, then identity: `id: node.id ?? built.id` — the node being
+ * replaced owns the identity of what replaces it (`slotByRuleId` resolves a
+ * wrapper's id, not its innermost leaf's). Applied here, once, because no
+ * DSL constructor takes an id.
  */
 ```
 
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:48`)
+### `packages/codegen/src/compiler/flatten.ts::withSeparator`
+
+```text
+/**
+ * Link's lifted separator lives on the REPEAT wrapper; on the normalize
+ * view it lives on the repeated content. `repeat(x)` takes no separator
+ * (the DSL has none), so the fact is moved onto the rebuilt content first
+ * and `repeat` reads it there — its `value` is a rule position like any
+ * other and is rebuilt through the same recursion.
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::construct`
+
+```text
+/**
+ * Bottom-up rebuild: each case rebuilds the node's content/members first
+ * (the recursion IS the bottom-up order — a child is finished before its
+ * parent's builder runs), then calls the matching `attributeBuilder`
+ * constructor with the node's own parameters and those finished children.
+ * This is what lets the attribute builders be typed `Rule<'normalize'>` in
+ * and out with no hybrid "link wrapper over rebuilt children" shape in
+ * between. Leaves (and SUPERTYPE, whose `subtypes` are symbol refs, not a
+ * rule position) fall through the default arm unchanged; the enclosing
+ * builder stamps them.
+ */
+```
+
+#### body
 
 ```text
 // SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the
 // wrapper cases below, which are consumed into their content) — the
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
+// For SEQ the built node may be a collapsed singleton survivor with
+// no `members` of its own — `overlaySeq` drops the stale array.
 ```
 
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:53`)
-
-```text
-// `attributeBuilder.seq` stamps `id` itself (id: node.id ??
-// input.id — here there's no single input, so it's just
-// `node.id`); the outer spread still carries any OTHER stamped
-// facts (metadata, …) attributeBuilder has no access to. `built`
-// may be a collapsed singleton survivor (buildSeq's own
-// singleton collapse) with no `members` of its own — a plain
-// `{...node, ...built}` spread would leave `node`'s stale
-// `members` array on it, so drop it when `built` doesn't own one.
-```
-
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:69`)
+#### body
 
 ```text
 // `buildOptional`, not `attributeBuilder.optional`: the empty-match
@@ -8327,22 +8234,7 @@ source, one derivation.
 // bare literal here stays a leaf with `multiplicity: 'optional'`.
 ```
 
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:75`)
 
-```text
-// Cast, not narrow: `node: AnyRule` distributes REPEAT across
-// every phase (its 'evaluate' view's `separator` is a bare
-// string, not yet lifted to the structured link-phase shape),
-// while wrapper-deletion always operates on the 'link' view —
-// same "narrow via AnyRule, cast back" convention as
-// rule-patterns.ts's `ruleChildren`.
-```
-
-#### body (`packages/codegen/src/compiler/wrapper-deletion.ts:97`)
-
-```text
-// string / pattern / symbol / supertype / indent / dedent / newline
-```
 
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
@@ -8498,23 +8390,20 @@ source, one derivation.
 // require its separator the way the 3-window's mandatory head does.
 ```
 
-### `packages/codegen/src/compiler/wrapper-deletion.ts::module`
+### `packages/codegen/src/compiler/flatten.ts::module`
 
 ```text
 /**
- * compiler/wrapper-deletion.ts — PR1 Task 2.A2
+ * compiler/flatten.ts — the wrapper-free view of a rule tree.
  *
- * Pushes modifier wrappers (optional / field / repeat / repeat1 / alias /
- * token) down to leaf attributes (fieldName, multiplicity, separator, …) on
- * RuleBase. The result type is RenderRule: the Rule<'link'> union minus the
- * wrapper variants, so consumers that only see RenderRule cannot
- * accidentally re-wrap a leaf.
- *
- * `deleteWrapper` is a re-evaluation of the tree through `attributeBuilder`
- * (dsl/builders.ts) — the RuleBuilder strategy that implements every
- * constructor as attribute-push instead of node construction — not an edit
- * of the tree: `RuleWalker.map` rebuilds bottom-up so each `attributeBuilder`
- * call receives an already-finished input and looks exactly one level down.
+ * `flatten` is a re-evaluation of the tree through `attributeBuilder`
+ * (dsl/builders.ts) — the `RuleBuilder<'normalize'>` strategy that
+ * implements every constructor as attribute-push instead of node
+ * construction — not an edit of the tree: `rebuild` recurses bottom-up so
+ * each `attributeBuilder` call receives already-finished `Rule<'normalize'>`
+ * children and looks exactly one level down. The result type is
+ * `Rule<'normalize'>` (`RenderRule`): the union with no wrapper variants, so
+ * consumers that only see it cannot accidentally re-wrap a leaf.
  */
 ```
 
@@ -8603,7 +8492,7 @@ source, one derivation.
  * `deriveSlotsRawFromLeafAttr` folding, `armSlots` / `mergeChoiceArmSlots`,
  * first-arm naming. All slot facts (`fieldName` / `multiplicity` /
  * `separator` / `aliasedFrom` / `nonterminal`) already live ON the leaf
- * after `applyWrapperDeletion`, so collection just reads them.
+ * after `flattenRules`, so collection just reads them.
  *
  * The produced `AssembledNonterminal` shape is identical to the old walker's
  * (four emitters depend on `storageName` / `propertyName` / `paramName` /
@@ -10217,7 +10106,7 @@ source, one derivation.
 
 ```text
 // target.separator already carries trailing/leading nested — rides
-// along for free (same pattern as wrapper-deletion.ts's REPEAT case).
+// along for free (same pattern as flatten.ts's REPEAT case).
 ```
 
 ### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
@@ -10714,49 +10603,25 @@ source, one derivation.
 ```text
 /**
  * CHOICE: fold an empty-match member (`pattern("")`, empty seq) into `optional`;
- * collapse a single member; fuse same-named fields across structurally-equivalent
- * branches (`mergeBranchesForChoice`), then hoist a field shared by every branch out
- * to an enclosing seq. Variant wrappers are preserved for polymorph detection.
+ * collapse a single member; merge structurally-equivalent branches
+ * (`mergeBranchesForChoice`). Variant wrappers are preserved for polymorph
+ * detection.
  *
- * Uses `b.optional` / `b.choice` so the phase builder decides whether to produce
- * a wrapper node or push attributes (attributeBuilder → attributes; structuralBuilder
- * → nodes). The empty-match fold no longer routes through `simplifyRule` for the
- * optional wrapper — `b.optional` applies the same semantics directly.
+ * Constructs through `ctx.builder` (`RuleBuilder<'normalize'>` — always
+ * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather
+ * than mint wrapper nodes; the empty-match fold is `b.optional`'s own
+ * semantics. simplify's helpers are typed `RenderRule` in and out — the
+ * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP/
+ * VARIANT have no dedicated handlers — recursion into their `.content`
+ * happens once, via simplifyRule's ctx.walker.map call.)
  */
-```
-
-```text
-// simplifyChoiceRule (and simplifySeqRule below) stay AnyRule-in AnyRule-out
-// (not narrowed to RenderRule) — phase-visibility-tightening finding:
-// narrowing them forces new `as RenderRule` casts at their
-// `withAttrsFrom(rule, b.choice(...))` / `b.optional(...)` call sites, because
-// `RuleBuilder` (dsl/builders.ts) is DELIBERATELY AnyRule-generic (one
-// interface serving both `structuralBuilder`, which legitimately builds
-// WrapperPhase wrapper nodes, and `attributeBuilder`, which never does).
-// Forcing these call sites to a narrower phase would launder past the
-// checker rather than reflect a real invariant the builder abstraction
-// enforces — left generic per the "no new cast to satisfy the checker" rule.
-// `simplifyRule` (the public dispatcher immediately above) is still the
-// honest RenderRule-in/RenderRule-out boundary; these are its AnyRule-typed
-// internal helpers, called only with RenderRule-shaped values in production.
-// (GROUP/VARIANT no longer have dedicated handlers — recursion into their
-// `.content` now happens once, via simplifyRule's ctx.walker.map call, and
-// they had no case-specific logic beyond that recursion.)
 ```
 
 #### body
 
 ```text
 // Members already simplified by simplifyRule's ctx.walker.map recursion —
-// this function no longer recurses into its own children (PR-S task 4).
-```
-
-#### body
-
-```text
-// Structurally still a ChoiceRule at this point (only `.type` was checked
-// above); `mergeBranchesForChoice`'s AnyRule return type is wider than what
-// it actually produces for a CHOICE-shaped input.
+// this function does not recurse into its own children.
 ```
 
 ### `packages/codegen/src/compiler/trace.ts::module`

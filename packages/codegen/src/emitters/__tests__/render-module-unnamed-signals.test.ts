@@ -6,7 +6,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 	const parentRule: SeqRule<'link'> = {
@@ -25,10 +25,7 @@ function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'mixed_parent',
-		new AssembledBranch('mixed_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
-	);
+	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRule, flatten(parentRule), flatten(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
@@ -58,12 +55,9 @@ function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'parent_helper',
-		new AssembledBranch('parent_helper', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+		new AssembledBranch('parent_helper', parentRule, flatten(parentRule), flatten(parentRule))
 	);
-	nodes.set(
-		'_helper',
-		new AssembledBranch('_helper', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
-	);
+	nodes.set('_helper', new AssembledBranch('_helper', helperRule, flatten(helperRule), flatten(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);

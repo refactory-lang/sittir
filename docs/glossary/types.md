@@ -352,7 +352,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   'evaluate' — raw post-evaluate: all variants incl. alias/token/wrappers.
  *   'link'     — references resolved (alias/token survive only defensively);
  *                separator strings lifted onto repeat nodes.
- *   'normalize' — wrapper-free (applyWrapperDeletion ran): optional/field/
+ *   'normalize' — wrapper-free (flattenRules ran): optional/field/
  *                 repeat/repeat1/alias/token GONE; their meaning lives in the
  *                 stamped leaf attributes (fieldName/multiplicity/separator/
  *                 aliasedFrom). This is the RenderRule shape.
@@ -417,7 +417,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * Per-ref inline decision: `inline = hidden && !aliased`. Default
 	 * `hidden` (`name.startsWith('_')`) stamped at construction
 	 * (`evaluate.ts symbol`/`createProxy`); flipped `false` by the `alias`
-	 * wrapper during push-down (`wrapper-deletion.ts` ALIAS case) because an
+	 * wrapper during push-down (`flatten.ts` ALIAS case) because an
 	 * alias confers a real visible CST kind that must materialize, not
 	 * flatten. Read directly off the rule (with an `isHiddenKind` fallback
 	 * for link-synthesized symbols) — see `compiler/link.ts:539-540`,
@@ -506,25 +506,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 *  ChoiceRule/SeqRule for a rule-shaped separator. `trailing`/
 			 *  `leading` are nested HERE (not top-level siblings) so an
 			 *  orphan trailing/leading-without-a-separator state is
-			 *  structurally impossible, and so `applyWrapperDeletion` can
-			 *  carry this whole fact across the phase boundary unchanged
-			 *  from RepeatRule<'link'>'s identical shape. */
-```
-
-### `packages/codegen/src/types/rule.ts::aliasedFrom`
-
-```text
-/**
-			 * Alias provenance pushed down from an `alias()` wrapper by
-			 * `applyWrapperDeletion`, exactly as `fieldName` / `multiplicity` /
-			 * `separator` are pushed down from `field` / `optional` / `repeat`.
-			 * `aliasedFrom` is the alias TARGET (`AliasRule.value` — the name
-			 * tree-sitter emits for the node), `aliasNamed` mirrors
-			 * `AliasRule.named`. Consumers of the wrapper-free RenderRule /
-			 * SimplifiedRule read these off the leaf instead of matching a
-			 * mid-tree `alias` node. (`SymbolRule.aliasedFrom` predates this and
-			 * carries the same target name for Link-resolved symbol aliases.)
-			 */
+			 *  structurally impossible. The shape is `RuleSeparator<Rule<Phase>>`
+			 *  — the same declaration RepeatRule<'link'> uses; `flatten`
+			 *  rebuilds `value` through the builders like any rule position. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::Rule`
@@ -593,14 +577,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // window (see the per-type conditionals): alias/token are consumed by
 // Link (surviving into the 'link' view only defensively);
 // optional/field/repeat/repeat1 are consumed by Normalize's
-// applyWrapperDeletion. None appear in the wrapper-free views.
+// flattenRules. None appear in the wrapper-free views.
 ```
 
 ### `packages/codegen/src/types/rule.ts::RenderRule`
 
 ```text
 /**
- * A Rule shape produced by `applyWrapperDeletion` in normalize.ts. Modifier
+ * A Rule shape produced by `flattenRules` in normalize.ts. Modifier
  * wrappers (`optional` / `field` / `repeat` / `repeat1`) have been pushed
  * down to leaf attributes; structural rules (`seq` / `choice` / `variant` /
  * `group`) are preserved.
@@ -609,7 +593,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `__renderRule` marker for readability at call sites, but the marker is
  * optional and never written, so it provides no assignability protection —
  * `Rule<'normalize'>` values are still structurally assignable to
- * `RenderRule` without going through `applyWrapperDeletion`.
+ * `RenderRule` without going through `flattenRules`.
  */
 ```
 
@@ -651,10 +635,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
-/** Same nested shape as RuleBase<NormalizedPhase>.separator, one
-			 *  phase earlier — applyWrapperDeletion carries this object
-			 *  across unchanged rather than reconstructing it from separate
-			 *  fields. */
+/** `RuleSeparator<Rule<'link'>>` — the one separator shape, one
+			 *  phase earlier; `flatten` rebuilds its `value` and keeps the
+			 *  placement flags. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::separator`
@@ -668,10 +651,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
-/** Same nested shape as RuleBase<NormalizedPhase>.separator, one
-			 *  phase earlier — applyWrapperDeletion carries this object
-			 *  across unchanged rather than reconstructing it from separate
-			 *  fields. */
+/** `RuleSeparator<Rule<'link'>>` — the one separator shape, one
+			 *  phase earlier; `flatten` rebuilds its `value` and keeps the
+			 *  placement flags. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::separator`
@@ -680,6 +662,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Evaluate-phase separators are always literal strings,
 				 *  reconstructed fresh by link's lift — not carried through, so
 				 *  this stays the original sibling shape (unchanged by PR-S). */
+```
+
+### `packages/codegen/src/types/rule.ts::RuleSeparator`
+
+```text
+/** The separator fact, parameterized by the rule it holds rather than by
+ *  phase: `{ value, trailing?, leading?, terminated? }` is the same shape
+ *  on RepeatRule<'link'> and on RuleBase<'normalize'>, and declaring it
+ *  once keeps that a fact instead of a coincidence. Parameterized by the
+ *  rule (not the phase) so TypeScript compares two phases' separators
+ *  structurally through their rules, as it does for every other rule
+ *  position. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::FieldRule`
@@ -1180,11 +1174,12 @@ narrowing guard.
 
 ```text
 /**
-	 * Lexical token facts, pushed down onto the content when a
-	 * `token(...)` / `token.immediate(...)` wrapper is flattened (Link's
-	 * TOKEN case) or stamped on synthetic external-scanner rules at
-	 * creation — same push-down discipline as the wrapper-deletion attrs
-	 * below: the fact is stamped where the wrapper dies so it survives it.
+	 * Lexical token facts — normalize-phase only, like every other attribute
+	 * a wrapper turns into. A `token(...)` / `token.immediate(...)` wrapper
+	 * survives link as a TokenRule (immediacy on the wrapper's own
+	 * `immediate` field); `flatten` consumes it through
+	 * `attributeBuilder.token` / `token.immediate`, which stamp these on the
+	 * leaf that replaces it. A wrapper-phase rule never carries them.
 	 * `tokenized` — this subtree lexes as ONE token. `immediate` — the
 	 * grammar forbids whitespace before this token (`token.immediate`, or
 	 * a declared-immediate external): its rendered text must never receive
@@ -1196,7 +1191,7 @@ narrowing guard.
 
 ```text
 // All stamped attributes below are populated by
-// `applyWrapperDeletion` (Normalize) — the structured `separator`
+// `flattenRules` (Normalize) — the structured `separator`
 // object included: wrapper-deletion carries the repeat node's own
 // link-lifted `separator` object across unchanged as it deletes
 // the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>

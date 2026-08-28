@@ -10,7 +10,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 const wrapEmitterSource = readFileSync(new URL('../wrap.ts', import.meta.url), 'utf8');
 
@@ -44,7 +44,7 @@ function makeHiddenGroupNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'_assignment_eq',
-		new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+		new AssembledGroup('_assignment_eq', helperRule, flatten(helperRule), flatten(helperRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -66,7 +66,7 @@ function makeTransparentHiddenGroupNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'_export_statement_default',
-		new AssembledGroup('_export_statement_default', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+		new AssembledGroup('_export_statement_default', helperRule, flatten(helperRule), flatten(helperRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);

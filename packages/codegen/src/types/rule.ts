@@ -25,8 +25,8 @@ export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
 
 export type PhaseName = 'evaluate' | 'link' | 'normalize' | 'simplify';
 
-type NormalizedPhase = 'normalize' | 'simplify';
-type WrapperPhase = 'evaluate' | 'link';
+export type NormalizedPhase = 'normalize' | 'simplify';
+export type WrapperPhase = 'evaluate' | 'link';
 
 export type AnyRule = Rule<PhaseName>;
 
@@ -40,26 +40,20 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly splicedBody?: boolean;
 
 	readonly variantArms?: readonly string[];
-
-	readonly tokenized?: boolean;
-	readonly immediate?: boolean;
 } & (Phase extends NormalizedPhase
 	? {
 			readonly fieldName?: string;
 			readonly multiplicity?: Multiplicity;
 			readonly nonterminal?: boolean;
 
-			readonly separator?: {
-				readonly value: Rule<Phase>;
-				readonly trailing?: DelimiterMode;
-				readonly leading?: DelimiterMode;
-				readonly terminated?: true;
-			};
+			readonly separator?: RuleSeparator<Rule<Phase>>;
 
 			readonly optionalElement?: boolean;
 
-			readonly aliasedFrom?: string;
 			readonly aliasNamed?: boolean;
+
+			readonly tokenized?: boolean;
+			readonly immediate?: boolean;
 
 			readonly prec?: {
 				readonly kind: 'left' | 'right' | 'dynamic' | undefined;
@@ -71,20 +65,15 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 export type Rule<Phase extends PhaseName = 'normalize'> =
 	| SeqRule<Phase>
 	| ChoiceRule<Phase>
-
 	| VariantRule<Phase>
 	| SupertypeRule<Phase>
 	| GroupRule<Phase>
-
 	| StringRule<Phase>
 	| PatternRule<Phase>
-
 	| IndentRule<Phase>
 	| DedentRule<Phase>
 	| NewlineRule<Phase>
-
 	| SymbolRule<Phase>
-
 	| OptionalRule<Phase>
 	| FieldRule<Phase>
 	| RepeatRule<Phase>
@@ -125,16 +114,18 @@ export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 
 export type DelimiterMode = 'mandatory' | 'optional';
 
+export type RuleSeparator<V = Rule> = {
+	readonly value: V;
+	readonly trailing?: DelimiterMode;
+	readonly leading?: DelimiterMode;
+	readonly terminated?: true;
+};
+
 export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
 			readonly type: typeof REPEAT;
 			readonly content: Rule<T>;
-			readonly separator?: {
-				readonly value: Rule<T>;
-				readonly trailing?: DelimiterMode;
-				readonly leading?: DelimiterMode;
-				readonly terminated?: true;
-			};
+			readonly separator?: RuleSeparator<Rule<T>>;
 		}
 	: T extends 'evaluate'
 		? RuleBase<T> & {
@@ -150,12 +141,7 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
 			readonly type: typeof REPEAT1;
 			readonly content: Rule<T>;
-			readonly separator?: {
-				readonly value: Rule<T>;
-				readonly trailing?: DelimiterMode;
-				readonly leading?: DelimiterMode;
-				readonly terminated?: true;
-			};
+			readonly separator?: RuleSeparator<Rule<T>>;
 		}
 	: T extends 'evaluate'
 		? RuleBase<T> & {

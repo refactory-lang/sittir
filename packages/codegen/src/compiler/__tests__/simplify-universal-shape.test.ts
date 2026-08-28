@@ -18,7 +18,7 @@
  *     burn-in confirms the invariant holds across real grammars).
  */
 
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
 import { AssembledBranch, AssembledGroup, AssembledPattern } from '../model/node-map.ts';
@@ -30,7 +30,7 @@ import type { RenderRule, Rule, SeqRule, SimplifiedRule } from '../../types/rule
 
 describe('canonicalizeSeqOfLeaves', () => {
 	it('top-level seq of leaves stays unchanged', () => {
-		const rule: SeqRule<'link'> = {
+		const rule: SeqRule = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
@@ -43,15 +43,15 @@ describe('canonicalizeSeqOfLeaves', () => {
 	});
 
 	it('degenerate single-member seq gets flattened', () => {
-		const inner: Rule<'link'> = { type: SYMBOL, name: 'X' };
-		const rule: SeqRule<'link'> = { type: SEQ, members: [inner] };
+		const inner: RenderRule = { type: SYMBOL, name: 'X' };
+		const rule: SeqRule = { type: SEQ, members: [inner] };
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual(inner);
 	});
 
 	it('nested single-member seq gets recursively flattened', () => {
 		// seq([seq([X])]) -> X
-		const inner: Rule<'link'> = { type: SYMBOL, name: 'X' };
-		const rule: SeqRule<'link'> = {
+		const inner: RenderRule = { type: SYMBOL, name: 'X' };
+		const rule: SeqRule = {
 			type: SEQ,
 			members: [{ type: SEQ, members: [inner] }]
 		};
@@ -59,7 +59,7 @@ describe('canonicalizeSeqOfLeaves', () => {
 	});
 
 	it('is idempotent (running twice produces same result)', () => {
-		const rule: SeqRule<'link'> = {
+		const rule: SeqRule = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '{' },
@@ -74,15 +74,15 @@ describe('canonicalizeSeqOfLeaves', () => {
 
 	it('preserves leaf content inside wrappers (does not push down attributes)', () => {
 		// canonicalizeSeqOfLeaves does NOT push down attributes — it only
-		// flattens degenerate single-member seqs. A field-wrapped leaf with
-		// a degenerate seq inside should collapse the seq but keep the field.
-		const rule: Rule<'link'> = {
-			type: FIELD,
+		// flattens degenerate single-member seqs. A variant-wrapped leaf with
+		// a degenerate seq inside should collapse the seq but keep the wrapper.
+		const rule: RenderRule = {
+			type: VARIANT,
 			name: 'op',
 			content: { type: SEQ, members: [{ type: STRING, value: '+' }] }
 		};
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual({
-			type: 'FIELD',
+			type: 'VARIANT',
 			name: 'op',
 			content: { type: 'STRING', value: '+' }
 		});

@@ -230,10 +230,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Internal — fields-side walk. The exported derivation surface is
  * `deriveSlots`; this helper is its fields-portion.
  *
- * Applies `deleteWrapper` before dispatching so test fixtures that pass raw
+ * Applies `flatten` before dispatching so test fixtures that pass raw
  * rule trees (with `field` / `optional` / `repeat` / `repeat1` wrappers) get
  * canonical input automatically. In production the rule arrives already
- * wrapper-free from `computeSimplifiedRules` — `deleteWrapper` is idempotent
+ * wrapper-free from `computeSimplifiedRules` — `flatten` is idempotent
  * on wrapper-free input, so this is a no-op on the hot path.
  */
 ```
@@ -318,7 +318,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Extract a separator string from a `RuleBase<'normalize'>['separator']`
- * value (the stamped leaf form `applyWrapperDeletion` produces — this
+ * value (the stamped leaf form `flattenRules` produces — this
  * function only ever sees post-Normalize separators, never the `link`-phase
  * `RepeatRule.separator` — which, post-PR-S, shares this same nested shape).
  * Returns undefined when the separator is absent, non-literal, or empty.
@@ -1301,7 +1301,7 @@ can't be unified.
 	 * Repeat-list separator fallback for `render-module.ts`'s `collectMetaData`.
 	 * Historically read `this.simplifiedRule.type === REPEAT/REPEAT1` (the
 	 * former `AssembledContainer.separator` getter), but `simplifiedRule` is
-	 * the post-`applyWrapperDeletion` view (see `SimplifiedRule`) where
+	 * the post-`flattenRules` view (see `SimplifiedRule`) where
 	 * REPEAT/REPEAT1 wrapper nodes never survive — they're converted to a
 	 * `multiplicity`/`separator` leaf attribute before storage. Verified
 	 * empirically (phase-visibility-tightening investigation): 0 of 468

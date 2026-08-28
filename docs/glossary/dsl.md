@@ -1969,7 +1969,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 ```text
 // `original` may be a wrapper-bearing (evaluate/link) rule where these
 // stamped leaf attrs aren't part of the type yet (they're populated by
-// `applyWrapperDeletion` during Normalize) — but `collapseWrappers`
+// `flattenRules` during Normalize) — but `collapseWrappers`
 // (normalize.ts, pre-Normalize) legitimately calls this with `Rule<'link'>`
 // wrapper nodes that already carry link-lifted attrs defensively. Read
 // structurally rather than narrowing the param type, matching the
@@ -2244,7 +2244,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 				   symbol with the target body would otherwise DROP that
 				   multiplicity, collapsing a multi slot to singular. Re-wrap the
 				   inlined body in the equivalent modifier and re-run the
-				   (idempotent) deleteWrapper to re-push the attributes onto the
+				   (idempotent) flatten to re-push the attributes onto the
 				   inlined leaves.
 
 				   `inlined` comes back typed `AnyRule` (via the internal `recurse`
@@ -2329,7 +2329,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * body, the attributes on the symbol would be lost — collapsing a
  * multi-valued slot to singular and dropping the separator. We reconstruct
  * the equivalent modifier wrapper around the inlined body and re-run the
- * idempotent `deleteWrapper`, which re-pushes the attributes onto the
+ * idempotent `flatten`, which re-pushes the attributes onto the
  * inlined body's leaves using the same "outer wins" rule wrapper-deletion
  * applied originally.
  *
@@ -2931,26 +2931,6 @@ registered but later unused still counts as a sibling.
 // derives the inline list from its keys) — rename there too.
 ```
 
-### `packages/codegen/src/dsl/builders.ts::stampId`
-
-```text
-/** `id: rule.id ?? input.id` — the CURRENT wrapper rule's id wins over the
- *  survivor's own, matching `dsl/rule-attrs.ts`'s `withAttrsFrom` id
- *  discipline at collapse sites (`slotByRuleId` must resolve the wrapper's
- *  id, not whatever the innermost leaf happened to carry). */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// attributeBuilder — the RuleBuilder that pushes attributes instead of
-// constructing wrapper nodes, so simplify stays field/optional/repeat-free.
-// Every constructor is a pure function of its ALREADY-BUILT input, looking
-// exactly one level down — `deleteWrapper` (compiler/wrapper-deletion.ts)
-// rebuilds a raw rule tree bottom-up by calling these same methods, so this
-// is the one place wrapper-vs-attribute construction logic lives.
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/dsl/builders.ts::collapseSingletonSeq`
 
 ```text
@@ -2976,10 +2956,26 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
- * reference) or CHOICE/REPEAT/REPEAT1 (a union or a repetition). One level:
- * a wrapper type (FIELD/ALIAS/SEQ/TOKEN/VARIANT/GROUP) is never inspected
- * here — its own builder already stamped `nonterminal` on it when
- * applicable, so `optional` reads that stamp instead of recursing.
+ * reference) or CHOICE (a union). One level: a wrapper type (SEQ/VARIANT/
+ * GROUP) is never inspected here — its own builder already stamped
+ * `nonterminal` on it when applicable, so `optional` reads that stamp
+ * instead of recursing. A repetition never arrives as a node on this view:
+ * `repeat`'s builder already stamped `nonterminal: true` on its content.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::overlaySeq`
+
+```text
+/**
+ * A seq's own stamped facts (metadata, …) ride along under `built`'s
+ * freshly-computed shape — `buildSeq` constructs a new node and has no
+ * access to the original's identity. `built` may be a collapsed singleton
+ * survivor (buildSeq's own singleton collapse), so its own `type`/`members`
+ * must win outright, not merely its stamped attrs: a plain
+ * `{...content, ...built}` spread would leave `content`'s stale `members`
+ * array on a survivor that has none. Shared by `buildOptional`,
+ * `buildRepeatLike` and `flatten`'s SEQ case.
  */
 ```
 
@@ -2988,24 +2984,13 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * optional(x) — the core formula, with no empty-match folding. This is what
- * `deleteWrapper` (compiler/wrapper-deletion.ts) calls directly for every
+ * `flatten` (compiler/flatten.ts) calls directly for every
  * OPTIONAL node in a raw rule tree: RenderRule production never strips a
  * bare literal to an empty seq (only `simplifyRules`'s own construction, via
  * `foldOptionalEmptyMatch` below, does that later).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/builders.ts:184`)
-
-```text
-// The seq's own stamped facts (metadata, …) ride along under
-// `built`'s freshly-computed shape — `buildSeq` constructs a new node
-// and has no access to `content`'s identity. `built` may now be a
-// collapsed singleton survivor (buildSeq's own singleton collapse),
-// so its own `type`/`members` must win outright, not merely its
-// stamped attrs: a plain `{...content, ...built}` spread would leave
-// `content`'s stale `members` array on a survivor that has none.
-```
 
 ### `packages/codegen/src/dsl/builders.ts::foldOptionalEmptyMatch`
 
@@ -3016,7 +3001,7 @@ registered but later unused still counts as a sibling.
  * (non-slot-promoted) string body to the empty-seq sentinel — a delimiter
  * that can't individually carry `multiplicity: 'optional'` collapses to
  * "renders nothing" instead. `attributeBuilder.optional` is this fold;
- * `deleteWrapper` never reaches it (it calls `buildOptional` directly).
+ * `flatten` never reaches it (it calls `buildOptional` directly).
  */
 ```
 
@@ -3064,34 +3049,41 @@ registered but later unused still counts as a sibling.
  * multiplicity must reach the seq's own slot-bearing members (Table 2's
  * per-field storage), so this re-enters `buildSeq` with the combined
  * multiplicity instead of stamping the seq node as if it were opaque.
+ * The separator is read off the content: `repeat(x)` has no separator
+ * parameter (the DSL has none), so link's lifted separator arrives already
+ * stamped on the content by `flatten`, and a content that carries one from
+ * an earlier collapse is the same case.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/builders.ts:236`)
-
-```text
-// See buildOptional's identical note: `built` is a fresh node from
-// `buildSeq` and may be a collapsed singleton survivor with no
-// `members` of its own — drop `content`'s stale array when so.
-```
 
 ### `packages/codegen/src/dsl/builders.ts::module`
 
 ```text
 /**
- * dsl/builders.ts — the `RuleBuilder` construction strategies shared across
- * normalize/simplify: `structuralBuilder` (builds real wrapper nodes) and
- * `attributeBuilder` (pushes modifiers onto leaf attributes instead of
- * wrapping). Every `attributeBuilder` constructor is a pure function of its
- * ALREADY-BUILT input, looking exactly one level down — `deleteWrapper`
- * (compiler/wrapper-deletion.ts) rebuilds a raw rule tree bottom-up by
- * calling these same methods, so this is the one place wrapper-vs-attribute
- * construction logic lives.
+ * dsl/builders.ts — the `RuleBuilder<P>` construction strategies. The
+ * interface is the grammar DSL's own constructor vocabulary — `seq(...)`,
+ * `choice(...)`, `optional(x)`, `repeat(x)`, `field(name, x)`,
+ * `alias(x, target)`, `token(x)` / `token.immediate(x)`, `prec(n, x)` /
+ * `prec.left` / `prec.right` / `prec.dynamic`, plus sittir's `variant` /
+ * `group` and the leaf constructors — with only the types changed: every
+ * constructor takes and returns `Rule<P>` for one phase `P`.
+ * `structuralBuilder` is `RuleBuilder<'evaluate'>` (what the DSL evaluates
+ * into: real wrapper nodes); `attributeBuilder` is `RuleBuilder<'normalize'>`
+ * (pushes modifiers onto leaf attributes instead of wrapping). Every
+ * `attributeBuilder` constructor is a pure function of its ALREADY-BUILT
+ * `Rule<'normalize'>` input, looking exactly one level down — `flatten`
+ * (compiler/flatten.ts) rebuilds a rule tree bottom-up by calling these
+ * same methods, so this is the one place wrapper-vs-attribute construction
+ * logic lives. Facts that are not DSL parameters — a rule's `id`, link's
+ * lifted separator — are not constructor parameters either: `flatten`
+ * applies identity uniformly after construction and stamps the separator
+ * on the content `repeat` receives.
  *
  * dsl-side: the transforms that need a builder take a structural
- * `{ builder?: RuleBuilder }` slice, never a compiler ctx, so this module has
- * no dsl -> compiler dependency and no compiler phase module needs to import
- * another compiler phase module for builder code.
+ * `{ builder?: RuleBuilder<P> }` slice, never a compiler ctx, so this module
+ * has no dsl -> compiler dependency and no compiler phase module needs to
+ * import another compiler phase module for builder code.
  */
 ```
 
@@ -3103,13 +3095,49 @@ registered but later unused still counts as a sibling.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.optional`
+### `packages/codegen/src/dsl/builders.ts::TokenBuilder`
 
 ```text
-// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
-// phase, while a single-content wrapper's own `content` field wants one
-// specific phase — same "narrow via AnyRule, cast back" convention as
-// rule-patterns.ts's `ruleChildren`.
+/** `token(x)` with `token.immediate(x)` hanging off it, exactly as the DSL
+ *  spells them: a callable with a property, not two methods. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::PrecBuilder`
+
+```text
+/** `prec(n, x)` with `prec.left` / `prec.right` / `prec.dynamic`, the DSL's
+ *  spelling. On the normalize view the family is vocabulary only —
+ *  precedence never reaches link (evaluate strips it), so
+ *  `attributeBuilder.prec` stamps `prec` but nothing routes through it. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::RuleBuilder`
+
+```text
+/**
+ * One construction strategy, closed over one phase `P`: every constructor
+ * takes `Rule<P>` children and returns a `Rule<P>` — a builder never sees
+ * a value from another phase, so `attributeBuilder` receives already
+ * attribute-built children (bottom-up) and `structuralBuilder` receives
+ * evaluate-phase nodes. The identity constructors (choice, variant, group,
+ * the leaves) return their exact node type — both strategies build exactly
+ * that node — so a caller spreading a built CHOICE/VARIANT/GROUP over the
+ * original keeps a discriminable type. The content-consuming constructors
+ * (optional, repeat, field, alias, token, prec) return `Rule<P>` because
+ * the attribute strategy returns its content, of whatever type that was.
+ * `alias`'s target is a string (anonymous alias) or a symbol (named), as
+ * in tree-sitter — named-ness is derived from the target's type.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::withId`
+
+```text
+/** Stamp a rule id onto a built rule when there is one to stamp. Identity
+ *  is not a DSL parameter, so no constructor takes it: `flatten` applies
+ *  `id: node.id ?? built.id` once per rebuilt node (the wrapper's own id
+ *  wins over the survivor's — `slotByRuleId` resolves the wrapper's id),
+ *  and link's mints stamp the rule they replace. */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::structuralBuilder.prec`
@@ -4922,7 +4950,7 @@ registered but later unused still counts as a sibling.
 
 ```text
 // `enrichFieldWrappers` REMOVED — `fieldName`/`nonterminal` are derived by
-// `applyWrapperDeletion`'s FIELD case (push the field's name + nonterminal onto
+// `flattenRules`'s FIELD case (push the field's name + nonterminal onto
 // its content) and its SEQ case (retains fieldName on the seq node), with
 // `materializeInlinedBody` carrying fieldName through group inlining. Stamping it
 // in enrich was premature (nothing reads it before wrapper-deletion); enrich no
@@ -4934,7 +4962,7 @@ registered but later unused still counts as a sibling.
 
 ```text
 // Multiplicity / nonterminal are NOT stamped here — they are derived later by
-// `applyWrapperDeletion` (normalize) from the OPTIONAL/REPEAT/REPEAT1/FIELD
+// `flattenRules` (normalize) from the OPTIONAL/REPEAT/REPEAT1/FIELD
 // wrapper structure, the single source of truth. Stamping them in enrich was
 // premature (nothing reads them before wrapper-deletion) and polluted the
 // `nonterminal` slot signal — enrich marked bare `optional(',')` delimiters

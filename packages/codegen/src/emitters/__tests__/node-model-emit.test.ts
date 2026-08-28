@@ -9,7 +9,7 @@ import {
 import type { SeqRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 describe('node-model emitter', () => {
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
@@ -20,7 +20,7 @@ describe('node-model emitter', () => {
 		const nodes = new Map<string, AssembledNode>();
 		nodes.set(
 			'alias_host',
-			new AssembledBranch('alias_host', rule, deleteWrapper(rule), deleteWrapper(rule), {
+			new AssembledBranch('alias_host', rule, flatten(rule), flatten(rule), {
 				slotRecord: Object.freeze({
 					value: new AssembledNonterminal({
 						fieldName: 'value',

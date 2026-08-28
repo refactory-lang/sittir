@@ -11,7 +11,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import { emitAll } from '../emit.ts';
 import { TemplateEmitter } from '../templates.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 function makeNodeMap(): NodeMap {
 	return {
@@ -31,7 +31,7 @@ function makeBranch(kind: string, label: string): AssembledBranch {
 		type: SEQ,
 		members: [{ type: STRING, value: label }]
 	};
-	return new AssembledBranch(kind, rule, deleteWrapper(rule), deleteWrapper(rule));
+	return new AssembledBranch(kind, rule, flatten(rule), flatten(rule));
 }
 
 function makeHiddenHelperNodeMap(): NodeMap {
@@ -42,7 +42,7 @@ function makeHiddenHelperNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'_assignment_eq',
-		new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+		new AssembledGroup('_assignment_eq', helperRule, flatten(helperRule), flatten(helperRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {

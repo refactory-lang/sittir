@@ -5,7 +5,7 @@ import type { SeqRule } from '../../types/rule.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { FactorySlotMeta } from '../../emitters/factory-map.ts';
-import { deleteWrapper } from '../wrapper-deletion.ts';
+import { flatten } from '../flatten.ts';
 
 function makeSlotArityNodeMap() {
 	const singleChildRule: SeqRule<'link'> = {
@@ -69,38 +69,28 @@ function makeSlotArityNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'single_parent',
-		new AssembledBranch(
-			'single_parent',
-			singleChildRule,
-			deleteWrapper(singleChildRule),
-			deleteWrapper(singleChildRule)
-		)
+		new AssembledBranch('single_parent', singleChildRule, flatten(singleChildRule), flatten(singleChildRule))
 	);
 	nodes.set(
 		'multi_parent',
 		new AssembledBranch(
 			'multi_parent',
 			multiSingularChildRule,
-			deleteWrapper(multiSingularChildRule),
-			deleteWrapper(multiSingularChildRule)
+			flatten(multiSingularChildRule),
+			flatten(multiSingularChildRule)
 		)
 	);
 	nodes.set(
 		'repeat_parent',
-		new AssembledBranch(
-			'repeat_parent',
-			repeatFieldRule,
-			deleteWrapper(repeatFieldRule),
-			deleteWrapper(repeatFieldRule)
-		)
+		new AssembledBranch('repeat_parent', repeatFieldRule, flatten(repeatFieldRule), flatten(repeatFieldRule))
 	);
 	nodes.set(
 		'optional_then_required_parent',
 		new AssembledBranch(
 			'optional_then_required_parent',
 			optionalThenRequiredChildRule,
-			deleteWrapper(optionalThenRequiredChildRule),
-			deleteWrapper(optionalThenRequiredChildRule)
+			flatten(optionalThenRequiredChildRule),
+			flatten(optionalThenRequiredChildRule)
 		)
 	);
 	nodes.set(
@@ -108,8 +98,8 @@ function makeSlotArityNodeMap() {
 		new AssembledBranch(
 			'ambient_like_parent',
 			multiSiblingFieldRule,
-			deleteWrapper(multiSiblingFieldRule),
-			deleteWrapper(multiSiblingFieldRule)
+			flatten(multiSiblingFieldRule),
+			flatten(multiSiblingFieldRule)
 		)
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));

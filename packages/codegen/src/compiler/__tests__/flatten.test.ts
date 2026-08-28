@@ -1,5 +1,5 @@
 /**
- * Tests for applyWrapperDeletion (PR1 Task 2.A2).
+ * Tests for flattenRules.
  *
  * Verifies that wrapper rules (optional / field / repeat / repeat1) are
  * pushed down to RuleBase modifier attributes (multiplicity / fieldName /
@@ -9,7 +9,7 @@
 
 import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { deleteWrapper, applyWrapperDeletion } from '../wrapper-deletion.ts';
+import { flatten, flattenRules } from '../flatten.ts';
 import type {
 	Rule,
 	RuleBase,
@@ -28,13 +28,13 @@ import type {
 const sym = (name: string): SymbolRule => ({ type: SYMBOL, name });
 
 // ---------------------------------------------------------------------------
-// deleteWrapper — single-rule form
+// flatten — single-rule form
 // ---------------------------------------------------------------------------
 
-describe('deleteWrapper — optional', () => {
+describe('flatten — optional', () => {
 	it('lifts optional → multiplicity: "optional" on inner symbol', () => {
 		const wrapped: OptionalRule = { type: OPTIONAL, content: sym('expression') };
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('optional');
 		expect((out as SymbolRule).name).toBe('expression');
@@ -42,25 +42,25 @@ describe('deleteWrapper — optional', () => {
 
 	it('does not stamp multiplicity: "single" (default)', () => {
 		// A bare symbol (no wrapper) should not have multiplicity set at all
-		const out = deleteWrapper(sym('foo'));
+		const out = flatten(sym('foo'));
 		expect(out.multiplicity).toBeUndefined();
 	});
 });
 
-describe('deleteWrapper — field', () => {
+describe('flatten — field', () => {
 	it('lifts field → fieldName on inner symbol', () => {
 		const wrapped: FieldRule = { type: FIELD, name: 'value', content: sym('expression') };
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.fieldName).toBe('value');
 		expect(out.multiplicity).toBeUndefined();
 	});
 });
 
-describe('deleteWrapper — repeat', () => {
+describe('flatten — repeat', () => {
 	it('lifts repeat → multiplicity: "array" on inner symbol', () => {
 		const wrapped: RepeatRule = { type: REPEAT, content: sym('item') };
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 	});
@@ -71,7 +71,7 @@ describe('deleteWrapper — repeat', () => {
 			content: sym('item'),
 			separator: { value: { type: 'STRING', value: ',' } }
 		};
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toEqual({ value: { type: 'STRING', value: ',' } });
@@ -80,13 +80,13 @@ describe('deleteWrapper — repeat', () => {
 	it('lifts repeat with separator + trailing/leading → nested object rides along for free', () => {
 		// wrapper-deletion's REPEAT case does NOT reconstruct trailing/leading
 		// from separate fields — it carries the whole `separator` object across
-		// unchanged, since RepeatRule<'link'> already nests them (PR-S).
+		// unchanged, since RepeatRule<'link'> already nests them.
 		const wrapped: RepeatRule = {
 			type: REPEAT,
 			content: sym('item'),
 			separator: { value: { type: 'STRING', value: ',' }, trailing: 'optional', leading: 'mandatory' }
 		};
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toEqual({
@@ -101,7 +101,7 @@ describe('deleteWrapper — repeat', () => {
 		// but no `separator` — they only exist nested INSIDE `separator` now.
 		const wrapped: RepeatRule = { type: REPEAT, content: sym('item') };
 		expect(wrapped.separator).toBeUndefined();
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.separator).toBeUndefined();
 
 		// Compile-time pin: the invariant above is a TYPE guarantee, not just a
@@ -119,10 +119,10 @@ describe('deleteWrapper — repeat', () => {
 	});
 });
 
-describe('deleteWrapper — repeat1', () => {
+describe('flatten — repeat1', () => {
 	it('lifts repeat1 → multiplicity: "nonEmptyArray" on inner symbol', () => {
 		const wrapped: Repeat1Rule = { type: REPEAT1, content: sym('item') };
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('nonEmptyArray');
 	});
@@ -132,12 +132,12 @@ describe('deleteWrapper — repeat1', () => {
 // Structural recursion
 // ---------------------------------------------------------------------------
 
-describe('deleteWrapper — seq recursion', () => {
+describe('flatten — seq recursion', () => {
 	it('recurses into seq members and deletes wrappers inside', () => {
 		const a: OptionalRule = { type: OPTIONAL, content: sym('a') };
 		const b: SymbolRule = sym('b');
 		const seq: SeqRule<'link'> = { type: SEQ, members: [a, b] };
-		const out = deleteWrapper(seq);
+		const out = flatten(seq);
 		expect(out.type).toBe('SEQ');
 		const members = (out as SeqRule).members;
 		expect(members).toHaveLength(2);
@@ -152,11 +152,11 @@ describe('deleteWrapper — seq recursion', () => {
 // Stacked wrappers
 // ---------------------------------------------------------------------------
 
-describe('deleteWrapper — stacked wrappers', () => {
+describe('flatten — stacked wrappers', () => {
 	it('field(optional(symbol)) → symbol with fieldName AND multiplicity:optional', () => {
 		const inner: OptionalRule = { type: OPTIONAL, content: sym('expr') };
 		const wrapped: FieldRule = { type: FIELD, name: 'value', content: inner };
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.fieldName).toBe('value');
 		expect(out.multiplicity).toBe('optional');
@@ -165,7 +165,7 @@ describe('deleteWrapper — stacked wrappers', () => {
 	it('optional(field(symbol)) → symbol with fieldName AND multiplicity:optional', () => {
 		const inner: FieldRule = { type: FIELD, name: 'value', content: sym('expr') };
 		const wrapped: OptionalRule = { type: OPTIONAL, content: inner };
-		const out = deleteWrapper(wrapped);
+		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.fieldName).toBe('value');
 		expect(out.multiplicity).toBe('optional');
@@ -176,26 +176,26 @@ describe('deleteWrapper — stacked wrappers', () => {
 // Idempotence
 // ---------------------------------------------------------------------------
 
-describe('deleteWrapper — idempotence', () => {
+describe('flatten — idempotence', () => {
 	it('applying twice yields same result as applying once', () => {
 		const wrapped: OptionalRule = { type: OPTIONAL, content: sym('expression') };
-		const once = deleteWrapper(wrapped);
-		const twice = deleteWrapper(once as Rule);
+		const once = flatten(wrapped);
+		const twice = flatten(once as Rule);
 		expect(twice).toEqual(once);
 	});
 });
 
 // ---------------------------------------------------------------------------
-// applyWrapperDeletion — map form
+// flattenRules — map form
 // ---------------------------------------------------------------------------
 
-describe('applyWrapperDeletion — map form', () => {
+describe('flattenRules — map form', () => {
 	it('transforms every rule in the map', () => {
 		const rules: Record<string, Rule<'link'>> = {
 			foo: { type: OPTIONAL, content: sym('bar') } as OptionalRule,
 			baz: sym('qux')
 		};
-		const result = applyWrapperDeletion(rules);
+		const result = flattenRules(rules);
 		expect(result['foo']!.type).toBe('SYMBOL');
 		expect(result['foo']!.multiplicity).toBe('optional');
 		expect(result['baz']!.type).toBe('SYMBOL');
@@ -204,7 +204,7 @@ describe('applyWrapperDeletion — map form', () => {
 });
 
 // ---------------------------------------------------------------------------
-// deleteWrapper — separator sub-rule recursion (PR-S task 4)
+// flatten — separator sub-rule recursion
 // ---------------------------------------------------------------------------
 
 describe('separator sub-rules get the same push-down as ordinary content', () => {
@@ -222,7 +222,7 @@ describe('separator sub-rules get the same push-down as ordinary content', () =>
 				}
 			}
 		} as unknown as Rule<'link'>;
-		const out = deleteWrapper(rule) as unknown as {
+		const out = flatten(rule) as unknown as {
 			separator: { value: { members: { fieldName?: string; type: string }[] } };
 		};
 		expect(out.separator.value.members[0]!.fieldName).toBe('sep_kind');

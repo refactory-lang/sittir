@@ -24,7 +24,7 @@ import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './type
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
 import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
-import { applyWrapperDeletion } from './wrapper-deletion.ts';
+import { flattenRules } from './flatten.ts';
 import { withAttrsFrom } from '../dsl/rule-attrs.ts';
 import { separatorFactsEqual } from '../dsl/rule-patterns.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
@@ -253,7 +253,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	resetSlotGroupingDiagnostics();
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
 	const rules = applyNormalizationPasses(linked.rules, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
-	const normalizedRules = applyWrapperDeletion(rules);
+	const normalizedRules = flattenRules(rules);
 	for (let pass = 0; pass < 8; pass++) {
 		const keepRef = computeKeepRef(normalizedRules);
 		const changed = inlineHiddenSeqRefs(normalizedRules, ctx, keepRef);
@@ -304,7 +304,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			ctx,
 			preserveKinds.size > 0 ? preserveKinds : undefined
 		);
-		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
+		const aliasBodiesRender = flattenRules(aliasBodiesNormalized);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
 			rules: aliasBodiesRender,
@@ -373,9 +373,7 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 				...choice,
 				type: CHOICE,
 				members: branches,
-				...(rule.id !== undefined ? { id: rule.id } : {}),
-				...(rule.tokenized !== undefined ? { tokenized: rule.tokenized } : {}),
-				...(rule.immediate !== undefined ? { immediate: rule.immediate } : {})
+				...(rule.id !== undefined ? { id: rule.id } : {})
 			};
 		}
 		case CHOICE: {

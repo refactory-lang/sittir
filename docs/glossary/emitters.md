@@ -6039,7 +6039,7 @@ Surface`
  * fallback chain in `emitListSlot` just as effectively as a real value).
  * `isNonterminalRuleType` is typed over `Rule<'evaluate'>` but classifies
  * purely by `.type` + child shape — phase-agnostic in practice, same cast
- * pattern used throughout PR-S (e.g. wrapper-deletion.ts's OPTIONAL case).
+ * pattern used throughout PR-S (e.g. flatten.ts's OPTIONAL case).
  */
 ```
 
@@ -6222,7 +6222,7 @@ Surface`
 /**
  * Fallback slot emission keyed on a field name + the leaf `rule.multiplicity`,
  * for a field-wrapped rule that has NO registered back-pointer slot (rare —
- * e.g. a deleteWrapper-stamped fieldName whose rule id / fieldName didn't
+ * e.g. a flatten-stamped fieldName whose rule id / fieldName didn't
  * resolve in `lookupSlot`). Prefer `emitSlotReference` whenever a slot exists.
  */
 ```
@@ -6273,7 +6273,7 @@ Surface`
 //
 // Chunk D2: a link-symbol renders its literal verbatim ONLY when it has no
 // `fieldName`. A field-wrapped link-operator literal (stamped by
-// deleteWrapper from a surrounding field() wrapper, e.g.
+// flatten from a surrounding field() wrapper, e.g.
 // `field('operator', symbol(name='amp_amp', literal='&&'))`)
 // is a SLOT — it must fall through to the standard slot path below so the
 // renderer substitutes the actual operator from the parse tree (the now-
@@ -6373,7 +6373,7 @@ Surface`
 // Hidden helper refs INLINE, mirroring tree-sitter's parse-time flattening of
 // `_`-rules. Provenance-free — keyed only on the structural `_` fact, NOT on
 // `source:'group-lift'`. The assembled `renderRule` is the inline source for
-// EVERY hidden ref (verified: emitRule(renderRule) === emitRule(deleteWrapper(raw))
+// EVERY hidden ref (verified: emitRule(renderRule) === emitRule(flatten(raw))
 // for every hidden ref — the raw-rule path below is now only a fallback for the
 // rare hidden-without-renderRule case). Cycle guard via visitingHelpers.
 ```
@@ -6443,7 +6443,7 @@ Surface`
 // inlining, matching the walker's `seen.has('@'+name)` short-circuit.
 //
 // ctx.rules is the normalizedRules view (PR-137) — already RenderRule,
-// no deleteWrapper bridge needed. This is a fallback for the rare
+// no flatten bridge needed. This is a fallback for the rare
 // hidden-without-renderRule case (the primary path above handles every
 // branch/group target); reached e.g. for hidden `pattern`/`multi`
 // modelType targets that never got an AssembledBranch/Group `renderRule`.
@@ -6509,7 +6509,7 @@ Surface`
 
 ```text
 // Transparent wrappers — recurse. FIELD/TOKEN/ALIAS are WrapperPhase-only
-// (types/rule.ts) and never survive into RenderRule — applyWrapperDeletion
+// (types/rule.ts) and never survive into RenderRule — flattenRules
 // has already pushed their facts (fieldName / aliasedFrom+aliasNamed) onto
 // leaf attributes or unwrapped them to content, so those cases are
 // unreachable here and are not switch arms.
@@ -6642,7 +6642,7 @@ Surface`
 ```text
 // Skip slots where every referenced kind already appears in the body
 // under its own name. This handles the `isSyntheticFieldWrapper` case:
-// when deleteWrapper on `field('constraint', optional(seq('extends',
+// when flatten on `field('constraint', optional(seq('extends',
 // field('type', _type))))` produces a slot named 'constraint' with a
 // single node-ref value of kind 'type', but the body correctly emits
 // `{% if type | isPresent %}...{{ type }}...` — the inner 'type' field
@@ -9262,7 +9262,7 @@ Surface`
 	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
 	 * `linkRules` — `emitSymbol`'s hidden-helper fallback (the only
 	 * consumer) used to bridge `linkRules[name]` through a per-call
-	 * `deleteWrapper()`; verified byte-identical to reading
+	 * `flatten()`; verified byte-identical to reading
 	 * `normalizedRules[name]` directly for every hidden ref the fallback
 	 * actually reaches, across all 3 grammars, so the bridge is gone.
 	 */
@@ -11747,7 +11747,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// If a string literal carries `fieldName` (stamped by deleteWrapper
+// If a string literal carries `fieldName` (stamped by flatten
 // when peeling a field() wrapper), emit it as a slot reference rather
 // than the literal value. This makes
 // `field('operator', string('&&'))` emit `{{ operator }}` instead of
@@ -11755,8 +11755,8 @@ pipeline — which falls back to string equality.
 //
 // The original code also required `nonterminal: true`, but that
 // attribute is only stamped by the DSL enrich pass (dsl/enrich.ts)
-// and is NOT propagated by deleteWrapper at emitter time. Since
-// `fieldName` on a string can only come from deleteWrapper peeling a
+// and is NOT propagated by flatten at emitter time. Since
+// `fieldName` on a string can only come from flatten peeling a
 // `field()` wrapper, the `nonterminal` check is redundant and
 // incorrect — the presence of `fieldName` is sufficient.
 ```
@@ -11766,7 +11766,7 @@ pipeline — which falls back to string equality.
 ```text
 // An optional anonymous separator literal (e.g. the trailing
 // `optional(',')` in a comma-list, stamped `multiplicity:'optional'`
-// by deleteWrapper) has no slot to gate on. Canonical render omits
+// by flatten) has no slot to gate on. Canonical render omits
 // it — emitting it unconditionally produces a spurious trailing
 // token (`f(a,b,)` instead of `f(a,b)`).
 ```
@@ -11914,13 +11914,13 @@ pipeline — which falls back to string equality.
 // phase-visibility-tightening: TOKEN and ALIAS cases deleted — both
 // collapse to `never` under RenderRule (WrapperPhase-only,
 // types/rule.ts). ALIAS is genuinely eliminated by
-// `applyWrapperDeletion` (pushes aliasedFrom/aliasNamed onto a leaf
+// `flattenRules` (pushes aliasedFrom/aliasNamed onto a leaf
 // attribute, returns content). TOKEN is NOT mechanically eliminated —
 // wrapper-deletion's TOKEN case PRESERVES the node (`{...rule,
-// content}`, wrapper-deletion.ts) — so the TokenRule→never assertion
+// content}`, flatten.ts) — so the TokenRule→never assertion
 // is type-level + EMPIRICAL, not a code guarantee: 0 TOKEN hits
 // walking every AssembledNode.renderRule and every
-// deleteWrapper(linkRules[name]) hidden-helper target across all 3
+// flatten(linkRules[name]) hidden-helper target across all 3
 // grammars. If a top-level token(...) rule ever survives into
 // normalizedRules, the type lies — tracked with the preserve-token-
 // wrappers debt. Post-normalize aliasing is fully represented via the
@@ -12090,7 +12090,7 @@ pipeline — which falls back to string equality.
 ```text
 // Every choice that surfaces as data is a registered slot — there is no
 // "positional choice" anymore (kind-named slots). Look the slot up by the
-// choice's rule id (the deleteWrapper-stamped `fieldName` case resolves via
+// choice's rule id (the flatten-stamped `fieldName` case resolves via
 // lookupSlot's fieldName→storageName fallback) and emit it FROM THE SLOT
 // through the shared `emitSlotReference` (feedback_ruleid_backpointer) — no
 // first-arm-pick (which dropped the other arms + the separator), no
@@ -12158,7 +12158,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// No back-pointer slot but a deleteWrapper-stamped fieldName (a `field()`
+// No back-pointer slot but a flatten-stamped fieldName (a `field()`
 // around a choice whose members carry no fieldName): emit by the field
 // name directly.
 ```

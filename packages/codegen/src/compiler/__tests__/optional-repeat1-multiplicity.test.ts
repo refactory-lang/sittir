@@ -1,17 +1,17 @@
 import { OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveSlots, isNonEmpty, isMultiple } from '../model/node-map.ts';
-import { deleteWrapper } from '../wrapper-deletion.ts';
+import { flatten } from '../flatten.ts';
 import type { Rule } from '../../types/rule.ts';
 
 // Helper — children-equivalent view over deriveSlots: kind-derived
 // positional (unnamed) slots. This regression test predates the Phase
 // 1d.iv unification and was scoped to the children walker; the same
 // expectations hold over the unified slots view.
-// Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
+// Pre-process raw rules through flatten so deriveSlotsRaw receives
 // canonical (wrapper-free) input.
 function deriveChildren(rule: Rule<'link'>) {
-	return deriveSlots(deleteWrapper(rule)).filter((s) => s.isUnnamed);
+	return deriveSlots(flatten(rule)).filter((s) => s.isUnnamed);
 }
 
 /**

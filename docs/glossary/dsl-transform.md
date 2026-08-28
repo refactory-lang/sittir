@@ -1122,7 +1122,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * Relabel every enrich-shaped fielded arm to the override's chosen name so
  * every arm converges on ONE field — matching sittir's own IR-side
- * precedence (`wrapper-deletion.ts` stamps the OUTER field name) instead of
+ * precedence (`flatten.ts` stamps the OUTER field name) instead of
  * diverging from it. A no-op for choices whose arms are all bare (pure
  * kindEnum literal choices already get the outer name correctly with no
  * help needed here) — this only fires when relabeling is actually required.

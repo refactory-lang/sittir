@@ -52,7 +52,7 @@ import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
-import { deleteWrapper } from '../wrapper-deletion.ts';
+import { flatten } from '../flatten.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
@@ -556,7 +556,7 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 }
 
 function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNonterminal[] {
-	const canonical = deleteWrapper(rule) as Rule<'link'>;
+	const canonical = flatten(rule) as Rule<'link'>;
 	const prevAuditKind = currentAuditKind;
 	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
 	try {
@@ -1739,20 +1739,20 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 	}
 }
 
-export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends AssembledNodeBase<R> {
+export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
 	get immediate(): boolean {
-		return (this.rule as { immediate?: boolean }).immediate === true;
+		return 'immediate' in this.rule && this.rule.immediate === true;
 	}
 
 	get tokenized(): boolean {
-		return (this.rule as { tokenized?: boolean }).tokenized === true;
+		return 'tokenized' in this.rule && this.rule.tokenized === true;
 	}
 }
 
-export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
+export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	readonly modelType = 'pattern' as const;
 
-	constructor(kind: string, rule: Rule<'link'>, opts?: { factoryName?: string; irKey?: string }) {
+	constructor(kind: string, rule: RenderRule, opts?: { factoryName?: string; irKey?: string }) {
 		super(kind, rule, opts);
 	}
 
@@ -1772,13 +1772,12 @@ interface FixedLiteralCtx {
 }
 
 function collectFixedLiteral(
-	rule: Rule<'link'>,
+	rule: RenderRule,
 	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
 ): string | undefined {
-	const attrs = rule as { multiplicity?: Multiplicity; nonterminal?: boolean; tokenized?: boolean };
-	if (attrs.nonterminal || attrs.multiplicity === 'array' || attrs.multiplicity === 'nonEmptyArray') return undefined;
-	if (attrs.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
-	const ctx = attrs.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
+	if (rule.nonterminal || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') return undefined;
+	if (rule.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
+	const ctx = rule.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
 	switch (rule.type) {
 		case STRING:
 			return rule.value || undefined;
@@ -1818,14 +1817,14 @@ function collectFixedLiteral(
 	}
 }
 
-export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
+export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
 	constructor(
 		kind: string,
-		rule: StringRule<'link'>,
+		rule: StringRule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -1864,12 +1863,12 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 	}
 }
 
-export class AssembledToken extends AssembledLeaf<StringRule<'link'>> {
+export class AssembledToken extends AssembledLeaf<StringRule> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
-	constructor(kind: string, rule: StringRule<'link'>, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
+	constructor(kind: string, rule: StringRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
 		super(kind, rule, { hidden: true });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
@@ -2226,7 +2225,7 @@ interface LeftmostWalkCtx {
 
 function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: LeftmostWalkCtx): boolean {
 	if (!rule) return false;
-	if (rule.immediate === true) return true;
+	if (rule.type === TOKEN && rule.immediate) return true;
 	switch (rule.type) {
 		case 'SEQ':
 			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);

@@ -28,7 +28,7 @@ import {
 	SimplifyCtx,
 	makeNormalizedGrammar
 } from '../simplify.ts';
-import { applyWrapperDeletion } from '../wrapper-deletion.ts';
+import { flattenRules } from '../flatten.ts';
 import type { Rule } from '../../types/rule.ts';
 
 afterEach(() => {
@@ -124,7 +124,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			_expression: { type: 'SYMBOL', name: '_expression' } as Rule
 		};
 
-		const normalizedRules = applyWrapperDeletion(inputRules);
+		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -174,7 +174,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
-		const normalizedRules = applyWrapperDeletion(inputRules);
+		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -218,7 +218,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			some_kind: { type: 'SYMBOL', name: 'some_kind' } as Rule
 		};
 
-		const normalizedRules = applyWrapperDeletion(inputRules);
+		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -272,7 +272,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
-		const normalizedRules = applyWrapperDeletion(inputRules);
+		const normalizedRules = flattenRules(inputRules);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
 		const simplified = computeSimplifiedRules(
