@@ -11,7 +11,7 @@
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
-import { separatorFactsEqual } from './list-patterns.ts';
+import { separatorFactsEqual } from './rule-patterns.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	// `original` may be a wrapper-bearing (evaluate/link) rule where these

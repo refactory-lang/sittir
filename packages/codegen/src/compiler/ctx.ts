@@ -32,7 +32,7 @@
 import type { PhaseName } from '../types/rule.ts';
 import type { Grammar, PhaseRuleOf } from './types.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
-import type { RuleBuilder } from '../dsl/rule-transforms.ts';
+import type { RuleBuilder } from '../dsl/builders.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 
 export interface BaseCtxInit<P extends PhaseName> {

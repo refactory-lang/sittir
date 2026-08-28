@@ -68,7 +68,13 @@ describe('slot structural signals', () => {
 		expect(slot?.parseNames).toEqual(['object_type']);
 	});
 
-	it('behavior-facing emitters honor isUnnamed', () => {
+	it('resolves the sole slot for the direct surface whether or not it is named', () => {
+		// The surface a kind gets is decided by its slot's ARITY, never by
+		// whether the slot carries a field name — the model names every slot,
+		// falling back to `content` when the grammar gave none. An unnamed
+		// sole slot therefore reaches the same direct-value factory a named
+		// one does, and `isUnnamed` survives as a wire fact rather than a
+		// surface one.
 		const nodeMap = buildNodeMap({
 			box: seq({ type: 'SYMBOL', name: 'identifier' }),
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
@@ -76,10 +82,10 @@ describe('slot structural signals', () => {
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
-		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBeUndefined();
+		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBe(slot);
 	});
 
-	it('shared factory classifiers key unnamed-child direct surfaces off isUnnamed', () => {
+	it('classifies the child surface from arity, for an unnamed sole slot too', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({ type: 'SYMBOL', name: 'identifier' }),
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }

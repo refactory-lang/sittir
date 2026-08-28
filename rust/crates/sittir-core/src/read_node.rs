@@ -68,11 +68,34 @@ pub fn read_node(
     tree: &tree_sitter::Tree,
     source: &str,
     target: Option<tree_sitter::Node>,
-    node_handle: Option<u32>,
+    node_handle: Option<u64>,
     depth: ReadDepth,
 ) -> NodeData {
-    let node = target.unwrap_or_else(|| tree.root_node());
-    read_ts_node(node, source, node_handle, depth)
+    match target {
+        Some(node) => read_ts_node(node, source, node_handle, depth),
+        None => {
+            let mut root = read_ts_node(tree.root_node(), source, node_handle, depth);
+            widen_to_whole_source(&mut root, source);
+            root
+        }
+    }
+}
+
+/// Stretch the root's span and captured text to cover the entire source.
+///
+/// tree-sitter's root node starts at the first token, so a leading blank line
+/// or indentation falls outside its byte range — and for a source with no
+/// tokens at all the range collapses to the end of the file. The root stands
+/// for the whole file, and its captured text is what the untouched-subtree
+/// render replays verbatim, so anything outside that range would be dropped on
+/// the way back out. Trailing extras are already inside the root's range;
+/// only the leading side (and the token-less case) needs widening.
+fn widen_to_whole_source(root: &mut NodeData, source: &str) {
+    root.span = Some(Span {
+        start: 0,
+        end: source.len() as u32,
+    });
+    root.text = Some(source.to_string());
 }
 
 /// The `$type` every read stamps: tree-sitter's pre-alias GRAMMAR symbol —
@@ -91,7 +114,7 @@ fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
 fn read_ts_node(
     node: tree_sitter::Node<'_>,
     source: &str,
-    node_handle: Option<u32>,
+    node_handle: Option<u64>,
     depth: ReadDepth,
 ) -> NodeData {
     // Phase B-inverse: numeric ids directly instead of the string kind()
@@ -244,7 +267,7 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
 fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
-    node_handle: Option<u32>,
+    node_handle: Option<u64>,
     depth: ReadDepth,
 ) -> (
     Option<IndexMap<String, FieldValue>>,
@@ -330,7 +353,7 @@ fn read_children(
 fn read_child_stub(
     child: tree_sitter::Node<'_>,
     source: &str,
-    parent_handle: Option<u32>,
+    parent_handle: Option<u64>,
     child_index: u16,
 ) -> NodeData {
     let byte_range = child.byte_range();

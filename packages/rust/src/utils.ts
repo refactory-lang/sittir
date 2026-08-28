@@ -3,7 +3,6 @@
 
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
 import type { BlockComment, LineComment, NamespaceMap } from './types.js';
-import { kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -43,10 +42,12 @@ export const methodsEngine = {
 	}
 } satisfies WithMethodsEngine;
 
-export function withMethods<T extends object>(
-	node: T,
-	engine: typeof methodsEngine
-): T & {
+/** The methods every node carries. Named, and self-referential through
+ *  the polymorphic `this`, because `$trivia` rebuilds the node and hands
+ *  back the same kind. A type alias cannot name itself, so the earlier
+ *  declaration fell back to `AnyNodeData` and lost the type at every
+ *  `$trivia` call site. */
+export interface NodeMethodsOf {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
@@ -56,26 +57,17 @@ export function withMethods<T extends object>(
 			| LineComment
 			| { leading?: (BlockComment | LineComment)[]; trailing?: (BlockComment | LineComment)[] }
 		)[]
-	): AnyNodeData;
-} {
+	): this;
+}
+
+export function withMethods<T extends object>(node: T, engine: typeof methodsEngine): T & NodeMethodsOf {
 	// Grammar-local facade: T extends object to accept wrap.ts union-spread literals.
 	// Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.
-	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & {
-		$render(): string;
-		$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
-		$replace(target: { range(): ByteRange }): Edit;
-		$trivia(
-			...args: (
-				| BlockComment
-				| LineComment
-				| { leading?: (BlockComment | LineComment)[]; trailing?: (BlockComment | LineComment)[] }
-			)[]
-		): AnyNodeData;
-	};
+	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(v: unknown, kind: K): v is NamespaceMap[K]['Node'] {
-	return isNodeData(v) && v.$type === kindIdFromName(kind);
+	return isNodeData(v) && v.$type === kind;
 }
 
 export function hasKindOf<K extends keyof NamespaceMap>(

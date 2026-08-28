@@ -76,7 +76,7 @@ describe('Link — reference resolution', () => {
 		expect(linked.rules['statement']).toBeDefined();
 	});
 
-	it('produces a LinkedGrammar with no alias or token nodes', () => {
+	it('produces a LinkedGrammar with no alias nodes (token wrappers survive to normalize)', () => {
 		const raw = makeRaw({
 			root: {
 				type: SEQ,
@@ -95,8 +95,7 @@ describe('Link — reference resolution', () => {
 		function assertNoRefTypes(rule: Rule<'link'>): void {
 			if ('type' in rule) {
 				expect(rule.type).not.toBe('ALIAS');
-				expect(rule.type).not.toBe('TOKEN');
-				// NOTE: `repeat1` is intentionally preserved through
+				// NOTE: `token` and `repeat1` are intentionally preserved through
 				// Link so the downstream field / child derivation can
 				// stamp `nonEmpty: true` on the resulting slot and the
 				// types emitter can render a non-empty tuple type.
@@ -124,7 +123,7 @@ describe('Link — reference resolution', () => {
 		expect(rule!.type).toBe('REPEAT1');
 	});
 
-	it('flattens token to its content, pushing the lexical facts down as attrs', () => {
+	it('keeps a token wrapper structurally — link does not restructure the tree', () => {
 		const raw = makeRaw({
 			comment: {
 				type: TOKEN,
@@ -133,12 +132,11 @@ describe('Link — reference resolution', () => {
 			}
 		});
 		const linked = link(raw);
-		// The wrapper dies here — `tokenized` (and `immediate`, when declared)
-		// must survive as rule attrs or the fact is unrecoverable downstream.
-		expect(linked.rules['comment']).toEqual({ type: 'STRING', value: '//', tokenized: true });
+		// The wrapper is consumed by normalize's `token` builder, not here.
+		expect(linked.rules['comment']).toEqual({ type: TOKEN, content: { type: STRING, value: '//' }, immediate: false });
 	});
 
-	it('pushes immediate=true down when flattening token.immediate', () => {
+	it('keeps a token.immediate wrapper structurally, immediacy on the wrapper', () => {
 		const raw = makeRaw({
 			esc: {
 				type: TOKEN,
@@ -147,7 +145,7 @@ describe('Link — reference resolution', () => {
 			}
 		});
 		const linked = link(raw);
-		expect(linked.rules['esc']).toEqual({ type: 'STRING', value: '\\n', tokenized: true, immediate: true });
+		expect(linked.rules['esc']).toEqual({ type: TOKEN, content: { type: STRING, value: '\\n' }, immediate: true });
 	});
 });
 

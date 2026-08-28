@@ -2989,6 +2989,9 @@ export interface NamespaceExport {
 export interface ExportClause {
 	readonly $type: TSKindId.ExportClause;
 	readonly _export_specifiers?: ExportSpecifiers;
+	readonly __looseHints__?: {
+		readonly export_specifiers?: readonly ExportSpecifier[];
+	};
 	exportSpecifiers(): ExportSpecifiers | undefined;
 }
 
@@ -3030,6 +3033,9 @@ export interface ImportClause {
 export interface FromClause {
 	readonly $type: TSKindId.FromClause;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	source(): String;
 }
 
@@ -3042,6 +3048,9 @@ export interface NamespaceImport {
 export interface NamedImports {
 	readonly $type: TSKindId.NamedImports;
 	readonly _import_specifiers?: ImportSpecifiers;
+	readonly __looseHints__?: {
+		readonly import_specifiers?: readonly ImportSpecifier[];
+	};
 	importSpecifiers(): ImportSpecifiers | undefined;
 }
 
@@ -3062,6 +3071,9 @@ export interface ImportAttribute {
 	readonly _object: Object;
 	readonly __inputHints__?: {
 		readonly attribute_kind: KindEnum<'with' | 'assert', TSKindId.With | TSKindId.Assert>;
+	};
+	readonly __looseHints__?: {
+		readonly object: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 	};
 	attributeKind(): number;
 	object(): Object;
@@ -3131,6 +3143,16 @@ export interface IfStatement {
 	readonly _condition: ParenthesizedExpression;
 	readonly _consequence: Statement;
 	readonly _alternative?: ElseClause;
+	readonly __looseHints__?: {
+		readonly condition: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+		readonly alternative?: readonly Statement[];
+	};
 	condition(): ParenthesizedExpression;
 	consequence(): Statement;
 	alternative(): ElseClause | undefined;
@@ -3140,6 +3162,16 @@ export interface SwitchStatement {
 	readonly $type: TSKindId.SwitchStatement;
 	readonly _value: ParenthesizedExpression;
 	readonly _body: SwitchBody;
+	readonly __looseHints__?: {
+		readonly value: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+		readonly body: readonly (SwitchCase | SwitchDefault)[];
+	};
 	value(): ParenthesizedExpression;
 	body(): SwitchBody;
 }
@@ -3191,6 +3223,15 @@ export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: ParenthesizedExpression;
 	readonly _body: Statement;
+	readonly __looseHints__?: {
+		readonly condition: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+	};
 	condition(): ParenthesizedExpression;
 	body(): Statement;
 }
@@ -3203,6 +3244,15 @@ export interface DoStatement {
 	readonly __inputHints__?: {
 		readonly semicolon?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __looseHints__?: {
+		readonly condition: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+	};
 	body(): Statement;
 	condition(): ParenthesizedExpression;
 	semicolon(): number | undefined;
@@ -3213,6 +3263,9 @@ export interface TryStatement {
 	readonly _body: StatementBlock;
 	readonly _handler?: CatchClause;
 	readonly _finalizer?: FinallyClause;
+	readonly __looseHints__?: {
+		readonly finalizer?: readonly Statement[];
+	};
 	body(): StatementBlock;
 	handler(): CatchClause | undefined;
 	finalizer(): FinallyClause | undefined;
@@ -3222,6 +3275,15 @@ export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _object: ParenthesizedExpression;
 	readonly _body: Statement;
+	readonly __looseHints__?: {
+		readonly object: readonly (
+			| ParenthesizedExpressionTyped
+			| SequenceExpression
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+		)[];
+	};
 	object(): ParenthesizedExpression;
 	body(): Statement;
 }
@@ -3468,6 +3530,11 @@ export interface Class {
 	readonly _type_parameters?: TypeParameters;
 	readonly _class_heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
+	};
 	decorators(): readonly Decorator[];
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -3485,6 +3552,11 @@ export interface ClassDeclaration {
 	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
 		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
+	};
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
@@ -3513,6 +3585,8 @@ export interface FunctionExpression {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -3537,6 +3611,8 @@ export interface FunctionDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -3560,6 +3636,8 @@ export interface GeneratorFunction {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -3584,6 +3662,8 @@ export interface GeneratorFunctionDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -3615,6 +3695,10 @@ export interface _CallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -3631,6 +3715,10 @@ export interface NewExpression {
 	readonly _constructor: PrimaryExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments?: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+		readonly arguments?: readonly (Expression | SpreadElement)[];
+	};
 	constructor_(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments | undefined;
@@ -3884,6 +3972,10 @@ export interface DecoratorCallExpression {
 	readonly _function: Identifier | DecoratorMemberExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): Identifier | DecoratorMemberExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -3916,6 +4008,9 @@ export interface FieldDefinition {
 export interface FormalParameters {
 	readonly $type: TSKindId.FormalParameters;
 	readonly _formal_parameters_elements?: FormalParametersElements;
+	readonly __looseHints__?: {
+		readonly formal_parameters_elements?: readonly FormalParameter[];
+	};
 	formalParametersElements(): FormalParametersElements | undefined;
 }
 
@@ -3967,6 +4062,8 @@ export interface MethodDefinition {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -4037,6 +4134,7 @@ export interface PublicFieldDefinition {
 		readonly readonly_marker?: 'readonly' | 'readonly';
 		readonly abstract_marker?: 'abstract' | 'abstract';
 		readonly override_modifier?: OverrideModifier | 'override';
+		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	declareMarker(): boolean | undefined;
@@ -4094,6 +4192,8 @@ export interface MethodSignature {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -4129,6 +4229,8 @@ export interface AbstractMethodSignature {
 	};
 	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	accessibilityModifier(): number | undefined;
 	overrideModifier(): boolean | undefined;
@@ -4157,6 +4259,8 @@ export interface FunctionSignature {
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4176,6 +4280,9 @@ export interface TypeAssertion {
 	readonly $type: TSKindId.TypeAssertion;
 	readonly _type_arguments: TypeArguments;
 	readonly _expression: Expression;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	typeArguments(): TypeArguments;
 	expression(): Expression;
 }
@@ -4200,6 +4307,9 @@ export interface InstantiationExpression {
 	readonly $type: TSKindId.InstantiationExpression;
 	readonly _expression: Expression;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	expression(): Expression;
 	typeArguments(): TypeArguments;
 }
@@ -4208,6 +4318,9 @@ export interface ImportRequireClause {
 	readonly $type: TSKindId.ImportRequireClause;
 	readonly _identifier: Identifier;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	identifier(): Identifier;
 	source(): String;
 }
@@ -4222,6 +4335,9 @@ export interface ExtendsClauseSingle {
 	readonly $type: TSKindId.ExtendsClauseSingle;
 	readonly _value: Expression;
 	readonly _type_arguments?: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	value(): Expression;
 	typeArguments(): TypeArguments | undefined;
 }
@@ -4245,6 +4361,11 @@ export interface AbstractClassDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _class_heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
+	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4303,6 +4424,10 @@ export interface InterfaceDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _extends_type_clause?: ExtendsTypeClause;
 	readonly _body: ObjectType;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly extends_type_clause?: readonly (Identifier | NestedTypeIdentifier | GenericType)[];
+	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	extendsTypeClause(): ExtendsTypeClause | undefined;
@@ -4325,6 +4450,7 @@ export interface EnumDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly const_marker?: 'const' | 'const';
+		readonly body: readonly (EnumAssignment | PropertyName)[];
 	};
 	constMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4334,6 +4460,9 @@ export interface EnumDeclaration {
 export interface EnumBody {
 	readonly $type: TSKindId.EnumBody;
 	readonly _enum_body_elements?: EnumBodyElements;
+	readonly __looseHints__?: {
+		readonly enum_body_elements?: readonly (EnumAssignment | PropertyName)[];
+	};
 	enumBodyElements(): EnumBodyElements | undefined;
 }
 
@@ -4353,6 +4482,9 @@ export interface TypeAliasDeclaration {
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4380,6 +4512,7 @@ export interface RequiredParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
+		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -4410,6 +4543,7 @@ export interface OptionalParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
+		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -4482,6 +4616,9 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 	readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 	readonly _function: Import | TypeQueryMemberExpressionInTypeAnnotation;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): Import | TypeQueryMemberExpressionInTypeAnnotation;
 	arguments(): Arguments;
 }
@@ -4496,7 +4633,7 @@ export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
 	readonly _asserts: Asserts;
 	readonly __looseHints__?: {
-		readonly asserts: Asserts | 'this';
+		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | This)[];
 	};
 	asserts(): Asserts;
 }
@@ -4505,6 +4642,9 @@ export interface TupleParameter {
 	readonly $type: TSKindId.TupleParameter;
 	readonly _name: Identifier | RestPattern;
 	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
 	name(): Identifier | RestPattern;
 	type(): TypeAnnotation;
 }
@@ -4513,6 +4653,9 @@ export interface OptionalTupleParameter {
 	readonly $type: TSKindId.OptionalTupleParameter;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
 	name(): Identifier;
 	type(): TypeAnnotation;
 }
@@ -4540,6 +4683,8 @@ export interface ConstructorType {
 	};
 	readonly __looseHints__?: {
 		readonly abstract_marker?: 'abstract' | 'abstract';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -4583,6 +4728,9 @@ export interface GenericType {
 	readonly $type: TSKindId.GenericType;
 	readonly _name: Identifier | NestedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	name(): Identifier | NestedTypeIdentifier;
 	typeArguments(): TypeArguments;
 }
@@ -4636,6 +4784,9 @@ export interface TypeQueryCallExpression {
 	readonly $type: TSKindId.TypeQueryCallExpression;
 	readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	arguments(): Arguments;
 }
@@ -4644,6 +4795,9 @@ export interface TypeQueryInstantiationExpression {
 	readonly $type: TSKindId.TypeQueryInstantiationExpression;
 	readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _type_arguments: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments: readonly Type[];
+	};
 	function(): Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	typeArguments(): TypeArguments;
 }
@@ -4722,6 +4876,9 @@ export interface ParenthesizedType {
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
 	readonly _types: Types;
+	readonly __looseHints__?: {
+		readonly types: readonly Type[];
+	};
 	types(): Types;
 }
 
@@ -4734,6 +4891,16 @@ export interface ObjectType {
 		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
 		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
 	};
+	readonly __looseHints__?: {
+		readonly members?: readonly (
+			| ExportStatement
+			| PropertySignature
+			| CallSignature
+			| ConstructSignature
+			| IndexSignature
+			| MethodSignature
+		)[];
+	};
 	opening(): number;
 	members(): ObjectTypeContent | undefined;
 	closing(): number;
@@ -4744,6 +4911,10 @@ export interface CallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -4772,6 +4943,7 @@ export interface PropertySignature {
 		readonly static_marker?: 'static' | 'static';
 		readonly override_modifier?: OverrideModifier | 'override';
 		readonly readonly_marker?: 'readonly' | 'readonly';
+		readonly type?: readonly Type[];
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -4785,6 +4957,9 @@ export interface PropertySignature {
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
 	readonly _type_parameters_elements: TypeParametersElements;
+	readonly __looseHints__?: {
+		readonly type_parameters_elements: readonly TypeParameter[];
+	};
 	typeParametersElements(): TypeParametersElements;
 }
 
@@ -4799,6 +4974,7 @@ export interface TypeParameter {
 	};
 	readonly __looseHints__?: {
 		readonly const_marker?: 'const' | 'const';
+		readonly value?: readonly Type[];
 	};
 	constMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4834,6 +5010,9 @@ export interface ConstructSignature {
 	};
 	readonly __looseHints__?: {
 		readonly abstract_marker?: 'abstract' | 'abstract';
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+		readonly type?: readonly Type[];
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -4869,6 +5048,9 @@ export interface ArrayType {
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
 	readonly _tuple_type_members?: TupleTypeMembers;
+	readonly __looseHints__?: {
+		readonly tuple_type_members?: readonly TupleTypeMember[];
+	};
 	tupleTypeMembers(): TupleTypeMembers | undefined;
 }
 
@@ -4899,6 +5081,10 @@ export interface FunctionType {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type: Type | Asserts | TypePredicate;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): Type | Asserts | TypePredicate;
@@ -4927,6 +5113,9 @@ export interface VariableDeclaratorArm1 {
 	readonly _name: Identifier | DestructuringPattern;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
 	name(): Identifier | DestructuringPattern;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -4936,6 +5125,9 @@ export interface VariableDeclaratorArm2 {
 	readonly $type: TSKindId.VariableDeclaratorArm2;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
 	name(): Identifier;
 	type(): TypeAnnotation;
 }
@@ -4995,6 +5187,10 @@ export interface ImportStatementArm {
 	readonly $type: TSKindId.ImportStatementArm;
 	readonly _import_clause: ImportClause;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	importClause(): ImportClause;
 	source(): String;
 }
@@ -5009,6 +5205,9 @@ export interface CatchClauseGroup {
 	readonly $type: TSKindId.CatchClauseGroup;
 	readonly _parameter: Identifier | DestructuringPattern;
 	readonly _type?: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
 	parameter(): Identifier | DestructuringPattern;
 	type(): TypeAnnotation | undefined;
 }
@@ -5025,6 +5224,9 @@ export interface JsxStartOpeningElementArm {
 	readonly $type: '_jsx_start_opening_element_arm';
 	readonly _name: Identifier | NestedIdentifier;
 	readonly _type_arguments?: TypeArguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+	};
 	name(): Identifier | NestedIdentifier;
 	typeArguments(): TypeArguments | undefined;
 }
@@ -5085,6 +5287,10 @@ export interface ArrowFunctionUCallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: readonly FormalParameter[];
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -5094,6 +5300,10 @@ export interface ClassHeritageExtendsClause {
 	readonly $type: TSKindId.ClassHeritageExtendsClause;
 	readonly _extends_clause: ExtendsClause;
 	readonly _implements_clause?: ImplementsClause;
+	readonly __looseHints__?: {
+		readonly extends_clause: readonly ExtendsClauseSingle[];
+		readonly implements_clause?: readonly Type[];
+	};
 	extendsClause(): ExtendsClause;
 	implementsClause(): ImplementsClause | undefined;
 }
@@ -5102,6 +5312,9 @@ export interface ImportClauseDefaultImport {
 	readonly $type: TSKindId.ImportClauseDefaultImport;
 	readonly _import_identifier: ImportIdentifier;
 	readonly _import_clause_group?: ImportClauseGroup;
+	readonly __looseHints__?: {
+		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
+	};
 	importIdentifier(): ImportIdentifier;
 	importClauseGroup(): ImportClauseGroup | undefined;
 }
@@ -5152,6 +5365,9 @@ export interface ExportStatementDefaultDeclArm {
 export interface ExportStatementDefaultStarFrom {
 	readonly $type: TSKindId.ExportStatementDefaultStarFrom;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	source(): String;
 }
 
@@ -5159,6 +5375,10 @@ export interface ExportStatementDefaultNsFrom {
 	readonly $type: TSKindId.ExportStatementDefaultNsFrom;
 	readonly _namespace_export: NamespaceExport;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly namespace_export: readonly ModuleExportName[];
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	namespaceExport(): NamespaceExport;
 	source(): String;
 }
@@ -5167,6 +5387,10 @@ export interface ExportStatementDefaultClauseFrom {
 	readonly $type: TSKindId.ExportStatementDefaultClauseFrom;
 	readonly _export_clause: ExportClause;
 	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly export_clause: readonly ExportSpecifier[];
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
 	exportClause(): ExportClause;
 	source(): String;
 }
@@ -5255,6 +5479,9 @@ export interface ParenthesizedExpressionTyped {
 	readonly $type: TSKindId.ParenthesizedExpressionTyped;
 	readonly _expression: Expression;
 	readonly _type?: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
 	expression(): Expression;
 	type(): TypeAnnotation | undefined;
 }
@@ -5266,6 +5493,10 @@ export interface ExportStatementTypeExport {
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __looseHints__?: {
+		readonly export_clause: readonly ExportSpecifier[];
+		readonly source?: readonly (StringDouble | StringSingle)[];
 	};
 	exportClause(): ExportClause;
 	source(): String | undefined;
@@ -5299,6 +5530,10 @@ export interface CallExpressionCall {
 	readonly _function: Expression | Import;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): Expression | Import;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -5308,6 +5543,9 @@ export interface CallExpressionTemplateCall {
 	readonly $type: TSKindId.CallExpressionTemplateCall;
 	readonly _function: PrimaryExpression | NewExpression;
 	readonly _arguments: TemplateString;
+	readonly __looseHints__?: {
+		readonly arguments: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	};
 	function(): PrimaryExpression | NewExpression;
 	arguments(): TemplateString;
 }
@@ -5317,6 +5555,10 @@ export interface CallExpressionMember {
 	readonly _function: PrimaryExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __looseHints__?: {
+		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
 	function(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -7478,9 +7720,6 @@ export interface ArrayPatternNs extends NodeNs<
 	F$.ArrayPatternBuildArgs,
 	F$.ArrayPatternLooseArgs
 > {}
-export interface JsxElementNs extends NodeNs<JsxElement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface JsxExpressionNs extends NodeNs<JsxExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface JsxOpeningElementNs extends NodeNs<JsxOpeningElement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface NestedIdentifierNs extends NodeNs<
 	NestedIdentifier,
 	LeafScalarMap,
@@ -7490,16 +7729,6 @@ export interface NestedIdentifierNs extends NodeNs<
 	F$.NestedIdentifierBuildArgs,
 	F$.NestedIdentifierLooseArgs
 > {}
-export interface JsxNamespaceNameNs extends NodeNs<JsxNamespaceName, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface JsxClosingElementNs extends NodeNs<JsxClosingElement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface JsxSelfClosingElementNs extends NodeNs<
-	JsxSelfClosingElement,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface JsxAttributeNs extends NodeNs<JsxAttribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface JsxStringNs extends NodeNs<JsxString, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClassNs extends NodeNs<
 	Class,
 	LeafScalarMap,
@@ -7797,7 +8026,6 @@ export interface ClassBodyNs extends NodeNs<
 	F$.ClassBodyBuildArgs,
 	F$.ClassBodyLooseArgs
 > {}
-export interface FieldDefinitionNs extends NodeNs<FieldDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FormalParametersNs extends NodeNs<
 	FormalParameters,
 	LeafScalarMap,
@@ -7869,12 +8097,6 @@ export interface PublicFieldDefinitionNs extends NodeNs<
 	F$.PublicFieldDefinitionBuilt,
 	F$.PublicFieldDefinitionBuildArgs,
 	F$.PublicFieldDefinitionLooseArgs
-> {}
-export interface JsxStartOpeningElementNs extends NodeNs<
-	JsxStartOpeningElement,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
 > {}
 export interface NonNullExpressionNs extends NodeNs<
 	NonNullExpression,
@@ -8578,12 +8800,6 @@ export interface ExportSpecifiersNs extends NodeNs<
 	F$.ExportSpecifiersBuildArgs,
 	F$.ExportSpecifiersLooseArgs
 > {}
-export interface ExportSpecifierOptional1Ns extends NodeNs<
-	ExportSpecifierOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface ImportSpecifiersNs extends NodeNs<
 	ImportSpecifiers,
 	LeafScalarMap,
@@ -8629,13 +8845,6 @@ export interface EnumBodyElementsNs extends NodeNs<
 	F$.EnumBodyElementsBuildArgs,
 	F$.EnumBodyElementsLooseArgs
 > {}
-export interface InferTypeOptional1Ns extends NodeNs<InferTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MappedTypeClauseOptional1Ns extends NodeNs<
-	MappedTypeClauseOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface TypesNs extends NodeNs<
 	Types,
 	LeafScalarMap,
@@ -8653,12 +8862,6 @@ export interface TypeParametersElementsNs extends NodeNs<
 	F$.TypeParametersElementsBuilt,
 	F$.TypeParametersElementsBuildArgs,
 	F$.TypeParametersElementsLooseArgs
-> {}
-export interface IndexSignatureOptional1Ns extends NodeNs<
-	IndexSignatureOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
 > {}
 export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers,
@@ -8704,12 +8907,6 @@ export interface BinaryExpressionArmNs extends NodeNs<
 	F$.BinaryExpressionArmBuilt,
 	F$.BinaryExpressionArmBuildArgs,
 	F$.BinaryExpressionArmLooseArgs
-> {}
-export interface JsxStartOpeningElementArmNs extends NodeNs<
-	JsxStartOpeningElementArm,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
 > {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal,
@@ -9017,242 +9214,220 @@ export interface UpdateExpressionPrefixNs extends NodeNs<
 	F$.UpdateExpressionPrefixBuildArgs,
 	F$.UpdateExpressionPrefixLooseArgs
 > {}
-export interface JsxOpeningElementContentNs extends NodeNs<
-	JsxOpeningElementContent,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 
 export interface NamespaceMap {
-	program: ProgramNs;
-	export_statement: ExportStatementNs;
-	namespace_export: NamespaceExportNs;
-	export_clause: ExportClauseNs;
-	export_specifier: ExportSpecifierNs;
-	import_statement: ImportStatementNs;
-	import_clause: ImportClauseNs;
-	_from_clause: FromClauseNs;
-	namespace_import: NamespaceImportNs;
-	named_imports: NamedImportsNs;
-	import_specifier: ImportSpecifierNs;
-	import_attribute: ImportAttributeNs;
-	expression_statement: ExpressionStatementNs;
-	variable_declaration: VariableDeclarationNs;
-	lexical_declaration: LexicalDeclarationNs;
-	variable_declarator: VariableDeclaratorNs;
-	statement_block: StatementBlockNs;
-	else_clause: ElseClauseNs;
-	if_statement: IfStatementNs;
-	switch_statement: SwitchStatementNs;
-	for_statement: ForStatementNs;
-	for_in_statement: ForInStatementNs;
-	_for_header: ForHeaderNs;
-	while_statement: WhileStatementNs;
-	do_statement: DoStatementNs;
-	try_statement: TryStatementNs;
-	with_statement: WithStatementNs;
-	break_statement: BreakStatementNs;
-	continue_statement: ContinueStatementNs;
-	debugger_statement: DebuggerStatementNs;
-	return_statement: ReturnStatementNs;
-	throw_statement: ThrowStatementNs;
-	labeled_statement: LabeledStatementNs;
-	switch_body: SwitchBodyNs;
-	switch_case: SwitchCaseNs;
-	switch_default: SwitchDefaultNs;
-	catch_clause: CatchClauseNs;
-	finally_clause: FinallyClauseNs;
-	parenthesized_expression: ParenthesizedExpressionNs;
-	yield_expression: YieldExpressionNs;
-	object: ObjectNs;
-	object_pattern: ObjectPatternNs;
-	assignment_pattern: AssignmentPatternNs;
-	object_assignment_pattern: ObjectAssignmentPatternNs;
-	array: ArrayNs;
-	array_pattern: ArrayPatternNs;
-	jsx_element: JsxElementNs;
-	jsx_expression: JsxExpressionNs;
-	jsx_opening_element: JsxOpeningElementNs;
-	nested_identifier: NestedIdentifierNs;
-	jsx_namespace_name: JsxNamespaceNameNs;
-	jsx_closing_element: JsxClosingElementNs;
-	jsx_self_closing_element: JsxSelfClosingElementNs;
-	jsx_attribute: JsxAttributeNs;
-	_jsx_string: JsxStringNs;
-	class: ClassNs;
-	class_declaration: ClassDeclarationNs;
-	class_heritage: ClassHeritageNs;
-	function_expression: FunctionExpressionNs;
-	function_declaration: FunctionDeclarationNs;
-	generator_function: GeneratorFunctionNs;
-	generator_function_declaration: GeneratorFunctionDeclarationNs;
-	arrow_function: ArrowFunctionNs;
-	_call_signature: _CallSignatureNs;
-	call_expression: CallExpressionNs;
-	new_expression: NewExpressionNs;
-	await_expression: AwaitExpressionNs;
-	member_expression: MemberExpressionNs;
-	subscript_expression: SubscriptExpressionNs;
-	assignment_expression: AssignmentExpressionNs;
-	augmented_assignment_expression: AugmentedAssignmentExpressionNs;
-	_initializer: InitializerNs;
-	spread_element: SpreadElementNs;
-	ternary_expression: TernaryExpressionNs;
-	binary_expression: BinaryExpressionNs;
-	unary_expression: UnaryExpressionNs;
-	update_expression: UpdateExpressionNs;
-	sequence_expression: SequenceExpressionNs;
-	string: StringNs;
-	template_string: TemplateStringNs;
-	template_substitution: TemplateSubstitutionNs;
-	regex: RegexNs;
-	meta_property: MetaPropertyNs;
-	arguments: ArgumentsNs;
-	decorator: DecoratorNs;
-	decorator_member_expression: DecoratorMemberExpressionNs;
-	decorator_call_expression: DecoratorCallExpressionNs;
-	class_body: ClassBodyNs;
-	field_definition: FieldDefinitionNs;
-	formal_parameters: FormalParametersNs;
-	class_static_block: ClassStaticBlockNs;
-	rest_pattern: RestPatternNs;
-	method_definition: MethodDefinitionNs;
-	pair: PairNs;
-	pair_pattern: PairPatternNs;
-	computed_property_name: ComputedPropertyNameNs;
-	public_field_definition: PublicFieldDefinitionNs;
-	_jsx_start_opening_element: JsxStartOpeningElementNs;
-	non_null_expression: NonNullExpressionNs;
-	method_signature: MethodSignatureNs;
-	abstract_method_signature: AbstractMethodSignatureNs;
-	function_signature: FunctionSignatureNs;
-	decorator_parenthesized_expression: DecoratorParenthesizedExpressionNs;
-	type_assertion: TypeAssertionNs;
-	as_expression: AsExpressionNs;
-	satisfies_expression: SatisfiesExpressionNs;
-	instantiation_expression: InstantiationExpressionNs;
-	import_require_clause: ImportRequireClauseNs;
-	extends_clause: ExtendsClauseNs;
-	_extends_clause_single: ExtendsClauseSingleNs;
-	implements_clause: ImplementsClauseNs;
-	ambient_declaration: AmbientDeclarationNs;
-	abstract_class_declaration: AbstractClassDeclarationNs;
-	module: ModuleNs;
-	internal_module: InternalModuleNs;
-	_module: _ModuleNs;
-	import_alias: ImportAliasNs;
-	nested_type_identifier: NestedTypeIdentifierNs;
-	interface_declaration: InterfaceDeclarationNs;
-	extends_type_clause: ExtendsTypeClauseNs;
-	enum_declaration: EnumDeclarationNs;
-	enum_body: EnumBodyNs;
-	enum_assignment: EnumAssignmentNs;
-	type_alias_declaration: TypeAliasDeclarationNs;
-	required_parameter: RequiredParameterNs;
-	optional_parameter: OptionalParameterNs;
-	_parameter_name: ParameterNameNs;
-	omitting_type_annotation: OmittingTypeAnnotationNs;
-	adding_type_annotation: AddingTypeAnnotationNs;
-	opting_type_annotation: OptingTypeAnnotationNs;
-	type_annotation: TypeAnnotationNs;
-	_type_query_member_expression_in_type_annotation: TypeQueryMemberExpressionInTypeAnnotationNs;
-	_type_query_call_expression_in_type_annotation: TypeQueryCallExpressionInTypeAnnotationNs;
-	asserts: AssertsNs;
-	asserts_annotation: AssertsAnnotationNs;
-	tuple_parameter: TupleParameterNs;
-	optional_tuple_parameter: OptionalTupleParameterNs;
-	optional_type: OptionalTypeNs;
-	rest_type: RestTypeNs;
-	constructor_type: ConstructorTypeNs;
-	template_type: TemplateTypeNs;
-	template_literal_type: TemplateLiteralTypeNs;
-	infer_type: InferTypeNs;
-	conditional_type: ConditionalTypeNs;
-	generic_type: GenericTypeNs;
-	type_predicate: TypePredicateNs;
-	type_predicate_annotation: TypePredicateAnnotationNs;
-	_type_query_member_expression: TypeQueryMemberExpressionNs;
-	_type_query_subscript_expression: TypeQuerySubscriptExpressionNs;
-	_type_query_call_expression: TypeQueryCallExpressionNs;
-	_type_query_instantiation_expression: TypeQueryInstantiationExpressionNs;
-	type_query: TypeQueryNs;
-	index_type_query: IndexTypeQueryNs;
-	lookup_type: LookupTypeNs;
-	mapped_type_clause: MappedTypeClauseNs;
-	literal_type: LiteralTypeNs;
-	_number: _NumberNs;
-	flow_maybe_type: FlowMaybeTypeNs;
-	parenthesized_type: ParenthesizedTypeNs;
-	type_arguments: TypeArgumentsNs;
-	object_type: ObjectTypeNs;
-	call_signature: CallSignatureNs;
-	property_signature: PropertySignatureNs;
-	type_parameters: TypeParametersNs;
-	type_parameter: TypeParameterNs;
-	default_type: DefaultTypeNs;
-	constraint: ConstraintNs;
-	construct_signature: ConstructSignatureNs;
-	index_signature: IndexSignatureNs;
-	array_type: ArrayTypeNs;
-	tuple_type: TupleTypeNs;
-	readonly_type: ReadonlyTypeNs;
-	union_type: UnionTypeNs;
-	intersection_type: IntersectionTypeNs;
-	function_type: FunctionTypeNs;
-	_export_specifiers: ExportSpecifiersNs;
-	_export_specifier_optional1: ExportSpecifierOptional1Ns;
-	_import_specifiers: ImportSpecifiersNs;
-	_variable_declarator_arm1: VariableDeclaratorArm1Ns;
-	_variable_declarator_arm2: VariableDeclaratorArm2Ns;
-	_formal_parameters_elements: FormalParametersElementsNs;
-	_enum_body_elements: EnumBodyElementsNs;
-	_infer_type_optional1: InferTypeOptional1Ns;
-	_mapped_type_clause_optional1: MappedTypeClauseOptional1Ns;
-	_types: TypesNs;
-	_type_parameters_elements: TypeParametersElementsNs;
-	_index_signature_optional1: IndexSignatureOptional1Ns;
-	_tuple_type_members: TupleTypeMembersNs;
-	_import_statement_arm: ImportStatementArmNs;
-	_import_clause_group: ImportClauseGroupNs;
-	_catch_clause_group: CatchClauseGroupNs;
-	_binary_expression_arm: BinaryExpressionArmNs;
-	_jsx_start_opening_element_arm: JsxStartOpeningElementArmNs;
-	_ambient_declaration_global: AmbientDeclarationGlobalNs;
-	_ambient_declaration_module: AmbientDeclarationModuleNs;
-	object_type_content: ObjectTypeContentNs;
-	_export_statement_default: ExportStatementDefaultNs;
-	_arrow_function_parameter: ArrowFunctionParameterNs;
-	_arrow_function__call_signature: ArrowFunctionUCallSignatureNs;
-	_class_heritage_extends_clause: ClassHeritageExtendsClauseNs;
-	_import_clause_default_import: ImportClauseDefaultImportNs;
-	_import_specifier_as: ImportSpecifierAsNs;
-	_index_signature_colon: IndexSignatureColonNs;
-	_export_statement_default_from_arm: ExportStatementDefaultFromArmNs;
-	_export_statement_default_decl_arm: ExportStatementDefaultDeclArmNs;
-	_export_statement_default_star_from: ExportStatementDefaultStarFromNs;
-	_export_statement_default_ns_from: ExportStatementDefaultNsFromNs;
-	_export_statement_default_clause_from: ExportStatementDefaultClauseFromNs;
-	_export_statement_default_default_kw: ExportStatementDefaultDefaultKwNs;
-	_export_statement_default_value: ExportStatementDefaultValueNs;
-	_class_body_method: ClassBodyMethodNs;
-	_class_body_method_sig: ClassBodyMethodSigNs;
-	_class_body_member: ClassBodyMemberNs;
-	_for_header_lhs: ForHeaderLhsNs;
-	_for_header_var_kind: ForHeaderVarKindNs;
-	_for_header_let_const_kind: ForHeaderLetConstKindNs;
-	_parenthesized_expression_typed: ParenthesizedExpressionTypedNs;
-	_export_statement_type_export: ExportStatementTypeExportNs;
-	_export_statement_equals_export: ExportStatementEqualsExportNs;
-	_export_statement_namespace_export: ExportStatementNamespaceExportNs;
-	_call_expression_call: CallExpressionCallNs;
-	_call_expression_template_call: CallExpressionTemplateCallNs;
-	_call_expression_member: CallExpressionMemberNs;
-	_string_double: StringDoubleNs;
-	_string_single: StringSingleNs;
-	_update_expression_postfix: UpdateExpressionPostfixNs;
-	_update_expression_prefix: UpdateExpressionPrefixNs;
-	_jsx_opening_element_content: JsxOpeningElementContentNs;
+	[TSKindId.Program]: ProgramNs;
+	[TSKindId.ExportStatement]: ExportStatementNs;
+	[TSKindId.NamespaceExport]: NamespaceExportNs;
+	[TSKindId.ExportClause]: ExportClauseNs;
+	[TSKindId.ExportSpecifier]: ExportSpecifierNs;
+	[TSKindId.ImportStatement]: ImportStatementNs;
+	[TSKindId.ImportClause]: ImportClauseNs;
+	[TSKindId.FromClause]: FromClauseNs;
+	[TSKindId.NamespaceImport]: NamespaceImportNs;
+	[TSKindId.NamedImports]: NamedImportsNs;
+	[TSKindId.ImportSpecifier]: ImportSpecifierNs;
+	[TSKindId.ImportAttribute]: ImportAttributeNs;
+	[TSKindId.ExpressionStatement]: ExpressionStatementNs;
+	[TSKindId.VariableDeclaration]: VariableDeclarationNs;
+	[TSKindId.LexicalDeclaration]: LexicalDeclarationNs;
+	[TSKindId.VariableDeclarator]: VariableDeclaratorNs;
+	[TSKindId.StatementBlock]: StatementBlockNs;
+	[TSKindId.ElseClause]: ElseClauseNs;
+	[TSKindId.IfStatement]: IfStatementNs;
+	[TSKindId.SwitchStatement]: SwitchStatementNs;
+	[TSKindId.ForStatement]: ForStatementNs;
+	[TSKindId.ForInStatement]: ForInStatementNs;
+	[TSKindId.ForHeader]: ForHeaderNs;
+	[TSKindId.WhileStatement]: WhileStatementNs;
+	[TSKindId.DoStatement]: DoStatementNs;
+	[TSKindId.TryStatement]: TryStatementNs;
+	[TSKindId.WithStatement]: WithStatementNs;
+	[TSKindId.BreakStatement]: BreakStatementNs;
+	[TSKindId.ContinueStatement]: ContinueStatementNs;
+	[TSKindId.DebuggerStatement]: DebuggerStatementNs;
+	[TSKindId.ReturnStatement]: ReturnStatementNs;
+	[TSKindId.ThrowStatement]: ThrowStatementNs;
+	[TSKindId.LabeledStatement]: LabeledStatementNs;
+	[TSKindId.SwitchBody]: SwitchBodyNs;
+	[TSKindId.SwitchCase]: SwitchCaseNs;
+	[TSKindId.SwitchDefault]: SwitchDefaultNs;
+	[TSKindId.CatchClause]: CatchClauseNs;
+	[TSKindId.FinallyClause]: FinallyClauseNs;
+	[TSKindId.ParenthesizedExpression]: ParenthesizedExpressionNs;
+	[TSKindId.YieldExpression]: YieldExpressionNs;
+	[TSKindId.Object]: ObjectNs;
+	[TSKindId.ObjectPattern]: ObjectPatternNs;
+	[TSKindId.AssignmentPattern]: AssignmentPatternNs;
+	[TSKindId.ObjectAssignmentPattern]: ObjectAssignmentPatternNs;
+	[TSKindId.Array]: ArrayNs;
+	[TSKindId.ArrayPattern]: ArrayPatternNs;
+	[TSKindId.NestedIdentifier]: NestedIdentifierNs;
+	[TSKindId.Class]: ClassNs;
+	[TSKindId.ClassDeclaration]: ClassDeclarationNs;
+	[TSKindId.ClassHeritage]: ClassHeritageNs;
+	[TSKindId.FunctionExpression]: FunctionExpressionNs;
+	[TSKindId.FunctionDeclaration]: FunctionDeclarationNs;
+	[TSKindId.GeneratorFunction]: GeneratorFunctionNs;
+	[TSKindId.GeneratorFunctionDeclaration]: GeneratorFunctionDeclarationNs;
+	[TSKindId.ArrowFunction]: ArrowFunctionNs;
+	[TSKindId._CallSignature]: _CallSignatureNs;
+	[TSKindId.CallExpression]: CallExpressionNs;
+	[TSKindId.NewExpression]: NewExpressionNs;
+	[TSKindId.AwaitExpression]: AwaitExpressionNs;
+	[TSKindId.MemberExpression]: MemberExpressionNs;
+	[TSKindId.SubscriptExpression]: SubscriptExpressionNs;
+	[TSKindId.AssignmentExpression]: AssignmentExpressionNs;
+	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpressionNs;
+	[TSKindId.Initializer]: InitializerNs;
+	[TSKindId.SpreadElement]: SpreadElementNs;
+	[TSKindId.TernaryExpression]: TernaryExpressionNs;
+	[TSKindId.BinaryExpression]: BinaryExpressionNs;
+	[TSKindId.UnaryExpression]: UnaryExpressionNs;
+	[TSKindId.UpdateExpression]: UpdateExpressionNs;
+	[TSKindId.SequenceExpression]: SequenceExpressionNs;
+	[TSKindId.String]: StringNs;
+	[TSKindId.TemplateString]: TemplateStringNs;
+	[TSKindId.TemplateSubstitution]: TemplateSubstitutionNs;
+	[TSKindId.Regex]: RegexNs;
+	[TSKindId.MetaProperty]: MetaPropertyNs;
+	[TSKindId.Arguments]: ArgumentsNs;
+	[TSKindId.Decorator]: DecoratorNs;
+	[TSKindId.DecoratorMemberExpression]: DecoratorMemberExpressionNs;
+	[TSKindId.DecoratorCallExpression]: DecoratorCallExpressionNs;
+	[TSKindId.ClassBody]: ClassBodyNs;
+	[TSKindId.FormalParameters]: FormalParametersNs;
+	[TSKindId.ClassStaticBlock]: ClassStaticBlockNs;
+	[TSKindId.RestPattern]: RestPatternNs;
+	[TSKindId.MethodDefinition]: MethodDefinitionNs;
+	[TSKindId.Pair]: PairNs;
+	[TSKindId.PairPattern]: PairPatternNs;
+	[TSKindId.ComputedPropertyName]: ComputedPropertyNameNs;
+	[TSKindId.PublicFieldDefinition]: PublicFieldDefinitionNs;
+	[TSKindId.NonNullExpression]: NonNullExpressionNs;
+	[TSKindId.MethodSignature]: MethodSignatureNs;
+	[TSKindId.AbstractMethodSignature]: AbstractMethodSignatureNs;
+	[TSKindId.FunctionSignature]: FunctionSignatureNs;
+	[TSKindId.DecoratorParenthesizedExpression]: DecoratorParenthesizedExpressionNs;
+	[TSKindId.TypeAssertion]: TypeAssertionNs;
+	[TSKindId.AsExpression]: AsExpressionNs;
+	[TSKindId.SatisfiesExpression]: SatisfiesExpressionNs;
+	[TSKindId.InstantiationExpression]: InstantiationExpressionNs;
+	[TSKindId.ImportRequireClause]: ImportRequireClauseNs;
+	[TSKindId.ExtendsClause]: ExtendsClauseNs;
+	[TSKindId.ExtendsClauseSingle]: ExtendsClauseSingleNs;
+	[TSKindId.ImplementsClause]: ImplementsClauseNs;
+	[TSKindId.AmbientDeclaration]: AmbientDeclarationNs;
+	[TSKindId.AbstractClassDeclaration]: AbstractClassDeclarationNs;
+	[TSKindId.Module]: ModuleNs;
+	[TSKindId.InternalModule]: InternalModuleNs;
+	[TSKindId._Module]: _ModuleNs;
+	[TSKindId.ImportAlias]: ImportAliasNs;
+	[TSKindId.NestedTypeIdentifier]: NestedTypeIdentifierNs;
+	[TSKindId.InterfaceDeclaration]: InterfaceDeclarationNs;
+	[TSKindId.ExtendsTypeClause]: ExtendsTypeClauseNs;
+	[TSKindId.EnumDeclaration]: EnumDeclarationNs;
+	[TSKindId.EnumBody]: EnumBodyNs;
+	[TSKindId.EnumAssignment]: EnumAssignmentNs;
+	[TSKindId.TypeAliasDeclaration]: TypeAliasDeclarationNs;
+	[TSKindId.RequiredParameter]: RequiredParameterNs;
+	[TSKindId.OptionalParameter]: OptionalParameterNs;
+	[TSKindId.ParameterName]: ParameterNameNs;
+	[TSKindId.OmittingTypeAnnotation]: OmittingTypeAnnotationNs;
+	[TSKindId.AddingTypeAnnotation]: AddingTypeAnnotationNs;
+	[TSKindId.OptingTypeAnnotation]: OptingTypeAnnotationNs;
+	[TSKindId.TypeAnnotation]: TypeAnnotationNs;
+	[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: TypeQueryMemberExpressionInTypeAnnotationNs;
+	[TSKindId.TypeQueryCallExpressionInTypeAnnotation]: TypeQueryCallExpressionInTypeAnnotationNs;
+	[TSKindId.Asserts]: AssertsNs;
+	[TSKindId.AssertsAnnotation]: AssertsAnnotationNs;
+	[TSKindId.TupleParameter]: TupleParameterNs;
+	[TSKindId.OptionalTupleParameter]: OptionalTupleParameterNs;
+	[TSKindId.OptionalType]: OptionalTypeNs;
+	[TSKindId.RestType]: RestTypeNs;
+	[TSKindId.ConstructorType]: ConstructorTypeNs;
+	[TSKindId.TemplateType]: TemplateTypeNs;
+	[TSKindId.TemplateLiteralType]: TemplateLiteralTypeNs;
+	[TSKindId.InferType]: InferTypeNs;
+	[TSKindId.ConditionalType]: ConditionalTypeNs;
+	[TSKindId.GenericType]: GenericTypeNs;
+	[TSKindId.TypePredicate]: TypePredicateNs;
+	[TSKindId.TypePredicateAnnotation]: TypePredicateAnnotationNs;
+	[TSKindId.TypeQueryMemberExpression]: TypeQueryMemberExpressionNs;
+	[TSKindId.TypeQuerySubscriptExpression]: TypeQuerySubscriptExpressionNs;
+	[TSKindId.TypeQueryCallExpression]: TypeQueryCallExpressionNs;
+	[TSKindId.TypeQueryInstantiationExpression]: TypeQueryInstantiationExpressionNs;
+	[TSKindId.TypeQuery]: TypeQueryNs;
+	[TSKindId.IndexTypeQuery]: IndexTypeQueryNs;
+	[TSKindId.LookupType]: LookupTypeNs;
+	[TSKindId.MappedTypeClause]: MappedTypeClauseNs;
+	[TSKindId.LiteralType]: LiteralTypeNs;
+	[TSKindId._Number]: _NumberNs;
+	[TSKindId.FlowMaybeType]: FlowMaybeTypeNs;
+	[TSKindId.ParenthesizedType]: ParenthesizedTypeNs;
+	[TSKindId.TypeArguments]: TypeArgumentsNs;
+	[TSKindId.ObjectType]: ObjectTypeNs;
+	[TSKindId.CallSignature]: CallSignatureNs;
+	[TSKindId.PropertySignature]: PropertySignatureNs;
+	[TSKindId.TypeParameters]: TypeParametersNs;
+	[TSKindId.TypeParameter]: TypeParameterNs;
+	[TSKindId.DefaultType]: DefaultTypeNs;
+	[TSKindId.Constraint]: ConstraintNs;
+	[TSKindId.ConstructSignature]: ConstructSignatureNs;
+	[TSKindId.IndexSignature]: IndexSignatureNs;
+	[TSKindId.ArrayType]: ArrayTypeNs;
+	[TSKindId.TupleType]: TupleTypeNs;
+	[TSKindId.ReadonlyType]: ReadonlyTypeNs;
+	[TSKindId.UnionType]: UnionTypeNs;
+	[TSKindId.IntersectionType]: IntersectionTypeNs;
+	[TSKindId.FunctionType]: FunctionTypeNs;
+	[TSKindId.ExportSpecifiers]: ExportSpecifiersNs;
+	[TSKindId.ImportSpecifiers]: ImportSpecifiersNs;
+	[TSKindId.VariableDeclaratorArm1]: VariableDeclaratorArm1Ns;
+	[TSKindId.VariableDeclaratorArm2]: VariableDeclaratorArm2Ns;
+	[TSKindId.FormalParametersElements]: FormalParametersElementsNs;
+	[TSKindId.EnumBodyElements]: EnumBodyElementsNs;
+	[TSKindId.Types]: TypesNs;
+	[TSKindId.TypeParametersElements]: TypeParametersElementsNs;
+	[TSKindId.TupleTypeMembers]: TupleTypeMembersNs;
+	[TSKindId.ImportStatementArm]: ImportStatementArmNs;
+	[TSKindId.ImportClauseGroup]: ImportClauseGroupNs;
+	[TSKindId.CatchClauseGroup]: CatchClauseGroupNs;
+	[TSKindId.BinaryExpressionArm]: BinaryExpressionArmNs;
+	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobalNs;
+	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModuleNs;
+	[TSKindId.ObjectTypeContent]: ObjectTypeContentNs;
+	[TSKindId.ExportStatementDefault]: ExportStatementDefaultNs;
+	[TSKindId.ArrowFunctionParameter]: ArrowFunctionParameterNs;
+	[TSKindId.ArrowFunctionUCallSignature]: ArrowFunctionUCallSignatureNs;
+	[TSKindId.ClassHeritageExtendsClause]: ClassHeritageExtendsClauseNs;
+	[TSKindId.ImportClauseDefaultImport]: ImportClauseDefaultImportNs;
+	[TSKindId.ImportSpecifierAs]: ImportSpecifierAsNs;
+	[TSKindId.IndexSignatureColon]: IndexSignatureColonNs;
+	[TSKindId.ExportStatementDefaultFromArm]: ExportStatementDefaultFromArmNs;
+	[TSKindId.ExportStatementDefaultDeclArm]: ExportStatementDefaultDeclArmNs;
+	[TSKindId.ExportStatementDefaultStarFrom]: ExportStatementDefaultStarFromNs;
+	[TSKindId.ExportStatementDefaultNsFrom]: ExportStatementDefaultNsFromNs;
+	[TSKindId.ExportStatementDefaultClauseFrom]: ExportStatementDefaultClauseFromNs;
+	[TSKindId.ExportStatementDefaultDefaultKw]: ExportStatementDefaultDefaultKwNs;
+	[TSKindId.ExportStatementDefaultValue]: ExportStatementDefaultValueNs;
+	[TSKindId.ClassBodyMethod]: ClassBodyMethodNs;
+	[TSKindId.ClassBodyMethodSig]: ClassBodyMethodSigNs;
+	[TSKindId.ClassBodyMember]: ClassBodyMemberNs;
+	[TSKindId.ForHeaderLhs]: ForHeaderLhsNs;
+	[TSKindId.ForHeaderVarKind]: ForHeaderVarKindNs;
+	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKindNs;
+	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTypedNs;
+	[TSKindId.ExportStatementTypeExport]: ExportStatementTypeExportNs;
+	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExportNs;
+	[TSKindId.CallExpressionCall]: CallExpressionCallNs;
+	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCallNs;
+	[TSKindId.CallExpressionMember]: CallExpressionMemberNs;
+	[TSKindId.StringDouble]: StringDoubleNs;
+	[TSKindId.StringSingle]: StringSingleNs;
+	[TSKindId.UpdateExpressionPostfix]: UpdateExpressionPostfixNs;
+	[TSKindId.UpdateExpressionPrefix]: UpdateExpressionPrefixNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -9266,2291 +9441,2131 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 // Namespace sugar — merges with each data interface so consumers can write
 // <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
 export namespace Program {
-	export type Config = ConfigFor<'program'>;
-	export type Fluent = FluentFor<'program'>;
-	export type Loose = LooseFor<'program'>;
-	export type LooseConfig = LooseConfigFor<'program'>;
-	export type BuildArgs = BuildArgsFor<'program'>;
-	export type LooseArgs = LooseArgsFor<'program'>;
-	export type Tree = TreeFor<'program'>;
+	export type Config = ConfigFor<TSKindId.Program>;
+	export type Fluent = FluentFor<TSKindId.Program>;
+	export type Loose = LooseFor<TSKindId.Program>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Program>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Program>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Program>;
+	export type Tree = TreeFor<TSKindId.Program>;
 	export type Kind = 'program';
 }
 export namespace ExportStatement {
-	export type Config = ConfigFor<'export_statement'>;
-	export type Fluent = FluentFor<'export_statement'>;
-	export type Loose = LooseFor<'export_statement'>;
-	export type LooseConfig = LooseConfigFor<'export_statement'>;
-	export type BuildArgs = BuildArgsFor<'export_statement'>;
-	export type LooseArgs = LooseArgsFor<'export_statement'>;
-	export type Tree = TreeFor<'export_statement'>;
+	export type Config = ConfigFor<TSKindId.ExportStatement>;
+	export type Fluent = FluentFor<TSKindId.ExportStatement>;
+	export type Loose = LooseFor<TSKindId.ExportStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatement>;
+	export type Tree = TreeFor<TSKindId.ExportStatement>;
 	export type Kind = 'export_statement';
 }
 export namespace NamespaceExport {
-	export type Config = ConfigFor<'namespace_export'>;
-	export type Fluent = FluentFor<'namespace_export'>;
-	export type Loose = LooseFor<'namespace_export'>;
-	export type LooseConfig = LooseConfigFor<'namespace_export'>;
-	export type BuildArgs = BuildArgsFor<'namespace_export'>;
-	export type LooseArgs = LooseArgsFor<'namespace_export'>;
-	export type Tree = TreeFor<'namespace_export'>;
+	export type Config = ConfigFor<TSKindId.NamespaceExport>;
+	export type Fluent = FluentFor<TSKindId.NamespaceExport>;
+	export type Loose = LooseFor<TSKindId.NamespaceExport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceExport>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NamespaceExport>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NamespaceExport>;
+	export type Tree = TreeFor<TSKindId.NamespaceExport>;
 	export type Kind = 'namespace_export';
 }
 export namespace ExportClause {
-	export type Config = ConfigFor<'export_clause'>;
-	export type Fluent = FluentFor<'export_clause'>;
-	export type Loose = LooseFor<'export_clause'>;
-	export type LooseConfig = LooseConfigFor<'export_clause'>;
-	export type BuildArgs = BuildArgsFor<'export_clause'>;
-	export type LooseArgs = LooseArgsFor<'export_clause'>;
-	export type Tree = TreeFor<'export_clause'>;
+	export type Config = ConfigFor<TSKindId.ExportClause>;
+	export type Fluent = FluentFor<TSKindId.ExportClause>;
+	export type Loose = LooseFor<TSKindId.ExportClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportClause>;
+	export type Tree = TreeFor<TSKindId.ExportClause>;
 	export type Kind = 'export_clause';
 }
 export namespace ExportSpecifier {
-	export type Config = ConfigFor<'export_specifier'>;
-	export type Fluent = FluentFor<'export_specifier'>;
-	export type Loose = LooseFor<'export_specifier'>;
-	export type LooseConfig = LooseConfigFor<'export_specifier'>;
-	export type BuildArgs = BuildArgsFor<'export_specifier'>;
-	export type LooseArgs = LooseArgsFor<'export_specifier'>;
-	export type Tree = TreeFor<'export_specifier'>;
+	export type Config = ConfigFor<TSKindId.ExportSpecifier>;
+	export type Fluent = FluentFor<TSKindId.ExportSpecifier>;
+	export type Loose = LooseFor<TSKindId.ExportSpecifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifier>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportSpecifier>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportSpecifier>;
+	export type Tree = TreeFor<TSKindId.ExportSpecifier>;
 	export type Kind = 'export_specifier';
 }
 export namespace ImportStatement {
-	export type Config = ConfigFor<'import_statement'>;
-	export type Fluent = FluentFor<'import_statement'>;
-	export type Loose = LooseFor<'import_statement'>;
-	export type LooseConfig = LooseConfigFor<'import_statement'>;
-	export type BuildArgs = BuildArgsFor<'import_statement'>;
-	export type LooseArgs = LooseArgsFor<'import_statement'>;
-	export type Tree = TreeFor<'import_statement'>;
+	export type Config = ConfigFor<TSKindId.ImportStatement>;
+	export type Fluent = FluentFor<TSKindId.ImportStatement>;
+	export type Loose = LooseFor<TSKindId.ImportStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportStatement>;
+	export type Tree = TreeFor<TSKindId.ImportStatement>;
 	export type Kind = 'import_statement';
 }
 export namespace ImportClause {
-	export type Config = ConfigFor<'import_clause'>;
-	export type Fluent = FluentFor<'import_clause'>;
-	export type Loose = LooseFor<'import_clause'>;
-	export type LooseConfig = LooseConfigFor<'import_clause'>;
-	export type BuildArgs = BuildArgsFor<'import_clause'>;
-	export type LooseArgs = LooseArgsFor<'import_clause'>;
-	export type Tree = TreeFor<'import_clause'>;
+	export type Config = ConfigFor<TSKindId.ImportClause>;
+	export type Fluent = FluentFor<TSKindId.ImportClause>;
+	export type Loose = LooseFor<TSKindId.ImportClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportClause>;
+	export type Tree = TreeFor<TSKindId.ImportClause>;
 	export type Kind = 'import_clause';
 }
 export namespace FromClause {
-	export type Config = ConfigFor<'_from_clause'>;
-	export type Fluent = FluentFor<'_from_clause'>;
-	export type Loose = LooseFor<'_from_clause'>;
-	export type LooseConfig = LooseConfigFor<'_from_clause'>;
-	export type BuildArgs = BuildArgsFor<'_from_clause'>;
-	export type LooseArgs = LooseArgsFor<'_from_clause'>;
-	export type Tree = TreeFor<'_from_clause'>;
+	export type Config = ConfigFor<TSKindId.FromClause>;
+	export type Fluent = FluentFor<TSKindId.FromClause>;
+	export type Loose = LooseFor<TSKindId.FromClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FromClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FromClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FromClause>;
+	export type Tree = TreeFor<TSKindId.FromClause>;
 	export type Kind = '_from_clause';
 }
 export namespace NamespaceImport {
-	export type Config = ConfigFor<'namespace_import'>;
-	export type Fluent = FluentFor<'namespace_import'>;
-	export type Loose = LooseFor<'namespace_import'>;
-	export type LooseConfig = LooseConfigFor<'namespace_import'>;
-	export type BuildArgs = BuildArgsFor<'namespace_import'>;
-	export type LooseArgs = LooseArgsFor<'namespace_import'>;
-	export type Tree = TreeFor<'namespace_import'>;
+	export type Config = ConfigFor<TSKindId.NamespaceImport>;
+	export type Fluent = FluentFor<TSKindId.NamespaceImport>;
+	export type Loose = LooseFor<TSKindId.NamespaceImport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceImport>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NamespaceImport>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NamespaceImport>;
+	export type Tree = TreeFor<TSKindId.NamespaceImport>;
 	export type Kind = 'namespace_import';
 }
 export namespace NamedImports {
-	export type Config = ConfigFor<'named_imports'>;
-	export type Fluent = FluentFor<'named_imports'>;
-	export type Loose = LooseFor<'named_imports'>;
-	export type LooseConfig = LooseConfigFor<'named_imports'>;
-	export type BuildArgs = BuildArgsFor<'named_imports'>;
-	export type LooseArgs = LooseArgsFor<'named_imports'>;
-	export type Tree = TreeFor<'named_imports'>;
+	export type Config = ConfigFor<TSKindId.NamedImports>;
+	export type Fluent = FluentFor<TSKindId.NamedImports>;
+	export type Loose = LooseFor<TSKindId.NamedImports>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NamedImports>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NamedImports>;
+	export type Tree = TreeFor<TSKindId.NamedImports>;
 	export type Kind = 'named_imports';
 }
 export namespace ImportSpecifier {
-	export type Config = ConfigFor<'import_specifier'>;
-	export type Fluent = FluentFor<'import_specifier'>;
-	export type Loose = LooseFor<'import_specifier'>;
-	export type LooseConfig = LooseConfigFor<'import_specifier'>;
-	export type BuildArgs = BuildArgsFor<'import_specifier'>;
-	export type LooseArgs = LooseArgsFor<'import_specifier'>;
-	export type Tree = TreeFor<'import_specifier'>;
+	export type Config = ConfigFor<TSKindId.ImportSpecifier>;
+	export type Fluent = FluentFor<TSKindId.ImportSpecifier>;
+	export type Loose = LooseFor<TSKindId.ImportSpecifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifier>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportSpecifier>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportSpecifier>;
+	export type Tree = TreeFor<TSKindId.ImportSpecifier>;
 	export type Kind = 'import_specifier';
 }
 export namespace ImportAttribute {
-	export type Config = ConfigFor<'import_attribute'>;
-	export type Fluent = FluentFor<'import_attribute'>;
-	export type Loose = LooseFor<'import_attribute'>;
-	export type LooseConfig = LooseConfigFor<'import_attribute'>;
-	export type BuildArgs = BuildArgsFor<'import_attribute'>;
-	export type LooseArgs = LooseArgsFor<'import_attribute'>;
-	export type Tree = TreeFor<'import_attribute'>;
+	export type Config = ConfigFor<TSKindId.ImportAttribute>;
+	export type Fluent = FluentFor<TSKindId.ImportAttribute>;
+	export type Loose = LooseFor<TSKindId.ImportAttribute>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportAttribute>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportAttribute>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportAttribute>;
+	export type Tree = TreeFor<TSKindId.ImportAttribute>;
 	export type Kind = 'import_attribute';
 }
 export namespace ExpressionStatement {
-	export type Config = ConfigFor<'expression_statement'>;
-	export type Fluent = FluentFor<'expression_statement'>;
-	export type Loose = LooseFor<'expression_statement'>;
-	export type LooseConfig = LooseConfigFor<'expression_statement'>;
-	export type BuildArgs = BuildArgsFor<'expression_statement'>;
-	export type LooseArgs = LooseArgsFor<'expression_statement'>;
-	export type Tree = TreeFor<'expression_statement'>;
+	export type Config = ConfigFor<TSKindId.ExpressionStatement>;
+	export type Fluent = FluentFor<TSKindId.ExpressionStatement>;
+	export type Loose = LooseFor<TSKindId.ExpressionStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExpressionStatement>;
+	export type Tree = TreeFor<TSKindId.ExpressionStatement>;
 	export type Kind = 'expression_statement';
 }
 export namespace VariableDeclaration {
-	export type Config = ConfigFor<'variable_declaration'>;
-	export type Fluent = FluentFor<'variable_declaration'>;
-	export type Loose = LooseFor<'variable_declaration'>;
-	export type LooseConfig = LooseConfigFor<'variable_declaration'>;
-	export type BuildArgs = BuildArgsFor<'variable_declaration'>;
-	export type LooseArgs = LooseArgsFor<'variable_declaration'>;
-	export type Tree = TreeFor<'variable_declaration'>;
+	export type Config = ConfigFor<TSKindId.VariableDeclaration>;
+	export type Fluent = FluentFor<TSKindId.VariableDeclaration>;
+	export type Loose = LooseFor<TSKindId.VariableDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.VariableDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.VariableDeclaration>;
+	export type Tree = TreeFor<TSKindId.VariableDeclaration>;
 	export type Kind = 'variable_declaration';
 }
 export namespace LexicalDeclaration {
-	export type Config = ConfigFor<'lexical_declaration'>;
-	export type Fluent = FluentFor<'lexical_declaration'>;
-	export type Loose = LooseFor<'lexical_declaration'>;
-	export type LooseConfig = LooseConfigFor<'lexical_declaration'>;
-	export type BuildArgs = BuildArgsFor<'lexical_declaration'>;
-	export type LooseArgs = LooseArgsFor<'lexical_declaration'>;
-	export type Tree = TreeFor<'lexical_declaration'>;
+	export type Config = ConfigFor<TSKindId.LexicalDeclaration>;
+	export type Fluent = FluentFor<TSKindId.LexicalDeclaration>;
+	export type Loose = LooseFor<TSKindId.LexicalDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LexicalDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.LexicalDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.LexicalDeclaration>;
+	export type Tree = TreeFor<TSKindId.LexicalDeclaration>;
 	export type Kind = 'lexical_declaration';
 }
 export namespace VariableDeclarator {
-	export type Config = ConfigFor<'variable_declarator'>;
-	export type Fluent = FluentFor<'variable_declarator'>;
-	export type Loose = LooseFor<'variable_declarator'>;
-	export type LooseConfig = LooseConfigFor<'variable_declarator'>;
-	export type BuildArgs = BuildArgsFor<'variable_declarator'>;
-	export type LooseArgs = LooseArgsFor<'variable_declarator'>;
-	export type Tree = TreeFor<'variable_declarator'>;
+	export type Config = ConfigFor<TSKindId.VariableDeclarator>;
+	export type Fluent = FluentFor<TSKindId.VariableDeclarator>;
+	export type Loose = LooseFor<TSKindId.VariableDeclarator>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclarator>;
+	export type BuildArgs = BuildArgsFor<TSKindId.VariableDeclarator>;
+	export type LooseArgs = LooseArgsFor<TSKindId.VariableDeclarator>;
+	export type Tree = TreeFor<TSKindId.VariableDeclarator>;
 	export type Kind = 'variable_declarator';
 }
 export namespace StatementBlock {
-	export type Config = ConfigFor<'statement_block'>;
-	export type Fluent = FluentFor<'statement_block'>;
-	export type Loose = LooseFor<'statement_block'>;
-	export type LooseConfig = LooseConfigFor<'statement_block'>;
-	export type BuildArgs = BuildArgsFor<'statement_block'>;
-	export type LooseArgs = LooseArgsFor<'statement_block'>;
-	export type Tree = TreeFor<'statement_block'>;
+	export type Config = ConfigFor<TSKindId.StatementBlock>;
+	export type Fluent = FluentFor<TSKindId.StatementBlock>;
+	export type Loose = LooseFor<TSKindId.StatementBlock>;
+	export type LooseConfig = LooseConfigFor<TSKindId.StatementBlock>;
+	export type BuildArgs = BuildArgsFor<TSKindId.StatementBlock>;
+	export type LooseArgs = LooseArgsFor<TSKindId.StatementBlock>;
+	export type Tree = TreeFor<TSKindId.StatementBlock>;
 	export type Kind = 'statement_block';
 }
 export namespace ElseClause {
-	export type Config = ConfigFor<'else_clause'>;
-	export type Fluent = FluentFor<'else_clause'>;
-	export type Loose = LooseFor<'else_clause'>;
-	export type LooseConfig = LooseConfigFor<'else_clause'>;
-	export type BuildArgs = BuildArgsFor<'else_clause'>;
-	export type LooseArgs = LooseArgsFor<'else_clause'>;
-	export type Tree = TreeFor<'else_clause'>;
+	export type Config = ConfigFor<TSKindId.ElseClause>;
+	export type Fluent = FluentFor<TSKindId.ElseClause>;
+	export type Loose = LooseFor<TSKindId.ElseClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ElseClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ElseClause>;
+	export type Tree = TreeFor<TSKindId.ElseClause>;
 	export type Kind = 'else_clause';
 }
 export namespace IfStatement {
-	export type Config = ConfigFor<'if_statement'>;
-	export type Fluent = FluentFor<'if_statement'>;
-	export type Loose = LooseFor<'if_statement'>;
-	export type LooseConfig = LooseConfigFor<'if_statement'>;
-	export type BuildArgs = BuildArgsFor<'if_statement'>;
-	export type LooseArgs = LooseArgsFor<'if_statement'>;
-	export type Tree = TreeFor<'if_statement'>;
+	export type Config = ConfigFor<TSKindId.IfStatement>;
+	export type Fluent = FluentFor<TSKindId.IfStatement>;
+	export type Loose = LooseFor<TSKindId.IfStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IfStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.IfStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.IfStatement>;
+	export type Tree = TreeFor<TSKindId.IfStatement>;
 	export type Kind = 'if_statement';
 }
 export namespace SwitchStatement {
-	export type Config = ConfigFor<'switch_statement'>;
-	export type Fluent = FluentFor<'switch_statement'>;
-	export type Loose = LooseFor<'switch_statement'>;
-	export type LooseConfig = LooseConfigFor<'switch_statement'>;
-	export type BuildArgs = BuildArgsFor<'switch_statement'>;
-	export type LooseArgs = LooseArgsFor<'switch_statement'>;
-	export type Tree = TreeFor<'switch_statement'>;
+	export type Config = ConfigFor<TSKindId.SwitchStatement>;
+	export type Fluent = FluentFor<TSKindId.SwitchStatement>;
+	export type Loose = LooseFor<TSKindId.SwitchStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SwitchStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SwitchStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SwitchStatement>;
+	export type Tree = TreeFor<TSKindId.SwitchStatement>;
 	export type Kind = 'switch_statement';
 }
 export namespace ForStatement {
-	export type Config = ConfigFor<'for_statement'>;
-	export type Fluent = FluentFor<'for_statement'>;
-	export type Loose = LooseFor<'for_statement'>;
-	export type LooseConfig = LooseConfigFor<'for_statement'>;
-	export type BuildArgs = BuildArgsFor<'for_statement'>;
-	export type LooseArgs = LooseArgsFor<'for_statement'>;
-	export type Tree = TreeFor<'for_statement'>;
+	export type Config = ConfigFor<TSKindId.ForStatement>;
+	export type Fluent = FluentFor<TSKindId.ForStatement>;
+	export type Loose = LooseFor<TSKindId.ForStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ForStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ForStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ForStatement>;
+	export type Tree = TreeFor<TSKindId.ForStatement>;
 	export type Kind = 'for_statement';
 }
 export namespace ForInStatement {
-	export type Config = ConfigFor<'for_in_statement'>;
-	export type Fluent = FluentFor<'for_in_statement'>;
-	export type Loose = LooseFor<'for_in_statement'>;
-	export type LooseConfig = LooseConfigFor<'for_in_statement'>;
-	export type BuildArgs = BuildArgsFor<'for_in_statement'>;
-	export type LooseArgs = LooseArgsFor<'for_in_statement'>;
-	export type Tree = TreeFor<'for_in_statement'>;
+	export type Config = ConfigFor<TSKindId.ForInStatement>;
+	export type Fluent = FluentFor<TSKindId.ForInStatement>;
+	export type Loose = LooseFor<TSKindId.ForInStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ForInStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ForInStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ForInStatement>;
+	export type Tree = TreeFor<TSKindId.ForInStatement>;
 	export type Kind = 'for_in_statement';
 }
 export namespace ForHeader {
-	export type Config = ConfigFor<'_for_header'>;
-	export type Fluent = FluentFor<'_for_header'>;
-	export type Loose = LooseFor<'_for_header'>;
-	export type LooseConfig = LooseConfigFor<'_for_header'>;
-	export type BuildArgs = BuildArgsFor<'_for_header'>;
-	export type LooseArgs = LooseArgsFor<'_for_header'>;
-	export type Tree = TreeFor<'_for_header'>;
+	export type Config = ConfigFor<TSKindId.ForHeader>;
+	export type Fluent = FluentFor<TSKindId.ForHeader>;
+	export type Loose = LooseFor<TSKindId.ForHeader>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ForHeader>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ForHeader>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ForHeader>;
+	export type Tree = TreeFor<TSKindId.ForHeader>;
 	export type Kind = '_for_header';
 }
 export namespace WhileStatement {
-	export type Config = ConfigFor<'while_statement'>;
-	export type Fluent = FluentFor<'while_statement'>;
-	export type Loose = LooseFor<'while_statement'>;
-	export type LooseConfig = LooseConfigFor<'while_statement'>;
-	export type BuildArgs = BuildArgsFor<'while_statement'>;
-	export type LooseArgs = LooseArgsFor<'while_statement'>;
-	export type Tree = TreeFor<'while_statement'>;
+	export type Config = ConfigFor<TSKindId.WhileStatement>;
+	export type Fluent = FluentFor<TSKindId.WhileStatement>;
+	export type Loose = LooseFor<TSKindId.WhileStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.WhileStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.WhileStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.WhileStatement>;
+	export type Tree = TreeFor<TSKindId.WhileStatement>;
 	export type Kind = 'while_statement';
 }
 export namespace DoStatement {
-	export type Config = ConfigFor<'do_statement'>;
-	export type Fluent = FluentFor<'do_statement'>;
-	export type Loose = LooseFor<'do_statement'>;
-	export type LooseConfig = LooseConfigFor<'do_statement'>;
-	export type BuildArgs = BuildArgsFor<'do_statement'>;
-	export type LooseArgs = LooseArgsFor<'do_statement'>;
-	export type Tree = TreeFor<'do_statement'>;
+	export type Config = ConfigFor<TSKindId.DoStatement>;
+	export type Fluent = FluentFor<TSKindId.DoStatement>;
+	export type Loose = LooseFor<TSKindId.DoStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DoStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.DoStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.DoStatement>;
+	export type Tree = TreeFor<TSKindId.DoStatement>;
 	export type Kind = 'do_statement';
 }
 export namespace TryStatement {
-	export type Config = ConfigFor<'try_statement'>;
-	export type Fluent = FluentFor<'try_statement'>;
-	export type Loose = LooseFor<'try_statement'>;
-	export type LooseConfig = LooseConfigFor<'try_statement'>;
-	export type BuildArgs = BuildArgsFor<'try_statement'>;
-	export type LooseArgs = LooseArgsFor<'try_statement'>;
-	export type Tree = TreeFor<'try_statement'>;
+	export type Config = ConfigFor<TSKindId.TryStatement>;
+	export type Fluent = FluentFor<TSKindId.TryStatement>;
+	export type Loose = LooseFor<TSKindId.TryStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TryStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TryStatement>;
+	export type Tree = TreeFor<TSKindId.TryStatement>;
 	export type Kind = 'try_statement';
 }
 export namespace WithStatement {
-	export type Config = ConfigFor<'with_statement'>;
-	export type Fluent = FluentFor<'with_statement'>;
-	export type Loose = LooseFor<'with_statement'>;
-	export type LooseConfig = LooseConfigFor<'with_statement'>;
-	export type BuildArgs = BuildArgsFor<'with_statement'>;
-	export type LooseArgs = LooseArgsFor<'with_statement'>;
-	export type Tree = TreeFor<'with_statement'>;
+	export type Config = ConfigFor<TSKindId.WithStatement>;
+	export type Fluent = FluentFor<TSKindId.WithStatement>;
+	export type Loose = LooseFor<TSKindId.WithStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.WithStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.WithStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.WithStatement>;
+	export type Tree = TreeFor<TSKindId.WithStatement>;
 	export type Kind = 'with_statement';
 }
 export namespace BreakStatement {
-	export type Config = ConfigFor<'break_statement'>;
-	export type Fluent = FluentFor<'break_statement'>;
-	export type Loose = LooseFor<'break_statement'>;
-	export type LooseConfig = LooseConfigFor<'break_statement'>;
-	export type BuildArgs = BuildArgsFor<'break_statement'>;
-	export type LooseArgs = LooseArgsFor<'break_statement'>;
-	export type Tree = TreeFor<'break_statement'>;
+	export type Config = ConfigFor<TSKindId.BreakStatement>;
+	export type Fluent = FluentFor<TSKindId.BreakStatement>;
+	export type Loose = LooseFor<TSKindId.BreakStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BreakStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.BreakStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.BreakStatement>;
+	export type Tree = TreeFor<TSKindId.BreakStatement>;
 	export type Kind = 'break_statement';
 }
 export namespace ContinueStatement {
-	export type Config = ConfigFor<'continue_statement'>;
-	export type Fluent = FluentFor<'continue_statement'>;
-	export type Loose = LooseFor<'continue_statement'>;
-	export type LooseConfig = LooseConfigFor<'continue_statement'>;
-	export type BuildArgs = BuildArgsFor<'continue_statement'>;
-	export type LooseArgs = LooseArgsFor<'continue_statement'>;
-	export type Tree = TreeFor<'continue_statement'>;
+	export type Config = ConfigFor<TSKindId.ContinueStatement>;
+	export type Fluent = FluentFor<TSKindId.ContinueStatement>;
+	export type Loose = LooseFor<TSKindId.ContinueStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ContinueStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ContinueStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ContinueStatement>;
+	export type Tree = TreeFor<TSKindId.ContinueStatement>;
 	export type Kind = 'continue_statement';
 }
 export namespace DebuggerStatement {
-	export type Config = ConfigFor<'debugger_statement'>;
-	export type Fluent = FluentFor<'debugger_statement'>;
-	export type Loose = LooseFor<'debugger_statement'>;
-	export type LooseConfig = LooseConfigFor<'debugger_statement'>;
-	export type BuildArgs = BuildArgsFor<'debugger_statement'>;
-	export type LooseArgs = LooseArgsFor<'debugger_statement'>;
-	export type Tree = TreeFor<'debugger_statement'>;
+	export type Config = ConfigFor<TSKindId.DebuggerStatement>;
+	export type Fluent = FluentFor<TSKindId.DebuggerStatement>;
+	export type Loose = LooseFor<TSKindId.DebuggerStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DebuggerStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.DebuggerStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.DebuggerStatement>;
+	export type Tree = TreeFor<TSKindId.DebuggerStatement>;
 	export type Kind = 'debugger_statement';
 }
 export namespace ReturnStatement {
-	export type Config = ConfigFor<'return_statement'>;
-	export type Fluent = FluentFor<'return_statement'>;
-	export type Loose = LooseFor<'return_statement'>;
-	export type LooseConfig = LooseConfigFor<'return_statement'>;
-	export type BuildArgs = BuildArgsFor<'return_statement'>;
-	export type LooseArgs = LooseArgsFor<'return_statement'>;
-	export type Tree = TreeFor<'return_statement'>;
+	export type Config = ConfigFor<TSKindId.ReturnStatement>;
+	export type Fluent = FluentFor<TSKindId.ReturnStatement>;
+	export type Loose = LooseFor<TSKindId.ReturnStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ReturnStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ReturnStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ReturnStatement>;
+	export type Tree = TreeFor<TSKindId.ReturnStatement>;
 	export type Kind = 'return_statement';
 }
 export namespace ThrowStatement {
-	export type Config = ConfigFor<'throw_statement'>;
-	export type Fluent = FluentFor<'throw_statement'>;
-	export type Loose = LooseFor<'throw_statement'>;
-	export type LooseConfig = LooseConfigFor<'throw_statement'>;
-	export type BuildArgs = BuildArgsFor<'throw_statement'>;
-	export type LooseArgs = LooseArgsFor<'throw_statement'>;
-	export type Tree = TreeFor<'throw_statement'>;
+	export type Config = ConfigFor<TSKindId.ThrowStatement>;
+	export type Fluent = FluentFor<TSKindId.ThrowStatement>;
+	export type Loose = LooseFor<TSKindId.ThrowStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ThrowStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ThrowStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ThrowStatement>;
+	export type Tree = TreeFor<TSKindId.ThrowStatement>;
 	export type Kind = 'throw_statement';
 }
 export namespace LabeledStatement {
-	export type Config = ConfigFor<'labeled_statement'>;
-	export type Fluent = FluentFor<'labeled_statement'>;
-	export type Loose = LooseFor<'labeled_statement'>;
-	export type LooseConfig = LooseConfigFor<'labeled_statement'>;
-	export type BuildArgs = BuildArgsFor<'labeled_statement'>;
-	export type LooseArgs = LooseArgsFor<'labeled_statement'>;
-	export type Tree = TreeFor<'labeled_statement'>;
+	export type Config = ConfigFor<TSKindId.LabeledStatement>;
+	export type Fluent = FluentFor<TSKindId.LabeledStatement>;
+	export type Loose = LooseFor<TSKindId.LabeledStatement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LabeledStatement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.LabeledStatement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.LabeledStatement>;
+	export type Tree = TreeFor<TSKindId.LabeledStatement>;
 	export type Kind = 'labeled_statement';
 }
 export namespace SwitchBody {
-	export type Config = ConfigFor<'switch_body'>;
-	export type Fluent = FluentFor<'switch_body'>;
-	export type Loose = LooseFor<'switch_body'>;
-	export type LooseConfig = LooseConfigFor<'switch_body'>;
-	export type BuildArgs = BuildArgsFor<'switch_body'>;
-	export type LooseArgs = LooseArgsFor<'switch_body'>;
-	export type Tree = TreeFor<'switch_body'>;
+	export type Config = ConfigFor<TSKindId.SwitchBody>;
+	export type Fluent = FluentFor<TSKindId.SwitchBody>;
+	export type Loose = LooseFor<TSKindId.SwitchBody>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SwitchBody>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SwitchBody>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SwitchBody>;
+	export type Tree = TreeFor<TSKindId.SwitchBody>;
 	export type Kind = 'switch_body';
 }
 export namespace SwitchCase {
-	export type Config = ConfigFor<'switch_case'>;
-	export type Fluent = FluentFor<'switch_case'>;
-	export type Loose = LooseFor<'switch_case'>;
-	export type LooseConfig = LooseConfigFor<'switch_case'>;
-	export type BuildArgs = BuildArgsFor<'switch_case'>;
-	export type LooseArgs = LooseArgsFor<'switch_case'>;
-	export type Tree = TreeFor<'switch_case'>;
+	export type Config = ConfigFor<TSKindId.SwitchCase>;
+	export type Fluent = FluentFor<TSKindId.SwitchCase>;
+	export type Loose = LooseFor<TSKindId.SwitchCase>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SwitchCase>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SwitchCase>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SwitchCase>;
+	export type Tree = TreeFor<TSKindId.SwitchCase>;
 	export type Kind = 'switch_case';
 }
 export namespace SwitchDefault {
-	export type Config = ConfigFor<'switch_default'>;
-	export type Fluent = FluentFor<'switch_default'>;
-	export type Loose = LooseFor<'switch_default'>;
-	export type LooseConfig = LooseConfigFor<'switch_default'>;
-	export type BuildArgs = BuildArgsFor<'switch_default'>;
-	export type LooseArgs = LooseArgsFor<'switch_default'>;
-	export type Tree = TreeFor<'switch_default'>;
+	export type Config = ConfigFor<TSKindId.SwitchDefault>;
+	export type Fluent = FluentFor<TSKindId.SwitchDefault>;
+	export type Loose = LooseFor<TSKindId.SwitchDefault>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SwitchDefault>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SwitchDefault>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SwitchDefault>;
+	export type Tree = TreeFor<TSKindId.SwitchDefault>;
 	export type Kind = 'switch_default';
 }
 export namespace CatchClause {
-	export type Config = ConfigFor<'catch_clause'>;
-	export type Fluent = FluentFor<'catch_clause'>;
-	export type Loose = LooseFor<'catch_clause'>;
-	export type LooseConfig = LooseConfigFor<'catch_clause'>;
-	export type BuildArgs = BuildArgsFor<'catch_clause'>;
-	export type LooseArgs = LooseArgsFor<'catch_clause'>;
-	export type Tree = TreeFor<'catch_clause'>;
+	export type Config = ConfigFor<TSKindId.CatchClause>;
+	export type Fluent = FluentFor<TSKindId.CatchClause>;
+	export type Loose = LooseFor<TSKindId.CatchClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CatchClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CatchClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CatchClause>;
+	export type Tree = TreeFor<TSKindId.CatchClause>;
 	export type Kind = 'catch_clause';
 }
 export namespace FinallyClause {
-	export type Config = ConfigFor<'finally_clause'>;
-	export type Fluent = FluentFor<'finally_clause'>;
-	export type Loose = LooseFor<'finally_clause'>;
-	export type LooseConfig = LooseConfigFor<'finally_clause'>;
-	export type BuildArgs = BuildArgsFor<'finally_clause'>;
-	export type LooseArgs = LooseArgsFor<'finally_clause'>;
-	export type Tree = TreeFor<'finally_clause'>;
+	export type Config = ConfigFor<TSKindId.FinallyClause>;
+	export type Fluent = FluentFor<TSKindId.FinallyClause>;
+	export type Loose = LooseFor<TSKindId.FinallyClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FinallyClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FinallyClause>;
+	export type Tree = TreeFor<TSKindId.FinallyClause>;
 	export type Kind = 'finally_clause';
 }
 export namespace ParenthesizedExpression {
-	export type Config = ConfigFor<'parenthesized_expression'>;
-	export type Fluent = FluentFor<'parenthesized_expression'>;
-	export type Loose = LooseFor<'parenthesized_expression'>;
-	export type LooseConfig = LooseConfigFor<'parenthesized_expression'>;
-	export type BuildArgs = BuildArgsFor<'parenthesized_expression'>;
-	export type LooseArgs = LooseArgsFor<'parenthesized_expression'>;
-	export type Tree = TreeFor<'parenthesized_expression'>;
+	export type Config = ConfigFor<TSKindId.ParenthesizedExpression>;
+	export type Fluent = FluentFor<TSKindId.ParenthesizedExpression>;
+	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ParenthesizedExpression>;
+	export type Tree = TreeFor<TSKindId.ParenthesizedExpression>;
 	export type Kind = 'parenthesized_expression';
 }
 export namespace YieldExpression {
-	export type Config = ConfigFor<'yield_expression'>;
-	export type Fluent = FluentFor<'yield_expression'>;
-	export type Loose = LooseFor<'yield_expression'>;
-	export type LooseConfig = LooseConfigFor<'yield_expression'>;
-	export type BuildArgs = BuildArgsFor<'yield_expression'>;
-	export type LooseArgs = LooseArgsFor<'yield_expression'>;
-	export type Tree = TreeFor<'yield_expression'>;
+	export type Config = ConfigFor<TSKindId.YieldExpression>;
+	export type Fluent = FluentFor<TSKindId.YieldExpression>;
+	export type Loose = LooseFor<TSKindId.YieldExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.YieldExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.YieldExpression>;
+	export type Tree = TreeFor<TSKindId.YieldExpression>;
 	export type Kind = 'yield_expression';
 }
 export namespace Object {
-	export type Config = ConfigFor<'object'>;
-	export type Fluent = FluentFor<'object'>;
-	export type Loose = LooseFor<'object'>;
-	export type LooseConfig = LooseConfigFor<'object'>;
-	export type BuildArgs = BuildArgsFor<'object'>;
-	export type LooseArgs = LooseArgsFor<'object'>;
-	export type Tree = TreeFor<'object'>;
+	export type Config = ConfigFor<TSKindId.Object>;
+	export type Fluent = FluentFor<TSKindId.Object>;
+	export type Loose = LooseFor<TSKindId.Object>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Object>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Object>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Object>;
+	export type Tree = TreeFor<TSKindId.Object>;
 	export type Kind = 'object';
 }
 export namespace ObjectPattern {
-	export type Config = ConfigFor<'object_pattern'>;
-	export type Fluent = FluentFor<'object_pattern'>;
-	export type Loose = LooseFor<'object_pattern'>;
-	export type LooseConfig = LooseConfigFor<'object_pattern'>;
-	export type BuildArgs = BuildArgsFor<'object_pattern'>;
-	export type LooseArgs = LooseArgsFor<'object_pattern'>;
-	export type Tree = TreeFor<'object_pattern'>;
+	export type Config = ConfigFor<TSKindId.ObjectPattern>;
+	export type Fluent = FluentFor<TSKindId.ObjectPattern>;
+	export type Loose = LooseFor<TSKindId.ObjectPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ObjectPattern>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ObjectPattern>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ObjectPattern>;
+	export type Tree = TreeFor<TSKindId.ObjectPattern>;
 	export type Kind = 'object_pattern';
 }
 export namespace AssignmentPattern {
-	export type Config = ConfigFor<'assignment_pattern'>;
-	export type Fluent = FluentFor<'assignment_pattern'>;
-	export type Loose = LooseFor<'assignment_pattern'>;
-	export type LooseConfig = LooseConfigFor<'assignment_pattern'>;
-	export type BuildArgs = BuildArgsFor<'assignment_pattern'>;
-	export type LooseArgs = LooseArgsFor<'assignment_pattern'>;
-	export type Tree = TreeFor<'assignment_pattern'>;
+	export type Config = ConfigFor<TSKindId.AssignmentPattern>;
+	export type Fluent = FluentFor<TSKindId.AssignmentPattern>;
+	export type Loose = LooseFor<TSKindId.AssignmentPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentPattern>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentPattern>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AssignmentPattern>;
+	export type Tree = TreeFor<TSKindId.AssignmentPattern>;
 	export type Kind = 'assignment_pattern';
 }
 export namespace ObjectAssignmentPattern {
-	export type Config = ConfigFor<'object_assignment_pattern'>;
-	export type Fluent = FluentFor<'object_assignment_pattern'>;
-	export type Loose = LooseFor<'object_assignment_pattern'>;
-	export type LooseConfig = LooseConfigFor<'object_assignment_pattern'>;
-	export type BuildArgs = BuildArgsFor<'object_assignment_pattern'>;
-	export type LooseArgs = LooseArgsFor<'object_assignment_pattern'>;
-	export type Tree = TreeFor<'object_assignment_pattern'>;
+	export type Config = ConfigFor<TSKindId.ObjectAssignmentPattern>;
+	export type Fluent = FluentFor<TSKindId.ObjectAssignmentPattern>;
+	export type Loose = LooseFor<TSKindId.ObjectAssignmentPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ObjectAssignmentPattern>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ObjectAssignmentPattern>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ObjectAssignmentPattern>;
+	export type Tree = TreeFor<TSKindId.ObjectAssignmentPattern>;
 	export type Kind = 'object_assignment_pattern';
 }
 export namespace Array {
-	export type Config = ConfigFor<'array'>;
-	export type Fluent = FluentFor<'array'>;
-	export type Loose = LooseFor<'array'>;
-	export type LooseConfig = LooseConfigFor<'array'>;
-	export type BuildArgs = BuildArgsFor<'array'>;
-	export type LooseArgs = LooseArgsFor<'array'>;
-	export type Tree = TreeFor<'array'>;
+	export type Config = ConfigFor<TSKindId.Array>;
+	export type Fluent = FluentFor<TSKindId.Array>;
+	export type Loose = LooseFor<TSKindId.Array>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Array>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Array>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Array>;
+	export type Tree = TreeFor<TSKindId.Array>;
 	export type Kind = 'array';
 }
 export namespace ArrayPattern {
-	export type Config = ConfigFor<'array_pattern'>;
-	export type Fluent = FluentFor<'array_pattern'>;
-	export type Loose = LooseFor<'array_pattern'>;
-	export type LooseConfig = LooseConfigFor<'array_pattern'>;
-	export type BuildArgs = BuildArgsFor<'array_pattern'>;
-	export type LooseArgs = LooseArgsFor<'array_pattern'>;
-	export type Tree = TreeFor<'array_pattern'>;
+	export type Config = ConfigFor<TSKindId.ArrayPattern>;
+	export type Fluent = FluentFor<TSKindId.ArrayPattern>;
+	export type Loose = LooseFor<TSKindId.ArrayPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrayPattern>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ArrayPattern>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ArrayPattern>;
+	export type Tree = TreeFor<TSKindId.ArrayPattern>;
 	export type Kind = 'array_pattern';
 }
-export namespace JsxElement {
-	export type Config = ConfigFor<'jsx_element'>;
-	export type Fluent = FluentFor<'jsx_element'>;
-	export type Loose = LooseFor<'jsx_element'>;
-	export type LooseConfig = LooseConfigFor<'jsx_element'>;
-	export type BuildArgs = BuildArgsFor<'jsx_element'>;
-	export type LooseArgs = LooseArgsFor<'jsx_element'>;
-	export type Tree = TreeFor<'jsx_element'>;
-	export type Kind = 'jsx_element';
-}
-export namespace JsxExpression {
-	export type Config = ConfigFor<'jsx_expression'>;
-	export type Fluent = FluentFor<'jsx_expression'>;
-	export type Loose = LooseFor<'jsx_expression'>;
-	export type LooseConfig = LooseConfigFor<'jsx_expression'>;
-	export type BuildArgs = BuildArgsFor<'jsx_expression'>;
-	export type LooseArgs = LooseArgsFor<'jsx_expression'>;
-	export type Tree = TreeFor<'jsx_expression'>;
-	export type Kind = 'jsx_expression';
-}
-export namespace JsxOpeningElement {
-	export type Config = ConfigFor<'jsx_opening_element'>;
-	export type Fluent = FluentFor<'jsx_opening_element'>;
-	export type Loose = LooseFor<'jsx_opening_element'>;
-	export type LooseConfig = LooseConfigFor<'jsx_opening_element'>;
-	export type BuildArgs = BuildArgsFor<'jsx_opening_element'>;
-	export type LooseArgs = LooseArgsFor<'jsx_opening_element'>;
-	export type Tree = TreeFor<'jsx_opening_element'>;
-	export type Kind = 'jsx_opening_element';
-}
 export namespace NestedIdentifier {
-	export type Config = ConfigFor<'nested_identifier'>;
-	export type Fluent = FluentFor<'nested_identifier'>;
-	export type Loose = LooseFor<'nested_identifier'>;
-	export type LooseConfig = LooseConfigFor<'nested_identifier'>;
-	export type BuildArgs = BuildArgsFor<'nested_identifier'>;
-	export type LooseArgs = LooseArgsFor<'nested_identifier'>;
-	export type Tree = TreeFor<'nested_identifier'>;
+	export type Config = ConfigFor<TSKindId.NestedIdentifier>;
+	export type Fluent = FluentFor<TSKindId.NestedIdentifier>;
+	export type Loose = LooseFor<TSKindId.NestedIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NestedIdentifier>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NestedIdentifier>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NestedIdentifier>;
+	export type Tree = TreeFor<TSKindId.NestedIdentifier>;
 	export type Kind = 'nested_identifier';
 }
-export namespace JsxNamespaceName {
-	export type Config = ConfigFor<'jsx_namespace_name'>;
-	export type Fluent = FluentFor<'jsx_namespace_name'>;
-	export type Loose = LooseFor<'jsx_namespace_name'>;
-	export type LooseConfig = LooseConfigFor<'jsx_namespace_name'>;
-	export type BuildArgs = BuildArgsFor<'jsx_namespace_name'>;
-	export type LooseArgs = LooseArgsFor<'jsx_namespace_name'>;
-	export type Tree = TreeFor<'jsx_namespace_name'>;
-	export type Kind = 'jsx_namespace_name';
-}
-export namespace JsxClosingElement {
-	export type Config = ConfigFor<'jsx_closing_element'>;
-	export type Fluent = FluentFor<'jsx_closing_element'>;
-	export type Loose = LooseFor<'jsx_closing_element'>;
-	export type LooseConfig = LooseConfigFor<'jsx_closing_element'>;
-	export type BuildArgs = BuildArgsFor<'jsx_closing_element'>;
-	export type LooseArgs = LooseArgsFor<'jsx_closing_element'>;
-	export type Tree = TreeFor<'jsx_closing_element'>;
-	export type Kind = 'jsx_closing_element';
-}
-export namespace JsxSelfClosingElement {
-	export type Config = ConfigFor<'jsx_self_closing_element'>;
-	export type Fluent = FluentFor<'jsx_self_closing_element'>;
-	export type Loose = LooseFor<'jsx_self_closing_element'>;
-	export type LooseConfig = LooseConfigFor<'jsx_self_closing_element'>;
-	export type BuildArgs = BuildArgsFor<'jsx_self_closing_element'>;
-	export type LooseArgs = LooseArgsFor<'jsx_self_closing_element'>;
-	export type Tree = TreeFor<'jsx_self_closing_element'>;
-	export type Kind = 'jsx_self_closing_element';
-}
-export namespace JsxAttribute {
-	export type Config = ConfigFor<'jsx_attribute'>;
-	export type Fluent = FluentFor<'jsx_attribute'>;
-	export type Loose = LooseFor<'jsx_attribute'>;
-	export type LooseConfig = LooseConfigFor<'jsx_attribute'>;
-	export type BuildArgs = BuildArgsFor<'jsx_attribute'>;
-	export type LooseArgs = LooseArgsFor<'jsx_attribute'>;
-	export type Tree = TreeFor<'jsx_attribute'>;
-	export type Kind = 'jsx_attribute';
-}
-export namespace JsxString {
-	export type Config = ConfigFor<'_jsx_string'>;
-	export type Fluent = FluentFor<'_jsx_string'>;
-	export type Loose = LooseFor<'_jsx_string'>;
-	export type LooseConfig = LooseConfigFor<'_jsx_string'>;
-	export type BuildArgs = BuildArgsFor<'_jsx_string'>;
-	export type LooseArgs = LooseArgsFor<'_jsx_string'>;
-	export type Tree = TreeFor<'_jsx_string'>;
-	export type Kind = '_jsx_string';
-}
 export namespace Class {
-	export type Config = ConfigFor<'class'>;
-	export type Fluent = FluentFor<'class'>;
-	export type Loose = LooseFor<'class'>;
-	export type LooseConfig = LooseConfigFor<'class'>;
-	export type BuildArgs = BuildArgsFor<'class'>;
-	export type LooseArgs = LooseArgsFor<'class'>;
-	export type Tree = TreeFor<'class'>;
+	export type Config = ConfigFor<TSKindId.Class>;
+	export type Fluent = FluentFor<TSKindId.Class>;
+	export type Loose = LooseFor<TSKindId.Class>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Class>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Class>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Class>;
+	export type Tree = TreeFor<TSKindId.Class>;
 	export type Kind = 'class';
 }
 export namespace ClassDeclaration {
-	export type Config = ConfigFor<'class_declaration'>;
-	export type Fluent = FluentFor<'class_declaration'>;
-	export type Loose = LooseFor<'class_declaration'>;
-	export type LooseConfig = LooseConfigFor<'class_declaration'>;
-	export type BuildArgs = BuildArgsFor<'class_declaration'>;
-	export type LooseArgs = LooseArgsFor<'class_declaration'>;
-	export type Tree = TreeFor<'class_declaration'>;
+	export type Config = ConfigFor<TSKindId.ClassDeclaration>;
+	export type Fluent = FluentFor<TSKindId.ClassDeclaration>;
+	export type Loose = LooseFor<TSKindId.ClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassDeclaration>;
+	export type Tree = TreeFor<TSKindId.ClassDeclaration>;
 	export type Kind = 'class_declaration';
 }
 export namespace ClassHeritage {
-	export type Config = ConfigFor<'class_heritage'>;
-	export type Fluent = FluentFor<'class_heritage'>;
-	export type Loose = LooseFor<'class_heritage'>;
-	export type LooseConfig = LooseConfigFor<'class_heritage'>;
-	export type BuildArgs = BuildArgsFor<'class_heritage'>;
-	export type LooseArgs = LooseArgsFor<'class_heritage'>;
-	export type Tree = TreeFor<'class_heritage'>;
+	export type Config = ConfigFor<TSKindId.ClassHeritage>;
+	export type Fluent = FluentFor<TSKindId.ClassHeritage>;
+	export type Loose = LooseFor<TSKindId.ClassHeritage>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassHeritage>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassHeritage>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassHeritage>;
+	export type Tree = TreeFor<TSKindId.ClassHeritage>;
 	export type Kind = 'class_heritage';
 }
 export namespace FunctionExpression {
-	export type Config = ConfigFor<'function_expression'>;
-	export type Fluent = FluentFor<'function_expression'>;
-	export type Loose = LooseFor<'function_expression'>;
-	export type LooseConfig = LooseConfigFor<'function_expression'>;
-	export type BuildArgs = BuildArgsFor<'function_expression'>;
-	export type LooseArgs = LooseArgsFor<'function_expression'>;
-	export type Tree = TreeFor<'function_expression'>;
+	export type Config = ConfigFor<TSKindId.FunctionExpression>;
+	export type Fluent = FluentFor<TSKindId.FunctionExpression>;
+	export type Loose = LooseFor<TSKindId.FunctionExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FunctionExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FunctionExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FunctionExpression>;
+	export type Tree = TreeFor<TSKindId.FunctionExpression>;
 	export type Kind = 'function_expression';
 }
 export namespace FunctionDeclaration {
-	export type Config = ConfigFor<'function_declaration'>;
-	export type Fluent = FluentFor<'function_declaration'>;
-	export type Loose = LooseFor<'function_declaration'>;
-	export type LooseConfig = LooseConfigFor<'function_declaration'>;
-	export type BuildArgs = BuildArgsFor<'function_declaration'>;
-	export type LooseArgs = LooseArgsFor<'function_declaration'>;
-	export type Tree = TreeFor<'function_declaration'>;
+	export type Config = ConfigFor<TSKindId.FunctionDeclaration>;
+	export type Fluent = FluentFor<TSKindId.FunctionDeclaration>;
+	export type Loose = LooseFor<TSKindId.FunctionDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FunctionDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FunctionDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FunctionDeclaration>;
+	export type Tree = TreeFor<TSKindId.FunctionDeclaration>;
 	export type Kind = 'function_declaration';
 }
 export namespace GeneratorFunction {
-	export type Config = ConfigFor<'generator_function'>;
-	export type Fluent = FluentFor<'generator_function'>;
-	export type Loose = LooseFor<'generator_function'>;
-	export type LooseConfig = LooseConfigFor<'generator_function'>;
-	export type BuildArgs = BuildArgsFor<'generator_function'>;
-	export type LooseArgs = LooseArgsFor<'generator_function'>;
-	export type Tree = TreeFor<'generator_function'>;
+	export type Config = ConfigFor<TSKindId.GeneratorFunction>;
+	export type Fluent = FluentFor<TSKindId.GeneratorFunction>;
+	export type Loose = LooseFor<TSKindId.GeneratorFunction>;
+	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunction>;
+	export type BuildArgs = BuildArgsFor<TSKindId.GeneratorFunction>;
+	export type LooseArgs = LooseArgsFor<TSKindId.GeneratorFunction>;
+	export type Tree = TreeFor<TSKindId.GeneratorFunction>;
 	export type Kind = 'generator_function';
 }
 export namespace GeneratorFunctionDeclaration {
-	export type Config = ConfigFor<'generator_function_declaration'>;
-	export type Fluent = FluentFor<'generator_function_declaration'>;
-	export type Loose = LooseFor<'generator_function_declaration'>;
-	export type LooseConfig = LooseConfigFor<'generator_function_declaration'>;
-	export type BuildArgs = BuildArgsFor<'generator_function_declaration'>;
-	export type LooseArgs = LooseArgsFor<'generator_function_declaration'>;
-	export type Tree = TreeFor<'generator_function_declaration'>;
+	export type Config = ConfigFor<TSKindId.GeneratorFunctionDeclaration>;
+	export type Fluent = FluentFor<TSKindId.GeneratorFunctionDeclaration>;
+	export type Loose = LooseFor<TSKindId.GeneratorFunctionDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunctionDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.GeneratorFunctionDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.GeneratorFunctionDeclaration>;
+	export type Tree = TreeFor<TSKindId.GeneratorFunctionDeclaration>;
 	export type Kind = 'generator_function_declaration';
 }
 export namespace ArrowFunction {
-	export type Config = ConfigFor<'arrow_function'>;
-	export type Fluent = FluentFor<'arrow_function'>;
-	export type Loose = LooseFor<'arrow_function'>;
-	export type LooseConfig = LooseConfigFor<'arrow_function'>;
-	export type BuildArgs = BuildArgsFor<'arrow_function'>;
-	export type LooseArgs = LooseArgsFor<'arrow_function'>;
-	export type Tree = TreeFor<'arrow_function'>;
+	export type Config = ConfigFor<TSKindId.ArrowFunction>;
+	export type Fluent = FluentFor<TSKindId.ArrowFunction>;
+	export type Loose = LooseFor<TSKindId.ArrowFunction>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunction>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ArrowFunction>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ArrowFunction>;
+	export type Tree = TreeFor<TSKindId.ArrowFunction>;
 	export type Kind = 'arrow_function';
 }
 export namespace _CallSignature {
-	export type Config = ConfigFor<'_call_signature'>;
-	export type Fluent = FluentFor<'_call_signature'>;
-	export type Loose = LooseFor<'_call_signature'>;
-	export type LooseConfig = LooseConfigFor<'_call_signature'>;
-	export type BuildArgs = BuildArgsFor<'_call_signature'>;
-	export type LooseArgs = LooseArgsFor<'_call_signature'>;
-	export type Tree = TreeFor<'_call_signature'>;
+	export type Config = ConfigFor<TSKindId._CallSignature>;
+	export type Fluent = FluentFor<TSKindId._CallSignature>;
+	export type Loose = LooseFor<TSKindId._CallSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId._CallSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId._CallSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId._CallSignature>;
+	export type Tree = TreeFor<TSKindId._CallSignature>;
 	export type Kind = '_call_signature';
 }
 export namespace CallExpression {
-	export type Config = ConfigFor<'call_expression'>;
-	export type Fluent = FluentFor<'call_expression'>;
-	export type Loose = LooseFor<'call_expression'>;
-	export type LooseConfig = LooseConfigFor<'call_expression'>;
-	export type BuildArgs = BuildArgsFor<'call_expression'>;
-	export type LooseArgs = LooseArgsFor<'call_expression'>;
-	export type Tree = TreeFor<'call_expression'>;
+	export type Config = ConfigFor<TSKindId.CallExpression>;
+	export type Fluent = FluentFor<TSKindId.CallExpression>;
+	export type Loose = LooseFor<TSKindId.CallExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CallExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CallExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CallExpression>;
+	export type Tree = TreeFor<TSKindId.CallExpression>;
 	export type Kind = 'call_expression';
 }
 export namespace NewExpression {
-	export type Config = ConfigFor<'new_expression'>;
-	export type Fluent = FluentFor<'new_expression'>;
-	export type Loose = LooseFor<'new_expression'>;
-	export type LooseConfig = LooseConfigFor<'new_expression'>;
-	export type BuildArgs = BuildArgsFor<'new_expression'>;
-	export type LooseArgs = LooseArgsFor<'new_expression'>;
-	export type Tree = TreeFor<'new_expression'>;
+	export type Config = ConfigFor<TSKindId.NewExpression>;
+	export type Fluent = FluentFor<TSKindId.NewExpression>;
+	export type Loose = LooseFor<TSKindId.NewExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NewExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NewExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NewExpression>;
+	export type Tree = TreeFor<TSKindId.NewExpression>;
 	export type Kind = 'new_expression';
 }
 export namespace AwaitExpression {
-	export type Config = ConfigFor<'await_expression'>;
-	export type Fluent = FluentFor<'await_expression'>;
-	export type Loose = LooseFor<'await_expression'>;
-	export type LooseConfig = LooseConfigFor<'await_expression'>;
-	export type BuildArgs = BuildArgsFor<'await_expression'>;
-	export type LooseArgs = LooseArgsFor<'await_expression'>;
-	export type Tree = TreeFor<'await_expression'>;
+	export type Config = ConfigFor<TSKindId.AwaitExpression>;
+	export type Fluent = FluentFor<TSKindId.AwaitExpression>;
+	export type Loose = LooseFor<TSKindId.AwaitExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AwaitExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AwaitExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AwaitExpression>;
+	export type Tree = TreeFor<TSKindId.AwaitExpression>;
 	export type Kind = 'await_expression';
 }
 export namespace MemberExpression {
-	export type Config = ConfigFor<'member_expression'>;
-	export type Fluent = FluentFor<'member_expression'>;
-	export type Loose = LooseFor<'member_expression'>;
-	export type LooseConfig = LooseConfigFor<'member_expression'>;
-	export type BuildArgs = BuildArgsFor<'member_expression'>;
-	export type LooseArgs = LooseArgsFor<'member_expression'>;
-	export type Tree = TreeFor<'member_expression'>;
+	export type Config = ConfigFor<TSKindId.MemberExpression>;
+	export type Fluent = FluentFor<TSKindId.MemberExpression>;
+	export type Loose = LooseFor<TSKindId.MemberExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MemberExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.MemberExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.MemberExpression>;
+	export type Tree = TreeFor<TSKindId.MemberExpression>;
 	export type Kind = 'member_expression';
 }
 export namespace SubscriptExpression {
-	export type Config = ConfigFor<'subscript_expression'>;
-	export type Fluent = FluentFor<'subscript_expression'>;
-	export type Loose = LooseFor<'subscript_expression'>;
-	export type LooseConfig = LooseConfigFor<'subscript_expression'>;
-	export type BuildArgs = BuildArgsFor<'subscript_expression'>;
-	export type LooseArgs = LooseArgsFor<'subscript_expression'>;
-	export type Tree = TreeFor<'subscript_expression'>;
+	export type Config = ConfigFor<TSKindId.SubscriptExpression>;
+	export type Fluent = FluentFor<TSKindId.SubscriptExpression>;
+	export type Loose = LooseFor<TSKindId.SubscriptExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SubscriptExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SubscriptExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SubscriptExpression>;
+	export type Tree = TreeFor<TSKindId.SubscriptExpression>;
 	export type Kind = 'subscript_expression';
 }
 export namespace AssignmentExpression {
-	export type Config = ConfigFor<'assignment_expression'>;
-	export type Fluent = FluentFor<'assignment_expression'>;
-	export type Loose = LooseFor<'assignment_expression'>;
-	export type LooseConfig = LooseConfigFor<'assignment_expression'>;
-	export type BuildArgs = BuildArgsFor<'assignment_expression'>;
-	export type LooseArgs = LooseArgsFor<'assignment_expression'>;
-	export type Tree = TreeFor<'assignment_expression'>;
+	export type Config = ConfigFor<TSKindId.AssignmentExpression>;
+	export type Fluent = FluentFor<TSKindId.AssignmentExpression>;
+	export type Loose = LooseFor<TSKindId.AssignmentExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AssignmentExpression>;
+	export type Tree = TreeFor<TSKindId.AssignmentExpression>;
 	export type Kind = 'assignment_expression';
 }
 export namespace AugmentedAssignmentExpression {
-	export type Config = ConfigFor<'augmented_assignment_expression'>;
-	export type Fluent = FluentFor<'augmented_assignment_expression'>;
-	export type Loose = LooseFor<'augmented_assignment_expression'>;
-	export type LooseConfig = LooseConfigFor<'augmented_assignment_expression'>;
-	export type BuildArgs = BuildArgsFor<'augmented_assignment_expression'>;
-	export type LooseArgs = LooseArgsFor<'augmented_assignment_expression'>;
-	export type Tree = TreeFor<'augmented_assignment_expression'>;
+	export type Config = ConfigFor<TSKindId.AugmentedAssignmentExpression>;
+	export type Fluent = FluentFor<TSKindId.AugmentedAssignmentExpression>;
+	export type Loose = LooseFor<TSKindId.AugmentedAssignmentExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AugmentedAssignmentExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AugmentedAssignmentExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AugmentedAssignmentExpression>;
+	export type Tree = TreeFor<TSKindId.AugmentedAssignmentExpression>;
 	export type Kind = 'augmented_assignment_expression';
 }
 export namespace Initializer {
-	export type Config = ConfigFor<'_initializer'>;
-	export type Fluent = FluentFor<'_initializer'>;
-	export type Loose = LooseFor<'_initializer'>;
-	export type LooseConfig = LooseConfigFor<'_initializer'>;
-	export type BuildArgs = BuildArgsFor<'_initializer'>;
-	export type LooseArgs = LooseArgsFor<'_initializer'>;
-	export type Tree = TreeFor<'_initializer'>;
+	export type Config = ConfigFor<TSKindId.Initializer>;
+	export type Fluent = FluentFor<TSKindId.Initializer>;
+	export type Loose = LooseFor<TSKindId.Initializer>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Initializer>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Initializer>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Initializer>;
+	export type Tree = TreeFor<TSKindId.Initializer>;
 	export type Kind = '_initializer';
 }
 export namespace SpreadElement {
-	export type Config = ConfigFor<'spread_element'>;
-	export type Fluent = FluentFor<'spread_element'>;
-	export type Loose = LooseFor<'spread_element'>;
-	export type LooseConfig = LooseConfigFor<'spread_element'>;
-	export type BuildArgs = BuildArgsFor<'spread_element'>;
-	export type LooseArgs = LooseArgsFor<'spread_element'>;
-	export type Tree = TreeFor<'spread_element'>;
+	export type Config = ConfigFor<TSKindId.SpreadElement>;
+	export type Fluent = FluentFor<TSKindId.SpreadElement>;
+	export type Loose = LooseFor<TSKindId.SpreadElement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SpreadElement>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SpreadElement>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SpreadElement>;
+	export type Tree = TreeFor<TSKindId.SpreadElement>;
 	export type Kind = 'spread_element';
 }
 export namespace TernaryExpression {
-	export type Config = ConfigFor<'ternary_expression'>;
-	export type Fluent = FluentFor<'ternary_expression'>;
-	export type Loose = LooseFor<'ternary_expression'>;
-	export type LooseConfig = LooseConfigFor<'ternary_expression'>;
-	export type BuildArgs = BuildArgsFor<'ternary_expression'>;
-	export type LooseArgs = LooseArgsFor<'ternary_expression'>;
-	export type Tree = TreeFor<'ternary_expression'>;
+	export type Config = ConfigFor<TSKindId.TernaryExpression>;
+	export type Fluent = FluentFor<TSKindId.TernaryExpression>;
+	export type Loose = LooseFor<TSKindId.TernaryExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TernaryExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TernaryExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TernaryExpression>;
+	export type Tree = TreeFor<TSKindId.TernaryExpression>;
 	export type Kind = 'ternary_expression';
 }
 export namespace BinaryExpression {
-	export type Config = ConfigFor<'binary_expression'>;
-	export type Fluent = FluentFor<'binary_expression'>;
-	export type Loose = LooseFor<'binary_expression'>;
-	export type LooseConfig = LooseConfigFor<'binary_expression'>;
-	export type BuildArgs = BuildArgsFor<'binary_expression'>;
-	export type LooseArgs = LooseArgsFor<'binary_expression'>;
-	export type Tree = TreeFor<'binary_expression'>;
+	export type Config = ConfigFor<TSKindId.BinaryExpression>;
+	export type Fluent = FluentFor<TSKindId.BinaryExpression>;
+	export type Loose = LooseFor<TSKindId.BinaryExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.BinaryExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.BinaryExpression>;
+	export type Tree = TreeFor<TSKindId.BinaryExpression>;
 	export type Kind = 'binary_expression';
 }
 export namespace UnaryExpression {
-	export type Config = ConfigFor<'unary_expression'>;
-	export type Fluent = FluentFor<'unary_expression'>;
-	export type Loose = LooseFor<'unary_expression'>;
-	export type LooseConfig = LooseConfigFor<'unary_expression'>;
-	export type BuildArgs = BuildArgsFor<'unary_expression'>;
-	export type LooseArgs = LooseArgsFor<'unary_expression'>;
-	export type Tree = TreeFor<'unary_expression'>;
+	export type Config = ConfigFor<TSKindId.UnaryExpression>;
+	export type Fluent = FluentFor<TSKindId.UnaryExpression>;
+	export type Loose = LooseFor<TSKindId.UnaryExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UnaryExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.UnaryExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.UnaryExpression>;
+	export type Tree = TreeFor<TSKindId.UnaryExpression>;
 	export type Kind = 'unary_expression';
 }
 export namespace UpdateExpression {
-	export type Config = ConfigFor<'update_expression'>;
-	export type Fluent = FluentFor<'update_expression'>;
-	export type Loose = LooseFor<'update_expression'>;
-	export type LooseConfig = LooseConfigFor<'update_expression'>;
-	export type BuildArgs = BuildArgsFor<'update_expression'>;
-	export type LooseArgs = LooseArgsFor<'update_expression'>;
-	export type Tree = TreeFor<'update_expression'>;
+	export type Config = ConfigFor<TSKindId.UpdateExpression>;
+	export type Fluent = FluentFor<TSKindId.UpdateExpression>;
+	export type Loose = LooseFor<TSKindId.UpdateExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.UpdateExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.UpdateExpression>;
+	export type Tree = TreeFor<TSKindId.UpdateExpression>;
 	export type Kind = 'update_expression';
 }
 export namespace SequenceExpression {
-	export type Config = ConfigFor<'sequence_expression'>;
-	export type Fluent = FluentFor<'sequence_expression'>;
-	export type Loose = LooseFor<'sequence_expression'>;
-	export type LooseConfig = LooseConfigFor<'sequence_expression'>;
-	export type BuildArgs = BuildArgsFor<'sequence_expression'>;
-	export type LooseArgs = LooseArgsFor<'sequence_expression'>;
-	export type Tree = TreeFor<'sequence_expression'>;
+	export type Config = ConfigFor<TSKindId.SequenceExpression>;
+	export type Fluent = FluentFor<TSKindId.SequenceExpression>;
+	export type Loose = LooseFor<TSKindId.SequenceExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SequenceExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SequenceExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SequenceExpression>;
+	export type Tree = TreeFor<TSKindId.SequenceExpression>;
 	export type Kind = 'sequence_expression';
 }
 export namespace String {
-	export type Config = ConfigFor<'string'>;
-	export type Fluent = FluentFor<'string'>;
-	export type Loose = LooseFor<'string'>;
-	export type LooseConfig = LooseConfigFor<'string'>;
-	export type BuildArgs = BuildArgsFor<'string'>;
-	export type LooseArgs = LooseArgsFor<'string'>;
-	export type Tree = TreeFor<'string'>;
+	export type Config = ConfigFor<TSKindId.String>;
+	export type Fluent = FluentFor<TSKindId.String>;
+	export type Loose = LooseFor<TSKindId.String>;
+	export type LooseConfig = LooseConfigFor<TSKindId.String>;
+	export type BuildArgs = BuildArgsFor<TSKindId.String>;
+	export type LooseArgs = LooseArgsFor<TSKindId.String>;
+	export type Tree = TreeFor<TSKindId.String>;
 	export type Kind = 'string';
 }
 export namespace TemplateString {
-	export type Config = ConfigFor<'template_string'>;
-	export type Fluent = FluentFor<'template_string'>;
-	export type Loose = LooseFor<'template_string'>;
-	export type LooseConfig = LooseConfigFor<'template_string'>;
-	export type BuildArgs = BuildArgsFor<'template_string'>;
-	export type LooseArgs = LooseArgsFor<'template_string'>;
-	export type Tree = TreeFor<'template_string'>;
+	export type Config = ConfigFor<TSKindId.TemplateString>;
+	export type Fluent = FluentFor<TSKindId.TemplateString>;
+	export type Loose = LooseFor<TSKindId.TemplateString>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TemplateString>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TemplateString>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TemplateString>;
+	export type Tree = TreeFor<TSKindId.TemplateString>;
 	export type Kind = 'template_string';
 }
 export namespace TemplateSubstitution {
-	export type Config = ConfigFor<'template_substitution'>;
-	export type Fluent = FluentFor<'template_substitution'>;
-	export type Loose = LooseFor<'template_substitution'>;
-	export type LooseConfig = LooseConfigFor<'template_substitution'>;
-	export type BuildArgs = BuildArgsFor<'template_substitution'>;
-	export type LooseArgs = LooseArgsFor<'template_substitution'>;
-	export type Tree = TreeFor<'template_substitution'>;
+	export type Config = ConfigFor<TSKindId.TemplateSubstitution>;
+	export type Fluent = FluentFor<TSKindId.TemplateSubstitution>;
+	export type Loose = LooseFor<TSKindId.TemplateSubstitution>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TemplateSubstitution>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TemplateSubstitution>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TemplateSubstitution>;
+	export type Tree = TreeFor<TSKindId.TemplateSubstitution>;
 	export type Kind = 'template_substitution';
 }
 export namespace Regex {
-	export type Config = ConfigFor<'regex'>;
-	export type Fluent = FluentFor<'regex'>;
-	export type Loose = LooseFor<'regex'>;
-	export type LooseConfig = LooseConfigFor<'regex'>;
-	export type BuildArgs = BuildArgsFor<'regex'>;
-	export type LooseArgs = LooseArgsFor<'regex'>;
-	export type Tree = TreeFor<'regex'>;
+	export type Config = ConfigFor<TSKindId.Regex>;
+	export type Fluent = FluentFor<TSKindId.Regex>;
+	export type Loose = LooseFor<TSKindId.Regex>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Regex>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Regex>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Regex>;
+	export type Tree = TreeFor<TSKindId.Regex>;
 	export type Kind = 'regex';
 }
 export namespace MetaProperty {
-	export type Config = ConfigFor<'meta_property'>;
-	export type Fluent = FluentFor<'meta_property'>;
-	export type Loose = LooseFor<'meta_property'>;
-	export type LooseConfig = LooseConfigFor<'meta_property'>;
-	export type BuildArgs = BuildArgsFor<'meta_property'>;
-	export type LooseArgs = LooseArgsFor<'meta_property'>;
-	export type Tree = TreeFor<'meta_property'>;
+	export type Config = ConfigFor<TSKindId.MetaProperty>;
+	export type Fluent = FluentFor<TSKindId.MetaProperty>;
+	export type Loose = LooseFor<TSKindId.MetaProperty>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MetaProperty>;
+	export type BuildArgs = BuildArgsFor<TSKindId.MetaProperty>;
+	export type LooseArgs = LooseArgsFor<TSKindId.MetaProperty>;
+	export type Tree = TreeFor<TSKindId.MetaProperty>;
 	export type Kind = 'meta_property';
 }
 export namespace Arguments {
-	export type Config = ConfigFor<'arguments'>;
-	export type Fluent = FluentFor<'arguments'>;
-	export type Loose = LooseFor<'arguments'>;
-	export type LooseConfig = LooseConfigFor<'arguments'>;
-	export type BuildArgs = BuildArgsFor<'arguments'>;
-	export type LooseArgs = LooseArgsFor<'arguments'>;
-	export type Tree = TreeFor<'arguments'>;
+	export type Config = ConfigFor<TSKindId.Arguments>;
+	export type Fluent = FluentFor<TSKindId.Arguments>;
+	export type Loose = LooseFor<TSKindId.Arguments>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Arguments>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Arguments>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Arguments>;
+	export type Tree = TreeFor<TSKindId.Arguments>;
 	export type Kind = 'arguments';
 }
 export namespace Decorator {
-	export type Config = ConfigFor<'decorator'>;
-	export type Fluent = FluentFor<'decorator'>;
-	export type Loose = LooseFor<'decorator'>;
-	export type LooseConfig = LooseConfigFor<'decorator'>;
-	export type BuildArgs = BuildArgsFor<'decorator'>;
-	export type LooseArgs = LooseArgsFor<'decorator'>;
-	export type Tree = TreeFor<'decorator'>;
+	export type Config = ConfigFor<TSKindId.Decorator>;
+	export type Fluent = FluentFor<TSKindId.Decorator>;
+	export type Loose = LooseFor<TSKindId.Decorator>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Decorator>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Decorator>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Decorator>;
+	export type Tree = TreeFor<TSKindId.Decorator>;
 	export type Kind = 'decorator';
 }
 export namespace DecoratorMemberExpression {
-	export type Config = ConfigFor<'decorator_member_expression'>;
-	export type Fluent = FluentFor<'decorator_member_expression'>;
-	export type Loose = LooseFor<'decorator_member_expression'>;
-	export type LooseConfig = LooseConfigFor<'decorator_member_expression'>;
-	export type BuildArgs = BuildArgsFor<'decorator_member_expression'>;
-	export type LooseArgs = LooseArgsFor<'decorator_member_expression'>;
-	export type Tree = TreeFor<'decorator_member_expression'>;
+	export type Config = ConfigFor<TSKindId.DecoratorMemberExpression>;
+	export type Fluent = FluentFor<TSKindId.DecoratorMemberExpression>;
+	export type Loose = LooseFor<TSKindId.DecoratorMemberExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorMemberExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.DecoratorMemberExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.DecoratorMemberExpression>;
+	export type Tree = TreeFor<TSKindId.DecoratorMemberExpression>;
 	export type Kind = 'decorator_member_expression';
 }
 export namespace DecoratorCallExpression {
-	export type Config = ConfigFor<'decorator_call_expression'>;
-	export type Fluent = FluentFor<'decorator_call_expression'>;
-	export type Loose = LooseFor<'decorator_call_expression'>;
-	export type LooseConfig = LooseConfigFor<'decorator_call_expression'>;
-	export type BuildArgs = BuildArgsFor<'decorator_call_expression'>;
-	export type LooseArgs = LooseArgsFor<'decorator_call_expression'>;
-	export type Tree = TreeFor<'decorator_call_expression'>;
+	export type Config = ConfigFor<TSKindId.DecoratorCallExpression>;
+	export type Fluent = FluentFor<TSKindId.DecoratorCallExpression>;
+	export type Loose = LooseFor<TSKindId.DecoratorCallExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorCallExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.DecoratorCallExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.DecoratorCallExpression>;
+	export type Tree = TreeFor<TSKindId.DecoratorCallExpression>;
 	export type Kind = 'decorator_call_expression';
 }
 export namespace ClassBody {
-	export type Config = ConfigFor<'class_body'>;
-	export type Fluent = FluentFor<'class_body'>;
-	export type Loose = LooseFor<'class_body'>;
-	export type LooseConfig = LooseConfigFor<'class_body'>;
-	export type BuildArgs = BuildArgsFor<'class_body'>;
-	export type LooseArgs = LooseArgsFor<'class_body'>;
-	export type Tree = TreeFor<'class_body'>;
+	export type Config = ConfigFor<TSKindId.ClassBody>;
+	export type Fluent = FluentFor<TSKindId.ClassBody>;
+	export type Loose = LooseFor<TSKindId.ClassBody>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassBody>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassBody>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassBody>;
+	export type Tree = TreeFor<TSKindId.ClassBody>;
 	export type Kind = 'class_body';
 }
-export namespace FieldDefinition {
-	export type Config = ConfigFor<'field_definition'>;
-	export type Fluent = FluentFor<'field_definition'>;
-	export type Loose = LooseFor<'field_definition'>;
-	export type LooseConfig = LooseConfigFor<'field_definition'>;
-	export type BuildArgs = BuildArgsFor<'field_definition'>;
-	export type LooseArgs = LooseArgsFor<'field_definition'>;
-	export type Tree = TreeFor<'field_definition'>;
-	export type Kind = 'field_definition';
-}
 export namespace FormalParameters {
-	export type Config = ConfigFor<'formal_parameters'>;
-	export type Fluent = FluentFor<'formal_parameters'>;
-	export type Loose = LooseFor<'formal_parameters'>;
-	export type LooseConfig = LooseConfigFor<'formal_parameters'>;
-	export type BuildArgs = BuildArgsFor<'formal_parameters'>;
-	export type LooseArgs = LooseArgsFor<'formal_parameters'>;
-	export type Tree = TreeFor<'formal_parameters'>;
+	export type Config = ConfigFor<TSKindId.FormalParameters>;
+	export type Fluent = FluentFor<TSKindId.FormalParameters>;
+	export type Loose = LooseFor<TSKindId.FormalParameters>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FormalParameters>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FormalParameters>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FormalParameters>;
+	export type Tree = TreeFor<TSKindId.FormalParameters>;
 	export type Kind = 'formal_parameters';
 }
 export namespace ClassStaticBlock {
-	export type Config = ConfigFor<'class_static_block'>;
-	export type Fluent = FluentFor<'class_static_block'>;
-	export type Loose = LooseFor<'class_static_block'>;
-	export type LooseConfig = LooseConfigFor<'class_static_block'>;
-	export type BuildArgs = BuildArgsFor<'class_static_block'>;
-	export type LooseArgs = LooseArgsFor<'class_static_block'>;
-	export type Tree = TreeFor<'class_static_block'>;
+	export type Config = ConfigFor<TSKindId.ClassStaticBlock>;
+	export type Fluent = FluentFor<TSKindId.ClassStaticBlock>;
+	export type Loose = LooseFor<TSKindId.ClassStaticBlock>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassStaticBlock>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassStaticBlock>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassStaticBlock>;
+	export type Tree = TreeFor<TSKindId.ClassStaticBlock>;
 	export type Kind = 'class_static_block';
 }
 export namespace RestPattern {
-	export type Config = ConfigFor<'rest_pattern'>;
-	export type Fluent = FluentFor<'rest_pattern'>;
-	export type Loose = LooseFor<'rest_pattern'>;
-	export type LooseConfig = LooseConfigFor<'rest_pattern'>;
-	export type BuildArgs = BuildArgsFor<'rest_pattern'>;
-	export type LooseArgs = LooseArgsFor<'rest_pattern'>;
-	export type Tree = TreeFor<'rest_pattern'>;
+	export type Config = ConfigFor<TSKindId.RestPattern>;
+	export type Fluent = FluentFor<TSKindId.RestPattern>;
+	export type Loose = LooseFor<TSKindId.RestPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RestPattern>;
+	export type BuildArgs = BuildArgsFor<TSKindId.RestPattern>;
+	export type LooseArgs = LooseArgsFor<TSKindId.RestPattern>;
+	export type Tree = TreeFor<TSKindId.RestPattern>;
 	export type Kind = 'rest_pattern';
 }
 export namespace MethodDefinition {
-	export type Config = ConfigFor<'method_definition'>;
-	export type Fluent = FluentFor<'method_definition'>;
-	export type Loose = LooseFor<'method_definition'>;
-	export type LooseConfig = LooseConfigFor<'method_definition'>;
-	export type BuildArgs = BuildArgsFor<'method_definition'>;
-	export type LooseArgs = LooseArgsFor<'method_definition'>;
-	export type Tree = TreeFor<'method_definition'>;
+	export type Config = ConfigFor<TSKindId.MethodDefinition>;
+	export type Fluent = FluentFor<TSKindId.MethodDefinition>;
+	export type Loose = LooseFor<TSKindId.MethodDefinition>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MethodDefinition>;
+	export type BuildArgs = BuildArgsFor<TSKindId.MethodDefinition>;
+	export type LooseArgs = LooseArgsFor<TSKindId.MethodDefinition>;
+	export type Tree = TreeFor<TSKindId.MethodDefinition>;
 	export type Kind = 'method_definition';
 }
 export namespace Pair {
-	export type Config = ConfigFor<'pair'>;
-	export type Fluent = FluentFor<'pair'>;
-	export type Loose = LooseFor<'pair'>;
-	export type LooseConfig = LooseConfigFor<'pair'>;
-	export type BuildArgs = BuildArgsFor<'pair'>;
-	export type LooseArgs = LooseArgsFor<'pair'>;
-	export type Tree = TreeFor<'pair'>;
+	export type Config = ConfigFor<TSKindId.Pair>;
+	export type Fluent = FluentFor<TSKindId.Pair>;
+	export type Loose = LooseFor<TSKindId.Pair>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Pair>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Pair>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Pair>;
+	export type Tree = TreeFor<TSKindId.Pair>;
 	export type Kind = 'pair';
 }
 export namespace PairPattern {
-	export type Config = ConfigFor<'pair_pattern'>;
-	export type Fluent = FluentFor<'pair_pattern'>;
-	export type Loose = LooseFor<'pair_pattern'>;
-	export type LooseConfig = LooseConfigFor<'pair_pattern'>;
-	export type BuildArgs = BuildArgsFor<'pair_pattern'>;
-	export type LooseArgs = LooseArgsFor<'pair_pattern'>;
-	export type Tree = TreeFor<'pair_pattern'>;
+	export type Config = ConfigFor<TSKindId.PairPattern>;
+	export type Fluent = FluentFor<TSKindId.PairPattern>;
+	export type Loose = LooseFor<TSKindId.PairPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.PairPattern>;
+	export type BuildArgs = BuildArgsFor<TSKindId.PairPattern>;
+	export type LooseArgs = LooseArgsFor<TSKindId.PairPattern>;
+	export type Tree = TreeFor<TSKindId.PairPattern>;
 	export type Kind = 'pair_pattern';
 }
 export namespace ComputedPropertyName {
-	export type Config = ConfigFor<'computed_property_name'>;
-	export type Fluent = FluentFor<'computed_property_name'>;
-	export type Loose = LooseFor<'computed_property_name'>;
-	export type LooseConfig = LooseConfigFor<'computed_property_name'>;
-	export type BuildArgs = BuildArgsFor<'computed_property_name'>;
-	export type LooseArgs = LooseArgsFor<'computed_property_name'>;
-	export type Tree = TreeFor<'computed_property_name'>;
+	export type Config = ConfigFor<TSKindId.ComputedPropertyName>;
+	export type Fluent = FluentFor<TSKindId.ComputedPropertyName>;
+	export type Loose = LooseFor<TSKindId.ComputedPropertyName>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ComputedPropertyName>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ComputedPropertyName>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ComputedPropertyName>;
+	export type Tree = TreeFor<TSKindId.ComputedPropertyName>;
 	export type Kind = 'computed_property_name';
 }
 export namespace PublicFieldDefinition {
-	export type Config = ConfigFor<'public_field_definition'>;
-	export type Fluent = FluentFor<'public_field_definition'>;
-	export type Loose = LooseFor<'public_field_definition'>;
-	export type LooseConfig = LooseConfigFor<'public_field_definition'>;
-	export type BuildArgs = BuildArgsFor<'public_field_definition'>;
-	export type LooseArgs = LooseArgsFor<'public_field_definition'>;
-	export type Tree = TreeFor<'public_field_definition'>;
+	export type Config = ConfigFor<TSKindId.PublicFieldDefinition>;
+	export type Fluent = FluentFor<TSKindId.PublicFieldDefinition>;
+	export type Loose = LooseFor<TSKindId.PublicFieldDefinition>;
+	export type LooseConfig = LooseConfigFor<TSKindId.PublicFieldDefinition>;
+	export type BuildArgs = BuildArgsFor<TSKindId.PublicFieldDefinition>;
+	export type LooseArgs = LooseArgsFor<TSKindId.PublicFieldDefinition>;
+	export type Tree = TreeFor<TSKindId.PublicFieldDefinition>;
 	export type Kind = 'public_field_definition';
 }
-export namespace JsxStartOpeningElement {
-	export type Config = ConfigFor<'_jsx_start_opening_element'>;
-	export type Fluent = FluentFor<'_jsx_start_opening_element'>;
-	export type Loose = LooseFor<'_jsx_start_opening_element'>;
-	export type LooseConfig = LooseConfigFor<'_jsx_start_opening_element'>;
-	export type BuildArgs = BuildArgsFor<'_jsx_start_opening_element'>;
-	export type LooseArgs = LooseArgsFor<'_jsx_start_opening_element'>;
-	export type Tree = TreeFor<'_jsx_start_opening_element'>;
-	export type Kind = '_jsx_start_opening_element';
-}
 export namespace NonNullExpression {
-	export type Config = ConfigFor<'non_null_expression'>;
-	export type Fluent = FluentFor<'non_null_expression'>;
-	export type Loose = LooseFor<'non_null_expression'>;
-	export type LooseConfig = LooseConfigFor<'non_null_expression'>;
-	export type BuildArgs = BuildArgsFor<'non_null_expression'>;
-	export type LooseArgs = LooseArgsFor<'non_null_expression'>;
-	export type Tree = TreeFor<'non_null_expression'>;
+	export type Config = ConfigFor<TSKindId.NonNullExpression>;
+	export type Fluent = FluentFor<TSKindId.NonNullExpression>;
+	export type Loose = LooseFor<TSKindId.NonNullExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NonNullExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NonNullExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NonNullExpression>;
+	export type Tree = TreeFor<TSKindId.NonNullExpression>;
 	export type Kind = 'non_null_expression';
 }
 export namespace MethodSignature {
-	export type Config = ConfigFor<'method_signature'>;
-	export type Fluent = FluentFor<'method_signature'>;
-	export type Loose = LooseFor<'method_signature'>;
-	export type LooseConfig = LooseConfigFor<'method_signature'>;
-	export type BuildArgs = BuildArgsFor<'method_signature'>;
-	export type LooseArgs = LooseArgsFor<'method_signature'>;
-	export type Tree = TreeFor<'method_signature'>;
+	export type Config = ConfigFor<TSKindId.MethodSignature>;
+	export type Fluent = FluentFor<TSKindId.MethodSignature>;
+	export type Loose = LooseFor<TSKindId.MethodSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MethodSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.MethodSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.MethodSignature>;
+	export type Tree = TreeFor<TSKindId.MethodSignature>;
 	export type Kind = 'method_signature';
 }
 export namespace AbstractMethodSignature {
-	export type Config = ConfigFor<'abstract_method_signature'>;
-	export type Fluent = FluentFor<'abstract_method_signature'>;
-	export type Loose = LooseFor<'abstract_method_signature'>;
-	export type LooseConfig = LooseConfigFor<'abstract_method_signature'>;
-	export type BuildArgs = BuildArgsFor<'abstract_method_signature'>;
-	export type LooseArgs = LooseArgsFor<'abstract_method_signature'>;
-	export type Tree = TreeFor<'abstract_method_signature'>;
+	export type Config = ConfigFor<TSKindId.AbstractMethodSignature>;
+	export type Fluent = FluentFor<TSKindId.AbstractMethodSignature>;
+	export type Loose = LooseFor<TSKindId.AbstractMethodSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AbstractMethodSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AbstractMethodSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AbstractMethodSignature>;
+	export type Tree = TreeFor<TSKindId.AbstractMethodSignature>;
 	export type Kind = 'abstract_method_signature';
 }
 export namespace FunctionSignature {
-	export type Config = ConfigFor<'function_signature'>;
-	export type Fluent = FluentFor<'function_signature'>;
-	export type Loose = LooseFor<'function_signature'>;
-	export type LooseConfig = LooseConfigFor<'function_signature'>;
-	export type BuildArgs = BuildArgsFor<'function_signature'>;
-	export type LooseArgs = LooseArgsFor<'function_signature'>;
-	export type Tree = TreeFor<'function_signature'>;
+	export type Config = ConfigFor<TSKindId.FunctionSignature>;
+	export type Fluent = FluentFor<TSKindId.FunctionSignature>;
+	export type Loose = LooseFor<TSKindId.FunctionSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FunctionSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FunctionSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FunctionSignature>;
+	export type Tree = TreeFor<TSKindId.FunctionSignature>;
 	export type Kind = 'function_signature';
 }
 export namespace DecoratorParenthesizedExpression {
-	export type Config = ConfigFor<'decorator_parenthesized_expression'>;
-	export type Fluent = FluentFor<'decorator_parenthesized_expression'>;
-	export type Loose = LooseFor<'decorator_parenthesized_expression'>;
-	export type LooseConfig = LooseConfigFor<'decorator_parenthesized_expression'>;
-	export type BuildArgs = BuildArgsFor<'decorator_parenthesized_expression'>;
-	export type LooseArgs = LooseArgsFor<'decorator_parenthesized_expression'>;
-	export type Tree = TreeFor<'decorator_parenthesized_expression'>;
+	export type Config = ConfigFor<TSKindId.DecoratorParenthesizedExpression>;
+	export type Fluent = FluentFor<TSKindId.DecoratorParenthesizedExpression>;
+	export type Loose = LooseFor<TSKindId.DecoratorParenthesizedExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorParenthesizedExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.DecoratorParenthesizedExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.DecoratorParenthesizedExpression>;
+	export type Tree = TreeFor<TSKindId.DecoratorParenthesizedExpression>;
 	export type Kind = 'decorator_parenthesized_expression';
 }
 export namespace TypeAssertion {
-	export type Config = ConfigFor<'type_assertion'>;
-	export type Fluent = FluentFor<'type_assertion'>;
-	export type Loose = LooseFor<'type_assertion'>;
-	export type LooseConfig = LooseConfigFor<'type_assertion'>;
-	export type BuildArgs = BuildArgsFor<'type_assertion'>;
-	export type LooseArgs = LooseArgsFor<'type_assertion'>;
-	export type Tree = TreeFor<'type_assertion'>;
+	export type Config = ConfigFor<TSKindId.TypeAssertion>;
+	export type Fluent = FluentFor<TSKindId.TypeAssertion>;
+	export type Loose = LooseFor<TSKindId.TypeAssertion>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeAssertion>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeAssertion>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeAssertion>;
+	export type Tree = TreeFor<TSKindId.TypeAssertion>;
 	export type Kind = 'type_assertion';
 }
 export namespace AsExpression {
-	export type Config = ConfigFor<'as_expression'>;
-	export type Fluent = FluentFor<'as_expression'>;
-	export type Loose = LooseFor<'as_expression'>;
-	export type LooseConfig = LooseConfigFor<'as_expression'>;
-	export type BuildArgs = BuildArgsFor<'as_expression'>;
-	export type LooseArgs = LooseArgsFor<'as_expression'>;
-	export type Tree = TreeFor<'as_expression'>;
+	export type Config = ConfigFor<TSKindId.AsExpression>;
+	export type Fluent = FluentFor<TSKindId.AsExpression>;
+	export type Loose = LooseFor<TSKindId.AsExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AsExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AsExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AsExpression>;
+	export type Tree = TreeFor<TSKindId.AsExpression>;
 	export type Kind = 'as_expression';
 }
 export namespace SatisfiesExpression {
-	export type Config = ConfigFor<'satisfies_expression'>;
-	export type Fluent = FluentFor<'satisfies_expression'>;
-	export type Loose = LooseFor<'satisfies_expression'>;
-	export type LooseConfig = LooseConfigFor<'satisfies_expression'>;
-	export type BuildArgs = BuildArgsFor<'satisfies_expression'>;
-	export type LooseArgs = LooseArgsFor<'satisfies_expression'>;
-	export type Tree = TreeFor<'satisfies_expression'>;
+	export type Config = ConfigFor<TSKindId.SatisfiesExpression>;
+	export type Fluent = FluentFor<TSKindId.SatisfiesExpression>;
+	export type Loose = LooseFor<TSKindId.SatisfiesExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SatisfiesExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SatisfiesExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SatisfiesExpression>;
+	export type Tree = TreeFor<TSKindId.SatisfiesExpression>;
 	export type Kind = 'satisfies_expression';
 }
 export namespace InstantiationExpression {
-	export type Config = ConfigFor<'instantiation_expression'>;
-	export type Fluent = FluentFor<'instantiation_expression'>;
-	export type Loose = LooseFor<'instantiation_expression'>;
-	export type LooseConfig = LooseConfigFor<'instantiation_expression'>;
-	export type BuildArgs = BuildArgsFor<'instantiation_expression'>;
-	export type LooseArgs = LooseArgsFor<'instantiation_expression'>;
-	export type Tree = TreeFor<'instantiation_expression'>;
+	export type Config = ConfigFor<TSKindId.InstantiationExpression>;
+	export type Fluent = FluentFor<TSKindId.InstantiationExpression>;
+	export type Loose = LooseFor<TSKindId.InstantiationExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.InstantiationExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.InstantiationExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.InstantiationExpression>;
+	export type Tree = TreeFor<TSKindId.InstantiationExpression>;
 	export type Kind = 'instantiation_expression';
 }
 export namespace ImportRequireClause {
-	export type Config = ConfigFor<'import_require_clause'>;
-	export type Fluent = FluentFor<'import_require_clause'>;
-	export type Loose = LooseFor<'import_require_clause'>;
-	export type LooseConfig = LooseConfigFor<'import_require_clause'>;
-	export type BuildArgs = BuildArgsFor<'import_require_clause'>;
-	export type LooseArgs = LooseArgsFor<'import_require_clause'>;
-	export type Tree = TreeFor<'import_require_clause'>;
+	export type Config = ConfigFor<TSKindId.ImportRequireClause>;
+	export type Fluent = FluentFor<TSKindId.ImportRequireClause>;
+	export type Loose = LooseFor<TSKindId.ImportRequireClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportRequireClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportRequireClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportRequireClause>;
+	export type Tree = TreeFor<TSKindId.ImportRequireClause>;
 	export type Kind = 'import_require_clause';
 }
 export namespace ExtendsClause {
-	export type Config = ConfigFor<'extends_clause'>;
-	export type Fluent = FluentFor<'extends_clause'>;
-	export type Loose = LooseFor<'extends_clause'>;
-	export type LooseConfig = LooseConfigFor<'extends_clause'>;
-	export type BuildArgs = BuildArgsFor<'extends_clause'>;
-	export type LooseArgs = LooseArgsFor<'extends_clause'>;
-	export type Tree = TreeFor<'extends_clause'>;
+	export type Config = ConfigFor<TSKindId.ExtendsClause>;
+	export type Fluent = FluentFor<TSKindId.ExtendsClause>;
+	export type Loose = LooseFor<TSKindId.ExtendsClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExtendsClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExtendsClause>;
+	export type Tree = TreeFor<TSKindId.ExtendsClause>;
 	export type Kind = 'extends_clause';
 }
 export namespace ExtendsClauseSingle {
-	export type Config = ConfigFor<'_extends_clause_single'>;
-	export type Fluent = FluentFor<'_extends_clause_single'>;
-	export type Loose = LooseFor<'_extends_clause_single'>;
-	export type LooseConfig = LooseConfigFor<'_extends_clause_single'>;
-	export type BuildArgs = BuildArgsFor<'_extends_clause_single'>;
-	export type LooseArgs = LooseArgsFor<'_extends_clause_single'>;
-	export type Tree = TreeFor<'_extends_clause_single'>;
+	export type Config = ConfigFor<TSKindId.ExtendsClauseSingle>;
+	export type Fluent = FluentFor<TSKindId.ExtendsClauseSingle>;
+	export type Loose = LooseFor<TSKindId.ExtendsClauseSingle>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClauseSingle>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExtendsClauseSingle>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExtendsClauseSingle>;
+	export type Tree = TreeFor<TSKindId.ExtendsClauseSingle>;
 	export type Kind = '_extends_clause_single';
 }
 export namespace ImplementsClause {
-	export type Config = ConfigFor<'implements_clause'>;
-	export type Fluent = FluentFor<'implements_clause'>;
-	export type Loose = LooseFor<'implements_clause'>;
-	export type LooseConfig = LooseConfigFor<'implements_clause'>;
-	export type BuildArgs = BuildArgsFor<'implements_clause'>;
-	export type LooseArgs = LooseArgsFor<'implements_clause'>;
-	export type Tree = TreeFor<'implements_clause'>;
+	export type Config = ConfigFor<TSKindId.ImplementsClause>;
+	export type Fluent = FluentFor<TSKindId.ImplementsClause>;
+	export type Loose = LooseFor<TSKindId.ImplementsClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImplementsClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImplementsClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImplementsClause>;
+	export type Tree = TreeFor<TSKindId.ImplementsClause>;
 	export type Kind = 'implements_clause';
 }
 export namespace AmbientDeclaration {
-	export type Config = ConfigFor<'ambient_declaration'>;
-	export type Fluent = FluentFor<'ambient_declaration'>;
-	export type Loose = LooseFor<'ambient_declaration'>;
-	export type LooseConfig = LooseConfigFor<'ambient_declaration'>;
-	export type BuildArgs = BuildArgsFor<'ambient_declaration'>;
-	export type LooseArgs = LooseArgsFor<'ambient_declaration'>;
-	export type Tree = TreeFor<'ambient_declaration'>;
+	export type Config = ConfigFor<TSKindId.AmbientDeclaration>;
+	export type Fluent = FluentFor<TSKindId.AmbientDeclaration>;
+	export type Loose = LooseFor<TSKindId.AmbientDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AmbientDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AmbientDeclaration>;
+	export type Tree = TreeFor<TSKindId.AmbientDeclaration>;
 	export type Kind = 'ambient_declaration';
 }
 export namespace AbstractClassDeclaration {
-	export type Config = ConfigFor<'abstract_class_declaration'>;
-	export type Fluent = FluentFor<'abstract_class_declaration'>;
-	export type Loose = LooseFor<'abstract_class_declaration'>;
-	export type LooseConfig = LooseConfigFor<'abstract_class_declaration'>;
-	export type BuildArgs = BuildArgsFor<'abstract_class_declaration'>;
-	export type LooseArgs = LooseArgsFor<'abstract_class_declaration'>;
-	export type Tree = TreeFor<'abstract_class_declaration'>;
+	export type Config = ConfigFor<TSKindId.AbstractClassDeclaration>;
+	export type Fluent = FluentFor<TSKindId.AbstractClassDeclaration>;
+	export type Loose = LooseFor<TSKindId.AbstractClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AbstractClassDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AbstractClassDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AbstractClassDeclaration>;
+	export type Tree = TreeFor<TSKindId.AbstractClassDeclaration>;
 	export type Kind = 'abstract_class_declaration';
 }
 export namespace Module {
-	export type Config = ConfigFor<'module'>;
-	export type Fluent = FluentFor<'module'>;
-	export type Loose = LooseFor<'module'>;
-	export type LooseConfig = LooseConfigFor<'module'>;
-	export type BuildArgs = BuildArgsFor<'module'>;
-	export type LooseArgs = LooseArgsFor<'module'>;
-	export type Tree = TreeFor<'module'>;
+	export type Config = ConfigFor<TSKindId.Module>;
+	export type Fluent = FluentFor<TSKindId.Module>;
+	export type Loose = LooseFor<TSKindId.Module>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Module>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Module>;
+	export type Tree = TreeFor<TSKindId.Module>;
 	export type Kind = 'module';
 }
 export namespace InternalModule {
-	export type Config = ConfigFor<'internal_module'>;
-	export type Fluent = FluentFor<'internal_module'>;
-	export type Loose = LooseFor<'internal_module'>;
-	export type LooseConfig = LooseConfigFor<'internal_module'>;
-	export type BuildArgs = BuildArgsFor<'internal_module'>;
-	export type LooseArgs = LooseArgsFor<'internal_module'>;
-	export type Tree = TreeFor<'internal_module'>;
+	export type Config = ConfigFor<TSKindId.InternalModule>;
+	export type Fluent = FluentFor<TSKindId.InternalModule>;
+	export type Loose = LooseFor<TSKindId.InternalModule>;
+	export type LooseConfig = LooseConfigFor<TSKindId.InternalModule>;
+	export type BuildArgs = BuildArgsFor<TSKindId.InternalModule>;
+	export type LooseArgs = LooseArgsFor<TSKindId.InternalModule>;
+	export type Tree = TreeFor<TSKindId.InternalModule>;
 	export type Kind = 'internal_module';
 }
 export namespace _Module {
-	export type Config = ConfigFor<'_module'>;
-	export type Fluent = FluentFor<'_module'>;
-	export type Loose = LooseFor<'_module'>;
-	export type LooseConfig = LooseConfigFor<'_module'>;
-	export type BuildArgs = BuildArgsFor<'_module'>;
-	export type LooseArgs = LooseArgsFor<'_module'>;
-	export type Tree = TreeFor<'_module'>;
+	export type Config = ConfigFor<TSKindId._Module>;
+	export type Fluent = FluentFor<TSKindId._Module>;
+	export type Loose = LooseFor<TSKindId._Module>;
+	export type LooseConfig = LooseConfigFor<TSKindId._Module>;
+	export type BuildArgs = BuildArgsFor<TSKindId._Module>;
+	export type LooseArgs = LooseArgsFor<TSKindId._Module>;
+	export type Tree = TreeFor<TSKindId._Module>;
 	export type Kind = '_module';
 }
 export namespace ImportAlias {
-	export type Config = ConfigFor<'import_alias'>;
-	export type Fluent = FluentFor<'import_alias'>;
-	export type Loose = LooseFor<'import_alias'>;
-	export type LooseConfig = LooseConfigFor<'import_alias'>;
-	export type BuildArgs = BuildArgsFor<'import_alias'>;
-	export type LooseArgs = LooseArgsFor<'import_alias'>;
-	export type Tree = TreeFor<'import_alias'>;
+	export type Config = ConfigFor<TSKindId.ImportAlias>;
+	export type Fluent = FluentFor<TSKindId.ImportAlias>;
+	export type Loose = LooseFor<TSKindId.ImportAlias>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportAlias>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportAlias>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportAlias>;
+	export type Tree = TreeFor<TSKindId.ImportAlias>;
 	export type Kind = 'import_alias';
 }
 export namespace NestedTypeIdentifier {
-	export type Config = ConfigFor<'nested_type_identifier'>;
-	export type Fluent = FluentFor<'nested_type_identifier'>;
-	export type Loose = LooseFor<'nested_type_identifier'>;
-	export type LooseConfig = LooseConfigFor<'nested_type_identifier'>;
-	export type BuildArgs = BuildArgsFor<'nested_type_identifier'>;
-	export type LooseArgs = LooseArgsFor<'nested_type_identifier'>;
-	export type Tree = TreeFor<'nested_type_identifier'>;
+	export type Config = ConfigFor<TSKindId.NestedTypeIdentifier>;
+	export type Fluent = FluentFor<TSKindId.NestedTypeIdentifier>;
+	export type Loose = LooseFor<TSKindId.NestedTypeIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NestedTypeIdentifier>;
+	export type BuildArgs = BuildArgsFor<TSKindId.NestedTypeIdentifier>;
+	export type LooseArgs = LooseArgsFor<TSKindId.NestedTypeIdentifier>;
+	export type Tree = TreeFor<TSKindId.NestedTypeIdentifier>;
 	export type Kind = 'nested_type_identifier';
 }
 export namespace InterfaceDeclaration {
-	export type Config = ConfigFor<'interface_declaration'>;
-	export type Fluent = FluentFor<'interface_declaration'>;
-	export type Loose = LooseFor<'interface_declaration'>;
-	export type LooseConfig = LooseConfigFor<'interface_declaration'>;
-	export type BuildArgs = BuildArgsFor<'interface_declaration'>;
-	export type LooseArgs = LooseArgsFor<'interface_declaration'>;
-	export type Tree = TreeFor<'interface_declaration'>;
+	export type Config = ConfigFor<TSKindId.InterfaceDeclaration>;
+	export type Fluent = FluentFor<TSKindId.InterfaceDeclaration>;
+	export type Loose = LooseFor<TSKindId.InterfaceDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.InterfaceDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.InterfaceDeclaration>;
+	export type Tree = TreeFor<TSKindId.InterfaceDeclaration>;
 	export type Kind = 'interface_declaration';
 }
 export namespace ExtendsTypeClause {
-	export type Config = ConfigFor<'extends_type_clause'>;
-	export type Fluent = FluentFor<'extends_type_clause'>;
-	export type Loose = LooseFor<'extends_type_clause'>;
-	export type LooseConfig = LooseConfigFor<'extends_type_clause'>;
-	export type BuildArgs = BuildArgsFor<'extends_type_clause'>;
-	export type LooseArgs = LooseArgsFor<'extends_type_clause'>;
-	export type Tree = TreeFor<'extends_type_clause'>;
+	export type Config = ConfigFor<TSKindId.ExtendsTypeClause>;
+	export type Fluent = FluentFor<TSKindId.ExtendsTypeClause>;
+	export type Loose = LooseFor<TSKindId.ExtendsTypeClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsTypeClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExtendsTypeClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExtendsTypeClause>;
+	export type Tree = TreeFor<TSKindId.ExtendsTypeClause>;
 	export type Kind = 'extends_type_clause';
 }
 export namespace EnumDeclaration {
-	export type Config = ConfigFor<'enum_declaration'>;
-	export type Fluent = FluentFor<'enum_declaration'>;
-	export type Loose = LooseFor<'enum_declaration'>;
-	export type LooseConfig = LooseConfigFor<'enum_declaration'>;
-	export type BuildArgs = BuildArgsFor<'enum_declaration'>;
-	export type LooseArgs = LooseArgsFor<'enum_declaration'>;
-	export type Tree = TreeFor<'enum_declaration'>;
+	export type Config = ConfigFor<TSKindId.EnumDeclaration>;
+	export type Fluent = FluentFor<TSKindId.EnumDeclaration>;
+	export type Loose = LooseFor<TSKindId.EnumDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EnumDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.EnumDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.EnumDeclaration>;
+	export type Tree = TreeFor<TSKindId.EnumDeclaration>;
 	export type Kind = 'enum_declaration';
 }
 export namespace EnumBody {
-	export type Config = ConfigFor<'enum_body'>;
-	export type Fluent = FluentFor<'enum_body'>;
-	export type Loose = LooseFor<'enum_body'>;
-	export type LooseConfig = LooseConfigFor<'enum_body'>;
-	export type BuildArgs = BuildArgsFor<'enum_body'>;
-	export type LooseArgs = LooseArgsFor<'enum_body'>;
-	export type Tree = TreeFor<'enum_body'>;
+	export type Config = ConfigFor<TSKindId.EnumBody>;
+	export type Fluent = FluentFor<TSKindId.EnumBody>;
+	export type Loose = LooseFor<TSKindId.EnumBody>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
+	export type BuildArgs = BuildArgsFor<TSKindId.EnumBody>;
+	export type LooseArgs = LooseArgsFor<TSKindId.EnumBody>;
+	export type Tree = TreeFor<TSKindId.EnumBody>;
 	export type Kind = 'enum_body';
 }
 export namespace EnumAssignment {
-	export type Config = ConfigFor<'enum_assignment'>;
-	export type Fluent = FluentFor<'enum_assignment'>;
-	export type Loose = LooseFor<'enum_assignment'>;
-	export type LooseConfig = LooseConfigFor<'enum_assignment'>;
-	export type BuildArgs = BuildArgsFor<'enum_assignment'>;
-	export type LooseArgs = LooseArgsFor<'enum_assignment'>;
-	export type Tree = TreeFor<'enum_assignment'>;
+	export type Config = ConfigFor<TSKindId.EnumAssignment>;
+	export type Fluent = FluentFor<TSKindId.EnumAssignment>;
+	export type Loose = LooseFor<TSKindId.EnumAssignment>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EnumAssignment>;
+	export type BuildArgs = BuildArgsFor<TSKindId.EnumAssignment>;
+	export type LooseArgs = LooseArgsFor<TSKindId.EnumAssignment>;
+	export type Tree = TreeFor<TSKindId.EnumAssignment>;
 	export type Kind = 'enum_assignment';
 }
 export namespace TypeAliasDeclaration {
-	export type Config = ConfigFor<'type_alias_declaration'>;
-	export type Fluent = FluentFor<'type_alias_declaration'>;
-	export type Loose = LooseFor<'type_alias_declaration'>;
-	export type LooseConfig = LooseConfigFor<'type_alias_declaration'>;
-	export type BuildArgs = BuildArgsFor<'type_alias_declaration'>;
-	export type LooseArgs = LooseArgsFor<'type_alias_declaration'>;
-	export type Tree = TreeFor<'type_alias_declaration'>;
+	export type Config = ConfigFor<TSKindId.TypeAliasDeclaration>;
+	export type Fluent = FluentFor<TSKindId.TypeAliasDeclaration>;
+	export type Loose = LooseFor<TSKindId.TypeAliasDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeAliasDeclaration>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeAliasDeclaration>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeAliasDeclaration>;
+	export type Tree = TreeFor<TSKindId.TypeAliasDeclaration>;
 	export type Kind = 'type_alias_declaration';
 }
 export namespace RequiredParameter {
-	export type Config = ConfigFor<'required_parameter'>;
-	export type Fluent = FluentFor<'required_parameter'>;
-	export type Loose = LooseFor<'required_parameter'>;
-	export type LooseConfig = LooseConfigFor<'required_parameter'>;
-	export type BuildArgs = BuildArgsFor<'required_parameter'>;
-	export type LooseArgs = LooseArgsFor<'required_parameter'>;
-	export type Tree = TreeFor<'required_parameter'>;
+	export type Config = ConfigFor<TSKindId.RequiredParameter>;
+	export type Fluent = FluentFor<TSKindId.RequiredParameter>;
+	export type Loose = LooseFor<TSKindId.RequiredParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RequiredParameter>;
+	export type BuildArgs = BuildArgsFor<TSKindId.RequiredParameter>;
+	export type LooseArgs = LooseArgsFor<TSKindId.RequiredParameter>;
+	export type Tree = TreeFor<TSKindId.RequiredParameter>;
 	export type Kind = 'required_parameter';
 }
 export namespace OptionalParameter {
-	export type Config = ConfigFor<'optional_parameter'>;
-	export type Fluent = FluentFor<'optional_parameter'>;
-	export type Loose = LooseFor<'optional_parameter'>;
-	export type LooseConfig = LooseConfigFor<'optional_parameter'>;
-	export type BuildArgs = BuildArgsFor<'optional_parameter'>;
-	export type LooseArgs = LooseArgsFor<'optional_parameter'>;
-	export type Tree = TreeFor<'optional_parameter'>;
+	export type Config = ConfigFor<TSKindId.OptionalParameter>;
+	export type Fluent = FluentFor<TSKindId.OptionalParameter>;
+	export type Loose = LooseFor<TSKindId.OptionalParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.OptionalParameter>;
+	export type BuildArgs = BuildArgsFor<TSKindId.OptionalParameter>;
+	export type LooseArgs = LooseArgsFor<TSKindId.OptionalParameter>;
+	export type Tree = TreeFor<TSKindId.OptionalParameter>;
 	export type Kind = 'optional_parameter';
 }
 export namespace ParameterName {
-	export type Config = ConfigFor<'_parameter_name'>;
-	export type Fluent = FluentFor<'_parameter_name'>;
-	export type Loose = LooseFor<'_parameter_name'>;
-	export type LooseConfig = LooseConfigFor<'_parameter_name'>;
-	export type BuildArgs = BuildArgsFor<'_parameter_name'>;
-	export type LooseArgs = LooseArgsFor<'_parameter_name'>;
-	export type Tree = TreeFor<'_parameter_name'>;
+	export type Config = ConfigFor<TSKindId.ParameterName>;
+	export type Fluent = FluentFor<TSKindId.ParameterName>;
+	export type Loose = LooseFor<TSKindId.ParameterName>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ParameterName>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ParameterName>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ParameterName>;
+	export type Tree = TreeFor<TSKindId.ParameterName>;
 	export type Kind = '_parameter_name';
 }
 export namespace OmittingTypeAnnotation {
-	export type Config = ConfigFor<'omitting_type_annotation'>;
-	export type Fluent = FluentFor<'omitting_type_annotation'>;
-	export type Loose = LooseFor<'omitting_type_annotation'>;
-	export type LooseConfig = LooseConfigFor<'omitting_type_annotation'>;
-	export type BuildArgs = BuildArgsFor<'omitting_type_annotation'>;
-	export type LooseArgs = LooseArgsFor<'omitting_type_annotation'>;
-	export type Tree = TreeFor<'omitting_type_annotation'>;
+	export type Config = ConfigFor<TSKindId.OmittingTypeAnnotation>;
+	export type Fluent = FluentFor<TSKindId.OmittingTypeAnnotation>;
+	export type Loose = LooseFor<TSKindId.OmittingTypeAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.OmittingTypeAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.OmittingTypeAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.OmittingTypeAnnotation>;
+	export type Tree = TreeFor<TSKindId.OmittingTypeAnnotation>;
 	export type Kind = 'omitting_type_annotation';
 }
 export namespace AddingTypeAnnotation {
-	export type Config = ConfigFor<'adding_type_annotation'>;
-	export type Fluent = FluentFor<'adding_type_annotation'>;
-	export type Loose = LooseFor<'adding_type_annotation'>;
-	export type LooseConfig = LooseConfigFor<'adding_type_annotation'>;
-	export type BuildArgs = BuildArgsFor<'adding_type_annotation'>;
-	export type LooseArgs = LooseArgsFor<'adding_type_annotation'>;
-	export type Tree = TreeFor<'adding_type_annotation'>;
+	export type Config = ConfigFor<TSKindId.AddingTypeAnnotation>;
+	export type Fluent = FluentFor<TSKindId.AddingTypeAnnotation>;
+	export type Loose = LooseFor<TSKindId.AddingTypeAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AddingTypeAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AddingTypeAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AddingTypeAnnotation>;
+	export type Tree = TreeFor<TSKindId.AddingTypeAnnotation>;
 	export type Kind = 'adding_type_annotation';
 }
 export namespace OptingTypeAnnotation {
-	export type Config = ConfigFor<'opting_type_annotation'>;
-	export type Fluent = FluentFor<'opting_type_annotation'>;
-	export type Loose = LooseFor<'opting_type_annotation'>;
-	export type LooseConfig = LooseConfigFor<'opting_type_annotation'>;
-	export type BuildArgs = BuildArgsFor<'opting_type_annotation'>;
-	export type LooseArgs = LooseArgsFor<'opting_type_annotation'>;
-	export type Tree = TreeFor<'opting_type_annotation'>;
+	export type Config = ConfigFor<TSKindId.OptingTypeAnnotation>;
+	export type Fluent = FluentFor<TSKindId.OptingTypeAnnotation>;
+	export type Loose = LooseFor<TSKindId.OptingTypeAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.OptingTypeAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.OptingTypeAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.OptingTypeAnnotation>;
+	export type Tree = TreeFor<TSKindId.OptingTypeAnnotation>;
 	export type Kind = 'opting_type_annotation';
 }
 export namespace TypeAnnotation {
-	export type Config = ConfigFor<'type_annotation'>;
-	export type Fluent = FluentFor<'type_annotation'>;
-	export type Loose = LooseFor<'type_annotation'>;
-	export type LooseConfig = LooseConfigFor<'type_annotation'>;
-	export type BuildArgs = BuildArgsFor<'type_annotation'>;
-	export type LooseArgs = LooseArgsFor<'type_annotation'>;
-	export type Tree = TreeFor<'type_annotation'>;
+	export type Config = ConfigFor<TSKindId.TypeAnnotation>;
+	export type Fluent = FluentFor<TSKindId.TypeAnnotation>;
+	export type Loose = LooseFor<TSKindId.TypeAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeAnnotation>;
+	export type Tree = TreeFor<TSKindId.TypeAnnotation>;
 	export type Kind = 'type_annotation';
 }
 export namespace TypeQueryMemberExpressionInTypeAnnotation {
-	export type Config = ConfigFor<'_type_query_member_expression_in_type_annotation'>;
-	export type Fluent = FluentFor<'_type_query_member_expression_in_type_annotation'>;
-	export type Loose = LooseFor<'_type_query_member_expression_in_type_annotation'>;
-	export type LooseConfig = LooseConfigFor<'_type_query_member_expression_in_type_annotation'>;
-	export type BuildArgs = BuildArgsFor<'_type_query_member_expression_in_type_annotation'>;
-	export type LooseArgs = LooseArgsFor<'_type_query_member_expression_in_type_annotation'>;
-	export type Tree = TreeFor<'_type_query_member_expression_in_type_annotation'>;
+	export type Config = ConfigFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
+	export type Fluent = FluentFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
+	export type Loose = LooseFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
+	export type Tree = TreeFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
 	export type Kind = '_type_query_member_expression_in_type_annotation';
 }
 export namespace TypeQueryCallExpressionInTypeAnnotation {
-	export type Config = ConfigFor<'_type_query_call_expression_in_type_annotation'>;
-	export type Fluent = FluentFor<'_type_query_call_expression_in_type_annotation'>;
-	export type Loose = LooseFor<'_type_query_call_expression_in_type_annotation'>;
-	export type LooseConfig = LooseConfigFor<'_type_query_call_expression_in_type_annotation'>;
-	export type BuildArgs = BuildArgsFor<'_type_query_call_expression_in_type_annotation'>;
-	export type LooseArgs = LooseArgsFor<'_type_query_call_expression_in_type_annotation'>;
-	export type Tree = TreeFor<'_type_query_call_expression_in_type_annotation'>;
+	export type Config = ConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
+	export type Fluent = FluentFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
+	export type Loose = LooseFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
+	export type Tree = TreeFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
 	export type Kind = '_type_query_call_expression_in_type_annotation';
 }
 export namespace Asserts {
-	export type Config = ConfigFor<'asserts'>;
-	export type Fluent = FluentFor<'asserts'>;
-	export type Loose = LooseFor<'asserts'>;
-	export type LooseConfig = LooseConfigFor<'asserts'>;
-	export type BuildArgs = BuildArgsFor<'asserts'>;
-	export type LooseArgs = LooseArgsFor<'asserts'>;
-	export type Tree = TreeFor<'asserts'>;
+	export type Config = ConfigFor<TSKindId.Asserts>;
+	export type Fluent = FluentFor<TSKindId.Asserts>;
+	export type Loose = LooseFor<TSKindId.Asserts>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Asserts>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Asserts>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Asserts>;
+	export type Tree = TreeFor<TSKindId.Asserts>;
 	export type Kind = 'asserts';
 }
 export namespace AssertsAnnotation {
-	export type Config = ConfigFor<'asserts_annotation'>;
-	export type Fluent = FluentFor<'asserts_annotation'>;
-	export type Loose = LooseFor<'asserts_annotation'>;
-	export type LooseConfig = LooseConfigFor<'asserts_annotation'>;
-	export type BuildArgs = BuildArgsFor<'asserts_annotation'>;
-	export type LooseArgs = LooseArgsFor<'asserts_annotation'>;
-	export type Tree = TreeFor<'asserts_annotation'>;
+	export type Config = ConfigFor<TSKindId.AssertsAnnotation>;
+	export type Fluent = FluentFor<TSKindId.AssertsAnnotation>;
+	export type Loose = LooseFor<TSKindId.AssertsAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AssertsAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AssertsAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AssertsAnnotation>;
+	export type Tree = TreeFor<TSKindId.AssertsAnnotation>;
 	export type Kind = 'asserts_annotation';
 }
 export namespace TupleParameter {
-	export type Config = ConfigFor<'tuple_parameter'>;
-	export type Fluent = FluentFor<'tuple_parameter'>;
-	export type Loose = LooseFor<'tuple_parameter'>;
-	export type LooseConfig = LooseConfigFor<'tuple_parameter'>;
-	export type BuildArgs = BuildArgsFor<'tuple_parameter'>;
-	export type LooseArgs = LooseArgsFor<'tuple_parameter'>;
-	export type Tree = TreeFor<'tuple_parameter'>;
+	export type Config = ConfigFor<TSKindId.TupleParameter>;
+	export type Fluent = FluentFor<TSKindId.TupleParameter>;
+	export type Loose = LooseFor<TSKindId.TupleParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TupleParameter>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TupleParameter>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TupleParameter>;
+	export type Tree = TreeFor<TSKindId.TupleParameter>;
 	export type Kind = 'tuple_parameter';
 }
 export namespace OptionalTupleParameter {
-	export type Config = ConfigFor<'optional_tuple_parameter'>;
-	export type Fluent = FluentFor<'optional_tuple_parameter'>;
-	export type Loose = LooseFor<'optional_tuple_parameter'>;
-	export type LooseConfig = LooseConfigFor<'optional_tuple_parameter'>;
-	export type BuildArgs = BuildArgsFor<'optional_tuple_parameter'>;
-	export type LooseArgs = LooseArgsFor<'optional_tuple_parameter'>;
-	export type Tree = TreeFor<'optional_tuple_parameter'>;
+	export type Config = ConfigFor<TSKindId.OptionalTupleParameter>;
+	export type Fluent = FluentFor<TSKindId.OptionalTupleParameter>;
+	export type Loose = LooseFor<TSKindId.OptionalTupleParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.OptionalTupleParameter>;
+	export type BuildArgs = BuildArgsFor<TSKindId.OptionalTupleParameter>;
+	export type LooseArgs = LooseArgsFor<TSKindId.OptionalTupleParameter>;
+	export type Tree = TreeFor<TSKindId.OptionalTupleParameter>;
 	export type Kind = 'optional_tuple_parameter';
 }
 export namespace OptionalType {
-	export type Config = ConfigFor<'optional_type'>;
-	export type Fluent = FluentFor<'optional_type'>;
-	export type Loose = LooseFor<'optional_type'>;
-	export type LooseConfig = LooseConfigFor<'optional_type'>;
-	export type BuildArgs = BuildArgsFor<'optional_type'>;
-	export type LooseArgs = LooseArgsFor<'optional_type'>;
-	export type Tree = TreeFor<'optional_type'>;
+	export type Config = ConfigFor<TSKindId.OptionalType>;
+	export type Fluent = FluentFor<TSKindId.OptionalType>;
+	export type Loose = LooseFor<TSKindId.OptionalType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.OptionalType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.OptionalType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.OptionalType>;
+	export type Tree = TreeFor<TSKindId.OptionalType>;
 	export type Kind = 'optional_type';
 }
 export namespace RestType {
-	export type Config = ConfigFor<'rest_type'>;
-	export type Fluent = FluentFor<'rest_type'>;
-	export type Loose = LooseFor<'rest_type'>;
-	export type LooseConfig = LooseConfigFor<'rest_type'>;
-	export type BuildArgs = BuildArgsFor<'rest_type'>;
-	export type LooseArgs = LooseArgsFor<'rest_type'>;
-	export type Tree = TreeFor<'rest_type'>;
+	export type Config = ConfigFor<TSKindId.RestType>;
+	export type Fluent = FluentFor<TSKindId.RestType>;
+	export type Loose = LooseFor<TSKindId.RestType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RestType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.RestType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.RestType>;
+	export type Tree = TreeFor<TSKindId.RestType>;
 	export type Kind = 'rest_type';
 }
 export namespace ConstructorType {
-	export type Config = ConfigFor<'constructor_type'>;
-	export type Fluent = FluentFor<'constructor_type'>;
-	export type Loose = LooseFor<'constructor_type'>;
-	export type LooseConfig = LooseConfigFor<'constructor_type'>;
-	export type BuildArgs = BuildArgsFor<'constructor_type'>;
-	export type LooseArgs = LooseArgsFor<'constructor_type'>;
-	export type Tree = TreeFor<'constructor_type'>;
+	export type Config = ConfigFor<TSKindId.ConstructorType>;
+	export type Fluent = FluentFor<TSKindId.ConstructorType>;
+	export type Loose = LooseFor<TSKindId.ConstructorType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ConstructorType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ConstructorType>;
+	export type Tree = TreeFor<TSKindId.ConstructorType>;
 	export type Kind = 'constructor_type';
 }
 export namespace TemplateType {
-	export type Config = ConfigFor<'template_type'>;
-	export type Fluent = FluentFor<'template_type'>;
-	export type Loose = LooseFor<'template_type'>;
-	export type LooseConfig = LooseConfigFor<'template_type'>;
-	export type BuildArgs = BuildArgsFor<'template_type'>;
-	export type LooseArgs = LooseArgsFor<'template_type'>;
-	export type Tree = TreeFor<'template_type'>;
+	export type Config = ConfigFor<TSKindId.TemplateType>;
+	export type Fluent = FluentFor<TSKindId.TemplateType>;
+	export type Loose = LooseFor<TSKindId.TemplateType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TemplateType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TemplateType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TemplateType>;
+	export type Tree = TreeFor<TSKindId.TemplateType>;
 	export type Kind = 'template_type';
 }
 export namespace TemplateLiteralType {
-	export type Config = ConfigFor<'template_literal_type'>;
-	export type Fluent = FluentFor<'template_literal_type'>;
-	export type Loose = LooseFor<'template_literal_type'>;
-	export type LooseConfig = LooseConfigFor<'template_literal_type'>;
-	export type BuildArgs = BuildArgsFor<'template_literal_type'>;
-	export type LooseArgs = LooseArgsFor<'template_literal_type'>;
-	export type Tree = TreeFor<'template_literal_type'>;
+	export type Config = ConfigFor<TSKindId.TemplateLiteralType>;
+	export type Fluent = FluentFor<TSKindId.TemplateLiteralType>;
+	export type Loose = LooseFor<TSKindId.TemplateLiteralType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TemplateLiteralType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TemplateLiteralType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TemplateLiteralType>;
+	export type Tree = TreeFor<TSKindId.TemplateLiteralType>;
 	export type Kind = 'template_literal_type';
 }
 export namespace InferType {
-	export type Config = ConfigFor<'infer_type'>;
-	export type Fluent = FluentFor<'infer_type'>;
-	export type Loose = LooseFor<'infer_type'>;
-	export type LooseConfig = LooseConfigFor<'infer_type'>;
-	export type BuildArgs = BuildArgsFor<'infer_type'>;
-	export type LooseArgs = LooseArgsFor<'infer_type'>;
-	export type Tree = TreeFor<'infer_type'>;
+	export type Config = ConfigFor<TSKindId.InferType>;
+	export type Fluent = FluentFor<TSKindId.InferType>;
+	export type Loose = LooseFor<TSKindId.InferType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.InferType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.InferType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.InferType>;
+	export type Tree = TreeFor<TSKindId.InferType>;
 	export type Kind = 'infer_type';
 }
 export namespace ConditionalType {
-	export type Config = ConfigFor<'conditional_type'>;
-	export type Fluent = FluentFor<'conditional_type'>;
-	export type Loose = LooseFor<'conditional_type'>;
-	export type LooseConfig = LooseConfigFor<'conditional_type'>;
-	export type BuildArgs = BuildArgsFor<'conditional_type'>;
-	export type LooseArgs = LooseArgsFor<'conditional_type'>;
-	export type Tree = TreeFor<'conditional_type'>;
+	export type Config = ConfigFor<TSKindId.ConditionalType>;
+	export type Fluent = FluentFor<TSKindId.ConditionalType>;
+	export type Loose = LooseFor<TSKindId.ConditionalType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ConditionalType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ConditionalType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ConditionalType>;
+	export type Tree = TreeFor<TSKindId.ConditionalType>;
 	export type Kind = 'conditional_type';
 }
 export namespace GenericType {
-	export type Config = ConfigFor<'generic_type'>;
-	export type Fluent = FluentFor<'generic_type'>;
-	export type Loose = LooseFor<'generic_type'>;
-	export type LooseConfig = LooseConfigFor<'generic_type'>;
-	export type BuildArgs = BuildArgsFor<'generic_type'>;
-	export type LooseArgs = LooseArgsFor<'generic_type'>;
-	export type Tree = TreeFor<'generic_type'>;
+	export type Config = ConfigFor<TSKindId.GenericType>;
+	export type Fluent = FluentFor<TSKindId.GenericType>;
+	export type Loose = LooseFor<TSKindId.GenericType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.GenericType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.GenericType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.GenericType>;
+	export type Tree = TreeFor<TSKindId.GenericType>;
 	export type Kind = 'generic_type';
 }
 export namespace TypePredicate {
-	export type Config = ConfigFor<'type_predicate'>;
-	export type Fluent = FluentFor<'type_predicate'>;
-	export type Loose = LooseFor<'type_predicate'>;
-	export type LooseConfig = LooseConfigFor<'type_predicate'>;
-	export type BuildArgs = BuildArgsFor<'type_predicate'>;
-	export type LooseArgs = LooseArgsFor<'type_predicate'>;
-	export type Tree = TreeFor<'type_predicate'>;
+	export type Config = ConfigFor<TSKindId.TypePredicate>;
+	export type Fluent = FluentFor<TSKindId.TypePredicate>;
+	export type Loose = LooseFor<TSKindId.TypePredicate>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicate>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypePredicate>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypePredicate>;
+	export type Tree = TreeFor<TSKindId.TypePredicate>;
 	export type Kind = 'type_predicate';
 }
 export namespace TypePredicateAnnotation {
-	export type Config = ConfigFor<'type_predicate_annotation'>;
-	export type Fluent = FluentFor<'type_predicate_annotation'>;
-	export type Loose = LooseFor<'type_predicate_annotation'>;
-	export type LooseConfig = LooseConfigFor<'type_predicate_annotation'>;
-	export type BuildArgs = BuildArgsFor<'type_predicate_annotation'>;
-	export type LooseArgs = LooseArgsFor<'type_predicate_annotation'>;
-	export type Tree = TreeFor<'type_predicate_annotation'>;
+	export type Config = ConfigFor<TSKindId.TypePredicateAnnotation>;
+	export type Fluent = FluentFor<TSKindId.TypePredicateAnnotation>;
+	export type Loose = LooseFor<TSKindId.TypePredicateAnnotation>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicateAnnotation>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypePredicateAnnotation>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypePredicateAnnotation>;
+	export type Tree = TreeFor<TSKindId.TypePredicateAnnotation>;
 	export type Kind = 'type_predicate_annotation';
 }
 export namespace TypeQueryMemberExpression {
-	export type Config = ConfigFor<'_type_query_member_expression'>;
-	export type Fluent = FluentFor<'_type_query_member_expression'>;
-	export type Loose = LooseFor<'_type_query_member_expression'>;
-	export type LooseConfig = LooseConfigFor<'_type_query_member_expression'>;
-	export type BuildArgs = BuildArgsFor<'_type_query_member_expression'>;
-	export type LooseArgs = LooseArgsFor<'_type_query_member_expression'>;
-	export type Tree = TreeFor<'_type_query_member_expression'>;
+	export type Config = ConfigFor<TSKindId.TypeQueryMemberExpression>;
+	export type Fluent = FluentFor<TSKindId.TypeQueryMemberExpression>;
+	export type Loose = LooseFor<TSKindId.TypeQueryMemberExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryMemberExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQueryMemberExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQueryMemberExpression>;
+	export type Tree = TreeFor<TSKindId.TypeQueryMemberExpression>;
 	export type Kind = '_type_query_member_expression';
 }
 export namespace TypeQuerySubscriptExpression {
-	export type Config = ConfigFor<'_type_query_subscript_expression'>;
-	export type Fluent = FluentFor<'_type_query_subscript_expression'>;
-	export type Loose = LooseFor<'_type_query_subscript_expression'>;
-	export type LooseConfig = LooseConfigFor<'_type_query_subscript_expression'>;
-	export type BuildArgs = BuildArgsFor<'_type_query_subscript_expression'>;
-	export type LooseArgs = LooseArgsFor<'_type_query_subscript_expression'>;
-	export type Tree = TreeFor<'_type_query_subscript_expression'>;
+	export type Config = ConfigFor<TSKindId.TypeQuerySubscriptExpression>;
+	export type Fluent = FluentFor<TSKindId.TypeQuerySubscriptExpression>;
+	export type Loose = LooseFor<TSKindId.TypeQuerySubscriptExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQuerySubscriptExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQuerySubscriptExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQuerySubscriptExpression>;
+	export type Tree = TreeFor<TSKindId.TypeQuerySubscriptExpression>;
 	export type Kind = '_type_query_subscript_expression';
 }
 export namespace TypeQueryCallExpression {
-	export type Config = ConfigFor<'_type_query_call_expression'>;
-	export type Fluent = FluentFor<'_type_query_call_expression'>;
-	export type Loose = LooseFor<'_type_query_call_expression'>;
-	export type LooseConfig = LooseConfigFor<'_type_query_call_expression'>;
-	export type BuildArgs = BuildArgsFor<'_type_query_call_expression'>;
-	export type LooseArgs = LooseArgsFor<'_type_query_call_expression'>;
-	export type Tree = TreeFor<'_type_query_call_expression'>;
+	export type Config = ConfigFor<TSKindId.TypeQueryCallExpression>;
+	export type Fluent = FluentFor<TSKindId.TypeQueryCallExpression>;
+	export type Loose = LooseFor<TSKindId.TypeQueryCallExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQueryCallExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQueryCallExpression>;
+	export type Tree = TreeFor<TSKindId.TypeQueryCallExpression>;
 	export type Kind = '_type_query_call_expression';
 }
 export namespace TypeQueryInstantiationExpression {
-	export type Config = ConfigFor<'_type_query_instantiation_expression'>;
-	export type Fluent = FluentFor<'_type_query_instantiation_expression'>;
-	export type Loose = LooseFor<'_type_query_instantiation_expression'>;
-	export type LooseConfig = LooseConfigFor<'_type_query_instantiation_expression'>;
-	export type BuildArgs = BuildArgsFor<'_type_query_instantiation_expression'>;
-	export type LooseArgs = LooseArgsFor<'_type_query_instantiation_expression'>;
-	export type Tree = TreeFor<'_type_query_instantiation_expression'>;
+	export type Config = ConfigFor<TSKindId.TypeQueryInstantiationExpression>;
+	export type Fluent = FluentFor<TSKindId.TypeQueryInstantiationExpression>;
+	export type Loose = LooseFor<TSKindId.TypeQueryInstantiationExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryInstantiationExpression>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQueryInstantiationExpression>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQueryInstantiationExpression>;
+	export type Tree = TreeFor<TSKindId.TypeQueryInstantiationExpression>;
 	export type Kind = '_type_query_instantiation_expression';
 }
 export namespace TypeQuery {
-	export type Config = ConfigFor<'type_query'>;
-	export type Fluent = FluentFor<'type_query'>;
-	export type Loose = LooseFor<'type_query'>;
-	export type LooseConfig = LooseConfigFor<'type_query'>;
-	export type BuildArgs = BuildArgsFor<'type_query'>;
-	export type LooseArgs = LooseArgsFor<'type_query'>;
-	export type Tree = TreeFor<'type_query'>;
+	export type Config = ConfigFor<TSKindId.TypeQuery>;
+	export type Fluent = FluentFor<TSKindId.TypeQuery>;
+	export type Loose = LooseFor<TSKindId.TypeQuery>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeQuery>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeQuery>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeQuery>;
+	export type Tree = TreeFor<TSKindId.TypeQuery>;
 	export type Kind = 'type_query';
 }
 export namespace IndexTypeQuery {
-	export type Config = ConfigFor<'index_type_query'>;
-	export type Fluent = FluentFor<'index_type_query'>;
-	export type Loose = LooseFor<'index_type_query'>;
-	export type LooseConfig = LooseConfigFor<'index_type_query'>;
-	export type BuildArgs = BuildArgsFor<'index_type_query'>;
-	export type LooseArgs = LooseArgsFor<'index_type_query'>;
-	export type Tree = TreeFor<'index_type_query'>;
+	export type Config = ConfigFor<TSKindId.IndexTypeQuery>;
+	export type Fluent = FluentFor<TSKindId.IndexTypeQuery>;
+	export type Loose = LooseFor<TSKindId.IndexTypeQuery>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IndexTypeQuery>;
+	export type BuildArgs = BuildArgsFor<TSKindId.IndexTypeQuery>;
+	export type LooseArgs = LooseArgsFor<TSKindId.IndexTypeQuery>;
+	export type Tree = TreeFor<TSKindId.IndexTypeQuery>;
 	export type Kind = 'index_type_query';
 }
 export namespace LookupType {
-	export type Config = ConfigFor<'lookup_type'>;
-	export type Fluent = FluentFor<'lookup_type'>;
-	export type Loose = LooseFor<'lookup_type'>;
-	export type LooseConfig = LooseConfigFor<'lookup_type'>;
-	export type BuildArgs = BuildArgsFor<'lookup_type'>;
-	export type LooseArgs = LooseArgsFor<'lookup_type'>;
-	export type Tree = TreeFor<'lookup_type'>;
+	export type Config = ConfigFor<TSKindId.LookupType>;
+	export type Fluent = FluentFor<TSKindId.LookupType>;
+	export type Loose = LooseFor<TSKindId.LookupType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LookupType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.LookupType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.LookupType>;
+	export type Tree = TreeFor<TSKindId.LookupType>;
 	export type Kind = 'lookup_type';
 }
 export namespace MappedTypeClause {
-	export type Config = ConfigFor<'mapped_type_clause'>;
-	export type Fluent = FluentFor<'mapped_type_clause'>;
-	export type Loose = LooseFor<'mapped_type_clause'>;
-	export type LooseConfig = LooseConfigFor<'mapped_type_clause'>;
-	export type BuildArgs = BuildArgsFor<'mapped_type_clause'>;
-	export type LooseArgs = LooseArgsFor<'mapped_type_clause'>;
-	export type Tree = TreeFor<'mapped_type_clause'>;
+	export type Config = ConfigFor<TSKindId.MappedTypeClause>;
+	export type Fluent = FluentFor<TSKindId.MappedTypeClause>;
+	export type Loose = LooseFor<TSKindId.MappedTypeClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MappedTypeClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.MappedTypeClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.MappedTypeClause>;
+	export type Tree = TreeFor<TSKindId.MappedTypeClause>;
 	export type Kind = 'mapped_type_clause';
 }
 export namespace LiteralType {
-	export type Config = ConfigFor<'literal_type'>;
-	export type Fluent = FluentFor<'literal_type'>;
-	export type Loose = LooseFor<'literal_type'>;
-	export type LooseConfig = LooseConfigFor<'literal_type'>;
-	export type BuildArgs = BuildArgsFor<'literal_type'>;
-	export type LooseArgs = LooseArgsFor<'literal_type'>;
-	export type Tree = TreeFor<'literal_type'>;
+	export type Config = ConfigFor<TSKindId.LiteralType>;
+	export type Fluent = FluentFor<TSKindId.LiteralType>;
+	export type Loose = LooseFor<TSKindId.LiteralType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LiteralType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.LiteralType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.LiteralType>;
+	export type Tree = TreeFor<TSKindId.LiteralType>;
 	export type Kind = 'literal_type';
 }
 export namespace _Number {
-	export type Config = ConfigFor<'_number'>;
-	export type Fluent = FluentFor<'_number'>;
-	export type Loose = LooseFor<'_number'>;
-	export type LooseConfig = LooseConfigFor<'_number'>;
-	export type BuildArgs = BuildArgsFor<'_number'>;
-	export type LooseArgs = LooseArgsFor<'_number'>;
-	export type Tree = TreeFor<'_number'>;
+	export type Config = ConfigFor<TSKindId._Number>;
+	export type Fluent = FluentFor<TSKindId._Number>;
+	export type Loose = LooseFor<TSKindId._Number>;
+	export type LooseConfig = LooseConfigFor<TSKindId._Number>;
+	export type BuildArgs = BuildArgsFor<TSKindId._Number>;
+	export type LooseArgs = LooseArgsFor<TSKindId._Number>;
+	export type Tree = TreeFor<TSKindId._Number>;
 	export type Kind = '_number';
 }
 export namespace FlowMaybeType {
-	export type Config = ConfigFor<'flow_maybe_type'>;
-	export type Fluent = FluentFor<'flow_maybe_type'>;
-	export type Loose = LooseFor<'flow_maybe_type'>;
-	export type LooseConfig = LooseConfigFor<'flow_maybe_type'>;
-	export type BuildArgs = BuildArgsFor<'flow_maybe_type'>;
-	export type LooseArgs = LooseArgsFor<'flow_maybe_type'>;
-	export type Tree = TreeFor<'flow_maybe_type'>;
+	export type Config = ConfigFor<TSKindId.FlowMaybeType>;
+	export type Fluent = FluentFor<TSKindId.FlowMaybeType>;
+	export type Loose = LooseFor<TSKindId.FlowMaybeType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FlowMaybeType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FlowMaybeType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FlowMaybeType>;
+	export type Tree = TreeFor<TSKindId.FlowMaybeType>;
 	export type Kind = 'flow_maybe_type';
 }
 export namespace ParenthesizedType {
-	export type Config = ConfigFor<'parenthesized_type'>;
-	export type Fluent = FluentFor<'parenthesized_type'>;
-	export type Loose = LooseFor<'parenthesized_type'>;
-	export type LooseConfig = LooseConfigFor<'parenthesized_type'>;
-	export type BuildArgs = BuildArgsFor<'parenthesized_type'>;
-	export type LooseArgs = LooseArgsFor<'parenthesized_type'>;
-	export type Tree = TreeFor<'parenthesized_type'>;
+	export type Config = ConfigFor<TSKindId.ParenthesizedType>;
+	export type Fluent = FluentFor<TSKindId.ParenthesizedType>;
+	export type Loose = LooseFor<TSKindId.ParenthesizedType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ParenthesizedType>;
+	export type Tree = TreeFor<TSKindId.ParenthesizedType>;
 	export type Kind = 'parenthesized_type';
 }
 export namespace TypeArguments {
-	export type Config = ConfigFor<'type_arguments'>;
-	export type Fluent = FluentFor<'type_arguments'>;
-	export type Loose = LooseFor<'type_arguments'>;
-	export type LooseConfig = LooseConfigFor<'type_arguments'>;
-	export type BuildArgs = BuildArgsFor<'type_arguments'>;
-	export type LooseArgs = LooseArgsFor<'type_arguments'>;
-	export type Tree = TreeFor<'type_arguments'>;
+	export type Config = ConfigFor<TSKindId.TypeArguments>;
+	export type Fluent = FluentFor<TSKindId.TypeArguments>;
+	export type Loose = LooseFor<TSKindId.TypeArguments>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeArguments>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeArguments>;
+	export type Tree = TreeFor<TSKindId.TypeArguments>;
 	export type Kind = 'type_arguments';
 }
 export namespace ObjectType {
 	export namespace Curly {
-		export type Config = Omit<ConfigFor<'object_type'>, 'opening' | 'closing'>;
+		export type Config = Omit<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'>;
 		export type Tree = ObjectTypeCurlyTree;
 	}
 	export namespace Flow {
-		export type Config = Omit<ConfigFor<'object_type'>, 'opening' | 'closing'>;
+		export type Config = Omit<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'>;
 		export type Tree = ObjectTypeFlowTree;
 	}
 	/** Default form: 'curly' (first-declared). */
 	export type Config = Curly.Config;
-	export type Fluent = FluentFor<'object_type'>;
-	export type Loose = LooseFor<'object_type'>;
-	export type LooseConfig = LooseConfigFor<'object_type'>;
-	export type BuildArgs = BuildArgsFor<'object_type'>;
-	export type LooseArgs = LooseArgsFor<'object_type'>;
-	export type Tree = TreeFor<'object_type'>;
+	export type Fluent = FluentFor<TSKindId.ObjectType>;
+	export type Loose = LooseFor<TSKindId.ObjectType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ObjectType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ObjectType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ObjectType>;
+	export type Tree = TreeFor<TSKindId.ObjectType>;
 	export type Kind = 'object_type';
 }
 export namespace CallSignature {
-	export type Config = ConfigFor<'call_signature'>;
-	export type Fluent = FluentFor<'call_signature'>;
-	export type Loose = LooseFor<'call_signature'>;
-	export type LooseConfig = LooseConfigFor<'call_signature'>;
-	export type BuildArgs = BuildArgsFor<'call_signature'>;
-	export type LooseArgs = LooseArgsFor<'call_signature'>;
-	export type Tree = TreeFor<'call_signature'>;
+	export type Config = ConfigFor<TSKindId.CallSignature>;
+	export type Fluent = FluentFor<TSKindId.CallSignature>;
+	export type Loose = LooseFor<TSKindId.CallSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CallSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CallSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CallSignature>;
+	export type Tree = TreeFor<TSKindId.CallSignature>;
 	export type Kind = 'call_signature';
 }
 export namespace PropertySignature {
-	export type Config = ConfigFor<'property_signature'>;
-	export type Fluent = FluentFor<'property_signature'>;
-	export type Loose = LooseFor<'property_signature'>;
-	export type LooseConfig = LooseConfigFor<'property_signature'>;
-	export type BuildArgs = BuildArgsFor<'property_signature'>;
-	export type LooseArgs = LooseArgsFor<'property_signature'>;
-	export type Tree = TreeFor<'property_signature'>;
+	export type Config = ConfigFor<TSKindId.PropertySignature>;
+	export type Fluent = FluentFor<TSKindId.PropertySignature>;
+	export type Loose = LooseFor<TSKindId.PropertySignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.PropertySignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.PropertySignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.PropertySignature>;
+	export type Tree = TreeFor<TSKindId.PropertySignature>;
 	export type Kind = 'property_signature';
 }
 export namespace TypeParameters {
-	export type Config = ConfigFor<'type_parameters'>;
-	export type Fluent = FluentFor<'type_parameters'>;
-	export type Loose = LooseFor<'type_parameters'>;
-	export type LooseConfig = LooseConfigFor<'type_parameters'>;
-	export type BuildArgs = BuildArgsFor<'type_parameters'>;
-	export type LooseArgs = LooseArgsFor<'type_parameters'>;
-	export type Tree = TreeFor<'type_parameters'>;
+	export type Config = ConfigFor<TSKindId.TypeParameters>;
+	export type Fluent = FluentFor<TSKindId.TypeParameters>;
+	export type Loose = LooseFor<TSKindId.TypeParameters>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameters>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeParameters>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeParameters>;
+	export type Tree = TreeFor<TSKindId.TypeParameters>;
 	export type Kind = 'type_parameters';
 }
 export namespace TypeParameter {
-	export type Config = ConfigFor<'type_parameter'>;
-	export type Fluent = FluentFor<'type_parameter'>;
-	export type Loose = LooseFor<'type_parameter'>;
-	export type LooseConfig = LooseConfigFor<'type_parameter'>;
-	export type BuildArgs = BuildArgsFor<'type_parameter'>;
-	export type LooseArgs = LooseArgsFor<'type_parameter'>;
-	export type Tree = TreeFor<'type_parameter'>;
+	export type Config = ConfigFor<TSKindId.TypeParameter>;
+	export type Fluent = FluentFor<TSKindId.TypeParameter>;
+	export type Loose = LooseFor<TSKindId.TypeParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameter>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeParameter>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeParameter>;
+	export type Tree = TreeFor<TSKindId.TypeParameter>;
 	export type Kind = 'type_parameter';
 }
 export namespace DefaultType {
-	export type Config = ConfigFor<'default_type'>;
-	export type Fluent = FluentFor<'default_type'>;
-	export type Loose = LooseFor<'default_type'>;
-	export type LooseConfig = LooseConfigFor<'default_type'>;
-	export type BuildArgs = BuildArgsFor<'default_type'>;
-	export type LooseArgs = LooseArgsFor<'default_type'>;
-	export type Tree = TreeFor<'default_type'>;
+	export type Config = ConfigFor<TSKindId.DefaultType>;
+	export type Fluent = FluentFor<TSKindId.DefaultType>;
+	export type Loose = LooseFor<TSKindId.DefaultType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DefaultType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.DefaultType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.DefaultType>;
+	export type Tree = TreeFor<TSKindId.DefaultType>;
 	export type Kind = 'default_type';
 }
 export namespace Constraint {
-	export type Config = ConfigFor<'constraint'>;
-	export type Fluent = FluentFor<'constraint'>;
-	export type Loose = LooseFor<'constraint'>;
-	export type LooseConfig = LooseConfigFor<'constraint'>;
-	export type BuildArgs = BuildArgsFor<'constraint'>;
-	export type LooseArgs = LooseArgsFor<'constraint'>;
-	export type Tree = TreeFor<'constraint'>;
+	export type Config = ConfigFor<TSKindId.Constraint>;
+	export type Fluent = FluentFor<TSKindId.Constraint>;
+	export type Loose = LooseFor<TSKindId.Constraint>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Constraint>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Constraint>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Constraint>;
+	export type Tree = TreeFor<TSKindId.Constraint>;
 	export type Kind = 'constraint';
 }
 export namespace ConstructSignature {
-	export type Config = ConfigFor<'construct_signature'>;
-	export type Fluent = FluentFor<'construct_signature'>;
-	export type Loose = LooseFor<'construct_signature'>;
-	export type LooseConfig = LooseConfigFor<'construct_signature'>;
-	export type BuildArgs = BuildArgsFor<'construct_signature'>;
-	export type LooseArgs = LooseArgsFor<'construct_signature'>;
-	export type Tree = TreeFor<'construct_signature'>;
+	export type Config = ConfigFor<TSKindId.ConstructSignature>;
+	export type Fluent = FluentFor<TSKindId.ConstructSignature>;
+	export type Loose = LooseFor<TSKindId.ConstructSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ConstructSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ConstructSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ConstructSignature>;
+	export type Tree = TreeFor<TSKindId.ConstructSignature>;
 	export type Kind = 'construct_signature';
 }
 export namespace IndexSignature {
-	export type Config = ConfigFor<'index_signature'>;
-	export type Fluent = FluentFor<'index_signature'>;
-	export type Loose = LooseFor<'index_signature'>;
-	export type LooseConfig = LooseConfigFor<'index_signature'>;
-	export type BuildArgs = BuildArgsFor<'index_signature'>;
-	export type LooseArgs = LooseArgsFor<'index_signature'>;
-	export type Tree = TreeFor<'index_signature'>;
+	export type Config = ConfigFor<TSKindId.IndexSignature>;
+	export type Fluent = FluentFor<TSKindId.IndexSignature>;
+	export type Loose = LooseFor<TSKindId.IndexSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IndexSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.IndexSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.IndexSignature>;
+	export type Tree = TreeFor<TSKindId.IndexSignature>;
 	export type Kind = 'index_signature';
 }
 export namespace ArrayType {
-	export type Config = ConfigFor<'array_type'>;
-	export type Fluent = FluentFor<'array_type'>;
-	export type Loose = LooseFor<'array_type'>;
-	export type LooseConfig = LooseConfigFor<'array_type'>;
-	export type BuildArgs = BuildArgsFor<'array_type'>;
-	export type LooseArgs = LooseArgsFor<'array_type'>;
-	export type Tree = TreeFor<'array_type'>;
+	export type Config = ConfigFor<TSKindId.ArrayType>;
+	export type Fluent = FluentFor<TSKindId.ArrayType>;
+	export type Loose = LooseFor<TSKindId.ArrayType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrayType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ArrayType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ArrayType>;
+	export type Tree = TreeFor<TSKindId.ArrayType>;
 	export type Kind = 'array_type';
 }
 export namespace TupleType {
-	export type Config = ConfigFor<'tuple_type'>;
-	export type Fluent = FluentFor<'tuple_type'>;
-	export type Loose = LooseFor<'tuple_type'>;
-	export type LooseConfig = LooseConfigFor<'tuple_type'>;
-	export type BuildArgs = BuildArgsFor<'tuple_type'>;
-	export type LooseArgs = LooseArgsFor<'tuple_type'>;
-	export type Tree = TreeFor<'tuple_type'>;
+	export type Config = ConfigFor<TSKindId.TupleType>;
+	export type Fluent = FluentFor<TSKindId.TupleType>;
+	export type Loose = LooseFor<TSKindId.TupleType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TupleType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TupleType>;
+	export type Tree = TreeFor<TSKindId.TupleType>;
 	export type Kind = 'tuple_type';
 }
 export namespace ReadonlyType {
-	export type Config = ConfigFor<'readonly_type'>;
-	export type Fluent = FluentFor<'readonly_type'>;
-	export type Loose = LooseFor<'readonly_type'>;
-	export type LooseConfig = LooseConfigFor<'readonly_type'>;
-	export type BuildArgs = BuildArgsFor<'readonly_type'>;
-	export type LooseArgs = LooseArgsFor<'readonly_type'>;
-	export type Tree = TreeFor<'readonly_type'>;
+	export type Config = ConfigFor<TSKindId.ReadonlyType>;
+	export type Fluent = FluentFor<TSKindId.ReadonlyType>;
+	export type Loose = LooseFor<TSKindId.ReadonlyType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ReadonlyType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ReadonlyType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ReadonlyType>;
+	export type Tree = TreeFor<TSKindId.ReadonlyType>;
 	export type Kind = 'readonly_type';
 }
 export namespace UnionType {
-	export type Config = ConfigFor<'union_type'>;
-	export type Fluent = FluentFor<'union_type'>;
-	export type Loose = LooseFor<'union_type'>;
-	export type LooseConfig = LooseConfigFor<'union_type'>;
-	export type BuildArgs = BuildArgsFor<'union_type'>;
-	export type LooseArgs = LooseArgsFor<'union_type'>;
-	export type Tree = TreeFor<'union_type'>;
+	export type Config = ConfigFor<TSKindId.UnionType>;
+	export type Fluent = FluentFor<TSKindId.UnionType>;
+	export type Loose = LooseFor<TSKindId.UnionType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UnionType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.UnionType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.UnionType>;
+	export type Tree = TreeFor<TSKindId.UnionType>;
 	export type Kind = 'union_type';
 }
 export namespace IntersectionType {
-	export type Config = ConfigFor<'intersection_type'>;
-	export type Fluent = FluentFor<'intersection_type'>;
-	export type Loose = LooseFor<'intersection_type'>;
-	export type LooseConfig = LooseConfigFor<'intersection_type'>;
-	export type BuildArgs = BuildArgsFor<'intersection_type'>;
-	export type LooseArgs = LooseArgsFor<'intersection_type'>;
-	export type Tree = TreeFor<'intersection_type'>;
+	export type Config = ConfigFor<TSKindId.IntersectionType>;
+	export type Fluent = FluentFor<TSKindId.IntersectionType>;
+	export type Loose = LooseFor<TSKindId.IntersectionType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IntersectionType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.IntersectionType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.IntersectionType>;
+	export type Tree = TreeFor<TSKindId.IntersectionType>;
 	export type Kind = 'intersection_type';
 }
 export namespace FunctionType {
-	export type Config = ConfigFor<'function_type'>;
-	export type Fluent = FluentFor<'function_type'>;
-	export type Loose = LooseFor<'function_type'>;
-	export type LooseConfig = LooseConfigFor<'function_type'>;
-	export type BuildArgs = BuildArgsFor<'function_type'>;
-	export type LooseArgs = LooseArgsFor<'function_type'>;
-	export type Tree = TreeFor<'function_type'>;
+	export type Config = ConfigFor<TSKindId.FunctionType>;
+	export type Fluent = FluentFor<TSKindId.FunctionType>;
+	export type Loose = LooseFor<TSKindId.FunctionType>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FunctionType>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FunctionType>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FunctionType>;
+	export type Tree = TreeFor<TSKindId.FunctionType>;
 	export type Kind = 'function_type';
 }
 export namespace ExportSpecifiers {
-	export type Config = ConfigFor<'_export_specifiers'>;
-	export type Fluent = FluentFor<'_export_specifiers'>;
-	export type Loose = LooseFor<'_export_specifiers'>;
-	export type LooseConfig = LooseConfigFor<'_export_specifiers'>;
-	export type BuildArgs = BuildArgsFor<'_export_specifiers'>;
-	export type LooseArgs = LooseArgsFor<'_export_specifiers'>;
-	export type Tree = TreeFor<'_export_specifiers'>;
+	export type Config = ConfigFor<TSKindId.ExportSpecifiers>;
+	export type Fluent = FluentFor<TSKindId.ExportSpecifiers>;
+	export type Loose = LooseFor<TSKindId.ExportSpecifiers>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifiers>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportSpecifiers>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportSpecifiers>;
+	export type Tree = TreeFor<TSKindId.ExportSpecifiers>;
 	export type Kind = '_export_specifiers';
 }
-export namespace ExportSpecifierOptional1 {
-	export type Config = ConfigFor<'_export_specifier_optional1'>;
-	export type Fluent = FluentFor<'_export_specifier_optional1'>;
-	export type Loose = LooseFor<'_export_specifier_optional1'>;
-	export type LooseConfig = LooseConfigFor<'_export_specifier_optional1'>;
-	export type BuildArgs = BuildArgsFor<'_export_specifier_optional1'>;
-	export type LooseArgs = LooseArgsFor<'_export_specifier_optional1'>;
-	export type Tree = TreeFor<'_export_specifier_optional1'>;
-	export type Kind = '_export_specifier_optional1';
-}
 export namespace ImportSpecifiers {
-	export type Config = ConfigFor<'_import_specifiers'>;
-	export type Fluent = FluentFor<'_import_specifiers'>;
-	export type Loose = LooseFor<'_import_specifiers'>;
-	export type LooseConfig = LooseConfigFor<'_import_specifiers'>;
-	export type BuildArgs = BuildArgsFor<'_import_specifiers'>;
-	export type LooseArgs = LooseArgsFor<'_import_specifiers'>;
-	export type Tree = TreeFor<'_import_specifiers'>;
+	export type Config = ConfigFor<TSKindId.ImportSpecifiers>;
+	export type Fluent = FluentFor<TSKindId.ImportSpecifiers>;
+	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifiers>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportSpecifiers>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportSpecifiers>;
+	export type Tree = TreeFor<TSKindId.ImportSpecifiers>;
 	export type Kind = '_import_specifiers';
 }
 export namespace VariableDeclaratorArm1 {
-	export type Config = ConfigFor<'_variable_declarator_arm1'>;
-	export type Fluent = FluentFor<'_variable_declarator_arm1'>;
-	export type Loose = LooseFor<'_variable_declarator_arm1'>;
-	export type LooseConfig = LooseConfigFor<'_variable_declarator_arm1'>;
-	export type BuildArgs = BuildArgsFor<'_variable_declarator_arm1'>;
-	export type LooseArgs = LooseArgsFor<'_variable_declarator_arm1'>;
-	export type Tree = TreeFor<'_variable_declarator_arm1'>;
+	export type Config = ConfigFor<TSKindId.VariableDeclaratorArm1>;
+	export type Fluent = FluentFor<TSKindId.VariableDeclaratorArm1>;
+	export type Loose = LooseFor<TSKindId.VariableDeclaratorArm1>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorArm1>;
+	export type BuildArgs = BuildArgsFor<TSKindId.VariableDeclaratorArm1>;
+	export type LooseArgs = LooseArgsFor<TSKindId.VariableDeclaratorArm1>;
+	export type Tree = TreeFor<TSKindId.VariableDeclaratorArm1>;
 	export type Kind = '_variable_declarator_arm1';
 }
 export namespace VariableDeclaratorArm2 {
-	export type Config = ConfigFor<'_variable_declarator_arm2'>;
-	export type Fluent = FluentFor<'_variable_declarator_arm2'>;
-	export type Loose = LooseFor<'_variable_declarator_arm2'>;
-	export type LooseConfig = LooseConfigFor<'_variable_declarator_arm2'>;
-	export type BuildArgs = BuildArgsFor<'_variable_declarator_arm2'>;
-	export type LooseArgs = LooseArgsFor<'_variable_declarator_arm2'>;
-	export type Tree = TreeFor<'_variable_declarator_arm2'>;
+	export type Config = ConfigFor<TSKindId.VariableDeclaratorArm2>;
+	export type Fluent = FluentFor<TSKindId.VariableDeclaratorArm2>;
+	export type Loose = LooseFor<TSKindId.VariableDeclaratorArm2>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorArm2>;
+	export type BuildArgs = BuildArgsFor<TSKindId.VariableDeclaratorArm2>;
+	export type LooseArgs = LooseArgsFor<TSKindId.VariableDeclaratorArm2>;
+	export type Tree = TreeFor<TSKindId.VariableDeclaratorArm2>;
 	export type Kind = '_variable_declarator_arm2';
 }
 export namespace FormalParametersElements {
-	export type Config = ConfigFor<'_formal_parameters_elements'>;
-	export type Fluent = FluentFor<'_formal_parameters_elements'>;
-	export type Loose = LooseFor<'_formal_parameters_elements'>;
-	export type LooseConfig = LooseConfigFor<'_formal_parameters_elements'>;
-	export type BuildArgs = BuildArgsFor<'_formal_parameters_elements'>;
-	export type LooseArgs = LooseArgsFor<'_formal_parameters_elements'>;
-	export type Tree = TreeFor<'_formal_parameters_elements'>;
+	export type Config = ConfigFor<TSKindId.FormalParametersElements>;
+	export type Fluent = FluentFor<TSKindId.FormalParametersElements>;
+	export type Loose = LooseFor<TSKindId.FormalParametersElements>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElements>;
+	export type BuildArgs = BuildArgsFor<TSKindId.FormalParametersElements>;
+	export type LooseArgs = LooseArgsFor<TSKindId.FormalParametersElements>;
+	export type Tree = TreeFor<TSKindId.FormalParametersElements>;
 	export type Kind = '_formal_parameters_elements';
 }
 export namespace EnumBodyElements {
-	export type Config = ConfigFor<'_enum_body_elements'>;
-	export type Fluent = FluentFor<'_enum_body_elements'>;
-	export type Loose = LooseFor<'_enum_body_elements'>;
-	export type LooseConfig = LooseConfigFor<'_enum_body_elements'>;
-	export type BuildArgs = BuildArgsFor<'_enum_body_elements'>;
-	export type LooseArgs = LooseArgsFor<'_enum_body_elements'>;
-	export type Tree = TreeFor<'_enum_body_elements'>;
+	export type Config = ConfigFor<TSKindId.EnumBodyElements>;
+	export type Fluent = FluentFor<TSKindId.EnumBodyElements>;
+	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EnumBodyElements>;
+	export type BuildArgs = BuildArgsFor<TSKindId.EnumBodyElements>;
+	export type LooseArgs = LooseArgsFor<TSKindId.EnumBodyElements>;
+	export type Tree = TreeFor<TSKindId.EnumBodyElements>;
 	export type Kind = '_enum_body_elements';
 }
-export namespace InferTypeOptional1 {
-	export type Config = ConfigFor<'_infer_type_optional1'>;
-	export type Fluent = FluentFor<'_infer_type_optional1'>;
-	export type Loose = LooseFor<'_infer_type_optional1'>;
-	export type LooseConfig = LooseConfigFor<'_infer_type_optional1'>;
-	export type BuildArgs = BuildArgsFor<'_infer_type_optional1'>;
-	export type LooseArgs = LooseArgsFor<'_infer_type_optional1'>;
-	export type Tree = TreeFor<'_infer_type_optional1'>;
-	export type Kind = '_infer_type_optional1';
-}
-export namespace MappedTypeClauseOptional1 {
-	export type Config = ConfigFor<'_mapped_type_clause_optional1'>;
-	export type Fluent = FluentFor<'_mapped_type_clause_optional1'>;
-	export type Loose = LooseFor<'_mapped_type_clause_optional1'>;
-	export type LooseConfig = LooseConfigFor<'_mapped_type_clause_optional1'>;
-	export type BuildArgs = BuildArgsFor<'_mapped_type_clause_optional1'>;
-	export type LooseArgs = LooseArgsFor<'_mapped_type_clause_optional1'>;
-	export type Tree = TreeFor<'_mapped_type_clause_optional1'>;
-	export type Kind = '_mapped_type_clause_optional1';
-}
 export namespace Types {
-	export type Config = ConfigFor<'_types'>;
-	export type Fluent = FluentFor<'_types'>;
-	export type Loose = LooseFor<'_types'>;
-	export type LooseConfig = LooseConfigFor<'_types'>;
-	export type BuildArgs = BuildArgsFor<'_types'>;
-	export type LooseArgs = LooseArgsFor<'_types'>;
-	export type Tree = TreeFor<'_types'>;
+	export type Config = ConfigFor<TSKindId.Types>;
+	export type Fluent = FluentFor<TSKindId.Types>;
+	export type Loose = LooseFor<TSKindId.Types>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
+	export type BuildArgs = BuildArgsFor<TSKindId.Types>;
+	export type LooseArgs = LooseArgsFor<TSKindId.Types>;
+	export type Tree = TreeFor<TSKindId.Types>;
 	export type Kind = '_types';
 }
 export namespace TypeParametersElements {
-	export type Config = ConfigFor<'_type_parameters_elements'>;
-	export type Fluent = FluentFor<'_type_parameters_elements'>;
-	export type Loose = LooseFor<'_type_parameters_elements'>;
-	export type LooseConfig = LooseConfigFor<'_type_parameters_elements'>;
-	export type BuildArgs = BuildArgsFor<'_type_parameters_elements'>;
-	export type LooseArgs = LooseArgsFor<'_type_parameters_elements'>;
-	export type Tree = TreeFor<'_type_parameters_elements'>;
+	export type Config = ConfigFor<TSKindId.TypeParametersElements>;
+	export type Fluent = FluentFor<TSKindId.TypeParametersElements>;
+	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeParametersElements>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TypeParametersElements>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TypeParametersElements>;
+	export type Tree = TreeFor<TSKindId.TypeParametersElements>;
 	export type Kind = '_type_parameters_elements';
 }
-export namespace IndexSignatureOptional1 {
-	export type Config = ConfigFor<'_index_signature_optional1'>;
-	export type Fluent = FluentFor<'_index_signature_optional1'>;
-	export type Loose = LooseFor<'_index_signature_optional1'>;
-	export type LooseConfig = LooseConfigFor<'_index_signature_optional1'>;
-	export type BuildArgs = BuildArgsFor<'_index_signature_optional1'>;
-	export type LooseArgs = LooseArgsFor<'_index_signature_optional1'>;
-	export type Tree = TreeFor<'_index_signature_optional1'>;
-	export type Kind = '_index_signature_optional1';
-}
 export namespace TupleTypeMembers {
-	export type Config = ConfigFor<'_tuple_type_members'>;
-	export type Fluent = FluentFor<'_tuple_type_members'>;
-	export type Loose = LooseFor<'_tuple_type_members'>;
-	export type LooseConfig = LooseConfigFor<'_tuple_type_members'>;
-	export type BuildArgs = BuildArgsFor<'_tuple_type_members'>;
-	export type LooseArgs = LooseArgsFor<'_tuple_type_members'>;
-	export type Tree = TreeFor<'_tuple_type_members'>;
+	export type Config = ConfigFor<TSKindId.TupleTypeMembers>;
+	export type Fluent = FluentFor<TSKindId.TupleTypeMembers>;
+	export type Loose = LooseFor<TSKindId.TupleTypeMembers>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeMembers>;
+	export type BuildArgs = BuildArgsFor<TSKindId.TupleTypeMembers>;
+	export type LooseArgs = LooseArgsFor<TSKindId.TupleTypeMembers>;
+	export type Tree = TreeFor<TSKindId.TupleTypeMembers>;
 	export type Kind = '_tuple_type_members';
 }
 export namespace ImportStatementArm {
-	export type Config = ConfigFor<'_import_statement_arm'>;
-	export type Fluent = FluentFor<'_import_statement_arm'>;
-	export type Loose = LooseFor<'_import_statement_arm'>;
-	export type LooseConfig = LooseConfigFor<'_import_statement_arm'>;
-	export type BuildArgs = BuildArgsFor<'_import_statement_arm'>;
-	export type LooseArgs = LooseArgsFor<'_import_statement_arm'>;
-	export type Tree = TreeFor<'_import_statement_arm'>;
+	export type Config = ConfigFor<TSKindId.ImportStatementArm>;
+	export type Fluent = FluentFor<TSKindId.ImportStatementArm>;
+	export type Loose = LooseFor<TSKindId.ImportStatementArm>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatementArm>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportStatementArm>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportStatementArm>;
+	export type Tree = TreeFor<TSKindId.ImportStatementArm>;
 	export type Kind = '_import_statement_arm';
 }
 export namespace ImportClauseGroup {
-	export type Config = ConfigFor<'_import_clause_group'>;
-	export type Fluent = FluentFor<'_import_clause_group'>;
-	export type Loose = LooseFor<'_import_clause_group'>;
-	export type LooseConfig = LooseConfigFor<'_import_clause_group'>;
-	export type BuildArgs = BuildArgsFor<'_import_clause_group'>;
-	export type LooseArgs = LooseArgsFor<'_import_clause_group'>;
-	export type Tree = TreeFor<'_import_clause_group'>;
+	export type Config = ConfigFor<TSKindId.ImportClauseGroup>;
+	export type Fluent = FluentFor<TSKindId.ImportClauseGroup>;
+	export type Loose = LooseFor<TSKindId.ImportClauseGroup>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportClauseGroup>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportClauseGroup>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportClauseGroup>;
+	export type Tree = TreeFor<TSKindId.ImportClauseGroup>;
 	export type Kind = '_import_clause_group';
 }
 export namespace CatchClauseGroup {
-	export type Config = ConfigFor<'_catch_clause_group'>;
-	export type Fluent = FluentFor<'_catch_clause_group'>;
-	export type Loose = LooseFor<'_catch_clause_group'>;
-	export type LooseConfig = LooseConfigFor<'_catch_clause_group'>;
-	export type BuildArgs = BuildArgsFor<'_catch_clause_group'>;
-	export type LooseArgs = LooseArgsFor<'_catch_clause_group'>;
-	export type Tree = TreeFor<'_catch_clause_group'>;
+	export type Config = ConfigFor<TSKindId.CatchClauseGroup>;
+	export type Fluent = FluentFor<TSKindId.CatchClauseGroup>;
+	export type Loose = LooseFor<TSKindId.CatchClauseGroup>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CatchClauseGroup>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CatchClauseGroup>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CatchClauseGroup>;
+	export type Tree = TreeFor<TSKindId.CatchClauseGroup>;
 	export type Kind = '_catch_clause_group';
 }
 export namespace BinaryExpressionArm {
-	export type Config = ConfigFor<'_binary_expression_arm'>;
-	export type Fluent = FluentFor<'_binary_expression_arm'>;
-	export type Loose = LooseFor<'_binary_expression_arm'>;
-	export type LooseConfig = LooseConfigFor<'_binary_expression_arm'>;
-	export type BuildArgs = BuildArgsFor<'_binary_expression_arm'>;
-	export type LooseArgs = LooseArgsFor<'_binary_expression_arm'>;
-	export type Tree = TreeFor<'_binary_expression_arm'>;
+	export type Config = ConfigFor<TSKindId.BinaryExpressionArm>;
+	export type Fluent = FluentFor<TSKindId.BinaryExpressionArm>;
+	export type Loose = LooseFor<TSKindId.BinaryExpressionArm>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpressionArm>;
+	export type BuildArgs = BuildArgsFor<TSKindId.BinaryExpressionArm>;
+	export type LooseArgs = LooseArgsFor<TSKindId.BinaryExpressionArm>;
+	export type Tree = TreeFor<TSKindId.BinaryExpressionArm>;
 	export type Kind = '_binary_expression_arm';
 }
-export namespace JsxStartOpeningElementArm {
-	export type Config = ConfigFor<'_jsx_start_opening_element_arm'>;
-	export type Fluent = FluentFor<'_jsx_start_opening_element_arm'>;
-	export type Loose = LooseFor<'_jsx_start_opening_element_arm'>;
-	export type LooseConfig = LooseConfigFor<'_jsx_start_opening_element_arm'>;
-	export type BuildArgs = BuildArgsFor<'_jsx_start_opening_element_arm'>;
-	export type LooseArgs = LooseArgsFor<'_jsx_start_opening_element_arm'>;
-	export type Tree = TreeFor<'_jsx_start_opening_element_arm'>;
-	export type Kind = '_jsx_start_opening_element_arm';
-}
 export namespace AmbientDeclarationGlobal {
-	export type Config = ConfigFor<'_ambient_declaration_global'>;
-	export type Fluent = FluentFor<'_ambient_declaration_global'>;
-	export type Loose = LooseFor<'_ambient_declaration_global'>;
-	export type LooseConfig = LooseConfigFor<'_ambient_declaration_global'>;
-	export type BuildArgs = BuildArgsFor<'_ambient_declaration_global'>;
-	export type LooseArgs = LooseArgsFor<'_ambient_declaration_global'>;
-	export type Tree = TreeFor<'_ambient_declaration_global'>;
+	export type Config = ConfigFor<TSKindId.AmbientDeclarationGlobal>;
+	export type Fluent = FluentFor<TSKindId.AmbientDeclarationGlobal>;
+	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AmbientDeclarationGlobal>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AmbientDeclarationGlobal>;
+	export type Tree = TreeFor<TSKindId.AmbientDeclarationGlobal>;
 	export type Kind = '_ambient_declaration_global';
 }
 export namespace AmbientDeclarationModule {
-	export type Config = ConfigFor<'_ambient_declaration_module'>;
-	export type Fluent = FluentFor<'_ambient_declaration_module'>;
-	export type Loose = LooseFor<'_ambient_declaration_module'>;
-	export type LooseConfig = LooseConfigFor<'_ambient_declaration_module'>;
-	export type BuildArgs = BuildArgsFor<'_ambient_declaration_module'>;
-	export type LooseArgs = LooseArgsFor<'_ambient_declaration_module'>;
-	export type Tree = TreeFor<'_ambient_declaration_module'>;
+	export type Config = ConfigFor<TSKindId.AmbientDeclarationModule>;
+	export type Fluent = FluentFor<TSKindId.AmbientDeclarationModule>;
+	export type Loose = LooseFor<TSKindId.AmbientDeclarationModule>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationModule>;
+	export type BuildArgs = BuildArgsFor<TSKindId.AmbientDeclarationModule>;
+	export type LooseArgs = LooseArgsFor<TSKindId.AmbientDeclarationModule>;
+	export type Tree = TreeFor<TSKindId.AmbientDeclarationModule>;
 	export type Kind = '_ambient_declaration_module';
 }
 export namespace ObjectTypeContent {
-	export type Config = ConfigFor<'object_type_content'>;
-	export type Fluent = FluentFor<'object_type_content'>;
-	export type Loose = LooseFor<'object_type_content'>;
-	export type LooseConfig = LooseConfigFor<'object_type_content'>;
-	export type BuildArgs = BuildArgsFor<'object_type_content'>;
-	export type LooseArgs = LooseArgsFor<'object_type_content'>;
-	export type Tree = TreeFor<'object_type_content'>;
+	export type Config = ConfigFor<TSKindId.ObjectTypeContent>;
+	export type Fluent = FluentFor<TSKindId.ObjectTypeContent>;
+	export type Loose = LooseFor<TSKindId.ObjectTypeContent>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ObjectTypeContent>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ObjectTypeContent>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ObjectTypeContent>;
+	export type Tree = TreeFor<TSKindId.ObjectTypeContent>;
 	export type Kind = 'object_type_content';
 }
 export namespace ExportStatementDefault {
-	export type Config = ConfigFor<'_export_statement_default'>;
-	export type Fluent = FluentFor<'_export_statement_default'>;
-	export type Loose = LooseFor<'_export_statement_default'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default'>;
-	export type Tree = TreeFor<'_export_statement_default'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefault>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefault>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefault>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefault>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefault>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefault>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefault>;
 	export type Kind = '_export_statement_default';
 }
 export namespace ArrowFunctionParameter {
-	export type Config = ConfigFor<'_arrow_function_parameter'>;
-	export type Fluent = FluentFor<'_arrow_function_parameter'>;
-	export type Loose = LooseFor<'_arrow_function_parameter'>;
-	export type LooseConfig = LooseConfigFor<'_arrow_function_parameter'>;
-	export type BuildArgs = BuildArgsFor<'_arrow_function_parameter'>;
-	export type LooseArgs = LooseArgsFor<'_arrow_function_parameter'>;
-	export type Tree = TreeFor<'_arrow_function_parameter'>;
+	export type Config = ConfigFor<TSKindId.ArrowFunctionParameter>;
+	export type Fluent = FluentFor<TSKindId.ArrowFunctionParameter>;
+	export type Loose = LooseFor<TSKindId.ArrowFunctionParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunctionParameter>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ArrowFunctionParameter>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ArrowFunctionParameter>;
+	export type Tree = TreeFor<TSKindId.ArrowFunctionParameter>;
 	export type Kind = '_arrow_function_parameter';
 }
 export namespace ArrowFunctionUCallSignature {
-	export type Config = ConfigFor<'_arrow_function__call_signature'>;
-	export type Fluent = FluentFor<'_arrow_function__call_signature'>;
-	export type Loose = LooseFor<'_arrow_function__call_signature'>;
-	export type LooseConfig = LooseConfigFor<'_arrow_function__call_signature'>;
-	export type BuildArgs = BuildArgsFor<'_arrow_function__call_signature'>;
-	export type LooseArgs = LooseArgsFor<'_arrow_function__call_signature'>;
-	export type Tree = TreeFor<'_arrow_function__call_signature'>;
+	export type Config = ConfigFor<TSKindId.ArrowFunctionUCallSignature>;
+	export type Fluent = FluentFor<TSKindId.ArrowFunctionUCallSignature>;
+	export type Loose = LooseFor<TSKindId.ArrowFunctionUCallSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunctionUCallSignature>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ArrowFunctionUCallSignature>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ArrowFunctionUCallSignature>;
+	export type Tree = TreeFor<TSKindId.ArrowFunctionUCallSignature>;
 	export type Kind = '_arrow_function__call_signature';
 }
 export namespace ClassHeritageExtendsClause {
-	export type Config = ConfigFor<'_class_heritage_extends_clause'>;
-	export type Fluent = FluentFor<'_class_heritage_extends_clause'>;
-	export type Loose = LooseFor<'_class_heritage_extends_clause'>;
-	export type LooseConfig = LooseConfigFor<'_class_heritage_extends_clause'>;
-	export type BuildArgs = BuildArgsFor<'_class_heritage_extends_clause'>;
-	export type LooseArgs = LooseArgsFor<'_class_heritage_extends_clause'>;
-	export type Tree = TreeFor<'_class_heritage_extends_clause'>;
+	export type Config = ConfigFor<TSKindId.ClassHeritageExtendsClause>;
+	export type Fluent = FluentFor<TSKindId.ClassHeritageExtendsClause>;
+	export type Loose = LooseFor<TSKindId.ClassHeritageExtendsClause>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassHeritageExtendsClause>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassHeritageExtendsClause>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassHeritageExtendsClause>;
+	export type Tree = TreeFor<TSKindId.ClassHeritageExtendsClause>;
 	export type Kind = '_class_heritage_extends_clause';
 }
 export namespace ImportClauseDefaultImport {
-	export type Config = ConfigFor<'_import_clause_default_import'>;
-	export type Fluent = FluentFor<'_import_clause_default_import'>;
-	export type Loose = LooseFor<'_import_clause_default_import'>;
-	export type LooseConfig = LooseConfigFor<'_import_clause_default_import'>;
-	export type BuildArgs = BuildArgsFor<'_import_clause_default_import'>;
-	export type LooseArgs = LooseArgsFor<'_import_clause_default_import'>;
-	export type Tree = TreeFor<'_import_clause_default_import'>;
+	export type Config = ConfigFor<TSKindId.ImportClauseDefaultImport>;
+	export type Fluent = FluentFor<TSKindId.ImportClauseDefaultImport>;
+	export type Loose = LooseFor<TSKindId.ImportClauseDefaultImport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportClauseDefaultImport>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportClauseDefaultImport>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportClauseDefaultImport>;
+	export type Tree = TreeFor<TSKindId.ImportClauseDefaultImport>;
 	export type Kind = '_import_clause_default_import';
 }
 export namespace ImportSpecifierAs {
-	export type Config = ConfigFor<'_import_specifier_as'>;
-	export type Fluent = FluentFor<'_import_specifier_as'>;
-	export type Loose = LooseFor<'_import_specifier_as'>;
-	export type LooseConfig = LooseConfigFor<'_import_specifier_as'>;
-	export type BuildArgs = BuildArgsFor<'_import_specifier_as'>;
-	export type LooseArgs = LooseArgsFor<'_import_specifier_as'>;
-	export type Tree = TreeFor<'_import_specifier_as'>;
+	export type Config = ConfigFor<TSKindId.ImportSpecifierAs>;
+	export type Fluent = FluentFor<TSKindId.ImportSpecifierAs>;
+	export type Loose = LooseFor<TSKindId.ImportSpecifierAs>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifierAs>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ImportSpecifierAs>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ImportSpecifierAs>;
+	export type Tree = TreeFor<TSKindId.ImportSpecifierAs>;
 	export type Kind = '_import_specifier_as';
 }
 export namespace IndexSignatureColon {
-	export type Config = ConfigFor<'_index_signature_colon'>;
-	export type Fluent = FluentFor<'_index_signature_colon'>;
-	export type Loose = LooseFor<'_index_signature_colon'>;
-	export type LooseConfig = LooseConfigFor<'_index_signature_colon'>;
-	export type BuildArgs = BuildArgsFor<'_index_signature_colon'>;
-	export type LooseArgs = LooseArgsFor<'_index_signature_colon'>;
-	export type Tree = TreeFor<'_index_signature_colon'>;
+	export type Config = ConfigFor<TSKindId.IndexSignatureColon>;
+	export type Fluent = FluentFor<TSKindId.IndexSignatureColon>;
+	export type Loose = LooseFor<TSKindId.IndexSignatureColon>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IndexSignatureColon>;
+	export type BuildArgs = BuildArgsFor<TSKindId.IndexSignatureColon>;
+	export type LooseArgs = LooseArgsFor<TSKindId.IndexSignatureColon>;
+	export type Tree = TreeFor<TSKindId.IndexSignatureColon>;
 	export type Kind = '_index_signature_colon';
 }
 export namespace ExportStatementDefaultFromArm {
-	export type Config = ConfigFor<'_export_statement_default_from_arm'>;
-	export type Fluent = FluentFor<'_export_statement_default_from_arm'>;
-	export type Loose = LooseFor<'_export_statement_default_from_arm'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_from_arm'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_from_arm'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_from_arm'>;
-	export type Tree = TreeFor<'_export_statement_default_from_arm'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromArm>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultFromArm>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromArm>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromArm>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultFromArm>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultFromArm>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromArm>;
 	export type Kind = '_export_statement_default_from_arm';
 }
 export namespace ExportStatementDefaultDeclArm {
-	export type Config = ConfigFor<'_export_statement_default_decl_arm'>;
-	export type Fluent = FluentFor<'_export_statement_default_decl_arm'>;
-	export type Loose = LooseFor<'_export_statement_default_decl_arm'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_decl_arm'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_decl_arm'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_decl_arm'>;
-	export type Tree = TreeFor<'_export_statement_default_decl_arm'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclArm>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultDeclArm>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclArm>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclArm>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultDeclArm>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultDeclArm>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclArm>;
 	export type Kind = '_export_statement_default_decl_arm';
 }
 export namespace ExportStatementDefaultStarFrom {
-	export type Config = ConfigFor<'_export_statement_default_star_from'>;
-	export type Fluent = FluentFor<'_export_statement_default_star_from'>;
-	export type Loose = LooseFor<'_export_statement_default_star_from'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_star_from'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_star_from'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_star_from'>;
-	export type Tree = TreeFor<'_export_statement_default_star_from'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultStarFrom>;
 	export type Kind = '_export_statement_default_star_from';
 }
 export namespace ExportStatementDefaultNsFrom {
-	export type Config = ConfigFor<'_export_statement_default_ns_from'>;
-	export type Fluent = FluentFor<'_export_statement_default_ns_from'>;
-	export type Loose = LooseFor<'_export_statement_default_ns_from'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_ns_from'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_ns_from'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_ns_from'>;
-	export type Tree = TreeFor<'_export_statement_default_ns_from'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultNsFrom>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultNsFrom>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultNsFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultNsFrom>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultNsFrom>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultNsFrom>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultNsFrom>;
 	export type Kind = '_export_statement_default_ns_from';
 }
 export namespace ExportStatementDefaultClauseFrom {
-	export type Config = ConfigFor<'_export_statement_default_clause_from'>;
-	export type Fluent = FluentFor<'_export_statement_default_clause_from'>;
-	export type Loose = LooseFor<'_export_statement_default_clause_from'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_clause_from'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_clause_from'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_clause_from'>;
-	export type Tree = TreeFor<'_export_statement_default_clause_from'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultClauseFrom>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultClauseFrom>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultClauseFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultClauseFrom>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultClauseFrom>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultClauseFrom>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultClauseFrom>;
 	export type Kind = '_export_statement_default_clause_from';
 }
 export namespace ExportStatementDefaultDefaultKw {
-	export type Config = ConfigFor<'_export_statement_default_default_kw'>;
-	export type Fluent = FluentFor<'_export_statement_default_default_kw'>;
-	export type Loose = LooseFor<'_export_statement_default_default_kw'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_default_kw'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_default_kw'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_default_kw'>;
-	export type Tree = TreeFor<'_export_statement_default_default_kw'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDefaultKw>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultDefaultKw>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDefaultKw>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDefaultKw>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultDefaultKw>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultDefaultKw>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDefaultKw>;
 	export type Kind = '_export_statement_default_default_kw';
 }
 export namespace ExportStatementDefaultValue {
-	export type Config = ConfigFor<'_export_statement_default_value'>;
-	export type Fluent = FluentFor<'_export_statement_default_value'>;
-	export type Loose = LooseFor<'_export_statement_default_value'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_default_value'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_default_value'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_default_value'>;
-	export type Tree = TreeFor<'_export_statement_default_value'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultValue>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementDefaultValue>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultValue>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultValue>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementDefaultValue>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementDefaultValue>;
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultValue>;
 	export type Kind = '_export_statement_default_value';
 }
 export namespace ClassBodyMethod {
-	export type Config = ConfigFor<'_class_body_method'>;
-	export type Fluent = FluentFor<'_class_body_method'>;
-	export type Loose = LooseFor<'_class_body_method'>;
-	export type LooseConfig = LooseConfigFor<'_class_body_method'>;
-	export type BuildArgs = BuildArgsFor<'_class_body_method'>;
-	export type LooseArgs = LooseArgsFor<'_class_body_method'>;
-	export type Tree = TreeFor<'_class_body_method'>;
+	export type Config = ConfigFor<TSKindId.ClassBodyMethod>;
+	export type Fluent = FluentFor<TSKindId.ClassBodyMethod>;
+	export type Loose = LooseFor<TSKindId.ClassBodyMethod>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMethod>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassBodyMethod>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassBodyMethod>;
+	export type Tree = TreeFor<TSKindId.ClassBodyMethod>;
 	export type Kind = '_class_body_method';
 }
 export namespace ClassBodyMethodSig {
-	export type Config = ConfigFor<'_class_body_method_sig'>;
-	export type Fluent = FluentFor<'_class_body_method_sig'>;
-	export type Loose = LooseFor<'_class_body_method_sig'>;
-	export type LooseConfig = LooseConfigFor<'_class_body_method_sig'>;
-	export type BuildArgs = BuildArgsFor<'_class_body_method_sig'>;
-	export type LooseArgs = LooseArgsFor<'_class_body_method_sig'>;
-	export type Tree = TreeFor<'_class_body_method_sig'>;
+	export type Config = ConfigFor<TSKindId.ClassBodyMethodSig>;
+	export type Fluent = FluentFor<TSKindId.ClassBodyMethodSig>;
+	export type Loose = LooseFor<TSKindId.ClassBodyMethodSig>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMethodSig>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassBodyMethodSig>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassBodyMethodSig>;
+	export type Tree = TreeFor<TSKindId.ClassBodyMethodSig>;
 	export type Kind = '_class_body_method_sig';
 }
 export namespace ClassBodyMember {
-	export type Config = ConfigFor<'_class_body_member'>;
-	export type Fluent = FluentFor<'_class_body_member'>;
-	export type Loose = LooseFor<'_class_body_member'>;
-	export type LooseConfig = LooseConfigFor<'_class_body_member'>;
-	export type BuildArgs = BuildArgsFor<'_class_body_member'>;
-	export type LooseArgs = LooseArgsFor<'_class_body_member'>;
-	export type Tree = TreeFor<'_class_body_member'>;
+	export type Config = ConfigFor<TSKindId.ClassBodyMember>;
+	export type Fluent = FluentFor<TSKindId.ClassBodyMember>;
+	export type Loose = LooseFor<TSKindId.ClassBodyMember>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMember>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ClassBodyMember>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ClassBodyMember>;
+	export type Tree = TreeFor<TSKindId.ClassBodyMember>;
 	export type Kind = '_class_body_member';
 }
 export namespace ForHeaderLhs {
-	export type Config = ConfigFor<'_for_header_lhs'>;
-	export type Fluent = FluentFor<'_for_header_lhs'>;
-	export type Loose = LooseFor<'_for_header_lhs'>;
-	export type LooseConfig = LooseConfigFor<'_for_header_lhs'>;
-	export type BuildArgs = BuildArgsFor<'_for_header_lhs'>;
-	export type LooseArgs = LooseArgsFor<'_for_header_lhs'>;
-	export type Tree = TreeFor<'_for_header_lhs'>;
+	export type Config = ConfigFor<TSKindId.ForHeaderLhs>;
+	export type Fluent = FluentFor<TSKindId.ForHeaderLhs>;
+	export type Loose = LooseFor<TSKindId.ForHeaderLhs>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderLhs>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ForHeaderLhs>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ForHeaderLhs>;
+	export type Tree = TreeFor<TSKindId.ForHeaderLhs>;
 	export type Kind = '_for_header_lhs';
 }
 export namespace ForHeaderVarKind {
-	export type Config = ConfigFor<'_for_header_var_kind'>;
-	export type Fluent = FluentFor<'_for_header_var_kind'>;
-	export type Loose = LooseFor<'_for_header_var_kind'>;
-	export type LooseConfig = LooseConfigFor<'_for_header_var_kind'>;
-	export type BuildArgs = BuildArgsFor<'_for_header_var_kind'>;
-	export type LooseArgs = LooseArgsFor<'_for_header_var_kind'>;
-	export type Tree = TreeFor<'_for_header_var_kind'>;
+	export type Config = ConfigFor<TSKindId.ForHeaderVarKind>;
+	export type Fluent = FluentFor<TSKindId.ForHeaderVarKind>;
+	export type Loose = LooseFor<TSKindId.ForHeaderVarKind>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderVarKind>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ForHeaderVarKind>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ForHeaderVarKind>;
+	export type Tree = TreeFor<TSKindId.ForHeaderVarKind>;
 	export type Kind = '_for_header_var_kind';
 }
 export namespace ForHeaderLetConstKind {
-	export type Config = ConfigFor<'_for_header_let_const_kind'>;
-	export type Fluent = FluentFor<'_for_header_let_const_kind'>;
-	export type Loose = LooseFor<'_for_header_let_const_kind'>;
-	export type LooseConfig = LooseConfigFor<'_for_header_let_const_kind'>;
-	export type BuildArgs = BuildArgsFor<'_for_header_let_const_kind'>;
-	export type LooseArgs = LooseArgsFor<'_for_header_let_const_kind'>;
-	export type Tree = TreeFor<'_for_header_let_const_kind'>;
+	export type Config = ConfigFor<TSKindId.ForHeaderLetConstKind>;
+	export type Fluent = FluentFor<TSKindId.ForHeaderLetConstKind>;
+	export type Loose = LooseFor<TSKindId.ForHeaderLetConstKind>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderLetConstKind>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ForHeaderLetConstKind>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ForHeaderLetConstKind>;
+	export type Tree = TreeFor<TSKindId.ForHeaderLetConstKind>;
 	export type Kind = '_for_header_let_const_kind';
 }
 export namespace ParenthesizedExpressionTyped {
-	export type Config = ConfigFor<'_parenthesized_expression_typed'>;
-	export type Fluent = FluentFor<'_parenthesized_expression_typed'>;
-	export type Loose = LooseFor<'_parenthesized_expression_typed'>;
-	export type LooseConfig = LooseConfigFor<'_parenthesized_expression_typed'>;
-	export type BuildArgs = BuildArgsFor<'_parenthesized_expression_typed'>;
-	export type LooseArgs = LooseArgsFor<'_parenthesized_expression_typed'>;
-	export type Tree = TreeFor<'_parenthesized_expression_typed'>;
+	export type Config = ConfigFor<TSKindId.ParenthesizedExpressionTyped>;
+	export type Fluent = FluentFor<TSKindId.ParenthesizedExpressionTyped>;
+	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionTyped>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionTyped>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedExpressionTyped>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ParenthesizedExpressionTyped>;
+	export type Tree = TreeFor<TSKindId.ParenthesizedExpressionTyped>;
 	export type Kind = '_parenthesized_expression_typed';
 }
 export namespace ExportStatementTypeExport {
-	export type Config = ConfigFor<'_export_statement_type_export'>;
-	export type Fluent = FluentFor<'_export_statement_type_export'>;
-	export type Loose = LooseFor<'_export_statement_type_export'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_type_export'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_type_export'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_type_export'>;
-	export type Tree = TreeFor<'_export_statement_type_export'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementTypeExport>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementTypeExport>;
+	export type Loose = LooseFor<TSKindId.ExportStatementTypeExport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementTypeExport>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementTypeExport>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementTypeExport>;
+	export type Tree = TreeFor<TSKindId.ExportStatementTypeExport>;
 	export type Kind = '_export_statement_type_export';
 }
 export namespace ExportStatementEqualsExport {
-	export type Config = ConfigFor<'_export_statement_equals_export'>;
-	export type Fluent = FluentFor<'_export_statement_equals_export'>;
-	export type Loose = LooseFor<'_export_statement_equals_export'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_equals_export'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_equals_export'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_equals_export'>;
-	export type Tree = TreeFor<'_export_statement_equals_export'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementEqualsExport>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementEqualsExport>;
+	export type Loose = LooseFor<TSKindId.ExportStatementEqualsExport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementEqualsExport>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementEqualsExport>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementEqualsExport>;
+	export type Tree = TreeFor<TSKindId.ExportStatementEqualsExport>;
 	export type Kind = '_export_statement_equals_export';
 }
 export namespace ExportStatementNamespaceExport {
-	export type Config = ConfigFor<'_export_statement_namespace_export'>;
-	export type Fluent = FluentFor<'_export_statement_namespace_export'>;
-	export type Loose = LooseFor<'_export_statement_namespace_export'>;
-	export type LooseConfig = LooseConfigFor<'_export_statement_namespace_export'>;
-	export type BuildArgs = BuildArgsFor<'_export_statement_namespace_export'>;
-	export type LooseArgs = LooseArgsFor<'_export_statement_namespace_export'>;
-	export type Tree = TreeFor<'_export_statement_namespace_export'>;
+	export type Config = ConfigFor<TSKindId.ExportStatementNamespaceExport>;
+	export type Fluent = FluentFor<TSKindId.ExportStatementNamespaceExport>;
+	export type Loose = LooseFor<TSKindId.ExportStatementNamespaceExport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementNamespaceExport>;
+	export type BuildArgs = BuildArgsFor<TSKindId.ExportStatementNamespaceExport>;
+	export type LooseArgs = LooseArgsFor<TSKindId.ExportStatementNamespaceExport>;
+	export type Tree = TreeFor<TSKindId.ExportStatementNamespaceExport>;
 	export type Kind = '_export_statement_namespace_export';
 }
 export namespace CallExpressionCall {
-	export type Config = ConfigFor<'_call_expression_call'>;
-	export type Fluent = FluentFor<'_call_expression_call'>;
-	export type Loose = LooseFor<'_call_expression_call'>;
-	export type LooseConfig = LooseConfigFor<'_call_expression_call'>;
-	export type BuildArgs = BuildArgsFor<'_call_expression_call'>;
-	export type LooseArgs = LooseArgsFor<'_call_expression_call'>;
-	export type Tree = TreeFor<'_call_expression_call'>;
+	export type Config = ConfigFor<TSKindId.CallExpressionCall>;
+	export type Fluent = FluentFor<TSKindId.CallExpressionCall>;
+	export type Loose = LooseFor<TSKindId.CallExpressionCall>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionCall>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CallExpressionCall>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CallExpressionCall>;
+	export type Tree = TreeFor<TSKindId.CallExpressionCall>;
 	export type Kind = '_call_expression_call';
 }
 export namespace CallExpressionTemplateCall {
-	export type Config = ConfigFor<'_call_expression_template_call'>;
-	export type Fluent = FluentFor<'_call_expression_template_call'>;
-	export type Loose = LooseFor<'_call_expression_template_call'>;
-	export type LooseConfig = LooseConfigFor<'_call_expression_template_call'>;
-	export type BuildArgs = BuildArgsFor<'_call_expression_template_call'>;
-	export type LooseArgs = LooseArgsFor<'_call_expression_template_call'>;
-	export type Tree = TreeFor<'_call_expression_template_call'>;
+	export type Config = ConfigFor<TSKindId.CallExpressionTemplateCall>;
+	export type Fluent = FluentFor<TSKindId.CallExpressionTemplateCall>;
+	export type Loose = LooseFor<TSKindId.CallExpressionTemplateCall>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionTemplateCall>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CallExpressionTemplateCall>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CallExpressionTemplateCall>;
+	export type Tree = TreeFor<TSKindId.CallExpressionTemplateCall>;
 	export type Kind = '_call_expression_template_call';
 }
 export namespace CallExpressionMember {
-	export type Config = ConfigFor<'_call_expression_member'>;
-	export type Fluent = FluentFor<'_call_expression_member'>;
-	export type Loose = LooseFor<'_call_expression_member'>;
-	export type LooseConfig = LooseConfigFor<'_call_expression_member'>;
-	export type BuildArgs = BuildArgsFor<'_call_expression_member'>;
-	export type LooseArgs = LooseArgsFor<'_call_expression_member'>;
-	export type Tree = TreeFor<'_call_expression_member'>;
+	export type Config = ConfigFor<TSKindId.CallExpressionMember>;
+	export type Fluent = FluentFor<TSKindId.CallExpressionMember>;
+	export type Loose = LooseFor<TSKindId.CallExpressionMember>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionMember>;
+	export type BuildArgs = BuildArgsFor<TSKindId.CallExpressionMember>;
+	export type LooseArgs = LooseArgsFor<TSKindId.CallExpressionMember>;
+	export type Tree = TreeFor<TSKindId.CallExpressionMember>;
 	export type Kind = '_call_expression_member';
 }
 export namespace StringDouble {
-	export type Config = ConfigFor<'_string_double'>;
-	export type Fluent = FluentFor<'_string_double'>;
-	export type Loose = LooseFor<'_string_double'>;
-	export type LooseConfig = LooseConfigFor<'_string_double'>;
-	export type BuildArgs = BuildArgsFor<'_string_double'>;
-	export type LooseArgs = LooseArgsFor<'_string_double'>;
-	export type Tree = TreeFor<'_string_double'>;
+	export type Config = ConfigFor<TSKindId.StringDouble>;
+	export type Fluent = FluentFor<TSKindId.StringDouble>;
+	export type Loose = LooseFor<TSKindId.StringDouble>;
+	export type LooseConfig = LooseConfigFor<TSKindId.StringDouble>;
+	export type BuildArgs = BuildArgsFor<TSKindId.StringDouble>;
+	export type LooseArgs = LooseArgsFor<TSKindId.StringDouble>;
+	export type Tree = TreeFor<TSKindId.StringDouble>;
 	export type Kind = '_string_double';
 }
 export namespace StringSingle {
-	export type Config = ConfigFor<'_string_single'>;
-	export type Fluent = FluentFor<'_string_single'>;
-	export type Loose = LooseFor<'_string_single'>;
-	export type LooseConfig = LooseConfigFor<'_string_single'>;
-	export type BuildArgs = BuildArgsFor<'_string_single'>;
-	export type LooseArgs = LooseArgsFor<'_string_single'>;
-	export type Tree = TreeFor<'_string_single'>;
+	export type Config = ConfigFor<TSKindId.StringSingle>;
+	export type Fluent = FluentFor<TSKindId.StringSingle>;
+	export type Loose = LooseFor<TSKindId.StringSingle>;
+	export type LooseConfig = LooseConfigFor<TSKindId.StringSingle>;
+	export type BuildArgs = BuildArgsFor<TSKindId.StringSingle>;
+	export type LooseArgs = LooseArgsFor<TSKindId.StringSingle>;
+	export type Tree = TreeFor<TSKindId.StringSingle>;
 	export type Kind = '_string_single';
 }
 export namespace UpdateExpressionPostfix {
-	export type Config = ConfigFor<'_update_expression_postfix'>;
-	export type Fluent = FluentFor<'_update_expression_postfix'>;
-	export type Loose = LooseFor<'_update_expression_postfix'>;
-	export type LooseConfig = LooseConfigFor<'_update_expression_postfix'>;
-	export type BuildArgs = BuildArgsFor<'_update_expression_postfix'>;
-	export type LooseArgs = LooseArgsFor<'_update_expression_postfix'>;
-	export type Tree = TreeFor<'_update_expression_postfix'>;
+	export type Config = ConfigFor<TSKindId.UpdateExpressionPostfix>;
+	export type Fluent = FluentFor<TSKindId.UpdateExpressionPostfix>;
+	export type Loose = LooseFor<TSKindId.UpdateExpressionPostfix>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpressionPostfix>;
+	export type BuildArgs = BuildArgsFor<TSKindId.UpdateExpressionPostfix>;
+	export type LooseArgs = LooseArgsFor<TSKindId.UpdateExpressionPostfix>;
+	export type Tree = TreeFor<TSKindId.UpdateExpressionPostfix>;
 	export type Kind = '_update_expression_postfix';
 }
 export namespace UpdateExpressionPrefix {
-	export type Config = ConfigFor<'_update_expression_prefix'>;
-	export type Fluent = FluentFor<'_update_expression_prefix'>;
-	export type Loose = LooseFor<'_update_expression_prefix'>;
-	export type LooseConfig = LooseConfigFor<'_update_expression_prefix'>;
-	export type BuildArgs = BuildArgsFor<'_update_expression_prefix'>;
-	export type LooseArgs = LooseArgsFor<'_update_expression_prefix'>;
-	export type Tree = TreeFor<'_update_expression_prefix'>;
+	export type Config = ConfigFor<TSKindId.UpdateExpressionPrefix>;
+	export type Fluent = FluentFor<TSKindId.UpdateExpressionPrefix>;
+	export type Loose = LooseFor<TSKindId.UpdateExpressionPrefix>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpressionPrefix>;
+	export type BuildArgs = BuildArgsFor<TSKindId.UpdateExpressionPrefix>;
+	export type LooseArgs = LooseArgsFor<TSKindId.UpdateExpressionPrefix>;
+	export type Tree = TreeFor<TSKindId.UpdateExpressionPrefix>;
 	export type Kind = '_update_expression_prefix';
-}
-export namespace JsxOpeningElementContent {
-	export type Config = ConfigFor<'_jsx_opening_element_content'>;
-	export type Fluent = FluentFor<'_jsx_opening_element_content'>;
-	export type Loose = LooseFor<'_jsx_opening_element_content'>;
-	export type LooseConfig = LooseConfigFor<'_jsx_opening_element_content'>;
-	export type BuildArgs = BuildArgsFor<'_jsx_opening_element_content'>;
-	export type LooseArgs = LooseArgsFor<'_jsx_opening_element_content'>;
-	export type Tree = TreeFor<'_jsx_opening_element_content'>;
-	export type Kind = '_jsx_opening_element_content';
 }

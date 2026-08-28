@@ -46,7 +46,7 @@ import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts'
 import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar, DesugarDivergenceEvent } from './types.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
-import { classifyByType } from './rule-catalog.ts';
+import { classifyByType } from '../dsl/rule-patterns.ts';
 import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
@@ -414,7 +414,7 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 // Sittir-runtime-exclusive normalization: folds every real IMMEDIATE_TOKEN
 // node (see ImmediateTokenRule's doc comment in types/rule.ts) into
 // TOKEN+`immediate: true` once enrich's dedup/equality decisions —
-// dsl/list-patterns.ts's `rulesEqual` dispatches purely on `type`, so it needs
+// dsl/rule-patterns.ts's `rulesEqual` dispatches purely on `type`, so it needs
 // the distinct IMMEDIATE_TOKEN tag to tell `token.immediate(x)` apart from
 // `token(x)` — are locked in. Downstream phases (Link onward) already expect
 // immediate-ness as TokenRule's boolean field, never a separate type tag —

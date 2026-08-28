@@ -50,7 +50,9 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 		// current way to construct that branch's NodeData directly.
 		const result = ir.assignment({
 			left: 'x' as any,
-			content: F.buildAssignmentEq({ right: { kind: 'integer', text: '42' } as any })
+			// `_assignment_eq`'s sole slot is `right`, so its factory takes that
+			// value positionally, like every other one-slot kind.
+			content: F.buildAssignmentEq({ kind: 'integer', text: '42' } as any)
 		}) as any;
 		expect(result.$type).toBe(TSKindId.Assignment);
 	});
@@ -75,7 +77,7 @@ describe('loose from() — NodeData passthrough still works', () => {
 		// See the T052d-ii test above for why F.buildAssignmentEq (not
 		// ir.assignment.eq, which no longer exists) is how a caller
 		// supplies assignment's hidden-branch-kind `content` field.
-		const child = F.buildAssignmentEq({ right: nodeData });
+		const child = F.buildAssignmentEq(nodeData);
 		const result = ir.assignment({
 			left: 'x' as any,
 			content: child

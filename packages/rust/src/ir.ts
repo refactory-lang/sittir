@@ -17,10 +17,10 @@ import { attachProps } from './utils.js';
 
 const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
 	strict: typeof F.buildExpressionStatement;
-	withSemi: typeof F.buildExpressionStatement.withSemi;
+	withSemi: typeof FR.coerceToExpressionStatement.withSemi;
 } = attachProps(FR.coerceToExpressionStatement, {
 	strict: F.buildExpressionStatement,
-	withSemi: F.buildExpressionStatement.withSemi
+	withSemi: FR.coerceToExpressionStatement.withSemi
 });
 
 const _b$constItem: typeof FR.coerceToConstItem & {
@@ -145,26 +145,26 @@ const _b$staticItem: typeof FR.coerceToStaticItem & {
 
 const _b$tokenTreePattern: typeof FR.coerceToTokenTreePattern & {
 	strict: typeof F.buildTokenTreePattern;
-	paren: typeof F.buildTokenTreePattern.paren;
-	bracket: typeof F.buildTokenTreePattern.bracket;
-	brace: typeof F.buildTokenTreePattern.brace;
+	paren: typeof FR.coerceToTokenTreePattern.paren;
+	bracket: typeof FR.coerceToTokenTreePattern.bracket;
+	brace: typeof FR.coerceToTokenTreePattern.brace;
 } = attachProps(FR.coerceToTokenTreePattern, {
 	strict: F.buildTokenTreePattern,
-	paren: F.buildTokenTreePattern.paren,
-	bracket: F.buildTokenTreePattern.bracket,
-	brace: F.buildTokenTreePattern.brace
+	paren: FR.coerceToTokenTreePattern.paren,
+	bracket: FR.coerceToTokenTreePattern.bracket,
+	brace: FR.coerceToTokenTreePattern.brace
 });
 
 const _b$tokenRepetitionPattern: typeof FR.coerceToTokenRepetitionPattern & {
 	strict: typeof F.buildTokenRepetitionPattern;
-	plus: typeof F.buildTokenRepetitionPattern.plus;
-	star: typeof F.buildTokenRepetitionPattern.star;
-	qmark: typeof F.buildTokenRepetitionPattern.qmark;
+	plus: typeof FR.coerceToTokenRepetitionPattern.plus;
+	star: typeof FR.coerceToTokenRepetitionPattern.star;
+	qmark: typeof FR.coerceToTokenRepetitionPattern.qmark;
 } = attachProps(FR.coerceToTokenRepetitionPattern, {
 	strict: F.buildTokenRepetitionPattern,
-	plus: F.buildTokenRepetitionPattern.plus,
-	star: F.buildTokenRepetitionPattern.star,
-	qmark: F.buildTokenRepetitionPattern.qmark
+	plus: FR.coerceToTokenRepetitionPattern.plus,
+	star: FR.coerceToTokenRepetitionPattern.star,
+	qmark: FR.coerceToTokenRepetitionPattern.qmark
 });
 
 const _b$tokenBindingPattern: typeof FR.coerceToTokenBindingPattern & {
@@ -175,10 +175,10 @@ const _b$tokenBindingPattern: typeof FR.coerceToTokenBindingPattern & {
 
 const _b$stringLiteral: typeof FR.coerceToStringLiteral & {
 	strict: typeof F.buildStringLiteral;
-	open: typeof F.buildStringLiteral.open;
+	open: typeof FR.coerceToStringLiteral.open;
 } = attachProps(FR.coerceToStringLiteral, {
 	strict: F.buildStringLiteral,
-	open: F.buildStringLiteral.open
+	open: FR.coerceToStringLiteral.open
 });
 
 const _b$rawStringLiteral: typeof FR.coerceToRawStringLiteral & {
@@ -189,32 +189,32 @@ const _b$rawStringLiteral: typeof FR.coerceToRawStringLiteral & {
 
 const _b$tokenTree: typeof FR.coerceToTokenTree & {
 	strict: typeof F.buildTokenTree;
-	paren: typeof F.buildTokenTree.paren;
-	bracket: typeof F.buildTokenTree.bracket;
-	brace: typeof F.buildTokenTree.brace;
-	delimTokenTreeParen: typeof F.buildTokenTree.delimTokenTreeParen;
-	delimTokenTreeBracket: typeof F.buildTokenTree.delimTokenTreeBracket;
-	delimTokenTreeBrace: typeof F.buildTokenTree.delimTokenTreeBrace;
+	paren: typeof FR.coerceToTokenTree.paren;
+	bracket: typeof FR.coerceToTokenTree.bracket;
+	brace: typeof FR.coerceToTokenTree.brace;
+	delimTokenTreeParen: typeof FR.coerceToTokenTree.delimTokenTreeParen;
+	delimTokenTreeBracket: typeof FR.coerceToTokenTree.delimTokenTreeBracket;
+	delimTokenTreeBrace: typeof FR.coerceToTokenTree.delimTokenTreeBrace;
 } = attachProps(FR.coerceToTokenTree, {
 	strict: F.buildTokenTree,
-	paren: F.buildTokenTree.paren,
-	bracket: F.buildTokenTree.bracket,
-	brace: F.buildTokenTree.brace,
-	delimTokenTreeParen: F.buildTokenTree.delimTokenTreeParen,
-	delimTokenTreeBracket: F.buildTokenTree.delimTokenTreeBracket,
-	delimTokenTreeBrace: F.buildTokenTree.delimTokenTreeBrace
+	paren: FR.coerceToTokenTree.paren,
+	bracket: FR.coerceToTokenTree.bracket,
+	brace: FR.coerceToTokenTree.brace,
+	delimTokenTreeParen: FR.coerceToTokenTree.delimTokenTreeParen,
+	delimTokenTreeBracket: FR.coerceToTokenTree.delimTokenTreeBracket,
+	delimTokenTreeBrace: FR.coerceToTokenTree.delimTokenTreeBrace
 });
 
 const _b$tokenRepetition: typeof FR.coerceToTokenRepetition & {
 	strict: typeof F.buildTokenRepetition;
-	plus: typeof F.buildTokenRepetition.plus;
-	star: typeof F.buildTokenRepetition.star;
-	qmark: typeof F.buildTokenRepetition.qmark;
+	plus: typeof FR.coerceToTokenRepetition.plus;
+	star: typeof FR.coerceToTokenRepetition.star;
+	qmark: typeof FR.coerceToTokenRepetition.qmark;
 } = attachProps(FR.coerceToTokenRepetition, {
 	strict: F.buildTokenRepetition,
-	plus: F.buildTokenRepetition.plus,
-	star: F.buildTokenRepetition.star,
-	qmark: F.buildTokenRepetition.qmark
+	plus: FR.coerceToTokenRepetition.plus,
+	star: FR.coerceToTokenRepetition.star,
+	qmark: FR.coerceToTokenRepetition.qmark
 });
 
 const _b$scopedIdentifier: typeof FR.coerceToScopedIdentifier & {
@@ -297,20 +297,20 @@ const _b$functionType: typeof FR.coerceToFunctionType & {
 
 const _b$dynamicType: typeof FR.coerceToDynamicType & {
 	strict: typeof F.buildDynamicType;
-	higherRankedTraitBound: typeof F.buildDynamicType.higherRankedTraitBound;
-	identifier: typeof F.buildDynamicType.identifier;
-	scopedTypeIdentifier: typeof F.buildDynamicType.scopedTypeIdentifier;
-	genericType: typeof F.buildDynamicType.genericType;
-	functionType: typeof F.buildDynamicType.functionType;
-	tupleType: typeof F.buildDynamicType.tupleType;
+	higherRankedTraitBound: typeof FR.coerceToDynamicType.higherRankedTraitBound;
+	identifier: typeof FR.coerceToDynamicType.identifier;
+	scopedTypeIdentifier: typeof FR.coerceToDynamicType.scopedTypeIdentifier;
+	genericType: typeof FR.coerceToDynamicType.genericType;
+	functionType: typeof FR.coerceToDynamicType.functionType;
+	tupleType: typeof FR.coerceToDynamicType.tupleType;
 } = attachProps(FR.coerceToDynamicType, {
 	strict: F.buildDynamicType,
-	higherRankedTraitBound: F.buildDynamicType.higherRankedTraitBound,
-	identifier: F.buildDynamicType.identifier,
-	scopedTypeIdentifier: F.buildDynamicType.scopedTypeIdentifier,
-	genericType: F.buildDynamicType.genericType,
-	functionType: F.buildDynamicType.functionType,
-	tupleType: F.buildDynamicType.tupleType
+	higherRankedTraitBound: FR.coerceToDynamicType.higherRankedTraitBound,
+	identifier: FR.coerceToDynamicType.identifier,
+	scopedTypeIdentifier: FR.coerceToDynamicType.scopedTypeIdentifier,
+	genericType: FR.coerceToDynamicType.genericType,
+	functionType: FR.coerceToDynamicType.functionType,
+	tupleType: FR.coerceToDynamicType.tupleType
 });
 
 const _b$boundedType: typeof FR.coerceToBoundedType & {
@@ -327,14 +327,14 @@ const _b$removedTraitBound: typeof FR.coerceToRemovedTraitBound & {
 
 const _b$unaryExpression: typeof FR.coerceToUnaryExpression & {
 	strict: typeof F.buildUnaryExpression;
-	dash: typeof F.buildUnaryExpression.dash;
-	star: typeof F.buildUnaryExpression.star;
-	bang: typeof F.buildUnaryExpression.bang;
+	dash: typeof FR.coerceToUnaryExpression.dash;
+	star: typeof FR.coerceToUnaryExpression.star;
+	bang: typeof FR.coerceToUnaryExpression.bang;
 } = attachProps(FR.coerceToUnaryExpression, {
 	strict: F.buildUnaryExpression,
-	dash: F.buildUnaryExpression.dash,
-	star: F.buildUnaryExpression.star,
-	bang: F.buildUnaryExpression.bang
+	dash: FR.coerceToUnaryExpression.dash,
+	star: FR.coerceToUnaryExpression.star,
+	bang: FR.coerceToUnaryExpression.bang
 });
 
 const _b$referenceExpression: typeof FR.coerceToReferenceExpression & {
@@ -351,44 +351,44 @@ const _b$tryExpression: typeof FR.coerceToTryExpression & {
 
 const _b$binaryExpression: typeof FR.coerceToBinaryExpression & {
 	strict: typeof F.buildBinaryExpression;
-	ampAmp: typeof F.buildBinaryExpression.ampAmp;
-	pipePipe: typeof F.buildBinaryExpression.pipePipe;
-	amp: typeof F.buildBinaryExpression.amp;
-	pipe: typeof F.buildBinaryExpression.pipe;
-	caret: typeof F.buildBinaryExpression.caret;
-	eqEq: typeof F.buildBinaryExpression.eqEq;
-	bangEq: typeof F.buildBinaryExpression.bangEq;
-	lt: typeof F.buildBinaryExpression.lt;
-	ltEq: typeof F.buildBinaryExpression.ltEq;
-	gt: typeof F.buildBinaryExpression.gt;
-	gtEq: typeof F.buildBinaryExpression.gtEq;
-	ltLt: typeof F.buildBinaryExpression.ltLt;
-	gtGt: typeof F.buildBinaryExpression.gtGt;
-	plus: typeof F.buildBinaryExpression.plus;
-	dash: typeof F.buildBinaryExpression.dash;
-	star: typeof F.buildBinaryExpression.star;
-	slash: typeof F.buildBinaryExpression.slash;
-	percent: typeof F.buildBinaryExpression.percent;
+	ampAmp: typeof FR.coerceToBinaryExpression.ampAmp;
+	pipePipe: typeof FR.coerceToBinaryExpression.pipePipe;
+	amp: typeof FR.coerceToBinaryExpression.amp;
+	pipe: typeof FR.coerceToBinaryExpression.pipe;
+	caret: typeof FR.coerceToBinaryExpression.caret;
+	eqEq: typeof FR.coerceToBinaryExpression.eqEq;
+	bangEq: typeof FR.coerceToBinaryExpression.bangEq;
+	lt: typeof FR.coerceToBinaryExpression.lt;
+	ltEq: typeof FR.coerceToBinaryExpression.ltEq;
+	gt: typeof FR.coerceToBinaryExpression.gt;
+	gtEq: typeof FR.coerceToBinaryExpression.gtEq;
+	ltLt: typeof FR.coerceToBinaryExpression.ltLt;
+	gtGt: typeof FR.coerceToBinaryExpression.gtGt;
+	plus: typeof FR.coerceToBinaryExpression.plus;
+	dash: typeof FR.coerceToBinaryExpression.dash;
+	star: typeof FR.coerceToBinaryExpression.star;
+	slash: typeof FR.coerceToBinaryExpression.slash;
+	percent: typeof FR.coerceToBinaryExpression.percent;
 } = attachProps(FR.coerceToBinaryExpression, {
 	strict: F.buildBinaryExpression,
-	ampAmp: F.buildBinaryExpression.ampAmp,
-	pipePipe: F.buildBinaryExpression.pipePipe,
-	amp: F.buildBinaryExpression.amp,
-	pipe: F.buildBinaryExpression.pipe,
-	caret: F.buildBinaryExpression.caret,
-	eqEq: F.buildBinaryExpression.eqEq,
-	bangEq: F.buildBinaryExpression.bangEq,
-	lt: F.buildBinaryExpression.lt,
-	ltEq: F.buildBinaryExpression.ltEq,
-	gt: F.buildBinaryExpression.gt,
-	gtEq: F.buildBinaryExpression.gtEq,
-	ltLt: F.buildBinaryExpression.ltLt,
-	gtGt: F.buildBinaryExpression.gtGt,
-	plus: F.buildBinaryExpression.plus,
-	dash: F.buildBinaryExpression.dash,
-	star: F.buildBinaryExpression.star,
-	slash: F.buildBinaryExpression.slash,
-	percent: F.buildBinaryExpression.percent
+	ampAmp: FR.coerceToBinaryExpression.ampAmp,
+	pipePipe: FR.coerceToBinaryExpression.pipePipe,
+	amp: FR.coerceToBinaryExpression.amp,
+	pipe: FR.coerceToBinaryExpression.pipe,
+	caret: FR.coerceToBinaryExpression.caret,
+	eqEq: FR.coerceToBinaryExpression.eqEq,
+	bangEq: FR.coerceToBinaryExpression.bangEq,
+	lt: FR.coerceToBinaryExpression.lt,
+	ltEq: FR.coerceToBinaryExpression.ltEq,
+	gt: FR.coerceToBinaryExpression.gt,
+	gtEq: FR.coerceToBinaryExpression.gtEq,
+	ltLt: FR.coerceToBinaryExpression.ltLt,
+	gtGt: FR.coerceToBinaryExpression.gtGt,
+	plus: FR.coerceToBinaryExpression.plus,
+	dash: FR.coerceToBinaryExpression.dash,
+	star: FR.coerceToBinaryExpression.star,
+	slash: FR.coerceToBinaryExpression.slash,
+	percent: FR.coerceToBinaryExpression.percent
 });
 
 const _b$assignmentExpression: typeof FR.coerceToAssignmentExpression & {
@@ -447,20 +447,20 @@ const _b$fieldExpression: typeof FR.coerceToFieldExpression & {
 
 const _b$arrayExpression: typeof FR.coerceToArrayExpression & {
 	strict: typeof F.buildArrayExpression;
-	semi: typeof F.buildArrayExpression.semi;
-	list: typeof F.buildArrayExpression.list;
+	semi: typeof FR.coerceToArrayExpression.semi;
+	list: typeof FR.coerceToArrayExpression.list;
 } = attachProps(FR.coerceToArrayExpression, {
 	strict: F.buildArrayExpression,
-	semi: F.buildArrayExpression.semi,
-	list: F.buildArrayExpression.list
+	semi: FR.coerceToArrayExpression.semi,
+	list: FR.coerceToArrayExpression.list
 });
 
 const _b$tupleExpression: typeof FR.coerceToTupleExpression & {
 	strict: typeof F.buildTupleExpression;
-	elements: typeof F.buildTupleExpression.elements;
+	elements: typeof FR.coerceToTupleExpression.elements;
 } = attachProps(FR.coerceToTupleExpression, {
 	strict: F.buildTupleExpression,
-	elements: F.buildTupleExpression.elements
+	elements: FR.coerceToTupleExpression.elements
 });
 
 const _b$breakExpression: typeof FR.coerceToBreakExpression & {
@@ -567,32 +567,32 @@ const _b$constBlock: typeof FR.coerceToConstBlock & {
 
 const _b$rangeExpression: typeof FR.coerceToRangeExpression & {
 	strict: typeof F.buildRangeExpression;
-	binary: typeof F.buildRangeExpression.binary;
-	dotDot: typeof F.buildRangeExpression.dotDot;
-	dotDotDot: typeof F.buildRangeExpression.dotDotDot;
-	dotDotEq: typeof F.buildRangeExpression.dotDotEq;
-	postfix: typeof F.buildRangeExpression.postfix;
-	prefix: typeof F.buildRangeExpression.prefix;
+	binary: typeof FR.coerceToRangeExpression.binary;
+	dotDot: typeof FR.coerceToRangeExpression.dotDot;
+	dotDotDot: typeof FR.coerceToRangeExpression.dotDotDot;
+	dotDotEq: typeof FR.coerceToRangeExpression.dotDotEq;
+	postfix: typeof FR.coerceToRangeExpression.postfix;
+	prefix: typeof FR.coerceToRangeExpression.prefix;
 } = attachProps(FR.coerceToRangeExpression, {
 	strict: F.buildRangeExpression,
-	binary: F.buildRangeExpression.binary,
-	dotDot: F.buildRangeExpression.dotDot,
-	dotDotDot: F.buildRangeExpression.dotDotDot,
-	dotDotEq: F.buildRangeExpression.dotDotEq,
-	postfix: F.buildRangeExpression.postfix,
-	prefix: F.buildRangeExpression.prefix
+	binary: FR.coerceToRangeExpression.binary,
+	dotDot: FR.coerceToRangeExpression.dotDot,
+	dotDotDot: FR.coerceToRangeExpression.dotDotDot,
+	dotDotEq: FR.coerceToRangeExpression.dotDotEq,
+	postfix: FR.coerceToRangeExpression.postfix,
+	prefix: FR.coerceToRangeExpression.prefix
 });
 
 const _b$delimTokenTree: typeof FR.coerceToDelimTokenTree & {
 	strict: typeof F.buildDelimTokenTree;
-	paren: typeof F.buildDelimTokenTree.paren;
-	bracket: typeof F.buildDelimTokenTree.bracket;
-	brace: typeof F.buildDelimTokenTree.brace;
+	paren: typeof FR.coerceToDelimTokenTree.paren;
+	bracket: typeof FR.coerceToDelimTokenTree.bracket;
+	brace: typeof FR.coerceToDelimTokenTree.brace;
 } = attachProps(FR.coerceToDelimTokenTree, {
 	strict: F.buildDelimTokenTree,
-	paren: F.buildDelimTokenTree.paren,
-	bracket: F.buildDelimTokenTree.bracket,
-	brace: F.buildDelimTokenTree.brace
+	paren: FR.coerceToDelimTokenTree.paren,
+	bracket: FR.coerceToDelimTokenTree.bracket,
+	brace: FR.coerceToDelimTokenTree.brace
 });
 
 const _b$letCondition: typeof FR.coerceToLetCondition & {
@@ -603,12 +603,12 @@ const _b$letCondition: typeof FR.coerceToLetCondition & {
 
 const _b$negativeLiteral: typeof FR.coerceToNegativeLiteral & {
 	strict: typeof F.buildNegativeLiteral;
-	integerLiteral: typeof F.buildNegativeLiteral.integerLiteral;
-	floatLiteral: typeof F.buildNegativeLiteral.floatLiteral;
+	integerLiteral: typeof FR.coerceToNegativeLiteral.integerLiteral;
+	floatLiteral: typeof FR.coerceToNegativeLiteral.floatLiteral;
 } = attachProps(FR.coerceToNegativeLiteral, {
 	strict: F.buildNegativeLiteral,
-	integerLiteral: F.buildNegativeLiteral.integerLiteral,
-	floatLiteral: F.buildNegativeLiteral.floatLiteral
+	integerLiteral: FR.coerceToNegativeLiteral.integerLiteral,
+	floatLiteral: FR.coerceToNegativeLiteral.floatLiteral
 });
 
 const _b$genericPattern: typeof FR.coerceToGenericPattern & {
@@ -667,26 +667,26 @@ const _b$mutPattern: typeof FR.coerceToMutPattern & {
 
 const _b$rangePattern: typeof FR.coerceToRangePattern & {
 	strict: typeof F.buildRangePattern;
-	arm2: typeof F.buildRangePattern.arm2;
-	prefix: typeof F.buildRangePattern.prefix;
-	dotDotEq: typeof F.buildRangePattern.dotDotEq;
-	dotDot: typeof F.buildRangePattern.dotDot;
+	arm2: typeof FR.coerceToRangePattern.arm2;
+	prefix: typeof FR.coerceToRangePattern.prefix;
+	dotDotEq: typeof FR.coerceToRangePattern.dotDotEq;
+	dotDot: typeof FR.coerceToRangePattern.dotDot;
 } = attachProps(FR.coerceToRangePattern, {
 	strict: F.buildRangePattern,
-	arm2: F.buildRangePattern.arm2,
-	prefix: F.buildRangePattern.prefix,
-	dotDotEq: F.buildRangePattern.dotDotEq,
-	dotDot: F.buildRangePattern.dotDot
+	arm2: FR.coerceToRangePattern.arm2,
+	prefix: FR.coerceToRangePattern.prefix,
+	dotDotEq: FR.coerceToRangePattern.dotDotEq,
+	dotDot: FR.coerceToRangePattern.dotDot
 });
 
 const _b$orPattern: typeof FR.coerceToOrPattern & {
 	strict: typeof F.buildOrPattern;
-	binary: typeof F.buildOrPattern.binary;
-	prefix: typeof F.buildOrPattern.prefix;
+	binary: typeof FR.coerceToOrPattern.binary;
+	prefix: typeof FR.coerceToOrPattern.prefix;
 } = attachProps(FR.coerceToOrPattern, {
 	strict: F.buildOrPattern,
-	binary: F.buildOrPattern.binary,
-	prefix: F.buildOrPattern.prefix
+	binary: FR.coerceToOrPattern.binary,
+	prefix: FR.coerceToOrPattern.prefix
 });
 
 const _b$sourceFile: typeof FR.coerceToSourceFile & {
@@ -823,34 +823,34 @@ const _b$parameter: typeof FR.coerceToParameter & {
 
 const _b$externModifier: typeof FR.coerceToExternModifier & {
 	strict: typeof F.buildExternModifier;
-	stringLiteralOpen: typeof F.buildExternModifier.stringLiteralOpen;
+	stringLiteralOpen: typeof FR.coerceToExternModifier.stringLiteralOpen;
 } = attachProps(FR.coerceToExternModifier, {
 	strict: F.buildExternModifier,
-	stringLiteralOpen: F.buildExternModifier.stringLiteralOpen
+	stringLiteralOpen: FR.coerceToExternModifier.stringLiteralOpen
 });
 
 const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
 	strict: typeof F.buildVisibilityModifier;
-	crate: typeof F.buildVisibilityModifier.crate;
-	pub: typeof F.buildVisibilityModifier.pub;
-	self: typeof F.buildVisibilityModifier.self;
-	super: typeof F.buildVisibilityModifier.super;
-	inPath: typeof F.buildVisibilityModifier.inPath;
+	crate: typeof FR.coerceToVisibilityModifier.crate;
+	pub: typeof FR.coerceToVisibilityModifier.pub;
+	self: typeof FR.coerceToVisibilityModifier.self;
+	super: typeof FR.coerceToVisibilityModifier.super;
+	inPath: typeof FR.coerceToVisibilityModifier.inPath;
 } = attachProps(FR.coerceToVisibilityModifier, {
 	strict: F.buildVisibilityModifier,
-	crate: F.buildVisibilityModifier.crate,
-	pub: F.buildVisibilityModifier.pub,
-	self: F.buildVisibilityModifier.self,
-	super: F.buildVisibilityModifier.super,
-	inPath: F.buildVisibilityModifier.inPath
+	crate: FR.coerceToVisibilityModifier.crate,
+	pub: FR.coerceToVisibilityModifier.pub,
+	self: FR.coerceToVisibilityModifier.self,
+	super: FR.coerceToVisibilityModifier.super,
+	inPath: FR.coerceToVisibilityModifier.inPath
 });
 
 const _b$bracketedType: typeof FR.coerceToBracketedType & {
 	strict: typeof F.buildBracketedType;
-	qualifiedType: typeof F.buildBracketedType.qualifiedType;
+	qualifiedType: typeof FR.coerceToBracketedType.qualifiedType;
 } = attachProps(FR.coerceToBracketedType, {
 	strict: F.buildBracketedType,
-	qualifiedType: F.buildBracketedType.qualifiedType
+	qualifiedType: FR.coerceToBracketedType.qualifiedType
 });
 
 const _b$qualifiedType: typeof FR.coerceToQualifiedType & {
@@ -933,12 +933,12 @@ const _b$baseFieldInitializer: typeof FR.coerceToBaseFieldInitializer & {
 
 const _b$elseClause: typeof FR.coerceToElseClause & {
 	strict: typeof F.buildElseClause;
-	block: typeof F.buildElseClause.block;
-	ifExpression: typeof F.buildElseClause.ifExpression;
+	block: typeof FR.coerceToElseClause.block;
+	ifExpression: typeof FR.coerceToElseClause.ifExpression;
 } = attachProps(FR.coerceToElseClause, {
 	strict: F.buildElseClause,
-	block: F.buildElseClause.block,
-	ifExpression: F.buildElseClause.ifExpression
+	block: FR.coerceToElseClause.block,
+	ifExpression: FR.coerceToElseClause.ifExpression
 });
 
 const _b$matchBlock: typeof FR.coerceToMatchBlock & {
@@ -979,30 +979,38 @@ const _b$label: typeof FR.coerceToLabel & {
 
 const _b$fieldPattern: typeof FR.coerceToFieldPattern & {
 	strict: typeof F.buildFieldPattern;
-	identifier: typeof F.buildFieldPattern.identifier;
-	named: typeof F.buildFieldPattern.named;
+	identifier: typeof FR.coerceToFieldPattern.identifier;
+	named: typeof FR.coerceToFieldPattern.named;
 } = attachProps(FR.coerceToFieldPattern, {
 	strict: F.buildFieldPattern,
-	identifier: F.buildFieldPattern.identifier,
-	named: F.buildFieldPattern.named
+	identifier: FR.coerceToFieldPattern.identifier,
+	named: FR.coerceToFieldPattern.named
 });
 
 const _b$lineComment: typeof FR.coerceToLineComment & {
 	strict: typeof F.buildLineComment;
-	regularDslash: typeof F.buildLineComment.regularDslash;
-	doc: typeof F.buildLineComment.doc;
-	content: typeof F.buildLineComment.content;
+	regularDslash: typeof FR.coerceToLineComment.regularDslash;
+	docOuter: typeof FR.coerceToLineComment.docOuter;
+	docInner: typeof FR.coerceToLineComment.docInner;
+	content: typeof FR.coerceToLineComment.content;
 } = attachProps(FR.coerceToLineComment, {
 	strict: F.buildLineComment,
-	regularDslash: F.buildLineComment.regularDslash,
-	doc: F.buildLineComment.doc,
-	content: F.buildLineComment.content
+	regularDslash: FR.coerceToLineComment.regularDslash,
+	docOuter: FR.coerceToLineComment.docOuter,
+	docInner: FR.coerceToLineComment.docInner,
+	content: FR.coerceToLineComment.content
 });
 
 const _b$blockComment: typeof FR.coerceToBlockComment & {
 	strict: typeof F.buildBlockComment;
+	docOuter: typeof FR.coerceToBlockComment.docOuter;
+	docInner: typeof FR.coerceToBlockComment.docInner;
+	content: typeof FR.coerceToBlockComment.content;
 } = attachProps(FR.coerceToBlockComment, {
-	strict: F.buildBlockComment
+	strict: F.buildBlockComment,
+	docOuter: FR.coerceToBlockComment.docOuter,
+	docInner: FR.coerceToBlockComment.docInner,
+	content: FR.coerceToBlockComment.content
 });
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.

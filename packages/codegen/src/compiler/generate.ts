@@ -60,7 +60,6 @@ export interface GeneratedFiles {
 	consts: string;
 	index: string;
 	tests: string;
-	typeTests: string;
 	config: string;
 	nodeModel: string;
 	suggested: string | undefined;
@@ -321,7 +320,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		consts: emitted.consts,
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 		tests: emitted.tests,
-		typeTests: emitted.typeTests,
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel,
 		suggested: emitSuggested({

@@ -71,15 +71,17 @@ export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNode
  * Each entry in `slotKeys` gets a `$with.<slotKey>(v)` updater that calls
  * `factory({ ...config, <configKey>: v })` and returns the resulting frozen node.
  *
- * Unnamed-slot keys (`'$child'`, `'$children'`) are supported via the
- * `$with.$child(v)` / `$with.$children(vs)` pattern per FR-009a.
+ * Every key is a slot name, unnamed slots included — the model names those
+ * too, falling back to `content` and pluralising it when repeated. There is
+ * no sigil-spelled child entry: inside `$with` the namespace is already
+ * established by the container.
  *
  * @param config - The factory config object this node was constructed from.
  * @param factory - The factory function that produces a new frozen node.
  * @param slotKeys - Array of `[storageKey, configKey]` pairs. For named slots:
  *   `storageKey = '_name'`, `configKey = 'name'` (camelCase property name).
- *   For unnamed slots: `storageKey = '$child'` / `'$children'`,
- *   `configKey = '$child'` / `'$children'` (unchanged).
+ *   For unnamed slots: `storageKey = '$other'`, `configKey` the slot's own
+ *   config key.
  * @returns The `$with` namespace object (attached on the node by the caller).
  *
  * @remarks

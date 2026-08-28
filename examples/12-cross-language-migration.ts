@@ -10,13 +10,13 @@ const typeMap: Record<string, string> = {
 export function interfaceToPythonDataclass(tsSource: string) {
 	const tsEngine = createTsEngine();
 	const program = tsEngine.parse(tsSource);
-	const ifaceNode = (program.$children ?? []).find(is.interfaceDeclaration);
+	const ifaceNode = program.statements()?.find(is.interfaceDeclaration);
 	if (!ifaceNode) {
 		throw new Error('Expected a top-level TypeScript interface declaration.');
 	}
 	const iface = ifaceNode as ReturnType<typeof tsIr.interfaceDeclaration>;
 
-	const fields = iface.body().$children.filter(is.propertySignature).map((member) => {
+	const fields = iface.body().members()?.contents().filter(is.propertySignature).map((member) => {
 		const typedMember = member as ReturnType<typeof tsIr.propertySignature>;
 		const name = nodeText(typedMember.name());
 		const rawType = typedMember.type()?.type().$render() ?? 'Any';

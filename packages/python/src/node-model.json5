@@ -2172,7 +2172,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "right"
       ]
@@ -2211,7 +2211,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "type",
       "factoryFields": [
         "type"
       ],

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { detectRepeatSeparator, rulesEqual } from '../list-patterns.ts';
+import { separatorOf, rulesEqual } from '../rule-patterns.ts';
 
 describe('rulesEqual does not crash comparing mixed-phase repeat separators', () => {
 	it('returns false (not a throw) for an object-shaped separator vs a plain string', () => {
@@ -18,7 +18,7 @@ describe('rulesEqual does not crash comparing mixed-phase repeat separators', ()
 	});
 });
 
-describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
+describe('separatorOf preserves a choice-shaped separator', () => {
 	it('returns the full CHOICE rule, not just its first string arm', () => {
 		const seq = {
 			type: 'SEQ',
@@ -33,7 +33,7 @@ describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 				{ type: 'SYMBOL', name: 'item' }
 			]
 		};
-		const result = detectRepeatSeparator(seq);
+		const result = separatorOf(seq);
 		expect(result).not.toBeNull();
 		expect(result!.separator).toEqual({
 			type: 'CHOICE',
@@ -52,7 +52,7 @@ describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 				{ type: 'SYMBOL', name: 'item' }
 			]
 		};
-		const result = detectRepeatSeparator(seq);
+		const result = separatorOf(seq);
 		expect(result!.separator).toEqual({ type: 'STRING', value: ',' });
 	});
 
@@ -64,7 +64,7 @@ describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 				{ type: 'STRING', value: ',' }
 			]
 		};
-		const result = detectRepeatSeparator(seq);
+		const result = separatorOf(seq);
 		expect(result!.trailing).toBe(true);
 		expect(result!.separator).toEqual({ type: 'STRING', value: ',' });
 	});
@@ -86,7 +86,7 @@ describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 				{ type: 'SYMBOL', name: 'item' }
 			]
 		};
-		const result = detectRepeatSeparator(seq);
+		const result = separatorOf(seq);
 		expect(result!.separator).toEqual({
 			type: 'CHOICE',
 			members: [

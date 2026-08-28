@@ -8299,14 +8299,30 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_line_comment_doc",
+                "name": "_line_comment_doc_outer",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "line_comment_doc",
+              "value": "line_comment_doc_outer",
+              "metadata": {
+                "author": "enrich"
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_line_comment_doc_inner",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "line_comment_doc_inner",
               "metadata": {
                 "author": "enrich"
               }
@@ -8321,37 +8337,6 @@
               "value": "line_comment_content"
             }
           ]
-        }
-      ]
-    },
-    "_line_doc_comment_marker": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "outer",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_outer_line_doc_comment_marker"
-            },
-            "named": true,
-            "value": "outer_doc_comment_marker"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "inner",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_inner_line_doc_comment_marker"
-            },
-            "named": true,
-            "value": "inner_doc_comment_marker"
-          }
         }
       ]
     },
@@ -8394,14 +8379,30 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_block_comment_arm",
+                    "name": "_block_comment_doc_outer",
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
                     }
                   },
                   "named": true,
-                  "value": "block_comment_arm",
+                  "value": "block_comment_doc_outer",
+                  "metadata": {
+                    "author": "enrich"
+                  }
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_block_comment_doc_inner",
+                    "metadata": {
+                      "author": "enrich",
+                      "symbolSource": "group-lift"
+                    }
+                  },
+                  "named": true,
+                  "value": "block_comment_doc_inner",
                   "metadata": {
                     "author": "enrich"
                   }
@@ -8420,37 +8421,6 @@
         {
           "type": "STRING",
           "value": "*/"
-        }
-      ]
-    },
-    "_block_doc_comment_marker": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "outer",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_outer_block_doc_comment_marker"
-            },
-            "named": true,
-            "value": "outer_doc_comment_marker"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "inner",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_inner_block_doc_comment_marker"
-            },
-            "named": true,
-            "value": "inner_doc_comment_marker"
-          }
         }
       ]
     },
@@ -10077,36 +10047,6 @@
         }
       ]
     },
-    "_block_comment_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_block_doc_comment_marker"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "doc",
-              "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_block_comment_content"
-                },
-                "named": true,
-                "value": "doc_comment"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
-    },
     "_tuple_type_elements": {
       "type": "SEQ",
       "members": [
@@ -11457,12 +11397,52 @@
         }
       ]
     },
-    "_line_comment_doc": {
+    "_line_comment_doc_outer": {
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_line_doc_comment_marker"
+          "type": "FIELD",
+          "name": "outer",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_outer_line_doc_comment_marker"
+            },
+            "named": true,
+            "value": "outer_doc_comment_marker"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "doc",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_line_doc_content"
+            },
+            "named": true,
+            "value": "doc_comment"
+          }
+        }
+      ]
+    },
+    "_line_comment_doc_inner": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "inner",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_inner_line_doc_comment_marker"
+            },
+            "named": true,
+            "value": "inner_doc_comment_marker"
+          }
         },
         {
           "type": "FIELD",
@@ -11489,6 +11469,84 @@
           "value": ".*"
         }
       }
+    },
+    "_block_comment_doc_outer": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "outer",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_outer_block_doc_comment_marker"
+            },
+            "named": true,
+            "value": "outer_doc_comment_marker"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "doc",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_block_comment_content"
+                },
+                "named": true,
+                "value": "doc_comment"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_block_comment_doc_inner": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "inner",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_inner_block_doc_comment_marker"
+            },
+            "named": true,
+            "value": "inner_doc_comment_marker"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "doc",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_block_comment_content"
+                },
+                "named": true,
+                "value": "doc_comment"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
     },
     "_token_tree_pattern_paren": {
       "type": "SEQ",
@@ -12176,13 +12234,6 @@
     ],
     [
       "_array_expression_arm"
-    ],
-    [
-      "block_comment",
-      "_block_comment_arm"
-    ],
-    [
-      "_block_comment_arm"
     ],
     [
       "_array_expression_semi",

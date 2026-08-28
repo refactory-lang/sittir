@@ -5,14 +5,15 @@
  *
  * Paths tested per kind:
  *   1. Namespace sugar: FunctionItem.Config
- *   2. Generic accessor: ConfigFor<'function_item'>
- *   3. Direct map index: NamespaceMap['function_item']['Config']
+ *   2. Generic accessor: ConfigFor<TSKindId.FunctionItem>
+ *   3. Direct map index: NamespaceMap[TSKindId.FunctionItem]['Config']
  *
  * If the three diverge, NamespaceMap is broken. This is a type-level
  * test — tsc --noEmit failure IS the failure. The runtime body is empty.
  */
 
 import { describe, it } from 'vitest';
+import { TSKindId } from '../src/index.ts';
 import type {
 	FunctionItem,
 	Comment,
@@ -40,7 +41,6 @@ import type {
 	DeclarationListLooseArgs,
 	buildParametersElements
 } from '../src/factories.ts';
-import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -48,15 +48,15 @@ function expectTrue<_T extends true>(): void {}
 
 describe('rust NamespaceMap access-path convergence', () => {
 	it('three paths resolve to same Config type', () => {
-		expectTrue<Equals<FunctionItem.Config, ConfigFor<'function_item'>>>();
-		expectTrue<Equals<ConfigFor<'function_item'>, NamespaceMap['function_item']['Config']>>();
-		expectTrue<Equals<FunctionItem.Config, NamespaceMap['function_item']['Config']>>();
+		expectTrue<Equals<FunctionItem.Config, ConfigFor<TSKindId.FunctionItem>>>();
+		expectTrue<Equals<ConfigFor<TSKindId.FunctionItem>, NamespaceMap[TSKindId.FunctionItem]['Config']>>();
+		expectTrue<Equals<FunctionItem.Config, NamespaceMap[TSKindId.FunctionItem]['Config']>>();
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<FunctionItem.Fluent, FluentFor<'function_item'>>>();
-		expectTrue<Equals<FunctionItem.Loose, LooseFor<'function_item'>>>();
-		expectTrue<Equals<FunctionItem.Tree, TreeFor<'function_item'>>>();
+		expectTrue<Equals<FunctionItem.Fluent, FluentFor<TSKindId.FunctionItem>>>();
+		expectTrue<Equals<FunctionItem.Loose, LooseFor<TSKindId.FunctionItem>>>();
+		expectTrue<Equals<FunctionItem.Tree, TreeFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
 	});
 
@@ -64,20 +64,26 @@ describe('rust NamespaceMap access-path convergence', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
 		expectTrue<Equals<FunctionItem.Fluent, FunctionItemBuilt>>();
-		expectTrue<Equals<FluentFor<'function_item'>, FunctionItemBuilt>>();
-		expectTrue<Equals<NamespaceMap['function_item']['Fluent'], FunctionItemBuilt>>();
+		expectTrue<Equals<FluentFor<TSKindId.FunctionItem>, FunctionItemBuilt>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Fluent'], FunctionItemBuilt>>();
 	});
 
-	it('factory-less kinds keep the FluentNodeOf fallback', () => {
-		// comment has no emitted factory (no Built alias exists), so
-		// NodeNs' default Fluent projection remains in effect.
-		expectTrue<Equals<Comment.Fluent, FluentNodeOf<Comment>>>();
+	it('a kind the parser issues no id for takes NO namespace entry', () => {
+		// `NamespaceMap` is keyed by the kind id. `comment` is synthesized on
+		// the sittir side — absent from parser.c and node-types.json, built by
+		// no factory — so it has no id and therefore no entry, and the
+		// per-kind family (Config / Loose / BuildArgs) has no meaning for it.
+		// Its data interface still stands, which is what reading one out of a
+		// tree needs.
+		expectTrue<Equals<Comment['$type'] extends keyof NamespaceMap ? true : false, false>>();
+		// The interface itself is intact, so a parsed tree still reads out.
+		expectTrue<Equals<Comment['$type'], 'comment'>>();
 	});
 
 	// The pre-008 `FunctionItemConfig` / `LooseFunctionItem` flat aliases
 	// are no longer emitted (spec 008 US7 landing). Consumers use namespace
 	// sugar (`FunctionItem.Config`, `FunctionItem.Loose`) or the generic
-	// accessors (`ConfigFor<'function_item'>`, `LooseFor<'function_item'>`).
+	// accessors (`ConfigFor<TSKindId.FunctionItem>`, `LooseFor<TSKindId.FunctionItem>`).
 	// `FunctionItemTree` INTERFACE is still emitted — factories use it for
 	// `replace(target: T.FunctionItemTree)` signatures.
 
@@ -118,12 +124,9 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<IdentifierBuildArgs, IdentifierLooseArgs>>();
 	});
 
-	it('a factory-less kind falls back to the NodeNs defaults', () => {
-		// The defaults must be MUTABLE tuples like every emitted alias,
-		// otherwise a factory-less kind's BuildArgs is not comparable with a
-		// factory-carrying kind's.
-		expectTrue<Equals<Comment.BuildArgs, [Comment.Config]>>();
-		expectTrue<Equals<Comment.LooseArgs, [Comment.Loose]>>();
+	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {
+		// Comparability across kinds depends on the tuple being mutable; a
+		// readonly alias would not be assignable to a factory-carrying kind's.
 		expectTrue<Equals<FunctionItem.BuildArgs, [FunctionItem.Config]>>();
 	});
 
@@ -133,6 +136,6 @@ describe('rust NamespaceMap access-path convergence', () => {
 		// the split provably semantics-free: `Loose` still admits exactly what
 		// it admitted before, so the passthrough arm is untouched.
 		expectTrue<Equals<FunctionItem.Loose, FunctionItem.LooseConfig | FunctionItem>>();
-		expectTrue<Equals<FunctionItem.LooseConfig, LooseConfigFor<'function_item'>>>();
+		expectTrue<Equals<FunctionItem.LooseConfig, LooseConfigFor<TSKindId.FunctionItem>>>();
 	});
 });

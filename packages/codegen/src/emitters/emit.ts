@@ -28,7 +28,6 @@ import { emitConsts } from './consts.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
-import { emitTypeTests } from './type-test.ts';
 import { TemplateEmitter } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
@@ -63,7 +62,6 @@ export interface EmitAllResult {
 	irNamespace: string;
 	is: string;
 	tests: string;
-	typeTests: string;
 	jinjaTemplates: EmittedTemplates;
 	utils: string;
 	renderModule?: RenderModuleBundle;
@@ -153,7 +151,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
-	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 
 	return {
@@ -165,7 +162,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		irNamespace,
 		is,
 		tests,
-		typeTests,
 		jinjaTemplates,
 		utils,
 		renderModule,

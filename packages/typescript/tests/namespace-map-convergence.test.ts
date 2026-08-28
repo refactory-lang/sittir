@@ -4,6 +4,7 @@
  */
 
 import { describe, it } from 'vitest';
+import { TSKindId } from '../src/index.ts';
 import type {
 	ClassDeclaration,
 	Program,
@@ -32,7 +33,6 @@ import type {
 	SwitchBodyLooseArgs,
 	buildFormalParametersElements
 } from '../src/factories.ts';
-import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -40,21 +40,21 @@ function expectTrue<_T extends true>(): void {}
 
 describe('typescript NamespaceMap access-path convergence', () => {
 	it('ClassDeclaration three-path convergence', () => {
-		expectTrue<Equals<ClassDeclaration.Config, ConfigFor<'class_declaration'>>>();
-		expectTrue<Equals<ConfigFor<'class_declaration'>, NamespaceMap['class_declaration']['Config']>>();
-		expectTrue<Equals<ClassDeclaration.Config, NamespaceMap['class_declaration']['Config']>>();
+		expectTrue<Equals<ClassDeclaration.Config, ConfigFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ConfigFor<TSKindId.ClassDeclaration>, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
+		expectTrue<Equals<ClassDeclaration.Config, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<ClassDeclaration.Fluent, FluentFor<'class_declaration'>>>();
-		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<'class_declaration'>>>();
-		expectTrue<Equals<ClassDeclaration.Tree, TreeFor<'class_declaration'>>>();
+		expectTrue<Equals<ClassDeclaration.Fluent, FluentFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ClassDeclaration.Tree, TreeFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Kind, 'class_declaration'>>();
 	});
 
 	it('Program (root kind) converges', () => {
-		expectTrue<Equals<Program.Config, ConfigFor<'program'>>>();
-		expectTrue<Equals<Program.Tree, NamespaceMap['program']['Tree']>>();
+		expectTrue<Equals<Program.Config, ConfigFor<TSKindId.Program>>>();
+		expectTrue<Equals<Program.Tree, NamespaceMap[TSKindId.Program]['Tree']>>();
 	});
 
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
@@ -62,14 +62,18 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// type (`$with` setter record, `$`-prefixed methods, named
 		// self-reference) — not a re-derived generic projection.
 		expectTrue<Equals<Program.Fluent, ProgramBuilt>>();
-		expectTrue<Equals<FluentFor<'program'>, ProgramBuilt>>();
-		expectTrue<Equals<NamespaceMap['program']['Fluent'], ProgramBuilt>>();
+		expectTrue<Equals<FluentFor<TSKindId.Program>, ProgramBuilt>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Fluent'], ProgramBuilt>>();
 	});
 
-	it('factory-less kinds keep the FluentNodeOf fallback', () => {
-		// jsx_element has no emitted factory (no Built alias exists), so
-		// NodeNs' default Fluent projection remains in effect.
-		expectTrue<Equals<JsxElement.Fluent, FluentNodeOf<JsxElement>>>();
+	it('a kind the parser issues no id for takes NO namespace entry', () => {
+		// `NamespaceMap` is keyed by the kind id. This kind is synthesized on
+		// the sittir side — no parser symbol, built by no factory — so it has
+		// no id and therefore no entry, and the per-kind family has no meaning
+		// for it. Its data interface still stands, which is what reading one
+		// out of a tree needs.
+		expectTrue<Equals<JsxElement['$type'] extends keyof NamespaceMap ? true : false, false>>();
+		expectTrue<Equals<JsxElement['$type'], 'jsx_element'>>();
 	});
 
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
@@ -111,12 +115,8 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<HashBangLineBuildArgs, HashBangLineLooseArgs>>();
 	});
 
-	it('a factory-less kind falls back to the NodeNs defaults', () => {
-		// The defaults must be MUTABLE tuples like every emitted alias,
-		// otherwise a factory-less kind's BuildArgs is not comparable with a
-		// factory-carrying kind's.
-		expectTrue<Equals<JsxElement.BuildArgs, [JsxElement.Config]>>();
-		expectTrue<Equals<JsxElement.LooseArgs, [JsxElement.Loose]>>();
+	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {
+		// Comparability across kinds depends on the tuple being mutable.
 		expectTrue<Equals<ClassDeclaration.BuildArgs, [ClassDeclaration.Config]>>();
 	});
 
@@ -126,6 +126,6 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// the split provably semantics-free: `Loose` still admits exactly what
 		// it admitted before, so the passthrough arm is untouched.
 		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseConfig | ClassDeclaration>>();
-		expectTrue<Equals<ClassDeclaration.LooseConfig, LooseConfigFor<'class_declaration'>>>();
+		expectTrue<Equals<ClassDeclaration.LooseConfig, LooseConfigFor<TSKindId.ClassDeclaration>>>();
 	});
 });

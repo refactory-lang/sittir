@@ -40,7 +40,7 @@ export function createRenderEngine(options?: EngineOptions): SittirEngine<Source
 		options
 	);
 	if (!result.engine) {
-		throw new Error(`createRenderEngine: native engine unavailable (no JS-engine fallback): ${result.reason}`);
+		throw new Error(`native engine unavailable (no JS-engine fallback): ${result.reason}`);
 	}
 	return result.engine;
 }

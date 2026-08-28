@@ -47,7 +47,6 @@ import type {
 import {
 	isSeq,
 	isChoice,
-	isEnumChoiceRule,
 	literalTextOf,
 	sym,
 	replaceAtPath,
@@ -75,6 +74,7 @@ import type {
 	RefineForm
 } from './types.ts';
 import { hasAnyField } from '../dsl/rule-transforms.ts';
+import { structuralBuilder } from '../dsl/builders.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -83,11 +83,12 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
-import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
+import { rulesEqual, separatorOf } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -441,13 +442,12 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			// External scanner symbols lex as one token by nature —
-			// `tokenized` is derivable here. `immediate` is NOT synthesized:
-			// an external whose token forbids preceding whitespace declares
-			// that via its `renderAs` body wrapped in `token.immediate(...)`
-			// (which gives it a real rule instead of this synthetic one, and
-			// the TOKEN flatten above pushes the stamp down).
-			rules[ext] = { type: PATTERN, value: '', tokenized: true } as Rule<'link'>;
+			// External scanner symbols lex as one token by nature. Immediacy
+			// is never synthesized: an external whose token forbids preceding
+			// whitespace declares that via its `renderAs` body wrapped in
+			// `token.immediate(...)`, which gives it a real rule instead of
+			// this synthetic one.
+			rules[ext] = structuralBuilder.token(structuralBuilder.pattern('')) as Rule<'link'>;
 		}
 	}
 }
@@ -644,15 +644,6 @@ export function canonicalizeRuleLiterals(
 	}
 }
 
-/**
- * The unstampable-leaf report — the per-build phantom-kind inventory. One row
- * per class keeps `grammar-diagnostics.json` diffs readable; the sorted name
- * lists live in `details`. Expected members today: kinds synthesized after
- * tree-sitter generate (evaluate's field-enums), `inline:`-listed rules, and
- * VAPORIZED rules — these lack a parser-issued kindId by construction, not by
- * bug (every OTHER kind name should carry one — that's the invariant this
- * report ratchets against).
- */
 export function reportKindIdStampMisses(
 	stampMisses: KindIdStampMisses,
 	kindEntries: readonly GeneratedKindEntry[],
@@ -853,17 +844,6 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: Lin
 
 const aliasLiteralWalker = new RuleWalker<Rule<'link'>>();
 
-/**
- * An enum kind's member set is its GRAMMAR-WIDE realization set, not just
- * its defining rule's literals. An alias-of-terminal occurrence
- * (`alias('$', $.token_tree_punctuation)`, collapsed by resolveRule to a
- * literal-carrying SYMBOL) realizes the enum kind with a text the defining
- * rule never lists — without folding it in, the emitted transport enum has
- * no variant for that text and every read stub carrying it fails
- * deserialization ("unknown enum payload"). Append the missing texts as
- * ordinary STRING members so AssembledEnum, the transport enum, and every
- * kindEnum consumer see one uniform member list.
- */
 function foldAliasLiteralsIntoEnumRules(rules: Record<string, Rule<'link'>>): void {
 	const extras = new Map<string, Set<string>>();
 	const considerSymbol = (r: Rule<'link'>): void => {
@@ -1057,19 +1037,6 @@ function collectTopLevelAliasBodies(
 	return out;
 }
 
-/**
- * Kind name → anon-token wire ids from `alias('tok', $.kind)` occurrences
- * anywhere in the linked rule tree. `stampSymbolRefKindIds` records each
- * such occurrence as a literal SYMBOL with `kindId` (the alias-target
- * display symbol) plus `aliasedFromId` (the token's own grammar symbol —
- * the id the wire delivers); this collects those stamps kind-wide so
- * decode arms can accept the token ids even where the occurrence itself
- * is swallowed by supertype expansion (e.g. python's inlined
- * `keyword_identifier` body: `match`-as-identifier never appears as a
- * slot value, only as the `identifier` subtype). Registered under both
- * kind spellings (occurrence name + its `_`-toggled twin) so lookups by
- * either surface find it.
- */
 function collectTerminalAliasWireIds(
 	ruleBags: readonly Record<string, Rule<'link'>>[],
 	ctx: StampKindIdsCtx
@@ -1626,21 +1593,14 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				content: resolveRule(rule.content, ctx, currentName)
 			};
 
-		case TOKEN: {
-			// Flatten the wrapper, pushing its lexical facts down onto the
-			// resolved content as rule attrs (the wrapper node dies here, so
-			// without the push-down `escape_sequence`'s IMMEDIATE_TOKEN root
-			// would vanish into a bare SEQ and the immediacy fact would be
-			// unrecoverable downstream). `tokenized` always; `immediate` only
-			// when the wrapper declares it — an inner `token.immediate` nested
-			// under a plain outer `token` keeps its own stamp.
-			const content = resolveRule(rule.content, ctx, currentName);
+		case TOKEN:
+			// The wrapper survives link like every other wrapper; normalize's
+			// `token`/`tokenImmediate` builders consume it into the leaf's
+			// `tokenized`/`immediate` stamps.
 			return {
-				...content,
-				tokenized: true,
-				...(rule.immediate ? { immediate: true } : {})
+				...rule,
+				content: resolveRule(rule.content, ctx, currentName)
 			};
-		}
 
 		case ALIAS: {
 			// Every named alias routes uniformly through provenance
@@ -2196,7 +2156,7 @@ function suggestSharedName(kinds: readonly string[]): string {
 // Separator-lift pass (moved from lift-separators.ts in R7 de-scatter).
 //
 // This is the TRANSFORM half of separated-list handling (the DETECTION half
-// lives in `dsl/list-patterns.ts`). It rewrites the raw shapes tree-sitter
+// lives in `dsl/rule-patterns.ts`). It rewrites the raw shapes tree-sitter
 // authors write into one canonical repeat node carrying `separator` /
 // `leading` / `trailing` markers.
 //
@@ -2215,29 +2175,6 @@ function suggestSharedName(kinds: readonly string[]): string {
  * `null`.
  */
 
-/**
- * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
- * its own separator, with an optional final unterminated element) into one
- * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
- * (`x (sep x)*`) for the opposite separator orientation; `detectRepeatSeparator`
- * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
- * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
- * needs to recognize the two windows that ALSO carry a standalone head and/or
- * an unterminated final element beside that already-stamped repeat:
- *
- *  - `[seq(x, sep), repeat(x){sep, trailing:'mandatory'}, optional(x)]` — a
- *    mandatory first element (needed to disambiguate the construct, e.g.
- *    rust's `(x,)` single-element tuple) absorbs into the repeat's own
- *    minimum, promoting it to `repeat1`.
- *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — no standalone
- *    head (the construct is valid with zero elements, e.g. an empty
- *    `macro_rules! m {}` body); stays a plain `repeat`.
- *
- * Both windows relax `trailing` from `'mandatory'` (true only of the repeat's
- * OWN body in isolation) to `'optional'` (true of the whole merged list, once
- * the trailing unterminated element is accounted for) — the same relaxation
- * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
- */
 export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>[] | null {
 	let changed = false;
 	const out: Rule<'link'>[] = [];
@@ -2421,7 +2358,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 		case REPEAT:
 		case REPEAT1: {
 			const content = liftSeparators(rule.content, ctx);
-			const sep = detectRepeatSeparator(content);
+			const sep = separatorOf(content);
 			if (sep) {
 				if (sep.separator.type !== STRING) {
 					// 0 real grammars (rust/typescript/python) hit this today — this
@@ -2438,7 +2375,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 					};
 					ctx.diagnostics.emit(diagnostic);
 				}
-				// `sep.trailing` (list-patterns.ts's `detectRepeatSeparator`) is a
+				// `sep.trailing` (rule-patterns.ts's `separatorOf`) is a
 				// POSITIONAL flag: the separator appears AFTER the content element
 				// within `repeat(seq(content, SEP))` — every iteration (including
 				// the last) unconditionally emits `SEP`, no per-instance
@@ -2909,8 +2846,10 @@ function rewriteRuleForStamp(
 	switch (rule.type) {
 		case SYMBOL: {
 			const lit = symToLit[rule.name];
-			if (lit !== undefined) return { type: STRING, value: lit };
-			if (blankStamps.has(rule.name)) return { type: CHOICE, members: [] };
+			// The literal takes the ref's place and identity; a `token(...)`
+			// wrapper around the ref survives untouched.
+			if (lit !== undefined) return structuralBuilder.string(lit, rule.id) as Rule<'link'>;
+			if (blankStamps.has(rule.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
 			return rule;
 		}
 
@@ -2918,14 +2857,14 @@ function rewriteRuleForStamp(
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const lit = symToLit[inner.name];
-				if (lit !== undefined) {
-					// Drop the field wrapper; stamp the literal inline.
-					return { type: STRING, value: lit };
-				}
+				// The field wrapper is dropped with the ref (a renderAs literal
+				// is a mandatory inline literal, never a slot); the literal
+				// takes the field's identity.
+				if (lit !== undefined) return structuralBuilder.string(lit, rule.id ?? inner.id) as Rule<'link'>;
 				// Blank-stamped: the field references a zero-width-equivalent
 				// external. Replace the whole field with blank so the parent
 				// seq/choice collapse handles cardinality.
-				if (blankStamps.has(inner.name)) return { type: CHOICE, members: [] };
+				if (blankStamps.has(inner.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 		}
@@ -2953,9 +2892,9 @@ function rewriteRuleForStamp(
 			const nonBlank = members.filter((m) => !isBlankRule(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
-			if (nonBlank.length === 0) return { type: CHOICE, members: [] };
-			if (nonBlank.length === 1) return { type: OPTIONAL, content: nonBlank[0]! };
-			return { type: OPTIONAL, content: { type: CHOICE, members: nonBlank } };
+			if (nonBlank.length === 0) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
+			if (nonBlank.length === 1) return structuralBuilder.optional(nonBlank[0]!, rule.id) as Rule<'link'>;
+			return structuralBuilder.optional(structuralBuilder.choice(nonBlank), rule.id) as Rule<'link'>;
 		}
 
 		default:

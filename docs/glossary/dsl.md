@@ -1,13 +1,14 @@
 # `packages/codegen/src/dsl` — Function Glossary
 
 Per-function reference for `packages/codegen/src/dsl/`, mechanically relocated from source
-JSDoc by `scripts/wave5-relocate-jsdoc.mts` (wave 5 comment-cleanup, pass 1 —
-unedited, unverified). Pass 2 reformats/verifies these entries and decides
+comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
+unedited, unverified). A later pass reformats/verifies these entries and decides
 what merges into docs/compiler-phase-glossary.md's phase narrative.
 
 See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
+
 
 ### `getEnrichClauseGroups` (`packages/codegen/src/dsl/enrich.ts:314`)
 
@@ -871,7 +872,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-
 ### `isPermutationChoice` (`packages/codegen/src/dsl/group-classify.ts`)
 
 A choice whose arms are permutations of one modifier-slot set — every arm is
@@ -1356,39 +1356,6 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 */
 ```
 
-### `armLeadingSymbolName` (`packages/codegen/src/dsl/enrich.ts:2058`)
-
-```text
-/**
- * PR 3 (2026-07-21 union-slot design): classify a bare choice-arm position
- * (unnamed — no field wrapper) and, if it is STRUCTURED (multi-slot, or a
- * symbol ref to a hidden rule whose own body is multi-slot), mint it a kind
- * identity so it can join the union-slot routing (`collect-slots.ts`'s
- * `partitionChoiceArms`) as a distinguishable member. Returns `null` when no
- * mint is needed (the arm is already a fine union member as-is — a plain
- * reference, or a single-slot body that collapses cleanly) or when minting
- * collided with an existing rule name (caller keeps the arm unchanged,
- * matching every other collision-guard in this file — no partial synthesis).
- *
- * Two cases, per the design's "mint = promote, not synthesize" distinction:
- *   - The arm is a bare `symbol(name)` ref to an EXISTING hidden rule whose
- *     body is structured — promote that rule directly (no body copy):
- *     `alias($.<existingHiddenName>, $.<freshVisibleName>)`. Exemplar:
- *     python's `dict_pattern` — the comma-separated list's REPEATED-TAIL
- *     occurrence of `choice($._key_value_pattern, $.splat_pattern)` still
- *     references the hidden `_key_value_pattern` unpromoted (the author's
- *     `dict_pattern: {'1/0/0/0': 'kv'}` override only reached the HEAD
- *     occurrence of the same choice).
- *   - The arm is itself an anonymous structured `seq`/`choice` (no separate
- *     rule name) — synthesize a fresh hidden rule from the arm's own body,
- *     same as the inline-unsafe `optional(seq)` path (`visibleGroupSynthName`).
- *
- * Deliberately NOT handled here (gate (c), a separate follow-up): a
- * FIELD-NAMED arm sitting alongside union arms in the same choice (a mixed
- * row) — this pass only mints for unnamed arms.
- */
-```
-
 ### `SeparatorFact` (`packages/codegen/src/dsl/list-patterns.ts:29`)
 
 ```text
@@ -1730,3 +1697,212 @@ reference, and the wire-facing tracking structures (`visibleGroupHiddenNames`,
 `clauseGroupOwners`). A name collision with any existing rule keeps the
 ordinal. Only the clause-group mint namespace is surveyed; a sibling that was
 registered but later unused still counts as a sibling.
+
+### `stampId` (`packages/codegen/src/dsl/builders.ts:128`)
+
+```text
+/** `id: rule.id ?? input.id` — the CURRENT wrapper rule's id wins over the
+ *  survivor's own, matching `dsl/rule-attrs.ts`'s `withAttrsFrom` id
+ *  discipline at collapse sites (`slotByRuleId` must resolve the wrapper's
+ *  id, not whatever the innermost leaf happened to carry). */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// attributeBuilder — the RuleBuilder that pushes attributes instead of
+// constructing wrapper nodes, so simplify stays field/optional/repeat-free.
+// Every constructor is a pure function of its ALREADY-BUILT input, looking
+// exactly one level down — `deleteWrapper` (compiler/wrapper-deletion.ts)
+// rebuilds a raw rule tree bottom-up by calling these same methods, so this
+// is the one place wrapper-vs-attribute construction logic lives.
+// ---------------------------------------------------------------------------
+```
+
+### `collapseSingletonSeq` (`packages/codegen/src/dsl/builders.ts:156`)
+
+```text
+/**
+ * A seq with exactly one member IS that member — the seq's own attributes
+ * merge onto it by the same composition rules every collapse site in this
+ * codebase uses: `withAttrsFrom`'s absent-only transfer for the identity
+ * and flag attributes, `combineMultiplicity` for the composing one. This is
+ * `collapseSingleMemberSeq` + `withAttrsFrom` (simplify's own later pass
+ * over the whole tree), applied here at construction instead.
+ */
+```
+
+### `slotShaped` (`packages/codegen/src/dsl/builders.ts:198`)
+
+```text
+/**
+ * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
+ * reference) or CHOICE/REPEAT/REPEAT1 (a union or a repetition). One level:
+ * a wrapper type (FIELD/ALIAS/SEQ/TOKEN/VARIANT/GROUP) is never inspected
+ * here — its own builder already stamped `nonterminal` on it when
+ * applicable, so `optional` reads that stamp instead of recursing.
+ */
+```
+
+### `buildOptional` (`packages/codegen/src/dsl/builders.ts:219`)
+
+```text
+/**
+ * optional(x) — the core formula, with no empty-match folding. This is what
+ * `deleteWrapper` (compiler/wrapper-deletion.ts) calls directly for every
+ * OPTIONAL node in a raw rule tree: RenderRule production never strips a
+ * bare literal to an empty seq (only `simplifyRules`'s own construction, via
+ * `foldOptionalEmptyMatch` below, does that later).
+ */
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:184`)
+
+```text
+// The seq's own stamped facts (metadata, …) ride along under
+// `built`'s freshly-computed shape — `buildSeq` constructs a new node
+// and has no access to `content`'s identity. `built` may now be a
+// collapsed singleton survivor (buildSeq's own singleton collapse),
+// so its own `type`/`members` must win outright, not merely its
+// stamped attrs: a plain `{...content, ...built}` spread would leave
+// `content`'s stale `members` array on a survivor that has none.
+```
+
+### `foldOptionalEmptyMatch` (`packages/codegen/src/dsl/builders.ts:255`)
+
+```text
+/**
+ * simplify's OWN `optional` construction (empty-match choice folding, see
+ * `simplifyChoiceRule`) additionally strips an empty-seq or bare
+ * (non-slot-promoted) string body to the empty-seq sentinel — a delimiter
+ * that can't individually carry `multiplicity: 'optional'` collapses to
+ * "renders nothing" instead. `attributeBuilder.optional` is this fold;
+ * `deleteWrapper` never reaches it (it calls `buildOptional` directly).
+ */
+```
+
+### `repeatCombine` (`packages/codegen/src/dsl/builders.ts:272`)
+
+```text
+/**
+ * repeat/repeat1's own multiplicity dominates an already-optional content
+ * (`repeat1(optional(x))` keeps the repeat1's `nonEmptyArray` — the repeat
+ * still guarantees at least one POSITION; the individual position may be
+ * blank, tracked separately via `optionalElement`) rather than composing
+ * through the lattice, which would degrade `nonEmptyArray` to `array`.
+ */
+```
+
+### `buildSeq` (`packages/codegen/src/dsl/builders.ts:144`)
+
+```text
+/**
+ * seq(members, mult?) — receives already-rebuilt members. Splices a bare
+ * nested seq (`isSpliceableBareSeq`: no fieldName/separator/multiplicity of
+ * its own) into the member list first, at THIS level — since members arrive
+ * bottom-up, a member that is itself a multi-level chain of bare seqs has
+ * already flattened its own nested bare seqs one level down by the time its
+ * own `buildSeq` call returned, so splicing here reaches every level: a
+ * three-deep `seq(seq(seq(x,y),z),w)` fully flattens to `seq(x,y,z,w)`, one
+ * splice decision per level, not one pass over the whole tree. The
+ * at-least-one guarantee of a repeat1 belongs to the seq as a whole, not to
+ * each individual member — enclosing multiplicity is pushed onto each
+ * slot-bearing member through the lattice AFTER splicing (a bare,
+ * non-slot-promoted string/pattern literal is a co-optional delimiter and
+ * is skipped — the template emitter drops a literal stamped
+ * `multiplicity: 'optional'`), and retained on the seq node itself only
+ * when a bare literal member survives (the co-optional-delimiter guard:
+ * literals can't individually carry the multiplicity, so the whole unit
+ * needs it instead).
+ */
+```
+
+### `buildRepeatLike` (`packages/codegen/src/dsl/builders.ts:219`)
+
+```text
+/**
+ * (Also the seq branch of `buildOptional`.) A wrapper directly around a seq is not a leaf spread: the enclosing
+ * multiplicity must reach the seq's own slot-bearing members (Table 2's
+ * per-field storage), so this re-enters `buildSeq` with the combined
+ * multiplicity instead of stamping the seq node as if it were opaque.
+ */
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:236`)
+
+```text
+// See buildOptional's identical note: `built` is a fresh node from
+// `buildSeq` and may be a collapsed singleton survivor with no
+// `members` of its own — drop `content`'s stale array when so.
+```
+
+### `module` (`packages/codegen/src/dsl/builders.ts:1`)
+
+```text
+/**
+ * dsl/builders.ts — the `RuleBuilder` construction strategies shared across
+ * normalize/simplify: `structuralBuilder` (builds real wrapper nodes) and
+ * `attributeBuilder` (pushes modifiers onto leaf attributes instead of
+ * wrapping). Every `attributeBuilder` constructor is a pure function of its
+ * ALREADY-BUILT input, looking exactly one level down — `deleteWrapper`
+ * (compiler/wrapper-deletion.ts) rebuilds a raw rule tree bottom-up by
+ * calling these same methods, so this is the one place wrapper-vs-attribute
+ * construction logic lives.
+ *
+ * dsl-side: the transforms that need a builder take a structural
+ * `{ builder?: RuleBuilder }` slice, never a compiler ctx, so this module has
+ * no dsl -> compiler dependency and no compiler phase module needs to import
+ * another compiler phase module for builder code.
+ */
+```
+
+### `PrecKind` (`packages/codegen/src/dsl/builders.ts:40`)
+
+```text
+// ---------------------------------------------------------------------------
+// RuleBuilder — context-injected rule construction strategy
+// ---------------------------------------------------------------------------
+```
+
+### `structuralBuilder.optional` (`packages/codegen/src/dsl/builders.ts:73`)
+
+```text
+// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
+// phase, while a single-content wrapper's own `content` field wants one
+// specific phase — same "narrow via AnyRule, cast back" convention as
+// rule-patterns.ts's `ruleChildren`.
+```
+
+### `structuralBuilder.prec` (`packages/codegen/src/dsl/builders.ts:98`)
+
+```text
+// The evaluate-only PREC family collapses to four distinct type tags —
+// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
+// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
+```
+
+### `attributeBuilder.alias` (`packages/codegen/src/dsl/builders.ts:263`)
+
+```text
+// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
+// TARGET — the same provenance form link's own
+// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
+// one level down here: a SYMBOL content's own `.name` becomes
+// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:285`)
+
+```text
+// Alias of a literal: there is no storage rule to name (mirrors
+// link's own STRING-content branch, which stamps no
+// `aliasedFrom` either) — the literal text becomes the new
+// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:305`)
+
+```text
+// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
+// record — link never produces this shape (it collapses named
+// aliases to a SYMBOL ref before this point is reached).
+```

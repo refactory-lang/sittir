@@ -176,7 +176,9 @@ describe('factories emitter — separatedList', () => {
 		// The precedence bug this guards against: `[]` binding to the LAST
 		// union member alone instead of the whole union.
 		expect(emitted).not.toContain('T.MemberA | T.MemberB[]');
-		// Same guard applies to the $children setter's rest-param type.
-		expect(emitted).toContain('$children: (...vs: (T.MemberA | T.MemberB)[])');
+		// Same guard applies to the element setter's rest-param type. The
+		// setter is named after the canonical element slot — `content` when
+		// the grammar left it unnamed — not a sigil.
+		expect(emitted).toContain('content: (...vs: (T.MemberA | T.MemberB)[])');
 	});
 });

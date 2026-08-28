@@ -10,13 +10,15 @@ import { ir } from '@sittir/rust';
 // `#[derive(Debug, Clone, PartialEq, Eq)]`, a comma-terminated match arm
 // (`x,`), a `call();` statement and `write!(f, …)` — all correctly.
 //
-// GAP A (exposure, cross-cutting): none of those builders is reachable from
-// the public surface. `lineCommentDoc`, `attributeArm`, `matchArmWithComma`,
-// `expressionStatementWithSemi`, `implItemPositiveClause`, `implItemBody` and
-// `closureExpressionBlock` have no `ir` entry, and the package exports no
-// `build*` function at all, so no public path constructs them. That is why
-// this rebuild is no fuller than the loose one: the missing capability is
-// exposure, not construction.
+// GAP A (exposure, cross-cutting): `attributeArm`, `matchArmWithComma`,
+// `implItemPositiveClause`, `implItemBody` and `closureExpressionBlock` have
+// no `ir` entry, and the package exports no `build*` function at all, so no
+// public path constructs them. The missing capability there is exposure, not
+// construction.
+//
+// Doc comments and semicolon-terminated expression statements are NOT in that
+// set: the namespaced constructors reach them as `ir.lineComment.doc` and
+// `ir.expressionStatement.withSemi`.
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {

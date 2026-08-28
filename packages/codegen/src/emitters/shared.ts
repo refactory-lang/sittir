@@ -3,6 +3,7 @@
  * patterns that copy-paste across 3+ emitters, not to become a grab-bag.
  */
 
+import { assertNever } from '../polymorph-variant.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
@@ -31,7 +32,8 @@ import {
 	deriveChildrenCardinality,
 	allSlotsOf,
 	storageKindOfRef,
-	structuralFieldsOf
+	structuralFieldsOf,
+	type ModelType
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 
@@ -628,29 +630,31 @@ export function computeSlotClasses(nodeMap: NodeMap): void {
 
 export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
-	if (node.kind.startsWith('_')) return undefined;
+	// A hidden kind is out unless it is user-facing — a namespaced constructor
+	// reaches `_visibility_modifier_pub` as `ir.visibilityModifier.pub`, and a
+	// kind callers can construct wants a constructible surface. Same predicate
+	// `isWrapChildrenKind` applies for the same reason.
+	if (node.kind.startsWith('_') && !node.userFacing) return undefined;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return undefined;
-	const slot = slotClass.slot;
-	if (slot.isUnnamed) return undefined;
-	return slot;
+	return slotClass.slot;
 }
 
-/**
- * The single derivation of the direct-value factory calling convention:
- * the sole named singular user slot qualifies ONLY when it is also the
- * node's only non-stamped field. A keyword-presence marker or hidden-infra
- * slot is caller-settable surface a direct signature has nowhere to
- * accept, so its presence keeps the config-object surface. Both the
- * factories emitter (signature) and `classifyFactoryShape` (metadata)
- * consume this — they must never disagree, or every shape consumer
- * (validators, `from()` resolvers) calls the factory with the wrong
- * argument shape and marker fields silently drop.
- */
+/** The one derivation of the direct-value calling convention, consumed by
+ *  both the factories emitter and `classifyFactoryShape` — they must never
+ *  disagree, or every shape consumer calls the factory with the wrong
+ *  argument shape. See the compiler glossary for the contract. */
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
 	if (!slot) return undefined;
-	return structuralFieldsOf(node).length === 1 ? slot : undefined;
+	// Extras are the CALLER-SETTABLE slots, not the raw fields. A determined
+	// marker sits in `fields` and never in `slots` — it is what the kind IS,
+	// not something the caller supplies, so a positional signature has nothing
+	// to accept for it and nothing is lost by omitting it. Counting raw fields
+	// here would be a second, stricter notion of "extra" than the one
+	// `classifyFactoryShape` already applies, and the two would disagree
+	// exactly where a kind carries a marker beside its sole slot.
+	return allSlotsOf(node).every((f) => f === slot) ? slot : undefined;
 }
 
 /**
@@ -721,10 +725,12 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	if (shape === 'spread') return 'spread';
 	// 'forwarded' refines 'direct' (same positional child surface, plus the
 	// factory also accepts the child's constructor args) — the child SURFACE
-	// is 'direct' either way.
-	if (shape !== 'direct' && shape !== 'forwarded') return null;
-	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
+	// is 'direct' either way, for a named sole slot exactly as for an unnamed
+	// one. What this answers is whether the factory takes its children
+	// positionally, and that does not depend on the slot carrying a field
+	// name. The factories emitter asks a narrower question and gates on
+	// 'spread' alone.
+	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
 }
 
 export interface SoleSlotFacts {
@@ -736,11 +742,11 @@ export interface SoleSlotFacts {
 
 export function soleSlotFacts(node: AssembledNode, nodeMap: NodeMap): SoleSlotFacts | null {
 	if (!isSlotBearingCompound(node)) return null;
-	// The container's stamped slot is the classified sole user slot — NOT
+	// The stamped slot is the classified sole user slot — NOT
 	// positionally `fields[0]`, which can be a keyword-presence marker
 	// preceding the payload (e.g. rust field_pattern's [ref_marker,
 	// mutable_specifier, content]). Same derivation classifyBranchSlots
-	// uses to pick the container shape in the first place.
+	// uses to pick the sole-slot shape in the first place.
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot') return null;
 	const slot = slotClass.slot;
@@ -787,14 +793,11 @@ export function classifyFactoryShape(
 				// is how the list's spread surface hoists to its parent); a
 				// union slot has no unique constructor and stays 'direct'.
 				if (slotClass.arity !== 'singular') return 'spread';
-				if (slotClass.slot.isUnnamed) {
-					return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
-				}
-				// Named singular field: direct only when the emitter would emit
-				// the direct-value signature (sole non-stamped field, visible
-				// kind — see resolveDirectFactorySlot). Hidden kinds and
-				// marker-carrying kinds keep the config-object surface. Same
-				// forwarding refinement as the unnamed case.
+				// Direct only when the emitter would emit the direct-value
+				// signature — see resolveDirectFactorySlot. What keeps a kind
+				// on the config surface is a hidden kind nothing user-facing
+				// reaches, or a second caller-settable slot beside the sole
+				// one; a determined marker does neither.
 				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 			}
@@ -893,7 +896,10 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
  *  the `NodeNs` references and the emitted aliases cannot drift. */
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	switch (node.modelType) {
+	// Bound before the switch: switching on `node.modelType` narrows `node`
+	// itself, leaving nothing to name in the exhaustiveness check.
+	const modelType: ModelType = node.modelType;
+	switch (modelType) {
 		case 'pattern':
 		case 'keyword':
 		case 'enum':
@@ -901,8 +907,15 @@ export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: 
 		case 'group':
 		case 'separatedList':
 			return true;
-		default:
+		// Shapes with no aliases to declare: a token and a supertype are
+		// dispatched to rather than built, and a multi has no single shape to
+		// give arguments to.
+		case 'token':
+		case 'supertype':
+		case 'multi':
 			return false;
+		default:
+			return assertNever(modelType);
 	}
 }
 
@@ -939,7 +952,12 @@ export function emitsFieldResolvers(
 ): node is Extract<AssembledNode, { modelType: 'branch' }> {
 	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
 	if (node.modelType !== 'branch') return false;
-	return classifyChildFactorySurface(node, context.nodeMap) === null;
+	// The spread surface takes its children positionally and has no per-field
+	// config to resolve; every other branch goes through the field-carrying
+	// coercer, which is what emits these. `emitBranchFrom` routes on this same
+	// answer, so the two cannot disagree about which kinds have resolvers —
+	// and wrap's `$with` setters read it to know which ones they may call.
+	return classifyChildFactorySurface(node, context.nodeMap) !== 'spread';
 }
 
 /** ONE name for one fact, so `coerceTo<Kind>` and wrap's `$with` setter
@@ -956,6 +974,27 @@ export function fieldResolverName(parentTypeName: string, field: AssembledNonter
  *  even when the underlying values are repeat1. */
 export function needsNonEmptyHoist(field: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	return isNonEmpty(field) && isMultiple(field) && keywordPresenceKind(field, nodeMap) === null;
+}
+
+/** Whether a kind can be built from a bare list of its children — the
+ *  membership rule behind the `_wrapKindIds` table `_resolveOneBranch`
+ *  consults before wrapping an array. A singular slot holding such a kind
+ *  therefore accepts an ARRAY of that kind's elements at runtime, which is
+ *  why the type surface has to consult the same rule rather than restate it.
+ *  Read by from's wrap table and by the loose-hint emitter. */
+export function isWrapChildrenKind(
+	kind: string,
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): boolean {
+	if (node.modelType !== 'branch' && node.modelType !== 'separatedList') return false;
+	if (!node.rawFactoryName) return false;
+	if (kind.startsWith('_') && !node.userFacing) return false;
+	if (!kindEntries || !hasCatalogEntry(kindEntries, kind)) return false;
+	// A separated list is a list by construction; any other branch qualifies
+	// only when its factory takes the children directly.
+	return node.modelType === 'separatedList' || classifyChildFactorySurface(node, nodeMap) !== null;
 }
 
 export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;

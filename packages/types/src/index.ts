@@ -16,7 +16,7 @@
  * ```
  */
 
-import type { CamelCase, SimplifyDeep } from 'type-fest';
+import type { CamelCase } from 'type-fest';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -547,7 +547,7 @@ export type RuntimeNodeOf<T> = T extends {
  *
  * @deprecated Superseded by the emitted `<TypeName>Built` aliases (NodeNs'
  * `Built` parameter): a generic projection over `T` cannot reproduce the
- * factory surface (container `$child`/`$children`, `NonEmptyArray` rests,
+ * factory surface (slot-named child setters, `NonEmptyArray` rests,
  * enum-coercion input unions, forwarded shapes are model-derived facts
  * absent from `T`), and this shape's bare combined getter/setter methods
  * predate the runtime `$with` record. Survives only as NodeNs' default
@@ -572,7 +572,13 @@ export type FluentNodeOf<T> = T extends { readonly $type: number }
  */
 type FieldsOf<T> = T extends { readonly $fields: infer F }
 	? F
-	: { [K in keyof T as K extends `_${infer N}` ? N : never]: T[K] };
+	: {
+			// `__inputHints__` / `__looseHints__` are generator-emitted carriers,
+			// not slots. They match the storage-key glob (`_${infer N}` binds
+			// `_inputHints__`), so without this guard they surface on every
+			// public surface derived from here as `inputHints` / `looseHints`.
+			[K in keyof T as K extends `__${string}` ? never : K extends `_${infer N}` ? N : never]: T[K];
+		};
 
 /** @internal — optional generator-emitted config/from widening hints keyed by raw field name. */
 type InputHintsOf<T> = T extends { readonly __inputHints__?: infer H } ? H : {};
@@ -701,7 +707,7 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
  * automatically and callers should not (and cannot) supply them.
  */
 export type ConfigOf<T> = T extends unknown
-	? SimplifyDeep<
+	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
 					? never

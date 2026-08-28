@@ -420,7 +420,11 @@ export function childElementType(node: { children: readonly AssembledNonterminal
 				continue;
 			}
 			if (component.kind === 'missing') {
-				parts.add(JSON.stringify(component.rawKind));
+				// A kind with no node of its own (an external scanner token,
+				// say) still gets a stub type under this name from types.ts,
+				// so the value is typed as that stub — never as the raw kind
+				// name spelled as a string literal.
+				parts.add(`T.${component.value}`);
 				continue;
 			}
 			let ref = nodeMap.nodes.get(component.rawKind);
@@ -683,7 +687,7 @@ interface FactoryParam {
  * parameters for its child — one derivation, two consumers.
  */
 interface FactorySurface {
-	readonly containerFacts: ReturnType<typeof soleSlotFacts> | null;
+	readonly spreadFacts: ReturnType<typeof soleSlotFacts> | null;
 	readonly singleField: AssembledNonterminal | undefined;
 	/** The parameter the two strings below are rendered from. */
 	readonly param: FactoryParam;
@@ -709,7 +713,7 @@ interface FactorySurface {
  *  defaulted parameter re-declares as an optional one. One rewrite, for
  *  every consumer including parameter lists resolved elsewhere
  *  (`constructorSurface`) that never passed through a `FactoryParam`. */
-function declarationParams(params: string): string {
+export function declarationParams(params: string): string {
 	return params.replace(/(\w+)\??: (.+?) = .+$/, '$1?: $2');
 }
 
@@ -746,12 +750,13 @@ function looseValueOf(elementType: string): string {
 }
 
 function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): FactorySurface {
-	// Container shape: unnamed single/multiple child slot, positional
-	// `child`/`...children` calling convention. Never applies to 'group' —
-	// `classifyChildFactorySurface` only recognizes 'branch' modelType, since
-	// polymorph FORM factories (group) are always field-carrying.
-	const containerFacts =
-		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null
+	// The spread surface: a sole MANY-arity slot, taking `...children`
+	// positionally. A sole SINGULAR slot takes the direct-value path below
+	// instead, named or not — the model names every slot, so the surface is
+	// chosen by arity alone. Never applies to 'group': polymorph FORM
+	// factories are always field-carrying.
+	const spreadFacts =
+		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) === 'spread'
 			? soleSlotFacts(node, nodeMap)
 			: null;
 	// Gap 5: Single-field-no-children factories take the value directly
@@ -759,19 +764,19 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 	// derivation of this calling convention, shared with
 	// `classifyFactoryShape` so the emitted signature and the shape
 	// metadata can never disagree.
-	const singleField = !containerFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
-	if (containerFacts) {
-		const elementType = resolveContainerElementType(
+	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
+	if (spreadFacts) {
+		const elementType = resolveSoleSlotElementType(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
 				treeTypeName: node.treeTypeName,
 				rawFactoryName: node.rawFactoryName,
-				fields: [containerFacts.slot]
+				fields: [spreadFacts.slot]
 			},
 			nodeMap
 		);
-		if (containerFacts.multiple) {
+		if (spreadFacts.multiple) {
 			const param: FactoryParam = {
 				label: 'children',
 				optional: false,
@@ -780,7 +785,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 				looseType: `${looseValueOf(elementType)}[]`
 			};
 			return {
-				containerFacts,
+				spreadFacts,
 				singleField,
 				param,
 				...renderSurfaceParams(param),
@@ -792,27 +797,39 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 		}
 		const param: FactoryParam = {
 			label: 'child',
-			optional: !containerFacts.required,
+			optional: !spreadFacts.required,
 			rest: false,
 			strictType: elementType,
 			looseType: looseValueOf(elementType)
 		};
 		return {
-			containerFacts,
+			spreadFacts,
 			singleField,
 			param,
 			...renderSurfaceParams(param),
 			args: 'child',
 			elementType,
 			directParamType: elementType,
-			directParamOptional: !containerFacts.required,
-			opt: containerFacts.required ? '' : '?'
+			directParamOptional: !spreadFacts.required,
+			opt: spreadFacts.required ? '' : '?'
 		};
 	}
 	if (singleField) {
-		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
+		// The slot's own element type, spelled the same way the spread surface
+		// spells it. Indexing `Config` instead re-projects the slot through the
+		// config surface and loses the union of kinds it actually admits.
+		const elemType = childElementType({ children: [singleField] }, nodeMap);
+		// A POSITIONAL parameter, so its identifier is invisible to callers and
+		// carries no contract — the same reason the container surface above
+		// spells its own `child` / `...children`. `value` matches what the
+		// `$with` setter already calls its parameter, and it keeps a slot named
+		// for a reserved word (`arguments`, `function`) from ever reaching a
+		// binding, which is the one position where such a name is illegal.
+		//
+		// `paramName` stays on the model for a positional-parameter surface,
+		// where several parameters must be spelled apart from each other.
 		const param: FactoryParam = {
-			label: singleField.paramName,
+			label: 'value',
 			optional: !isRequired(singleField),
 			rest: false,
 			strictType: elemType,
@@ -823,11 +840,11 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 			looseType: looseValueOf(elemType)
 		};
 		return {
-			containerFacts,
+			spreadFacts,
 			singleField,
 			param,
 			...renderSurfaceParams(param),
-			args: singleField.paramName,
+			args: 'value',
 			directParamType: elemType,
 			directParamOptional: !isRequired(singleField),
 			opt: isRequired(singleField) ? '' : '?'
@@ -855,7 +872,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	return {
-		containerFacts,
+		spreadFacts,
 		singleField,
 		param,
 		...renderSurfaceParams(param),
@@ -892,12 +909,19 @@ function chainParamOptional(kind: string, nodeMap: NodeMap): boolean {
 }
 
 /** The parameters a form constructor declares for `kind` and how it
- *  forwards them — the target factory's own surface. */
+ *  forwards them — the target factory's own surface.
+ *
+ *  `looseParams` is the same list widened to what a COERCING caller may
+ *  pass, and is present only where the target's factory surface renders
+ *  one: a text leaf accepts its own loose input already, and a separated
+ *  list has no loose element rendering to project. Absent means "no loose
+ *  form distinct from the strict one", which is what gates the loose
+ *  mirror in `formLooseSurface`. */
 export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { params: string; args: string; argOptional?: boolean } | undefined {
+): { params: string; looseParams?: string; args: string; argOptional?: boolean } | undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap));
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
@@ -920,8 +944,13 @@ export function constructorSurface(
 			// tells the caller to guard the forward — the target's own
 			// overloads need not accept undefined for this param type.
 			const optionalized = chainParamOptional(kind, nodeMap) && /^\w+: /.test(surface.params);
-			const params = optionalized ? surface.params.replace(/^(\w+): /, '$1?: ') : surface.params;
-			return { params, args: surface.args, argOptional: optionalized };
+			const relax = (text: string): string => (optionalized ? text.replace(/^(\w+): /, '$1?: ') : text);
+			return {
+				params: relax(surface.params),
+				looseParams: relax(surface.looseParams),
+				args: surface.args,
+				argOptional: optionalized
+			};
 		}
 		case 'keyword':
 			// Fixed-text leaf: its factory takes no arguments (`buildCrate()`).
@@ -1005,7 +1034,7 @@ function emitFieldCarryingFactory(
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined;
 	const surface = resolveFactorySurface(node, nodeMap);
-	const { containerFacts, singleField } = surface;
+	const { spreadFacts, singleField } = surface;
 
 	// A field with an optional delimiter flank cannot reach this emitter: a
 	// delimiter-bearing list is a separatedList KIND (classifyNode routes it
@@ -1035,23 +1064,21 @@ function emitFieldCarryingFactory(
 	// The other two shapes (single-field, config) always use every field.
 	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
-	if (containerFacts) {
-		// The container's ONE user slot takes the positional child value.
-		// Other fields (markers the single-slot classification excluded)
-		// stay un-emitted, as before.
-		fieldsToEmit = [containerFacts.slot];
+	if (spreadFacts) {
+		// The ONE user slot takes the elements positionally. Other fields
+		// (markers the single-slot classification excluded) stay un-emitted.
+		fieldsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
-		valueSourceFor = (f) => (f === containerFacts.slot ? (containerFacts.multiple ? 'children' : 'child') : '');
-		withLines = containerFacts.multiple
-			? [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`]
-			: [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
-		withTypeMembers = containerFacts.multiple
-			? [`    $children(...vs: ${elementType}[]): ${builtName};`]
-			: [`    $child(v: ${elementType}): ${builtName};`];
+		// The setter is named after the slot, like every other setter. The
+		// rest PARAMETER keeps the generic `children` — it is positional, so
+		// its identifier is invisible to callers.
+		const setter = spreadFacts.slot.propertyName;
+		valueSourceFor = (f) => (f === spreadFacts.slot ? 'children' : '');
+		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
+		withTypeMembers = [`    ${setter}(...vs: ${elementType}[]): ${builtName};`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
-		const paramName = singleField.paramName;
-		valueSourceFor = (f) => slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries);
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
@@ -1096,7 +1123,7 @@ function emitFieldCarryingFactory(
 	// closure. `withMethods<T>` adds the four `$`-prefixed methods at the
 	// boundary — generic on T preserves the literal's type. ---
 	const lines: string[] = [signature];
-	if (containerFacts?.multiple && containerFacts.nonEmpty) {
+	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
 	for (const f of fieldsToEmit) {
@@ -1223,7 +1250,7 @@ function emitNamespacedConstructors(
 ): string[] {
 	// How the parent takes its slot value: positionally (container / direct
 	// convention) or as a config key — the decision its signature came from.
-	const positionalSlot = surface.containerFacts?.slot ?? surface.singleField;
+	const positionalSlot = surface.spreadFacts?.slot ?? surface.singleField;
 	const fill = (slot: AssembledNonterminal, value: string): string =>
 		slot === positionalSlot ? `${fn}(${value})` : `${fn}({ ${slot.configKey}: ${value} })`;
 	const lines = [`export const ${exportName} = attachProps(${fn}, {`];
@@ -1293,6 +1320,39 @@ export function namespacedEntryEligible(
 ): boolean {
 	if (entry.via !== 'form' || entry.path.length > 0) return true;
 	return constructorSurface(entry.childKind, nodeMap, kindEntries) !== undefined;
+}
+
+/** The child kind whose COERCER a form constructor's loose mirror routes
+ *  through, or undefined where no mirror is warranted.
+ *
+ *  `ir.<parent>.<form>` coerces and `.strict` is the factory's own form —
+ *  the pairing `ir.<kind>` / `ir.<kind>.strict` already uses, one level
+ *  down. The mirror declares the COERCER's parameters (`Parameters<typeof
+ *  coerceTo<Child>>`), never a projection of the factory surface: the two
+ *  disagree for a container-shaped child, whose factory takes a widened
+ *  `LooseValue<...>` while its coercer takes the positional arm union. The
+ *  factory's `looseParams` is read here only as the GATE — it says whether
+ *  the child declares a loose input distinct from its strict one at all.
+ *
+ *  No mirror when:
+ *   - the entry is a MEMBER constructor, or a form HOISTED through a hop —
+ *     a hoisted form declares the sub-constructor's own parameters, and the
+ *     coercer that matches them is the hop's, not the arm's;
+ *   - the child FORWARDS to another kind, so the coercer matching those
+ *     parameters builds the target rather than the slot's own kind;
+ *   - the child's loose parameter list IS its strict one — a text leaf
+ *     already accepts what a coercing caller would pass, so a mirror would
+ *     be a second name for one signature. */
+export function formLooseChildKind(
+	entry: NamespacedConstructorSet['entries'][number],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (entry.via !== 'form' || entry.path.length > 0) return undefined;
+	if (constructorTargetKind(entry.childKind, nodeMap) !== entry.childKind) return undefined;
+	const surface = constructorSurface(entry.childKind, nodeMap, kindEntries);
+	if (surface?.looseParams === undefined || surface.looseParams === surface.params) return undefined;
+	return entry.childKind;
 }
 
 /** The strict Config value for a kind-enum member: its kind discriminant
@@ -1439,7 +1499,7 @@ function resolvePolymorphFormVariantName(node: AssembledGroup): string | undefin
 // Container factory (children only, no fields)
 // ---------------------------------------------------------------------------
 
-interface ContainerNode {
+interface SoleSlotNode {
 	readonly kind: string;
 	readonly typeName: string;
 	readonly treeTypeName: string;
@@ -1447,9 +1507,8 @@ interface ContainerNode {
 	readonly fields: readonly AssembledNonterminal[];
 }
 
-function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): string {
-	// The unnamed-child slot lives in `node.fields`; derive the element type
-	// from it directly.
+function resolveSoleSlotElementType(node: SoleSlotNode, nodeMap: NodeMap): string {
+	// The sole slot lives in `node.fields`; derive the element type from it.
 	return childElementType({ children: node.fields }, nodeMap);
 }
 
@@ -1602,7 +1661,7 @@ function emitSeparatedListFactory(
 	// the options bag.
 	const listBuiltName = `${node.typeName}Built`;
 	const listWithTypeMembers = [
-		`    $children(...vs: ${elementsType}): ${listBuiltName};`,
+		`    ${contentAccessorName}(...vs: ${elementsType}): ${listBuiltName};`,
 		...(hasSeparatorKindOption ? [`    separator(v: ${separatorKindUnion}): ${listBuiltName};`] : []),
 		...(hasDelimiterOption ? [`    delimiter(v?: ${delimiterUnion}): ${listBuiltName};`] : [])
 	];
@@ -1714,7 +1773,7 @@ function emitSeparatedListFactory(
 	// values, silently diverging from the true (still-repeated) rule shape
 	// — `node.nonEmpty` has no such degenerate case since it reads directly
 	// off `rule.type`, never off the derived value count.
-	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
+	lines.push(`      ${contentAccessorName}: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
 	if (hasSeparatorKindOption) {
 		lines.push(`      separator: (v: ${separatorKindUnion}) => ${fn}({ ...options, separator: v }, ...elements),`);
 	}
@@ -1914,12 +1973,17 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			' *  union is derived from the grammar trivia roles — the same derivation',
 			" *  behind utils.ts' withMethods signature — so this alias tail and the",
 			' *  runtime surface never diverge. */',
-			'type _NodeMethods = {',
+			'// An INTERFACE, not a type alias: `$trivia` rebuilds the node and',
+			'// hands back the same kind, which the polymorphic `this` states —',
+			'// and `this` is only available in an interface. Declaring',
+			"// `AnyNodeData` instead threw the kind away and made `$render`",
+			'// optional on everything downstream of a `$trivia` call.',
+			'interface _NodeMethods {',
 			'  $render(): string;',
 			'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 			'  $replace(target: { range(): ByteRange }): Edit;',
-			`  $trivia(...args: ${triviaParamType}[]): AnyNodeData;`,
-			'};',
+			`  $trivia(...args: ${triviaParamType}[]): this;`,
+			'}',
 			''
 		);
 		lines.push(...emitNonEmptyAssertHelper());

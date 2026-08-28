@@ -168,11 +168,15 @@ pub struct AttributedTypeParameterTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_block_comment_arm.jinja", escape = "none")]
-pub struct BlockCommentArmTemplate<'a> {
+#[template(path = "_block_comment_doc_inner.jinja", escape = "none")]
+pub struct BlockCommentDocInnerTemplate<'a> {
     pub doc: OptionalNonterminalView<'a>,
-    pub inner: OptionalNonterminalView<'a>,
-    pub outer: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_block_comment_doc_outer.jinja", escape = "none")]
+pub struct BlockCommentDocOuterTemplate<'a> {
+    pub doc: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -281,11 +285,15 @@ pub struct LifetimesTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_line_comment_doc.jinja", escape = "none")]
-pub struct LineCommentDocTemplate<'a> {
+#[template(path = "_line_comment_doc_inner.jinja", escape = "none")]
+pub struct LineCommentDocInnerTemplate<'a> {
     pub doc: SingleNonterminalView<'a>,
-    pub inner: OptionalNonterminalView<'a>,
-    pub outer: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_line_comment_doc_outer.jinja", escape = "none")]
+pub struct LineCommentDocOuterTemplate<'a> {
+    pub doc: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -616,7 +624,7 @@ pub struct BinaryExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "block_comment.jinja", escape = "none")]
 pub struct BlockCommentTemplate<'a> {
-    pub block_comment_arm: OptionalNonterminalView<'a>,
+    pub content: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

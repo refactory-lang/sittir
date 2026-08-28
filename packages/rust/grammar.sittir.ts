@@ -307,10 +307,23 @@ export default grammar(
 
 				match_arm: [{ 0: field('attributes') }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
 
+				// `///` and `//!` reach this choice as separate arms: their
+				// outer/inner marker fields are alternatives, which enrich
+				// distributes over the doc sequence rather than fusing onto one
+				// kind as two independent optional markers.
 				line_comment: {
 					'1/0': variant('regular_dslash'),
-					'1/1': variant('doc'),
-					'1/2': variant('content')
+					'1/1': variant('doc_outer'),
+					'1/2': variant('doc_inner'),
+					'1/3': variant('content')
+				},
+
+				// `/**` and `/*!`, the block spelling of the same split. Only
+				// the two distributed arms are named; the third is already a
+				// reference to a named content rule.
+				block_comment: {
+					'1/0/0': variant('doc_outer'),
+					'1/0/1': variant('doc_inner')
 				},
 
 				// The token-tree repeats' element fields (`field('delim_tokens',

@@ -23,7 +23,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	} else {
 		lines.push("import type { NamespaceMap } from './types.js';");
 	}
-	lines.push("import { kindIdFromName } from './types.js';");
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push(
 		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors } from '@sittir/common/utils';"
@@ -74,23 +73,25 @@ function emitMethodsEngine(): string[] {
 function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
 	const triviaType = buildTriviaParamType(triviaTypeNames);
 	return [
-		'export function withMethods<T extends object>(',
-		'  node: T,',
-		'  engine: typeof methodsEngine',
-		'): T & {',
+		'/** The methods every node carries. Named, and self-referential through',
+		' *  the polymorphic `this`, because `$trivia` rebuilds the node and hands',
+		' *  back the same kind. A type alias cannot name itself, so the earlier',
+		' *  declaration fell back to `AnyNodeData` and lost the type at every',
+		' *  `$trivia` call site. */',
+		'export interface NodeMethodsOf {',
 		'  $render(): string;',
 		'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 		'  $replace(target: { range(): ByteRange }): Edit;',
-		`  $trivia(...args: ${triviaType}[]): AnyNodeData;`,
-		'} {',
+		`  $trivia(...args: ${triviaType}[]): this;`,
+		'}',
+		'',
+		'export function withMethods<T extends object>(',
+		'  node: T,',
+		'  engine: typeof methodsEngine',
+		'): T & NodeMethodsOf {',
 		'  // Grammar-local facade: T extends object to accept wrap.ts union-spread literals.',
 		'  // Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.',
-		'  return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & {',
-		'    $render(): string;',
-		'    $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
-		'    $replace(target: { range(): ByteRange }): Edit;',
-		`    $trivia(...args: ${triviaType}[]): AnyNodeData;`,
-		'  };',
+		'  return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;',
 		'}'
 	];
 }
@@ -125,7 +126,9 @@ function emitNodeGuards(): string[] {
 		'  v: unknown,',
 		'  kind: K,',
 		"): v is NamespaceMap[K]['Node'] {",
-		'  return isNodeData(v) && v.$type === kindIdFromName(kind);',
+		// `NamespaceMap` is keyed by the kind id, so `kind` IS the discriminant —
+		// no runtime name lookup stands between the argument and the comparison.
+		'  return isNodeData(v) && v.$type === kind;',
 		'}',
 		'',
 		'export function hasKindOf<K extends keyof NamespaceMap>(',
