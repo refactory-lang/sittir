@@ -125,7 +125,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/types/runtime-shapes.ts:91`)
+#### body
 
 ```text
 // Tree-sitter CLI: $.name → { symbol: { type: 'SYMBOL', name: '...' } }
@@ -166,13 +166,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/types/runtime-shapes.ts:108`)
+#### body
 
 ```text
 // Shape 2: reserved `_kw_` prefix — enrich's exclusive namespace.
 ```
 
-#### body (`packages/codegen/src/types/runtime-shapes.ts:110`)
+#### body
 
 ```text
 /* Shape 1: NAME === SYM, or the supertype-stripped variant. Exact equality
@@ -181,7 +181,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   below. */
 ```
 
-#### body (`packages/codegen/src/types/runtime-shapes.ts:116`)
+#### body
 
 ```text
 /* Numbered-duplicate variant: enrich appends a digit run to the field
@@ -543,50 +543,50 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:126`)
+#### body
 
 ```text
 // Structural grouping — Normalize restructures these
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:130`)
+#### body
 
 ```text
 // Named patterns — clean wrappers, no derived metadata
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:132`)
+#### body
 
 ```text
 // EnumRule is now ChoiceRule (PR-P): removed from union to avoid duplicate
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:135`)
+#### body
 
 ```text
 // TerminalRule removed (PR-P Task 2): terminals classify by shape at Assemble
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:137`)
+#### body
 
 ```text
 // Terminals
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:141`)
+#### body
 
 ```text
 // Structural whitespace
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:146`)
+#### body
 
 ```text
 // References — symbol refs persist through every phase (they are the
 // cross-rule reference mechanism all the way to emit)
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:150`)
+#### body
 
 ```text
 // Bounded-lifetime nodes — each collapses to `never` outside its phase
@@ -854,7 +854,7 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 // See glossary — full contract.
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:372`)
+#### body
 
 ```text
 // Pass 1: every ALIASED arm's parse (display) identity is reachable
@@ -862,7 +862,7 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 // supertype — in declaration order, before any recursion below.
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:380`)
+#### body
 
 ```text
 // Pass 2: recurse into every subtype's OWN storage identity, in
@@ -1006,7 +1006,7 @@ narrowing guard.
  *  effective storage identity). Stamped at link alongside `kindId`. */
 ```
 
-### `module` (`packages/codegen/src/types/runtime-shapes.ts:1`)
+### `types/runtime-shapes.ts` (module)
 
 ```text
 /**
@@ -1077,6 +1077,8 @@ narrowing guard.
  */
 ```
 
+### `types/diagnostics.ts` (module)
+
 ```text
 /**
  * Unified diagnostics model for sittir codegen.
@@ -1142,7 +1144,7 @@ narrowing guard.
  */
 ```
 
-### `RuleId` (`packages/codegen/src/types/rule.ts:21`)
+### `RuleId` (`packages/codegen/src/types/rule.ts:22`)
 
 ```text
 /**
@@ -1174,7 +1176,7 @@ narrowing guard.
 // ---------------------------------------------------------------------------
 ```
 
-### `RuleBase.tokenized` (`packages/codegen/src/types/rule.ts:67`)
+### `RuleBase.tokenized` (`packages/codegen/src/types/rule.ts:44`)
 
 ```text
 /**
@@ -1190,7 +1192,7 @@ narrowing guard.
 	 */
 ```
 
-### `RuleBase.fieldName` (`packages/codegen/src/types/rule.ts:82`)
+### `RuleBase.fieldName` (`packages/codegen/src/types/rule.ts:48`)
 
 ```text
 // All stamped attributes below are populated by
@@ -1203,7 +1205,7 @@ narrowing guard.
 // wrapper nodes themselves pre-deletion).
 ```
 
-### `RuleBase.separator.terminated` (`packages/codegen/src/types/rule.ts:98`)
+### `RuleBase.separator.terminated` (`packages/codegen/src/types/rule.ts:56`)
 
 ```text
 // Comma-TERMINATED list family (`(x sep)+ x?`): every element
@@ -1211,7 +1213,7 @@ narrowing guard.
 // trailing delimiter (rust `(1,)` vs parenthesized `(1)`).
 ```
 
-### `RuleBase.optionalElement` (`packages/codegen/src/types/rule.ts:104`)
+### `RuleBase.optionalElement` (`packages/codegen/src/types/rule.ts:59`)
 
 ```text
 // The deleted wrapper was an optional at the ELEMENT POSITION of a
@@ -1221,7 +1223,7 @@ narrowing guard.
 // element, distinct from absence of the position.
 ```
 
-### `RuleBase.prec` (`packages/codegen/src/types/rule.ts:114`)
+### `RuleBase.prec` (`packages/codegen/src/types/rule.ts:64`)
 
 ```text
 // Precedence vocabulary stamped by the `prec` rule builder. Link
@@ -1230,7 +1232,7 @@ narrowing guard.
 // normalized view but not yet populated by the pipeline.
 ```
 
-### `SeqRule` (`packages/codegen/src/types/rule.ts:176`)
+### `SeqRule` (`packages/codegen/src/types/rule.ts:109`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -1238,19 +1240,19 @@ narrowing guard.
 // ---------------------------------------------------------------------------
 ```
 
-### `RepeatRule.separator.terminated` (`packages/codegen/src/types/rule.ts:207`)
+### `RepeatRule.separator.terminated` (`packages/codegen/src/types/rule.ts:136`)
 
 ```text
 /** See RuleBase.separator — comma-terminated list family. */
 ```
 
-### `Repeat1Rule.separator.terminated` (`packages/codegen/src/types/rule.ts:229`)
+### `Repeat1Rule.separator.terminated` (`packages/codegen/src/types/rule.ts:157`)
 
 ```text
 /** See RuleBase.separator — comma-terminated list family. */
 ```
 
-### `SupertypeRule.subtypes` (`packages/codegen/src/types/rule.ts:289`)
+### `SupertypeRule.subtypes` (`packages/codegen/src/types/rule.ts:190`)
 
 ```text
 // Each subtype is a real SymbolRule reference (or, for a bare STRING
@@ -1262,7 +1264,7 @@ narrowing guard.
 // name-keyed table — `aliasedFrom ?? name` recovers the storage name.
 ```
 
-### `subtypeParseNamesOf` (`packages/codegen/src/types/rule.ts:299`)
+### `subtypeParseNamesOf` (`packages/codegen/src/types/rule.ts:193`)
 
 ```text
 /**
@@ -1272,7 +1274,7 @@ narrowing guard.
  */
 ```
 
-### `aliasRestampRequired` (`packages/codegen/src/types/rule.ts:312`)
+### `aliasRestampRequired` (`packages/codegen/src/types/rule.ts:201`)
 
 ```text
 /**
@@ -1288,7 +1290,7 @@ narrowing guard.
  */
 ```
 
-### `subtypeRestampPairsOf` (`packages/codegen/src/types/rule.ts:327`)
+### `subtypeRestampPairsOf` (`packages/codegen/src/types/rule.ts:205`)
 
 ```text
 /**
@@ -1302,7 +1304,7 @@ narrowing guard.
  */
 ```
 
-### `StringRule` (`packages/codegen/src/types/rule.ts:405`)
+### `StringRule` (`packages/codegen/src/types/rule.ts:264`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -1310,7 +1312,7 @@ narrowing guard.
 // ---------------------------------------------------------------------------
 ```
 
-### `IndentRule` (`packages/codegen/src/types/rule.ts:421`)
+### `IndentRule` (`packages/codegen/src/types/rule.ts:276`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -1318,7 +1320,7 @@ narrowing guard.
 // ---------------------------------------------------------------------------
 ```
 
-### `ImmediateTokenRule` (`packages/codegen/src/types/rule.ts:471`)
+### `ImmediateTokenRule` (`packages/codegen/src/types/rule.ts:315`)
 
 ```text
 // ImmediateTokenRule exists ONLY within the 'evaluate' phase view.
@@ -1335,7 +1337,7 @@ narrowing guard.
 // already expects — see docs/glossary/compiler-model.md's `NodeRef.immediate`.
 ```
 
-### `PrecRule` (`packages/codegen/src/types/rule.ts:487`)
+### `PrecRule` (`packages/codegen/src/types/rule.ts:319`)
 
 ```text
 // Prec*Rule exist ONLY within the 'evaluate' phase view. `prec`/`prec.left`/
@@ -1352,7 +1354,7 @@ narrowing guard.
 // enrich's minting pass completes.
 ```
 
-### `isSeq` (`packages/codegen/src/types/rule.ts:512`)
+### `isSeq` (`packages/codegen/src/types/rule.ts:332`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -1373,13 +1375,13 @@ narrowing guard.
 // — the narrowed type is `never`, surfacing the dead check at compile time).
 ```
 
-### `isString` (`packages/codegen/src/types/rule.ts:534`)
+### `isString` (`packages/codegen/src/types/rule.ts:340`)
 
 ```text
 // isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
 ```
 
-### `SymbolRef` (`packages/codegen/src/types/rule.ts:575`)
+### `SymbolRef` (`packages/codegen/src/types/rule.ts:376`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -1387,15 +1389,15 @@ narrowing guard.
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/types/rule.ts:587`)
+### `SymbolRef.position` (`packages/codegen/src/types/rule.ts:384`)
 
 ```text
 // Link adds: index within parent's SEQ
 ```
 
-### `diagnoseParseKindCollisions` (`packages/codegen/src/types/parsekind-collisions.ts:56`)
+### `diagnoseParseKindCollisions` (`packages/codegen/src/types/parsekind-collisions.ts:41`)
 
-#### body (`packages/codegen/src/types/parsekind-collisions.ts:56`)
+#### body
 
 ```text
 // Distinctness by stamped id where available: same-id values are the
@@ -1403,7 +1405,7 @@ narrowing guard.
 // twins); the name is only the fallback key for id-less values.
 ```
 
-#### body (`packages/codegen/src/types/parsekind-collisions.ts:66`)
+#### body
 
 ```text
 // Read-time dispatch keys on the WIRE identity — the grammar symbol

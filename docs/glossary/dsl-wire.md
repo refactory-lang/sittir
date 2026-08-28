@@ -348,7 +348,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:750`)
+#### body
 
 ```text
 // Filter OUT visible-group mint sources (see WireContext.inlineRemovals):
@@ -358,7 +358,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // models the kind. Un-inlining keeps the mint real on both sides.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:773`)
+#### body
 
 ```text
 // An orphaned synthetic (its owner was redeclared by an authored
@@ -481,7 +481,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:852`)
+#### body
 
 ```text
 // Shared detection (same `isChoiceType`/`isBlankType` that auto-groups.ts
@@ -508,13 +508,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:902`)
+#### body
 
 ```text
 // Check if THIS node matches any candidate.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:905`)
+#### body
 
 ```text
 // Emit a SYMBOL reference in the shape matching the candidate's body.
@@ -524,7 +524,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // kind never appears as a CST node).
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:921`)
+#### body
 
 ```text
 // Recurse into children.
@@ -619,7 +619,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:1049`)
+#### body
 
 ```text
 // Legacy auto-detection: any `_`-prefixed rule the author declared in
@@ -628,7 +628,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // path; new patterns should go in `groups:` with a body fn.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:1057`)
+#### body
 
 ```text
 // Eagerly evaluate with a null previous. Rules whose body depends on
@@ -636,7 +636,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // null, or throw — all safely skipped.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:1072`)
+#### body
 
 ```text
 // New body-pattern groups path: each `groups:` entry whose value is a
@@ -646,7 +646,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // sitter exposes the visible kind as a CST node.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:1102`)
+#### body
 
 ```text
 // Register the hidden rule body so tree-sitter has a definition
@@ -1016,13 +1016,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:222`)
-
 ```text
 // Loose default (`Base = GrammarJson`, rule values are the open
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:223`)
+#### body
 
 ```text
 // `GrammarRule` union): use the plain `PatchMap` form. Mapping
@@ -1032,7 +1030,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // internal pipeline always sees this loose form.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:231`)
+#### body
 
 ```text
 // Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
@@ -1065,7 +1063,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:251`)
+#### body
 
 ```text
 // Permissive fallback for alias-target / synthesized names not in the base
@@ -1264,7 +1262,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `module` (`packages/codegen/src/dsl/wire/wire.ts:1`)
+### `dsl/wire/wire.ts` (module)
 
 ```text
 /**
@@ -1307,9 +1305,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 ```
 
-### `WireConfig.rules` (`packages/codegen/src/dsl/wire/wire.ts:269`)
+### `WireConfig.rules` (`packages/codegen/src/dsl/wire/wire.ts:147`)
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:269`)
+#### body
 
 ```text
 // New rules the override ADDS (not in the base grammar.json, e.g. a
@@ -1318,7 +1316,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // assignable here (bivariant), so known keys retain their precise shape.
 ```
 
-### `WireConfig.factoryInline` (`packages/codegen/src/dsl/wire/wire.ts:275`)
+### `WireConfig.factoryInline` (`packages/codegen/src/dsl/wire/wire.ts:152`)
 
 ```text
 /**
@@ -1329,7 +1327,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `SittirRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:310`)
+### `SittirRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:181`)
 
 ```text
 // LOOSE-INTERNAL / NARROW-PUBLIC split (Phase-4 resolution to the
@@ -1354,7 +1352,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // loose type unchanged.
 ```
 
-### `wire` (`packages/codegen/src/dsl/wire/wire.ts:335`)
+### `wire` (`packages/codegen/src/dsl/wire/wire.ts:186`)
 
 ```text
 /**
@@ -1400,7 +1398,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `WireConfig<any>` in the body below).
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:374`)
+#### body
 
 ```text
 // Generics are contained to the SIGNATURE so `B` infers from `base`
@@ -1413,7 +1411,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // boundary casts (see the LOOSE-INTERNAL / NARROW-PUBLIC note above).
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:405`)
+#### body
 
 ```text
 // `outRules` holds rule-authoring FUNCTIONS (tree-sitter invokes each with
@@ -1424,7 +1422,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // with the function-map shape `cfg.rules` actually has.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:413`)
+#### body
 
 ```text
 // Transforms first, polymorphs second — transforms wrap the user
@@ -1445,7 +1443,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `buildPolymorphParentFn`).
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:433`)
+#### body
 
 ```text
 // Body-pattern groups: when `base` is supplied AND the groups config has
@@ -1464,7 +1462,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // against elsewhere).
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:455`)
+#### body
 
 ```text
 // Wire-phase pattern find-and-replace: runs after wrapAllRuleFns so
@@ -1473,7 +1471,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // own post-evaluation pass for the sittir-pipeline path.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:460`)
+#### body
 
 ```text
 // visibleExternals: SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path).
@@ -1481,7 +1479,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // — both MUST produce structurally identical output.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:465`)
+#### body
 
 ```text
 // Drain enrich-hoisted clause-group names into syntheticInline so they
@@ -1504,14 +1502,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // seqs link must see as inline content.)
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:487`)
+#### body
 
 ```text
 // Visible-group mint SOURCES must not be inlined away — see
 // `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:492`)
+#### body
 
 ```text
 // A synthesized clause-hoist name (recorded owner = the parent kind
@@ -1542,7 +1540,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // size, not correctness, when unused.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:528`)
+#### body
 
 ```text
 // A minted group's own body can ALSO self-conflict — e.g. a
@@ -1556,7 +1554,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `<rule>`" with just the one name).
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:543`)
+#### body
 
 ```text
 // Re-run body-pattern replacement so any `groups:` body-pattern can match
@@ -1564,7 +1562,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // bodies.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:549`)
+#### body
 
 ```text
 // Boundary casts to the internal loose (`unknown`-$, mutable-array)
@@ -1577,7 +1575,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // types are a safe narrowing-away, not a behavior change.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:560`)
+#### body
 
 ```text
 // `...cfg` carries `cfg`'s own (narrow, public) `conflicts` field into the
@@ -1588,21 +1586,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
-### `patternBodyEqual` (`packages/codegen/src/dsl/wire/wire.ts:869`)
+### `patternBodyEqual` (`packages/codegen/src/dsl/wire/wire.ts:532`)
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:869`)
+#### body
 
 ```text
 // Types must match.
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:874`)
-
 ```text
 // BLANK is a singleton — type match is sufficient
 ```
 
-#### body (`packages/codegen/src/dsl/wire/wire.ts:889`)
+#### body
 
 ```text
 // ALIAS nodes carry `named` (bool) and `value` (the visible name string)

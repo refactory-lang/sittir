@@ -53,7 +53,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/validate/rule-lookup.ts:40`)
+#### body
 
 ```text
 // Alias labels: a reference site may surface a kind under a different
@@ -67,14 +67,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // own classification.
 ```
 
-#### body (`packages/codegen/src/validate/rule-lookup.ts:51`)
+#### body
 
 ```text
 // A bare (unaliased) reference carries no label — only a differing
 // label records the source as labeled.
 ```
 
-#### body (`packages/codegen/src/validate/rule-lookup.ts:70`)
+#### body
 
 ```text
 // User-facing hidden kinds reached by no labeled reference — polymorph
@@ -149,7 +149,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `module` (`packages/codegen/src/validate/renderable.ts:1`)
+### `validate/renderable.ts` (module)
 
 ```text
 /**
@@ -175,6 +175,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `validate/rule-lookup.ts` (module)
+
 ```text
 /**
  * validate/rule-lookup.ts — shared rule-kind inventory.
@@ -188,6 +190,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * test.
  */
 ```
+
+### `classify` (`packages/codegen/src/validate/rule-lookup.ts:55`)
+
+#### body
+
+```text
+/* TEMPORARY: 'separatedList' shares 'branch'/'group's template render
+		   path for byte-identical output pending real per-instance separator
+		   capture — see isSlotBearingCompound's doc comment (emitters/shared.ts). */
+```
+
+### `validate/node-types-loader.ts` (module)
 
 ```text
 /**
@@ -207,17 +221,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `classify` (`packages/codegen/src/validate/rule-lookup.ts:88`)
-
-#### body (`packages/codegen/src/validate/rule-lookup.ts:88`)
-
-```text
-/* TEMPORARY: 'separatedList' shares 'branch'/'group's template render
-		   path for byte-identical output pending real per-instance separator
-		   capture — see isSlotBearingCompound's doc comment (emitters/shared.ts). */
-```
-
-### `packagesDir` (`packages/codegen/src/validate/node-types-loader.ts:21`)
+### `packagesDir` (`packages/codegen/src/validate/node-types-loader.ts:5`)
 
 ```text
 // `new URL(...).pathname` is not portable on Windows and leaks URL-encoded

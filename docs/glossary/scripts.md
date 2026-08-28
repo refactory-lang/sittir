@@ -20,13 +20,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:54`)
-
 ```text
 // lib.rs, index.{js,d.ts}, *.node
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:75`)
+#### body
 
 ```text
 // backend / boundary / engine / hash / ir / is / index / utils, etc.
@@ -44,8 +42,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Compress a new-file hunk header `@@ -_ +start,count @@` into "L120-131". */
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:86`)
-
 ```text
 // pure deletion: anchor at the deletion point
 ```
@@ -62,7 +58,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Parse `git diff --unified=0` output into per-file change records. */
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:113`)
+#### body
 
 ```text
 // New file section. The authoritative path comes from the +++/---
@@ -74,13 +70,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // factory function.
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:140`)
+#### body
 
 ```text
 // Deletion: +++ is /dev/null, so keep the old path as the identity.
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:155`)
+#### body
 
 ```text
 // Content lines (no context, since --unified=0).
@@ -102,13 +98,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:177`)
-
 ```text
 // not a git repo / git absent / no HEAD — skip silently
 ```
 
-#### body (`packages/codegen/src/scripts/emit-diff.ts:194`)
+#### body
 
 ```text
 // Align the file column across all rows for scannability.
@@ -396,7 +390,7 @@ reconciliation gate. Three clusters, one per root cause:
   `last_match_arm` SHOULD be unified with `match_arm` so the slot reads
   `matchArms` is a separate open design question, not part of this allowlist.
 
-### `module` (`packages/codegen/src/scripts/generated-manifest.ts:1`)
+### `scripts/generated-manifest.ts` (module)
 
 ```text
 /**
@@ -438,6 +432,72 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
+### `hostFilesFor` (`packages/codegen/src/scripts/generated-manifest.ts:34`)
+
+#### body
+
+```text
+// Platform-specific build artifacts (napi-emitted compiled binaries).
+// Tracked in the `host_files` section: hashed and verified, but
+// missing-locally is tolerated because different developers / CI runners
+// produce different per-platform binaries (`*.darwin-arm64.node`,
+// `*.linux-x64.node`, etc.). The manifest will accumulate every binary
+// every developer commits; verification only enforces matches for the
+// binaries that exist on the current host.
+```
+
+### `codegenSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:99`)
+
+#### body
+
+```text
+// Consumer-side validators don't affect generated output.
+```
+
+### `computeSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:118`)
+
+#### body
+
+```text
+// 2. Codegen source — same per-grammar inputs against a different codegen
+// produce different output, so codegen state IS part of the source.
+```
+
+### `writeManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:133`)
+
+#### body
+
+```text
+// Preserve previously-recorded host_files entries from other platforms,
+// then overwrite/add this host's binaries. This way commits from a
+// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
+// by another dev. Entries carry the freshness sentinel, not a content
+// hash — see the Manifest.host_files docs.
+```
+
+### `verifyManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:178`)
+
+#### body
+
+```text
+// Source-hash cross-layer synchronicity check: did the source inputs
+// (grammar.sittir.ts + package.json) change since this manifest was written?
+// If yes, the generated content is stale relative to current inputs and
+// the user needs to re-run codegen.
+```
+
+#### body
+
+```text
+// Platform-specific `host_files`: FRESHNESS check, not content hashes
+// (see Manifest.host_files docs). Missing binaries are silently
+// tolerated (per-platform); present-but-stale binaries fail — they
+// would validate stale code. Checks ALL binaries on this host, not just
+// manifest-listed ones, so a never-committed local build is gated too.
+```
+
+### `scripts/native-binary-freshness.ts` (module)
+
 ```text
 /**
  * Freshness predicate for grammar-owned napi binaries (`*.node`).
@@ -456,6 +516,8 @@ reconciliation gate. Three clusters, one per root cause:
  * consumer picks up import cycles.
  */
 ```
+
+### `scripts/reconcile-naming.ts` (module)
 
 ```text
 /**
@@ -479,6 +541,37 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
+### `Divergence.slot` (`packages/codegen/src/scripts/reconcile-naming.ts:19`)
+
+```text
+// the legacy slot.name (its current identity)
+```
+
+### `run` (`packages/codegen/src/scripts/reconcile-naming.ts:116`)
+
+#### body
+
+```text
+// Phase passes log via console.log/warn — route to stderr so stdout stays clean.
+```
+
+#### body
+
+```text
+// Non-zero exit only when an UNEXPECTED divergence remains (allowlisted §2
+// renames are accepted) — lets CI/the gate fail on genuine regressions.
+```
+
+### `_isMain` (`packages/codegen/src/scripts/reconcile-naming.ts:157`)
+
+```text
+// `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
+// (handles absolute paths / escaping) rather than string-interpolating, so the
+// `npx tsx reconcile-naming.ts` invocation is detected reliably.
+```
+
+### `scripts/regen-templates-rs.ts` (module)
+
 ```text
 /**
  * regen-templates-rs — regenerate only templates.rs for one or more grammars.
@@ -492,6 +585,8 @@ reconciliation gate. Three clusters, one per root cause:
  * regenerated without touching TS output files.
  */
 ```
+
+### `scripts/emit-diff.ts` (module)
 
 ```text
 /**
@@ -514,6 +609,14 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
+### `FileChange.path` (`packages/codegen/src/scripts/emit-diff.ts:20`)
+
+```text
+// repo-relative
+```
+
+### `scripts/verify-manifests-cli.ts` (module)
+
 ```text
 /**
  * Standalone manifest-verification CLI — used by the git pre-commit hook.
@@ -522,103 +625,4 @@ reconciliation gate. Three clusters, one per root cause:
  * inconsistent generated state (e.g. a staged manifest without its regenerated
  * test-fixtures.json) can't be committed. Fast: hash comparison only, no cargo.
  */
-```
-
-### `hostFilesFor` (`packages/codegen/src/scripts/generated-manifest.ts:73`)
-
-#### body (`packages/codegen/src/scripts/generated-manifest.ts:73`)
-
-```text
-// Platform-specific build artifacts (napi-emitted compiled binaries).
-// Tracked in the `host_files` section: hashed and verified, but
-// missing-locally is tolerated because different developers / CI runners
-// produce different per-platform binaries (`*.darwin-arm64.node`,
-// `*.linux-x64.node`, etc.). The manifest will accumulate every binary
-// every developer commits; verification only enforces matches for the
-// binaries that exist on the current host.
-```
-
-### `codegenSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:153`)
-
-#### body (`packages/codegen/src/scripts/generated-manifest.ts:153`)
-
-```text
-// Consumer-side validators don't affect generated output.
-```
-
-### `computeSourceHash` (`packages/codegen/src/scripts/generated-manifest.ts:173`)
-
-#### body (`packages/codegen/src/scripts/generated-manifest.ts:173`)
-
-```text
-// 2. Codegen source — same per-grammar inputs against a different codegen
-// produce different output, so codegen state IS part of the source.
-```
-
-### `writeManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:188`)
-
-#### body (`packages/codegen/src/scripts/generated-manifest.ts:188`)
-
-```text
-// Preserve previously-recorded host_files entries from other platforms,
-// then overwrite/add this host's binaries. This way commits from a
-// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
-// by another dev. Entries carry the freshness sentinel, not a content
-// hash — see the Manifest.host_files docs.
-```
-
-### `verifyManifestForGrammar` (`packages/codegen/src/scripts/generated-manifest.ts:247`)
-
-#### body (`packages/codegen/src/scripts/generated-manifest.ts:247`)
-
-```text
-// Source-hash cross-layer synchronicity check: did the source inputs
-// (grammar.sittir.ts + package.json) change since this manifest was written?
-// If yes, the generated content is stale relative to current inputs and
-// the user needs to re-run codegen.
-```
-
-#### body (`packages/codegen/src/scripts/generated-manifest.ts:269`)
-
-```text
-// Platform-specific `host_files`: FRESHNESS check, not content hashes
-// (see Manifest.host_files docs). Missing binaries are silently
-// tolerated (per-platform); present-but-stale binaries fail — they
-// would validate stale code. Checks ALL binaries on this host, not just
-// manifest-listed ones, so a never-committed local build is gated too.
-```
-
-### `Divergence.projection` (`packages/codegen/src/scripts/reconcile-naming.ts:38`)
-
-```text
-// the legacy slot.name (its current identity)
-```
-
-### `run` (`packages/codegen/src/scripts/reconcile-naming.ts:147`)
-
-#### body (`packages/codegen/src/scripts/reconcile-naming.ts:147`)
-
-```text
-// Phase passes log via console.log/warn — route to stderr so stdout stays clean.
-```
-
-#### body (`packages/codegen/src/scripts/reconcile-naming.ts:174`)
-
-```text
-// Non-zero exit only when an UNEXPECTED divergence remains (allowlisted §2
-// renames are accepted) — lets CI/the gate fail on genuine regressions.
-```
-
-### `_isMain` (`packages/codegen/src/scripts/reconcile-naming.ts:179`)
-
-```text
-// `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
-// (handles absolute paths / escaping) rather than string-interpolating, so the
-// `npx tsx reconcile-naming.ts` invocation is detected reliably.
-```
-
-### `FileChange.emitter` (`packages/codegen/src/scripts/emit-diff.ts:39`)
-
-```text
-// repo-relative
 ```

@@ -79,7 +79,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/util/word-matcher.ts:74`)
+#### body
 
 ```text
 /* No TERMINAL case: the Rule union has no TerminalRule variant.
@@ -87,7 +87,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			   sittir's AnyRule union, so no case is needed for it either.) */
 ```
 
-#### body (`packages/codegen/src/util/word-matcher.ts:112`)
+#### body
 
 ```text
 /* symbol / field / variant / supertype / enum / indent / dedent /
@@ -95,7 +95,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			   without additional context. */
 ```
 
-### `module` (`packages/codegen/src/util/word-matcher.ts:1`)
+### `util/word-matcher.ts` (module)
 
 ```text
 /**
@@ -178,13 +178,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectSymbolRefs` (`packages/codegen/src/util/reachable-rules.ts:25`)
+### `collectSymbolRefs` (`packages/codegen/src/util/reachable-rules.ts:5`)
 
 ```text
 /** Every `{type:'SYMBOL', name}` reference inside `node`, added to `into`. */
 ```
 
-### `collectUnreachableHiddenRules` (`packages/codegen/src/util/reachable-rules.ts:37`)
+### `collectUnreachableHiddenRules` (`packages/codegen/src/util/reachable-rules.ts:16`)
 
 ```text
 /**

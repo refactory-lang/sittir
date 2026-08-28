@@ -7,13 +7,18 @@
  *   - a comment (or a stack of them) directly above a declaration — only
  *     blank lines or other comments between — documents that declaration
  *     (a `###` section, one per declaration);
+ *   - a comment trailing code on a declaration's own line documents that
+ *     declaration;
  *   - a comment inside a declaration's range documents that declaration's
  *     body: a `####` sub-section inside the declaration's section;
- *   - anything else is file-level (the `module` section).
+ *   - anything else is file-level: a `### \`<file>\` (module)` section.
  * Names are qualified by their enclosing class / interface / enum / object
  * (`Outer.inner`). Directive comments (`@ts-*`, `eslint`, `prettier-ignore`,
  * `biome-ignore`, `@rule-type-consts`, `/// <reference>`) are tooling, not
  * documentation, and stay in source.
+ *
+ * Headings anchor to the declaration's line AFTER the strip (the stripped
+ * files are rescanned), so the anchors are live, not pre-removal.
  *
  * Re-running is idempotent: a comment whose text is already in the target
  * glossary is neither duplicated nor removed twice.
@@ -78,7 +83,7 @@ interface Decl {
 }
 interface Entry {
 	file: string;
-	/** Section key: the qualified declaration name, or `module`. */
+	/** Section key: the qualified declaration name, or the file itself for file-level comments. */
 	section: string;
 	/** Set for a comment inside the declaration's body — filed as a sub-section. */
 	body: boolean;
@@ -95,8 +100,12 @@ function scan(paths: string[]): Match[] {
 	return JSON.parse(out.toString('utf8')) as Match[];
 }
 
+function srcRelative(file: string): string {
+	return file.startsWith(SRC_PREFIX) ? file.slice(SRC_PREFIX.length) : file;
+}
+
 function glossaryPathFor(file: string): string {
-	const rel = file.startsWith(SRC_PREFIX) ? file.slice(SRC_PREFIX.length) : file;
+	const rel = srcRelative(file);
 	const lastSlash = rel.lastIndexOf('/');
 	const dir = lastSlash === -1 ? '.' : rel.slice(0, lastSlash);
 	const slug = dir === '.' ? 'root' : dir.replace(/\//g, '-');
@@ -104,7 +113,7 @@ function glossaryPathFor(file: string): string {
 }
 
 function glossaryHeaderFor(file: string): string {
-	const rel = file.startsWith(SRC_PREFIX) ? file.slice(SRC_PREFIX.length) : file;
+	const rel = srcRelative(file);
 	const lastSlash = rel.lastIndexOf('/');
 	const dir = lastSlash === -1 ? SRC_PREFIX.slice(0, -1) : SRC_PREFIX + rel.slice(0, lastSlash);
 	return (
@@ -166,6 +175,16 @@ function qualify(targets: Decl[], d: Decl): string {
 	return [...outer.map((o) => o.name), d.name].join('.');
 }
 
+/** The declarations of one file that get glossary entries: not nested inside any function body. */
+function targetsOf(list: Match[]): Decl[] {
+	const all: Decl[] = list
+		.filter((m) => m.ruleId !== 'comment')
+		.map((m) => ({ kind: m.ruleId, start: m.range.start, end: m.range.end, name: declName(m.text) }))
+		.sort((a, b) => a.start.line - b.start.line || a.start.column - b.start.column);
+	const bodies = all.filter((d) => BODY_KINDS.includes(d.kind));
+	return all.filter((d) => DECL_KINDS.includes(d.kind) && !bodies.some((b) => b !== d && contains(b, d.start, d.end)));
+}
+
 /**
  * Consecutive whole-line `//` comments at one indentation are one comment.
  * A trailing comment after code never merges: the strip would take the
@@ -194,21 +213,16 @@ function mergeLineComments(comments: Match[], lines: string[]): Match[] {
 	return out;
 }
 
-function buildEntries(matches: Match[], declarationsOnly: boolean): Entry[] {
+function groupByFile(matches: Match[]): Map<string, Match[]> {
 	const byFile = new Map<string, Match[]>();
 	for (const m of matches) byFile.set(m.file, [...(byFile.get(m.file) ?? []), m]);
-	const entries: Entry[] = [];
+	return byFile;
+}
 
-	for (const [file, list] of byFile) {
-		const all: Decl[] = list
-			.filter((m) => m.ruleId !== 'comment')
-			.map((m) => ({ kind: m.ruleId, start: m.range.start, end: m.range.end, name: declName(m.text) }))
-			.sort((a, b) => a.start.line - b.start.line || a.start.column - b.start.column);
-		const bodies = all.filter((d) => BODY_KINDS.includes(d.kind));
-		// A glossary target is a declaration not nested inside any function body.
-		const decls = all.filter(
-			(d) => DECL_KINDS.includes(d.kind) && !bodies.some((b) => b !== d && contains(b, d.start, d.end))
-		);
+function buildEntries(matches: Match[], declarationsOnly: boolean): Entry[] {
+	const entries: Entry[] = [];
+	for (const [file, list] of groupByFile(matches)) {
+		const decls = targetsOf(list);
 		const lines = readFileSync(REPO_ROOT + file, 'utf8').split('\n');
 		const comments = mergeLineComments(
 			list
@@ -218,29 +232,41 @@ function buildEntries(matches: Match[], declarationsOnly: boolean): Entry[] {
 		);
 		const commentLines = new Set<number>();
 		for (const c of comments) for (let l = c.range.start.line; l <= c.range.end.line; l++) commentLines.add(l);
+		const innermostAt = (p: Pos): Decl | undefined =>
+			decls.filter((d) => contains(d, p, p)).sort((a, b) => b.start.line - a.start.line)[0];
+		// The declaration whose span covers a line — the narrowest one when
+		// several do (a property inside its interface).
+		const innermostOnLine = (line: number): Decl | undefined =>
+			decls
+				.filter((d) => d.start.line <= line && d.end.line >= line)
+				.sort((a, b) => b.start.line - a.start.line || a.end.line - b.end.line)[0];
 
 		for (const c of comments) {
-			// Directly above a declaration: every line between is blank or comment.
-			const following = decls.find((d) => d.start.line > c.range.end.line);
-			let adjacent = following !== undefined;
-			if (following) {
-				for (let l = c.range.end.line + 1; l < following.start.line; l++) {
-					if (!commentLines.has(l) && lines[l]!.trim() !== '') {
-						adjacent = false;
-						break;
+			const trailing = lines[c.range.start.line]!.slice(0, c.range.start.column).trim() !== '';
+			let section: string | undefined;
+			let body = false;
+			if (trailing) {
+				// Trailing code on its own line: the declaration on that line.
+				const own = innermostOnLine(c.range.start.line);
+				if (own) section = qualify(decls, own);
+			} else {
+				// Directly above a declaration: every line between is blank or comment.
+				const following = decls.find((d) => d.start.line > c.range.end.line);
+				let adjacent = following !== undefined;
+				if (following) {
+					for (let l = c.range.end.line + 1; l < following.start.line; l++) {
+						if (!commentLines.has(l) && lines[l]!.trim() !== '') {
+							adjacent = false;
+							break;
+						}
 					}
 				}
+				if (adjacent && following) section = qualify(decls, following);
 			}
-			let section: string;
-			let body = false;
-			if (adjacent && following) {
-				section = qualify(decls, following);
-			} else {
+			if (section === undefined) {
 				if (declarationsOnly) continue;
-				const enclosing = decls
-					.filter((d) => contains(d, c.range.start, c.range.end))
-					.sort((a, b) => b.start.line - a.start.line)[0];
-				section = enclosing ? qualify(decls, enclosing) : 'module';
+				const enclosing = innermostAt(c.range.start);
+				section = enclosing ? qualify(decls, enclosing) : srcRelative(file);
 				body = enclosing !== undefined;
 			}
 			entries.push({ file, section, body, text: c.text, start: c.range.start, end: c.range.end });
@@ -266,12 +292,28 @@ function stripFromSource(file: string, entries: Entry[]): void {
 	writeFileSync(abs, lines.join('\n'));
 }
 
+/** Post-strip line (1-based) of every glossary target, per file, by qualified name. */
+function liveAnchors(files: string[]): Map<string, Map<string, number>> {
+	const out = new Map<string, Map<string, number>>();
+	if (files.length === 0) return out;
+	for (const [file, list] of groupByFile(scan(files))) {
+		const decls = targetsOf(list);
+		const byName = new Map<string, number>();
+		for (const d of decls) {
+			const name = qualify(decls, d);
+			if (!byName.has(name)) byName.set(name, d.start.line + 1);
+		}
+		out.set(file, byName);
+	}
+	return out;
+}
+
 /**
  * A glossary doc is a header followed by `### <name> (...)` sections; body
- * comments nest as `#### body (...)` sub-sections inside their declaration's
+ * comments nest as `#### body` sub-sections inside their declaration's
  * section, so the doc is rewritten section-wise rather than appended to.
  */
-function writeGlossary(entries: Entry[]): Set<string> {
+function writeGlossary(entries: Entry[], anchors: Map<string, Map<string, number>>): Set<string> {
 	mkdirSync(REPO_ROOT + GLOSSARY_DIR, { recursive: true });
 	const targets = new Set<string>();
 	const byGlossary = new Map<string, Entry[]>();
@@ -286,17 +328,22 @@ function writeGlossary(entries: Entry[]): Set<string> {
 		const sections = rest.map((s) => ({ key: sectionKey(s), text: s }));
 		let changed = false;
 		for (const e of list) {
+			const isModule = e.section === srcRelative(e.file);
+			const key = isModule ? `${e.section} (module)` : e.section;
 			const block = `\`\`\`text\n${e.text}\n\`\`\``;
-			const at = `(\`${e.file}:${e.start.line + 1}\`)`;
-			let section = sections.find((s) => s.key === e.section);
+			let section = sections.find((s) => s.key === key);
 			if (!section) {
-				section = { key: e.section, text: `### \`${e.section}\` ${at}\n` };
+				const line = anchors.get(e.file)?.get(e.section);
+				const heading = isModule
+					? `### \`${e.section}\` (module)`
+					: `### \`${e.section}\` (\`${e.file}${line !== undefined ? `:${line}` : ''}\`)`;
+				section = { key, text: `${heading}\n` };
 				sections.push(section);
 				changed = true;
 			}
 			if (section.text.includes(block)) continue;
 			section.text = section.text.replace(/\s*$/, '\n');
-			section.text += e.body ? `\n#### body ${at}\n\n${block}\n` : `\n${block}\n`;
+			section.text += e.body ? `\n#### body\n\n${block}\n` : `\n${block}\n`;
 			changed = true;
 		}
 		if (!changed) continue;
@@ -307,8 +354,8 @@ function writeGlossary(entries: Entry[]): Set<string> {
 }
 
 function sectionKey(sectionText: string): string {
-	const m = /^### `([^`]+)`/.exec(sectionText);
-	return m ? m[1]! : sectionText.split('\n')[0]!;
+	const m = /^### `([^`]+)`( \(module\))?/.exec(sectionText);
+	return m ? m[1]! + (m[2] ?? '') : sectionText.split('\n')[0]!;
 }
 
 const args = process.argv.slice(2);
@@ -327,7 +374,7 @@ if (!apply) {
 } else {
 	const byFile = new Map<string, Entry[]>();
 	for (const e of entries) byFile.set(e.file, [...(byFile.get(e.file) ?? []), e]);
-	const targets = writeGlossary(entries);
 	for (const [file, list] of byFile) stripFromSource(file, list);
+	const targets = writeGlossary(entries, liveAnchors([...byFile.keys()]));
 	console.log(`Applied: removed ${entries.length} comment(s) from ${byFile.size} file(s); wrote ${targets.size} glossary doc(s) under ${GLOSSARY_DIR}/`);
 }

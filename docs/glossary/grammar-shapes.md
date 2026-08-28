@@ -57,19 +57,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:144`)
-
 ```text
 // Shape 1 (bare symbol): `_`-names only if supertype.
 ```
 
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:153`)
-
 ```text
 // Shape 2 (optional symbol): `_`-names NEVER (gate).
 ```
-
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:158`)
 
 ```text
 // Shape 3 (optional seq with lone symbol): `_`-names NEVER.
@@ -109,8 +103,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:212`)
-
 ```text
 /* never-guard FIRST: a non-wrap member yields `WName = never`, and a
 		     bare `WName extends string` DISTRIBUTES over never -> never (the
@@ -118,25 +110,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 		     `[never] extends [string]` is `true`, so the never test must precede. */
 ```
 
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:217`)
-
 ```text
 // not a wrap target -> unchanged
 ```
 
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:222`)
-
 ```text
 // Shape 1
 ```
-
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:227`)
-
-```text
-// Shape 2
-```
-
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:236`)
 
 ```text
 // Shape 3
@@ -324,7 +304,7 @@ The type-only imports of the DSL primitive return interfaces keep the value
 axis DRY and introduce no runtime cycle — the primitives don't import
 `grammar-shapes`.
 
-### `module` (`packages/codegen/src/grammar-shapes/path-type.ts:1`)
+### `grammar-shapes/path-type.ts` (module)
 
 ```text
 /**
@@ -361,6 +341,8 @@ axis DRY and introduce no runtime cycle — the primitives don't import
  * inline nesting).
  */
 ```
+
+### `grammar-shapes/enrich-type.ts` (module)
 
 ```text
 /**
@@ -419,26 +401,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
  */
 ```
 
-```text
-/**
- * grammar-shape.rust.ts — GENERATED literal+tuple-preserving emit of the
- * RAW upstream tree-sitter-rust grammar.json.
- *
- * Emitted with `as const` so every STRING value stays a string LITERAL,
- * every rule name stays a literal key, and every JSON array becomes a
- * readonly TUPLE (positional indexing survives). A plain
- * `resolveJsonModule` import would widen all of these to
- * `string` / `T[]` and destroy the discriminants + tuple indices the
- * recursive deriver and path-key `Get` depend on.
- *
- * DO NOT hand-edit. Regenerate via grammar-shapes/emit-grammar-shape.mjs.
- *
- * Source (realpath, same pnpm-store entry as the production base import):
- *   node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/src/grammar.json
- */
-```
-
-### `IsPrec` (`packages/codegen/src/grammar-shapes/enrich-type.ts:76`)
+### `IsPrec` (`packages/codegen/src/grammar-shapes/enrich-type.ts:21`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -446,7 +409,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `IsBlank` (`packages/codegen/src/grammar-shapes/enrich-type.ts:84`)
+### `IsBlank` (`packages/codegen/src/grammar-shapes/enrich-type.ts:25`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -454,7 +417,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `StripUnderscore` (`packages/codegen/src/grammar-shapes/enrich-type.ts:102`)
+### `StripUnderscore` (`packages/codegen/src/grammar-shapes/enrich-type.ts:39`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -471,27 +434,23 @@ axis DRY and introduce no runtime cycle — the primitives don't import
    CountBaseName over the members tuple. */
 ```
 
-### `ExtractLoneSymbol.type` (`packages/codegen/src/grammar-shapes/enrich-type.ts:133`)
+### `ExtractLoneSymbol` (`packages/codegen/src/grammar-shapes/enrich-type.ts:45`)
 
 ```text
 // >1 SYMBOL -> too complex
 ```
 
-### `ExtractLoneSymbol` (`packages/codegen/src/grammar-shapes/enrich-type.ts:138`)
-
-#### body (`packages/codegen/src/grammar-shapes/enrich-type.ts:138`)
-
 ```text
 // non-anon, non-symbol -> too complex
 ```
 
-### `CountBase` (`packages/codegen/src/grammar-shapes/enrich-type.ts:170`)
+### `CountBase` (`packages/codegen/src/grammar-shapes/enrich-type.ts:91`)
 
 ```text
 // Count how many members share a given base field name (for uniqueness).
 ```
 
-### `WrapShape1` (`packages/codegen/src/grammar-shapes/enrich-type.ts:192`)
+### `WrapShape1` (`packages/codegen/src/grammar-shapes/enrich-type.ts:112`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -499,7 +458,13 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `EnrichRepeatContent` (`packages/codegen/src/grammar-shapes/enrich-type.ts:251`)
+### `EnrichMember.type` (`packages/codegen/src/grammar-shapes/enrich-type.ts:140`)
+
+```text
+// Shape 2
+```
+
+### `EnrichRepeatContent` (`packages/codegen/src/grammar-shapes/enrich-type.ts:164`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -509,7 +474,7 @@ axis DRY and introduce no runtime cycle — the primitives don't import
 // ---------------------------------------------------------------------------
 ```
 
-### `EnrichRule` (`packages/codegen/src/grammar-shapes/enrich-type.ts:261`)
+### `EnrichRule` (`packages/codegen/src/grammar-shapes/enrich-type.ts:168`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -571,5 +536,26 @@ axis DRY and introduce no runtime cycle — the primitives don't import
  * `supertypeNames` instead. Nothing depends on the typed field (the runtime
  * cross-check reads the raw `require`; the type-level supertype set is the
  * hardcoded `RustSupertypes`).
+ */
+```
+
+### `grammar-shapes/grammar-shape.rust.ts` (module)
+
+```text
+/**
+ * grammar-shape.rust.ts — GENERATED literal+tuple-preserving emit of the
+ * RAW upstream tree-sitter-rust grammar.json.
+ *
+ * Emitted with `as const` so every STRING value stays a string LITERAL,
+ * every rule name stays a literal key, and every JSON array becomes a
+ * readonly TUPLE (positional indexing survives). A plain
+ * `resolveJsonModule` import would widen all of these to
+ * `string` / `T[]` and destroy the discriminants + tuple indices the
+ * recursive deriver and path-key `Get` depend on.
+ *
+ * DO NOT hand-edit. Regenerate via grammar-shapes/emit-grammar-shape.mjs.
+ *
+ * Source (realpath, same pnpm-store entry as the production base import):
+ *   node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/src/grammar.json
  */
 ```

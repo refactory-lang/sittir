@@ -89,7 +89,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:291`)
+#### body
 
 ```text
 // Invert to twin → distinct hidden bodies.
@@ -118,7 +118,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:103`)
+#### body
 
 ```text
 // PolymorphRule was removed; the built-in skip-set is always empty.
@@ -126,7 +126,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // polymorphVariants metadata threaded through normalize.ts).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:110`)
+#### body
 
 ```text
 // §4c content-collision: count the UNNAMED content slots the kind's body
@@ -144,7 +144,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // predicate assemble.ts uses to classify 'pattern' (imported, not mirrored).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:130`)
+#### body
 
 ```text
 // Always blocking here — accepted-floor exceptions are applied later,
@@ -155,14 +155,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // kind in ANY grammar.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:147`)
+#### body
 
 ```text
 // Skip any kind that belongs to the polymorph system (shape ①/②/③ below
 // treat the variant/promotePolymorph machinery as already-correct dispatch).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:151`)
+#### body
 
 ```text
 // Determine whether the top-level rule body is in slot position.
@@ -172,14 +172,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // in slot position (it is the rule itself, not a slot).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:157`)
+#### body
 
 ```text
 // Top-level body of an inline helper is in repeat/optional slot position
 // (not a choice arm), so inChoiceArm=false at the top level.
 ```
-
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:159`)
 
 ```text
 /* inChoiceArm= */
@@ -206,14 +204,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:177`)
+#### body
 
 ```text
 // Only check if in a slot-creating position — a top-level rule body
 // seq is the rule itself, not a nested seq inside a slot.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:182`)
+#### body
 
 ```text
 // Recurse into members. A seq member's position context is inherited
@@ -221,25 +219,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // already in slot position is also in slot position).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:192`)
+#### body
 
 ```text
 // Content of a repeat is in slot position (genuine group-lift position).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:194`)
-
 ```text
 /* inSlotPosition= */
 ```
-
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:194`)
 
 ```text
 /* inChoiceArm= */
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:198`)
+#### body
 
 ```text
 // Each choice arm is in slot position per collectSlots' union semantics,
@@ -247,20 +241,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // group-lift violations (the choice already forms a single union slot).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:208`)
+#### body
 
 ```text
 // Simplified rules normally have wrappers deleted, but handle
 // defensively. Content is in slot position (genuine group-lift position).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:221`)
+#### body
 
 ```text
 // Transparent structural wrappers — propagate current slot position.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:226`)
+#### body
 
 ```text
 // Leaf — nothing to walk.
@@ -304,19 +298,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:368`)
+#### body
 
 ```text
 // Distribute: the seq itself emits no slot; sum its members.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:373`)
+#### body
 
 ```text
 // Transparent wrappers — their content's count is this node's count.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:377`)
+#### body
 
 ```text
 // Everything else is either a slot boundary (nonterminal → 1) or a
@@ -347,14 +341,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:388`)
+#### body
 
 ```text
 // A field-named seq is a single named slot — do not distribute. Only an
 // UNNAMED seq distributes (sums its members' content slots).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:397`)
+#### body
 
 ```text
 // Mirror collectSlots' CHOICE routing (same predicate, imported):
@@ -364,7 +358,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (a true union) stays a single slot boundary, counted below.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:403`)
+#### body
 
 ```text
 // Arms are mutually exclusive and same-named slots merge across
@@ -379,19 +373,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** A slot boundary that resolves to the generic `content` storage name. */
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:416`)
-
 ```text
 // terminal — emits no slot
 ```
-
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:417`)
 
 ```text
 // named slot
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:419`)
+#### body
 
 ```text
 // storageName is the single named kind iff exactly one named kind AND no
@@ -408,7 +398,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:445`)
+#### body
 
 ```text
 // string / pattern / enum / indent / dedent / newline / terminal / token
@@ -470,27 +460,27 @@ applied here instead, mirroring the `storagename-collision` override. The other
 three `SlotGroupingShape` codes always push `canProceed: true` at their own
 construction sites, so this override never touches them.
 
-### `fromParseKindCollision` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:42`)
+### `fromParseKindCollision` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:34`)
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:42`)
+#### body
 
 ```text
 // Forward the producer's message/severity/canProceed verbatim rather than
 // regenerating — keeps the wording single-sourced in the producer.
 ```
 
-### `fromDeriveShape` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:64`)
+### `fromDeriveShape` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:52`)
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:64`)
+#### body
 
 ```text
 // canProceed: true — derive-shape issues are surfaced as informational
 // warnings; codegen continues so all issues are visible in one pass.
 ```
 
-### `fromAssembleWarning` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:72`)
+### `fromAssembleWarning` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:67`)
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:72`)
+#### body
 
 ```text
 // typename-collision is auto-resolved at assemble time (the rename already
@@ -498,22 +488,22 @@ construction sites, so this override never touches them.
 // unresolved collisions keep 'warning'.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:83`)
+#### body
 
 ```text
 // Assemble warnings are observational — codegen continues.
 ```
 
-### `collectGrammarDiagnosticsForGrammar` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:188`)
+### `collectGrammarDiagnosticsForGrammar` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:173`)
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:188`)
+#### body
 
 ```text
 // Link's own sink carries the kindId stamp-miss report (the per-build
 // phantom-kind inventory) when id tables are supplied.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:192`)
+#### body
 
 ```text
 // Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
@@ -523,14 +513,14 @@ construction sites, so this override never touches them.
 // absent from the persisted grammar-diagnostics.json / validation report.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:211`)
+#### body
 
 ```text
 // §D-2c content-alias injectivity — sole consumer of the diagnostic-only
 // contentAliasedTo map (empty today; guards a future violation).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:246`)
+#### body
 
 ```text
 // Drop diagnostics for a kind this grammar's own override provably
@@ -539,7 +529,7 @@ construction sites, so this override never touches them.
 // regardless of code.
 ```
 
-### `module` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:1`)
+### `compiler/diagnostics/slot-grouping.ts` (module)
 
 ```text
 /**
@@ -587,7 +577,7 @@ construction sites, so this override never touches them.
  */
 ```
 
-### `SlotGroupingShape` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:64`)
+### `SlotGroupingShape` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:20`)
 
 ```text
 // All-text shape predicate: `isAllTextShape` is imported from assemble.ts (the
@@ -609,7 +599,7 @@ construction sites, so this override never touches them.
 // ---------------------------------------------------------------------------
 ```
 
-### `checkSeq` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:231`)
+### `checkSeq` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:121`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -617,7 +607,7 @@ construction sites, so this override never touches them.
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:244`)
+#### body
 
 ```text
 // FALSE POSITIVE guard: a multi-slot seq inside a CHOICE arm is NOT a genuine
@@ -627,7 +617,7 @@ construction sites, so this override never touches them.
 // (inChoiceArm === false) are genuine group-lift candidates.
 ```
 
-### `checkRepeat` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:265`)
+### `checkRepeat` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:146`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -635,33 +625,33 @@ construction sites, so this override never touches them.
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:276`)
+#### body
 
 ```text
 // Shape ③: repeat(choice(..., literal, ...)) — heterogeneous; flag as ambiguous.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:294`)
+#### body
 
 ```text
 // No literal in the choice → single union slot → shape ②.
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:299`)
+#### body
 
 ```text
 // Shape ②: repeat/repeat1 of a single symbol or supertype (not field-named).
 ```
 
-### `checkRepeatOfSymbol` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:309`)
+### `checkRepeatOfSymbol` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:177`)
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:309`)
+#### body
 
 ```text
 // Only symbol or supertype, or a choice of symbols/supertypes (all union, no literals).
 ```
 
-#### body (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:318`)
+#### body
 
 ```text
 // Already field-named → the author has already named this slot → silent.

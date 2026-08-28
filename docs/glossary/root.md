@@ -82,7 +82,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:83`)
+#### body
 
 ```text
 // Unreadable existing file — fall through and overwrite.
@@ -134,7 +134,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:140`)
+#### body
 
 ```text
 // enrich() ran as part of producing `rawGrammar` above and attached its
@@ -147,7 +147,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // as every other grammar diagnostic source.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:161`)
+#### body
 
 ```text
 // Non-blocking (and allow-listed) diagnostics are always surfaced as
@@ -155,7 +155,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // during `sittir gen`/regen, even when none are blocking.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:168`)
+#### body
 
 ```text
 // Persist the COMPLETE diagnostic set (blocking + non-blocking) — writing
@@ -212,7 +212,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:237`)
+#### body
 
 ```text
 // Codegen IS the writer of the per-grammar manifest. Internal validator runs
@@ -225,7 +225,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // not run this function and therefore do not inherit this env.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:256`)
+#### body
 
 ```text
 // Grammar-diagnostics preflight gate. Blocking diagnostics (canProceed ===
@@ -235,7 +235,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // halting; --allow-diagnostic remains available for any future blocking code.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:275`)
+#### body
 
 ```text
 // Surface slot-grouping diagnostics from the normalize phase. These are
@@ -244,13 +244,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the preflight and generate() pipelines are separate.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:286`)
+#### body
 
 ```text
 // Write source files
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:300`)
+#### body
 
 ```text
 // Write per-rule `.jinja` files to packages/<grammar>/templates/
@@ -258,7 +258,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // whose rule kind is no longer in the grammar.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:305`)
+#### body
 
 ```text
 // Static-seam-resolution residue report: how many template boundaries
@@ -270,7 +270,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (and a reviewer) can see WHICH sites changed, not just the counts.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:340`)
+#### body
 
 ```text
 // --- grammar-owned Rust render-module emission (spec 012 T017) ---
@@ -281,7 +281,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Rust-side derivations in lockstep.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:360`)
+#### body
 
 ```text
 // Copy the per-kind `.jinja` files into the grammar crate's templates/
@@ -290,14 +290,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // plan) are removed so regenerations don't accumulate dead templates.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:375`)
+#### body
 
 ```text
 // Write per-grammar kind_ids.rs (Phase B: KindID runtime migration).
 // This file exports one pub const per kind matching the TS-side TSKindId enum.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:389`)
+#### body
 
 ```text
 // Rebuild the corresponding N-API binding so the native render path
@@ -307,7 +307,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // previous templates baked in. Opt out with --no-build-native.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:396`)
+#### body
 
 ```text
 // Dev/gate loop can build the napi crate in DEBUG via --native-debug.
@@ -322,7 +322,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // from ambient shell state.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:424`)
+#### body
 
 ```text
 // Workspace-wide compile check — codegen changes in render-module.ts
@@ -339,14 +339,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // workspace, the earlier ones were redundant.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:454`)
+#### body
 
 ```text
 // Write node model (single on-disk metadata source — PR-K folded the
 // former factory-map.json5 sections in here).
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:458`)
+#### body
 
 ```text
 // Write suggested overrides log (T042f) next to grammar.sittir.ts at the
@@ -356,19 +356,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // run so re-enabling the emitter later naturally recreates it.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:470`)
+#### body
 
 ```text
 // Write tests
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:474`)
+#### body
 
 ```text
 // Write vitest config
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:477`)
+#### body
 
 ```text
 // --- Renderability check: every named kind in node-types.json must be
@@ -376,7 +376,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Uses the NodeMap directly for a structural truth check.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:485`)
+#### body
 
 ```text
 // Collected diagnostic: kinds whose CHOICE slot has no grammar field name.
@@ -384,7 +384,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // give it an explicit `field('<name>', ...)` in `packages/<lang>/grammar.sittir.ts`.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:496`)
+#### body
 
 ```text
 // Warning-only: these are typically anonymous / alias-target kinds that
@@ -393,7 +393,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // throw — but that's a real consumer bug, not a codegen failure.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:505`)
+#### body
 
 ```text
 // Write the per-grammar generated.manifest.json after all bulk writes complete
@@ -404,7 +404,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // which is intentionally excluded from the manifest (see pathsFor()).
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:514`)
+#### body
 
 ```text
 // Post-regen emit diff: show what THIS run changed in the generated output,
@@ -415,7 +415,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the tracked roots, so the later validation write does not muddy the report.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:530`)
+#### body
 
 ```text
 // Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
@@ -423,7 +423,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // shrinking `deriveFields` / `deriveChildren` to trivial walks.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:535`)
+#### body
 
 ```text
 // Return the assembled NodeMap so the cli orchestrator can thread it into the
@@ -454,13 +454,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:547`)
+#### body
 
 ```text
 // Set BEFORE any generate/validate work (mirrors the top-level set in cli.ts).
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:552`)
+#### body
 
 ```text
 // Auto-chain: with --all, by default run transpile + tree-sitter generate
@@ -478,7 +478,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // AST mismatches in round-trip tests.
 ```
 
-#### body (`packages/codegen/src/run-codegen.ts:578`)
+#### body
 
 ```text
 // Run the core codegen (generate → write all files → renderable → manifest
@@ -629,7 +629,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `module` (`packages/codegen/src/oxfmt-config.ts:1`)
+### `oxfmt-config.ts` (module)
 
 ```text
 /**
@@ -645,6 +645,24 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `rootDir`, and Node can't resolve it once only `dist` is packaged.
  */
 ```
+
+### `OXFMT_CONFIG.ignorePatterns` (`packages/codegen/src/oxfmt-config.ts:11`)
+
+#### body
+
+```text
+// Ad-hoc probes and debug scripts — see scratch/README.md. Nothing
+// there gates a commit, so the formatter has no business rewriting it.
+```
+
+#### body
+
+```text
+// Producer-owned serialization: collect-baseline.ts emits a strict
+// 4-space-indent contract — a formatter pass here breaks refresh diffs.
+```
+
+### `run-codegen.ts` (module)
 
 ```text
 /**
@@ -662,6 +680,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `index.ts` (module)
+
 ```text
 /**
  * @sittir/codegen — public surface.
@@ -669,20 +689,4 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * The five-phase pipeline (evaluate → link → normalize → assemble → emit)
  * is exposed as `generate`.
  */
-```
-
-### `OXFMT_CONFIG.ignorePatterns` (`packages/codegen/src/oxfmt-config.ts:34`)
-
-#### body (`packages/codegen/src/oxfmt-config.ts:34`)
-
-```text
-// Ad-hoc probes and debug scripts — see scratch/README.md. Nothing
-// there gates a commit, so the formatter has no business rewriting it.
-```
-
-#### body (`packages/codegen/src/oxfmt-config.ts:37`)
-
-```text
-// Producer-owned serialization: collect-baseline.ts emits a strict
-// 4-space-indent contract — a formatter pass here breaks refresh diffs.
 ```

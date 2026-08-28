@@ -33,7 +33,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:79`)
+#### body
 
 ```text
 // Copy the base grammar's external scanner sources alongside the
@@ -44,7 +44,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // "Undefined symbols ... external_scanner_*".
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:87`)
+#### body
 
 ```text
 // Nested package.json serves two purposes:
@@ -56,14 +56,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 //      to identify the grammar.
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:112`)
+#### body
 
 ```text
 // Tree-sitter.json — required for ABI 15 (current). Without this,
 // tree-sitter generate falls back to ABI 14 with a warning.
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:147`)
+#### body
 
 ```text
 // The DSL primitives from @sittir/codegen/dsl get inlined so
@@ -76,7 +76,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // runtime, so the externalized base call resolves there.
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:156`)
+#### body
 
 ```text
 // esbuild's CJS format wraps the default export as
@@ -88,7 +88,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // flat module.exports is a no-op because `.default` is undefined.
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:166`)
+#### body
 
 ```text
 // `write: false` + writeFileIfChanged below: the bundle is
@@ -97,7 +97,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // compileParser's regenerate-vs-skip guard honest.
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:185`)
+#### body
 
 ```text
 // Look up by explicit path keys instead of `Object.values(...)[0]`.
@@ -119,7 +119,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:206`)
+#### body
 
 ```text
 // Narrow to MODULE_NOT_FOUND — we expect "package doesn't exist"
@@ -127,7 +127,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // malformed package.json, or anything else. Let those surface.
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:217`)
+#### body
 
 ```text
 // Copy only scanner sources — parser.c and grammar.json get
@@ -150,7 +150,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:234`)
+#### body
 
 ```text
 // Match ANY tree-sitter-<lang> package import — including
@@ -165,7 +165,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // tree-sitter-typescript-tsx, tree-sitter-julia-ts, ...).
 ```
 
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:246`)
+#### body
 
 ```text
 // Strip any leading path components down to the
@@ -223,52 +223,6 @@ build fails with "Missing symbols" for the
  */
 ```
 
-### `module` (`packages/codegen/src/transpile/transpile-overrides.ts:1`)
-
-```text
-/**
- * transpile/transpile-overrides.ts — TypeScript → CommonJS bridge for
- * tree-sitter CLI consumption.
- *
- * Sittir's pipeline loads `packages/<lang>/grammar.sittir.ts` directly via
- * `import()` (handled by tsx/Node's TS loader). Tree-sitter's CLI
- * cannot — it expects a CommonJS `grammar.js` file that calls the
- * baseline DSL functions (`grammar`, `seq`, `choice`, ...) which it
- * provides as globals via its own runtime.
- *
- * This transpile step bridges the two: it reads `grammar.sittir.ts`, runs
- * esbuild in CJS+bundle mode, and writes
- * `packages/<lang>/.sittir/grammar.js`. The `.sittir/` directory is
- * gitignored — it's a build artifact, not source.
- *
- * The sittir DSL extensions (`enrich`, `transform`, `role`, `alias`,
- * `insert`, `replace`) are bundled inline so the transpiled file has
- * no external module references. The base tree-sitter grammar package
- * (`tree-sitter-rust/grammar.js` etc.) stays external — tree-sitter's
- * CLI resolves it the same way it always does.
- */
-```
-
-### `writeFileIfChanged` (`packages/codegen/src/transpile/transpile-overrides.ts:29`)
-
-```text
-/**
- * Content-aware write: skip when the file already holds identical bytes.
- * Not just an mtime nicety — `compileParser`'s regenerate-vs-skip guard
- * compares `grammar.js`'s mtime against the compiled parser's, and a
- * same-content rewrite here would force a full (slow, non-atomic)
- * `tree-sitter generate` downstream, whose in-place rewrite of
- * `.sittir/src/grammar.json` races any concurrent reader hashing it
- * (the generated-manifest check under parallel vitest workers).
- */
-```
-
-#### body (`packages/codegen/src/transpile/transpile-overrides.ts:45`)
-
-```text
-// Unreadable existing file — fall through and overwrite.
-```
-
 ### `pruneOrphanedPlaceholderRules` (`packages/codegen/src/transpile/prune-grammar-json.ts:6`)
 
 ```text
@@ -299,7 +253,7 @@ build fails with "Missing symbols" for the
  */
 ```
 
-#### body (`packages/codegen/src/transpile/prune-grammar-json.ts:45`)
+#### body
 
 ```text
 // Names the grammar machinery references outside rule bodies — roots the
@@ -308,4 +262,50 @@ build fails with "Missing symbols" for the
 // visible-group mint there, so an orphaned mint would keep itself alive
 // through its own bookkeeping entries — those entries are dead alongside
 // the rule and are filtered below instead.
+```
+
+### `transpile/transpile-overrides.ts` (module)
+
+```text
+/**
+ * transpile/transpile-overrides.ts — TypeScript → CommonJS bridge for
+ * tree-sitter CLI consumption.
+ *
+ * Sittir's pipeline loads `packages/<lang>/grammar.sittir.ts` directly via
+ * `import()` (handled by tsx/Node's TS loader). Tree-sitter's CLI
+ * cannot — it expects a CommonJS `grammar.js` file that calls the
+ * baseline DSL functions (`grammar`, `seq`, `choice`, ...) which it
+ * provides as globals via its own runtime.
+ *
+ * This transpile step bridges the two: it reads `grammar.sittir.ts`, runs
+ * esbuild in CJS+bundle mode, and writes
+ * `packages/<lang>/.sittir/grammar.js`. The `.sittir/` directory is
+ * gitignored — it's a build artifact, not source.
+ *
+ * The sittir DSL extensions (`enrich`, `transform`, `role`, `alias`,
+ * `insert`, `replace`) are bundled inline so the transpiled file has
+ * no external module references. The base tree-sitter grammar package
+ * (`tree-sitter-rust/grammar.js` etc.) stays external — tree-sitter's
+ * CLI resolves it the same way it always does.
+ */
+```
+
+### `writeFileIfChanged` (`packages/codegen/src/transpile/transpile-overrides.ts:7`)
+
+```text
+/**
+ * Content-aware write: skip when the file already holds identical bytes.
+ * Not just an mtime nicety — `compileParser`'s regenerate-vs-skip guard
+ * compares `grammar.js`'s mtime against the compiled parser's, and a
+ * same-content rewrite here would force a full (slow, non-atomic)
+ * `tree-sitter generate` downstream, whose in-place rewrite of
+ * `.sittir/src/grammar.json` races any concurrent reader hashing it
+ * (the generated-manifest check under parallel vitest workers).
+ */
+```
+
+#### body
+
+```text
+// Unreadable existing file — fall through and overwrite.
 ```

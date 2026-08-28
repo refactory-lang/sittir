@@ -58,14 +58,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:594`)
+#### body
 
 ```text
 // Callback form (raw author grammar): `$ => [$._expr, ...]`. Invoke
 // with a symbol-shaped proxy and harvest the names.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:597`)
+#### body
 
 ```text
 // Proxy that returns a SYMBOL-shaped object for any property access —
@@ -76,7 +76,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // supertypes:.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:620`)
+#### body
 
 ```text
 // Pre-evaluated form: tree-sitter's native grammar() and sittir's
@@ -164,7 +164,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1546`)
+#### body
 
 ```text
 // The name is a convention (`_<kw>_marker`), not a reservation — a base
@@ -220,32 +220,28 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  optional(seq) with non-anon members, or non-symbol leaves). */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1607`)
+#### body
 
 ```text
 // Shape 1: bare SYMBOL.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1619`)
+#### body
 
 ```text
 // Shape 2: optional(SYMBOL).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1627`)
+#### body
 
 ```text
 // Shape 3: optional(seq(SYMBOL, <anon…>)) — exactly one SYMBOL,
 // all other seq members anonymous (STRING / PATTERN).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1635`)
-
 ```text
 // >1 SYMBOL — too complex
 ```
-
-#### body (`packages/codegen/src/dsl/enrich.ts:1638`)
 
 ```text
 // non-anonymous, non-symbol — too complex
@@ -261,7 +257,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1692`)
+#### body
 
 ```text
 // STRING / PATTERN / TOKEN / BLANK — leaves with no symbols.
@@ -299,33 +295,33 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1822`)
+#### body
 
 ```text
 // Peel prec wrappers on the member itself.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1831`)
+#### body
 
 ```text
 // Peel prec wrappers on the repeat's content.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1844`)
+#### body
 
 ```text
 // Same supertype-only-bare gate as `applySymbolToField` —
 // see that function for the rationale.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1850`)
+#### body
 
 ```text
 // Direct-position counts within the repeat's inner seq drive the
 // numbered-duplicate naming; deeper-nested repeats disqualify entirely.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1874`)
+#### body
 
 ```text
 // Skip when the same symbol kind appears in the outer seq — promoting
@@ -333,7 +329,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (outer bare symbol), which variadic factories can't reconstruct.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1898`)
+#### body
 
 ```text
 // Rebuild: inner seq → inner prec stack → repeat → member prec stack.
@@ -358,20 +354,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1919`)
+#### body
 
 ```text
 // Peel prec wrappers on the inner content (e.g.
 // `repeat(prec.left(seq($.a, $.b)))`).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1929`)
+#### body
 
 ```text
 // Same supertype-only-bare gate as `applySymbolToField`.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1939`)
+#### body
 
 ```text
 // Count symbols in further-nested repeats within the inner seq so
@@ -379,7 +375,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // nested repeat is disqualified from numbering/wrapping.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1975`)
+#### body
 
 ```text
 // Rebuild: inner seq → inner prec stack → repeat → outer prec stack
@@ -434,20 +430,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:877`)
+#### body
 
 ```text
 // Already-lifted separator attribute.
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:880`)
+#### body
 
 ```text
 // Raw form: repeat(seq(SEP, x)) — detect the separator from the content
 // via the shared list-pattern detector (same logic evaluate's lift uses).
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:892`)
+#### body
 
 ```text
 // Falls through to the next seq member when the choice has no
@@ -506,8 +502,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2425`)
-
 ```text
 // consume the stranded trailing separator
 ```
@@ -533,7 +527,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2444`)
+#### body
 
 ```text
 // PR 3 (2026-07-21 union-slot design): the innermost PREC wrapper (if
@@ -549,7 +543,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // re-apply the SAME wrapper to its own registered body.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2456`)
+#### body
 
 ```text
 // The nearest enclosing `field(name, ...)` this position is STILL
@@ -561,19 +555,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // over an opaque ordinal when a group is hoisted from a fielded slot.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2465`)
+#### body
 
 ```text
 // Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2468`)
+#### body
 
 ```text
 // Post-order: recurse into the seq body FIRST, then classify.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2484`)
+#### body
 
 ```text
 // Empty-matching body: tree-sitter rejects named rules that match the
@@ -582,14 +576,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // counter slot for its own numbering.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2489`)
+#### body
 
 ```text
 // Rebuild wrapper with the recursed (possibly updated) seq body, but
 // leave this position un-hoisted.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2501`)
+#### body
 
 ```text
 // Inline-safe: exactly one field/symbol slot after dropping literals.
@@ -597,20 +591,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // clauseHoistSynthName increments the counter internally.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2506`)
+#### body
 
 ```text
 // Record which parent's body this hoist was minted from — see
 // `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs this.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2513`)
+#### body
 
 ```text
 // CHOICE[seq, BLANK] form
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2520`)
+#### body
 
 ```text
 // name === null: collision — skip but still count the position.
@@ -618,7 +612,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // before the collision was detected — see that function's comments.)
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2525`)
+#### body
 
 ```text
 // Inline-unsafe: multi-slot or bare-choice body. Surface it as a
@@ -642,7 +636,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // invariant is cheap to preserve).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2556`)
+#### body
 
 ```text
 // Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
@@ -650,7 +644,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // expanded seq). Classify ONCE here; read in enrich() at clauseGroupNames.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2560`)
+#### body
 
 ```text
 // Record which parent's body this visible-group hoist was minted
@@ -660,13 +654,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // override author's own text).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2566`)
+#### body
 
 ```text
 // Pass 1: symbol ref to the hidden rule (mirrors makeGroupLiftSymbol).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2568`)
+#### body
 
 ```text
 // Pass 2: wrap in a visible alias so the inline-unsafe group surfaces
@@ -674,13 +668,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // transform-path travels through it and link mints the kind.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2581`)
+#### body
 
 ```text
 // aliasName === null: collision — leave inline (un-aliased).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2594`)
+#### body
 
 ```text
 // Optional position with a NON-seq body (optional(seq) was peeled above).
@@ -697,13 +691,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // exactly as a `CHOICE[content, BLANK]` non-BLANK arm.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2631`)
+#### body
 
 ```text
 // Single non-BLANK arm: no siblings, no leading-name collisions.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2634`)
+#### body
 
 ```text
 // The whole optional content is still the field's logical
@@ -711,19 +705,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // seq/choice member boundary) — carry the field name in.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2644`)
+#### body
 
 ```text
 // CHOICE[content, BLANK] spelling — swap the non-BLANK member.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2653`)
+#### body
 
 ```text
 // Descend into seq members.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2657`)
+#### body
 
 ```text
 // Pre-fold: pull a separated-list's stranded trailing `optional(sep)` INTO
@@ -731,7 +725,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // below captures the whole list (head + repeat + trailing) as one group.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2680`)
+#### body
 
 ```text
 // Run hoist: a flank-carrying separated list INLINE among this seq's
@@ -746,7 +740,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // paths — carving a sub-run out of it would strand its head element.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2694`)
+#### body
 
 ```text
 // The empty-matchable tail run `repeat(elem sep) elem?` hoists as
@@ -757,21 +751,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // node-free in the parent.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2701`)
+#### body
 
 ```text
 // Runtime-native constructors so each pipeline gets ITS optional
 // spelling (sittir: OPTIONAL; tree-sitter CLI: CHOICE[X, BLANK]).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2735`)
+#### body
 
 ```text
 // Descend into choice branches that are NOT optional(seq) wrappers
 // (those were handled above via peelOptionalSeq).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2739`)
+#### body
 
 ```text
 /* Permutable-modifier arms (isPermutationChoice): decline minting —
@@ -781,7 +775,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 		   same slot the same way. */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2750`)
+#### body
 
 ```text
 // PR 3 (2026-07-21 union-slot design): leading-symbol collisions
@@ -794,7 +788,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // config) keeps doing so, unimpeded.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2781`)
+#### body
 
 ```text
 // PR 3 (2026-07-21 union-slot design): a bare choice-arm position
@@ -815,13 +809,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // enum slot instead.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2820`)
+#### body
 
 ```text
 // Descend into repeat / repeat1 / prec wrappers.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2824`)
+#### body
 
 ```text
 // PR 3 (2026-07-21 union-slot design): entering a PREC wrapper
@@ -832,7 +826,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // gets swapped out wherever it's applied later.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2848`)
+#### body
 
 ```text
 // Descend into field content (a field-wrapped optional(seq) is also a target).
@@ -907,7 +901,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2938`)
+#### body
 
 ```text
 // `path` addresses a real, editable location in the TOP-LEVEL rule passed
@@ -924,13 +918,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // and must never be handed to `rewriteUnaliasAt`.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2969`)
-
 ```text
 // do not descend into the alias's own content
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2976`)
+#### body
 
 ```text
 // A bare reference to a rule whose OWN body is a pure CHOICE gets
@@ -1024,7 +1016,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3048`)
+#### body
 
 ```text
 // Bucket by `(slotKey ?? targetName, targetName)` — NOT `targetName` alone.
@@ -1036,7 +1028,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // assemble-time caller's use of the resolved slot name).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3064`)
+#### body
 
 ```text
 // Per-candidate resolution: 'drop' (visible storage kind — bare content
@@ -1044,7 +1036,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // faithful new ALIAS node with the same content/named, stripped value).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3070`)
+#### body
 
 ```text
 // Retarget names already claimed EARLIER in THIS call (across all buckets).
@@ -1056,7 +1048,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // pre-existing name-collision guard against `rulesBag`/etc.).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3080`)
+#### body
 
 ```text
 // A collision needs at least one ALIAS site (only aliasing can make a
@@ -1064,7 +1056,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // overall sharing the target name.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3091`)
+#### body
 
 ```text
 // Representative ("this parse kind's canonical shape") signature. A
@@ -1082,7 +1074,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // collision unresolved. Anchoring on the native `y` fixes that.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3121`)
+#### body
 
 ```text
 // diagnoseParseKindCollisions reasons in aggregate over the bucket and
@@ -1096,14 +1088,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // retarget vs. decline-with-original-severity below.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3142`)
+#### body
 
 ```text
 // Empty stripped name (a storage kind that is all underscores, e.g.
 // `_`): there's no valid name to retarget to — decline.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3145`)
+#### body
 
 ```text
 // Already claimed by an EARLIER retarget in this same call (see
@@ -1111,7 +1103,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // non-injective collision under the stripped name.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3153`)
+#### body
 
 ```text
 // Name-collision guard: leave this candidate's alias untouched;
@@ -1119,7 +1111,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // downgrade or suppress it.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3162`)
+#### body
 
 ```text
 // Only downgrade/record the diagnostic when at least one candidate in
@@ -1153,7 +1145,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3214`)
+#### body
 
 ```text
 // Dedupe hit: reuse the already-assigned name. Do NOT increment the
@@ -1161,13 +1153,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // created. Inject into clauseGroupRules if not there yet.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3222`)
+#### body
 
 ```text
 // Increment FIRST so the slot is reserved before any collision check.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3225`)
+#### body
 
 ```text
 // Collision guard: if base.grammar.rules already has this name, skip.
@@ -1201,7 +1193,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3301`)
+#### body
 
 ```text
 // PR 3 (2026-07-21 union-slot design): the PREC wrapper (if any)
@@ -1214,7 +1206,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // didn't exist in the un-extracted grammar.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3310`)
+#### body
 
 ```text
 // The field this content was hoisted out of (e.g. `field('attributes',
@@ -1226,7 +1218,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // author already chose, rather than minting a fresh one.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3318`)
+#### body
 
 ```text
 // Ordinal-fallback suffix: 'arm' when the minted content is a CHOICE
@@ -1234,7 +1226,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the two constructs carry distinct name suffixes.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3332`)
+#### body
 
 ```text
 // Key on the registered body, not the bare content: two occurrences of
@@ -1243,14 +1235,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // silently vanishes (first-registered body wins at line below).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3347`)
+#### body
 
 ```text
 // Pass 1 — uniform hidden creation: register the seq body as a HIDDEN
 // rule so tree-sitter sees a single named symbol to alias.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3352`)
+#### body
 
 ```text
 // Separated-list naming: a flank-carrying list body names its kind after
@@ -1260,7 +1252,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // candidate is taken.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3366`)
+#### body
 
 ```text
 // Register the FLATTENED head-form spelling — the canonical shape the
@@ -1270,7 +1262,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the ambient prec wrapper re-applies around the flat seq.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3383`)
+#### body
 
 ```text
 // Also decline when a DIFFERENT group body already claimed this same
@@ -1297,13 +1289,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3410`)
+#### body
 
 ```text
 // See visibleGroupSynthName's `flavor` — armN for choice arms.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3415`)
+#### body
 
 ```text
 // The rule being promoted already HAS an identity — its own stripped
@@ -1340,7 +1332,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1130`)
+#### body
 
 ```text
 // A VISIBLE symbol is its own meaningful boundary for LR
@@ -1349,14 +1341,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // OWN leading symbol (descend into its body) is what matters.
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1144`)
+#### body
 
 ```text
 // A nested choice's own leading symbol is ambiguous (varies per
 // branch) — conservatively report none rather than pick one arm.
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1148`)
+#### body
 
 ```text
 // Single-content wrappers (optional/field/repeat/prec/token/...) — the
@@ -1415,7 +1407,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3632`)
+#### body
 
 ```text
 // Pure ref — NO inline body. Tree-sitter serializes any extra structural
@@ -1474,7 +1466,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3665`)
+#### body
 
 ```text
 // Pass a SYMBOL value so the runtime constructor sets named:true, value=name
@@ -1550,7 +1542,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:340`)
+#### body
 
 ```text
 /* Drop a SYMBOL slot that resolves to no rule body in `rulesBag` — a
@@ -1720,7 +1712,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:487`)
+#### body
 
 ```text
 /* Bare `repeat`/`repeat1` body — a LIST is one flat slot (e.g.
@@ -1739,7 +1731,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   `repeatHasGenuineSeparatorVariability`. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:503`)
+#### body
 
 ```text
 /* A bare `alias(content, $.name)` body is ALSO one flat slot — the alias
@@ -1754,7 +1746,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   slot-preservation crash, not a naming collision). */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:520`)
+#### body
 
 ```text
 /* A body containing a (possibly nested) top-level `repeat`/`repeat1` is a
@@ -1780,7 +1772,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   body. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:547`)
+#### body
 
 ```text
 /* The single slot must be a field or symbol (not a bare choice, repeat,
@@ -1821,7 +1813,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:567`)
+#### body
 
 ```text
 /* Member compatibility mirrors link's `classifyHiddenChoiceRule` supertype
@@ -1861,7 +1853,7 @@ the decline is the conservatism gate.
  *  docs/glossary/dsl.md. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:612`)
+#### body
 
 ```text
 /* Byte-identical arms are not a permutation delta — require at least two
@@ -1972,7 +1964,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-attrs.ts:17`)
+#### body
 
 ```text
 // `original` may be a wrapper-bearing (evaluate/link) rule where these
@@ -1984,7 +1976,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // established pattern (see `findRepeatFlag` in dsl/rule-transforms.ts).
 ```
 
-#### body (`packages/codegen/src/dsl/rule-attrs.ts:33`)
+#### body
 
 ```text
 // `nonterminal` is deliberately NOT transferred: every survivor a collapse
@@ -1993,7 +1985,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // deleted-wrapper fact would die with the discarded node.
 ```
 
-#### body (`packages/codegen/src/dsl/rule-attrs.ts:39`)
+#### body
 
 ```text
 // Lexical token facts (Link's flattened `token(...)` wrappers) have no
@@ -2001,7 +1993,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // immediate token kind loses its seam-free rendering.
 ```
 
-#### body (`packages/codegen/src/dsl/rule-attrs.ts:46`)
+#### body
 
 ```text
 // Preserve the rule's identity through collapse: renderRule.id === collapsedRule.id
@@ -2107,7 +2099,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:45`)
+#### body
 
 ```text
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`);
@@ -2117,7 +2109,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // is true (`combine(nonEmptyArray, single) → nonEmptyArray`, not `array`).
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:58`)
+#### body
 
 ```text
 /* Both are 'single' → required-one / default. Return `undefined` rather
@@ -2137,7 +2129,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:83`)
+#### body
 
 ```text
 // Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes REPEAT
@@ -2160,14 +2152,14 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:140`)
+#### body
 
 ```text
 /* A seq is flattened into its parent by `canonicalizeSeqOfLeaves`, so
 			   a seq-level multiplicity would be lost. Push into members instead. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:144`)
+#### body
 
 ```text
 /* A choice at a seq position is a SINGLE slot boundary (the field
@@ -2178,7 +2170,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 			   stamping of the arms is unnecessary here. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:155`)
+#### body
 
 ```text
 /* Propagate the pushed-down fieldName onto the choice NODE too (the
@@ -2188,7 +2180,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 			   an arbitrary arm kind (`block`). See python `function_definition.body`. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:175`)
+#### body
 
 ```text
 // Leaf: symbol / string / pattern / terminal / enum / supertype / etc.
@@ -2219,7 +2211,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:206`)
+#### body
 
 ```text
 /* grammar.inline is the single source of truth for inlining. Any
@@ -2242,7 +2234,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 			   gate — supertypes and lexeme leaves were already excluded upstream. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:232`)
+#### body
 
 ```text
 /* Preserve the referring symbol's pushed-down leaf attributes
@@ -2262,7 +2254,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 				   over, only rewrites refs within it. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:250`)
+#### body
 
 ```text
 /* Not inline-listed. Inline EVERY hidden helper ref, mirroring what
@@ -2282,7 +2274,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 			   gate below still excludes non-foldable shapes. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:274`)
+#### body
 
 ```text
 /* Combine the referring symbol's pushed-down attributes (multiplicity /
@@ -2311,7 +2303,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:305`)
+#### body
 
 ```text
 // `extractRepeatShape` finds a REPEAT/REPEAT1 wrapper node — the link-phase
@@ -2364,7 +2356,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:366`)
+#### body
 
 ```text
 // enum-shaped ChoiceRules fall through to default.
@@ -2379,31 +2371,27 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:374`)
-
 ```text
 // head is already multi — not a head+repeat pair
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:376`)
+#### body
 
 ```text
 // Idiom A: [E, E{array}]
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:379`)
-
 ```text
 // the array element absorbs the single head occurrence
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:382`)
+#### body
 
 ```text
 // Idiom B: [E, choice(sepString, E{array})]
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:391`)
+#### body
 
 ```text
 /* Fall back to the choice's separator-string arm, marking a
@@ -2413,7 +2401,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 			   check on the added `separator` key. */
 ```
 
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:413`)
+#### body
 
 ```text
 /* Fall back to the choice's separator-string arm, marking it a
@@ -2936,7 +2924,7 @@ registered but later unused still counts as a sibling.
 // Singleton-ordinal collapse — see docs/glossary/dsl.md (`collapseSingletonMintOrdinals`).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3268`)
+#### body
 
 ```text
 // The minted-rule bag is read again after this pass (clauseGroupNames
@@ -2976,7 +2964,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/builders.ts:100`)
+#### body
 
 ```text
 // The seq is the current rule: its identity wins over the survivor's,
@@ -3107,81 +3095,59 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-```text
-/**
- * @sittir/codegen/dsl — sittir's DSL layer for override files.
- *
- * This is the stable import surface for `packages/<lang>/grammar.sittir.ts`.
- * Override files import from here:
- *
- *     import { transform, role, enrich, field, alias } from '@sittir/codegen/dsl'
- *
- * Two categories of exports:
- *
- * **Pure sittir extensions** (no tree-sitter equivalent):
- *   - `transform` — override-authoring primitive that patches positions
- *     in an existing rule tree.
- *   - `role` — structural-whitespace annotation with per-grammar
- *     accumulator.
- *   - `enrich` — mechanical enrichment passes applied before the
- *     override's own rule callbacks run.
- *
- * **Sittir shadows of baseline tree-sitter DSL** (add one-arg shorthand;
- * two-arg calls delegate to the runtime-injected native):
- *   - `field(name)` — one-arg placeholder for `transform()` patches.
- *     Two-arg form delegates to the runtime's native `field()`.
- *   - `alias($.name)` — one-arg shorthand for `alias($.name, $.name)`.
- *     Two-arg form delegates to the runtime's native `alias()`.
- *
- * The remaining baseline tree-sitter DSL functions (`grammar`, `seq`,
- * `choice`, `optional`, `repeat`, `repeat1`, `token`, `prec`, `blank`)
- * are NOT exported from here — they're injected as globals by
- * `compiler/evaluate.ts` (sittir runtime) or by `tree-sitter` CLI
- * (transpiled output), mirroring tree-sitter's own convention where
- * grammar.js files call `grammar(...)` without importing it.
- */
-```
+### `PrecKind` (`packages/codegen/src/dsl/builders.ts:40`)
 
 ```text
-// Sittir-owned authoring type surface for grammar.sittir.ts.
-//
-// These ambient `declare global` signatures type the tree-sitter-INJECTED DSL
-// globals (`seq`/`choice`/`field`/…) over the sittir-owned `AuthoringRule`
-// vocabulary (grammar-shapes rules + bare literals), so authoring in grammar.sittir.ts
-// composes into the recursive rule types and gets IntelliSense.
-//
-// Why our own `AuthoringRule` and not tree-sitter's `RuleOrLiteral`: our rule
-// shapes are READONLY tuples (needed for the `as const` emit + path indexing),
-// which are NOT assignable to tree-sitter's MUTABLE `Rule`. Declaring the params
-// over `AuthoringRule` lets our rules compose into each other (the mismatch that
-// otherwise breaks `seq(choice(...))`). These merge with tree-sitter's ambient
-// `declare function seq` as overloads; ours matches the grammar-shapes args.
-// Scoped to overrides via tsconfig.grammar-sittir.json; codegen internals untouched.
-//
-// The declared set mirrors EXACTLY the runtime globals sittir injects
-// (compiler/evaluate.ts saveAndInjectDslGlobals): grammar, seq, choice,
-// optional, repeat, repeat1, sym, string, field, token, prec, alias, blank.
-// Do not declare a global here without a runtime counterpart there — a
-// bare-literal already types as `StringRule<S>` via `ToGrammarRule`, so no
-// `str()`/`pattern()` wrappers exist (or are needed) at runtime.
+// ---------------------------------------------------------------------------
+// RuleBuilder — context-injected rule construction strategy
+// ---------------------------------------------------------------------------
 ```
 
-```text
-/** Runtime-injected `string()` literal wrapper (see saveAndInjectDslGlobals). */
-```
+### `structuralBuilder.optional` (`packages/codegen/src/dsl/builders.ts:73`)
 
 ```text
-/**
- * dsl/rule-walker.ts — RuleWalker<R>: the one traversal engine (R12 PR-6).
- *
- * One canonical child-edge relation (`childrenOf`) + thin primitives over it.
- * The walker owns RECURSION, never DISPATCH: call sites keep exhaustive
- * `switch (rule.type)` arms (feedback_rule_type_discrimination).
- * Layering mirrors RuleBuilder: dsl-side class; compiler's BaseCtx binds an
- * instance over its rules map (+ diagnostics).
- * Spec: docs/superpowers/specs/2026-07-01-r12-rulewalker-design.md
- */
+// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
+// phase, while a single-content wrapper's own `content` field wants one
+// specific phase — same "narrow via AnyRule, cast back" convention as
+// rule-patterns.ts's `ruleChildren`.
 ```
+
+### `structuralBuilder.prec` (`packages/codegen/src/dsl/builders.ts:98`)
+
+```text
+// The evaluate-only PREC family collapses to four distinct type tags —
+// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
+// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
+```
+
+### `attributeBuilder.alias` (`packages/codegen/src/dsl/builders.ts:263`)
+
+```text
+// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
+// TARGET — the same provenance form link's own
+// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
+// one level down here: a SYMBOL content's own `.name` becomes
+// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:285`)
+
+```text
+// Alias of a literal: there is no storage rule to name (mirrors
+// link's own STRING-content branch, which stamps no
+// `aliasedFrom` either) — the literal text becomes the new
+// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
+```
+
+#### body (`packages/codegen/src/dsl/builders.ts:305`)
+
+```text
+// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
+// record — link never produces this shape (it collapses named
+// aliases to a SYMBOL ref before this point is reached).
+```
+
+### `dsl/rule-metadata.ts` (module)
 
 ```text
 /**
@@ -3225,6 +3191,70 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+### `dsl/authoring-globals.d.ts` (module)
+
+```text
+// Sittir-owned authoring type surface for grammar.sittir.ts.
+//
+// These ambient `declare global` signatures type the tree-sitter-INJECTED DSL
+// globals (`seq`/`choice`/`field`/…) over the sittir-owned `AuthoringRule`
+// vocabulary (grammar-shapes rules + bare literals), so authoring in grammar.sittir.ts
+// composes into the recursive rule types and gets IntelliSense.
+//
+// Why our own `AuthoringRule` and not tree-sitter's `RuleOrLiteral`: our rule
+// shapes are READONLY tuples (needed for the `as const` emit + path indexing),
+// which are NOT assignable to tree-sitter's MUTABLE `Rule`. Declaring the params
+// over `AuthoringRule` lets our rules compose into each other (the mismatch that
+// otherwise breaks `seq(choice(...))`). These merge with tree-sitter's ambient
+// `declare function seq` as overloads; ours matches the grammar-shapes args.
+// Scoped to overrides via tsconfig.grammar-sittir.json; codegen internals untouched.
+//
+// The declared set mirrors EXACTLY the runtime globals sittir injects
+// (compiler/evaluate.ts saveAndInjectDslGlobals): grammar, seq, choice,
+// optional, repeat, repeat1, sym, string, field, token, prec, alias, blank.
+// Do not declare a global here without a runtime counterpart there — a
+// bare-literal already types as `StringRule<S>` via `ToGrammarRule`, so no
+// `str()`/`pattern()` wrappers exist (or are needed) at runtime.
+```
+
+```text
+/** Runtime-injected `string()` literal wrapper (see saveAndInjectDslGlobals). */
+```
+
+### `token` (`packages/codegen/src/dsl/authoring-globals.d.ts:30`)
+
+```text
+// `token` / `prec` are callable VALUES with method properties, so they are
+// declared `const` with per-call-signature generics (an `interface` here
+// would declare a type, not the global value, and a generic param on the
+// container would make bare `token(...)` uninstantiable).
+```
+
+### `dsl/rule-walker.ts` (module)
+
+```text
+/**
+ * dsl/rule-walker.ts — RuleWalker<R>: the one traversal engine (R12 PR-6).
+ *
+ * One canonical child-edge relation (`childrenOf`) + thin primitives over it.
+ * The walker owns RECURSION, never DISPATCH: call sites keep exhaustive
+ * `switch (rule.type)` arms (feedback_rule_type_discrimination).
+ * Layering mirrors RuleBuilder: dsl-side class; compiler's BaseCtx binds an
+ * instance over its rules map (+ diagnostics).
+ * Spec: docs/superpowers/specs/2026-07-01-r12-rulewalker-design.md
+ */
+```
+
+### `RuleWalker.diagnostics` (`packages/codegen/src/dsl/rule-walker.ts:7`)
+
+```text
+/** Sink for future diagnostic-emitting walks (slot-grouping family). Public
+	 *  readonly (not #private) — nothing reads it yet; a private field would
+	 *  trip the unused-member lint. */
+```
+
+### `dsl/rule-attrs.ts` (module)
+
 ```text
 /**
  * compiler/rule-attrs.ts — shared attr-preservation helpers.
@@ -3237,6 +3267,8 @@ registered but later unused still counts as a sibling.
  * companion at those sites, lives in `dsl/rule-transforms.ts`.)
  */
 ```
+
+### `dsl/shared.ts` (module)
 
 ```text
 /**
@@ -3286,12 +3318,57 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+### `dsl/rule-transforms.ts` (module)
+
 ```text
 /**
  * dsl/rule-transforms.ts — shared, idempotent rule transforms and the
  * `RuleBuilder` construction strategy used across normalize/simplify.
  */
 ```
+
+### `LeafMultiplicity` (`packages/codegen/src/dsl/rule-transforms.ts:24`)
+
+```text
+// `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
+// missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
+```
+
+### `hasAnyField` (`packages/codegen/src/dsl/rule-transforms.ts:71`)
+
+```text
+// Genuinely link-phase only — see "Rule IR and snapshots" in
+// docs/compiler-phase-glossary.md for the phase-scoping rationale.
+```
+
+### `Mult` (`packages/codegen/src/dsl/rule-transforms.ts:223`)
+
+```text
+// ---------------------------------------------------------------------------
+// List-fusion pass — fuse a separated-list's head + repeat occurrences into
+// a single multi-valued slot.
+//
+// tree-sitter grammars author `sepBy1`/`commaSep1` lists in shapes that
+// `liftCommaSep` (evaluate) does not always collapse — notably when a choice
+// arm is an alias (`argument_list`) or the trailing separator lives in a
+// choice (`pattern_list`). After wrapper-deletion those survive as a HEAD
+// element (single) plus a REPEAT of the same element (array). Two idioms
+// are recognized inside a `seq` (after recursing children):
+//
+//   A. adjacent `[E, E{array|nonEmptyArray, sep?}]` where the two elements are
+//      structurally identical ignoring leaf attributes → fuse to the array E.
+//   B. `[E, choice(sepString, E{array|nonEmptyArray, sep?})]` → fuse to the
+//      array E, taking the choice's separator string as the trailing separator.
+// ---------------------------------------------------------------------------
+```
+
+### `fuseAtNode` (`packages/codegen/src/dsl/rule-transforms.ts:292`)
+
+```text
+// consume the repeat member too
+```
+
+### `dsl/rule-patterns.ts` (module)
 
 ```text
 /**
@@ -3324,6 +3401,464 @@ registered but later unused still counts as a sibling.
  * attributes.
  */
 ```
+
+### `classifyByType` (`packages/codegen/src/dsl/rule-patterns.ts:37`)
+
+```text
+// ---------------------------------------------------------------------------
+// Terminality — the per-rule-type decision table and the predicate over it
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+/* No separate ENUM case: enum-shaped ChoiceRules are classified under
+			   the CHOICE arm below. */
+```
+
+#### body
+
+```text
+/* Unconditionally nonterminal: a choice is a single union slot
+			   (literal-only = enum); a repeat captures a variable-length sequence
+			   (array slot) even when its content is terminal. */
+```
+
+#### body
+
+```text
+/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
+		   variant. */
+```
+
+#### body
+
+```text
+/* PREC family is stripped by evaluate.ts's `stripPrecedenceWrappers`
+		   before this runs — see that function's doc comment — so these
+		   cases are unreachable at runtime. Transparent single-child wrapper,
+		   same as TOKEN/FIELD above. String literals (not rule-types.ts
+		   consts): that module is deprecated for new imports — see its
+		   header. */
+```
+
+#### body
+
+```text
+/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by evaluate.ts's
+		   `normalizeImmediateTokens` before this runs — unreachable at
+		   runtime, transparent single-child wrapper like TOKEN. */
+```
+
+### `ruleChildren` (`packages/codegen/src/dsl/rule-patterns.ts:78`)
+
+#### body
+
+```text
+/* Narrow via AnyRule, cast back — children share the parent's phase by
+	   construction. Exhaustive over every AnyRule variant (no default
+	   fallthrough) so a newly added rule type fails compilation here instead
+	   of silently contributing no children — see classifyByType's own
+	   exhaustive switch for the sibling convention. */
+```
+
+#### body
+
+```text
+/* PREC family: stripped before this runs (see classifyByType's PREC
+		   comment) — unreachable at runtime, transparent single-child
+		   wrapper for exhaustiveness. */
+```
+
+#### body
+
+```text
+/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
+			   variant. */
+```
+
+#### body
+
+```text
+/* Unconditionally nonterminal per classifyByType — these children
+			   never actually feed a classification decision — but returned for
+			   real (not `[]`) so `ruleChildren` stays structurally honest about
+			   what each rule type's children are. */
+```
+
+#### body
+
+```text
+/* Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE are
+			   leaves; SUPERTYPE's `subtypes` are kind-name strings, not
+			   Rule<Phase> nodes. */
+```
+
+### `isEnumChoiceRule` (`packages/codegen/src/dsl/rule-patterns.ts:112`)
+
+```text
+// ---------------------------------------------------------------------------
+// Rule-shape predicates on the phase-typed `Rule` union
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
+// canonicalized operators AND aliased fixed-text externals like
+// `automatic_semicolon`) are both terminal-valued — `literalTextOf`
+// serves both shapes uniformly downstream.
+```
+
+### `isSpliceableBareSeq` (`packages/codegen/src/dsl/rule-patterns.ts:122`)
+
+```text
+/**
+ * A nested `seq` member carrying none of its own `fieldName`/`separator`/
+ * `multiplicity` is structurally redundant — its members are siblings of
+ * whatever else shares the parent seq, not a cardinality-carrying unit — and
+ * splices (flattens) into the parent rather than surviving as its own
+ * nesting level. `seq` applies it at construction (simplify's `buildSeq`), so
+ * every derivation of "does this nested seq need to stay nested" agrees.
+ */
+```
+
+### `separatorOf` (`packages/codegen/src/dsl/rule-patterns.ts:157`)
+
+#### body
+
+```text
+// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
+```
+
+#### body
+
+```text
+// Choice-of-separators in the separator position — preserve the FULL
+// choice; the caller (and everything downstream, per PR-S) now knows how
+// to handle a non-literal separator rule. No literal-presence check here
+// by design: a choice with zero STRING arms (all-symbol/external-scanner)
+// still counts as a detected separator shape — it's up to the caller to
+// decide what to do when it can't extract a literal from it.
+```
+
+### `permutationAtomKey` (`packages/codegen/src/dsl/rule-patterns.ts:452`)
+
+```text
+/**
+ * Identity key for one permutation-arm step: a word-shaped keyword literal
+ * (raw, `_kw_*`-promoted, or marker-fielded — all key to the literal) or a
+ * symbol ref (keyed by name). Optionality and field wrappers are peeled —
+ * they are the permutation delta, not the atom identity. Anything else
+ * (repeat, nested seq, non-optional choice) disqualifies the arm.
+ */
+```
+
+#### body
+
+```text
+// Keep the OUTERMOST authored field name — it is slot identity;
+// two arms fielding the same symbol under different names are
+// distinct slots, not a permutation.
+```
+
+#### body
+
+```text
+/* A generated `<literal>_marker` field is the keyword-promotion spelling
+	   of the same literal — collapse it so a raw keyword in one arm keys
+	   equal to its promoted sibling. Any other field name is authored slot
+	   identity and stays in the key. */
+```
+
+### `resolveRuleLiteral` (`packages/codegen/src/dsl/rule-patterns.ts:509`)
+
+```text
+/** Literal text of a keyword-shaped rule body (STRING, possibly TOKEN- or
+ *  prec-wrapped), else null. */
+```
+
+### `selfReferentialFoldOf` (`packages/codegen/src/dsl/rule-patterns.ts:519`)
+
+```text
+// ---------------------------------------------------------------------------
+// Self-referential chain fold
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * Tree-sitter's prec.left self-referential-choice flattening: a hidden
+ * CHOICE rule whose arms are all 3-member SEQs
+ * `[field(base), STRING(separator), field(extension)]` with the SAME
+ * (base, extension) field-name pair and separator literal across every
+ * arm, where at least one arm's base field is a bare (non-alias-wrapped)
+ * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
+ * collapses the recursion into ONE FLAT node at parse time: the base field
+ * stays singular — only the true base operand carries it, since inner
+ * recursive occurrences dissolve into siblings and the leftover separator
+ * tokens are anonymous so the reader drops them — while the extension field
+ * repeats once per additional chained operand. No wrapper shape and no
+ * node-types.json entry can see this: the multiplicity is an emergent
+ * property of LR precedence-climbing over a self-referential choice.
+ * Confirmed case: rust's `_let_chain` (`a && b && c && d` parses as one
+ * node with a single `left` and a repeated `right`).
+ *
+ * Only meaningful at the TOP of a named rule's own body: the self-reference
+ * check requires the SYMBOL's name to equal the rule being processed, so a
+ * nested CHOICE inside some OTHER rule's body can never coincidentally match.
+ */
+```
+
+```text
+// self-ref on the extension side — bail, don't guess
+```
+
+### `exclusiveFieldChoiceBranches` (`packages/codegen/src/dsl/rule-patterns.ts:555`)
+
+```text
+// ---------------------------------------------------------------------------
+// Enrich-phase recognizers (raw DSL rule shapes, both runtime spellings)
+// ---------------------------------------------------------------------------
+```
+
+```text
+/** The branches of a choice whose every arm is a single, distinctly-named
+ *  field — the shape that means "exactly one of these". Reached either
+ *  directly or through a hidden rule, since such a choice is usually spelled
+ *  as a helper (`_line_doc_comment_marker`) rather than inline.
+ *
+ *  Two arms sharing a field name are ONE slot with a union value, not a set
+ *  of alternatives, so a repeated name declines. */
+```
+
+### `separatedListElementName` (`packages/codegen/src/dsl/rule-patterns.ts:663`)
+
+```text
+/**
+ * @internal — derive the element name a separated-list position exposes from
+ * mint-time-visible facts ONLY (`type`/`name`/`members`/`content`), never the
+ * per-pipeline decoration stamps (`id`/`_ref`/`metadata`) — the tree-sitter CLI
+ * bundle and sittir's evaluate() must derive the SAME name for the same body.
+ * A single symbol (or choice-of-one, or FIELD wrapper) names the element; a
+ * multi-arm choice or compound seq has no single name (`null` — the caller
+ * falls back to the `elements` basis).
+ */
+```
+
+### `peelOptionalEitherSpelling` (`packages/codegen/src/dsl/rule-patterns.ts:686`)
+
+```text
+/** @internal — `rule` matches `optional(X)` in either runtime spelling
+ *  (`OPTIONAL{content}` or the CLI-desugared `CHOICE[X, BLANK]`); returns the
+ *  inner X, else null. */
+```
+
+### `SeparatedListBodyInfo.elementName` (`packages/codegen/src/dsl/rule-patterns.ts:692`)
+
+```text
+/** Element name per {@link separatedListElementName}; null for multi-arm/compound elements. */
+```
+
+### `SeparatedListBodyInfo.flankCarrying` (`packages/codegen/src/dsl/rule-patterns.ts:693`)
+
+```text
+/** True when a flank is per-instance data: an optional trailing/leading
+	 *  separator, an optionally-unterminated tail form, or a separator-kind
+	 *  choice. Flankless lists carry no such data and never hoist. */
+```
+
+### `SeparatedListBodyInfo.form` (`packages/codegen/src/dsl/rule-patterns.ts:694`)
+
+```text
+/** Which spelling matched: `head` = `[elem, repeat(sep elem), opt(sep)?]`,
+	 *  `leading` = `[repeat1(sep elem), opt(sep)]` (continues a parent-side
+	 *  head), `tail` = `[repeat(elem sep), opt(elem)]` (each element
+	 *  separator-terminated, last optionally bare). */
+```
+
+### `SeparatedListBodyInfo.element` (`packages/codegen/src/dsl/rule-patterns.ts:695`)
+
+```text
+/** The element rule at the repeat position (fields/wrappers intact). */
+```
+
+### `SeparatedListBodyInfo.separatorRule` (`packages/codegen/src/dsl/rule-patterns.ts:696`)
+
+```text
+/** The separator rule (STRING literal or CHOICE). */
+```
+
+### `SeparatedListBodyInfo.flatMembers` (`packages/codegen/src/dsl/rule-patterns.ts:697`)
+
+```text
+/** The body's members with any nested-head seq spliced FLAT — the
+	 *  canonical head-form spelling link's separator lift recognizes.
+	 *  Language-identical to the original (seq nesting is associative). */
+```
+
+### `separatedListBodyInfo` (`packages/codegen/src/dsl/rule-patterns.ts:700`)
+
+```text
+/**
+ * @internal — recognize a whole seq body as ONE separated list, in the two
+ * spellings the raw grammars use:
+ *   head-form: `[elem, repeat(seq(sep, elem)), optional(sep)?]`
+ *              (incl. the nested-head variant `[[elem, repeat(...)], optional(sep)]`)
+ *   tail-form: `[repeat(seq(elem, sep)), optional(elem)?]`
+ * Works on the pre-pushdown wrapper-intact rule tree (this phase has no
+ * `separator`/flank attributes yet) and on both runtime spellings of
+ * `optional`. Returns null when the body is not a single separated list.
+ */
+```
+
+#### body
+
+```text
+// A list's repeat member is the one whose content is a separator run —
+// NOT just any repeat (an attributed element is itself `seq(repeat(attr),
+// X)`, whose inner repeat carries no separator).
+```
+
+#### body
+
+```text
+// Nested-head variant: [flank?, [elem, repeat(sep-run)], flank?] — splice
+// the nested seq's members into place and re-examine as the flat
+// head-form (the nested seq may sit after a leading flank member, e.g.
+// object_type_content's optional leading separator).
+```
+
+#### body
+
+```text
+// Head-form: repeat is seq(SEP, elem); the member BEFORE the repeat is
+// the head element, an optional(SEP) member after it is the trailing
+// flank (a leading optional(SEP)/bare SEP before the head is the
+// leading flank). A leading-run variant carries NO in-body head — the
+// list continues a head element living in the parent
+// (`[repeat1(seq(sep, elem)), optional(sep)]`, python's
+// expression_list/pattern_list tail groups) — recognized only when a
+// trailing flank follows, so a bare `repeat(seq(sep, elem))` member
+// alone never reads as a whole-body list.
+```
+
+#### body
+
+```text
+// REPEAT1 only: a zero-or-more repeat plus an optional flank would
+// match the empty string — not a rule tree-sitter accepts, and not
+// this shape (the leading run CONTINUES a mandatory head element).
+```
+
+#### body
+
+```text
+// Compound/multi-arm elements: both positions must still AGREE
+// structurally — compare their canonical keys instead of names.
+```
+
+#### body
+
+```text
+// A bare separator literal is a MANDATORY flank — part of the list
+// shape, but compile-time-known (not per-instance data).
+```
+
+#### body
+
+```text
+// A choice-of-separators flank next to a choice-separator list — the
+// two spellings routinely diverge in decoration (one side may hold
+// substituted symbol refs), so match on both being choices rather
+// than exact keys.
+```
+
+#### body
+
+```text
+// Any member that is not the head, the repeat, or a flank breaks
+// the "whole body is one list" reading.
+```
+
+#### body
+
+```text
+// Tail-form: repeat is seq(elem, SEP); the optional(elem) member after the
+// repeat means the last element may omit its separator — per-instance
+// trailing-separator data. A bare separator-terminated repeat with NO
+// elem? tail is not this shape (every element is mandatorily terminated).
+```
+
+### `isLiteralChoiceContent` (`packages/codegen/src/dsl/rule-patterns.ts:840`)
+
+```text
+/** A position whose content is a literal choice: one string, or a choice
+ *  of strings — the shape a kind-enum slot carries. */
+```
+
+### `armsDifferOnlyByLiteralChoice` (`packages/codegen/src/dsl/rule-patterns.ts:849`)
+
+```text
+/**
+ * Two choice arms that differ ONLY at literal-choice positions must stay
+ * one kind with an enum slot — splitting them would mint a form whose
+ * sole difference is a cardinality-1 (determined) enum.
+ * `mintStructuredChoiceArm`'s callers decline such arms. Returns true
+ * when the arms are structurally identical except for at least one
+ * literal-choice position whose texts differ.
+ */
+```
+
+#### body
+
+```text
+// EXACTLY one differing position: the delta must be expressible as ONE
+// enum slot. Arms differing at two literal positions (`new.target` vs
+// `import.meta`) are distinct forms — folding them would cross-combine
+// the literals.
+```
+
+### `dsl/index.ts` (module)
+
+```text
+/**
+ * @sittir/codegen/dsl — sittir's DSL layer for override files.
+ *
+ * This is the stable import surface for `packages/<lang>/grammar.sittir.ts`.
+ * Override files import from here:
+ *
+ *     import { transform, role, enrich, field, alias } from '@sittir/codegen/dsl'
+ *
+ * Two categories of exports:
+ *
+ * **Pure sittir extensions** (no tree-sitter equivalent):
+ *   - `transform` — override-authoring primitive that patches positions
+ *     in an existing rule tree.
+ *   - `role` — structural-whitespace annotation with per-grammar
+ *     accumulator.
+ *   - `enrich` — mechanical enrichment passes applied before the
+ *     override's own rule callbacks run.
+ *
+ * **Sittir shadows of baseline tree-sitter DSL** (add one-arg shorthand;
+ * two-arg calls delegate to the runtime-injected native):
+ *   - `field(name)` — one-arg placeholder for `transform()` patches.
+ *     Two-arg form delegates to the runtime's native `field()`.
+ *   - `alias($.name)` — one-arg shorthand for `alias($.name, $.name)`.
+ *     Two-arg form delegates to the runtime's native `alias()`.
+ *
+ * The remaining baseline tree-sitter DSL functions (`grammar`, `seq`,
+ * `choice`, `optional`, `repeat`, `repeat1`, `token`, `prec`, `blank`)
+ * are NOT exported from here — they're injected as globals by
+ * `compiler/evaluate.ts` (sittir runtime) or by `tree-sitter` CLI
+ * (transpiled output), mirroring tree-sitter's own convention where
+ * grammar.js files call `grammar(...)` without importing it.
+ */
+```
+
+### `dsl/enrich.ts` (module)
 
 ```text
 /**
@@ -3427,540 +3962,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `PrecKind` (`packages/codegen/src/dsl/builders.ts:40`)
-
-```text
-// ---------------------------------------------------------------------------
-// RuleBuilder — context-injected rule construction strategy
-// ---------------------------------------------------------------------------
-```
-
-### `structuralBuilder.optional` (`packages/codegen/src/dsl/builders.ts:73`)
-
-```text
-// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
-// phase, while a single-content wrapper's own `content` field wants one
-// specific phase — same "narrow via AnyRule, cast back" convention as
-// rule-patterns.ts's `ruleChildren`.
-```
-
-### `structuralBuilder.prec` (`packages/codegen/src/dsl/builders.ts:98`)
-
-```text
-// The evaluate-only PREC family collapses to four distinct type tags —
-// structuralBuilder mirrors the runtime's own `prec`/`prec.left`/
-// `prec.right`/`prec.dynamic` shape (grammar-shapes/grammar-json.ts).
-```
-
-### `attributeBuilder.alias` (`packages/codegen/src/dsl/builders.ts:263`)
-
-```text
-// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
-// TARGET — the same provenance form link's own
-// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
-// one level down here: a SYMBOL content's own `.name` becomes
-// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
-```
-
-#### body (`packages/codegen/src/dsl/builders.ts:285`)
-
-```text
-// Alias of a literal: there is no storage rule to name (mirrors
-// link's own STRING-content branch, which stamps no
-// `aliasedFrom` either) — the literal text becomes the new
-// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
-```
-
-#### body (`packages/codegen/src/dsl/builders.ts:305`)
-
-```text
-// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
-// record — link never produces this shape (it collapses named
-// aliases to a SYMBOL ref before this point is reached).
-```
-
-### `token` (`packages/codegen/src/dsl/authoring-globals.d.ts:51`)
-
-```text
-// `token` / `prec` are callable VALUES with method properties, so they are
-// declared `const` with per-call-signature generics (an `interface` here
-// would declare a type, not the global value, and a generic param on the
-// container would make bare `token(...)` uninstantiable).
-```
-
-### `RuleWalker.diagnostics` (`packages/codegen/src/dsl/rule-walker.ts:17`)
-
-```text
-/** Sink for future diagnostic-emitting walks (slot-grouping family). Public
-	 *  readonly (not #private) — nothing reads it yet; a private field would
-	 *  trip the unused-member lint. */
-```
-
-### `LeafMultiplicity` (`packages/codegen/src/dsl/rule-transforms.ts:28`)
-
-```text
-// `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
-// missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
-```
-
-### `hasAnyField` (`packages/codegen/src/dsl/rule-transforms.ts:101`)
-
-```text
-// Genuinely link-phase only — see "Rule IR and snapshots" in
-// docs/compiler-phase-glossary.md for the phase-scoping rationale.
-```
-
-### `Mult` (`packages/codegen/src/dsl/rule-transforms.ts:332`)
-
-```text
-// ---------------------------------------------------------------------------
-// List-fusion pass — fuse a separated-list's head + repeat occurrences into
-// a single multi-valued slot.
-//
-// tree-sitter grammars author `sepBy1`/`commaSep1` lists in shapes that
-// `liftCommaSep` (evaluate) does not always collapse — notably when a choice
-// arm is an alias (`argument_list`) or the trailing separator lives in a
-// choice (`pattern_list`). After wrapper-deletion those survive as a HEAD
-// element (single) plus a REPEAT of the same element (array). Two idioms
-// are recognized inside a `seq` (after recursing children):
-//
-//   A. adjacent `[E, E{array|nonEmptyArray, sep?}]` where the two elements are
-//      structurally identical ignoring leaf attributes → fuse to the array E.
-//   B. `[E, choice(sepString, E{array|nonEmptyArray, sep?})]` → fuse to the
-//      array E, taking the choice's separator string as the trailing separator.
-// ---------------------------------------------------------------------------
-```
-
-### `fuseAtNode` (`packages/codegen/src/dsl/rule-transforms.ts:443`)
-
-#### body (`packages/codegen/src/dsl/rule-transforms.ts:443`)
-
-```text
-// consume the repeat member too
-```
-
-### `classifyByType` (`packages/codegen/src/dsl/rule-patterns.ts:67`)
-
-```text
-// ---------------------------------------------------------------------------
-// Terminality — the per-rule-type decision table and the predicate over it
-// ---------------------------------------------------------------------------
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:79`)
-
-```text
-/* No separate ENUM case: enum-shaped ChoiceRules are classified under
-			   the CHOICE arm below. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:85`)
-
-```text
-/* Unconditionally nonterminal: a choice is a single union slot
-			   (literal-only = enum); a repeat captures a variable-length sequence
-			   (array slot) even when its content is terminal. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:90`)
-
-```text
-/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
-		   variant. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:103`)
-
-```text
-/* PREC family is stripped by evaluate.ts's `stripPrecedenceWrappers`
-		   before this runs — see that function's doc comment — so these
-		   cases are unreachable at runtime. Transparent single-child wrapper,
-		   same as TOKEN/FIELD above. String literals (not rule-types.ts
-		   consts): that module is deprecated for new imports — see its
-		   header. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:113`)
-
-```text
-/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by evaluate.ts's
-		   `normalizeImmediateTokens` before this runs — unreachable at
-		   runtime, transparent single-child wrapper like TOKEN. */
-```
-
-### `ruleChildren` (`packages/codegen/src/dsl/rule-patterns.ts:129`)
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:129`)
-
-```text
-/* Narrow via AnyRule, cast back — children share the parent's phase by
-	   construction. Exhaustive over every AnyRule variant (no default
-	   fallthrough) so a newly added rule type fails compilation here instead
-	   of silently contributing no children — see classifyByType's own
-	   exhaustive switch for the sibling convention. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:142`)
-
-```text
-/* PREC family: stripped before this runs (see classifyByType's PREC
-		   comment) — unreachable at runtime, transparent single-child
-		   wrapper for exhaustiveness. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:150`)
-
-```text
-/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
-			   variant. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:158`)
-
-```text
-/* Unconditionally nonterminal per classifyByType — these children
-			   never actually feed a classification decision — but returned for
-			   real (not `[]`) so `ruleChildren` stays structurally honest about
-			   what each rule type's children are. */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:170`)
-
-```text
-/* Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE are
-			   leaves; SUPERTYPE's `subtypes` are kind-name strings, not
-			   Rule<Phase> nodes. */
-```
-
-### `isEnumChoiceRule` (`packages/codegen/src/dsl/rule-patterns.ts:179`)
-
-```text
-// ---------------------------------------------------------------------------
-// Rule-shape predicates on the phase-typed `Rule` union
-// ---------------------------------------------------------------------------
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:189`)
-
-```text
-// STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
-// canonicalized operators AND aliased fixed-text externals like
-// `automatic_semicolon`) are both terminal-valued — `literalTextOf`
-// serves both shapes uniformly downstream.
-```
-
-### `isSpliceableBareSeq` (`packages/codegen/src/dsl/rule-patterns.ts:197`)
-
-```text
-/**
- * A nested `seq` member carrying none of its own `fieldName`/`separator`/
- * `multiplicity` is structurally redundant — its members are siblings of
- * whatever else shares the parent seq, not a cardinality-carrying unit — and
- * splices (flattens) into the parent rather than surviving as its own
- * nesting level. `seq` applies it at construction (simplify's `buildSeq`), so
- * every derivation of "does this nested seq need to stay nested" agrees.
- */
-```
-
-### `separatorOf` (`packages/codegen/src/dsl/rule-patterns.ts:251`)
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:251`)
-
-```text
-// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:255`)
-
-```text
-// Choice-of-separators in the separator position — preserve the FULL
-// choice; the caller (and everything downstream, per PR-S) now knows how
-// to handle a non-literal separator rule. No literal-presence check here
-// by design: a choice with zero STRING arms (all-symbol/external-scanner)
-// still counts as a detected separator shape — it's up to the caller to
-// decide what to do when it can't extract a literal from it.
-```
-
-### `permutationAtomKey` (`packages/codegen/src/dsl/rule-patterns.ts:640`)
-
-```text
-/**
- * Identity key for one permutation-arm step: a word-shaped keyword literal
- * (raw, `_kw_*`-promoted, or marker-fielded — all key to the literal) or a
- * symbol ref (keyed by name). Optionality and field wrappers are peeled —
- * they are the permutation delta, not the atom identity. Anything else
- * (repeat, nested seq, non-optional choice) disqualifies the arm.
- */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:660`)
-
-```text
-// Keep the OUTERMOST authored field name — it is slot identity;
-// two arms fielding the same symbol under different names are
-// distinct slots, not a permutation.
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:688`)
-
-```text
-/* A generated `<literal>_marker` field is the keyword-promotion spelling
-	   of the same literal — collapse it so a raw keyword in one arm keys
-	   equal to its promoted sibling. Any other field name is authored slot
-	   identity and stays in the key. */
-```
-
-### `resolveRuleLiteral` (`packages/codegen/src/dsl/rule-patterns.ts:711`)
-
-```text
-/** Literal text of a keyword-shaped rule body (STRING, possibly TOKEN- or
- *  prec-wrapped), else null. */
-```
-
-### `selfReferentialFoldOf` (`packages/codegen/src/dsl/rule-patterns.ts:723`)
-
-```text
-// ---------------------------------------------------------------------------
-// Self-referential chain fold
-// ---------------------------------------------------------------------------
-```
-
-```text
-/**
- * Tree-sitter's prec.left self-referential-choice flattening: a hidden
- * CHOICE rule whose arms are all 3-member SEQs
- * `[field(base), STRING(separator), field(extension)]` with the SAME
- * (base, extension) field-name pair and separator literal across every
- * arm, where at least one arm's base field is a bare (non-alias-wrapped)
- * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
- * collapses the recursion into ONE FLAT node at parse time: the base field
- * stays singular — only the true base operand carries it, since inner
- * recursive occurrences dissolve into siblings and the leftover separator
- * tokens are anonymous so the reader drops them — while the extension field
- * repeats once per additional chained operand. No wrapper shape and no
- * node-types.json entry can see this: the multiplicity is an emergent
- * property of LR precedence-climbing over a self-referential choice.
- * Confirmed case: rust's `_let_chain` (`a && b && c && d` parses as one
- * node with a single `left` and a repeated `right`).
- *
- * Only meaningful at the TOP of a named rule's own body: the self-reference
- * check requires the SYMBOL's name to equal the rule being processed, so a
- * nested CHOICE inside some OTHER rule's body can never coincidentally match.
- */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:778`)
-
-```text
-// self-ref on the extension side — bail, don't guess
-```
-
-### `exclusiveFieldChoiceBranches` (`packages/codegen/src/dsl/rule-patterns.ts:784`)
-
-```text
-// ---------------------------------------------------------------------------
-// Enrich-phase recognizers (raw DSL rule shapes, both runtime spellings)
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** The branches of a choice whose every arm is a single, distinctly-named
- *  field — the shape that means "exactly one of these". Reached either
- *  directly or through a hidden rule, since such a choice is usually spelled
- *  as a helper (`_line_doc_comment_marker`) rather than inline.
- *
- *  Two arms sharing a field name are ONE slot with a union value, not a set
- *  of alternatives, so a repeated name declines. */
-```
-
-### `separatedListElementName` (`packages/codegen/src/dsl/rule-patterns.ts:911`)
-
-```text
-/**
- * @internal — derive the element name a separated-list position exposes from
- * mint-time-visible facts ONLY (`type`/`name`/`members`/`content`), never the
- * per-pipeline decoration stamps (`id`/`_ref`/`metadata`) — the tree-sitter CLI
- * bundle and sittir's evaluate() must derive the SAME name for the same body.
- * A single symbol (or choice-of-one, or FIELD wrapper) names the element; a
- * multi-arm choice or compound seq has no single name (`null` — the caller
- * falls back to the `elements` basis).
- */
-```
-
-### `peelOptionalEitherSpelling` (`packages/codegen/src/dsl/rule-patterns.ts:943`)
-
-```text
-/** @internal — `rule` matches `optional(X)` in either runtime spelling
- *  (`OPTIONAL{content}` or the CLI-desugared `CHOICE[X, BLANK]`); returns the
- *  inner X, else null. */
-```
-
-### `SeparatedListBodyInfo.elementName` (`packages/codegen/src/dsl/rule-patterns.ts:952`)
-
-```text
-/** Element name per {@link separatedListElementName}; null for multi-arm/compound elements. */
-```
-
-### `SeparatedListBodyInfo.flankCarrying` (`packages/codegen/src/dsl/rule-patterns.ts:954`)
-
-```text
-/** True when a flank is per-instance data: an optional trailing/leading
-	 *  separator, an optionally-unterminated tail form, or a separator-kind
-	 *  choice. Flankless lists carry no such data and never hoist. */
-```
-
-### `SeparatedListBodyInfo.form` (`packages/codegen/src/dsl/rule-patterns.ts:958`)
-
-```text
-/** Which spelling matched: `head` = `[elem, repeat(sep elem), opt(sep)?]`,
-	 *  `leading` = `[repeat1(sep elem), opt(sep)]` (continues a parent-side
-	 *  head), `tail` = `[repeat(elem sep), opt(elem)]` (each element
-	 *  separator-terminated, last optionally bare). */
-```
-
-### `SeparatedListBodyInfo.element` (`packages/codegen/src/dsl/rule-patterns.ts:963`)
-
-```text
-/** The element rule at the repeat position (fields/wrappers intact). */
-```
-
-### `SeparatedListBodyInfo.separatorRule` (`packages/codegen/src/dsl/rule-patterns.ts:965`)
-
-```text
-/** The separator rule (STRING literal or CHOICE). */
-```
-
-### `SeparatedListBodyInfo.flatMembers` (`packages/codegen/src/dsl/rule-patterns.ts:967`)
-
-```text
-/** The body's members with any nested-head seq spliced FLAT — the
-	 *  canonical head-form spelling link's separator lift recognizes.
-	 *  Language-identical to the original (seq nesting is associative). */
-```
-
-### `separatedListBodyInfo` (`packages/codegen/src/dsl/rule-patterns.ts:973`)
-
-```text
-/**
- * @internal — recognize a whole seq body as ONE separated list, in the two
- * spellings the raw grammars use:
- *   head-form: `[elem, repeat(seq(sep, elem)), optional(sep)?]`
- *              (incl. the nested-head variant `[[elem, repeat(...)], optional(sep)]`)
- *   tail-form: `[repeat(seq(elem, sep)), optional(elem)?]`
- * Works on the pre-pushdown wrapper-intact rule tree (this phase has no
- * `separator`/flank attributes yet) and on both runtime spellings of
- * `optional`. Returns null when the body is not a single separated list.
- */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:988`)
-
-```text
-// A list's repeat member is the one whose content is a separator run —
-// NOT just any repeat (an attributed element is itself `seq(repeat(attr),
-// X)`, whose inner repeat carries no separator).
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:997`)
-
-```text
-// Nested-head variant: [flank?, [elem, repeat(sep-run)], flank?] — splice
-// the nested seq's members into place and re-examine as the flat
-// head-form (the nested seq may sit after a leading flank member, e.g.
-// object_type_content's optional leading separator).
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1026`)
-
-```text
-// Head-form: repeat is seq(SEP, elem); the member BEFORE the repeat is
-// the head element, an optional(SEP) member after it is the trailing
-// flank (a leading optional(SEP)/bare SEP before the head is the
-// leading flank). A leading-run variant carries NO in-body head — the
-// list continues a head element living in the parent
-// (`[repeat1(seq(sep, elem)), optional(sep)]`, python's
-// expression_list/pattern_list tail groups) — recognized only when a
-// trailing flank follows, so a bare `repeat(seq(sep, elem))` member
-// alone never reads as a whole-body list.
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1036`)
-
-```text
-// REPEAT1 only: a zero-or-more repeat plus an optional flank would
-// match the empty string — not a rule tree-sitter accepts, and not
-// this shape (the leading run CONTINUES a mandatory head element).
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1056`)
-
-```text
-// Compound/multi-arm elements: both positions must still AGREE
-// structurally — compare their canonical keys instead of names.
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1063`)
-
-```text
-// A bare separator literal is a MANDATORY flank — part of the list
-// shape, but compile-time-known (not per-instance data).
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1071`)
-
-```text
-// A choice-of-separators flank next to a choice-separator list — the
-// two spellings routinely diverge in decoration (one side may hold
-// substituted symbol refs), so match on both being choices rather
-// than exact keys.
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1084`)
-
-```text
-// Any member that is not the head, the repeat, or a flank breaks
-// the "whole body is one list" reading.
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1098`)
-
-```text
-// Tail-form: repeat is seq(elem, SEP); the optional(elem) member after the
-// repeat means the last element may omit its separator — per-instance
-// trailing-separator data. A bare separator-terminated repeat with NO
-// elem? tail is not this shape (every element is mandatorily terminated).
-```
-
-### `isLiteralChoiceContent` (`packages/codegen/src/dsl/rule-patterns.ts:1166`)
-
-```text
-/** A position whose content is a literal choice: one string, or a choice
- *  of strings — the shape a kind-enum slot carries. */
-```
-
-### `armsDifferOnlyByLiteralChoice` (`packages/codegen/src/dsl/rule-patterns.ts:1177`)
-
-```text
-/**
- * Two choice arms that differ ONLY at literal-choice positions must stay
- * one kind with an enum slot — splitting them would mint a form whose
- * sole difference is a cardinality-1 (determined) enum.
- * `mintStructuredChoiceArm`'s callers decline such arms. Returns true
- * when the arms are structurally identical except for at least one
- * literal-choice position whose texts differ.
- */
-```
-
-#### body (`packages/codegen/src/dsl/rule-patterns.ts:1223`)
-
-```text
-// EXACTLY one differing position: the delta must be expressible as ONE
-// enum slot. Arms differing at two literal positions (`new.target` vs
-// `import.meta`) are distinct forms — folding them would cross-combine
-// the literals.
-```
-
-### `GrammarResult` (`packages/codegen/src/dsl/enrich.ts:149`)
+### `GrammarResult` (`packages/codegen/src/dsl/enrich.ts:49`)
 
 ```text
 // Shape of the tree-sitter grammar result that our grammarFn produces.
@@ -3968,7 +3970,7 @@ registered but later unused still counts as a sibling.
 // top-level `grammar()` call wraps its result; we preserve that shape.
 ```
 
-### `EnrichConfig.skip` (`packages/codegen/src/dsl/enrich.ts:169`)
+### `EnrichConfig.skip` (`packages/codegen/src/dsl/enrich.ts:66`)
 
 ```text
 /**
@@ -3985,9 +3987,9 @@ registered but later unused still counts as a sibling.
 	 */
 ```
 
-### `enrich` (`packages/codegen/src/dsl/enrich.ts:195`)
+### `enrich` (`packages/codegen/src/dsl/enrich.ts:69`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:195`)
+#### body
 
 ```text
 // Grammar-wide word-shape matcher (R12 Camp A). `word`'s shape depends on
@@ -4005,7 +4007,7 @@ registered but later unused still counts as a sibling.
 // matchesWordShape; used by pass 3's optional-keyword-prefix below.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:212`)
+#### body
 
 ```text
 // Extract declared supertype names so pass 3 can treat `_prefix`-
@@ -4016,7 +4018,7 @@ registered but later unused still counts as a sibling.
 // without waiting for tree-sitter to run the real grammar pipeline.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:219`)
+#### body
 
 ```text
 // Per-enrich hidden-rule bag. Passes that wrap keywords populate it
@@ -4024,7 +4026,7 @@ registered but later unused still counts as a sibling.
 // enriched user rules.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:223`)
+#### body
 
 ```text
 // Clause-hoist hidden-rule bag. The clause-hoist pass injects hoisted
@@ -4032,7 +4034,7 @@ registered but later unused still counts as a sibling.
 // from base.grammar.rules (same path as _kw_* rules).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:227`)
+#### body
 
 ```text
 // Cross-parent dedupe map for clause-hoist: canonicalStringify(seq) → name.
@@ -4041,7 +4043,7 @@ registered but later unused still counts as a sibling.
 // parents reuse the same hidden rule.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:232`)
+#### body
 
 ```text
 // Cross-parent dedupe map for inline-UNSAFE visible content-aliases:
@@ -4049,7 +4051,7 @@ registered but later unused still counts as a sibling.
 // inline-unsafe bodies in different parents reuse the same visible kind.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:236`)
+#### body
 
 ```text
 // Hidden-rule names (`_<parent>_group<N>`) for VISIBLE-aliased groups. These
@@ -4062,7 +4064,7 @@ registered but later unused still counts as a sibling.
 // here, never re-derived.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:245`)
+#### body
 
 ```text
 // Synthesized clause-hoist name → the parent kind whose body it was
@@ -4074,14 +4076,14 @@ registered but later unused still counts as a sibling.
 // mints it from the base grammar's own, pre-override shape).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:253`)
+#### body
 
 ```text
 // Per-call un-aliasing diagnostic sink (see ENRICH_UNALIAS_DIAGNOSTICS_KEY):
 // local to THIS enrich() invocation, attached to its result below.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:257`)
+#### body
 
 ```text
 // Loop 1: field-wrap every rule to its fixed point BEFORE any hoisting, so
@@ -4089,7 +4091,7 @@ registered but later unused still counts as a sibling.
 // separated-list naming needs grammar-global field-name knowledge).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:267`)
+#### body
 
 ```text
 // Whole-body list normalization: an existing rule whose ENTIRE body is a
@@ -4101,7 +4103,7 @@ registered but later unused still counts as a sibling.
 // as the mints below. Language-identical: seq nesting is associative.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:284`)
+#### body
 
 ```text
 // Exclusive field-choice distribution, BEFORE loop 2: the mint below lifts
@@ -4111,7 +4113,7 @@ registered but later unused still counts as a sibling.
 // inlines, so it sees them fully field-wrapped.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:294`)
+#### body
 
 ```text
 // Loop 2: clause/group hoisting + base-grammar un-aliasing, per rule in the
@@ -4120,7 +4122,7 @@ registered but later unused still counts as a sibling.
 // name only with global uniqueness.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:328`)
+#### body
 
 ```text
 // Base-grammar un-aliasing also needs to reach clause-hoist-minted group
@@ -4134,7 +4136,7 @@ registered but later unused still counts as a sibling.
 // main loop has fully settled, so it sees every mint from every rule.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:353`)
+#### body
 
 ```text
 // Inject `_<kw>_marker` hidden rules — `registerKwRule` already checked
@@ -4144,7 +4146,7 @@ registered but later unused still counts as a sibling.
 // (they start with `_<parentKind>_optional`, a synthesized prefix).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:359`)
+#### body
 
 ```text
 // Singleton-ordinal collapse: an arm/group mint's ordinal exists only to
@@ -4153,7 +4155,7 @@ registered but later unused still counts as a sibling.
 // later passes so they (and wire's override callbacks) see final names.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:364`)
+#### body
 
 ```text
 // Node-choice field wrapping (pass 6) — runs once, last, over every rule
@@ -4164,7 +4166,7 @@ registered but later unused still counts as a sibling.
 // `applyNodeChoiceFieldWrap`'s doc comment for why.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:375`)
+#### body
 
 ```text
 // Mint inline field-enum choices (`field('operator', choice('+', '-', …))`)
@@ -4180,7 +4182,7 @@ registered but later unused still counts as a sibling.
 // manual entry.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:387`)
+#### body
 
 ```text
 // Register the merged rule-map so transform()/groups path-descent can resolve
@@ -4192,7 +4194,7 @@ registered but later unused still counts as a sibling.
 // grammar at a time and enrich runs before any transform fn executes.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:400`)
+#### body
 
 ```text
 // Attach the set of clause-group names as a well-known non-enumerable
@@ -4206,7 +4208,7 @@ registered but later unused still counts as a sibling.
 // inlining them would re-distribute the visible alias across the seq members.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:421`)
+#### body
 
 ```text
 // Attach the synthesized-name → owning-parent-kind map (BOTH categories —
@@ -4215,7 +4217,7 @@ registered but later unused still counts as a sibling.
 // `getEnrichClauseGroupOwners`.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:433`)
+#### body
 
 ```text
 // Attach this call's un-aliasing diagnostics to its own result (non-enumerable,
@@ -4223,7 +4225,7 @@ registered but later unused still counts as a sibling.
 // of a module-global accumulator — see ENRICH_UNALIAS_DIAGNOSTICS_KEY.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:444`)
+#### body
 
 ```text
 // Attach the hidden SOURCE names behind every visible-group mint (both the
@@ -4236,9 +4238,9 @@ registered but later unused still counts as a sibling.
 // the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
 ```
 
-### `applyFieldWrapPasses` (`packages/codegen/src/dsl/enrich.ts:498`)
+### `applyFieldWrapPasses` (`packages/codegen/src/dsl/enrich.ts:241`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:498`)
+#### body
 
 ```text
 // Fixed-point loop. The current pass set has well-defined
@@ -4252,7 +4254,7 @@ registered but later unused still counts as a sibling.
 // that accidentally produces ever-changing output.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:513`)
+#### body
 
 ```text
 // Choice-arm terminal field wrapping (pass 5) — see
@@ -4262,7 +4264,7 @@ registered but later unused still counts as a sibling.
 // within this loop doesn't matter.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:519`)
+#### body
 
 ```text
 // Repeat-union field promotion (pass 6) — see
@@ -4271,7 +4273,7 @@ registered but later unused still counts as a sibling.
 // hidden rules), so loop ordering doesn't matter.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:524`)
+#### body
 
 ```text
 // Bare leading-keyword pass intentionally omitted — the docstring
@@ -4281,7 +4283,7 @@ registered but later unused still counts as a sibling.
 // regresses by ~47/136 with this pass on).
 ```
 
-### `applyHoistAndUnalias` (`packages/codegen/src/dsl/enrich.ts:541`)
+### `applyHoistAndUnalias` (`packages/codegen/src/dsl/enrich.ts:269`)
 
 ```text
 // Clause-hoist runs AFTER the field-wrapping loop has converged — it must
@@ -4297,13 +4299,13 @@ registered but later unused still counts as a sibling.
 // which only exists once all rules carry their enriched fields.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:566`)
+#### body
 
 ```text
 // Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:579`)
+#### body
 
 ```text
 // Base-grammar un-aliasing: drop (visible X) or retarget (hidden X)
@@ -4312,7 +4314,7 @@ registered but later unused still counts as a sibling.
 // Runs after clause-hoist has settled so it sees the final member shape.
 ```
 
-### `isAnonymousLiteralShapedRule` (`packages/codegen/src/dsl/enrich.ts:628`)
+### `isAnonymousLiteralShapedRule` (`packages/codegen/src/dsl/enrich.ts:328`)
 
 ```text
 /**
@@ -4338,19 +4340,15 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:650`)
-
 ```text
 // cycle guard — never seen in practice, but don't hang if it occurs
 ```
-
-#### body (`packages/codegen/src/dsl/enrich.ts:653`)
 
 ```text
 // no rule body — presumed external scanner token
 ```
 
-### `applyChoiceArmFieldWrap` (`packages/codegen/src/dsl/enrich.ts:669`)
+### `applyChoiceArmFieldWrap` (`packages/codegen/src/dsl/enrich.ts:348`)
 
 ```text
 /**
@@ -4393,19 +4391,15 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:713`)
-
 ```text
 // skip hidden helpers — same gate as pass 1
 ```
-
-#### body (`packages/codegen/src/dsl/enrich.ts:737`)
 
 ```text
 // Shape 1 only, same as pass 1's underscore restriction
 ```
 
-### `isAllArmsNodeShaped` (`packages/codegen/src/dsl/enrich.ts:781`)
+### `isAllArmsNodeShaped` (`packages/codegen/src/dsl/enrich.ts:422`)
 
 ```text
 /**
@@ -4420,7 +4414,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `isAllArmsNodeOrLiteralShaped` (`packages/codegen/src/dsl/enrich.ts:803`)
+### `isAllArmsNodeOrLiteralShaped` (`packages/codegen/src/dsl/enrich.ts:434`)
 
 ```text
 /**
@@ -4432,7 +4426,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `LITERAL_ARM_NAMES` (`packages/codegen/src/dsl/enrich.ts:822`)
+### `LITERAL_ARM_NAMES` (`packages/codegen/src/dsl/enrich.ts:446`)
 
 ```text
 /** Minimal punctuation → readable-name map for `promoteLiteralChoiceArms`.
@@ -4444,7 +4438,7 @@ registered but later unused still counts as a sibling.
  * enough for debugging, not exhaustive. */
 ```
 
-### `promoteLiteralChoiceArms` (`packages/codegen/src/dsl/enrich.ts:837`)
+### `promoteLiteralChoiceArms` (`packages/codegen/src/dsl/enrich.ts:454`)
 
 ```text
 /**
@@ -4474,7 +4468,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `pluralizeFieldName` (`packages/codegen/src/dsl/enrich.ts:893`)
+### `pluralizeFieldName` (`packages/codegen/src/dsl/enrich.ts:485`)
 
 ```text
 /**
@@ -4574,7 +4568,7 @@ registered but later unused still counts as a sibling.
  * naming domains don't share a suffix vocabulary anyway. */
 ```
 
-### `isHiddenPureUnionRule` (`packages/codegen/src/dsl/enrich.ts:992`)
+### `isHiddenPureUnionRule` (`packages/codegen/src/dsl/enrich.ts:491`)
 
 ```text
 /**
@@ -4587,7 +4581,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `peelTransparentElementWrappers` (`packages/codegen/src/dsl/enrich.ts:1023`)
+### `peelTransparentElementWrappers` (`packages/codegen/src/dsl/enrich.ts:514`)
 
 ```text
 /** Field name for a separated list's element pair (see
@@ -4607,7 +4601,7 @@ registered but later unused still counts as a sibling.
  * declared-but-unreferenced field (one fact, two derivations). */
 ```
 
-### `fieldSeparatedListElements` (`packages/codegen/src/dsl/enrich.ts:1059`)
+### `fieldSeparatedListElements` (`packages/codegen/src/dsl/enrich.ts:538`)
 
 ```text
 /**
@@ -4654,9 +4648,9 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `applyNodeChoiceFieldWrap` (`packages/codegen/src/dsl/enrich.ts:1188`)
+### `applyNodeChoiceFieldWrap` (`packages/codegen/src/dsl/enrich.ts:584`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1188`)
+#### body
 
 ```text
 // `suppressed` is true exactly when case 2 must not fire at `r`'s own
@@ -4672,7 +4666,7 @@ registered but later unused still counts as a sibling.
 // class as the rust `trait_bounds` case found earlier).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1217`)
+#### body
 
 ```text
 // Case 2, repeat variant: `inner` is itself a bare eligible
@@ -4684,7 +4678,7 @@ registered but later unused still counts as a sibling.
 // hand-authored overrides expect to find and rename).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1238`)
+#### body
 
 ```text
 // A mixed node+literal choice (e.g. class_body's method/member
@@ -4694,7 +4688,7 @@ registered but later unused still counts as a sibling.
 // `promoteLiteralChoiceArms`'s doc comment for why this is safe.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1248`)
+#### body
 
 ```text
 // Field wraps the WHOLE repeat (matching the codebase's existing
@@ -4707,7 +4701,7 @@ registered but later unused still counts as a sibling.
 // around it.
 ```
 
-### `distributeExclusiveFieldChoices` (`packages/codegen/src/dsl/enrich.ts:1356`)
+### `distributeExclusiveFieldChoices` (`packages/codegen/src/dsl/enrich.ts:749`)
 
 ```text
 /**
@@ -4734,14 +4728,14 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1382`)
+#### body
 
 ```text
 /** One rule again, choosing between the alternatives when there are
 	 *  several. */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1389`)
+#### body
 
 ```text
 /** The alternatives a node expands to — normally just itself. A sequence
@@ -4752,21 +4746,21 @@ registered but later unused still counts as a sibling.
 	 *  into kinds and to the variant paths that name them. */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1397`)
+#### body
 
 ```text
 // Rebuild children first, so a choice uncovered deeper has already
 // distributed by the time this level inspects its own members.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1419`)
+#### body
 
 ```text
 // Re-expand each arm, so a sequence carrying two such choices
 // distributes over both.
 ```
 
-### `applyRepeatUnionFieldPromotion` (`packages/codegen/src/dsl/enrich.ts:1433`)
+### `applyRepeatUnionFieldPromotion` (`packages/codegen/src/dsl/enrich.ts:792`)
 
 ```text
 /**
@@ -4791,14 +4785,14 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1454`)
+#### body
 
 ```text
 // Names owned by fields that existed BEFORE this pass — those positions
 // (or their siblings) claimed the name deliberately; never shadow them.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1472`)
+#### body
 
 ```text
 // This pass's own mints, keyed by the union symbol they name. The SAME
@@ -4809,29 +4803,29 @@ registered but later unused still counts as a sibling.
 // collision and skips.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1483`)
+#### body
 
 ```text
 // A fielded position is owned — its content is that field's business.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1492`)
+#### body
 
 ```text
 // Repeated/array slots get plural names — same convention
 // pluralizeFieldName serves everywhere else in enrich.
 ```
 
-### `makeSymbol` (`packages/codegen/src/dsl/enrich.ts:1527`)
+### `makeSymbol` (`packages/codegen/src/dsl/enrich.ts:854`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1527`)
+#### body
 
 ```text
 // Both runtimes inject the symbol constructor under the SAME name `sym`
 // (sittir's `saveAndInjectDslGlobals` shadows tree-sitter's baseline `sym`).
 ```
 
-### `SymbolTarget` (`packages/codegen/src/dsl/enrich.ts:1588`)
+### `SymbolTarget` (`packages/codegen/src/dsl/enrich.ts:904`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -4843,27 +4837,25 @@ registered but later unused still counts as a sibling.
 // (except supertypes). See compiler-phase-glossary.md for full details.
 ```
 
-### `applySymbolToField` (`packages/codegen/src/dsl/enrich.ts:1696`)
-
-#### body (`packages/codegen/src/dsl/enrich.ts:1696`)
+### `applySymbolToField` (`packages/codegen/src/dsl/enrich.ts:998`)
 
 ```text
 // skip hidden helpers
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1697`)
+#### body
 
 ```text
 // Peel prec wrappers; rebuild on top after field-wrapping.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1705`)
+#### body
 
 ```text
 // Not a top-level seq — check for repeat/repeat1 wrapping a seq.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1709`)
+#### body
 
 ```text
 // Direct-position counts power the duplicate-numbering decision:
@@ -4874,7 +4866,7 @@ registered but later unused still counts as a sibling.
 // `promoteInsideRepeatMembers` does inside the repeat's seq.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1719`)
+#### body
 
 ```text
 // Supertype-prefixed kinds (`_expression`, `_type`, ...) only
@@ -4892,7 +4884,7 @@ registered but later unused still counts as a sibling.
 // rarely collide with override targets.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1738`)
+#### body
 
 ```text
 // Nested-repeat counts disqualify direct-position wrapping for any
@@ -4901,7 +4893,7 @@ registered but later unused still counts as a sibling.
 // factory reconstruction.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1747`)
+#### body
 
 ```text
 // Per-rule sequence counters for numbered-duplicate naming. Reset
@@ -4909,13 +4901,13 @@ registered but later unused still counts as a sibling.
 // own outer seq.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1764`)
+#### body
 
 ```text
 // Numbered duplicates: 1-based sequence index per kind.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:1778`)
+#### body
 
 ```text
 // Second pass: descend into repeat/repeat1 members whose content is a
@@ -4926,7 +4918,7 @@ registered but later unused still counts as a sibling.
 // pass keeps the same outer-shadow-prevention invariant as before.
 ```
 
-### `applyOptionalKeyword` (`packages/codegen/src/dsl/enrich.ts:1987`)
+### `applyOptionalKeyword` (`packages/codegen/src/dsl/enrich.ts:1238`)
 
 ```text
 // `enrichFieldWrappers` REMOVED — `fieldName`/`nonterminal` are derived by
@@ -4956,13 +4948,13 @@ registered but later unused still counts as a sibling.
 // ---------------------------------------------------------------------------
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2016`)
+#### body
 
 ```text
 // Peel prec wrappers so claimed-name set covers the inner seq.
 ```
 
-### `tryPromoteOptionalNode` (`packages/codegen/src/dsl/enrich.ts:2030`)
+### `tryPromoteOptionalNode` (`packages/codegen/src/dsl/enrich.ts:1258`)
 
 ```text
 // Peels an optional-shape node (sittir's own OPTIONAL wrapper, or
@@ -4973,9 +4965,9 @@ registered but later unused still counts as a sibling.
 // declined (already claimed, collision, non-keyword inner, etc).
 ```
 
-### `walkOptionalKeyword` (`packages/codegen/src/dsl/enrich.ts:2083`)
+### `walkOptionalKeyword` (`packages/codegen/src/dsl/enrich.ts:1285`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2083`)
+#### body
 
 ```text
 // tree-sitter's native optional() is sugar for choice(rule, blank()) —
@@ -4985,21 +4977,21 @@ registered but later unused still counts as a sibling.
 // before falling back to generic per-member CHOICE recursion below.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2108`)
+#### body
 
 ```text
 // Descend through prec wrappers to reach inner seqs.
 ```
 
-### `tryPromoteInnerKeyword` (`packages/codegen/src/dsl/enrich.ts:2131`)
+### `tryPromoteInnerKeyword` (`packages/codegen/src/dsl/enrich.ts:1334`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2131`)
+#### body
 
 ```text
 // `_marker` suffix avoids JS-reserved-keyword collisions.
 ```
 
-### `ClauseHoistCounter` (`packages/codegen/src/dsl/enrich.ts:2163`)
+### `ClauseHoistCounter` (`packages/codegen/src/dsl/enrich.ts:1378`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -5030,7 +5022,7 @@ registered but later unused still counts as a sibling.
 // auto-groups.ts synthesizeGroupName).
 ```
 
-### `ClauseHoistCounter.opt` (`packages/codegen/src/dsl/enrich.ts:2191`)
+### `ClauseHoistCounter.opt` (`packages/codegen/src/dsl/enrich.ts:1379`)
 
 ```text
 // Counts ALL optional(seq) positions in traversal order — both clause
@@ -5046,7 +5038,7 @@ registered but later unused still counts as a sibling.
 // collide with applyAutoGroups's emission for the non-clause position.
 ```
 
-### `ClauseHoistCounter.grp` (`packages/codegen/src/dsl/enrich.ts:2203`)
+### `ClauseHoistCounter.grp` (`packages/codegen/src/dsl/enrich.ts:1380`)
 
 ```text
 // Counts inline-UNSAFE positions surfaced as visible content-aliases
@@ -5056,7 +5048,7 @@ registered but later unused still counts as a sibling.
 // sync for the visible groups.
 ```
 
-### `ClauseHoistCounter.arm` (`packages/codegen/src/dsl/enrich.ts:2209`)
+### `ClauseHoistCounter.arm` (`packages/codegen/src/dsl/enrich.ts:1381`)
 
 ```text
 // Counts CHOICE-arm mints surfaced as visible content-aliases
@@ -5065,7 +5057,7 @@ registered but later unused still counts as a sibling.
 // name suffixes (armN vs groupN).
 ```
 
-### `ClauseHoistCounter.supertypeNames` (`packages/codegen/src/dsl/enrich.ts:2214`)
+### `ClauseHoistCounter.supertypeNames` (`packages/codegen/src/dsl/enrich.ts:1382`)
 
 ```text
 // DECLARED supertype names (grammar's `supertypes:` array, base +
@@ -5079,14 +5071,14 @@ registered but later unused still counts as a sibling.
 // applyClauseHoist recursion into the mint site.
 ```
 
-### `InlineSeparatedListRun.body` (`packages/codegen/src/dsl/enrich.ts:2237`)
+### `InlineSeparatedListRun.body` (`packages/codegen/src/dsl/enrich.ts:1396`)
 
 ```text
 /** The run's synthetic seq body — the exact members slice, reusable as a
 	 *  hoisted rule body. */
 ```
 
-### `detectInlineSeparatedListRuns` (`packages/codegen/src/dsl/enrich.ts:2244`)
+### `detectInlineSeparatedListRuns` (`packages/codegen/src/dsl/enrich.ts:1401`)
 
 ```text
 /** @internal — flank-carrying separated-list runs INLINE among a seq's
@@ -5098,7 +5090,7 @@ registered but later unused still counts as a sibling.
  *  the proposal count AND by the seq-descent run hoist. */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2252`)
+#### body
 
 ```text
 // A window member "carries" the list's repeat either directly or one seq
@@ -5108,14 +5100,14 @@ registered but later unused still counts as a sibling.
 // splice unpacks these, this predicate only pre-filters.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2271`)
+#### body
 
 ```text
 // A size-1 window is a nested whole-list sub-seq member — offer it
 // directly (the ≥2-member synthetic path is for flat/sibling runs).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2280`)
+#### body
 
 ```text
 // Only the empty-matchable `repeat(elem sep) elem?` family
@@ -5127,7 +5119,7 @@ registered but later unused still counts as a sibling.
 // list; those stay inline.
 ```
 
-### `collectSeparatedListNameProposals` (`packages/codegen/src/dsl/enrich.ts:2304`)
+### `collectSeparatedListNameProposals` (`packages/codegen/src/dsl/enrich.ts:1440`)
 
 ```text
 /**
@@ -5141,7 +5133,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:2329`)
+#### body
 
 ```text
 // Same pre-fold the hoist applies: pull a stranded trailing
@@ -5149,7 +5141,7 @@ registered but later unused still counts as a sibling.
 // the shapes the mints will see.
 ```
 
-### `separatedListNameCounts` (`packages/codegen/src/dsl/enrich.ts:2353`)
+### `separatedListNameCounts` (`packages/codegen/src/dsl/enrich.ts:1477`)
 
 ```text
 /** Grammar-global separated-list name counts for the CURRENT enrich() call —
@@ -5159,7 +5151,7 @@ registered but later unused still counts as a sibling.
  *  naming). */
 ```
 
-### `separatedListEnrichSkip` (`packages/codegen/src/dsl/enrich.ts:2360`)
+### `separatedListEnrichSkip` (`packages/codegen/src/dsl/enrich.ts:1479`)
 
 ```text
 /** The current enrich() call's skip set — consulted by the mint-path list
@@ -5169,7 +5161,7 @@ registered but later unused still counts as a sibling.
  *  {@link separatedListNameCounts}. */
 ```
 
-### `hiddenListPromotionNames` (`packages/codegen/src/dsl/enrich.ts:2367`)
+### `hiddenListPromotionNames` (`packages/codegen/src/dsl/enrich.ts:1481`)
 
 ```text
 /** Per-enrich() cache of hidden-list-rule promotions: hidden rule name →
@@ -5177,7 +5169,7 @@ registered but later unused still counts as a sibling.
  *  {@link separatedListNameCounts}. */
 ```
 
-### `hoistKwRules` (`packages/codegen/src/dsl/enrich.ts:2372`)
+### `hoistKwRules` (`packages/codegen/src/dsl/enrich.ts:1483`)
 
 ```text
 // Loop-2 (clause-hoist) access to the enrich() call's keyword bag and word
@@ -5188,7 +5180,7 @@ registered but later unused still counts as a sibling.
 // separated-list state above.
 ```
 
-### `promoteHiddenListRef` (`packages/codegen/src/dsl/enrich.ts:2381`)
+### `promoteHiddenListRef` (`packages/codegen/src/dsl/enrich.ts:1486`)
 
 ```text
 /**
@@ -5203,7 +5195,7 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `promotePermutationArmKeywords` (`packages/codegen/src/dsl/enrich.ts:3440`)
+### `promotePermutationArmKeywords` (`packages/codegen/src/dsl/enrich.ts:2236`)
 
 ```text
 /**
@@ -5217,9 +5209,9 @@ registered but later unused still counts as a sibling.
  */
 ```
 
-### `mintStructuredChoiceArm` (`packages/codegen/src/dsl/enrich.ts:3489`)
+### `mintStructuredChoiceArm` (`packages/codegen/src/dsl/enrich.ts:2265`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3489`)
+#### body
 
 ```text
 // See visibleGroupSynthName's doc comment — same field-derived naming as
@@ -5228,7 +5220,7 @@ registered but later unused still counts as a sibling.
 // member is a distinct position, not "the field's content" as a whole).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3499`)
+#### body
 
 ```text
 // Descend through a precedence wrapper (PREC/PREC_LEFT/PREC_RIGHT/
@@ -5251,7 +5243,7 @@ registered but later unused still counts as a sibling.
 // declines — the original divergence this branch closes.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3520`)
+#### body
 
 ```text
 // Thread this prec wrapper down as `ambientPrec` (mirrors
@@ -5267,7 +5259,7 @@ registered but later unused still counts as a sibling.
 // used to resolve it with.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3550`)
+#### body
 
 ```text
 // Hidden-ness by NAME (`_` prefix — tree-sitter's own convention), NOT
@@ -5279,13 +5271,11 @@ registered but later unused still counts as a sibling.
 // divergence this file's mints kept hitting.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3557`)
-
 ```text
 // already a real/visible kind — fine as-is
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3558`)
+#### body
 
 ```text
 // DECLARED supertype arm (grammar `supertypes:` array — a declared
@@ -5299,7 +5289,7 @@ registered but later unused still counts as a sibling.
 // `statement_group2` wrappers that broke wrap universally (0/115).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3568`)
+#### body
 
 ```text
 // Enrich's OWN synthesized helpers (`_<parent>_optional<N>` clause
@@ -5313,7 +5303,7 @@ registered but later unused still counts as a sibling.
 // fixtures 399→41).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3580`)
+#### body
 
 ```text
 // STRUCTURALLY supertype-shaped arm (bare choice-of-symbols union,
@@ -5328,7 +5318,7 @@ registered but later unused still counts as a sibling.
 // SYMBOL) cannot recur for this class.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3600`)
+#### body
 
 ```text
 // Same structural-union decline as the SYMBOL branch above: a bare
@@ -5338,7 +5328,7 @@ registered but later unused still counts as a sibling.
 // `isSupertypeLike`'s doc comment for the two-runtime rationale.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3606`)
+#### body
 
 ```text
 /* Permutable-modifier choice offered whole (optional-position path):
@@ -5346,7 +5336,7 @@ registered but later unused still counts as a sibling.
 		   parent's own slots instead of minting a group kind. */
 ```
 
-### `synthesizeFieldEnumRules` (`packages/codegen/src/dsl/enrich.ts:3672`)
+### `synthesizeFieldEnumRules` (`packages/codegen/src/dsl/enrich.ts:2357`)
 
 ```text
 // ---------------------------------------------------------------------------
@@ -5379,9 +5369,9 @@ registered but later unused still counts as a sibling.
 // once per grammar load, so neither applies here.
 ```
 
-### `walkFieldEnums` (`packages/codegen/src/dsl/enrich.ts:3743`)
+### `walkFieldEnums` (`packages/codegen/src/dsl/enrich.ts:2395`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3743`)
+#### body
 
 ```text
 // Peel one level of repeat/repeat1 wrapper so that
@@ -5390,21 +5380,21 @@ registered but later unused still counts as a sibling.
 // The repeat wrapper is preserved in the rewrite pass below.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3753`)
+#### body
 
 ```text
 // Always recurse into content — a field can nest other fields.
 ```
 
-### `buildCanonicalEnumNames` (`packages/codegen/src/dsl/enrich.ts:3775`)
+### `buildCanonicalEnumNames` (`packages/codegen/src/dsl/enrich.ts:2425`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3775`)
+#### body
 
 ```text
 // Group occurrences by memberKey.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3786`)
+#### body
 
 ```text
 // One O(rules) pass building memberKey → existing rule name, rather than
@@ -5420,9 +5410,9 @@ registered but later unused still counts as a sibling.
 // runtime-divergent phantom this pass exists to eliminate.
 ```
 
-### `deriveCandidateName` (`packages/codegen/src/dsl/enrich.ts:3913`)
+### `deriveCandidateName` (`packages/codegen/src/dsl/enrich.ts:2547`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3913`)
+#### body
 
 ```text
 // Priority 0: some existing rule, anywhere in the grammar, already has
@@ -5435,21 +5425,21 @@ registered but later unused still counts as a sibling.
 // `_accessibility_modifier` vs the pre-existing `accessibility_modifier`).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3933`)
+#### body
 
 ```text
 // Priority 2: shared field name across ≥2 distinct parent kinds.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3940`)
+#### body
 
 ```text
 // Priority 3: fallback — first parent + field name.
 ```
 
-### `rewriteFieldEnums` (`packages/codegen/src/dsl/enrich.ts:3966`)
+### `rewriteFieldEnums` (`packages/codegen/src/dsl/enrich.ts:2580`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3966`)
+#### body
 
 ```text
 // Replace the field's inline content with the replacement content rule.
@@ -5457,15 +5447,15 @@ registered but later unused still counts as a sibling.
 // For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:3976`)
+#### body
 
 ```text
 // Content isn't an enum candidate — recurse to find nested fields.
 ```
 
-### `tryExtractFieldEnum` (`packages/codegen/src/dsl/enrich.ts:4009`)
+### `tryExtractFieldEnum` (`packages/codegen/src/dsl/enrich.ts:2629`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4009`)
+#### body
 
 ```text
 // Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
@@ -5473,7 +5463,7 @@ registered but later unused still counts as a sibling.
 // so the rewrite can restore it around the synthesized symbol reference.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4023`)
+#### body
 
 ```text
 // Low precedence so this newly-real rule defers to whatever else the
@@ -5482,7 +5472,7 @@ registered but later unused still counts as a sibling.
 // authored directly in the grammar (`'grammar'` would misattribute it).
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4033`)
+#### body
 
 ```text
 // Already the canonical reference — nothing to rewrite. Without this,
@@ -5493,7 +5483,7 @@ registered but later unused still counts as a sibling.
 // grammar.json for zero semantic effect.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4043`)
+#### body
 
 ```text
 // Route through the shared `makeSymbol` constructor so the ref carries
@@ -5503,9 +5493,9 @@ registered but later unused still counts as a sibling.
 // treats as authoritative.
 ```
 
-### `resolveToEnumMembers` (`packages/codegen/src/dsl/enrich.ts:4064`)
+### `resolveToEnumMembers` (`packages/codegen/src/dsl/enrich.ts:2668`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4064`)
+#### body
 
 ```text
 // `isEnumChoiceRule` also accepts a literal-carrying SYMBOL arm, but
@@ -5515,7 +5505,7 @@ registered but later unused still counts as a sibling.
 // "what counts as an enum-shaped choice" instead of a second copy.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4073`)
+#### body
 
 ```text
 // A bare single STRING is never a field-enum candidate — that's exactly
@@ -5527,15 +5517,15 @@ registered but later unused still counts as a sibling.
 // hijacked `_kw_async`'s reference into a spurious re-synthesized name.
 ```
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4081`)
+#### body
 
 ```text
 // Follow one level of symbol indirection.
 ```
 
-### `resolveToEnumMembersOneLevelDeep` (`packages/codegen/src/dsl/enrich.ts:4093`)
+### `resolveToEnumMembersOneLevelDeep` (`packages/codegen/src/dsl/enrich.ts:2686`)
 
-#### body (`packages/codegen/src/dsl/enrich.ts:4093`)
+#### body
 
 ```text
 // A synthesized field-enum's own body is `prec(-1, …)`-wrapped; peel it so

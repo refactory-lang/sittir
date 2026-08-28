@@ -48,14 +48,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-#### body (`packages/codegen/src/dsl/primitives/field.ts:44`)
+#### body
 
 ```text
 /* Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
 	   may not. */
 ```
 
-#### body (`packages/codegen/src/dsl/primitives/field.ts:50`)
+#### body
 
 ```text
 /* CHOICE(STRING, BLANK) is tree-sitter's normalized form for
@@ -207,7 +207,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `module` (`packages/codegen/src/dsl/primitives/field.ts:1`)
+### `dsl/primitives/field.ts` (module)
 
 ```text
 /**
@@ -235,6 +235,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `dsl/primitives/alias.ts` (module)
+
 ```text
 /**
  * dsl/alias.ts — sittir alias shadow with placeholder form.
@@ -260,6 +262,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     import { alias } from '@sittir/codegen/dsl'
  */
 ```
+
+### `dsl/primitives/refine.ts` (module)
 
 ```text
 /**
@@ -304,6 +308,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `dsl/primitives/role.ts` (module)
+
 ```text
 /**
  * dsl/role.ts — structural-whitespace role primitive for override files.
@@ -337,9 +343,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `role` (`packages/codegen/src/dsl/primitives/role.ts:46`)
+### `role` (`packages/codegen/src/dsl/primitives/role.ts:9`)
 
-#### body (`packages/codegen/src/dsl/primitives/role.ts:46`)
+#### body
 
 ```text
 // Runtime validation — the TS type parameter doesn't flow through
