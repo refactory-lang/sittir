@@ -4,7 +4,7 @@ Paste this as the opening prompt of the next session.
 
 ---
 
-Continue the rule-builder / recognizers work on `engine-tree-identity`.
+Continue the rule-builder / recognizers work on `rule-builders` (PR #239, stacked on `engine-tree-identity` #238 → `dogfood-examples` #237 → `parse-api` #236). Never `--delete-branch` when merging a stacked PR.
 Read `docs/superpowers/specs/2026-08-27-wrapper-deletion-as-rule-builder.md`
 and `docs/superpowers/specs/2026-08-27-rule-pattern-recognizers.md` first —
 they carry every ruling. Session memory: call `get_latest_session`.
