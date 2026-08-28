@@ -1,58 +1,3 @@
-/**
- * enrich-type.ts — type-level mirror of `dsl/enrich.ts`'s STRUCTURAL field
- * insertion, for one rule body.
- *
- * WHY this is the linchpin: enrich is NOT path-transparent — it INSERTS
- * `FIELD(...)` rules into the rule tree. A transform path that crosses a
- * wrapped position gains a level. So `Enrich<>` must reproduce enrich's
- * insertion sites exactly, or every typed path is confidently wrong.
- *
- * EMPIRICAL CONTRACT (verified against runtime `enrich()` on all 182
- * tree-sitter-rust rules — see enrich-fidelity.test.ts):
- *
- *  - Structure is FULLY LOCALLY DECIDABLE on rust: there are ZERO
- *    structural skips. Every top-level seq member matching Shape 1/2/3
- *    (after the `_`-prefix + supertype gate) becomes a FIELD at the SAME
- *    index. No nested-repeat disqualification or claimed-name collision
- *    causes a structural divergence on rust. So `Enrich<>` needs NO
- *    cross-tuple counting for the STRUCTURE — only local shape checks.
- *
- *  - Insertion sites are SHALLOW: only direct top-level seq members (after
- *    peeling PREC), plus one `REPEAT(seq(...))` / `REPEAT1(seq(...))`
- *    level. enrich does NOT wrap symbols buried deeper in nested
- *    choices/seqs. Below an insertion site the structure equals raw.
- *
- *  - The three shapes (mirroring `detectSymbolTarget`):
- *      Shape 1: bare `SYMBOL`                          -> FIELD wraps it
- *      Shape 2: `CHOICE(SYMBOL, BLANK)` (= optional)   -> FIELD wraps inner SYMBOL
- *      Shape 3: `CHOICE(SEQ(SYMBOL, anon...), BLANK)`  -> FIELD wraps the SYMBOL in the seq
- *    (compiled grammar.json has NO OPTIONAL rule; optionals are
- *    CHOICE(_, BLANK).)
- *
- *  - The `_`-prefix gate (mirroring applySymbolToField): a symbol whose
- *    name starts with `_` only wraps when it is Shape 1 AND its name is a
- *    declared supertype; then the field name is the name with `_` stripped.
- *    `_`-prefixed Shape 2/3 are LEFT UNWRAPPED (e.g. break_expression's
- *    `optional($._expression)` stays raw; reference_type's
- *    `optional($.lifetime)` wraps because `lifetime` is non-`_`).
- *
- *  - The optional-keyword (`_marker`) pass does NOT fire on compiled
- *    grammar.json: `walkOptionalKeyword` matches CHOICE before peeling, so
- *    a compiled `CHOICE(STRING,BLANK)` is never seen as an optional. (The
- *    `*_marker` fields in the generated grammar are AUTHOR overrides, not
- *    enrich output.) So `Enrich<>` does NOT model it. NOTE: this is
- *    input-form-dependent — sittir's `{type:'OPTIONAL'}` form WOULD fire
- *    pass 3; correct here only because we type off compiled grammar.json.
- *
- * SOUNDNESS: field NAMES for numbered duplicates (e.g. index_expression's
- * `expression1`/`expression2`) need cross-tuple counting. Per the soundness
- * rule (degrade NAME, never STRUCTURE), when a wrapped symbol's name is not
- * provably unique among its siblings we widen the inserted FIELD's `name`
- * to `string` rather than guess. The FIELD still lands at the right index,
- * so PATHS stay correct; only the displayed name degrades. (On rust this
- * affects only `type_item` and `index_expression`.)
- */
-
 import type {
 	GrammarRule,
 	SeqRule,
@@ -73,17 +18,9 @@ export type RustSupertypes =
 	| '_declaration_statement'
 	| '_pattern';
 
-// ---------------------------------------------------------------------------
-// PREC transparency — peel/rebuild a single layer at a time.
-// ---------------------------------------------------------------------------
-
 type IsPrec<N> = N extends PrecRuleUnion ? true : false;
 
 type RewrapPrec<P extends PrecRuleUnion, Inner extends GrammarRule> = Omit<P, 'content'> & { content: Inner };
-
-// ---------------------------------------------------------------------------
-// optional detection: CHOICE(X, BLANK) (order-insensitive, exactly 2 members)
-// ---------------------------------------------------------------------------
 
 type IsBlank<N> = N extends BlankRule ? true : false;
 
@@ -99,25 +36,9 @@ type OptionalInner<C extends ChoiceRule> = C['members'] extends readonly [infer 
 		: never
 	: never;
 
-// ---------------------------------------------------------------------------
-// Field-name decision for a wrapped symbol.
-// ---------------------------------------------------------------------------
-/* Soundness: numbered-duplicate names need cross-tuple counting, which we do
-   NOT attempt structurally. The base name is the symbol name (supertype:
-   strip leading `_`). When the same base name occurs more than once among the
-   seq's wrap-eligible members, the runtime numbers them — so we widen to
-   `string` (degrade NAME, keep STRUCTURE). Uniqueness is decided by
-   CountBaseName over the members tuple. */
-
 type StripUnderscore<S extends string> = S extends `_${infer R}` ? R : S;
 
 type BaseFieldName<Name extends string> = Name extends RustSupertypes ? StripUnderscore<Name> : Name;
-
-// ---------------------------------------------------------------------------
-// Per-member symbol target detection (mirrors detectSymbolTarget).
-// Returns the wrapped symbol NAME (string) eligible for fielding, or never.
-// Applies the `_`-prefix gate: `_`-names only via Shape 1 + supertype.
-// ---------------------------------------------------------------------------
 
 type Shape3Symbol<S extends SeqRule> = ExtractLoneSymbol<S['members']>;
 
@@ -130,18 +51,18 @@ type ExtractLoneSymbol<M extends readonly GrammarRule[], Found extends string | 
 			? Tail extends readonly GrammarRule[]
 				? ExtractLoneSymbol<Tail, Head['name']>
 				: never
-			: never // >1 SYMBOL -> too complex
+			: never
 		: Head extends { type: 'STRING' } | { type: 'PATTERN' }
 			? Tail extends readonly GrammarRule[]
 				? ExtractLoneSymbol<Tail, Found>
 				: never
-			: never // non-anon, non-symbol -> too complex
+			: never
 	: Found extends 'none'
 		? never
 		: Found;
 
 type MemberWrapName<N extends GrammarRule> = N extends SymbolRule
-	? // Shape 1 (bare symbol): `_`-names only if supertype.
+	?
 		N['name'] extends `_${string}`
 		? N['name'] extends RustSupertypes
 			? N['name']
@@ -150,12 +71,12 @@ type MemberWrapName<N extends GrammarRule> = N extends SymbolRule
 	: N extends ChoiceRule
 		? OptionalInner<N> extends infer Inner
 			? Inner extends SymbolRule
-				? // Shape 2 (optional symbol): `_`-names NEVER (gate).
+				?
 					Inner['name'] extends `_${string}`
 					? never
 					: Inner['name']
 				: Inner extends SeqRule
-					? // Shape 3 (optional seq with lone symbol): `_`-names NEVER.
+					?
 						Shape3Symbol<Inner> extends infer SymName
 						? SymName extends `_${string}`
 							? never
@@ -167,7 +88,6 @@ type MemberWrapName<N extends GrammarRule> = N extends SymbolRule
 			: never
 		: never;
 
-// Count how many members share a given base field name (for uniqueness).
 type CountBase<
 	M extends readonly GrammarRule[],
 	Target extends string,
@@ -189,10 +109,6 @@ type CountBase<
 type FieldNameFor<WName extends string, AllMembers extends readonly GrammarRule[]> =
 	CountBase<AllMembers, BaseFieldName<WName>> extends 1 ? BaseFieldName<WName> : string;
 
-// ---------------------------------------------------------------------------
-// Member rewrite: insert FIELD at the wrap site, preserving structure.
-// ---------------------------------------------------------------------------
-
 type WrapShape1<Name extends string, SymLeaf extends SymbolRule> = FieldRule & {
 	type: 'FIELD';
 	name: Name;
@@ -209,22 +125,19 @@ type WrapShape3Members<M extends readonly GrammarRule[], Name extends string> = 
 
 type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule[]> =
 	MemberWrapName<N> extends infer WName
-		? /* never-guard FIRST: a non-wrap member yields `WName = never`, and a
-		     bare `WName extends string` DISTRIBUTES over never -> never (the
-		     `: N` fallback is unreachable), collapsing every non-wrapped member.
-		     `[never] extends [string]` is `true`, so the never test must precede. */
+		?
 			[WName] extends [never]
-			? N // not a wrap target -> unchanged
+			? N
 			: WName extends string
 				? FieldNameFor<WName, AllMembers> extends infer FName
 					? FName extends string
 						? N extends SymbolRule
-							? WrapShape1<FName, N> // Shape 1
+							? WrapShape1<FName, N>
 							: N extends ChoiceRule
 								? N['members'] extends infer CM extends readonly GrammarRule[]
 									? OptionalInner<N> extends infer Inner
 										? Inner extends SymbolRule
-											? ChoiceRule & { type: 'CHOICE'; members: ReplaceOptionalMembers<CM, WrapShape1<FName, Inner>> } // Shape 2
+											? ChoiceRule & { type: 'CHOICE'; members: ReplaceOptionalMembers<CM, WrapShape1<FName, Inner>> }
 											: Inner extends SeqRule
 												? Inner['members'] extends infer SM extends readonly GrammarRule[]
 													? ChoiceRule & {
@@ -233,7 +146,7 @@ type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule
 																CM,
 																SeqRule & { type: 'SEQ'; members: WrapShape3Members<SM, FName> }
 															>;
-														} // Shape 3
+														}
 													: N
 												: N
 										: N
@@ -241,31 +154,16 @@ type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule
 								: N
 						: N
 					: N
-				: N // not a wrap target -> unchanged
+				: N
 		: N;
 
 type EnrichSeqMembers<M extends readonly GrammarRule[]> = {
 	[K in keyof M]: M[K] extends GrammarRule ? EnrichMember<M[K], M> : M[K];
 };
 
-// ---------------------------------------------------------------------------
-// Repeat(seq(...)) one-level descent (mirrors promoteInsideRepeatMembers /
-// tryPromoteInRepeatSeq). We field-promote bare symbols inside a
-// REPEAT/REPEAT1 whose content is a SEQ, at one level only.
-// ---------------------------------------------------------------------------
-
 type EnrichRepeatContent<C extends GrammarRule> = C extends SeqRule
 	? { type: 'SEQ'; members: EnrichSeqMembers<C['members']> }
 	: C;
-
-// ---------------------------------------------------------------------------
-// Top-level entry: Enrich one rule body.
-//   - PREC: peel transparently, enrich inner, rewrap.
-//   - SEQ:  enrich each member.
-//   - REPEAT/REPEAT1 of SEQ: enrich the inner seq members.
-//   - anything else (bare CHOICE of symbols, single SYMBOL, token, etc.):
-//     unchanged (enrich only wraps within a top-level SEQ context).
-// ---------------------------------------------------------------------------
 
 export type EnrichRule<N extends GrammarRule> =
 	IsPrec<N> extends true

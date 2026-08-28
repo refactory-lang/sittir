@@ -1,19 +1,3 @@
-/**
- * Freshness predicate for grammar-owned napi binaries (`*.node`).
- *
- * Askama bakes the per-kind `.jinja` templates into the binary at compile
- * time, and the transport/dispatch code is compiled from the generated
- * `src/render/*.rs` — so a `.node` older than ANY of those inputs renders
- * with stale templates or stale transport logic. Historically this failed
- * SILENTLY (validators ran against the stale engine; in the worst case the
- * stale binary segfaulted mid-gate). Every native consumer should assert
- * freshness before loading the engine.
- *
- * Shared leaf module: consumed by `generated-manifest.ts` (manifest
- * verification of host binaries) and `validate/common.ts`
- * (`loadNativeEngineForGrammar`). Keep it dependency-free so neither
- * consumer picks up import cycles.
- */
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 

@@ -9,7 +9,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `getCurrentWireContext` (`packages/codegen/src/dsl/wire/wire.ts:193`)
+
+### `packages/codegen/src/dsl/wire/wire.ts::getCurrentWireContext`
 
 ```text
 /** Read the active wire context, or null if no `wire()`-wrapped rule
@@ -18,7 +19,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  accumulator in `synthetic-rules.ts`. */
 ```
 
-### `wireRegisterSyntheticRule` (`packages/codegen/src/dsl/wire/wire.ts:201`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticRule`
 
 ```text
 /**
@@ -28,7 +29,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireRegisterSyntheticInline` (`packages/codegen/src/dsl/wire/wire.ts:212`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticInline`
 
 ```text
 /**
@@ -40,7 +41,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireRegisterConflict` (`packages/codegen/src/dsl/wire/wire.ts:226`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterConflict`
 
 ```text
 /**
@@ -49,7 +50,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireRegisterRefineForms` (`packages/codegen/src/dsl/wire/wire.ts:241`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterRefineForms`
 
 ```text
 /**
@@ -68,13 +69,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wireGetCurrentRuleKind` (`packages/codegen/src/dsl/wire/wire.ts:261`)
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetCurrentRuleKind`
 
 ```text
 /** Current rule kind on the active wire context, or null when inactive. */
 ```
 
-### `withWireContext` (`packages/codegen/src/dsl/wire/wire.ts:266`)
+### `packages/codegen/src/dsl/wire/wire.ts::withWireContext`
 
 ```text
 /**
@@ -88,7 +89,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `composeOrSynthesizePolymorphParents` (`packages/codegen/src/dsl/wire/wire.ts:857`)
+### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizePolymorphParents`
 
 ```text
 /**
@@ -106,7 +107,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildPolymorphParentFn` (`packages/codegen/src/dsl/wire/wire.ts:882`)
+```text
+// ---------------------------------------------------------------------------
+// wire() helpers
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::buildPolymorphParentFn`
 
 ```text
 /**
@@ -125,7 +132,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `injectHiddenRulePlaceholders` (`packages/codegen/src/dsl/wire/wire.ts:920`)
+### `packages/codegen/src/dsl/wire/wire.ts::injectHiddenRulePlaceholders`
 
 ```text
 /**
@@ -144,7 +151,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `polymorphVisibleName` (`packages/codegen/src/dsl/wire/wire.ts:949`)
+### `packages/codegen/src/dsl/wire/wire.ts::polymorphVisibleName`
 
 ```text
 /**
@@ -162,13 +169,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `polymorphHiddenName` (`packages/codegen/src/dsl/wire/wire.ts:967`)
+### `packages/codegen/src/dsl/wire/wire.ts::polymorphHiddenName`
 
 ```text
 /** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
 ```
 
-### `composeOrSynthesizeTransformParents` (`packages/codegen/src/dsl/wire/wire.ts:972`)
+### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizeTransformParents`
 
 ```text
 /**
@@ -179,7 +186,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildTransformParentFn` (`packages/codegen/src/dsl/wire/wire.ts:987`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildTransformParentFn`
 
 ```text
 /**
@@ -191,7 +198,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `injectTransformHiddenRulePlaceholders` (`packages/codegen/src/dsl/wire/wire.ts:1001`)
+### `packages/codegen/src/dsl/wire/wire.ts::injectTransformHiddenRulePlaceholders`
 
 ```text
 /**
@@ -213,7 +220,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `registerHiddenRuleForPlaceholder` (`packages/codegen/src/dsl/wire/wire.ts:1034`)
+### `packages/codegen/src/dsl/wire/wire.ts::registerHiddenRuleForPlaceholder`
 
 ```text
 /**
@@ -227,7 +234,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `makeDeferredContentFn` (`packages/codegen/src/dsl/wire/wire.ts:1066`)
+### `packages/codegen/src/dsl/wire/wire.ts::makeDeferredContentFn`
 
 ```text
 /**
@@ -258,7 +265,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapAllRuleFns` (`packages/codegen/src/dsl/wire/wire.ts:1102`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapAllRuleFns`
 
 ```text
 /**
@@ -269,7 +276,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapOneRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:1114`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapOneRuleFn`
 
 ```text
 /**
@@ -278,7 +285,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapConflictsCallback` (`packages/codegen/src/dsl/wire/wire.ts:1133`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapConflictsCallback`
 
 ```text
 /**
@@ -293,7 +300,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapInlineCallback` (`packages/codegen/src/dsl/wire/wire.ts:1147`)
+### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
 ```text
 /**
@@ -307,7 +314,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildWiredConflictsFn` (`packages/codegen/src/dsl/wire/wire.ts:1160`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildWiredConflictsFn`
 
 ```text
 /**
@@ -328,7 +335,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildWiredInlineFn` (`packages/codegen/src/dsl/wire/wire.ts:1185`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildWiredInlineFn`
 
 ```text
 /**
@@ -341,7 +348,26 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectInlineNames` (`packages/codegen/src/dsl/wire/wire.ts:1225`)
+#### body
+
+```text
+// Filter OUT visible-group mint sources (see WireContext.inlineRemovals):
+// leaving `_src` in `inline:` makes tree-sitter erase the rule before
+// table construction, vaporizing `alias($._src, $.visible)` — and with
+// it the minted kind's entire parser identity — while the IR still
+// models the kind. Un-inlining keeps the mint real on both sides.
+```
+
+#### body
+
+```text
+// An orphaned synthetic (its owner was redeclared by an authored
+// `rules:` override, dropping the mint's only reference) must not
+// reach `inline:` — tree-sitter warns `inline rule '<name>' is
+// not defined` and discards it (typescript's `_object_arm1`).
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::collectInlineNames`
 
 ```text
 /**
@@ -350,7 +376,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `nativeInlineRef` (`packages/codegen/src/dsl/wire/wire.ts:1241`)
+### `packages/codegen/src/dsl/wire/wire.ts::nativeInlineRef`
 
 ```text
 /**
@@ -363,7 +389,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `symbolizeRef` (`packages/codegen/src/dsl/wire/wire.ts:1255`)
+### `packages/codegen/src/dsl/wire/wire.ts::symbolizeRef`
 
 ```text
 /**
@@ -389,13 +415,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `hasBodyPatternGroups` (`packages/codegen/src/dsl/wire/wire.ts:1284`)
+### `packages/codegen/src/dsl/wire/wire.ts::hasBodyPatternGroups`
 
 ```text
 /** True when any value in `groups` is a function (body-pattern entry). */
 ```
 
-### `makeSimpleDollarProxy` (`packages/codegen/src/dsl/wire/wire.ts:1312`)
+```text
+// ---------------------------------------------------------------------------
+// Wire-phase pattern find-and-replace
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::makeSimpleDollarProxy`
 
 ```text
 /**
@@ -411,7 +443,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isComplexBodyRt` (`packages/codegen/src/dsl/wire/wire.ts:1331`)
+### `packages/codegen/src/dsl/wire/wire.ts::isComplexBodyRt`
 
 ```text
 /**
@@ -436,7 +468,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `unwrapOptionalChoiceRt` (`packages/codegen/src/dsl/wire/wire.ts:1382`)
+### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
 
 ```text
 /**
@@ -449,7 +481,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `replaceInBodyRt` (`packages/codegen/src/dsl/wire/wire.ts:1440`)
+#### body
+
+```text
+// Shared detection (same `isChoiceType`/`isBlankType` that auto-groups.ts
+// uses for its `CHOICE[seq, BLANK]` → optional handling), so the two wire
+// passes recognize the tree-sitter-lowered optional form identically.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::replaceInBodyRt`
 
 ```text
 /**
@@ -468,7 +508,29 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildPatternReplacingFn` (`packages/codegen/src/dsl/wire/wire.ts:1506`)
+#### body
+
+```text
+// Check if THIS node matches any candidate.
+```
+
+#### body
+
+```text
+// Emit a SYMBOL reference in the shape matching the candidate's body.
+// When the candidate has an aliasAs target, wrap the symbol in an
+// ALIAS so tree-sitter emits the visible kind at every match site
+// (otherwise tree-sitter inlines the hidden `_<name>` body and the
+// kind never appears as a CST node).
+```
+
+#### body
+
+```text
+// Recurse into children.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::buildPatternReplacingFn`
 
 ```text
 /**
@@ -476,7 +538,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `withStringGlobalShim` (`packages/codegen/src/dsl/wire/wire.ts:1520`)
+### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
 ```text
 /**
@@ -496,7 +558,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `rewriteVisibleExternalRefsRt` (`packages/codegen/src/dsl/wire/wire.ts:1550`)
+```text
+// ---------------------------------------------------------------------------
+// visibleExternals — SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path)
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::rewriteVisibleExternalRefsRt`
 
 ```text
 /**
@@ -509,13 +577,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildVisibleExternalsRewritingFn` (`packages/codegen/src/dsl/wire/wire.ts:1596`)
+### `packages/codegen/src/dsl/wire/wire.ts::buildVisibleExternalsRewritingFn`
 
 ```text
 /** Wrap a rule fn so its return value has visibleExternals refs rewritten. */
 ```
 
-### `applyWireVisibleExternalsRewrite` (`packages/codegen/src/dsl/wire/wire.ts:1604`)
+### `packages/codegen/src/dsl/wire/wire.ts::applyWireVisibleExternalsRewrite`
 
 ```text
 /**
@@ -527,7 +595,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyWirePatternReplacement` (`packages/codegen/src/dsl/wire/wire.ts:1626`)
+### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
 ```text
 /**
@@ -551,7 +619,43 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `RenderAsConfig` (`packages/codegen/src/dsl/wire/wire.ts:52`)
+#### body
+
+```text
+// Legacy auto-detection: any `_`-prefixed rule the author declared in
+// `rules:` is a structural pattern candidate. Maintained for the
+// TypeScript `_ambient_declaration_*` entries that still rely on this
+// path; new patterns should go in `groups:` with a body fn.
+```
+
+#### body
+
+```text
+// Eagerly evaluate with a null previous. Rules whose body depends on
+// `original` (transform-based overrides) will likely return undefined,
+// null, or throw — all safely skipped.
+```
+
+#### body
+
+```text
+// New body-pattern groups path: each `groups:` entry whose value is a
+// function is a body-pattern candidate. The KEY is the visible kind
+// name; internally we synthesize a hidden `_<key>` rule with the body,
+// and emit `alias($._<key>, $.<key>)` at every match site so tree-
+// sitter exposes the visible kind as a CST node.
+```
+
+#### body
+
+```text
+// Register the hidden rule body so tree-sitter has a definition
+// for the symbol the alias() wrappers will reference. Wrap via
+// wrapOneRuleFn directly (this fn runs after wrapAllRuleFns) so
+// the body fn evaluates inside a proper wire context.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::RenderAsConfig`
 
 ```text
 /**
@@ -573,7 +677,32 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `VisibleExternalsConfig` (`packages/codegen/src/dsl/wire/wire.ts:76`)
+```text
+// ---------------------------------------------------------------------------
+// RenderAsConfig — sittir-side rule bodies for external scanner symbols
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * External-scanner symbol → nominal render body, sittir-side ONLY. The parser
+ * is untouched: the symbol keeps its CST visibility exactly as the base
+ * grammar declares it. Bodies are nominal shapes — read-produced leaves render
+ * verbatim from wire text; the body's job is to give factory-built nodes a
+ * render rule and to carry declared token facts. `token.immediate(...)` is the
+ * one wrapper a body may use (the drain folds it into the rule's
+ * `immediate`/`tokenized` attrs); `prec()` and other wrappers leak past the
+ * drain folds and must not appear.
+ *
+ * Deliberately separate from {@link VisibleExternalsConfig}: a render body and
+ * CST visibility are independent facts. A hidden external may carry a
+ * `renderAs:` body while its visible name comes from a rules-block alias
+ * (python's `_string_content` → `string_fragment`) — deriving visibility from
+ * body presence would mint a second, competing alias for such symbols.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::VisibleExternalsConfig`
 
 ```text
 /**
@@ -601,7 +730,27 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `WireContext` (`packages/codegen/src/dsl/wire/wire.ts:105`)
+```text
+// ---------------------------------------------------------------------------
+// VisibleExternalsConfig — materialize hidden external-scanner symbols as
+// named CST-visible aliases
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * Hidden (`_`-prefixed) external-scanner symbol → render body, PLUS a parser
+ * rewrite: every `SYMBOL` reference to the key is wrapped in a named `ALIAS`
+ * of the underscore-stripped name, in both grammar pipelines (tree-sitter CLI
+ * via {@link applyWireVisibleExternalsRewrite}, sittir evaluate via its
+ * `rewriteVisibleExternalRefs`). The parser then materializes real CST nodes
+ * for the symbol (python `_newline` → visible `newline`). Use this when the
+ * external must be visible; use {@link RenderAsConfig} when it only needs a
+ * sittir-side body — the two keys carry independent facts and both stay.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext`
 
 ```text
 /**
@@ -611,20 +760,26 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `deposits` (`packages/codegen/src/dsl/wire/wire.ts:111`)
+```text
+// ---------------------------------------------------------------------------
+// WireContext + module-level current pointer
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::deposits`
 
 ```text
 /** Hidden-rule name → captured content body. */
 ```
 
-### `syntheticInline` (`packages/codegen/src/dsl/wire/wire.ts:113`)
+### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`
 
 ```text
 /** Hidden `_kw_*` helper names that should be appended to the
 	 *  grammar's inline list after rule evaluation deposits their body. */
 ```
 
-### `inlineRemovals` (`packages/codegen/src/dsl/wire/wire.ts:116`)
+### `packages/codegen/src/dsl/wire/wire.ts::inlineRemovals`
 
 ```text
 /** Hidden source names behind enrich visible-group mints
@@ -637,7 +792,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  callback. */
 ```
 
-### `orphanedSyntheticGroups` (`packages/codegen/src/dsl/wire/wire.ts:125`)
+### `packages/codegen/src/dsl/wire/wire.ts::orphanedSyntheticGroups`
 
 ```text
 /** Enrich-synthesized clause-hoist names (both inline-safe and
@@ -652,7 +807,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  would otherwise raise for a kind that can never occur in a parse. */
 ```
 
-### `conflictGroups` (`packages/codegen/src/dsl/wire/wire.ts:136`)
+### `packages/codegen/src/dsl/wire/wire.ts::conflictGroups`
 
 ```text
 /** Conflict groups (rule-name arrays) registered by variant() for
@@ -660,7 +815,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  callback when tree-sitter invokes it. */
 ```
 
-### `refineForms` (`packages/codegen/src/dsl/wire/wire.ts:140`)
+### `packages/codegen/src/dsl/wire/wire.ts::refineForms`
 
 ```text
 /** Per-rule form declarations registered by refine(). Ordered list
@@ -671,7 +826,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  the original shape. */
 ```
 
-### `groups` (`packages/codegen/src/dsl/wire/wire.ts:147`)
+### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
 ```text
 /** Per-kind group-lift map from config. Link reads this to synthesize
@@ -679,7 +834,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
 ```
 
-### `polymorphsConfig` (`packages/codegen/src/dsl/wire/wire.ts:151`)
+### `packages/codegen/src/dsl/wire/wire.ts::polymorphsConfig`
 
 ```text
 /** Raw polymorphs path→variant-name config. Link passes this to
@@ -687,7 +842,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  ancestor context segments. */
 ```
 
-### `renderAs` (`packages/codegen/src/dsl/wire/wire.ts:155`)
+### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
 /** Sittir-side rule bodies for external scanner symbols. Each entry
@@ -698,28 +853,28 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  See: renderAs mechanism. */
 ```
 
-### `visibleExternals` (`packages/codegen/src/dsl/wire/wire.ts:162`)
+### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
 
 ```text
 /** Hidden-external → sittir-side render body map from `visibleExternals:`.
 	 *  See {@link VisibleExternalsConfig} for the full mechanism. */
 ```
 
-### `expectDiagnostics` (`packages/codegen/src/dsl/wire/wire.ts:165`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectDiagnostics`
 
 ```text
 /** Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:`.
 	 *  See `WireConfig.expectDiagnostics` for the full description. */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/dsl/wire/wire.ts:168`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectTestFailures`
 
 ```text
 /** Per-kind known-failing generated-test declarations from
 	 *  `expectTestFailures:`. See `WireConfig.expectTestFailures`. */
 ```
 
-### `currentRuleKind` (`packages/codegen/src/dsl/wire/wire.ts:171`)
+### `packages/codegen/src/dsl/wire/wire.ts::currentRuleKind`
 
 ```text
 /** Name of the rule currently being evaluated, for variant()'s
@@ -727,14 +882,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
 ```
 
-### `authoredRuleNames` (`packages/codegen/src/dsl/wire/wire.ts:175`)
+### `packages/codegen/src/dsl/wire/wire.ts::authoredRuleNames`
 
 ```text
 /** Rule<'evaluate'> names explicitly authored in `config.rules`. Synthetic `_kw_*`
 	 *  auto-inline only applies to helpers wire synthesized itself. */
 ```
 
-### `RefineForm` (`packages/codegen/src/dsl/wire/wire.ts:180`)
+### `packages/codegen/src/dsl/wire/wire.ts::RefineForm`
 
 ```text
 /**
@@ -745,7 +900,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `BaseKind` (`packages/codegen/src/dsl/wire/wire.ts:284`)
+### `packages/codegen/src/dsl/wire/wire.ts::BaseKind`
 
 ```text
 /** @internal — extract the rule-kind string union from a base grammar.
@@ -753,7 +908,37 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
 ```
 
-### `PolymorphsConfig` (`packages/codegen/src/dsl/wire/wire.ts:293`)
+```text
+// ---------------------------------------------------------------------------
+// Public API: `wire(config)` — opts wrapper
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * Shape of the type parameter to `wire()` / `transform()` / the
+ * polymorph & transform config interfaces. Two shapes accepted:
+ *
+ * 1. **Flat sittir-emitted grammar type** (preferred) — the
+ *    `RustGrammar` / `TypeScriptGrammar` / `PythonGrammar` types
+ *    emitted at `packages/{lang}/src/grammar.ts`. Top-level keys are
+ *    the kind names (visible AND hidden, e.g. `_expression`,
+ *    `_visibility_modifier_pub`). Authors write `wire<RustGrammar>(...)`.
+ *
+ * 2. **Tree-sitter native base grammar** — `typeof base` from
+ *    `tree-sitter-<lang>/grammar.js`, shape `{ rules: { … } }`.
+ *    Less authoritative (no hidden kinds added by overrides), but
+ *    works for authors that already have `import base from
+ *    '…/grammar.js'` in scope and want to bind to it directly.
+ *
+ * `BaseKind<Base>` projects the kind-name union out of either shape.
+ * The default (`Record<string, unknown>`) collapses to plain `string`
+ * keys, preserving the pre-generics behaviour of every call site that
+ * doesn't supply a base type.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::PolymorphsConfig`
 
 ```text
 /**
@@ -769,7 +954,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `GroupsConfigValue` (`packages/codegen/src/dsl/wire/wire.ts:308`)
+### `packages/codegen/src/dsl/wire/wire.ts::GroupsConfigValue`
 
 ```text
 /**
@@ -803,7 +988,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `TransformsConfig` (`packages/codegen/src/dsl/wire/wire.ts:340`)
+### `packages/codegen/src/dsl/wire/wire.ts::TransformsConfig`
 
 ```text
 /**
@@ -831,13 +1016,41 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PatchMap` (`packages/codegen/src/dsl/wire/wire.ts:390`)
+```text
+// Loose default (`Base = GrammarJson`, rule values are the open
+```
+
+#### body
+
+```text
+// `GrammarRule` union): use the plain `PatchMap` form. Mapping
+// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
+// per-rule precise form is only meaningful — and only safe — when
+// `Base` is a CONCRETE `as const` schema (tuple rule bodies). The
+// internal pipeline always sees this loose form.
+```
+
+#### body
+
+```text
+// Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
+// segment-1-precise path strings. We derive them from the RAW rule
+// (`FastKeys` = PathKey<R[K]>) rather than the post-Enrich shape:
+// `PathKey` only consumes the FIRST segment (`TopLevelKeys`), and
+// enrich wraps top-level members IN PLACE (never adds/removes one),
+// so `PathKey<EnrichRule<X>> ≡ PathKey<X>` (proven in
+// wire-transforms.test-d.ts). FastKeys is therefore LOSSLESS for
+// keys and avoids instantiating EnrichRule over the loose union
+// (which is the TS2589 source). Array form = multi-patchset rules.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchMap`
 
 ```text
 /** A single patch-map — path-in-original → patch value. */
 ```
 
-### `ShapedSymbols` (`packages/codegen/src/dsl/wire/wire.ts:405`)
+### `packages/codegen/src/dsl/wire/wire.ts::ShapedSymbols`
 
 ```text
 /**
@@ -850,7 +1063,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `conflicts` (`packages/codegen/src/dsl/wire/wire.ts:427`)
+#### body
+
+```text
+// Permissive fallback for alias-target / synthesized names not in the base
+// grammar.json (e.g. `$.wildcard_pattern`). Known rules resolve via the
+// mapped member above (precise `SymbolRule<R>`, no `undefined`); only unknown names
+// hit this index.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::conflicts`
 
 ```text
 /**
@@ -859,7 +1081,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `rules` (`packages/codegen/src/dsl/wire/wire.ts:435`)
+### `packages/codegen/src/dsl/wire/wire.ts::rules`
 
 ```text
 /**
@@ -873,7 +1095,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `groups` (`packages/codegen/src/dsl/wire/wire.ts:454`)
+### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
 ```text
 /**
@@ -883,13 +1105,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `__enrichOverrides__` (`packages/codegen/src/dsl/wire/wire.ts:463`)
+### `packages/codegen/src/dsl/wire/wire.ts::__enrichOverrides__`
 
 ```text
 /** Side-channel from `enrich()` — preserved unchanged. */
 ```
 
-### `renderAs` (`packages/codegen/src/dsl/wire/wire.ts:465`)
+### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
 /**
@@ -910,7 +1132,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `visibleExternals` (`packages/codegen/src/dsl/wire/wire.ts:482`)
+### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
 
 ```text
 /**
@@ -924,7 +1146,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `expectDiagnostics` (`packages/codegen/src/dsl/wire/wire.ts:492`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectDiagnostics`
 
 ```text
 /**
@@ -940,7 +1162,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `expectTestFailures` (`packages/codegen/src/dsl/wire/wire.ts:504`)
+### `packages/codegen/src/dsl/wire/wire.ts::expectTestFailures`
 
 ```text
 /**
@@ -959,7 +1181,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `__wireContext__` (`packages/codegen/src/dsl/wire/wire.ts:533`)
+### `packages/codegen/src/dsl/wire/wire.ts::__wireContext__`
 
 ```text
 /**
@@ -970,19 +1192,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `RuleFn` (`packages/codegen/src/dsl/wire/wire.ts:563`)
+### `packages/codegen/src/dsl/wire/wire.ts::RuleFn`
 
 ```text
 /** @internal alias for the internal rules-map element type (the dual-runtime seam). */
 ```
 
-### `WirePatternCandidate` (`packages/codegen/src/dsl/wire/wire.ts:1050`)
+### `packages/codegen/src/dsl/wire/wire.ts::WirePatternCandidate`
 
 ```text
 /** Minimal candidate record for wire-phase pattern replacement. */
 ```
 
-### `aliasAs` (`packages/codegen/src/dsl/wire/wire.ts:1054`)
+### `packages/codegen/src/dsl/wire/wire.ts::aliasAs`
 
 ```text
 /** When set, every replacement site emits
@@ -991,7 +1213,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  pattern entries; absent for legacy `_`-prefix candidates. */
 ```
 
-### `unwrapOptionalChoiceRt` (`packages/codegen/src/dsl/wire/wire.ts:1083`)
+### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
 
 ```text
 /**
@@ -1013,7 +1235,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ShapedSymbols` (`packages/codegen/src/dsl/wire/wire.ts:222`)
+### `packages/codegen/src/dsl/wire/wire.ts::ShapedSymbols`
 
 ```text
 /**
@@ -1030,7 +1252,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `passthroughBaseRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:786`)
+### `packages/codegen/src/dsl/wire/wire.ts::passthroughBaseRuleFn`
 
 ```text
 /**
@@ -1038,4 +1260,348 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Returns `previous` unchanged; the pattern-replacement pass wraps this
  * fn so the returned body is structurally walked and substituted.
  */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::module`
+
+```text
+/**
+ * dsl/wire.ts — opts-wrapping helper for grammar() invocations.
+ *
+ * See `docs/adr/0007-wire-opts-declarative-polymorphs.md` for the full
+ * design.
+ *
+ * `wire(config)` is a synchronous transformation of the options object
+ * the author passes to `grammar()`. It:
+ *
+ *   1. Reads a declarative `polymorphs: { parent: { path: suffix } }`
+ *      map and injects deferred-content placeholder rule fns for every
+ *      `_<parent>_<suffix>` hidden rule into `opts.rules`. When the
+ *      tree-sitter runtime later iterates those entries, each one
+ *      reads captured content from the wire-scoped `deposits` map.
+ *   2. Synthesizes or composes `opts.rules[parent]` so its body calls
+ *      `transform(original, { path → variant(suffix) })` automatically.
+ *   3. Wraps every rule fn so the wire context (and `currentRuleKind`)
+ *      are set while the fn executes — `variant()` / `alias()` /
+ *      `transform()` read those during their dispatch.
+ *   4. Wraps the user's `conflicts` callback so accumulated variant
+ *      conflict groups are symbolized through `$` and appended to the
+ *      returned conflict list.
+ *
+ * State lives in a per-invocation `WireContext` captured in the closure
+ * `wire()` creates. A module-level `currentContext` pointer is set by
+ * the rule-fn wrapper so DSL helpers invoked synchronously during that
+ * rule's evaluation can reach the context. No `globalThis` mutations.
+ *
+ * Fallback during migration: until all three grammars move to `wire()`,
+ * the existing `dsl/synthetic-rules.ts` module state still handles
+ * variant/alias for ungated paths. When `currentContext` is set, the
+ * synthetic-rules helpers route to it instead. This lets each grammar
+ * migrate independently.
+ */
+```
+
+```text
+// Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.rules`
+
+#### body
+
+```text
+// New rules the override ADDS (not in the base grammar.json, e.g. a
+// synthesized `_wildcard_pattern`): `$` stays typed; no base `previous`.
+// `any`-typed `previous` keeps the precise base-rule callbacks above
+// assignable here (bivariant), so known keys retain their precise shape.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.factoryInline`
+
+```text
+/**
+	 * Kinds with no top-level `ir.*` builder: constructed only through nested
+	 * config on the slot(s) that reference them. Assemble stamps the names
+	 * listed here onto `AssembledNodeBase.factoryInline`; a listed kind with
+	 * nowhere to nest fails the `factory-inline-unnestable` diagnostic.
+	 */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::SittirRuleFn`
+
+```text
+// LOOSE-INTERNAL / NARROW-PUBLIC split (Phase-4 resolution to the
+// contravariance wall):
+//
+// `SittirRuleFn` is the INTERNAL rules-map element type. wire's own builder
+// fns — `makeDeferredContentFn`, `buildTransformParentFn`, `wiredPolymorphParent`,
+// `patternReplacingRuleFn`, and auto-groups' `makeStaticRuleFn` — return
+// sittir's dual-runtime raw rule shapes (lowercase + sittir-only variants,
+// heterogeneous literals, typed `unknown`/`RuntimeRule`), BROADER than
+// tree-sitter's `RuleOrLiteral`, so the return MUST stay `unknown`.
+//
+// The PARAMS are `any`, NOT `unknown` — this is load-bearing. The PUBLIC
+// authoring callbacks `WireConfig.rules` exposes are narrow
+// (`($: GrammarSymbols<…>) => unknown`). A narrow `$: GrammarSymbols` fn is
+// assignable to a loose `$: any` param (any is bivariant-compatible) but NOT
+// to `$: unknown` (function params are contravariant — `unknown` demands the
+// fn accept anything, which a `GrammarSymbols`-typed `$` does not). With
+// `$: unknown` the narrow public fns wouldn't flow into
+// `WireContext.rules: Record<string, SittirRuleFn>` without a cast; `$: any`
+// lets them flow with zero cast. The internal machinery still consumes this
+// loose type unchanged.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::wire`
+
+```text
+/**
+ * Wrap the user's grammar options with wire-managed polymorph plumbing.
+ *
+ * @param config - Options to pass to `grammar()` plus an optional
+ *   `polymorphs` declaration.
+ * @param base - Optional enriched-base grammar object. When supplied AND
+ *   `config.groups` declares body-pattern entries (function values), wire
+ *   walks every base rule and injects a pattern-replacing override for it.
+ *   This is necessary because tree-sitter only invokes override rule fns
+ *   for entries the author put in `config.rules`; unoverridden base rules
+ *   would otherwise bypass pattern replacement entirely. Passing `base`
+ *   keeps the body-pattern groups mechanism honest for grammars where the
+ *   matching positions live in base rules. Pass `enrich(base)` (the same
+ *   value handed to `grammar()` as the base arg) so the patterns match
+ *   the same evaluated rule bodies tree-sitter will see.
+ * @returns A new options object suitable for `grammar()`. Tree-sitter's
+ *   own iteration observes the injected hidden-rule entries at its
+ *   `Object.keys()` snapshot; content resolves via deferred-content fns
+ *   as tree-sitter iterates.
+ */
+```
+
+```text
+// `B` infers from `base` (the enriched-base grammar), so the config
+// literal is contextually typed — and IntelliSense'd — against the
+// precise `WireConfig<B>` (typed `$`, per-rule `previous`/`original`).
+// No explicit `WireConfig` annotation is needed at the call site. When
+// `base` is omitted, `B` defaults to `any` (the loose form, identical to
+// the prior `C extends WireConfig<any>` behavior — there is nothing to
+// infer grammar precision from).
+//
+// NOTE on TS2589: routing the literal through the generic `WireConfig<B>`
+// is REQUIRED for base-present precision — but at a no-`base` call site
+// (where `B` reaches the generic with nothing to pin it) TS may eagerly
+// instantiate the precise `TransformsConfig<B>` mapped-type branch and
+// report "excessively deep". A call site that pins `B` to a lazy alias —
+// an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
+// grammar.sittir.ts) or a concrete `base` — evaluates that branch lazily and
+// stays shallow. The residual no-base artifact is editor-only typecheck
+// noise; runtime is unaffected (`config` is aliased to a loose
+// `WireConfig<any>` in the body below).
+```
+
+#### body
+
+```text
+// Generics are contained to the SIGNATURE so `B` infers from `base`
+// and the literal `config` is contextually checked against
+// `WireConfig<B>`. The BODY operates on the loose runtime shapes wire
+// has always worked on — alias to non-generic internal types ONCE
+// here so the body never instantiates `WireConfig<B>['rules']`
+// generically (which trips TS2589) nor reads `base.grammar` off a
+// generic `B`. The runtime is unchanged; these are the sanctioned
+// boundary casts (see the LOOSE-INTERNAL / NARROW-PUBLIC note above).
+```
+
+#### body
+
+```text
+// `outRules` holds rule-authoring FUNCTIONS (tree-sitter invokes each with
+// `$`/`previous` to produce the rule body at grammar-compile time), not
+// `Rule<'evaluate'>` data nodes — see the SittirRuleFn "LOOSE-INTERNAL /
+// NARROW-PUBLIC" note above. The R12 sweep over-annotated this as
+// `Record<string, Rule<'evaluate'>>`, which doesn't structurally overlap
+// with the function-map shape `cfg.rules` actually has.
+```
+
+#### body
+
+```text
+// Transforms first, polymorphs second — transforms wrap the user
+// fn innermost and see the base-shape rule tree; polymorphs wrap
+// the transforms-wrapped fn outermost and split what remains.
+// Reversing this (polymorphs first) made inline transforms that
+// address base-shape paths (e.g. 'N/_expression' kind-match) break
+// because the polymorph already aliased the choice arms.
+//
+// Compose runs BEFORE inject so iteration order at runtime puts
+// polymorph parents ahead of their hidden arms — parents populate
+// deposits via transformFn; arms read those deposits when their
+// deferred-content fn later runs. The injection pass is careful not
+// to clobber a polymorph-parent fn already installed by compose:
+// when a hidden name is BOTH an arm of one polymorph AND itself a
+// polymorph parent (e.g. `_visibility_modifier_pub`), compose wins
+// and the parent fn reads the outer's deposit at run time (see
+// `buildPolymorphParentFn`).
+```
+
+#### body
+
+```text
+// Body-pattern groups: when `base` is supplied AND the groups config has
+// function-valued entries, scan base rule names and inject a passthrough
+// override for any base rule not already overridden. Tree-sitter calls
+// each override with `previous` (the base body); our passthrough returns
+// `previous` unchanged but then `applyWirePatternReplacement` wraps the
+// passthrough so the body undergoes pattern replacement. Without this,
+// unoverridden base rules bypass replacement entirely.
+// visibleExternals needs the SAME passthrough treatment as body-pattern
+// groups: its SYMBOL→ALIAS rewrite (applyWireVisibleExternalsRewrite,
+// below) only reaches rule fns present in `outRules` — an unoverridden
+// base rule with no entry here never gets wrapped, so a `$._x` reference
+// buried in an un-overridden base rule would silently escape the
+// rewrite (the exact phantom-kind divergence class this file guards
+// against elsewhere).
+```
+
+#### body
+
+```text
+// Wire-phase pattern find-and-replace: runs after wrapAllRuleFns so
+// each candidate fn executes inside a proper wire context when eagerly
+// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
+// own post-evaluation pass for the sittir-pipeline path.
+```
+
+#### body
+
+```text
+// visibleExternals: SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path).
+// evaluate.ts's applyVisibleExternalsRewrite is the sittir-pipeline twin
+// — both MUST produce structurally identical output.
+```
+
+#### body
+
+```text
+// Drain enrich-hoisted clause-group names into syntheticInline so they
+// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
+// rules directly into base.grammar.rules before wire runs; without
+// inlining, tree-sitter creates LR conflicts for those hidden rules.
+// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
+// property that enrich() attaches to the grammar result.
+//
+// (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
+// auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
+// `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
+// desugaring, per `peelOptionalSeq`): inline-SAFE into a hidden
+// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
+// `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
+// registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
+// only descends through them transparently to reach a nested `optional(seq)`;
+// a bare `repeat(seq(...))` with no `optional` wrapper is untouched. The old
+// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe
+// seqs link must see as inline content.)
+```
+
+#### body
+
+```text
+// Visible-group mint SOURCES must not be inlined away — see
+// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+```
+
+#### body
+
+```text
+// A synthesized clause-hoist name (recorded owner = the parent kind
+// enrich() hoisted it FROM) is orphaned once THIS grammar's own
+// `rules:` config redeclares that owner — the override text could
+// never reference a name that didn't exist until this enrich() call
+// minted it from the base grammar's pre-override shape, so replacing
+// the owner's body necessarily drops the only reference. See
+// `WireContext.orphanedSyntheticGroups`.
+// PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
+// mint (the inline-UNSAFE category — excluded from `syntheticInline`
+// above precisely because we WANT it to stay a distinguishable kind,
+// not get inlined away) can share a structural prefix with its own
+// owning parent rule (e.g. python's `expression_statement`, whose
+// arm 0 is `$.expression` and whose newly-hoisted arm 1
+// `_expression_statement_group1` also starts with `commaSep1($.expression)`
+// — both begin `expression • …`, an unresolved tree-sitter LR
+// conflict without an explicit GLR fork). Proactively register a
+// conflict between the owner and every such mint, mirroring the
+// hand-authored `conflicts: [$.expression_statement,
+// $._expression_statement_tuple]` pattern this codebase already used
+// for the pre-existing variant()-only mint path — but automatic, so
+// it covers every clause-hoist visible-group mint (this widened
+// bare-choice-arm gate included) without per-grammar hand-maintenance.
+// Harmless when the two rules don't actually conflict in a given
+// grammar: tree-sitter's `conflicts:` only enables a GLR fork; it
+// doesn't change accepted language and costs a little parse-table
+// size, not correctness, when unused.
+```
+
+#### body
+
+```text
+// A minted group's own body can ALSO self-conflict — e.g. a
+// shared comma/element shape recurring across sibling rules
+// (python's `_expression_list_expressions` vs `assert_statement`'s
+// own `commaSep1` repeat) confuses tree-sitter's LALR merge
+// independent of the owner pairing above. A single-rule
+// `conflicts` entry is tree-sitter's own documented way to
+// request a GLR self-fork for a rule (see its own error
+// resolution list: "Add a conflict for these rules:
+// `<rule>`" with just the one name).
+```
+
+#### body
+
+```text
+// Re-run body-pattern replacement so any `groups:` body-pattern can match
+// rule bodies wrapped by the first pass above. Idempotent on already-aliased
+// bodies.
+```
+
+#### body
+
+```text
+// Boundary casts to the internal loose (`unknown`-$, mutable-array)
+// callback shapes — same LOOSE-INTERNAL / NARROW-PUBLIC split as `cfg`
+// itself (see the block comment above `wire()`): the public config's
+// `conflicts`/`inline` callbacks are typed against the precise
+// `ShapedSymbols<B>` $ and readonly-array shapes for author ergonomics;
+// `wrapConflictsCallback`/`wrapInlineCallback` are internal machinery
+// that only ever calls them positionally, so the wider internal param
+// types are a safe narrowing-away, not a behavior change.
+```
+
+#### body
+
+```text
+// `...cfg` carries `cfg`'s own (narrow, public) `conflicts` field into the
+// inferred object-literal type even though the later spreads unconditionally
+// override it with the internal-shape `conflicts`/`inline` computed above;
+// TS still unions both possible shapes when inferring the literal's type,
+// so an explicit `WiredOpts` boundary cast is needed here (same pattern as
+// `cfg = config as unknown as WireConfig<any>` above).
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::patternBodyEqual`
+
+#### body
+
+```text
+// Types must match.
+```
+
+```text
+// BLANK is a singleton — type match is sufficient
+```
+
+#### body
+
+```text
+// ALIAS nodes carry `named` (bool) and `value` (the visible name string)
+// in addition to `content`. Two aliases are structurally equal when all
+// three match — e.g. `alias($._not_in, 'not in')` vs itself.
 ```

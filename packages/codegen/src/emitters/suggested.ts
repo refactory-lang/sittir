@@ -1,21 +1,3 @@
-/**
- * Emits overrides.suggested.ts — a runnable TypeScript module that
- * exports every derivation Link produced as real data and (more
- * importantly) as copy-pasteable grammar-extension snippets.
- *
- * Two tiers of content:
- *   1. `export const` data arrays (`promotedRules`, `inferredFields`,
- *      `repeatedShapes`) for programmatic consumption.
- *   2. A `suggestedRules` object literal whose entries match the
- *      shape of `grammar.sittir.ts` — each entry is a real
- *      `transform(original, { ... })` / `choice(...)` expression
- *      ready to drop into your `grammar(base, { rules })` map.
- *
- * The file is syntactically valid TypeScript. Nothing is commented
- * out: the suggested rules sit alongside the data exports so a
- * curator can import either, or pull specific entries out by hand.
- */
-
 import {
 	ALIAS,
 	CHOICE,
@@ -40,9 +22,6 @@ function deriveArmNameFromRule(node: Rule<'link'>, index: number): string {
 	if (node.type === VARIANT) return node.name;
 	if (node.type === SYMBOL || node.type === SUPERTYPE) return node.name;
 	if (node.type === SEQ && node.members.length > 0) {
-		// Lead with the first named member (symbol/supertype) or a
-		// leading identifier-shaped string literal ('(' → 'paren', etc.
-		// the caller can rename).
 		for (const m of node.members) {
 			if (m.type === SYMBOL || m.type === SUPERTYPE) return m.name;
 			if (m.type === STRING) {
@@ -82,11 +61,6 @@ function _locateTopLevelChoice(rule: Rule<'link'>): { choicePath: string; arms: 
 			return null;
 		}
 		if (node.type === FIELD) {
-			// Field wrappers around choices — the common pattern the
-			// promotePolymorph pass used to miss (e.g. python's
-			// `field('wildcard_import', choice(...))`). Descend; the
-			// emitted `variant()` overrides will replace the choice arms
-			// and the author can optionally drop the outer field wrapper.
 			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
 		if (node.type === OPTIONAL || node.type === VARIANT || node.type === GROUP) {
@@ -141,13 +115,6 @@ export interface EmitSuggestedConfig {
 }
 
 export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
-	// DISABLED FOR NOW (cleanup-slot-naming-source): the suggested-overrides
-	// emitter reads the slot `source`/naming model, which is being reworked
-	// (link field-inference deleted; group-lift→hiddenness; source→metadata).
-	// Returning undefined tells the caller there's nothing to write, so no
-	// stub file lands on disk. Re-enable once the slot-naming/source refactor
-	// settles. The body below is retained (unreachable) so re-enabling is a
-	// one-line revert.
 	return undefined;
 
 	const { grammar, nodeMap, roundTripFailures = [] } = config;
@@ -168,9 +135,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	lines.push("// not a standalone module; it isn't imported at build time.");
 	lines.push('');
 
-	// ---------------------------------------------------------------
-	// Summary
-	// ---------------------------------------------------------------
 	const inferredApplied = log.inferredFields.filter((e) => e.applied).length;
 	const inferredHeld = log.inferredFields.length - inferredApplied;
 	const promotedApplied = log.promotedRules.filter((e) => e.applied).length;
@@ -195,9 +159,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	}
 	lines.push('');
 
-	// ---------------------------------------------------------------
-	// Round-trip failures (corpus diagnostics)
-	// ---------------------------------------------------------------
 	if (roundTripFailures.length > 0) {
 		lines.push('// ---------------------------------------------------------------');
 		lines.push("// Round-trip failures — corpus cases that didn't survive");
@@ -211,7 +172,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 		lines.push('//   - Template gap — rule content has no renderable slot for');
 		lines.push('//     some structural position');
 		lines.push('// ---------------------------------------------------------------');
-		// Group by rule kind so related failures cluster.
 		const byKind = new Map<string, RoundTripDiagnostic[]>();
 		for (const f of roundTripFailures) {
 			const arr = byKind.get(f.kind) ?? [];
@@ -245,16 +205,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 		lines.push('');
 	}
 
-	// ---------------------------------------------------------------
-	// Copy-paste ready transforms block (ADR-0008)
-	// ---------------------------------------------------------------
-	// Inferred fields + polymorph candidates produce patch maps that
-	// belong in the `transforms:` block of grammar.sittir.ts — each value
-	// is a plain object (or array of objects for multiple patch sets)
-	// that `transform()` unpacks at rule-evaluation time. Keeping them
-	// separate from `suggestedRules` matches the two-block shape the
-	// grammars now author by hand (see rust/grammar.sittir.ts for the
-	// template).
 	lines.push('// ---------------------------------------------------------------');
 	lines.push('// suggestedTransforms — drop entries into your grammar.sittir.ts');
 	lines.push('// `transforms:` block. Each value is a patch map (or an');
@@ -285,13 +235,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 		}> = [];
 		const nonPositional: InferredFieldEntry[] = [];
 		if (inferred !== undefined) {
-			// `inferred` is captured by the `emitTransform(kind, () => …)`
-			// closure later in this loop body; tsgo's control-flow narrowing
-			// doesn't carry the `!== undefined` guard through to reads here once
-			// a later closure in the same scope also references the variable
-			// (verified in isolation — the guard is genuinely sound at runtime).
-			// Non-null assertion matches the file's existing idiom for
-			// checker-can't-see-it cases (e.g. `node.members[i]!` above).
 			const resolved = inferred!.map((e) => ({
 				e,
 				pos: parentRule ? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName) : null
@@ -306,9 +249,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 				if (seen.has(dkey)) continue;
 				seen.add(dkey);
 				fieldPatches.push({
-					// tsgo does not narrow the destructured `pos` through the
-					// `pos === null` continue above (verified: removing the assertion
-					// fails TS2322) — same checker gap as the `inferred!` case.
 					pos: pos!,
 					fieldName: e.fieldName,
 					targetSymbol: e.targetSymbol,
@@ -352,9 +292,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 				}
 			}
 
-			// Emit the value — patch map for single patch set, array for multiple.
-			// Polymorph candidates each want their own patch set (tryHoistSiblingVariants
-			// requires all variant patches in one set to target the same choice position).
 			const patchSets: string[][] = [];
 			if (hasFieldPatch) {
 				const block = ['{'];
@@ -396,7 +333,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 			lines.push('');
 		});
 	}
-	// Polymorph holds with no candidates — comment-only entries.
 	for (const entry of polymorphHolds) {
 		if (transformKinds.has(entry.kind)) continue;
 		if ((entry.polymorphCandidates ?? []).length === 0) {
@@ -410,12 +346,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	lines.push('};');
 	lines.push('');
 
-	// ---------------------------------------------------------------
-	// Copy-paste ready rules block — supertype & repeated-shape definitions
-	// ---------------------------------------------------------------
-	// These are NEW rule definitions (not transforms of existing ones)
-	// so they stay in `suggestedRules` with the `$ => ...` callback
-	// shape used by grammar.sittir.ts's `rules:` block.
 	lines.push('// ---------------------------------------------------------------');
 	lines.push('// suggestedRules — drop entries into your grammar.sittir.ts');
 	lines.push('// `rules:` block. Each value defines a NEW rule (supertype');
@@ -426,9 +356,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 
 	const { emit } = createDeduplicatingEmitter();
 
-	// Promoted supertypes become `_name: $ => choice($.a, $.b, ...)`
-	// rules and get a reminder to list them in the grammar's
-	// `supertypes:` array.
 	const promotedSupertypes = log.promotedRules
 		.filter((e) => e.classification === 'supertype')
 		.sort((a, b) => a.kind.localeCompare(b.kind));
@@ -437,13 +364,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	}
 	for (const entry of promotedSupertypes) {
 		const node = nodeMap.nodes.get(entry.kind);
-		// `node instanceof AssembledSupertype` is the established discriminator
-		// for reaching `.subtypeNames` (see emitters/shared.ts:264/287) — a bare
-		// `modelType === 'supertype'` string comparison doesn't narrow the
-		// `AssembledNode` union to the concrete class. tsgo's control-flow
-		// narrowing doesn't carry through to the ternary's true-branch member
-		// access here (verified in isolation), so the `.subtypeNames` read needs
-		// an explicit non-null + cast past the checker gap.
 		const subs = node instanceof AssembledSupertype ? (node as AssembledSupertype).subtypeNames : [];
 		emit(entry.kind, () => {
 			const tag = entry.applied ? 'applied' : 'held';
@@ -458,9 +378,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 		});
 	}
 
-	// Repeated-shape candidates — emit the proposed supertype rule
-	// verbatim so the author can adopt it by pasting one line plus
-	// the supertypes-array entry.
 	if (log.repeatedShapes.length > 0) {
 		lines.push('  // --- Repeated-shape candidates (reused across ≥2 parents) ---');
 	}
@@ -480,22 +397,10 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	lines.push('};');
 	lines.push('');
 
-	// ---------------------------------------------------------------
-	// suggestedGroups — nested-seq candidates for group synthesis
-	// ---------------------------------------------------------------
-	// Use linkRules (post-normalization-passes, pre-wrapper-deletion) —
-	// the detector's OPTIONAL/REPEAT/REPEAT1/FIELD/ALIAS/TOKEN/VARIANT/GROUP
-	// case matching is genuinely wrapper-shape-dependent (justified
-	// exception, PR-137 — see `NodeMap.linkRules`'s doc comment). The
-	// former `nodeMap.linkedRules` fallback-preferred field was dead
-	// surface (nothing ever populated it) and is deleted.
 	const groupRules = nodeMap.linkRules ?? {};
 	const groupCandidates = detectGroupCandidates(groupRules);
 	lines.push(emitSuggestedGroupsBlock(groupCandidates));
 
-	// ---------------------------------------------------------------
-	// Raw data exports — typed arrays for programmatic consumption
-	// ---------------------------------------------------------------
 	lines.push('// ---------------------------------------------------------------');
 	lines.push('// Raw derivation data — typed arrays for tooling');
 	lines.push('// ---------------------------------------------------------------');
@@ -562,10 +467,6 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	return lines.join('\n');
 }
 
-// ---------------------------------------------------------------------------
-// Sort helpers — stable, skim-friendly ordering per section
-// ---------------------------------------------------------------------------
-
 function sortedPromotions(entries: readonly PromotedRuleEntry[]): PromotedRuleEntry[] {
 	const order: Record<PromotedRuleEntry['classification'], number> = {
 		supertype: 0,
@@ -615,10 +516,6 @@ function groupInferencesByKind(entries: readonly InferredFieldEntry[]): Map<stri
 	return byKind;
 }
 
-// ---------------------------------------------------------------------------
-// Group candidate detection — suggestedGroups block
-// ---------------------------------------------------------------------------
-
 export interface GroupCandidate {
 	kind: string;
 	path: string;
@@ -639,18 +536,7 @@ function walkBodyForGroups(
 	ctx: { kind: string; isTopLevel: boolean },
 	out: GroupCandidate[]
 ): void {
-	// (debt PR-P1) The former `source === 'group-lift'` skip-guard here was
-	// PROVABLY DEAD: a bare SYMBOL rule never matches case 1 (OPTIONAL/REPEAT/
-	// REPEAT1) or case 2 (SEQ) below, and the dispatch switch at the bottom of
-	// this function has no SYMBOL case either — so a SYMBOL rule always
-	// no-ops through this function regardless of any guard. Deleting it is a
-	// pure no-op, not a provenance-to-structural conversion (there is no
-	// structural fact to convert to; the check never did anything).
 
-	// Case 1: A cardinality wrapper (optional/repeat/repeat1) whose content is a
-	// structural seq — suggest the wrapper's path. This way the user's groups
-	// entry points to the optional/repeat, and applyGroupOverrides's liftRule
-	// preserves the wrapper (lifts only the inner seq body) as designed.
 	if ((rule.type === OPTIONAL || rule.type === REPEAT || rule.type === REPEAT1) && !ctx.isTopLevel) {
 		const inner = (rule as { content: Rule<'link'> }).content;
 		if (inner.type === SEQ && hasGroupableStructure(inner)) {
@@ -659,22 +545,16 @@ function walkBodyForGroups(
 				path: path.join('/'),
 				discriminatorGuess: guessGroupDiscriminator(inner, path)
 			});
-			// Don't descend further — the inner seq is captured by this entry.
 			return;
 		}
 	}
 
-	// Case 2: A non-top-level seq with structural members directly nested
-	// inside a choice, seq, or field (no cardinality wrapper) — suggest the
-	// seq's path directly.
 	if (rule.type === SEQ && !ctx.isTopLevel && hasGroupableStructure(rule)) {
 		out.push({
 			kind: ctx.kind,
 			path: path.join('/'),
 			discriminatorGuess: guessGroupDiscriminator(rule, path)
 		});
-		// Don't descend into it — nested-seq-inside-seq candidates would be
-		// sub-candidates of this one, and nested group lifts are unsupported.
 		return;
 	}
 
@@ -693,14 +573,9 @@ function walkBodyForGroups(
 		case TOKEN:
 		case ALIAS:
 		case VARIANT:
-			// For non-cardinality-with-structural-seq cases, descend normally.
 			walkBodyForGroups((rule as { content: Rule<'link'> }).content, [...path, 0], childCtx, out);
 			break;
 		case GROUP:
-			// A top-level `group` rule wraps the rule body transparently — treat
-			// the group's content as still top-level so the body seq isn't
-			// incorrectly flagged as a nested-seq candidate. At non-top-level a
-			// group wrapper is meaningful (it signals grouping) so use childCtx.
 			walkBodyForGroups(
 				(rule as { content: Rule<'link'> }).content,
 				[...path, 0],
@@ -708,7 +583,6 @@ function walkBodyForGroups(
 				out
 			);
 			break;
-		// string / blank / pattern / supertype / symbol — no children to walk
 	}
 }
 
@@ -763,7 +637,6 @@ function guessGroupDiscriminator(rule: Rule<'link'>, path: readonly number[]): s
 	};
 	const guess = peel(rule);
 	if (guess && isAsciiIdentifier(guess)) return guess;
-	// Position-based fallback: 'g' + underscore-joined path (e.g. g1_1)
 	return 'g' + path.join('_');
 }
 
@@ -792,7 +665,6 @@ export function emitSuggestedGroupsBlock(candidates: readonly GroupCandidate[]):
 		return out.join('\n');
 	}
 
-	// Group candidates by parent kind for readability.
 	const byKind: Record<string, GroupCandidate[]> = {};
 	for (const c of candidates) {
 		(byKind[c.kind] ??= []).push(c);

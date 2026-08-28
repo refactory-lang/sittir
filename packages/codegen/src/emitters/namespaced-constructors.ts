@@ -1,22 +1,3 @@
-/**
- * Namespaced constructors — the derivation behind `buildX.form(...)` /
- * `buildX.member(...)` on a factory.
- *
- * A parent whose sole user slot is a choice of concrete kinds carries one
- * constructor per choice member (a FORM constructor: the parent built with
- * its slot holding the form, named by the form's own name). A parent whose
- * single kind-enum slot discriminates it carries one constructor per enum
- * member (a MEMBER constructor: the slot fixed to that literal, the other
- * user slots as parameters in slot order). A form's own constructors hoist
- * into the parent's namespace (`forHeader.let` from the let/const form's
- * enum), recursively, so a caller never names an intermediate kind. Two
- * claimants of one name cancel each other out (`ambiguous`) — never
- * first-wins.
- *
- * Pure derivation over the assembled model: the factory, ir, node-model and
- * test emitters all consume it, so the surface has one source.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledGroup,
@@ -43,38 +24,23 @@ import { hasCatalogEntry, type KindEnumEntry } from './kind-discriminant.ts';
 export interface FormConstructor {
 	readonly via: 'form';
 	readonly name: string;
-	/** The parent slot the built form fills. */
 	readonly slot: AssembledNonterminal;
 	readonly childKind: string;
 	readonly childFactory: string;
-	/** Empty: call the child's factory. One name: call that namespaced
-	 *  constructor on the child's factory (a hoisted sub-constructor). */
 	readonly path: readonly string[];
-	/** The kind this constructor ultimately builds — `childKind` for a direct
-	 *  form, the originating arm for a hoisted one. The name is derived from
-	 *  it against whichever parent the constructor is attached to, so a form
-	 *  minted under the TOP parent keeps its authored variant name however
-	 *  many hops it flattens through. */
 	readonly formKind: string;
 }
 
 export interface MemberConstructor {
 	readonly via: 'member';
 	readonly name: string;
-	/** The kind-enum slot this constructor fixes. */
 	readonly slot: AssembledNonterminal;
 	readonly literal: string;
-	/** Remaining user slots, in slot order — the constructor's parameters. */
 	readonly params: readonly AssembledNonterminal[];
 }
 
 export type NamespacedConstructor = FormConstructor | MemberConstructor;
 
-/** A name more than one candidate claims. Flattening stops at the ambiguity:
- *  no HOISTED candidate takes the name. The parent's own direct arm was never
- *  hoisted, so when exactly one claimant is one it keeps the name and is named
- *  in `kept`; otherwise the name goes unclaimed. Reported either way — never a
- *  silent resolution. */
 export interface NamespacedAmbiguity {
 	readonly name: string;
 	readonly claimants: readonly string[];
@@ -87,24 +53,17 @@ export interface NamespacedConstructorSet {
 }
 
 export interface NamespacedConstructorOptions {
-	/** Whether a kind's factory is actually emitted (catalog-backed). A
-	 *  child without an emitted factory cannot be constructed through the
-	 *  parent. Defaults to every kind. */
 	readonly isEmitted?: (kind: string) => boolean;
 }
 
 const EMPTY: NamespacedConstructorSet = { entries: [], ambiguous: [] };
 
-/** Whether `kind` is one of `parentKind`'s own arms: a registered polymorph
- *  form, or a kind minted under the parent's name (`_<parent>_<arm>`). */
 function isArmOf(kind: string, parentKind: string, nodeMap: NodeMap): boolean {
 	const n = nodeMap.nodes.get(kind);
 	if (n instanceof AssembledGroup && n.parentKind === parentKind) return true;
 	return kind !== parentKind && prefixNamedSuffix(parentKind, kind) !== null;
 }
 
-/** A slot holding only the parent's own arms — an alternative to the
- *  parent's other slots, never a parameter beside them. */
 export function isFormSlot(slot: AssembledNonterminal, parentKind: string, nodeMap: NodeMap): boolean {
 	const refs = slot.values.filter(isNodeRef);
 	return (
@@ -149,8 +108,6 @@ export function namespacedConstructors(
 	const cached = perMap.get(node.kind);
 	if (cached !== undefined) return cached;
 	const result = derive(node, nodeMap, options, visiting);
-	// A cycle-cut result (some form skipped because it was being visited)
-	// is not the node's full namespace — only top-level derivations cache.
 	if (visiting.size === 0) perMap.set(node.kind, result);
 	return result;
 }
@@ -167,10 +124,6 @@ function derive(
 	const user = userSlotsOf(node, nodeMap);
 	const candidates: { readonly entry: NamespacedConstructor; readonly claimant: string }[] = [];
 
-	// Form constructors: a singular choice of ≥2 concrete kinds, each with
-	// its own factory — either the sole user slot, or a slot of the parent's
-	// own polymorph arms beside siblings that are all optional (the arm is a
-	// complete alternative: the parent builds from it alone).
 	const formSlot =
 		user.length === 1
 			? user[0]!
@@ -178,10 +131,6 @@ function derive(
 	if (formSlot !== undefined) {
 		const slot = formSlot;
 		const kinds = slotKindNames(slot);
-		// An arm is form-capable when it reaches a factory of its own: a
-		// slot-bearing compound (its own config surface) or a text leaf
-		// (keyword / pattern / enum). A supertype arm has none, so it takes no
-		// constructor — and does not disqualify the siblings that do.
 		const formable: { readonly child: AssembledNode; readonly factory: string }[] = [];
 		for (const kind of kinds) {
 			const child = nodeMap.nodes.get(kind);
@@ -189,10 +138,6 @@ function derive(
 			if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
 			formable.push({ child, factory: child.rawFactoryName });
 		}
-		// A sole slot with exactly one kind is the forwarded shape: the parent
-		// already IS that kind's surface, so it gets no constructor named for
-		// it. The child's own namespace still flattens through — that hop is
-		// the only route to an arm two levels down.
 		const forwarded = user.length === 1 && kinds.length === 1;
 		const concrete = !isMultiple(slot) && slotLiteralValues(slot).length === 0 && formable.length > 0;
 		if (concrete) {
@@ -206,13 +151,6 @@ function derive(
 					});
 				}
 				if (nextVisiting.has(child.kind)) continue;
-				// Sub-constructors flatten upward, recursively: the child's
-				// namespace is already flat, so one level suffices. A hoisted
-				// FORM is re-named against THIS parent — the arm it builds may
-				// be minted under this kind even though the hop it travelled
-				// through is not, which is how `visibility_modifier`'s `in_path`
-				// keeps its authored name three levels up. A hoisted enum MEMBER
-				// carries the authored member name and is never re-derived.
 				for (const sub of namespacedConstructors(child, nodeMap, options, nextVisiting).entries) {
 					const origin = sub.via === 'form' ? nodeMap.nodes.get(sub.formKind) : undefined;
 					const name = origin === undefined ? sub.name : formName(node.kind, origin);
@@ -233,9 +171,6 @@ function derive(
 		}
 	}
 
-	// Member constructors: exactly one kind-enum slot discriminates the
-	// kind; form slots (alternative arms with their own constructors above)
-	// are not parameters.
 	const enumSlots = user.filter(isKindEnumSlot);
 	if (enumSlots.length === 1) {
 		const slot = enumSlots[0]!;
@@ -261,10 +196,6 @@ function derive(
 			entries.push(list[0]!.entry);
 			continue;
 		}
-		// Flattening stops at the ambiguity: no hoisted candidate takes the
-		// name. A direct arm of this parent was never hoisted, so one of those
-		// still keeps it — two of them cancel each other exactly as two hoists
-		// do. Reported in every case.
 		const direct = list.filter((c) => c.entry.via !== 'form' || c.entry.path.length === 0);
 		const claimants = list.map((c) => c.claimant);
 		if (direct.length === 1) {
@@ -277,8 +208,6 @@ function derive(
 	return { entries, ambiguous };
 }
 
-/** The factory-emission predicate every consumer shares: a kind's factory
- *  exists iff the kind is catalog-backed (or no catalog is in play). */
 export function emittedByCatalog(kindEntries: readonly KindEnumEntry[] | undefined): (kind: string) => boolean {
 	return (kind) => !kindEntries || hasCatalogEntry(kindEntries, kind);
 }

@@ -1,18 +1,3 @@
-/**
- * Shared helpers for emitting `$type` discriminants per the KindID
- * runtime migration design (2026-04-30): runtime objects carry numeric
- * `TSKindId.X` discriminants where `X` is the parser.c-derived ID.
- *
- * Kinds without a parser symbol (TSGrammar-only inlined rules) fall
- * back to string-literal discriminants — they never carry a runtime
- * `$type` on a parsed tree, but emitter sites that reference them
- * still need *some* expression.
- *
- * Used by both `types.ts` (interface declarations) and `factories.ts`
- * (factory body literals) so both surfaces agree on the same
- * discriminant expression for each kind.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
@@ -37,11 +22,6 @@ export interface KindEnumEntry {
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
 	const typeName = nodeMap.nodes.get(kind)?.typeName;
 	if (typeName) return typeName;
-	/* toPascal strips leading underscores (`_literal` → `Literal`). For
-	   hidden kinds this creates member-name collisions with visible kinds
-	   that have the same base name (`literal` → `Literal`). Preserve the
-	   leading underscore so hidden kinds get a distinct member: `_literal` →
-	   `_Literal`, `_primitive_type` → `_PrimitiveType`. */
 	const prefix = kind.match(/^_+/)?.[0] ?? '';
 	return `${prefix}${toPascal(kind)}`;
 }
@@ -57,15 +37,11 @@ export function collectKindEntries(
 ): KindEnumEntry[] {
 	const fullCatalog = toCatalogMap(generatedIdTables.kindIds);
 	const entries: KindEnumEntry[] = [];
-	const seenMembers = new Map<string, string>(); // member → first kind that claimed it
+	const seenMembers = new Map<string, string>();
 	for (const kind of allKinds) {
 		const row = fullCatalog.get(kind);
 		if (row === undefined || row.id === undefined) continue;
 		let member = kindIdMemberName(nodeMap, kind);
-		/* Disambiguate member-name collisions. Two different catalog keys can
-		   produce the same PascalCase member (e.g. `_literal` typeName `Literal`
-		   and anon token `literal` → `Literal`). Append the numeric id to the
-		   second occurrence so the enum compiles. */
 		const existing = seenMembers.get(member);
 		if (existing !== undefined && existing !== kind) {
 			member = `${member}_${row.id}`;
@@ -81,11 +57,6 @@ export function collectKindEntries(
 }
 
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
-	/* Delegates to the shared kind-name chain — see KindEntryLike in
-	   compiler/generated-metadata.ts for the full step documentation,
-	   including why step 3 is anon-scoped: the `_as_pattern` shadowing bug.
-	   A step 4 (named-symbolName fallback for hidden compound tokens like
-	   `_is_not` ← `"is not"`) is reachable only when steps 1-3 all miss. */
 	return findEntryForKindName(kindEntries, kind);
 }
 

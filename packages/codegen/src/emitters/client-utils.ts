@@ -1,8 +1,3 @@
-/**
- * Emits utils.ts — typed facade over `@sittir/common/utils` with grammar-local narrowing.
- * Runtime behavior lives in `@sittir/common/utils`; this module only projects local types.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 export interface EmitClientUtilsConfig {
@@ -48,9 +43,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 }
 
 function emitAttachProps(): string[] {
-	// defineProperty rather than Object.assign: a function's reserved
-	// read-only properties (name, length, arguments, caller) make [[Set]]
-	// throw, and a namespaced constructor may legitimately be called `name`.
 	return [
 		'export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {',
 		'  for (const key of Object.keys(props)) {',
@@ -126,8 +118,6 @@ function emitNodeGuards(): string[] {
 		'  v: unknown,',
 		'  kind: K,',
 		"): v is NamespaceMap[K]['Node'] {",
-		// `NamespaceMap` is keyed by the kind id, so `kind` IS the discriminant —
-		// no runtime name lookup stands between the argument and the comparison.
 		'  return isNodeData(v) && v.$type === kind;',
 		'}',
 		'',

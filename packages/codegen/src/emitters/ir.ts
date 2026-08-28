@@ -1,16 +1,3 @@
-/**
- * Emits ir.ts — developer-facing namespace re-exporting factories with short names.
- *
- * Consumes NodeMap directly. Derives from factory exports — thin namespace wrapper.
- *
- * Spec 008 US5:
- *   - Namespace imports (`import * as F` / `import * as FR`) replace the
- *     per-entry import walls. Single short line per source module.
- *   - Supertype-grouped sub-namespaces (`ir.expression`, `ir.pattern`, …)
- *     emitted alongside the flat `ir.*` namespace. Members keyed by
- *     supertype-stripped short names; JS reserved words get a `_` suffix.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
@@ -40,8 +27,6 @@ export function emitIr(config: EmitIrConfig): string {
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
 	const namespaceOf = (node: AssembledNode) => factoryNamespaceOf(node, nodeMap, kindEntries).entries;
-	// One hoisted, typeof-annotated const per bundle kind — the group/`ir`
-	// namespace consts reference these by NAME (see hoistedBundleLines).
 	const hoisted = new Map<string, string>();
 	const hoistedLines: string[] = [];
 	const bundleRef = (node: AssembledNode): string => {
@@ -76,11 +61,6 @@ export function emitIr(config: EmitIrConfig): string {
 		''
 	];
 
-	// ----------------------------------------------------------------------
-	// Supertype-grouped sub-namespaces — collected first so they can be
-	// both exported as tree-shakeable top-level consts AND attached to
-	// the flat `ir` namespace for nested access (`ir.expression.binary`).
-	// ----------------------------------------------------------------------
 	const body: string[] = [];
 	const groupBlocks: string[] = [];
 	const groupNames: string[] = [];
@@ -112,15 +92,11 @@ export function emitIr(config: EmitIrConfig): string {
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
 			if (sub.modelType === 'supertype' || sub.modelType === 'group' || sub.modelType === 'token') continue;
-			// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
-			// never appear at runtime; no factory was emitted for them.
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
 
-			// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-			// isSlotBearingCompound's doc comment (shared.ts).
 			if (sub.modelType === 'branch' || sub.modelType === 'separatedList') {
 				if (!sub.fromFunctionName) continue;
 				const ref = bundleRef(sub);
@@ -153,8 +129,6 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
-		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-		// isSlotBearingCompound's doc comment (shared.ts).
 		if (
 			node.modelType !== 'branch' &&
 			node.modelType !== 'separatedList' &&
@@ -180,8 +154,6 @@ export function emitIr(config: EmitIrConfig): string {
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
 			let bundle: string | undefined;
-			// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-			// isSlotBearingCompound's doc comment (shared.ts).
 			if (sub.modelType === 'branch' || sub.modelType === 'separatedList') {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleRef(sub);
@@ -195,16 +167,6 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 	}
 
-	// ------------------------------------------------------------------
-	// Role synonyms — native JS value → this grammar's node for that role.
-	// Grammar-agnostic construction from native JS values, keyed by the
-	// semantic role a kind plays rather than by its grammar-specific name.
-	// Emitted BEFORE `ir` so it can be referenced as `ir.synonym`.
-	// Also exported standalone for tree-shakeable `synonym.boolean(...)`.
-	// ------------------------------------------------------------------
-	// ----------------------------------------------------------------------
-	// Flat `ir.*` namespace — every grammar kind by camelCase short name.
-	// ----------------------------------------------------------------------
 	const irTypeMembers: string[] = [];
 	const irValueLines: string[] = [];
 	irValueLines.push('  // Node factories');
@@ -213,11 +175,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
-		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-		// isSlotBearingCompound's doc comment (shared.ts).
 		if (node.modelType !== 'branch' && node.modelType !== 'separatedList') continue;
-		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
-		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const ref = bundleRef(node);
 		irValueLines.push(`  ${node.irKey}: ${ref},`);
@@ -232,8 +190,6 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
-		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
-		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -247,8 +203,6 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
-		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
-		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -273,8 +227,6 @@ export function emitIr(config: EmitIrConfig): string {
 			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
-	// Explicit typeof-composed surface — same TS7056 rationale as the
-	// hoisted bundle consts above.
 	body.push('export const ir: {');
 	body.push(...irTypeMembers);
 	body.push('} = {');
@@ -283,10 +235,6 @@ export function emitIr(config: EmitIrConfig): string {
 
 	return [...lines, ...hoistedLines, ...body].join('\n');
 }
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 interface BundleParts {
 	readonly base: string;
@@ -298,8 +246,6 @@ function bundleParts(
 	refineInfo: RefineKindInfo | undefined,
 	namespace: readonly NamespacedConstructor[]
 ): BundleParts {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-	// isSlotBearingCompound's doc comment (shared.ts).
 	if (node.modelType === 'branch' || node.modelType === 'separatedList') {
 		if (!node.rawFactoryName) {
 			return { base: `FR.${node.fromFunctionName}`, props: [] };
@@ -312,12 +258,6 @@ function bundleParts(
 			if (camelCase(form.name) !== form.name) keys.push(form.name);
 			for (const key of keys) props.push({ key: JSON.stringify(key), expr: `F.${factoryName}` });
 		}
-		// The namespaced constructors ride along on the bundle
-		// (`ir.forHeader.var(...)`); the bundle's own keys win a clash. Taken
-		// from the FROM surface, not the factory: `ir.<kind>` coerces and
-		// `.strict` is the factory, and a form under it keeps that same
-		// pairing — `coerceTo<Kind>` already carries whichever of the two
-		// each form resolved to.
 		const taken = new Set(props.map((p) => JSON.parse(p.key.startsWith('"') ? p.key : JSON.stringify(p.key))));
 		for (const entry of namespace) {
 			if (taken.has(entry.name)) {
@@ -330,16 +270,9 @@ function bundleParts(
 		}
 		return { base: `FR.${node.fromFunctionName}`, props };
 	}
-	// One convention across the whole surface: the entry coerces, `.strict` is
-	// the strict factory. No `from` prop — it was the entry itself under a
-	// second name.
 	return { base: `FR.${node.fromFunctionName}`, props: [{ key: 'strict', expr: `F.${node.rawFactoryName}` }] };
 }
 
-/** Hoisted, explicitly-annotated bundle const. The typeof-composed
- *  annotation keeps declaration emit finite: the mega-namespace consts
- *  below reference these by NAME, so no node's inferred type ever expands
- *  the whole surface structurally (TS7056). */
 function hoistedBundleLines(name: string, parts: BundleParts): string[] {
 	return [
 		`const ${name}: typeof ${parts.base} & {`,
@@ -355,10 +288,6 @@ function groupNameFor(supertypeKind: string): string {
 	return toCamel(bare);
 }
 
-/** Kind-name tokens that mean the same thing as a token in a group's name.
- *  A grammar spells the category one way in the group and another in the
- *  kinds themselves — rust groups `declaration_statement` over members named
- *  `function_item`, `struct_item`. */
 const GROUP_TOKEN_SYNONYMS: Readonly<Record<string, string>> = {
 	item: 'statement',
 	stmt: 'statement',
@@ -367,10 +296,6 @@ const GROUP_TOKEN_SYNONYMS: Readonly<Record<string, string>> = {
 	impl: 'implementation'
 };
 
-/** Tokens naming a syntactic CATEGORY rather than the construct itself.
- *  Only these may be dropped from a member's tail, and only when the group's
- *  own name did not already account for a token. `line_comment` keeps
- *  `comment` because a comment is the construct, not a category. */
 const CATEGORY_TOKENS: ReadonlySet<string> = new Set([
 	'expression',
 	'statement',
@@ -396,23 +321,13 @@ function memberKeyFor(memberKind: string, supertypeKind: string): string {
 			.filter((t) => t.length > 0)
 			.map(normalizeGroupToken)
 	);
-	// Drop what the GROUP already says, wherever it sits — not the last token
-	// positionally. `expression_statement` under `statement` keeps
-	// `expression`, and `statement_block` keeps `block` instead of stuttering.
 	let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
 	if (kept.length === parts.length && parts.length >= 2) {
-		// The group's name says nothing about these members — many groups are
-		// structural unions (`condition`, `non_delim_token`) whose name never
-		// appears in a member. Drop a trailing CATEGORY token instead, so
-		// `array_expression` still reduces to `array`.
 		const tail = normalizeGroupToken(parts[parts.length - 1]!);
 		if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
 	}
 	if (kept.length === 0) return toCamel(bareMember);
-	// camelCase runs LAST, on the surviving snake tokens, so the group's own
-	// capitalization never has to be matched.
 	const camel = toCamel(kept.join('_'));
-	// A member that reduces to the group's own name would read as a stutter.
 	if (camel === groupNameFor(supertypeKind)) return toCamel(bareMember);
 	return camel;
 }
@@ -428,10 +343,6 @@ function toCamel(snake: string): string {
 			.join('')
 	);
 }
-
-// ---------------------------------------------------------------------------
-// Role-synonym namespace — native JS value → node, keyed by semantic role
-// ---------------------------------------------------------------------------
 
 function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap): AssembledNode[] {
 	const kindNames = grammarRoles.get(role);
@@ -481,7 +392,6 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
-	// Strategy 1: single leaf/enum factory that accepts text (e.g., booleanLiteral('true' | 'false'))
 	const leafNode = nodes.find((n) => isLeafFactory(n) && n.modelType !== 'keyword');
 	if (leafNode) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
@@ -490,7 +400,6 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 		return;
 	}
 
-	// Strategy 2: keyword pair — look for `true` and `false` keyword kinds
 	const trueNode = nodes.find((n) => n.kind === 'true');
 	const falseNode = nodes.find((n) => n.kind === 'false');
 	if (trueNode && falseNode) {
@@ -501,7 +410,6 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 		return;
 	}
 
-	// Strategy 3: single factory (whatever it is)
 	const first = nodes[0];
 	if (first && isLeafFactory(first)) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(first)} {`);
@@ -515,7 +423,6 @@ function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 	const leafNodes = nodes.filter(isLeafFactory);
 	if (leafNodes.length === 0) return;
 
-	// Identify integer and float kinds via the number.float sub-role
 	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap).filter(isLeafFactory);
 	const floatSet = new Set(floatNodes.map((n) => n.kind));
 	const intNodes = leafNodes.filter((n) => !floatSet.has(n.kind));
@@ -553,12 +460,9 @@ function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 	const nodes = resolveRoleNodes('string', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
-	// Find the primary string kind — prefer kinds containing "string"
-	// but not "char", "raw", "template", "regex"
 	const primaryNode = nodes.find((n) => /string/.test(n.kind) && !/char|raw|template|regex/.test(n.kind));
 	if (!primaryNode) return;
 
-	// If it's a leaf, emit directly
 	if (isLeafFactory(primaryNode)) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
 		fns.push(`    return F.${primaryNode.rawFactoryName}(value);`);
@@ -566,30 +470,21 @@ function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 		return;
 	}
 
-	// Branch string: look for a string-content leaf child to compose. Only
-	// when the branch is container-shaped (`classifyChildFactorySurface`
-	// 'direct'/'spread' — a single positional child, or `...children`,
-	// either of which accepts one positional argument the same way) —
-	// composing via a hardcoded `{ children: [...] }` config object here
-	// previously assumed a calling convention the factory doesn't have.
 	const contentNode = nodeMap.nodes.get('string_content');
 	if (contentNode && isLeafFactory(contentNode) && classifyChildFactorySurface(primaryNode, nodeMap) !== null) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
 		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value));`);
 		fns.push('  },');
 	}
-	// Otherwise: skip — too complex to auto-compose
 }
 
 function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('trivia', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
-	// Find leaf comment kinds (Python/TS: `comment(text)`)
 	const leafNodes = nodes.filter(isLeafFactory);
 
 	if (leafNodes.length === 1) {
-		// Single leaf comment kind — route everything there
 		const node = leafNodes[0]!;
 		fns.push(`  comment(text: string): ${returnTypeExpr(node)} {`);
 		fns.push(`    return F.${node.rawFactoryName}(text);`);
@@ -624,26 +519,16 @@ function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 		return;
 	}
 
-	// No leaf comment kinds — branch/polymorph comment kinds (e.g. Rust's
-	// line_comment polymorph, block_comment branch) are too complex to
-	// auto-compose in a canonical factory. Skip emission.
-	// Users should call the grammar-specific `ir.lineComment(...)` /
-	// `ir.blockComment(...)` factories directly.
 }
 
 function emitSynonymType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	// Get type kinds, excluding builtin types
 	const typeKinds = grammarRoles.get('type');
 	const builtinKinds = new Set(grammarRoles.get('type.builtin'));
 	const filteredKinds = typeKinds.filter((k) => !builtinKinds.has(k));
 
-	// Find the type-identifier node (not plain `identifier`).
-	// Probe both bare and hidden-prefixed names since SCM captures use
-	// unprefixed names but the grammar may use `_type_identifier`.
 	const resolveNode = (k: string) => nodeMap.nodes.get(k) ?? nodeMap.nodes.get(`_${k}`);
 	const typeIdKind = filteredKinds.find((k) => k !== 'identifier' && resolveNode(k) !== undefined);
 	if (!typeIdKind) {
-		// No type-specific kind — check if `identifier` is the only option
 		const identKind = filteredKinds.find((k) => k === 'identifier' && resolveNode(k) !== undefined);
 		if (identKind) {
 			const node = resolveNode(identKind)!;
@@ -659,12 +544,10 @@ function emitSynonymType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: stri
 	const typeNode = resolveNode(typeIdKind)!;
 
 	if (isLeafFactory(typeNode)) {
-		// Simple leaf type factory
 		fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
 		fns.push(`    return F.${typeNode.rawFactoryName}(name);`);
 		fns.push('  },');
 	} else {
-		// Branch type-identifier — compose with identifier factory
 		const identNode = nodeMap.nodes.get('identifier');
 		if (identNode && isLeafFactory(identNode)) {
 			fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
@@ -677,7 +560,6 @@ function emitSynonymType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: stri
 function emitSynonymIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const varKinds = grammarRoles.get('variable');
 
-	// Find the `identifier` kind specifically — not `this`, `super`, `self`
 	const identKind = varKinds.find((k) => k === 'identifier');
 	if (!identKind) return;
 

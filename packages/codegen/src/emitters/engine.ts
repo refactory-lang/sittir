@@ -1,23 +1,6 @@
-/**
- * Emits the per-grammar engine surface, split across two files so that
- * rendering never depends on parsing.
- *
- * `render-engine.ts` holds the render / edit half and imports
- * no wrapper. `engine.ts` adds `parse()`, which does need `wrap.ts`. The
- * split is load-bearing, not cosmetic: constructed nodes carry `$render()`,
- * so `factories -> utils -> boundary` reaches the render half; if that half
- * also carried `parse()`, it would pull `wrap.ts` and close a cycle back
- * onto `factories.ts`.
- */
-
 export interface EmitEngineConfig {
 	grammar: string;
-	/** The grammar's root kind interface name (e.g. `SourceFile`) — types
-	 *  `createEngine`'s diagnostics so `parseAndRead(...).root` needs no cast. */
 	rootTypeName: string;
-	/** The `wrap.ts` alias for the root kind's wrapped surface (e.g.
-	 *  `SourceFileTree`) — `parse()`'s return type. Emitted by the wrap
-	 *  emitter from the same table that types `wrapNode`. */
 	rootTreeTypeName: string;
 }
 

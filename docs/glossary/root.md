@@ -9,7 +9,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `loadWebTreeSitter` (`packages/codegen/src/engine-loader.ts:3`)
+
+### `packages/codegen/src/engine-loader.ts::loadWebTreeSitter`
 
 ```text
 /**
@@ -26,7 +27,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `assertNever` (`packages/codegen/src/polymorph-variant.ts:41`)
+### `packages/codegen/src/polymorph-variant.ts::assertNever`
 
 ```text
 /**
@@ -36,7 +37,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `writeFile` (`packages/codegen/src/run-codegen.ts:89`)
+### `packages/codegen/src/run-codegen.ts::writeFile`
 
 ```text
 /**
@@ -75,7 +76,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runTreeSitterGenerate` (`packages/codegen/src/run-codegen.ts:146`)
+```text
+// ---------------------------------------------------------------------------
+// Internal helpers — co-located with cli.ts originally
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Unreadable existing file — fall through and overwrite.
+```
+
+### `packages/codegen/src/run-codegen.ts::runTreeSitterGenerate`
 
 ```text
 /**
@@ -87,7 +100,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runStandaloneSteps` (`packages/codegen/src/run-codegen.ts:162`)
+### `packages/codegen/src/run-codegen.ts::runStandaloneSteps`
 
 ```text
 /**
@@ -100,7 +113,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runGrammarDiagnosticsPreflight` (`packages/codegen/src/run-codegen.ts:195`)
+### `packages/codegen/src/run-codegen.ts::runGrammarDiagnosticsPreflight`
 
 ```text
 /**
@@ -115,7 +128,51 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runCodegenCli` (`packages/codegen/src/run-codegen.ts:284`)
+```text
+// ---------------------------------------------------------------------------
+// Grammar-diagnostics preflight gate
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// enrich() ran as part of producing `rawGrammar` above and attached its
+// downgraded parsekind-noninjective diagnostics to that grammar object
+// (evaluate propagates them from the enriched base). Read them off
+// `rawGrammar`'s own return value — NOT a module-global accumulator — so
+// they are correct even on a repeated evaluate() of the same grammar in
+// one process, and never interleave across concurrent grammar
+// evaluations. They land in the same persisted grammar-diagnostics.json
+// as every other grammar diagnostic source.
+```
+
+#### body
+
+```text
+// Non-blocking (and allow-listed) diagnostics are always surfaced as
+// visible, non-fatal output so every collected grammar condition prints
+// during `sittir gen`/regen, even when none are blocking.
+```
+
+#### body
+
+```text
+// Persist the COMPLETE diagnostic set (blocking + non-blocking) — writing
+// only `nonBlocking` silently dropped blocking diagnostics from the
+// persisted artifact even when the run went on to proceed (allow-listed,
+// or confirmed interactively).
+//
+// Only write when running against a REAL loaded grammar. `injectedDiagnostics`
+// is a test-only seam (`cli-grammar-diagnostics.test.ts` injects diagnostics
+// for an arbitrary/fake grammar to exercise the gate's allow-list/confirm
+// logic in isolation, bypassing real grammar loading) — writing through to
+// the tracked `packages/<grammar>/.sittir/grammar-diagnostics.json` in that
+// case would contaminate the real artifact with test fixtures. Keep the
+// injection seam side-effect-free.
+```
+
+### `packages/codegen/src/run-codegen.ts::runCodegenCli`
 
 ```text
 /**
@@ -128,7 +185,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runCodegen` (`packages/codegen/src/run-codegen.ts:320`)
+### `packages/codegen/src/run-codegen.ts::runCodegen`
 
 ```text
 /**
@@ -149,7 +206,232 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `runFullRegen` (`packages/codegen/src/run-codegen.ts:609`)
+```text
+// ---------------------------------------------------------------------------
+// Core codegen function
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Codegen IS the writer of the per-grammar manifest. Internal validator runs
+// invoked from inside this function (e.g. extractParityFixtures uses
+// validateReadRenderParse to extract parity fixtures BEFORE the manifest is
+// rewritten) would otherwise verify the manifest mid-write — checking the
+// codegen process against its own incomplete output, which is meaningless.
+// Set the env so `loadLanguageForGrammar` skips verification for these
+// internal calls. External callers (validator CLI, probe-validate, etc.) do
+// not run this function and therefore do not inherit this env.
+```
+
+#### body
+
+```text
+// Grammar-diagnostics preflight gate. Blocking diagnostics (canProceed ===
+// false) not covered by `allowDiagnostics` throw GrammarDiagnosticError in
+// non-interactive mode, or prompt on a TTY. Known-debt diagnostics are
+// currently non-blocking (canProceed: true), so this surfaces them without
+// halting; --allow-diagnostic remains available for any future blocking code.
+```
+
+#### body
+
+```text
+// Surface slot-grouping diagnostics from the normalize phase. These are
+// non-blocking propose-promotion suggestions; printing them here (after
+// generate()) ensures they appear during `sittir gen --all` even when
+// the preflight and generate() pipelines are separate.
+```
+
+#### body
+
+```text
+// Write source files
+```
+
+#### body
+
+```text
+// Write per-rule `.jinja` files to packages/<grammar>/templates/
+// (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
+// whose rule kind is no longer in the grammar.
+```
+
+#### body
+
+```text
+// Static-seam-resolution residue report: how many template boundaries
+// the SEQ join resolved statically, how many runtime checks have a
+// statically-knowable outcome (derivable — the static-resolution
+// candidate pool), and how many genuinely vary per instance (the true
+// residue the spec ratchets on). The full per-boundary record list is
+// persisted beside the other generated grammar artifacts so a ratchet
+// (and a reviewer) can see WHICH sites changed, not just the counts.
+```
+
+#### body
+
+```text
+// --- grammar-owned Rust render-module emission (spec 012 T017) ---
+// When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
+// so the native backend and the TS backend can detect template-bundle drift
+// at runtime (FR-020). The hash is computed over the same `.jinja`
+// bodies that were just written above — this keeps the TS-side and
+// Rust-side derivations in lockstep.
+```
+
+#### body
+
+```text
+// Copy the per-kind `.jinja` files into the grammar crate's templates/
+// directory so askama's build-time `#[template(path = ...)]` can
+// resolve them (T030). Stale files (no longer in the generated copy
+// plan) are removed so regenerations don't accumulate dead templates.
+```
+
+#### body
+
+```text
+// Write per-grammar kind_ids.rs (Phase B: KindID runtime migration).
+// This file exports one pub const per kind matching the TS-side TSKindId enum.
+```
+
+#### body
+
+```text
+// Rebuild the corresponding N-API binding so the native render path
+// picks up the new templates. Askama compiles templates at the
+// crate's build time via proc macro; without a rebuild, native
+// baseline collection silently falls back to TS render with the
+// previous templates baked in. Opt out with --no-build-native.
+```
+
+#### body
+
+```text
+// Dev/gate loop can build the napi crate in DEBUG via --native-debug.
+// The validate gate only needs a CORRECT .node (AST-match), not an optimized
+// one — and the debug profile enables incremental compilation (the release
+// profile has `incremental = false`), so a codegen edit → regen recompiles
+// only the changed crate + relinks instead of a full from-scratch optimized
+// build. Keep the default `build` (`--release`) for CI / production artifacts.
+// Explicit opt-in only (--native-debug, not an env var): build-profile
+// choice affects the shared, historically-compared validate:native
+// numbers, so it must be visible in the invocation, never inherited
+// from ambient shell state.
+```
+
+#### body
+
+```text
+// Workspace-wide compile check — codegen changes in render-module.ts
+// affect all three grammars' emitted transport.rs. Without a check
+// across the whole workspace, breakage in non-targeted grammars
+// (e.g. python or typescript) would silently persist until the next
+// per-grammar regen. cargo check is incremental: a no-op for the
+// crate just rebuilt by napi, and only compiles other crates whose
+// source changed since their last build.
+//
+// Skippable via --no-workspace-check: a multi-grammar driver
+// (`regen:all`) runs the check once on its LAST grammar instead of
+// once per grammar — the final check still covers the whole
+// workspace, the earlier ones were redundant.
+```
+
+#### body
+
+```text
+// Write node model (single on-disk metadata source — PR-K folded the
+// former factory-map.json5 sections in here).
+```
+
+#### body
+
+```text
+// Write suggested overrides log (T042f) next to grammar.sittir.ts at the
+// package root. This is a documentation file — not runnable. `undefined`
+// means the emitter has nothing to suggest (emission disabled or empty
+// result) — skip the write, and remove any stale file left by a prior
+// run so re-enabling the emitter later naturally recreates it.
+```
+
+#### body
+
+```text
+// Write tests
+```
+
+#### body
+
+```text
+// Write vitest config
+```
+
+#### body
+
+```text
+// --- Renderability check: every named kind in node-types.json must be
+// reachable by @sittir/legacy-core's render() function (supertype, leaf, or rule).
+// Uses the NodeMap directly for a structural truth check.
+```
+
+#### body
+
+```text
+// Collected diagnostic: kinds whose CHOICE slot has no grammar field name.
+// A naked choice falls back to an unresolvable `content` slot; the author must
+// give it an explicit `field('<name>', ...)` in `packages/<lang>/grammar.sittir.ts`.
+```
+
+#### body
+
+```text
+// Warning-only: these are typically anonymous / alias-target kinds that
+// never get rendered as top-level nodes (e.g. `empty_statement`,
+// `doc_comment`). If user code DOES call render() on them, it will
+// throw — but that's a real consumer bug, not a codegen failure.
+```
+
+#### body
+
+```text
+// Write the per-grammar generated.manifest.json after all bulk writes complete
+// and before any validation runs. Always happens regardless of --roundtrip,
+// because the manifest needs to track the current on-disk state for any
+// downstream validator (this function's roundtrip probes OR the external
+// validator CLI). The only post-validation write is overrides.suggested.ts,
+// which is intentionally excluded from the manifest (see pathsFor()).
+```
+
+#### body
+
+```text
+// Post-regen emit diff: show what THIS run changed in the generated output,
+// grouped by emitter, working tree vs HEAD. Convenience only — skipped under
+// --no-emit-diff and silently when git is unavailable. Printed here (right
+// after the manifest write, before validation) so it reflects the same on-disk
+// state the manifest just captured; overrides.suggested.ts is excluded from
+// the tracked roots, so the later validation write does not muddy the report.
+```
+
+#### body
+
+```text
+// Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
+// No-op otherwise. Used to validate simplify's canonicalization before
+// shrinking `deriveFields` / `deriveChildren` to trivial walks.
+```
+
+#### body
+
+```text
+// Return the assembled NodeMap so the cli orchestrator can thread it into the
+// tools-side post-generate validation passes (parity fixtures, round-trip
+// probes) — validation no longer runs inside codegen.
+```
+
+### `packages/codegen/src/run-codegen.ts::runFullRegen`
 
 ```text
 /**
@@ -165,7 +447,49 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PolymorphVariantDescriptor` (`packages/codegen/src/polymorph-variant.ts:13`)
+```text
+// ---------------------------------------------------------------------------
+// Full regen (--all chain: transpile → ts-generate → compile-parser → runCodegen
+// → native rebuild)
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Set BEFORE any generate/validate work (mirrors the top-level set in cli.ts).
+```
+
+#### body
+
+```text
+// Auto-chain: with --all, by default run transpile + tree-sitter generate
+// + compile-parser BEFORE sittir codegen. This produces fresh
+// .sittir/grammar.js, .sittir/src/{grammar,node-types}.json, AND a
+// fresh .sittir/parser.wasm — sittir codegen then reads those to emit
+// packages/<grammar>/src/*. Opt out with --skip-ts-chain if you only
+// want the sittir codegen phase (e.g., rapid iteration when the upstream
+// grammar hasn't changed).
+//
+// parser.wasm MUST be rebuilt alongside grammar.js / node-types.json —
+// otherwise validators that consult the override parser (via
+// loadLanguageForGrammar) see a stale parser that doesn't know about
+// recent `field(...)` / `variant(...)` additions, producing silent
+// AST mismatches in round-trip tests.
+```
+
+#### body
+
+```text
+// Run the core codegen (generate → write all files → renderable → manifest
+// → emit-diff → native rebuild (if applicable)). The native rebuild lives
+// inside runCodegen (within the shouldEmitRustRender block) so it runs BEFORE
+// manifest write — matching the original ordering from mainCli where cargo
+// build preceded writeManifestForGrammar. Returns the NodeMap for the
+// orchestrator's post-generate validation.
+```
+
+### `packages/codegen/src/polymorph-variant.ts::PolymorphVariantDescriptor`
 
 ```text
 /**
@@ -184,7 +508,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `CodegenOptions` (`packages/codegen/src/run-codegen.ts:44`)
+```text
+/**
+ * Descriptor telling validators how to stamp `$variant` on a derived
+ * polymorph config when the caller didn't supply it (readNode-derived
+ * shapes, `.from()` Loose wrappers). Serialized into node-model.json5's
+ * `polymorphVariants` section (PR-K); consumed by `nodeToConfig` via
+ * `validate/common.ts`.
+ *
+ * Lives in codegen — not `@sittir/types` — because the descriptor is
+ * codegen/validator-internal. Consumers of `@sittir/types` should never
+ * see it.
+ */
+```
+
+### `packages/codegen/src/run-codegen.ts::CodegenOptions`
 
 ```text
 /**
@@ -193,61 +531,61 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `grammar` (`packages/codegen/src/run-codegen.ts:49`)
+### `packages/codegen/src/run-codegen.ts::grammar`
 
 ```text
 /** Grammar name (rust, typescript, python). */
 ```
 
-### `outputDir` (`packages/codegen/src/run-codegen.ts:51`)
+### `packages/codegen/src/run-codegen.ts::outputDir`
 
 ```text
 /** Output directory for generated TS files (e.g. packages/rust/src). */
 ```
 
-### `nodes` (`packages/codegen/src/run-codegen.ts:53`)
+### `packages/codegen/src/run-codegen.ts::nodes`
 
 ```text
 /** Specific node kinds to generate (mutually exclusive with `all`). */
 ```
 
-### `all` (`packages/codegen/src/run-codegen.ts:55`)
+### `packages/codegen/src/run-codegen.ts::all`
 
 ```text
 /** Generate full native render-module artifacts (equivalent to --all). */
 ```
 
-### `testsDir` (`packages/codegen/src/run-codegen.ts:57`)
+### `packages/codegen/src/run-codegen.ts::testsDir`
 
 ```text
 /** Output directory for test files (default: ../tests relative to outputDir). */
 ```
 
-### `compileParser` (`packages/codegen/src/run-codegen.ts:59`)
+### `packages/codegen/src/run-codegen.ts::compileParser`
 
 ```text
 /** Compile override grammar to .sittir/parser.wasm (standalone step). */
 ```
 
-### `transpile` (`packages/codegen/src/run-codegen.ts:61`)
+### `packages/codegen/src/run-codegen.ts::transpile`
 
 ```text
 /** Transpile grammar.sittir.ts to .sittir/grammar.js (standalone step). */
 ```
 
-### `tsGenerate` (`packages/codegen/src/run-codegen.ts:63`)
+### `packages/codegen/src/run-codegen.ts::tsGenerate`
 
 ```text
 /** Run 'tree-sitter generate' in .sittir/ (standalone step). */
 ```
 
-### `skipTsChain` (`packages/codegen/src/run-codegen.ts:65`)
+### `packages/codegen/src/run-codegen.ts::skipTsChain`
 
 ```text
 /** Skip the auto transpile + tree-sitter generate chain that --all normally runs. */
 ```
 
-### `buildNative` (`packages/codegen/src/run-codegen.ts:67`)
+### `packages/codegen/src/run-codegen.ts::buildNative`
 
 ```text
 /**
@@ -256,7 +594,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `workspaceCheck` (`packages/codegen/src/run-codegen.ts:72`)
+### `packages/codegen/src/run-codegen.ts::workspaceCheck`
 
 ```text
 /**
@@ -267,19 +605,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `noEmitDiff` (`packages/codegen/src/run-codegen.ts:79`)
+### `packages/codegen/src/run-codegen.ts::noEmitDiff`
 
 ```text
 /** Suppress the post-regen emit-diff report (--no-emit-diff). */
 ```
 
-### `allowDiagnostics` (`packages/codegen/src/run-codegen.ts:81`)
+### `packages/codegen/src/run-codegen.ts::allowDiagnostics`
 
 ```text
 /** List of diagnostic messages to allow (passed from CLI allowlist). */
 ```
 
-### `OXFMT_EFFECTIVE_CONFIG` (`packages/codegen/src/oxfmt-config.ts:36`)
+### `packages/codegen/src/oxfmt-config.ts::OXFMT_EFFECTIVE_CONFIG`
 
 ```text
 /**
@@ -288,5 +626,67 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `.editorconfig` the way oxfmt's CLI does, so `.editorconfig`'s
  * `indent_style = tab` rule for `.ts` files (repo-wide, `root = true`,
  * unambiguous) is merged in by hand here.
+ */
+```
+
+### `packages/codegen/src/oxfmt-config.ts::module`
+
+```text
+/**
+ * Canonical oxfmt formatting settings — single source of truth for both the
+ * repo-root `oxfmt.config.ts` (consumed by `pnpm run format` / oxfmt's CLI)
+ * and `writeFile()`'s in-pipeline formatting of generated `.ts` output
+ * (`run-codegen.ts`).
+ *
+ * Lives inside `packages/codegen/src` — not the repo root — so it ships
+ * with the package's own `dist` output and resolves correctly for real
+ * installed/published consumers. A repo-root-relative import from a
+ * package's `src/` reaches outside that package's `tsconfig.build.json`
+ * `rootDir`, and Node can't resolve it once only `dist` is packaged.
+ */
+```
+
+### `packages/codegen/src/oxfmt-config.ts::OXFMT_CONFIG.ignorePatterns`
+
+#### body
+
+```text
+// Ad-hoc probes and debug scripts — see scratch/README.md. Nothing
+// there gates a commit, so the formatter has no business rewriting it.
+```
+
+#### body
+
+```text
+// Producer-owned serialization: collect-baseline.ts emits a strict
+// 4-space-indent contract — a formatter pass here breaks refresh diffs.
+```
+
+### `packages/codegen/src/run-codegen.ts::module`
+
+```text
+/**
+ * Codegen library surface — programmatic entry points for running the codegen
+ * pipeline without going through the CLI argument parser.
+ *
+ * `runCodegen`    — core path: generate IR → write all output files → renderable
+ *                   check → manifest write → optional emit-diff → optional roundtrip.
+ * `runFullRegen`  — `--all` chain: transpile → tree-sitter generate →
+ *                   compile-parser → runCodegen → optional native rebuild.
+ *
+ * Error handling: instead of calling `process.exit()` (as the CLI does for
+ * missing arguments), these functions throw `Error` with the same messages.
+ * The CLI caller catches and converts to `process.exit(1)`.
+ */
+```
+
+### `packages/codegen/src/index.ts::module`
+
+```text
+/**
+ * @sittir/codegen — public surface.
+ *
+ * The five-phase pipeline (evaluate → link → normalize → assemble → emit)
+ * is exposed as `generate`.
  */
 ```

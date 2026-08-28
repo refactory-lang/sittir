@@ -1,22 +1,9 @@
-/**
- * dsl/rule-walker.ts — RuleWalker<R>: the one traversal engine (R12 PR-6).
- *
- * One canonical child-edge relation (`childrenOf`) + thin primitives over it.
- * The walker owns RECURSION, never DISPATCH: call sites keep exhaustive
- * `switch (rule.type)` arms (feedback_rule_type_discrimination).
- * Layering mirrors RuleBuilder: dsl-side class; compiler's BaseCtx binds an
- * instance over its rules map (+ diagnostics).
- * Spec: docs/superpowers/specs/2026-07-01-r12-rulewalker-design.md
- */
 import type { AnyRule } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 
 export class RuleWalker<R extends AnyRule = AnyRule> {
 	readonly #rules?: Readonly<Record<string, R>>;
-	/** Sink for future diagnostic-emitting walks (slot-grouping family). Public
-	 *  readonly (not #private) — nothing reads it yet; a private field would
-	 *  trip the unused-member lint. */
 	readonly diagnostics?: DiagnosticSink;
 
 	constructor(rules?: Readonly<Record<string, R>>, diagnostics?: DiagnosticSink) {

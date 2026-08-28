@@ -1,26 +1,8 @@
-/**
- * compiler/rule-attrs.ts — shared attr-preservation helpers.
- *
- * `withAttrsFrom` is used by every collapse site that discards a structural
- * wrapper (seq / choice) in favour of a single survivor. Originally local to
- * simplify.ts; it lives here so normalize.ts's `collapseWrappers` and
- * simplify.ts's `canonicalizeSeqOfLeaves` use the SAME implementation, and
- * future collapse sites can't drift apart. (`combineMultiplicity`, its usual
- * companion at those sites, lives in `dsl/rule-transforms.ts`.)
- */
-
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
-	// `original` may be a wrapper-bearing (evaluate/link) rule where these
-	// stamped leaf attrs aren't part of the type yet (they're populated by
-	// `applyWrapperDeletion` during Normalize) — but `collapseWrappers`
-	// (normalize.ts, pre-Normalize) legitimately calls this with `Rule<'link'>`
-	// wrapper nodes that already carry link-lifted attrs defensively. Read
-	// structurally rather than narrowing the param type, matching the
-	// established pattern (see `findRepeatFlag` in dsl/rule-transforms.ts).
 	const src = original as StampedAttrs & { id?: string };
 	const { fieldName, multiplicity, separator, optionalElement, id, tokenized, immediate } = src;
 	const patch: Record<string, unknown> = {};
@@ -30,23 +12,12 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 		patch['multiplicity'] = multiplicity;
 	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
 		patch['separator'] = separator;
-	// `nonterminal` is deliberately NOT transferred: every survivor a collapse
-	// site produces is intrinsically nonterminal (isSlotNode's structural
-	// fallback covers it). `optionalElement` has no structural fallback — the
-	// deleted-wrapper fact would die with the discarded node.
 	if (optionalElement !== undefined && !Object.prototype.hasOwnProperty.call(result, 'optionalElement'))
 		patch['optionalElement'] = optionalElement;
-	// Lexical token facts (Link's flattened `token(...)` wrappers) have no
-	// structural fallback either — a collapse survivor must keep them or an
-	// immediate token kind loses its seam-free rendering.
 	if (tokenized !== undefined && !Object.prototype.hasOwnProperty.call(result, 'tokenized'))
 		patch['tokenized'] = tokenized;
 	if (immediate !== undefined && !Object.prototype.hasOwnProperty.call(result, 'immediate'))
 		patch['immediate'] = immediate;
-	// Preserve the rule's identity through collapse: renderRule.id === collapsedRule.id
-	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) still
-	// share one of the slot's `sourceRuleIds`, making `slotByRuleId` (the canonical,
-	// primary slot lookup) resolve instead of degrading to fragile fallbacks.
 	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
 	if (Object.keys(patch).length === 0) return result;
 	return { ...result, ...patch };

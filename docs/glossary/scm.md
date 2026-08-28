@@ -9,7 +9,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `resolveGrammarRoot` (`packages/codegen/src/scm/extract-roles.ts:143`)
+
+### `packages/codegen/src/scm/extract-roles.ts::resolveGrammarRoot`
 
 ```text
 /**
@@ -20,7 +21,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `readIfExists` (`packages/codegen/src/scm/extract-roles.ts:158`)
+### `packages/codegen/src/scm/extract-roles.ts::readIfExists`
 
 ```text
 /**
@@ -28,7 +29,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveParentGrammarsFromConfig` (`packages/codegen/src/scm/extract-roles.ts:168`)
+### `packages/codegen/src/scm/extract-roles.ts::resolveParentGrammarsFromConfig`
 
 ```text
 /**
@@ -45,7 +46,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectCaptures` (`packages/codegen/src/scm/extract-roles.ts:214`)
+#### body
+
+```text
+// The field can be a string or an array of strings.
+```
+
+#### body
+
+```text
+// Match patterns like "node_modules/tree-sitter-<lang>/queries/<file>.scm"
+```
+
+### `packages/codegen/src/scm/extract-roles.ts::collectCaptures`
 
 ```text
 /**
@@ -58,7 +71,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `captureMatchesMapping` (`packages/codegen/src/scm/extract-roles.ts:259`)
+#### body
+
+```text
+// tags.scm is optional — only warn for highlights.scm
+```
+
+### `packages/codegen/src/scm/extract-roles.ts::captureMatchesMapping`
 
 ```text
 /**
@@ -70,7 +89,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `baseRoleOf` (`packages/codegen/src/scm/extract-roles.ts:270`)
+### `packages/codegen/src/scm/extract-roles.ts::baseRoleOf`
 
 ```text
 /**
@@ -80,7 +99,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyFallbackProbes` (`packages/codegen/src/scm/extract-roles.ts:300`)
+### `packages/codegen/src/scm/extract-roles.ts::applyFallbackProbes`
 
 ```text
 /**
@@ -98,7 +117,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `extractGrammarRoles` (`packages/codegen/src/scm/extract-roles.ts:333`)
+### `packages/codegen/src/scm/extract-roles.ts::extractGrammarRoles`
 
 ```text
 /**
@@ -116,13 +135,23 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `addToRole` (`packages/codegen/src/scm/extract-roles.ts:358`)
+#### body
+
+```text
+// Fallback: probe for well-known kind names when SCM captures didn't
+// discover them. Some grammars (e.g. Rust) use @constant.builtin for
+// booleans / numbers instead of @boolean / @number, so the capture-
+// based extraction misses them. These probes add kinds that are
+// universally recognized as belonging to a role.
+```
+
+### `packages/codegen/src/scm/extract-roles.ts::addToRole`
 
 ```text
 /** Add a kind to a role's set, creating the set if needed. */
 ```
 
-### `tokenise` (`packages/codegen/src/scm/parse.ts:44`)
+### `packages/codegen/src/scm/parse.ts::tokenise`
 
 ```text
 /**
@@ -139,31 +168,79 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `peek` (`packages/codegen/src/scm/parse.ts:186`)
+#### body
+
+```text
+// Line comments: ; ...
+```
+
+#### body
+
+```text
+// Check for predicate: (#name? ...)
+```
+
+#### body
+
+```text
+// Quantifiers
+```
+
+#### body
+
+```text
+// Captures: @name.sub
+```
+
+#### body
+
+```text
+// String literals: "..."
+```
+
+#### body
+
+```text
+// Identifiers (kind names, field names)
+```
+
+#### body
+
+```text
+// Field colon: `name:`
+```
+
+#### body
+
+```text
+// Anchors (`.`) and other unknown chars — skip
+```
+
+### `packages/codegen/src/scm/parse.ts::peek`
 
 ```text
 /** Return current token without advancing, or `undefined` at end. */
 ```
 
-### `advance` (`packages/codegen/src/scm/parse.ts:191`)
+### `packages/codegen/src/scm/parse.ts::advance`
 
 ```text
 /** Return current token and advance, or `undefined` at end. */
 ```
 
-### `is` (`packages/codegen/src/scm/parse.ts:196`)
+### `packages/codegen/src/scm/parse.ts::is`
 
 ```text
 /** Check if current token has the given kind. */
 ```
 
-### `eat` (`packages/codegen/src/scm/parse.ts:202`)
+### `packages/codegen/src/scm/parse.ts::eat`
 
 ```text
 /** Consume the current token if it matches `kind`. Returns true if consumed. */
 ```
 
-### `parseSCMQuery` (`packages/codegen/src/scm/parse.ts:217`)
+### `packages/codegen/src/scm/parse.ts::parseSCMQuery`
 
 ```text
 /**
@@ -178,7 +255,45 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `parsePattern` (`packages/codegen/src/scm/parse.ts:231`)
+#### body
+
+```text
+// Check for double-paren: ((kind) @cap (#pred? ...))
+```
+
+#### body
+
+```text
+// Bracket alternation inside predicate group: ([ ... ] @cap (#pred? ...))
+```
+
+```text
+// skip string literals, etc.
+```
+
+#### body
+
+```text
+// Normal pattern: (kind ...) @cap
+```
+
+#### body
+
+```text
+// Bracket alternation at top level: [ (kind1) (kind2) ] @cap
+```
+
+#### body
+
+```text
+// String literal at top level: ";" @punctuation.delimiter
+```
+
+```text
+// skip the capture — anonymous node, no kind name
+```
+
+### `packages/codegen/src/scm/parse.ts::parsePattern`
 
 ```text
 /**
@@ -188,25 +303,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `skipBracketGroup` (`packages/codegen/src/scm/parse.ts:276`)
+### `packages/codegen/src/scm/parse.ts::skipBracketGroup`
 
 ```text
 /** Skip past a bracket group `[...]`, handling nesting. */
 ```
 
-### `skipToClose` (`packages/codegen/src/scm/parse.ts:288`)
+### `packages/codegen/src/scm/parse.ts::skipToClose`
 
 ```text
 /** Skip tokens to the matching `)` for the current `(`. */
 ```
 
-### `tryCapture` (`packages/codegen/src/scm/parse.ts:299`)
+### `packages/codegen/src/scm/parse.ts::tryCapture`
 
 ```text
 /** Try to consume a capture token; returns the capture value or undefined. */
 ```
 
-### `parseInheritsDirective` (`packages/codegen/src/scm/parse.ts:444`)
+### `packages/codegen/src/scm/parse.ts::parseInheritsDirective`
 
 ```text
 /**
@@ -221,7 +336,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `Role` (`packages/codegen/src/scm/extract-roles.ts:29`)
+### `packages/codegen/src/scm/extract-roles.ts::Role`
 
 ```text
 /**
@@ -233,19 +348,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `get` (`packages/codegen/src/scm/extract-roles.ts:67`)
+### `packages/codegen/src/scm/extract-roles.ts::get`
 
 ```text
 /** Convenience accessor — get kinds for a specific role */
 ```
 
-### `captureBase` (`packages/codegen/src/scm/extract-roles.ts:78`)
+### `packages/codegen/src/scm/extract-roles.ts::captureBase`
 
 ```text
 /** Base capture name — matches the capture itself or any sub-captures. */
 ```
 
-### `TokenCursor` (`packages/codegen/src/scm/parse.ts:156`)
+### `packages/codegen/src/scm/parse.ts::TokenCursor`
 
 ```text
 /**
@@ -255,7 +370,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `CAPTURE_TO_ROLE` (`packages/codegen/src/scm/extract-roles.ts:75`)
+### `packages/codegen/src/scm/extract-roles.ts::CAPTURE_TO_ROLE`
 
 ```text
 /**
@@ -272,7 +387,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `FALLBACK_PROBES` (`packages/codegen/src/scm/extract-roles.ts:235`)
+### `packages/codegen/src/scm/extract-roles.ts::FALLBACK_PROBES`
 
 ```text
 /**
@@ -288,12 +403,101 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `withRootRole` (`packages/codegen/src/scm/extract-roles.ts:64`)
+### `packages/codegen/src/scm/extract-roles.ts::withRootRole`
 
 ```text
 /**
  * Compose the scm-derived roles with the grammar's `root` role. The start
  * symbol is a grammar fact — the rule record's first rule — not an scm
  * capture, so the caller that owns the rule record stamps it here.
+ */
+```
+
+```text
+// The start symbol is a rule-record fact, not an scm capture — the
+// rule-record owner stamps it.
+```
+
+### `packages/codegen/src/scm/extract-roles.ts::module`
+
+```text
+/**
+ * Semantic role extractor — reads tree-sitter `highlights.scm` and `tags.scm`
+ * query files and identifies which grammar kinds serve specific semantic roles.
+ *
+ * Resolution strategy:
+ * 1. Locate the grammar package via `createRequire`.
+ * 2. Read `queries/highlights.scm` and `queries/tags.scm`.
+ * 3. Check for `; inherits: <lang>` directive in each file.
+ * 4. If not found, check `tree-sitter.json` `highlights`/`tags` arrays for
+ *    parent grammar references (e.g. TypeScript → JavaScript).
+ * 5. Parse all sources with {@link parseSCMQuery}.
+ * 6. Map captures to semantic roles via {@link CAPTURE_TO_ROLE}.
+ * 7. Deduplicate kind names per role.
+ *
+ * Phase 1 (shipped) extracted `@comment` captures for trivia.
+ * Phase 2 extends this to ALL semantic roles from both query files.
+ */
+```
+
+### `packages/codegen/src/scm/extract-roles.ts::CAPTURE_TO_ROLE.captureBase`
+
+```text
+// trivia
+```
+
+```text
+// string sub-roles before base
+```
+
+```text
+// number sub-roles before base
+```
+
+```text
+// boolean
+```
+
+```text
+// type sub-roles before base
+```
+
+```text
+// variable sub-roles before base
+```
+
+```text
+// function sub-roles before base
+```
+
+```text
+// tags.scm definitions
+```
+
+```text
+// tags.scm references
+```
+
+### `packages/codegen/src/scm/extract-roles.ts::assignCapturesToRoles`
+
+#### body
+
+```text
+// Sub-roles also contribute to their base role.
+```
+
+```text
+// first match wins per capture
+```
+
+### `packages/codegen/src/scm/parse.ts::SCMCapture`
+
+```text
+/**
+ * Minimal S-expression query parser for tree-sitter `highlights.scm` files.
+ *
+ * Parses enough of the SCM query syntax to extract `@capture_name` bindings
+ * attached to `(kind_name)` node patterns. Predicates, field names, quantifiers,
+ * string literals, and alternation brackets are recognised and skipped.
  */
 ```

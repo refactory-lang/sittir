@@ -1,22 +1,3 @@
-/**
- * reconcile-naming — PR-A WIDE divergence probe.
- *
- * For every AssembledNonterminal in each grammar's NodeMap, assert each legacy
- * projected slot name equals the value the §2 PROJECTION computes from the slot's
- * `values` + `fieldName` (`projectSlotNaming`): storageName, name, configKey,
- * propertyName, paramName. The probe drives `collect-slots` until 0 — proving
- * PR-B's getter swap is byte-identical.
- *
- * Projections, not stored `_new` fields: `parseNames` is the live set of CST
- * kinds tree-sitter emits (per-value `parseKind.name`), so it can't go stale
- * across `mergeSlotsByName`'s value-union (the old stored `parseNamesNew` did).
- * No emitter reads the projection yet — this is the acceptance probe.
- *
- * ## Usage
- *   npx tsx packages/codegen/src/scripts/reconcile-naming.ts            # all grammars
- *   npx tsx packages/codegen/src/scripts/reconcile-naming.ts --grammar rust
- *   npx tsx packages/codegen/src/scripts/reconcile-naming.ts --first 20 # first-N per grammar
- */
 import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -35,7 +16,7 @@ type Grammar = (typeof GRAMMARS)[number];
 
 export interface Divergence {
 	kind: string;
-	slot: string; // the legacy slot.name (its current identity)
+	slot: string;
 	projection: 'storageName' | 'name' | 'configKey' | 'propertyName' | 'paramName';
 	legacy: string;
 	recomputed: string;
@@ -144,7 +125,6 @@ export async function run(argv: string[]): Promise<number> {
 	const first = Number.parseInt(values.first ?? '10', 10);
 	const targets: Grammar[] = values.grammar ? [values.grammar as Grammar] : [...GRAMMARS];
 
-	// Phase passes log via console.log/warn — route to stderr so stdout stays clean.
 	const origLog = console.log;
 	const origWarn = console.warn;
 	console.log = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
@@ -171,14 +151,9 @@ export async function run(argv: string[]): Promise<number> {
 		console.log = origLog;
 		console.warn = origWarn;
 	}
-	// Non-zero exit only when an UNEXPECTED divergence remains (allowlisted §2
-	// renames are accepted) — lets CI/the gate fail on genuine regressions.
 	return totalUnexpected === 0 ? 0 : 1;
 }
 
-// `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
-// (handles absolute paths / escaping) rather than string-interpolating, so the
-// `npx tsx reconcile-naming.ts` invocation is detected reliably.
 const _isMain = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (_isMain) {
 	run(process.argv.slice(2))

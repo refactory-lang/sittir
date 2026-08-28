@@ -9,7 +9,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `parsePath` (`packages/codegen/src/dsl/transform/transform-path.ts:122`)
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::parsePath`
 
 ```text
 /**
@@ -31,7 +32,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughPrecWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:271`)
+#### body
+
+```text
+// Wildcard syntax.
+```
+
+#### body
+
+```text
+// Kind-match syntax: (name).
+```
+
+#### body
+
+```text
+// Field-traversal syntax: name:.
+```
+
+#### body
+
+```text
+// ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughPrecWrapper`
 
 ```text
 /**
@@ -52,7 +77,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isEnrichGroupLiftSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:298`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichGroupLiftSymbol`
 
 ```text
 /**
@@ -66,7 +91,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `setGroupLiftRuleMap` (`packages/codegen/src/dsl/transform/transform-path.ts:335`)
+#### body
+
+```text
+// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
+// also carries `metadata.author === 'enrich'` but is handled separately by
+// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
+// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
+// would throw "group-lift symbol has no name" (an alias has no `.name`).
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::setGroupLiftRuleMap`
 
 ```text
 /**
@@ -76,7 +111,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `getGroupLiftRuleBody` (`packages/codegen/src/dsl/transform/transform-path.ts:344`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::getGroupLiftRuleBody`
 
 ```text
 /**
@@ -95,7 +130,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughGroupLiftSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:362`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughGroupLiftSymbol`
 
 ```text
 /**
@@ -111,7 +146,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isEnrichContentAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:395`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichContentAlias`
 
 ```text
 /**
@@ -126,7 +161,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughEnrichContentAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:412`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 
 ```text
 /**
@@ -138,7 +173,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughSingleWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:433`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughSingleWrapper`
 
 ```text
 /**
@@ -159,7 +194,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:486`)
+#### body
+
+```text
+// Dispatched before reaching descendThroughSingleWrapper — should never arrive here.
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughAlias`
 
 ```text
 /**
@@ -177,7 +218,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructAlias` (`packages/codegen/src/dsl/transform/transform-path.ts:535`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructAlias`
 
 ```text
 /**
@@ -191,7 +232,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `descendThroughNamedField` (`packages/codegen/src/dsl/transform/transform-path.ts:551`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughNamedField`
 
 ```text
 /**
@@ -214,7 +255,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `dispatchKindMatch` (`packages/codegen/src/dsl/transform/transform-path.ts:591`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::dispatchKindMatch`
 
 ```text
 /**
@@ -238,7 +279,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyKindMatch` (`packages/codegen/src/dsl/transform/transform-path.ts:620`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatch`
 
 ```text
 /**
@@ -254,7 +295,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyKindMatchToSymbol` (`packages/codegen/src/dsl/transform/transform-path.ts:647`)
+#### body
+
+```text
+// Track whether we matched anything so callers can error on zero.
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToSymbol`
 
 ```text
 /**
@@ -278,7 +325,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isWalkableNode` (`packages/codegen/src/dsl/transform/transform-path.ts:754`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::isWalkableNode`
 
 ```text
 /**
@@ -296,7 +343,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructContainer` (`packages/codegen/src/dsl/transform/transform-path.ts:776`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructContainer`
 
 ```text
 /**
@@ -307,7 +354,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructWrapper` (`packages/codegen/src/dsl/transform/transform-path.ts:789`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructWrapper`
 
 ```text
 /**
@@ -325,7 +372,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `reconstructRepeatWithMetadata` (`packages/codegen/src/dsl/transform/transform-path.ts:817`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructRepeatWithMetadata`
 
 ```text
 /**
@@ -347,7 +394,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapInPrecStack` (`packages/codegen/src/dsl/transform/transform-path.ts:874`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::wrapInPrecStack`
 
 ```text
 /**
@@ -358,7 +405,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyToIndexedMember` (`packages/codegen/src/dsl/transform/transform-path.ts:927`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyToIndexedMember`
 
 ```text
 /**
@@ -380,7 +427,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyWildcardToMembers` (`packages/codegen/src/dsl/transform/transform-path.ts:960`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyWildcardToMembers`
 
 ```text
 /**
@@ -404,7 +451,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `makePolymorphAliasNode` (`packages/codegen/src/dsl/transform/transform.ts:61`)
+### `packages/codegen/src/dsl/transform/transform.ts::makePolymorphAliasNode`
 
 ```text
 /**
@@ -428,7 +475,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `transform` (`packages/codegen/src/dsl/transform/transform.ts:118`)
+### `packages/codegen/src/dsl/transform/transform.ts::transform`
 
 ```text
 /**
@@ -441,7 +488,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `requiresPathMode` (`packages/codegen/src/dsl/transform/transform.ts:140`)
+### `packages/codegen/src/dsl/transform/transform.ts::requiresPathMode`
 
 ```text
 /**
@@ -462,7 +509,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `partitionPatchesByVariant` (`packages/codegen/src/dsl/transform/transform.ts:176`)
+### `packages/codegen/src/dsl/transform/transform.ts::partitionPatchesByVariant`
 
 ```text
 /**
@@ -481,7 +528,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyVariantPatches` (`packages/codegen/src/dsl/transform/transform.ts:206`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
 ```text
 /**
@@ -501,7 +548,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `tryHoistSiblingVariants` (`packages/codegen/src/dsl/transform/transform.ts:252`)
+#### body
+
+```text
+// Sort deepest-first so variants at greater path depth run before
+// shallower ones. Without this, a shallower variant that aliases
+// an ancestor position would block later descents through it
+// (ALIAS wrappers only allow index 0/-1). Also unblocks the common
+// case where mixed numeric + path keys coexist in one polymorph:
+// JS object iteration places pure-numeric keys first in numeric
+// order regardless of insertion order, so relying on author-
+// specified ordering isn't portable.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::tryHoistSiblingVariants`
 
 ```text
 /**
@@ -520,7 +580,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `peelPrecWrappersFromRule` (`packages/codegen/src/dsl/transform/transform.ts:296`)
+```text
+// non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::peelPrecWrappersFromRule`
 
 ```text
 /**
@@ -544,7 +608,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `parseVariantPathsForHoist` (`packages/codegen/src/dsl/transform/transform.ts:335`)
+### `packages/codegen/src/dsl/transform/transform.ts::parseVariantPathsForHoist`
 
 ```text
 /**
@@ -562,7 +626,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `buildHoistedVariants` (`packages/codegen/src/dsl/transform/transform.ts:373`)
+### `packages/codegen/src/dsl/transform/transform.ts::buildHoistedVariants`
 
 ```text
 /**
@@ -594,7 +658,43 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `registerHoistedVariantConflicts` (`packages/codegen/src/dsl/transform/transform.ts:455`)
+#### body
+
+```text
+// Hidden rule name (underscore-prefixed) — MUST match wire's
+// `injectHiddenRulePlaceholders` naming (`_<parent>_<suffix>`)
+// so the deferred-content fn can read this deposit. Previously
+// this code deposited under the VISIBLE name (`parent_suffix`)
+// which wire's placeholder never looked up, leaving the hidden
+// rule BLANK → tree-sitter "Undefined symbol" on compile.
+// Nested-variant naming: when `parentKind` is already a hidden
+// rule (e.g. `_visibility_modifier_pub`, produced as an arm of
+// an outer polymorph), strip its leading underscore before
+// building the variant's visible kind name. Without stripping,
+// the inner visible name inherits the leading `_` and
+// tree-sitter treats the alias target as hidden, collapsing
+// the variant's contribution.
+```
+
+#### body
+
+```text
+// Emit `alias($._hidden, $.visible)` so tree-sitter matches the
+// hidden rule but surfaces the visible kind name in parse trees.
+// Mirrors `registerAliasedVariant`'s output shape used by the
+// non-hoisted variant placeholder path.
+```
+
+#### body
+
+```text
+// Conflicts MUST reference declared rules (tree-sitter rejects
+// symbol references to alias targets in the conflicts array with
+// "Undefined symbol"). Use the hidden rule names — those ARE
+// declared via wire's placeholder injection.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::registerHoistedVariantConflicts`
 
 ```text
 /**
@@ -613,7 +713,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `countBodyAnchors` (`packages/codegen/src/dsl/transform/transform.ts:486`)
+### `packages/codegen/src/dsl/transform/transform.ts::countBodyAnchors`
 
 ```text
 /**
@@ -625,7 +725,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `variantBranchIsUnmaterializable` (`packages/codegen/src/dsl/transform/transform.ts:512`)
+### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
 
 ```text
 /**
@@ -639,7 +739,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `deField` (`packages/codegen/src/dsl/transform/transform.ts:526`)
+### `packages/codegen/src/dsl/transform/transform.ts::deField`
 
 ```text
 /**
@@ -651,7 +751,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyFlatPatchesThroughPrec` (`packages/codegen/src/dsl/transform/transform.ts:579`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyFlatPatchesThroughPrec`
 
 ```text
 /**
@@ -671,7 +771,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `applyFlatPatchesToSeq` (`packages/codegen/src/dsl/transform/transform.ts:602`)
+### `packages/codegen/src/dsl/transform/transform.ts::applyFlatPatchesToSeq`
 
 ```text
 /**
@@ -698,7 +798,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `wrapVariantBodyInParentPrec` (`packages/codegen/src/dsl/transform/transform.ts:644`)
+#### body
+
+```text
+// Skippable (not a hard Error): when this seq is one arm of an
+// enclosing choice's flat-patch fan-out, an out-of-bounds index
+// here just means THIS arm doesn't have that position — the
+// choice-level recursion above catches ApplyPathSkip and leaves
+// the arm unchanged. If this seq is the top-level patch target
+// (no enclosing choice fan-out), ApplyPathSkip is never caught
+// and still propagates out of transform() as an error, same as
+// before — genuinely out-of-bounds against the ONE target shape.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::wrapVariantBodyInParentPrec`
 
 ```text
 /**
@@ -720,7 +833,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `findEnrichShapedFieldThroughTransparentWrappers` (`packages/codegen/src/dsl/transform/transform.ts:799`)
+### `packages/codegen/src/dsl/transform/transform.ts::findEnrichShapedFieldThroughTransparentWrappers`
 
 ```text
 /**
@@ -742,7 +855,36 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `resolveAliasPlaceholder` (`packages/codegen/src/dsl/transform/transform.ts:984`)
+#### body
+
+```text
+// Shape A: the sittir/tree-sitter-native optional { type: 'OPTIONAL', content: ... }.
+```
+
+#### body
+
+```text
+// Shape B: tree-sitter CLI's CHOICE-with-BLANK — the canonical encoding of
+// optional(x) in tree-sitter's runtime: { type: 'CHOICE', members: [x, BLANK] }
+// or [BLANK, x]. Enrich's rebuildOptional preserves this shape.
+// Only treat as transparent when exactly 2 members and one is BLANK.
+```
+
+```text
+// a real choice, not an optional
+```
+
+#### body
+
+```text
+// Shape C: prec wrappers — transparent in path-addressing; content carries
+// the actual rule (value is separate). PREC/PREC_LEFT/PREC_RIGHT/
+// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
+// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
+// uppercase spellings ever appear here.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::resolveAliasPlaceholder`
 
 ```text
 /**
@@ -762,7 +904,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `registerAliasedVariant` (`packages/codegen/src/dsl/transform/transform.ts:1016`)
+### `packages/codegen/src/dsl/transform/transform.ts::registerAliasedVariant`
 
 ```text
 /**
@@ -783,7 +925,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `matchesEmpty` (`packages/codegen/src/dsl/transform/transform.ts:1063`)
+```text
+// ---------------------------------------------------------------------------
+// Aliased-variant synthesis — shared between variant() and alias()
+// placeholders. Handles the mechanics of "extract an arbitrary sub-rule
+// into a hidden named rule, return an alias node that points at it,
+// wrap in prec where needed, and factor out empty-matching content
+// tree-sitter won't accept as a syntactic rule."
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::matchesEmpty`
 
 ```text
 /**
@@ -795,7 +947,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `factorOutEmptiness` (`packages/codegen/src/dsl/transform/transform.ts:1084`)
+### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`
 
 ```text
 /**
@@ -806,7 +958,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `extractNonEmpty` (`packages/codegen/src/dsl/transform/transform.ts:1095`)
+### `packages/codegen/src/dsl/transform/transform.ts::extractNonEmpty`
 
 ```text
 /**
@@ -818,7 +970,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `kind` (`packages/codegen/src/dsl/transform/transform-path.ts:83`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::kind`
 
 ```text
 /**
@@ -832,7 +984,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `kind` (`packages/codegen/src/dsl/transform/transform-path.ts:96`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::kind`
 
 ```text
 /**
@@ -844,7 +996,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `ApplyPathSkip` (`packages/codegen/src/dsl/transform/transform-path.ts:107`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::ApplyPathSkip`
 
 ```text
 /**
@@ -857,7 +1009,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `GroupLiftRuleMap` (`packages/codegen/src/dsl/transform/transform-path.ts:277`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::GroupLiftRuleMap`
 
 ```text
 /**
@@ -871,7 +1023,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PatchSet` (`packages/codegen/src/dsl/transform/transform.ts:67`)
+### `packages/codegen/src/dsl/transform/transform.ts::PatchSet`
 
 ```text
 /**
@@ -906,7 +1058,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `findEnrichShapedFieldThroughTransparentWrappers` (`packages/codegen/src/dsl/transform/transform.ts:531`)
+### `packages/codegen/src/dsl/transform/transform.ts::findEnrichShapedFieldThroughTransparentWrappers`
 
 ```text
 /**
@@ -941,7 +1093,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PREC_VARIANT_MAP` (`packages/codegen/src/dsl/transform/transform-path.ts:573`)
+### `packages/codegen/src/dsl/transform/transform-path.ts::PREC_VARIANT_MAP`
 
 ```text
 /**
@@ -952,7 +1104,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `unifyChoiceArmFieldNames` (`packages/codegen/src/dsl/transform/transform.ts:630`)
+### `packages/codegen/src/dsl/transform/transform.ts::unifyChoiceArmFieldNames`
 
 ```text
 /**
@@ -978,4 +1130,460 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `applyChoiceArmFieldWrap` convention; arms that are themselves nested
  * choices are left alone.
  */
+```
+
+#### body
+
+```text
+// Any field-wrapped arm gets unified, not just enrich-shaped ones
+// (name === symbol name) — a hand-authored, meaningfully-named field
+// from the base grammar (e.g. `field('source', $.string)`) is just as
+// much "already fielded under its own differing name" as an
+// enrich-numbered one, and this function's whole job (per its
+// callers) is to unify those under the override's chosen name.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::module`
+
+```text
+/**
+ * dsl/transform.ts — sittir override primitives for rule patching.
+ *
+ * These are NOT tree-sitter baseline DSL. They are sittir-specific
+ * extensions that operate on the `original` rule passed by tree-sitter's
+ * `grammar(base)` mechanism to each rule callback.
+ *
+ * Override files import these explicitly:
+ *
+ *     import { transform, insert, replace } from '@sittir/codegen/dsl'
+ *
+ * The baseline shadow functions (`grammar`, `seq`, `choice`, `field`, ...)
+ * are still injected as globals by `evaluate.ts` — don't import those.
+ *
+ * Types are deliberately `RuntimeRule` (not sittir's `Rule` union).
+ * The `original` argument comes from tree-sitter's extension mechanism
+ * at runtime — that's sittir-shaped under sittir's pipeline but
+ * tree-sitter-native (uppercase types) under the CLI runtime. Typing
+ * as `RuntimeRule` is honest in both directions and forces callers
+ * that inspect the result to narrow via guards in `runtime-shapes.ts`.
+ * Override files are `@ts-nocheck` so they're unaffected.
+ */
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::membersOf`
+
+```text
+// Local accessors for the container/wrapper field shapes RuntimeRule
+// doesn't expose structurally. Consolidated so the casts live in one
+// spot rather than scattered through the function body.
+```
+
+```text
+/**
+ * Apply a patch at one or more positions inside a rule tree, addressed
+ * by a parsed path. Returns a new rule (no mutation). Wildcards expand
+ * to every matching sibling at that level.
+ *
+ * The patch may be either a Rule (replace the target) or a function
+ * `(originalMember: Rule) => Rule` for in-place wrapping.
+ *
+ * Throws on out-of-bounds indices or zero-match wildcards.
+ */
+```
+
+```text
+// Local accessors for the container/wrapper field shapes RuntimeRule
+// doesn't expose structurally. Consolidated so the casts live in one
+// spot rather than scattered through applyPath's branches.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::applyFlatPatches`
+
+#### body
+
+```text
+// Choice: apply transform to each member recursively, uniformly — the
+// same flat positions are attempted on every arm. Arms are heterogeneous
+// by construction (different lengths/shapes), so a member that doesn't
+// have one of the target positions is left UNCHANGED rather than
+// aborting the whole patch (mirrors applyWildcardToMembers's per-member
+// skip/require-at-least-one-match contract in transform-path.ts — same
+// "some siblings won't match, that's fine" semantics, just for flat
+// positional keys instead of path wildcards). Reconstruct via native
+// dsl so the choice keeps its runtime-correct shape.
+```
+
+#### body
+
+```text
+// Single-content wrappers (optional/repeat/repeat1/field) — descend
+// and reconstruct via native dsl.
+```
+
+#### body
+
+```text
+// For other types, return as-is (patches don't apply)
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
+
+#### body
+
+```text
+// Two-arg field passed through directly — accept either case.
+// Tag `metadata.fieldSource: 'override'` (debt PR-P1) so diagnostics
+// recognize it as user-authored.
+```
+
+#### body
+
+```text
+// Variant placeholder — variant('suffix'): auto-prefix with current
+// rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
+```
+
+#### body
+
+```text
+// PR 3 (2026-07-21 union-slot design): the arm may already be an
+// enrich-minted visible-group alias (`mintStructuredChoiceArm` /
+// `applyClauseHoist`, widened to fire at bare choice-arm positions —
+// see dsl/enrich.ts) by the time variant() sees it. Its target is,
+// by construction of that mint gate, already a materializing named
+// kind — checked here BEFORE `variantBranchIsUnmaterializable`
+// below, which can't see through a SYMBOL content to the hidden
+// rule's own body and would misjudge an alias-wrapped symbol ref as
+// a unit production. variant() just RENAMES the alias to the
+// friendlier `<parent>_<suffix>` identity instead of wrapping a
+// second hidden rule around the same content ("mint = promote, not
+// synthesize" — matches enrich's own convention, avoids a double mint).
+```
+
+#### body
+
+```text
+// Label-only rename: we can't safely delete a rule from the base
+// grammar's rules map (tree-sitter tolerates dead/unreferenced
+// entries, but relocating-then-deleting risks stranding OTHER
+// consumers keyed by the old name — e.g. enrich's own
+// getEnrichClauseGroupOwners snapshot, taken before this rename
+// runs). Just relabel the outer alias's visible identity to what
+// variant()/polymorphs intends; the underlying enrich-minted
+// hidden rule keeps its own name. Double-mint collisions this
+// could otherwise cause are prevented upstream now — enrich's
+// mintStructuredChoiceArm skips minting for a choice arm that
+// structurally recurses through a bare-symbol sibling arm (see
+// armStartsWithSymbol in dsl/enrich.ts) — so this rename only
+// ever relabels a mint that has no competing identity to collide
+// with.
+```
+
+#### body
+
+```text
+// Deposit under the NESTED polymorph's own hidden name (not the
+// original enrich group-lift name) and repoint the alias's
+// `content` there too — a nested `polymorphs:` config keyed on
+// this exact deposit name (e.g. typescript's cascaded
+// `_export_statement_default_from_arm: {...}`) further splits the
+// deposited body IN PLACE under that name. Leaving `content`
+// pointing at the original group-lift symbol would strand this
+// alias on the pre-split raw mint while the real, fully-split
+// content lives — unreferenced by this alias — under the deposit
+// name (confirmed: `_export_statement_group2` vs. the properly
+// split `_export_statement_default_from_arm`, PR 3 storagename-
+// collision root cause).
+```
+
+#### body
+
+```text
+// A transparent unit-production branch (single named symbol via
+// fields/prec, no anonymous token) cannot become a CST node:
+// tree-sitter inlines it and bubbles the inner field up to the
+// parent. Skip the alias + polymorph registration and leave the
+// branch as its bare content, so we never promise a
+// `<parent>_<name>` kind that no parse tree contains. De-field it
+// (strip a leading `field(name, X)`): the field can't survive on
+// the CST anyway, and stripping it lets the bare nonterminal unify
+// with its materializable sibling into ONE unnamed body slot
+// (rendered `content`) instead of leaking a stray `value` field
+// the template would drop.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
+
+```text
+/**
+ * When the subtree under an override's `field(name)` position carries
+ * FIELDs of exactly ONE distinct name — one logical slot occurring at
+ * several structural positions (a separated list's head + per-iteration
+ * element, a repeat's per-arm fields) — rename every occurrence to the
+ * override's name and return the rewritten subtree. Returns null when the
+ * subtree has no fields, more than one distinct field name (ambiguous —
+ * the override can't know which slot it means), or the single name already
+ * matches (nothing to do; the duplicate-name diagnostic path owns that).
+ * Field content is not descended into: a field's interior belongs to the
+ * referenced node's own shape, not to this slot.
+ */
+```
+
+#### body
+
+```text
+// Enrich group-lift symbols are transparent here the same way they are
+// to path addressing: the slot's fields live in the hoisted rule's body,
+// reached through the registered rule map and written back in place.
+```
+
+#### body
+
+```text
+// Relabel only when the field set IS the slot the override names: an
+// ARRAY-valued set (at least one occurrence inside a repeat — a
+// separated list's per-iteration element) with no unfielded
+// symbol/alias positions alongside (an unfielded symbol means the
+// override is naming THOSE, or an aggregate of both — e.g.
+// comparison_operator's fielded operators interleaved with unfielded
+// comparand expressions). A singular field inside a composite (a
+// marker sub-slot within a group) likewise means the override names
+// the outer aggregate: wrap, don't rename.
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::resolveFieldPlaceholder`
+
+#### body
+
+```text
+// Override landing on a position that already carries a FIELD —
+// whether from enrich's auto-inference or straight from the base
+// grammar (e.g. tree-sitter-rust's `field('pattern', choice(...))`
+// on `parameter`) — replaces that field rather than nesting a new
+// one around it. Nesting (`field('name', field('pattern', ...))`)
+// is what a one-arg `field(name)` placeholder degenerates to if the
+// existing FIELD isn't unwrapped first; even where tree-sitter's own
+// field-resolution happens to prefer the outer name and the parser
+// ends up correct, the emitted grammar.json still carries the dead
+// inner field, which is wrong on its own terms. Per the 2026-07-02
+// user decision, transparency is structural: a user-authored wrapper
+// shape-identical to enrich's output is treated the same as one
+// enrich actually produced — neither should leak into the override
+// result as a nested wrapper.
+```
+
+#### body
+
+```text
+// Only warn for the redundant-duplicate case (override matches the
+// existing field's name). The rename case (override picks a
+// different name like 'object'/'index'/'name' instead of the
+// existing 'expression1'/'expression2'/'pattern') is the intended
+// override-trumps-existing behavior — silent by design.
+```
+
+#### body
+
+```text
+// Not a direct enrich-shaped field — check for one nested inside
+// field-transparent wrappers (optional, prec/*). This handles the case
+// where enrich placed an auto-numbered field INSIDE an optional:
+//   optional(field('where_clause1', $.where_clause))
+// and the override wants to rename it via field('where_clause') at
+// that position. Without this descent, resolveFieldPlaceholder wraps
+// the entire optional with the new field name, producing:
+//   field('where_clause', optional(field('where_clause1', ...)))
+// tree-sitter collapses nested field wrappers to the innermost name,
+// so the intended rename never reaches the parser.
+```
+
+#### body
+
+```text
+// findEnrichShapedFieldThroughTransparentWrappers only returns for
+// structurally enrich-shaped fields, so this is always a safe rename.
+// Rename the inferred field in place and reconstruct the wrappers.
+// Result: optional(field('trailing_where_clause', $.where_clause))
+// instead of: field('trailing_where_clause', optional(field('where_clause2', ...)))
+```
+
+#### body
+
+```text
+// A uniform sibling field set — every FIELD in the subtree carries
+// the SAME name (one logical slot spread across positions, e.g. the
+// separated-list element fields enrich mints on the head and the
+// repeat's per-iteration element). The override names that slot:
+// relabel every occurrence in place instead of nesting an outer
+// field around the structure (tree-sitter keeps only the innermost
+// field name, so the wrap would never reach the parser).
+```
+
+#### body
+
+```text
+// Not optional-shaped either — unifyChoiceArmFieldNames covers the
+// remaining case: an override-wrapped choice whose arms are already
+// fielded under their own (differing) names.
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::module`
+
+```text
+/**
+ * dsl/transform-path.ts — path addressing for transform() patches.
+ *
+ * Path strings use forward-slash delimiters. Segment forms:
+ *
+ *   'N'         → positional index (0-based)
+ *   '-N'        → reverse index from the end (-1 = last member)
+ *   '_'         → wildcard — matches every sibling at this level
+ *   '(name)'    → kind-match — finds every occurrence of symbol `name`
+ *                 in the current subtree, skipping pre-fielded ones
+ *   'name:'     → field traversal — descends through a field('name', ...)
+ *                 wrapper at the current position (hard-errors on mismatch)
+ *
+ * Examples:
+ *   '0'              → first position of the top-level seq
+ *   '0/1/2'          → nested descent by positional indices
+ *   '0/_/1'          → position 1 of every branch at level 1 under pos 0
+ *   '(_expression)'  → every `_expression` symbol in the subtree
+ *   '2/elements:'    → descend into field('elements', ...) at position 2
+ *
+ * Migration notes:
+ *   '*' → '_'         (wildcard)
+ *   'name' → '(name)' (kind-match)
+ *
+ * Rules:
+ * - No leading slash (`/0` is invalid).
+ * - No trailing slash.
+ * - `_` wildcard matches a single level only — not recursive.
+ * - Out-of-bounds paths and zero-match wildcards are hard errors at
+ *   apply time (with the path + actual rule shape in the message).
+ */
+```
+
+```text
+// Re-export so transform.ts's `applyFlatPatches` can reach the
+// shared predicates through the canonical path-related module.
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::RuntimeDsl`
+
+```text
+// ---------------------------------------------------------------------------
+// Native DSL accessors — we call the runtime-injected DSL functions
+// (sittir's grammarFn-injected globals OR tree-sitter CLI's native
+// globals) instead of reconstructing rule objects directly. This keeps
+// the rule shape consistent with whichever runtime is processing the
+// transform call, and runs whatever normalization the runtime does.
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyPath`
+
+#### body
+
+```text
+// Precedence wrappers are transparent to path addressing EVEN AT THE TARGET
+// POSITION (segments.length === 0), same as the group-lift-symbol and
+// content-alias transparency below — a patch path resolves against the
+// pre-mint structure, and enrich's PREC-descent mint (mintStructuredChoiceArm)
+// now produces PREC(ALIAS(...)) arms whose precedence must ride through to
+// the rebuilt result (descendThroughPrecWrapper's own recursion already
+// re-wraps correctly; this check only needed to come BEFORE the
+// segments.length === 0 leaf case below it used to fall through to, handing
+// callers like resolvePatch's variant() branch the raw unpeeled PREC node
+// instead of its content — see typescript's call_expression regression).
+```
+
+#### body
+
+```text
+// Reached the target position — apply the patch.
+```
+
+#### body
+
+```text
+// Enrich group-lift symbols are transparent to path addressing, like prec
+// wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
+// tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
+// decision 6 — was `metadata.source === 'enrich'`) that carries the hoisted
+// seq body on `content`. An authored patch whose path was written against the pre-hoist
+// seq must travel THROUGH the symbol into that body. We descend without
+// consuming a segment (transparent) and rebuild the symbol around the patched
+// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
+// because the tag + body ride the symbol object itself — no rule-map resolver.
+```
+
+#### body
+
+```text
+// Enrich content-aliases are ALSO transparent to path addressing. enrich
+// wraps an inline-unsafe `optional(seq)` / bare `choice` in
+// `alias(<content>, $.<name>)` (the visible-kind form) tagged
+// `metadata.author === 'enrich'` (was `metadata.source === 'enrich'`,
+// decision 6). enrich runs BEFORE the authored
+// transform()/variant()/groups path-patches, so a patch whose path was
+// written against the pre-alias content must travel THROUGH the alias into
+// that content. Without this, `descendThroughAlias` (single-content, index 0
+// only) rejects any index ≥1 a real patch uses (e.g. rust visibility_modifier
+// `1/1/0/1/3`). We descend into `content` WITHOUT consuming a segment
+// (transparent, like prec / the group-lift symbol) and rebuild the alias.
+```
+
+#### body
+
+```text
+// Containers we can descend into — predicates in runtime-shapes.ts
+// work across both the sittir and tree-sitter-CLI runtimes.
+```
+
+#### body
+
+```text
+// Exhaustiveness guard — TypeScript narrows `head` to `never` here.
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::walkKindMatch`
+
+#### body
+
+```text
+// Prec wrappers are transparent.
+```
+
+#### body
+
+```text
+// Field: descend into content but mark insideNamedField=true so nested
+// `_expression` references inside already-fielded symbols don't get
+// re-wrapped.
+```
+
+#### body
+
+```text
+// Other wrappers — descend transparently.
+```
+
+#### body
+
+```text
+// Containers — descend into every member.
+```
+
+#### body
+
+```text
+// Leaf types we don't descend into (string, pattern, blank, etc.).
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyToMembers`
+
+#### body
+
+```text
+// Dispatched before reaching applyToMembers — should never arrive here.
 ```

@@ -1,8 +1,3 @@
-/**
- * Emits index.ts — barrel re-exports.
- * Consumes NodeMap directly. Static output — doesn't depend on node list.
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 
 export interface EmitIndexConfig {

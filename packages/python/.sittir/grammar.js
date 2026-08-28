@@ -528,9 +528,6 @@ var TOKEN = "TOKEN";
 // packages/codegen/src/dsl/rule-walker.ts
 var RuleWalker = class {
   #rules;
-  /** Sink for future diagnostic-emitting walks (slot-grouping family). Public
-   *  readonly (not #private) — nothing reads it yet; a private field would
-   *  trip the unused-member lint. */
   diagnostics;
   constructor(rules, diagnostics) {
     this.#rules = rules;
@@ -743,11 +740,7 @@ function canonicalizeSeparator(separator) {
 
 // packages/codegen/src/dsl/rule-patterns.ts
 function isEnumChoiceRule(rule) {
-  return rule.type === CHOICE && rule.members.length >= 2 && // STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
-  // canonicalized operators AND aliased fixed-text externals like
-  // `automatic_semicolon`) are both terminal-valued — `literalTextOf`
-  // serves both shapes uniformly downstream.
-  rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
+  return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
 }
 function leadingLiteralOf(r) {
   if (!typeEq(r.type, "CHOICE")) return null;
@@ -2756,12 +2749,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         groupDedupeMap,
         visibleGroupHiddenNames,
         clauseGroupOwners,
-        // Single non-BLANK arm: no siblings, no leading-name collisions.
         /* @__PURE__ */ new Set(),
         ambientPrec,
-        // The whole optional content is still the field's logical
-        // position (this is optional(seq)/CHOICE[content, BLANK], not a
-        // seq/choice member boundary) — carry the field name in.
         enclosingFieldName
       );
       const final = promoted ?? recursed;
@@ -3068,14 +3057,7 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
           continue;
         }
         const strippedName = candidate.storageKind.replace(/^_+/, "");
-        const collides = (
-          // Empty stripped name (a storage kind that is all underscores, e.g.
-          // `_`): there's no valid name to retarget to — decline.
-          strippedName === "" || // Already claimed by an EARLIER retarget in this same call (see
-          // `claimedRetargetNames`) — declining here avoids re-introducing a
-          // non-injective collision under the stripped name.
-          claimedRetargetNames.has(strippedName) || Object.hasOwn(rulesBag, strippedName) || Object.hasOwn(kwRules, strippedName) || Object.hasOwn(clauseGroupRules, strippedName)
-        );
+        const collides = strippedName === "" || claimedRetargetNames.has(strippedName) || Object.hasOwn(rulesBag, strippedName) || Object.hasOwn(kwRules, strippedName) || Object.hasOwn(clauseGroupRules, strippedName);
         if (collides) {
           continue;
         }
@@ -3598,13 +3580,6 @@ function resolveToEnumMembers(rule, rules) {
     case "CHOICE": {
       return isEnumChoiceRule(rule) ? rule.members : null;
     }
-    // A bare single STRING is never a field-enum candidate — that's exactly
-    // the class of hidden single-literal rules (e.g. `_kw_<name>`) already
-    // minted by an earlier enrich pass. A genuine field-enum is inherently a
-    // CHOICE of ≥2 alternatives; unlike evaluate.ts's post-pass, this
-    // enrich-time pass runs against those very hidden rules, so it must not
-    // match STRING here or one level through SYMBOL (below) — doing so once
-    // hijacked `_kw_async`'s reference into a spurious re-synthesized name.
     case "SYMBOL": {
       const name = rule.name;
       const target = rules[name];

@@ -1,11 +1,3 @@
-/**
- * render-module-runner.ts — thin adapter that drives the class-based
- * RenderModuleEmitter contract for scripts and focused unit tests.
- *
- * Using this adapter instead of calling emitRenderModuleBundle directly
- * ensures scripts and tests exercise the same emitter contract as emitAll().
- */
-
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
@@ -48,8 +40,6 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 			case 'supertype':
 			case 'multi':
 				break;
-			// TEMPORARY: 'separatedList' shares 'branch's emission — see
-			// isSlotBearingCompound's doc comment (shared.ts, emitters).
 			case 'separatedList':
 				templateEmitter.emitBranch?.(node);
 				renderModuleEmitter.emitBranch?.(node);

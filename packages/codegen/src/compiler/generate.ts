@@ -1,9 +1,3 @@
-/**
- * compiler/generate.ts — pipeline entry point.
- *
- * Pipeline: evaluate → link → normalize → assemble → emitters.
- */
-
 import { existsSync } from 'node:fs';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
@@ -43,7 +37,7 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
-import type { GeneratedIdTables } from './generated-metadata.ts'; // exposed via GeneratedFiles
+import type { GeneratedIdTables } from './generated-metadata.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 
 export interface GeneratedFiles {
@@ -82,14 +76,8 @@ export interface GenerateConfig {
 }
 
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
-	// PR-G: Diagnostics accumulator for the Assemble→Project gate.
-	// PR-H: threaded into phase contexts so pipeline diagnostics flow here.
 	const diagnostics = new DiagnosticSink();
 
-	// PR-H: forward unnamed-choice-slot events to the DiagnosticSink in addition
-	// to the module-global accumulator (drainUnnamedChoiceSlots still works).
-	// addUnnamedChoiceListener does NOT replace the primary warner, so tests that
-	// install spies via setUnnamedChoiceWarner are unaffected.
 	const removeUnnamedChoiceListener = addUnnamedChoiceListener((kind) => {
 		diagnostics.info({
 			code: 'unnamed-choice-slot',
@@ -98,74 +86,26 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		});
 	});
 
-	// Resolve grammar.js path
 	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
 
-	// Use grammar.sittir.ts if it exists (grammar extension), else base grammar.js
 	const overridesPath = resolveOverridesPath(cfg.grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
-	// Phase 1: Evaluate
 	const raw = await evaluate(entryPath);
 	tracePhaseRules('evaluate', raw.rules);
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
-	// Phase 2: Link — pass the include filter so derivation passes
-	// know whether to mutate the rule tree or only log to the sidecar. Also
-	// thread the pipeline's live `diagnostics` sink (PR-S task 5) — without
-	// this, Link-phase diagnostics (e.g. `non-literal-separator`) land in a
-	// throwaway sink `link()` discards internally and never reach the
-	// surfacing code below.
 	const linked = link(raw, { include: cfg.include, generatedIdTables, diagnostics });
 	tracePhaseRules('link', linked.rules);
 
-	// Authoritative inline list from the compiled grammar.json (if present).
-	// `raw.inline` only contains what the overrides callback explicitly
-	// returns — base-grammar string items in `previous` are silently dropped
-	// by evaluate's normalize() pass (which only handles symbol-ref objects).
-	// Reading grammar.json directly gives us the full merged inline list that
-	// tree-sitter itself used when compiling the parser.
-	// Loaded BEFORE normalize so inlineRefs in computeSimplifiedRules can inline
-	// auto-synthesized helpers (e.g., _type_arguments_repeat1) that tree-sitter
-	// expands at parse time.
-	//TODO: Pull into evaluate() so the inline list is available to link() and normalize() without a separate read.
-	// Fail loudly on dangling inline names — tree-sitter warns about only
-	// the FIRST undefined inline rule per run and silently drops the rest.
 	assertGrammarJsonInlineIntegrity(cfg.grammar);
 	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
 	const inlineKinds = new Set(inlineKindsArray ?? []);
 
-	// Inline-DECISION set for the simplify pass: which grammar.inline kinds
-	// inlineRefs should substitute. The gate is "in grammar.inline AND
-	// modelType is NOT a supertype / keyword / token". Supertypes are typed
-	// unions referenced by name (inlining them explodes a clean union into its
-	// alternatives at a seq position → non-canonical choice-at-seq); keyword /
-	// token helpers are leaf lexemes that must stay as scalar slot refs. The
-	// remaining inline kinds — auto-synthesized group-lift helpers (`branch`)
-	// and the hidden structural helpers tree-sitter expands at parse time — ARE
-	// inlined so sittir's derivation matches the flat parser output.
-	//
-	// NOTE: this is a SEPARATE set from `inlineKinds` above, which the emitters
-	// use as the "skip emitting this inlined kind" list (emitters/shared.ts).
-	// Filtering that list would un-skip supertypes/keywords and emit phantom
-	// concrete kinds — so the decision set is kept distinct.
-	// TODO: Pull this into simplify() so that inlineKinds is available to the simplify pass without a separate read.
 	const inlinableKinds = buildInlinableKinds(inlineKinds, linked);
 
-	// Build the extra polymorph skip-set for the slot-grouping diagnostic.
-	// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
-	// config from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces
-	// hidden arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`).
-	// These arms are already handled by the polymorph dispatch machinery; the
-	// diagnostic must not flag their multi-slot seq bodies as violations.
-	// Note: the parent kinds themselves are included too, to silence the top-level
-	// polymorph rule if it isn't already classified as PolymorphRule in the simplified
-	// map (e.g. when all arms are inlined, the structure gets flattened).
 	const polymorphsConfigSkip = buildPolymorphsConfigSkip(raw.polymorphsConfig);
 
-	// Phase 3: Normalize — build a NormalizeCtx carrying the inline-decision set
-	// and polymorph skip-set; pass it to normalizeGrammar so the simplify phase
-	// can read them off ctx (PR-H ctx threading).
 	const normalizeCtx = new NormalizeCtx({
 		grammar: linked,
 		inlineKinds: inlinableKinds,
@@ -174,44 +114,14 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	});
 	const normalized = normalize(linked, normalizeCtx);
 	tracePhaseRules('normalize', normalized.rules);
-	// tracePhaseRules('simplify', simplified.rules); — `simplified` doesn't exist yet;
-	// simplify() is still called inside assemble() below. Re-enable once the TODO
-	// below is implemented (simplify() hoisted out and called here directly).
-	//TODO: call simplify here and pass the simplified grammar to assemble() so the pipeline is evaluate → link → normalize → simplify → assemble → emitters. Currently simplify() is called inside assemble(). The pipeline should be refactored to call simplify() here and pass the simplified grammar to assemble().
 
-	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
-	// the canonical factory, threading the pipeline's live DiagnosticSink.
-	// `grammarJsonAliasMap` corrects nested-supertype-arm naming divergence
-	// between enrich's two per-grammar evaluations — see AssembleCtx's doc
-	// comment on the field and inline-sets.ts's loadGrammarJsonAliasMap.
 	const nodeMap = assemble(
 		AssembleCtx.from(normalized, generatedIdTables, diagnostics, loadGrammarJsonAliasMap(cfg.grammar))
 	);
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
-	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so
-	// the sink is empty and this never throws. Threading real diagnostics into
-	// `diagnostics` is PR-H's job (phase contexts).
 	assertEmittable(nodeMap, diagnostics);
 
-	// Surface accumulated compiler-phase warnings (PR-S task 5) — e.g. the
-	// link-phase `non-literal-separator` warning — to the author. `fail`
-	// diagnostics already halted the pipeline via assertEmittable above.
-	//
-	// Deliberately scoped to `severity === 'warning'` AND `scope ===
-	// 'compiler'` — NOT "every non-`fail` diagnostic". Empirically (all 3
-	// real grammars), the sink already carries a pre-existing `info`-severity
-	// `unnamed-choice-slot` entry, forwarded into this SAME shared sink and
-	// already drained by its own `console.warn` path (`addUnnamedChoiceListener`
-	// below). Reprinting it here via a blanket `!== 'fail'` filter would
-	// duplicate that output on every real-grammar run — not silent, contrary
-	// to this diagnostic's design. (`content-collision` is a separate case:
-	// `warning`-severity, but it never reaches this sink at all — it lives in
-	// `simplify.ts`'s own `_slotGroupingDiagnostics` accumulator, drained
-	// independently into `GeneratedFiles.slotGroupingDiagnostics` below, so it
-	// isn't part of this filter's job to begin with.) `warning` + `scope:
-	// 'compiler'` is the exact vocabulary this task introduces; nothing else
-	// emits at that severity/scope pair today.
 	const compilerWarnings = diagnostics
 		.all()
 		.filter(
@@ -221,64 +131,23 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
 	}
 
-	// Extract all semantic roles from the grammar's highlights.scm + tags.scm,
-	// plus the stamped `root` role: the start symbol is the rule record's
-	// FIRST rule (tree-sitter convention, preserved through every phase).
-	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
-	// The full GrammarRoles are passed to the ir emitter for `ir.synonym.*`.
 	const rootKind = rootRuleName(normalized.rules)!;
 	const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
 	const triviaKinds = grammarRoles.get('trivia');
 
-	// Kinds that were synthesized by evaluate's inline-alias-source pass
-	// (synthesizeInlineAliasSources). These have no parser symbol because
-	// tree-sitter inlined the alias body at parse time — the `_doc_comment`
-	// intermediary exists only in the codegen rule map. They're intentional
-	// pipeline constructs; warn-and-skip at emit time is correct.
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 	computeFieldStorageInfo(nodeMap);
 
-	// Prune determined slots — a required singular slot with exactly one
-	// possible value leaves the slot record (no storage, transport, wrap,
-	// accessor, or from() surface) and renders as template text. Runs
-	// BEFORE node-model emission (so the serialized fields match the wire)
-	// and before hydration — unresolved refs resolve by name here.
 	pruneDeterminedSlots(nodeMap);
 
-	// Phase 5a: Serialize the unhydrated NodeMap. `node-model.json5` is
-	// JSON-stringified, so it MUST run BEFORE `hydrateSlotRefs` wires the
-	// slot graph cyclically. Capture the result here; the rest of the emit
-	// phase reads the hydrated form.
 	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
 
-	// Phase 5b: Hydrate slot refs in place. After this, every
-	// `slot.values[*].node` is a fully-resolved `AssembledNode` — emitters
-	// read `.kind` / `.modelType` directly without the per-call-site
-	// `isUnresolvedRef` fallback ternary. Throws on unresolvable refs.
 	hydrateSlotRefs(nodeMap);
 
-	// Phase 5b½: Compute slot taxonomy (singleSlot vs multiSlot) on each
-	// branch/group node. Runs after hydration so parameterless-kind refs
-	// resolve through the hydrated slot graph.
 	computeSlotClasses(nodeMap);
 
-	// Phase 5b¾: Compute SCC over the singular transport-reference graph.
-	// Render-module's per-slot and supertype enum emitters consult
-	// `nodeMap.scc.sameSCC(variantKind, ownerKind)` to decide Box vs
-	// inline for each variant — Box only when the variant can reach the
-	// enum's owner kind through singular (non-Vec) references. Runs
-	// after slot-class computation since the SCC walks slot graphs.
 	nodeMap.scc = computeTransportSCC(nodeMap);
 
-	// Phase 5c: Emit — every emitter consumes the hydrated NodeMap directly.
-	// The ir-namespace keys are populated on each AssembledNode during
-	// assemble() (see resolveIrKeys), so emitters read node.irKey
-	// directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
-
-	// Single-loop orchestrator: factory/from/wrap share ONE iteration
-	// over nodeMap.nodes; other emitters run their own internal loops
-	// via emitAll. See emitters/emit.ts for architecture.
-	//TODO: Only input should be the NodeMap and normalized.rules (for render emission); all other inputsgeneratedIdTables, inlineKinds, etc.) should be read off the NodeMap
 	const emitted = emitAll({
 		grammar: cfg.grammar,
 		nodeMap,
@@ -292,7 +161,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		expectTestFailures: raw.expectTestFailures
 	});
 
-	// The stamped `root` role types the engine's raw root and its wrapped surface.
 	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
 	if (rootTypeName === undefined) {
 		throw new Error(
@@ -332,11 +200,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		nodeMap,
 		generatedIdTables,
 		renderModule: emitted.renderModule,
-		// drain slot-grouping diagnostics accumulated during the normalize phase
 		slotGroupingDiagnostics: drainSlotGroupingDiagnostics()
 	};
-	// Clean up the unnamed-choice listener to avoid double-forwarding on
-	// subsequent generate() calls in long-lived processes.
 	removeUnnamedChoiceListener();
 	return result;
 }

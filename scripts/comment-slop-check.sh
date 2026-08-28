@@ -25,8 +25,12 @@ case "$mode" in
 esac
 
 # Hand-written source only — generated packages/grammar crates excluded.
+# Documentation is scanned too: the glossaries and top-level docs carry the
+# relocated comments, and the planning-artifact rule applies to them; the
+# planning artifacts themselves (docs/superpowers: specs, plans, handoffs)
+# necessarily cite each other and are excluded.
 paths=(
-  -- '*.ts' '*.mts' '*.cts' '*.rs'
+  -- '*.ts' '*.mts' '*.cts' '*.rs' 'docs/*.md' 'docs/glossary/*.md'
   ':!packages/rust/src' ':!packages/typescript/src' ':!packages/python/src'
   ':!packages/*/.sittir' ':!packages/*/tests'
   ':!rust/crates/sittir-rust' ':!rust/crates/sittir-typescript' ':!rust/crates/sittir-python'

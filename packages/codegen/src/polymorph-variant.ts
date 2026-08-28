@@ -1,15 +1,3 @@
-/**
- * Descriptor telling validators how to stamp `$variant` on a derived
- * polymorph config when the caller didn't supply it (readNode-derived
- * shapes, `.from()` Loose wrappers). Serialized into node-model.json5's
- * `polymorphVariants` section (PR-K); consumed by `nodeToConfig` via
- * `validate/common.ts`.
- *
- * Lives in codegen — not `@sittir/types` — because the descriptor is
- * codegen/validator-internal. Consumers of `@sittir/types` should never
- * see it.
- */
-
 export type PolymorphVariantDescriptor =
 	| {
 			readonly definedBy: 'override';

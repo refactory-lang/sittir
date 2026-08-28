@@ -1,19 +1,3 @@
-/**
- * grammar-shape.rust.ts — GENERATED literal+tuple-preserving emit of the
- * RAW upstream tree-sitter-rust grammar.json.
- *
- * Emitted with `as const` so every STRING value stays a string LITERAL,
- * every rule name stays a literal key, and every JSON array becomes a
- * readonly TUPLE (positional indexing survives). A plain
- * `resolveJsonModule` import would widen all of these to
- * `string` / `T[]` and destroy the discriminants + tuple indices the
- * recursive deriver and path-key `Get` depend on.
- *
- * DO NOT hand-edit. Regenerate via grammar-shapes/emit-grammar-shape.mjs.
- *
- * Source (realpath, same pnpm-store entry as the production base import):
- *   node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/src/grammar.json
- */
 import type { GrammarJson } from './grammar-json.ts';
 
 export const rustGrammarShape = {

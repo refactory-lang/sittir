@@ -1,11 +1,3 @@
-/**
- * Minimal S-expression query parser for tree-sitter `highlights.scm` files.
- *
- * Parses enough of the SCM query syntax to extract `@capture_name` bindings
- * attached to `(kind_name)` node patterns. Predicates, field names, quantifiers,
- * string literals, and alternation brackets are recognised and skipped.
- */
-
 export interface SCMCapture {
 	kindName: string;
 	captureName: string;
@@ -42,14 +34,12 @@ function tokenise(source: string): Token[] {
 			continue;
 		}
 
-		// Line comments: ; ...
 		if (ch === ';') {
 			while (i < len && source[i] !== '\n') i++;
 			continue;
 		}
 
 		if (ch === '(') {
-			// Check for predicate: (#name? ...)
 			if (i + 1 < len && source[i + 1] === '#') {
 				const start = i;
 				let depth = 1;
@@ -82,14 +72,12 @@ function tokenise(source: string): Token[] {
 			continue;
 		}
 
-		// Quantifiers
 		if (ch === '?' || ch === '*' || ch === '+') {
 			tokens.push({ kind: TokenKind.Quantifier, value: ch });
 			i++;
 			continue;
 		}
 
-		// Captures: @name.sub
 		if (ch === '@') {
 			i++;
 			const start = i;
@@ -98,7 +86,6 @@ function tokenise(source: string): Token[] {
 			continue;
 		}
 
-		// String literals: "..."
 		if (ch === '"') {
 			const start = i;
 			i++;
@@ -111,13 +98,11 @@ function tokenise(source: string): Token[] {
 			continue;
 		}
 
-		// Identifiers (kind names, field names)
 		if (/[\w_]/.test(ch)) {
 			const start = i;
 			while (i < len && /[\w_.]/.test(source[i]!)) i++;
 			const word = source.slice(start, i);
 
-			// Field colon: `name:`
 			if (i < len && source[i] === ':') {
 				i++;
 				tokens.push({ kind: TokenKind.FieldColon, value: word });
@@ -128,7 +113,6 @@ function tokenise(source: string): Token[] {
 			continue;
 		}
 
-		// Anchors (`.`) and other unknown chars — skip
 		i++;
 	}
 
@@ -250,7 +234,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 		if (tok.kind === TokenKind.LParen) {
 			c.advance();
 
-			// Check for double-paren: ((kind) @cap (#pred? ...))
 			if (c.is(TokenKind.LParen)) {
 				c.advance();
 				const kindName = parsePattern();
@@ -273,7 +256,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 				continue;
 			}
 
-			// Bracket alternation inside predicate group: ([ ... ] @cap (#pred? ...))
 			if (c.is(TokenKind.LBracket)) {
 				c.advance();
 				const bracketKinds: string[] = [];
@@ -289,7 +271,7 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 						while (!c.done && !c.is(TokenKind.RParen)) c.advance();
 						c.eat(TokenKind.RParen);
 					} else {
-						c.advance(); // skip string literals, etc.
+						c.advance();
 					}
 				}
 				c.eat(TokenKind.RBracket);
@@ -313,7 +295,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 				continue;
 			}
 
-			// Normal pattern: (kind ...) @cap
 			const kindName = parsePattern();
 			c.eat(TokenKind.RParen);
 
@@ -324,7 +305,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 			continue;
 		}
 
-		// Bracket alternation at top level: [ (kind1) (kind2) ] @cap
 		if (tok.kind === TokenKind.LBracket) {
 			c.advance();
 			const bracketKinds: string[] = [];
@@ -340,7 +320,7 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 					while (!c.done && !c.is(TokenKind.RParen)) c.advance();
 					c.eat(TokenKind.RParen);
 				} else {
-					c.advance(); // skip string literals, etc.
+					c.advance();
 				}
 			}
 			c.eat(TokenKind.RBracket);
@@ -354,10 +334,9 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 			continue;
 		}
 
-		// String literal at top level: ";" @punctuation.delimiter
 		if (tok.kind === TokenKind.StringLiteral) {
 			c.advance();
-			tryCapture(); // skip the capture — anonymous node, no kind name
+			tryCapture();
 			continue;
 		}
 

@@ -9,7 +9,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `isExpectedDiagnostic` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:108`)
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::isExpectedDiagnostic`
 
 ```text
 /**
@@ -24,7 +25,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `fromBodyPatternZeroMatch` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:127`)
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromBodyPatternZeroMatch`
 
 ```text
 /**
@@ -39,7 +40,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `formatCompilerDiagnostics` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:273`)
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::formatCompilerDiagnostics`
 
 ```text
 /**
@@ -51,7 +52,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `writeGrammarDiagnosticsJson` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:290`)
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::writeGrammarDiagnosticsJson`
 
 ```text
 /**
@@ -65,7 +66,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `diagnoseContentAliasInjectivity` (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:306`)
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseContentAliasInjectivity`
 
 ```text
 /**
@@ -88,7 +89,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `diagnoseSlotGrouping` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:100`)
+#### body
+
+```text
+// Invert to twin → distinct hidden bodies.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::diagnoseSlotGrouping`
 
 ```text
 /**
@@ -105,7 +112,78 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `walkRule` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:182`)
+```text
+// ---------------------------------------------------------------------------
+// Main entry point
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// PolymorphRule was removed; the built-in skip-set is always empty.
+// Use only the caller-provided extra entries (variant() skip-set from
+// polymorphVariants metadata threaded through normalize.ts).
+```
+
+#### body
+
+```text
+// §4c content-collision: count the UNNAMED content slots the kind's body
+// yields (field-named seqs are single named slots, NOT distributed). >1
+// means they'd share the `_content` storage key — an unemittable ambiguity
+// — so at least one needs a `field()` name. Counted on the simplified rule,
+// BEFORE mergeSlotsByName folds the duplicate `content` slots into one
+// (which masks the collision).
+//
+// FALSE POSITIVE guard: skip all-text-shape kinds (pure text leaves like
+// `identifier`, `integer_literal`, `float` whose modelType === 'pattern').
+// Their simplified rules contain unnamed slot-boundary choices-of-patterns
+// that all resolve to text content — no real storage-key collision exists
+// because the kind emits no structural slots. `isAllTextShape` is the SAME
+// predicate assemble.ts uses to classify 'pattern' (imported, not mirrored).
+```
+
+#### body
+
+```text
+// Always blocking here — accepted-floor exceptions are applied later,
+// in grammar-diagnostics.ts's `collectGrammarDiagnostics`, driven by
+// the grammar's OWN `expectDiagnostics:` declaration in its
+// grammar.sittir.ts. This function has no grammar identity, so a
+// kind-name-only check here would incorrectly except a same-named
+// kind in ANY grammar.
+```
+
+#### body
+
+```text
+// Skip any kind that belongs to the polymorph system (shape ①/②/③ below
+// treat the variant/promotePolymorph machinery as already-correct dispatch).
+```
+
+#### body
+
+```text
+// Determine whether the top-level rule body is in slot position.
+// Auto-group helpers (in inlineKinds) represent extracted seq content
+// of an inlined repeat(seq(...)) — their body IS the repeating element,
+// so it is in slot position. All other kinds: top-level body is NOT
+// in slot position (it is the rule itself, not a slot).
+```
+
+#### body
+
+```text
+// Top-level body of an inline helper is in repeat/optional slot position
+// (not a choice arm), so inChoiceArm=false at the top level.
+```
+
+```text
+/* inChoiceArm= */
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::walkRule`
 
 ```text
 /**
@@ -120,7 +198,69 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `countSlots` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:389`)
+```text
+// ---------------------------------------------------------------------------
+// Walk — visits seq and repeat/repeat1 nodes tracking slot position
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Only check if in a slot-creating position — a top-level rule body
+// seq is the rule itself, not a nested seq inside a slot.
+```
+
+#### body
+
+```text
+// Recurse into members. A seq member's position context is inherited
+// from the current position (a nested seq inside another seq that is
+// already in slot position is also in slot position).
+```
+
+#### body
+
+```text
+// Content of a repeat is in slot position (genuine group-lift position).
+```
+
+```text
+/* inSlotPosition= */
+```
+
+```text
+/* inChoiceArm= */
+```
+
+#### body
+
+```text
+// Each choice arm is in slot position per collectSlots' union semantics,
+// but this is a CHOICE-ARM position — seqs here are NOT genuine
+// group-lift violations (the choice already forms a single union slot).
+```
+
+#### body
+
+```text
+// Simplified rules normally have wrappers deleted, but handle
+// defensively. Content is in slot position (genuine group-lift position).
+```
+
+#### body
+
+```text
+// Transparent structural wrappers — propagate current slot position.
+```
+
+#### body
+
+```text
+// Leaf — nothing to walk.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::countSlots`
 
 ```text
 /**
@@ -132,7 +272,54 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `countContentSlots` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:416`)
+```text
+// ---------------------------------------------------------------------------
+// Slot-counting primitives (folded in from the former compiler/slot-count.ts).
+//
+// The single source of truth for "how many slots does this rule contribute."
+// Mirrors `collectSlots`' distribution semantics, built on
+// `isNonterminalRuleType` (Table 1). This diagnostic is the only production
+// consumer, so the primitives live here rather than in a standalone file.
+//
+// Distribution table (matches the spec design doc):
+//   seq                       → recurse + sum members (distribute)
+//   choice / symbol / supertype /
+//   pattern / enum / repeat /
+//   repeat1 / optional / field → 1 (slot boundary — one union/array/single slot)
+//   variant / group / clause   → transparent — recurse into content
+//   string / terminal /
+//   indent / dedent / newline  → 0
+//
+// `choice`, `repeat`, `repeat1`, `optional`, and `field` each count as exactly
+// ONE slot regardless of contents — they are slot BOUNDARIES, not transparent
+// containers. A seq distributes across its members because seqs emit no slot.
+// `variant` / `group` / `clause` are transparent structural wrappers; their
+// content's slot count IS this node's slot count.
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Distribute: the seq itself emits no slot; sum its members.
+```
+
+#### body
+
+```text
+// Transparent wrappers — their content's count is this node's count.
+```
+
+#### body
+
+```text
+// Everything else is either a slot boundary (nonterminal → 1) or a
+// terminal (string / indent / dedent / newline / terminal → 0).
+// `isNonterminalRuleType` encodes Table 1 and is the authoritative
+// terminality predicate — do not re-derive here.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::countContentSlots`
 
 ```text
 /**
@@ -154,13 +341,54 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isContentSlot` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:449`)
+#### body
+
+```text
+// A field-named seq is a single named slot — do not distribute. Only an
+// UNNAMED seq distributes (sums its members' content slots).
+```
+
+#### body
+
+```text
+// Mirror collectSlots' CHOICE routing (same predicate, imported):
+// an unnamed STRUCTURAL choice distributes into its arms and merges
+// by name — it yields no content slot of its own, only whatever
+// unnamed content its arms carry. A non-structural unnamed choice
+// (a true union) stays a single slot boundary, counted below.
+```
+
+#### body
+
+```text
+// Arms are mutually exclusive and same-named slots merge across
+// them (mergeChoiceArms), so the choice contributes the MAXIMUM
+// of its arms' counts — two content slots within ONE arm still
+// collide, one per arm does not.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::isContentSlot`
 
 ```text
 /** A slot boundary that resolves to the generic `content` storage name. */
 ```
 
-### `slotKindProfile` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:459`)
+```text
+// terminal — emits no slot
+```
+
+```text
+// named slot
+```
+
+#### body
+
+```text
+// storageName is the single named kind iff exactly one named kind AND no
+// unnamed value present; otherwise it falls back to `content`.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::slotKindProfile`
 
 ```text
 /**
@@ -170,19 +398,26 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ownerKind` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:88`)
+#### body
+
+```text
+// string / pattern / enum / indent / dedent / newline / terminal / token
+// — no named kind, contributes an unnamed value.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::ownerKind`
 
 ```text
 /** The kind that owns the rule containing the violation. */
 ```
 
-### `slotCount` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:90`)
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::slotCount`
 
 ```text
 /** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
 ```
 
-### `proposal` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:92`)
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::proposal`
 
 ```text
 /** Human-readable propose-promotion text for the author. */
@@ -224,3 +459,200 @@ with it as a side effect.
 applied here instead, mirroring the `storagename-collision` override. The other
 three `SlotGroupingShape` codes always push `canProceed: true` at their own
 construction sites, so this override never touches them.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromParseKindCollision`
+
+#### body
+
+```text
+// Forward the producer's message/severity/canProceed verbatim rather than
+// regenerating — keeps the wording single-sourced in the producer.
+```
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDeriveShape`
+
+#### body
+
+```text
+// canProceed: true — derive-shape issues are surfaced as informational
+// warnings; codegen continues so all issues are visible in one pass.
+```
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromAssembleWarning`
+
+#### body
+
+```text
+// typename-collision is auto-resolved at assemble time (the rename already
+// succeeded). Downgrade to 'info' so the channel stays signal-only; genuine
+// unresolved collisions keep 'warning'.
+```
+
+#### body
+
+```text
+// Assemble warnings are observational — codegen continues.
+```
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
+
+#### body
+
+```text
+// Link's own sink carries the kindId stamp-miss report (the per-build
+// phantom-kind inventory) when id tables are supplied.
+```
+
+#### body
+
+```text
+// Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
+// inlineKinds, diagnoseSlotGrouping's shape-①b (auto-group helper bodies,
+// e.g. rust `_match_block_optional1`) never fires on this path, so
+// `multi-slot-nested-seq` violations were console-only during regen and
+// absent from the persisted grammar-diagnostics.json / validation report.
+```
+
+#### body
+
+```text
+// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
+// contentAliasedTo map (empty today; guards a future violation).
+```
+
+#### body
+
+```text
+// Drop diagnostics for a kind this grammar's own override provably
+// orphaned (see `RawGrammar.orphanedSyntheticGroups`) — it can never
+// occur in a real parse, so any diagnostic about it is phantom
+// regardless of code.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::module`
+
+```text
+/**
+ * compiler/diagnostics/slot-grouping.ts — Simplify-time propose-promotion diagnostic.
+ *
+ * Enforces the invariant: "a slot never contains multiple slots; a multi-slot
+ * substructure must be a group." Walks each simplified rule and emits diagnostic
+ * records for three violation shapes:
+ *
+ *   1. multi-slot-nested-seq   — a seq with countSlots≥2 that is in a genuine
+ *      slot-creating position: inside repeat/optional content, or in the body of an
+ *      auto-group helper that is in the grammar's inline set.
+ *      Choice-arm position is SUPPRESSED (choice-distributed — collectSlots already
+ *      treats the whole choice as a single union slot boundary; the seq arms are NOT
+ *      separate slots and do NOT need grouping).
+ *      → propose a visible `groups:` registration.
+ *   2. supertype-list          — repeat/repeat1 of a single non-field-named
+ *      symbol/supertype → propose `transforms: field()` rename.
+ *   3. repeat-choice-with-literal — repeat/repeat1(choice(..., literal, ...))
+ *      → flag as ambiguous; author decides.
+ *
+ * Key invariant for shape ①: the top-level rule BODY of a normal grammar kind
+ * is NOT a "slot" — it is the kind itself. Shape ① fires only when a seq
+ * occupies a slot-creating position:
+ *
+ *   a. As the content of a `repeat` / `repeat1` / `optional` (seq is the
+ *      repeating element body — the whole point of the diagnostic).
+ *   b. As the top-level body of an auto-group helper kind (a hidden kind whose
+ *      name appears in `inlineKinds` — these are exactly the synthesized
+ *      `_<parent>_repeat<N>` / `_<parent>_optional<N>` helpers that represent
+ *      the seq content of an inlined `repeat(seq(...))`).
+ *
+ *   SUPPRESSED position — choice arms: collectSlots treats the whole choice as a
+ *   single union slot boundary, so a multi-slot seq arm is already handled by the
+ *   union — it is NOT a genuine group-lift violation. Firing on choice arms was a
+ *   false positive (PR-P diagnostic narrowing).
+ *
+ *   Rules whose top-level body is a seq but are NOT in `inlineKinds` (normal
+ *   branch kinds, already-registered group kinds) are SILENT at the top level
+ *   because their seq is the rule body, not a slot.
+ *
+ * DIAGNOSTIC ONLY: records never drive codegen behavior
+ * (feedback_metadata_not_behavior). They are surfaced via the derivation log
+ * and console during regen so the author can act.
+ */
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::SlotGroupingShape`
+
+```text
+// All-text shape predicate: `isAllTextShape` is imported from assemble.ts (the
+// SAME predicate that classifies modelType === 'pattern'). DRY — no mirrored copy
+// that could drift (the REPEAT1 case lives in exactly one place). Used to suppress
+// content-collision false-positives on pattern kinds (identifier, float, …), which
+// have all-text simplified rules and emit no structural slots.
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Polymorph skip-set construction
+// ---------------------------------------------------------------------------
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Public types
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::checkSeq`
+
+```text
+// ---------------------------------------------------------------------------
+// Shape ①: multi-slot seq in a slot position
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// FALSE POSITIVE guard: a multi-slot seq inside a CHOICE arm is NOT a genuine
+// group-lift violation. collectSlots treats the whole choice as a single union
+// slot boundary, so the seq's members are choice-distributed — each arm is a
+// variant of the union, not a separate slot. Only repeat/optional positions
+// (inChoiceArm === false) are genuine group-lift candidates.
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::checkRepeat`
+
+```text
+// ---------------------------------------------------------------------------
+// Shape ② and ③: repeat / repeat1 of symbol/supertype or choice-with-literal
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Shape ③: repeat(choice(..., literal, ...)) — heterogeneous; flag as ambiguous.
+```
+
+#### body
+
+```text
+// No literal in the choice → single union slot → shape ②.
+```
+
+#### body
+
+```text
+// Shape ②: repeat/repeat1 of a single symbol or supertype (not field-named).
+```
+
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::checkRepeatOfSymbol`
+
+#### body
+
+```text
+// Only symbol or supertype, or a choice of symbols/supertypes (all union, no literals).
+```
+
+#### body
+
+```text
+// Already field-named → the author has already named this slot → silent.
+```

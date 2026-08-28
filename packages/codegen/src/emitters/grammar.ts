@@ -1,8 +1,3 @@
-/**
- * Emits a `grammar.ts` file containing a TypeScript type literal
- * derived from tree-sitter's node-types.json.
- */
-
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import { snakeToCamel } from '../compiler/model/node-map.ts';
 

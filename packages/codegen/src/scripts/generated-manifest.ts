@@ -1,41 +1,3 @@
-/**
- * generated-manifest — module that writes/verifies per-grammar SHA256
- * manifests for every generated file.
- *
- * Manifest lives at `packages/<grammar>/.sittir/generated.manifest.json`.
- *
- * ## Lifecycle
- *
- * - `writeManifestForGrammar(grammar)` is called by `packages/codegen/src/cli.ts`
- *   at the end of each successful per-grammar regen. There is intentionally no
- *   separate CLI for writing — the manifest must always be in lockstep with the
- *   codegen output it describes.
- * - `assertGeneratedManifestsClean()` is called by the validator
- *   (`packages/tools/src/validate/common.ts`) at startup, before any
- *   counts/probe-factory work. Verification failure aborts the validator;
- *   the only legitimate way to update a manifest is to re-run codegen.
- *
- * The manifest excludes itself (would otherwise be a chicken-and-egg).
- *
- * ## Tracked in git
- *
- * The manifest file is force-added to git despite `packages/*\/.sittir/`
- * being gitignored — same pattern as `grammar.js`, `package.json`,
- * `tree-sitter.json` inside the same directory. Tracking the manifest is
- * what makes cross-commit drift detectable: if a commit changes a generated
- * file without re-running codegen, the committed file hash diverges from
- * the committed manifest entry and `verifyManifestForGrammar` flags it.
- *
- * ## Limits
- *
- * The manifest catches honest-mistake hand-edits AND cross-commit drift
- * (since the manifest is itself committed). It does NOT catch a coordinated
- * commit that updates both the file and its manifest entry but ships an
- * INTERNALLY inconsistent codegen output (e.g., wrap.ts and templates that
- * disagree on slot optionality). That class of bug requires a CI gate that
- * re-runs codegen and diffs the on-disk content.
- */
-
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
@@ -70,13 +32,6 @@ function pathsFor(grammar: Grammar): string[] {
 }
 
 function hostFilesFor(grammar: Grammar): string[] {
-	// Platform-specific build artifacts (napi-emitted compiled binaries).
-	// Tracked in the `host_files` section: hashed and verified, but
-	// missing-locally is tolerated because different developers / CI runners
-	// produce different per-platform binaries (`*.darwin-arm64.node`,
-	// `*.linux-x64.node`, etc.). The manifest will accumulate every binary
-	// every developer commits; verification only enforces matches for the
-	// binaries that exist on the current host.
 	const crateDir = join(REPO_ROOT, `rust/crates/sittir-${grammar}`);
 	if (!existsSync(crateDir)) return [];
 	return readdirSync(crateDir)
@@ -150,7 +105,6 @@ function codegenSourceHash(): string {
 	for (const f of files.sort()) {
 		if (f.endsWith('.js') || f.endsWith('.d.ts')) continue;
 		if (f.includes('/__tests__/')) continue;
-		// Consumer-side validators don't affect generated output.
 		if (f.includes('/src/validate/')) continue;
 		if (!f.endsWith('.ts')) continue;
 		hash.update(`${relative(REPO_ROOT, f)}\0`);
@@ -170,8 +124,6 @@ export function computeSourceHash(grammar: Grammar): string {
 			hash.update('\0');
 		}
 	}
-	// 2. Codegen source — same per-grammar inputs against a different codegen
-	// produce different output, so codegen state IS part of the source.
 	hash.update('codegen\0');
 	hash.update(codegenSourceHash());
 	hash.update('\0');
@@ -185,11 +137,6 @@ export function writeManifestForGrammar(grammar: Grammar): void {
 		files[rel] = sha256(f);
 	}
 
-	// Preserve previously-recorded host_files entries from other platforms,
-	// then overwrite/add this host's binaries. This way commits from a
-	// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
-	// by another dev. Entries carry the freshness sentinel, not a content
-	// hash — see the Manifest.host_files docs.
 	const existing = readExistingManifest(grammar);
 	const host_files: Record<string, string> = { ...existing?.host_files };
 	for (const rel of hostFilesFor(grammar)) {
@@ -244,10 +191,6 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 	result.manifestPresent = true;
 	const manifest = JSON.parse(readFileSync(path, 'utf-8')) as Manifest;
 
-	// Source-hash cross-layer synchronicity check: did the source inputs
-	// (grammar.sittir.ts + package.json) change since this manifest was written?
-	// If yes, the generated content is stale relative to current inputs and
-	// the user needs to re-run codegen.
 	if (manifest.source_hash !== computeSourceHash(grammar)) {
 		result.sourceHashMismatch = true;
 	}
@@ -266,11 +209,6 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 		if (!expectedFiles.has(rel)) result.extra.push(rel);
 	}
 
-	// Platform-specific `host_files`: FRESHNESS check, not content hashes
-	// (see Manifest.host_files docs). Missing binaries are silently
-	// tolerated (per-platform); present-but-stale binaries fail — they
-	// would validate stale code. Checks ALL binaries on this host, not just
-	// manifest-listed ones, so a never-committed local build is gated too.
 	for (const b of hostBinaryFreshnessFor(REPO_ROOT, grammar)) {
 		if (b.stale) result.stale.push(`${b.rel} (older than ${b.newestInputRel})`);
 	}

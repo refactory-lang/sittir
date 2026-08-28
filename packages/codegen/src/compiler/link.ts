@@ -1,15 +1,3 @@
-/**
- * compiler/link.ts — Link phase.
- *
- * Resolves what nodes ARE.
- * After Link: no symbol, alias, token. `repeat1` is preserved — see rule.ts header.
- * Terminals (string, pattern) and structural whitespace (indent, dedent, newline) survive.
- * All field nodes enriched with provenance.
- *
- * Link does NOT restructure the tree — shape identical before and after.
- * Link does NOT process overrides — already applied by Evaluate.
- */
-
 import {
 	ALIAS,
 	CHOICE,
@@ -90,10 +78,6 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 
-// ---------------------------------------------------------------------------
-// link() — main entry point
-// ---------------------------------------------------------------------------
-
 export interface LinkOptions {
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
@@ -107,10 +91,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly derivations: DerivationLog;
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
-	/** Same catalog `canonicalizeRuleLiterals` stamps ids from — carried here so
-	 *  hidden-choice classification (`collectSubtypeNames`) can key an anonymous
-	 *  literal subtype by its catalog kind name instead of its raw text, the
-	 *  same resolution `collectAnonymousNodes` (assemble.ts) applies. */
 	readonly kindEntries: readonly GeneratedKindEntry[];
 
 	constructor(
@@ -147,45 +127,18 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const references = [...raw.references];
 	const kindEntries = collectGeneratedKindEntries(ctx?.generatedIdTables);
 
-	// Resolve include defaults: undefined means "include everything".
-	// Explicit empty arrays mean "include nothing of this category".
 	const includeRules = new Set(include?.rules ?? (['promoted'] as const));
 	const applyPromotedRules = includeRules.has('promoted');
 
-	// Derivation log — populated unconditionally; each entry records
-	// whether the mutation was also applied.
 	const derivations: DerivationLog = {
-		// inferredFields stays empty: the statistical field-name-inference pass was
-		// deleted (it was apply=false / analysis-only). suggested-overrides emission
-		// is disabled for now, so nothing reads this.
 		inferredFields: [],
 		promotedRules: [],
 		repeatedShapes: []
 	};
 
-	// Compute the hidden-choice classification guard from the RAW
-	// (pre-resolveRule) rules — hoisted above the resolve loop (pure function
-	// of `raw.rules`, independent of it) so ONE LinkCtx instance can serve
-	// both the resolve walk and the later hidden-rule classification pass.
-	//
-	// hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own body
-	// has named-alias members → must NOT be promoted to supertype.
 	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
-	// PIN POINT (2026-07-05 design): compiled exactly ONCE here, from
-	// `raw.rules` — the evaluate-view rule tree, where the `word` rule's
-	// authored wrappers (notably a trailing REPEAT) are still intact. This is
-	// the grammar's single word-matcher compilation for the entire pipeline;
-	// every later phase CARRIES `wordMatcherRegex` forward on its
-	// `LinkedGrammar`/`NormalizedGrammar`/`SimplifiedGrammar`/`NodeMap`
-	// container rather than recompiling from its own post-link rules view
-	// (see `LinkedGrammar.wordMatcher`'s doc comment for why recompiling from
-	// a post-normalize view is unsound).
 	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
 
-	// Resolve all rules. Named `linkCtx` (not `ctx`) to avoid shadowing the
-	// public `ctx: LinkOptions` entry param above — this is the internal,
-	// BaseCtx-extending phase context threaded through the resolve/classify
-	// walks below, a distinct object from the public options bag.
 	const linkCtx = new LinkCtx({
 		grammar: raw,
 		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
@@ -200,57 +153,18 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	});
 	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
-		// raw.rules is Rule<'evaluate'> (pre-link); resolveRule's own job IS the
-		// evaluate→link transition, so it structurally handles both phases —
-		// widen the phase view (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
-		// diverge in shape, so this is now an explicit cast, not a coincidence).
 		rules[name] = resolveRule(rule as Rule<'link'>, linkCtx, name);
 	}
 
-	// Lift separated lists into canonical separator-bearing repeat nodes:
-	// repeat(seq(sep, x)) → repeat{sep}, commaSep1 → repeat1{sep}, and
-	// trailing-separator absorb. This is the SAME lift the evaluate
-	// constructors perform; centralizing it here (post-resolve, post-wire,
-	// post-enrich-injection) makes it the single source and lets it reach the
-	// enrich-injected group rules the constructors miss. Idempotent over
-	// already-lifted shapes (see lift-separators.ts), so it is a no-op while
-	// the constructors still lift. Runs before group-lift / classification,
-	// which expect the canonical separator shape.
 	for (const name of Object.keys(rules)) {
 		rules[name] = liftSeparators(rules[name]!, linkCtx);
 	}
 
-	// Retired: `mintContentAliasKinds` used to copy a SYMBOL-content alias's
-	// hidden source rule body into a NEW top-level entry under the alias's
-	// target name (`rules[value] = <copy of _<name>'s body>`). Its gate
-	// (the retired `isClauseHoistVisibleGroupAlias`) required SYMBOL content
-	// referencing a real hidden rule — meaning it only ever fired for aliases
-	// that ALSO now flow through `resolveRule`'s `aliasedFrom` provenance
-	// path uniformly (above). Minting a duplicate independent rule for that
-	// case was redundant at best (two disagreeing representations of the
-	// same content at worst — the exact bug this retirement fixes): the
-	// underlying `_<name>` rule stays the single source of truth, referenced
-	// via `aliasedFrom`, and gets promoted to user-facing visibility by the
-	// existing `aliasSourceKinds` mechanism (assemble.ts) once its slot
-	// reference is hydrated.
-
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
 
-	// Map hidden rules to alias targets before resolveRule collapses them.
 	const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules);
 
-	// Stamp static renderAs entries first — replaces field/symbol refs
-	// to externals declared via `renderAs` with their literal text inline.
-	// After this, downstream phases see bare string literals at those
-	// positions and treat them as inline mandatory literals in seq
-	// context — same as how `seq('mod', $.name)` renders `mod {{ name }}`
-	// with `mod` stamped inline. Runs BEFORE applyGroupOverrides so any
-	// group lifts operate on already-stamped rule bodies.
-	// raw.renderAs is Rule<'evaluate'> (pre-link, override-authored literal
-	// bodies); stampStaticRenderAs only reads STRING-shaped bodies, so the
-	// phase view is a widen-only cast (post-PR-S, RepeatRule's per-phase
-	// shapes genuinely diverge, so this is now explicit, not a coincidence).
 	const renderAs = (raw.renderAs ?? {}) as Record<string, Rule<'link'>>;
 	if (Object.keys(renderAs).length > 0) {
 		const stamped = stampStaticRenderAs(rules, renderAs);
@@ -260,23 +174,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, stamped);
 	}
 
-	// visibleExternals: nothing to register here. evaluate's
-	// drainVisibleExternalsMetadata already injected each body into the
-	// rules map under the HIDDEN name (the storage identity, mirroring
-	// drainRenderAsMetadata), replacing the external's empty-pattern
-	// placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
-	// parse identity. Registering under the VISIBLE name here instead
-	// creates a second node colliding on the same typeName — the transport
-	// struct then emits from the empty placeholder (no render text).
-	// Deliberately excluded from `renderAs` so `stampStaticRenderAs`
-	// never inlines these bodies into referencing rules.
-
-	// Group lift pass — run BEFORE classifyAndLogHiddenRules so path
-	// resolution addresses the raw resolved seq/choice bodies before
-	// classifyHiddenSeqRule wraps them in GroupRule<'link'> nodes. Also runs
-	// BEFORE polymorph alias so lifts happen against the original rule
-	// body. See:
-	//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 	const groupsConfig = raw.groups ?? {};
 	if (Object.keys(groupsConfig).length > 0) {
 		const lifted = applyGroupOverrides({
@@ -288,15 +185,9 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 			if (!(key in lifted.rules)) delete rules[key];
 		}
 		Object.assign(rules, lifted.rules);
-		// Force-classify synthesized kinds as GroupRule<'link'> so downstream
-		// normalize.inlineSingleUseHidden skips them (it preserves 'group'
-		// type rules) and assemble sees them as AssembledGroup candidates.
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];
 			if (body && body.type !== GROUP) {
-				// Lift separated lists in the synth group body — this runs after
-				// the main lift loop, so an un-lifted commaSep1 inside a synth
-				// group would otherwise escape #62's separator centralization.
 				rules[synthKind] = {
 					type: GROUP,
 					name: synthKind,
@@ -306,41 +197,12 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		}
 	}
 
-	// Compute the remaining classification guard from the RAW (pre-resolveRule)
-	// rules so the original alias structure is still visible.
-	// (hiddenChoicesWithNamedAliasMembers is computed earlier, above the
-	// resolve loop, and already lives on `linkCtx`.)
-	//
-	// - parentAliasedKinds: hidden kinds that appear as the content of a
-	//   named alias in any parent rule → real runtime CST nodes even when
-	//   their normalized body is a repeat1 → must NOT be classified as multi.
-	// ONE deep-walk yields BOTH the hidden-aliased set (classifier guard) and the
-	// visible→visible alias-target map (slot accept-set union), derived together so
-	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
-	// raw.rules is Rule<'evaluate'> (pre-resolveRule, by design — see comment
-	// above), matching collectAliasedByParents's own Rule<'evaluate'> parameter
-	// directly — no phase-widening cast needed here.
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
 
 	classifyAndLogHiddenRules(rules, linkCtx);
-	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
 
-	// `inline = hidden && !aliased && !supertype`. A supertype ref is a DISPATCH
-	// point, not an inline helper: its CST node is a transparent choice that
-	// materializes via its slot, never flattening into the parent. The
-	// construction default stamped `inline=true` for the leading `_`; flip it off
-	// for every ref to a SUPERTYPE-classified kind (grammar-declared OR
-	// link-promoted, now that classification has run) so the emit-time inline path
-	// never renders a supertype as an empty body (empty template → unused-lifetime
-	// E0392). Runs post-classification so promoted supertypes are included.
 	markSupertypeRefsNonInline(rules);
 
-	// Apply wire-produced variant alias push-down (ambient scaffolding into
-	// variant children). R12/decision-7 V2 Task 2: `applyOverridePolymorphs`
-	// discovers its own (parent, children) pairs structurally from `rules`
-	// now (`deriveStructuralVariantChildren`) instead of the deleted wire
-	// metadata channel — see that function's own comment for the byte-gate
-	// verification this re-keying was checked against.
 	applyOverridePolymorphs(rules, derivations);
 
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
@@ -351,13 +213,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
-	// Occurrence identity for alias-bodied mints: a ref to a rule whose
-	// entire body is `alias($.source, $.display)` is, in grammar truth, an
-	// occurrence of `source` — the parser keeps `source`'s symbol as the
-	// node's grammar kind, and the wire ($type = grammar symbol) delivers
-	// that id. Map mint name -> alias source name so ref stamping can chase
-	// it and populate `aliasedFrom`/`aliasedFromId` (the storage-side facts)
-	// the same way a directly-aliased occurrence gets them.
 	const aliasBodySourceNames = new Map<string, string>();
 	for (const [name, rawRule] of Object.entries(raw.rules)) {
 		if (!name.startsWith('_')) continue;
@@ -366,11 +221,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		const source = extractAliasedFromName(content, linkCtx.supertypes);
 		if (source !== undefined && source !== name) aliasBodySourceNames.set(name, source);
 	}
-	// Two bags: the linked rules carry the link-distributed form (literal
-	// SYMBOLs with both ids stamped), while `alias(choice('tok', …), $.kind)`
-	// shapes survive only in the RAW rules — link collapses those arms into
-	// plain refs of the alias target (e.g. `keyword_identifier` classifying
-	// as a supertype of two bare `identifier` refs), discarding the texts.
 	const stampCtx: StampKindIdsCtx = { kindEntries, misses: stampMisses, aliasBodySourceNames };
 	canonicalizeCatalogLiteralRefs(rules, stampCtx);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, stampCtx);
@@ -378,17 +228,11 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		[rules, raw.rules as unknown as Record<string, Rule<'link'>>],
 		stampCtx
 	);
-	// `raw.inline` (evaluate's own DSL-level record) drops inherited
-	// base-grammar inline entries — the parser's actual compiled inline set
-	// lives in grammar.json (see generate.ts's own NormalizeCtx construction,
-	// which reads it via this same helper). VAPORIZED vs inline-excluded
-	// classification needs THAT authoritative set, not the DSL-level one.
 	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
 	const rootName = rootRuleName(raw.rules);
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
-	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
 		for (const [kind, forms] of raw.refineForms) {
 			const rule = rules[kind];
@@ -422,10 +266,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	};
 }
 
-// ---------------------------------------------------------------------------
-// link() sub-step helpers
-// ---------------------------------------------------------------------------
-
 function buildExternalRolesMap(rawExternalRoles: Map<string, ExternalRole> | undefined): Map<string, ExternalRole> {
 	return rawExternalRoles ? new Map<string, ExternalRole>(rawExternalRoles) : new Map<string, ExternalRole>();
 }
@@ -442,11 +282,6 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			// External scanner symbols lex as one token by nature. Immediacy
-			// is never synthesized: an external whose token forbids preceding
-			// whitespace declares that via its `renderAs` body wrapped in
-			// `token.immediate(...)`, which gives it a real rule instead of
-			// this synthetic one.
 			rules[ext] = structuralBuilder.token(structuralBuilder.pattern('')) as Rule<'link'>;
 		}
 	}
@@ -477,16 +312,8 @@ function canonicalizeCatalogLiteralRefsInMap(rules: Map<string, Rule<'link'>>, c
 
 function stampSymbolRefKindIds(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): SymbolRule<'link'> {
 	const { kindEntries, misses, aliasBodySourceNames } = ctx;
-	// Link-minted literal symbol: its value IS the literal text, so the
-	// id resolves through the literal chain (anon token outranks a
-	// same-spelled NAMED rule) — same resolution deriveValuesForRule
-	// applies to these.
 	if (rule.literal !== undefined) {
 		if (rule.kindId !== undefined) {
-			// Alias-of-terminal mint: `kindId` (stamped at mint from the alias
-			// target name) is the DISPLAY symbol. The literal's own anon token
-			// is the grammar symbol — the id the wire actually delivers — so
-			// it stamps as the storage-side fact.
 			if (rule.aliasedFromId !== undefined) return rule;
 			const entry = findEntryForLiteralText(kindEntries, rule.literal);
 			if (entry === undefined) {
@@ -502,14 +329,6 @@ function stampSymbolRefKindIds(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): 
 		}
 		return { ...rule, kindId: entry.parseId ?? entry.id };
 	}
-	// kindId is always the id of this occurrence's own name; aliasedFromId
-	// is the storage-side fact, present whenever the occurrence is aliased —
-	// either directly (`aliasedFrom` stamped at the reference site) or
-	// through an alias-bodied mint (a target rule whose whole body is
-	// `alias($.source, …)`: the occurrence is, in grammar truth, `source`,
-	// and the wire delivers `source`'s id). No fallback between the two
-	// here — that is a consumer's job (aliasedFromId ?? kindId for whoever
-	// needs the effective storage id).
 	const nameEntry = findEntryForKindName(kindEntries, rule.name);
 	if (nameEntry === undefined) misses.symbols.add(rule.name);
 	let aliasedFrom = rule.aliasedFrom;
@@ -603,9 +422,6 @@ export function canonicalizeRuleLiterals(
 				? rule
 				: stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodySourceNames });
 		case SUPERTYPE:
-			// Each subtype ref stamps exactly like a top-level SYMBOL occurrence —
-			// same catalog, same helper — since collectSubtypeRefs mints these
-			// before this pass runs and doesn't stamp them itself.
 			return !stampable || kindEntries.length === 0
 				? rule
 				: {
@@ -652,9 +468,6 @@ export function reportKindIdStampMisses(
 	reachableFromRoot: ReadonlySet<string>
 ): void {
 	if (kindEntries.length === 0 || !diagnostics) return;
-	// warning severity, reports the FULL miss set — see "Diagnostics" in
-	// docs/compiler-phase-glossary.md for the severity/exclusion-class
-	// rationale.
 	if (stampMisses.symbols.size > 0) {
 		diagnostics.warn({
 			code: 'kindid-unstamped-symbols',
@@ -674,18 +487,6 @@ export function reportKindIdStampMisses(
 	reportVaporizedKinds(stampMisses, inlineKinds, reachableFromRoot, diagnostics);
 }
 
-// Walks the grammar's own rule reference graph from its root rule (the
-// tree-sitter convention that the first-declared rule is the start rule —
-// verified against all 3 grammars' compiled grammar.json), following SYMBOL/
-// SUPERTYPE references and wrapper/seq/choice structure transitively. This
-// is the ONLY independent evidence available that a phantom kind is
-// genuinely dead surface rather than merely "not in the inline array" —
-// tree-sitter's compiled grammar.json retains every declared rule in its
-// `rules` map regardless of reachability, so mere presence there can't
-// distinguish the two; see "classifyNode's RenderRule-only design" sibling
-// section in docs/compiler-phase-glossary.md for the analogous phase-view
-// precedent this reachability check follows (read the authoritative
-// signal directly rather than re-deriving it from an unrelated proxy).
 function computeReachableFromRoot(input: {
 	rules: Record<string, Rule<'link'>>;
 	rootName: string;
@@ -702,11 +503,6 @@ function computeReachableFromRoot(input: {
 	return reachable;
 }
 
-// Same case list as resolveHiddenRuleContent (assemble.ts): collects every
-// rule-name reference reachable directly under `rule`, recursing through
-// wrapper/seq/choice structure. SYMBOL/SUPERTYPE are where a name reference
-// actually lives; every other type only contributes structure to recurse
-// through.
 function walkRuleRefs(rule: Rule<'link'>): readonly string[] {
 	switch (rule.type) {
 		case SYMBOL:
@@ -748,22 +544,6 @@ function emitStampMissDiagnostic(entry: {
 	});
 }
 
-// A stamp miss is VAPORIZED (dead grammar surface, e.g. jsx nodes
-// unreachable in the non-tsx dialect) when its kind is NOT in the grammar's
-// `inline:` array AND not reachable from the grammar's root by our own
-// reference-graph walk — the latter is real, independent evidence of dead
-// code, not just the complement of the inline-array check (see
-// computeReachableFromRoot's doc comment for why that distinction matters).
-// A miss reachable from the root, with no kindId, and not inline-excluded
-// is a genuine unresolved gap — reported separately (kindid-unclassified-*)
-// rather than silently absorbed into "vaporized", so a future regression
-// can't hide there. Literals have no rule-name identity to test reachability
-// against (a bare literal isn't itself a graph node), so they stay
-// classified purely by inline-array membership — matched by raw text against
-// `inlineKinds` (a name set), which only agrees for a literal whose text
-// happens to equal a rule name. In practice every literal miss lands in
-// kindid-vaporized-literals; inline-excluded-literals stays populated only by
-// that accidental-collision case.
 function reportVaporizedKinds(
 	stampMisses: KindIdStampMisses,
 	inlineKinds: ReadonlySet<string>,
@@ -824,8 +604,6 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: Lin
 	const { inline, supertypes, derivations, applyPromotedRules } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
-			// (debt PR-P1, item 3) Branch on the RETURNED classification only —
-			// never re-read a stamp off `classified.rule`. See ClassifyResult.
 			const { rule: classified, classification } = classifyHiddenRule(rule, ctx, name, rules);
 			if (classified !== rule && classification !== undefined) {
 				derivations.promotedRules.push({
@@ -867,16 +645,13 @@ function foldAliasLiteralsIntoEnumRules(rules: Record<string, Rule<'link'>>): vo
 		}
 	};
 	for (const rule of Object.values(rules)) {
-		// SUPERTYPE keeps its arms in the bespoke `subtypes` field the generic
-		// walker does not descend into — the classified-supertype arm is
-		// exactly where an alias-of-terminal subtype lives.
 		if (rule.type === SUPERTYPE) {
 			for (const sub of (rule as SupertypeRule<'link'>).subtypes) considerSymbol(sub);
 			continue;
 		}
 		aliasLiteralWalker.find(rule, (r) => {
 			considerSymbol(r);
-			return false; // exhaustive walk — never short-circuit
+			return false;
 		});
 	}
 	for (const [target, texts] of extras) {
@@ -916,9 +691,6 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		// rawRules is Rule<'evaluate'> (pre-link); extractTopLevelAliasTarget
-		// only walks the OPTIONAL/ALIAS/SEQ/CHOICE shell around a top-level
-		// alias, present in both phases — widen the phase view (post-PR-S cast).
 		const target = extractTopLevelAliasTarget(rule as Rule<'link'>);
 		if (target) out.set(name, target);
 	}
@@ -937,14 +709,6 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		// Only pure alias-dispatch choices: every member must be a named alias
-		// OF A RULE (content is a SYMBOL). An alias-of-terminal member
-		// (`alias('$', $.token_tree_punctuation)`) is a renamed token, not a
-		// dispatch arm — a choice carrying one is a plain union whose literal
-		// arm happens to have a kind identity, and blocking its supertype
-		// promotion reclassifies the whole union as a branch (observed:
-		// `_non_delim_token` losing its supertype shape and with it the
-		// repeat slot's per-kind wrap routing).
 		if (
 			rule.type === CHOICE &&
 			rule.members.length > 0 &&
@@ -987,9 +751,6 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
 			walk((rule as { content: Rule<'link'> }).content);
 		}
 	}
-	// rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
-	// ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
-	// view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
 	for (const rule of Object.values(rawRules)) walk(rule as Rule<'link'>);
 	return { parentAliasedKinds, visibleAliasTargets };
 }
@@ -1003,31 +764,8 @@ function collectTopLevelAliasBodies(
 	const out = new Map<string, Rule<'link'>>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		// rawRules (ctx.rules) is Rule<'evaluate'> (RAW view);
-		// extractTopLevelNamedAliasContent only walks OPTIONAL/ALIAS/SEQ/CHOICE
-		// shapes present in both phases — widen the phase view (post-PR-S cast).
 		const content = extractTopLevelNamedAliasContent(rule as Rule<'link'>);
 		if (!content) continue;
-		// LOAD-BEARING GUARD — NOT a removable band-aid (isolation-test-verified).
-		// Never inline a named-alias-target's hidden body into the visible-alias
-		// parent. Body-pattern groups produce `alias(SYMBOL(_hidden), $.visible)`
-		// where `_hidden` is a complex-body alias-target kind (derived via
-		// `deriveComplexAliasTargetHidden`). The alias' content is a symbol ref
-		// to the hidden rule (`_type_argument` etc.), but the render template
-		// must reference the VISIBLE kind (e.g. `type_argument`) — not inline
-		// the hidden rule's body. Skip these entries so `normalizedRules[name]`
-		// keeps the wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form
-		// set by the main normalization path, rather than being overwritten with
-		// the hidden rule's body.
-		//
-		// Removing this skip REGRESSES `type_arguments`/`type_parameters` jinja
-		// (`{{ type_argument | joinWithTrailing(",") }}` → `{{ content }}…`) and
-		// leaks the hidden kinds' slots (`content`/`trait_bounds`) into the LIVE
-		// transport render surface — proven by delete→regen→diff, NOT a static
-		// probe (a guard-free nodeMap dump reads the derived set empty because it
-		// bypasses the evaluate pipeline). The predicate is now derived on-demand
-		// from `raw.rules` via `deriveComplexAliasTargetHidden` (structural
-		// derivation, not a cached set). See project_pr_e_spec_premises_false.
 		if (complexAliasTargetHidden && content.type === SYMBOL && complexAliasTargetHidden.has(content.name)) {
 			continue;
 		}
@@ -1052,10 +790,6 @@ function collectTerminalAliasWireIds(
 		add(kind, id);
 		add(kind.startsWith('_') ? kind.replace(/^_+/, '') : `_${kind}`, id);
 	};
-	// Terminal texts under a rule shell — a bare STRING, or a CHOICE of
-	// STRINGs (through PREC/TOKEN wrappers), the two shapes `alias(tok,
-	// $.kind)` declarations take. Anything else (a SYMBOL, a SEQ) means the
-	// alias source isn't a terminal set — not this fact.
 	const terminalTexts = (rule: Rule<'link'>): string[] | undefined => {
 		if (rule.type === STRING) return [rule.value];
 		if (rule.type === CHOICE) {
@@ -1073,8 +807,6 @@ function collectTerminalAliasWireIds(
 	};
 	const visit = (rule: Rule<'link'>): void => {
 		if (rule.type === SYMBOL) {
-			// Link-distributed form: the alias-of-terminal occurrence already
-			// minted as a literal SYMBOL carrying both ids.
 			if (rule.literal !== undefined && rule.kindId !== undefined && rule.aliasedFromId !== undefined) {
 				addBothSpellings(rule.name, rule.aliasedFromId);
 			}
@@ -1126,14 +858,6 @@ function dereferenceTopLevelAliasBody(
 
 function extractAliasedFromName(content: Rule<'link'>, supertypes: ReadonlySet<string>): string | undefined {
 	if (content.type === SYMBOL) {
-		// Record the alias SOURCE as provenance even when it is a supertype.
-		// `alias($.expression, $.as_pattern_target)` aliases the `expression`
-		// supertype: the slot must be typed by that source (the expression
-		// union, which IS in the node map), NOT by the bare target label
-		// `as_pattern_target` — the target has no rule body, so leaving
-		// aliasedFrom unset makes `refName = aliasedFrom ?? name` fall back to
-		// the target and emit a phantom unresolved ref. The target still
-		// survives as the symbol `name` (the CST `$type` the reader matches).
 		return content.name;
 	}
 	if (content.type === VARIANT || content.type === GROUP || content.type === TOKEN) {
@@ -1142,57 +866,20 @@ function extractAliasedFromName(content: Rule<'link'>, supertypes: ReadonlySet<s
 	return undefined;
 }
 
-// tagVariants / isStructurallyHomogeneousChoice removed.
-// Auto-wrapping heuristics replaced by explicit user-declared
-// `variant()` / `polymorphs:` in grammar.sittir.ts. See commit
-// "013: disable tagAllRulesVariants — auto-tagging masked real
-// adoption work" for the rationale.
-
 function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'link'>>): boolean {
 	const target = rules[kindName];
 	if (!target) return false;
 	if (target.type === GROUP) return true;
-	// Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
 	const unwrap = (r: Rule<'link'>): Rule<'link'> => (r.type === OPTIONAL || r.type === VARIANT ? unwrap(r.content) : r);
 	const bare = unwrap(target);
 	return bare.type === REPEAT || bare.type === REPEAT1;
 }
 
-// ---------------------------------------------------------------------------
-// promotePolymorph — wrap heterogeneous-field choices in PolymorphRule
-// ---------------------------------------------------------------------------
-//
 export interface VariantChoiceLocation {
 	choice: ChoiceRule<'link'>;
 	prefix: Rule<'link'>[];
 	suffix: Rule<'link'>[];
 }
-
-// ---------------------------------------------------------------------------
-// applyOverridePolymorphs — variant-adoption choice → ambient-scaffold push-down
-// ---------------------------------------------------------------------------
-//
-// R12/decision-7 V2 Task 2: (parent, children) pairs are now discovered
-// STRUCTURALLY from `rules` (`deriveStructuralVariantChildren`,
-// variant-structural.ts) instead of the deleted wire-metadata channel
-// (formerly `variants: PolymorphVariant[]`, populated by
-// `wireRegisterPolymorphVariant`). Verified byte-neutral: the ONE parent
-// that reaches this function's real structural mutation
-// (`pushAmbientScaffoldIntoVariantChildren` — the `!anyChildMemberInFoundChoice`
-// branch; the OTHER branch below is a no-op derivation-log-only path since
-// the 2026-06-01 DE-POLYMORPH change) is typescript's
-// `public_field_definition`; `deriveStructuralVariantChildren` reproduces
-// its exact 5-child set (same full names, same order) both mid-link (the
-// `rules` snapshot this function receives, already past wire's alias
-// injection + `resolveRule`) and post-link — confirmed empirically during
-// V2 development. Short suffixes (needed by `emitVariantChildDerivations`'s
-// `${parentKind}_${child}` log format and `polymorphVisibleName`) are
-// recovered from the derivation's full target names via `prefixNamedSuffix`
-// (the exact inverse of `polymorphVisibleName`, shared not re-derived).
-//
-// Form names use the SHORT child suffix from variant() — not the
-// tagVariants-derived names — so generated factories/types align with
-// what the user wrote. Mutates `rules` in place; logs to derivations.
 
 export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, derivations: DerivationLog): void {
 	const structural = deriveStructuralVariantChildren(rules);
@@ -1209,21 +896,11 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 		const found = findVariantChoice(rule);
 		if (!found) continue;
 
-		// Deep choice: push ambient scaffold into variant children instead.
 		emitVariantChildDerivations(parentKind, children, derivations);
 
 		const variantChildSymbolNames = new Set(children.map((c) => polymorphVisibleName(parentKind, c)));
-		// Check whether any variant-child symbol appears in the found choice — either
-		// as a direct member or nested inside choice/seq arms at any shallow depth.
 		const symbolInNames = (r: Rule<'link'>): boolean => {
 			let inner = r.type === VARIANT ? r.content : r;
-			// Wire injects variant-child aliases as `optional(alias(...))` for
-			// some parents (e.g. public_field_definition) — unwrap OPTIONAL the
-			// same way VARIANT is unwrapped above, or the alias is invisible to
-			// this check and the parent wrongly falls into the ambient-scaffold
-			// pushdown branch below (which is a no-op for it, since the aliases
-			// ARE already present — its only effect is to rebuild the rule tree
-			// without preserving rule ids, per `rewriteSeqWithVariantAliasChoice`).
 			if (inner.type === OPTIONAL) inner = inner.content;
 			return inner.type === SYMBOL && variantChildSymbolNames.has(inner.name);
 		};
@@ -1241,20 +918,6 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 			continue;
 		}
 
-		// DE-POLYMORPH (2026-06-01): wire already injected the variant-child
-		// aliases into this choice (confirmed by anyChildMemberInFoundChoice
-		// above). We intentionally STOP here — no longer reclassifying the
-		// parent into a PolymorphRule / modelType:'polymorph' with forms. The
-		// rule stays the wire-produced seq(..., choice(alias_a, alias_b, …), …)
-		// and flows through as a plain BRANCH: faithful order-preserving render
-		// over a single choice slot, no forms / no $variant dispatch. The
-		// `polymorphs:` / `variant()` overlay and wire's alias synthesis are
-		// retained, so factory submethod sugar derives from the choice arms
-		// (the alias kinds) rather than from a forms list.
-		//
-		// (Was: rules[parentKind] = { type:'polymorph',
-		//   forms: buildOverridePolymorphForms(parentKind, children, found, rules),
-		//   source:'override' }.)
 	}
 }
 
@@ -1278,11 +941,6 @@ function pushAmbientScaffoldIntoVariantChildren(
 	const parentRule = rules[parentKind];
 	if (!parentRule) return;
 
-	// Rewrite the parent rule: find seq members that contain a choice of
-	// aliases matching the registered variant children, extract the
-	// literal prefix/suffix inside that seq, and strip them. For each
-	// matched alias, rewrite its `_${parent}_${child}` hidden-rule body
-	// to wrap with the same prefix/suffix.
 	const rewritten = rewriteSeqWithVariantAliasChoice(parentRule, rules, variantChildVisibleNames);
 	if (rewritten !== parentRule) rules[parentKind] = rewritten;
 }
@@ -1294,7 +952,6 @@ function rewriteSeqWithVariantAliasChoice(
 ): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ: {
-			// Does this seq directly contain the alias-choice?
 			const choiceIdx = rule.members.findIndex((m) => isAllAliasChoice(m, variantChildVisibleNames));
 			if (choiceIdx !== -1) {
 				return applyVariantScaffoldPushDown(rule, choiceIdx, rules);
@@ -1342,7 +999,7 @@ function applyVariantScaffoldPushDown(
 ): Rule<'link'> {
 	const prefix = seq.members.slice(0, choiceIdx).filter((m) => m.type === STRING) as StringRule<'link'>[];
 	const suffix = seq.members.slice(choiceIdx + 1).filter((m) => m.type === STRING) as StringRule<'link'>[];
-	if (prefix.length === 0 && suffix.length === 0) return seq; // nothing to push
+	if (prefix.length === 0 && suffix.length === 0) return seq;
 	const choice = seq.members[choiceIdx] as ChoiceRule<'link'>;
 	for (const member of choice.members) {
 		const core = member.type === VARIANT ? member.content : member;
@@ -1350,17 +1007,10 @@ function applyVariantScaffoldPushDown(
 		if (core.type === ALIAS) {
 			visibleName = core.value;
 		} else if (core.type === SYMBOL) {
-			// Link already collapsed the alias wrapper; the symbol's
-			// name IS the visible variant-child kind name.
 			visibleName = core.name;
 		}
 		if (!visibleName) continue;
 		const hiddenName = `_${visibleName}`;
-		// `collectAliasTargets` at Link entry seeds both `rules[hiddenName]`
-		// (the hidden rule) and `rules[visibleName]` (the alias target)
-		// with separate references to the same source content. Wrap once
-		// and assign to both so the visible kind's emitted template —
-		// which is what render consults — picks up the pushed scaffold.
 		const body = rules[hiddenName] ?? rules[visibleName];
 		if (!body) continue;
 		const wrapped: Rule<'link'> = {
@@ -1370,22 +1020,18 @@ function applyVariantScaffoldPushDown(
 		if (hiddenName in rules) rules[hiddenName] = wrapped;
 		if (visibleName in rules) rules[visibleName] = wrapped;
 	}
-	// Strip the literals we just pushed down, keep everything else (the
-	// choice itself plus any non-string members).
 	const remaining = seq.members.filter((m, i) => i === choiceIdx || m.type !== STRING);
 	if (remaining.length === 1) return remaining[0]!;
 	return { type: SEQ, members: remaining };
 }
 
 export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | null {
-	// Matches bare choices (post-spec-013) and seq-wrapped choices.
 	if (isChoice(rule)) {
 		return { choice: rule, prefix: [], suffix: [] };
 	}
 	if (rule.type === SEQ) {
 		const choiceIdx = rule.members.findIndex((m) => m.type === CHOICE);
 		if (choiceIdx !== -1) {
-			// More than one choice in the seq is ambiguous — bail.
 			const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === CHOICE);
 			if (more !== -1) return null;
 			return {
@@ -1395,28 +1041,20 @@ export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | n
 			};
 		}
 
-		// No direct choice — check if exactly one member is a seq that contains
-		// exactly one choice (the variant choice nested in an inner seq, e.g. function_type).
-		// Guard: there must be zero choices at the outer level AND exactly one in the
-		// inner seq; if more than one choice total, bail (ambiguous).
 		const innerSeqIdx = rule.members.findIndex(
 			(m) => m.type === SEQ && (m as SeqRule<'link'>).members.some((mm) => mm.type === CHOICE)
 		);
 		if (innerSeqIdx === -1) return null;
-		// Make sure there is no other member that is also a seq with a choice in it,
-		// and no choices at all elsewhere in the outer seq.
 		const outerChoiceCount = rule.members.filter((m) => m.type === CHOICE).length;
-		if (outerChoiceCount > 0) return null; // would have been caught above, defensive
+		if (outerChoiceCount > 0) return null;
 		const innerSeq = rule.members[innerSeqIdx] as SeqRule<'link'>;
 		const innerChoiceIdx = innerSeq.members.findIndex((m) => m.type === CHOICE);
 		if (innerChoiceIdx === -1) return null;
-		// Ensure there is only ONE choice total across outer + inner levels.
 		const innerChoiceCount = innerSeq.members.filter((m) => m.type === CHOICE).length;
 		const otherSeqChoiceCount = rule.members
 			.filter((m, i) => i !== innerSeqIdx && m.type === SEQ)
 			.reduce((acc, m) => acc + (m as SeqRule<'link'>).members.filter((mm) => mm.type === CHOICE).length, 0);
 		if (innerChoiceCount !== 1 || otherSeqChoiceCount > 0) return null;
-		// Merge outer prefix/suffix with the inner seq's non-choice members.
 		const outerPrefix = rule.members.slice(0, innerSeqIdx);
 		const outerSuffix = rule.members.slice(innerSeqIdx + 1);
 		const innerPrefix = innerSeq.members.slice(0, innerChoiceIdx);
@@ -1429,14 +1067,6 @@ export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | n
 	}
 	return null;
 }
-
-// ---------------------------------------------------------------------------
-// tokenToName — map punctuation to readable names
-// ---------------------------------------------------------------------------
-//
-// Used by both nameVariant (above) and Assemble's nameNode for kinds
-// that are operators / punctuation. Single source of truth for "what
-// do we call this token in TypeScript identifier space".
 
 const TOKEN_NAMES: Record<string, string> = {
 	';': 'semi',
@@ -1468,7 +1098,6 @@ const TOKEN_NAMES: Record<string, string> = {
 	'~': 'tilde',
 	'#': 'hash',
 	'@': 'at',
-	// Multi-char tokens
 	'==': 'eqeq',
 	'!=': 'neq',
 	'<=': 'le',
@@ -1554,10 +1183,6 @@ export function tokenToName(token: string): string {
 	return charFallback(token);
 }
 
-// ---------------------------------------------------------------------------
-// resolveRule — recursive resolution of all reference types
-// ---------------------------------------------------------------------------
-
 function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
@@ -1594,51 +1219,15 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 			};
 
 		case TOKEN:
-			// The wrapper survives link like every other wrapper; normalize's
-			// `token`/`tokenImmediate` builders consume it into the leaf's
-			// `tokenized`/`immediate` stamps.
 			return {
 				...rule,
 				content: resolveRule(rule.content, ctx, currentName)
 			};
 
 		case ALIAS: {
-			// Every named alias routes uniformly through provenance
-			// (`aliasedFrom`), whether its content is a clause-hoist/
-			// visible-group mint's freshly-synthesized `_<name>` rule or an
-			// authored relabel of a pre-existing rule (PR3's
-			// `applyUnaliasDistinct` retarget, e.g. `_simple_statements` →
-			// `simple_statements`). Both are `alias(symbol(_<name>), $<value>)`
-			// with no independent rule under `<value>` — structurally
-			// indistinguishable — and the OLD special-case here
-			// (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
-			// apart by checking only whether `<value>` had a rule body,
-			// which can't actually distinguish "content is itself a fresh
-			// mint" from "content is a real pre-existing rule being
-			// relabeled" — both produce that same signature.
-			//
-			// It doesn't need to: whether `content.name`'s rule gets its own
-			// independent top-level `AssembledNode` is decided separately, by
-			// whether it's a `rules` bag key at all — completely unaffected
-			// by whether THIS reference to it carries `aliasedFrom`.
-			// `aliasedFrom` only says "this specific occurrence displays
-			// under a different name than its underlying rule's own name" —
-			// render/read dispatch already resolves the correct numeric id
-			// via the alias occurrence's own `alias_sym_<value>` symbol
-			// (`kindId`), independent of whether the source rule survives
-			// as its own addressable parser symbol.
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value, rule.id);
 			}
-			// Unnamed alias with a non-word literal value (e.g. typescript
-			// `alias(_ternary_qmark, '?')` — relabels a hidden external-
-			// scanner symbol as the literal punctuation it represents).
-			// The inner symbol resolves to an empty-pattern stub during
-			// simplify, stranding the walker with nothing to emit. The
-			// alias's `value` IS the rendered text — preserve it as a
-			// string literal so the template walker surfaces `?` / `:` /
-			// whatever the alias relabels to. Only fires for unnamed
-			// aliases (named aliases become their own visible kind).
 			if (
 				!rule.named &&
 				typeof rule.value === 'string' &&
@@ -1654,10 +1243,8 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 		case SYMBOL:
 			return resolveSymbolRoleOrPass(rule, ctx);
 
-		// These pass through unchanged
 		case STRING:
 		case PATTERN:
-		// PR-P: ENUM case removed — enum-shaped choices are CHOICE type now.
 		case SUPERTYPE:
 		case GROUP:
 		case VARIANT:
@@ -1685,20 +1272,7 @@ function resolveNamedAliasWithProvenance(
 	id: RuleId | undefined
 ): Rule<'link'> {
 	const idAttrs = id !== undefined ? { id } : {};
-	// Alias-of-terminal (`alias('$', $.token_tree_punctuation)`): there is no
-	// storage rule to record provenance for, and dropping the text would
-	// leave a dangling bare ref (the visible target often has no rules-bag
-	// entry of its own — it exists only as other alias sites' parse name).
-	// Collapse to the literal-carrying SYMBOL instead — the same vehicle
-	// canonicalizeRuleLiterals stamps kindIds onto, which subtype collection,
-	// enum admission, and storage classification all already serve. The
-	// parse kind is the alias target; the render text is the literal.
 	if (content.type === STRING) {
-		// The alias target is this occurrence's parse kind — a NAMED node
-		// distinct from the literal text's anonymous token — so the kindId
-		// must be stamped from the target name here at the mint. The generic
-		// literal-symbol stamp resolves by text (anon-token identity), which
-		// is correct for link-minted literals but wrong for this shape.
 		const nameEntry = findEntryForKindName(ctx.kindEntries, targetName);
 		const kindIdAttrs = nameEntry !== undefined ? { kindId: nameEntry.parseId ?? nameEntry.id } : {};
 		return { type: SYMBOL, name: targetName, literal: content.value, inline: false, ...kindIdAttrs, ...idAttrs };
@@ -1735,10 +1309,6 @@ function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'
 	return rule;
 }
 
-// ---------------------------------------------------------------------------
-// classifyHiddenRule — determine what a hidden rule IS
-// ---------------------------------------------------------------------------
-
 interface ClassifyResult {
 	readonly rule: Rule<'link'>;
 	readonly classification?: 'enum' | 'supertype';
@@ -1751,8 +1321,6 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	// Already classified (e.g., enum from Evaluate)
-	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
 		return { rule };
 	}
@@ -1765,15 +1333,9 @@ function classifyHiddenRule(
 		return { rule: classifyHiddenSeqRule(name, rule) };
 	}
 
-	// Other hidden rules survive as-is — Assemble classifies by structure
 	return { rule };
 }
 
-// Grammar-inheritance idioms (`choice(previous, $.new_arm)`) nest a CHOICE
-// inside a CHOICE's own members. Tree-sitter erases the nesting at parse
-// time — choice-of-choice is parse-equivalent to one flat choice — so
-// supertype-compatibility and variant-arm extraction must see the flat leaf
-// list, not the authored nesting.
 function flattenNestedChoiceMembers(members: readonly Rule<'link'>[]): Rule<'link'>[] {
 	const flat: Rule<'link'>[] = [];
 	for (const m of members) {
@@ -1793,17 +1355,6 @@ function classifyHiddenChoiceRule(
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
-	// Enum admission. Two terminal-valued member shapes qualify:
-	//   - bare STRING literals (the original all-STRING enum), and
-	//   - post-resolve SYMBOLs carrying `aliasedFrom` whose STORAGE rule body
-	//     is a bare STRING — the kind's whole realization is one fixed render
-	//     text (visibleExternals: `_semicolon`'s `automatic_semicolon` arm,
-	//     storage `_automatic_semicolon := '\n'`). Convert those to the
-	//     literal-carrying SYMBOL shape (`canonicalizeRuleLiterals`' vehicle —
-	//     this is deliberately its second writer; `literalTextOf`/
-	//     `isEnumChoiceRule` serve the shape uniformly downstream) so the
-	//     choice classifies as an ENUM of {literal → kind} members instead of
-	//     a supertype whose member set can never project a type union.
 	const enumMembers = rule.members.map((m): StringRule<'link'> | SymbolRule<'link'> | undefined => {
 		if (m.type === STRING) return m;
 		if (m.type === SYMBOL) {
@@ -1834,74 +1385,22 @@ function classifyHiddenChoiceRule(
 		};
 	}
 
-	// If this hidden choice's ORIGINAL (pre-resolveRule) rule body contained
-	// named-alias members, its choice arms represent REAL aliased CST nodes —
-	// NOT abstract supertypes that tree-sitter erases at parse time. Block
-	// supertype promotion so these kinds fall through to branch classification.
-	// Grammar-declared supertypes (in grammar.supertypes) are never blocked.
 	if (hiddenChoicesWithNamedAliasMembers.has(name) && !supertypes.has(name)) {
 		return { rule };
 	}
 
-	// Grammar inheritance idioms author a hidden union as `choice(previous,
-	// $.new_arm)` — a CHOICE member that is ITSELF a CHOICE, not a leaf. Since
-	// choice-of-choice is parse-equivalent (tree-sitter erases the nesting),
-	// flatten before checking supertype-compatibility and before computing
-	// variantArms below; otherwise a single nested-CHOICE member fails
-	// `supertypeCompatible` outright and blocks promotion for the WHOLE
-	// hidden union, even though every actual leaf arm qualifies (confirmed
-	// case: typescript's `_lhs_expression`, authored as
-	// `choice(previous, $.non_null_expression)`).
 	const flatMembers = flattenNestedChoiceMembers(rule.members);
 	const supertypeCompatible = (m: Rule<'link'>): boolean =>
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = flatMembers.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeRefs(rule, ctx);
-		// Only promote if we actually resolved subtype names. An empty
-		// subtypes list means the choice members aren't symbols and we
-		// can't project a union — fall through to leave-as-is.
 		if (subtypes.length > 0) {
 			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';
-			// R12/decision-7 V2 Task 1: stamp the variant-arm linkage THIS
-			// flatten is about to erase — see `RuleBase.variantArms`'s doc
-			// comment. Computed from the PRE-flatten CHOICE's own members
-			// (not `subtypes`, which already lost per-arm rule-shape info): a
-			// bare SYMBOL/ALIAS arm that is alias-minted (the exact
-			// `isAliasMintedRef` condition `variant-structural.ts`'s
-			// CHOICE-arm predicate uses, shared not re-derived) names its
-			// subtype-list entry (`aliasedFrom ?? name` for SYMBOL, matching
-			// `collectSubtypeRefs`'s own per-arm naming exactly, so
-			// `variantArms` entries are always a subset of `subtypes`'
-			// `aliasedFrom ?? name` set).
-			//
-			// This surfaces MORE alias-minted arms than the wire channel ever
-			// registered for SUPERTYPE parents: every `alias($.hidden,
-			// $.visible)` construct inside a supertype's choice qualifies,
-			// whether hand-authored in an override `rules:` replacement OR
-			// inherited from the upstream base grammar (verified during Task
-			// 1 development: rust's `_pattern`/`wildcard_pattern`,
-			// `_condition`/`let_chain`, `_type`/`primitive_type` are all
-			// genuine upstream `alias(...)` calls in tree-sitter-rust's own
-			// grammar.js, not false positives). This is the SAME
-			// reviewed-additive widening V1 already accepted for
-			// CHOICE-classified parents (rust's
-			// `impl_item`/`reference_expression`, ts `string`'s
-			// `string_fragment` — hand-authored `alias()` calls with no
-			// `polymorphs:`/`variant()` registration); Task 3's probe
-			// exceptions table enumerates the SUPERTYPE-parent instances the
-			// same way.
 			const variantArms = flatMembers
 				.map((m): string | null => {
 					const core = m.type === VARIANT ? m.content : m;
 					if (!isAliasMintedRef(core, rules)) return null;
-					// Named ALIAS arm: record the HIDDEN symbol name (content.name),
-					// matching collectSubtypeRefs' per-arm naming — variantArms
-					// entries must stay a subset of `subtypes`, and assemble's
-					// lookup keys on the hidden name. (Effectively unreachable
-					// today — resolveRule collapses raw alias arms to
-					// SYMBOL+aliasedFrom first — but the visible `value` here
-					// would silently no-op if an unresolved ALIAS ever arrived.)
 					if (core.type === ALIAS) {
 						return core.named && core.content.type === SYMBOL ? core.content.name : null;
 					}
@@ -1922,7 +1421,6 @@ function classifyHiddenChoiceRule(
 		}
 	}
 
-	// Mixed/structural hidden choice — survive as-is.
 	return { rule };
 }
 
@@ -1942,18 +1440,9 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 	const visit = (current: Rule<'link'>): void => {
 		switch (current.type) {
 			case SYMBOL:
-				// `aliasedFrom` = the alias SOURCE (storage kind), `name` = the
-				// alias target (parse kind) — see `resolveNamedAliasWithProvenance`.
-				// Kept as the real ref; kindId/aliasedFromId stamp onto it later
-				// (canonicalizeRuleLiterals' SUPERTYPE case).
 				subtypes.push(current);
 				return;
 			case ALIAS:
-				// Effectively unreachable today — resolveRule collapses raw
-				// alias arms to SYMBOL+aliasedFrom first (see the matching note
-				// on `classifyHiddenChoiceRule`'s variantArms computation) —
-				// but mirror the SYMBOL branch's storage/parse handling so an
-				// unresolved ALIAS arriving here behaves identically.
 				if (!current.named) return;
 				if (current.content.type === SYMBOL) {
 					const storageName = current.content.name;
@@ -1968,22 +1457,10 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 				}
 				return;
 			case STRING: {
-				// Grammar-token shape (name vs punctuation) — routed through the
-				// grammar's own word-matcher (R12 Camp A); single source of truth
-				// via matchesWordShape, replacing the former hardcoded
-				// identifier-shape regex.
 				const isWordShape = ctx.wordMatcher
 					? ctx.wordMatcher(current.value)
 					: matchesWordShape(current.value, undefined);
 				if (isWordShape) return;
-				// Catalog-first: key this subtype by the same name
-				// `collectAnonymousNodes` (assemble.ts) mints the anonymous
-				// node under, not the literal's raw text — tree-sitter often
-				// sanitizes or dedupes the literal under a different name. No
-				// natural SymbolRule exists for a bare literal arm, so synthesize
-				// one carrying the literal — canonicalizeRuleLiterals' SYMBOL
-				// literal branch stamps its kindId the same way it does for any
-				// other link-minted literal symbol.
 				const entry = findEntryForLiteralText(ctx.kindEntries, current.value);
 				subtypes.push({ type: SYMBOL, name: entry?.kind ?? current.value, literal: current.value });
 				return;
@@ -2000,7 +1477,6 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 			case REPEAT1:
 				visit(current.content);
 				return;
-			// PR-P: ENUM case removed — handled by CHOICE arm above.
 			default:
 				return;
 		}
@@ -2008,10 +1484,6 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 	visit(rule);
 	return subtypes;
 }
-
-// ---------------------------------------------------------------------------
-// enrichPositions — walk SEQ members to assign position to SymbolRefs
-// ---------------------------------------------------------------------------
 
 export function enrichPositions(rules: Record<string, Rule<'link'>>, refs: SymbolRef[]): void {
 	for (const ref of refs) {
@@ -2021,10 +1493,6 @@ export function enrichPositions(rules: Record<string, Rule<'link'>>, refs: Symbo
 		if (idx >= 0) ref.position = idx;
 	}
 }
-
-// ---------------------------------------------------------------------------
-// computeParentSets — group refs by target symbol
-// ---------------------------------------------------------------------------
 
 export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
 	const parents = new Map<string, SymbolRef[]>();
@@ -2039,13 +1507,7 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
 	return parents;
 }
 
-// ---------------------------------------------------------------------------
-// collectRepeatedShapes — suggestion pass for shared supertypes/groups
-// ---------------------------------------------------------------------------
-
 function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: RepeatedShapeEntry[]): void {
-	// Build the set of already-declared supertype signatures so we
-	// don't duplicate-suggest what the grammar author already wrote.
 	const existingSupertypeKeys = new Set<string>();
 	for (const rule of Object.values(rules)) {
 		if (rule.type === SUPERTYPE) {
@@ -2058,8 +1520,6 @@ function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: Repeate
 		}
 	}
 
-	// Parent map: sorted kind key → set of parent rule names that
-	// host a field with exactly this content-type set.
 	const parentsByKey = new Map<string, Set<string>>();
 	for (const [parentName, rule] of Object.entries(rules)) {
 		collectFieldKindSets(rule, (kinds) => {
@@ -2078,9 +1538,6 @@ function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: Repeate
 		if (parents.size < 2) continue;
 		if (existingSupertypeKeys.has(key)) continue;
 		const kinds = key.split('\n');
-		// Suggest a `supertype` when every kind looks like a named
-		// rule kind (letters/underscores/digits, not operator
-		// punctuation). Otherwise fall back to `group`.
 		const shape: 'supertype' | 'group' = kinds.every((k) => /^[\w]+$/.test(k)) ? 'supertype' : 'group';
 		out.push({
 			suggestedName: suggestSharedName(kinds),
@@ -2096,8 +1553,6 @@ function collectFieldKindSets(rule: Rule<'link'>, yield_: (kinds: readonly strin
 		case FIELD: {
 			const kinds = directContentKinds(rule.content);
 			if (kinds.length > 0) yield_(kinds);
-			// Walk into the content too — nested fields get yielded
-			// on their own.
 			collectFieldKindSets(rule.content, yield_);
 			return;
 		}
@@ -2135,10 +1590,6 @@ function directContentKinds(rule: Rule<'link'>): string[] {
 }
 
 function suggestSharedName(kinds: readonly string[]): string {
-	// Longest common suffix works surprisingly well for grammars —
-	// `binary_expression` / `call_expression` / `field_expression`
-	// all share `_expression`. Fall back to the kinds count when
-	// nothing common sticks out.
 	const words = kinds.map((k) => k.split('_').filter(Boolean));
 	if (words.length === 0) return '_shared';
 	const first = words[0]!;
@@ -2152,28 +1603,6 @@ function suggestSharedName(kinds: readonly string[]): string {
 	if (suffix.length > 0) return '_' + suffix.join('_');
 	return `_shared_${kinds.length}`;
 }
-// ---------------------------------------------------------------------------
-// Separator-lift pass (moved from lift-separators.ts in R7 de-scatter).
-//
-// This is the TRANSFORM half of separated-list handling (the DETECTION half
-// lives in `dsl/rule-patterns.ts`). It rewrites the raw shapes tree-sitter
-// authors write into one canonical repeat node carrying `separator` /
-// `leading` / `trailing` markers.
-//
-// Why a link pass (not the evaluate constructors): the lift used to run at
-// DSL-call time, before wire/override callbacks and enrich-injected rules
-// existed. Running it here (post-wire, post-enrich) means every separated
-// list — authored or synthesized — is lifted from one place.
-//
-// Idempotent: re-running over an already-lifted tree is a no-op.
-// ---------------------------------------------------------------------------
-
-/**
- * Merge adjacent `repeat`/`repeat1`(with separator) + `optional(sepLit)` pairs
- * inside a seq's member list by stamping `trailing: true` on the repeat and
- * dropping the optional. Returns the new member array if anything merged, else
- * `null`.
- */
 
 export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>[] | null {
 	let changed = false;
@@ -2191,7 +1620,6 @@ export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>
 			const tail = members[idx];
 			return tail !== undefined && tail.type === OPTIONAL && rulesEqual(tail.content, repeat.content);
 		};
-		// 3-window: standalone head + repeat + optional tail.
 		if (cur.type === SEQ && cur.members.length === 2) {
 			const [head, headSep] = cur.members;
 			const repeat = repeatAt(i + 1);
@@ -2214,10 +1642,6 @@ export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>
 				continue;
 			}
 		}
-		// 2-window: repeat + optional tail, no standalone head. NOT stamped
-		// `terminated` — with no mandatory head, a lone element can be the
-		// optional (unterminated) tail itself, so a single element does not
-		// require its separator the way the 3-window's mandatory head does.
 		const repeat = repeatAt(i);
 		if (repeat && tailMatches(repeat, i + 1)) {
 			out.push({ ...repeat, separator: { ...repeat.separator!, trailing: 'optional' } });
@@ -2239,9 +1663,6 @@ export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[]
 		const next = members[i + 1];
 		const curSep = cur.type === REPEAT || cur.type === REPEAT1 ? cur.separator : undefined;
 		const isSepRepeat = curSep !== undefined && !curSep.trailing;
-		// Structural comparison (not literal-string-only) so a choice-shaped
-		// separator (e.g. `optional(choice(',', ';'))`) is absorbed the same
-		// way a plain literal one is.
 		const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: { value: Rule<'link'> }): boolean => {
 			if (!r || r.type !== OPTIONAL) return false;
 			return rulesEqual(r.content, sep.value);
@@ -2256,13 +1677,6 @@ export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[]
 	}
 	return changed ? out : null;
 }
-/**
- * Detect the `commaSep1` family inside a seq's member list and lift it to a
- * single `repeat1` node with `separator` plus optional `leading` / `trailing`
- * markers. Returns `null` if no lift applies. Relies on the inner
- * `repeat(seq(sep, x))` already carrying a lifted `separator` — guaranteed
- * when this runs bottom-up (children lifted first).
- */
 
 export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 	if (members.length < 2 || members.length > 3) return null;
@@ -2274,47 +1688,20 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 	const elem = repeatNode.content;
 
 	const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
-	// Structural comparison (not literal-string-only) so a choice-shaped
-	// separator (e.g. `optional(choice(',', ';'))`) is absorbed the same way
-	// a plain literal one is.
 	const matchesOptionalSep = (r: Rule<'link'>): boolean => {
 		if (r.type !== OPTIONAL) return false;
 		return rulesEqual(r.content, sep.value);
 	};
 
-	// Head absorption (Cases 1-2): the standalone head element is the
-	// structural proof of BETWEEN-join semantics — each ex-repeat element's
-	// prefix separator becomes a between-separator once the head merges into
-	// the same list. Clear the positional `leading: 'mandatory'` the inner
-	// sep-first repeat lift stamped; only a HEADLESS sep-first repeat (no
-	// absorbable head in its rule, e.g. python `_expression_list_expressions`)
-	// keeps it and renders the flank.
-	// Case 1: [x, repeat(sep, x)]
 	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
 		return { type: REPEAT1, content: elem, separator: { ...sep, leading: undefined } };
 	}
-	// Case 2: [x, repeat(sep, x), optional(sep)] — genuinely OPTIONAL
-	// trailing (per-instance variability, needs runtime capture).
 	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
 		return { type: REPEAT1, content: elem, separator: { ...sep, leading: undefined, trailing: 'optional' } };
 	}
-	// Case 3: [sep, x, repeat(sep, x)] — a MANDATORY leading separator
-	// (bare, not `optional(...)`-wrapped): always present, no per-instance
-	// variability. Stamped `leading: 'mandatory'` — a real, distinct
-	// `DelimiterMode` value from Case 4's `'optional'`, not the same
-	// boolean `true` both used to share (which is what let a genuinely
-	// mandatory flank get misclassified as `'optional'` downstream, per
-	// `AssembledSeparatedList.leadingDelimiter`'s doc comment, node-map.ts).
 	if (members.length === 3 && repeatIdx === 2 && rulesEqual(members[0]!, sep.value) && matchesElem(members[1]!)) {
 		return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'mandatory' } };
 	}
-	// Case 4: [optional(sep), repeat(sep, x)] or
-	// [optional(sep), repeat(sep, x), optional(sep)] — genuinely OPTIONAL
-	// leading separator (the flanking counterpart of Case 3's mandatory
-	// form), also absorbing a trailing optional on the far side when
-	// present. No case handled an OPTIONAL leading flank at all before this
-	// widening (Case 3 only ever matched a bare, mandatory literal/
-	// structural separator).
 	if (repeatIdx === 1 && matchesOptionalSep(members[0]!)) {
 		if (members.length === 2) {
 			return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'optional' } };
@@ -2339,12 +1726,6 @@ function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
 	const { members: _members, ...rest } = seq;
 	return rest;
 }
-/**
- * Lift every separated list in a rule tree, bottom-up. Children are lifted
- * first so an inner `repeat(seq(sep, x))` carries its separator before the
- * enclosing seq's commaSep1 detection runs — the same order the evaluate
- * constructors produced by lifting inner-to-outer at call time.
- */
 
 export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 	switch (rule.type) {
@@ -2361,10 +1742,6 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 			const sep = separatorOf(content);
 			if (sep) {
 				if (sep.separator.type !== STRING) {
-					// 0 real grammars (rust/typescript/python) hit this today — this
-					// is purely a forward-looking guard. Rendering a non-literal
-					// (e.g. choice(',', ';')) separator isn't supported yet; tracked
-					// by PR-T (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
 					const diagnostic: CompilerDiagnostic = {
 						code: 'non-literal-separator',
 						severity: 'warning',
@@ -2375,26 +1752,6 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 					};
 					ctx.diagnostics.emit(diagnostic);
 				}
-				// `sep.trailing` (rule-patterns.ts's `separatorOf`) is a
-				// POSITIONAL flag: the separator appears AFTER the content element
-				// within `repeat(seq(content, SEP))` — every iteration (including
-				// the last) unconditionally emits `SEP`, no per-instance
-				// omission possible. That is a genuinely MANDATORY trailing
-				// flank, not the `optional` kind `liftCommaSep`'s Case 2/4 stamp
-				// (this function, `liftSeparators`, is a separate, earlier lift
-				// that never sees an `optional(sep)`-wrapped shape — that shape
-				// only arises from the seq-of-3-members pattern `liftCommaSep`
-				// handles downstream in link).
-				// Symmetric positional stamp: sep-FIRST (`repeat(seq(SEP, X))`)
-				// means every element is PREFIXED — a mandatory LEADING flank.
-				// This is safe for BOTH list shapes because the joinWith*
-				// filters are capture-driven: a canonical head-first list
-				// captures no leading anon (no separator precedes its first
-				// element) and the filter degrades to a plain between-join,
-				// while a HEADLESS group (head lives outside the group, e.g.
-				// python `_expression_list_expressions`) captures its leading ','
-				// and renders `,2,3` — previously these reversed to `2,3,`
-				// because only the trailing flank was ever stamped.
 				return {
 					...rule,
 					content: sep.content,
@@ -2413,34 +1770,9 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 		case ALIAS:
 			return { ...rule, content: liftSeparators(rule.content, ctx) };
 		default:
-			// Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
-			// group/variant/terminal do NOT exist in the tree when this runs:
-			// liftSeparators is invoked in the link resolveRule loop, whereas
-			// GROUP is synthesized later in link (link.ts:189/1864) and VARIANT
-			// later still in normalize. Their bodies are lifted AT those
-			// construction sites, so skipping them here is correct, not lossy.
-			// (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
-			// dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
 			return rule;
 	}
 }
-// ---------------------------------------------------------------------------
-// Group-lift synthesis (moved from group-synthesis.ts in R7 de-scatter).
-// Implements the `groups:` override block per
-// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md.
-// Pure — no I/O, no side effects on inputs.
-// ---------------------------------------------------------------------------
-/**
- * Walk a path string ('1/1/0/1/3') into a rule tree, returning the
- * sub-rule at that path. Path segments index into:
- *   - seq.members[i]
- *   - choice.members[i]
- *   - wrapper.content (path '0' for optional/repeat/repeat1/field/token/
- *     alias/variant/clause/group)
- *
- * Throws if any segment fails to address. Mirrors path semantics used
- * by `polymorphs:` / `transforms:` in `grammar.sittir.ts`.
- */
 
 export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'> {
 	const segments = path.split('/').filter((s) => s.length > 0);
@@ -2492,16 +1824,6 @@ export interface DeriveSynthesizedNameArgs {
 	discriminator: string;
 	polymorphs: Record<string, Record<string, string> | undefined>;
 }
-/**
- * Compute the synthesized hidden kind name for a group lift.
- *
- * Rule<'link'>: `_<parent>` + for each path-prefix that ALSO appears as a key
- * in polymorphs[parent], append `_<variantName>` + `_<discriminator>`.
- *
- * Polymorph prefixes are matched by string prefix of the slash-joined
- * path. polymorphs['1'] matches lift paths '1', '1/2', '1/2/3' etc.
- * polymorphs['1/2'] matches '1/2', '1/2/3' etc.
- */
 
 export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
 	const { parentKind, path, discriminator, polymorphs } = args;
@@ -2516,8 +1838,6 @@ export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
 		}
 	}
 
-	// When parentKind already starts with '_' (hidden rule), use it as-is
-	// as the base; otherwise prepend '_' to canonicalize.
 	const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
 	return [base, ...contributions, discriminator].join('_');
 }
@@ -2528,10 +1848,6 @@ export interface ValidateGroupsArgs {
 	rules: Record<string, Rule<'link'>>;
 	warn?: (msg: string) => void;
 }
-/**
- * Validate all groups config at config-load time. Throws on E1-E5,
- * warns on E6. See spec §"Error handling" for the full taxonomy.
- */
 
 function resolveGroupsConfigKey(kind: string, rules: Record<string, Rule<'link'>>): string | undefined {
 	if (kind in rules) return kind;
@@ -2653,18 +1969,6 @@ export interface ApplyGroupOverridesResult {
 	rules: Record<string, Rule<'link'>>;
 	synthesizedKinds: readonly string[];
 }
-/**
- * Apply all `groups:` lifts. Pure transform — input rules are not
- * mutated; a new rules map is returned with lifted bodies registered
- * under their synthesized kind names and parent bodies rewritten to
- * reference them.
- *
- * Wrapper handling: when the lift target is wrapped (`optional` /
- * `repeat` / `repeat1`), only the wrapper's content is moved into the
- * synthesized kind. The wrapper stays at the parent's lift position
- * with the synthesized symbol ref inside. This preserves cardinality
- * semantics at the parent.
- */
 
 export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
 	validateGroupsConfig(args);
@@ -2674,14 +1978,8 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 	for (const [kind, lifts] of Object.entries(args.groups)) {
 		if (!lifts || Object.keys(lifts).length === 0) continue;
-		// `kind` may be variant()/polymorphs' INTENDED hidden name rather
-		// than the name the rule is actually registered under — see
-		// `resolveGroupsConfigKey`'s doc comment. `deriveSynthesizedName`
-		// below still uses the ORIGINAL `kind` (the naming convention
-		// callers/templates expect), only the rules-map read/write target
-		// resolves to wherever the body actually lives.
 		const resolvedKey = resolveGroupsConfigKey(kind, newRules) ?? kind;
-		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length); // deep first
+		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length);
 		let parentBody = clone(newRules[resolvedKey]!);
 
 		for (const path of sortedPaths) {
@@ -2710,15 +2008,7 @@ function liftRule(
 	synName: string,
 	_discriminator: string
 ): { liftedBody: Rule<'link'>; replacement: Rule<'link'> } {
-	// Mint the helper ref through evaluate's `symbol()` so it gets the SAME
-	// construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
-	// other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
-	// the one constructor (then revised at wrapper push-down / link supertype pass)
-	// keeps `inline` authoritative on the normalizedRules path, so normalize's fold
-	// can read it instead of re-deriving hiddenness structurally.
 	const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
-	// (_discriminator kept for future use; the current implementation does not use it.
-	// The discriminator participates only in the synthesized kind name component.)
 	switch (target.type) {
 		case OPTIONAL:
 			return {
@@ -2726,8 +2016,6 @@ function liftRule(
 				replacement: { type: OPTIONAL, content: synSym } as Rule<'link'>
 			};
 		case REPEAT:
-			// target.separator already carries trailing/leading nested — rides
-			// along for free (same pattern as wrapper-deletion.ts's REPEAT case).
 			return {
 				liftedBody: target.content,
 				replacement: { type: REPEAT, content: synSym, separator: target.separator } as Rule<'link'>
@@ -2744,49 +2032,12 @@ function liftRule(
 function clone<T>(value: T): T {
 	return JSON.parse(JSON.stringify(value)) as T;
 }
-// ---------------------------------------------------------------------------
-// stampStaticRenderAs — inline string() renderAs bodies into rule trees
-// ---------------------------------------------------------------------------
-/**
- * Stamp static renderAs entries into rule bodies.
- *
- * For each renderAs entry with a `string(lit)` body, walk the rule map
- * and replace every occurrence of:
- *   - `SYMBOL(x)` (bare)
- *   - `FIELD(name, SYMBOL(x))` (field-wrapped)
- *   - `FIELD(name, ALIAS(SYMBOL(x)))` (alias-wrapped — any depth)
- * with `STRING(lit)` at the same position. Pure transform — input rule
- * map not mutated.
- *
- * Symbol resolution is transitive: when `x` itself is not in `renderAs`
- * but `rules[x]` is a `StringRule<'link'>` whose value matches a renderAs literal,
- * the stamp fires. This handles post-evaluate renaming — evaluate's
- * `synthesizeFieldEnumRules` replaces `field(n, SYMBOL(renderAs))` with
- * `field(n, SYMBOL(_parentKind_fieldName))` where the new hidden rule
- * has the same `string` body as the original renderAs entry.
- *
- * After this pass, downstream phases (slot derivation, template walker,
- * factory emitter, from emitter) see bare string literals at those
- * positions and treat them as inline mandatory literals in seq context —
- * the same as how `seq('mod', $.name)` renders `mod {{ name }}` with
- * `mod` stamped inline.
- */
 
 export function stampStaticRenderAs(
 	rules: Record<string, Rule<'link'>>,
 	renderAs: Record<string, Rule<'link'>>
 ): Record<string, Rule<'link'>> {
-	// Build the stamp lookup: renderAs-key → literal value, for entries
-	// that are single string() bodies.
 	const renderStamps: Record<string, string> = {};
-	// Blank-bodied renderAs entries: zero-width-equivalent. References
-	// get replaced with `{ type: 'CHOICE', members: [] }` (the blank
-	// sentinel), which the choice() collapse in `rewriteRuleForStamp`
-	// lowers to `optional(other)` when paired with another member. Use
-	// case: tree-sitter externals that fire invisibly at runtime (e.g.
-	// ASI's `_automatic_semicolon`). The slot-model look-through in
-	// node-map.ts propagates this optionality up to any SYMBOL ref
-	// pointing at the now-optional-bodied wrapper rule (`_semicolon`).
 	const blankStamps = new Set<string>();
 	for (const [sym, body] of Object.entries(renderAs)) {
 		if (body.type === STRING) renderStamps[sym] = body.value;
@@ -2794,25 +2045,10 @@ export function stampStaticRenderAs(
 	}
 	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
-	// Build symToLit: symbol-name → literal to stamp.
-	// Includes:
-	//   1. The original renderAs key names (exact match).
-	//   2. Names whose string body matches a renderAs value AND whose
-	//      name ends with the renderAs key (handling evaluate's
-	//      synthesized renames: `synthesizeFieldEnumRules` creates
-	//      `_<parent>_<fieldName>` where `<fieldName>` corresponds to the
-	//      field that referenced the renderAs symbol — the renderAs key
-	//      itself ends with `_<fieldName>`).
-	// This is deliberately conservative: we do NOT match all string rules
-	// by value alone, to avoid stamping unrelated `_kw_*` helpers that
-	// happen to share a character with a renderAs literal (e.g.
-	// `_kw_negative` has body `'!'` which clashes with the
-	// `_inner_*_doc_comment_marker` renderAs values).
 	const symToLit: Record<string, string> = { ...renderStamps };
 	for (const [sym, body] of Object.entries(rules)) {
-		if (sym in symToLit) continue; // Already included via exact match.
+		if (sym in symToLit) continue;
 		if (body.type !== STRING) continue;
-		// Check whether any renderAs key is a suffix of this symbol name.
 		for (const [renderKey, lit] of Object.entries(renderStamps)) {
 			if (sym.endsWith(renderKey) && body.value === lit) {
 				symToLit[sym] = lit;
@@ -2824,12 +2060,6 @@ export function stampStaticRenderAs(
 
 	const out: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		// Blank-stamped entries are removed from the rules map: their
-		// references have been replaced inline with the blank sentinel
-		// (which `rewriteRuleForStamp` collapses to `optional(...)` in
-		// containing choices). Keeping the entry would cause assemble to
-		// classify an empty `choice` body as an empty AssembledEnum and
-		// throw.
 		if (blankStamps.has(name)) continue;
 		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
 	}
@@ -2846,8 +2076,6 @@ function rewriteRuleForStamp(
 	switch (rule.type) {
 		case SYMBOL: {
 			const lit = symToLit[rule.name];
-			// The literal takes the ref's place and identity; a `token(...)`
-			// wrapper around the ref survives untouched.
 			if (lit !== undefined) return structuralBuilder.string(lit, rule.id) as Rule<'link'>;
 			if (blankStamps.has(rule.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
 			return rule;
@@ -2857,13 +2085,7 @@ function rewriteRuleForStamp(
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const lit = symToLit[inner.name];
-				// The field wrapper is dropped with the ref (a renderAs literal
-				// is a mandatory inline literal, never a slot); the literal
-				// takes the field's identity.
 				if (lit !== undefined) return structuralBuilder.string(lit, rule.id ?? inner.id) as Rule<'link'>;
-				// Blank-stamped: the field references a zero-width-equivalent
-				// external. Replace the whole field with blank so the parent
-				// seq/choice collapse handles cardinality.
 				if (blankStamps.has(inner.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
@@ -2884,10 +2106,6 @@ function rewriteRuleForStamp(
 			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
 
 		case CHOICE: {
-			// Recursively stamp members, then re-apply the blank-collapse that
-			// evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
-			// `optional(X)`. Re-applied here because stamping may have
-			// synthesized new blank members the DSL-time pass didn't see.
 			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
 			const nonBlank = members.filter((m) => !isBlankRule(m));
 			const hadBlank = nonBlank.length < members.length;
@@ -2905,39 +2123,11 @@ function unwrapAliasForCheck(rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type === ALIAS || rule.type === TOKEN) return unwrapAliasForCheck(rule.content);
 	return rule;
 }
-// ---------------------------------------------------------------------------
-// Refine-form validation (moved from link-refine.ts in R7 de-scatter).
-//
-// Validates `refine()` metadata against the linked rule tree at link time.
-// `refine()` registers per-form choice selections at authoring time; the rule
-// tree may still be mid-transform then, so validation is deferred to here.
-// See refine() DSL primitive for the full design.
-// ---------------------------------------------------------------------------
-
-/**
- * The result of resolving a refine() path against a rule tree. Carries
- * both the containing field name (when the terminal choice lives inside
- * a field wrapper) and the choice itself so emitters can narrow the
- * field's literal values per form.
- */
 
 export interface RefinePathResolution {
 	readonly fieldName: string | undefined;
 	readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
 }
-/**
- * Validate every refine form's paths and selections for one kind.
- * Throws on the first failure — codegen fails loud when a refine
- * declaration is inconsistent with the rule shape.
- *
- * @param kind - Rule<'link'> kind being validated (used in error messages).
- * @param rule - Post-link rule tree for `kind`.
- * @param forms - Ordered list of refine forms declared for `kind`.
- * @param rules - Optional rules map for resolving symbol references
- *   introduced by evaluate's field-enum synthesis pass. When a path
- *   terminus resolves to a `SymbolRule<'link'>`, the target rule is looked up
- *   here to retrieve the underlying `EnumRule<'link'>`.
- */
 
 export function validateRefineForms(
 	kind: string,
@@ -2952,19 +2142,6 @@ export function validateRefineForms(
 		}
 	}
 }
-/**
- * Resolve a refine() path against a rule tree to the target CHOICE.
- *
- * @param kind - Rule<'link'> kind being validated (used in error messages).
- * @param formName - Refine form name (used in error messages).
- * @param pathStr - The path string as declared in the refine() call.
- * @param rule - Post-link rule tree for `kind`.
- * @param rules - Optional rules map for resolving symbol references
- *   introduced by evaluate's field-enum synthesis pass.
- * @returns A {@link RefinePathResolution} carrying the choice and the
- *   enclosing field name (when the terminal step was a `name:` segment).
- * @throws When the path doesn't resolve, or resolves to a non-choice.
- */
 
 export function resolveRefinePath(
 	kind: string,
@@ -3054,9 +2231,6 @@ function unwrapToChoice(
 			cur = cur.content;
 			continue;
 		}
-		// Follow synthesized field-enum indirection until we reach the
-		// underlying enum/choice. Real grammars often lower field-wrapped
-		// literal choices to hidden symbol refs during evaluate.
 		if (isSymbol(cur) && rules !== undefined) {
 			if (visitedSymbols.has(cur.name)) return undefined;
 			visitedSymbols.add(cur.name);
@@ -3107,9 +2281,6 @@ function validateSelection(
 	}
 }
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
-	// STRING and literal-carrying link SYMBOLs (canonicalizeRuleLiterals's
-	// anon-token rewrite) are both terminal-valued — literalTextOf covers
-	// both shapes uniformly, same as isEnumChoiceRule's own member check.
 	const literal = literalTextOf(rule);
 	if (literal !== undefined) return literal;
 	if (rule.type === VARIANT) {
@@ -3118,22 +2289,6 @@ function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
 	}
 	return undefined;
 }
-/**
- * Given a rule tree and a resolved refine form, return the field name
- * whose single literal value should be narrowed for per-form Config
- * emission, along with the narrowed literal.
- *
- * Used by the type/factory emitters to build the per-form narrowed
- * fields. Returns an array because a form may narrow multiple selections
- * (e.g. `opening` and `closing` simultaneously).
- *
- * @returns Array of `{ fieldName, literal }` tuples. `fieldName` is the
- *   enclosing field (when the selection targets a field-wrapped choice)
- *   and `literal` is the chosen string value. Entries whose selection
- *   can't be resolved to a string (e.g. numeric selection into a
- *   non-string branch) are omitted — those forms still narrow the
- *   choice shape at parse time but don't qualify for auto-stamp.
- */
 
 export function narrowedFieldLiteralsForForm(
 	rule: Rule<'link'>,
@@ -3150,11 +2305,6 @@ export function narrowedFieldLiteralsForForm(
 	}
 	return out;
 }
-/**
- * Map a selection (numeric index or string) to the terminal string
- * value it selects. Returns `undefined` when the index points at a
- * non-string branch.
- */
 
 export function resolveSelectionLiteral(
 	choice: ChoiceRule<'link'> | EnumRule<'link'>,
@@ -3165,10 +2315,6 @@ export function resolveSelectionLiteral(
 	if (!arm) return undefined;
 	return unwrapToStringValue(arm);
 }
-// ---------------------------------------------------------------------------
-// Rule<'link'>-shape helpers (localized — we don't want link-refine to grow into
-// a general rule-walking utility; it's path-resolution only)
-// ---------------------------------------------------------------------------
 function membersOf(rule: Rule<'link'>): Rule<'link'>[] | undefined {
 	if (rule.type === SEQ || rule.type === CHOICE) return rule.members;
 	return undefined;
@@ -3181,7 +2327,6 @@ function singleContentOf(rule: Rule<'link'>): Rule<'link'> | undefined {
 		case FIELD:
 		case VARIANT:
 		case GROUP:
-			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 			return rule.content;
 		default:
 			return undefined;

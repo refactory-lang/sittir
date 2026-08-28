@@ -9,26 +9,27 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `fail` (`packages/codegen/src/types/diagnostics.ts:80`)
+
+### `packages/codegen/src/types/diagnostics.ts::fail`
 
 ```text
 /** Emit a blocking (fail) diagnostic. `canProceed` is forced to `false` —
 	 *  a `'fail'` is blocking by definition, so the caller cannot supply it. */
 ```
 
-### `all` (`packages/codegen/src/types/diagnostics.ts:94`)
+### `packages/codegen/src/types/diagnostics.ts::all`
 
 ```text
 /** Returns a shallow copy — callers cannot mutate the sink's backing array. */
 ```
 
-### `hasBlocking` (`packages/codegen/src/types/diagnostics.ts:99`)
+### `packages/codegen/src/types/diagnostics.ts::hasBlocking`
 
 ```text
 /** Returns true iff at least one item has severity === 'fail'. */
 ```
 
-### `kindKey` (`packages/codegen/src/types/parsekind-collisions.ts:55`)
+### `packages/codegen/src/types/parsekind-collisions.ts::kindKey`
 
 ```text
 /**
@@ -39,7 +40,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isEnumChoiceRule` (`packages/codegen/src/types/rule.ts:470`)
+### `packages/codegen/src/types/rule.ts::isEnumChoiceRule`
 
 ```text
 /**
@@ -62,7 +63,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `collectFieldNames` (`packages/codegen/src/types/rule.ts:678`)
+### `packages/codegen/src/types/rule.ts::collectFieldNames`
 
 ```text
 /**
@@ -74,7 +75,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `replaceAtPath` (`packages/codegen/src/types/rule.ts:737`)
+```text
+// ---------------------------------------------------------------------------
+// Tree walkers — pure Rule-tree projections, no AssembledNode concepts
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::replaceAtPath`
 
 ```text
 /**
@@ -88,7 +95,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `sym` (`packages/codegen/src/types/rule.ts:778`)
+```text
+// ---------------------------------------------------------------
+// Path-addressed rule rewriting
+//
+// Slash-separated positional paths (e.g. '1/1/0/1/3') used by
+// `polymorphs:` / `transforms:` / `groups:` in grammar.sittir.ts. See
+// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+// for the path semantics.
+// ---------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::sym`
 
 ```text
 /**
@@ -97,7 +115,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `extractSymbolName` (`packages/codegen/src/types/runtime-shapes.ts:91`)
+### `packages/codegen/src/types/runtime-shapes.ts::extractSymbolName`
 
 ```text
 /**
@@ -107,7 +125,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isEnrichShapedFieldWrapper` (`packages/codegen/src/types/runtime-shapes.ts:114`)
+#### body
+
+```text
+// Tree-sitter CLI: $.name → { symbol: { type: 'SYMBOL', name: '...' } }
+```
+
+### `packages/codegen/src/types/runtime-shapes.ts::isEnrichShapedFieldWrapper`
 
 ```text
 /**
@@ -142,7 +166,30 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isContainerType` (`packages/codegen/src/types/runtime-shapes.ts:163`)
+#### body
+
+```text
+// Shape 2: reserved `_kw_` prefix — enrich's exclusive namespace.
+```
+
+#### body
+
+```text
+/* Shape 1: NAME === SYM, or the supertype-stripped variant. Exact equality
+	   is checked FIRST so a symbol whose own name ends in digits
+	   (`field('foo2', $.foo2)`) is not misclassified by the suffix-strip
+	   below. */
+```
+
+#### body
+
+```text
+/* Numbered-duplicate variant: enrich appends a digit run to the field
+	   name when the same symbol occurs multiple times in one seq
+	   (`expression1`, `expression2`) — strip the suffix and re-compare. */
+```
+
+### `packages/codegen/src/types/runtime-shapes.ts::isContainerType`
 
 ```text
 /**
@@ -150,7 +197,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isWrapperType` (`packages/codegen/src/types/runtime-shapes.ts:170`)
+### `packages/codegen/src/types/runtime-shapes.ts::isWrapperType`
 
 ```text
 /**
@@ -160,7 +207,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `isPrecWrapper` (`packages/codegen/src/types/runtime-shapes.ts:187`)
+### `packages/codegen/src/types/runtime-shapes.ts::isPrecWrapper`
 
 ```text
 /**
@@ -171,31 +218,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `typeEq` (`packages/codegen/src/types/runtime-shapes.ts:207`)
+### `packages/codegen/src/types/runtime-shapes.ts::typeEq`
 
 ```text
 /** True if `t` equals `upper` (both runtimes now agree on the discriminant case). */
 ```
 
-### `GrammarDiagnostic` (`packages/codegen/src/types/diagnostics.ts:32`)
+### `packages/codegen/src/types/diagnostics.ts::GrammarDiagnostic`
 
 ```text
 /** Static, author-facing facts about the authored grammar; subject is a Rule. */
 ```
 
-### `CompilerDiagnostic` (`packages/codegen/src/types/diagnostics.ts:42`)
+### `packages/codegen/src/types/diagnostics.ts::CompilerDiagnostic`
 
 ```text
 /** Emitted during the compile pipeline about a rule OR an assembled node. */
 ```
 
-### `RuntimeDiagnostic` (`packages/codegen/src/types/diagnostics.ts:50`)
+### `packages/codegen/src/types/diagnostics.ts::RuntimeDiagnostic`
 
 ```text
 /** Render / read / parse execution. */
 ```
 
-### `DiagnosticSink` (`packages/codegen/src/types/diagnostics.ts:62`)
+### `packages/codegen/src/types/diagnostics.ts::DiagnosticSink`
 
 ```text
 /**
@@ -211,7 +258,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `EmitHaltedError` (`packages/codegen/src/types/diagnostics.ts:101`)
+### `packages/codegen/src/types/diagnostics.ts::EmitHaltedError`
 
 ```text
 /**
@@ -220,13 +267,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `ExternalRole` (`packages/codegen/src/types/ir.ts:15`)
+### `packages/codegen/src/types/ir.ts::ExternalRole`
 
 ```text
 /** External-scanner role binding (indent / dedent / newline tokens). */
 ```
 
-### `parseKindId` (`packages/codegen/src/types/parsekind-collisions.ts:25`)
+```text
+/**
+ * types/ir.ts — IR-level metadata types shared by the DSL and the compiler
+ * (R11). Both sides import DOWN into this layer; neither imports the other.
+ */
+```
+
+```text
+/**
+ * (R12/decision-7 V2 Task 2) `PolymorphVariant` — the wire-registered
+ * `{parent, child}` pair type — is DELETED. Variant-adoption pairs are now
+ * discovered structurally from the post-link rule tree
+ * (`deriveStructuralVariantChildren`, compiler/variant-structural.ts)
+ * instead of a metadata channel. This comment marks the historical
+ * deletion site; do not resurrect the type.
+ */
+```
+
+### `packages/codegen/src/types/parsekind-collisions.ts::parseKindId`
 
 ```text
 /**
@@ -237,7 +302,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `storageKindId` (`packages/codegen/src/types/parsekind-collisions.ts:32`)
+### `packages/codegen/src/types/parsekind-collisions.ts::storageKindId`
 
 ```text
 /**
@@ -249,7 +314,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `RuleMetadata` (`packages/codegen/src/types/rule-metadata-brand.ts:20`)
+### `packages/codegen/src/types/rule-metadata-brand.ts::RuleMetadata`
 
 ```text
 /**
@@ -260,7 +325,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `Multiplicity` (`packages/codegen/src/types/rule.ts:47`)
+### `packages/codegen/src/types/rule.ts::Multiplicity`
 
 ```text
 /**
@@ -275,7 +340,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `PhaseName` (`packages/codegen/src/types/rule.ts:59`)
+### `packages/codegen/src/types/rule.ts::PhaseName`
 
 ```text
 /**
@@ -296,19 +361,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `NormalizedPhase` (`packages/codegen/src/types/rule.ts:77`)
+### `packages/codegen/src/types/rule.ts::NormalizedPhase`
 
 ```text
 /** Phases whose views are wrapper-free (at-or-after wrapper-deletion). */
 ```
 
-### `WrapperPhase` (`packages/codegen/src/types/rule.ts:79`)
+### `packages/codegen/src/types/rule.ts::WrapperPhase`
 
 ```text
 /** Phases where modifier wrappers + reference nodes still exist. */
 ```
 
-### `AnyRule` (`packages/codegen/src/types/rule.ts:82`)
+### `packages/codegen/src/types/rule.ts::AnyRule`
 
 ```text
 /**
@@ -318,7 +383,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `RuleBase` (`packages/codegen/src/types/rule.ts:89`)
+### `packages/codegen/src/types/rule.ts::RuleBase`
 
 ```text
 /**
@@ -345,7 +410,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `inline` (`packages/codegen/src/types/rule.ts:114`)
+### `packages/codegen/src/types/rule.ts::inline`
 
 ```text
 /**
@@ -361,7 +426,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `metadata` (`packages/codegen/src/types/rule.ts:127`)
+### `packages/codegen/src/types/rule.ts::metadata`
 
 ```text
 /**
@@ -380,7 +445,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `splicedBody` (`packages/codegen/src/types/rule.ts:143`)
+### `packages/codegen/src/types/rule.ts::splicedBody`
 
 ```text
 /**
@@ -402,7 +467,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `variantArms` (`packages/codegen/src/types/rule.ts:162`)
+### `packages/codegen/src/types/rule.ts::variantArms`
 
 ```text
 /**
@@ -432,7 +497,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `separator` (`packages/codegen/src/types/rule.ts:202`)
+### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
 /** Single canonical separator fact (widened from the former 3-way
@@ -446,7 +511,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 *  from RepeatRule<'link'>'s identical shape. */
 ```
 
-### `aliasedFrom` (`packages/codegen/src/types/rule.ts:217`)
+### `packages/codegen/src/types/rule.ts::aliasedFrom`
 
 ```text
 /**
@@ -462,7 +527,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `Rule` (`packages/codegen/src/types/rule.ts:233`)
+### `packages/codegen/src/types/rule.ts::Rule`
 
 ```text
 /**
@@ -478,7 +543,60 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `RenderRule` (`packages/codegen/src/types/rule.ts:281`)
+#### body
+
+```text
+// Structural grouping — Normalize restructures these
+```
+
+#### body
+
+```text
+// Named patterns — clean wrappers, no derived metadata
+```
+
+#### body
+
+```text
+// EnumRule is now ChoiceRule (PR-P): removed from union to avoid duplicate
+```
+
+#### body
+
+```text
+// TerminalRule removed (PR-P Task 2): terminals classify by shape at Assemble
+```
+
+#### body
+
+```text
+// Terminals
+```
+
+#### body
+
+```text
+// Structural whitespace
+```
+
+#### body
+
+```text
+// References — symbol refs persist through every phase (they are the
+// cross-rule reference mechanism all the way to emit)
+```
+
+#### body
+
+```text
+// Bounded-lifetime nodes — each collapses to `never` outside its phase
+// window (see the per-type conditionals): alias/token are consumed by
+// Link (surviving into the 'link' view only defensively);
+// optional/field/repeat/repeat1 are consumed by Normalize's
+// applyWrapperDeletion. None appear in the wrapper-free views.
+```
+
+### `packages/codegen/src/types/rule.ts::RenderRule`
 
 ```text
 /**
@@ -495,7 +613,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `SimplifiedRule` (`packages/codegen/src/types/rule.ts:297`)
+### `packages/codegen/src/types/rule.ts::SimplifiedRule`
 
 ```text
 /**
@@ -515,7 +633,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `SeparatorFlankMode` (`packages/codegen/src/types/rule.ts:338`)
+### `packages/codegen/src/types/rule.ts::SeparatorFlankMode`
 
 ```text
 /**
@@ -530,7 +648,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `separator` (`packages/codegen/src/types/rule.ts:354`)
+### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
 /** Same nested shape as RuleBase<NormalizedPhase>.separator, one
@@ -539,7 +657,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 *  fields. */
 ```
 
-### `separator` (`packages/codegen/src/types/rule.ts:368`)
+### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
 /** Evaluate-phase separators are always literal strings,
@@ -547,7 +665,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 				 *  this stays the original sibling shape (unchanged by PR-S). */
 ```
 
-### `separator` (`packages/codegen/src/types/rule.ts:381`)
+### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
 /** Same nested shape as RuleBase<NormalizedPhase>.separator, one
@@ -556,7 +674,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 *  fields. */
 ```
 
-### `separator` (`packages/codegen/src/types/rule.ts:395`)
+### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
 /** Evaluate-phase separators are always literal strings,
@@ -564,7 +682,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 				 *  this stays the original sibling shape (unchanged by PR-S). */
 ```
 
-### `FieldRule` (`packages/codegen/src/types/rule.ts:408`)
+### `packages/codegen/src/types/rule.ts::FieldRule`
 
 ```text
 /**
@@ -580,7 +698,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `blockBearer` (`packages/codegen/src/types/rule.ts:424`)
+```text
+// ---------------------------------------------------------------------------
+// Named patterns
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::blockBearer`
 
 ```text
 /**
@@ -592,7 +716,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `_needsContent` (`packages/codegen/src/types/rule.ts:432`)
+### `packages/codegen/src/types/rule.ts::_needsContent`
 
 ```text
 /**
@@ -603,7 +727,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 			 */
 ```
 
-### `EnumRule` (`packages/codegen/src/types/rule.ts:459`)
+### `packages/codegen/src/types/rule.ts::EnumRule`
 
 ```text
 /**
@@ -617,7 +741,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `SupertypeRule` (`packages/codegen/src/types/rule.ts:495`)
+```text
+/**
+ * (debt: source-homonym resolution, decision 6) `RuleSource` ('grammar' |
+ * 'promoted' | 'override') is DELETED. It wore two different facts under
+ * one name: WHO authored a rule's text (grammar / override — now
+ * `RuleMetadataShape.author`, which also covers 'enrich' and 'evaluate'),
+ * and WHETHER a classification was declared or inferred by link's
+ * structural classifier (the former 'promoted' value — now
+ * `RuleMetadataShape.classifiedBy: 'grammar' | 'link'`, a separate axis,
+ * not an authorship fact). See `dsl/rule-metadata.ts`.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::SupertypeRule`
 
 ```text
 /**
@@ -634,7 +771,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `subtypeParseNames` (`packages/codegen/src/types/rule.ts:512`)
+```text
+/**
+ * Normalize a closed literal set to the canonical rule shape.
+ *
+ * (debt PR-P1) Relocated to `dsl/rule-metadata.ts` — it constructs the
+ * `metadata.source` bag, and `types/` cannot import the dsl-owned
+ * `makeRuleMetadata` write seam (layering: dsl → types ← compiler). See that
+ * module for the implementation; re-exported here is NOT done deliberately —
+ * callers (compiler/link.ts, compiler/evaluate.ts) already import from
+ * `dsl/`, so they import `normalizeEnumMembers` from its new home directly.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::subtypeParseNames`
 
 ```text
 /**
@@ -654,7 +804,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
-### `TransitiveSubtypeRef` (`packages/codegen/src/types/rule.ts:290`)
+### `packages/codegen/src/types/rule.ts::TransitiveSubtypeRef`
 
 ```text
 One transitively-reachable subtype: its storage (render/source) identity
@@ -667,7 +817,12 @@ module layering and cannot import it; model-layer callers
 `NodeOrTerminal` entries from this where needed.
 ```
 
-### `transitiveParseKinds` (`packages/codegen/src/types/rule.ts:297`)
+```text
+// Narrower pair than `NodeOrTerminal` because `types/` sits below `compiler/`
+// in the module layering and cannot import it — see glossary.
+```
+
+### `packages/codegen/src/types/rule.ts::transitiveParseKinds`
 
 ```text
 Transitive parse-kind closure of a supertype's subtypes — recurses through
@@ -695,7 +850,28 @@ one pass per subtype) mirrors the order the previous implementation
 grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 ```
 
-### `SymbolRule` (`packages/codegen/src/types/rule.ts:573`)
+```text
+// See glossary — full contract.
+```
+
+#### body
+
+```text
+// Pass 1: every ALIASED arm's parse (display) identity is reachable
+// here regardless of whether its storage side is itself a nested
+// supertype — in declaration order, before any recursion below.
+```
+
+#### body
+
+```text
+// Pass 2: recurse into every subtype's OWN storage identity, in
+// declaration order — a nested supertype expands to its leaves
+// (never its own name); a plain leaf (aliased or not) lands in the
+// output under its bare storage name.
+```
+
+### `packages/codegen/src/types/rule.ts::SymbolRule`
 
 ```text
 /**
@@ -710,13 +886,22 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
  */
 ```
 
-### `literal` (`packages/codegen/src/types/rule.ts:586`)
+```text
+// ---------------------------------------------------------------------------
+// References. Symbol refs persist through EVERY phase (wrapper-deletion
+// stamps fieldName/multiplicity/separator onto them as leaves — that is the
+// core of the RenderRule design). alias/token are consumed by Link and only
+// exist in the WrapperPhase views.
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::literal`
 
 ```text
 /** Original literal text when Link synthesized this ref from a string token. */
 ```
 
-### `aliasedFrom` (`packages/codegen/src/types/rule.ts:589`)
+### `packages/codegen/src/types/rule.ts::aliasedFrom`
 
 ```text
 /**
@@ -731,7 +916,7 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 	 */
 ```
 
-### `metadata` (`packages/codegen/src/types/runtime-shapes.ts:76`)
+### `packages/codegen/src/types/runtime-shapes.ts::metadata`
 
 ```text
 /** Opaque (debt PR-P1): the former `source?: string` provenance tag is
@@ -741,7 +926,7 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 	 *  constructor; writers cast through `unknown`. */
 ```
 
-### `isLinkSymbol` (`packages/codegen/src/types/rule.ts:360`)
+### `packages/codegen/src/types/rule.ts::isLinkSymbol`
 
 ```text
 /**
@@ -754,26 +939,26 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
  */
 ```
 
-### `isPlainRepeatType` (`packages/codegen/src/types/runtime-shapes.ts:163`)
+### `packages/codegen/src/types/runtime-shapes.ts::isPlainRepeatType`
 
 ```text
 /** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
  *  either should use {@link isRepeatType}. */
 ```
 
-### `isRepeatType` (`packages/codegen/src/types/runtime-shapes.ts:166`)
+### `packages/codegen/src/types/runtime-shapes.ts::isRepeatType`
 
 ```text
 /** Either repeat variant — true for both `repeat` and `repeat1`. */
 ```
 
-### `Severity` (`packages/codegen/src/types/diagnostics.ts`)
+### `packages/codegen/src/types/diagnostics.ts::Severity`
 
 `'fail'` is reserved for the Assemble→Project gate in `emit-gate.ts`. No
 emitter produces it today; the `'error'` / `'warning'` vocabulary plus the
 `canProceed` blocking signal carry all current blocking behaviour.
 
-### `ParseKindCollisionDiagnostic.severity` (`packages/codegen/src/types/parsekind-collisions.ts`)
+### `packages/codegen/src/types/parsekind-collisions.ts::ParseKindCollisionDiagnostic.severity`
 
 `diagnoseParseKindCollisions` always produces `'error'`, but the field is
 widened to the full `Severity` so a caller — `applyUnaliasDistinct` in
@@ -789,7 +974,7 @@ absorb. They are consolidated here rather than written inline as `t === 'SEQ'`
 per call site because callers frequently hold a `t: unknown` and want a typed
 narrowing guard.
 
-### `resolvedKindId` (`packages/codegen/src/types/rule.ts:283`)
+### `packages/codegen/src/types/rule.ts::resolvedKindId`
 
 ```text
 /** Parser-issued anon-token kindId for `value` — stamped once at link
@@ -798,13 +983,13 @@ narrowing guard.
  *  consumer-side migration is a separate, later change). */
 ```
 
-### `resolvedKindId` (`packages/codegen/src/types/rule.ts:292`)
+### `packages/codegen/src/types/rule.ts::resolvedKindId`
 
 ```text
 /** Stamped at link for fixed-literal patterns only — see StringRule. */
 ```
 
-### `kindId` (`packages/codegen/src/types/rule.ts:321`)
+### `packages/codegen/src/types/rule.ts::kindId`
 
 ```text
 /** Parser-issued kindId of this occurrence's own name — stamped once at
@@ -812,11 +997,422 @@ narrowing guard.
  *  (phantom / inline / vaporized). */
 ```
 
-### `aliasedFromId` (`packages/codegen/src/types/rule.ts:322`)
+### `packages/codegen/src/types/rule.ts::aliasedFromId`
 
 ```text
 /** Parser-issued kindId of `aliasedFrom`'s own occurrence, present ONLY
  *  when `aliasedFrom` is set — no fallback to `kindId` (that fallback is a
  *  consumer's job: `aliasedFromId ?? kindId` for whoever needs the
  *  effective storage identity). Stamped at link alongside `kindId`. */
+```
+
+### `packages/codegen/src/types/runtime-shapes.ts::module`
+
+```text
+/**
+ * dsl/runtime-shapes.ts — cross-runtime rule shape utilities.
+ *
+ * **Scope: DSL layer only.** The predicates here are dual-RUNTIME aware
+ * because DSL code runs under two different runtimes:
+ *
+ *   1. **Sittir runtime** — `evaluate.ts` injects `grammarFn` as the
+ *      global `grammar()`. Rules use sittir's `Rule` union in
+ *      `compiler/rule.ts` (UPPERCASE type discriminators, matching
+ *      tree-sitter's own — see decision item 2 in
+ *      `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`).
+ *
+ *   2. **Tree-sitter CLI runtime** — the transpiled `.sittir/grammar.js`
+ *      is loaded by tree-sitter's parser generator. Rules use
+ *      tree-sitter-cli's own `dsl.d.ts` natives — same UPPERCASE
+ *      discriminators, but different SHAPES for some nodes (nested `$`
+ *      refs, `PREC_LEFT` carrying `value`, `optional` lowered to
+ *      `CHOICE(x, BLANK)`, etc. — see the SSOT research doc §0's
+ *      divergence table).
+ *
+ * DSL helpers (`transform`, `applyPath`, `enrich`, `field`, `alias`,
+ * `role`) run in both runtimes, so they must accept both shapes. The
+ * case split that used to motivate `typeEq`'s lower/upper ladders is
+ * GONE (both runtimes now agree on UPPERCASE) — what remains here is
+ * SHAPE normalization: symbol refs sometimes nested (`{symbol:{...}}`),
+ * FIELD `content` typed as `unknown` rather than `Rule`, etc. Consolidate
+ * those predicates + type guards here rather than scattering per-file
+ * shape checks.
+ *
+ * **Do NOT import from here in `compiler/` or `validate/`.** Code past
+ * the evaluate.ts boundary operates on the sittir-internal `Rule` union
+ * exclusively. Use the `isSeq` / `isChoice` / etc. guards in
+ * `compiler/rule.ts` instead. Importing this module from `compiler/` is
+ * a cross-pipeline-leak signal (see MEMORY.md
+ * `feedback_rule_case_as_origin_signal`).
+ */
+```
+
+```text
+/**
+ * The honest return/input type for DSL functions that accept or
+ * produce rules without knowing which runtime they're running in.
+ *
+ * Broader than sittir's `Rule` union: any object with a string
+ * `type` discriminator is a `RuntimeRule`. Consumers that need to
+ * access runtime-specific fields (`members`, `content`, `name`,
+ * ...) must narrow via the guards in this module (`isContainerType`,
+ * `isWrapperType`, `isPrecWrapper`, `isFieldLike`, `isSymbolLike`)
+ * or by pattern-matching on `type` literals.
+ *
+ * Why a supertype rather than a precise union? Both runtimes agree on
+ * UPPERCASE type discriminators, but their SHAPES diverge for some nodes:
+ * nested `$` symbol refs, `PREC_LEFT` carrying `value` as `number` (sittir's
+ * `prec()` strips the wrapper entirely — see `evaluate.ts::prec` — so a
+ * PREC-shaped rule only ever appears via the tree-sitter CLI runtime),
+ * `content: unknown` rather than `Rule`, `optional` lowered to
+ * `CHOICE(x, BLANK)`, etc. (see this file's header, and the SSOT research
+ * doc §0's divergence table). Typing `transform()` as returning `Rule` would
+ * lie to consumers about these shape differences; typing it as
+ * `RuntimeRule` forces an honest narrowing at every inspection point.
+ *
+ * Intentionally shape-minimal (no index signature) so sittir's Rule
+ * interfaces — which don't declare `[k: string]: unknown` — are
+ * structurally assignable via the `type` field alone. Consumers cast
+ * at property-access sites (e.g. `(r as SeqRule).members`).
+ */
+```
+
+### `packages/codegen/src/types/diagnostics.ts::module`
+
+```text
+/**
+ * Unified diagnostics model for sittir codegen.
+ *
+ * One base `Diagnostic` + three scope-discriminated subtypes:
+ *   - GrammarDiagnostic<TRule>     — static, author-facing facts about the grammar
+ *   - CompilerDiagnostic<TSubject> — pipeline-phase issues (rule or node)
+ *   - RuntimeDiagnostic            — render/read/parse execution
+ * `scope` is the discriminant; `ruleId` is the stable back-pointer; `subject`
+ * is an optional typed escape hatch.
+ *
+ * NOTE: NodeData is a generated per-grammar type (emitted by emitters/types.ts),
+ * not statically importable into the compiler. TSubject defaults to `Rule | unknown`
+ * as the documented fallback. Callers with concrete node data may specialize
+ * the generic (e.g. CompilerDiagnostic<MyNodeData>).
+ */
+```
+
+### `packages/codegen/src/types/rule-types.ts::SEQ`
+
+```text
+/**
+ * compiler/rule-types.ts — Rule discriminant tag constants (SLATED FOR REMOVAL).
+ *
+ * Each constant is exactly its tag value (`SEQ === 'SEQ'`). The `Rule`
+ * union in `rule.ts` derives its `type` fields from these via `typeof SEQ`.
+ * (UPPERCASE since debt PR-U — sittir's IR adopted tree-sitter's discriminant
+ * case; see `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`
+ * DECISIONS item 2.)
+ *
+ * DEPRECATED: this const-string layer violates `AGENTS.md` §"Rule type
+ * discrimination" — the `Rule` union is meant to be the single source of truth,
+ * with inline `rule.type === 'SEQ'` literals (type-safe via discriminated-union
+ * narrowing) and the per-variant guards (`isSeq`, ...) in `rule.ts`. This layer
+ * adds no errors over the union itself and is a second vocabulary that can drift.
+ *
+ * It is kept ONLY to avoid a ~5.8k-site / ~70-file codemod inside a feature
+ * branch (the file is shared with PR-N). Removal is tracked as a dedicated
+ * follow-up: `docs/superpowers/plans/2026-06-05-rule-type-consts-codemod.md`.
+ * Do NOT add new imports of these constants — use `rule.type` literals/guards.
+ */
+```
+
+### `packages/codegen/src/types/rule-metadata-brand.ts::RULE_METADATA_BRAND`
+
+```text
+/**
+ * types/rule-metadata-brand.ts — the OPAQUE type for `RuleBase.metadata`.
+ *
+ * Layering note (debt PR-P1): `types/` cannot import from `dsl/` (dsl → types
+ * ← compiler is the acyclic dependency shape; see docs/compiler-phase-glossary.md
+ * "Rule IR" §R11). But `RuleBase.metadata` (types/rule.ts) needs a TYPE here so
+ * every phase-gated Rule shape can carry it, while the real provenance shape and
+ * its construct/read accessors must live in `dsl/rule-metadata.ts` (only dsl-side
+ * code — enrich, wire, diagnostics — is a sanctioned reader of the real shape).
+ *
+ * This file holds ONLY the brand: a nominal type with no structural properties.
+ * `dsl/rule-metadata.ts` imports this brand type and casts through it internally
+ * to implement `makeRuleMetadata` / `readRuleMetadata`. Nothing in `types/` or
+ * `compiler/` may cast through the brand directly — that would defeat the
+ * opacity contract (`feedback_metadata_not_behavior` / decision 3 in
+ * docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md).
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::RuleId`
+
+```text
+/**
+ * compiler/rule.ts — Shared IR
+ *
+ * One type throughout the pipeline. Defined once, never extended.
+ * Rule type presence varies by phase:
+ *   - After Evaluate: symbol, alias, token, repeat1 present
+ *   - After Link: symbol, alias, token gone; group, indent/dedent/newline added.
+ *     `repeat1` is preserved so downstream field/child derivation can stamp the
+ *     `nonEmpty` flag on the resulting slot for emitter tuple-type rendering.
+ *   - After Normalize: variant added; structural grouping may be restructured
+ *
+ * @generated — do not add derived metadata (required, multiple, contentTypes, etc.)
+ *              Those are derived from tree context at Assemble time.
+ */
+```
+
+```text
+// tokenToName is defined locally below to avoid a circular import with
+// compiler/link.ts (which imports helpers from this file). A small map
+// covering the common non-word optionals (`!`, `?`) is enough; bail to
+// null for anything else and the caller falls back to existing behavior.
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Rule — the shared intermediate representation
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::RuleBase.tokenized`
+
+```text
+/**
+	 * Lexical token facts, pushed down onto the content when a
+	 * `token(...)` / `token.immediate(...)` wrapper is flattened (Link's
+	 * TOKEN case) or stamped on synthetic external-scanner rules at
+	 * creation — same push-down discipline as the wrapper-deletion attrs
+	 * below: the fact is stamped where the wrapper dies so it survives it.
+	 * `tokenized` — this subtree lexes as ONE token. `immediate` — the
+	 * grammar forbids whitespace before this token (`token.immediate`, or
+	 * a declared-immediate external): its rendered text must never receive
+	 * a seam space.
+	 */
+```
+
+### `packages/codegen/src/types/rule.ts::RuleBase.fieldName`
+
+```text
+// All stamped attributes below are populated by
+// `applyWrapperDeletion` (Normalize) — the structured `separator`
+// object included: wrapper-deletion carries the repeat node's own
+// link-lifted `separator` object across unchanged as it deletes
+// the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>
+// share this identical nested shape). None of them exist on
+// evaluate/link views' RuleBase (they exist on the repeat/repeat1
+// wrapper nodes themselves pre-deletion).
+```
+
+### `packages/codegen/src/types/rule.ts::RuleBase.separator.terminated`
+
+```text
+// Comma-TERMINATED list family (`(x sep)+ x?`): every element
+// trails its own separator, so a single element REQUIRES the
+// trailing delimiter (rust `(1,)` vs parenthesized `(1)`).
+```
+
+### `packages/codegen/src/types/rule.ts::RuleBase.optionalElement`
+
+```text
+// The deleted wrapper was an optional at the ELEMENT POSITION of a
+// separated repeat: individual list positions may be blank (array
+// elision, `[a, , b]`). Storage for such a slot is
+// `Array<X | undefined>` — a hole is a real position holding no
+// element, distinct from absence of the position.
+```
+
+### `packages/codegen/src/types/rule.ts::RuleBase.prec`
+
+```text
+// Precedence vocabulary stamped by the `prec` rule builder. Link
+// still consumes PREC/PREC_LEFT/PREC_RIGHT/PREC_DYNAMIC wrapper
+// nodes directly this step, so this attribute is reachable on the
+// normalized view but not yet populated by the pipeline.
+```
+
+### `packages/codegen/src/types/rule.ts::SeqRule`
+
+```text
+// ---------------------------------------------------------------------------
+// Structural grouping
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::RepeatRule.separator.terminated`
+
+```text
+/** See RuleBase.separator — comma-terminated list family. */
+```
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule.separator.terminated`
+
+```text
+/** See RuleBase.separator — comma-terminated list family. */
+```
+
+### `packages/codegen/src/types/rule.ts::SupertypeRule.subtypes`
+
+```text
+// Each subtype is a real SymbolRule reference (or, for a bare STRING
+// choice arm with no natural symbol, one synthesized from its catalog
+// entry) — never a name string. This is the same convention every other
+// rule-tree reference to another kind uses (SeqRule/ChoiceRule members),
+// so subtype kindId/aliasedFromId stamp inline on the ref itself
+// (`kindId`, `aliasedFrom`, `aliasedFromId`) instead of a parallel
+// name-keyed table — `aliasedFrom ?? name` recovers the storage name.
+```
+
+### `packages/codegen/src/types/rule.ts::subtypeParseNamesOf`
+
+```text
+/**
+ * Storage→parse name pairs for the aliased arms of a supertype's subtypes —
+ * projected on demand from `SupertypeRule.subtypes` (single source of truth;
+ * replaces the former separately-stored `subtypeParseNames` field).
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::aliasRestampRequired`
+
+```text
+/**
+ * Whether an aliased reference's display (parse) name genuinely diverges
+ * from its storage kind. tree-sitter merges a hidden rule that is referenced
+ * ONLY through a single alias name into the alias symbol at generate time —
+ * one parser id serves both spellings, the wire `$type` already IS the
+ * storage kind, and a normalization pair would remap a node to itself.
+ * Distinct stamped ids mean the parser kept two symbols (the alias is not
+ * globally 1:1 with its source rule), so the display name genuinely differs
+ * from the storage kind. Missing ids keep the pair — the merge cannot be
+ * proven from an absent stamp.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::subtypeRestampPairsOf`
+
+```text
+/**
+ * `subtypeParseNamesOf` narrowed to the arms whose display (parse) name
+ * genuinely differs from the storage kind on the wire (see
+ * {@link aliasRestampRequired}), as `[parseName, storageName]` pairs.
+ * Serialized into the node model's `fieldAliasMap` and consumed by the
+ * corpus validators (`validate/factory-render-parse.ts`, `validate/from.ts`)
+ * to normalize display names against storage kinds; the wire `$type` itself
+ * is the grammar symbol stamped by the native read and needs no restamp.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::StringRule`
+
+```text
+// ---------------------------------------------------------------------------
+// Terminals
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::IndentRule`
+
+```text
+// ---------------------------------------------------------------------------
+// Structural whitespace
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::ImmediateTokenRule`
+
+```text
+// ImmediateTokenRule exists ONLY within the 'evaluate' phase view.
+// `token.immediate()` constructs this real IMMEDIATE_TOKEN-tagged node
+// (matching tree-sitter's own dsl.js shape, and grammar-shapes/grammar-json.ts's
+// existing `ImmediateTokenRule` model of it) instead of folding straight into
+// `TokenRule`'s `immediate: true` — so a dedup/equality check running during
+// enrich (e.g. dsl/rule-patterns.ts's `rulesEqual`, which dispatches purely on
+// `type`) sees the SAME distinct tag under both runtimes, matching tree-sitter's
+// CLI-runtime `token.immediate()` which was never foldable to sittir's shape in
+// the first place. `grammarFn`'s `normalizeImmediateTokens` folds every
+// remaining IMMEDIATE_TOKEN into `TokenRule` + `immediate: true` once enrich's
+// decisions are locked in, matching what the compiler pipeline (Link onward)
+// already expects — see docs/glossary/compiler-model.md's `NodeRef.immediate`.
+```
+
+### `packages/codegen/src/types/rule.ts::PrecRule`
+
+```text
+// Prec*Rule exist ONLY within the 'evaluate' phase view. `prec`/`prec.left`/
+// `prec.right`/`prec.dynamic` construct these (mirroring the PREC/PREC_LEFT/
+// PREC_RIGHT/PREC_DYNAMIC shape `grammar-shapes/grammar-json.ts` already
+// models for tree-sitter's own dsl.js prec, and that `isPrecWrapper`
+// — types/runtime-shapes.ts — already recognizes) so a choice arm's
+// precedence wrapping is visible to enrich's minting decisions under BOTH
+// runtimes identically. `enrich`'s existing `applyClauseHoist` already
+// descends through this exact shape and threads `ambientPrec` — that path
+// was previously dead on sittir's own runtime because sittir's `prec` never
+// produced a shape it could match. Downstream phases (Link onward) never see
+// these — every remaining Prec*Rule collapses back to its content once
+// enrich's minting pass completes.
+```
+
+### `packages/codegen/src/types/rule.ts::isSeq`
+
+```text
+// ---------------------------------------------------------------------------
+// Per-variant type guards
+//
+// Prefer these over inline `r.type === 'SEQ'` checks in `.filter()`,
+// `.find()`, `.some()`, `.every()`, and standalone predicates — they
+// narrow the rule type through the callback (no `as SeqRule` casts
+// downstream). Inside a `switch (rule.type)` stay with literal case
+// arms so TS exhaustiveness checking catches missing variants when
+// new Rule types are added.
+// ---------------------------------------------------------------------------
+```
+
+```text
+// Phase-generic: each guard narrows WITHIN the caller's phase view (for a
+// view where the variant cannot exist — e.g. isOptional on Rule<'normalize'>
+// — the narrowed type is `never`, surfacing the dead check at compile time).
+```
+
+### `packages/codegen/src/types/rule.ts::isString`
+
+```text
+// isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
+```
+
+### `packages/codegen/src/types/rule.ts::SymbolRef`
+
+```text
+// ---------------------------------------------------------------------------
+// Reference graph
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/types/rule.ts::SymbolRef.position`
+
+```text
+// Link adds: index within parent's SEQ
+```
+
+### `packages/codegen/src/types/parsekind-collisions.ts::diagnoseParseKindCollisions`
+
+#### body
+
+```text
+// Distinctness by stamped id where available: same-id values are the
+// same runtime identity even under different names (hidden/visible
+// twins); the name is only the fallback key for id-less values.
+```
+
+#### body
+
+```text
+// Read-time dispatch keys on the WIRE identity — the grammar symbol
+// the read stamps as `$type` (the storage-side id for aliased
+// occurrences). Distinct storage kinds sharing only a DISPLAY name
+// are injective on the wire and need no diagnostic; the defect is
+// distinct storage kinds whose WIRE ids coincide. Values without a
+// stamped storage id cannot prove the wire distinguishes them, so
+// they conservatively share one collision group.
 ```

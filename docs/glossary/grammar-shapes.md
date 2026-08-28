@@ -9,37 +9,46 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `RustSupertypes` (`packages/codegen/src/grammar-shapes/enrich-type.ts:68`)
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::RustSupertypes`
 
 ```text
 /** tree-sitter-rust declared supertypes (from grammar.json `supertypes`). */
 ```
 
-### `RewrapPrec` (`packages/codegen/src/grammar-shapes/enrich-type.ts:83`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::RewrapPrec`
 
 ```text
 /** Wrap `Inner` back in the prec rule `P`'s shape (preserve value+type). */
 ```
 
-### `OptionalInner` (`packages/codegen/src/grammar-shapes/enrich-type.ts:92`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::OptionalInner`
 
 ```text
 /** If `C` is `CHOICE(X, BLANK)`, yields `X`; else `never`. */
 ```
 
-### `BaseFieldName` (`packages/codegen/src/grammar-shapes/enrich-type.ts:117`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::BaseFieldName`
 
 ```text
 /** Base field name for a symbol name (supertype prefix stripped). */
 ```
 
-### `Shape3Symbol` (`packages/codegen/src/grammar-shapes/enrich-type.ts:126`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::Shape3Symbol`
 
 ```text
 /** Shape 3: SEQ whose members are exactly one SYMBOL + anon (STRING/PATTERN). */
 ```
 
-### `MemberWrapName` (`packages/codegen/src/grammar-shapes/enrich-type.ts:148`)
+```text
+// ---------------------------------------------------------------------------
+// Per-member symbol target detection (mirrors detectSymbolTarget).
+// Returns the wrapped symbol NAME (string) eligible for fielding, or never.
+// Applies the `_`-prefix gate: `_`-names only via Shape 1 + supertype.
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::MemberWrapName`
 
 ```text
 /**
@@ -48,13 +57,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `FieldNameFor` (`packages/codegen/src/grammar-shapes/enrich-type.ts:198`)
+```text
+// Shape 1 (bare symbol): `_`-names only if supertype.
+```
+
+```text
+// Shape 2 (optional symbol): `_`-names NEVER (gate).
+```
+
+```text
+// Shape 3 (optional seq with lone symbol): `_`-names NEVER.
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::FieldNameFor`
 
 ```text
 /** Field name to emit: base name if unique among siblings, else `string`. */
 ```
 
-### `ReplaceOptionalMembers` (`packages/codegen/src/grammar-shapes/enrich-type.ts:212`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::ReplaceOptionalMembers`
 
 ```text
 /**
@@ -67,13 +88,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `WrapShape3Members` (`packages/codegen/src/grammar-shapes/enrich-type.ts:224`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::WrapShape3Members`
 
 ```text
 /** Rebuild a Shape-3 SEQ members tuple with its lone SYMBOL FIELD-wrapped. */
 ```
 
-### `EnrichMember` (`packages/codegen/src/grammar-shapes/enrich-type.ts:229`)
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichMember`
 
 ```text
 /**
@@ -82,13 +103,32 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `EnrichSeqMembers` (`packages/codegen/src/grammar-shapes/enrich-type.ts:270`)
+```text
+/* never-guard FIRST: a non-wrap member yields `WName = never`, and a
+		     bare `WName extends string` DISTRIBUTES over never -> never (the
+		     `: N` fallback is unreachable), collapsing every non-wrapped member.
+		     `[never] extends [string]` is `true`, so the never test must precede. */
+```
+
+```text
+// not a wrap target -> unchanged
+```
+
+```text
+// Shape 1
+```
+
+```text
+// Shape 3
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichSeqMembers`
 
 ```text
 /** Map every member of a top-level seq through EnrichMember. */
 ```
 
-### `SymbolRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:63`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::SymbolRule`
 
 ```text
 /** SYMBOL leaf — structurally mirrors tree-sitter's ambient `SymbolRule<Name>`
@@ -100,13 +140,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  changed. */
 ```
 
-### `GrammarRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:134`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::GrammarRule`
 
 ```text
 /** Union of every compiled-grammar.json rule shape (loose any-rule alias). */
 ```
 
-### `AuthoringRule` (`packages/codegen/src/grammar-shapes/grammar-json.ts:153`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::AuthoringRule`
 
 ```text
 /**
@@ -120,13 +160,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `GrammarJson` (`packages/codegen/src/grammar-shapes/grammar-json.ts:179`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::GrammarJson`
 
 ```text
 /** Top-level compiled grammar.json shape (the subset we type off). */
 ```
 
-### `supertypeNames` (`packages/codegen/src/grammar-shapes/grammar-json.ts:183`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::supertypeNames`
 
 ```text
 /** Compiled supertype-name array. Named `supertypeNames` (not
@@ -134,31 +174,31 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  of the same name — see the file header. */
 ```
 
-### `PrecRuleUnion` (`packages/codegen/src/grammar-shapes/grammar-json.ts:193`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::PrecRuleUnion`
 
 ```text
 /** PREC wrappers are transparent to path addressing (skip a segment). */
 ```
 
-### `SingleContentWrapper` (`packages/codegen/src/grammar-shapes/grammar-json.ts:196`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::SingleContentWrapper`
 
 ```text
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 ```
 
-### `PeelPrec` (`packages/codegen/src/grammar-shapes/path-type.ts:48`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::PeelPrec`
 
 ```text
 /** Peel all leading PREC wrappers (transparent) to the structural rule. */
 ```
 
-### `TopLevelKeys` (`packages/codegen/src/grammar-shapes/path-type.ts:59`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::TopLevelKeys`
 
 ```text
 /** Valid first-segment index strings for rule `N` (top-level). */
 ```
 
-### `NonNumericFirstSegment` (`packages/codegen/src/grammar-shapes/path-type.ts:89`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::NonNumericFirstSegment`
 
 ```text
 /** Non-numeric first-segment forms from `parsePath` that the type model
@@ -166,7 +206,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  `'5:'` — TS can't cheaply require a letter-initial; permissive is fine.) */
 ```
 
-### `TransformPatchValue` (`packages/codegen/src/grammar-shapes/path-type.ts:119`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchValue`
 
 ```text
 /** Patch values accepted in a transform patch-map: tree-sitter `RuleOrLiteral`
@@ -185,13 +225,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  the whole value type and accept anything). */
 ```
 
-### `TransformPatchMap` (`packages/codegen/src/grammar-shapes/path-type.ts:135`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 
 ```text
 /** A single patch-map for one rule: path-key → patch value. */
 ```
 
-### `FastKeys` (`packages/codegen/src/grammar-shapes/path-type.ts:138`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::FastKeys`
 
 ```text
 /** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
@@ -208,7 +248,7 @@ tree-sitter union.
 `PrecRuleUnion` and `SingleContentWrapper` are the discriminant guards used by
 the purely type-level `Enrich<>` and path types.
 
-### `MutableDeep` (`packages/codegen/src/grammar-shapes/grammar-json.ts`)
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::MutableDeep`
 
 The readonly→mutable bridge, used ONLY to PROVE the subtyping ladder
 `GrammarJson ⊑ GrammarSchema<string>` (modulo readonly). It recursively strips
@@ -225,7 +265,7 @@ transparently peeling PREC wrappers.
 one. It is the union of valid top-level index segments for a rule (after the
 PREC peel), and editors offer these as completions for the first path segment.
 
-### `PathKey` (`packages/codegen/src/grammar-shapes/path-type.ts`)
+### `packages/codegen/src/grammar-shapes/path-type.ts::PathKey`
 
 The type a transform patch-object KEY should have for rule `N`.
 
@@ -263,3 +303,259 @@ without touching the value/mapping machinery:
 The type-only imports of the DSL primitive return interfaces keep the value
 axis DRY and introduce no runtime cycle — the primitives don't import
 `grammar-shapes`.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::module`
+
+```text
+/**
+ * path-type.ts — type-level FIRST-SEGMENT addressing for transform PATH
+ * keys over a (post-Enrich) rule shape.
+ *
+ * Only the first path segment is resolved precisely (`TopLevelKeys`), after
+ * transparently peeling PREC wrappers (PREC does not consume a segment):
+ *
+ *   - SEQ / CHOICE  : the segment must be a valid `members` index.
+ *   - single-content wrappers (FIELD/ALIAS/REPEAT/REPEAT1/TOKEN/
+ *     IMMEDIATE_TOKEN) : the only valid segment is `'0'`.
+ *   - leaves (SYMBOL/STRING/PATTERN/BLANK) : no valid segment (`never`).
+ *
+ * Everything past the first segment (`PathKey`'s `/${string}` tail) is
+ * free-form and unchecked — deep paths are accepted permissively rather
+ * than walked and bounds-checked (soundness: never REJECT a deep path we
+ * can't prove invalid). The full recursive path-to-rule resolver this
+ * module used to expose (`RuleAtPath`) was deleted as dead code (Track 1
+ * sweep, commit `662fde555`); this module now only powers segment-1
+ * autocomplete/validation, not full path resolution.
+ *
+ * Paths are `/`-joined segments, e.g. `'4/0'`, `'1/0'`. We model numeric
+ * segments only (the dominant authoring form). Wildcard `_`, kind-match
+ * `(name)`, and field-traversal `name:` are accepted by the runtime but are
+ * left as `string`-typed escape hatches here (see PathKey below) — typing
+ * them precisely is future work and degrading to `string` is sound.
+ *
+ * PERF (the stated risk): First-segment autocomplete (`TopLevelKeys`) is a
+ * cheap hand-rolled union over the top-level members tuple, NOT a full path
+ * walk over all paths (no `type-fest` `Paths` over the 182-rule registry,
+ * which would blow up). SYMBOL stays a lazy name-tagged leaf: we do NOT
+ * follow symbols cross-rule (authored paths address within one rule's
+ * inline nesting).
+ */
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::module`
+
+```text
+/**
+ * enrich-type.ts — type-level mirror of `dsl/enrich.ts`'s STRUCTURAL field
+ * insertion, for one rule body.
+ *
+ * WHY this is the linchpin: enrich is NOT path-transparent — it INSERTS
+ * `FIELD(...)` rules into the rule tree. A transform path that crosses a
+ * wrapped position gains a level. So `Enrich<>` must reproduce enrich's
+ * insertion sites exactly, or every typed path is confidently wrong.
+ *
+ * EMPIRICAL CONTRACT (verified against runtime `enrich()` on all 182
+ * tree-sitter-rust rules — see enrich-fidelity.test.ts):
+ *
+ *  - Structure is FULLY LOCALLY DECIDABLE on rust: there are ZERO
+ *    structural skips. Every top-level seq member matching Shape 1/2/3
+ *    (after the `_`-prefix + supertype gate) becomes a FIELD at the SAME
+ *    index. No nested-repeat disqualification or claimed-name collision
+ *    causes a structural divergence on rust. So `Enrich<>` needs NO
+ *    cross-tuple counting for the STRUCTURE — only local shape checks.
+ *
+ *  - Insertion sites are SHALLOW: only direct top-level seq members (after
+ *    peeling PREC), plus one `REPEAT(seq(...))` / `REPEAT1(seq(...))`
+ *    level. enrich does NOT wrap symbols buried deeper in nested
+ *    choices/seqs. Below an insertion site the structure equals raw.
+ *
+ *  - The three shapes (mirroring `detectSymbolTarget`):
+ *      Shape 1: bare `SYMBOL`                          -> FIELD wraps it
+ *      Shape 2: `CHOICE(SYMBOL, BLANK)` (= optional)   -> FIELD wraps inner SYMBOL
+ *      Shape 3: `CHOICE(SEQ(SYMBOL, anon...), BLANK)`  -> FIELD wraps the SYMBOL in the seq
+ *    (compiled grammar.json has NO OPTIONAL rule; optionals are
+ *    CHOICE(_, BLANK).)
+ *
+ *  - The `_`-prefix gate (mirroring applySymbolToField): a symbol whose
+ *    name starts with `_` only wraps when it is Shape 1 AND its name is a
+ *    declared supertype; then the field name is the name with `_` stripped.
+ *    `_`-prefixed Shape 2/3 are LEFT UNWRAPPED (e.g. break_expression's
+ *    `optional($._expression)` stays raw; reference_type's
+ *    `optional($.lifetime)` wraps because `lifetime` is non-`_`).
+ *
+ *  - The optional-keyword (`_marker`) pass does NOT fire on compiled
+ *    grammar.json: `walkOptionalKeyword` matches CHOICE before peeling, so
+ *    a compiled `CHOICE(STRING,BLANK)` is never seen as an optional. (The
+ *    `*_marker` fields in the generated grammar are AUTHOR overrides, not
+ *    enrich output.) So `Enrich<>` does NOT model it. NOTE: this is
+ *    input-form-dependent — sittir's `{type:'OPTIONAL'}` form WOULD fire
+ *    pass 3; correct here only because we type off compiled grammar.json.
+ *
+ * SOUNDNESS: field NAMES for numbered duplicates (e.g. index_expression's
+ * `expression1`/`expression2`) need cross-tuple counting. Per the soundness
+ * rule (degrade NAME, never STRUCTURE), when a wrapped symbol's name is not
+ * provably unique among its siblings we widen the inserted FIELD's `name`
+ * to `string` rather than guess. The FIELD still lands at the right index,
+ * so PATHS stay correct; only the displayed name degrades. (On rust this
+ * affects only `type_item` and `index_expression`.)
+ */
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::IsPrec`
+
+```text
+// ---------------------------------------------------------------------------
+// PREC transparency — peel/rebuild a single layer at a time.
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::IsBlank`
+
+```text
+// ---------------------------------------------------------------------------
+// optional detection: CHOICE(X, BLANK) (order-insensitive, exactly 2 members)
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::StripUnderscore`
+
+```text
+// ---------------------------------------------------------------------------
+// Field-name decision for a wrapped symbol.
+// ---------------------------------------------------------------------------
+```
+
+```text
+/* Soundness: numbered-duplicate names need cross-tuple counting, which we do
+   NOT attempt structurally. The base name is the symbol name (supertype:
+   strip leading `_`). When the same base name occurs more than once among the
+   seq's wrap-eligible members, the runtime numbers them — so we widen to
+   `string` (degrade NAME, keep STRUCTURE). Uniqueness is decided by
+   CountBaseName over the members tuple. */
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::ExtractLoneSymbol`
+
+```text
+// >1 SYMBOL -> too complex
+```
+
+```text
+// non-anon, non-symbol -> too complex
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::CountBase`
+
+```text
+// Count how many members share a given base field name (for uniqueness).
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::WrapShape1`
+
+```text
+// ---------------------------------------------------------------------------
+// Member rewrite: insert FIELD at the wrap site, preserving structure.
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichMember.type`
+
+```text
+// Shape 2
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRepeatContent`
+
+```text
+// ---------------------------------------------------------------------------
+// Repeat(seq(...)) one-level descent (mirrors promoteInsideRepeatMembers /
+// tryPromoteInRepeatSeq). We field-promote bare symbols inside a
+// REPEAT/REPEAT1 whose content is a SEQ, at one level only.
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRule`
+
+```text
+// ---------------------------------------------------------------------------
+// Top-level entry: Enrich one rule body.
+//   - PREC: peel transparently, enrich inner, rewrap.
+//   - SEQ:  enrich each member.
+//   - REPEAT/REPEAT1 of SEQ: enrich the inner seq members.
+//   - anything else (bare CHOICE of symbols, single SYMBOL, token, etc.):
+//     unchanged (enrich only wraps within a top-level SEQ context).
+// ---------------------------------------------------------------------------
+```
+
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::SeqRule`
+
+```text
+/**
+ * grammar-json.ts — tuple-precise REFINEMENT of tree-sitter's ambient `Rule`
+ * vocabulary (from `tree-sitter-cli/dsl.d.ts`, in tsconfig `types`).
+ *
+ * tree-sitter's `Rule` is shapeless for our purpose: `SeqRule = { type:'SEQ';
+ * members: Rule[] }` collapses every member to the `Rule` union, so there is
+ * no positional information for path addressing. We ADD the recursion by
+ * PARAMETERIZING each rule over its content:
+ *
+ *   SeqRule<M>       ChoiceRule<M>      — M extends readonly GrammarRule[] (tuple-precise)
+ *   FieldRule<N,C>   RepeatRule<C> …    — C extends GrammarRule (single content slot)
+ *   SymbolRule<N>    mirrors tree-sitter's ambient SymbolRule<N> shape (a leaf)
+ *   StringRule<V>  PatternRule<V>  BlankRule — leaves
+ *
+ * SINGLE VOCABULARY: these are tree-sitter's discriminants, refined. Leaves
+ * mirror tree-sitter's shapes structurally (`SymbolRule<N>`). The `as const`
+ * grammar.json emit instantiates these with concrete READONLY tuples; the
+ * deriver / Enrich<> / path types operate on that form.
+ *
+ * READONLY, by necessity (documented deviation from "rule MUST extend Rule"):
+ * `as const` produces readonly tuples, and positional path indexing
+ * (`members[0]`) + `EnrichRule<>`'s `N extends SeqRule<…>` matching both REQUIRE
+ * readonly. But a readonly-membered container is NOT assignable to
+ * tree-sitter's mutable `Rule` (`{ members: Rule[] }`) — empirically proven.
+ * The two requirements (readonly-for-paths vs rule⊑Rule) are mutually
+ * exclusive under one variance. Resolution:
+ *   - bound containers over `readonly GrammarRule[]` (our union), NOT
+ *     `readonly Rule[]` (which would demand GrammarRule ⊑ Rule → false).
+ *   - the `$` proxy returns `SymbolRule<R>` (a leaf, IS RuleOrLiteral) so
+ *     `$.r` still composes in seq()/choice(); it does NOT return the
+ *     readonly recursive shape (which wouldn't compose, and isn't what
+ *     tree-sitter returns at runtime anyway).
+ *   - the `GrammarJson extends GrammarSchema<string>` ladder is proven via
+ *     a `MutableDeep<>` bridge (below), not by making rules literally ⊑ Rule.
+ *
+ * NOTE: compiled grammar.json has NO `OPTIONAL` rule — tree-sitter lowers
+ * `optional(x)` to `CHOICE(x, BLANK)`. The Enrich<> + path machinery match
+ * on `CHOICE(_, BLANK)`, never a phantom OPTIONAL.
+ *
+ * `supertypes` rename: compiled grammar.json carries `supertypes: string[]`,
+ * but tree-sitter's ambient `Grammar.supertypes` is an AUTHORING CALLBACK
+ * (`($, prev) => RuleOrLiteral[]`). The two collide on the same key, blocking
+ * `GrammarJson extends GrammarSchema<string>`. We emit the array under
+ * `supertypeNames` instead. Nothing depends on the typed field (the runtime
+ * cross-check reads the raw `require`; the type-level supertype set is the
+ * hardcoded `RustSupertypes`).
+ */
+```
+
+### `packages/codegen/src/grammar-shapes/grammar-shape.rust.ts::module`
+
+```text
+/**
+ * grammar-shape.rust.ts — GENERATED literal+tuple-preserving emit of the
+ * RAW upstream tree-sitter-rust grammar.json.
+ *
+ * Emitted with `as const` so every STRING value stays a string LITERAL,
+ * every rule name stays a literal key, and every JSON array becomes a
+ * readonly TUPLE (positional indexing survives). A plain
+ * `resolveJsonModule` import would widen all of these to
+ * `string` / `T[]` and destroy the discriminants + tuple indices the
+ * recursive deriver and path-key `Get` depend on.
+ *
+ * DO NOT hand-edit. Regenerate via grammar-shapes/emit-grammar-shape.mjs.
+ *
+ * Source (realpath, same pnpm-store entry as the production base import):
+ *   node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/src/grammar.json
+ */
+```
