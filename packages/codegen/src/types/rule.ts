@@ -39,6 +39,8 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 
 	readonly inlinedFrom?: string;
 
+	readonly absorbedIds?: readonly RuleId[];
+
 	readonly metadata?: RuleMetadata;
 
 	readonly splicedBody?: boolean;

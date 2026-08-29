@@ -1442,14 +1442,13 @@ parents.
 #### body
 
 ```text
-// A sanctioned union slot's addressable positions are every one of its
-// arms, not just the CHOICE root — the render-rule's per-arm scan
-// (`emitChoice`'s union-backed path in templates.ts) resolves EACH arm
-// symbol independently via `lookupSlot`'s primary `slotByRuleId` path,
-// so each arm's own id must also back-point to this slot. Scoped to the
-// union-slot path only (never the general case) — a non-union rule's
-// members belong to their OWN slots, and merging their ids in here would
-// misroute `slotByRuleId` for them.
+// A CHOICE slot's addressable positions are every one of its members, not
+// just the CHOICE root: `sourceRuleIds` includes each member's own id and
+// its `absorbedIds` alongside the rule's own id and `absorbedIds`. A choice
+// of leaves IS one union-valued slot, so its members' ids belong to it —
+// this holds for any CHOICE slot, not only the sanctioned-union-routing
+// path, since `emitChoice`'s per-arm scan resolves EACH arm symbol
+// independently via `lookupSlot`'s primary `slotByRuleId` path.
 ```
 
 #### body
@@ -5321,10 +5320,13 @@ parents.
  * Merge a choice of structurally-equivalent branches into one flat seq: every
  * position must be pairwise mergeable (same symbol / supertype / literal, or
  * JSON-equal) and at most one position may vary, in which case the first
- * branch's member stands for it. Bails (→ `liftSharedArmAttrs`) otherwise;
- * NEVER unwraps `variant()`. Typed on the wrapper-free view: a field arrives
- * as `fieldName` on its content, never as a FieldRule, so a differing
- * slot-promoted literal is simply a non-mergeable STRING position.
+ * branch's member stands for it and absorbs the other branches' members at
+ * that position (`absorbIds`) — the merged position keeps one member, but
+ * every folded branch's id is still reachable through it. Bails
+ * (→ `liftSharedArmAttrs`) otherwise; NEVER unwraps `variant()`. Typed on the
+ * wrapper-free view: a field arrives as `fieldName` on its content, never as
+ * a FieldRule, so a differing slot-promoted literal is simply a
+ * non-mergeable STRING position.
  */
 ```
 
@@ -10293,10 +10295,13 @@ source, one derivation.
  * member list (choice associativity) — each spliced arm carries the nested
  * node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …,
  * already flattened to attributes by this phase) via `withAttrsFrom` onto
- * that arm, not the nested CHOICE node itself. Then: fold an empty-match
- * member (`pattern("")`, empty seq) into `optional`; collapse a single
- * member; merge structurally-equivalent branches (`mergeBranchesForChoice`).
- * Variant wrappers are preserved for polymorph detection.
+ * that arm, not the nested CHOICE node itself, and the parent absorbs the
+ * spliced-away nested choices' ids (`absorbIds`). Then: fold an empty-match
+ * member (`pattern("")`, empty seq) into `optional`, where a single
+ * surviving non-empty member absorbs the wrapper choice's id; collapse a
+ * single member the same way; merge structurally-equivalent branches
+ * (`mergeBranchesForChoice`). Variant wrappers are preserved for polymorph
+ * detection.
  *
  * Constructs through `ctx.builder` (`RuleBuilder<'normalize'>` — always
  * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather

@@ -91,19 +91,26 @@ interface SlotLookupMiss {
 	readonly name: string | undefined;
 	readonly fieldName: string | undefined;
 	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'alias-source' | 'none';
+	readonly structural: boolean;
 }
 const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
 const SLOT_MISS_LOG: SlotLookupMiss[] = [];
 function dumpSlotMissLog(grammar: string): void {
 	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
 	const tally = { fieldName: 0, 'symbol-name': 0, 'alias-source': 0, none: 0 } as Record<string, number>;
-	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
+	let structural = 0;
+	for (const m of SLOT_MISS_LOG) {
+		if (m.structural) structural++;
+		else tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
+	}
+	const unexpected = SLOT_MISS_LOG.length - structural;
 	process.stderr.write(
-		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
+		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total: ` +
+			`${structural} structural (choice with seq arms, no single slot to resolve), ${unexpected} unexpected ` +
 			`(recovered fieldName=${tally.fieldName} symbol-name=${tally['symbol-name']} UNRESOLVED=${tally.none}) ===\n`
 	);
 	for (const m of SLOT_MISS_LOG) {
-		const tag = m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
+		const tag = m.structural ? 'structural ' : m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
 		const label = m.name ? `${m.ruleType}(${m.name})` : m.ruleType;
 		process.stderr.write(
 			`  ${tag} kind=${m.kind ?? '?'} ${label}${m.fieldName ? ` field=${m.fieldName}` : ''} id=${m.ruleId ?? '<none>'}\n`
@@ -498,7 +505,8 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			ruleId: rule.id,
 			name: (rule as { name?: string }).name,
 			fieldName: (rule as { fieldName?: string }).fieldName,
-			recoveredBy
+			recoveredBy,
+			structural: rule.type === CHOICE && rule.members.some((m) => m.type === SEQ)
 		});
 	}
 	return recovered;

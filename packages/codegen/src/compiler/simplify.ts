@@ -21,7 +21,7 @@ import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
-import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
+import { withAttrsFrom, sharedArmAttrs, absorbIds } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { attributeBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -173,7 +173,8 @@ export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
 	}
 	const mergedMembers: RenderRule[] = [];
 	for (let i = 0; i < len; i++) {
-		mergedMembers.push(unwrapped[0]!.members[i]!);
+		const position = unwrapped.map((br) => br.members[i]!);
+		mergedMembers.push(absorbIds(position[0]!, ...position.slice(1)));
 	}
 	if (mergedMembers.length === 0) return { type: SEQ, members: [] };
 	if (mergedMembers.length === 1) return mergedMembers[0]!;
@@ -279,15 +280,18 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
 	const b = ctx.builder;
+	const nested = rule.members.filter((m) => m.type === CHOICE);
+	const host: ChoiceRule = nested.length > 0 ? absorbIds(rule, ...nested) : rule;
 	const members = rule.members.flatMap((m) => (m.type === CHOICE ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]));
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);
-		const inner: RenderRule = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, ...b.choice(...nonEmpty) };
-		return withAttrsFrom(rule, b.optional(inner));
+		const inner: RenderRule =
+			nonEmpty.length === 1 ? absorbIds(nonEmpty[0]!, host) : { ...host, ...b.choice(...nonEmpty) };
+		return withAttrsFrom(host, b.optional(inner));
 	}
-	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-	return { ...rule, ...mergeBranchesForChoice(b.choice(...members)) };
+	if (members.length === 1) return withAttrsFrom(host, absorbIds(members[0]!, host));
+	return { ...host, ...mergeBranchesForChoice(b.choice(...members)) };
 }
 
 export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {

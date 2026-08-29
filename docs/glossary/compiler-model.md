@@ -202,9 +202,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * it — no re-flattening. A nested bare seq that simplify left behind reaches
  * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
  * derive-audit is there to surface); re-splicing it here would mask that.
- * The audit is the slot derivation's: `buildSlotsRecord`'s id harvest over
- * the render rule (where nested seqs are legitimate render structure)
- * passes `shapeAudit: false`.
+ * `DeriveCtx.shapeAudit` lets a caller opt a rule out of the audit
+ * (`shapeAudit: false`); every current caller derives slots straight from
+ * the simplified tree and leaves the audit on.
  */
 ```
 
@@ -914,20 +914,19 @@ can't be unified.
 ```text
 /**
  * Build the frozen slot Record for an AssembledBranch (or any kind that
- * uses the slot-Record surface). Walks `deriveSlots(rule)` over the
- * simplified rule — the one derivation of what is a slot — and keys each
- * slot by its name. Insertion order = declared rule order.
+ * uses the slot-Record surface). Signature `(rule: SimplifiedRule, ctx:
+ * KindedDeriveCtx)`. Walks `deriveSlots(rule, ctx)` over the simplified
+ * rule — the one derivation of what is a slot — and keys each slot by its
+ * name. Insertion order = declared rule order.
  *
- * A second `deriveSlots` over the render rule (an id harvest, not a shape
- * derivation: `shapeAudit: false`) only widens each slot's `sourceRuleIds`.
- * An inlined reference already keeps its own id (`inlineRefs`) and a
- * discarded wrapper's id lands on its survivor (`flatten`, `withAttrsFrom`);
- * what the harvest still supplies is the ids of choice ARMS that simplify
- * merged into one slot (`'+' field rhs` / `'-' field rhs` → one `rhs`;
- * rust `_let_chain.left`) — the merged member carries one id, the render
- * tree keeps every arm's. The harvest goes when the arm merge accumulates
- * the merged ids (`node-map-backpointers.test.ts` pins the invariant;
- * `DBG_SLOT_MISS=1` must then show no new recoveries).
+ * Slots derive from the simplified rule only; there is no second
+ * derivation over a render rule and no `renderRule` parameter. An inlined
+ * reference already keeps its own id (`inlineRefs`), a discarded wrapper's
+ * id lands on its survivor (`flatten`, `withAttrsFrom`), and a choice arm
+ * that simplify merges or splices away (`'+' field rhs` / `'-' field rhs`
+ * → one `rhs`; rust `_let_chain.left`) carries its id forward as
+ * `absorbedIds` on the surviving node — so `buildSlot`'s `sourceRuleIds`
+ * resolves every merged-away id straight from the simplified tree.
  */
 ```
 
@@ -1630,7 +1629,7 @@ can't be unified.
 
 ```text
 /**
-	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
+	 * Ids of every simplified-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
 	 */
 ```
@@ -2437,11 +2436,13 @@ can't be unified.
 
 ```text
 /**
-	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
-	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
-	 * view a consumer walks to the owning slot without owner traversal. Empty
-	 * when the source rules carry no ids (hand-constructed test fixtures that
-	 * bypass `buildRuleCatalog`). See feedback_ruleid_backpointer / FOLD-1.
+	 * Ids of every simplified-rule position that produced this slot: the
+	 * rule's own id, its `absorbedIds`, and — for a CHOICE slot — every
+	 * member's id and `absorbedIds`. Used by `NodeMap.slotByRuleId` to
+	 * back-pointer from a simplified-rule id to the owning slot without
+	 * owner traversal. Empty when the source rules carry no ids
+	 * (hand-constructed test fixtures that bypass `buildRuleCatalog`). See
+	 * feedback_ruleid_backpointer / FOLD-1.
 	 */
 ```
 

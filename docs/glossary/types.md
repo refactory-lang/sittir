@@ -475,6 +475,22 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/types/rule.ts::absorbedIds`
+
+```text
+/** Ids of nodes this rule absorbed when simplify reduced them into it:
+ *  a nested CHOICE spliced into its parent choice, a wrapper choice
+ *  collapsed onto its single surviving member, or the other branches'
+ *  members at a position `mergeBranchesForChoice` folds into one. Stamped
+ *  by `dsl/rule-attrs.ts::absorbIds` and carried forward by ordinary
+ *  spread like every other attribute. `collect-slots.ts::buildSlot` reads
+ *  it to resolve a slot's `sourceRuleIds` against ids the simplified tree
+ *  no longer holds a node for — the simplified tree carries every
+ *  absorbed id itself, so no second derivation over another rule view is
+ *  needed to find them.
+ */
+```
+
 ### `packages/codegen/src/types/rule.ts::kind`
 
 ```text

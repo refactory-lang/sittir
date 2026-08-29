@@ -24,6 +24,16 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	return { ...result, ...patch };
 }
 
+export function absorbIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
+	const ids = new Set<RuleId>(host.absorbedIds ?? []);
+	for (const r of absorbed) {
+		if (r.id !== undefined && r.id !== host.id) ids.add(r.id);
+		for (const id of r.absorbedIds ?? []) if (id !== host.id) ids.add(id);
+	}
+	if (ids.size === (host.absorbedIds?.length ?? 0)) return host;
+	return { ...host, absorbedIds: [...ids] };
+}
+
 export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {
 	const { hidden, inlinedFrom } = source;
 	const patch: { hidden?: boolean; inlinedFrom?: string } = {};

@@ -390,8 +390,8 @@ function buildSlot(
 	});
 
 	const memberIds =
-		sanctionedUnion && rule.type === CHOICE ? rule.members.map((m) => m.id).filter((id): id is string => !!id) : [];
-	const sourceRuleIds = [...(rule.id ? [rule.id] : []), ...memberIds];
+		rule.type === CHOICE ? rule.members.flatMap((m) => [...(m.id ? [m.id] : []), ...(m.absorbedIds ?? [])]) : [];
+	const sourceRuleIds = [...new Set([...(rule.id ? [rule.id] : []), ...(rule.absorbedIds ?? []), ...memberIds])];
 
 	return new AssembledNonterminal({
 		values,

@@ -29,15 +29,6 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[5]] alongside union arm(s) [enum_assignment]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",

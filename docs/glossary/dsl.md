@@ -1964,6 +1964,19 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
+### `packages/codegen/src/dsl/rule-attrs.ts::absorbIds`
+
+```text
+/** `absorbIds(host, ...absorbed)` returns `host` with `absorbedIds`
+ *  extended by each absorbed rule's own `id` and its own `absorbedIds`
+ *  (deduped, and never the host's own id). Returns `host` unchanged when
+ *  nothing new is added. Used wherever simplify reduces sibling or nested
+ *  nodes into one survivor — the survivor's `absorbedIds` is how a later
+ *  slot lookup still resolves an id the simplified tree no longer has a
+ *  node for.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::withKindFacts`
 
 ```text

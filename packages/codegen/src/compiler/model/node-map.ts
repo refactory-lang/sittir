@@ -1380,21 +1380,9 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 	return closure;
 }
 
-function buildSlotsRecord(
-	rule: SimplifiedRule,
-	ctx: KindedDeriveCtx,
-	renderRule: RenderRule
-): Readonly<Record<string, AssembledNonterminal>> {
+function buildSlotsRecord(rule: SimplifiedRule, ctx: KindedDeriveCtx): Readonly<Record<string, AssembledNonterminal>> {
 	const kind = ctx.kindName;
 	const slots = [...deriveSlots(rule, ctx)];
-	for (const renderSlot of deriveSlots(renderRule, { ...ctx, shapeAudit: false })) {
-		const existing = slots.find((slot) => slot.name === renderSlot.name);
-		if (!existing) continue;
-		const next = existing.with({
-			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds)
-		});
-		slots.splice(slots.indexOf(existing), 1, next);
-	}
 	let resolvedSlots = resolveParseKindCollisions(slots, ctx);
 
 	resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
@@ -1505,9 +1493,7 @@ export class AssembledBranch extends AssembledNodeBase<RenderRule> {
 					collision: opts?.parseKindCollisionContext,
 					visibleAliasTargets: opts?.visibleAliasTargets,
 					simplifiedRules: opts?.simplifiedRules
-				},
-				renderRule
-			);
+				});
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -1912,9 +1898,7 @@ export class AssembledGroup extends AssembledNodeBase<RenderRule> {
 		this.overridePassthrough = opts?.overridePassthrough;
 		this._slots = buildSlotsRecord(
 			simplifiedRule,
-			{ kindName: kind, kindEntries: opts?.kindEntries, collision: opts?.parseKindCollisionContext },
-			renderRule
-		);
+			{ kindName: kind, kindEntries: opts?.kindEntries, collision: opts?.parseKindCollisionContext });
 	}
 
 	get renderRule(): RenderRule {
@@ -1991,9 +1975,7 @@ export class AssembledSeparatedList extends AssembledNodeBase<SeparatedListEleme
 		this.renderRule = opts.renderRule;
 		this._slots = buildSlotsRecord(
 			opts.simplifiedRule,
-			{ kindName: kind, kindEntries: opts.kindEntries, collision: opts.parseKindCollisionContext },
-			opts.renderRule
-		);
+			{ kindName: kind, kindEntries: opts.kindEntries, collision: opts.parseKindCollisionContext });
 	}
 
 	get nonEmpty(): boolean {
