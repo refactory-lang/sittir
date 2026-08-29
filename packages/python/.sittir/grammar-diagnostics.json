@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -241,60 +241,5 @@
     },
     "scope": "grammar",
     "grammar": "python"
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_suite",
-    "slotName": "block",
-    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "block",
-      "storageKinds": [
-        "_simple_statements",
-        "block",
-        "_newline"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_expression_within_for_in_clause",
-    "slotName": "lambda",
-    "message": "Slot 'lambda' of kind '_expression_within_for_in_clause' collapses [lambda, lambda_within_for_in_clause] onto parse kind 'lambda'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "lambda",
-      "storageKinds": [
-        "lambda",
-        "lambda_within_for_in_clause"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_argument_list_elements",
-    "slotName": "parenthesized_expression",
-    "message": "Slot 'parenthesized_expression' of kind '_argument_list_elements' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "parenthesized_expression",
-      "storageKinds": [
-        "parenthesized_expression",
-        "parenthesized_list_splat"
-      ]
-    }
   }
 ]

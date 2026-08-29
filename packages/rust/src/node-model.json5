@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 371,
+  "nodeCount": 369,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -209,37 +209,38 @@
       "field_identifier": "identifier"
     },
     "field_declaration.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "const_item.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "static_item.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_item.name": {
       "type_identifier": "identifier"
     },
     "type_item.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_item.return_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_signature_item.return_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "where_predicate.left": {
-      "type_identifier": "identifier"
+      "type_identifier": "identifier",
+      "primitive_type": "_primitive_type"
     },
     "impl_item.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "trait_item.name": {
@@ -249,54 +250,54 @@
       "type_identifier": "identifier"
     },
     "trait_bounds.bounds": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "higher_ranked_trait_bound.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "removed_trait_bound.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "const_parameter.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
     },
     "type_parameter.default_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "let_declaration.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "parameter.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "bracketed_type.content": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "qualified_type.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "qualified_type.alias": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "array_type.element": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_type.return_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "generic_type.type": {
@@ -306,26 +307,26 @@
       "type_identifier": "identifier"
     },
     "bounded_type.left": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "bounded_type.right": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_binding.name": {
       "type_identifier": "identifier"
     },
     "type_binding.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "reference_type.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "pointer_type.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "abstract_type.trait": {
@@ -350,7 +351,7 @@
       "type_identifier": "identifier"
     },
     "type_cast_expression.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "struct_expression.name": {
@@ -359,15 +360,6 @@
     },
     "field_initializer.field": {
       "field_identifier": "identifier"
-    },
-    "if_expression.condition": {
-      "let_chain": "_let_chain"
-    },
-    "match_pattern.condition": {
-      "let_chain": "_let_chain"
-    },
-    "while_expression.condition": {
-      "let_chain": "_let_chain"
     },
     "field_expression.field": {
       "field_identifier": "identifier"
@@ -385,28 +377,25 @@
       "string_content": "raw_string_literal_content"
     },
     "_function_item_optional1.return_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_type_parameter_optional1.default_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_let_declaration_optional1.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_use_bounds_elements.element": {
       "type_identifier": "identifier"
     },
-    "_match_pattern_optional1.condition": {
-      "let_chain": "_let_chain"
-    },
     "_attribute_arm.arguments": {
       "token_tree": "delim_token_tree"
     },
     "_tuple_type_elements.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_impl_item_positive_clause.trait": {
@@ -416,7 +405,7 @@
       "type_identifier": "identifier"
     },
     "_closure_expression_block.return_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_field_pattern_named.name": {
@@ -441,15 +430,15 @@
       "token_tree": "delim_token_tree"
     },
     "_attributed_parameter.content": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_attributed_ordered_field.type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_type_argument.content": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     }
   },
@@ -4991,9 +4980,9 @@
       "hidden": true,
       "subtypes": [
         "_non_delim_token",
+        "_non_special_token",
         "delim_token_tree",
-        "non_special_token",
-        "token_tree_punctuation"
+        "dollar"
       ]
     },
     {
@@ -6350,40 +6339,6 @@
       ]
     },
     {
-      "kind": "_match_block_optional1",
-      "modelType": "branch",
-      "typeName": "MatchBlockOptional1",
-      "factoryName": "matchBlockOptional1",
-      "irKey": "matchBlockOptional1",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "match_block_arms",
-          "propertyName": "matchBlockArms",
-          "paramName": "matchBlockArms",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_match_block_arms",
-              "parseKind": "match_block_arms",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_match_block_arms"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_match_pattern_optional1",
       "modelType": "group",
       "typeName": "MatchPatternOptional1",
@@ -6435,23 +6390,8 @@
       "irKey": "nonDelimToken",
       "hidden": true,
       "subtypes": [
-        "_literal",
         "_non_special_token",
-        "_primitive_type",
-        "_token_keywords",
-        "_token_tree_punctuation",
-        "boolean_literal",
-        "char_literal",
-        "crate",
-        "float_literal",
-        "identifier",
-        "integer_literal",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super",
-        "token_tree_punctuation"
+        "dollar"
       ]
     },
     {
@@ -7574,23 +7514,8 @@
       "irKey": "tokenPattern",
       "hidden": true,
       "subtypes": [
-        "_literal",
         "_non_special_token",
-        "_primitive_type",
-        "_token_keywords",
-        "_token_tree_punctuation",
-        "boolean_literal",
-        "char_literal",
-        "crate",
-        "float_literal",
-        "identifier",
-        "integer_literal",
         "metavariable",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super",
         "token_binding_pattern",
         "token_repetition_pattern",
         "token_tree_pattern"
@@ -7892,23 +7817,8 @@
       "irKey": "tokens",
       "hidden": true,
       "subtypes": [
-        "_literal",
         "_non_special_token",
-        "_primitive_type",
-        "_token_keywords",
-        "_token_tree_punctuation",
-        "boolean_literal",
-        "char_literal",
-        "crate",
-        "float_literal",
-        "identifier",
-        "integer_literal",
         "metavariable",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super",
         "token_repetition",
         "token_tree"
       ]
@@ -8186,7 +8096,7 @@
       "trailingDelimiter": "optional",
       "elementKinds": [
         "lifetime",
-        "_type_identifier"
+        "type_identifier"
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -8471,79 +8381,6 @@
       "factoryFields": [
         "visibility_modifier_group"
       ],
-      "namespacedConstructors": [
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "self"
-          ]
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "super"
-          ]
-        },
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "crate"
-          ]
-        },
-        {
-          "name": "visibilityModifierInPath",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "visibilityModifierInPath"
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "_visibility_modifier_pub_parens",
-      "modelType": "group",
-      "typeName": "VisibilityModifierPubParens",
-      "factoryName": "_visibilityModifierPubParens",
-      "irKey": "visibilityModifierPubParens",
-      "hidden": false,
-      "name": "_visibility_modifier_pub_parens",
-      "fields": [
-        {
-          "name": "visibility_modifier_group",
-          "propertyName": "visibilityModifierGroup",
-          "paramName": "visibilityModifierGroup",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_visibility_modifier_group",
-              "parseKind": "visibility_modifier_group",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_visibility_modifier_group"
-            ]
-          }
-        }
-      ],
-      "children": [],
       "namespacedConstructors": [
         {
           "name": "self",

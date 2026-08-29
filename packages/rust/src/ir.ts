@@ -173,20 +173,6 @@ const _b$tokenBindingPattern: typeof FR.coerceToTokenBindingPattern & {
 	strict: F.buildTokenBindingPattern
 });
 
-const _b$stringLiteral: typeof FR.coerceToStringLiteral & {
-	strict: typeof F.buildStringLiteral;
-	open: typeof FR.coerceToStringLiteral.open;
-} = attachProps(FR.coerceToStringLiteral, {
-	strict: F.buildStringLiteral,
-	open: FR.coerceToStringLiteral.open
-});
-
-const _b$rawStringLiteral: typeof FR.coerceToRawStringLiteral & {
-	strict: typeof F.buildRawStringLiteral;
-} = attachProps(FR.coerceToRawStringLiteral, {
-	strict: F.buildRawStringLiteral
-});
-
 const _b$tokenTree: typeof FR.coerceToTokenTree & {
 	strict: typeof F.buildTokenTree;
 	paren: typeof FR.coerceToTokenTree.paren;
@@ -215,6 +201,20 @@ const _b$tokenRepetition: typeof FR.coerceToTokenRepetition & {
 	plus: FR.coerceToTokenRepetition.plus,
 	star: FR.coerceToTokenRepetition.star,
 	qmark: FR.coerceToTokenRepetition.qmark
+});
+
+const _b$stringLiteral: typeof FR.coerceToStringLiteral & {
+	strict: typeof F.buildStringLiteral;
+	open: typeof FR.coerceToStringLiteral.open;
+} = attachProps(FR.coerceToStringLiteral, {
+	strict: F.buildStringLiteral,
+	open: FR.coerceToStringLiteral.open
+});
+
+const _b$rawStringLiteral: typeof FR.coerceToRawStringLiteral & {
+	strict: typeof F.buildRawStringLiteral;
+} = attachProps(FR.coerceToRawStringLiteral, {
+	strict: F.buildRawStringLiteral
 });
 
 const _b$scopedIdentifier: typeof FR.coerceToScopedIdentifier & {
@@ -1157,65 +1157,21 @@ export const tokenPattern: {
 	readonly repetition: typeof _b$tokenRepetitionPattern;
 	readonly binding: typeof _b$tokenBindingPattern;
 	readonly metavariable: typeof F.buildMetavariable;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
-	readonly self: typeof F.buildSelf;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
 } = {
 	tree: _b$tokenTreePattern,
 	repetition: _b$tokenRepetitionPattern,
 	binding: _b$tokenBindingPattern,
-	metavariable: F.buildMetavariable,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutableSpecifier: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
+	metavariable: F.buildMetavariable
 };
 
 export const tokens: {
 	readonly tokenTree: typeof _b$tokenTree;
 	readonly tokenRepetition: typeof _b$tokenRepetition;
 	readonly metavariable: typeof F.buildMetavariable;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
-	readonly self: typeof F.buildSelf;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
 } = {
 	tokenTree: _b$tokenTree,
 	tokenRepetition: _b$tokenRepetition,
-	metavariable: F.buildMetavariable,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutableSpecifier: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
+	metavariable: F.buildMetavariable
 };
 
 export const nonSpecialToken: {
@@ -1518,32 +1474,6 @@ export const delimTokens: {
 	readonly tokenTree: typeof _b$delimTokenTree;
 } = {
 	tokenTree: _b$delimTokenTree
-};
-
-export const nonDelimToken: {
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
-	readonly self: typeof F.buildSelf;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-} = {
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutableSpecifier: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
 };
 
 export const condition: {
@@ -1979,7 +1909,6 @@ export const ir: {
 	readonly expression: typeof expression;
 	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
 	readonly delimTokens: typeof delimTokens;
-	readonly nonDelimToken: typeof nonDelimToken;
 	readonly condition: typeof condition;
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
@@ -2234,7 +2163,6 @@ export const ir: {
 	expression,
 	expressionEndingWithBlock,
 	delimTokens,
-	nonDelimToken,
 	condition,
 	pattern,
 	literal,

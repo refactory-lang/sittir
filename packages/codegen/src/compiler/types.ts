@@ -97,6 +97,7 @@ export interface RawGrammar {
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];
+	readonly visibleInlineNames?: readonly string[];
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];

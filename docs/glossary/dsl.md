@@ -1964,6 +1964,18 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
+### `packages/codegen/src/dsl/rule-attrs.ts::withKindFacts`
+
+```text
+/** Carries a rule's `hidden`/`kind` facts from `source` onto `result` when
+ *  `result` doesn't already have them — `hidden` only overwrites on a real
+ *  difference, `kind` only fills an absent slot (never overwrites an
+ *  existing `kind` provenance stamp). Used where a pass rebuilds a rule's
+ *  root fresh (flatten's self-referential fold, normalize's alias-body
+ *  substitution) and the pre-rebuild rule's kind-level facts would
+ *  otherwise be silently dropped. */
+```
+
 #### body
 
 ```text
@@ -2212,7 +2224,9 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  *     grammar's `inline:` array are inlined unconditionally — these are
  *     helpers tree-sitter itself expands at parse time. Sittir's derivation
  *     view must match what tree-sitter produces: if the parser inlines a
- *     helper, the simplified rule must too.
+ *     helper, the simplified rule must too. Skipped when the reference
+ *     carries `aliasedTo` — an aliased occurrence materializes as its own
+ *     node regardless of the grammar's `inline:` array.
  *
  * The inlined body takes the REFERENCE's id (`id: ref.id ?? body.id`) — the
  * parent's identity survives a nesting that disappears, the same rule
@@ -2289,7 +2303,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 ```text
 /**
  * Structural identity of two slot-bearing rules ignoring leaf attributes
- * (multiplicity / separator / fieldName / aliasedFrom). Used to decide that a
+ * (multiplicity / separator / fieldName / aliasedTo). Used to decide that a
  * head element and a repeat element are "the same list element".
  */
 ```
@@ -3105,14 +3119,15 @@ registered but later unused still counts as a sibling.
 /** `RuleBuilder<'normalize'>` with what the attribute strategy actually
  *  returns. An attribute constructor only stamps attributes on its input,
  *  so it is identity-preserving in the type: `field`, `token`,
- *  `token.immediate` and `prec` are `<R>(…, content: R): R`. The
- *  exceptions are exactly the recognitions, spelled as overloads on the
+ *  `token.immediate`, `prec`, and `alias` are all `<R>(…, content: R): R` —
+ *  `alias` stamps `aliasedTo`/`aliasedToId` onto whatever `R` it's given,
+ *  symbol, literal, or structural, uniformly, never changing its shape.
+ *  The exceptions are exactly the recognitions, spelled as overloads on the
  *  INPUT type (never as a conditional return type — a deferred conditional
  *  cannot be checked against the implementation's literals and would force
  *  casts back into the builders): `optional`/`repeat`/`repeat1` re-enter
  *  `buildSeq` for a SEQ (→ `Rule`) and `optional` folds a bare literal to
- *  the empty seq (→ `Rule`), otherwise `R`; `alias` turns a STRING into a
- *  literal-carrying SymbolRule, otherwise `R`; `choice` is always a
+ *  the empty seq (→ `Rule`), otherwise `R`; `choice` is always a
  *  ChoiceRule (no FIELD exists on this view). A catch-all `(Rule) → Rule`
  *  overload closes each set so a wide argument stays honest. */
 ```
@@ -3316,28 +3331,23 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/builders.ts::attributeBuilder.alias`
 
 ```text
-// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
-// TARGET — the same provenance form link's own
-// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
-// one level down here: a SYMBOL content's own `.name` becomes
-// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
+// The one expression for any content: `{...content, aliasedTo: target.name,
+// aliasedToId: target.kindId, inline: false, nonterminal: true}`. `name`/
+// `kindId` on `content` stay the SOURCE (storage) kind; `aliasedTo` is the
+// alias TARGET (the parse kind). No branching on content shape — a literal,
+// a symbol, or any other built rule all take the same stamp uniformly.
 ```
 
-#### body (`packages/codegen/src/dsl/builders.ts:285`)
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.alias`
 
 ```text
-// Alias of a literal: there is no storage rule to name (mirrors
-// link's own STRING-content branch, which stamps no
-// `aliasedFrom` either) — the literal text becomes the new
-// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
-```
-
-#### body (`packages/codegen/src/dsl/builders.ts:305`)
-
-```text
-// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
-// record — link never produces this shape (it collapses named
-// aliases to a SYMBOL ref before this point is reached).
+// The tree-sitter ALIAS wrapper: `content` unchanged except a bare SYMBOL
+// content is stamped `inline: false` (an alias confers a real visible CST
+// kind, so its wrapped reference must materialize rather than fold away —
+// mirrors evaluate's own `canonicalizeRawGrammar`, which forces the same
+// stamp on any symbol it finds under an ALIAS built some other way). Evaluate never
+// mints `aliasedTo`/`aliasedToId` here; those are wrapper-deletion facts
+// (`attributeAlias`), stamped once the ALIAS wrapper itself is consumed.
 ```
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::module`
@@ -4031,6 +4041,19 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isHiddenRule`
+
+```text
+/**
+ * Reads the `hidden` stamp `RuleBase.hidden` puts on a rule (evaluate's
+ * `canonicalizeRawGrammar`, corrected by link's `unhideAliasedTargets` /
+ * `stampLinkMintedVisibility`) instead of re-deriving hidden-ness from a
+ * leading underscore. The stamp — not the name — is authoritative once a
+ * rule has passed through evaluate: a rule some named alias wraps is
+ * `hidden:false` even though its name starts with `_`.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::isComplexBody`
 
 ```text
@@ -4055,15 +4078,17 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * Derive the set of hidden (`_`-prefixed) kinds that:
- *   1. Appear as the source of a NAMED ALIAS — either in pre-link form
- *      (`alias(symbol(_X), $visible)`) or post-link form
- *      (`symbol(visible, aliasedFrom='_X')`).
+ *   1. Appear as the source of a NAMED ALIAS — either the wrapper form
+ *      (`alias(symbol(_X), $visible)`, kept through link since link never
+ *      restructures an ALIAS it can't reduce) or the reduced form link
+ *      produces for a complex alias content that targets a declared rule
+ *      (`symbol(_X, aliasedTo:'visible')`).
  *   2. Whose own rule body in `rules` satisfies {@link isComplexBody}.
  *
  * This is the on-demand structural replacement for `patternReplacementKinds`.
  * Both consumers receive different rule-map shapes:
- *   - `link.ts` calls this on `raw.rules` (pre-link; alias nodes present).
- *   - `normalize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
+ *   - `link.ts` calls this on `raw.rules` (pre-link; only the wrapper form exists).
+ *   - `normalize.ts` calls this on `linked.rules` (post-link; both forms can appear).
  *
  * The predicate is intentionally conservative (the derived set may be a
  * strict superset of the old `patternReplacementKinds` cache). Probe-verified
@@ -4079,13 +4104,13 @@ registered but later unused still counts as a sibling.
 #### body
 
 ```text
-// Pre-link form: alias(symbol(_X), $visible)
+// Wrapper form: alias(symbol(_X), $visible)
 ```
 
 #### body
 
 ```text
-// Post-link form: symbol(visible, aliasedFrom='_X')
+// Reduced form: symbol(_X, aliasedTo:'visible')
 ```
 
 #### body

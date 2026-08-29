@@ -889,7 +889,7 @@ export interface GenericTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: SlotValue<IdentifierTransport>
+  _identifier: SlotValue<GenericTypeIdentifierTransportSlot>
   _type_parameter: SlotValue<TypeParameterTransport>
 }
 

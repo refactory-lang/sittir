@@ -28,7 +28,9 @@ import type { LinkedGrammar, ExternalRole } from '../types.ts';
 function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
 	return {
 		name: 'test',
-		rules,
+		rules: Object.fromEntries(
+			Object.entries(rules).map(([name, rule]) => [name, rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule])
+		),
 		supertypes: new Set(),
 		factoryInline: new Set(),
 		externalRoles: new Map<string, ExternalRole>(),

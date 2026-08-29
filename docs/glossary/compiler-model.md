@@ -721,9 +721,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * ARRAY slot into that array slot, then drop the singular slot.
  *
  * Background: `alias($.last_match_arm, $.match_arm)` causes `deriveValuesForRule`
- * to produce a `symbol{name:'match_arm', aliasedFrom:'last_match_arm'}` value.
- * `projectSlotNaming` derives `storageName='last_match_arm'` (from the aliasedFrom
- * side), creating a SEPARATE singular slot with `parseKind='match_arm'` — colliding
+ * to produce a `symbol{name:'last_match_arm', aliasedTo:'match_arm'}` value —
+ * `name` is always the storage kind. `projectSlotNaming` derives
+ * `storageName='last_match_arm'` (from `name` directly), creating a SEPARATE
+ * singular slot with `parseKind='match_arm'` — colliding
  * with the existing array `match_arm` slot. At parse time every node appears as
  * `match_arm`; there is no `last_match_arm` kind in the CST. The array slot already
  * covers all of them. The singular slot is spurious and causes the native reader to
@@ -1972,9 +1973,10 @@ can't be unified.
 
 ```text
 // Parse-as kind ref: the CST kind this value
-// surfaces under — the alias TARGET when aliased (`rule.name`), else the
-// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
-// only for aliased/variant values. `storageName`/`parseNames` project this.
+// surfaces under — the alias TARGET when aliased (`rule.aliasedTo`), else
+// the own kind. Differs from `node` (render/source = always `rule.name`,
+// the storage kind) only for aliased/variant values. `storageName`/
+// `parseNames` project this.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseKindId`
@@ -2337,8 +2339,8 @@ can't be unified.
 	 *   modelType is `token` or `multi` (structural helpers with no
 	 *   API surface).
 	 * - Hidden kinds (`_`-prefixed) — user-facing ONLY when the kind
-	 *   is an alias source (some symbol ref elsewhere points at it
-	 *   via `aliasedFrom`, meaning factories stamp this kind as
+	 *   is an alias source (some symbol ref elsewhere points at it by
+	 *   its storage `.name`, meaning factories stamp this kind as
 	 *   `$type` per the source-kind identity model). Otherwise hidden
 	 *   kinds are inlined / never surface at runtime.
 	 *

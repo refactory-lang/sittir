@@ -52,8 +52,8 @@ describe('wrapper-deletion nonterminal push-down', () => {
 		expect(out.nonterminal).toBe(true);
 	});
 
-	it('unnamed alias(terminal) → no nonterminal stamp', () => {
-		const out = flatten({ type: ALIAS, named: false, value: 't', content: str(',') });
-		expect(out.nonterminal).toBeUndefined();
+	it('alias(terminal) → nonterminal stamp (link resolves unnamed aliases before flatten; every alias here is a named kind)', () => {
+		const out = flatten({ type: ALIAS, named: true, value: 't', content: str(',') });
+		expect(out).toMatchObject({ nonterminal: true, aliasedTo: 't' });
 	});
 });

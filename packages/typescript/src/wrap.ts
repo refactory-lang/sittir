@@ -924,7 +924,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'static',
 		'let'
 	]),
-	_import_identifier: new Set(['identifier']),
+	_import_identifier: new Set(['identifier', 'anon_type']),
 	type: new Set([
 		'primary_type',
 		'parenthesized_type',
@@ -1659,6 +1659,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
 export function wrapImportSpecifier(
 	data: T.ImportSpecifier & {
 		readonly _identifier?: T.ImportIdentifier | T.ImportSpecifierAs;
+		readonly _anon_type?: T.ImportIdentifier | T.ImportSpecifierAs;
 		readonly _import_specifier_as?: T.ImportIdentifier | T.ImportSpecifierAs;
 	},
 	tree: TreeHandle
@@ -1667,7 +1668,7 @@ export function wrapImportSpecifier(
 		return withMethods({ ...data, $type: TSKindId.ImportSpecifier as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_identifier', '_import_specifier_as']),
+			..._omitWrapKeys(data, ['_anon_type', '_identifier', '_import_specifier_as']),
 			$type: TSKindId.ImportSpecifier as const,
 			_import_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -1680,7 +1681,7 @@ export function wrapImportSpecifier(
 				{ type: 7, typeof: 8 }
 			),
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._import_specifier_as,
+				data._content ?? data._identifier ?? data._anon_type ?? data._import_specifier_as,
 				'content',
 				true,
 				data.$type,
@@ -5855,42 +5856,12 @@ export function wrapPattern(
 	data: T.Pattern & { readonly $other?: T.Pattern | readonly T.Pattern[] },
 	tree: TreeHandle
 ) {
-	const kindKeyed = _firstKindKeyedWrapChild(data, [
-		'_lhs_expression',
-		'lhs_expression',
-		'member_expression',
-		'subscript_expression',
-		'_identifier',
-		'identifier',
-		'undefined',
-		'_reserved_identifier',
-		'reserved_identifier',
-		'_destructuring_pattern',
-		'destructuring_pattern',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression',
-		'rest_pattern'
-	]) as T.Pattern | readonly T.Pattern[] | undefined;
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['_lhs_expression', 'lhs_expression', 'rest_pattern']) as
+		| T.Pattern
+		| readonly T.Pattern[]
+		| undefined;
 	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(data.$other, [
-			'_lhs_expression',
-			'lhs_expression',
-			'member_expression',
-			'subscript_expression',
-			'_identifier',
-			'identifier',
-			'undefined',
-			'_reserved_identifier',
-			'reserved_identifier',
-			'_destructuring_pattern',
-			'destructuring_pattern',
-			'object_pattern',
-			'array_pattern',
-			'non_null_expression',
-			'rest_pattern'
-		]);
+		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_lhs_expression', 'lhs_expression', 'rest_pattern']);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillInSelf<T.Pattern>(data as T.Pattern, tree);
 	}
@@ -6205,9 +6176,6 @@ export function wrapPropertyName(
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'_property_identifier',
 		'property_identifier',
-		'identifier',
-		'_reserved_identifier',
-		'reserved_identifier',
 		'private_property_identifier',
 		'string',
 		'number',
@@ -6218,9 +6186,6 @@ export function wrapPropertyName(
 		_filterWrapChildrenByKind(data.$other, [
 			'_property_identifier',
 			'property_identifier',
-			'identifier',
-			'_reserved_identifier',
-			'reserved_identifier',
 			'private_property_identifier',
 			'string',
 			'number',
@@ -6538,11 +6503,11 @@ export function wrapImportIdentifier(
 	data: T.ImportIdentifier & { readonly $other?: T.ImportIdentifier | readonly T.ImportIdentifier[] },
 	tree: TreeHandle
 ) {
-	const kindKeyed = _firstKindKeyedWrapChild(data, ['identifier']) as
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['identifier', 'anon_type']) as
 		| T.ImportIdentifier
 		| readonly T.ImportIdentifier[]
 		| undefined;
-	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier']);
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', 'anon_type']);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillInSelf<T.ImportIdentifier>(data as T.ImportIdentifier, tree);
 	}
@@ -10433,8 +10398,6 @@ export function wrapEnumBodyElements(
 	data: T.EnumBodyElements & {
 		readonly _name?: T.EnumAssignment | T.PropertyName;
 		readonly _property_identifier?: T.EnumAssignment | T.PropertyName;
-		readonly _identifier?: T.EnumAssignment | T.PropertyName;
-		readonly _reserved_identifier?: T.EnumAssignment | T.PropertyName;
 		readonly _private_property_identifier?: T.EnumAssignment | T.PropertyName;
 		readonly _string?: T.EnumAssignment | T.PropertyName;
 		readonly _number?: T.EnumAssignment | T.PropertyName;
@@ -10451,8 +10414,6 @@ export function wrapEnumBodyElements(
 			: _interleaveBySlotOrder(data as _NodeData, [
 					['name', data._name],
 					['property_identifier', data._property_identifier],
-					['identifier', data._identifier],
-					['reserved_identifier', data._reserved_identifier],
 					['private_property_identifier', data._private_property_identifier],
 					['string', data._string],
 					['number', data._number],
@@ -10468,12 +10429,10 @@ export function wrapEnumBodyElements(
 			..._omitWrapKeys(data, [
 				'_computed_property_name',
 				'_enum_assignment',
-				'_identifier',
 				'_name',
 				'_number',
 				'_private_property_identifier',
 				'_property_identifier',
-				'_reserved_identifier',
 				'_string'
 			]),
 			$type: TSKindId.EnumBodyElements as const,
@@ -11050,15 +11009,18 @@ export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClaus
 }
 
 export function wrapImportClauseDefaultImport(
-	data: T.ImportClauseDefaultImport & { readonly _identifier?: T.ImportIdentifier },
+	data: T.ImportClauseDefaultImport & {
+		readonly _identifier?: T.ImportIdentifier;
+		readonly _anon_type?: T.ImportIdentifier;
+	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_identifier']),
+			..._omitWrapKeys(data, ['_anon_type', '_identifier']),
 			$type: TSKindId.ImportClauseDefaultImport as const,
 			_import_identifier: normalizeSingularWrapSlot(
-				data._import_identifier ?? data._identifier,
+				data._import_identifier ?? data._identifier ?? data._anon_type,
 				'import_identifier',
 				true,
 				data.$type,

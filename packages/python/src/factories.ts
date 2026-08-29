@@ -3741,7 +3741,7 @@ export type GenericTypeBuilt = T.GenericType & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		identifier(value: T.Identifier): GenericTypeBuilt;
+		identifier(value: T.Identifier | 'type'): GenericTypeBuilt;
 		typeParameter(value: T.TypeParameter): GenericTypeBuilt;
 	};
 } & _NodeMethods;
@@ -3758,7 +3758,7 @@ export function buildGenericType(config: T.GenericType.Config): GenericTypeBuilt
 				_identifier,
 				_type_parameter,
 				$with: {
-					identifier: (value: T.Identifier) => buildGenericType({ ...config, identifier: value }),
+					identifier: (value: T.Identifier | 'type') => buildGenericType({ ...config, identifier: value }),
 					typeParameter: (value: T.TypeParameter) => buildGenericType({ ...config, typeParameter: value })
 				}
 			},

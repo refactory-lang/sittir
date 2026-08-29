@@ -1370,17 +1370,9 @@ export const jsxIdentifier: {
 };
 
 export const jsxElementName: {
-	readonly identifier: typeof F.buildIdentifier;
 	readonly nestedIdentifier: typeof _b$nestedIdentifier;
 } = {
-	identifier: F.buildIdentifier,
 	nestedIdentifier: _b$nestedIdentifier
-};
-
-export const jsxAttributeName: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
 };
 
 export const formalParameter: {
@@ -1440,33 +1432,17 @@ export const identifier: {
 };
 
 export const pattern: {
-	readonly member: typeof _b$memberExpression;
-	readonly subscript: typeof _b$subscriptExpression;
-	readonly undefined: typeof F.buildUndefined;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly object: typeof _b$objectPattern;
-	readonly array: typeof _b$arrayPattern;
-	readonly nonNull: typeof _b$nonNullExpression;
 	readonly rest: typeof _b$restPattern;
 } = {
-	member: _b$memberExpression,
-	subscript: _b$subscriptExpression,
-	undefined: F.buildUndefined,
-	identifier: F.buildIdentifier,
-	object: _b$objectPattern,
-	array: _b$arrayPattern,
-	nonNull: _b$nonNullExpression,
 	rest: _b$restPattern
 };
 
 export const propertyName: {
-	readonly identifier: typeof F.buildIdentifier;
 	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly string: typeof _b$string;
 	readonly number: typeof F.buildNumber;
 	readonly computed: typeof _b$computedPropertyName;
 } = {
-	identifier: F.buildIdentifier,
 	privateIdentifier: F.buildPrivatePropertyIdentifier,
 	string: _b$string,
 	number: F.buildNumber,
@@ -1815,7 +1791,6 @@ export const ir: {
 	readonly jsxChild: typeof jsxChild;
 	readonly jsxIdentifier: typeof jsxIdentifier;
 	readonly jsxElementName: typeof jsxElementName;
-	readonly jsxAttributeName: typeof jsxAttributeName;
 	readonly formalParameter: typeof formalParameter;
 	readonly lhsExpression: typeof lhsExpression;
 	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
@@ -2089,7 +2064,6 @@ export const ir: {
 	jsxChild,
 	jsxIdentifier,
 	jsxElementName,
-	jsxAttributeName,
 	formalParameter,
 	lhsExpression,
 	augmentedAssignmentLhs,

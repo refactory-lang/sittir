@@ -6012,11 +6012,13 @@ Surface`
 ```text
 // Fallback C: alias source → storageName. A singular `alias($._hidden,
 // $.visible)` reference survives wrapper-deletion as
-// `SYMBOL(visible, aliasedFrom='_hidden')` with no id (rebuilt, not
+// `SYMBOL(name:'_hidden', aliasedTo:'visible')` with no id (rebuilt, not
 // preserved), so slotByRuleId, Fallback A (no fieldName), and Fallback B
-// (slot is keyed by the HIDDEN target's name, not the visible alias name)
-// all miss. The slot's own name derives from the same hidden target, so
-// join on `aliasedFrom` instead of the alias's display name.
+// (gated to non-`_`-prefixed names, so it never even attempts an aliased
+// symbol) all miss. `.name` already IS the hidden target — the guard is
+// `aliasedTo !== undefined` (this occurrence is aliased at all), then
+// join on `rule.name` (underscore-stripped) instead of the alias's
+// display name.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::separatorToString`
@@ -6510,7 +6512,7 @@ Surface`
 ```text
 // Transparent wrappers — recurse. FIELD/TOKEN/ALIAS are WrapperPhase-only
 // (types/rule.ts) and never survive into RenderRule — flattenRules
-// has already pushed their facts (fieldName / aliasedFrom+aliasNamed) onto
+// has already pushed their facts (fieldName / aliasedTo+aliasedToId) onto
 // leaf attributes or unwrapped them to content, so those cases are
 // unreachable here and are not switch arms.
 // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
@@ -11914,7 +11916,7 @@ pipeline — which falls back to string equality.
 // phase-visibility-tightening: TOKEN and ALIAS cases deleted — both
 // collapse to `never` under RenderRule (WrapperPhase-only,
 // types/rule.ts). ALIAS is genuinely eliminated by
-// `flattenRules` (pushes aliasedFrom/aliasNamed onto a leaf
+// `flattenRules` (pushes aliasedTo/aliasedToId onto a leaf
 // attribute, returns content). TOKEN is NOT mechanically eliminated —
 // wrapper-deletion's TOKEN case PRESERVES the node (`{...rule,
 // content}`, flatten.ts) — so the TokenRule→never assertion
@@ -11924,7 +11926,7 @@ pipeline — which falls back to string equality.
 // grammars. If a top-level token(...) rule ever survives into
 // normalizedRules, the type lies — tracked with the preserve-token-
 // wrappers debt. Post-normalize aliasing is fully represented via the
-// `fieldName`/`aliasedFrom` leaf attributes other cases here already
+// `fieldName`/`aliasedTo` leaf attributes other cases here already
 // read (see `pickConditionalKey`'s `contentFieldName` check).
 ```
 

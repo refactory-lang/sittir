@@ -630,20 +630,19 @@ const _supertype_primaryExpression_ids = new Set<number>([
 ]);
 const _supertype_jsxChild_ids = new Set<number>([164]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
-const _supertype_jsxElementName_ids = new Set<number>([1, 220]);
-const _supertype_jsxAttributeName_ids = new Set<number>([1]);
+const _supertype_jsxElementName_ids = new Set<number>([220]);
 const _supertype_formalParameter_ids = new Set<number>([298, 299]);
 const _supertype_lhsExpression_ids = new Set<number>([235, 236, 105, 1, 440, 215, 219, 270]);
 const _supertype_augmentedAssignmentLhs_ids = new Set<number>([235, 236, 440, 1, 210, 270]);
 const _supertype_destructuringPattern_ids = new Set<number>([215, 219]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
-const _supertype_pattern_ids = new Set<number>([235, 236, 105, 1, 440, 215, 219, 270, 262]);
-const _supertype_propertyName_ids = new Set<number>([1, 440, 99, 249, 98, 267]);
+const _supertype_pattern_ids = new Set<number>([262]);
+const _supertype_propertyName_ids = new Set<number>([99, 249, 98, 267]);
 const _supertype_statementIdentifier_ids = new Set<number>([1, 440]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 440]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 440]);
 const _supertype_propertyIdentifier_ids = new Set<number>([1, 440]);
-const _supertype_importIdentifier_ids = new Set<number>([1]);
+const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([353, 350, 315, 319, 305, 306]);
 const _supertype_tupleTypeMember_ids = new Set<number>([310, 311, 312, 313]);
 const _supertype_primaryType_ids = new Set<number>([
@@ -832,7 +831,7 @@ export const is = {
 	jsxIdentifier: _sg(_supertype_jsxIdentifier_ids),
 	jsxElementName: _sg(_supertype_jsxElementName_ids),
 	jsxAttribute: _sg(new Set<number>()),
-	jsxAttributeName: _sg(_supertype_jsxAttributeName_ids),
+	jsxAttributeName: _sg(new Set<number>()),
 	jsxAttributeValue: _sg(new Set<number>()),
 	formalParameter: _sg(_supertype_formalParameter_ids),
 	lhsExpression: _sg(_supertype_lhsExpression_ids),

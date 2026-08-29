@@ -45,7 +45,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "25 referenced kind(s) resolved no parser kindId",
+    "message": "23 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -64,7 +64,6 @@
         "_kw_reference",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
-        "_match_block_optional1",
         "_match_pattern_optional1",
         "_path",
         "_primitive_type",
@@ -72,7 +71,6 @@
         "_tokens",
         "_type_parameter_optional1",
         "_variadic_parameter_optional1",
-        "_visibility_modifier_pub_parens",
         "_while_expression_optional1"
       ]
     },
@@ -95,7 +93,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "22 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "21 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -114,7 +112,6 @@
         "_kw_reference",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
-        "_match_block_optional1",
         "_match_pattern_optional1",
         "_path",
         "_reserved_identifier",
@@ -142,53 +139,16 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
-        "_primitive_type",
-        "_visibility_modifier_pub_parens"
+        "_primitive_type"
       ]
     },
     "scope": "grammar",
     "grammar": "rust"
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "scoped_type_identifier",
-    "slotName": "path",
-    "message": "Slot 'path' of kind 'scoped_type_identifier' collapses [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "generic_type",
-      "storageKinds": [
-        "generic_type_with_turbofish",
-        "generic_type"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_match_block_optional1",
-    "slotName": "match_arm",
-    "message": "Slot 'match_arm' of kind '_match_block_optional1' collapses [match_arm, last_match_arm] onto parse kind 'match_arm'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "match_arm",
-      "storageKinds": [
-        "match_arm",
-        "last_match_arm"
-      ]
-    }
   }
 ]

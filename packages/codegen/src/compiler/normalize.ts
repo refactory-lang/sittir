@@ -1,3 +1,4 @@
+import { withKindFacts } from '../dsl/rule-attrs.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -19,7 +20,7 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
-import { deriveComplexAliasTargetHidden, isEnumChoiceRule, separatorFactsEqual } from '../dsl/rule-patterns.ts';
+import { deriveComplexAliasTargetHidden, isEnumChoiceRule, isHiddenRule, separatorFactsEqual } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
 import { attributeBuilder } from '../dsl/builders.ts';
@@ -67,7 +68,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 	const twinned = new Set<string>();
 	const supertypeNamed = new Set<string>();
 
-	const isHidden = (name: string): boolean => name.startsWith('_');
+	const isHidden = (name: string): boolean => isHiddenRule(name, rules);
 
 	const walk = (rule: Rule<'link'>, ownerTwinTarget: string | undefined): void => {
 		if (rule.type === SYMBOL) {
@@ -109,7 +110,7 @@ export function inlineHiddenSeqRefs(
 ): boolean {
 	const foldable = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
-		if (!name.startsWith('_')) continue;
+		if (!isHiddenRule(name, rules)) continue;
 		if (keepRef.has(name)) continue;
 		if (name === '_import_list') continue;
 		if (resolveGroupOrMultiInlineTarget(rule) !== null) foldable.add(name);
@@ -319,7 +320,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			})
 		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			normalizedRules[kind] = rule;
+			const own = normalizedRules[kind];
+			normalizedRules[kind] = own === undefined ? rule : withKindFacts(rule, own);
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;
@@ -507,7 +509,7 @@ function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserv
 		const refCounts = countReferences(work);
 		let changed = false;
 		for (const [name, rule] of Object.entries(work)) {
-			if (!name.startsWith('_')) continue;
+			if (!isHiddenRule(name, work)) continue;
 			if (isStructurallyMeaningfulHiddenRule(rule)) continue;
 			if (preserveKinds?.has(name)) continue;
 			const uses = refCounts.get(name) ?? 0;
@@ -648,7 +650,7 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
-			if (rule.name === targetName) return targetRule;
+			if (rule.name === targetName && rule.inline === true) return targetRule;
 			return rule;
 		case SEQ: {
 			let changed = false;

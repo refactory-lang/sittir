@@ -10,7 +10,7 @@ function stripHiddenPrefix(name: string): string {
 
 export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
 	if (rule.type === ALIAS) return true;
-	if (rule.type === SYMBOL) return rule.aliasedTo !== undefined || !(rule.name in rules);
+	if (rule.type === SYMBOL) return !(rule.name in rules);
 	return false;
 }
 

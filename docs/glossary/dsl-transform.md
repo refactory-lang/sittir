@@ -467,11 +467,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * project convention: "always use the rule builder functions" rather than
  * fabricate rule shapes by hand. `sym(hiddenName)` stamps
  * `hidden`/`inline: true` on the inner SYMBOL (since `hiddenName` is
- * `_`-prefixed) — this is provably inert for this call site:
- * `compiler/link.ts`'s `resolveNamedAliasWithProvenance` (the ALIAS
- * resolver that fires for this shape) discards the entire `content` node
- * and reconstructs a fresh SYMBOL from just `content.name`, never reading
- * `.hidden`/`.inline`.
+ * `_`-prefixed) — this is provably inert for this call site: evaluate's exit
+ * pass (`canonicalizeRawGrammar`) re-derives `hidden`
+ * from the name independently (same result) and force-overrides `inline` to
+ * `false` on any SYMBOL it finds directly under a named ALIAS, before link
+ * ever runs. Link's own ALIAS resolver keeps this shape as the wrapper
+ * (content resolved, not discarded) — `unhideAliasedTargets` later reads
+ * `hidden` off the RULES-MAP entry the alias's SYMBOL name resolves to
+ * (the deposited hidden rule), never off this leaf's own `.hidden` field.
  */
 ```
 

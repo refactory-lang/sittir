@@ -123,13 +123,7 @@ function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, Sym
 		get(_target, name: string): SymbolRuleWithRef {
 			const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name };
 			refs.push(ref);
-			return {
-				type: SYMBOL,
-				name,
-				hidden: name.startsWith('_'),
-				inline: name.startsWith('_'),
-				_ref: ref
-			};
+			return { ...sym(name), _ref: ref };
 		}
 	});
 }
@@ -416,6 +410,29 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	return { grammar: grammarResult };
 }
 
+const canonicalWalker = new RuleWalker<Rule<'evaluate'>>({});
+
+function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
+	const inlineNames = new Set(raw.inline);
+	const supertypes = new Set(raw.supertypes);
+	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		if (rule.type === ALIAS) {
+			return rule.content.type === SYMBOL && rule.content.inline !== false
+				? { ...rule, content: { ...rule.content, inline: false } }
+				: rule;
+		}
+		if (rule.type !== SYMBOL) return rule;
+		const hidden = rule.name.startsWith('_');
+		const inline = !supertypes.has(rule.name) && (hidden || inlineNames.has(rule.name));
+		return rule.inline === inline && rule.hidden === hidden ? rule : { ...rule, hidden, inline };
+	};
+	const rules: Record<string, Rule<'evaluate'>> = {};
+	for (const [name, rule] of Object.entries(raw.rules)) {
+		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: name.startsWith('_') };
+	}
+	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
+}
+
 function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const externalSet = new Set(ctx.externals);
 	const ruleEntries = Object.entries(rules);
@@ -432,27 +449,24 @@ function rewriteInlineAliases(
 	const { rules, provenanceByKind } = ctx;
 	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals);
 	switch (rule.type) {
-		case ALIAS:
+		case ALIAS: {
 			if (rule.named && rule.value) {
 				const inner = rule.content;
 				const isBareSymbolToKnownSource =
 					inner.type === SYMBOL && (rules[inner.name] !== undefined || externals.has(inner.name));
 				const targetAlreadyExists = rules[rule.value] !== undefined;
-				const isStringBody = inner.type === STRING;
-				if (!targetAlreadyExists && !isBareSymbolToKnownSource && !isStringBody) {
+				if (!targetAlreadyExists && !isBareSymbolToKnownSource && inner.type !== STRING) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
 						rules[syntheticHiddenName] = recurse(rule.content);
 						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
 						ctx.desugarDivergences.push({ site: 'inline-alias-source', name: syntheticHiddenName });
 					}
-					return {
-						...rule,
-						content: { type: SYMBOL, name: syntheticHiddenName } as SymbolRule<'evaluate'>
-					};
+					return { ...rule, content: { type: SYMBOL, name: syntheticHiddenName } };
 				}
 			}
 			return { ...rule, content: recurse(rule.content) };
+		}
 		case SEQ:
 			return { ...rule, members: rule.members.map((m) => recurse(m)) } as Rule<'evaluate'>;
 		case CHOICE:
@@ -724,11 +738,8 @@ function applyPatternReplacement(
 function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[]): Rule<'evaluate'> {
 	for (const c of candidates) {
 		if (patternRulesEqual(rule, c.body)) {
-			const symRef: SymbolRule<'evaluate'> = { type: SYMBOL, name: c.name, hidden: true };
-			if (c.aliasAs !== undefined) {
-				return { type: ALIAS, content: symRef, named: true, value: c.aliasAs } satisfies AliasRule<'evaluate'>;
-			}
-			return symRef;
+			const symRef = sym(c.name);
+			return c.aliasAs !== undefined ? structuralBuilder.alias(symRef, sym(c.aliasAs)) : symRef;
 		}
 	}
 	switch (rule.type) {
@@ -830,7 +841,7 @@ function rewriteVisibleExternalRefs(rule: Rule<'evaluate'>, ctx: VisibleExternal
 	if (rule.type === SYMBOL) {
 		const visibleName = hiddenToVisible.get((rule as SymbolRule<'evaluate'>).name);
 		if (visibleName === undefined) return rule;
-		return { type: ALIAS, content: rule, named: true, value: visibleName } satisfies AliasRule<'evaluate'>;
+		return structuralBuilder.alias(rule, sym(visibleName));
 	}
 	switch (rule.type) {
 		case SEQ: {
@@ -1058,7 +1069,7 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
 	const savedGlobals = saveAndInjectDslGlobals(g);
 
 	try {
-		return await importAndExtractGrammar(entryPath);
+		return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
 	} finally {
 		restoreSavedGlobals(g, savedGlobals);
 	}

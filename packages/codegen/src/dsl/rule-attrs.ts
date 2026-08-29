@@ -23,6 +23,14 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	return { ...result, ...patch };
 }
 
+export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {
+	const { hidden, kind } = source;
+	const patch: { hidden?: boolean; kind?: string } = {};
+	if (hidden !== undefined && result.hidden !== hidden) patch.hidden = hidden;
+	if (kind !== undefined && result.kind === undefined) patch.kind = kind;
+	return Object.keys(patch).length === 0 ? result : { ...result, ...patch };
+}
+
 export interface SharedArmAttrs {
 	readonly fieldName?: string;
 	readonly multiplicity?: Multiplicity;

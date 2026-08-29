@@ -1751,26 +1751,7 @@ export function wrapTokenPattern(
 		'token_binding_pattern',
 		'metavariable',
 		'_non_special_token',
-		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'_token_keywords',
-		'token_keywords'
+		'non_special_token'
 	]) as T.TokenPattern | readonly T.TokenPattern[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -1780,26 +1761,7 @@ export function wrapTokenPattern(
 			'token_binding_pattern',
 			'metavariable',
 			'_non_special_token',
-			'non_special_token',
-			'_literal',
-			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'identifier',
-			'mutable_specifier',
-			'self',
-			'super',
-			'crate',
-			'_primitive_type',
-			'primitive_type',
-			'_token_tree_punctuation',
-			'token_tree_punctuation',
-			'_token_keywords',
-			'token_keywords'
+			'non_special_token'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillInSelf<T.TokenPattern>(data as T.TokenPattern, tree);
@@ -5455,8 +5417,9 @@ export function wrapDelimTokens(
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'_non_delim_token',
 		'non_delim_token',
+		'_non_special_token',
 		'non_special_token',
-		'token_tree_punctuation',
+		'dollar',
 		'delim_token_tree'
 	]) as T.DelimTokens | readonly T.DelimTokens[] | undefined;
 	const filtered =
@@ -5464,8 +5427,9 @@ export function wrapDelimTokens(
 		_filterWrapChildrenByKind(data.$other, [
 			'_non_delim_token',
 			'non_delim_token',
+			'_non_special_token',
 			'non_special_token',
-			'token_tree_punctuation',
+			'dollar',
 			'delim_token_tree'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
@@ -5486,54 +5450,12 @@ export function wrapNonDelimToken(
 	data: T.NonDelimToken & { readonly $other?: T.NonDelimToken | readonly T.NonDelimToken[] },
 	tree: TreeHandle
 ) {
-	const kindKeyed = _firstKindKeyedWrapChild(data, [
-		'_non_special_token',
-		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'_token_keywords',
-		'token_keywords'
-	]) as T.NonDelimToken | readonly T.NonDelimToken[] | undefined;
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['_non_special_token', 'non_special_token', 'dollar']) as
+		| T.NonDelimToken
+		| readonly T.NonDelimToken[]
+		| undefined;
 	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(data.$other, [
-			'_non_special_token',
-			'non_special_token',
-			'_literal',
-			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'identifier',
-			'mutable_specifier',
-			'self',
-			'super',
-			'crate',
-			'_primitive_type',
-			'primitive_type',
-			'_token_tree_punctuation',
-			'token_tree_punctuation',
-			'_token_keywords',
-			'token_keywords'
-		]);
+		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_non_special_token', 'non_special_token', 'dollar']);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillInSelf<T.NonDelimToken>(data as T.NonDelimToken, tree);
 	}

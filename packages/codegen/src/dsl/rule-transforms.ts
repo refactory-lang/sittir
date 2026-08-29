@@ -158,7 +158,7 @@ export function inlineRefs<R extends AnyRule>(
 	const recurse = (r: AnyRule, v: ReadonlySet<string>): AnyRule => inlineRefs(r, ctx, v);
 	switch (rule.type) {
 		case SYMBOL: {
-			if (inlineKinds.has(rule.name)) {
+			if (inlineKinds.has(rule.name) && rule.aliasedTo === undefined) {
 				if (visited.has(rule.name)) return rule;
 				const target = rules[rule.name];
 				if (!target) return rule;

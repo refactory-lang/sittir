@@ -2772,44 +2772,14 @@ export const enum TokenPatternKind {
 	TokenRepetitionPattern = 'token_repetition_pattern',
 	TokenBindingPattern = 'token_binding_pattern',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
+	_NonSpecialToken = '_non_special_token'
 }
 
 export const enum TokensKind {
 	TokenTree = 'token_tree',
 	TokenRepetition = 'token_repetition',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
+	_NonSpecialToken = '_non_special_token'
 }
 
 export const enum _NonSpecialTokenKind {
@@ -2983,28 +2953,14 @@ export const enum ExpressionEndingWithBlockKind {
 
 export const enum DelimTokensKind {
 	NonDelimToken = '_non_delim_token',
-	NonSpecialToken = 'non_special_token',
-	TokenTreePunctuation = 'token_tree_punctuation',
+	_NonSpecialToken = '_non_special_token',
+	Dollar = 'dollar',
 	DelimTokenTree = 'delim_token_tree'
 }
 
 export const enum NonDelimTokenKind {
 	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
+	Dollar = 'dollar'
 }
 
 export const enum ConditionKind {
@@ -4852,12 +4808,6 @@ export interface FieldInitializerListElements {
 	elements(): NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
 }
 
-export interface MatchBlockOptional1 {
-	readonly $type: '_match_block_optional1';
-	readonly _match_block_arms: MatchBlockArms;
-	matchBlockArms(): MatchBlockArms;
-}
-
 export interface MatchPatternOptional1 {
 	readonly $type: '_match_pattern_optional1';
 	readonly _condition: Condition;
@@ -5315,20 +5265,6 @@ export interface MatchBlockArms {
 	readonly _last_arm: LastMatchArm;
 	matchArms(): readonly MatchArm[];
 	lastArm(): LastMatchArm;
-}
-
-export interface VisibilityModifierPubParens {
-	readonly $type: '_visibility_modifier_pub_parens';
-	readonly _visibility_modifier_group: VisibilityModifierGroup;
-	readonly __looseHints__?: {
-		readonly visibility_modifier_group:
-			| VisibilityModifierGroup
-			| 'self'
-			| 'super'
-			| 'crate'
-			| readonly (Self | Super | Crate | VisibilityModifierInPath)[];
-	};
-	visibilityModifierGroup(): VisibilityModifierGroup;
 }
 
 // Leaf node types
@@ -5816,9 +5752,6 @@ export interface ArgumentsElementsTree extends AnyTreeNode {
 export interface FieldInitializerListElementsTree extends AnyTreeNode {
 	readonly type: '_field_initializer_list_elements';
 }
-export interface MatchBlockOptional1Tree extends AnyTreeNode {
-	readonly type: '_match_block_optional1';
-}
 export interface MatchPatternOptional1Tree extends AnyTreeNode {
 	readonly type: '_match_pattern_optional1';
 }
@@ -5998,9 +5931,6 @@ export interface TypeArgumentTree extends AnyTreeNode {
 }
 export interface MatchBlockArmsTree extends AnyTreeNode {
 	readonly type: '_match_block_arms';
-}
-export interface VisibilityModifierPubParensTree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_pub_parens';
 }
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
 export interface UnitTypeTree extends TreeNode<'unit_type'> {}
@@ -6286,82 +6216,17 @@ export type TokenPattern =
 	| TokenRepetitionPattern
 	| TokenBindingPattern
 	| Metavariable
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
+	| _NonSpecialToken;
 
 export type TokenPatternTree =
 	| TokenTreePatternTree
 	| TokenRepetitionPatternTree
 	| TokenBindingPatternTree
-	| MetavariableTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+	| MetavariableTree;
 
-export type Tokens =
-	| TokenTree
-	| TokenRepetition
-	| Metavariable
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
+export type Tokens = TokenTree | TokenRepetition | Metavariable | _NonSpecialToken;
 
-export type TokensTree =
-	| TokenTreeTree
-	| TokenRepetitionTree
-	| MetavariableTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree;
 
 export type _NonSpecialToken =
 	| Literal
@@ -6680,45 +6545,11 @@ export type ExpressionEndingWithBlockTree =
 	| ForExpressionTree
 	| ConstBlockTree;
 
-export type DelimTokens = NonDelimToken | NonSpecialToken | TokenTreePunctuation | DelimTokenTree;
+export type DelimTokens = NonDelimToken | _NonSpecialToken | DelimTokenTree;
 
-export type DelimTokensTree = TokenTreePunctuationTree | DelimTokenTreeTree;
+export type DelimTokensTree = DelimTokenTreeTree;
 
-export type NonDelimToken =
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords
-	| TokenTreePunctuation;
-
-export type NonDelimTokenTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree
-	| TokenTreePunctuationTree;
+export type NonDelimToken = _NonSpecialToken;
 
 export type Condition =
 	| Expression
@@ -6960,6 +6791,10 @@ export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
 }
+export type Dollar = Terminal<TSKindId.Dollar>;
+export interface DollarTree extends AnyTreeNode {
+	readonly type: 'dollar';
+}
 
 export type RustNode =
 	| SourceFile
@@ -7126,7 +6961,6 @@ export type RustNode =
 	| AbstractTypeOptional1
 	| ArgumentsElements
 	| FieldInitializerListElements
-	| MatchBlockOptional1
 	| MatchPatternOptional1
 	| WhileExpressionOptional1
 	| TuplePatternElements
@@ -7186,8 +7020,7 @@ export type RustNode =
 	| AttributedArgument
 	| AttributedOrderedField
 	| TypeArgument
-	| MatchBlockArms
-	| VisibilityModifierPubParens;
+	| MatchBlockArms;
 
 export interface KindMap {
 	source_file: SourceFile;
@@ -7354,7 +7187,6 @@ export interface KindMap {
 	_abstract_type_optional1: AbstractTypeOptional1;
 	_arguments_elements: ArgumentsElements;
 	_field_initializer_list_elements: FieldInitializerListElements;
-	_match_block_optional1: MatchBlockOptional1;
 	_match_pattern_optional1: MatchPatternOptional1;
 	_while_expression_optional1: WhileExpressionOptional1;
 	_tuple_pattern_elements: TuplePatternElements;
@@ -7415,7 +7247,6 @@ export interface KindMap {
 	_attributed_ordered_field: AttributedOrderedField;
 	_type_argument: TypeArgument;
 	_match_block_arms: MatchBlockArms;
-	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
 	fragment_specifier: FragmentSpecifier;
 	unit_type: UnitType;
 	mutable_specifier: MutableSpecifier;

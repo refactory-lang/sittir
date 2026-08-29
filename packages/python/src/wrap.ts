@@ -5279,6 +5279,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 }
 
 export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.GenericType as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -5297,7 +5298,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 			}),
 
 			identifier() {
-				return drillIn<T.Identifier>(this._identifier, tree);
+				return drillIn<T.Identifier | 'type'>(this._identifier, tree);
 			},
 			typeParameter() {
 				return drillIn<T.TypeParameter>(this._type_parameter, tree);

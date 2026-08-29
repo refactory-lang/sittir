@@ -44,7 +44,10 @@ function makeNormalized(
 	rules: Record<string, Rule<'link'>>,
 	overrides?: Partial<SimplifiedGrammar>
 ): SimplifiedGrammar {
-	const normalizedRules = flattenRules(rules);
+	const stamped = Object.fromEntries(
+		Object.entries(rules).map(([name, rule]) => [name, rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule])
+	);
+	const normalizedRules = flattenRules(stamped);
 	const simplifiedRules = computeSimplifiedRules(
 		new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 	);
@@ -57,7 +60,8 @@ function makeNormalized(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() })
 		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			normalizedRules[kind] = rule;
+			const own = normalizedRules[kind];
+			normalizedRules[kind] = own === undefined ? rule : { ...rule, hidden: own.hidden, kind: own.kind };
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;
@@ -351,8 +355,7 @@ describe('Assemble — classifyNode', () => {
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_type_identifier: {
 					type: SYMBOL,
-					name: 'type_identifier',
-					aliasedFrom: 'identifier'
+					name: 'identifier', aliasedTo: 'type_identifier'
 				}
 			},
 			{
@@ -369,8 +372,7 @@ describe('Assemble — classifyNode', () => {
 				expr: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_pair_alias: {
 					type: SYMBOL,
-					name: 'pair',
-					aliasedFrom: '_pair_source'
+					name: '_pair_source', aliasedTo: 'pair'
 				}
 			},
 			{
@@ -1042,7 +1044,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			_outer: {
 				type: SUPERTYPE,
 				name: '_outer',
-				subtypes: [{ type: SYMBOL, name: 'inner_alias', aliasedFrom: '_inner' }]
+				subtypes: [{ type: SYMBOL, name: '_inner', aliasedTo: 'inner_alias' }]
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
@@ -1060,7 +1062,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			name: '_expression',
 			subtypes: [
 				{ type: SYMBOL, name: 'identifier', kindId: 99 },
-				{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+				{ type: SYMBOL, name: '_simple_statements', aliasedTo: 'block', kindId: 77, aliasedToId: 42 }
 			]
 		};
 		const node = new AssembledSupertype('_expression', rule, [
@@ -1089,7 +1091,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				name: '_inner',
 				subtypes: [
 					{ type: SYMBOL, name: 'identifier', kindId: 99 },
-					{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+					{ type: SYMBOL, name: '_simple_statements', aliasedTo: 'block', kindId: 77, aliasedToId: 42 }
 				]
 			}
 		});

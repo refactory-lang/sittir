@@ -710,8 +710,8 @@ export function deriveValuesForRule(
 							value: rule.literal,
 							resolvedKind: rule.name,
 							resolvedKindId: rule.kindId,
-							parseKind: { kind: 'unresolved-ref', name: rule.name },
-							parseKindId: rule.kindId,
+							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
+							parseKindId: rule.aliasedToId ?? rule.kindId,
 							multiplicity
 						}
 					];
@@ -734,20 +734,22 @@ export function deriveValuesForRule(
 					{
 						node: { kind: 'unresolved-ref', name: rule.name },
 						storageKindId: rule.kindId,
-						parseKind: { kind: 'unresolved-ref', name: rule.name },
-						parseKindId: rule.kindId,
+						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
+						parseKindId: rule.aliasedToId ?? rule.kindId,
 						multiplicity
 					}
 				];
 			}
 			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
+			const parseEntry =
+				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
+			if (entry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
 					storageKindId: entry?.id,
-					parseKind: { kind: 'unresolved-ref', name: rule.name },
-					parseKindId: entry?.parseId ?? entry?.id,
+					parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
+					parseKindId: rule.aliasedToId ?? parseEntry?.parseId ?? parseEntry?.id,
 					multiplicity
 				}
 			];
@@ -759,21 +761,18 @@ export function deriveValuesForRule(
 					return {
 						node: { kind: 'unresolved-ref' as const, name },
 						storageKindId: subRef.kindId,
-						parseKind: { kind: 'unresolved-ref' as const, name },
-						parseKindId: subRef.kindId,
+						parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
+						parseKindId: subRef.aliasedToId ?? subRef.kindId,
 						multiplicity
 					};
 				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
-				const parseName: string | undefined = undefined;
-				const parseEntry = parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
-				if (entry !== undefined || parseEntry !== undefined)
-					noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
+				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
-					parseKind: { kind: 'unresolved-ref' as const, name: parseName ?? name },
-					parseKindId: parseEntry?.parseId ?? parseEntry?.id ?? entry?.parseId ?? entry?.id,
+					parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
+					parseKindId: subRef.aliasedToId ?? entry?.parseId ?? entry?.id,
 					multiplicity
 				};
 			});

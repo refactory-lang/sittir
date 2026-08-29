@@ -22,7 +22,6 @@ const NODE_KINDS = [
 	'_macro_definition_bracket',
 	'_macro_definition_paren',
 	'_macro_rules',
-	'_match_block_optional1',
 	'_ordered_field_declaration_list_elements',
 	'_parameters_elements',
 	'_patterns',

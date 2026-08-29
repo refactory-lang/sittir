@@ -359,6 +359,13 @@ pub struct JsxStartOpeningElementArmTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_jsx_string.jinja", escape = "none")]
+pub struct JsxStringTemplate<'a> {
+    pub elements: ListNonterminalView<'a>,
+    pub elements_2: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_number.jinja", escape = "none")]
 pub struct _NumberTemplate<'a> {
     pub argument: SingleNonterminalView<'a>,

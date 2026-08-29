@@ -8165,6 +8165,12 @@
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
             }
           ],
           "projection": {

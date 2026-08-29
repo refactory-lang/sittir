@@ -853,6 +853,10 @@ export function isHiddenKind(name: string, inlineList?: readonly string[]): bool
 	return false;
 }
 
+export function isHiddenRule(name: string, rules: Readonly<Record<string, AnyRule>>): boolean {
+	return rules[name]?.hidden === true;
+}
+
 export function isComplexBody(rule: Rule<'evaluate'>): boolean {
 	switch (rule.type) {
 		case SEQ:

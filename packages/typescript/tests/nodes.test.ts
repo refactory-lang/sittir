@@ -2165,7 +2165,7 @@ describe('rest_pattern', () => {
 describe('method_definition', () => {
 	it('factory produces correct type', () => {
 		const node = ir.methodDefinition({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2174,7 +2174,7 @@ describe('method_definition', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.methodDefinition({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2186,7 +2186,7 @@ describe('method_definition namespaced constructors', () => {
 	it('get builds the parent', () => {
 		const node = ir.methodDefinition.get(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2224,7 +2224,7 @@ describe('method_definition namespaced constructors', () => {
 	it('set builds the parent', () => {
 		const node = ir.methodDefinition.set(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2262,7 +2262,7 @@ describe('method_definition namespaced constructors', () => {
 	it('star builds the parent', () => {
 		const node = ir.methodDefinition.star(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2302,7 +2302,7 @@ describe('method_definition namespaced constructors', () => {
 describe('pair', () => {
 	it('factory produces correct type', () => {
 		const node = ir.pair({
-			key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			key: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
@@ -2310,7 +2310,7 @@ describe('pair', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.pair({
-			key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			key: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2320,7 +2320,7 @@ describe('pair', () => {
 describe('pair_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.pairPattern({
-			key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			key: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
@@ -2328,7 +2328,7 @@ describe('pair_pattern', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.pairPattern({
-			key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			key: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2351,14 +2351,14 @@ describe('computed_property_name', () => {
 describe('public_field_definition', () => {
 	it('factory produces correct type', () => {
 		const node = ir.publicFieldDefinition({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.publicFieldDefinition({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -2377,7 +2377,7 @@ describe('public_field_definition namespaced constructors', () => {
 				} as any
 			],
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeAnnotation,
 				$text: 'test',
@@ -2402,7 +2402,7 @@ describe('public_field_definition namespaced constructors', () => {
 				} as any
 			],
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeAnnotation,
 				$text: 'test',
@@ -2433,7 +2433,7 @@ describe('non_null_expression', () => {
 describe('method_signature', () => {
 	it('factory produces correct type', () => {
 		const node = ir.methodSignature({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
@@ -2441,7 +2441,7 @@ describe('method_signature', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.methodSignature({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2452,7 +2452,7 @@ describe('method_signature namespaced constructors', () => {
 	it('get builds the parent', () => {
 		const node = ir.methodSignature.get(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2489,7 +2489,7 @@ describe('method_signature namespaced constructors', () => {
 	it('set builds the parent', () => {
 		const node = ir.methodSignature.set(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2526,7 +2526,7 @@ describe('method_signature namespaced constructors', () => {
 	it('star builds the parent', () => {
 		const node = ir.methodSignature.star(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2565,7 +2565,7 @@ describe('method_signature namespaced constructors', () => {
 describe('abstract_method_signature', () => {
 	it('factory produces correct type', () => {
 		const node = ir.abstractMethodSignature({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
@@ -2573,7 +2573,7 @@ describe('abstract_method_signature', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.abstractMethodSignature({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2584,7 +2584,7 @@ describe('abstract_method_signature namespaced constructors', () => {
 	it('get builds the parent', () => {
 		const node = ir.abstractMethodSignature.get(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2621,7 +2621,7 @@ describe('abstract_method_signature namespaced constructors', () => {
 	it('set builds the parent', () => {
 		const node = ir.abstractMethodSignature.set(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -2658,7 +2658,7 @@ describe('abstract_method_signature namespaced constructors', () => {
 	it('star builds the parent', () => {
 		const node = ir.abstractMethodSignature.star(
 			TSKindId.Public,
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			{ $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeParameters,
 				$text: 'test',
@@ -3116,7 +3116,7 @@ describe('enum_body', () => {
 describe('enum_assignment', () => {
 	it('factory produces correct type', () => {
 		const node = ir.enumAssignment({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
@@ -3124,7 +3124,7 @@ describe('enum_assignment', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.enumAssignment({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3795,14 +3795,14 @@ describe('call_signature', () => {
 describe('property_signature', () => {
 	it('factory produces correct type', () => {
 		const node = ir.propertySignature({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.propertySignature({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

@@ -591,12 +591,8 @@ const _supertype_statement_ids = new Set<number>([
 const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
-const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 135, 312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347
-]);
-const _supertype_tokens_ids = new Set<number>([
-	168, 169, 135, 312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347
-]);
+const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 135]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 135]);
 const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347]);
 const _supertype_useClause_ids = new Set<number>([132, 1, 135, 133, 134, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([236, 233, 135, 234, 227, 246, 224, 225, 221, 223, 1, 240, 237, 229, 199]);
@@ -612,7 +608,6 @@ const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_delimTokens_ids = new Set<number>([241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347]);
 const _supertype_condition_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 122, 314, 120, 151, 1, 132, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 135, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
@@ -813,7 +808,7 @@ export const is = {
 	expression: _sg(_supertype_expression_ids),
 	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
 	delimTokens: _sg(_supertype_delimTokens_ids),
-	nonDelimToken: _sg(_supertype_nonDelimToken_ids),
+	nonDelimToken: _sg(new Set<number>()),
 	condition: _sg(_supertype_condition_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),

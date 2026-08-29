@@ -2787,8 +2787,6 @@ export const enum _JsxIdentifierKind {
 
 export const enum JsxElementNameKind {
 	_JsxIdentifier = '_jsx_identifier',
-	JsxIdentifier = 'jsx_identifier',
-	Identifier = 'identifier',
 	NestedIdentifier = 'nested_identifier',
 	JsxNamespaceName = 'jsx_namespace_name'
 }
@@ -2800,8 +2798,6 @@ export const enum _JsxAttributeKind {
 
 export const enum JsxAttributeNameKind {
 	_JsxIdentifier = '_jsx_identifier',
-	JsxIdentifier = 'jsx_identifier',
-	Identifier = 'identifier',
 	JsxNamespaceName = 'jsx_namespace_name'
 }
 
@@ -2852,23 +2848,11 @@ export const enum _IdentifierKind {
 
 export const enum PatternKind {
 	_LhsExpression = '_lhs_expression',
-	MemberExpression = 'member_expression',
-	SubscriptExpression = 'subscript_expression',
-	_Identifier = '_identifier',
-	Undefined = 'undefined',
-	Identifier = 'identifier',
-	ReservedIdentifier = '_reserved_identifier',
-	DestructuringPattern = '_destructuring_pattern',
-	ObjectPattern = 'object_pattern',
-	ArrayPattern = 'array_pattern',
-	NonNullExpression = 'non_null_expression',
 	RestPattern = 'rest_pattern'
 }
 
 export const enum PropertyNameKind {
 	_PropertyIdentifier = '_property_identifier',
-	Identifier = 'identifier',
-	ReservedIdentifier = '_reserved_identifier',
 	PrivatePropertyIdentifier = 'private_property_identifier',
 	String = 'string',
 	Number = 'number',
@@ -2896,7 +2880,8 @@ export const enum _PropertyIdentifierKind {
 }
 
 export const enum ImportIdentifierKind {
-	Identifier = 'identifier'
+	Identifier = 'identifier',
+	AnonType = 'anon_type'
 }
 
 export const enum TypeKind {
@@ -5730,6 +5715,7 @@ export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type Oror = Terminal<'||', string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
+export type AnonType = Terminal<TSKindId.AnonType, 'type'>;
 
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
@@ -6574,17 +6560,17 @@ export type _JsxIdentifier = JsxIdentifier | Identifier;
 
 export type _JsxIdentifierTree = JsxIdentifierTree | IdentifierTree;
 
-export type JsxElementName = _JsxIdentifier | JsxIdentifier | Identifier | NestedIdentifier | JsxNamespaceName;
+export type JsxElementName = _JsxIdentifier | NestedIdentifier | JsxNamespaceName;
 
-export type JsxElementNameTree = JsxIdentifierTree | IdentifierTree | NestedIdentifierTree | JsxNamespaceNameTree;
+export type JsxElementNameTree = NestedIdentifierTree | JsxNamespaceNameTree;
 
 export type _JsxAttribute = JsxAttribute | JsxExpression;
 
 export type _JsxAttributeTree = JsxAttributeTree | JsxExpressionTree;
 
-export type JsxAttributeName = _JsxIdentifier | JsxIdentifier | Identifier | JsxNamespaceName;
+export type JsxAttributeName = _JsxIdentifier | JsxNamespaceName;
 
-export type JsxAttributeNameTree = JsxIdentifierTree | IdentifierTree | JsxNamespaceNameTree;
+export type JsxAttributeNameTree = JsxNamespaceNameTree;
 
 export type JsxAttributeValue = JsxString | JsxExpression | _JsxElement | JsxElement | JsxSelfClosingElement;
 
@@ -6640,47 +6626,13 @@ export type _Identifier = Undefined | Identifier;
 
 export type _IdentifierTree = UndefinedTree | IdentifierTree;
 
-export type Pattern =
-	| _LhsExpression
-	| MemberExpression
-	| SubscriptExpression
-	| _Identifier
-	| Undefined
-	| Identifier
-	| ReservedIdentifier
-	| DestructuringPattern
-	| ObjectPattern
-	| ArrayPattern
-	| NonNullExpression
-	| RestPattern;
+export type Pattern = _LhsExpression | RestPattern;
 
-export type PatternTree =
-	| MemberExpressionTree
-	| SubscriptExpressionTree
-	| UndefinedTree
-	| IdentifierTree
-	| ReservedIdentifierTree
-	| ObjectPatternTree
-	| ArrayPatternTree
-	| NonNullExpressionTree
-	| RestPatternTree;
+export type PatternTree = RestPatternTree;
 
-export type PropertyName =
-	| _PropertyIdentifier
-	| Identifier
-	| ReservedIdentifier
-	| PrivatePropertyIdentifier
-	| String
-	| Number
-	| ComputedPropertyName;
+export type PropertyName = _PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 
-export type PropertyNameTree =
-	| IdentifierTree
-	| ReservedIdentifierTree
-	| PrivatePropertyIdentifierTree
-	| StringTree
-	| NumberTree
-	| ComputedPropertyNameTree;
+export type PropertyNameTree = PrivatePropertyIdentifierTree | StringTree | NumberTree | ComputedPropertyNameTree;
 
 export type StatementIdentifier = Identifier | ReservedIdentifier;
 
@@ -6698,9 +6650,9 @@ export type _PropertyIdentifier = Identifier | ReservedIdentifier;
 
 export type _PropertyIdentifierTree = IdentifierTree | ReservedIdentifierTree;
 
-export type ImportIdentifier = Identifier;
+export type ImportIdentifier = Identifier | AnonType;
 
-export type ImportIdentifierTree = IdentifierTree;
+export type ImportIdentifierTree = IdentifierTree | AnonTypeTree;
 
 export type Type =
 	| PrimaryType
@@ -7303,6 +7255,7 @@ export interface KindMap {
 	'||': Oror;
 	jsx_text: JsxText;
 	__error_recovery: ErrorRecovery;
+	anon_type: AnonType;
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)

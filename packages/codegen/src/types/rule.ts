@@ -35,6 +35,10 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 
 	readonly inline?: boolean;
 
+	readonly hidden?: boolean;
+
+	readonly kind?: string;
+
 	readonly metadata?: RuleMetadata;
 
 	readonly splicedBody?: boolean;
@@ -49,8 +53,6 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 			readonly separator?: RuleSeparator<Rule<Phase>>;
 
 			readonly optionalElement?: boolean;
-
-			readonly aliasNamed?: boolean;
 
 			readonly tokenized?: boolean;
 			readonly immediate?: boolean;
@@ -272,7 +274,6 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;
 	readonly name: string;
 	readonly literal?: string;
-	readonly hidden?: boolean;
 	readonly aliasedTo?: string;
 	readonly kindId?: number;
 	readonly aliasedToId?: number;
@@ -284,6 +285,7 @@ export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 			readonly content: Rule<Phase>;
 			readonly named: boolean;
 			readonly value: string;
+			readonly kindId?: number;
 		}
 	: never;
 
@@ -399,6 +401,10 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 	}
 }
 
-export function sym(name: string): SymbolRule {
+export function sym(name: string): SymbolRule<'evaluate'> {
 	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
+}
+
+export function isIdentifierLike(value: string): boolean {
+	return /^[A-Za-z_]\w*$/.test(value);
 }

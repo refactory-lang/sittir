@@ -2849,12 +2849,12 @@ export interface SplatType {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _identifier: Identifier;
+	readonly _identifier: Identifier | 'type';
 	readonly _type_parameter: TypeParameter;
 	readonly __looseHints__?: {
 		readonly type_parameter: readonly Type[];
 	};
-	identifier(): Identifier;
+	identifier(): Identifier | 'type';
 	typeParameter(): TypeParameter;
 }
 

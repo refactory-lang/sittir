@@ -1152,7 +1152,7 @@ const _K66: readonly string[] = [
 	'_token_tree_punctuation',
 	'_token_keywords'
 ];
-const _K67: readonly string[] = ['string_literal', 'raw_string_literal', 'token_tree_punctuation', 'delim_token_tree'];
+const _K67: readonly string[] = ['string_literal', 'raw_string_literal', 'delim_token_tree'];
 const _K68: readonly string[] = [
 	'char_literal',
 	'boolean_literal',

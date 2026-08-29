@@ -172,6 +172,9 @@
     }
   },
   "fieldAliasMap": {
+    "import_specifier.content": {
+      "identifier": "anon_type"
+    },
     "break_statement.label": {
       "statement_identifier": "identifier"
     },
@@ -181,12 +184,6 @@
     "parenthesized_expression.content": {
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
-    },
-    "assignment_pattern.left": {
-      "lhs_expression": "_lhs_expression"
-    },
-    "array_pattern.elements": {
-      "lhs_expression": "_lhs_expression"
     },
     "jsx_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
@@ -218,9 +215,6 @@
     "member_expression.property": {
       "property_identifier": "identifier"
     },
-    "assignment_expression.left": {
-      "lhs_expression": "_lhs_expression"
-    },
     "decorator.content": {
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression",
@@ -234,9 +228,6 @@
     },
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
-    },
-    "pair_pattern.value": {
-      "lhs_expression": "_lhs_expression"
     },
     "_jsx_start_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
@@ -279,15 +270,6 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "required_parameter.pattern": {
-      "lhs_expression": "_lhs_expression"
-    },
-    "optional_parameter.pattern": {
-      "lhs_expression": "_lhs_expression"
-    },
-    "_parameter_name.pattern": {
-      "lhs_expression": "_lhs_expression"
-    },
     "omitting_type_annotation.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
@@ -327,7 +309,7 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "template_type.content": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "this_type": "this"
     },
     "infer_type.type_identifier": {
@@ -388,11 +370,11 @@
       "instantiation_expression": "_type_query_instantiation_expression"
     },
     "index_type_query.primary_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "this_type": "this"
     },
     "lookup_type.primary_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "this_type": "this"
     },
     "lookup_type.index_type": {
@@ -414,7 +396,7 @@
       "unary_expression": "_number"
     },
     "flow_maybe_type.primary_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "this_type": "this"
     },
     "parenthesized_type.type": {
@@ -433,7 +415,7 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "array_type.primary_type": {
-      "_type_identifier": "identifier",
+      "type_identifier": "identifier",
       "this_type": "this"
     },
     "readonly_type.type": {
@@ -486,12 +468,15 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
+    "_import_clause_default_import.import_identifier": {
+      "identifier": "anon_type"
+    },
+    "_import_specifier_as.alias": {
+      "identifier": "anon_type"
+    },
     "_index_signature_colon.index_type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "_for_header_lhs.left": {
-      "lhs_expression": "_lhs_expression"
     },
     "_jsx_opening_element_content.jsx_start_opening_element_arm": {
       "jsx_start_opening_element_arm": "_jsx_start_opening_element_arm"
@@ -7062,6 +7047,7 @@
       "irKey": "importIdentifier",
       "hidden": true,
       "subtypes": [
+        "anon_type",
         "identifier"
       ]
     },
@@ -7437,8 +7423,6 @@
       "hidden": true,
       "subtypes": [
         "_jsx_identifier",
-        "identifier",
-        "jsx_identifier",
         "jsx_namespace_name"
       ]
     },
@@ -7490,8 +7474,6 @@
       "hidden": true,
       "subtypes": [
         "_jsx_identifier",
-        "identifier",
-        "jsx_identifier",
         "jsx_namespace_name",
         "nested_identifier"
       ]
@@ -8327,9 +8309,7 @@
       "hidden": true,
       "subtypes": [
         "_property_identifier",
-        "_reserved_identifier",
         "computed_property_name",
-        "identifier",
         "number",
         "private_property_identifier",
         "string"
@@ -20687,18 +20667,8 @@
       "irKey": "pattern",
       "hidden": true,
       "subtypes": [
-        "_destructuring_pattern",
-        "_identifier",
         "_lhs_expression",
-        "_reserved_identifier",
-        "array_pattern",
-        "identifier",
-        "member_expression",
-        "non_null_expression",
-        "object_pattern",
-        "rest_pattern",
-        "subscript_expression",
-        "undefined"
+        "rest_pattern"
       ]
     },
     {

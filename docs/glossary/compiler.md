@@ -46,8 +46,8 @@ parents.
 	 * into a dispatchable one, corrupting the family's "unresolvable → keep
 	 * the hidden name" fallback for polymorph-variant-adopted arms). Modifier
 	 * wrappers (optional/field/repeat/repeat1/alias/token) are pushed down to
-	 * leaf attributes (`multiplicity`/`fieldName`/`separator`/`aliasedFrom`/
-	 * `aliasNamed`); structural rules (seq/choice/variant/group/supertype) are
+	 * leaf attributes (`multiplicity`/`fieldName`/`separator`/`aliasedTo`/
+	 * `aliasedToId`); structural rules (seq/choice/variant/group/supertype) are
 	 * preserved and recursed into — the honest post-normalize equivalent of
 	 * `linkRules` for callers that read attributes instead of wrapper shape.
 	 */
@@ -488,8 +488,9 @@ parents.
  * `AssembleCtx.normalizedRules`'s doc comment). `rule` is a `RenderRule`
  * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
  * exist as `rule.type` values on this view — their meaning is stamped onto
- * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasNamed`
- * (an alias of a symbol is a SymbolRule carrying `aliasedFrom`; no other rule type does). The link-view switch enforced wrapper opacity by SIMPLY HAVING
+ * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedTo`
+ * (`attributeAlias` stamps `aliasedTo`/`aliasedToId` on whatever content the
+ * `alias()` wrapper wraps, symbol or otherwise). The link-view switch enforced wrapper opacity by SIMPLY HAVING
  * NO CASE for REPEAT/REPEAT1/OPTIONAL/FIELD (falling to `default: []`); the
  * equivalent here is an explicit attribute check BEFORE the type switch,
  * covering every rule type uniformly (a repeat/optional can wrap ANY rule
@@ -524,24 +525,18 @@ parents.
  *
  * `ALIAS` is dropped as a switch case (not translated): unlike `token`,
  * `alias` is fully consumed by `flattenRules` (it never survives as
- * its own node — the wrapper disappears and `aliasedFrom`/`aliasNamed` land on
+ * its own node — the wrapper disappears and `aliasedTo`/`aliasedToId` land on
  * its content), so `RenderRule` can never have `type === 'ALIAS'` at runtime,
- * not just by static type (`AliasRule<'normalize'> = never`). Its resolution
- * ("resolve to the alias's source kind": `rule.named && content.type ===
- * SYMBOL` → the inner symbol's OWN name — the SOURCE kind, not the alias's
- * `value` target; else → `rule.value`) is subsumed by two reads: the SYMBOL
- * case's existing `aliasedFrom ?? name` (unchanged — that fact predates this
- * migration; see `SymbolRule.aliasedFrom`'s doc comment, a link-time
- * stamping distinct from wrapper-deletion's but carrying the same source-kind
- * meaning and never conflicting, since wrapper-deletion's outer-alias-wins
- * merge only overwrites when an ENCLOSING alias exists) for the
- * `content.type === SYMBOL` case; and a NEW generic non-SYMBOL fallback below
- * (`rule.aliasedFrom` on any other leaf type) for the `else` branch — the old
- * switch never had to handle "alias-of-non-symbol" as its own case because
- * the link-view ALIAS node caught it structurally; post-wrapper-deletion the
- * content's own type dispatches instead, so the fallback re-surfaces exactly
- * that one fact (`rule.value`, preserved as `aliasedFrom`) the SYMBOL-only
- * read would otherwise miss.
+ * not just by static type (`AliasRule<'normalize'> = never`). The alias form
+ * flip means the SYMBOL case needs no dual read for this: `rule.name` is
+ * ALREADY the storage kind on every SYMBOL leaf, aliased or not — `aliasedTo`
+ * only ever carries the extra display (parse) name, never the identity this
+ * walk resolves by. A structural alias content (SEQ/CHOICE/…) carries
+ * `aliasedTo` too (`attributeAlias` stamps it uniformly regardless of content
+ * shape), but this walk never reads it: `case SEQ` and `default` both return
+ * `[]` unconditionally, so an alias wrapping something other than a symbol
+ * or literal is opaque here exactly like an unaliased occurrence of the same
+ * shape would be.
  *
  * `TOKEN` is dropped as a switch case (matching `emitters/templates.ts`'s
  * `isLeftmostTerminalImmediate` precedent — see its NOTE comment,
@@ -566,17 +561,6 @@ parents.
 // type switch: a repeat/repeat1/optional can wrap ANY rule shape, and the
 // collapsed leaf's `rule.type` is otherwise indistinguishable from an
 // unwrapped occurrence of that same type.
-```
-
-#### body
-
-```text
-// Generic alias-of-non-symbol fallback (the `else` branch of the former
-// ALIAS case — see doc comment). SYMBOL has its own `aliasedFrom` read
-// below (unchanged, predates this migration) so it's excluded here to
-// avoid short-circuiting its hidden-prefix/recursion logic. No stamp is
-// available here — `aliasedFrom`/`aliasedFromId` are a SYMBOL-only
-// pairing (types/rule.ts), and this rule isn't one.
 ```
 
 #### body
@@ -949,9 +933,9 @@ parents.
  *
  * Does NOT match a branch that merely HAS one array-multiplicity field
  * among several named fields (that stays 'branch', unchanged) — only a
- * rule whose own top-level type IS repeat/repeat1 qualifies, which is
- * exactly the same shape gate `isHiddenRepeatHelper` uses via
- * `extractRepeatShape` for the (unrelated) hidden-multi case above.
+ * rule whose own top-level `multiplicity` is `array`/`nonEmptyArray`
+ * qualifies, the same `rule.multiplicity` gate `isHiddenRepeatHelper` uses
+ * for the (unrelated) hidden-multi case above.
  */
 ```
 
@@ -968,17 +952,10 @@ parents.
 
 ```text
 /**
- * Test whether a kind should be classified as a hidden `multi` helper.
+ * Test whether a rule should be classified as a hidden `multi` helper:
+ * `rule.hidden === true && (rule.multiplicity === 'array' ||
+ * rule.multiplicity === 'nonEmptyArray')`.
  *
- * @param kind - The rule kind name (snake_case, may start with `_`).
- * @param rule - The rule body for that kind.
- * @param parentAliasedKinds - Optional set of hidden kind names that appear
- *   as the content of a named alias in a parent rule. When provided, kinds
- *   in this set are excluded from the `multi` classification even if their
- *   rule body is a repeat: they surface as REAL runtime CST nodes (under
- *   the alias target name) and need their own `branch` transport type.
- * @returns `true` when the kind is hidden, its body unwraps to a repeat,
- *   AND it is NOT aliased by a parent rule.
  * @remarks
  *   Hidden repeat helpers are inlined by tree-sitter at parse time, so they never
  *   surface as concrete nodes. Classifying them as `multi` lets downstream emitters
@@ -986,16 +963,12 @@ parents.
  *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
  *
  *   Aliased hidden kinds (e.g. `_with_clause_bare` aliased to `with_clause_bare`)
- *   are NOT inlined — tree-sitter exposes them as concrete named nodes. They must
- *   classify as `branch` so the Rust transport can dispatch on their kind ID.
+ *   are NOT inlined — tree-sitter exposes them as concrete named nodes, so they must
+ *   classify as `branch` so the Rust transport can dispatch on their kind ID. No
+ *   separate `parentAliasedKinds` exclusion set is needed for this: link's
+ *   `unhideAliasedTargets` already flips such a rule's `hidden` to `false`, so the
+ *   single `rule.hidden === true` check already excludes it.
  */
-```
-
-#### body
-
-```text
-// If this kind appears as the content of a named alias in any parent rule,
-// it produces a real runtime CST node — do NOT classify as multi.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyBranchOrContainer`
@@ -1847,14 +1820,14 @@ parents.
  *    rules[_primitive_type] = choice('u8','u16',...)
  *    alias(symbol(_primitive_type), $.primitive_type)
  *
- * Why: downstream (link's `resolveNamedAliasWithProvenance`) produces
- * `symbol(target, aliasedFrom: source)` ONLY when the alias source is
- * a bare symbol. For inline content it can't stamp `aliasedFrom`, and
- * without that stamp the display-name ↔ storage-kind linkage is lost to
- * everything downstream that consumes it (the node model's
+ * Why: the storage identity an alias's content carries is a NAME
+ * (`SymbolRule.name`) — inline content (a CHOICE, a SEQ, …) has no name for
+ * `aliasedTo`/`aliasedToId` (wrapper-deletion's `attributeAlias`) to attach
+ * to, and without a name the display-name ↔ storage-kind linkage is lost to
+ * everything downstream that resolves it by name (the node model's
  * `fieldAliasMap`, validator name normalization). By making every alias
- * source a named hidden rule here, we uniformly preserve alias-target
- * metadata through the pipeline.
+ * source a named hidden rule here, the alias content is always a bare
+ * symbol reference, so the storage identity is always a name, uniformly.
  *
  * Also: the rules map now has a single named entry per alias target
  * (the `_${target}` source) without adding entries for visible-only
@@ -2370,8 +2343,8 @@ parents.
 ```text
 // Mirror drainRenderAsMetadata: inject the body into the rules map
 // under the HIDDEN name, replacing the external's empty-pattern
-// placeholder. The hidden name is the STORAGE identity (aliasedFrom
-// doctrine) — registering under the visible name instead creates a
+// placeholder. The hidden name is the STORAGE identity (`name` is always
+// storage; `aliasedTo` is the display name) — registering under the visible name instead creates a
 // SECOND node colliding on the same typeName, and the transport
 // struct gets emitted from the empty placeholder (no render text).
 // The visible name stays parse-identity-only, carried by the ALIAS
@@ -2878,7 +2851,10 @@ parents.
 /**
  * Evaluate a grammar.js (or grammar.sittir.ts) file and return a RawGrammar.
  *
- * Injects DSL functions as globals, then imports the module.
+ * Injects DSL functions as globals, then imports the module, then runs the
+ * imported result through `canonicalizeRawGrammar` — the one place
+ * `hidden`/`inline` get their final evaluate-phase stamp before link ever
+ * sees the grammar.
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 ```
@@ -2926,6 +2902,32 @@ parents.
  *
  * @param g - `globalThis` cast to a mutable string-keyed record.
  * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
+ */
+```
+
+### `packages/codegen/src/compiler/evaluate.ts::canonicalizeRawGrammar`
+
+```text
+/**
+ * Evaluate's exit gate — the one place `hidden` and `inline` get stamped
+ * for every rule reference in the grammar, and where
+ * `RawGrammar.visibleInlineNames` gets recorded (the grammar's `inline:`
+ * array entries that do NOT start with `_` — link reports these as the
+ * `inline-array-visible-name` diagnostic, since the parser inlines them
+ * regardless of the leading-underscore convention, so they never surface
+ * as their own nodes). Every rule link resolves afterward has its
+ * `hidden`/`inline` facts already settled.
+ *
+ * For a top-level rule: `hidden = name.startsWith('_')`. For a SYMBOL
+ * reference: `hidden = name.startsWith('_')`,
+ * `inline = !supertypes.has(name) && (hidden || inlineNames.has(name))`.
+ * For a named ALIAS wrapping a bare SYMBOL: forces that symbol's `inline`
+ * to `false` regardless of what the name-based computation would give —
+ * an alias confers a real visible CST kind that must materialize, not
+ * flatten, however the ALIAS was built (`structuralAlias`, an
+ * enrich-injected alias, a hand-built rule literal). Runs bottom-up over
+ * every node in every rule (`RuleWalker.map`), so it corrects a symbol's
+ * `inline` no matter how deep under an ALIAS it sits.
  */
 ```
 
@@ -3529,6 +3531,64 @@ parents.
  *  matching the original hand-rolled walk's members/content-only descent). */
 ```
 
+### `packages/codegen/src/compiler/link.ts::topLevelAliasOf`
+
+```text
+/** A rule's top-level named ALIAS, walking through transparent GROUP/
+ *  VARIANT/TOKEN wrappers — undefined for anything else. Used to find a
+ *  hidden rule's alias body (`aliasBodies`, keyed by the hidden rule's
+ *  name) without re-deriving the walk at each call site. */
+```
+
+### `packages/codegen/src/compiler/link.ts::unhideAliasedTargets`
+
+```text
+/** A hidden rule some named alias wraps produces a real, separately-named
+ *  CST node (the parser emits it under the alias's display name) — it is
+ *  not swallowed the way an ordinary hidden helper is. Walks every rule
+ *  for a `named` ALIAS over a bare SYMBOL and flips that symbol's target
+ *  rule to `hidden: false`, correcting the leading-underscore default
+ *  `canonicalizeRawGrammar` (evaluate) stamped before link ever ran. Runs once,
+ *  after every top-level rule has been resolved, so it sees the final
+ *  ALIAS shapes `resolveRule` produced. */
+```
+
+### `packages/codegen/src/compiler/link.ts::stampLinkMintedVisibility`
+
+```text
+/** A rule link mints with no counterpart in `ctx.rules` (the raw grammar's
+ *  own rule names — an external role rule, a synthesized supertype, …)
+ *  never went through evaluate's visibility stamping, so it has no
+ *  `hidden` stamp yet — back-fill it from the leading-underscore
+ *  convention. A rule with a raw-grammar counterpart, or one that already
+ *  carries a `hidden` stamp (from `unhideAliasedTargets`), is left alone. */
+```
+
+### `packages/codegen/src/compiler/link.ts::pruneInlinedAliasBodies`
+
+```text
+/** Deletes an alias-bodied hidden rule (one `ctx.aliasBodies` tracked)
+ *  once nothing references it any more. Collects its own referenced-name
+ *  set with one walk over every rule (every SYMBOL name, every SUPERTYPE
+ *  subtype name) rather than re-walking per candidate, then drops any
+ *  `aliasBodies` entry not in that set and not re-added by
+ *  `ctx.topLevelAliasBodies` (some later pass still needs the standalone
+ *  body) — the common case is a rule whose every reference was already
+ *  substituted for its content by `canonicalizeRuleLiterals`'s
+ *  SYMBOL/SUPERTYPE inlining. Runs once, after the literal-canonicalize
+ *  pass that does the inlining. */
+```
+
+### `packages/codegen/src/compiler/link.ts::aliasedSymbolWithin`
+
+```text
+/** Whether `content` is, or transparently wraps (VARIANT/GROUP/TOKEN), a
+ *  bare SYMBOL — and if so, that symbol. Used by `resolveRule`'s ALIAS
+ *  case to decide whether an alias's content is simple enough to keep as
+ *  the ALIAS wrapper (a symbol or a literal) rather than reduce to a bare
+ *  target reference. */
+```
+
 ### `packages/codegen/src/compiler/link.ts::collectAliasedHiddenKinds`
 
 ```text
@@ -3607,8 +3667,9 @@ parents.
  *   aliases (e.g. `alias($.delim_token_tree, $.token_tree)`). An aliased instance
  *   surfaces under `target` carrying the SOURCE's body, so the target kind's slot
  *   accept-set must union the source's parse-surface children. Hidden sources are
- *   already handled structurally via the `aliasedFrom` mechanism, so only visible
- *   sources need this union — hence the split.
+ *   already handled structurally via the alias-form mechanism (`name` the storage
+ *   kind, `aliasedTo` the display name), so only visible sources need this union —
+ *   hence the split.
  *
  * @param rawRules - The EVALUATED (pre-resolveRule) rules map, alias nodes present.
  */
@@ -3620,48 +3681,6 @@ parents.
 // rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
 // ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
 // view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
-```
-
-### `packages/codegen/src/compiler/link.ts::extractAliasedFromName`
-
-```text
-/**
- * Given `alias($.X, $.Y)`'s content (the aliased-from body), extract
- * the source kind-name `X` when the alias was specifically a rename of
- * a named symbol. Returns undefined for alias-of-literal, alias-of-seq,
- * alias-of-choice, and other non-symbol bodies where there's no single
- * source kind to track.
- *
- * Walks through transparent wrappers (variant/group/clause/token/terminal)
- * so patterns like `alias(token($.inner), $.target)` still resolve.
- *
- * @remarks
- *   Hidden symbols (`$._match_block`) are valid alias sources — they still
- *   have concrete shape interfaces emitted from Assemble and are the canonical
- *   type factories/types surface. Tree-sitter emits `_match_block`'s body
- *   structure at the node labeled `block` per `alias($._match_block, $.block)`;
- *   the wire `$type` is the grammar symbol stamped by the native read, so
- *   downstream sees the source kind's identity without any rewrite step.
- *
- *   Supertypes (`alias($.expression, $.as_pattern_target)`) are NOT valid alias
- *   sources: supertypes are abstract unions with no concrete shape of their own.
- *   Tree-sitter uses them to mean "parse anything in the expression grammar at
- *   this slot, label the result `as_pattern_target`". Using the supertype as
- *   canonical would strip the concrete kind the runtime actually produces.
- */
-```
-
-#### body
-
-```text
-// Record the alias SOURCE as provenance even when it is a supertype.
-// `alias($.expression, $.as_pattern_target)` aliases the `expression`
-// supertype: the slot must be typed by that source (the expression
-// union, which IS in the node map), NOT by the bare target label
-// `as_pattern_target` — the target has no rule body, so leaving
-// aliasedFrom unset makes `refName = aliasedFrom ?? name` fall back to
-// the target and emit a phantom unresolved ref. The target still
-// survives as the symbol `name` (the CST `$type` the reader matches).
 ```
 
 ### `packages/codegen/src/compiler/link.ts::_wouldInlineAtAssemble`
@@ -3780,10 +3799,11 @@ parents.
 /**
  * Is `rule` a choice whose every member (after unwrapping variant
  * wrappers) is a reference to one of the registered variant-child
- * visible names? Link's `resolveRule` collapses `alias($._hidden,
- * $.visible)` into `symbol('visible', aliasedFrom: '_hidden')` before
- * this pass runs — so both raw `alias` rules AND collapsed symbol refs
- * need to count.
+ * visible names? Link's `resolveRule` keeps `alias($._hidden, $.visible)`
+ * as the ALIAS wrapper (a bare-symbol alias content is never reduced to a
+ * plain symbol) — the `core.type === ALIAS` arm checks `core.value` (the
+ * alias name) for this shape; the `core.type === SYMBOL` arm checking
+ * `core.name` covers an unaliased bare reference to the variant-child kind.
  */
 ```
 
@@ -3805,8 +3825,8 @@ parents.
 #### body
 
 ```text
-// Link already collapsed the alias wrapper; the symbol's
-// name IS the visible variant-child kind name.
+// ALIAS wrapper: `core.value` is the alias name (the visible variant-child
+// kind). The SYMBOL arm below covers an unaliased bare reference.
 ```
 
 #### body
@@ -3848,30 +3868,6 @@ parents.
  *   render non-empty tuple types for those slots. Earlier builds collapsed
  *   `repeat1` → `repeat` here unconditionally, which erased the non-empty
  *   signal.
- */
-```
-
-### `packages/codegen/src/compiler/link.ts::resolveNamedAliasWithProvenance`
-
-```text
-/**
- * Resolve a named alias to a symbol rule that carries aliased-from provenance.
- *
- * @param content - The body of the alias (typically a symbol referencing the
- *   original kind).
- * @param ctx - Link phase context; `ctx.supertypes` are not valid
- *   aliased-from sources.
- * @param targetName - The alias target kind name (the visible kind produced in
- *   the parse tree).
- * @returns A `SymbolRule<'link'>` for `targetName`, with `aliasedFrom` set when the
- *   body resolves to a concrete non-supertype symbol.
- * @remarks
- *   Preserving alias provenance (`aliasedFrom` set here; `aliasedFromId`
- *   stamped later in link's kind-id pass)
- *   feeds the display-name -> storage-kind pairs (`subtypeRestampPairsOf`,
- *   `resolveSlotAliasPairs`, serialized as the node model's `fieldAliasMap`)
- *   the corpus validators use to normalize parse-tree display names against
- *   storage kinds.
  */
 ```
 
@@ -3936,17 +3932,18 @@ parents.
 #### body
 
 ```text
-// Enum admission. Two terminal-valued member shapes qualify:
-//   - bare STRING literals (the original all-STRING enum), and
-//   - post-resolve SYMBOLs carrying `aliasedFrom` whose STORAGE rule body
-//     is a bare STRING — the kind's whole realization is one fixed render
-//     text (visibleExternals: `_semicolon`'s `automatic_semicolon` arm,
-//     storage `_automatic_semicolon := '\n'`). Convert those to the
-//     literal-carrying SYMBOL shape (`canonicalizeRuleLiterals`' vehicle —
-//     this is deliberately its second writer; `literalTextOf`/
-//     `isEnumChoiceRule` serve the shape uniformly downstream) so the
-//     choice classifies as an ENUM of {literal → kind} members instead of
-//     a supertype whose member set can never project a type union.
+// Enum admission. Three member shapes qualify:
+//   - bare STRING literals (the original all-STRING enum);
+//   - an already-literal-carrying SYMBOL (`.literal !== undefined`, set by
+//     `canonicalizeRuleLiterals`' STRING-target case); and
+//   - a named ALIAS whose content resolves to a STRING (`alias('x', $.kind)`)
+//     or to a SYMBOL whose STORAGE rule body (`rules[content.name]`) is a
+//     bare STRING — the kind's whole realization is one fixed render text
+//     (visibleExternals: `_semicolon`'s `automatic_semicolon` arm, storage
+//     `_automatic_semicolon := '\n'`). Both ALIAS cases synthesize a
+//     literal-carrying SYMBOL (`name: <alias name>`) so the choice classifies
+//     as an ENUM of {literal → kind} members instead of a supertype whose
+//     member set can never project a type union.
 ```
 
 #### body
@@ -3991,10 +3988,11 @@ parents.
 // bare SYMBOL/ALIAS arm that is alias-minted (the exact
 // `isAliasMintedRef` condition `variant-structural.ts`'s
 // CHOICE-arm predicate uses, shared not re-derived) names its
-// subtype-list entry (`aliasedFrom ?? name` for SYMBOL, matching
+// subtype-list entry by STORAGE name (an ALIAS arm by its wrapped
+// symbol's `.name`, a SYMBOL arm by its own `.name` — matching
 // `collectSubtypeRefs`'s own per-arm naming exactly, so
-// `variantArms` entries are always a subset of `subtypes`'
-// `aliasedFrom ?? name` set).
+// `variantArms` entries are always a subset of `subtypes`' storage
+// names).
 //
 // This surfaces MORE alias-minted arms than the wire channel ever
 // registered for SUPERTYPE parents: every `alias($.hidden,
@@ -4020,10 +4018,11 @@ parents.
 // Named ALIAS arm: record the HIDDEN symbol name (content.name),
 // matching collectSubtypeRefs' per-arm naming — variantArms
 // entries must stay a subset of `subtypes`, and assemble's
-// lookup keys on the hidden name. (Effectively unreachable
-// today — resolveRule collapses raw alias arms to
-// SYMBOL+aliasedFrom first — but the visible `value` here
-// would silently no-op if an unresolved ALIAS ever arrived.)
+// lookup keys on the hidden name. Live today: link's `resolveRule`
+// keeps a bare-symbol-content named alias as the ALIAS wrapper (it
+// no longer collapses to a plain symbol), so this arm's raw ALIAS
+// shape is the common case reaching this walk, not a defensive
+// fallback.
 ```
 
 #### body
@@ -4051,7 +4050,7 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/link.ts::collectSubtypeNames`
+### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
 
 ```text
 /**
@@ -4062,7 +4061,7 @@ parents.
  * hybrid case where a supertype branch wraps a single symbol in a seq.
  *
  * Aliased arms additionally record their storage→parse name pair in
- * `parseNames`: the subtype identity stays the STORAGE name (`aliasedFrom`,
+ * `parseNames`: the subtype identity stays the STORAGE name (`SymbolRule.name`,
  * the kind whose rule body/slots/template model the arm — and the name
  * `variantArms` / assemble's node map key on), while the PARSE name is the
  * visible label tree-sitter actually emits at that position
@@ -4421,8 +4420,9 @@ parents.
 #### body
 
 ```text
-// The kind the ref stores under — an aliased ref keeps its
-// `aliasedFrom` rule alive, whatever name it displays as.
+// The kind the ref stores under (`rule.name` — always the storage
+// kind) — an aliased ref keeps its storage rule alive, whatever
+// name `aliasedTo` displays it as.
 ```
 
 #### body
@@ -5426,7 +5426,7 @@ parents.
  * must never appear in the input:
  *  - `flattenRules` (which runs before this in the production pipeline)
  *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
- *    attributes and pushes ALIAS down to `aliasedFrom`+`aliasNamed` leaf
+ *    attributes and pushes ALIAS down to `aliasedTo`+`aliasedToId` leaf
  *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
  *    (`{...rule, content}`, flatten.ts) — its absence here is a
  *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
@@ -5647,21 +5647,27 @@ parents.
 
 ```text
 /**
- * Is `rule` alias-minted — a bare ALIAS node, or a SYMBOL whose target name
- * has NO independent rule body of its own in `rules` — rather than an
- * ordinary, independently-authored sibling rule reference? This is the PR-0c
- * mint-site condition (`mintContentAliasKinds` / `isClauseHoistVisibleGroupAlias`,
- * link.ts/evaluate.ts: "the alias value has no independent rule body
- * elsewhere in `rules` — exactly the fact tree-sitter's own grammar compiler
- * keys on to decide there's no existing symbol to reuse"), reapplied here to
- * discriminate real variant-child arms from a coincidental prefix-name
+ * Is `rule` alias-minted — a bare ALIAS node, or a SYMBOL whose own name
+ * has NO independent rule body in `rules` — rather than an ordinary,
+ * independently-authored sibling rule reference? This is the same
+ * mint-site condition `mintContentAliasKinds` / `isClauseHoistVisibleGroupAlias`
+ * (link.ts/evaluate.ts) key on: "the alias value has no independent rule
+ * body elsewhere in `rules` — exactly the fact tree-sitter's own grammar
+ * compiler keys on to decide there's no existing symbol to reuse",
+ * reapplied here to discriminate real variant-child arms from a coincidental prefix-name
  * collision with an unrelated, independently defined rule (python's
  * `dictionary_splat`/`string_content`, ts's
  * `object_type_content_comma`/`_semi` — all real top-level rules with their
- * own bodies in `rules`, NOT alias targets). A bare ALIAS node (rare at this
- * phase; link resolves aliases to `SYMBOL` before `normalized.rules` is
- * built) is unconditionally alias-minted — there is no "independent body" to
- * check because the arm IS the alias construct itself.
+ * own bodies in `rules`, NOT alias targets). A bare ALIAS node is the
+ * COMMON case reaching this phase now: link's `resolveRule` keeps a
+ * bare-symbol- or literal-content named alias as the ALIAS wrapper rather
+ * than reducing it to a plain SYMBOL, so `linked.rules` (pre-wrapper-
+ * deletion) routinely carries raw ALIAS nodes at choice/supertype arm
+ * positions — unconditionally alias-minted, since there is no "independent
+ * body" to check when the arm IS the alias construct itself. The SYMBOL
+ * branch no longer checks `aliasedTo`: nothing stamps that fact on a plain
+ * tree-walk SYMBOL at link phase (it's a wrapper-deletion leaf attribute),
+ * so the name-in-`rules` test alone is the live condition.
  *
  * Exported (R12/decision-7 V2 Task 1) so `compiler/link.ts`'s
  * `classifyHiddenChoiceRule` can reapply the SAME test at its own CHOICE-arm
@@ -5823,7 +5829,11 @@ parents.
 /**
  * `flatten` over a whole rule map — the map-form `normalizeGrammar()` uses
  * to produce the `normalizedRules` snapshot. Applies the self-referential
- * fold keyed on each rule's own name before flattening.
+ * fold keyed on each rule's own name before flattening, then carries the
+ * PRE-flatten rule's `hidden`/`kind` facts onto the flattened root
+ * (`dsl/rule-attrs.ts::withKindFacts`) — flattening can rebuild the root
+ * node fresh (a collapsed singleton, a spliced seq), so those facts don't
+ * survive the rebuild on their own.
  */
 ```
 
@@ -5855,7 +5865,7 @@ parents.
  * (2026-07-05, PR-137 follow-on-3): the wrapper shapes that switch used to
  * pattern-match (REPEAT/REPEAT1/OPTIONAL/ALIAS/TOKEN) don't exist post-
  * wrapper-deletion — their meaning is stamped as leaf attributes
- * (`multiplicity`/`aliasedFrom`/`aliasNamed`/`fieldName`) — so the family now
+ * (`multiplicity`/`aliasedTo`/`aliasedToId`/`fieldName`) — so the family now
  * checks those attributes BEFORE dispatching on `rule.type`. See each
  * function's doc comment for its specific translation.
  *
@@ -5940,14 +5950,14 @@ parents.
  * - `token` / `multi` modelTypes: never user-facing (structural helpers).
  * - Visible kinds (not `_`-prefixed): user-facing.
  * - Hidden kinds: user-facing only when they're alias sources
- *   (referenced elsewhere via `aliasedFrom`, meaning factories
+ *   (referenced elsewhere by their storage `name`, meaning factories
  *   stamp this kind as `$type`).
  *
  * Alias-source detection: walk every node's field / child value
- * slots and collect unresolved-ref names starting with `_`. Those
- * references only exist in the emitted NodeMap when
- * `walkForChildren` / `deriveValuesForRule` stamped the source
- * (`aliasedFrom`) rather than the visible target.
+ * slots and collect unresolved-ref names starting with `_`. A
+ * reference's `.node` identity (`storageKindOfRef`) is always the
+ * STORAGE name — `walkForChildren` / `deriveValuesForRule` never
+ * substitute the display (`aliasedTo`) name there.
  */
 ```
 
@@ -7029,13 +7039,11 @@ parents.
 
 ```text
 /**
-	 * Hidden-rule → alias-target mapping. When a hidden rule like
-	 * `_type_identifier: $ => alias($.identifier, $.type_identifier)`
-	 * is collapsed by Link (the alias wrapper is stripped so the rule
-	 * tree downstream sees just `symbol('identifier')`), the alias's
-	 * rename — the name tree-sitter actually emits at parse time —
-	 * would be lost. This map records those collapses so Assemble
-	 * can rewrite supertype subtype lists from `_type_identifier` to
+	 * Hidden-rule → alias-target mapping, collected from `raw.rules` (the
+	 * evaluate-phase, pre-link grammar) for a hidden rule like
+	 * `_type_identifier: $ => alias($.identifier, $.type_identifier)`. Records
+	 * the rename — the name tree-sitter actually emits at parse time — so
+	 * Assemble can rewrite supertype subtype lists from `_type_identifier` to
 	 * `type_identifier`. Optional so unit tests that construct a
 	 * LinkedGrammar directly don't have to fill in an empty map.
 	 */
@@ -7048,10 +7056,11 @@ parents.
 	 * Hidden top-level alias-source kind → structural body to use for
 	 * assembly/classification.
 	 *
-	 * Link collapses named aliases to `symbol(targetName, aliasedFrom?)`
-	 * so downstream passes preserve runtime alias identity, but that
-	 * erases the source body's shape for kinds like
-	 * `_type_identifier: alias($.identifier, $.type_identifier)`.
+	 * Link's `resolveRule` ALIAS case reduces a COMPLEX alias content
+	 * (not a bare string, not reducible to a single symbol) to a plain
+	 * `symbol(targetName)` when the target names a declared rule — losing
+	 * the source body's structural shape for kinds like a hidden rule
+	 * `alias(seq(...), $.target)` where the target is itself declared.
 	 * This map restores the original structural body for the alias
 	 * source kind so Assemble can derive the hidden kind's model from
 	 * the aliased content instead of the collapsed symbol.
@@ -7075,6 +7084,16 @@ parents.
 	 *
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
+```
+
+### `packages/codegen/src/compiler/types.ts::visibleInlineNames`
+
+```text
+/** Entries of the grammar's `inline:` array that do NOT start with `_` —
+ *  computed once at evaluate's exit (`canonicalizeRawGrammar`). The parser
+ *  inlines these regardless of the leading-underscore convention, so they
+ *  never surface as their own nodes; link reports a non-empty set as the
+ *  `inline-array-visible-name` diagnostic. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
@@ -7376,7 +7395,7 @@ parents.
 	 * `isAliasMemberKind` / `isCompatibleSubtypeMember` /
 	 * `resolveHiddenRuleContent`) now reads `AssembleCtx.normalizedRules`
 	 * instead, with the former "no REPEAT1 case = opaque" switch behavior
-	 * translated into explicit `multiplicity`/`fieldName`/`aliasedFrom`
+	 * translated into explicit `multiplicity`/`fieldName`/`aliasedTo`
 	 * attribute checks run BEFORE the type switch (see
 	 * `resolveHiddenRuleContent`'s doc comment in assemble.ts for the full
 	 * translation table and the regression fixture this closes — rust's
@@ -7745,9 +7764,23 @@ source, one derivation.
 /**
  * Distinct names/texts the stamp pass could not resolve to a kindId — the
  * per-build phantom-kind signal. Symbols are keyed by storage name
- * (`aliasedFrom ?? name`); literals by their text. Fixed-literal PATTERN
- * misses are NOT recorded (a real regex body has no anon token by design).
+ * (`.name`, always storage under the alias form); literals by their text;
+ * `aliasTargets` separately holds an alias NAME (`aliasedTo`/an ALIAS
+ * node's own `value`) that resolved no named parser kindId — reported as the
+ * `alias-target-unminted` diagnostic. Fixed-literal PATTERN misses are NOT
+ * recorded (a real regex body has no anon token by design).
  */
+```
+
+### `packages/codegen/src/compiler/link.ts::StampKindIdsCtx`
+
+```text
+/** Shared context for the literal/kindId stamp pass. `aliasBodies` is the
+ *  hidden-rule-name → alias-body map (`topLevelAliasOf`) `canonicalizeRuleLiterals`
+ *  inlines a reference into; `topLevelAliasBodies` is the separately-tracked
+ *  set of alias-body kinds a later pass still needs standalone — an
+ *  `aliasBodies` entry also present here survives `pruneInlinedAliasBodies`
+ *  even with zero remaining references. */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::canonicalizeRuleLiterals`
@@ -7883,13 +7916,16 @@ source, one derivation.
 /**
  * An enum kind's member set is its GRAMMAR-WIDE realization set, not just
  * its defining rule's literals. An alias-of-terminal occurrence
- * (`alias('$', $.token_tree_punctuation)`, collapsed by resolveRule to a
- * literal-carrying SYMBOL) realizes the enum kind with a text the defining
- * rule never lists — without folding it in, the emitted transport enum has
- * no variant for that text and every read stub carrying it fails
- * deserialization ("unknown enum payload"). Append the missing texts as
- * ordinary STRING members so AssembledEnum, the transport enum, and every
- * kindEnum consumer see one uniform member list.
+ * (`alias('$', $.token_tree_punctuation)`, kept by `resolveRule` as the
+ * ALIAS(STRING) wrapper — it is never reduced to a bare symbol) realizes
+ * the enum kind with a text the defining rule never lists — without
+ * folding it in, the emitted transport enum has no variant for that text
+ * and every read stub carrying it fails deserialization ("unknown enum
+ * payload"). Also recognizes the legacy literal-carrying-SYMBOL shape
+ * (`.literal` set, `aliasedTo` the enum kind name) other producers can
+ * still emit. Append the missing texts as ordinary STRING members so
+ * AssembledEnum, the transport enum, and every kindEnum consumer see one
+ * uniform member list.
  */
 ```
 
@@ -7910,16 +7946,18 @@ source, one derivation.
 ```text
 /**
  * Kind name → anon-token wire ids from `alias('tok', $.kind)` occurrences
- * anywhere in the linked rule tree. `stampSymbolRefKindIds` records each
- * such occurrence as a literal SYMBOL with `kindId` (the alias-target
- * display symbol) plus `aliasedFromId` (the token's own grammar symbol —
- * the id the wire delivers); this collects those stamps kind-wide so
- * decode arms can accept the token ids even where the occurrence itself
- * is swallowed by supertype expansion (e.g. python's inlined
- * `keyword_identifier` body: `match`-as-identifier never appears as a
- * slot value, only as the `identifier` subtype). Registered under both
- * kind spellings (occurrence name + its `_`-toggled twin) so lookups by
- * either surface find it.
+ * anywhere in the linked rule tree. Two shapes both reach this: the raw
+ * ALIAS(STRING/CHOICE-of-STRING) wrapper `resolveRule` keeps for this
+ * content shape (its own branch resolves the terminal text(s) against the
+ * catalog directly), and a literal-carrying SYMBOL some other producer
+ * stamped with `kindId` (the token's own grammar symbol — the id the wire
+ * delivers) and `aliasedTo` (the alias-target display kind). Either way the
+ * wire id is registered under the alias TARGET's name, so decode arms can
+ * accept the token ids even where the occurrence itself is swallowed by
+ * supertype expansion (e.g. python's inlined `keyword_identifier` body:
+ * `match`-as-identifier never appears as a slot value, only as the
+ * `identifier` subtype). Registered under both kind spellings (occurrence
+ * name + its `_`-toggled twin) so lookups by either surface find it.
  */
 ```
 
@@ -8110,7 +8148,7 @@ source, one derivation.
  * Removed vs the old walker: `effectiveMultiplicity` threading,
  * `deriveSlotsRawFromLeafAttr` folding, `armSlots` / `mergeChoiceArmSlots`,
  * first-arm naming. All slot facts (`fieldName` / `multiplicity` /
- * `separator` / `aliasedFrom` / `nonterminal`) already live ON the leaf
+ * `separator` / `aliasedTo` / `nonterminal`) already live ON the leaf
  * after `flattenRules`, so collection just reads them.
  *
  * The produced `AssembledNonterminal` shape is identical to the old walker's
@@ -8642,7 +8680,8 @@ source, one derivation.
 // their hidden `_<name>` body in the rules bag before this
 // runs) take the `isBareSymbolToKnownSource` path below — no
 // synthesis, alias preserved — and later resolve through
-// link's uniform `aliasedFrom` provenance routing. The former
+// link's uniform alias-form routing (`name` the storage kind,
+// `aliasedTo` the display name). The former
 // `isClauseHoistVisibleGroupAlias` early-return here was
 // behaviorally identical for that population and is retired
 // along with link's mint machinery.
@@ -8674,9 +8713,10 @@ source, one derivation.
 #### body
 
 ```text
-// A STRING body is self-carrying — link collapses the alias to a
-// literal-carrying SYMBOL (parse kind = target, render text = the
-// literal), so no hidden source is needed. Synthesizing here is
+// A STRING body is self-carrying — link keeps it as the ALIAS(STRING)
+// wrapper and stamps `kindId` on the ALIAS node directly
+// (`canonicalizeRuleLiterals`'s ALIAS case, resolved by the alias name),
+// so no hidden source is needed. Synthesizing here is
 // not just unnecessary: when `_${target}` already exists with a
 // DIFFERENT body (rust `alias('$', $.token_tree_punctuation)` vs
 // the real `_token_tree_punctuation` punctuation choice), the
@@ -8905,20 +8945,25 @@ source, one derivation.
 // target name (`rules[value] = <copy of _<name>'s body>`). Its gate
 // (the retired `isClauseHoistVisibleGroupAlias`) required SYMBOL content
 // referencing a real hidden rule — meaning it only ever fired for aliases
-// that ALSO now flow through `resolveRule`'s `aliasedFrom` provenance
-// path uniformly (above). Minting a duplicate independent rule for that
-// case was redundant at best (two disagreeing representations of the
-// same content at worst — the exact bug this retirement fixes): the
-// underlying `_<name>` rule stays the single source of truth, referenced
-// via `aliasedFrom`, and gets promoted to user-facing visibility by the
-// existing `aliasSourceKinds` mechanism (assemble.ts) once its slot
-// reference is hydrated.
+// that ALSO now flow through `resolveRule`'s ALIAS case uniformly (above),
+// which keeps the wrapper (content resolved, not discarded) for this
+// content shape. Minting a duplicate independent rule for that case was
+// redundant at best (two disagreeing representations of the same content
+// at worst — the exact bug this retirement fixes): the underlying
+// `_<name>` rule stays the single source of truth, referenced by its own
+// `name` (with `aliasedTo`/`aliasedToId` stamped onto the leaf once
+// wrapper-deletion consumes the ALIAS), and gets promoted to user-facing
+// visibility by the existing `aliasSourceKinds` mechanism (assemble.ts)
+// once its slot reference is hydrated.
 ```
 
 #### body
 
 ```text
-// Map hidden rules to alias targets before resolveRule collapses them.
+// Map hidden rules to alias targets before resolveRule touches them —
+// some (a complex content targeting a declared rule) get reduced to a
+// bare symbol; this snapshot is taken from the raw, pre-resolve rules
+// regardless.
 ```
 
 #### body
@@ -9035,9 +9080,11 @@ source, one derivation.
 // entire body is `alias($.source, $.display)` is, in grammar truth, an
 // occurrence of `source` — the parser keeps `source`'s symbol as the
 // node's grammar kind, and the wire ($type = grammar symbol) delivers
-// that id. Map mint name -> alias source name so ref stamping can chase
-// it and populate `aliasedFrom`/`aliasedFromId` (the storage-side facts)
-// the same way a directly-aliased occurrence gets them.
+// that id. Map mint name -> its full alias body (`aliasBodies`, from
+// `topLevelAliasOf`) so `canonicalizeRuleLiterals`'s SYMBOL/SUPERTYPE
+// cases can substitute it and stamp `aliasedTo`/`aliasedToId` (from the
+// body's own `value`/`kindId`) the same way a directly-aliased
+// occurrence gets them.
 ```
 
 #### body
@@ -9066,37 +9113,31 @@ source, one derivation.
 // Validate refine() forms against the linked rule tree.
 ```
 
+### `packages/codegen/src/compiler/link.ts::stampAliasTargetId`
+
+```text
+/** Stamps `aliasedToId` — the alias TARGET's own catalog id — from
+ *  `aliasedTo` (the alias name), when the rule carries one and isn't
+ *  already stamped. A miss (no named entry, or an anonymous one) is
+ *  recorded in `misses.aliasTargets`, never silently left unset. Runs
+ *  first inside `stampSymbolRefKindIds`, before `kindId` resolution —
+ *  the two ids are independent: `aliasedToId` is the DISPLAY symbol,
+ *  `kindId` is always this occurrence's own (storage) identity. */
+```
+
 ### `packages/codegen/src/compiler/link.ts::stampSymbolRefKindIds`
 
-#### body
-
 ```text
-// Link-minted literal symbol: its value IS the literal text, so the
-// id resolves through the literal chain (anon token outranks a
-// same-spelled NAMED rule) — same resolution deriveValuesForRule
-// applies to these.
-```
-
-#### body
-
-```text
-// Alias-of-terminal mint: `kindId` (stamped at mint from the alias
-// target name) is the DISPLAY symbol. The literal's own anon token
-// is the grammar symbol — the id the wire actually delivers — so
-// it stamps as the storage-side fact.
-```
-
-#### body
-
-```text
-// kindId is always the id of this occurrence's own name; aliasedFromId
-// is the storage-side fact, present whenever the occurrence is aliased —
-// either directly (`aliasedFrom` stamped at the reference site) or
-// through an alias-bodied mint (a target rule whose whole body is
-// `alias($.source, …)`: the occurrence is, in grammar truth, `source`,
-// and the wire delivers `source`'s id). No fallback between the two
-// here — that is a consumer's job (aliasedFromId ?? kindId for whoever
-// needs the effective storage id).
+/**
+ * Stamps `kindId` — this occurrence's own identity, never the alias
+ * display name — after `stampAliasTargetId` has handled `aliasedToId`
+ * separately. Already-stamped `kindId` is a no-op. A `literal` value
+ * resolves through the literal-text catalog chain (anon token outranks a
+ * same-spelled NAMED rule — same resolution `deriveValuesForRule` applies
+ * to these); otherwise resolves by the STORAGE `name`. No fallback between
+ * `kindId` and `aliasedToId` here — that is a consumer's job
+ * (`aliasedToId ?? kindId` for whoever needs the effective display id).
+ */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::computeReachableFromRoot`
@@ -9168,9 +9209,9 @@ source, one derivation.
 // to the hidden rule (`_type_argument` etc.), but the render template
 // must reference the VISIBLE kind (e.g. `type_argument`) — not inline
 // the hidden rule's body. Skip these entries so `normalizedRules[name]`
-// keeps the wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form
-// set by the main normalization path, rather than being overwritten with
-// the hidden rule's body.
+// keeps the wrapper-deleted `SYMBOL(name:'_hidden', aliasedTo:'visible')`
+// form set by the main normalization path, rather than being overwritten
+// with the hidden rule's body.
 //
 // Removing this skip REGRESSES `type_arguments`/`type_parameters` jinja
 // (`{{ type_argument | joinWithTrailing(",") }}` → `{{ content }}…`) and
@@ -9348,30 +9389,30 @@ source, one derivation.
 #### body
 
 ```text
-// Every named alias routes uniformly through provenance
-// (`aliasedFrom`), whether its content is a clause-hoist/
-// visible-group mint's freshly-synthesized `_<name>` rule or an
-// authored relabel of a pre-existing rule (PR3's
-// `applyUnaliasDistinct` retarget, e.g. `_simple_statements` →
-// `simple_statements`). Both are `alias(symbol(_<name>), $<value>)`
-// with no independent rule under `<value>` — structurally
-// indistinguishable — and the OLD special-case here
-// (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
-// apart by checking only whether `<value>` had a rule body,
-// which can't actually distinguish "content is itself a fresh
-// mint" from "content is a real pre-existing rule being
-// relabeled" — both produce that same signature.
+// Every named alias whose content resolves to a bare symbol (or one
+// under a transparent VARIANT/GROUP/TOKEN) is handled uniformly by
+// KEEPING the ALIAS wrapper — not reducing it to a bespoke stamped
+// symbol — whether its content is a clause-hoist/visible-group mint's
+// freshly-synthesized `_<name>` rule or an authored relabel of a
+// pre-existing rule (PR3's `applyUnaliasDistinct` retarget, e.g.
+// `_simple_statements` → `simple_statements`). Both are
+// `alias(symbol(_<name>), $<value>)` with no independent rule under
+// `<value>` — structurally indistinguishable — and the OLD special-case
+// here (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
+// apart by checking only whether `<value>` had a rule body, which can't
+// actually distinguish "content is itself a fresh mint" from "content is
+// a real pre-existing rule being relabeled" — both produce that same
+// signature.
 //
 // It doesn't need to: whether `content.name`'s rule gets its own
 // independent top-level `AssembledNode` is decided separately, by
-// whether it's a `rules` bag key at all — completely unaffected
-// by whether THIS reference to it carries `aliasedFrom`.
-// `aliasedFrom` only says "this specific occurrence displays
-// under a different name than its underlying rule's own name" —
-// render/read dispatch already resolves the correct numeric id
-// via the alias occurrence's own `alias_sym_<value>` symbol
-// (`kindId`), independent of whether the source rule survives
-// as its own addressable parser symbol.
+// whether it's a `rules` bag key at all — completely unaffected by
+// whether this ALIAS wrapper survives or how `aliasedTo` eventually gets
+// stamped on it. The wrapper's content still names the rule by its own
+// (storage) `name`; render/read dispatch resolves the correct numeric id
+// via the ALIAS node's own `alias_sym_<value>` symbol (its stamped
+// `kindId`), independent of whether the source rule survives as its own
+// addressable parser symbol.
 ```
 
 #### body
@@ -9430,20 +9471,20 @@ source, one derivation.
 #### body
 
 ```text
-// `aliasedFrom` = the alias SOURCE (storage kind), `name` = the
-// alias target (parse kind) — see `resolveNamedAliasWithProvenance`.
-// Kept as the real ref; kindId/aliasedFromId stamp onto it later
-// (canonicalizeRuleLiterals' SUPERTYPE case).
+// `name` = the alias SOURCE (storage kind), `aliasedTo` = the
+// alias target (parse kind). Kept as the real ref; kindId/
+// aliasedToId stamp onto it later (canonicalizeRuleLiterals'
+// SUPERTYPE case).
 ```
 
 #### body
 
 ```text
-// Effectively unreachable today — resolveRule collapses raw
-// alias arms to SYMBOL+aliasedFrom first (see the matching note
-// on `classifyHiddenChoiceRule`'s variantArms computation) —
-// but mirror the SYMBOL branch's storage/parse handling so an
-// unresolved ALIAS arriving here behaves identically.
+// Live today, not a defensive fallback: link's `resolveRule` keeps
+// a bare-symbol-content named alias as the ALIAS wrapper (see the
+// matching note on `classifyHiddenChoiceRule`'s variantArms
+// computation), so a raw ALIAS arm is the common shape reaching
+// this walk — mirror the SYMBOL branch's storage/parse handling.
 ```
 
 #### body
@@ -10800,6 +10841,11 @@ source, one derivation.
 // Alias-body kinds: thread the alias-target bodies through the same pipeline
 // so normalizedRules / simplifiedRules cover them too. Eliminates the
 // assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
+// When a kind already has its own entry in normalizedRules, carry that
+// entry's `hidden`/`kind` facts onto the alias-body replacement
+// (`dsl/rule-attrs.ts::withKindFacts`) rather than overwriting them —
+// the alias-target body describes structure, not the kind's own
+// visibility/provenance stamps.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::walkSymbols`
@@ -10808,8 +10854,8 @@ source, one derivation.
 
 ```text
 // A ref depends on the kind that STORES it, not the name it
-// displays under: an aliased ref still needs its `aliasedFrom`
-// rule to survive, so that is the kind the reference counts for.
+// displays under: `rule.name` is always the storage kind, aliased
+// or not, so that is the kind the reference counts for.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::outerFromParts`
@@ -10833,7 +10879,7 @@ source, one derivation.
 #### body
 
 ```text
-// Include aliasedFrom: two symbols with the same `.name` but
+// Include aliasedTo: two symbols with the same `.name` but
 // different alias provenance point at the same kind but carry
 // different display-name facts (the per-value `parseKind` that
 // feeds the node model's `fieldAliasMap`). Treating them as

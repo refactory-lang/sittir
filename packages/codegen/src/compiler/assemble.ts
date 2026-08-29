@@ -30,7 +30,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
-import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
+import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -471,15 +471,11 @@ function resolveHiddenSubtypes(
 		const name = ref.name;
 		if (seen.has(name)) return;
 		seen.add(name);
-		if (!name.startsWith('_')) {
+		if (!isHiddenRule(name, rules)) {
 			out.push(ref);
 			return;
 		}
-		const rule = rules[name];
-		if (!rule) {
-			out.push(ref);
-			return;
-		}
+		const rule = rules[name]!;
 		if (rule.type !== SUPERTYPE && subtypeParseNames && Object.prototype.hasOwnProperty.call(subtypeParseNames, name)) {
 			out.push(ref);
 			return;
@@ -491,7 +487,7 @@ function resolveHiddenSubtypes(
 				const sub = subRef.name;
 				const subStamp = subRef.kindId;
 				const parseName = nestedParseNames[sub];
-				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
+				const subRule = isHiddenRule(sub, rules) ? rules[sub] : undefined;
 				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
 					if (!seen.has(parseName)) {
 						seen.add(parseName);
@@ -499,7 +495,7 @@ function resolveHiddenSubtypes(
 					}
 					continue;
 				}
-				if (sub.startsWith('_')) {
+				if (isHiddenRule(sub, rules)) {
 					visit({ name: sub, storageKindId: subStamp });
 					continue;
 				}
@@ -517,7 +513,7 @@ function resolveHiddenSubtypes(
 			return;
 		}
 		for (const r of resolved) {
-			if (r.name.startsWith('_')) {
+			if (isHiddenRule(r.name, rules)) {
 				visit(r);
 				continue;
 			}
@@ -544,7 +540,7 @@ function includeAliasMemberKinds(
 	while (changed) {
 		changed = false;
 		for (const name of Object.keys(rules)) {
-			if (!name.startsWith('_')) continue;
+			if (!isHiddenRule(name, rules)) continue;
 			if (name === ownerName) continue;
 			if (subtypeSet.has(name)) continue;
 			if (!isAliasMemberKind(name, ctx, subtypeSet, kindEntries)) continue;
@@ -580,10 +576,9 @@ function isCompatibleSubtypeMember(
 ): boolean {
 	const { normalizedRules: rules } = ctx;
 	if (subtypeSet.has(name)) return true;
-	if (!name.startsWith('_')) return false;
+	if (!isHiddenRule(name, rules)) return false;
 	if (seen.has(name)) return false;
-	const rule = rules[name];
-	if (!rule) return false;
+	const rule = rules[name]!;
 	seen.add(name);
 	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx, kindEntries);
 	if (resolved.length === 0) return false;
@@ -610,13 +605,12 @@ function resolveHiddenRuleContent(
 		case SYMBOL: {
 			const refName = rule.name;
 			const refStamp = rule.kindId;
-			if (!refName.startsWith('_')) return [{ name: refName, storageKindId: refStamp }];
+			if (rule.literal !== undefined || !isHiddenRule(refName, rules)) {
+				return [{ name: refName, storageKindId: refStamp }];
+			}
 			if (seen.has(refName)) return [];
 			seen.add(refName);
-			const target = rules[refName];
-			return target
-				? resolveHiddenRuleContent(target, seen, ctx, kindEntries)
-				: [{ name: refName, storageKindId: refStamp }];
+			return resolveHiddenRuleContent(rules[refName]!, seen, ctx, kindEntries);
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((symbolRef) => {
@@ -624,9 +618,8 @@ function resolveHiddenRuleContent(
 				const sStamp = symbolRef.kindId;
 				if (seen.has(s)) return [];
 				seen.add(s);
-				if (!s.startsWith('_')) return [{ name: s, storageKindId: sStamp }];
-				const target = rules[s];
-				return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [{ name: s, storageKindId: sStamp }];
+				if (!isHiddenRule(s, rules)) return [{ name: s, storageKindId: sStamp }];
+				return resolveHiddenRuleContent(rules[s]!, seen, ctx, kindEntries);
 			});
 		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx, kindEntries));
@@ -957,7 +950,7 @@ export function classifyNode(
 		}
 	}
 
-	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';
+	if (isHiddenRepeatHelper(rule)) return 'multi';
 	if (isSeparatedListShape(rule)) return 'separatedList';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
@@ -978,11 +971,8 @@ function isSeparatedListShape(rule: RenderRule): boolean {
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
-function isHiddenRepeatHelper(kind: string, rule: RenderRule, parentAliasedKinds?: ReadonlySet<string>): boolean {
-	if (!kind.startsWith('_')) return false;
-	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
-	if (parentAliasedKinds?.has(kind)) return false;
-	return true;
+function isHiddenRepeatHelper(rule: RenderRule): boolean {
+	return rule.hidden === true && (rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray');
 }
 
 function classifyBranchOrContainer(rule: RenderRule): ModelType | null {

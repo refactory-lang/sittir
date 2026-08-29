@@ -3210,7 +3210,7 @@ export const coerceToSplatType: typeof coerceToSplatType$impl & {
 export function resolveGenericType_identifier(
 	value: T.GenericType.LooseConfig['identifier']
 ): T.GenericType['_identifier'] {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+	return _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier');
 }
 
 export function resolveGenericType_typeParameter(

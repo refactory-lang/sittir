@@ -1501,17 +1501,6 @@ export interface MatchBlockArmsTransport {
   _match_arm?: Array<SlotValue<MatchArmTransport>>
 }
 
-export interface MatchBlockOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _match_block_arms: SlotValue<MatchBlockArmsTransport>
-}
-
 export interface MatchBlockTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2671,17 +2660,6 @@ export interface VisibilityModifierInPathTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path: SlotValue<PathTransport>
-}
-
-export interface VisibilityModifierPubParensTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _visibility_modifier_group: SlotValue<VisibilityModifierGroupTransport>
 }
 
 export interface VisibilityModifierPubTransport {

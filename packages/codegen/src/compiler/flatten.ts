@@ -3,7 +3,7 @@ import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts'
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf } from '../dsl/rule-patterns.ts';
 import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
-import { withId } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts } from '../dsl/rule-attrs.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;
@@ -51,7 +51,7 @@ function construct(node: Input): Output {
 		case FIELD:
 			return b.field(node.name, rebuild(node.content));
 		case ALIAS:
-			return b.alias(rebuild(node.content), node.named ? b.symbol(node.value) : node.value);
+			return b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
 		case VARIANT:
@@ -75,7 +75,8 @@ export function flatten(rule: Input): Output {
 export function flattenRules(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		result[name] = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
+		const flat = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
+		result[name] = withKindFacts(flat, rule);
 	}
 	return result;
 }
