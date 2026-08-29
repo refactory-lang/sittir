@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { AssembledSupertype, AssembledToken } from '../compiler/model/node-map.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
@@ -205,33 +206,53 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 
 		switch (node.modelType) {
 			case 'pattern':
-			case 'keyword':
 			case 'enum':
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
 				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
-			case 'branch':
-				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-				renderModuleEmitterInst?.emitBranch?.(node);
-				break;
-			case 'group':
-				if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
-				if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
-				if (templateEmission === 'emit') templateEmitter.emitGroup(node);
-				renderModuleEmitterInst?.emitGroup?.(node);
-				break;
-			case 'supertype':
-				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);
-				break;
 			case 'token':
-			case 'multi':
+				if (node instanceof AssembledToken) break;
+				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
+				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
+				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
+				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
-			case 'separatedList':
+			case 'envelope':
+			case 'branch':
+				if (node.hoisted) {
+					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
+					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
+					if (templateEmission === 'emit') templateEmitter.emitGroup(node);
+					renderModuleEmitterInst?.emitGroup?.(node);
+				} else {
+					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+					if (fromEmission === 'emit') fromEmitter.emitBranch(node);
+					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
+					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
+					renderModuleEmitterInst?.emitBranch?.(node);
+				}
+				break;
+			case 'polymorph':
+				if (node instanceof AssembledSupertype) {
+					if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);
+					break;
+				}
+				if (node.hoisted) {
+					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
+					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
+					if (templateEmission === 'emit') templateEmitter.emitGroup(node);
+					renderModuleEmitterInst?.emitGroup?.(node);
+				} else {
+					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+					if (fromEmission === 'emit') fromEmitter.emitBranch(node);
+					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
+					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
+					renderModuleEmitterInst?.emitBranch?.(node);
+				}
+				break;
+			case 'list':
 				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
 				if (fromEmission === 'emit') fromEmitter.emitSeparatedList(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitSeparatedList(node);

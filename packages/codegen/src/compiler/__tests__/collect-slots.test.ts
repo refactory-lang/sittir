@@ -59,7 +59,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		// flatten stamps `nonterminal: true` on this STRING regardless of
 		// field-name presence — `nonterminal` is the sole authoritative slot
 		// signal (flatten is its sole deriver), not "has a name source".
-		// This feeds separator-kind/flank detection for AssembledSeparatedList.
+		// This feeds separator-kind/flank detection for AssembledList.
 		const out = slots({ type: REPEAT, content: str(',') });
 		expect(out).toHaveLength(1);
 		expect(out[0]!.values.every((v) => v.multiplicity === 'array')).toBe(true);

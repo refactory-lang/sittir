@@ -5,8 +5,6 @@ import type {
 	NodeOrTerminal,
 	NodeBackedRef,
 	AssembledNode,
-	AssembledGroup,
-	AssembledSeparatedList,
 	BranchSlotClass,
 	FieldStorageInfo
 } from '../compiler/model/node-map.ts';
@@ -15,7 +13,6 @@ import {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
-	type AssembledPattern,
 	AssembledSupertype,
 	isNodeRef,
 	isTerminalValue,
@@ -28,21 +25,30 @@ import {
 	allSlotsOf,
 	storageKindOfRef,
 	structuralFieldsOf,
-	type ModelType
+	AbstractAssembledCompound,
+	AssembledEnvelope,
+	AssembledPolymorph,
+	AssembledLeaf,
+	AssembledPattern,
+	AssembledList
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 
 export function isSlotBearingCompound(
 	node: AssembledNode
-): node is AssembledBranch | AssembledGroup | AssembledSeparatedList {
-	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
+): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList {
+	return node instanceof AbstractAssembledCompound;
+}
+
+export function isAuthoredCompound(node: AssembledNode): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph {
+	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.hoisted;
 }
 
 export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPattern | AssembledEnum {
-	return node.modelType === 'keyword' || node.modelType === 'pattern' || node.modelType === 'enum';
+	return node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
-export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {
+export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
 	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
@@ -69,14 +75,14 @@ export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, str
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!kind.startsWith('_')) continue;
 		if (!node.userFacing) continue;
-		if (node.modelType === 'token' || node.modelType === 'multi') continue;
+		if (node instanceof AssembledToken) continue;
 		const visible = kind.replace(/^_+/, '');
 		if (visible.length === 0) continue;
 		if (nodeMap.nodes.has(visible)) continue;
 		out.set(visible, kind);
 	}
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		for (const [storage, parse] of Object.entries((node as AssembledSupertype).subtypeParseNames ?? {})) {
 			if (!nodeMap.nodes.has(storage)) continue;
 			if (!nodeMap.nodes.has(parse) && !out.has(parse)) out.set(parse, storage);
@@ -90,14 +96,10 @@ export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, str
 export function referencedKinds(nodeMap: NodeMap): Set<string> {
 	const referenced = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
-		switch (node.modelType) {
-			case 'branch':
-			case 'group':
-				for (const s of Object.values(node.slots)) for (const t of slotKindNames(s)) referenced.add(t);
-				break;
-			case 'supertype':
-				for (const t of node.subtypeNames) referenced.add(t);
-				break;
+		if (node instanceof AbstractAssembledCompound) {
+			for (const s of Object.values(node.slots)) for (const t of slotKindNames(s)) referenced.add(t);
+		} else if (node instanceof AssembledSupertype) {
+			for (const t of node.subtypeNames) referenced.add(t);
 		}
 	}
 	return referenced;
@@ -458,7 +460,7 @@ export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string
 	if (node === undefined) return [];
 	const isWord = (t: string | undefined): t is string => t !== undefined && matchesWordShape(t, nodeMap.wordMatcher);
 	if (node instanceof AssembledKeyword) return isWord(node.text) ? [node.text] : [];
-	if (!(node instanceof AssembledBranch)) return [];
+	if (!isAuthoredCompound(node)) return [];
 	const own = wordConstructibleText(node, nodeMap);
 	if (own !== undefined) return [own];
 	const facts = soleSlotFacts(node, nodeMap);
@@ -467,7 +469,7 @@ export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string
 	for (const k of slotKindNames(facts.slot)) {
 		const child = nodeMap.nodes.get(k);
 		if (child instanceof AssembledKeyword && isWord(child.text)) out.push(child.text);
-		else if (child instanceof AssembledBranch) {
+		else if (child !== undefined && isAuthoredCompound(child)) {
 			const t = wordConstructibleText(child, nodeMap);
 			if (t !== undefined) out.push(t);
 		}
@@ -476,7 +478,7 @@ export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string
 }
 
 export function wordConstructibleText(node: AssembledNode, nodeMap: NodeMap): string | undefined {
-	if (!(node instanceof AssembledBranch)) return undefined;
+	if (!isAuthoredCompound(node)) return undefined;
 	const text = node.keywordConstructibleText;
 	return text !== undefined && matchesWordShape(text, nodeMap.wordMatcher) ? text : undefined;
 }
@@ -555,22 +557,17 @@ export function configurableFactoryFields(
 }
 
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
-	switch (node.modelType) {
-		case 'branch':
-		case 'group': {
-			const fields = configurableFactoryFields(node.fields, nodeMap);
-			if (fields.length === 0) return undefined;
-			return fields.map((field) => field.name);
-		}
-		case 'separatedList':
-			return [canonicalSeparatedListField(node).name];
-		default:
-			return undefined;
+	if (node instanceof AbstractAssembledCompound) {
+		const fields = configurableFactoryFields(node.fields, nodeMap);
+		if (fields.length === 0) return undefined;
+		return fields.map((field) => field.name);
 	}
+	if (node instanceof AssembledList) return [canonicalSeparatedListField(node).name];
+	return undefined;
 }
 
 export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
-	if (node.modelType !== 'branch') return null;
+	if (!(node instanceof AbstractAssembledCompound) || node.hoisted) return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
 	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
@@ -596,33 +593,25 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	switch (node.modelType) {
-		case 'pattern':
-		case 'enum':
-		case 'keyword':
-			return 'text';
-		case 'token':
-			return options?.includeTokenText ? 'text' : null;
-		case 'separatedList':
-			return 'elements';
-		case 'branch': {
-			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-			if (slotClass.tag === 'singleSlot') {
-				const configurableExtras = allSlotsOf(node).filter((f) => f !== slotClass.slot);
-				if (configurableExtras.length > 0) return 'config';
-				if (slotClass.arity !== 'singular') return 'spread';
-				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
-				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
-			}
-			return 'config';
-		}
-		case 'group': {
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword) return 'text';
+	if (node instanceof AssembledToken) return options?.includeTokenText ? 'text' : null;
+	if (node instanceof AssembledList) return 'elements';
+	if (node instanceof AbstractAssembledCompound) {
+		if (node.hoisted) {
 			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 		}
-		default:
-			return null;
+		const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
+		if (slotClass.tag === 'singleSlot') {
+			const configurableExtras = allSlotsOf(node).filter((f) => f !== slotClass.slot);
+			if (configurableExtras.length > 0) return 'config';
+			if (slotClass.arity !== 'singular') return 'spread';
+			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+		}
+		return 'config';
 	}
+	return null;
 }
 
 export interface ParserSymbolDispatchContext {
@@ -667,7 +656,7 @@ export function warnSkippedParserSymbol(
 }
 
 function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {
-	return kind.startsWith('_') && node.modelType !== 'token' && node.modelType !== 'multi';
+	return kind.startsWith('_') && !(node instanceof AssembledToken);
 }
 
 export interface FactoryDispatchContext extends ParserSymbolDispatchContext {
@@ -697,27 +686,13 @@ export function classifyFactoryEmission(
 
 export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
+	return node instanceof AbstractAssembledCompound || node instanceof AssembledList;
 }
 
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	const modelType: ModelType = node.modelType;
-	switch (modelType) {
-		case 'pattern':
-		case 'keyword':
-		case 'enum':
-		case 'branch':
-		case 'group':
-		case 'separatedList':
-			return true;
-		case 'token':
-		case 'supertype':
-		case 'multi':
-			return false;
-		default:
-			return assertNever(modelType);
-	}
+	if (node instanceof AssembledToken || node instanceof AssembledSupertype) return false;
+	return true;
 }
 
 export interface FromDispatchContext {
@@ -746,7 +721,7 @@ export function emitsFieldResolvers(
 	context: FromDispatchContext
 ): node is Extract<AssembledNode, { modelType: 'branch' }> {
 	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
-	if (node.modelType !== 'branch') return false;
+	if (!isAuthoredCompound(node)) return false;
 	return classifyChildFactorySurface(node, context.nodeMap) !== 'spread';
 }
 
@@ -764,11 +739,12 @@ export function isWrapChildrenKind(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): boolean {
-	if (node.modelType !== 'branch' && node.modelType !== 'separatedList') return false;
+	const compound = node instanceof AbstractAssembledCompound && !node.hoisted;
+	if (!compound && !(node instanceof AssembledList)) return false;
 	if (!node.rawFactoryName) return false;
 	if (kind.startsWith('_') && !node.userFacing) return false;
 	if (!kindEntries || !hasCatalogEntry(kindEntries, kind)) return false;
-	return node.modelType === 'separatedList' || classifyChildFactorySurface(node, nodeMap) !== null;
+	return node instanceof AssembledList || classifyChildFactorySurface(node, nodeMap) !== null;
 }
 
 export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;
@@ -787,15 +763,8 @@ export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph
 
 export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
 	if (!node.userFacing) return 'skip-non-user-facing';
-	if (node.modelType === 'group' && node.parentKind) return 'skip-polymorph-form-group';
-	if (
-		node.modelType === 'pattern' ||
-		node.modelType === 'keyword' ||
-		node.modelType === 'token' ||
-		node.modelType === 'supertype' ||
-		node.modelType === 'enum' ||
-		node.modelType === 'multi'
-	) {
+	if (node instanceof AbstractAssembledCompound && node.hoisted && node.parentKind) return 'skip-polymorph-form-group';
+	if (node instanceof AssembledLeaf || node instanceof AssembledSupertype) {
 		return 'skip-leaf-model-type';
 	}
 	return 'emit';

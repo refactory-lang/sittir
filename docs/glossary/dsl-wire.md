@@ -830,7 +830,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Per-kind group-lift map from config. Link reads this to synthesize
-	 *  nested sub-rules into hidden AssembledGroup kinds. See:
+	 *  nested sub-rules into hidden, hoisted compound kinds
+	 *  (`AbstractAssembledCompound` with `enrichment.hoisted` set). See:
 	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
 ```
 

@@ -182,7 +182,7 @@ export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
 }
 
 export function assertUniversalShape(node: AssembledNode): void {
-	if (node.modelType !== 'branch' && node.modelType !== 'group') return;
+	if (!('simplifiedRule' in node) || node.transparent) return;
 	const body = node.simplifiedRule;
 	if (!body) return;
 	if (body.type !== SEQ) {

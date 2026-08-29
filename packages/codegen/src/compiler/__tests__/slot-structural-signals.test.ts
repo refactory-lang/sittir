@@ -4,10 +4,10 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
-import type { AssembledBranch } from '../model/node-map.ts';
 import {
 	classifyChildFactorySurface,
 	classifyFactoryShape,
+	isSlotBearingCompound,
 	resolveSingleFieldFactorySlot
 } from '../../emitters/shared.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
@@ -31,11 +31,10 @@ function buildNodeMap(rules: Record<string, unknown>) {
 	return assemble(AssembleCtx.from(normalized));
 }
 
-function getBranch(nodeMap: ReturnType<typeof buildNodeMap>, kind: string): AssembledBranch {
+function getCompound(nodeMap: ReturnType<typeof buildNodeMap>, kind: string) {
 	const node = nodeMap.nodes.get(kind);
-	expect(node?.modelType).toBe('branch');
-	if (!node || node.modelType !== 'branch') {
-		throw new Error(`expected '${kind}' to assemble as a branch`);
+	if (!node || !isSlotBearingCompound(node)) {
+		throw new Error(`expected '${kind}' to assemble as a compound`);
 	}
 	return node;
 }
@@ -46,7 +45,7 @@ describe('slot structural signals', () => {
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const slot = getBranch(nodeMap, 'box').fields[0];
+		const slot = getCompound(nodeMap, 'box').fields[0];
 		expect(slot?.fieldName).toBeUndefined();
 		expect(slot?.isUnnamed).toBe(true);
 	});
@@ -62,7 +61,7 @@ describe('slot structural signals', () => {
 			interface_body: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const slot = getBranch(nodeMap, 'box').fields[0];
+		const slot = getCompound(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(slot?.values.map((value) => value.parseKind?.name)).toEqual(['object_type']);
 		expect(slot?.parseNames).toEqual(['object_type']);
@@ -79,7 +78,7 @@ describe('slot structural signals', () => {
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const box = getBranch(nodeMap, 'box');
+		const box = getCompound(nodeMap, 'box');
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBe(slot);
@@ -90,7 +89,7 @@ describe('slot structural signals', () => {
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const box = getBranch(nodeMap, 'box');
+		const box = getCompound(nodeMap, 'box');
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 		// The sole slot holds a single concrete kind, so the shape is the
@@ -107,7 +106,7 @@ describe('slot structural signals', () => {
 			},
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const box = getBranch(nodeMap, 'box');
+		const box = getCompound(nodeMap, 'box');
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
@@ -125,7 +124,7 @@ describe('slot structural signals', () => {
 			_helper: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const slot = getBranch(nodeMap, 'box').fields[0];
+		const slot = getCompound(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 
 		// The slot's storageName is the hidden alias source (`helper`), not the

@@ -1,15 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { emitConsts } from '../consts.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import type {
+import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
 	AssembledBranch,
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
-	AssembledEnum
+	AssembledEnum,
+	AssembledNonterminal,
+	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 
-function makeNodeMap(nodes: [string, any][]): NodeMap {
+function makeNodeMap(nodes: [string, AssembledNode][]): NodeMap {
 	return {
 		name: 'test',
 		nodes: new Map(nodes),
@@ -21,20 +24,28 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 	};
 }
 
+// A field's structural role for consts.ts comes entirely from its
+// fieldName + values (bitflag/keyword collapsing reads terminal values
+// directly) — no owning node or rule is needed to back it.
+function field(fieldName: string, values: readonly { value: string; multiplicity: 'array' | 'nonEmptyArray' }[] = []): AssembledNonterminal {
+	return new AssembledNonterminal({
+		values,
+		fieldName,
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
+		sourceRuleIds: []
+	});
+}
+
 describe('emitConsts', () => {
 	it('emits NODE_KINDS for branch nodes', () => {
-		const nodeMap = makeNodeMap([
-			[
-				'function_item',
-				{
-					kind: 'function_item',
-					typeName: 'FunctionItem',
-					factoryName: 'functionItem',
-					modelType: 'branch',
-					fields: []
-				} as unknown as AssembledBranch
-			]
-		]);
+		const node = new AssembledBranch(
+			'function_item',
+			{ type: SYMBOL, name: 'identifier' },
+			{ type: SYMBOL, name: 'identifier' },
+			{ slotRecord: {} }
+		);
+		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain("'function_item'");
 		expect(output).toContain('NODE_KINDS');
@@ -42,25 +53,8 @@ describe('emitConsts', () => {
 
 	it('emits LEAF_KINDS for leaf and keyword nodes', () => {
 		const nodeMap = makeNodeMap([
-			[
-				'identifier',
-				{
-					kind: 'identifier',
-					typeName: 'Identifier',
-					factoryName: 'identifier',
-					modelType: 'pattern'
-				} as unknown as AssembledPattern
-			],
-			[
-				'true',
-				{
-					kind: 'true',
-					typeName: 'True',
-					factoryName: 'true_',
-					modelType: 'keyword',
-					text: 'true'
-				} as unknown as AssembledKeyword
-			]
+			['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
+			['true', new AssembledKeyword('true', { type: STRING, value: 'true' })]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('LEAF_KINDS');
@@ -70,23 +64,8 @@ describe('emitConsts', () => {
 
 	it('emits KEYWORDS and OPERATORS from token nodes', () => {
 		const nodeMap = makeNodeMap([
-			[
-				'fn',
-				{
-					kind: 'fn',
-					typeName: 'Fn',
-					modelType: 'keyword',
-					text: 'fn'
-				} as unknown as AssembledKeyword
-			],
-			[
-				'+',
-				{
-					kind: '+',
-					typeName: 'Plus',
-					modelType: 'token'
-				} as unknown as AssembledToken
-			]
+			['fn', new AssembledKeyword('fn', { type: STRING, value: 'fn' })],
+			['+', new AssembledToken('+', { type: STRING, value: '+' })]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('KEYWORDS');
@@ -101,12 +80,13 @@ describe('emitConsts', () => {
 		const nodeMap = makeNodeMap([
 			[
 				'visibility',
-				{
-					kind: 'visibility',
-					typeName: 'Visibility',
-					modelType: 'enum',
-					values: ['pub', 'crate']
-				} as unknown as AssembledEnum
+				new AssembledEnum('visibility', {
+					type: CHOICE,
+					members: [
+						{ type: STRING, value: 'pub' },
+						{ type: STRING, value: 'crate' }
+					]
+				})
 			]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
@@ -119,29 +99,18 @@ describe('emitConsts', () => {
 
 	// ADR-0012 — bitflag const enum emission
 	it('emits a const enum for a bitflag field (repeat1 of choice-of-literals)', () => {
-		const field = {
-			name: 'modifiers',
-			propertyName: 'modifiers',
-			paramName: 'modifiers',
-			source: 'grammar',
-			values: [
-				{ kind: 'terminal', value: 'async', multiplicity: 'nonEmptyArray' },
-				{ kind: 'terminal', value: 'unsafe', multiplicity: 'nonEmptyArray' },
-				{ kind: 'terminal', value: 'const', multiplicity: 'nonEmptyArray' }
-			]
-		};
-		const nodeMap = makeNodeMap([
-			[
-				'function_item',
-				{
-					kind: 'function_item',
-					typeName: 'FunctionItem',
-					factoryName: 'functionItem',
-					modelType: 'branch',
-					fields: [field]
-				} as unknown as AssembledBranch
-			]
+		const modifiers = field('modifiers', [
+			{ value: 'async', multiplicity: 'nonEmptyArray' },
+			{ value: 'unsafe', multiplicity: 'nonEmptyArray' },
+			{ value: 'const', multiplicity: 'nonEmptyArray' }
 		]);
+		const node = new AssembledBranch(
+			'function_item',
+			{ type: SYMBOL, name: 'x' },
+			{ type: SYMBOL, name: 'x' },
+			{ slotRecord: { modifiers } }
+		);
+		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('export const enum Modifiers {');
 		expect(output).toContain('Async = 1 << 0,');
@@ -152,65 +121,51 @@ describe('emitConsts', () => {
 	});
 
 	it('includes None = 0 when repeat allows zero flags', () => {
-		const field = {
-			name: 'modifiers',
-			propertyName: 'modifiers',
-			paramName: 'modifiers',
-			source: 'grammar',
-			values: [
-				{ kind: 'terminal', value: 'async', multiplicity: 'array' },
-				{ kind: 'terminal', value: 'unsafe', multiplicity: 'array' }
-			]
-		};
-		const nodeMap = makeNodeMap([
-			[
-				'function_item',
-				{
-					kind: 'function_item',
-					typeName: 'FunctionItem',
-					factoryName: 'functionItem',
-					modelType: 'branch',
-					fields: [field]
-				} as unknown as AssembledBranch
-			]
+		const modifiers = field('modifiers', [
+			{ value: 'async', multiplicity: 'array' },
+			{ value: 'unsafe', multiplicity: 'array' }
 		]);
+		const node = new AssembledBranch(
+			'function_item',
+			{ type: SYMBOL, name: 'x' },
+			{ type: SYMBOL, name: 'x' },
+			{ slotRecord: { modifiers } }
+		);
+		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('None = 0,');
 	});
 
 	it('disambiguates bitflag const names when two kinds share a field name', () => {
-		const mkField = (values: string[]) => ({
-			name: 'modifiers',
-			propertyName: 'modifiers',
-			paramName: 'modifiers',
-			source: 'grammar',
-			values: values.map((v) => ({
-				kind: 'terminal',
-				value: v,
-				multiplicity: 'nonEmptyArray'
-			}))
-		});
+		const classNode = new AssembledBranch(
+			'class_declaration',
+			{ type: SYMBOL, name: 'x' },
+			{ type: SYMBOL, name: 'x' },
+			{
+				slotRecord: {
+					modifiers: field('modifiers', [
+						{ value: 'public', multiplicity: 'nonEmptyArray' },
+						{ value: 'abstract', multiplicity: 'nonEmptyArray' }
+					])
+				}
+			}
+		);
+		const methodNode = new AssembledBranch(
+			'method_definition',
+			{ type: SYMBOL, name: 'x' },
+			{ type: SYMBOL, name: 'x' },
+			{
+				slotRecord: {
+					modifiers: field('modifiers', [
+						{ value: 'async', multiplicity: 'nonEmptyArray' },
+						{ value: 'static', multiplicity: 'nonEmptyArray' }
+					])
+				}
+			}
+		);
 		const nodeMap = makeNodeMap([
-			[
-				'class_declaration',
-				{
-					kind: 'class_declaration',
-					typeName: 'ClassDeclaration',
-					factoryName: 'classDeclaration',
-					modelType: 'branch',
-					fields: [mkField(['public', 'abstract'])]
-				} as unknown as AssembledBranch
-			],
-			[
-				'method_definition',
-				{
-					kind: 'method_definition',
-					typeName: 'MethodDefinition',
-					factoryName: 'methodDefinition',
-					modelType: 'branch',
-					fields: [mkField(['async', 'static'])]
-				} as unknown as AssembledBranch
-			]
+			['class_declaration', classNode],
+			['method_definition', methodNode]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('export const enum ClassDeclarationModifiers {');
@@ -220,61 +175,32 @@ describe('emitConsts', () => {
 	});
 
 	it('PascalCases keyword values with non-identifier characters', () => {
-		const field = {
-			name: 'visibility',
-			propertyName: 'visibility',
-			paramName: 'visibility',
-			source: 'grammar',
-			values: [
-				{ kind: 'terminal', value: 'pub', multiplicity: 'nonEmptyArray' },
-				{ kind: 'terminal', value: 'pub(crate)', multiplicity: 'nonEmptyArray' }
-			]
-		};
-		const nodeMap = makeNodeMap([
-			[
-				'visibility_modifier',
-				{
-					kind: 'visibility_modifier',
-					typeName: 'VisibilityModifier',
-					factoryName: 'visibilityModifier',
-					modelType: 'branch',
-					fields: [field]
-				} as unknown as AssembledBranch
-			]
+		const visibility = field('visibility', [
+			{ value: 'pub', multiplicity: 'nonEmptyArray' },
+			{ value: 'pub(crate)', multiplicity: 'nonEmptyArray' }
 		]);
+		const node = new AssembledBranch(
+			'visibility_modifier',
+			{ type: SYMBOL, name: 'x' },
+			{ type: SYMBOL, name: 'x' },
+			{ slotRecord: { visibility } }
+		);
+		const nodeMap = makeNodeMap([['visibility_modifier', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('Pub = 1 << 0,');
 		expect(output).toContain('PubCrate = 1 << 1,');
 	});
 
 	it('emits tree-sitter numeric kind and field ID maps from generated metadata', () => {
+		const sourceFile = new AssembledBranch(
+			'source_file',
+			{ type: SYMBOL, name: 'x' },
+			{ type: SYMBOL, name: 'x' },
+			{ slotRecord: { item: field('item') } }
+		);
 		const nodeMap = makeNodeMap([
-			[
-				'source_file',
-				{
-					kind: 'source_file',
-					typeName: 'SourceFile',
-					factoryName: 'sourceFile',
-					modelType: 'branch',
-					fields: [
-						{
-							name: 'item',
-							propertyName: 'item',
-							paramName: 'item',
-							values: [],
-							source: 'grammar'
-						}
-					]
-				} as unknown as AssembledBranch
-			],
-			[
-				';',
-				{
-					kind: ';',
-					typeName: 'Semi',
-					modelType: 'token'
-				} as unknown as AssembledToken
-			]
+			['source_file', sourceFile],
+			[';', new AssembledToken(';', { type: STRING, value: ';' })]
 		]);
 
 		const output = emitConsts({

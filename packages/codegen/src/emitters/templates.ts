@@ -16,7 +16,8 @@ import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
 import {
-	AssembledGroup,
+	AssembledKeyword,
+	AssembledSupertype,
 	allSlotsOf,
 	isMultiple,
 	isRequired,
@@ -30,9 +31,11 @@ import {
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
+	AssembledEnvelope,
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledSeparatedList,
+	AssembledPolymorph,
+	AssembledList,
 	NodeOrTerminal,
 	SeamEdgeClass
 } from '../compiler/model/node-map.ts';
@@ -303,20 +306,15 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	const ctxK: EmitCtx = { ...ctx, currentKind: node.kind };
 	switch (node.modelType) {
 		case 'branch':
+		case 'envelope':
 			return emitBranchTemplate(node, ctxK);
-		case 'group':
-			return emitGroupTemplate(node, ctxK);
-		case 'supertype':
+		case 'polymorph':
+			return node instanceof AssembledSupertype ? undefined : emitBranchTemplate(node, ctxK);
 		case 'pattern':
-		case 'keyword':
 		case 'token':
 		case 'enum':
 			return undefined;
-		case 'multi':
-			throw new Error(
-				`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`
-			);
-		case 'separatedList':
+		case 'list':
 			return emitBranchTemplate(node, ctxK);
 		default: {
 			const _exhaustive: never = node;
@@ -325,12 +323,10 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	}
 }
 
-export function emitBranchTemplate(node: AssembledBranch | AssembledSeparatedList, ctx: EmitCtx): string {
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
-	return emitRule(node.renderRule, ctxWithSlots);
-}
-
-export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
+export function emitBranchTemplate(
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList,
+	ctx: EmitCtx
+): string {
 	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
 	return emitRule(node.renderRule, ctxWithSlots);
 }
@@ -1158,21 +1154,23 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 
 		switch (node.modelType) {
 			case 'pattern':
-			case 'keyword':
 			case 'enum':
 				te.emitLeaf(node);
 				break;
-			case 'branch':
-				te.emitBranch(node);
-				break;
-			case 'group':
-				te.emitGroup(node);
-				break;
-			case 'supertype':
 			case 'token':
-			case 'multi':
+				if (node instanceof AssembledKeyword) te.emitLeaf(node);
 				break;
-			case 'separatedList':
+			case 'branch':
+			case 'envelope':
+				if (node.hoisted) te.emitGroup(node);
+				else te.emitBranch(node);
+				break;
+			case 'polymorph':
+				if (node instanceof AssembledSupertype) break;
+				if (node.hoisted) te.emitGroup(node);
+				else te.emitBranch(node);
+				break;
+			case 'list':
 				te.emitBranch(node);
 				break;
 			default: {

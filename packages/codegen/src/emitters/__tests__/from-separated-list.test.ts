@@ -24,7 +24,7 @@ import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import {
 	AssembledPattern,
-	AssembledSeparatedList,
+	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
@@ -43,7 +43,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledSeparatedList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE

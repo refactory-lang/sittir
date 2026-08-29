@@ -1,11 +1,19 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledEnum, AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
-import type { AssembledSeparatedList } from '../compiler/model/node-map.ts';
-import { AssembledNonterminal, valueParseKindsOf, valueParseLabelsOf } from '../compiler/model/node-map.ts';
+import type { AssembledNode } from '../compiler/model/node-map.ts';
+import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
+import {
+	AssembledEnum,
+	AssembledSupertype,
+	AssembledList,
+	AssembledKeyword,
+	AssembledNonterminal,
+	valueParseKindsOf,
+	valueParseLabelsOf
+} from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
-type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
+type BranchLikeForWrap = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 
 import {
@@ -17,6 +25,7 @@ import {
 	resolveFieldStorageInfo,
 	classifyChildFactorySurface,
 	classifyWrapEmission,
+	isSlotBearingCompound,
 	warnSkippedParserSymbol,
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
@@ -50,7 +59,7 @@ function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap):
 	for (const name of names) {
 		const normalized = name.startsWith('_') ? name.slice(1) : name;
 		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
-		if (node?.modelType !== 'supertype') {
+		if (!(node instanceof AssembledSupertype)) {
 			add(name);
 			continue;
 		}
@@ -115,7 +124,7 @@ export namespace wrap {
 
 	export function group(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'group' }>,
+		node: BranchLikeForWrap,
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
 	): void {
@@ -136,7 +145,7 @@ export namespace wrap {
 
 	export function supertype(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'supertype' }>,
+		node: AssembledSupertype,
 		_kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		output.push(renameUnusedTreeParam(emitTransparentSupertypeWrap(node)));
@@ -144,7 +153,7 @@ export namespace wrap {
 
 	export function separatedList(
 		output: string[],
-		node: AssembledSeparatedList,
+		node: AssembledList,
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
 	): void {
@@ -166,11 +175,10 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 		seen.add(kind);
 		const node = nodeMap.nodes.get(kind);
 		if (!node) return [kind];
-		if (node.modelType === 'enum')
-			return (node as AssembledEnum).resolvedKinds.length > 0 ? [...(node as AssembledEnum).resolvedKinds] : [kind];
-		if (node.modelType !== 'supertype') return [kind];
+		if (node instanceof AssembledEnum) return node.resolvedKinds.length > 0 ? [...node.resolvedKinds] : [kind];
+		if (!(node instanceof AssembledSupertype)) return [kind];
 		const members = new Set<string>();
-		for (const subtype of (node as AssembledSupertype).subtypeNames) {
+		for (const subtype of node.subtypeNames) {
 			members.add(subtype);
 			if (subtype.startsWith('_')) members.add(subtype.slice(1));
 			for (const member of expandMembers(subtype, seen)) {
@@ -183,7 +191,7 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 
 	const out = new Map<string, string[]>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		out.set(kind, expandMembers(kind, new Set()));
 	}
 	return out;
@@ -447,7 +455,7 @@ export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[]
 	}
 }
 
-export function buildSeparatedListContentSlot(node: AssembledSeparatedList): AssembledNonterminal {
+export function buildSeparatedListContentSlot(node: AssembledList): AssembledNonterminal {
 	return new AssembledNonterminal({
 		values: node.elements,
 		fieldName: undefined,
@@ -457,7 +465,7 @@ export function buildSeparatedListContentSlot(node: AssembledSeparatedList): Ass
 	});
 }
 
-function isFieldBackedSeparatedList(node: AssembledSeparatedList): boolean {
+function isFieldBackedSeparatedList(node: AssembledList): boolean {
 	return (node.simplifiedRule as { fieldName?: string }).fieldName !== undefined;
 }
 
@@ -503,7 +511,7 @@ function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: Readonl
 }
 
 function emitSeparatedListWrap(
-	node: AssembledSeparatedList,
+	node: AssembledList,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): string | undefined {
@@ -918,17 +926,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitGroup(node: Extract<AssembledNode, { modelType: 'group' }>): void {
+	emitGroup(node: BranchLikeForWrap): void {
 		wrap.group(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitSupertype(node: Extract<AssembledNode, { modelType: 'supertype' }>): void {
+	emitSupertype(node: AssembledSupertype): void {
 		wrap.supertype(this.#output, node, this.#kindEntries);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitSeparatedList(node: AssembledSeparatedList): void {
+	emitSeparatedList(node: AssembledList): void {
 		wrap.separatedList(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
@@ -954,16 +962,20 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		}
 		if (emission !== 'emit') return;
 		switch (node.modelType) {
+			case 'envelope':
 			case 'branch':
-				this.emitBranch(node);
+				if (node.hoisted) this.emitGroup(node);
+				else this.emitBranch(node);
 				break;
-			case 'group':
-				this.emitGroup(node);
+			case 'polymorph':
+				if (node instanceof AssembledSupertype) {
+					this.emitSupertype(node);
+					break;
+				}
+				if (node.hoisted) this.emitGroup(node);
+				else this.emitBranch(node);
 				break;
-			case 'supertype':
-				this.emitSupertype(node);
-				break;
-			case 'separatedList':
+			case 'list':
 				this.emitSeparatedList(node);
 				break;
 			default:
@@ -1563,12 +1575,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (existing === undefined || (exact && !existing.exact)) rows.set(tableKey, { row, exact, typeExpr });
 		};
 		for (const [kind, node] of this.#nodeMap.nodes) {
-			if (
-				node.modelType === 'branch' ||
-				node.modelType === 'group' ||
-				node.modelType === 'supertype' ||
-				node.modelType === 'separatedList'
-			) {
+			if (isSlotBearingCompound(node) || node instanceof AssembledSupertype) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
 				const entry = this.#kindEntries ? findKindEntry(this.#kindEntries, kind) : undefined;
 				if (this.#kindEntries && entry === undefined) {
@@ -1584,7 +1591,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					entry !== undefined && entry.kind === kind,
 					`ReturnType<typeof wrap${node.typeName}>`
 				);
-			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
+			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node instanceof AssembledKeyword) {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries) {
 					const entry = findKindEntry(this.#kindEntries, kind);

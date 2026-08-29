@@ -16,6 +16,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { generate } from '../../compiler/generate.ts';
+import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 
 describe('round-trip validation', () => {
 	it('generates all output files for python without crashing', async () => {
@@ -88,7 +89,7 @@ describe('NodeMap structure', () => {
 		let groupCount = 0;
 		const assignmentVariantKinds = new Set<string>();
 		for (const [kind, node] of result.nodeMap.nodes) {
-			if (node.modelType === 'group') {
+			if (node instanceof AbstractAssembledCompound && node.hoisted) {
 				groupCount++;
 				if (kind.startsWith('_assignment_')) assignmentVariantKinds.add(kind);
 			}

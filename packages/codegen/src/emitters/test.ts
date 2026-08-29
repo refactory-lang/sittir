@@ -1,6 +1,15 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { allSlotsOf, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
+import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledKeyword,
+	AssembledList,
+	AssembledSupertype,
+	allSlotsOf,
+	isNodeRef,
+	storageKindOfRef
+} from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -86,17 +95,23 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
+			case 'envelope':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
 				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
 				break;
-			case 'separatedList':
+			case 'polymorph':
+				if (node instanceof AssembledSupertype) break;
+				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
+				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
+				break;
+			case 'list':
 				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'pattern':
 				emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
-			case 'keyword':
-				emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
+			case 'token':
+				if (node instanceof AssembledKeyword) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
 				emitEnumTest(target, node, kind, key, kindEntries, nodeMap);
@@ -122,7 +137,7 @@ function emitBranchTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	if (node.modelType !== 'branch') return;
+	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.hoisted) return;
 	if (classifyChildFactorySurface(node, nodeMap) !== null) {
 		emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
 		return;
@@ -154,7 +169,7 @@ function emitBranchTest(
 }
 
 function factoryCallArgs(
-	node: Extract<AssembledNode, { modelType: 'branch' | 'group' }>,
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	strict = false
@@ -186,7 +201,7 @@ function factoryCallArgs(
 }
 
 function containerCallArgs(
-	node: Extract<AssembledNode, { modelType: 'branch' }>,
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
@@ -216,7 +231,8 @@ function emitContainerTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (node.modelType !== 'branch' || classifyChildFactorySurface(node, nodeMap) === null) return;
+	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList) return;
+	if (classifyChildFactorySurface(node, nodeMap) === null) return;
 
 	const placeholder = containerCallArgs(node, nodeMap, kindEntries);
 	lines.push(`describe('${kind}', () => {`);
@@ -250,12 +266,16 @@ function namespacedCallArgs(
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
 		case 'branch':
+		case 'envelope':
 			return classifyChildFactorySurface(target, nodeMap) !== null
 				? containerCallArgs(target, nodeMap, kindEntries)
 				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
-		case 'group':
-			return factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
-		case 'separatedList': {
+		case 'polymorph':
+			if (target instanceof AssembledSupertype) return undefined;
+			return classifyChildFactorySurface(target, nodeMap) !== null
+				? containerCallArgs(target, nodeMap, kindEntries)
+				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
+		case 'list': {
 			const element = dummyValueForField(buildSeparatedListContentSlot(target), nodeMap, kindEntries, 0, new Set());
 			return `${element}, ${element}`;
 		}
@@ -313,7 +333,7 @@ function emitSeparatedListTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (node.modelType !== 'separatedList') return;
+	if (node.modelType !== 'list') return;
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elementsArg = `[${dummyValueForField(contentSlot, nodeMap, kindEntries, 0, new Set())}]`;
@@ -402,7 +422,7 @@ function emitKeywordTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (node.modelType !== 'keyword') return;
+	if (!(node instanceof AssembledKeyword)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces keyword', () => {`);
 	lines.push(`    const node = ir.${key}();`);
@@ -449,17 +469,12 @@ function resolveConcreteKind(
 		seen.add(current);
 		const node = nodeMap.nodes.get(current);
 		if (!node) continue;
-		if (node.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			queue.push(...node.subtypeNames);
 			continue;
 		}
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
-		if (
-			node.modelType === 'pattern' ||
-			node.modelType === 'keyword' ||
-			node.modelType === 'enum' ||
-			node.modelType === 'token'
-		) {
+		if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
 			return current;
 		}
 		nonLeafCandidates.push(current);
@@ -513,8 +528,7 @@ function buildDummyStub(
 	const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
 	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
-	if (!node || (node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'separatedList'))
-		return base;
+	if (!node || (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList))) return base;
 	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
 
 	const nextVisiting = new Set(visiting);
@@ -563,8 +577,7 @@ function dummyValue(
 function dummyTextForKind(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return 'test';
-	if (node.modelType === 'keyword') return node.text;
+	if (node.modelType === 'token') return node.text;
 	if (node.modelType === 'enum' && node.values.length > 0) return node.values[0]!;
-	if (node.modelType === 'token' && node.text !== undefined) return node.text;
 	return 'test';
 }

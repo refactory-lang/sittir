@@ -1,5 +1,14 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledList,
+	AssembledPattern,
+	AssembledEnum,
+	AssembledKeyword,
+	AssembledToken,
+	structuralFieldsOf
+} from '../compiler/model/node-map.ts';
 import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, escForSource } from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
@@ -20,25 +29,18 @@ export function emitConsts(config: EmitConstsConfig): string {
 	const enumEntries: { kind: string; values: string[] }[] = [];
 
 	for (const [kind, node] of nodeMap.nodes) {
-		switch (node.modelType) {
-			case 'branch':
-			case 'separatedList':
-				nodeKinds.push(kind);
-				break;
-			case 'pattern':
-			case 'enum':
-				leafKinds.push(kind);
-				if (node.modelType === 'enum') {
-					enumEntries.push({ kind, values: node.values });
-				}
-				break;
-			case 'keyword':
-				leafKinds.push(kind);
-				keywords.push(kind);
-				break;
-			case 'token':
-				operators.push(kind);
-				break;
+		if ((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList) {
+			nodeKinds.push(kind);
+		} else if (node instanceof AssembledPattern) {
+			leafKinds.push(kind);
+		} else if (node instanceof AssembledEnum) {
+			leafKinds.push(kind);
+			enumEntries.push({ kind, values: node.values });
+		} else if (node instanceof AssembledKeyword) {
+			leafKinds.push(kind);
+			keywords.push(kind);
+		} else if (node instanceof AssembledToken) {
+			operators.push(kind);
 		}
 	}
 
@@ -285,7 +287,7 @@ function toIdMap(ids: GeneratedIdTable | undefined): Map<string, GeneratedIdEntr
 function collectFieldNames(nodeMap: NodeMap): string[] {
 	const result = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
-		for (const field of fieldsOfNode(node)) result.add(field.name);
+		for (const field of structuralFieldsOf(node)) result.add(field.name);
 	}
 	return [...result];
 }
@@ -353,7 +355,7 @@ function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
 		nonEmptyRepeat: boolean;
 	}[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		for (const f of fieldsOfNode(node)) {
+		for (const f of structuralFieldsOf(node)) {
 			if (keywordPresenceKind(f, nodeMap) !== 'bitflag') continue;
 			const values = keywordPresenceValues(f, nodeMap);
 			if (values.length < 2) continue;
@@ -394,7 +396,7 @@ export function resolveBitflagConstName(
 	if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return undefined;
 	const bareCounts = new Map<string, number>();
 	for (const [k, n] of nodeMap.nodes) {
-		for (const f of fieldsOfNode(n)) {
+		for (const f of structuralFieldsOf(n)) {
 			if (keywordPresenceKind(f, nodeMap) !== 'bitflag') continue;
 			const bare = bitflagBareConstName(f.propertyName);
 			bareCounts.set(bare, (bareCounts.get(bare) ?? 0) + 1);
@@ -497,17 +499,4 @@ function pascalCaseFromSnake(s: string): string {
 function pascalCaseFromCamel(s: string): string {
 	if (s.length === 0) return s;
 	return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
-	switch (node.modelType) {
-		case 'branch':
-			return node.fields;
-		case 'group':
-			return node.fields;
-		case 'separatedList':
-			return node.fields;
-		default:
-			return [];
-	}
 }

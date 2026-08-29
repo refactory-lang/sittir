@@ -1,6 +1,12 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import { allSlotsOf, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
+import {
+	AssembledKeyword,
+	AssembledSupertype,
+	allSlotsOf,
+	isNodeRef,
+	storageKindOfRef
+} from '../compiler/model/node-map.ts';
 
 export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none';
 
@@ -55,17 +61,16 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group':
-		case 'separatedList':
+		case 'envelope':
+		case 'list':
 			return 'template';
+		case 'polymorph':
+			return node instanceof AssembledSupertype ? 'dispatch' : 'template';
 		case 'pattern':
-		case 'keyword':
 		case 'enum':
 			return 'text';
-		case 'supertype':
-			return 'dispatch';
 		case 'token':
-			return 'none';
+			return node instanceof AssembledKeyword ? 'text' : 'none';
 		default:
 			return 'none';
 	}

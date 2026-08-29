@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import {
-	AssembledGroup,
+	AbstractAssembledCompound,
+	AssembledList,
 	isNodeRef,
 	isMultiple,
 	isRequired,
@@ -60,7 +61,7 @@ const EMPTY: NamespacedConstructorSet = { entries: [], ambiguous: [] };
 
 function isArmOf(kind: string, parentKind: string, nodeMap: NodeMap): boolean {
 	const n = nodeMap.nodes.get(kind);
-	if (n instanceof AssembledGroup && n.parentKind === parentKind) return true;
+	if (n instanceof AbstractAssembledCompound && n.hoisted && n.parentKind === parentKind) return true;
 	return kind !== parentKind && prefixNamedSuffix(parentKind, kind) !== null;
 }
 
@@ -83,7 +84,7 @@ function isKindEnumSlot(slot: AssembledNonterminal): boolean {
 }
 
 function formName(parentKind: string, child: AssembledNode): string {
-	if (child instanceof AssembledGroup && child.parentKind === parentKind) return camelCase(child.name);
+	if (child instanceof AbstractAssembledCompound && child.hoisted && child.parentKind === parentKind) return camelCase(child.name);
 	return camelCase(prefixNamedSuffix(parentKind, child.kind) ?? child.kind.replace(/^_+/, ''));
 }
 
@@ -118,7 +119,7 @@ function derive(
 	options: NamespacedConstructorOptions,
 	visiting: ReadonlySet<string>
 ): NamespacedConstructorSet {
-	if (!isSlotBearingCompound(node) || node.modelType === 'separatedList') return EMPTY;
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return EMPTY;
 	if (!node.rawFactoryName || nodeMap.refineForms?.has(node.kind)) return EMPTY;
 	const isEmitted = options.isEmitted ?? (() => true);
 	const user = userSlotsOf(node, nodeMap);

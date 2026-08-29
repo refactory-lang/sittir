@@ -496,7 +496,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * the whole list (head + repeat + trailing) is captured as one group. Without
  * it the trailing separator strands as a standalone member → wrapper-deletion
  * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
- * groups it is permanently split from its list across the AssembledGroup
+ * groups it is permanently split from its list across the hoisted-compound
  * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
  * into the group's `repeat1` as `trailing: true`.
  */
@@ -1257,8 +1257,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Register the FLATTENED head-form spelling — the canonical shape the
 // link phase's separator lift recognizes, so the kind classifies
-// 'separatedList' (kind-level flank keys) instead of 'group' with
-// per-field capture. Language-identical (seq nesting is associative);
+// 'list' (kind-level flank keys) instead of an ordinary hoisted compound
+// with per-field capture. Language-identical (seq nesting is associative);
 // the ambient prec wrapper re-applies around the flat seq.
 ```
 
@@ -1527,7 +1527,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     slot that is a `field` or `symbol` (NOT a bare `choice`) after dropping
  *     pure literals/punctuation and `blank`. The inline+gate render path can
  *     key on that single slot; multi-slot or bare-choice bodies need to be
- *     visible (their own AssembledGroup template).
+ *     visible (their own hoisted-compound template).
  */
 ```
 
@@ -1649,7 +1649,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * flattened seq is an optional/choice-of-blank flank of that same separator
  * literal (a stranded leading/trailing comma). Either shape means the list
  * can't be rendered from one fixed separator string — it needs its own
- * visible `AssembledSeparatedList` template, not the hidden inline-flat
+ * visible `AssembledList` template, not the hidden inline-flat
  * path.
  */
 ```
@@ -1714,7 +1714,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     or any other multi-valued / compound type.
  *
  * Multi-slot or bare-choice bodies are "inline-unsafe" and require a visible
- * AssembledGroup template for correct rendering.
+ * hoisted-compound template for correct rendering.
  *
  * @param seqBody — the rule to classify. Typically the body of an
  *   `optional(seq)` position, but may also be called with non-seq bodies
@@ -1737,7 +1737,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   EXCEPT when the repeat has genuine per-instance separator variability
 	   (a non-literal separator rule) — such a list can't render from one
 	   fixed separator string on the inline-flat path and needs its own
-	   visible `AssembledSeparatedList` template instead. See
+	   visible `AssembledList` template instead. See
 	   `repeatHasGenuineSeparatorVariability`. */
 ```
 
@@ -1802,7 +1802,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * parse time exactly one arm's node materializes and the hidden rule
  * splices away, so wrapping it in a mint alias inserts a CST node level
  * into every position the union appears in AND severs the wrap layer's
- * concrete-kind expansion (keyed on `modelType === 'supertype'`) — the
+ * concrete-kind expansion (keyed on `instanceof AssembledSupertype`) — the
  * failure class that took python to 0/115 when `_compound_statement` was
  * wrapped.
  *
@@ -4476,7 +4476,7 @@ registered but later unused still counts as a sibling.
 // (`seq(seq(elem, repeat(sep elem)), flank)`) — e.g. python's upstream
 // `_patterns`/`_parameters`/`_import_list` helpers — flattens to the
 // canonical head-form so the link phase's separator lift recognizes it
-// and the kind classifies 'separatedList' (kind-level flank keys), same
+// and the kind classifies 'list' (kind-level flank keys), same
 // as the mints below. Language-identical: seq nesting is associative.
 ```
 
@@ -5443,7 +5443,7 @@ registered but later unused still counts as a sibling.
 // already a dispatchable union (subtype expansion IS its identity);
 // wrapping it in a mint alias adds a CST wrapper node to every tree it
 // appears in and severs its wrap-time concrete-kind expansion (which
-// keys on `modelType === 'supertype'`). Carried on this per-rule ctx
+// keys on `instanceof AssembledSupertype`). Carried on this per-rule ctx
 // bag (§7.7 Principle #14) because it already travels through every
 // applyClauseHoist recursion into the mint site.
 ```
@@ -5661,7 +5661,7 @@ registered but later unused still counts as a sibling.
 // runtime identity — so a mint adds nothing, while the alias wrapper
 // it introduces (a) inserts a CST node level into every tree the
 // supertype appears in, and (b) severs the supertype's wrap-time
-// concrete-kind expansion (keyed on `modelType === 'supertype'`).
+// concrete-kind expansion (keyed on `instanceof AssembledSupertype`).
 // Empirically: minting python's `_compound_statement` arm produced
 // `statement_group2` wrappers that broke wrap universally (0/115).
 ```

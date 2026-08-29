@@ -10,8 +10,7 @@ import {
 	classifyFactoryShape,
 	collectAliasSourceKinds,
 	forwardedTargetKind,
-	resolveFactoryFieldNames
-} from './shared.ts';
+	resolveFactoryFieldNames, isAuthoredCompound } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
@@ -86,7 +85,7 @@ function collectVariantAdoptedBranches(
 ): Record<string, PolymorphVariantDescriptor> {
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'branch' || node.variantChildKinds.length === 0) continue;
+		if (!isAuthoredCompound(node) || node.variantChildKinds.length === 0) continue;
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		polymorphVariants[kind] = {
 			definedBy: 'override',

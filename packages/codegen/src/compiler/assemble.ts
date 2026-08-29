@@ -50,14 +50,13 @@ import type {
 } from './model/node-map.ts';
 import {
 	AssembledBranch,
+	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
 	AssembledSupertype,
-	AssembledGroup,
-	AssembledMulti,
-	AssembledSeparatedList,
+	AssembledList,
 	drainParseKindCollisionDiagnostics,
 	drainDeriveShapeDiagnostics,
 	drainAssembleWarnings,
@@ -71,7 +70,7 @@ import {
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	buildParseKindRuleSignatures,
-	type AssembleWarning, branchClassFor } from './model/node-map.ts';
+	type AssembleWarning, branchClassFor, compoundModelTypeFor } from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
@@ -165,16 +164,25 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
 			switch (modelType) {
-				case 'branch': {
-					const BranchClass = branchClassFor(simplifiedRule);
+				case 'branch':
+				case 'envelope':
+				case 'polymorph': {
+					if (renderRule.type === SUPERTYPE || (modelType === 'polymorph' && renderRule.type === CHOICE && simplifiedRule.type === SUPERTYPE)) {
+						const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
+						nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
+						break;
+					}
+					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
+					const CompoundClass = branchClassFor(groupSimplified);
 					nodes.set(
 						kind,
-						new BranchClass(kind, simplifiedRule, renderRule, {
+						new CompoundClass(kind, groupSimplified, groupRenderRule, {
 							variantChildKinds,
 							kindEntries,
 							parseKindCollisionContext,
 							visibleAliasTargets: normalized.visibleAliasTargets,
-							simplifiedRules: normalized.rules
+							simplifiedRules: normalized.rules,
+							...(simplifiedRule.type === GROUP ? { hoisted: {} } : {})
 						})
 					);
 					break;
@@ -183,16 +191,13 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					nodes.set(kind, new AssembledPattern(kind, simplifiedRule));
 					break;
 				}
-				case 'keyword':
 				case 'token': {
 					if (simplifiedRule.type !== STRING) {
-						throw new Error(
-							`[assemble] ${modelType} kind '${kind}' must be a single literal; found ${simplifiedRule.type}`
-						);
+						throw new Error(`[assemble] token kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 					}
 					nodes.set(
 						kind,
-						modelType === 'keyword'
+						matchesWordShape(simplifiedRule.value, wordMatcherRegex)
 							? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
 							: new AssembledToken(kind, simplifiedRule, { kindEntries })
 					);
@@ -205,42 +210,19 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					nodes.set(kind, new AssembledEnum(kind, renderRule, { kindEntries }));
 					break;
 				}
-				case 'supertype': {
-					if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
-						throw new Error(`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`);
-					}
-					const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
-					nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
-					break;
-				}
-				case 'group': {
-					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
-					nodes.set(
-						kind,
-						new AssembledGroup(kind, groupSimplified, groupRenderRule, {
-							kindEntries,
-							parseKindCollisionContext
-						})
-					);
-					break;
-				}
-				case 'multi': {
-					nodes.set(kind, new AssembledMulti(kind, simplifiedRule));
-					break;
-				}
-				case 'separatedList': {
+				case 'list': {
 					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
 					const listRule = peelSeparatedListCore(groupSimplified);
 					if (listRule.type !== SYMBOL && listRule.type !== CHOICE) {
 						throw new Error(
-							`[assemble] separatedList kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
+							`[assemble] list kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
 						);
 					}
 					const sep = listRule.separator;
 					const separatorRule = sep && isNonterminalRuleType(sep.value) ? sep.value : undefined;
 					nodes.set(
 						kind,
-						new AssembledSeparatedList(
+						new AssembledList(
 							kind,
 							listRule,
 							{ kindEntries },
@@ -296,7 +278,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 
 		for (const node of nodes.values()) {
-			if (node.modelType === 'branch' || node.modelType === 'group') {
+			if (node instanceof AbstractAssembledCompound) {
 				node.attachNodeMap(nodes);
 			}
 		}
@@ -640,10 +622,10 @@ function resolveHiddenRuleContent(
 export function hydrateSlotRefs(nodeMap: NodeMap): void {
 	const externals = nodeMap.externals ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType === 'branch' || node.modelType === 'group') {
+		if (node instanceof AbstractAssembledCompound) {
 			hydrateSlots(kind, node.slots, nodeMap.nodes, externals);
 		}
-		if (node.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			hydrateValues(node.subtypes, { parentKind: kind, siteLabel: 'subtypes', nodes: nodeMap.nodes, externals });
 		}
 	}
@@ -699,7 +681,7 @@ interface _UserFacingCtx {
 
 function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 	const { kind } = node;
-	if (node.modelType === 'token' || node.modelType === 'multi') {
+	if (node instanceof AssembledToken) {
 		node.userFacing = ctx.variantChildKinds.has(kind);
 		return;
 	}
@@ -732,7 +714,7 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
 }
 
 function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledNode[], typeName: string): void {
-	const hasNonTokenVisible = visible.some((n) => n.modelType !== 'token');
+	const hasNonTokenVisible = visible.some((n) => !(n instanceof AssembledToken));
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
@@ -793,7 +775,7 @@ function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: strin
 
 function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
 	for (const node of nodes.values()) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		claimed.add(shortenIrKey(node.kind));
 	}
 }
@@ -806,7 +788,7 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	const phase2: AssembledNode[] = [];
 	for (const node of nodes.values()) {
 		if (!node.factoryName) continue;
-		if (node.modelType === 'group') continue;
+		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) phase1.push(node);
 		else phase2.push(node);
@@ -909,41 +891,42 @@ function walkForStrings(rule: RenderRule, out: Set<string>): void {
 
 type ModelType = AssembledNode['modelType'];
 
-
 export function classifyNode(
 	kind: string,
-	rule: RenderRule,
+	rule: SimplifiedRule,
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
 ): ModelType {
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		if (isEnumChoiceRule(rule)) return 'enum';
 		switch (rule.type) {
 			case SUPERTYPE:
-				return 'supertype';
+				return 'polymorph';
 			case GROUP:
-				if (isSeparatedListShape(peelSeparatedListCore(rule) as RenderRule)) return 'separatedList';
-				return 'group';
+				if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
+				return compoundModelType(rule);
 			case PATTERN:
 				return 'pattern';
 			case STRING:
-				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'token';
+				return 'token';
 		}
 	}
 
-	if (isHiddenRepeatHelper(rule)) return 'multi';
-	if (isSeparatedListShape(rule)) return 'separatedList';
-	const branchOrContainer = classifyBranchOrContainer(rule);
-	if (branchOrContainer !== null) return branchOrContainer;
+	if (isSeparatedListShape(rule)) return 'list';
+	if (hasSlotBearingContent(rule)) return compoundModelType(rule);
 	return classifyTerminalFallback(kind, rule);
 }
 
-function peelSeparatedListCore(rule: RenderRule): RenderRule {
-	let r: RenderRule = rule.type === GROUP ? rule.content : rule;
+function compoundModelType(rule: SimplifiedRule): 'envelope' | 'branch' | 'polymorph' {
+	return compoundModelTypeFor(rule);
+}
+
+function peelSeparatedListCore(rule: SimplifiedRule): SimplifiedRule {
+	let r: SimplifiedRule = rule.type === GROUP ? rule.content : rule;
 	if (r.type === SEQ && r.members.length === 1) r = r.members[0]!;
 	return r;
 }
 
-function isSeparatedListShape(rule: RenderRule): boolean {
+function isSeparatedListShape(rule: SimplifiedRule): boolean {
 	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
 	const sep = rule.separator;
 	if (sep === undefined) return false;
@@ -951,16 +934,7 @@ function isSeparatedListShape(rule: RenderRule): boolean {
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
-function isHiddenRepeatHelper(rule: RenderRule): boolean {
-	return rule.hidden === true && (rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray');
-}
-
-function classifyBranchOrContainer(rule: RenderRule): ModelType | null {
-	if (hasSlotBearingContent(rule)) return 'branch';
-	return null;
-}
-
-function hasSlotBearingContent(rule: RenderRule): boolean {
+function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 	if (rule.fieldName !== undefined) return true;
 	switch (rule.type) {
 		case SYMBOL:

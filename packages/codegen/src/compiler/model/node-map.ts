@@ -936,16 +936,7 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export type ModelType =
-	| 'branch'
-	| 'pattern'
-	| 'keyword'
-	| 'token'
-	| 'enum'
-	| 'supertype'
-	| 'multi'
-	| 'group'
-	| 'separatedList';
+export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'enum' | 'token' | 'pattern' | 'list';
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
@@ -979,6 +970,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	factoryInline: boolean = false;
 
+	readonly enrichment: NodeEnrichment;
+
 	constructor(
 		kind: string,
 		rule: R,
@@ -986,10 +979,12 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
+			enrichment?: NodeEnrichment;
 		}
 	) {
 		this.kind = kind;
 		this.rule = rule;
+		this.enrichment = opts?.enrichment ?? {};
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
@@ -1226,7 +1221,7 @@ export function resolveSlotAliasPairs(
 	for (const parseKind of valueParseKindsOf(slot)) {
 		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
-		if (node?.modelType !== 'supertype') continue;
+		if (node?.subtypeRestampPairs === undefined) continue;
 		for (const pair of node.subtypeRestampPairs ?? []) pairs.push(pair);
 	}
 	return pairs.length > 0 ? pairs : undefined;
@@ -1455,13 +1450,59 @@ export function determinedSlotText(slot: AssembledNonterminal, ctx?: DeriveCtx):
 
 export function pruneDeterminedSlots(nodeMap: { nodes: ReadonlyMap<string, AssembledNode> }): void {
 	for (const node of nodeMap.nodes.values()) {
-		if (node.modelType !== 'branch' && node.modelType !== 'group') continue;
+		if (!(node instanceof AbstractAssembledCompound)) continue;
 		node.pruneDeterminedSlots(nodeMap.nodes);
 	}
 }
 
-export abstract class AssembledCompound extends AssembledNodeBase<RenderRule> {
+export interface HoistedFacts {
+	readonly detectToken?: string;
+	readonly name?: string;
+	readonly parentKind?: string;
+	readonly overridePassthrough?: boolean;
+}
+
+export interface NodeEnrichment {
+	readonly hoisted?: HoistedFacts;
+}
+
+export interface CompoundOpts {
+	factoryName?: string;
+	irKey?: string;
+	hidden?: boolean;
+	variantChildKinds?: readonly string[];
+	hoisted?: HoistedFacts;
+	kindEntries?: readonly GeneratedKindEntry[];
+	parseKindCollisionContext?: ParseKindCollisionContext;
+	slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
+	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	simplifiedRules?: Record<string, SimplifiedRule>;
+}
+
+export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
+	readonly renderRule: RenderRule;
+	readonly variantChildKinds: readonly string[];
+
+	get hoisted(): boolean {
+		return this.enrichment.hoisted !== undefined;
+	}
+
+	get detectToken(): string | undefined {
+		return this.enrichment.hoisted?.detectToken;
+	}
+
+	get name(): string {
+		return this.enrichment.hoisted?.name ?? this.kind;
+	}
+
+	get parentKind(): string | undefined {
+		return this.enrichment.hoisted?.parentKind;
+	}
+
+	get overridePassthrough(): boolean | undefined {
+		return this.enrichment.hoisted?.overridePassthrough;
+	}
 
 	slotClass?: BranchSlotClass;
 
@@ -1472,19 +1513,16 @@ export abstract class AssembledCompound extends AssembledNodeBase<RenderRule> {
 		kind: string,
 		simplifiedRule: SimplifiedRule,
 		renderRule: RenderRule,
-		opts?: {
-			factoryName?: string;
-			irKey?: string;
-			hidden?: boolean;
-			kindEntries?: readonly GeneratedKindEntry[];
-			parseKindCollisionContext?: ParseKindCollisionContext;
-			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
-			visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-			simplifiedRules?: Record<string, SimplifiedRule>;
-		}
+		opts?: CompoundOpts,
+		rule: R = renderRule as R
 	) {
-		super(kind, renderRule, opts);
+		const hoisted = opts?.hoisted !== undefined;
+		const factoryName =
+			opts?.factoryName ?? (hoisted && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
+		super(kind, rule, { ...opts, factoryName, enrichment: opts?.hoisted ? { hoisted: opts.hoisted } : {} });
 		this.simplifiedRule = simplifiedRule;
+		this.renderRule = renderRule;
+		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots =
 			opts?.slotRecord ??
 			buildSlotsRecord(simplifiedRule, {
@@ -1517,12 +1555,8 @@ export abstract class AssembledCompound extends AssembledNodeBase<RenderRule> {
 		if (this.#determinedSlots.length > 0) this._slots = kept;
 	}
 
-	get renderRule(): RenderRule {
-		return this.rule;
-	}
-
 	get keywordConstructibleText(): string | undefined {
-		const r = this.rule;
+		const r = this.renderRule;
 		const lead = r.type === SEQ ? r.members[0] : r;
 		if (lead === undefined || lead.type !== STRING) return undefined;
 		if (!this.fields.every((f) => !isRequired(f))) return undefined;
@@ -1563,38 +1597,22 @@ export abstract class AssembledCompound extends AssembledNodeBase<RenderRule> {
 	}
 }
 
-export class AssembledBranch extends AssembledCompound {
+export class AssembledBranch extends AbstractAssembledCompound {
 	readonly modelType = 'branch' as const;
-	readonly variantChildKinds: readonly string[];
-
-	constructor(
-		kind: string,
-		simplifiedRule: SimplifiedRule,
-		renderRule: RenderRule,
-		opts?: {
-			factoryName?: string;
-			irKey?: string;
-			variantChildKinds?: readonly string[];
-			kindEntries?: readonly GeneratedKindEntry[];
-			parseKindCollisionContext?: ParseKindCollisionContext;
-			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
-			visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-			simplifiedRules?: Record<string, SimplifiedRule>;
-		}
-	) {
-		super(kind, simplifiedRule, renderRule, opts);
-		this.variantChildKinds = opts?.variantChildKinds ?? [];
-	}
 }
 
-export class AssembledEnvelope extends AssembledBranch {
+export class AssembledEnvelope extends AbstractAssembledCompound {
+	readonly modelType = 'envelope' as const;
+
 	get soleSlot(): AssembledNonterminal | undefined {
 		const slots = Object.values(this.slots);
 		return slots.length === 1 ? slots[0] : undefined;
 	}
 }
 
-export class AssembledPolymorph extends AssembledBranch {
+export class AssembledPolymorph extends AbstractAssembledCompound {
+	readonly modelType = 'polymorph' as const;
+
 	get arms(): readonly SimplifiedRule[] {
 		const body = unwrapStructuralPassthroughs(this.simplifiedRule);
 		return body.type === CHOICE ? body.members : [];
@@ -1616,11 +1634,25 @@ export function isLeafShapedMember(rule: SimplifiedRule): boolean {
 	}
 }
 
-export function branchClassFor(simplifiedRule: SimplifiedRule): typeof AssembledBranch {
+export type CompoundClass = typeof AssembledBranch | typeof AssembledEnvelope | typeof AssembledPolymorph;
+
+export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
+
+export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
 	const body = unwrapStructuralPassthroughs(simplifiedRule);
-	if (body.type === SYMBOL) return AssembledEnvelope;
-	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return AssembledPolymorph;
-	return AssembledBranch;
+	if (body.type === SYMBOL) return 'envelope';
+	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
+	return 'branch';
+}
+
+const COMPOUND_CLASS_BY_MODEL_TYPE: Record<CompoundModelType, CompoundClass> = {
+	envelope: AssembledEnvelope,
+	branch: AssembledBranch,
+	polymorph: AssembledPolymorph
+};
+
+export function branchClassFor(simplifiedRule: SimplifiedRule): CompoundClass {
+	return COMPOUND_CLASS_BY_MODEL_TYPE[compoundModelTypeFor(simplifiedRule)];
 }
 
 export function unwrapStructuralPassthroughs(rule: SimplifiedRule): SimplifiedRule {
@@ -1661,7 +1693,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 }
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
-	readonly modelType = 'keyword' as const;
+	readonly modelType = 'token' as const;
 
 	override get word(): boolean {
 		return true;
@@ -1793,7 +1825,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 }
 
 export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
-	readonly modelType = 'supertype' as const;
+	readonly modelType = 'polymorph' as const;
 
 	override get transparent(): boolean {
 		return true;
@@ -1833,87 +1865,14 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	}
 }
 
-export abstract class AssembledList<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
-	abstract get nonEmpty(): boolean;
-}
-
-export class AssembledMulti extends AssembledList<RenderRule> {
-	readonly modelType = 'multi' as const;
-
-	constructor(kind: string, rule: RenderRule, opts?: { irKey?: string }) {
-		super(kind, rule, { hidden: true, irKey: opts?.irKey });
-	}
-
-	get elementRule(): RenderRule {
-		return this.rule;
-	}
-
-	get nonEmpty(): boolean {
-		return this.rule.multiplicity === 'nonEmptyArray';
-	}
-
-	get separator(): string | undefined {
-		return extractSeparatorString(this.rule.separator);
-	}
-
-	get trailing(): DelimiterMode | undefined {
-		return this.rule.separator?.trailing;
-	}
-
-	get leading(): DelimiterMode | undefined {
-		return this.rule.separator?.leading;
-	}
-}
-
-export class AssembledGroup extends AssembledCompound {
-	readonly modelType = 'group' as const;
-	readonly detectToken?: string;
-	readonly name: string;
-	readonly parentKind?: string;
-	readonly overridePassthrough?: boolean;
-
-	constructor(
-		kind: string,
-		simplifiedRule: SimplifiedRule,
-		renderRule: RenderRule,
-		opts?: {
-			factoryName?: string;
-			irKey?: string;
-			detectToken?: string;
-			name?: string;
-			parentKind?: string;
-			overridePassthrough?: boolean;
-			kindEntries?: readonly GeneratedKindEntry[];
-			parseKindCollisionContext?: ParseKindCollisionContext;
-		}
-	) {
-		const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, simplifiedRule, renderRule, {
-			factoryName,
-			irKey: opts?.irKey,
-			kindEntries: opts?.kindEntries,
-			parseKindCollisionContext: opts?.parseKindCollisionContext
-		});
-		this.detectToken = opts?.detectToken;
-		this.name = opts?.name ?? kind;
-		this.parentKind = opts?.parentKind;
-		this.overridePassthrough = opts?.overridePassthrough;
-	}
-}
-
 export type SeparatedListElementRule = SymbolRule | ChoiceRule;
 
-export class AssembledSeparatedList extends AssembledList<SeparatedListElementRule> {
-	readonly modelType = 'separatedList' as const;
+export class AssembledList extends AbstractAssembledCompound<SeparatedListElementRule> {
+	readonly modelType = 'list' as const;
 	readonly elements: readonly NodeOrTerminal[];
 	readonly separatorRule: RenderRule | undefined;
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
-
-	readonly simplifiedRule: SimplifiedRule;
-	readonly renderRule: RenderRule;
-	protected readonly _slots: Readonly<Record<string, AssembledNonterminal>>;
-	slotClass?: BranchSlotClass;
 
 	constructor(
 		kind: string,
@@ -1927,7 +1886,13 @@ export class AssembledSeparatedList extends AssembledList<SeparatedListElementRu
 			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
-		super(kind, rule, {});
+		super(
+			kind,
+			opts.simplifiedRule,
+			opts.renderRule,
+			{ kindEntries: opts.kindEntries, parseKindCollisionContext: opts.parseKindCollisionContext },
+			rule
+		);
 		const sep = rule.separator;
 		this.elements = deriveValuesForRule(
 			rule,
@@ -1937,11 +1902,10 @@ export class AssembledSeparatedList extends AssembledList<SeparatedListElementRu
 		this.separatorRule = opts.separatorRule;
 		this.leadingDelimiter = sep?.leading ?? 'none';
 		this.trailingDelimiter = sep?.trailing ?? 'none';
-		this.simplifiedRule = opts.simplifiedRule;
-		this.renderRule = opts.renderRule;
-		this._slots = buildSlotsRecord(
-			opts.simplifiedRule,
-			{ kindName: kind, kindEntries: opts.kindEntries, collision: opts.parseKindCollisionContext });
+	}
+
+	override get parameterless(): boolean {
+		return false;
 	}
 
 	get nonEmpty(): boolean {
@@ -1952,50 +1916,41 @@ export class AssembledSeparatedList extends AssembledList<SeparatedListElementRu
 		return this.rule.separator?.terminated === true;
 	}
 
-	get separator(): string | undefined {
+	override get separator(): string | undefined {
 		return extractSeparatorString(this.rule.separator);
 	}
-
-	get slots(): Readonly<Record<string, AssembledNonterminal>> {
-		return this._slots;
-	}
-
-	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this._slots);
-	}
 }
-
 export type AssembledNode =
 	| AssembledBranch
+	| AssembledEnvelope
+	| AssembledPolymorph
 	| AssembledPattern
 	| AssembledKeyword
 	| AssembledToken
 	| AssembledEnum
 	| AssembledSupertype
-	| AssembledGroup
-	| AssembledMulti
-	| AssembledSeparatedList;
+	| AssembledList;
 
 export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+	if (node instanceof AbstractAssembledCompound)
 		return node.fields;
 	return [];
 }
 
 export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+	if (node instanceof AbstractAssembledCompound)
 		return node.fields;
 	return [];
 }
 
 export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+	if (node instanceof AbstractAssembledCompound)
 		return Object.values(node.slots);
 	return [];
 }
 
 export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+	if (node instanceof AbstractAssembledCompound)
 		return Object.values(node.slots);
 	return [];
 }

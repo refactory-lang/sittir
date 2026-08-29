@@ -147,9 +147,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   (rust has none; typescript + python do). `Edit` was previously
  *   imported but no emitted body references it — dropped.
  *
- *   Also checks `AssembledSeparatedList.nonEmpty` directly (a REPEAT1
- *   source rule) rather than through `allSlotsOf`'s `.fields` (the Task-2
- *   stub) — the stub can misderive a kind's real elements arity (see
+ *   Also checks `AssembledList.nonEmpty` directly (a REPEAT1
+ *   source rule) rather than through `allSlotsOf`'s `.fields` — the
+ *   generic slot surface can misderive a kind's real elements arity (see
  *   `emitSeparatedListFactory`'s doc comment), so it can't be trusted for
  *   this detection either.
  */
@@ -382,7 +382,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+// 'list' participates in this scan uniformly alongside 'branch' — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -475,12 +475,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
-	 * Emit a `'separatedList'` factory — dedicated construct surface built
-	 * directly from `AssembledSeparatedList`'s own real fields (`elements`/
-	 * `separatorRule`/`leadingMode`/`trailingMode`), bypassing the Task-2
-	 * `_slots` stub entirely (see `AssembledSeparatedList`'s doc comment,
-	 * node-map.ts). Replaces the former `branch(...)` routing for this
-	 * modelType.
+	 * Emit a `'list'` factory — dedicated construct surface built
+	 * directly from `AssembledList`'s own real fields (`elements`/
+	 * `separatorRule`/`leadingMode`/`trailingMode`), bypassing the generic
+	 * `.slots`/`.fields` surface entirely (see `AssembledList`'s doc
+	 * comment, node-map.ts) rather than routing through `branch(...)`.
 	 */
 ```
 
@@ -986,12 +985,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Emit a `'separatedList'` factory function.
+ * Emit a `'list'` factory function.
  *
  * Signature: `fn(elements: T[] | NonEmptyArray<T>, options?: {...})` —
- * `elements` is always positional (a separatedList's whole rule identity is
- * array multiplicity, so there's never a singular-content case, unlike
- * `emitContainerFactory`). `options` is a SECOND, trailing parameter
+ * `elements` is always positional (a `'list'`-classified kind's whole rule
+ * identity is array multiplicity, so there's never a singular-content case,
+ * unlike `emitContainerFactory`). `options` is a SECOND, trailing parameter
  * (`elements` can't itself be a rest/spread param followed by more
  * arguments) and is emitted ONLY when at least one of
  * `separatorKind`/`leading`/`trailing` genuinely varies per-instance —
@@ -1011,23 +1010,24 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `renderTransportDataStruct`'s transport struct use, so the constructed
  * object's storage key matches the model's real slot name (e.g.
  * `_attributed_argument`, not `_content`) and satisfies both the wire
- * transport and the Task-2 `_slots` stub's `T.<TypeName>` interface in
- * types.ts (which declares `_<name>`/`<name>()` from the identical
- * `node.fields` source). Multi-field kinds (`node.fields.length > 1`, e.g.
- * TypeScript's `enum_body_group1`) can't route a flat `elements` array to
- * more than one field without partitioning by kind — they keep the generic
- * `_content`/`content()` bucket, which remains WRONG for those kinds (see
- * `expectTestFailures`) pending a real per-field partition.
+ * transport and the generic `.fields`/`.slots` surface's `T.<TypeName>`
+ * interface in types.ts (which declares `_<name>`/`<name>()` from the
+ * identical `node.fields` source). Multi-field kinds (`node.fields.length
+ * > 1`, e.g. TypeScript's `enum_body_group1`) can't route a flat
+ * `elements` array to more than one field without partitioning by kind —
+ * they keep the generic `_content`/`content()` bucket, which remains WRONG
+ * for those kinds (see `expectTestFailures`) pending a real per-field
+ * partition.
  *
- * Bypasses `node.fields`/`.slots` (the Task-2 stub) entirely, reading
+ * Bypasses `node.fields`/`.slots` entirely, reading
  * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
- * directly — the stub can misderive a kind's real shape for a rule that's
- * an alias of a hidden rule (empirically found: python's `lambda_parameters`,
- * whose rule id resolves through hidden `_parameters`, currently gets a
- * WRONG singular `child: T.Parameters` factory under the stub instead of
- * the real REPEAT1 array — this function fixes that as a side effect of
- * bypassing the stub, the same way Task 4's wrap.ts fix did for the wrap
- * side).
+ * directly — the generic slot surface can misderive a kind's real shape
+ * for a rule that's an alias of a hidden rule (empirically found: python's
+ * `lambda_parameters`, whose rule id resolves through hidden
+ * `_parameters`, currently gets a WRONG singular `child: T.Parameters`
+ * factory under the generic surface instead of the real REPEAT1 array —
+ * this function fixes that as a side effect of bypassing it, the same way
+ * wrap.ts's analogous fix did for the wrap side).
  */
 ```
 
@@ -1070,7 +1070,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Terminated-list validity invariant (see AssembledSeparatedList.
+// Terminated-list validity invariant (see AssembledList.
 // terminatedSeparator): a single element must carry the trailing
 // delimiter — the undelimited one-element rendering parses as a
 // different construct.
@@ -1444,7 +1444,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
-	 * Emit a `'separatedList'` from() resolver — dedicated construct/
+	 * Emit a `'list'` from() resolver — dedicated construct/
 	 * reconstruction surface, see `emitSeparatedListFrom`'s doc comment.
 	 */
 ```
@@ -1483,12 +1483,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// 'separatedList' is EXCLUDED here (unlike 'branch') — its Task-6 factory
+// 'list' is EXCLUDED here (unlike 'branch') — its Task-6 factory
 // signature always requires an `elements` argument (never a zero-arg
 // `F.x()` call, even for a plain `repeat` whose elements COULD be an
 // empty array — the array itself is still a mandatory argument, not a
 // default). `instanceof AssembledBranch` can't recognize
-// AssembledSeparatedList, so narrow on modelType instead.
+// AssembledList, so narrow on modelType instead.
 ```
 
 #### body
@@ -1501,8 +1501,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Branch / group with fields: check if the factory config is all-optional.
-// 'separatedList' excluded — see this function's doc comment above.
+// Branch / hoisted compound with fields: check if the factory config is
+// all-optional. 'list' excluded — see this function's doc comment above.
 ```
 
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
@@ -1678,7 +1678,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * existing self-NodeData value's storage. Both `emitRepeatedContainerFrom`
  * (container-shape branches — spreads the resolved elements into the
  * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
- * (`'separatedList'` kinds — passes the resolved elements as the single
+ * (`'list'` kinds — passes the resolved elements as the single
  * `elements: T[] | NonEmptyArray<T>` array argument, Task 6) share this exact
  * three-shape structure (numeric-discriminant gate, self-NodeData unwrap,
  * fresh-input fallback); they differ ONLY in how the final call expression is
@@ -1694,7 +1694,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @param storageKey - The wire storage key to unwrap on the self-NodeData path.
  * @param buildCallExpr - Builds the final `factory(...)` call expression from
  *   a resolved variable name (`'input'` or `'children'`) — spread-via-unknown
- *   for container-shape factories, direct array cast for `'separatedList'`.
+ *   for container-shape factories, direct array cast for `'list'`.
  * @param childrenTypeAnnotation - Optional explicit type annotation for the
  *   self-NodeData-unwrap `children` local (e.g. `': readonly unknown[]'`) —
  *   `emitSeparatedListFrom` needs this so its direct (non-`unknown`-laundered)
@@ -1847,10 +1847,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Emit a `'separatedList'` from() resolver — dedicated construct/
- * reconstruction surface built directly from `AssembledSeparatedList`'s own
- * real fields, bypassing the Task-2 `_slots` stub entirely (see
- * `AssembledSeparatedList`'s doc comment, node-map.ts, and
+ * Emit a `'list'` from() resolver — dedicated construct/
+ * reconstruction surface built directly from `AssembledList`'s own
+ * real fields, bypassing the generic `.slots`/`.fields` surface entirely (see
+ * `AssembledList`'s doc comment, node-map.ts, and
  * `emitSeparatedListFactory`'s doc comment, factories.ts).
  *
  * Shares `emitRestParamFromResolver`'s three-shape structure with
@@ -1862,7 +1862,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * signature is `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`,
  * not the old `factory(...children: T[])` `emitRepeatedContainerFrom`
  * assumes. Before this function existed, `classifyChildFactorySurface`'s
- * stub-based 'spread'/'direct' classification routed `'separatedList'`
+ * stub-based 'spread'/'direct' classification routed `'list'`
  * kinds through the SAME spread/index call shape `emitRepeatedContainerFrom`
  * still uses for real container-shape branches — which silently bound
  * `children[0]` to `elements` and `children[1]` to `options` instead of the
@@ -2048,7 +2048,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' shares 'branch'/'group's from()
+// 'list' shares 'branch'/'envelope'/'polymorph's from()
 // dispatch — see isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -2328,21 +2328,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Collects all branch/separatedList kinds that accept `$other` (catch-all
+ * Collects all branch/`'list'` kinds that accept `$other` (catch-all
  * children) — used by the `_wrapWithChildren` runtime dispatch table in
  * generated from.ts.
  *
  * @remarks
  * Child-surface branches wrap through the same taxonomy used by the factory
  * emitter: direct unnamed-child factories call `F.kind(children[0])`, while
- * spread-child factories call `F.kind(...children)`. `'separatedList'`
+ * spread-child factories call `F.kind(...children)`. `'list'`
  * kinds are handled separately with `childSurface: 'array'` (`F.kind(children
  * as ...)`, the whole array as the single `elements` argument) — routing
- * them through `classifyChildFactorySurface`'s stub-based 'direct'/'spread'
+ * them through `classifyChildFactorySurface`'s 'direct'/'spread'
  * classification here would reproduce the same real from() mis-binding bug
  * `emitSeparatedListFrom`'s doc comment (this file) documents; every
- * `'separatedList'` kind unconditionally gets an `'array'` entry regardless
- * of what the stub would have classified it as.
+ * `'list'` kind unconditionally gets an `'array'` entry regardless
+ * of what that classifier would have returned for it.
  *
  * @param nodeMap - The assembled node map.
  * @param kindEntries - Kind enum entries for TSKindId emission.
@@ -2409,7 +2409,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// 'separatedList' — the factory's spread-with-leading-options
+// 'list' — the factory's spread-with-leading-options
 // signature takes the elements as REST arguments; spread the array
 // into the call (the `unknown` launder is unavoidable here: the
 // overloaded signature's Parameters<> resolves to the
@@ -2888,24 +2888,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // otherwise fall back to the canonical kind string.
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::extractElementKinds`
-
-```text
-/**
- * Best-effort extraction of element kind names from an `AssembledMulti`'s
- * `elementRule`. Walks choice/symbol/supertype; drops anonymous literals.
- * Used only for diagnostic display in node-model.json5.
- */
-```
-
-```text
-// Phase-invariant, same convention as assemble.ts's isAllTextShape: at
-// normalize/simplify, OPTIONAL/REPEAT/REPEAT1/FIELD collapse to `never`, so
-// this switch simply never reaches those cases when called on a
-// wrapper-deleted RenderRule (AssembledMulti.elementRule) — it bottoms out
-// directly on whatever leaf wrapper-deletion left in place.
-```
-
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
 ```text
@@ -2973,7 +2955,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' shares 'branch's emission — see
+// 'list' shares 'branch's emission — see
 // isSlotBearingCompound's doc comment (shared.ts, emitters).
 ```
 
@@ -3153,7 +3135,7 @@ Surface`
  *   (single derivation, DRY).
  * @param kindIdByKind - Map<kind, u16 id>, same source `renderTransportSupport`
  *   already computes for supertype/per-slot enum dispatch (`buildKindIdByKind`).
- *   Threaded through so `'separatedList'` kinds with a nonterminal separator
+ *   Threaded through so `'list'` kinds with a nonterminal separator
  *   can resolve each candidate arm's numeric KindId for the render-side
  *   `_separator_kind` → literal match (see `buildSeparatorKindMatchLines`).
  */
@@ -3263,7 +3245,7 @@ Surface`
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' shares 'branch'/'group's typed-render
+// 'list' shares 'branch'/'envelope'/'polymorph's typed-render
 // path — see isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -3401,7 +3383,7 @@ Surface`
 ```text
 /**
  * Emit `match node.separator_kind { Some(<id>) => "<lit>", ..., _ => <fallback> }`
- * lines resolving a `'separatedList'` node's per-instance nonterminal-separator
+ * lines resolving a `'list'` node's per-instance nonterminal-separator
  * KindId back to its compile-time-known literal text (design doc's "Render"
  * section: the render side never stores separator text, only resynthesizes it).
  *
@@ -3455,7 +3437,7 @@ Surface`
  * @param childrenCls - slot classification for the children slot. Falls back
  *   to heterogeneous when not provided.
  * @param node - the assembled node this struct was built for. Only consulted
- *   for `'separatedList'`-classified nodes, to wire real per-instance
+ *   for `'list'`-classified nodes, to wire real per-instance
  *   `leading`/`trailing`/`separator` values into list slots' `ListNonterminalView`
  *   instead of the hardcoded `false`/`sepLiteral` every other kind still uses
  *   (see the `f.view === 'list' || f.multiple` branch below).
@@ -3611,7 +3593,7 @@ Surface`
 #### body
 
 ```text
-// 'separatedList' kinds carry real per-instance leading/trailing/
+// 'list' kinds carry real per-instance leading/trailing/
 // separator-kind capture (Task 4's wire fields, mirrored onto this
 // struct by renderTransportDataStruct) — resolve them here instead
 // of the `false`/literal every other list-shaped slot still uses.
@@ -3625,10 +3607,10 @@ Surface`
 // Three-way branch on `DelimiterMode`: `'optional'` reads the
 // wire-captured per-instance bitflag; `'mandatory'` is always
 // present (hardcoded `true`, no per-instance capture exists — see
-// AssembledSeparatedList's `leadingDelimiter`/`trailingDelimiter`
+// AssembledList's `leadingDelimiter`/`trailingDelimiter`
 // doc comment, node-map.ts); `'none'`/`undefined` is always absent
 // (`false`). A delimiter-bearing list is always its own
-// separatedList kind (kind-level `_delimiter`), so the kind-level
+// `'list'`-classified kind (kind-level `_delimiter`), so the kind-level
 // read is the only wire read; an inner slot's own delimiter mode
 // never carries an 'optional' flank here.
 ```
@@ -4993,15 +4975,16 @@ Surface`
 
 ```text
 /**
- * TEMPORARY (separator-as-slot Task 2 follow-up — see
- * `AssembledSeparatedList`'s doc comment, compiler/model/node-map.ts): the
- * render/wrap/factory pipeline currently treats `'separatedList'` nodes
- * exactly like `'branch'`/`'group'` (slot-bearing compounds) for
- * byte-identical emission, pending Tasks 4-6's real per-instance capture.
- * Centralizes the widened modelType check so the several call sites that
- * used to gate on `'branch'|'group'` alone stay in sync. Remove once
- * 'separatedList' gets its own dedicated emission and this predicate's
- * call sites revert to `'branch'|'group'` only.
+ * `node instanceof AbstractAssembledCompound` — true for `AssembledBranch`,
+ * `AssembledEnvelope`, `AssembledPolymorph`, AND `AssembledList` alike,
+ * since all four extend that base directly and genuinely share its
+ * `.slots`/`.fields` surface (not a widened special case: `AssembledList`
+ * is a real subclass, not a byte-identity workaround pretending to be one).
+ * `AssembledSupertype` is NOT included — despite also being
+ * `modelType: 'polymorph'`, it has no slots of its own and does not extend
+ * `AbstractAssembledCompound`. Centralizes the check so the several call
+ * sites that need "does this node have a generic slot surface" stay in
+ * sync on one predicate rather than each re-deriving it from `modelType`.
  */
 ```
 
@@ -5009,7 +4992,7 @@ Surface`
 
 ```text
 /**
- * A separatedList's single-field-storage canonical slot — the `node.fields`
+ * An `AssembledList`'s single-field-storage canonical slot — the `node.fields`
  * entry whose storage key wrap.ts/render-module.ts's transport-struct
  * emission actually use for the "whole element union" bucket (Bug B fix,
  * wrap.ts's `emitSeparatedListWrap`). Prefers the `arity === 'many'` field
@@ -5017,8 +5000,8 @@ Surface`
  * kinds with no such slot.
  *
  * SHARED across wrap.ts, factories.ts, from.ts, and test.ts so all four
- * emitters agree on the same canonical storage key a separatedList's
- * elements are read from / written to on the wire — see wrap.ts's
+ * emitters agree on the same canonical storage key a `'list'`-classified
+ * kind's elements are read from / written to on the wire — see wrap.ts's
  * `emitSeparatedListWrap` doc comment ("Bug B fix") for the full rationale.
  * Multi-field kinds (`node.fields.length > 1`) must NOT use this helper for
  * storage — they route each field through `emitFieldStorageLines`/
@@ -5595,14 +5578,15 @@ Surface`
 #### body
 
 ```text
-// 'group' (e.g. `wrap.group()`'s own call site) and 'separatedList' both
-// legitimately reach this function with a broad `AssembledNode` and
-// correctly get `null` back — 'group' because this function was never
-// group-inclusive, and 'separatedList' because it now has its own
-// dedicated factory/wrap/from emission everywhere (Tasks 4/6); every
-// remaining call site narrows its own node type to 'branch' before
-// calling in, so the 'separatedList' branch this check used to carry is
-// unreachable and has been dropped.
+// A hoisted compound (e.g. `wrap.group()`'s own call site) and a 'list'
+// kind both legitimately reach this function with a broad `AssembledNode`
+// and correctly get `null` back — a hoisted compound via the explicit
+// `node.hoisted` guard (this function was never hoisted-inclusive), and
+// 'list' because `classifyFactoryShape` returns `'elements'` for
+// `AssembledList` (neither `'direct'`/`'spread'`/`'forwarded'`), and it now
+// has its own dedicated factory/wrap/from emission everywhere (Tasks 4/6);
+// every remaining call site narrows its own node type to 'branch' before
+// calling in.
 ```
 
 #### body
@@ -5946,9 +5930,9 @@ Surface`
 
 ```text
 // Presence check, not a specific `DelimiterMode` value: a rule
-// reaching this (non-`'separatedList'`-classified) function can only
+// reaching this (non-`'list'`-classified) function can only
 // carry a `'mandatory'` flank here (a genuinely `'optional'` one would
-// already have routed the rule to `'separatedList'` classification
+// already have routed the rule to `'list'` classification
 // instead, see `isSeparatedListShape`, assemble.ts) — mirrors
 // `collect-slots.ts`'s `hasTrailingDelimiter`/`hasLeadingDelimiter` derivation.
 ```
@@ -6218,7 +6202,7 @@ Surface`
 // Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
 // (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
 // INLINED rather than emitted as opaque slot references. These helpers
-// exist in `ctx.nodeMap.nodes` as AssembledGroup nodes with their own
+// exist in `ctx.nodeMap.nodes` as hoisted compound nodes with their own
 // `renderRule`, but they do NOT correspond to declared fields that FROM/read
 // can populate — emitting `{{ function_item_optional1 }}` as a slot
 // reference produces unresolvable template variables.
@@ -6577,7 +6561,7 @@ Surface`
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' shares 'branch's template emission —
+// 'list' shares 'branch's template emission —
 // see isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -6808,20 +6792,22 @@ Surface`
 ```text
 /**
  * Build a complete dummy stub literal for `kind`, recursing into required
- * fields when `kind` is branch- or group-shaped.
+ * fields whenever `kind` is `instanceof AbstractAssembledCompound` (branch,
+ * envelope, polymorph, or list alike — no separate case for a hoisted kind).
  *
  * @remarks
  * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $source,
  * $named }` stubs (this is what native's transport `FromNapiValue` expects
- * for those shapes). Branch AND group kinds additionally require every
- * required field to be present and correctly shaped — a flat stub is
- * rejected with "Missing field `_x`" by the native transport. Groups
- * (`AssembledGroup`, `modelType === 'group'`) are the synthesized hidden
- * single-field wrapper kinds (e.g. `_match_arm_with_comma`) — structurally
- * a one-field record like a branch, just keyed via `.slots` instead of
- * `.fields` (see {@link allSlotsOf}). This function fills required fields
- * recursively for both shapes, bounded by {@link MAX_DUMMY_DEPTH} and a
- * per-branch `visiting` set (cycle guard for self-referential grammars).
+ * for those shapes). Compound kinds additionally require every required
+ * field to be present and correctly shaped — a flat stub is rejected with
+ * "Missing field `_x`" by the native transport. A hoisted kind (the
+ * synthesized single-field wrapper kinds, e.g. `_match_arm_with_comma`) is
+ * just an ordinary compound with `enrichment.hoisted` set — structurally a
+ * one-field record like any other branch, its slots reachable via
+ * `allSlotsOf` the same way. This function fills required fields
+ * recursively for every compound shape, bounded by {@link MAX_DUMMY_DEPTH}
+ * and a per-branch `visiting` set (cycle guard for self-referential
+ * grammars).
  *
  * When recursion bottoms out (depth limit or cycle) the stub still declares
  * `$type`/`$text`/`$source`/`$named` but omits nested required fields —
@@ -6844,8 +6830,9 @@ Surface`
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (shared.ts).
+// 'list' participates in this scan uniformly alongside
+// 'branch'/'envelope'/'polymorph' — see isSlotBearingCompound's doc
+// comment (shared.ts).
 ```
 
 #### body
@@ -7022,10 +7009,8 @@ Surface`
 #### body
 
 ```text
-// TEMPORARY (separator-as-slot Task 2 follow-up — see
-// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-// shares 'branch's type-interface emission for byte-identical
-// output pending Tasks 4-6's real per-instance capture.
+// 'list' shares 'branch's type-interface emission — see
+// isSlotBearingCompound's doc comment, shared.ts.
 ```
 
 #### body
@@ -7879,7 +7864,7 @@ Surface`
 ```text
 /**
  * Recursively collect candidate separator token kind names from a
- * nonterminal separator rule (`AssembledSeparatedList.separatorRule`) —
+ * nonterminal separator rule (`AssembledList.separatorRule`) —
  * walks CHOICE/GROUP/OPTIONAL down to STRING/SYMBOL leaves, gathering the
  * set of literal texts / referenced rule names the runtime `$other` scan
  * must match against. A plain leaf-collecting walk, not related to
@@ -8019,18 +8004,23 @@ Surface`
 
 ```text
 /**
- * Emit a wrap function for a `'separatedList'`-classified kind — REAL
- * per-instance separator capture, replacing the Task-2 stub's
- * `_slots`-based branch-reuse emission for wrap.ts specifically (other
- * emitters — render-module.ts, factories.ts, from.ts — still read the
- * stub's `_slots`/`fields` surface; only wrap.ts, the TS SDK's deprecated
- * JS view layer, switches over here — see `AssembledSeparatedList`'s doc
- * comment: "at that point this slot-bearing surface goes away" for wrap.ts).
+ * Emit a wrap function for a `'list'`-classified kind — REAL per-instance
+ * separator capture, reading `AssembledList`'s own `elements`/
+ * `separatorRule`/`leadingDelimiter`/`trailingDelimiter` directly rather
+ * than the generic `.slots`/`.fields` surface, for wrap.ts specifically.
+ * factories.ts (`emitSeparatedListFactory`) and from.ts
+ * (`emitSeparatedListFrom`) have their own analogous dedicated emission,
+ * reading the same real fields directly; render-module.ts's template
+ * rendering still goes through the generic `.fields`/`.slots` surface
+ * (which `AssembledList` genuinely inherits from `AbstractAssembledCompound`,
+ * not a stub) because template rendering is generically slot-based by
+ * design, consulting `AssembledList`'s own separator facts only for
+ * delimiter emission specifics.
  *
  * Field derivation, verified against real generated grammar output
  * (`probe-kind` on python's `with_clause_bare` / `expression_statement_tuple`
  * / `lambda_parameters` and typescript's `object_type_content_comma` /
- * `object_type_content_semi` — the only 5 real `'separatedList'` kinds
+ * `object_type_content_semi` — the only 5 real `'list'` kinds
  * across all 3 grammars as of this task):
  *
  * - `_content`: the elements array. The wire has NO `_content` key —
@@ -8054,7 +8044,7 @@ Surface`
  * - `_separator_kind`: only emitted when `separatorRule` is a nonterminal
  *   (Task 2). UNVERIFIED against real wire data — no real grammar kind in
  *   any of the 3 grammars currently has a nonterminal separator (all 5
- *   real `'separatedList'` kinds have a literal `,` separator with
+ *   real `'list'` kinds have a literal `,` separator with
  *   `separatorRule === undefined`). Implemented via the SAME `$other`
  *   kind-id scan `readTerminalFromOther` already performs for kindEnum
  *   reclamation (option B) — reused, not reinvented — but this specific
@@ -8065,9 +8055,9 @@ Surface`
 #### body
 
 ```text
-// Bug B fix (separator-as-slot follow-up): a separatedList's elements do
+// Bug B fix (separator-as-slot follow-up): a 'list' kind's elements do
 // NOT always all bucket under one generic "content" name — `node.fields`
-// (the SAME `_slots`-derived source `types.ts` derives `T.<TypeName>`'s
+// (the SAME source `types.ts` derives `T.<TypeName>`'s
 // declared members from) is the model's OWN name for the real slot(s),
 // e.g. `_pattern`/`_parameters`/`_use_clause`/`_where_predicate` — NOT
 // always `_content`. Hardcoding `_content` here (independent of
@@ -8081,7 +8071,7 @@ Surface`
 //
 // Single-field kinds (the common case: one field spans the whole element
 // union) rename the emitted property/accessor to the model's real slot
-// name. Multi-field kinds (e.g. a dict-pattern-shaped separatedList whose
+// name. Multi-field kinds (e.g. a dict-pattern-shaped 'list' kind whose
 // elements route to more than one real slot by kind) route EACH field
 // through the exact same per-field drilling logic
 // `emitFieldCarryingWrap` uses (`emitFieldStorageLines`/
@@ -8091,7 +8081,7 @@ Surface`
 #### body
 
 ```text
-// `node.fields` (Task-2 `_slots` stub) is the SAME source `types.ts`
+// `node.fields` is the SAME source `types.ts`
 // derives `T.<TypeName>`'s declared members from — the canonical-key
 // exclusion set for `collectSeparatedListWireKeyTypes` must match it
 // exactly, or a still-declared key gets redundantly (and incoherently)
@@ -8140,7 +8130,7 @@ Surface`
 // expected accessor name via camelCase projection (e.g. the validator's
 // `accessorCandidatesForStorageKey`), which then silently falls back to
 // the raw, undrilled `_<kind>` storage value instead of calling this
-// method — a materialization gap for separatedList content accessors.
+// method — a materialization gap for `'list'`-classified content accessors.
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
@@ -8162,9 +8152,9 @@ Surface`
  * Emit per-field `_<name>: <storeExpr>,` storage assignments for `fields`,
  * reusing the exact same per-field kindEnum/verbatim/alias/candidate-
  * storage-key drilling logic regardless of which caller's kind classifies as
- * (`'branch'`/`'group'` via `emitFieldCarryingWrap`, or a MULTI-field
- * `'separatedList'` via `emitSeparatedListWrap` — e.g. a separatedList whose
- * elements route to more than one real slot by kind, not one shared
+ * (`'branch'`/`'envelope'`/`'polymorph'` via `emitFieldCarryingWrap`, or a
+ * MULTI-field `'list'` via `emitSeparatedListWrap` — e.g. a `'list'` kind
+ * whose elements route to more than one real slot by kind, not one shared
  * bucket). Extracted so both callers share ONE source for this drilling
  * decision tree instead of two copies drifting apart.
  */
@@ -8580,15 +8570,17 @@ Surface`
 	 */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedSeparatedList`
+### `packages/codegen/src/emitters/node-model.ts::SerializedList`
 
 ```text
 /**
- * No wire/render/factory support yet (separator-as-slot Task 2) — this
- * serialization is deliberately minimal (mirrors `SerializedMulti`'s shape
- * using the analogous `AssembledSeparatedList` facts) rather than attempting
- * to serialize the full separator rule tree, which is a later task's design
- * surface.
+ * `modelType: 'list'` — covers both populations `AssembledList` now models
+ * (hidden tree-sitter-inlined repeat helpers and genuine separated lists
+ * alike). No wire/render/factory support for the separator rule tree itself
+ * — this serialization is deliberately minimal (`nonEmpty`,
+ * `hasNonterminalSeparator`, `leadingDelimiter`/`trailingDelimiter`,
+ * `elementKinds`) rather than attempting to serialize the full separator
+ * rule tree, which is a later task's design surface.
  */
 ```
 
@@ -9212,7 +9204,7 @@ Surface`
 /**
 	 * Emit `normalizeRepeatedWrapSlot<unknown>`/`normalizeSingularWrapSlot<unknown>`
 	 * with an EXPLICIT type argument instead of leaving `T` to be inferred from
-	 * `reclaimedStoreExpr`. For a multi-field `AssembledSeparatedList`
+	 * `reclaimedStoreExpr`. For a multi-field `AssembledList`
 	 * (`emitSeparatedListWrap`'s `_content` local — see its doc comment), the
 	 * probe combines candidate storage keys from MORE THAN ONE real slot (e.g.
 	 * TypeScript's `enum_body_group1`: `PropertyName`-kind keys AND a
@@ -9665,10 +9657,8 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// TEMPORARY (separator-as-slot Task 2 follow-up — see
-// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-// shares 'branch's per-kind guard emission for byte-identical
-// output pending Tasks 4-6's real per-instance capture.
+// 'list' shares 'branch's per-kind guard emission — see
+// isSlotBearingCompound's doc comment, shared.ts.
 ```
 
 #### body
@@ -10538,8 +10528,9 @@ pipeline — which falls back to string equality.
 ### `packages/codegen/src/emitters/types.ts::StructuralNode`
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (shared.ts).
+// 'list' participates in this scan uniformly alongside
+// 'branch'/'envelope'/'polymorph' — see isSlotBearingCompound's doc
+// comment (shared.ts).
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitTypes`
@@ -11186,17 +11177,16 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// classifyTemplateEmission always skips 'multi' nodes before emitOne
-// is reached — this arm is an unreachable safety fallback.
+// classifyTemplateEmission always skips a hidden, non-user-facing node
+// (a hidden tree-sitter-inlined repeat helper is one such node) before
+// emitOne is reached — this arm is an unreachable safety fallback.
 ```
 
 #### body
 
 ```text
-// TEMPORARY (separator-as-slot Task 2 follow-up — see
-// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-// shares 'branch's template emission for byte-identical output pending
-// Tasks 4-6's real per-instance capture.
+// 'list' shares 'branch's template emission — see
+// isSlotBearingCompound's doc comment, shared.ts.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitBranchTemplate`
@@ -11205,8 +11195,8 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 // Per-modelType emit functions
 //
-// Each structural modelType (`branch`, `group`, `multi`) carries a single
-// `rule` whose Jinja shape is fully captured by `emitRule`.
+// Every compositional modelType (`branch`, `envelope`, `polymorph`, `list`)
+// carries a single `rule` whose Jinja shape is fully captured by `emitRule`.
 //
 // Exported so the modelType-emit test suite can exercise each function in
 // isolation against minimal in-memory fixtures (no NodeMap construction
@@ -11215,7 +11205,7 @@ pipeline — which falls back to string equality.
 ```
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+// 'list' participates in this scan uniformly alongside 'branch' — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -11933,12 +11923,12 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-/* TEMPORARY: template/render-module still share 'branch's full
-			   emission for byte-identical output — see isSlotBearingCompound's doc
-			   comment (shared.ts). Remove once 'separatedList' gets its own
-			   dedicated emission there too; wrap.ts, factories.ts, and from.ts
-			   already have their own dedicated emission — see
-			   `emitSeparatedListWrap`'s doc comment (wrap.ts),
+/* template/render-module still share 'branch's full slot-based
+			   emission for 'list' kinds (deliberately — template rendering is
+			   generically slot-based by design) — see isSlotBearingCompound's doc
+			   comment (shared.ts). wrap.ts, factories.ts, and from.ts instead have
+			   their own dedicated emission reading `AssembledList`'s real fields
+			   directly — see `emitSeparatedListWrap`'s doc comment (wrap.ts),
 			   `emitSeparatedListFactory`'s doc comment (factories.ts), and
 			   `emitSeparatedListFrom`'s doc comment (from.ts). */
 ```
@@ -11989,8 +11979,8 @@ pipeline — which falls back to string equality.
  * The serializer deliberately mirrors the public shape of `NodeMap` /
  * `AssembledNode` (plus their subclass-specific accessors) rather than
  * inventing a bespoke wire format. That way it tracks the source model
- * automatically: adding a new getter on `AssembledBranch` only needs a
- * one-line addition here to surface in the dump.
+ * automatically: adding a new getter on `AbstractAssembledCompound` only
+ * needs a one-line addition here to surface in the dump.
  *
  * Output is plain JSON (which is valid JSON5) with 2-space indent,
  * deterministically sorted by kind so diffs are stable.
@@ -12025,10 +12015,12 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-/* Container-shape branches (no fields) carry their runtime separator
-			   data on `AssembledBranch.separator`, for branches whose simplified
-			   rule is a `repeat` / `repeat1`. Surface it on the branch payload
-			   only when present. */
+/* Branch/envelope/polymorph read `separator` from the inherited
+			   `AbstractAssembledCompound.separator` getter, which is permanently
+			   `undefined` for those three (a compound's post-wrapper-deletion
+			   `simplifiedRule` never survives as REPEAT-shaped) — surfaced here
+			   only for parity with `AssembledList`'s own live override, never
+			   actually populated for a compound. */
 ```
 
 ### `packages/codegen/src/emitters/node-model.ts::serializeField`
@@ -12092,9 +12084,8 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-/* TEMPORARY: 'separatedList' shares 'branch's transport-concreteness for
-		   byte-identical output pending real per-instance separator capture —
-		   see isSlotBearingCompound's doc comment (shared.ts). */
+/* 'list' shares 'branch's transport-concreteness — see
+		   isSlotBearingCompound's doc comment (shared.ts). */
 ```
 
 ### `packages/codegen/src/emitters/transport-projection.ts::collectTransportLiterals`
@@ -12125,7 +12116,7 @@ pipeline — which falls back to string equality.
 ### `packages/codegen/src/emitters/consts.ts::emitConsts`
 
 ```text
-// branch + polymorph
+// non-hoisted branch/envelope/polymorph + list
 ```
 
 ```text
@@ -12133,20 +12124,18 @@ pipeline — which falls back to string equality.
 ```
 
 ```text
-// keyword model type (alphabetic tokens)
+// AssembledKeyword (alphabetic tokens — modelType 'token', word: true)
 ```
 
 ```text
-// token model type (non-alphabetic)
+// AssembledToken (non-alphabetic — modelType 'token', word: false)
 ```
 
 #### body
 
 ```text
-// TEMPORARY (separator-as-slot Task 2 follow-up — see
-// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-// shares 'branch's consts emission for byte-identical output
-// pending Tasks 4-6's real per-instance capture.
+// 'list' shares 'branch's consts emission — see
+// isSlotBearingCompound's doc comment, shared.ts.
 ```
 
 #### body
@@ -13215,7 +13204,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+// 'list' participates in this scan uniformly alongside 'branch' — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -13254,7 +13243,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+// 'list' participates in this scan uniformly alongside 'branch' — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -13497,8 +13486,9 @@ pipeline — which falls back to string equality.
 ### `packages/codegen/src/emitters/from.ts::BranchLikeNode.modelType`
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (shared.ts).
+// 'list' participates in this scan uniformly alongside
+// 'branch'/'envelope'/'polymorph' — see isSlotBearingCompound's doc
+// comment (shared.ts).
 ```
 
 ### `packages/codegen/src/emitters/from.ts::emitBranchNodeDataPassthrough`
@@ -13981,7 +13971,7 @@ pipeline — which falls back to string equality.
 
 ```text
 // See resolveSlotDrillExprs's ResolveSlotDrillConfig.forceUnknownElement
-// doc comment: a multi-field AssembledSeparatedList's internal
+// doc comment: a multi-field AssembledList's internal
 // `_content` probe can combine candidate keys from more than one real
 // slot with no common element type — `_interleaveBySlotOrder`'s own
 // generic inference (independent of the outer normalizeRepeatedWrapSlot
@@ -14035,19 +14025,19 @@ pipeline — which falls back to string equality.
 ### `packages/codegen/src/emitters/wrap.ts::isFieldBackedSeparatedList`
 
 ```text
-// A separatedList's content position is genuinely field-backed when
+// A 'list'-classified kind's content position is genuinely field-backed when
 // wrapper-deletion stamped a `fieldName` directly onto its simplified rule
 // (carried down from the REPEAT wrapper it deleted — see
-// `compiler/model/node-map.ts`'s `AssembledSeparatedList` doc comment).
+// `compiler/model/node-map.ts`'s `AssembledList` doc comment).
 // That's a real tree-sitter `field()` the native reader always populates —
-// confirmed empirically (a fielded separatedList's canonical storage key is
-// present on every genuine parse) — as opposed to a `separatedList`
+// confirmed empirically (a fielded list kind's canonical storage key is
+// present on every genuine parse) — as opposed to a kind
 // classified purely by structural shape (`isSeparatedListShape`,
 // compiler/assemble.ts) with no grammar-level field backing it, where the
 // canonical key is a compiler-only abstraction and the candidate-kind-bucket
 // keys below are the ONLY thing a fresh read ever populates. Conflating the
 // two (dropping candidates whenever there's a "single" canonical slot,
-// regardless of whether it's a real field) breaks the many separatedList
+// regardless of whether it's a real field) breaks the many 'list'-classified
 // kinds that fall in the second bucket — verified the hard way.
 ```
 
@@ -14246,7 +14236,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// TEMPORARY: 'separatedList' shares 'branch's wrap function — see
+// 'list' shares 'branch's wrap function — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
@@ -14334,8 +14324,9 @@ pipeline — which falls back to string equality.
 ### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitBranch`
 
 ```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch' (no-op body,
-// same as 'branch') — see isSlotBearingCompound's doc comment (shared.ts).
+// 'list' participates in this scan uniformly alongside 'branch' (no-op
+// body, same as 'branch') — see isSlotBearingCompound's doc comment
+// (shared.ts).
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RUST_KEYWORDS`
@@ -14491,21 +14482,21 @@ pipeline — which falls back to string equality.
 ```text
 // Separator — scan slot values for stamped separators (set by
 // deriveSlotsRawFromLeafAttr via stampListFactsOnValues for named
-// field slots). Falls back to node.separator (AssembledBranch /
-// AssembledSeparatedList simplified-rule-or-raw-rule separator) for
-// container-shaped nodes whose separator lives on the rule rather
-// than slot values.
+// field slots). Falls back to node.separator (the
+// `AbstractAssembledCompound.separator` getter, overridden on
+// `AssembledList`) for container-shaped nodes whose separator lives on
+// the rule rather than slot values.
 //
-// TEMPORARY (separator-as-slot Task 2 follow-up — see
-// isSlotBearingCompound's doc comment, emitters/shared.ts):
-// AssembledSeparatedList widened in alongside AssembledBranch/
-// AssembledGroup so this scan (and its fallback) doesn't silently
-// skip 'separatedList' nodes. AssembledBranch.separator is
-// permanently dead (0/468 branches ever had a REPEAT-shaped
-// simplifiedRule — wrapper-deletion always converts it to a leaf
-// attribute first) but AssembledSeparatedList.separator is NOT dead:
-// its `rule` is always the raw REPEAT/REPEAT1 rule by construction,
-// so the fallback is live for it even though it's a no-op for branch.
+// This scan runs uniformly across every `isSlotBearingCompound` node
+// (see that predicate's doc comment, emitters/shared.ts) so it doesn't
+// silently skip `'list'`-classified nodes alongside `'branch'`/
+// `'envelope'`/`'polymorph'`. The base `AbstractAssembledCompound.separator`
+// getter is permanently dead for branch/envelope/polymorph (0/468 branches
+// ever had a REPEAT-shaped simplifiedRule — wrapper-deletion always
+// converts it to a leaf attribute first) but `AssembledList`'s override is
+// NOT dead: its `rule` is always the raw REPEAT/REPEAT1 rule by
+// construction, so the fallback is live for it even though it's a no-op
+// for the other three.
 ```
 
 #### body
@@ -14517,11 +14508,11 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// 2. Fall back to AssembledBranch/AssembledSeparatedList.separator
-//    (from simplified rule / raw rule) for list-container nodes
-//    where the separator lives on the top-level repeat and
-//    children are inferred/positional (no deriveSlotsRawFromLeafAttr
-//    path).
+// 2. Fall back to node.separator (from simplified rule / raw rule) for
+//    list-container nodes where the separator lives on the top-level
+//    repeat and children are inferred/positional (no
+//    deriveSlotsRawFromLeafAttr path). Live only for `AssembledList`;
+//    a no-op for the other three compound classes.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::libRsContents`
@@ -14937,7 +14928,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// Branch/container/group/polymorph/enum use #[napi(object)] for derived
+// Branch/envelope/polymorph/list/enum use #[napi(object)] for derived
 // FromNapiValue. Leaf/keyword/token transport structs opt out of
 // #[napi(object)] and instead get manual cfg-gated FromNapiValue impls
 // below — so JS can send a plain string in release mode (no debug-transport)
@@ -14947,11 +14938,8 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// TEMPORARY (separator-as-slot Task 2 follow-up — see
-// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-// shares 'branch's transport struct field emission for
-// byte-identical output pending Tasks 4-6's real per-instance
-// capture.
+// 'list' shares 'branch's transport struct field emission — see
+// isSlotBearingCompound's doc comment, shared.ts.
 ```
 
 #### body

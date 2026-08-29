@@ -2,9 +2,10 @@ import type { NodeMap } from './types.ts';
 import {
 	kindsOf,
 	isMultiple,
+	AbstractAssembledCompound,
+	AssembledSupertype,
 	type AssembledNode,
-	type AssembledNonterminal,
-	type AssembledSupertype
+	type AssembledNonterminal
 } from './model/node-map.ts';
 import { classifySlot, buildSupertypeTransportSet } from '../emitters/transport-common.ts';
 
@@ -58,7 +59,7 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 
 	const kindOfTypeName = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			kindOfTypeName.set(node.typeName, kind);
 		}
 	}
@@ -66,7 +67,7 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!adjacency.has(kind)) adjacency.set(kind, new Set());
 
-		if (node.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			const supertype = node as AssembledSupertype;
 			for (const subKind of supertype.subtypeNames) {
 				addEdge(kind, subKind);
@@ -99,7 +100,7 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 }
 
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group') {
+	if (node instanceof AbstractAssembledCompound) {
 		return Object.values(node.slots).filter((slot) => !isMultiple(slot));
 	}
 	return [];

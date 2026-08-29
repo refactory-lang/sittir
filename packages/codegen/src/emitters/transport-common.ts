@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal, AssembledSupertype } from '../compiler/model/node-map.ts';
-import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
+import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 export type SlotClass =
 	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
@@ -48,15 +48,15 @@ export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, Readon
 		seen.add(kind);
 		const members = new Set<string>([kind]);
 		const node = nodeMap.nodes.get(kind);
-		if (!node || node.modelType !== 'supertype') return members;
-		for (const subtype of (node as AssembledSupertype).subtypeNames) {
+		if (!(node instanceof AssembledSupertype)) return members;
+		for (const subtype of node.subtypeNames) {
 			members.add(subtype);
 			for (const nested of expandSupertypeKinds(subtype, seen)) members.add(nested);
 		}
 		return members;
 	};
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		result.set(node.typeName, expandSupertypeKinds(node.kind));
 	}
 	return result;
@@ -68,9 +68,9 @@ function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen
 	if (!nodeMap) return [kind];
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
-	if (node.modelType === 'supertype') {
+	if (node instanceof AssembledSupertype) {
 		const members = new Set<string>([kind]);
-		for (const subtype of (node as AssembledSupertype).subtypeNames) {
+		for (const subtype of node.subtypeNames) {
 			members.add(subtype);
 			for (const member of expandWrapRuntimeKinds(subtype, nodeMap, seen)) members.add(member);
 		}

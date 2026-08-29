@@ -1,3 +1,4 @@
+import { AssembledSupertype } from './model/node-map.ts';
 import type { AssembledNode, NodeOrTerminal } from './model/node-map.ts';
 
 export function stampSupertypeClosures(
@@ -5,7 +6,7 @@ export function stampSupertypeClosures(
 ): ReadonlyMap<string, ReadonlySet<string>> {
 	const storageClosures = new Map<string, ReadonlySet<string>>();
 	for (const [, root] of nodes) {
-		if (root.modelType !== 'supertype') continue;
+		if (!(root instanceof AssembledSupertype)) continue;
 		const seenLeaves = new Set<string>();
 		const visitingSupertypes = new Set<string>();
 		const storageKinds = new Set<string>();
@@ -23,7 +24,7 @@ export function stampSupertypeClosures(
 			const normalized = name.startsWith('_') ? name.slice(1) : name;
 			if (seenLeaves.has(normalized) || visitingSupertypes.has(normalized)) return;
 			const node = nodes.get(name) ?? nodes.get(normalized);
-			if (node?.modelType !== 'supertype') {
+			if (!(node instanceof AssembledSupertype)) {
 				add(normalized, normalized);
 				return;
 			}

@@ -28,8 +28,8 @@
  * supertype / …) — see that module's own doc for the predicate. But
  * `node-model.json5`'s `polymorphVariants` section is populated EXCLUSIVELY
  * for `modelType === 'branch'` parents (`emitters/factory-map.ts`'s
- * `buildFactoryMap`: `if (node.modelType === 'branch' && node.
- * variantChildKinds.length > 0)` — `AssembledGroup`/`AssembledSupertype`
+ * `buildFactoryMap`: `if (isAuthoredCompound(node) && node.
+ * variantChildKinds.length > 0)` — hoisted compounds/`AssembledSupertype`
  * don't even carry a `variantChildKinds` field). So the committed artifact
  * can NEVER reflect a non-branch parent's variant children, independent of
  * how those children were discovered (wire pairs, historically, or the
@@ -94,8 +94,8 @@ const KNOWN_NON_BRANCH_PARENTS: readonly KnownNonBranchParent[] = [
 		parent: '_export_statement_default_decl_arm',
 		modelType: 'group',
 		reason:
-			'Hidden-cascade intermediate classifies to AssembledGroup (has fields), not AssembledBranch — ' +
-			'AssembledGroup has no variantChildKinds field, so buildFactoryMap never visits it.'
+			'Hidden-cascade intermediate is a hoisted compound (has fields), not an authored branch — ' +
+			'buildFactoryMap only visits authored (non-hoisted) compounds, so it never visits it.'
 	},
 	{
 		grammar: 'typescript',
@@ -160,7 +160,10 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	// node-model.json5's polymorphVariants section can ever record (see
 	// module doc). Non-branch qualifying parents are structurally excluded,
 	// not diffed.
-	const isBranchParent = (parent: string): boolean => nodeMap.nodes.get(parent)?.modelType === 'branch';
+	const isBranchParent = (parent: string): boolean => {
+		const n = nodeMap.nodes.get(parent);
+		return n !== undefined && 'hoisted' in n && !n.hoisted && n.modelType !== 'list';
+	};
 
 	const parents = new Set<string>([...structuralMap.keys(), ...committedMap.keys()].filter(isBranchParent));
 	const rows: ParentRow[] = [];

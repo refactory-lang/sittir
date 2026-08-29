@@ -136,7 +136,8 @@ parents.
 // `reference_expression`, ts `string`'s `string_fragment` — joined the
 // form set) and the enumerated known exceptions (parents that
 // structurally qualify but can never appear in node-model.json5 because
-// they classify to SupertypeRule/AssembledGroup, not AssembledBranch).
+// they classify to SupertypeRule/AssembledSupertype or a hoisted compound,
+// not an ordinary AssembledBranch).
 ```
 
 #### body
@@ -155,12 +156,15 @@ parents.
 // link-phase `inlinedRule` — simplify's own folds (literal-only body to
 // STRING, single-slot seq collapse) are what settle a kind's true shape.
 // `renderRule` and `inlinedRule` still feed the node CONSTRUCTORS below
-// wherever the SHAPE they build needs the pre-simplify view (AssembledGroup
-// deliberately needs the pre-deletion wrapper node; branch/group/
-// separatedList carry both views, simplified for shape and render for
-// rendering); AssembledMulti constructs directly off the simplified rule
-// — a hidden repeat helper's own body IS the repeat, so simplify's
-// pushed-down attributes are already everything it needs.
+// wherever the SHAPE they build needs the pre-simplify view (a hoisted
+// compound deliberately needs the pre-deletion wrapper node; every
+// AbstractAssembledCompound subclass — branch/envelope/polymorph/list —
+// carries both views, simplified for shape and render for rendering);
+// AssembledList derives its own list-specific facts (`elements`,
+// `separatorRule`) directly off the peeled list-element rule, not off
+// simplifiedRule/renderRule — a genuine separated list's own body IS the
+// repeat, so simplify's pushed-down attributes are already everything it
+// needs for those two facts.
 ```
 
 #### body
@@ -194,13 +198,15 @@ parents.
 #### body
 
 ```text
-// TEMPORARY behavior-preserving stub (see
-// AssembledSeparatedList's doc comment) — the SAME
+// The 'list' case passes AssembledList the SAME
 // simplifiedRule/renderRule/parseKindCollisionContext
-// the 'branch' case above passes (group-unwrapped for
-// group-wrapped kinds, exactly as the 'group' case
-// would have), so wrap/render/factory emission reusing
-// 'branch's code path stays byte-identical.
+// the compound case above passes (group-unwrapped for
+// group-wrapped kinds, exactly as a branch/envelope/
+// polymorph would get) — AssembledList extends the same
+// AbstractAssembledCompound base and genuinely inherits
+// its buildSlotsRecord construction, so wrap/render/factory
+// emission stays byte-identical with the pre-taxonomy
+// 'branch' output for these kinds.
 ```
 
 #### body
@@ -857,18 +863,28 @@ parents.
  * collapsed to its survivor — into a `ModelType`.
  *
  * A fielded/multiplicity-free body dispatches structurally: an enum
- * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'supertype'; a
- * GROUP → 'separatedList' when its peeled core
- * (`peelSeparatedListCore`) is a separated-list shape, else 'group'; a
- * PATTERN → 'pattern'; a STRING → 'keyword' when it matches the
- * grammar's word shape (`matchesWordShape`), else 'token'.
+ * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a
+ * GROUP → 'list' when its peeled core (`peelSeparatedListCore`) is a
+ * separated-list shape (`isSeparatedListShape`), else `compoundModelType`
+ * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'); a PATTERN
+ * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
+ * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
+ * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
+ * here).
  *
- * Otherwise: a hidden repeat helper (`isHiddenRepeatHelper`) → 'multi';
- * a separated-list shape at any fielded/multiplicity position →
- * 'separatedList'; a slot-bearing body (`classifyBranchOrContainer`) →
- * 'branch' (or 'group' for a children-only container); anything left
- * falls to `classifyTerminalFallback` (an enum choice or an all-text
- * pattern that only becomes slot-free at this later, structural check).
+ * Otherwise (fielded or multiplicity-bearing): a separated-list shape
+ * (`isSeparatedListShape`) → 'list'; a slot-bearing body
+ * (`hasSlotBearingContent`) → `compoundModelType`; anything left falls to
+ * `classifyTerminalFallback` (an enum choice or an all-text pattern that
+ * only becomes slot-free at this later, structural check). A hidden repeat
+ * helper has no dedicated classification of its own — such a rule
+ * classifies by these same general rules (typically `'polymorph'` for a
+ * repeated choice-of-symbols with no separator, or `'list'` if it does
+ * carry one) and is suppressed from user-facing emission by the ordinary
+ * hidden/`userFacing` mechanism; some hidden repeats are also inlined at
+ * their referrer before assemble ever runs
+ * (`resolveGroupOrMultiInlineTarget`, dsl/rule-transforms.ts, called from
+ * simplify's `inlineRefs`), so they never reach classification at all.
  */
 ```
 
@@ -883,7 +899,7 @@ parents.
 ```text
 // Guards against a decorated PATTERN/STRING — a fielded or
 // multiplicity-bearing leaf masquerading as bare — early-exiting to
-// keyword/token/pattern wrongly; it must fall through to
+// token/pattern wrongly; it must fall through to
 // classifyTerminalFallback instead.
 ```
 
@@ -900,8 +916,8 @@ parents.
 // A polymorph-form / content-alias GROUP is a transparent
 // wrapper: when its (sole) content carries a lifted separated
 // list's multiplicity + separator, the kind IS that list — the
-// delimiter belongs to the kind, so it classifies
-// separatedList, not opaque group.
+// delimiter belongs to the kind, so it classifies 'list', not an
+// opaque compound.
 ```
 
 #### body
@@ -914,7 +930,9 @@ parents.
 #### body
 
 ```text
-// keyword vs token honours the grammar's `word` rule — see matchesWordShape.
+// The keyword-vs-token split (AssembledKeyword vs AssembledToken, honouring
+// the grammar's `word` rule via matchesWordShape) happens in assemble()'s
+// own switch on this function's 'token' return value, not here.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::isSeparatedListShape`
@@ -930,8 +948,9 @@ parents.
  * Does NOT match a branch that merely HAS one array-multiplicity field
  * among several named fields (that stays 'branch', unchanged) — only a
  * rule whose own top-level `multiplicity` is `array`/`nonEmptyArray`
- * qualifies, the same `rule.multiplicity` gate `isHiddenRepeatHelper` uses
- * for the (unrelated) hidden-multi case above.
+ * qualifies. A rule with that multiplicity but no separator at all falls
+ * through to `hasSlotBearingContent`/`compoundModelType` instead — this
+ * predicate requires the separator unconditionally.
  */
 ```
 
@@ -941,53 +960,8 @@ parents.
 // Only a genuinely OPTIONAL flank has per-instance variability worth
 // this classification — 'mandatory' (always present) is compile-time
 // renderable exactly like 'none' (absent), and stays classified as
-// 'branch' via the pre-existing hasTrailingDelimiter/hasLeadingDelimiter mechanism.
-```
-
-### `packages/codegen/src/compiler/assemble.ts::isHiddenRepeatHelper`
-
-```text
-/**
- * Test whether a rule should be classified as a hidden `multi` helper:
- * `rule.hidden === true && (rule.multiplicity === 'array' ||
- * rule.multiplicity === 'nonEmptyArray')`.
- *
- * @remarks
- *   Hidden repeat helpers are inlined by tree-sitter at parse time, so they never
- *   surface as concrete nodes. Classifying them as `multi` lets downstream emitters
- *   skip the interface/factory/resolver and the walker inlines the repeat at
- *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
- *
- *   Aliased hidden kinds (e.g. `_with_clause_bare` aliased to `with_clause_bare`)
- *   are NOT inlined — tree-sitter exposes them as concrete named nodes, so they must
- *   classify as `branch` so the Rust transport can dispatch on their kind ID. No
- *   separate `parentAliasedKinds` exclusion set is needed for this: link's
- *   `unhideAliasedTargets` already flips such a rule's `hidden` to `false`, so the
- *   single `rule.hidden === true` check already excludes it.
- */
-```
-
-### `packages/codegen/src/compiler/assemble.ts::classifyBranchOrContainer`
-
-```text
-/**
- * Classify a rule as `branch` based on presence of fields or children,
- * or return `null` when neither applies.
- *
- * The prior `'container'` model was collapsed into `'branch'`: nodes
- * that carry only unnamed children (no `field()` on the rule) are still
- * `AssembledBranch` instances — whether a slot is named is read off the
- * slot itself (`AssembledNonterminal.isUnnamed`). The single
- * classification arm reflects that there is one runtime class for both
- * shapes.
- *
- * @param rule - The rule to inspect.
- * @returns `'branch'` if the rule has any named field or unnamed child,
- *   or `null` when neither applies.
- * @remarks
- *   Only existence checks are performed — not full extraction. The class
- *   getter (`AssembledBranch.fields`) does the full walk later, once.
- */
+// 'branch'/'envelope'/'polymorph' via the pre-existing
+// hasTrailingDelimiter/hasLeadingDelimiter mechanism.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyTerminalFallback`
@@ -1416,13 +1390,13 @@ parents.
 // OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
 // (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
 // `isSeparatedListShape` (assemble.ts) only routes a rule to
-// `'separatedList'` classification when the rule's OWN top-level
+// `'list'` classification when the rule's OWN top-level
 // structure IS the array (the kind's whole identity is a list) — a slot
 // that is merely ONE array-multiplicity field among several in a larger
 // branch/seq (e.g. a paren-wrapped tuple's inner repeat field) never
 // reaches that check, so `sep?.trailing`/`.leading` here can genuinely be
 // `'optional'`, not just `'mandatory'`. Preserve that tri-state via
-// `trailingDelimiter`/`leadingDelimiter` (mirrors `AssembledSeparatedList`'s own
+// `trailingDelimiter`/`leadingDelimiter` (mirrors `AssembledList`'s own
 // fields) instead of collapsing straight to a presence boolean — the
 // `findRepeatFlag` fallback has no mode granularity of its own, so a flag
 // found only that way is treated as `'mandatory'` (preserves prior
@@ -4655,7 +4629,7 @@ parents.
 // not gated/joined by the existing emit path, so folding it here would
 // DROP the joins (extends_clause regression). Leave the `symbol(_x)` ref
 // intact — it renders correctly via the existing emit machinery — and
-// let the deliberate AssembledGroup boundary stand (plan §D-2a: "respect
+// let the deliberate hoisted-compound boundary stand (plan §D-2a: "respect
 // resolveGroupOrMultiInlineTarget eligibility").
 ```
 
@@ -6977,8 +6951,9 @@ parents.
 ```text
 /**
 	 * Per-kind group-lift map from `groups:` in the override layer.
-	 * Link reads this to synthesize nested sub-rules into hidden
-	 * AssembledGroup kinds. See:
+	 * Link reads this to synthesize nested sub-rules into hidden, hoisted
+	 * compound kinds (`AbstractAssembledCompound` with `enrichment.hoisted`
+	 * set). See:
 	 *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 	 */
 ```
@@ -8482,26 +8457,26 @@ source, one derivation.
  *   of named kinds" for the predicate to match against at all, by design
  *   (the predicate is CHOICE-centric, matching `isAllAliasChoice`/
  *   `findVariantChoice`'s own scope).
- * - **Supertype/Group union, not (only) a plain BRANCH.** Some
- *   variant-adoption parents classify to `SupertypeRule` (python's
- *   `_simple_pattern`) or `AssembledGroup` (ts's
- *   `_export_statement_default_decl_arm` family, `_for_header`) rather than
- *   `AssembledBranch`. `_simple_pattern`'s original CHOICE flattens into a
- *   bare `subtypes: string[]` BEFORE this module ever sees the rule
- *   (`classifyHiddenChoiceRule`, link.ts) — the alias-mint linkage would be
- *   destroyed if not for the declared `variantArms` fact that flatten
- *   stamps (see `RuleBase.variantArms`'s doc comment); this module still
- *   can't reproduce it from `normalized.rules` alone (verified: ts `type`'s
- *   `_type_query_member_expression_in_type_annotation` subtype is a
+ * - **Supertype/hoisted-compound union, not (only) a plain BRANCH.** Some
+ *   variant-adoption parents classify to `SupertypeRule`/`AssembledSupertype`
+ *   (python's `_simple_pattern`) or a hoisted `AbstractAssembledCompound`
+ *   (ts's `_export_statement_default_decl_arm` family, `_for_header`) rather
+ *   than an ordinary `AssembledBranch`. `_simple_pattern`'s original CHOICE
+ *   flattens into a bare `subtypes: string[]` BEFORE this module ever sees
+ *   the rule (`classifyHiddenChoiceRule`, link.ts) — the alias-mint linkage
+ *   would be destroyed if not for the declared `variantArms` fact that
+ *   flatten stamps (see `RuleBase.variantArms`'s doc comment); this module
+ *   still can't reproduce it from `normalized.rules` alone (verified: ts
+ *   `type`'s `_type_query_member_expression_in_type_annotation` subtype is a
  *   structurally-identical-looking coincidental collision that a generic
- *   body-presence heuristic would readmit as a false positive). GROUP
- *   parents have no `variantChildKinds` field at all on `AssembledGroup` —
- *   `buildFactoryMap` (emitters/factory-map.ts) only ever visits
- *   `modelType==='branch'` nodes, so neither shape can EVER produce a
+ *   body-presence heuristic would readmit as a false positive). A hoisted
+ *   compound carries a real `variantChildKinds` field, but `buildFactoryMap`
+ *   (emitters/factory-map.ts) gates on `isAuthoredCompound` (compound, not a
+ *   list, not hoisted), so neither shape can EVER produce a
  *   `node-model.json5` `polymorphVariants` entry regardless of how the
  *   children were discovered. `tool variant-derivation-probe`'s comparison
- *   restricts to `modelType==='branch'` parents on both sides for exactly
- *   this reason — see that probe's own doc.
+ *   restricts to the same non-hoisted-compound parents on both sides for
+ *   exactly this reason — see that probe's own doc.
  *
  * EXTRA (structural finds a prefix-named, alias-minted choice that has no
  * historical wire-pair equivalent — REVIEWED-ADDITIVE, these joined the
@@ -9190,8 +9165,10 @@ source, one derivation.
 
 ```text
 // Force-classify synthesized kinds as GroupRule<'link'> so downstream
-// normalize.inlineSingleUseHidden skips them (it preserves 'group'
-// type rules) and assemble sees them as AssembledGroup candidates.
+// normalize.inlineSingleUseHidden skips them (it preserves GROUP-typed
+// rules) and assemble sees them as hoisted-compound candidates
+// (`simplifiedRule.type === GROUP` triggers the `hoisted` opt in
+// assemble.ts's compound construction).
 ```
 
 #### body
@@ -9768,7 +9745,7 @@ source, one derivation.
 // `DelimiterMode` value from Case 4's `'optional'`, not the same
 // boolean `true` both used to share (which is what let a genuinely
 // mandatory flank get misclassified as `'optional'` downstream, per
-// `AssembledSeparatedList.leadingDelimiter`'s doc comment, node-map.ts).
+// `AssembledList.leadingDelimiter`'s doc comment, node-map.ts).
 ```
 
 #### body
