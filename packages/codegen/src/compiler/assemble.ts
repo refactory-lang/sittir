@@ -71,8 +71,7 @@ import {
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	buildParseKindRuleSignatures,
-	type AssembleWarning
-} from './model/node-map.ts';
+	type AssembleWarning, branchClassFor } from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
@@ -167,9 +166,10 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 			switch (modelType) {
 				case 'branch': {
+					const BranchClass = branchClassFor(simplifiedRule);
 					nodes.set(
 						kind,
-						new AssembledBranch(kind, simplifiedRule, renderRule, {
+						new BranchClass(kind, simplifiedRule, renderRule, {
 							variantChildKinds,
 							kindEntries,
 							parseKindCollisionContext,

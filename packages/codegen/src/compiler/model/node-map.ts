@@ -1000,6 +1000,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return this.factoryName === undefined;
 	}
 
+	get transparent(): boolean {
+		return false;
+	}
+
 	get rawFactoryName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
 		return `build${this.typeName}`;
@@ -1564,6 +1568,42 @@ export class AssembledBranch extends AssembledNodeBase<RenderRule> {
 	}
 }
 
+export class AssembledEnvelope extends AssembledBranch {
+	get soleSlot(): AssembledNonterminal | undefined {
+		const slots = Object.values(this.slots);
+		return slots.length === 1 ? slots[0] : undefined;
+	}
+}
+
+export class AssembledPolymorph extends AssembledBranch {
+	get arms(): readonly SimplifiedRule[] {
+		const body = unwrapStructuralPassthroughs(this.simplifiedRule);
+		return body.type === CHOICE ? body.members : [];
+	}
+}
+
+export function isLeafShapedMember(rule: SimplifiedRule): boolean {
+	switch (rule.type) {
+		case SYMBOL:
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			return true;
+		default:
+			return false;
+	}
+}
+
+export function branchClassFor(simplifiedRule: SimplifiedRule): typeof AssembledBranch {
+	const body = unwrapStructuralPassthroughs(simplifiedRule);
+	if (body.type === SYMBOL) return AssembledEnvelope;
+	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return AssembledPolymorph;
+	return AssembledBranch;
+}
+
 export function unwrapStructuralPassthroughs(rule: SimplifiedRule): SimplifiedRule {
 	let r: SimplifiedRule = rule;
 	while (r.type === VARIANT || r.type === GROUP) r = r.content;
@@ -1577,6 +1617,10 @@ export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends Asse
 
 	get tokenized(): boolean {
 		return 'tokenized' in this.rule && this.rule.tokenized === true;
+	}
+
+	get word(): boolean {
+		return false;
 	}
 }
 
@@ -1599,6 +1643,10 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'keyword' as const;
+
+	override get word(): boolean {
+		return true;
+	}
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
@@ -1727,6 +1775,10 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 
 export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
 	readonly modelType = 'supertype' as const;
+
+	override get transparent(): boolean {
+		return true;
+	}
 	readonly #subtypes: readonly NodeOrTerminal[];
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 
@@ -1762,7 +1814,11 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	}
 }
 
-export class AssembledMulti extends AssembledNodeBase<RenderRule> {
+export abstract class AssembledList<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
+	abstract get nonEmpty(): boolean;
+}
+
+export class AssembledMulti extends AssembledList<RenderRule> {
 	readonly modelType = 'multi' as const;
 
 	constructor(kind: string, rule: RenderRule, opts?: { irKey?: string }) {
@@ -1887,7 +1943,7 @@ export class AssembledGroup extends AssembledNodeBase<RenderRule> {
 
 export type SeparatedListElementRule = SymbolRule | ChoiceRule;
 
-export class AssembledSeparatedList extends AssembledNodeBase<SeparatedListElementRule> {
+export class AssembledSeparatedList extends AssembledList<SeparatedListElementRule> {
 	readonly modelType = 'separatedList' as const;
 	readonly elements: readonly NodeOrTerminal[];
 	readonly separatorRule: RenderRule | undefined;
