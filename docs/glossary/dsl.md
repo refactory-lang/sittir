@@ -2653,7 +2653,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 * grammar (`'grammar'`, e.g. present in `grammar.supertypes`) or inferred
 	 * by link's structural classifier (`'link'`, the former `source:
 	 * 'promoted'` value). Diagnostics-only (the `promotedRules` derivation
-	 * log / suggested.ts's override-candidate surfacing) — never an
+	 * log) — never an
 	 * authorship fact.
 	 */
 ```

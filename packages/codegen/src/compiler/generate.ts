@@ -12,7 +12,6 @@ import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { emitIndex } from '../emitters/index-file.ts';
-import { emitSuggested } from '../emitters/suggested.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
@@ -36,7 +35,6 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
-import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 
@@ -56,7 +54,6 @@ export interface GeneratedFiles {
 	tests: string;
 	config: string;
 	nodeModel: string;
-	suggested: string | undefined;
 	is: string;
 	kindIds: string;
 	nodeMap: NodeMap;
@@ -71,7 +68,6 @@ export interface GenerateConfig {
 	outputDir: string;
 	include?: IncludeFilter;
 	strict?: boolean;
-	roundTripFailures?: readonly RoundTripDiagnostic[];
 	emitRenderModule?: boolean;
 }
 
@@ -190,11 +186,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		tests: emitted.tests,
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel,
-		suggested: emitSuggested({
-			grammar: cfg.grammar,
-			nodeMap,
-			roundTripFailures: cfg.roundTripFailures
-		}),
 		is: emitted.is,
 		kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
 		nodeMap,

@@ -3794,7 +3794,7 @@ parents.
  * @remarks
  *   The `variant()` naming convention produces visible kinds named
  *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
- *   each as a derivation gives `suggested.ts` visibility into what the parse
+ *   each as a derivation records in the derivation log what the parse
  *   tree carries vs what sittir's typed surface presents. Without this,
  *   `readNode` would have to infer polymorph-internal shape from
  *   grammar-specific knowledge.
@@ -4187,8 +4187,8 @@ parents.
 /**
  * Walk every rule's field content-type unions and flag kind sets
  * that appear in ≥2 distinct parent rules. Each unique set becomes
- * a `RepeatedShapeEntry` that the suggested.ts emitter surfaces as
- * a review candidate — the grammar author can then declare a shared
+ * a `RepeatedShapeEntry` recorded in the derivation log as a review
+ * candidate — the grammar author can then declare a shared
  * supertype (choice of the kinds) or a group and replace the
  * repeated union with a single reference.
  *
@@ -6376,12 +6376,6 @@ parents.
 	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 ```
 
-### `packages/codegen/src/compiler/generate.ts::suggested`
-
-```text
-/** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
-```
-
 ### `packages/codegen/src/compiler/generate.ts::is`
 
 ```text
@@ -6434,7 +6428,7 @@ parents.
 	 * mutate the rule tree with.
 	 *
 	 * Entries EXCLUDED from this filter still appear in the
-	 * `derivations` log (and therefore in `overrides.suggested.ts`)
+	 * `derivations` log
 	 * so you can review what Link inferred and either adopt it into
 	 * grammar.sittir.ts or leave it in the log.
 	 *
@@ -6460,18 +6454,6 @@ parents.
 	 * leaf patterns can diverge from JS RegExp syntax (Unicode
 	 * property escapes without the `u` flag, PCRE-only features) so
 	 * opt-in avoids surprising the non-strict call sites.
-	 */
-```
-
-### `packages/codegen/src/compiler/generate.ts::roundTripFailures`
-
-```text
-/**
-	 * Round-trip failure diagnostics to surface in overrides.suggested.ts.
-	 * Collected by the CLI `--roundtrip` flag; when absent, the suggested
-	 * emitter skips the round-trip section. Passing empty or omitting
-	 * produces the same output — the emitter only adds the section
-	 * when at least one diagnostic exists.
 	 */
 ```
 
@@ -6980,10 +6962,10 @@ parents.
 /**
  * DerivationLog — sidecar record of everything Link inferred / promoted.
  *
- * Populated unconditionally by Link's derivation passes. The emitter
- * for `overrides.suggested.ts` reads this to surface every
- * finding as a reviewable suggestion, regardless of whether Link
- * actually applied the mutation to the rule tree.
+ * Populated unconditionally by Link's derivation passes and recorded
+ * regardless of whether Link actually applied the mutation to the rule
+ * tree. No emitter consumes it; it is a diagnostics record pinned by
+ * link's tests.
  *
  * Whether a derivation is ALSO applied (mutating the rule tree) is
  * governed by `IncludeFilter` — excluded sources still appear in the
@@ -7305,15 +7287,12 @@ parents.
 	 * Carried mid-normalize link-phase view (wrappers intact) — see
 	 * {@link NormalizedGrammar.linkRules}'s doc comment for the pipeline
 	 * provenance. Carried through assemble onto {@link NodeMap.linkRules};
-	 * see THAT field's doc comment for the current (2026-07-05, post-PR-137-
-	 * follow-on-3) consumer list — now exclusively the two by-design
-	 * authoring-shape diagnostics (`emitters/suggested.ts`,
-	 * `emitters/refine-emit.ts` via `compiler/link.ts`'s refine-path
-	 * resolution). `compiler/assemble.ts`'s hidden-body/subtype-resolution
-	 * family migrated off this view onto `normalizedRules` (below); this
-	 * field's sole remaining purpose is feeding `NodeMap.linkRules` for those
-	 * two diagnostics — a candidate for a diagnostics-scoped carry in a future
-	 * pass (not restructured here; see PR-137 follow-on-3 notes).
+	 * see THAT field's doc comment for the consumer list — exclusively the
+	 * by-design authoring-shape diagnostic (`emitters/refine-emit.ts` via
+	 * `compiler/link.ts`'s refine-path resolution). `compiler/assemble.ts`'s
+	 * hidden-body/subtype-resolution family reads `normalizedRules` (below);
+	 * this field's sole remaining purpose is feeding `NodeMap.linkRules` for
+	 * that diagnostic — a candidate for a diagnostics-scoped carry.
 	 */
 ```
 
@@ -7498,17 +7477,8 @@ parents.
 	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
 	 * no longer compiles from `linkRules` (or any post-link view) at all —
 	 * it's pinned once at Link time from `raw.rules` and carried on
-	 * `wordMatcher` (below) instead. Remaining consumers are exclusively the
-	 * two BY-DESIGN authoring-shape diagnostics (not render/derivation paths —
-	 * see docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md's
-	 * end-state table, row "emitters"):
-	 *   - `emitters/suggested.ts`'s `findSymbolPosition` (via `parentRule`)
-	 *     and `detectGroupCandidates`/`walkBodyForGroups` (via `groupRules`):
-	 *     both explicitly pattern-match `FIELD`/`OPTIONAL`/`REPEAT`/
-	 *     `REPEAT1`/`ALIAS`/`TOKEN`/`VARIANT`/`GROUP` wrapper shapes by
-	 *     design — these are propose-diagnostics over the grammar's
-	 *     natural (pre-wrapper-deletion) authoring shape, not render
-	 *     consumers.
+	 * `wordMatcher` (below) instead. The remaining consumer is exclusively a
+	 * BY-DESIGN authoring-shape diagnostic (not a render/derivation path):
 	 *   - `compiler/link.ts`'s `resolveRefinePath`/`narrowedFieldLiteralsForForm`
 	 *     (via `emitters/refine-emit.ts`'s `collectRefineKindInfos`):
 	 *     `refine()` selection paths are authored against the pre-normalize
@@ -10880,7 +10850,7 @@ source, one derivation.
  * only — it MUST NOT silently classify rules as polymorphs because
  * tree-sitter's parser-generator doesn't see these mutations and the parse
  * tree wouldn't match the typed surface. Heuristic candidates that need
- * promotion are surfaced via suggested.ts; the user authors variant() in
+ * promotion are recorded in the derivation log; the user authors variant() in
  * grammar.sittir.ts to make them explicit.
  */
 ```

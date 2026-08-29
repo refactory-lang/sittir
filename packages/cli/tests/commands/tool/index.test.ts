@@ -10,7 +10,6 @@ const EXPECTED = [
 	'check-jinja',
 	'check-perf',
 	'classify',
-	'compare-overrides',
 	'corpus-coverage-census',
 	'defect-histogram',
 	'diff-failures',
@@ -36,7 +35,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 30 converted tools', () => {
+	it('registers exactly the 29 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

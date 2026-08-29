@@ -336,13 +336,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
-	const suggestedPath = join(dirname(outDir), 'overrides.suggested.ts');
-	if (result.suggested !== undefined) {
-		await writeFile(suggestedPath, result.suggested);
-	} else if (existsSync(suggestedPath)) {
-		rmSync(suggestedPath);
-	}
-
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
 
