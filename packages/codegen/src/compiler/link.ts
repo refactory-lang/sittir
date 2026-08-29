@@ -80,7 +80,7 @@ import {
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
-import { withId, withKindFacts } from '../dsl/rule-attrs.ts';
+import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 
 export interface LinkOptions {
@@ -771,7 +771,7 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name)) return r;
 		const body = rules[r.name];
 		if (body === undefined) return r;
-		return withId({ ...body, inlinedFrom: r.name }, r.id ?? body.id);
+		return rebaseRuleIds({ ...body, inlinedFrom: r.name }, r.id ?? body.id);
 	};
 	for (let pass = 0; pass < 64; pass++) {
 		let changed = false;

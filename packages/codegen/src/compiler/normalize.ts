@@ -1,4 +1,3 @@
-import { withKindFacts } from '../dsl/rule-attrs.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -26,7 +25,7 @@ import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } fro
 import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
-import { withAttrsFrom } from '../dsl/rule-attrs.ts';
+import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -648,7 +647,7 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
-			if (rule.name === targetName && rule.inline === true) return targetRule;
+			if (rule.name === targetName && rule.inline === true) return rebaseRuleIds(targetRule, rule.id ?? targetRule.id);
 			return rule;
 		case SEQ: {
 			let changed = false;

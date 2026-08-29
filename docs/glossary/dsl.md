@@ -2030,6 +2030,20 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  *  link's mints stamp the rule they replace. */
 ```
 
+### `packages/codegen/src/dsl/rule-attrs.ts::rebaseRuleIds`
+
+```text
+/** Re-key a spliced body's rule ids under the host reference's id. Ids are
+ *  minted once, per owner kind, by the rule catalog (`rule:<owner>:<path>`);
+ *  when link or normalize splices a body into another rule, the descendants
+ *  would otherwise keep the source owner's ids, and every host that inlines
+ *  the same body would register the same id in `slotByRuleId` — last writer
+ *  wins, so a host could resolve another host's slot (and inherit its
+ *  requiredness). The body root takes the host id; each descendant becomes
+ *  `<hostId>/<path>`, so ids stay unique per host and `slotByRuleId` resolves
+ *  the host's own slot. A missing host id leaves the body untouched. */
+```
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::armsOf`
 
 ```text
