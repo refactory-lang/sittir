@@ -150,24 +150,29 @@ parents.
 #### body
 
 ```text
-// Classification reads the already-stamped normalize-phase view
-// (`renderRule`) instead of re-deriving wrapper shape from
-// `inlinedRule` — wrapper-deletion already computed the same facts
-// (multiplicity/nonterminal/separator) these checks used to walk
-// OPTIONAL/FIELD/REPEAT/REPEAT1 nodes for. `inlinedRule` (Rule<'link'>)
-// still feeds most node CONSTRUCTORS below (AssembledGroup deliberately
-// needs the pre-deletion wrapper node); AssembledMulti constructs
-// directly off `renderRule` — a hidden repeat helper's own body IS the
-// repeat, so wrapper-deletion's pushed-down attributes are already
-// everything it needs.
+// classifyNode is called with the SIMPLIFIED rule (`normalized.rules`,
+// simplify's fixpoint-folded view), not `renderRule` and not the
+// link-phase `inlinedRule` — simplify's own folds (literal-only body to
+// STRING, single-slot seq collapse) are what settle a kind's true shape.
+// `renderRule` and `inlinedRule` still feed the node CONSTRUCTORS below
+// wherever the SHAPE they build needs the pre-simplify view (AssembledGroup
+// deliberately needs the pre-deletion wrapper node; branch/group/
+// separatedList carry both views, simplified for shape and render for
+// rendering); AssembledMulti constructs directly off the simplified rule
+// — a hidden repeat helper's own body IS the repeat, so simplify's
+// pushed-down attributes are already everything it needs.
 ```
 
 #### body
 
 ```text
-// Leaves construct off the wrapper-free `renderRule`: a kind's
-// lexical facts (`tokenized`/`immediate`) are stamps the
-// normalize builders put on the leaf, and the leaf reads them.
+// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledToken)
+// build off the SIMPLIFIED rule: simplify's literal-only fold
+// (`collectFixedLiteral` via `isAllTextRender`) is what produces the
+// STRING body these leaves read. A kind's lexical facts
+// (`tokenized`/`immediate`) are stamps normalize put on the leaf and
+// simplify's fixpoint carries unchanged (`withAttrsFrom`), so the leaf
+// reads them off either view.
 ```
 
 #### body
@@ -846,36 +851,40 @@ parents.
 
 ```text
 /**
- * Classify a rule into a model type by pure rule.type dispatch.
+ * Classify a kind's SIMPLIFIED rule — simplify's fixpoint-folded view,
+ * where a literal-only body has already folded to one STRING
+ * (`collectFixedLiteral`) and a slot-free single-member seq has already
+ * collapsed to its survivor — into a `ModelType`.
  *
- * By the time rules reach Assemble, Link and Normalize have already
- * pre-classified the interesting cases via dedicated rule types:
+ * A fielded/multiplicity-free body dispatches structurally: an enum
+ * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'supertype'; a
+ * GROUP → 'separatedList' when its peeled core
+ * (`peelSeparatedListCore`) is a separated-list shape, else 'group'; a
+ * PATTERN → 'pattern'; a STRING → 'keyword' when it matches the
+ * grammar's word shape (`matchesWordShape`), else 'token'.
  *
- *   EnumRule<'link'>       — Link: choice-of-strings
- *   SupertypeRule<'link'>  — Link: hidden choice-of-symbols (grammar or promoted)
- *   GroupRule<'link'>      — Link: hidden seq with fields
- *   TerminalRule   — Link: subtree with no fields and no symbol refs
- *   PolymorphRule  — Normalize: choice-of-variants with heterogeneous fields
- *
- * Assemble just dispatches on rule.type. The only structural inspection
- * left is distinguishing branch (has fields) from container (has children
- * only) for ordinary seq rules — that's a one-level check.
+ * Otherwise: a hidden repeat helper (`isHiddenRepeatHelper`) → 'multi';
+ * a separated-list shape at any fielded/multiplicity position →
+ * 'separatedList'; a slot-bearing body (`classifyBranchOrContainer`) →
+ * 'branch' (or 'group' for a children-only container); anything left
+ * falls to `classifyTerminalFallback` (an enum choice or an all-text
+ * pattern that only becomes slot-free at this later, structural check).
  */
 ```
 
 ```text
-// Reads RenderRule directly — see "classifyNode's RenderRule-only design" in
-// docs/compiler-phase-glossary.md. Kept as a module-level export purely for
-// assemble.test.ts's direct unit coverage; assemble()'s own loop is the only
-// real caller.
+// Kept as a module-level export purely for assemble.test.ts's direct
+// unit coverage; assemble()'s own loop — which passes the SIMPLIFIED
+// rule, not the render-phase view — is the only real caller.
 ```
 
 #### body
 
 ```text
-// Guards against a DECORATED PATTERN/STRING (wrapper-collapsible content
-// masquerading as bare) early-exiting wrong — see "classifyNode's
-// RenderRule-only design" in docs/compiler-phase-glossary.md.
+// Guards against a decorated PATTERN/STRING — a fielded or
+// multiplicity-bearing leaf masquerading as bare — early-exiting to
+// keyword/token/pattern wrongly; it must fall through to
+// classifyTerminalFallback instead.
 ```
 
 #### body
@@ -2964,30 +2973,36 @@ parents.
 
 ```text
 /**
- * Evaluate's exit gate — the one place `hidden` and `inline` get stamped
- * for every rule reference in the grammar, and where
- * `RawGrammar.visibleInlineNames` gets recorded (the grammar's `inline:`
- * array entries that do NOT start with `_` — link reports these as the
- * `inline-array-visible-name` diagnostic, since the parser inlines them
- * regardless of the leading-underscore convention, so they never surface
- * as their own nodes). Every rule link resolves afterward has its
+ * Evaluate's exit gate. `hidden` is stamped ONLY on top-level rules
+ * (`hidden = isParserHiddenName(name)`, one stamp per entry in
+ * `raw.rules`); a SYMBOL reference never carries `hidden` —
+ * reference-level classification is `inline` alone. `isParserHiddenName`
+ * (`dsl/rule-patterns.ts`) is the single source both stamps read: `inline`
+ * gets stamped on every rule reference in the grammar, and
+ * `RawGrammar.visibleInlineNames` gets recorded here (the grammar's
+ * `inline:` array entries that do NOT start with `_` — link reports these
+ * as the `inline-array-visible-name` diagnostic, since the parser inlines
+ * them regardless of the leading-underscore convention, so they never
+ * surface as their own nodes). Every rule link resolves afterward has its
  * `hidden`/`inline` facts already settled.
  *
- * For a top-level rule: `hidden = name.startsWith('_')`. For a SYMBOL
- * reference: `hidden = name.startsWith('_')`; a reference is a `boundary`
- * — never eligible to inline — when its name is a declared supertype, OR
- * when it is not itself in the grammar's `inline:` array and its target
- * rule's shape is {@link isNonInlinableLeafShape} (an enum choice,
- * SUPERTYPE, PATTERN, or STRING body — splicing one of those into every
- * occurrence site would duplicate a whole leaf class rather than fold a
- * single reference). `inline = !boundary && (hidden || inlineNames.has(name))`.
- * For a named ALIAS wrapping a bare SYMBOL: forces that symbol's `inline`
- * to `false` regardless of what the name-based computation would give —
- * an alias confers a real visible CST kind that must materialize, not
- * flatten, however the ALIAS was built (`structuralAlias`, an
- * enrich-injected alias, a hand-built rule literal). Runs bottom-up over
- * every node in every rule (`RuleWalker.map`), so it corrects a symbol's
- * `inline` no matter how deep under an ALIAS it sits.
+ * For a SYMBOL reference: a local `hidden = isParserHiddenName(rule.name)`
+ * feeds only the `inline` computation below, never the returned rule (a
+ * reference's own `hidden` field is never set); a reference is a
+ * `boundary` — never eligible to inline — when its name is a declared
+ * supertype, OR when it is not itself in the grammar's `inline:` array and
+ * its target rule's shape is {@link isNonInlinableLeafShape} (an enum
+ * choice, SUPERTYPE, PATTERN, or STRING body — splicing one of those into
+ * every occurrence site would duplicate a whole leaf class rather than
+ * fold a single reference). `inline = !boundary && (hidden ||
+ * inlineNames.has(name))`. For a named ALIAS wrapping a bare SYMBOL:
+ * forces that symbol's `inline` to `false` regardless of what the
+ * name-based computation would give — an alias confers a real visible CST
+ * kind that must materialize, not flatten, however the ALIAS was built
+ * (`structuralAlias`, an enrich-injected alias, a hand-built rule
+ * literal). Runs bottom-up over every node in every rule
+ * (`RuleWalker.map`), so it corrects a symbol's `inline` no matter how
+ * deep under an ALIAS it sits.
  */
 ```
 
@@ -3662,7 +3677,10 @@ parents.
  *  rule's body, stamping `inlinedFrom` on the substituted body with the
  *  ref's own name and keeping the ref's own id (`withId(..., r.id ??
  *  body.id)`) so downstream slot-naming and provenance still resolve to
- *  the occurrence site, not the definition site. Runs to a fixed point (no
+ *  the occurrence site, not the definition site. The spliced body drops
+ *  its source kind's own `hidden` stamp — it describes the SOURCE kind,
+ *  not the host occurrence site, and simplify's single-member collapse
+ *  would otherwise hoist that fact onto the host. Runs to a fixed point (no
  *  rule changed in a pass) or a 64-pass cap, whichever comes first; hitting
  *  the cap emits the `inline-fixpoint-unreached` diagnostic (`canProceed:
  *  true` — a stalled inline chain degrades slot naming, it does not break
@@ -4672,7 +4690,11 @@ parents.
  * / fieldName pushed down by wrapper-deletion (e.g. `optional(_initializer)` →
  * `symbol(_initializer){multiplicity:'optional'}`). We re-home those attributes
  * onto the group's body — onto the SEQ node itself, not its leaves — so the
- * render emitter gates the whole sequence on its single internal slot.
+ * render emitter gates the whole sequence on its single internal slot. The
+ * spliced body drops the source group's own `hidden` stamp — it describes
+ * the group kind being folded away, not the host occurrence site, and
+ * simplify's single-member collapse would otherwise hoist that fact onto
+ * the host.
  */
 ```
 
@@ -5054,9 +5076,12 @@ parents.
  * `inline === true`; a non-inline ref to `targetName` (an aliased,
  * supertype, or self-recursive occurrence) is a real node the parser
  * keeps and must NOT be spliced away, even though this is the SAME
- * name `spliceHiddenRuleIntoSingleParent` is trying to fold. Returns the
- * same reference when nothing changed so callers can do identity
- * comparison.
+ * name `spliceHiddenRuleIntoSingleParent` is trying to fold. The spliced
+ * body drops `targetRule`'s own `hidden` stamp — it describes the source
+ * kind being folded away, not the host occurrence site, and simplify's
+ * single-member collapse would otherwise hoist that fact onto the host.
+ * Returns the same reference when nothing changed so callers can do
+ * identity comparison.
  */
 ```
 
@@ -5680,52 +5705,126 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/simplify.ts::isAllTextRender`
+
+```text
+/**
+ * Is `rule`, at every level, made of nothing but fixed text — no slot
+ * anywhere in the subtree, and no member promoted to a slot
+ * (`isSlotPromotedLiteral`)? True for a bare STRING or PATTERN; a SEQ or
+ * CHOICE where every member is itself all-text; the content of a VARIANT
+ * or GROUP passthrough. This is the predicate `simplifySeqRule` uses to
+ * decide whether a member (or the whole seq) has nothing left for a
+ * factory to address and can fold to a literal or be stripped.
+ */
+```
+
+### `packages/codegen/src/compiler/simplify.ts::FixedLiteralCtx`
+
+```text
+/**
+ * @param joiner - separator used when concatenating a multi-member SEQ's
+ *   literals: a single space at grammar level (canonical token
+ *   separation), an empty string inside a `tokenized` subtree (contiguous
+ *   by construction — a `tokenized` rule forces this joiner for its own
+ *   recursive calls).
+ * @param deterministic - when true, any optionality (`multiplicity:
+ *   'optional'`, a blank CHOICE arm) makes the subtree non-fixed. Set for
+ *   the members of a multi-member SEQ, where "same text OR absent" is no
+ *   longer a single fixed realisation.
+ */
+```
+
+### `packages/codegen/src/compiler/simplify.ts::collectFixedLiteral`
+
+```text
+/**
+ * The single derivation of a literal-only body's rendered text — the
+ * fixed-literal join every literal-text consumer (`isAllTextRender`'s
+ * SEQ/CHOICE fold in `simplifySeqRule`, `AssembledPattern.fixedLiteralText`)
+ * goes through rather than re-walking the tree itself.
+ *
+ * Walks `rule` collecting leaf `string` values and returns the single
+ * distinct string every parse produces, or `undefined` the moment a
+ * content-bearing symbol or a multi-value divergence is found. Undefined
+ * for a nonterminal rule, an array-multiplicity rule (`array` /
+ * `nonEmptyArray` — repetition has no single realisation), and an
+ * `optional`-multiplicity rule when `ctx.deterministic` is set (two
+ * realisations: present or absent). Blanks (an empty `choice` or `seq`)
+ * are skipped in non-deterministic mode — they contribute no text and
+ * represent the "omit" arm of an optional — but bail the whole CHOICE to
+ * `undefined` in deterministic mode, where a blank arm IS a second
+ * realisation.
+ *
+ * A CHOICE is fixed only when every non-blank arm resolves to the SAME
+ * string. A SEQ with exactly one non-blank member recurses directly on it
+ * (no join needed); with more than one, every member is walked in
+ * `deterministic` mode (an optional member or a blank-arm CHOICE inside a
+ * seq means divergent realisations, not a fixed one) and the results are
+ * joined with `ctx.joiner` — e.g. python's `_not_in` = `seq('not', 'in')`,
+ * aliased to `'not in'`, IS a fixed realisation: every parse produces
+ * exactly the same token sequence.
+ */
+```
+
 ### `packages/codegen/src/compiler/simplify.ts::simplifySeqRule`
 
 ```text
 /**
- * Collapse a `seq`, carrying the seq node's slot attrs onto the survivor when
- * the node is discarded (`seq(x) → x` / multi-member flatten) — else
- * multiplicity/separator/fieldName are lost. `multiplicity` COMBINES via the
- * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
- * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
+ * Collapse a `seq`. A slot-free body (`isAllTextRender`) folds to a single
+ * STRING when `collectFixedLiteral` resolves one deterministic realisation
+ * for the whole seq — the leaf/enum boundary where a run of literal-only
+ * members becomes one token — and is retained whole when no such single
+ * realisation exists (a divergent CHOICE arm, an array-multiplicity
+ * member, a nonterminal). Otherwise, beside a slot, a bare STRING member
+ * (not slot-promoted) and an all-text SEQ member are stripped, and empty
+ * seqs are dropped; a spliceable bare seq member is spliced into this
+ * seq's own member list. A single surviving member carries the seq's own
+ * attrs (`withAttrsFrom`) and combines multiplicity with its own via the
+ * lattice (a survivor `optional` inside an `array` seq combines to
+ * `array`); more than one survivor keeps the SEQ shape.
  */
 ```
 
+#### body
+
 ```text
-// ---------------------------------------------------------------------------
-// Hidden group / multi inlining (moved from assemble.ts to participate in
-// the simplify fixpoint).
-// ---------------------------------------------------------------------------
+// The whole-seq fold to a single STRING only applies to a slot-free body
+// (`isAllTextRender`) — a fielded or multiplicity-bearing seq is never
+// collapsed to a bare literal here.
 ```
 
 #### body
 
 ```text
-// Members already simplified by simplifyRule's ctx.walker.map recursion —
-// this function no longer recurses into its own children (PR-S task 4).
+// Members are already simplified: simplifyRule's ctx.walker.map recurses
+// into children before this dispatch runs, so this function only
+// restructures its own member list, never its children's.
 ```
 
 #### body
 
 ```text
-// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
+// Strips a bare STRING member (not slot-promoted) and a SEQ member that
+// is empty or itself all-text — either would otherwise sit inert beside
+// a slot with nothing left for a factory to address.
 ```
 
 #### body
 
 ```text
-// Keep a nested seq that carries its OWN cardinality as one member:
-// splicing would lose that cardinality and hoist an inner choice to
-// the parent's seq position (a non-canonical choice-at-seq). A bare
-// seq (no own attrs) is spliced/flattened — shared predicate with
-// flatten.ts's SEQ case (see isSpliceableBareSeq's doc).
+// A spliceable bare seq (no own attrs — shared predicate with
+// flatten.ts's SEQ case, see isSpliceableBareSeq's doc) is inlined into
+// this seq's member list; a seq that carries its own cardinality
+// survives as one member instead, so splicing never drops a
+// multiplicity/separator stamp.
 ```
 
 #### body
 
 ```text
-// Only stamp when non-default (single → undefined per combineMultiplicity).
+// Multiplicity combines via the lattice; stamped only when the combined
+// value is non-default (absent stays absent).
 ```
 
 ### `packages/codegen/src/compiler/trace.ts::tracePhaseRules`

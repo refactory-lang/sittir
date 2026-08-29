@@ -4786,18 +4786,14 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle) {
 
 export function wrapReferenceExpression(
 	data: T.ReferenceExpression & {
-		readonly _reference_expression_raw_const?:
-			| T.ReferenceExpressionRawConst
-			| T.ReferenceExpressionRawMut
-			| T.MutableSpecifier;
-		readonly _reference_expression_raw_mut?:
-			| T.ReferenceExpressionRawConst
-			| T.ReferenceExpressionRawMut
-			| T.MutableSpecifier;
-		readonly _mutable_specifier?: T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier;
+		readonly _reference_expression_raw_const?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier;
+		readonly _reference_expression_raw_mut?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier;
+		readonly _mutable_specifier?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier;
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ReferenceExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -4824,10 +4820,7 @@ export function wrapReferenceExpression(
 			}),
 
 			content() {
-				return drillIn<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier | undefined>(
-					this._content,
-					tree
-				);
+				return drillIn<'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier | undefined>(this._content, tree);
 			},
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
@@ -10463,7 +10456,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForLifetimes]: (d, t) => wrapForLifetimes(d as unknown as T.ForLifetimes, t),
 	[TSKindId.FunctionType]: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
 	[TSKindId.TupleType]: (d, t) => wrapTupleType(d as unknown as T.TupleType, t),
-	[TSKindId.UnitType]: (d) => ({ ...d, $type: TSKindId.UnitType as const }),
 	[TSKindId.GenericFunction]: (d, t) => wrapGenericFunction(d as unknown as T.GenericFunction, t),
 	[TSKindId.GenericType]: (d, t) => wrapGenericType(d as unknown as T.GenericType, t),
 	[TSKindId.GenericTypeWithTurbofish]: (d, t) =>
@@ -10500,7 +10492,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ParenthesizedExpression]: (d, t) =>
 		wrapParenthesizedExpression(d as unknown as T.ParenthesizedExpression, t),
 	[TSKindId.TupleExpression]: (d, t) => wrapTupleExpression(d as unknown as T.TupleExpression, t),
-	[TSKindId.UnitExpression]: (d) => ({ ...d, $type: TSKindId.UnitExpression as const }),
 	[TSKindId.StructExpression]: (d, t) => wrapStructExpression(d as unknown as T.StructExpression, t),
 	[TSKindId.FieldInitializerList]: (d, t) => wrapFieldInitializerList(d as unknown as T.FieldInitializerList, t),
 	[TSKindId.ShorthandFieldInitializer]: (d, t) =>
@@ -10602,7 +10593,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TokenKeywords]: (d) => ({ ...d, $type: TSKindId.TokenKeywords as const }),
 	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
 	[TSKindId.StringLiteralOpen]: (d) => ({ ...d, $type: TSKindId.StringLiteralOpen as const }),
-	[TSKindId.ReferenceExpressionRawConst]: (d) => ({ ...d, $type: TSKindId.ReferenceExpressionRawConst as const }),
 	[TSKindId.ReferenceExpressionRawMut]: (d, t) =>
 		wrapReferenceExpressionRawMut(d as unknown as T.ReferenceExpressionRawMut, t),
 	[TSKindId.ImplItemUnsafeMarker]: (d) => ({ ...d, $type: TSKindId.ImplItemUnsafeMarker as const }),
@@ -10737,7 +10727,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.ForLifetimes]: ReturnType<typeof wrapForLifetimes>;
 	[TSKindId.FunctionType]: ReturnType<typeof wrapFunctionType>;
 	[TSKindId.TupleType]: ReturnType<typeof wrapTupleType>;
-	[TSKindId.UnitType]: _NodeData & { readonly $type: TSKindId.UnitType };
 	[TSKindId.GenericFunction]: ReturnType<typeof wrapGenericFunction>;
 	[TSKindId.GenericType]: ReturnType<typeof wrapGenericType>;
 	[TSKindId.GenericTypeWithTurbofish]: ReturnType<typeof wrapGenericTypeWithTurbofish>;
@@ -10771,7 +10760,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.ArrayExpression]: ReturnType<typeof wrapArrayExpression>;
 	[TSKindId.ParenthesizedExpression]: ReturnType<typeof wrapParenthesizedExpression>;
 	[TSKindId.TupleExpression]: ReturnType<typeof wrapTupleExpression>;
-	[TSKindId.UnitExpression]: _NodeData & { readonly $type: TSKindId.UnitExpression };
 	[TSKindId.StructExpression]: ReturnType<typeof wrapStructExpression>;
 	[TSKindId.FieldInitializerList]: ReturnType<typeof wrapFieldInitializerList>;
 	[TSKindId.ShorthandFieldInitializer]: ReturnType<typeof wrapShorthandFieldInitializer>;
@@ -10866,7 +10854,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.TokenKeywords]: _NodeData & { readonly $type: TSKindId.TokenKeywords };
 	[TSKindId.WildcardPattern]: _NodeData & { readonly $type: TSKindId.WildcardPattern };
 	[TSKindId.StringLiteralOpen]: _NodeData & { readonly $type: TSKindId.StringLiteralOpen };
-	[TSKindId.ReferenceExpressionRawConst]: _NodeData & { readonly $type: TSKindId.ReferenceExpressionRawConst };
 	[TSKindId.ReferenceExpressionRawMut]: ReturnType<typeof wrapReferenceExpressionRawMut>;
 	[TSKindId.ImplItemUnsafeMarker]: _NodeData & { readonly $type: TSKindId.ImplItemUnsafeMarker };
 	[TSKindId.ImplItemBody]: ReturnType<typeof wrapImplItemBody>;

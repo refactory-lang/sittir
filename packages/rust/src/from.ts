@@ -80,7 +80,6 @@ export const _fromMap = {
 	for_lifetimes: coerceToForLifetimes,
 	function_type: coerceToFunctionType,
 	tuple_type: coerceToTupleType,
-	unit_type: coerceToUnitType,
 	generic_function: coerceToGenericFunction,
 	generic_type: coerceToGenericType,
 	generic_type_with_turbofish: coerceToGenericTypeWithTurbofish,
@@ -113,7 +112,6 @@ export const _fromMap = {
 	array_expression: coerceToArrayExpression$impl,
 	parenthesized_expression: coerceToParenthesizedExpression,
 	tuple_expression: coerceToTupleExpression$impl,
-	unit_expression: coerceToUnitExpression,
 	struct_expression: coerceToStructExpression,
 	field_initializer_list: coerceToFieldInitializerList,
 	shorthand_field_initializer: coerceToShorthandFieldInitializer,
@@ -204,9 +202,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		],
 		factory: (text: string) => F.buildFragmentSpecifier(text as Parameters<typeof F.buildFragmentSpecifier>[0])
 	},
-	unit_type: { factory: F.buildUnitType },
 	mutable_specifier: { values: ['mut'], factory: () => F.buildMutableSpecifier() },
-	unit_expression: { factory: F.buildUnitExpression },
 	integer_literal: { factory: F.buildIntegerLiteral },
 	char_literal: { factory: F.buildCharLiteral },
 	escape_sequence: { factory: F.buildEscapeSequence },
@@ -822,7 +818,6 @@ const _K14: readonly string[] = [
 	'float_literal',
 	'identifier',
 	'self',
-	'unit_expression',
 	'metavariable'
 ];
 const _K15: readonly string[] = [
@@ -864,7 +859,7 @@ const _K15: readonly string[] = [
 	'const_block',
 	'range_expression'
 ];
-const _K16: readonly string[] = ['metavariable', 'unit_type', 'identifier', '_primitive_type'];
+const _K16: readonly string[] = ['metavariable', 'identifier', '_primitive_type'];
 const _K17: readonly string[] = [
 	'abstract_type',
 	'reference_type',
@@ -1005,7 +1000,7 @@ const _K41: readonly string[] = ['identifier', 'super'];
 const _K42: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish'];
 const _K43: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish', 'bracketed_type', 'generic_type'];
 const _K44: readonly string[] = ['_range_expression_binary', '_range_expression_postfix', '_range_expression_prefix'];
-const _K45: readonly string[] = ['_reference_expression_raw_const', 'mutable_specifier'];
+const _K45: readonly string[] = ['mutable_specifier'];
 const _K46: readonly string[] = ['_reference_expression_raw_mut'];
 const _K47: readonly string[] = [
 	'unary_expression',
@@ -3563,11 +3558,6 @@ export function coerceToTupleType(
 	);
 }
 
-export function coerceToUnitType(input: string | T.UnitType): ReturnType<typeof F.buildUnitType> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnitType>;
-	return F.buildUnitType(input as Parameters<typeof F.buildUnitType>[0]);
-}
-
 export function resolveGenericFunction_function(
 	value: T.GenericFunction.LooseConfig['function']
 ): T.GenericFunction['_function'] {
@@ -4156,11 +4146,7 @@ export function coerceToTryExpression(
 export function resolveReferenceExpression_content(
 	value: T.ReferenceExpression.LooseConfig['content']
 ): T.ReferenceExpression['_content'] {
-	return _resolveOne<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier>(
-		value,
-		_K45,
-		_K46
-	);
+	return _resolveOne<'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier>(value, _K45, _K46);
 }
 
 export function resolveReferenceExpression_value(
@@ -4613,11 +4599,6 @@ export const coerceToTupleExpression: typeof coerceToTupleExpression$impl & {
 } = attachProps(coerceToTupleExpression$impl, {
 	elements: F.buildTupleExpression.elements
 });
-
-export function coerceToUnitExpression(input: string | T.UnitExpression): ReturnType<typeof F.buildUnitExpression> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnitExpression>;
-	return F.buildUnitExpression(input as Parameters<typeof F.buildUnitExpression>[0]);
-}
 
 export function resolveStructExpression_name(
 	value: T.StructExpression.LooseConfig['name']

@@ -2105,21 +2105,12 @@ describe('private_property_identifier', () => {
 
 describe('meta_property', () => {
 	it('factory produces correct type', () => {
-		const node = ir.metaProperty({ $type: TSKindId.MetaPropertyArm1, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.metaProperty({ content: 'new . target' });
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		expect(node.$source).toBe(2);
 	});
-});
-
-describe('meta_property namespaced constructors', () => {
-	it('arm1 builds the parent', () => {
-		const node = ir.metaProperty.arm1('test');
-		expect(node.$type).toBe(TSKindId.MetaProperty);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('arm2 builds the parent', () => {
-		const node = ir.metaProperty.arm2('test');
-		expect(node.$type).toBe(TSKindId.MetaProperty);
+	it('render produces non-empty string', () => {
+		const node = ir.metaProperty({ content: 'new . target' });
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

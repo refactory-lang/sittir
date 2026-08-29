@@ -1308,37 +1308,47 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // survives only as the collision fallback.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::armLeadingSymbolName`
+### `packages/codegen/src/dsl/rule-patterns.ts::armLeadingSymbolName`
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
- * LEFTMOST reachable position (descending through SEQ's first member,
- * every CHOICE member, and single-content wrappers — the same shape a
- * parser's FIRST-set walk would follow) references one of `siblingNames`.
- * Guards against minting a choice arm that is structurally a RECURSIVE
- * extension of a SIBLING arm in the same choice rather than an
- * independent alternative — e.g. python's `expression_statement`:
- * arm 0 is the bare `$.expression`; arm 1 is `seq(commaSep1($.expression),
- * optional(','))`, which itself STARTS with `$.expression`. Minting arm 1
- * into its own hidden rule creates a second grammar production sharing
- * arm 0's leading symbol — an unresolvable tree-sitter LR conflict, not a
- * cosmetic one (confirmed: no `conflicts:` declaration or rename
- * resolves it, since it's a genuine shared-prefix ambiguity between two
- * live productions). Skipping the mint here leaves the arm exactly as
- * enrich found it — whatever OTHER mechanism (variant()/polymorphs in
- * this grammar's own grammar.sittir.ts, same as before PR 3) already handles
- * it keeps doing so, unimpeded.
+ * Resolve `rule`'s LEFTMOST reachable symbol name — descending through a
+ * SEQ's first member and single-content wrappers (optional/field/repeat/
+ * prec/token/...), the same shape a parser's FIRST-set walk would follow.
+ * A CHOICE has no single leftmost symbol (it varies per arm) and resolves
+ * to `undefined`; the `seen` set guards against infinite recursion on a
+ * self-referential rule.
+ *
+ * For a SYMBOL, hiddenness gates whether the name IS the leftmost
+ * boundary or resolution must descend further: `rulesBag[name]?.hidden`
+ * — the referenced rule's OWN stamp, looked up by name — decides, never
+ * a property read off the reference itself (a SYMBOL reference carries
+ * no `hidden` of its own; only top-level rules do). A visible target's
+ * name IS the leftmost boundary — return it. A hidden target is
+ * invisible to the parser's distinguishable-item boundary, so its own
+ * leftmost symbol (found by recursing into its body) is what actually
+ * matters; if that recursion resolves to `undefined` (e.g. the hidden
+ * body is a CHOICE), the hidden name is returned as the fallback.
+ *
+ * `armStartsWithSymbol` (this file) is the boolean guard built on top:
+ * true when this resolved name collides with a sibling arm's own
+ * leading symbol — the shared-prefix collision that would create an
+ * unresolvable tree-sitter LR conflict if a choice arm minted its own
+ * hidden rule while structurally being a recursive extension of a
+ * sibling arm (e.g. python's `expression_statement`: one arm is bare
+ * `$.expression`; another is `seq(commaSep1($.expression),
+ * optional(','))`, which itself starts with `$.expression`).
  */
 ```
 
 #### body
 
 ```text
-// A VISIBLE symbol is its own meaningful boundary for LR
-// prefix-collision purposes — stop here. A HIDDEN symbol is
-// invisible to the parser's distinguishable-item boundary, so its
-// OWN leading symbol (descend into its body) is what matters.
+// A visible target (`rulesBag[name]?.hidden !== true`) is its own
+// meaningful boundary for LR prefix-collision purposes — stop here. A
+// hidden target is invisible to the parser's distinguishable-item
+// boundary, so its OWN leading symbol (descend into its body) is what
+// matters instead.
 ```
 
 #### body
@@ -3808,6 +3818,22 @@ registered but later unused still counts as a sibling.
  *  prec-wrapped), else null. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isParserHiddenName`
+
+```text
+/**
+ * The parser's own hiddenness rule: a symbol name beginning with `_`. The
+ * single source for "the parser hides this symbol" — evaluate's
+ * `canonicalizeRawGrammar` reads it for both the rule-level `hidden` stamp
+ * and the reference-level `inline` computation, and `selfReferentialFoldOf`
+ * reads it directly on a self-reference's name. Distinct from
+ * `RuleBase.hidden` (sittir's own PUBLISHED visibility fact, which link's
+ * `unhideAliasedTargets` may flip to `false` for an alias target): a
+ * symbol occurrence is parser-hidden purely by its name, independent of
+ * whatever visibility sittir later publishes the rule under.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::selfReferentialFoldOf`
 
 ```text
@@ -3818,18 +3844,26 @@ registered but later unused still counts as a sibling.
 
 ```text
 /**
- * Tree-sitter's prec.left self-referential-choice flattening: a hidden
- * CHOICE rule whose arms are all 3-member SEQs
+ * Tree-sitter's prec.left self-referential-choice flattening: a CHOICE
+ * rule whose arms are all 3-member SEQs
  * `[field(base), STRING(separator), field(extension)]` with the SAME
  * (base, extension) field-name pair and separator literal across every
  * arm, where at least one arm's base field is a bare (non-alias-wrapped)
- * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
- * collapses the recursion into ONE FLAT node at parse time: the base field
- * stays singular — only the true base operand carries it, since inner
+ * SYMBOL reference to THIS rule's own name whose name is
+ * `isParserHiddenName` — the PARSER's own hiddenness rule (leading `_`),
+ * not `RuleBase.hidden` (sittir's published-visibility fact, which link's
+ * `unhideAliasedTargets` may flip for an alias target): tree-sitter
+ * flattens an occurrence of a symbol whenever THAT occurrence's name is
+ * hidden, regardless of whether sittir later publishes the target rule as
+ * visible under an alias — an unaliased inner self-reference is still
+ * flattened by the parser even when the rule it names is otherwise
+ * published visibly elsewhere. Tree-sitter's LR table collapses the
+ * recursion into ONE FLAT node at parse time: the base field stays
+ * singular — only the true base operand carries it, since inner
  * recursive occurrences dissolve into siblings and the leftover separator
- * tokens are anonymous so the reader drops them — while the extension field
- * repeats once per additional chained operand. No wrapper shape and no
- * node-types.json entry can see this: the multiplicity is an emergent
+ * tokens are anonymous so the reader drops them — while the extension
+ * field repeats once per additional chained operand. No wrapper shape and
+ * no node-types.json entry can see this: the multiplicity is an emergent
  * property of LR precedence-climbing over a self-referential choice.
  * Confirmed case: rust's `_let_chain` (`a && b && c && d` parses as one
  * node with a single `left` and a repeated `right`).

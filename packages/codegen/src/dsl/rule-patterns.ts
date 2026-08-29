@@ -512,6 +512,10 @@ function resolveRuleLiteral(body: unknown): string | null {
 	return null;
 }
 
+export function isParserHiddenName(name: string): boolean {
+	return name.startsWith('_');
+}
+
 export function selfReferentialFoldOf(
 	name: string,
 	rule: Rule<'link'>
@@ -524,7 +528,7 @@ export function selfReferentialFoldOf(
 	const isSelfRef = (content: Rule<'link'>): boolean =>
 		content.type === SYMBOL &&
 		content.name === name &&
-		(content as { hidden?: boolean }).hidden === true &&
+		isParserHiddenName(content.name) &&
 		(content as { aliasedTo?: string }).aliasedTo === undefined;
 	for (const arm of rule.members) {
 		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
@@ -811,9 +815,8 @@ export function armLeadingSymbolName<P extends PhaseName>(
 	if (isSymbolType(t)) {
 		const name = (rule as { name?: string }).name;
 		if (typeof name !== 'string') return undefined;
-		const hidden = (rule as { hidden?: boolean }).hidden;
-		if (!hidden) return name;
 		const body = rulesBag[name];
+		if (body?.hidden !== true) return name;
 		return body ? (armLeadingSymbolName(body, rulesBag, seen) ?? name) : name;
 	}
 	if (isSeqType(t)) {

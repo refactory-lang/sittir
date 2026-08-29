@@ -158,7 +158,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	try {
 		for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 			const simplifiedRule = normalized.rules[kind]!;
-			const modelType = classifyNode(kind, renderRule, {
+			const modelType = classifyNode(kind, simplifiedRule, {
 				variantParents,
 				parentAliasedKinds: normalized.parentAliasedKinds,
 				wordMatcher: wordMatcherRegex
@@ -180,21 +180,21 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, renderRule));
+					nodes.set(kind, new AssembledPattern(kind, simplifiedRule));
 					break;
 				}
 				case 'keyword':
 				case 'token': {
-					if (renderRule.type !== STRING) {
+					if (simplifiedRule.type !== STRING) {
 						throw new Error(
-							`[assemble] ${modelType} kind '${kind}' must be a single literal; found ${renderRule.type}`
+							`[assemble] ${modelType} kind '${kind}' must be a single literal; found ${simplifiedRule.type}`
 						);
 					}
 					nodes.set(
 						kind,
 						modelType === 'keyword'
-							? new AssembledKeyword(kind, renderRule, { kindEntries })
-							: new AssembledToken(kind, renderRule, { kindEntries })
+							? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
+							: new AssembledToken(kind, simplifiedRule, { kindEntries })
 					);
 					break;
 				}
@@ -225,12 +225,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'multi': {
-					nodes.set(kind, new AssembledMulti(kind, renderRule));
+					nodes.set(kind, new AssembledMulti(kind, simplifiedRule));
 					break;
 				}
 				case 'separatedList': {
 					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
-					const listRule = peelSeparatedListCore(groupRenderRule);
+					const listRule = peelSeparatedListCore(groupSimplified);
 					if (listRule.type !== SYMBOL && listRule.type !== CHOICE) {
 						throw new Error(
 							`[assemble] separatedList kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`

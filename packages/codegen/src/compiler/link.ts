@@ -775,7 +775,8 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name)) return r;
 		const body = rules[r.name];
 		if (body === undefined) return r;
-		return rebaseRuleIds({ ...body, inlinedFrom: r.name }, r.id ?? body.id);
+		const { hidden: _sourceKindHidden, ...spliced } = body;
+		return rebaseRuleIds({ ...spliced, inlinedFrom: r.name } as Rule<'link'>, r.id ?? body.id);
 	};
 	for (let pass = 0; pass < 64; pass++) {
 		let changed = false;

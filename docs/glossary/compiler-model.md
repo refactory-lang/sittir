@@ -1086,60 +1086,6 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::collectFixedLiteral`
-
-```text
-/**
- * Walk a rule subtree collecting leaf `string` values.
- * Returns the single distinct string if every non-blank reachable leaf is
- * the same fixed literal, or `undefined` the moment any content-bearing
- * external (symbol) or multi-value divergence is encountered.
- *
- * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
- * represent the "omit" arm of an `optional`.
- */
-```
-
-#### body
-
-```text
-// A slot (promoted literal, ref) is content-bearing; a repeated literal
-// has no single realisation; an optional one has two in deterministic mode.
-```
-
-```text
-// blank sentinel
-```
-
-```text
-// blank arm = optionality
-```
-
-```text
-// blank arm — ignore
-```
-
-```text
-// non-literal or divergent branch
-```
-
-```text
-// two different literals
-```
-
-#### body
-
-```text
-// Multi-member seq: fixed iff every member is itself a deterministic
-// fixed literal; the realisation is their joined concatenation.
-```
-
-#### body
-
-```text
-// symbol, pattern, variant, group, … — content-bearing or structural
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text
@@ -2728,46 +2674,11 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
 
 ```text
-// regex — always content-bearing
-```
-
-#### body
-
-```text
-// Terminal-shape rule: walk the content tree collecting all non-blank string leaves.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::FixedLiteralCtx`
-
-```text
 /**
- * Walk a rule subtree collecting leaf `string` values.
- * Returns the single distinct string if every non-blank reachable leaf is
- * the same fixed literal, or `undefined` the moment any content-bearing
- * external (symbol) or multi-value divergence is encountered.
- *
- * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
- * represent the "omit" arm of an `optional`.
- *
- * Multi-member SEQs of fixed literals (e.g. python's `_not_in` =
- * `seq('not', 'in')`, aliased to `'not in'`) ARE a fixed realisation: every
- * parse of the rule produces exactly the same token sequence. Their members
- * are collected in `deterministic` mode (no optional member / blank-arm
- * CHOICE allowed — optionality inside a seq means divergent realisations)
- * and joined with `joiner`: a single space at grammar level (canonical
- * token separation), an empty string under a `tokenized` stamp (contiguous
- * by construction).
- *
- * The rule is the wrapper-free normalize view: optionality, repetition and
- * slot promotion are the leaf's own `multiplicity` / `nonterminal` stamps,
- * read one level at a time.
- *
- * @param ctx.joiner - separator used when concatenating a multi-member SEQ's
- *   literals. `' '` outside a tokenized subtree, `''` inside.
- * @param ctx.deterministic - when true, any optionality (`multiplicity:
- *   'optional'`, blank CHOICE arm) makes the subtree non-fixed. Used for
- *   members of a multi-member SEQ, where "same text OR absent" is no longer
- *   a single fixed realisation.
+ * A PATTERN leaf's rule is always content-bearing (a regex, not a fixed
+ * string) so this short-circuits before delegating to simplify's
+ * `collectFixedLiteral` — the single derivation of a literal-only body's
+ * text — for every other pattern shape.
  */
 ```
 

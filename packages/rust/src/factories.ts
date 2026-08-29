@@ -3235,23 +3235,6 @@ function _buildTupleType(value: T.TupleTypeElements): TupleTypeBuilt {
 	);
 }
 
-export type UnitTypeBuildArgs = [text: string];
-export type UnitTypeLooseArgs = [text: string];
-
-export function buildUnitType(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`unit_type: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.UnitType as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export type GenericFunctionBuildArgs = [config: T.GenericFunction.Config];
 export type GenericFunctionLooseArgs = [config: T.GenericFunction.Loose];
 
@@ -4199,9 +4182,7 @@ export type ReferenceExpressionBuilt = T.ReferenceExpression & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(
-			value?: T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier
-		): ReferenceExpressionBuilt;
+		content(value?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier): ReferenceExpressionBuilt;
 		value(value: T.Expression): ReferenceExpressionBuilt;
 	};
 } & _NodeMethods;
@@ -4218,7 +4199,7 @@ export function buildReferenceExpression(config: T.ReferenceExpression.Config): 
 				_content,
 				_value,
 				$with: {
-					content: (value?: T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier) =>
+					content: (value?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier) =>
 						buildReferenceExpression({ ...config, content: value }),
 					value: (value: T.Expression) => buildReferenceExpression({ ...config, value: value })
 				}
@@ -4822,23 +4803,6 @@ export const buildTupleExpression = attachProps(buildTupleExpression$impl, {
 			)(...args) as T.TupleExpressionElements
 		})
 });
-
-export type UnitExpressionBuildArgs = [text: string];
-export type UnitExpressionLooseArgs = [text: string];
-
-export function buildUnitExpression(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`unit_expression: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.UnitExpression as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
 
 export type StructExpressionBuildArgs = [config: T.StructExpression.Config];
 export type StructExpressionLooseArgs = [config: T.StructExpression.Loose];
@@ -8961,23 +8925,6 @@ export function buildStringLiteralOpen(text: string) {
 	);
 }
 
-export type ReferenceExpressionRawConstBuildArgs = [text: string];
-export type ReferenceExpressionRawConstLooseArgs = [text: string];
-
-export function buildReferenceExpressionRawConst(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_reference_expression_raw_const: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.ReferenceExpressionRawConst as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export type ReferenceExpressionRawMutBuildArgs = [config?: T.ReferenceExpressionRawMut.Config];
 export type ReferenceExpressionRawMutLooseArgs = [config?: T.ReferenceExpressionRawMut.Loose];
 
@@ -11264,7 +11211,6 @@ export type FluentKindMap = {
 	for_lifetimes: ForLifetimesBuilt;
 	function_type: FunctionTypeBuilt;
 	tuple_type: TupleTypeBuilt;
-	unit_type: T.UnitType;
 	generic_function: GenericFunctionBuilt;
 	generic_type: GenericTypeBuilt;
 	generic_type_with_turbofish: GenericTypeWithTurbofishBuilt;
@@ -11297,7 +11243,6 @@ export type FluentKindMap = {
 	array_expression: ArrayExpressionBuilt;
 	parenthesized_expression: ParenthesizedExpressionBuilt;
 	tuple_expression: TupleExpressionBuilt;
-	unit_expression: T.UnitExpression;
 	struct_expression: StructExpressionBuilt;
 	field_initializer_list: FieldInitializerListBuilt;
 	shorthand_field_initializer: ShorthandFieldInitializerBuilt;
@@ -11383,7 +11328,6 @@ export type FluentKindMap = {
 	_token_tree_punctuation: T.TokenTreePunctuation;
 	_token_keywords: T.TokenKeywords;
 	_string_literal_open: T.StringLiteralOpen;
-	_reference_expression_raw_const: T.ReferenceExpressionRawConst;
 	_reference_expression_raw_mut: ReferenceExpressionRawMutBuilt;
 	_impl_item_body: ImplItemBodyBuilt;
 	_impl_item_positive_clause: ImplItemPositiveClauseBuilt;
@@ -11507,7 +11451,6 @@ export const _factoryMap = {
 	for_lifetimes: buildForLifetimes,
 	function_type: buildFunctionType,
 	tuple_type: buildTupleType,
-	unit_type: buildUnitType,
 	generic_function: buildGenericFunction,
 	generic_type: buildGenericType,
 	generic_type_with_turbofish: buildGenericTypeWithTurbofish,
@@ -11540,7 +11483,6 @@ export const _factoryMap = {
 	array_expression: buildArrayExpression,
 	parenthesized_expression: buildParenthesizedExpression,
 	tuple_expression: buildTupleExpression,
-	unit_expression: buildUnitExpression,
 	struct_expression: buildStructExpression,
 	field_initializer_list: buildFieldInitializerList,
 	shorthand_field_initializer: buildShorthandFieldInitializer,
@@ -11626,7 +11568,6 @@ export const _factoryMap = {
 	_token_tree_punctuation: buildTokenTreePunctuation,
 	_token_keywords: buildTokenKeywords,
 	_string_literal_open: buildStringLiteralOpen,
-	_reference_expression_raw_const: buildReferenceExpressionRawConst,
 	_reference_expression_raw_mut: buildReferenceExpressionRawMut,
 	_impl_item_body: buildImplItemBody,
 	_impl_item_positive_clause: buildImplItemPositiveClause,

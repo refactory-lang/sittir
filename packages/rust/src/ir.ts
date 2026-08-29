@@ -1180,7 +1180,6 @@ export const type: {
 	readonly generic: typeof _b$genericType;
 	readonly scopedIdentifier: typeof _b$scopedTypeIdentifier;
 	readonly tuple: typeof _b$tupleType;
-	readonly unit: typeof F.buildUnitType;
 	readonly array: typeof _b$arrayType;
 	readonly function: typeof _b$functionType;
 	readonly identifier: typeof F.buildIdentifier;
@@ -1196,7 +1195,6 @@ export const type: {
 	generic: _b$genericType,
 	scopedIdentifier: _b$scopedTypeIdentifier,
 	tuple: _b$tupleType,
-	unit: F.buildUnitType,
 	array: _b$arrayType,
 	function: _b$functionType,
 	identifier: F.buildIdentifier,
@@ -1232,7 +1230,6 @@ export const expression: {
 	readonly array: typeof _b$arrayExpression;
 	readonly tuple: typeof _b$tupleExpression;
 	readonly macroInvocation: typeof _b$macroInvocation;
-	readonly unit: typeof F.buildUnitExpression;
 	readonly break: typeof _b$breakExpression;
 	readonly continue: typeof _b$continueExpression;
 	readonly index: typeof _b$indexExpression;
@@ -1278,7 +1275,6 @@ export const expression: {
 	array: _b$arrayExpression,
 	tuple: _b$tupleExpression,
 	macroInvocation: _b$macroInvocation,
-	unit: F.buildUnitExpression,
 	break: _b$breakExpression,
 	continue: _b$continueExpression,
 	index: _b$indexExpression,
@@ -1527,8 +1523,6 @@ export const ir: {
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
 	readonly fragmentSpecifier: typeof F.buildFragmentSpecifier;
-	readonly unitType: typeof F.buildUnitType;
-	readonly unitExpression: typeof F.buildUnitExpression;
 	readonly integerLiteral: typeof F.buildIntegerLiteral;
 	readonly charLiteral: typeof F.buildCharLiteral;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
@@ -1596,7 +1590,6 @@ export const ir: {
 	readonly typeCast: typeof _b$typeCastExpression;
 	readonly unary: typeof _b$unaryExpression;
 	readonly union: typeof _b$unionItem;
-	readonly unit: typeof F.buildUnitType;
 	readonly use: typeof _b$useDeclaration;
 	readonly while: typeof _b$whileExpression;
 	readonly yield: typeof _b$yieldExpression;
@@ -1758,8 +1751,6 @@ export const ir: {
 
 	// Leaf node factories
 	fragmentSpecifier: F.buildFragmentSpecifier,
-	unitType: F.buildUnitType,
-	unitExpression: F.buildUnitExpression,
 	integerLiteral: F.buildIntegerLiteral,
 	charLiteral: F.buildCharLiteral,
 	escapeSequence: F.buildEscapeSequence,
@@ -1829,7 +1820,6 @@ export const ir: {
 	typeCast: _b$typeCastExpression,
 	unary: _b$unaryExpression,
 	union: _b$unionItem,
-	unit: F.buildUnitType,
 	use: _b$useDeclaration,
 	while: _b$whileExpression,
 	yield: _b$yieldExpression,

@@ -6846,13 +6846,13 @@
     },
     {
       "kind": "_reference_expression_raw_const",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "ReferenceExpressionRawConst",
-      "factoryName": "referenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
-      "hidden": false,
-      "text": "raw const",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"raw const\" as const",
+      "text": "raw const"
     },
     {
       "kind": "_reference_expression_raw_mut",
@@ -20675,23 +20675,23 @@
     },
     {
       "kind": "unit_expression",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "UnitExpression",
-      "factoryName": "unitExpression",
       "irKey": "unitExpression",
-      "hidden": false,
-      "text": "( )",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"( )\" as const",
+      "text": "( )"
     },
     {
       "kind": "unit_type",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "UnitType",
-      "factoryName": "unitType",
       "irKey": "unitType",
-      "hidden": false,
-      "text": "( )",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"( )\" as const",
+      "text": "( )"
     },
     {
       "kind": "unsafe",

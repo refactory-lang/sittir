@@ -404,7 +404,7 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 }
 
 export function sym(name: string): SymbolRule<'evaluate'> {
-	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
+	return { type: SYMBOL, name, inline: name.startsWith('_') };
 }
 
 export function isIdentifierLike(value: string): boolean {

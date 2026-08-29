@@ -184,8 +184,6 @@ const LEAF_KINDS = [
 	'_kw_declare_marker',
 	'_kw_static_marker',
 	'_kw_using_marker',
-	'_meta_property_arm1',
-	'_meta_property_arm2',
 	'_operator',
 	'_reserved_identifier',
 	'_template_chars',
@@ -390,6 +388,8 @@ export const KEYWORDS = [
 export const OPERATORS = [
 	'_automatic_semicolon',
 	'_function_signature_automatic_semicolon',
+	'_meta_property_arm1',
+	'_meta_property_arm2',
 	'amp',
 	'amp_amp',
 	'amp_amp_eq',

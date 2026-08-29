@@ -33,7 +33,7 @@ import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import { isComplexBody, isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
+import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../dsl/rule-patterns.ts';
 import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -422,17 +422,17 @@ function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
 				: rule;
 		}
 		if (rule.type !== SYMBOL) return rule;
-		const hidden = rule.name.startsWith('_');
+		const hidden = isParserHiddenName(rule.name);
 		const target = raw.rules[rule.name];
 		const boundary =
 			supertypes.has(rule.name) ||
 			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
 		const inline = !boundary && (hidden || inlineNames.has(rule.name));
-		return rule.inline === inline && rule.hidden === hidden ? rule : { ...rule, hidden, inline };
+		return rule.inline === inline ? rule : { ...rule, inline };
 	};
 	const rules: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: name.startsWith('_') };
+		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
 	}
 	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
 }

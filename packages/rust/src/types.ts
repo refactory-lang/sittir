@@ -4024,9 +4024,9 @@ export interface TryExpression {
 
 export interface ReferenceExpression {
 	readonly $type: TSKindId.ReferenceExpression;
-	readonly _content?: ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier;
+	readonly _content?: 'raw const' | ReferenceExpressionRawMut | MutableSpecifier;
 	readonly _value: Expression;
-	content(): ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier | undefined;
+	content(): 'raw const' | ReferenceExpressionRawMut | MutableSpecifier | undefined;
 	value(): Expression;
 }
 
@@ -5324,9 +5324,7 @@ export type FragmentSpecifier = Terminal<
 	| 'ty'
 	| 'vis'
 >;
-export type UnitType = Terminal<TSKindId.UnitType, string>;
 export type MutableSpecifier = Terminal<TSKindId.MutableSpecifier, 'mut'>;
-export type UnitExpression = Terminal<TSKindId.UnitExpression, string>;
 export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
 export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
@@ -5545,7 +5543,6 @@ export type TokenKeywords = Terminal<
 	| 'while'
 >;
 export type StringLiteralOpen = Terminal<TSKindId.StringLiteralOpen, string>;
-export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
@@ -5918,11 +5915,9 @@ export interface VisibilityModifierPubParensTree extends AnyTreeNode {
 	readonly type: '_visibility_modifier_pub_parens';
 }
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
-export interface UnitTypeTree extends TreeNode<'unit_type'> {}
 export interface MutableSpecifierTree extends AnyTreeNode {
 	readonly type: 'mutable_specifier';
 }
-export interface UnitExpressionTree extends TreeNode<'unit_expression'> {}
 export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
 export interface CharLiteralTree extends TreeNode<'char_literal'> {}
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
@@ -5962,9 +5957,6 @@ export interface TokenKeywordsTree extends AnyTreeNode {
 }
 export interface StringLiteralOpenTree extends AnyTreeNode {
 	readonly type: '_string_literal_open';
-}
-export interface ReferenceExpressionRawConstTree extends AnyTreeNode {
-	readonly type: '_reference_expression_raw_const';
 }
 export interface LineCommentRegularDslashTree extends AnyTreeNode {
 	readonly type: '_line_comment_regular_dslash';
@@ -6292,7 +6284,6 @@ export type _Type =
 	| GenericType
 	| ScopedTypeIdentifier
 	| TupleType
-	| UnitType
 	| ArrayType
 	| FunctionType
 	| Identifier
@@ -6310,7 +6301,6 @@ export type _TypeTree =
 	| GenericTypeTree
 	| ScopedTypeIdentifierTree
 	| TupleTypeTree
-	| UnitTypeTree
 	| ArrayTypeTree
 	| FunctionTypeTree
 	| IdentifierTree
@@ -6347,7 +6337,6 @@ export type Expression =
 	| ArrayExpression
 	| TupleExpression
 	| MacroInvocation
-	| UnitExpression
 	| BreakExpression
 	| ContinueExpression
 	| IndexExpression
@@ -6394,7 +6383,6 @@ export type ExpressionTree =
 	| ArrayExpressionTree
 	| TupleExpressionTree
 	| MacroInvocationTree
-	| UnitExpressionTree
 	| BreakExpressionTree
 	| ContinueExpressionTree
 	| IndexExpressionTree
@@ -6497,9 +6485,17 @@ export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
 export interface EmptyStatementTree extends AnyTreeNode {
 	readonly type: 'empty_statement';
 }
+export type UnitType = Terminal<TSKindId.UnitType>;
+export interface UnitTypeTree extends AnyTreeNode {
+	readonly type: 'unit_type';
+}
 export type NeverType = Terminal<TSKindId.NeverType>;
 export interface NeverTypeTree extends AnyTreeNode {
 	readonly type: 'never_type';
+}
+export type UnitExpression = Terminal<TSKindId.UnitExpression>;
+export interface UnitExpressionTree extends AnyTreeNode {
+	readonly type: 'unit_expression';
 }
 export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode {
@@ -6932,9 +6928,7 @@ export interface KindMap {
 	_match_block_arms: MatchBlockArms;
 	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
 	fragment_specifier: FragmentSpecifier;
-	unit_type: UnitType;
 	mutable_specifier: MutableSpecifier;
-	unit_expression: UnitExpression;
 	integer_literal: IntegerLiteral;
 	char_literal: CharLiteral;
 	escape_sequence: EscapeSequence;
@@ -6953,7 +6947,6 @@ export interface KindMap {
 	_token_tree_punctuation: TokenTreePunctuation;
 	_token_keywords: TokenKeywords;
 	_string_literal_open: StringLiteralOpen;
-	_reference_expression_raw_const: ReferenceExpressionRawConst;
 	_line_comment_regular_dslash: LineCommentRegularDslash;
 	_line_comment_content: LineCommentContent;
 	string_content: StringContent;

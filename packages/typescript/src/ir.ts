@@ -469,12 +469,8 @@ const _b$class: typeof FR.coerceToClass & {
 
 const _b$metaProperty: typeof FR.coerceToMetaProperty & {
 	strict: typeof F.buildMetaProperty;
-	arm1: typeof FR.coerceToMetaProperty.arm1;
-	arm2: typeof FR.coerceToMetaProperty.arm2;
 } = attachProps(FR.coerceToMetaProperty, {
-	strict: F.buildMetaProperty,
-	arm1: FR.coerceToMetaProperty.arm1,
-	arm2: FR.coerceToMetaProperty.arm2
+	strict: F.buildMetaProperty
 });
 
 const _b$callExpression: typeof FR.coerceToCallExpression & {

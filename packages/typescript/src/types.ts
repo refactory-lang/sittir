@@ -3760,8 +3760,11 @@ export interface Regex {
 
 export interface MetaProperty {
 	readonly $type: TSKindId.MetaProperty;
-	readonly _content: MetaPropertyArm1 | MetaPropertyArm2;
-	content(): MetaPropertyArm1 | MetaPropertyArm2;
+	readonly _content: number;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'new . target' | 'import . meta', TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2>;
+	};
+	content(): number;
 }
 
 export interface Arguments {
@@ -5442,8 +5445,6 @@ export type PredefinedType = Terminal<
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
-export type MetaPropertyArm1 = Terminal<TSKindId.MetaPropertyArm1, string>;
-export type MetaPropertyArm2 = Terminal<TSKindId.MetaPropertyArm2, string>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
 export type AugmentedAssignmentExpressionOperator = Terminal<
@@ -5843,12 +5844,6 @@ export interface OverrideModifierTree extends AnyTreeNode {
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface TypeIdentifierTree extends AnyTreeNode {
 	readonly type: '_type_identifier';
-}
-export interface MetaPropertyArm1Tree extends AnyTreeNode {
-	readonly type: '_meta_property_arm1';
-}
-export interface MetaPropertyArm2Tree extends AnyTreeNode {
-	readonly type: '_meta_property_arm2';
 }
 export interface KindTree extends AnyTreeNode {
 	readonly type: '_kind';
@@ -6835,8 +6830,6 @@ export interface KindMap {
 	override_modifier: OverrideModifier;
 	predefined_type: PredefinedType;
 	_type_identifier: TypeIdentifier;
-	_meta_property_arm1: MetaPropertyArm1;
-	_meta_property_arm2: MetaPropertyArm2;
 	_kind: Kind;
 	__for_header_operator: ForHeaderOperator;
 	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;

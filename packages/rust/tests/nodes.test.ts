@@ -1247,15 +1247,6 @@ describe('tuple_type', () => {
 	});
 });
 
-describe('unit_type', () => {
-	it('factory produces correct type', () => {
-		const node = ir.unitType('test');
-		expect(node.$type).toBe(TSKindId.UnitType);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
 describe('generic_function', () => {
 	it('factory produces correct type', () => {
 		const node = ir.genericFunction({
@@ -2289,15 +2280,6 @@ describe('tuple_expression namespaced constructors', () => {
 		);
 		expect(node.$type).toBe(TSKindId.TupleExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('unit_expression', () => {
-	it('factory produces correct type', () => {
-		const node = ir.unitExpression('test');
-		expect(node.$type).toBe(TSKindId.UnitExpression);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
 	});
 });
 

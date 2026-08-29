@@ -5066,25 +5066,32 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle) {
 
 export function wrapMetaProperty(
 	data: T.MetaProperty & {
-		readonly _meta_property_arm1?: T.MetaPropertyArm1 | T.MetaPropertyArm2;
-		readonly _meta_property_arm2?: T.MetaPropertyArm1 | T.MetaPropertyArm2;
+		readonly _meta_property_arm1?: 'new . target' | 'import . meta';
+		readonly _meta_property_arm2?: 'new . target' | 'import . meta';
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MetaProperty as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_meta_property_arm1', '_meta_property_arm2']),
 			$type: TSKindId.MetaProperty as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._meta_property_arm1 ?? data._meta_property_arm2,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						data._meta_property_arm1 ??
+						data._meta_property_arm2 ??
+						readTerminalFromOther(data, [TSKindId.MetaPropertyArm1, TSKindId.MetaPropertyArm2]),
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ 'new . target': 366, 'import . meta': 367 }
 			),
 
 			content() {
-				return drillIn<T.MetaPropertyArm1 | T.MetaPropertyArm2>(this._content, tree);
+				return this._content;
 			},
 			$with: {
 				content: (v: NonNullable<T.MetaProperty['_content']>) =>
@@ -12046,8 +12053,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ImportSpecifiers]: (d, t) => wrapImportSpecifiers(d as unknown as T.ImportSpecifiers, t),
 	[TSKindId.VariableDeclaratorArm1]: (d, t) => wrapVariableDeclaratorArm1(d as unknown as T.VariableDeclaratorArm1, t),
 	[TSKindId.VariableDeclaratorArm2]: (d, t) => wrapVariableDeclaratorArm2(d as unknown as T.VariableDeclaratorArm2, t),
-	[TSKindId.MetaPropertyArm1]: (d) => ({ ...d, $type: TSKindId.MetaPropertyArm1 as const }),
-	[TSKindId.MetaPropertyArm2]: (d) => ({ ...d, $type: TSKindId.MetaPropertyArm2 as const }),
 	[TSKindId.FormalParametersElements]: (d, t) =>
 		wrapFormalParametersElements(d as unknown as T.FormalParametersElements, t),
 	[TSKindId.EnumBodyElements]: (d, t) => wrapEnumBodyElements(d as unknown as T.EnumBodyElements, t),
@@ -12328,8 +12333,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.ImportSpecifiers]: ReturnType<typeof wrapImportSpecifiers>;
 	[TSKindId.VariableDeclaratorArm1]: ReturnType<typeof wrapVariableDeclaratorArm1>;
 	[TSKindId.VariableDeclaratorArm2]: ReturnType<typeof wrapVariableDeclaratorArm2>;
-	[TSKindId.MetaPropertyArm1]: _NodeData & { readonly $type: TSKindId.MetaPropertyArm1 };
-	[TSKindId.MetaPropertyArm2]: _NodeData & { readonly $type: TSKindId.MetaPropertyArm2 };
 	[TSKindId.FormalParametersElements]: ReturnType<typeof wrapFormalParametersElements>;
 	[TSKindId.EnumBodyElements]: ReturnType<typeof wrapEnumBodyElements>;
 	[TSKindId.Types]: ReturnType<typeof wrapTypes>;

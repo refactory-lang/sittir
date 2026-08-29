@@ -3617,21 +3617,22 @@ export function buildPrivatePropertyIdentifier(text: string) {
 	);
 }
 
-export type MetaPropertyBuildArgs = [value: T.MetaPropertyArm1 | T.MetaPropertyArm2];
-export type MetaPropertyLooseArgs = [
-	value: LooseValue<T.MetaPropertyArm1 | T.MetaPropertyArm2, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-];
+export type MetaPropertyBuildArgs = [config: T.MetaProperty.Config];
+export type MetaPropertyLooseArgs = [config: T.MetaProperty.Loose];
 
 export type MetaPropertyBuilt = T.MetaProperty & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T.MetaPropertyArm1 | T.MetaPropertyArm2): MetaPropertyBuilt;
+		content(value: NonNullable<Parameters<typeof buildMetaProperty>[0]>['content']): MetaPropertyBuilt;
 	};
 } & _NodeMethods;
 
-function buildMetaProperty$impl(value: T.MetaPropertyArm1 | T.MetaPropertyArm2): MetaPropertyBuilt {
-	const _content = value;
+export function buildMetaProperty(config: T.MetaProperty.Config): MetaPropertyBuilt {
+	const _content = coerceKindEnumStorage<number>(config.content, [
+		['new . target', TSKindId.MetaPropertyArm1] as const,
+		['import . meta', TSKindId.MetaPropertyArm2] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3640,7 +3641,8 @@ function buildMetaProperty$impl(value: T.MetaPropertyArm1 | T.MetaPropertyArm2):
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.MetaPropertyArm1 | T.MetaPropertyArm2) => buildMetaProperty$impl(value)
+					content: (value: NonNullable<Parameters<typeof buildMetaProperty>[0]>['content']) =>
+						buildMetaProperty({ ...config, content: value })
 				}
 			},
 			{
@@ -3650,11 +3652,6 @@ function buildMetaProperty$impl(value: T.MetaPropertyArm1 | T.MetaPropertyArm2):
 		methodsEngine
 	);
 }
-
-export const buildMetaProperty = attachProps(buildMetaProperty$impl, {
-	arm1: (text: string) => buildMetaProperty$impl(buildMetaPropertyArm1(text) as T.MetaPropertyArm1),
-	arm2: (text: string) => buildMetaProperty$impl(buildMetaPropertyArm2(text) as T.MetaPropertyArm2)
-});
 
 export type ThisBuildArgs = [];
 export type ThisLooseArgs = [];
@@ -8717,40 +8714,6 @@ export function buildVariableDeclaratorArm2(config: T.VariableDeclaratorArm2.Con
 	);
 }
 
-export type MetaPropertyArm1BuildArgs = [text: string];
-export type MetaPropertyArm1LooseArgs = [text: string];
-
-export function buildMetaPropertyArm1(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_meta_property_arm1: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.MetaPropertyArm1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export type MetaPropertyArm2BuildArgs = [text: string];
-export type MetaPropertyArm2LooseArgs = [text: string];
-
-export function buildMetaPropertyArm2(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_meta_property_arm2: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.MetaPropertyArm2 as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export type FormalParametersElementsBuildArgs = [...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>];
 export type FormalParametersElementsLooseArgs = [
 	...elements: NonEmptyArray<
@@ -11340,8 +11303,6 @@ export type FluentKindMap = {
 	_import_specifiers: ImportSpecifiersBuilt;
 	_variable_declarator_arm1: VariableDeclaratorArm1Built;
 	_variable_declarator_arm2: VariableDeclaratorArm2Built;
-	_meta_property_arm1: T.MetaPropertyArm1;
-	_meta_property_arm2: T.MetaPropertyArm2;
 	_formal_parameters_elements: FormalParametersElementsBuilt;
 	_enum_body_elements: EnumBodyElementsBuilt;
 	_types: TypesBuilt;
@@ -11581,8 +11542,6 @@ export const _factoryMap = {
 	_import_specifiers: buildImportSpecifiers,
 	_variable_declarator_arm1: buildVariableDeclaratorArm1,
 	_variable_declarator_arm2: buildVariableDeclaratorArm2,
-	_meta_property_arm1: buildMetaPropertyArm1,
-	_meta_property_arm2: buildMetaPropertyArm2,
 	_formal_parameters_elements: buildFormalParametersElements,
 	_enum_body_elements: buildEnumBodyElements,
 	_types: buildTypes,

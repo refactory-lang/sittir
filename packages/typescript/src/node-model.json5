@@ -7106,23 +7106,23 @@
     },
     {
       "kind": "_meta_property_arm1",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "MetaPropertyArm1",
-      "factoryName": "metaPropertyArm1",
       "irKey": "metaPropertyArm1",
-      "hidden": false,
-      "text": "new . target",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"new . target\" as const",
+      "text": "new . target"
     },
     {
       "kind": "_meta_property_arm2",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "MetaPropertyArm2",
-      "factoryName": "metaPropertyArm2",
       "irKey": "metaPropertyArm2",
-      "hidden": false,
-      "text": "import . meta",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"import . meta\" as const",
+      "text": "import . meta"
     },
     {
       "kind": "_number",
@@ -17367,26 +17367,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "arm1",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_meta_property_arm1",
-          "path": []
-        },
-        {
-          "name": "arm2",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_meta_property_arm2",
-          "path": []
-        }
-      ]
+      "factoryShape": "config"
     },
     {
       "kind": "method_definition",

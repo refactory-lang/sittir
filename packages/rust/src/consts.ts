@@ -200,7 +200,6 @@ const LEAF_KINDS = [
 	'_primitive_type',
 	'_raw_string_literal_end',
 	'_raw_string_literal_start',
-	'_reference_expression_raw_const',
 	'_reserved_identifier',
 	'_string_literal_open',
 	'_token_keywords',
@@ -286,8 +285,6 @@ const LEAF_KINDS = [
 	'u64',
 	'u8',
 	'union',
-	'unit_expression',
-	'unit_type',
 	'unsafe',
 	'use',
 	'usize',
@@ -399,6 +396,7 @@ export const OPERATORS = [
 	'_outer_line_doc_comment_marker',
 	'_range_expression_bare',
 	'_range_pattern_left_bare',
+	'_reference_expression_raw_const',
 	'_struct_item_unit',
 	'amp',
 	'amp_amp',
@@ -458,7 +456,9 @@ export const OPERATORS = [
 	'squote',
 	'star',
 	'star_eq',
-	'star_slash'
+	'star_slash',
+	'unit_expression',
+	'unit_type'
 ] as const;
 
 export type NodeKind = (typeof NODE_KINDS)[number];
