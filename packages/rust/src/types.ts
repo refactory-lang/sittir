@@ -159,6 +159,9 @@ export type LeafStringMap = {
 	static: 'static';
 	type: 'type';
 	fn: 'fn';
+	async: 'async';
+	default: 'default';
+	unsafe: 'unsafe';
 	where: 'where';
 	impl: 'impl';
 	trait: 'trait';
@@ -167,7 +170,6 @@ export type LeafStringMap = {
 	else: 'else';
 	use: 'use';
 	dyn: 'dyn';
-	mut: 'mut';
 	return: 'return';
 	yield: 'yield';
 	if: 'if';
@@ -178,8 +180,6 @@ export type LeafStringMap = {
 	break: 'break';
 	continue: 'continue';
 	await: 'await';
-	unsafe: 'unsafe';
-	async: 'async';
 	gen: 'gen';
 	try: 'try';
 	ref: 'ref';
@@ -5988,6 +5988,15 @@ export interface TypeTree extends AnyTreeNode {
 export interface FnTree extends AnyTreeNode {
 	readonly type: 'fn';
 }
+export interface AsyncTree extends AnyTreeNode {
+	readonly type: 'async';
+}
+export interface DefaultTree extends AnyTreeNode {
+	readonly type: 'default';
+}
+export interface UnsafeTree extends AnyTreeNode {
+	readonly type: 'unsafe';
+}
 export interface WhereTree extends AnyTreeNode {
 	readonly type: 'where';
 }
@@ -6011,9 +6020,6 @@ export interface UseTree extends AnyTreeNode {
 }
 export interface DynTree extends AnyTreeNode {
 	readonly type: 'dyn';
-}
-export interface MutTree extends AnyTreeNode {
-	readonly type: 'mut';
 }
 export interface ReturnTree extends AnyTreeNode {
 	readonly type: 'return';
@@ -6044,12 +6050,6 @@ export interface ContinueTree extends AnyTreeNode {
 }
 export interface AwaitTree extends AnyTreeNode {
 	readonly type: 'await';
-}
-export interface UnsafeTree extends AnyTreeNode {
-	readonly type: 'unsafe';
-}
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
 }
 export interface GenTree extends AnyTreeNode {
 	readonly type: 'gen';

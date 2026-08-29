@@ -9034,12 +9034,10 @@ Surface`
 
 ```text
 /**
-	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
-	 * `linkRules` — `emitSymbol`'s hidden-helper fallback (the only
-	 * consumer) used to bridge `linkRules[name]` through a per-call
-	 * `flatten()`; verified byte-identical to reading
-	 * `normalizedRules[name]` directly for every hidden ref the fallback
-	 * actually reaches, across all 3 grammars, so the bridge is gone.
+	 * `normalizedRules` — the wrapper-deleted `RenderRule` view, read directly
+	 * by `emitSymbol`'s hidden-helper fallback (the only consumer). There is
+	 * no separate wrapper-bearing view to bridge through: `normalizedRules`
+	 * is the one post-normalize rule map this emitter ever reads.
 	 */
 ```
 
@@ -11083,9 +11081,9 @@ pipeline — which falls back to string equality.
 ```text
 // Link-time-pinned, carried on `nodeMap.wordMatcher` — NOT recompiled
 // here. See `LinkedGrammar.wordMatcher`'s doc comment (compiler/types.ts)
-// for why a post-link recompile (this used to compile from
-// `config.nodeMap.linkRules`, the wrapper-bearing view) is unsound in
-// general. `?? /\w/` preserves the pre-existing no-word-rule fallback.
+// for why a post-link recompile from `nodeMap.normalizedRules`, the
+// wrapper-deleted view, is unsound in general. `?? /\w/` preserves the
+// pre-existing no-word-rule fallback.
 ```
 
 #### body
@@ -11428,22 +11426,15 @@ pipeline — which falls back to string equality.
 // Transparent wrappers — recurse into content. Variant / group have no
 // template-level surface of their own; the inner rule's emission is
 // what the renderer sees.
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
-// phase-visibility-tightening: TOKEN and ALIAS cases deleted — both
-// collapse to `never` under RenderRule (WrapperPhase-only,
-// types/rule.ts). ALIAS is genuinely eliminated by
-// `flattenRules` (pushes aliasedTo/aliasedToId onto a leaf
-// attribute, returns content). TOKEN is NOT mechanically eliminated —
-// wrapper-deletion's TOKEN case PRESERVES the node (`{...rule,
-// content}`, flatten.ts) — so the TokenRule→never assertion
-// is type-level + EMPIRICAL, not a code guarantee: 0 TOKEN hits
-// walking every AssembledNode.renderRule and every
-// flatten(linkRules[name]) hidden-helper target across all 3
-// grammars. If a top-level token(...) rule ever survives into
-// normalizedRules, the type lies — tracked with the preserve-token-
-// wrappers debt. Post-normalize aliasing is fully represented via the
-// `fieldName`/`aliasedTo` leaf attributes other cases here already
-// read (see `pickConditionalKey`'s `contentFieldName` check).
+// TOKEN and ALIAS have no case: both collapse to `never` under RenderRule
+// (types/rule.ts) because `flattenRules` genuinely eliminates both — a
+// `token()`/`token.immediate()` wrapper is consumed into `tokenized`/
+// `immediate` on its content the same way `alias()` is consumed into
+// `aliasedTo`/`aliasedToId`, so neither wrapper survives as its own node.
+// Post-normalize aliasing and tokenization are both fully represented via
+// leaf attributes (`fieldName`/`aliasedTo`/`tokenized`/`immediate`) other
+// cases here already read (see `pickConditionalKey`'s `contentFieldName`
+// check).
 ```
 
 #### body

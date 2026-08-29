@@ -71,6 +71,15 @@ parents.
 	 * The grammar word-matcher is NOT derived here — it's pinned once at Link
 	 * time (`link.ts`, from `raw.rules`) and carried onto `normalized.wordMatcher`
 	 * unchanged; see `LinkedGrammar.wordMatcher`'s doc comment.
+	 *
+	 * `generatedIdTables` is optional but load-bearing for anonymous-kind
+	 * minting: `assemble()` derives `kindEntries` from it
+	 * (`collectGeneratedKindEntries`), and `collectAnonymousNodes` mints a
+	 * node only when the catalog has an anonymous-symbol entry for a
+	 * literal. Omitting `generatedIdTables` yields an empty `kindEntries`, so
+	 * the resulting `NodeMap` has no anonymous kinds at all — every
+	 * production call site and probe that needs anonymous kinds must pass
+	 * the grammar's generated id tables here.
 	 */
 ```
 
@@ -95,8 +104,7 @@ parents.
 ```text
 // Link-time-pinned, carried — NOT recompiled here. See
 // `LinkedGrammar.wordMatcher`'s doc comment for why a post-link recompile
-// (from `normalized.linkRules`, the wrapper-bearing view this function used
-// to compile from) is unsound in general.
+// from `normalized.rules`, the wrapper-deleted view, is unsound in general.
 ```
 
 #### body
@@ -200,7 +208,7 @@ parents.
 // a genuinely distinct, named CST node at that occurrence
 // (`SupertypeRule.subtypeParseNames`, confirmed against grammar.json
 // — see `resolveHiddenSubtypes`'s doc comment). That aliased name has
-// no entry of its own in `normalized.linkRules` (it's a parse-time
+// no entry of its own in `normalized.normalizedRules` (it's a parse-time
 // label, not a rule sittir's own grammar declares), so the main loop
 // above never assembles it. Give it one here: reuse the nested rule's
 // OWN already-resolved subtypes (identical union either way — the
@@ -395,24 +403,23 @@ parents.
  *
  *   Non-hidden names pass through unchanged.
  *
- *   2026-07-05 (PR-137 follow-on-3): body lookups migrated from
- *   `ctx.linkRules` to `ctx.normalizedRules` (see `AssembleCtx.normalizedRules`
- *   / `resolveHiddenRuleContent`'s doc comments for the attribute-aware
- *   rationale). follow-on-4 (same day) re-examined `normalizedRules` vs
- *   `ctx.rules` and confirmed empirically that `normalizedRules` must stay —
- *   see `AssembleCtx`'s class doc comment for the `_simple_pattern_negative`
- *   finding that settled it. `ctx.topLevelAliasBodies` is UNCHANGED — its
- *   `.has(name)` test is a presence fact ("is this hidden kind an alias-mint
- *   target elsewhere in the grammar") with no rule-attribute equivalent (a
- *   hidden kind's own rule body carries no trace of being aliased-TO by
- *   another rule), so it can't be derived from `normalizedRules[name]`'s
- *   attributes the way the wrapper shapes could. Its VALUES, however, are now
- *   redundant with `normalizedRules[name]` (verified empirically: every
- *   alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
- *   flattenRules(topLevelAliasBodies.get(name))`, since
- *   `normalizeGrammar` already threads alias-target bodies through the same
- *   wrapper-deletion pipeline and merges them into `normalizedRules` under the
- *   identical hidden-kind key) — so the `body` lookup below reads
+ *   Body lookups read `ctx.normalizedRules` (see `resolveHiddenRuleContent`'s
+ *   doc comment for the attribute-aware rationale) — `ctx.rules`
+ *   (`SimplifiedRule`, simplify's own further-canonicalized product) is NOT
+ *   safe here: its independent structural canonicalization, beyond
+ *   wrapper-deletion, can unmask an intentionally opaque SEQ shape into a
+ *   dispatchable one (see `AssembleCtx`'s class doc comment for the
+ *   `_simple_pattern_negative` case this breaks). `ctx.topLevelAliasBodies`
+ *   is a presence fact ("is this hidden kind an alias-mint target elsewhere
+ *   in the grammar") with no rule-attribute equivalent (a hidden kind's own
+ *   rule body carries no trace of being aliased-TO by another rule), so it
+ *   can't be derived from `normalizedRules[name]`'s attributes the way the
+ *   wrapper shapes could. Its VALUES, however, are redundant with
+ *   `normalizedRules[name]` (every alias-body kind across all 3 grammars
+ *   satisfies `normalizedRules[name] === flattenRules(topLevelAliasBodies.get(name))`,
+ *   since `normalizeGrammar` already threads alias-target bodies through the
+ *   same wrapper-deletion pipeline and merges them into `normalizedRules`
+ *   under the identical hidden-kind key) — so the `body` lookup below reads
  *   `rules[name]` uniformly instead of `topLevelAliasBodies.get(name) ??
  *   rules[name]`.
  */
@@ -483,18 +490,18 @@ parents.
 
 ```text
 /**
- * Attribute-aware hidden-body walker (2026-07-05, PR-137 follow-on-3 —
- * migrated OFF `ctx.linkRules` onto `ctx.normalizedRules`; see
- * `AssembleCtx.normalizedRules`'s doc comment). `rule` is a `RenderRule`
- * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
- * exist as `rule.type` values on this view — their meaning is stamped onto
- * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedTo`
+ * Attribute-aware hidden-body walker. `rule` is a `RenderRule`
+ * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias`/`token`
+ * wrappers don't exist as `rule.type` values on this view — their meaning is
+ * stamped onto whatever leaf they used to wrap, as
+ * `multiplicity`/`fieldName`/`aliasedTo`/`tokenized`/`immediate`
  * (`attributeAlias` stamps `aliasedTo`/`aliasedToId` on whatever content the
- * `alias()` wrapper wraps, symbol or otherwise). The link-view switch enforced wrapper opacity by SIMPLY HAVING
- * NO CASE for REPEAT/REPEAT1/OPTIONAL/FIELD (falling to `default: []`); the
- * equivalent here is an explicit attribute check BEFORE the type switch,
- * covering every rule type uniformly (a repeat/optional can wrap ANY rule
- * shape, not just the ones the old switch happened to dispatch):
+ * `alias()` wrapper wraps, symbol or otherwise; `attributeToken` stamps
+ * `tokenized`/`immediate` the same way onto whatever content `token()`
+ * wraps). The switch below enforces wrapper opacity with an explicit
+ * attribute check BEFORE dispatching on `rule.type`, covering every rule
+ * type uniformly (a repeat/optional can wrap ANY rule shape, not just the
+ * ones a type-only switch would dispatch on):
  *
  *   - `multiplicity === 'array' | 'nonEmptyArray'` — was `repeat`/`repeat1`.
  *     LOAD-BEARING: this is the crash fix (regression fixture:
@@ -504,53 +511,42 @@ parents.
  *     through `_delim_tokens`'s supertype chain) collapses post-wrapper-
  *     deletion to a bare `CHOICE(...)` stamped `multiplicity: 'nonEmptyArray'`
  *     — structurally indistinguishable from an unwrapped CHOICE without this
- *     check, so the old switch's CHOICE case would wrongly recurse into the
+ *     check, so a type-only CHOICE case would wrongly recurse into the
  *     punctuation arms and surface `%` as a bogus subtype name (crashing
- *     `emitSupertypeUnionDeclarations`). PR-137 follow-on-4 confirmed this
- *     particular shape actually survives `computeSimplifiedRules` unchanged
- *     too (`simplifyChoiceRule` bails to a no-op `liftSharedArmAttrs` for two
- *     bare STRING branches; `simplifySeqRule`'s anonymous-literal stripping
- *     only fires on SEQ members, never CHOICE members) — but a SIBLING shape
- *     (a SEQ, not a CHOICE, wrapping one anonymous literal + one nonterminal)
- *     does NOT survive unchanged, which is why the family stays on
- *     `normalizedRules` rather than migrating to `ctx.rules` — see the `case
- *     SEQ` branch below and `AssembleCtx`'s class doc comment for that
- *     finding (python's `_simple_pattern_negative`).
- *   - `multiplicity === 'optional'` — was `optional`. The link-view switch had
- *     no OPTIONAL case either (same opacity), so this mirrors it exactly.
+ *     `emitSupertypeUnionDeclarations`). This particular shape survives
+ *     `computeSimplifiedRules` unchanged too (`simplifyChoiceRule` bails to a
+ *     no-op `liftSharedArmAttrs` for two bare STRING branches;
+ *     `simplifySeqRule`'s anonymous-literal stripping only fires on SEQ
+ *     members, never CHOICE members) — but a SIBLING shape (a SEQ, not a
+ *     CHOICE, wrapping one anonymous literal + one nonterminal) does NOT
+ *     survive unchanged, which is why the family stays on `normalizedRules`
+ *     rather than migrating to `ctx.rules` — see the `case SEQ` branch below
+ *     and `AssembleCtx`'s class doc comment for that finding (python's
+ *     `_simple_pattern_negative`).
+ *   - `multiplicity === 'optional'` — was `optional`.
  *   - `fieldName !== undefined` — was `field`. Kept for parity though no
  *     caller in this family is expected to hand a field-wrapped position
  *     (callers only pass hidden-kind top-level bodies and supertype/choice
  *     arms, never seq-internal field slots).
  *
- * `ALIAS` is dropped as a switch case (not translated): unlike `token`,
- * `alias` is fully consumed by `flattenRules` (it never survives as
- * its own node — the wrapper disappears and `aliasedTo`/`aliasedToId` land on
- * its content), so `RenderRule` can never have `type === 'ALIAS'` at runtime,
- * not just by static type (`AliasRule<'normalize'> = never`). The alias form
- * flip means the SYMBOL case needs no dual read for this: `rule.name` is
- * ALREADY the storage kind on every SYMBOL leaf, aliased or not — `aliasedTo`
- * only ever carries the extra display (parse) name, never the identity this
- * walk resolves by. A structural alias content (SEQ/CHOICE/…) carries
- * `aliasedTo` too (`attributeAlias` stamps it uniformly regardless of content
- * shape), but this walk never reads it: `case SEQ` and `default` both return
- * `[]` unconditionally, so an alias wrapping something other than a symbol
- * or literal is opaque here exactly like an unaliased occurrence of the same
- * shape would be.
- *
- * `TOKEN` is dropped as a switch case (matching `emitters/templates.ts`'s
- * `isLeftmostTerminalImmediate` precedent — see its NOTE comment,
- * `project_preserve_token_wrappers`): `flattenRules`'s TOKEN case
- * technically PRESERVES the node (`{...rule, content}`, not deleted like
- * ALIAS), so `RenderRule`'s `never` for TOKEN is a type-level assertion, not a
- * runtime guarantee — but it's backed by the same EMPIRICAL fact that
- * consumer already relies on (0 top-level `token(...)` survivors into
- * `normalizedRules` across all 3 grammars). Adding a defensive case here would
- * require an `as`-cast the gates forbid for a shape that doesn't occur;
- * `default: []` is honest (a hidden supertype/choice chain reaching a
- * TOKEN-wrapped position would be opaque anyway, since opacity is the safe
- * fallback) and matches the recorded preserve-token-wrappers debt rather than
- * papering over it per-callsite.
+ * `ALIAS` and `TOKEN` are both dropped as switch cases (not translated):
+ * both are fully consumed by `flattenRules` — the wrapper disappears and its
+ * meaning lands on the content's own leaf attributes (`aliasedTo`/
+ * `aliasedToId` for alias, `tokenized`/`immediate` for token) — so
+ * `RenderRule` can never have `type === 'ALIAS'` or `type === 'TOKEN'` at
+ * runtime, matching their static `never` type (`AliasRule<'normalize'>`/
+ * `TokenRule<'normalize'> = never`). The alias form flip means the SYMBOL
+ * case needs no dual read for this: `rule.name` is ALREADY the storage kind
+ * on every SYMBOL leaf, aliased or not — `aliasedTo` only ever carries the
+ * extra display (parse) name, never the identity this walk resolves by. A
+ * structural alias content (SEQ/CHOICE/…) carries `aliasedTo` too
+ * (`attributeAlias` stamps it uniformly regardless of content shape), but
+ * this walk never reads it: `case SEQ` and `default` both return `[]`
+ * unconditionally, so an alias wrapping something other than a symbol or
+ * literal is opaque here exactly like an unaliased occurrence of the same
+ * shape would be. A tokenized bare literal is likewise just a STRING/PATTERN
+ * rule carrying `tokenized`/`immediate` — the STRING case already handles it
+ * via its own word-shape check, with no separate case needed.
  */
 ```
 
@@ -828,31 +824,29 @@ parents.
 
 ```text
 /**
- * Recursively collect all string literals from a rule tree into `out`.
+ * Recursively collect all string literals from a `RenderRule` tree into `out`.
  *
- * @param rule - The rule to walk.
+ * @param rule - The `RenderRule` to walk.
  * @param out - Mutable set that receives each string literal value.
  * @remarks
  *   `enum` rules are deliberately **not** descended. Enum values are the `text`
  *   content of the parent kind, not distinct node kinds — the parser produces a
  *   single node (e.g. `primitive_type` with text `"usize"`), never a `usize`
  *   node, so collecting the enum member strings as anonymous token kinds would
- *   be incorrect.
+ *   be incorrect. STRING values and `SYMBOL.literal` both contribute a
+ *   literal; VARIANT/GROUP descend into their `content`. There are no
+ *   OPTIONAL/REPEAT/FIELD/TOKEN cases — on this wrapper-free view, those
+ *   wrappers are leaf attributes on whatever this switch already recurses
+ *   into or collects, not separate node shapes to walk.
  */
 ```
 
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
-```
-
-#### body
-
-```text
-// Do NOT descend into enum-shaped choices. Two forms must be guarded:
-// 1. Pre-link: all members are STRING nodes (isEnumChoiceRule).
-// 2. Post-link: all members are LINK-SYMBOL nodes (canonicalizeRuleLiterals).
+// Do NOT descend into enum-shaped choices — guarded either way a choice can
+// present as an enum: `isEnumChoiceRule`, or every member being a literal
+// SYMBOL (≥2 members, each with `SYMBOL.literal !== undefined`).
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyNode`
@@ -4558,13 +4552,12 @@ parents.
 
 ```text
 // NOTE: we deliberately do NOT delete the folded `_x` entry from the map.
-// `assemble` iterates the RAW `normalized.linkRules` keys and looks up the matching
-// `normalizedRules[kind]` / `rules[kind]` (SimplifiedGrammar's phase product) for
-// EACH — deleting `_x` from normalizedRules only would desync the maps and crash
-// assemble. The folded `_x` survives as a standalone entry (its parents simply no
-// longer reference it); emitters already skip it via `inlineKinds`. Dead-duplicate
-// cleanup of the orphaned `_x` kind + its transport is a separate concern (§D-2b),
-// not here.
+// `assemble` iterates `normalized.normalizedRules` keys and looks up the matching
+// `rules[kind]` (SimplifiedGrammar's phase product) for EACH — deleting `_x` from
+// normalizedRules only would desync the maps and crash assemble. The folded `_x`
+// survives as a standalone entry (its parents simply no longer reference it);
+// emitters already skip it via `inlineKinds`. Dead-duplicate cleanup of the
+// orphaned `_x` kind + its transport is a separate concern, not here.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::spliceFoldableRefs`
@@ -5247,13 +5240,10 @@ parents.
  * bare wrapper-deleted rules map, defaulting every other phase-invariant
  * field to an empty/absent value. For call sites (tests, `makeDefaultCtx`)
  * that only have a rules map in hand — not a full linked-grammar bundle —
- * and need a `SimplifyCtx` (S2: `SimplifyCtx` now requires a full
- * `Grammar<'normalize'>` container, not a bare `rules` field). `linkRules`
- * is left empty: these callers have no distinct mid-normalize link-phase
- * view to carry (only that of a real `normalizeGrammar()` run), and only
+ * and need a `SimplifyCtx` (`SimplifyCtx` requires a full
+ * `Grammar<'normalize'>` container, not a bare `rules` field). Only
  * `simplify`'s own `ctx.rules` read (→ `grammar.rules`) is exercised by
- * `computeSimplifiedRules` — the carried `linkRules` view is consumed
- * downstream by assemble, not by simplify itself.
+ * `computeSimplifiedRules`, so every other field defaults away safely.
  */
 ```
 
@@ -5504,13 +5494,11 @@ parents.
  * must never appear in the input:
  *  - `flattenRules` (which runs before this in the production pipeline)
  *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
- *    attributes and pushes ALIAS down to `aliasedTo`+`aliasedToId` leaf
- *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
- *    (`{...rule, content}`, flatten.ts) — its absence here is a
- *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
- *    empirically (0 surviving top-level token rules across all 3 grammars),
- *    not a mechanism guarantee; see the preserve-token-wrappers debt. All
- *    six still collapse to `never` under `RenderRule` (types/rule.ts).
+ *    attributes, pushes ALIAS down to `aliasedTo`+`aliasedToId`, and pushes
+ *    TOKEN down to `tokenized`+`immediate` — all six wrapper types are fully
+ *    consumed into leaf attributes on their content, never preserved as
+ *    their own node, so all six collapse to `never` under `RenderRule`
+ *    (types/rule.ts).
  *  - Construction sites inside `mergePositionForChoice` / `extractFieldFromBranchesForChoice`
  *    and the empty-match fold in `simplifyChoiceRule` now delegate to
  *    `ctx.builder` (= `attributeBuilder` in production) which pushes attributes
@@ -7229,16 +7217,14 @@ parents.
 	 *
 	 * Every later phase CARRIES this value forward (`NormalizedGrammar` →
 	 * `SimplifiedGrammar` → `NodeMap`) rather than recompiling from its own
-	 * `rules`/`linkRules` view: compiling from a post-normalize view is
+	 * `rules`/`normalizedRules` view: compiling from a post-normalize view is
 	 * unsound in general — normalize's wrapper-deletion collapses
 	 * `REPEAT`/`OPTIONAL` wrappers into leaf `multiplicity` attributes that
 	 * `ruleToRegexSource`'s walker doesn't consult, so a post-link recompile
 	 * can silently undercount the regex (confirmed regression: typescript's
 	 * `identifier` word rule loses its trailing `REPEAT`). Pinning at link
 	 * time — where the wrapper is still a real node — and carrying the single
-	 * compiled result is the fix; see
-	 * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md (PR-137
-	 * follow-on) for the falsifying probe.
+	 * compiled result is the fix.
 	 */
 ```
 
@@ -7276,18 +7262,17 @@ parents.
 ```text
 /**
  * Normalize-phase view of the grammar (`Grammar<'normalize'>`): `rules` IS
- * the wrapper-deleted set (`flattenRules` output + the §D-2a inline
- * hoist), i.e. what the phase PRODUCES — per the 2026-07-04 design decision
- * that "normalize's output rules are the normalized rules" (the map formerly
- * known as `renderRules`). `linkRules` is the carried mid-normalize
- * link-phase view (post-`applyNormalizationPasses`, pre-wrapper-deletion —
- * wrappers intact) that hidden-rule resolution in assemble still needs.
+ * the wrapper-deleted set (`flattenRules` output plus the hidden-seq inline
+ * hoist), i.e. what the phase PRODUCES. There is no separate mid-normalize,
+ * wrapper-bearing view carried alongside it — the intermediate
+ * `applyNormalizationPasses` output is a local inside `normalizeGrammar()`,
+ * consumed immediately by `flattenRules` and never exposed on this
+ * container.
  *
  * Today this view exists as locals inside `normalizeGrammar()` (which runs
  * simplify as its final stage and returns the {@link SimplifiedGrammar}
- * bundle directly); it is reified here so `SimplifyCtx` (S2) can be
- * `BaseCtx<'normalize'>` reading exactly this shape. See
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md.
+ * bundle directly); it is reified here so `SimplifyCtx` can be
+ * `BaseCtx<'normalize'>` reading exactly this shape.
  */
 ```
 
@@ -7297,32 +7282,10 @@ parents.
 /** The normalize-phase rules — wrapper-free, attribute-stamped. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::linkRules`
-
-```text
-/** Carried mid-normalize link-phase view (wrappers intact). */
-```
-
 ### `packages/codegen/src/compiler/types.ts::wordMatcher`
 
 ```text
 /** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
-```
-
-### `packages/codegen/src/compiler/types.ts::linkRules`
-
-```text
-/**
-	 * Carried mid-normalize link-phase view (wrappers intact) — see
-	 * {@link NormalizedGrammar.linkRules}'s doc comment for the pipeline
-	 * provenance. Carried through assemble onto {@link NodeMap.linkRules};
-	 * see THAT field's doc comment for the consumer list — exclusively the
-	 * by-design authoring-shape diagnostic (`emitters/refine-emit.ts` via
-	 * `compiler/link.ts`'s refine-path resolution). `compiler/assemble.ts`'s
-	 * hidden-body/subtype-resolution family reads `normalizedRules` (below);
-	 * this field's sole remaining purpose is feeding `NodeMap.linkRules` for
-	 * that diagnostic — a candidate for a diagnostics-scoped carry.
-	 */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
@@ -7348,9 +7311,8 @@ parents.
 	 * view of every rule, produced by `simplifyRule` as the final pass in
 	 * `normalizeGrammar()`. Downstream consumers (`assemble` →
 	 * `AssembledBranch/Container/Group`) read from this map instead of
-	 * re-simplifying per-node. Raw templates still read `normalizedRules` /
-	 * `linkRules` because they need anonymous delimiters to surface as
-	 * template literals.
+	 * re-simplifying per-node. Raw templates still read `normalizedRules`
+	 * because they need anonymous delimiters to surface as template literals.
 	 */
 ```
 
@@ -7409,8 +7371,8 @@ parents.
  * (2026-07-05: closed the former `SimplifiedGrammar` exception — its phase
  * product field is named `rules` like every other family member now):
  * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` for ALL `P`.
- * `SimplifiedGrammar` additionally carries `normalizedRules` / `linkRules`
- * as extra (non-`rules`) views alongside its `rules` product. See
+ * `SimplifiedGrammar` additionally carries `normalizedRules` as an extra
+ * (non-`rules`) view alongside its `rules` product. See
  * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
  */
 ```
@@ -7466,66 +7428,19 @@ parents.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::linkRules`
-
-```text
-/**
-	 * `SimplifiedGrammar.linkRules` carried through assemble — the
-	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
-	 * output, BEFORE `flattenRules` strips modifier wrappers).
-	 *
-	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers; the PR-137
-	 * follow-on-3 migration (2026-07-05) closed out the LAST render/derivation
-	 * consumer — `compiler/assemble.ts`'s hidden-body/subtype-resolution
-	 * family (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
-	 * `isAliasMemberKind` / `isCompatibleSubtypeMember` /
-	 * `resolveHiddenRuleContent`) now reads `AssembleCtx.normalizedRules`
-	 * instead, with the former "no REPEAT1 case = opaque" switch behavior
-	 * translated into explicit `multiplicity`/`fieldName`/`aliasedTo`
-	 * attribute checks run BEFORE the type switch (see
-	 * `resolveHiddenRuleContent`'s doc comment in assemble.ts for the full
-	 * translation table and the regression fixture this closes — rust's
-	 * `_delim_tokens` supertype chain resolving `%` as a bogus subtype and
-	 * crashing `emitSupertypeUnionDeclarations`). `AssembleCtx.linkRules` (the
-	 * getter this family used to read) is DELETED — zero assemble consumers
-	 * remain. The PR-137 follow-on-4 investigation (same day) tried migrating
-	 * this family from `AssembleCtx.normalizedRules` to `AssembleCtx.rules`
-	 * (`SimplifiedGrammar`'s own phase product — the map `assemble()`'s input
-	 * container is actually named for, so `normalizedRules` wasn't obviously
-	 * justified over it) and found it EMPIRICALLY UNSAFE: python's
-	 * `_simple_pattern` supertype loses its `_simple_pattern_negative` subtype
-	 * entry under `rules` (simplify's SEQ-collapse unmasks an intentionally
-	 * opaque SEQ shape into a dispatchable CHOICE, discarding the variant-
-	 * adopted kind's own name) — see `AssembleCtx`'s class doc comment for the
-	 * full root-cause. The family stays on `normalizedRules`; the getter is
-	 * NOT deleted. `topLevelAliasBodies` stays a distinct field (its presence
-	 * test — "is this hidden kind an alias-mint target" — has no rule-
-	 * attribute equivalent; its VALUES are redundant with `normalizedRules[name]`
-	 * and no longer read directly).
-	 *
-	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
-	 * no longer compiles from `linkRules` (or any post-link view) at all —
-	 * it's pinned once at Link time from `raw.rules` and carried on
-	 * `wordMatcher` (below) instead. Refine path resolution left too: link
-	 * stamps `LinkedRefineForm.narrowedFields` before this view is built.
-	 * The edge-class / left-immediate walks read `normalizedRules`. The one
-	 * remaining reader is `compiler/assemble.ts`'s `collectAnonymousNodes`,
-	 * slated to become catalog-driven.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::normalizedRules`
 
 ```text
 /**
 	 * `SimplifiedGrammar.normalizedRules` carried through assemble — the
 	 * wrapper-deleted `RenderRule` view (modifier wrappers pushed down to
-	 * leaf attributes). PR-137: added so `emitters/templates.ts`'s
-	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) can
-	 * read the honest post-normalize view directly instead of bridging
-	 * through `flatten(linkRules[name])` per call — verified
-	 * byte-identical to the former bridge for every hidden ref the
-	 * fallback actually reaches, across all 3 grammars.
+	 * leaf attributes). Read by `compiler/assemble.ts`'s hidden-body/
+	 * subtype-resolution family (`resolveHiddenSubtypes` /
+	 * `resolveHiddenRuleContent` and peers) and by `emitters/templates.ts`'s
+	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) — the
+	 * only wrapper-free, attribute-stamped view assemble and the emitters
+	 * ever read; there is no separate mid-normalize wrapper-bearing view to
+	 * fall back to.
 	 */
 ```
 
@@ -10700,7 +10615,14 @@ source, one derivation.
 
 ```text
 // ---------------------------------------------------------------------------
-// collectAnonymousNodes — extract string literals from rules as token/keyword entries
+// collectAnonymousNodes — mint anonymous-symbol token/keyword nodes for the
+// string literals occurring in `rules` (`Record<string, RenderRule>`, the
+// normalize view). Minting is catalog-driven: a literal is only ever minted
+// when the parser's generated-id catalog knows it as an anonymous symbol
+// (`findEntryForLiteralText` → an entry with `anon === true`), keyed by that
+// catalog entry's kind name. A literal the catalog has no anonymous entry
+// for is NOT minted; the occurrence-collecting walk over `rules` is a filter
+// only, never itself a source of new kinds.
 // ---------------------------------------------------------------------------
 ```
 
@@ -10717,9 +10639,12 @@ source, one derivation.
 // A token whose whole body is one literal lexes as that literal's own
 // anonymous symbol (`token.immediate('"')` IS the `"` node); a
 // composite token body (`token(seq('/', '/', '/'))`) is one symbol whose
-// parts are never CST nodes. So a bare-literal token contributes its
-// literal like a top-level STRING/PATTERN rule does, and any other
-// compound all-text rule is skipped.
+// parts are never CST nodes. There is no TOKEN wrapper on this view — by
+// the time `rules` reaches here, `token()`/`token.immediate()` have been
+// consumed into `tokenized`/`immediate` attributes on the literal's own
+// STRING/PATTERN rule (see `resolveHiddenRuleContent`'s doc comment). So a
+// bare-literal token contributes its literal like a top-level STRING/PATTERN
+// rule does, and any other compound all-text rule is skipped.
 ```
 
 ```text
@@ -10729,13 +10654,15 @@ source, one derivation.
 #### body
 
 ```text
-// Resolve through the catalog FIRST (anon-token-first chain — the same
-// resolution AssembledKeyword/AssembledToken's own constructor uses to
-// stamp resolvedKind/resolvedKindId) so the minted node is keyed by the
-// catalog row's kind name, not the literal's raw text. Tree-sitter often
-// sanitizes or dedupes anonymous literals under a different name
-// (`,` → `comma`, `mut` → `mutable_specifier`) — keying by raw text mints
-// a phantom name with no id row even though the token already has one.
+// Resolve through the catalog — the same resolution AssembledKeyword/
+// AssembledToken's own constructor uses to stamp resolvedKind/resolvedKindId
+// — so the minted node is keyed by the catalog row's kind name, not the
+// literal's raw text: tree-sitter often sanitizes or dedupes anonymous
+// literals under a different name (`,` → `comma`) — keying by raw text mints
+// a phantom name with no id row even though the token already has one. This
+// is the ONLY path to minting: a literal with no anonymous catalog entry is
+// never minted (see the `kindid-unstamped-anon-literal` warning below)
+// rather than falling back to raw-text keying.
 ```
 
 ```text
@@ -10745,10 +10672,15 @@ source, one derivation.
 #### body
 
 ```text
-// No catalog row for this literal — fall back to raw-text keying and
-// surface it in the same grammar-diagnostics.json stream the link-time
-// kindid-unstamped-* report uses, so this fallback is visible and
-// ratcheted rather than silently minting a phantom.
+// No anonymous-symbol catalog row for this literal — record the
+// kindid-unstamped-anon-literal warning and do NOT mint it. This is the
+// literal's own body as a NAMED rule (e.g. python's `True`/`False`/`None`/
+// `...`, rust's `mut`) or a literal outside the reachable rules — in both
+// cases the kind already exists (or will) under its own name, never under
+// this raw literal text, so minting here would create an unaddressable
+// phantom. A literal that instead resolves to a named (non-anonymous)
+// catalog entry is skipped silently just above — its kind already exists as
+// a named node, so no warning is needed.
 ```
 
 #### body
@@ -10951,11 +10883,12 @@ source, one derivation.
 #### body
 
 ```text
-// S2: build the honest Grammar<'normalize'> view SimplifyCtx reads (§2 —
-// SimplifyCtx = BaseCtx<'normalize'>). `rules` (mid-normalize, wrapper-intact
-// link view) becomes NormalizedGrammar.linkRules; `normalizedRules`
-// (wrapper-deleted) is NormalizedGrammar.rules — the phase's own product.
-// Phase-invariant fields carry straight from `linked`.
+// Build the Grammar<'normalize'> view SimplifyCtx reads (SimplifyCtx =
+// BaseCtx<'normalize'>). `rules` (mid-normalize, wrapper-intact link view) is
+// a local consumed immediately by flattenRules; `normalizedRules`
+// (wrapper-deleted) is NormalizedGrammar.rules — the phase's own product, the
+// only rule view this container carries. Phase-invariant fields carry
+// straight from `linked`.
 ```
 
 #### body

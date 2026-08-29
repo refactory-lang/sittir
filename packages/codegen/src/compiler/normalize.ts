@@ -268,7 +268,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	const normalizedGrammarView: NormalizedGrammar = {
 		name: linked.name,
 		rules: normalizedRules,
-		linkRules: rules,
 		supertypes: linked.supertypes,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
@@ -304,8 +303,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		const aliasBodiesRender = flattenRules(aliasBodiesNormalized);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
-			rules: aliasBodiesRender,
-			linkRules: aliasBodiesNormalized
+			rules: aliasBodiesRender
 		};
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({
@@ -328,7 +326,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	return {
 		name: linked.name,
-		linkRules: rules,
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,

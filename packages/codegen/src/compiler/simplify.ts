@@ -53,7 +53,6 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 	return {
 		name: '',
 		rules,
-		linkRules: {},
 		supertypes: new Set(),
 		word: null,
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }

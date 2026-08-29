@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "rust",
     "ownerKind": "mut",
-    "message": "[assemble] anonymous literal \"mut\" resolved no parser kindId — keyed by raw text 'mut'",
+    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "mut"

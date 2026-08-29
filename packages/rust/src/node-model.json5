@@ -11004,6 +11004,17 @@
       ]
     },
     {
+      "kind": "default",
+      "modelType": "keyword",
+      "typeName": "Default",
+      "irKey": "default",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"default\" as const",
+      "text": "default",
+      "factoryShape": "text"
+    },
+    {
       "kind": "delim_token_tree",
       "modelType": "branch",
       "typeName": "DelimTokenTree",
@@ -15627,17 +15638,6 @@
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
       "text": "move",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "mut",
-      "modelType": "keyword",
-      "typeName": "Mut",
-      "irKey": "mut",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"mut\" as const",
-      "text": "mut",
       "factoryShape": "text"
     },
     {

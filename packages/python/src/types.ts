@@ -77,13 +77,8 @@ export type LeafStringMap = {
 	class: 'class';
 	_: '_';
 	not: 'not';
-	and: 'and';
-	or: 'or';
 	anon_lambda: 'lambda';
 	anon_yield: 'yield';
-	True: 'True';
-	False: 'False';
-	None: 'None';
 	anon_await: 'await';
 	async: 'async';
 	print: 'print';
@@ -153,7 +148,7 @@ export const enum TSKindId {
 	Is = 61,
 	AnonLambda = 62,
 	AnonYield = 63,
-	Ellipsis2 = 64,
+	Ellipsis = 64,
 	EscapeSequence = 65,
 	Bslash = 66,
 	FormatSpecifierToken1 = 67,
@@ -1167,7 +1162,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'anon_yield':
 			return TSKindId.AnonYield;
 		case 'ellipsis':
-			return TSKindId.Ellipsis2;
+			return TSKindId.Ellipsis;
 		case 'escape_sequence':
 			return TSKindId.EscapeSequence;
 		case 'bslash':
@@ -1952,7 +1947,7 @@ export const enum PrimaryExpressionKind {
 	Tuple = 'tuple',
 	ParenthesizedExpression = 'parenthesized_expression',
 	GeneratorExpression = 'generator_expression',
-	Ellipsis2 = 'ellipsis',
+	Ellipsis = 'ellipsis',
 	ListSplatPattern = 'list_splat_pattern'
 }
 
@@ -3872,26 +3867,11 @@ export interface ClassTree extends AnyTreeNode {
 export interface NotTree extends AnyTreeNode {
 	readonly type: 'not';
 }
-export interface AndTree extends AnyTreeNode {
-	readonly type: 'and';
-}
-export interface OrTree extends AnyTreeNode {
-	readonly type: 'or';
-}
 export interface AnonLambdaTree extends AnyTreeNode {
 	readonly type: 'anon_lambda';
 }
 export interface AnonYieldTree extends AnyTreeNode {
 	readonly type: 'anon_yield';
-}
-export interface True2Tree extends AnyTreeNode {
-	readonly type: 'True';
-}
-export interface False2Tree extends AnyTreeNode {
-	readonly type: 'False';
-}
-export interface None2Tree extends AnyTreeNode {
-	readonly type: 'None';
 }
 export interface AnonAwaitTree extends AnyTreeNode {
 	readonly type: 'anon_await';
@@ -4070,8 +4050,8 @@ export type WildcardImport = Terminal<TSKindId.WildcardImport>;
 export interface WildcardImportTree extends AnyTreeNode {
 	readonly type: 'wildcard_import';
 }
-export type Ellipsis2 = Terminal<TSKindId.Ellipsis2>;
-export interface Ellipsis2Tree extends AnyTreeNode {
+export type Ellipsis = Terminal<TSKindId.Ellipsis>;
+export interface EllipsisTree extends AnyTreeNode {
 	readonly type: 'ellipsis';
 }
 export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator>;

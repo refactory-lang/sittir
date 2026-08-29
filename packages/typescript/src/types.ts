@@ -98,6 +98,7 @@ export type LeafStringMap = {
 	_operator: '++' | '--';
 	as: 'as';
 	anon_import: 'import';
+	anon_type: 'type';
 	var: 'var';
 	else: 'else';
 	if: 'if';
@@ -135,7 +136,6 @@ export type LeafStringMap = {
 	namespace: 'namespace';
 	interface: 'interface';
 	enum: 'enum';
-	anon_type: 'type';
 	override: 'override';
 	anon_asserts: 'asserts';
 	infer: 'infer';
@@ -5870,6 +5870,9 @@ export interface AsTree extends AnyTreeNode {
 export interface AnonImportTree extends AnyTreeNode {
 	readonly type: 'anon_import';
 }
+export interface AnonTypeTree extends AnyTreeNode {
+	readonly type: 'anon_type';
+}
 export interface VarTree extends AnyTreeNode {
 	readonly type: 'var';
 }
@@ -5980,9 +5983,6 @@ export interface InterfaceTree extends AnyTreeNode {
 }
 export interface EnumTree extends AnyTreeNode {
 	readonly type: 'enum';
-}
-export interface AnonTypeTree extends AnyTreeNode {
-	readonly type: 'anon_type';
 }
 export interface OverrideTree extends AnyTreeNode {
 	readonly type: 'override';

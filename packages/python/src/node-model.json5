@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 252,
+  "nodeCount": 240,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -2052,49 +2052,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "...",
-      "modelType": "token",
-      "typeName": "Ellipsis",
-      "irKey": "ellipsis",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"...\" as const",
-      "text": "..."
-    },
-    {
-      "kind": "False",
-      "modelType": "keyword",
-      "typeName": "False2",
-      "irKey": "false",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"False\" as const",
-      "text": "False",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "None",
-      "modelType": "keyword",
-      "typeName": "None2",
-      "irKey": "none",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"None\" as const",
-      "text": "None",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "True",
-      "modelType": "keyword",
-      "typeName": "True2",
-      "irKey": "true",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"True\" as const",
-      "text": "True",
-      "factoryShape": "text"
-    },
-    {
       "kind": "]",
       "modelType": "pattern",
       "typeName": "CloseBracket",
@@ -4009,27 +3966,6 @@
       ]
     },
     {
-      "kind": "amp",
-      "modelType": "token",
-      "typeName": "Amp",
-      "irKey": "amp",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&\" as const",
-      "text": "&"
-    },
-    {
-      "kind": "and",
-      "modelType": "keyword",
-      "typeName": "And",
-      "irKey": "and",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"and\" as const",
-      "text": "and",
-      "factoryShape": "text"
-    },
-    {
       "kind": "anon_await",
       "modelType": "keyword",
       "typeName": "AnonAwait",
@@ -5121,16 +5057,6 @@
         "function",
         "arguments"
       ]
-    },
-    {
-      "kind": "caret",
-      "modelType": "token",
-      "typeName": "Caret",
-      "irKey": "caret",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"^\" as const",
-      "text": "^"
     },
     {
       "kind": "case",
@@ -7143,7 +7069,7 @@
     {
       "kind": "ellipsis",
       "modelType": "token",
-      "typeName": "Ellipsis2",
+      "typeName": "Ellipsis",
       "irKey": "ellipsis",
       "hidden": true,
       "isParameterless": true,
@@ -9714,16 +9640,6 @@
       "text": "("
     },
     {
-      "kind": "lt_lt",
-      "modelType": "token",
-      "typeName": "LtLt",
-      "irKey": "ltLt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<<\" as const",
-      "text": "<<"
-    },
-    {
       "kind": "match",
       "modelType": "keyword",
       "typeName": "Match",
@@ -10075,17 +9991,6 @@
       "factoryFields": [
         "argument"
       ]
-    },
-    {
-      "kind": "or",
-      "modelType": "keyword",
-      "typeName": "Or",
-      "irKey": "or",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"or\" as const",
-      "text": "or",
-      "factoryShape": "text"
     },
     {
       "kind": "pair",
@@ -10463,16 +10368,6 @@
       ]
     },
     {
-      "kind": "percent",
-      "modelType": "token",
-      "typeName": "Percent",
-      "irKey": "percent",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"%\" as const",
-      "text": "%"
-    },
-    {
       "kind": "pipe",
       "modelType": "token",
       "typeName": "Pipe",
@@ -10481,16 +10376,6 @@
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
       "text": "|"
-    },
-    {
-      "kind": "plus",
-      "modelType": "token",
-      "typeName": "Plus",
-      "irKey": "plus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
-      "text": "+"
     },
     {
       "kind": "positional_separator",
@@ -11065,16 +10950,6 @@
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/"
-    },
-    {
-      "kind": "slash_slash",
-      "modelType": "token",
-      "typeName": "SlashSlash",
-      "irKey": "slashSlash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"//\" as const",
-      "text": "//"
     },
     {
       "kind": "slice",

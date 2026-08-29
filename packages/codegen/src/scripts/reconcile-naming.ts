@@ -8,6 +8,7 @@ import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../compiler/assemble.ts';
+import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { allStructuralSlotsOf, projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 
 const requireFromHere = createRequire(import.meta.url);
@@ -103,7 +104,7 @@ function resolveEntryPath(grammar: Grammar, repoRoot: string): string {
 async function probeGrammar(grammar: Grammar, repoRoot: string): Promise<Divergence[]> {
 	const raw = await evaluate(resolveEntryPath(grammar, repoRoot));
 	const normalized = normalizeGrammar(link(raw, undefined));
-	const nodeMap = assemble(AssembleCtx.from(normalized));
+	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(grammar)));
 	const divergences: Divergence[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const slot of allStructuralSlotsOf(node)) {

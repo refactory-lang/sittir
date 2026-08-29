@@ -69,7 +69,6 @@ function makeNormalized(
 	}
 	return {
 		name: 'test',
-		linkRules: rules,
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: new Set(),
@@ -1001,7 +1000,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(nodeMap.nodes.has(',')).toBe(false);
 	});
 
-	it('falls back to raw-text keying and records a diagnosable warning when no catalog row resolves', () => {
+	it('does not mint a literal with no anonymous parser symbol and records a diagnosable warning', () => {
 		const normalized = makeNormalized({
 			root: {
 				type: SEQ,
@@ -1014,7 +1013,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 		const generatedIdTables = makeIdTables({ unrelated: anonEntry(9, '@@') });
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
-		expect(nodeMap.nodes.has('::=')).toBe(true);
+		expect(nodeMap.nodes.has('::=')).toBe(false);
 		expect(nodeMap.assembleWarnings.some((w) => w.code === 'kindid-unstamped-anon-literal')).toBe(true);
 	});
 

@@ -268,7 +268,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 		}
 
-		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
+		collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
 		stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -323,7 +323,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			terminalAliasWireIds: normalized.terminalAliasWireIds,
 			signatures: computeSignatures(nodes),
 			derivations: normalized.derivations,
-			linkRules: normalized.linkRules,
 			normalizedRules: normalized.normalizedRules,
 			word: normalized.word,
 			wordMatcher: normalized.wordMatcher,
@@ -848,73 +847,63 @@ function shortenIrKey(kind: string): string {
 }
 
 function collectAnonymousNodes(
-	rules: Record<string, Rule<'link'>>,
+	rules: Record<string, RenderRule>,
 	nodes: Map<string, AssembledNode>,
 	wordMatcher: RegExp | undefined,
 	kindEntries: readonly GeneratedKindEntry[]
 ): void {
-	const seen = new Map<string, string>();
-
+	const seen = new Set<string>();
 	for (const rule of Object.values(rules)) {
-		const body =
-			rule.type === TOKEN && (rule.content.type === STRING || rule.content.type === PATTERN) ? rule.content : rule;
-		if (body.type !== STRING && body.type !== PATTERN && isAllTextShape(body)) continue;
-		walkForStrings(body, seen);
+		if (rule.type !== STRING && rule.type !== PATTERN && isAllTextShape(rule)) continue;
+		walkForStrings(rule, seen);
 	}
 
-	for (const [kindName, literalText] of seen) {
+	for (const literalText of seen) {
 		if (literalText === '' || /^\s+$/.test(literalText)) continue;
-
 		const catalogEntry = findEntryForLiteralText(kindEntries, literalText);
-		const resolvedKind = catalogEntry?.kind ?? kindName;
-		if (nodes.has(resolvedKind)) continue;
-
-		if (catalogEntry === undefined) {
-			recordAssembleWarning({
-				code: 'kindid-unstamped-anon-literal',
-				message: `[assemble] anonymous literal ${JSON.stringify(literalText)} resolved no parser kindId — keyed by raw text '${kindName}'`,
-				ownerKind: kindName,
-				details: { literalText }
-			});
+		if (catalogEntry === undefined || catalogEntry.anon !== true) {
+			if (catalogEntry === undefined) {
+				recordAssembleWarning({
+					code: 'kindid-unstamped-anon-literal',
+					message: `[assemble] literal ${JSON.stringify(literalText)} has no anonymous parser symbol — not minted`,
+					ownerKind: literalText,
+					details: { literalText }
+				});
+			}
+			continue;
 		}
+		if (nodes.has(catalogEntry.kind)) continue;
 
-		const isWordShape = matchesWordShape(literalText, wordMatcher);
 		const syntheticStringRule: StringRule = { type: STRING, value: literalText };
-
-		if (isWordShape) {
-			nodes.set(resolvedKind, new AssembledKeyword(resolvedKind, syntheticStringRule, { hidden: true, kindEntries }));
+		if (matchesWordShape(literalText, wordMatcher)) {
+			nodes.set(
+				catalogEntry.kind,
+				new AssembledKeyword(catalogEntry.kind, syntheticStringRule, { hidden: true, kindEntries })
+			);
 		} else {
-			nodes.set(resolvedKind, new AssembledToken(resolvedKind, syntheticStringRule, { kindEntries }));
+			nodes.set(catalogEntry.kind, new AssembledToken(catalogEntry.kind, syntheticStringRule, { kindEntries }));
 		}
 	}
 }
 
-function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
+function walkForStrings(rule: RenderRule, out: Set<string>): void {
 	switch (rule.type) {
 		case STRING:
-			out.set(rule.value, rule.value);
+			out.add(rule.value);
 			break;
 		case SYMBOL:
-			if (isLinkSymbol(rule) && rule.literal !== undefined) {
-				out.set(rule.name, rule.literal);
-			}
+			if (rule.literal !== undefined) out.add(rule.literal);
 			break;
 		case SEQ:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case CHOICE:
+		case CHOICE: {
+			const members = rule.members;
 			if (isEnumChoiceRule(rule)) break;
-			if (rule.members.length >= 2 && rule.members.every((m) => isLinkSymbol(m) && m.literal !== undefined)) break;
-			for (const m of rule.members) walkForStrings(m, out);
+			if (members.length >= 2 && members.every((m) => m.type === SYMBOL && m.literal !== undefined)) break;
+			for (const m of members) walkForStrings(m, out);
 			break;
-		case OPTIONAL:
-			walkForStrings(rule.content, out);
-			break;
-		case REPEAT:
-			walkForStrings(rule.content, out);
-			break;
-		case FIELD:
-		case TOKEN:
+		}
 		case VARIANT:
 		case GROUP:
 			walkForStrings(rule.content, out);

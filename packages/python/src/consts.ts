@@ -143,9 +143,6 @@ const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 const LEAF_KINDS = [
 	')',
-	'False',
-	'None',
-	'True',
 	']',
 	'_',
 	'__future__',
@@ -156,7 +153,6 @@ const LEAF_KINDS = [
 	'_string_content',
 	'_unary_operator_operator',
 	'_wildcard_pattern',
-	'and',
 	'anon_await',
 	'anon_lambda',
 	'anon_type',
@@ -196,7 +192,6 @@ const LEAF_KINDS = [
 	'none',
 	'nonlocal',
 	'not',
-	'or',
 	'pass',
 	'pass_statement',
 	'print',
@@ -217,14 +212,10 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
-	'False',
-	'None',
-	'True',
 	'_',
 	'__future__',
 	'_kw_async_marker',
 	'_wildcard_pattern',
-	'and',
 	'anon_await',
 	'anon_lambda',
 	'anon_type',
@@ -255,7 +246,6 @@ export const KEYWORDS = [
 	'none',
 	'nonlocal',
 	'not',
-	'or',
 	'pass',
 	'pass_statement',
 	'print',
@@ -269,13 +259,10 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-	'...',
 	'_newline',
 	'_not_escape_sequence',
-	'amp',
 	'at',
 	'bslash',
-	'caret',
 	'colon',
 	'colon_eq',
 	'comma',
@@ -289,16 +276,12 @@ export const OPERATORS = [
 	'lbrace',
 	'lbrack',
 	'lparen',
-	'lt_lt',
-	'percent',
 	'pipe',
-	'plus',
 	'positional_separator',
 	'rbrace',
 	'rbrack',
 	'rparen',
 	'slash',
-	'slash_slash',
 	'star',
 	'star_star',
 	'wildcard_import'

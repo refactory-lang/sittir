@@ -32,7 +32,6 @@ export function makeNodeMapWith(
 			promotedRules: [],
 			repeatedShapes: []
 		},
-		linkRules: {},
 		externals: new Set(),
 		word: undefined,
 		polymorphFormKinds,
