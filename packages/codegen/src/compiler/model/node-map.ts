@@ -42,6 +42,7 @@ import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
+import { collectFixedLiteral } from '../simplify.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import {
@@ -1593,57 +1594,6 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	get fixedLiteralText(): string | undefined {
 		if (this.rule.type === PATTERN) return undefined;
 		return collectFixedLiteral(this.rule);
-	}
-}
-
-interface FixedLiteralCtx {
-	joiner: string;
-	deterministic: boolean;
-}
-
-function collectFixedLiteral(
-	rule: RenderRule,
-	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
-): string | undefined {
-	if (rule.nonterminal || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') return undefined;
-	if (rule.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
-	const ctx = rule.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
-	switch (rule.type) {
-		case STRING:
-			return rule.value || undefined;
-		case CHOICE: {
-			if (rule.members.length === 0) return undefined;
-			let found: string | undefined;
-			for (const m of rule.members) {
-				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
-				if (isBlank) {
-					if (ctx.deterministic) return undefined;
-					continue;
-				}
-				const v = collectFixedLiteral(m, ctx);
-				if (v === undefined) return undefined;
-				if (found === undefined) found = v;
-				else if (found !== v) return undefined;
-			}
-			return found;
-		}
-		case SEQ: {
-			if (rule.members.length === 0) return undefined;
-			const nonBlanks = rule.members.filter(
-				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
-			);
-			const [only] = nonBlanks;
-			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
-			const parts: string[] = [];
-			for (const m of nonBlanks) {
-				const v = collectFixedLiteral(m, { ...ctx, deterministic: true });
-				if (v === undefined) return undefined;
-				parts.push(v);
-			}
-			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
-		}
-		default:
-			return undefined;
 	}
 }
 
