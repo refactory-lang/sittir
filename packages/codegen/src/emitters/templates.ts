@@ -270,7 +270,7 @@ function renderRuleEdge(
 			if (ctx.nodeMap.nodes.has(rule.name)) {
 				return edgeClassesOfKind(rule.name, {
 					nodes: ctx.nodeMap.nodes,
-					linkRules: ctx.nodeMap.linkRules,
+					normalizedRules: ctx.nodeMap.normalizedRules,
 					isWordChar: ctx.isWordChar
 				})[side];
 			}
@@ -562,7 +562,7 @@ function staticListInterior(
 		verdict = blocked ? 'runtime-derivable' : 'runtime-varying';
 		detail = `sep=${JSON.stringify(sep)}`;
 	} else {
-		const edgeCtx = { nodes: ctx.nodeMap.nodes, linkRules: ctx.nodeMap.linkRules, isWordChar: ctx.isWordChar };
+		const edgeCtx = { nodes: ctx.nodeMap.nodes, normalizedRules: ctx.nodeMap.normalizedRules, isWordChar: ctx.isWordChar };
 		const ends = new Set<string>();
 		const starts = new Set<string>();
 		let known = true;

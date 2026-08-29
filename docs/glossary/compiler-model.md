@@ -3149,11 +3149,12 @@ can't be unified.
  * terminal of the kind's rule forbids preceding whitespace
  * (`token.immediate`), making every reference to the kind seam-free on its
  * left in every context — the structural counterpart of
- * `AssembledLeaf.immediate`. Walks the link-phase rule leftmost-first: a
- * pushed `immediate` attr anywhere on the leftmost path decides true; a
- * CHOICE requires every arm; a nullable leftmost item (OPTIONAL/REPEAT)
- * decides false because the true left edge then varies per instance; an
- * unresolvable reference decides false. A conservative false never costs
+ * `AssembledLeaf.immediate`. Walks the normalized (render-view) rule
+ * leftmost-first: an `immediate` attribute anywhere on the leftmost path
+ * decides true; a CHOICE requires every arm; a nullable leftmost item
+ * (optional/array multiplicity) decides false because the true left edge
+ * then varies per instance; an unresolvable reference decides false. A
+ * conservative false never costs
  * correctness — only a runtime seam check that static resolution could
  * have skipped.
  */
@@ -3174,8 +3175,8 @@ can't be unified.
 #### body
 
 ```text
-// OPTIONAL/REPEAT (nullable left edge), unstamped terminals, and
-// compound forms with no single leftmost path.
+// Unstamped terminals and compound forms with no single leftmost
+// path (nullable multiplicity already decided false above).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::SeamEdgeClass`
@@ -3191,6 +3192,16 @@ can't be unified.
  *  when every instance's edge character has that class under the grammar's
  *  `wordMatcher`, `varies` when the class differs per instance or cannot be
  *  established (nullable edges, unparsed pattern tails, unresolved refs). */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isNullableMultiplicity`
+
+```text
+/** A rule whose flattened multiplicity is `optional` or `array` may render
+ *  nothing, so it has no fixed edge: the edge walkers treat it the way the
+ *  wrapper phases treated an OPTIONAL/REPEAT node — no left-immediacy, edge
+ *  class `varies`, no edge char set (except as a nullable SEQ member, which
+ *  contributes and falls through). */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
@@ -3234,8 +3245,9 @@ can't be unified.
  * Edge character classes of a kind's rendered text. Leaves answer from
  * their own literal text (keyword), literal value set (enum), or pattern
  * source (leading atom only — a pattern's trailing class is `varies` in
- * this cut); structural kinds walk their link-phase rule to the leftmost/
- * rightmost terminal, with nullable edges and cycles deciding `varies`.
+ * this cut); structural kinds walk their normalized (render-view) rule to
+ * the leftmost/rightmost terminal, with nullable edges (optional/array
+ * multiplicity) and cycles deciding `varies`.
  * `varies` never causes a wrong static decision — only a boundary left to
  * the runtime writer.
  */
@@ -3252,8 +3264,8 @@ can't be unified.
 #### body
 
 ```text
-// OPTIONAL/REPEAT (nullable edge) and forms with no single
-// terminal on this side.
+// Forms with no single terminal on this side (nullable
+// multiplicity already decided `varies` above).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindEdgeCharSets`
@@ -3270,9 +3282,9 @@ can't be unified.
 #### body
 
 ```text
-// A nullable edge member (OPTIONAL/REPEAT) contributes its
-// content's edge chars AND falls through to the next member
-// inward — both are possible edges depending on presence.
+// A nullable edge member (optional/array multiplicity) contributes
+// its own edge chars AND falls through to the next member inward —
+// both are possible edges depending on presence.
 ```
 
 #### body
@@ -3291,8 +3303,8 @@ can't be unified.
 #### body
 
 ```text
-// PATTERN (not enumerable), OPTIONAL/REPEAT (nullable edge), and
-// forms with no single terminal on this side.
+// PATTERN (not enumerable) and forms with no single terminal on
+// this side (nullable multiplicity already decided undefined above).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFlags`

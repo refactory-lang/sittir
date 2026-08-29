@@ -7508,10 +7508,9 @@ parents.
 	 * it's pinned once at Link time from `raw.rules` and carried on
 	 * `wordMatcher` (below) instead. Refine path resolution left too: link
 	 * stamps `LinkedRefineForm.narrowedFields` before this view is built.
-	 * The remaining readers are `compiler/assemble.ts`'s
-	 * `collectAnonymousNodes` and the template emitter's edge-class /
-	 * left-immediate walks (`compiler/model/node-map.ts`'s `EdgeClassCtx`,
-	 * `LeftImmediateCtx`), both slated to move onto `normalizedRules`.
+	 * The edge-class / left-immediate walks read `normalizedRules`. The one
+	 * remaining reader is `compiler/assemble.ts`'s `collectAnonymousNodes`,
+	 * slated to become catalog-driven.
 	 */
 ```
 

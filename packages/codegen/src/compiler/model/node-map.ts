@@ -2054,25 +2054,29 @@ export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNon
 
 export interface LeftImmediateCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
-	readonly linkRules?: Record<string, Rule<'link'>>;
+	readonly normalizedRules?: Record<string, RenderRule>;
 }
+
+const isNullableMultiplicity = (rule: RenderRule): boolean =>
+	rule.multiplicity === 'optional' || rule.multiplicity === 'array';
 
 export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
 	const node = ctx.nodes.get(kind);
 	if (node instanceof AssembledLeaf) return node.immediate;
-	const rules = ctx.linkRules;
+	const rules = ctx.normalizedRules;
 	if (!rules) return false;
 	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
 }
 
 interface LeftmostWalkCtx {
-	readonly rules: Record<string, Rule<'link'>>;
+	readonly rules: Record<string, RenderRule>;
 	readonly visiting: Set<string>;
 }
 
-function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: LeftmostWalkCtx): boolean {
+function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
 	if (!rule) return false;
-	if (rule.type === TOKEN && rule.immediate) return true;
+	if (isNullableMultiplicity(rule)) return false;
+	if (rule.immediate === true) return true;
 	switch (rule.type) {
 		case 'SEQ':
 			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
@@ -2081,11 +2085,7 @@ function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: Leftmost
 				rule.members.length > 0 &&
 				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
-		case 'REPEAT1':
-		case 'FIELD':
 		case 'VARIANT':
-		case 'ALIAS':
-		case 'TOKEN':
 			return leftmostTerminalImmediate(rule.content, ctx);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;
@@ -2106,7 +2106,7 @@ export interface KindEdgeClasses {
 
 export interface EdgeClassCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
-	readonly linkRules?: Record<string, Rule<'link'>>;
+	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly isWordChar: (c: string) => boolean;
 }
 
@@ -2203,7 +2203,7 @@ export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClas
 		if (pattern !== undefined) return { starts: patternLeadingEdgeClass(pattern, ctx), ends: 'varies' };
 		return { starts: 'varies', ends: 'varies' };
 	}
-	const rule = ctx.linkRules?.[kind];
+	const rule = ctx.normalizedRules?.[kind];
 	return {
 		starts: ruleEdgeClass(rule, 'starts', ctx, new Set([kind])),
 		ends: ruleEdgeClass(rule, 'ends', ctx, new Set([kind]))
@@ -2211,12 +2211,13 @@ export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClas
 }
 
 function ruleEdgeClass(
-	rule: Rule<'link'> | undefined,
+	rule: RenderRule | undefined,
 	side: 'starts' | 'ends',
 	ctx: EdgeClassCtx,
 	visiting: Set<string>
 ): SeamEdgeClass {
 	if (!rule) return 'varies';
+	if (isNullableMultiplicity(rule)) return 'varies';
 	switch (rule.type) {
 		case 'STRING': {
 			const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
@@ -2230,11 +2231,7 @@ function ruleEdgeClass(
 		}
 		case 'CHOICE':
 			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, new Set(visiting))));
-		case 'REPEAT1':
-		case 'FIELD':
 		case 'VARIANT':
-		case 'ALIAS':
-		case 'TOKEN':
 			return ruleEdgeClass(rule.content, side, ctx, visiting);
 		case 'SYMBOL': {
 			if (visiting.has(rule.name)) return 'varies';
@@ -2243,7 +2240,7 @@ function ruleEdgeClass(
 			if (node instanceof AssembledLeaf) {
 				return edgeClassesOfKind(rule.name, ctx)[side];
 			}
-			return ruleEdgeClass(ctx.linkRules?.[rule.name], side, ctx, visiting);
+			return ruleEdgeClass(ctx.normalizedRules?.[rule.name], side, ctx, visiting);
 		}
 		default:
 			return 'varies';
@@ -2277,7 +2274,7 @@ export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCha
 		}
 		return {};
 	}
-	const rule = ctx.linkRules?.[kind];
+	const rule = ctx.normalizedRules?.[kind];
 	return {
 		starts: ruleEdgeCharSet(rule, 'starts', ctx, new Set([kind])),
 		ends: ruleEdgeCharSet(rule, 'ends', ctx, new Set([kind]))
@@ -2285,12 +2282,14 @@ export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCha
 }
 
 function ruleEdgeCharSet(
-	rule: Rule<'link'> | undefined,
+	rule: RenderRule | undefined,
 	side: 'starts' | 'ends',
 	ctx: EdgeClassCtx,
-	visiting: Set<string>
+	visiting: Set<string>,
+	nullableMember = false
 ): ReadonlySet<string> | undefined {
 	if (!rule) return undefined;
+	if (!nullableMember && isNullableMultiplicity(rule)) return undefined;
 	switch (rule.type) {
 		case 'STRING': {
 			const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
@@ -2300,13 +2299,8 @@ function ruleEdgeCharSet(
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			const union = new Set<string>();
 			for (const m of members) {
-				const nullable = m.type === 'OPTIONAL' || m.type === 'REPEAT';
-				const s = ruleEdgeCharSet(
-					nullable ? (m as { content: Rule<'link'> }).content : m,
-					side,
-					ctx,
-					new Set(visiting)
-				);
+				const nullable = isNullableMultiplicity(m);
+				const s = ruleEdgeCharSet(m, side, ctx, new Set(visiting), nullable);
 				if (s === undefined) return undefined;
 				for (const c of s) union.add(c);
 				if (!nullable) return union;
@@ -2322,11 +2316,7 @@ function ruleEdgeCharSet(
 			}
 			return union.size > 0 ? union : undefined;
 		}
-		case 'REPEAT1':
-		case 'FIELD':
 		case 'VARIANT':
-		case 'ALIAS':
-		case 'TOKEN':
 			return ruleEdgeCharSet(rule.content, side, ctx, visiting);
 		case 'SYMBOL': {
 			if (visiting.has(rule.name)) return undefined;
@@ -2335,7 +2325,7 @@ function ruleEdgeCharSet(
 			if (node instanceof AssembledLeaf) {
 				return edgeCharSetsOfKind(rule.name, ctx)[side];
 			}
-			return ruleEdgeCharSet(ctx.linkRules?.[rule.name], side, ctx, visiting);
+			return ruleEdgeCharSet(ctx.normalizedRules?.[rule.name], side, ctx, visiting);
 		}
 		default:
 			return undefined;
