@@ -1460,10 +1460,8 @@ export function pruneDeterminedSlots(nodeMap: { nodes: ReadonlyMap<string, Assem
 	}
 }
 
-export class AssembledBranch extends AssembledNodeBase<RenderRule> {
-	readonly modelType = 'branch' as const;
+export abstract class AssembledCompound extends AssembledNodeBase<RenderRule> {
 	readonly simplifiedRule: SimplifiedRule;
-	readonly variantChildKinds: readonly string[];
 
 	slotClass?: BranchSlotClass;
 
@@ -1477,7 +1475,7 @@ export class AssembledBranch extends AssembledNodeBase<RenderRule> {
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
-			variantChildKinds?: readonly string[];
+			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
 			parseKindCollisionContext?: ParseKindCollisionContext;
 			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
@@ -1487,18 +1485,15 @@ export class AssembledBranch extends AssembledNodeBase<RenderRule> {
 	) {
 		super(kind, renderRule, opts);
 		this.simplifiedRule = simplifiedRule;
-		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots =
 			opts?.slotRecord ??
-			buildSlotsRecord(
-				simplifiedRule,
-				{
-					kindName: kind,
-					kindEntries: opts?.kindEntries,
-					collision: opts?.parseKindCollisionContext,
-					visibleAliasTargets: opts?.visibleAliasTargets,
-					simplifiedRules: opts?.simplifiedRules
-				});
+			buildSlotsRecord(simplifiedRule, {
+				kindName: kind,
+				kindEntries: opts?.kindEntries,
+				collision: opts?.parseKindCollisionContext,
+				visibleAliasTargets: opts?.visibleAliasTargets,
+				simplifiedRules: opts?.simplifiedRules
+			});
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -1565,6 +1560,30 @@ export class AssembledBranch extends AssembledNodeBase<RenderRule> {
 
 	get fields(): readonly AssembledNonterminal[] {
 		return Object.values(this.slots);
+	}
+}
+
+export class AssembledBranch extends AssembledCompound {
+	readonly modelType = 'branch' as const;
+	readonly variantChildKinds: readonly string[];
+
+	constructor(
+		kind: string,
+		simplifiedRule: SimplifiedRule,
+		renderRule: RenderRule,
+		opts?: {
+			factoryName?: string;
+			irKey?: string;
+			variantChildKinds?: readonly string[];
+			kindEntries?: readonly GeneratedKindEntry[];
+			parseKindCollisionContext?: ParseKindCollisionContext;
+			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
+			visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+			simplifiedRules?: Record<string, SimplifiedRule>;
+		}
+	) {
+		super(kind, simplifiedRule, renderRule, opts);
+		this.variantChildKinds = opts?.variantChildKinds ?? [];
 	}
 }
 
@@ -1846,39 +1865,12 @@ export class AssembledMulti extends AssembledList<RenderRule> {
 	}
 }
 
-export class AssembledGroup extends AssembledNodeBase<RenderRule> {
+export class AssembledGroup extends AssembledCompound {
 	readonly modelType = 'group' as const;
-	readonly simplifiedRule: SimplifiedRule;
 	readonly detectToken?: string;
 	readonly name: string;
 	readonly parentKind?: string;
 	readonly overridePassthrough?: boolean;
-
-	slotClass?: BranchSlotClass;
-
-	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
-	#determinedSlots: AssembledNonterminal[] = [];
-
-	get slots(): Readonly<Record<string, AssembledNonterminal>> {
-		return this._slots;
-	}
-
-	get determinedSlots(): readonly AssembledNonterminal[] {
-		return this.#determinedSlots;
-	}
-
-	pruneDeterminedSlots(nodes: ReadonlyMap<string, AssembledNode>): void {
-		const kept: Record<string, AssembledNonterminal> = {};
-		for (const [name, slot] of Object.entries(this._slots)) {
-			if (isDeterminedSlot(slot, { nodes })) {
-				slot.determined = true;
-				this.#determinedSlots.push(slot);
-			} else {
-				kept[name] = slot;
-			}
-		}
-		if (this.#determinedSlots.length > 0) this._slots = kept;
-	}
 
 	constructor(
 		kind: string,
@@ -1896,48 +1888,16 @@ export class AssembledGroup extends AssembledNodeBase<RenderRule> {
 		}
 	) {
 		const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, renderRule, { factoryName, irKey: opts?.irKey });
-		this.simplifiedRule = simplifiedRule;
+		super(kind, simplifiedRule, renderRule, {
+			factoryName,
+			irKey: opts?.irKey,
+			kindEntries: opts?.kindEntries,
+			parseKindCollisionContext: opts?.parseKindCollisionContext
+		});
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
 		this.overridePassthrough = opts?.overridePassthrough;
-		this._slots = buildSlotsRecord(
-			simplifiedRule,
-			{ kindName: kind, kindEntries: opts?.kindEntries, collision: opts?.parseKindCollisionContext });
-	}
-
-	get renderRule(): RenderRule {
-		return this.rule;
-	}
-
-	#computing = false;
-
-	#nodes: ReadonlyMap<string, AssembledNodeBase> | undefined = undefined;
-
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase>): void {
-		this.#nodes = nodes;
-	}
-
-	override get parameterless(): boolean {
-		if (this.#computing) return false;
-		this.#computing = true;
-		try {
-			return this.#computeParameterless();
-		} finally {
-			this.#computing = false;
-		}
-	}
-
-	#computeParameterless(): boolean {
-		if (!this.rawFactoryName) return false;
-		const pending = Object.values(this._slots).filter((s) => isDeterminedSlot(s, { nodes: this.#nodes }));
-		if (this.determinedSlots.length + pending.length === 0) return false;
-		return Object.values(this._slots).every((s) => !isRequired(s) || isDeterminedSlot(s, { nodes: this.#nodes }));
-	}
-
-	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots);
 	}
 }
 
