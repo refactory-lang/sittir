@@ -219,10 +219,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Nonterminal-driven collection: one slot per `nonterminal` node, choice =
-// one union slot, seq distributes. Same-name slots that appear in multiple
-// positions (e.g. python `if_statement`'s `alternative` in both a repeat and
-// an optional) are folded into one AssembledNonterminal by
+// Nonterminal-driven collection (collect-slots.ts's collectSlots /
+// resolveMember): one slot per `nonterminal` node; a non-structural choice
+// is one union slot, a structural choice distributes into its arms instead,
+// and a seq distributes into its members. Same-name slots that appear in
+// multiple positions (e.g. python `if_statement`'s `alternative` in both a
+// repeat and an optional) are folded into one AssembledNonterminal by
 // `mergeSlotsByName`.
 ```
 
@@ -308,7 +310,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Single-walk slot derivation over the simplified rule — returns every slot
  * on a kind in declared rule order. The simplified tree is the one view that
  * answers "what is a slot": wrappers are already attributes, literals beside
- * slots are already stripped, so the walk is one nonterminal → one slot.
+ * slots are already stripped, so most of the walk is one nonterminal → one
+ * slot; a structural choice or a list-less nested seq is resolved by
+ * `collect-slots.ts`'s recursion exceptions instead of that direct mapping.
  */
 ```
 

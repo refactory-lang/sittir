@@ -413,11 +413,39 @@ export function collectSlots(
 	inherited: Multiplicity = 'single',
 	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined
 ): AssembledNonterminal[] {
+	if (rule.type === SEQ) {
+		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
+		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
+		return rule.members.flatMap((m) => resolveMember(m, kindForName, kindEntries, seqMult, seqSep));
+	}
+	return resolveMember(rule, kindForName, kindEntries, inherited, inheritedSeparator);
+}
+
+function recordUnclassifiableShape(kindForName: string | undefined, member: SimplifiedRule, bucket: string): void {
+	recordAssembleWarning({
+		code: 'unclassifiable-shape',
+		ownerKind: kindForName,
+		message:
+			`[collect-slots] kind '${kindForName ?? '(unknown)'}': member ${member.id ?? '(no id)'} is not a leaf or a ` +
+			`choice of leaves (${bucket}: ${describeArmShape(member)}) — resolved by structural recursion`,
+		details: { bucket, shape: describeArmShape(member), ruleId: member.id }
+	});
+}
+
+function resolveMember(
+	rule: SimplifiedRule,
+	kindForName: string | undefined,
+	kindEntries: readonly GeneratedKindEntry[] | undefined,
+	inherited: Multiplicity,
+	inheritedSeparator: RuleBase<'normalize'>['separator']
+): AssembledNonterminal[] {
 	switch (rule.type) {
 		case SEQ: {
-			const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
-			const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, seqMult, seqSep));
+			const isList =
+				(rule as { multiplicity?: Multiplicity }).multiplicity !== undefined ||
+				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator !== undefined;
+			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq');
+			return collectSlots(rule, kindForName, kindEntries, inherited, inheritedSeparator);
 		}
 
 		case VARIANT:
@@ -435,6 +463,9 @@ export function collectSlots(
 				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 				const partition = partitionChoiceArms(rule);
+				if (partition.structuredArms.length > 0 || partition.structuredNamedArms.length > 0) {
+					recordUnclassifiableShape(kindForName, rule, 'choice-with-structured-arms');
+				}
 				if (partition.unionArms.length > 0) {
 					const ruleId = (rule as { id?: string }).id;
 					const site = `choice ${ruleId ?? '(no id)'}`;

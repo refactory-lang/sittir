@@ -1463,7 +1463,13 @@ parents.
 
 ```text
 /**
- * Walk a wrapper-free RenderRule and collect one slot per nonterminal node.
+ * Body entry for slot derivation. A body is a seq of members or a single
+ * member: a `SEQ` body resolves each member one level down via
+ * `resolveMember`, passing the seq's own multiplicity/separator as the
+ * inherited context for its members; any other body is resolved as one
+ * member via `resolveMember`. No tree walk lives here — recursion is
+ * `resolveMember`'s exception path (a list-less nested seq, or a
+ * structural choice).
  *
  * @param rule        wrapper-free rule (post `flattenRules`)
  * @param kindForName owning branch kind name (for unnamed-choice warnings)
@@ -1487,6 +1493,53 @@ parents.
 // mandatory member of an optional unit mis-derives as a required
 // single (e.g. index_signature's `readonly` marker inside its
 // optional modifier group).
+```
+
+### `packages/codegen/src/compiler/collect-slots.ts::recordUnclassifiableShape`
+
+```text
+/**
+ * Records the `unclassifiable-shape` assemble warning for a member
+ * `resolveMember` could not resolve as a leaf slot or a choice of leaves:
+ * code, owner kind, the member's rule id, the bucket (`nested-seq` or
+ * `choice-with-structured-arms`), and the shape via `describeArmShape`.
+ * Deduped by `recordAssembleWarning`. The count of these warnings across a
+ * grammar is a ratchet — it may only fall, never rise.
+ */
+```
+
+### `packages/codegen/src/compiler/collect-slots.ts::resolveMember`
+
+```text
+/**
+ * Per-member resolution, one level down. A leaf slot node (`SYMBOL` /
+ * `SUPERTYPE`, or anything `isSlotNode`) becomes one slot via `buildSlot`; a
+ * `CHOICE` with no field name that is not structural (`isStructuralChoice`
+ * false) is a choice of leaves — one union-valued slot via `buildSlot` (its
+ * members' own ids belong to that slot); a fielded `CHOICE` likewise
+ * resolves to one slot via `buildSlot`. `VARIANT` / `GROUP` are
+ * transparent — they resolve their `content`, threading their own
+ * multiplicity/separator down as the inherited context.
+ *
+ * Two shapes resist that one-level classification and are the recursion
+ * exceptions, each recorded via `recordUnclassifiableShape`: a nested `SEQ`
+ * member that is not itself a list (no multiplicity/separator of its own),
+ * resolved by recursing into `collectSlots`; and a structural `CHOICE`
+ * whose arm partition has structured arms (`structuredArms` or
+ * `structuredNamedArms`), resolved by the choice-arm partition /
+ * union-routing path below (distribute into arms and merge by name).
+ */
+```
+
+#### body
+
+```text
+// A nested seq is not itself a list-slot unless it carries its own
+// multiplicity or separator (a real repeated/separated group). Without
+// one, its members aren't distinguishable from the owning seq's own
+// members by shape alone — record the shape as unclassifiable and resolve
+// it by recursing into collectSlots, which distributes it exactly like
+// the outer seq.
 ```
 
 #### body
@@ -8151,16 +8204,25 @@ source, one derivation.
  *
  *   **A slot IS a `nonterminal`-flagged node.**
  *
- * Walk a wrapper-free RenderRule; emit one `AssembledNonterminal` per
- * `nonterminal` node:
- *  - `symbol` / `supertype` / `choice` / `pattern` / `enum` (intrinsic
- *    nonterminals, Table 1) or any node carrying a pushed-down
- *    `nonterminal: true` (Table 2) → ONE slot. A choice is a single UNION
- *    slot — its arms are NOT recursed into separate slots.
- *  - `seq` → distribute: flat-collect the slots of its members. The seq
- *    itself emits no slot.
- *  - `variant` / `clause` / `group` → transparent: recurse into content.
+ * `collectSlots` is the body entry: a `seq` distributes into its members
+ * one level down, anything else is a single member. `resolveMember`
+ * classifies that member one level down, with no tree walk as its main
+ * path:
+ *  - `symbol` / `supertype` / `pattern` / `enum` (intrinsic nonterminals,
+ *    Table 1) or any node carrying a pushed-down `nonterminal: true`
+ *    (Table 2), or a non-structural `choice` → ONE slot via `buildSlot`. A
+ *    choice of leaves is a single UNION slot — its arms are not recursed
+ *    into separate slots.
+ *  - `variant` / `group` → transparent: resolve their content.
  *  - non-nonterminal leaf (terminal `string` / `token('lit')` / indent / …) → [].
+ *
+ * Two shapes resist that one-level classification and are the recursion
+ * exceptions (each recorded as an `unclassifiable-shape` diagnostic — a
+ * ratchet, never rising): a nested `seq` with no multiplicity/separator of
+ * its own recurses via `collectSlots`, distributing exactly like the outer
+ * seq; a structural `choice` (arms carrying distinct fields or ambient
+ * structure) recurses via the choice-arm partition / union-routing path,
+ * merging same-named slots across arms.
  *
  * Removed vs the old walker: `effectiveMultiplicity` threading,
  * `deriveSlotsRawFromLeafAttr` folding, `armSlots` / `mergeChoiceArmSlots`,
