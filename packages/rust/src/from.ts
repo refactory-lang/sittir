@@ -3002,7 +3002,7 @@ export function resolveConstParameter_type(value: T.ConstParameter.LooseConfig['
 }
 
 export function resolveConstParameter_value(value: T.ConstParameter.LooseConfig['value']): T.ConstParameter['_value'] {
-	return _resolveOne<T.Block | T.Identifier | T.Literal | T.NegativeLiteral>(value, _K23, _K24);
+	return _resolveOne<T.Block | T.Identifier | T._Literal | T.NegativeLiteral>(value, _K23, _K24);
 }
 
 export function coerceToConstParameter(input: T.ConstParameter.Loose): ReturnType<typeof F.buildConstParameter> {
@@ -3686,7 +3686,7 @@ export function coerceToTypeArguments(
 		| T._Type
 		| T.TypeBinding
 		| T.Lifetime
-		| T.Literal
+		| T._Literal
 		| T.Block
 		| T.TypeArguments.Loose
 ): ReturnType<typeof F.buildTypeArguments> {
@@ -4445,7 +4445,7 @@ export function resolveCallExpression_function(
 		| T.CallExpression
 		| T.ReturnExpression
 		| T.YieldExpression
-		| T.Literal
+		| T._Literal
 		| T.Identifier
 		| T.Self
 		| T.ScopedIdentifier

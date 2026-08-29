@@ -2203,7 +2203,7 @@ export type ConstParameterBuilt = T.ConstParameter & {
 	readonly $with: {
 		name(value: T.Identifier): ConstParameterBuilt;
 		type(value: T._Type): ConstParameterBuilt;
-		value(value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral): ConstParameterBuilt;
+		value(value?: T.Block | T.Identifier | T._Literal | T.NegativeLiteral): ConstParameterBuilt;
 	};
 } & _NodeMethods;
 
@@ -2223,7 +2223,7 @@ export function buildConstParameter(config: T.ConstParameter.Config): ConstParam
 				$with: {
 					name: (value: T.Identifier) => buildConstParameter({ ...config, name: value }),
 					type: (value: T._Type) => buildConstParameter({ ...config, type: value }),
-					value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) =>
+					value: (value?: T.Block | T.Identifier | T._Literal | T.NegativeLiteral) =>
 						buildConstParameter({ ...config, value: value })
 				}
 			},
@@ -3471,7 +3471,7 @@ export function buildTypeArguments(value: T.TypeArgumentsElements): ReturnType<t
 export function buildTypeArguments(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
-		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)
+		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block)
 	)[]
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
@@ -4550,7 +4550,7 @@ export type CallExpressionBuilt = T.CallExpression & {
 				| T.CallExpression
 				| T.ReturnExpression
 				| T.YieldExpression
-				| T.Literal
+				| T._Literal
 				| T.Identifier
 				| T.Self
 				| T.ScopedIdentifier
@@ -4608,7 +4608,7 @@ export function buildCallExpression(config: T.CallExpression.Config): CallExpres
 							| T.CallExpression
 							| T.ReturnExpression
 							| T.YieldExpression
-							| T.Literal
+							| T._Literal
 							| T.Identifier
 							| T.Self
 							| T.ScopedIdentifier
@@ -7946,12 +7946,12 @@ function _buildUseBoundsElements(
 }
 
 export type TypeArgumentsElementsBuildArgs = [
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ];
 export type TypeArgumentsElementsLooseArgs = [
 	...elements: NonEmptyArray<
 		LooseValue<
-			T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
+			T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -7965,23 +7965,23 @@ export type TypeArgumentsElementsBuilt = T.TypeArgumentsElements & {
 	readonly _delimiter: Delimiter;
 	readonly $with: {
 		elements(
-			...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+			...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 		): TypeArgumentsElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): TypeArgumentsElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildTypeArgumentsElements(
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
-		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)
+		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block)
 	)[]
 ) {
 	const _optsFirst =
@@ -7992,12 +7992,12 @@ export function buildTypeArgumentsElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block
+		T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block
 	>;
 	return _buildTypeArgumentsElements(elements, options);
 }
 function _buildTypeArgumentsElements(
-	elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>,
+	elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>,
 	options: { delimiter?: Delimiter.Trailing }
 ): TypeArgumentsElementsBuilt {
 	_assertNonEmpty(elements, '_type_arguments_elements.elements');
@@ -8020,7 +8020,7 @@ function _buildTypeArgumentsElements(
 				_delimiter,
 				$with: {
 					elements: (
-						...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+						...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 					) => buildTypeArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -10997,7 +10997,7 @@ export type TypeArgumentBuilt = T.TypeArgument & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block): TypeArgumentBuilt;
+		content(value: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block): TypeArgumentBuilt;
 		traitBounds(value?: T.TraitBounds): TypeArgumentBuilt;
 	};
 } & _NodeMethods;
@@ -11014,7 +11014,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): TypeArgumentBu
 				_content,
 				_trait_bounds,
 				$with: {
-					content: (value: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block) =>
+					content: (value: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block) =>
 						buildTypeArgument({ ...config, content: value }),
 					traitBounds: (value?: T.TraitBounds) => buildTypeArgument({ ...config, traitBounds: value })
 				}

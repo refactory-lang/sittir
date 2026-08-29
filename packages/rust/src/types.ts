@@ -149,6 +149,21 @@ export type LeafStringMap = {
 	_wildcard_pattern: '_';
 	_impl_item_unsafe_marker: 'unsafe';
 	_pointer_type_const: 'const';
+	anon_block: 'block';
+	expr: 'expr';
+	expr_2021: 'expr_2021';
+	ident: 'ident';
+	item: 'item';
+	anon_lifetime: 'lifetime';
+	literal: 'literal';
+	meta: 'meta';
+	pat: 'pat';
+	pat_param: 'pat_param';
+	path: 'path';
+	stmt: 'stmt';
+	tt: 'tt';
+	ty: 'ty';
+	vis: 'vis';
 	mod: 'mod';
 	struct: 'struct';
 	union: 'union';
@@ -183,10 +198,29 @@ export type LeafStringMap = {
 	gen: 'gen';
 	try: 'try';
 	ref: 'ref';
+	true: 'true';
+	false: 'false';
+	u8: 'u8';
+	i8: 'i8';
+	u16: 'u16';
+	i16: 'i16';
+	u32: 'u32';
+	i32: 'i32';
+	u64: 'u64';
+	i64: 'i64';
+	u128: 'u128';
+	i128: 'i128';
+	isize: 'isize';
+	usize: 'usize';
+	f32: 'f32';
+	f64: 'f64';
+	bool: 'bool';
+	str: 'str';
+	char: 'char';
 	move: 'move';
 	_: '_';
-	raw: 'raw';
 	pub: 'pub';
+	raw: 'raw';
 };
 
 export const enum TSKindId {
@@ -498,7 +532,7 @@ export const enum TSKindId {
 	CapturedPattern = 306,
 	ReferencePattern = 307,
 	OrPattern = 308,
-	Literal_309 = 309,
+	_Literal = 309,
 	LiteralPattern = 310,
 	NegativeLiteral = 311,
 	StringLiteral = 312,
@@ -2143,7 +2177,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'or_pattern':
 			return TSKindId.OrPattern;
 		case '_literal':
-			return TSKindId.Literal_309;
+			return TSKindId._Literal;
 		case '_literal_pattern':
 			return TSKindId.LiteralPattern;
 		case 'negative_literal':
@@ -2746,7 +2780,7 @@ export const enum DeclarationStatementKind {
 }
 
 export const enum NonSpecialTokenKind {
-	Literal = '_literal',
+	_Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2794,7 +2828,7 @@ export const enum ExpressionKind {
 	CallExpression = 'call_expression',
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
-	Literal = '_literal',
+	_Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2860,7 +2894,7 @@ export const enum PatternKind {
 	WildcardPattern = '_wildcard_pattern'
 }
 
-export const enum LiteralKind {
+export const enum _LiteralKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3494,10 +3528,10 @@ export interface ConstParameter {
 	readonly $type: TSKindId.ConstParameter;
 	readonly _name: Identifier;
 	readonly _type: _Type;
-	readonly _value?: Block | Identifier | Literal | NegativeLiteral;
+	readonly _value?: Block | Identifier | _Literal | NegativeLiteral;
 	name(): Identifier;
 	type(): _Type;
-	value(): Block | Identifier | Literal | NegativeLiteral | undefined;
+	value(): Block | Identifier | _Literal | NegativeLiteral | undefined;
 }
 
 export interface TypeParameter {
@@ -4095,7 +4129,7 @@ export interface CallExpression {
 		| CallExpression
 		| ReturnExpression
 		| YieldExpression
-		| Literal
+		| _Literal
 		| Identifier
 		| Self
 		| ScopedIdentifier
@@ -4139,7 +4173,7 @@ export interface CallExpression {
 		| CallExpression
 		| ReturnExpression
 		| YieldExpression
-		| Literal
+		| _Literal
 		| Identifier
 		| Self
 		| ScopedIdentifier
@@ -5226,12 +5260,12 @@ export interface AttributedOrderedField {
 
 export interface TypeArgument {
 	readonly $type: TSKindId.TypeArgument;
-	readonly _content: _Type | TypeBinding | Lifetime | Literal | Block;
+	readonly _content: _Type | TypeBinding | Lifetime | _Literal | Block;
 	readonly _trait_bounds?: TraitBounds;
 	readonly __looseHints__?: {
 		readonly trait_bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
 	};
-	content(): _Type | TypeBinding | Lifetime | Literal | Block;
+	content(): _Type | TypeBinding | Lifetime | _Literal | Block;
 	traitBounds(): TraitBounds | undefined;
 }
 
@@ -5958,6 +5992,51 @@ export interface LineDocContentTree extends AnyTreeNode {
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
 }
+export interface AnonBlockTree extends AnyTreeNode {
+	readonly type: 'anon_block';
+}
+export interface ExprTree extends AnyTreeNode {
+	readonly type: 'expr';
+}
+export interface Expr2021Tree extends AnyTreeNode {
+	readonly type: 'expr_2021';
+}
+export interface IdentTree extends AnyTreeNode {
+	readonly type: 'ident';
+}
+export interface ItemTree extends AnyTreeNode {
+	readonly type: 'item';
+}
+export interface AnonLifetimeTree extends AnyTreeNode {
+	readonly type: 'anon_lifetime';
+}
+export interface LiteralTree extends AnyTreeNode {
+	readonly type: 'literal';
+}
+export interface MetaTree extends AnyTreeNode {
+	readonly type: 'meta';
+}
+export interface PatTree extends AnyTreeNode {
+	readonly type: 'pat';
+}
+export interface PatParamTree extends AnyTreeNode {
+	readonly type: 'pat_param';
+}
+export interface PathTree extends AnyTreeNode {
+	readonly type: 'path';
+}
+export interface StmtTree extends AnyTreeNode {
+	readonly type: 'stmt';
+}
+export interface TtTree extends AnyTreeNode {
+	readonly type: 'tt';
+}
+export interface TyTree extends AnyTreeNode {
+	readonly type: 'ty';
+}
+export interface VisTree extends AnyTreeNode {
+	readonly type: 'vis';
+}
 export interface ModTree extends AnyTreeNode {
 	readonly type: 'mod';
 }
@@ -6060,14 +6139,71 @@ export interface TryTree extends AnyTreeNode {
 export interface RefTree extends AnyTreeNode {
 	readonly type: 'ref';
 }
+export interface TrueTree extends AnyTreeNode {
+	readonly type: 'true';
+}
+export interface FalseTree extends AnyTreeNode {
+	readonly type: 'false';
+}
+export interface U8Tree extends AnyTreeNode {
+	readonly type: 'u8';
+}
+export interface I8Tree extends AnyTreeNode {
+	readonly type: 'i8';
+}
+export interface U16Tree extends AnyTreeNode {
+	readonly type: 'u16';
+}
+export interface I16Tree extends AnyTreeNode {
+	readonly type: 'i16';
+}
+export interface U32Tree extends AnyTreeNode {
+	readonly type: 'u32';
+}
+export interface I32Tree extends AnyTreeNode {
+	readonly type: 'i32';
+}
+export interface U64Tree extends AnyTreeNode {
+	readonly type: 'u64';
+}
+export interface I64Tree extends AnyTreeNode {
+	readonly type: 'i64';
+}
+export interface U128Tree extends AnyTreeNode {
+	readonly type: 'u128';
+}
+export interface I128Tree extends AnyTreeNode {
+	readonly type: 'i128';
+}
+export interface IsizeTree extends AnyTreeNode {
+	readonly type: 'isize';
+}
+export interface UsizeTree extends AnyTreeNode {
+	readonly type: 'usize';
+}
+export interface F32Tree extends AnyTreeNode {
+	readonly type: 'f32';
+}
+export interface F64Tree extends AnyTreeNode {
+	readonly type: 'f64';
+}
+export interface BoolTree extends AnyTreeNode {
+	readonly type: 'bool';
+}
+export interface StrTree extends AnyTreeNode {
+	readonly type: 'str';
+}
+export interface CharTree extends AnyTreeNode {
+	readonly type: 'char';
+}
 export interface MoveTree extends AnyTreeNode {
 	readonly type: 'move';
 }
-export interface RawTree extends AnyTreeNode {
-	readonly type: 'raw';
-}
 export interface PubTree extends AnyTreeNode {
 	readonly type: 'pub';
+}
+export interface RawTree extends AnyTreeNode {
+	readonly type: 'raw';
 }
 
 // Supertype unions
@@ -6116,7 +6252,7 @@ export type DeclarationStatementTree =
 	| StaticItemTree;
 
 export type NonSpecialToken =
-	| Literal
+	| _Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6195,7 +6331,7 @@ export type Expression =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
-	| Literal
+	| _Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6328,9 +6464,9 @@ export type PatternTree =
 	| ConstBlockTree
 	| MacroInvocationTree;
 
-export type Literal = StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral;
+export type _Literal = StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral;
 
-export type LiteralTree =
+export type _LiteralTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree

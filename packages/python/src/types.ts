@@ -77,11 +77,14 @@ export type LeafStringMap = {
 	class: 'class';
 	_: '_';
 	not: 'not';
+	and: 'and';
+	or: 'or';
 	anon_lambda: 'lambda';
 	anon_yield: 'yield';
 	anon_await: 'await';
 	async: 'async';
 	print: 'print';
+	is: 'is';
 };
 
 export const enum TSKindId {
@@ -3867,6 +3870,12 @@ export interface ClassTree extends AnyTreeNode {
 export interface NotTree extends AnyTreeNode {
 	readonly type: 'not';
 }
+export interface AndTree extends AnyTreeNode {
+	readonly type: 'and';
+}
+export interface OrTree extends AnyTreeNode {
+	readonly type: 'or';
+}
 export interface AnonLambdaTree extends AnyTreeNode {
 	readonly type: 'anon_lambda';
 }
@@ -3881,6 +3890,9 @@ export interface AsyncTree extends AnyTreeNode {
 }
 export interface PrintTree extends AnyTreeNode {
 	readonly type: 'print';
+}
+export interface IsTree extends AnyTreeNode {
+	readonly type: 'is';
 }
 
 // Supertype unions

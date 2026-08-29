@@ -97,8 +97,11 @@ export type LeafStringMap = {
 	__number_operator: '-' | '+';
 	_operator: '++' | '--';
 	as: 'as';
-	anon_import: 'import';
 	anon_type: 'type';
+	typeof: 'typeof';
+	anon_import: 'import';
+	with: 'with';
+	assert: 'assert';
 	var: 'var';
 	else: 'else';
 	if: 'if';
@@ -107,7 +110,6 @@ export type LeafStringMap = {
 	while: 'while';
 	do: 'do';
 	try: 'try';
-	with: 'with';
 	break: 'break';
 	continue: 'continue';
 	debugger: 'debugger';
@@ -125,30 +127,48 @@ export type LeafStringMap = {
 	instanceof: 'instanceof';
 	static: 'static';
 	readonly: 'readonly';
+	get: 'get';
+	set: 'set';
+	declare: 'declare';
+	namespace: 'namespace';
+	public: 'public';
+	private: 'private';
+	protected: 'protected';
+	override: 'override';
+	anon_module: 'module';
+	any: 'any';
+	anon_number: 'number';
+	boolean: 'boolean';
+	anon_string: 'string';
+	symbol: 'symbol';
+	export: 'export';
+	anon_object: 'object';
+	async: 'async';
+	let: 'let';
 	abstract: 'abstract';
 	const: 'const';
 	satisfies: 'satisfies';
 	require: 'require';
 	extends: 'extends';
 	implements: 'implements';
-	declare: 'declare';
-	anon_module: 'module';
-	namespace: 'namespace';
 	interface: 'interface';
 	enum: 'enum';
-	override: 'override';
 	anon_asserts: 'asserts';
 	infer: 'infer';
 	is: 'is';
-	typeof: 'typeof';
 	keyof: 'keyof';
 	in: 'in';
-	async: 'async';
+	void: 'void';
+	unknown: 'unknown';
+	never: 'never';
 	using: 'using';
 	accessor: 'accessor';
+	target: 'target';
+	meta: 'meta';
 	from: 'from';
+	of: 'of';
+	delete: 'delete';
 	global: 'global';
-	export: 'export';
 };
 
 export const enum TSKindId {
@@ -5867,11 +5887,20 @@ export interface ErrorRecoveryTree extends AnyTreeNode {
 export interface AsTree extends AnyTreeNode {
 	readonly type: 'as';
 }
+export interface AnonTypeTree extends AnyTreeNode {
+	readonly type: 'anon_type';
+}
+export interface TypeofTree extends AnyTreeNode {
+	readonly type: 'typeof';
+}
 export interface AnonImportTree extends AnyTreeNode {
 	readonly type: 'anon_import';
 }
-export interface AnonTypeTree extends AnyTreeNode {
-	readonly type: 'anon_type';
+export interface WithTree extends AnyTreeNode {
+	readonly type: 'with';
+}
+export interface AssertTree extends AnyTreeNode {
+	readonly type: 'assert';
 }
 export interface VarTree extends AnyTreeNode {
 	readonly type: 'var';
@@ -5896,9 +5925,6 @@ export interface DoTree extends AnyTreeNode {
 }
 export interface TryTree extends AnyTreeNode {
 	readonly type: 'try';
-}
-export interface WithTree extends AnyTreeNode {
-	readonly type: 'with';
 }
 export interface BreakTree extends AnyTreeNode {
 	readonly type: 'break';
@@ -5951,6 +5977,60 @@ export interface StaticTree extends AnyTreeNode {
 export interface ReadonlyTree extends AnyTreeNode {
 	readonly type: 'readonly';
 }
+export interface GetTree extends AnyTreeNode {
+	readonly type: 'get';
+}
+export interface SetTree extends AnyTreeNode {
+	readonly type: 'set';
+}
+export interface DeclareTree extends AnyTreeNode {
+	readonly type: 'declare';
+}
+export interface NamespaceTree extends AnyTreeNode {
+	readonly type: 'namespace';
+}
+export interface PublicTree extends AnyTreeNode {
+	readonly type: 'public';
+}
+export interface PrivateTree extends AnyTreeNode {
+	readonly type: 'private';
+}
+export interface ProtectedTree extends AnyTreeNode {
+	readonly type: 'protected';
+}
+export interface OverrideTree extends AnyTreeNode {
+	readonly type: 'override';
+}
+export interface AnonModuleTree extends AnyTreeNode {
+	readonly type: 'anon_module';
+}
+export interface AnyTree extends AnyTreeNode {
+	readonly type: 'any';
+}
+export interface AnonNumberTree extends AnyTreeNode {
+	readonly type: 'anon_number';
+}
+export interface BooleanTree extends AnyTreeNode {
+	readonly type: 'boolean';
+}
+export interface AnonStringTree extends AnyTreeNode {
+	readonly type: 'anon_string';
+}
+export interface SymbolTree extends AnyTreeNode {
+	readonly type: 'symbol';
+}
+export interface ExportTree extends AnyTreeNode {
+	readonly type: 'export';
+}
+export interface AnonObjectTree extends AnyTreeNode {
+	readonly type: 'anon_object';
+}
+export interface AsyncTree extends AnyTreeNode {
+	readonly type: 'async';
+}
+export interface LetTree extends AnyTreeNode {
+	readonly type: 'let';
+}
 export interface AbstractTree extends AnyTreeNode {
 	readonly type: 'abstract';
 }
@@ -5969,23 +6049,11 @@ export interface ExtendsTree extends AnyTreeNode {
 export interface ImplementsTree extends AnyTreeNode {
 	readonly type: 'implements';
 }
-export interface DeclareTree extends AnyTreeNode {
-	readonly type: 'declare';
-}
-export interface AnonModuleTree extends AnyTreeNode {
-	readonly type: 'anon_module';
-}
-export interface NamespaceTree extends AnyTreeNode {
-	readonly type: 'namespace';
-}
 export interface InterfaceTree extends AnyTreeNode {
 	readonly type: 'interface';
 }
 export interface EnumTree extends AnyTreeNode {
 	readonly type: 'enum';
-}
-export interface OverrideTree extends AnyTreeNode {
-	readonly type: 'override';
 }
 export interface AnonAssertsTree extends AnyTreeNode {
 	readonly type: 'anon_asserts';
@@ -5996,17 +6064,20 @@ export interface InferTree extends AnyTreeNode {
 export interface IsTree extends AnyTreeNode {
 	readonly type: 'is';
 }
-export interface TypeofTree extends AnyTreeNode {
-	readonly type: 'typeof';
-}
 export interface KeyofTree extends AnyTreeNode {
 	readonly type: 'keyof';
 }
 export interface InTree extends AnyTreeNode {
 	readonly type: 'in';
 }
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
+export interface VoidTree extends AnyTreeNode {
+	readonly type: 'void';
+}
+export interface UnknownTree extends AnyTreeNode {
+	readonly type: 'unknown';
+}
+export interface NeverTree extends AnyTreeNode {
+	readonly type: 'never';
 }
 export interface UsingTree extends AnyTreeNode {
 	readonly type: 'using';
@@ -6014,14 +6085,23 @@ export interface UsingTree extends AnyTreeNode {
 export interface AccessorTree extends AnyTreeNode {
 	readonly type: 'accessor';
 }
+export interface TargetTree extends AnyTreeNode {
+	readonly type: 'target';
+}
+export interface MetaTree extends AnyTreeNode {
+	readonly type: 'meta';
+}
 export interface FromTree extends AnyTreeNode {
 	readonly type: 'from';
 }
+export interface OfTree extends AnyTreeNode {
+	readonly type: 'of';
+}
+export interface DeleteTree extends AnyTreeNode {
+	readonly type: 'delete';
+}
 export interface GlobalTree extends AnyTreeNode {
 	readonly type: 'global';
-}
-export interface ExportTree extends AnyTreeNode {
-	readonly type: 'export';
 }
 
 // refine() per-form Tree aliases — same shape as the base kind Tree.

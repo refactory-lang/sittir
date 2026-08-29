@@ -854,7 +854,7 @@ function collectAnonymousNodes(
 ): void {
 	const seen = new Set<string>();
 	for (const rule of Object.values(rules)) {
-		if (rule.type !== STRING && rule.type !== PATTERN && isAllTextShape(rule)) continue;
+		if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN) continue;
 		walkForStrings(rule, seen);
 	}
 
@@ -897,13 +897,9 @@ function walkForStrings(rule: RenderRule, out: Set<string>): void {
 		case SEQ:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case CHOICE: {
-			const members = rule.members;
-			if (isEnumChoiceRule(rule)) break;
-			if (members.length >= 2 && members.every((m) => m.type === SYMBOL && m.literal !== undefined)) break;
-			for (const m of members) walkForStrings(m, out);
+		case CHOICE:
+			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		}
 		case VARIANT:
 		case GROUP:
 			walkForStrings(rule.content, out);

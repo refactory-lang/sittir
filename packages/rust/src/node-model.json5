@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 348,
+  "nodeCount": 400,
   "word": "identifier",
   "supertypes": [
     "_declaration_statement",
@@ -5631,7 +5631,7 @@
     {
       "kind": "_literal",
       "modelType": "supertype",
-      "typeName": "Literal",
+      "typeName": "_Literal",
       "irKey": "literal",
       "hidden": true,
       "subtypes": [
@@ -8427,6 +8427,38 @@
       "text": "&&"
     },
     {
+      "kind": "amp_eq",
+      "modelType": "token",
+      "typeName": "AmpEq",
+      "irKey": "ampEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&=\" as const",
+      "text": "&="
+    },
+    {
+      "kind": "anon_block",
+      "modelType": "keyword",
+      "typeName": "AnonBlock",
+      "irKey": "anonBlock",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"block\" as const",
+      "text": "block",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_lifetime",
+      "modelType": "keyword",
+      "typeName": "AnonLifetime",
+      "irKey": "anonLifetime",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"lifetime\" as const",
+      "text": "lifetime",
+      "factoryShape": "text"
+    },
+    {
       "kind": "arguments",
       "modelType": "branch",
       "typeName": "Arguments",
@@ -9055,6 +9087,16 @@
       "text": "!"
     },
     {
+      "kind": "bang_eq",
+      "modelType": "token",
+      "typeName": "BangEq",
+      "irKey": "bangEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!=\" as const",
+      "text": "!="
+    },
+    {
       "kind": "base_field_initializer",
       "modelType": "branch",
       "typeName": "BaseFieldInitializer",
@@ -9629,6 +9671,17 @@
           "path": []
         }
       ]
+    },
+    {
+      "kind": "bool",
+      "modelType": "keyword",
+      "typeName": "Bool",
+      "irKey": "bool",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"bool\" as const",
+      "text": "bool",
+      "factoryShape": "text"
     },
     {
       "kind": "boolean_literal",
@@ -10304,6 +10357,27 @@
       "text": "^"
     },
     {
+      "kind": "caret_eq",
+      "modelType": "token",
+      "typeName": "CaretEq",
+      "irKey": "caretEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^=\" as const",
+      "text": "^="
+    },
+    {
+      "kind": "char",
+      "modelType": "keyword",
+      "typeName": "Char",
+      "irKey": "char",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"char\" as const",
+      "text": "char",
+      "factoryShape": "text"
+    },
+    {
       "kind": "char_literal",
       "modelType": "pattern",
       "typeName": "CharLiteral",
@@ -10956,6 +11030,16 @@
       "text": "-"
     },
     {
+      "kind": "dash_eq",
+      "modelType": "token",
+      "typeName": "DashEq",
+      "irKey": "dashEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-=\" as const",
+      "text": "-="
+    },
+    {
       "kind": "dash_gt",
       "modelType": "token",
       "typeName": "DashGt",
@@ -11130,6 +11214,16 @@
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "text": "..."
+    },
+    {
+      "kind": "dot_dot_eq",
+      "modelType": "token",
+      "typeName": "DotDotEq",
+      "irKey": "dotDotEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"..=\" as const",
+      "text": "..="
     },
     {
       "kind": "dquote",
@@ -11670,6 +11764,16 @@
       "text": "="
     },
     {
+      "kind": "eq_eq",
+      "modelType": "token",
+      "typeName": "EqEq",
+      "irKey": "eqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"==\" as const",
+      "text": "=="
+    },
+    {
       "kind": "eq_gt",
       "modelType": "token",
       "typeName": "EqGt",
@@ -11686,6 +11790,28 @@
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
+      "factoryShape": "text"
+    },
+    {
+      "kind": "expr",
+      "modelType": "keyword",
+      "typeName": "Expr",
+      "irKey": "expr",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"expr\" as const",
+      "text": "expr",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "expr_2021",
+      "modelType": "keyword",
+      "typeName": "Expr2021",
+      "irKey": "expr2021",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"expr_2021\" as const",
+      "text": "expr_2021",
       "factoryShape": "text"
     },
     {
@@ -12053,6 +12179,39 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "f32",
+      "modelType": "keyword",
+      "typeName": "F32",
+      "irKey": "f32",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"f32\" as const",
+      "text": "f32",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "f64",
+      "modelType": "keyword",
+      "typeName": "F64",
+      "irKey": "f64",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"f64\" as const",
+      "text": "f64",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "false",
+      "modelType": "keyword",
+      "typeName": "False",
+      "irKey": "false",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"false\" as const",
+      "text": "false",
+      "factoryShape": "text"
     },
     {
       "kind": "field_declaration",
@@ -13768,6 +13927,36 @@
       "text": ">"
     },
     {
+      "kind": "gt_eq",
+      "modelType": "token",
+      "typeName": "GtEq",
+      "irKey": "gtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">=\" as const",
+      "text": ">="
+    },
+    {
+      "kind": "gt_gt",
+      "modelType": "token",
+      "typeName": "GtGt",
+      "irKey": "gtGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>\" as const",
+      "text": ">>"
+    },
+    {
+      "kind": "gt_gt_eq",
+      "modelType": "token",
+      "typeName": "GtGtEq",
+      "irKey": "gtGtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>=\" as const",
+      "text": ">>="
+    },
+    {
       "kind": "higher_ranked_trait_bound",
       "modelType": "branch",
       "typeName": "HigherRankedTraitBound",
@@ -13828,6 +14017,72 @@
         "type_parameters",
         "type"
       ]
+    },
+    {
+      "kind": "i128",
+      "modelType": "keyword",
+      "typeName": "I128",
+      "irKey": "i128",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"i128\" as const",
+      "text": "i128",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "i16",
+      "modelType": "keyword",
+      "typeName": "I16",
+      "irKey": "i16",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"i16\" as const",
+      "text": "i16",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "i32",
+      "modelType": "keyword",
+      "typeName": "I32",
+      "irKey": "i32",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"i32\" as const",
+      "text": "i32",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "i64",
+      "modelType": "keyword",
+      "typeName": "I64",
+      "irKey": "i64",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"i64\" as const",
+      "text": "i64",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "i8",
+      "modelType": "keyword",
+      "typeName": "I8",
+      "irKey": "i8",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"i8\" as const",
+      "text": "i8",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "ident",
+      "modelType": "keyword",
+      "typeName": "Ident",
+      "irKey": "ident",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"ident\" as const",
+      "text": "ident",
+      "factoryShape": "text"
     },
     {
       "kind": "identifier",
@@ -14255,6 +14510,28 @@
       "factoryName": "integerLiteral",
       "irKey": "integerLiteral",
       "hidden": false,
+      "factoryShape": "text"
+    },
+    {
+      "kind": "isize",
+      "modelType": "keyword",
+      "typeName": "Isize",
+      "irKey": "isize",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"isize\" as const",
+      "text": "isize",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "item",
+      "modelType": "keyword",
+      "typeName": "Item",
+      "irKey": "item",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"item\" as const",
+      "text": "item",
       "factoryShape": "text"
     },
     {
@@ -14830,6 +15107,17 @@
       ]
     },
     {
+      "kind": "literal",
+      "modelType": "keyword",
+      "typeName": "Literal",
+      "irKey": "literal",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"literal\" as const",
+      "text": "literal",
+      "factoryShape": "text"
+    },
+    {
       "kind": "loop",
       "modelType": "keyword",
       "typeName": "Loop",
@@ -14921,6 +15209,36 @@
       "isParameterless": true,
       "stampExpression": "\"<\" as const",
       "text": "<"
+    },
+    {
+      "kind": "lt_eq",
+      "modelType": "token",
+      "typeName": "LtEq",
+      "irKey": "ltEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<=\" as const",
+      "text": "<="
+    },
+    {
+      "kind": "lt_lt",
+      "modelType": "token",
+      "typeName": "LtLt",
+      "irKey": "ltLt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<\" as const",
+      "text": "<<"
+    },
+    {
+      "kind": "lt_lt_eq",
+      "modelType": "token",
+      "typeName": "LtLtEq",
+      "irKey": "ltLtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<=\" as const",
+      "text": "<<="
     },
     {
       "kind": "macro_definition",
@@ -15515,6 +15833,17 @@
       ]
     },
     {
+      "kind": "meta",
+      "modelType": "keyword",
+      "typeName": "Meta",
+      "irKey": "meta",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"meta\" as const",
+      "text": "meta",
+      "factoryShape": "text"
+    },
+    {
       "kind": "metavariable",
       "modelType": "pattern",
       "typeName": "Metavariable",
@@ -16041,6 +16370,59 @@
       ]
     },
     {
+      "kind": "pat",
+      "modelType": "keyword",
+      "typeName": "Pat",
+      "irKey": "pat",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"pat\" as const",
+      "text": "pat",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "pat_param",
+      "modelType": "keyword",
+      "typeName": "PatParam",
+      "irKey": "patParam",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"pat_param\" as const",
+      "text": "pat_param",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "path",
+      "modelType": "keyword",
+      "typeName": "Path",
+      "irKey": "path",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"path\" as const",
+      "text": "path",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "percent",
+      "modelType": "token",
+      "typeName": "Percent",
+      "irKey": "percent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%\" as const",
+      "text": "%"
+    },
+    {
+      "kind": "percent_eq",
+      "modelType": "token",
+      "typeName": "PercentEq",
+      "irKey": "percentEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%=\" as const",
+      "text": "%="
+    },
+    {
       "kind": "pipe",
       "modelType": "token",
       "typeName": "Pipe",
@@ -16049,6 +16431,16 @@
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
       "text": "|"
+    },
+    {
+      "kind": "pipe_eq",
+      "modelType": "token",
+      "typeName": "PipeEq",
+      "irKey": "pipeEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|=\" as const",
+      "text": "|="
     },
     {
       "kind": "pipe_pipe",
@@ -16069,6 +16461,16 @@
       "isParameterless": true,
       "stampExpression": "\"+\" as const",
       "text": "+"
+    },
+    {
+      "kind": "plus_eq",
+      "modelType": "token",
+      "typeName": "PlusEq",
+      "irKey": "plusEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+=\" as const",
+      "text": "+="
     },
     {
       "kind": "pointer_type",
@@ -17589,6 +17991,16 @@
       "text": "/"
     },
     {
+      "kind": "slash_eq",
+      "modelType": "token",
+      "typeName": "SlashEq",
+      "irKey": "slashEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/=\" as const",
+      "text": "/="
+    },
+    {
       "kind": "slash_slash",
       "modelType": "token",
       "typeName": "SlashSlash",
@@ -17736,6 +18148,16 @@
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*"
+    },
+    {
+      "kind": "star_eq",
+      "modelType": "token",
+      "typeName": "StarEq",
+      "irKey": "starEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*=\" as const",
+      "text": "*="
     },
     {
       "kind": "star_slash",
@@ -17913,6 +18335,28 @@
         "type",
         "value"
       ]
+    },
+    {
+      "kind": "stmt",
+      "modelType": "keyword",
+      "typeName": "Stmt",
+      "irKey": "stmt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"stmt\" as const",
+      "text": "stmt",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "str",
+      "modelType": "keyword",
+      "typeName": "Str",
+      "irKey": "str",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"str\" as const",
+      "text": "str",
+      "factoryShape": "text"
     },
     {
       "kind": "string_content",
@@ -19101,6 +19545,17 @@
       ]
     },
     {
+      "kind": "true",
+      "modelType": "keyword",
+      "typeName": "True",
+      "irKey": "true",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"true\" as const",
+      "text": "true",
+      "factoryShape": "text"
+    },
+    {
       "kind": "try",
       "modelType": "keyword",
       "typeName": "Try",
@@ -19187,6 +19642,17 @@
       "factoryFields": [
         "value"
       ]
+    },
+    {
+      "kind": "tt",
+      "modelType": "keyword",
+      "typeName": "Tt",
+      "irKey": "tt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"tt\" as const",
+      "text": "tt",
+      "factoryShape": "text"
     },
     {
       "kind": "tuple_expression",
@@ -19414,6 +19880,17 @@
       "factoryFields": [
         "tuple_type_elements"
       ]
+    },
+    {
+      "kind": "ty",
+      "modelType": "keyword",
+      "typeName": "Ty",
+      "irKey": "ty",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"ty\" as const",
+      "text": "ty",
+      "factoryShape": "text"
     },
     {
       "kind": "type",
@@ -19895,6 +20372,61 @@
       "factoryFields": [
         "type_parameters_elements"
       ]
+    },
+    {
+      "kind": "u128",
+      "modelType": "keyword",
+      "typeName": "U128",
+      "irKey": "u128",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"u128\" as const",
+      "text": "u128",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "u16",
+      "modelType": "keyword",
+      "typeName": "U16",
+      "irKey": "u16",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"u16\" as const",
+      "text": "u16",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "u32",
+      "modelType": "keyword",
+      "typeName": "U32",
+      "irKey": "u32",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"u32\" as const",
+      "text": "u32",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "u64",
+      "modelType": "keyword",
+      "typeName": "U64",
+      "irKey": "u64",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"u64\" as const",
+      "text": "u64",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "u8",
+      "modelType": "keyword",
+      "typeName": "U8",
+      "irKey": "u8",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"u8\" as const",
+      "text": "u8",
+      "factoryShape": "text"
     },
     {
       "kind": "unary_expression",
@@ -20659,6 +21191,17 @@
       ]
     },
     {
+      "kind": "usize",
+      "modelType": "keyword",
+      "typeName": "Usize",
+      "irKey": "usize",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"usize\" as const",
+      "text": "usize",
+      "factoryShape": "text"
+    },
+    {
       "kind": "variadic_parameter",
       "modelType": "branch",
       "typeName": "VariadicParameter",
@@ -20718,6 +21261,17 @@
       "factoryFields": [
         "pattern"
       ]
+    },
+    {
+      "kind": "vis",
+      "modelType": "keyword",
+      "typeName": "Vis",
+      "irKey": "vis",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"vis\" as const",
+      "text": "vis",
+      "factoryShape": "text"
     },
     {
       "kind": "visibility_modifier",

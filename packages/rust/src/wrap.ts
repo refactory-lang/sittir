@@ -3000,7 +3000,7 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle) {
 				return drillIn<T._Type>(this._type, tree);
 			},
 			value() {
-				return drillIn<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this._value, tree);
+				return drillIn<T.Block | T.Identifier | T._Literal | T.NegativeLiteral | undefined>(this._value, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.ConstParameter['_name']>) => wrapConstParameter({ ...$edited(data), _name: v }, tree),
@@ -5151,7 +5151,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 					| T.CallExpression
 					| T.ReturnExpression
 					| T.YieldExpression
-					| T.Literal
+					| T._Literal
 					| T.Identifier
 					| T.Self
 					| T.ScopedIdentifier
@@ -7377,8 +7377,8 @@ export function wrapOrPattern(
 	return _node;
 }
 
-export function wrapLiteral(
-	data: T.Literal & { readonly $other?: T.Literal | readonly T.Literal[] },
+export function wrap_Literal(
+	data: T._Literal & { readonly $other?: T._Literal | readonly T._Literal[] },
 	tree: TreeHandle
 ) {
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
@@ -7388,7 +7388,7 @@ export function wrapLiteral(
 		'boolean_literal',
 		'integer_literal',
 		'float_literal'
-	]) as T.Literal | readonly T.Literal[] | undefined;
+	]) as T._Literal | readonly T._Literal[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, [
@@ -7400,9 +7400,9 @@ export function wrapLiteral(
 			'float_literal'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillInSelf<T.Literal>(data as T.Literal, tree);
+		return drillInSelf<T._Literal>(data as T._Literal, tree);
 	}
-	return drillIn<T.Literal>(
+	return drillIn<T._Literal>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -10240,33 +10240,33 @@ export function wrapAttributedOrderedField(data: T.AttributedOrderedField, tree:
 
 export function wrapTypeArgument(
 	data: T.TypeArgument & {
-		readonly _type_identifier?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _primitive_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _abstract_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _reference_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _metavariable?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _pointer_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _generic_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _scoped_type_identifier?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _tuple_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _unit_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _array_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _function_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _identifier?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _macro_invocation?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _never_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _dynamic_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _bounded_type?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _removed_trait_bound?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _type_binding?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _lifetime?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _string_literal?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _raw_string_literal?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _char_literal?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _boolean_literal?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _integer_literal?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _float_literal?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _block?: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _type_identifier?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _primitive_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _abstract_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _reference_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _metavariable?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _pointer_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _generic_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _scoped_type_identifier?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _tuple_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _unit_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _array_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _function_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _identifier?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _macro_invocation?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _never_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _dynamic_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _bounded_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _removed_trait_bound?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _type_binding?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _lifetime?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _string_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _raw_string_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _char_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _boolean_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _integer_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _float_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _block?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
 	},
 	tree: TreeHandle
 ) {
@@ -10344,7 +10344,7 @@ export function wrapTypeArgument(
 			}),
 
 			content() {
-				return drillIn<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(this._content, tree);
+				return drillIn<T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>(this._content, tree);
 			},
 			traitBounds() {
 				return drillIn<T.TraitBounds | undefined>(this._trait_bounds, tree);
@@ -10546,7 +10546,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CapturedPattern]: (d, t) => wrapCapturedPattern(d as unknown as T.CapturedPattern, t),
 	[TSKindId.ReferencePattern]: (d, t) => wrapReferencePattern(d as unknown as T.ReferencePattern, t),
 	[TSKindId.OrPattern]: (d, t) => wrapOrPattern(d as unknown as T.OrPattern, t),
-	[TSKindId.Literal_309]: (d, t) => wrapLiteral(d as unknown as T.Literal, t),
+	[TSKindId._Literal]: (d, t) => wrap_Literal(d as unknown as T._Literal, t),
 	[TSKindId.LiteralPattern]: (d, t) => wrapLiteralPattern(d as unknown as T.LiteralPattern, t),
 	[TSKindId.NegativeLiteral]: (d, t) => wrapNegativeLiteral(d as unknown as T.NegativeLiteral, t),
 	[TSKindId.IntegerLiteral]: (d) => ({ ...d, $type: TSKindId.IntegerLiteral as const }),
@@ -10816,7 +10816,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.CapturedPattern]: ReturnType<typeof wrapCapturedPattern>;
 	[TSKindId.ReferencePattern]: ReturnType<typeof wrapReferencePattern>;
 	[TSKindId.OrPattern]: ReturnType<typeof wrapOrPattern>;
-	[TSKindId.Literal_309]: ReturnType<typeof wrapLiteral>;
+	[TSKindId._Literal]: ReturnType<typeof wrap_Literal>;
 	[TSKindId.LiteralPattern]: ReturnType<typeof wrapLiteralPattern>;
 	[TSKindId.NegativeLiteral]: ReturnType<typeof wrapNegativeLiteral>;
 	[TSKindId.IntegerLiteral]: _NodeData & { readonly $type: TSKindId.IntegerLiteral };

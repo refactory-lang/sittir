@@ -829,11 +829,11 @@ parents.
  * @param rule - The `RenderRule` to walk.
  * @param out - Mutable set that receives each string literal value.
  * @remarks
- *   `enum` rules are deliberately **not** descended. Enum values are the `text`
- *   content of the parent kind, not distinct node kinds — the parser produces a
- *   single node (e.g. `primitive_type` with text `"usize"`), never a `usize`
- *   node, so collecting the enum member strings as anonymous token kinds would
- *   be incorrect. STRING values and `SYMBOL.literal` both contribute a
+ *   Enum-shaped choices ARE descended: every value that can appear in a slot
+ *   or as an enum member has its own anonymous parser symbol (`primitive_type`
+ *   wraps an anonymous `usize` child), and the wire format needs a kindId for
+ *   it, so each member literal is collected and minted like any other
+ *   literal. STRING values and `SYMBOL.literal` both contribute a
  *   literal; VARIANT/GROUP descend into their `content`. There are no
  *   OPTIONAL/REPEAT/FIELD/TOKEN cases — on this wrapper-free view, those
  *   wrappers are leaf attributes on whatever this switch already recurses
@@ -841,13 +841,6 @@ parents.
  */
 ```
 
-#### body
-
-```text
-// Do NOT descend into enum-shaped choices — guarded either way a choice can
-// present as an enum: `isEnumChoiceRule`, or every member being a literal
-// SYMBOL (≥2 members, each with `SYMBOL.literal !== undefined`).
-```
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyNode`
 
@@ -10644,7 +10637,9 @@ source, one derivation.
 // consumed into `tokenized`/`immediate` attributes on the literal's own
 // STRING/PATTERN rule (see `resolveHiddenRuleContent`'s doc comment). So a
 // bare-literal token contributes its literal like a top-level STRING/PATTERN
-// rule does, and any other compound all-text rule is skipped.
+// rule does, and only a `tokenized` compound body is skipped — an untokenized
+// all-text rule (an enum choice, a seq of literals) is walked because its
+// parts are CST nodes with their own anonymous symbols.
 ```
 
 ```text

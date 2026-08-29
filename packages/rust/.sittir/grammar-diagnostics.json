@@ -28,6 +28,22 @@
     }
   },
   {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_literal",
+    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Literal",
+      "newType": "_Literal",
+      "visibleKinds": [
+        "literal"
+      ]
+    }
+  },
+  {
     "code": "kindid-unstamped-symbols",
     "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,

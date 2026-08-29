@@ -8,10 +8,10 @@ import type {
 	NamespaceMap,
 	DeclarationStatement,
 	Expression,
-	Literal,
 	LiteralPattern,
 	NonSpecialToken,
 	Pattern,
+	_Literal,
 	_Type
 } from './types.js';
 
@@ -313,7 +313,7 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number }): v is _Type;
 	expression(v: { readonly $type: string | number }): v is Expression;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
-	literal(v: { readonly $type: string | number }): v is Literal;
+	literal(v: { readonly $type: string | number }): v is _Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
 }
 
@@ -543,7 +543,7 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number }): asserts v is _Type;
 	expression(v: { readonly $type: string | number }): asserts v is Expression;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-	literal(v: { readonly $type: string | number }): asserts v is Literal;
+	literal(v: { readonly $type: string | number }): asserts v is _Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
 }
 
