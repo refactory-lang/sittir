@@ -17,7 +17,6 @@ import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledKeyword,
-	AssembledSupertype,
 	allSlotsOf,
 	isMultiple,
 	isRequired,
@@ -309,7 +308,8 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 		case 'envelope':
 			return emitBranchTemplate(node, ctxK);
 		case 'polymorph':
-			return node instanceof AssembledSupertype ? undefined : emitBranchTemplate(node, ctxK);
+			return emitBranchTemplate(node, ctxK);
+		case 'supertype':
 		case 'pattern':
 		case 'token':
 		case 'enum':
@@ -1166,9 +1166,10 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				else te.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node instanceof AssembledSupertype) break;
 				if (node.hoisted) te.emitGroup(node);
 				else te.emitBranch(node);
+				break;
+			case 'supertype':
 				break;
 			case 'list':
 				te.emitBranch(node);

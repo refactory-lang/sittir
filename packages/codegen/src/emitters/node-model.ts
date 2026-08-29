@@ -108,7 +108,7 @@ interface SerializedEnum extends SerializedNodeBase {
 }
 
 interface SerializedSupertype extends SerializedNodeBase {
-	modelType: 'polymorph';
+	modelType: 'supertype';
 	transparent: true;
 	subtypes: string[];
 }
@@ -224,9 +224,9 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		case 'envelope':
 			return serializeCompoundNode(node, base);
 		case 'polymorph':
-			return node instanceof AssembledSupertype
-				? { ...base, modelType: 'polymorph', transparent: true, subtypes: [...node.subtypeNames].sort() }
-				: serializeCompoundNode(node, base);
+			return serializeCompoundNode(node, base);
+		case 'supertype':
+			return { ...base, modelType: 'supertype', transparent: true, subtypes: [...node.subtypeNames].sort() };
 		case 'pattern':
 			return {
 				...base,

@@ -968,12 +968,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				else this.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node instanceof AssembledSupertype) {
-					this.emitSupertype(node);
-					break;
-				}
 				if (node.hoisted) this.emitGroup(node);
 				else this.emitBranch(node);
+				break;
+			case 'supertype':
+				this.emitSupertype(node);
 				break;
 			case 'list':
 				this.emitSeparatedList(node);

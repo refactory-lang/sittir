@@ -259,7 +259,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: SYMBOL, name: 'identifier' }
 			]
 		};
-		expect(classifyNode('_expression', flatten(rule))).toBe('polymorph');
+		expect(classifyNode('_expression', flatten(rule))).toBe('supertype');
 	});
 
 	it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
@@ -274,9 +274,9 @@ describe('Assemble — classifyNode', () => {
 			]
 		};
 		const renderRule = flatten(rule);
-		expect(classifyNode('expression', renderRule)).toBe('polymorph');
-		expect(classifyNode('_expression', renderRule)).toBe('polymorph');
-		expect(classifyNode('anything', renderRule)).toBe('polymorph');
+		expect(classifyNode('expression', renderRule)).toBe('supertype');
+		expect(classifyNode('_expression', renderRule)).toBe('supertype');
+		expect(classifyNode('anything', renderRule)).toBe('supertype');
 	});
 
 	it('classifies a link-minted GROUP as a hoisted compound', () => {
@@ -443,7 +443,7 @@ describe('Assemble — classifyNode', () => {
 			}
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
-		expect(node?.modelType).toBe('polymorph');
+		expect(node?.modelType).toBe('supertype');
 		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_property_identifier']);
 	});
@@ -499,7 +499,7 @@ describe('Assemble — classifyNode', () => {
 			}
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
-		expect(node?.modelType).toBe('polymorph');
+		expect(node?.modelType).toBe('supertype');
 		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
 	});
@@ -552,7 +552,7 @@ describe('Assemble — classifyNode', () => {
 			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' }
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_delim_tokens');
-		expect(node?.modelType).toBe('polymorph');
+		expect(node?.modelType).toBe('supertype');
 		expect(node).toBeInstanceOf(AssembledSupertype);
 		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('%');
@@ -617,7 +617,7 @@ describe('Assemble — classifyNode', () => {
 			float: { type: PATTERN, value: '[0-9]+\\.[0-9]+' }
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_simple_pattern');
-		expect(node?.modelType).toBe('polymorph');
+		expect(node?.modelType).toBe('supertype');
 		expect(node).toBeInstanceOf(AssembledSupertype);
 		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('integer');
@@ -1075,7 +1075,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		const generatedIdTables = makeIdTables({ identifier: anonEntry(7, 'identifier') });
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 		const aliasNode = nodeMap.nodes.get('inner_alias');
-		expect(aliasNode?.modelType).toBe('polymorph');
+		expect(aliasNode?.modelType).toBe('supertype');
 		expect(aliasNode).toBeInstanceOf(AssembledSupertype);
 		expect((aliasNode as AssembledSupertype).subtypeNames).toEqual(['identifier']);
 	});
@@ -1120,7 +1120,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			}
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_outer') as AssembledSupertype;
-		expect(node.modelType).toBe('polymorph');
+		expect(node.modelType).toBe('supertype');
 		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect(node.subtypeNames).toEqual(['_inner', 'identifier', '_simple_statements']);
 		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([10, 99, 77]);

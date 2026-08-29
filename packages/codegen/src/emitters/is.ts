@@ -98,7 +98,10 @@ export function emitIs(config: EmitIsConfig): string {
 				structural = !node.hoisted;
 				break;
 			case 'polymorph':
-				structural = node instanceof AssembledSupertype ? false : !node.hoisted;
+				structural = !node.hoisted;
+				break;
+			case 'supertype':
+				structural = false;
 				break;
 			case 'list':
 				structural = true;

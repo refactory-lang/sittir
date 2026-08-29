@@ -2117,8 +2117,9 @@ can't be unified.
 ```text
 /** Every shape an assembled node can take: `'envelope'` (single-symbol
  *  passthrough body), `'branch'` (a seq/choice of members), `'polymorph'`
- *  (a choice of leaf-shaped members, or an `AssembledSupertype`'s hidden
- *  choice-of-symbols dispatch point), `'enum'` (closed set of literals),
+ *  (a choice of leaf-shaped members — a node holding one union slot),
+ *  `'supertype'` (`AssembledSupertype`: a collection of subtypes with no
+ *  slot; never a polymorph), `'enum'` (closed set of literals),
  *  `'token'` (a single fixed literal — `AssembledKeyword`/`AssembledToken`
  *  share this discriminant, distinguished by their `word` getter), `'pattern'`
  *  (open regex/text-shaped leaf), `'list'` (a repeated element with genuine
@@ -2879,7 +2880,7 @@ can't be unified.
 
 ```text
 /**
- * `modelType: 'polymorph'`, `transparent: true` — a hidden choice-of-symbols
+ * `modelType: 'supertype'`, `transparent: true` — a hidden choice-of-symbols
  * dispatch point (e.g. python's `expression`, rust's `pattern`): parsing
  * always yields one of `subtypeNames`, never a node of this kind's own
  * type. NOT an `AbstractAssembledCompound` — a supertype has no slots of

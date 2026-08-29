@@ -2,7 +2,6 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	AssembledKeyword,
-	AssembledSupertype,
 	allSlotsOf,
 	isNodeRef,
 	storageKindOfRef
@@ -65,7 +64,9 @@ function classify(node: AssembledNode): RenderKindPath {
 		case 'list':
 			return 'template';
 		case 'polymorph':
-			return node instanceof AssembledSupertype ? 'dispatch' : 'template';
+			return 'template';
+		case 'supertype':
+			return 'dispatch';
 		case 'pattern':
 		case 'enum':
 			return 'text';

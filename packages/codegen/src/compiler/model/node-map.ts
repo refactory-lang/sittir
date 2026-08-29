@@ -936,7 +936,7 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'enum' | 'token' | 'pattern' | 'list';
+export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'token' | 'pattern' | 'list';
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
@@ -1825,7 +1825,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 }
 
 export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
-	readonly modelType = 'polymorph' as const;
+	readonly modelType = 'supertype' as const;
 
 	override get transparent(): boolean {
 		return true;

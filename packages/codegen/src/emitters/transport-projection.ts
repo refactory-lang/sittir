@@ -47,8 +47,9 @@ function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean
 		case 'envelope':
 			return node.hoisted ? !nodeMap.polymorphFormKinds.has(node.kind) : true;
 		case 'polymorph':
-			if (node instanceof AssembledSupertype) return false;
 			return node.hoisted ? !nodeMap.polymorphFormKinds.has(node.kind) : true;
+		case 'supertype':
+			return false;
 		default:
 			return assertNever(node);
 	}

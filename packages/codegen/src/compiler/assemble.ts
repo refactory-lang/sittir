@@ -164,14 +164,17 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
 			switch (modelType) {
+				case 'supertype': {
+					if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
+						throw new Error(`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`);
+					}
+					const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
+					nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
+					break;
+				}
 				case 'branch':
 				case 'envelope':
 				case 'polymorph': {
-					if (renderRule.type === SUPERTYPE || (modelType === 'polymorph' && renderRule.type === CHOICE && simplifiedRule.type === SUPERTYPE)) {
-						const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
-						nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
-						break;
-					}
 					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
 					const CompoundClass = branchClassFor(groupSimplified);
 					nodes.set(
@@ -900,7 +903,7 @@ export function classifyNode(
 		if (isEnumChoiceRule(rule)) return 'enum';
 		switch (rule.type) {
 			case SUPERTYPE:
-				return 'polymorph';
+				return 'supertype';
 			case GROUP:
 				if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
 				return compoundModelType(rule);

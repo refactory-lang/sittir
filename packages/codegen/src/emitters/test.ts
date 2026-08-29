@@ -100,9 +100,10 @@ export function emitTests(config: EmitTestsConfig): string {
 				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
 				break;
 			case 'polymorph':
-				if (node instanceof AssembledSupertype) break;
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
 				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
+				break;
+			case 'supertype':
 				break;
 			case 'list':
 				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
@@ -271,10 +272,11 @@ function namespacedCallArgs(
 				? containerCallArgs(target, nodeMap, kindEntries)
 				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
 		case 'polymorph':
-			if (target instanceof AssembledSupertype) return undefined;
 			return classifyChildFactorySurface(target, nodeMap) !== null
 				? containerCallArgs(target, nodeMap, kindEntries)
 				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
+		case 'supertype':
+			return undefined;
 		case 'list': {
 			const element = dummyValueForField(buildSeparatedListContentSlot(target), nodeMap, kindEntries, 0, new Set());
 			return `${element}, ${element}`;

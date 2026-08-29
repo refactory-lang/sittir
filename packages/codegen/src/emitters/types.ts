@@ -44,7 +44,6 @@ import {
 	AssembledList,
 	AssembledKeyword,
 	AssembledToken,
-	AssembledSupertype,
 	AssembledEnum,
 	snakeToCamel,
 	structuralFieldsOf
@@ -346,13 +345,14 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				}
 				break;
 			case 'polymorph':
-				if (node instanceof AssembledSupertype) {
-					supertypes.push({ kind, subtypes: [...node.subtypeNames] });
-				} else if (node.hoisted) {
+				if (node.hoisted) {
 					if (!nodeMap.polymorphFormKinds.has(kind)) structNodes.push(node);
 				} else {
 					structNodes.push(node);
 				}
+				break;
+			case 'supertype':
+				supertypes.push({ kind, subtypes: [...node.subtypeNames] });
 				break;
 			case 'list':
 				structNodes.push(node);

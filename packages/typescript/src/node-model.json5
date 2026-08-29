@@ -7132,7 +7132,7 @@
     },
     {
       "kind": "_lhs_expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "_LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
@@ -7313,7 +7313,7 @@
     },
     {
       "kind": "_property_identifier",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "PropertyIdentifier",
       "irKey": "propertyIdentifier",
       "hidden": true,
@@ -7358,7 +7358,7 @@
     },
     {
       "kind": "_shorthand_property_identifier",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "ShorthandPropertyIdentifier",
       "irKey": "shorthandPropertyIdentifier",
       "hidden": true,
@@ -7370,7 +7370,7 @@
     },
     {
       "kind": "_shorthand_property_identifier_pattern",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "ShorthandPropertyIdentifierPattern",
       "irKey": "shorthandPropertyIdentifierPattern",
       "hidden": true,
@@ -7382,7 +7382,7 @@
     },
     {
       "kind": "_statement_identifier",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "StatementIdentifier",
       "irKey": "statementIdentifier",
       "hidden": true,
@@ -12200,7 +12200,7 @@
     },
     {
       "kind": "declaration",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Declaration",
       "irKey": "declaration",
       "hidden": true,
@@ -13488,7 +13488,7 @@
     },
     {
       "kind": "expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Expression",
       "irKey": "expression",
       "hidden": true,
@@ -17072,7 +17072,7 @@
     },
     {
       "kind": "lhs_expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
@@ -20016,7 +20016,7 @@
     },
     {
       "kind": "pattern",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Pattern",
       "irKey": "pattern",
       "hidden": true,
@@ -20170,7 +20170,7 @@
     },
     {
       "kind": "primary_expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "PrimaryExpression",
       "irKey": "primaryExpression",
       "hidden": true,
@@ -20204,7 +20204,7 @@
     },
     {
       "kind": "primary_type",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "PrimaryType",
       "irKey": "primaryType",
       "hidden": true,
@@ -21873,7 +21873,7 @@
     },
     {
       "kind": "statement",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Statement",
       "irKey": "statement",
       "hidden": true,
@@ -23056,7 +23056,7 @@
     },
     {
       "kind": "type",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Type",
       "irKey": "type",
       "hidden": true,

@@ -2703,7 +2703,7 @@
     },
     {
       "kind": "_compound_statement",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "CompoundStatement",
       "irKey": "compoundStatement",
       "hidden": true,
@@ -3547,7 +3547,7 @@
     },
     {
       "kind": "_simple_statement",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "SimpleStatement",
       "irKey": "simpleStatement",
       "hidden": true,
@@ -7569,7 +7569,7 @@
     },
     {
       "kind": "expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Expression",
       "irKey": "expression",
       "hidden": true,
@@ -9247,7 +9247,7 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "KeywordIdentifier",
       "irKey": "keywordIdentifier",
       "hidden": true,
@@ -10413,7 +10413,7 @@
     },
     {
       "kind": "parameter",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Parameter",
       "irKey": "parameter",
       "hidden": true,
@@ -10649,7 +10649,7 @@
     },
     {
       "kind": "pattern",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "Pattern",
       "irKey": "pattern",
       "hidden": true,
@@ -10811,7 +10811,7 @@
     },
     {
       "kind": "primary_expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "PrimaryExpression",
       "irKey": "primaryExpression",
       "hidden": true,
