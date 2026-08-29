@@ -2910,18 +2910,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Collect refine metadata for every kind that carries forms, walking
- * each form's paths against the assembled rule tree to precompute the
- * narrowed field-literal pairs. Returns `undefined` when the grammar
- * has no refine metadata.
+ * Collect refine metadata for every kind that carries forms, pairing
+ * each node with its `LinkedRefineForm`s. The narrowed field-literal
+ * pairs are link's stamp (`narrowedFields`); nothing is resolved here.
+ * Returns `undefined` when the grammar has no refine metadata.
  *
  * @remarks
- * Path resolution at emit time reads the post-Link rule map (stored on
- * `NodeMap.rules`). Forms that don't resolve to field-wrapped choices
- * contribute an empty `narrowedFields` list — the form's factory still
- * exists but narrows nothing at the Config surface, which is the
- * intended behavior for selections that target anonymous structural
- * literals.
+ * Forms that don't resolve to field-wrapped choices carry an empty
+ * `narrowedFields` list — the form's factory still exists but narrows
+ * nothing at the Config surface, which is the intended behavior for
+ * selections that target anonymous structural literals.
  */
 ```
 

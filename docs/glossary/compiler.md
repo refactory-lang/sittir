@@ -6952,10 +6952,25 @@ parents.
 ### `packages/codegen/src/compiler/types.ts::RefineForm`
 
 ```text
-/**
- * A single refine() form — duplicated from `dsl/wire/wire.ts::RefineForm`
- * as a plain type so the compiler tier doesn't import the DSL layer.
- */
+/** The authored refine() form, re-exported from `dsl/wire/wire.ts::RefineForm`
+ *  — one declaration, no compiler-side copy. Link stamps it into
+ *  `LinkedRefineForm`. */
+```
+
+### `packages/codegen/src/compiler/types.ts::NarrowedField`
+
+```text
+/** One field a refine form pins to a single literal: the enclosing field
+ *  name and the chosen string value. */
+```
+
+### `packages/codegen/src/compiler/types.ts::LinkedRefineForm`
+
+```text
+/** A refine form after link: the authored `RefineForm` plus
+ *  `narrowedFields`, resolved once by `narrowedFieldLiteralsForForm`
+ *  against the final link rules. Emitters read the stamp and never walk a
+ *  link tree for it. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::DerivationLog`
@@ -7491,12 +7506,12 @@ parents.
 	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
 	 * no longer compiles from `linkRules` (or any post-link view) at all —
 	 * it's pinned once at Link time from `raw.rules` and carried on
-	 * `wordMatcher` (below) instead. The remaining consumer is exclusively a
-	 * BY-DESIGN authoring-shape diagnostic (not a render/derivation path):
-	 *   - `compiler/link.ts`'s `resolveRefinePath`/`narrowedFieldLiteralsForForm`
-	 *     (via `emitters/refine-emit.ts`'s `collectRefineKindInfos`):
-	 *     `refine()` selection paths are authored against the pre-normalize
-	 *     tree, so path resolution must walk the same wrapper shapes.
+	 * `wordMatcher` (below) instead. Refine path resolution left too: link
+	 * stamps `LinkedRefineForm.narrowedFields` before this view is built.
+	 * The remaining readers are `compiler/assemble.ts`'s
+	 * `collectAnonymousNodes` and the template emitter's edge-class /
+	 * left-immediate walks (`compiler/model/node-map.ts`'s `EdgeClassCtx`,
+	 * `LeftImmediateCtx`), both slated to move onto `normalizedRules`.
 	 */
 ```
 
@@ -7559,10 +7574,11 @@ parents.
 
 ```text
 /**
-	 * Per-kind refine() form declarations, keyed by rule kind. Emitters
-	 * read this to generate namespace-keyed factories and narrowed
-	 * Config types for per-form factories. Undefined when no refine()
-	 * calls fired in this grammar's overrides.
+	 * Per-kind refine() forms, keyed by rule kind, each carrying link's
+	 * `narrowedFields` stamp (`LinkedRefineForm`). Emitters read this to
+	 * generate namespace-keyed factories and narrowed Config types for
+	 * per-form factories. Undefined when no refine() calls fired in this
+	 * grammar's overrides.
 	 */
 ```
 
@@ -10067,9 +10083,10 @@ source, one derivation.
  * whose single literal value should be narrowed for per-form Config
  * emission, along with the narrowed literal.
  *
- * Used by the type/factory emitters to build the per-form narrowed
- * fields. Returns an array because a form may narrow multiple selections
- * (e.g. `opening` and `closing` simultaneously).
+ * Link calls it once per form at its end, after `validateRefineForms`,
+ * to stamp `LinkedRefineForm.narrowedFields`; the type/factory emitters
+ * read that stamp. Returns an array because a form may narrow multiple
+ * selections (e.g. `opening` and `closing` simultaneously).
  *
  * @returns Array of `{ fieldName, literal }` tuples. `fieldName` is the
  *   enclosing field (when the selection targets a field-wrapped choice)

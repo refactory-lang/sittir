@@ -108,9 +108,16 @@ export interface DesugarDivergenceEvent {
 	readonly name: string;
 }
 
-export interface RefineForm {
-	readonly name: string;
-	readonly selections: Record<string, number | string>;
+import type { RefineForm } from '../dsl/wire/wire.ts';
+export type { RefineForm };
+
+export interface NarrowedField {
+	readonly fieldName: string;
+	readonly literal: string;
+}
+
+export interface LinkedRefineForm extends RefineForm {
+	readonly narrowedFields: readonly NarrowedField[];
 }
 
 export interface DerivationLog {
@@ -161,7 +168,7 @@ export interface LinkedGrammar {
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
-	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
@@ -194,7 +201,7 @@ export interface NormalizedGrammar {
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
-	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
 
 export interface SimplifiedGrammar {
@@ -215,7 +222,7 @@ export interface SimplifiedGrammar {
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
-	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
 
 export type PhaseRuleOf<P extends PhaseName> = P extends 'simplify'
@@ -252,6 +259,6 @@ export interface NodeMap {
 	readonly polymorphFormKinds: ReadonlySet<string>;
 	readonly externals?: ReadonlySet<string>;
 	readonly extras?: ReadonlySet<string>;
-	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 }

@@ -1,6 +1,5 @@
-import type { NodeMap, RefineForm } from '../compiler/types.ts';
+import type { NodeMap, LinkedRefineForm, NarrowedField } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import { narrowedFieldLiteralsForForm } from '../compiler/link.ts';
 
 export interface RefineKindInfo {
 	readonly kind: string;
@@ -11,11 +10,8 @@ export interface RefineKindInfo {
 
 export interface RefineFormInfo {
 	readonly name: string;
-	readonly form: RefineForm;
-	readonly narrowedFields: ReadonlyArray<{
-		fieldName: string;
-		literal: string;
-	}>;
+	readonly form: LinkedRefineForm;
+	readonly narrowedFields: readonly NarrowedField[];
 }
 
 export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | undefined {
@@ -25,12 +21,7 @@ export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | und
 	for (const [kind, kindForms] of forms) {
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
-		const rule = nodeMap.linkRules?.[kind];
-		const infos: RefineFormInfo[] = [];
-		for (const form of kindForms) {
-			const narrowed = rule ? narrowedFieldLiteralsForForm(rule, form, nodeMap.linkRules) : [];
-			infos.push({ name: form.name, form, narrowedFields: narrowed });
-		}
+		const infos: RefineFormInfo[] = kindForms.map((form) => ({ name: form.name, form, narrowedFields: form.narrowedFields }));
 		out.push({ kind, typeName: node.typeName, node, forms: infos });
 	}
 	return out;
