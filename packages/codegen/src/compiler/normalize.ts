@@ -26,7 +26,7 @@ import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
-import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
+import { prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
@@ -257,7 +257,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	}
 
 	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
-	for (const [parentKind, targetNames] of deriveStructuralVariantChildren(linked.rules)) {
+	for (const [parentKind, targetNames] of linked.variantChildren ?? []) {
 		variantSkip.add(parentKind);
 		for (const targetName of targetNames) {
 			const suffix = prefixNamedSuffix(parentKind, targetName);
@@ -280,6 +280,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
+		variantChildren: linked.variantChildren,
 		refineForms: linked.refineForms
 	};
 	const simplifiedRules = computeSimplifiedRules(
@@ -342,7 +343,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
-		visibleAliasTargets: linked.visibleAliasTargets
+		visibleAliasTargets: linked.visibleAliasTargets,
+		variantChildren: linked.variantChildren
 	};
 }
 

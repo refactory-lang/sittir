@@ -5862,11 +5862,12 @@ parents.
 ```text
 /**
  * Derive `{parent -> childTargetName[]}` for every kind in `rules`, purely
- * structurally — the SOLE source `assemble.ts`'s `variantChildrenByParent`,
- * `link.ts`'s `applyOverridePolymorphs`, and `normalize.ts`'s `variantSkip`
- * all consume (V2: the former wire-metadata channel this replaced,
- * `normalized.polymorphVariants`, is deleted entirely — see this module's
- * top-of-file STATUS comment). Values are the arm's FULL target kind name
+ * structurally. Link calls it twice: `applyOverridePolymorphs` derives on
+ * the pre-classification rules to push ambient scaffold into variant
+ * children, and the end of link derives on the final rules to stamp
+ * `LinkedGrammar.variantChildren` — the single table `normalize.ts`'s
+ * `variantSkip` and `assemble.ts`'s `variantChildrenByParent` read; neither
+ * re-derives. Values are the arm's FULL target kind name
  * (`arm.targetName`) — NOT a `${kind}_${suffix}` reconstruction, which is
  * unsound when a hidden (`_`-prefixed) parent has a VISIBLE target (ts's
  * `_export_statement_default` → `export_statement_default_from_arm`; the
@@ -6625,9 +6626,10 @@ parents.
  * `classifyAndLogHiddenRules` / `classifyHiddenRule` / `classifyHiddenChoiceRule`
  * already take the accumulator as an explicit `rules` parameter (V2 fixed
  * this pre-S3 — kept as-is). `applyOverridePolymorphs` /
- * `deriveStructuralVariantChildren` callers in this file, normalize.ts, and
- * assemble.ts each pass an explicit accumulator/carried-view parameter, never
- * an ambient ctx field. No STOP-worthy wrong-phase value flow found.
+ * `deriveStructuralVariantChildren` callers in this file pass an explicit
+ * accumulator parameter, never an ambient ctx field; normalize.ts and
+ * assemble.ts read the stamped `variantChildren` table instead of
+ * re-deriving. No STOP-worthy wrong-phase value flow found.
  */
 ```
 
@@ -7172,6 +7174,18 @@ parents.
 	 *
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
+```
+
+
+### `packages/codegen/src/compiler/types.ts::variantChildren`
+
+```text
+/** `{parent -> childTargetName[]}` for every variant-adoption parent, stamped
+ *  once at the end of link from the final link rules
+ *  (`deriveStructuralVariantChildren`). Normalize's `variantSkip` and
+ *  assemble's `variantChildrenByParent` consume this table; it is carried
+ *  unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`. Absent when
+ *  no kind adopts variants. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::contentAliasedFrom`
@@ -10908,10 +10922,10 @@ source, one derivation.
 // every variant-adoption parent/child is already resolved by variant
 // dispatch; flagging them as multi-slot seqs in the diagnostic would be
 // a false positive. Formerly derived from the wire-metadata channel's
-// `{parent, child}` pairs (`linked.polymorphVariants`); now derived from
-// `deriveStructuralVariantChildren(linked.rules)` — the SAME derivation
-// assemble.ts and link.ts's `applyOverridePolymorphs` consume, so this
-// skip-set can never drift from what actually adopted. Preserves the
+// `{parent, child}` pairs (`linked.polymorphVariants`); now read from
+// `linked.variantChildren` — the table link stamps once from its final
+// rules and assemble.ts reads too, so this skip-set can never drift from
+// what actually adopted. Preserves the
 // exact two-string-per-child shape the old code added (`pv.parent` +
 // `pv.child`, the SHORT suffix): the short suffix is recovered from
 // each structural target's full name via `prefixNamedSuffix` (the

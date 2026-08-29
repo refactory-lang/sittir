@@ -74,7 +74,6 @@ import {
 	type AssembleWarning
 } from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
-import { deriveStructuralVariantChildren } from './variant-structural.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
@@ -149,7 +148,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
-	const variantChildrenByParent = deriveStructuralVariantChildren(normalized.linkRules);
+	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly string[]>();
 	const variantParents = new Set(variantChildrenByParent.keys());
 
 	const parseKindCollisionContext = {

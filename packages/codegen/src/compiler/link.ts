@@ -252,6 +252,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
 	stampLinkMintedVisibility(rules, linkCtx);
+	const variantChildren = deriveStructuralVariantChildren(rules);
 	if (raw.refineForms && raw.refineForms.size > 0) {
 		for (const [kind, forms] of raw.refineForms) {
 			const rule = rules[kind];
@@ -281,7 +282,8 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: raw.refineForms,
 		parentAliasedKinds,
-		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
+		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
+		variantChildren: variantChildren.size > 0 ? variantChildren : undefined
 	};
 }
 

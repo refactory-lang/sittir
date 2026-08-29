@@ -164,6 +164,7 @@ export interface LinkedGrammar {
 	readonly refineForms?: Map<string, RefineForm[]>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
@@ -191,6 +192,7 @@ export interface NormalizedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
@@ -202,6 +204,7 @@ export interface SimplifiedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
