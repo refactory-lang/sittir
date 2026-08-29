@@ -853,6 +853,11 @@ export function isHiddenKind(name: string, inlineList?: readonly string[]): bool
 	return false;
 }
 
+export function isNonInlinableLeafShape(rule: AnyRule): boolean {
+	if (isEnumChoiceRule(rule)) return true;
+	return rule.type === SUPERTYPE || rule.type === PATTERN || rule.type === STRING;
+}
+
 export function isHiddenRule(name: string, rules: Readonly<Record<string, AnyRule>>): boolean {
 	return rules[name]?.hidden === true;
 }

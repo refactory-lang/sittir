@@ -1967,13 +1967,18 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 ### `packages/codegen/src/dsl/rule-attrs.ts::withKindFacts`
 
 ```text
-/** Carries a rule's `hidden`/`kind` facts from `source` onto `result` when
- *  `result` doesn't already have them — `hidden` only overwrites on a real
- *  difference, `kind` only fills an absent slot (never overwrites an
- *  existing `kind` provenance stamp). Used where a pass rebuilds a rule's
- *  root fresh (flatten's self-referential fold, normalize's alias-body
- *  substitution) and the pre-rebuild rule's kind-level facts would
- *  otherwise be silently dropped. */
+/** Carries a rule's `hidden`/`inlinedFrom` facts from `source` onto
+ *  `result` when `result` doesn't already have them — `hidden` only
+ *  overwrites on a real difference, `inlinedFrom` only fills an absent
+ *  slot (never overwrites an existing splice-provenance stamp). Used
+ *  where a pass rebuilds a rule's root fresh — flatten's `flattenRules`
+ *  carries the pre-flatten rule's facts onto the flattened root; link's
+ *  `classifyAndLogHiddenRules` carries them onto a reclassified
+ *  EnumRule/SupertypeRule; normalize's alias-bodies merge carries the
+ *  MAIN rules map's already-facted entry onto the separately re-derived
+ *  alias-body rule when both exist for the same kind — and the
+ *  pre-rebuild rule's kind-level facts would otherwise be silently
+ *  dropped. */
 ```
 
 #### body
@@ -2637,13 +2642,6 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 * log / suggested.ts's override-candidate surfacing) — never an
 	 * authorship fact.
 	 */
-```
-
-### `packages/codegen/src/dsl/rule-metadata.ts::inlinedFrom`
-
-```text
-/** Diagnostics-only: the hidden kind whose body was spliced in by the
-	 *  normalize inline hoist (§D-2a). */
 ```
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::fieldSource`
@@ -4038,6 +4036,22 @@ registered but later unused still counts as a sibling.
  * still mark rules hidden via `inline`. Passing `undefined` for
  * `inlineList` falls back to convention-only, which is the safe
  * default when Link doesn't have grammar metadata at hand.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isNonInlinableLeafShape`
+
+```text
+/** A rule shape that must never be spliced into every occurrence site by
+ *  reference-inlining: an enum choice, SUPERTYPE, PATTERN, or STRING body.
+ *  Each of those is a whole leaf CLASS with its own catalog identity, not
+ *  a single-use structural fragment — folding one into an inline SYMBOL
+ *  reference would duplicate that class at every reference site instead of
+ *  collapsing a single occurrence. Consumers: evaluate's
+ *  `canonicalizeRawGrammar` gates a reference's `inline` stamp on this
+ *  (unless the reference's own name is explicitly in the grammar's
+ *  `inline:` array, which overrides the guard); `inline-sets.ts` and
+ *  `assemble.ts` read the negation directly as an inlinability check.
  */
 ```
 

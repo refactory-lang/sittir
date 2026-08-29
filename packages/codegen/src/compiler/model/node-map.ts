@@ -1025,6 +1025,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
+	readonly inlinedFrom?: string;
 	readonly hasTrailingDelimiter: boolean;
 	readonly hasLeadingDelimiter: boolean;
 	readonly trailingDelimiter?: 'mandatory' | 'optional' | 'none';
@@ -1052,6 +1053,7 @@ export class AssembledNonterminal {
 	determined?: true;
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
+	readonly inlinedFrom?: string;
 	readonly hasTrailingDelimiter: boolean;
 	readonly hasLeadingDelimiter: boolean;
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
@@ -1092,6 +1094,7 @@ export class AssembledNonterminal {
 	constructor(init: AssembledNonterminalInit) {
 		this.values = init.values;
 		this.fieldName = init.fieldName;
+		this.inlinedFrom = init.inlinedFrom;
 		this.hasTrailingDelimiter = init.hasTrailingDelimiter;
 		this.hasLeadingDelimiter = init.hasLeadingDelimiter;
 		this.trailingDelimiter = init.trailingDelimiter ?? (init.hasTrailingDelimiter ? 'mandatory' : 'none');
@@ -1106,6 +1109,7 @@ export class AssembledNonterminal {
 		return new AssembledNonterminal({
 			values: this.values,
 			fieldName: this.fieldName,
+			inlinedFrom: this.inlinedFrom,
 			hasTrailingDelimiter: this.hasTrailingDelimiter,
 			hasLeadingDelimiter: this.hasLeadingDelimiter,
 			trailingDelimiter: this.trailingDelimiter,
@@ -1245,6 +1249,7 @@ export function acceptedIdPairsByKindOf(slot: {
 
 export interface SlotNamingInputs {
 	readonly fieldName?: string;
+	readonly inlinedFrom?: string;
 	readonly values: readonly NodeOrTerminal[];
 }
 
@@ -1272,7 +1277,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		slot.fieldName ??
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
-			: 'content');
+			: (slot.inlinedFrom?.replace(/^_+/, '') || 'content'));
 	const configKey = snakeToCamel(storageName);
 	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 	const propertyName = isMulti ? pluralize(configKey) : configKey;

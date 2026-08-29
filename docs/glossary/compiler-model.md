@@ -713,6 +713,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // lone ref (`splat_pattern.content` → `identifier`).
 ```
 
+#### body
+
+```text
+// A slot backed by more than one distinct storage kind (or an unnamed
+// value) has no single kind name to fall back on — try `slot.inlinedFrom`
+// (leading underscores stripped, same trim as the single-storage-kind
+// branch) before giving up to the generic `content`. `inlinedFrom` is set
+// only when this slot's whole content was spliced in from another rule's
+// body (link's `inlineReferences`, normalize's `spliceFoldableRefs`), so
+// the fallback names the slot after the rule it was inlined from rather
+// than the uninformative `content`.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::foldParseKindDuplicateSingularSlots`
 
 ```text

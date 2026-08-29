@@ -1287,6 +1287,19 @@ parents.
 // not itself guaranteed ≥1 occurrences at the individual-field level.
 ```
 
+### `packages/codegen/src/compiler/collect-slots.ts::inlinedFromSlotName`
+
+```text
+/** The fallback slot name for a rule whose whole content was spliced in
+ *  from another rule's body (`RuleBase.inlinedFrom`, leading underscores
+ *  stripped) — `undefined` when the rule was never inlined, so callers
+ *  chain it with `?? 'content'` for the final generic fallback. Named
+ *  after the rule it came from rather than the uninformative `content` for
+ *  every `buildSlot` unnamed-choice / no-nameable-kind case, matching
+ *  `node-map.ts`'s `projectSlotNaming` fallback for the same fact.
+ */
+```
+
 ### `packages/codegen/src/compiler/collect-slots.ts::buildSlot`
 
 ```text
@@ -1337,11 +1350,13 @@ parents.
 #### body
 
 ```text
-// Unnamed choice → `content`. Warn unless this is a
-// registered polymorph (polymorph metadata drives the TYPE
-// surface only; render just renders `content`) — or a sanctioned
-// union slot (for a qualifying union the `content` name
-// is the intended model, not a missing-name smell).
+// Unnamed choice → `inlinedFromSlotName(rule) ?? 'content'`: an
+// inlined-body choice is named after the rule it was spliced from
+// instead of the generic `content`. Warn unless this is a registered
+// polymorph (polymorph metadata drives the TYPE surface only; render
+// just renders `content`) — or a sanctioned union slot (for a
+// qualifying union the `content` name is the intended model, not a
+// missing-name smell).
 ```
 
 #### body
@@ -1357,11 +1372,12 @@ parents.
 ```text
 // Any OTHER nonterminal slot (per `classifyByType`) with no
 // fieldName and no nameable kind — `pattern` / `enum` / aliased
-// leaf → `content`, like an unnamed choice. `buildSlot` is only
-// reached for nonterminal positions, so we must NOT elide based on
-// rule.type: patterns and enums are structural slots (the catalog
-// classifies them nonterminal). Eliding here dropped real slots
-// (e.g. token_repetition's operator enum + separator pattern).
+// leaf → `inlinedFromSlotName(rule) ?? 'content'`, same fallback as
+// an unnamed choice. `buildSlot` is only reached for nonterminal
+// positions, so we must NOT elide based on rule.type: patterns and
+// enums are structural slots (the catalog classifies them
+// nonterminal). Eliding here dropped real slots (e.g.
+// token_repetition's operator enum + separator pattern).
 ```
 
 #### body
@@ -2919,8 +2935,13 @@ parents.
  * `hidden`/`inline` facts already settled.
  *
  * For a top-level rule: `hidden = name.startsWith('_')`. For a SYMBOL
- * reference: `hidden = name.startsWith('_')`,
- * `inline = !supertypes.has(name) && (hidden || inlineNames.has(name))`.
+ * reference: `hidden = name.startsWith('_')`; a reference is a `boundary`
+ * — never eligible to inline — when its name is a declared supertype, OR
+ * when it is not itself in the grammar's `inline:` array and its target
+ * rule's shape is {@link isNonInlinableLeafShape} (an enum choice,
+ * SUPERTYPE, PATTERN, or STRING body — splicing one of those into every
+ * occurrence site would duplicate a whole leaf class rather than fold a
+ * single reference). `inline = !boundary && (hidden || inlineNames.has(name))`.
  * For a named ALIAS wrapping a bare SYMBOL: forces that symbol's `inline`
  * to `false` regardless of what the name-based computation would give —
  * an alias confers a real visible CST kind that must materialize, not
@@ -3487,8 +3508,11 @@ parents.
 #### body
 
 ```text
-// (debt PR-P1, item 3) Branch on the RETURNED classification only —
-// never re-read a stamp off `classified.rule`. See ClassifyResult.
+// Branch on the RETURNED classification only — never re-read a stamp off
+// `classified.rule`. See ClassifyResult. When classification actually
+// changed the shape, `withKindFacts` carries the original rule's `hidden`
+// and `inlinedFrom` stamps onto the reclassified shape — classification
+// builds a fresh EnumRule/SupertypeRule that would otherwise lose them.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::markSupertypeRefsNonInline`
@@ -3579,6 +3603,46 @@ parents.
  *  pass that does the inlining. */
 ```
 
+### `packages/codegen/src/compiler/link.ts::pruneUnreachableRules`
+
+```text
+/** Drops every rule not reachable from the grammar's root, nor from any
+ *  external or extra (each of those is its own reachability root — an
+ *  external/extra can be referenced only indirectly, e.g. through a
+ *  dialect-only production). Dialect filtering: a rule that exists in the
+ *  raw grammar but only serves a variant the current dialect never reaches
+ *  is deleted here, before any later pass's raw-rule collectors run, so
+ *  those collectors only ever see the pruned (reachable) set. */
+```
+
+### `packages/codegen/src/compiler/link.ts::inlineReferences`
+
+```text
+/** Fixed-point inlining: repeatedly replaces every SYMBOL ref with
+ *  `inline === true` (and not in `cyclicInlineTargets`) by its target
+ *  rule's body, stamping `inlinedFrom` on the substituted body with the
+ *  ref's own name and keeping the ref's own id (`withId(..., r.id ??
+ *  body.id)`) so downstream slot-naming and provenance still resolve to
+ *  the occurrence site, not the definition site. Runs to a fixed point (no
+ *  rule changed in a pass) or a 64-pass cap, whichever comes first; hitting
+ *  the cap emits the `inline-fixpoint-unreached` diagnostic (`canProceed:
+ *  true` — a stalled inline chain degrades slot naming, it does not break
+ *  the build) rather than looping forever on a mutually-inlining cycle
+ *  `cyclicInlineTargets` failed to catch. */
+```
+
+### `packages/codegen/src/compiler/link.ts::cyclicInlineTargets`
+
+```text
+/** The set of rule names `inlineReferences` must never substitute in place
+ *  because inlining them would not terminate: for every rule, walk its
+ *  `inline === true` SYMBOL out-edges and DFS from each of that rule's
+ *  targets: if the search returns to the START rule, the start rule is
+ *  cyclic. A rule mutually or self reachable only through inline refs is
+ *  left as a plain reference — never spliced — so `inlineReferences`'s
+ *  fixed point is guaranteed to exist for every other rule. */
+```
+
 ### `packages/codegen/src/compiler/link.ts::aliasedSymbolWithin`
 
 ```text
@@ -3607,7 +3671,7 @@ parents.
 ```text
 // rawRules is Rule<'evaluate'> (pre-link); extractTopLevelAliasTarget
 // only walks the OPTIONAL/ALIAS/SEQ/CHOICE shell around a top-level
-// alias, present in both phases — widen the phase view (post-PR-S cast).
+// alias, present in both phases — widen the phase view with a cast.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::collectHiddenChoicesWithNamedAliasMembers`
@@ -3618,12 +3682,16 @@ parents.
  * body is a `choice` where **ALL** members are named aliases.
  *
  * These are pure alias-dispatch choices like `_export_statement_default`
- * where every choice arm is `alias(symbol(_child), $.visible)`. After
- * `resolveRule` collapses named aliases to plain `symbol` refs, such a choice
- * looks identical to a bare-symbol supertype — but every alias target IS a
- * real runtime CST node, not an erased abstraction. Classifying them as
- * `supertype` would make the transport expect transparent subtype dispatch,
- * which fails at decode when the reader sees the concrete kind ID.
+ * where every choice arm is `alias(symbol(_child), $.visible)`. `resolveRule`
+ * keeps a bare-symbol-content named alias as the ALIAS wrapper rather than
+ * collapsing it to a plain `symbol` ref (`aliasedSymbolWithin` is what makes
+ * that shape eligible to stay wrapped) — but without this set,
+ * `classifyHiddenChoiceRule`'s supertype-compatible check treats an
+ * ALIAS-of-SYMBOL member the same as a bare `symbol` and would still promote
+ * the choice to a supertype. Every alias target here IS a real runtime CST
+ * node, not an erased abstraction. Classifying them as `supertype` would
+ * make the transport expect transparent subtype dispatch, which fails at
+ * decode when the reader sees the concrete kind ID.
  *
  * Mixed choices (some alias + some symbol, like `_match_block`) are
  * intentionally excluded: they may still need supertype treatment for the
@@ -4285,9 +4353,12 @@ parents.
 
 ```text
 /**
- * Unwrap alias (and token) wrappers to find the inner rule for stamp
- * candidate checking. Does NOT recurse into field/optional/etc — only
- * strips alias/token transparency layers.
+ * Unwrap TOKEN wrappers to find the inner rule for stamp candidate
+ * checking. Does NOT recurse into field/optional/etc, and does NOT unwrap
+ * ALIAS — an ALIAS is link's own wrapper for a named alias occurrence and
+ * `rewriteRuleForStamp`'s ALIAS case returns it untouched, so a check that
+ * unwrapped through ALIAS here would see a shape this rewrite never acts
+ * on anyway.
  */
 ```
 
@@ -4502,8 +4573,9 @@ parents.
 /**
  * Replace every fold-eligible `symbol(_x)` inside `rule` with the body of
  * `rules[_x]` (the group's `content`), carrying the symbol's seq-unit
- * multiplicity / separator / fieldName onto the spliced node and tagging
- * `metadata.inlinedFrom = _x`. Returns the same reference when nothing changed.
+ * multiplicity / separator / fieldName onto the spliced node and stamping
+ * `inlinedFrom: _x` (RuleBase's own field — see {@link RuleBase.inlinedFrom},
+ * types/rule.ts). Returns the same reference when nothing changed.
  */
 ```
 
@@ -4574,11 +4646,12 @@ parents.
 // slot). A non-seq body (single member group) is wrapped in a 1-member seq
 // so it carries the same seq-unit gating uniformly.
 //
-// `splicedBody: true` (debt PR-0c) is the DECLARED structural flag —
-// distinct from the `inlinedFrom` provenance value in `metadata` — that
-// `emitters/templates.ts`'s boundary walkers key on to keep this seq's
-// outer-boundary spacing like the opaque `symbol(_x)` ref it replaced.
-// See `RuleBase.splicedBody`'s doc comment (types/rule.ts).
+// `splicedBody: true` is the DECLARED structural flag — distinct from
+// the `inlinedFrom` provenance value (both live directly on RuleBase,
+// not in `metadata`) — that `emitters/templates.ts`'s boundary walkers
+// key on to keep this seq's outer-boundary spacing like the opaque
+// `symbol(_x)` ref it replaced. See `RuleBase.splicedBody`'s doc
+// comment (types/rule.ts).
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::fanOutSeqChoices`
@@ -4939,8 +5012,13 @@ parents.
 ```text
 /**
  * Replace every symbol ref to `targetName` inside `rule` with the
- * content of `targetRule`. Returns the same reference when nothing
- * changed so callers can do identity comparison.
+ * content of `targetRule` — but only when the ref is itself
+ * `inline === true`; a non-inline ref to `targetName` (an aliased,
+ * supertype, or self-recursive occurrence) is a real node the parser
+ * keeps and must NOT be spliced away, even though this is the SAME
+ * name `spliceHiddenRuleIntoSingleParent` is trying to fold. Returns the
+ * same reference when nothing changed so callers can do identity
+ * comparison.
  */
 ```
 
@@ -5830,7 +5908,7 @@ parents.
  * `flatten` over a whole rule map — the map-form `normalizeGrammar()` uses
  * to produce the `normalizedRules` snapshot. Applies the self-referential
  * fold keyed on each rule's own name before flattening, then carries the
- * PRE-flatten rule's `hidden`/`kind` facts onto the flattened root
+ * PRE-flatten rule's `hidden`/`inlinedFrom` facts onto the flattened root
  * (`dsl/rule-attrs.ts::withKindFacts`) — flattening can rebuild the root
  * node fresh (a collapsed singleton, a spliced seq), so those facts don't
  * survive the rebuild on their own.
@@ -7789,22 +7867,39 @@ source, one derivation.
 /**
  * One walk, two catalog jobs: rewrite catalog-known literals at FIELD
  * positions into link-minted SYMBOLs, and stamp parser-issued kindIds onto
- * every value-bearing leaf (`storageKindId`/`parseKindId` on SYMBOL,
+ * every value-bearing leaf (`kindId` on SYMBOL and named ALIAS,
  * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
  * facts instead of re-resolving names/texts per site. Leaves that resolve
  * nothing are collected into `misses` — the link-time phantom-kind
  * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
  * strings are lexeme fragments of the token, not separate anon tokens, so
  * a miss there is meaningless by construction.
+ *
+ * An inline SYMBOL (or inline SUPERTYPE subtype) whose name has an entry
+ * in `aliasBodies` is not stamped in place — its alias body is spliced in
+ * (`{...body, kind: rule.name}`, keeping the ref's own id) and the whole
+ * substituted rule is recursively re-canonicalized, so the emitted tree
+ * carries the alias's own content and kindId rather than a bare reference
+ * to it. A SUPERTYPE subtype's inlined body additionally carries
+ * `aliasedTo`/`aliasedToId` from the alias so the display name survives
+ * the splice. A non-inline SYMBOL is stamped directly and never spliced.
+ * ALIAS itself stamps `kindId` from its own `value` (the alias name),
+ * skipped once already stamped or when the entry resolves to nothing
+ * (`entry.anon === true` counts as unresolved — an anonymous catalog row
+ * is not a named parser kindId).
  */
 ```
 
 #### body
 
 ```text
-// Each subtype ref stamps exactly like a top-level SYMBOL occurrence —
-// same catalog, same helper — since collectSubtypeRefs mints these
-// before this pass runs and doesn't stamp them itself.
+// Each subtype ref is first offered the same alias-body splice an inline
+// SYMBOL gets (`inlineSubtype`, mirroring the SYMBOL case above but
+// carrying `aliasedTo`/`aliasedToId` forward from the spliced body since
+// a subtype loses its own SYMBOL identity in the splice), then stamps
+// exactly like a top-level SYMBOL occurrence — same catalog, same helper
+// — since collectSubtypeRefs mints these before this pass runs and
+// doesn't stamp them itself.
 ```
 
 ### `packages/codegen/src/compiler/flatten.ts::applySelfReferentialFold`
@@ -7886,7 +7981,20 @@ source, one derivation.
 // bare literal here stays a leaf with `multiplicity: 'optional'`.
 ```
 
+#### body
 
+```text
+// ALIAS: named goes through `b.alias(content, {...symbol(value),
+// kindId})` — a fresh SYMBOL built from the alias's own NAME (`value`),
+// carrying the ALIAS node's own `kindId` (stamped by link's
+// `canonicalizeRuleLiterals` from that same name), never from the
+// wrapped content. Unnamed goes through `b.alias(content, value)` — the
+// raw literal target string, no kindId to carry. Either way `b.alias`
+// (`attributeAlias`) mints `aliasedTo`/`aliasedToId` from that target
+// onto `content`, so the SOURCE (storage) identity on `content` and the
+// ALIAS's own display identity travel as two independent facts through
+// the same call.
+```
 
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
@@ -9866,6 +9974,17 @@ source, one derivation.
 
 ### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`
 
+```text
+/** A non-inline SYMBOL is a real occurrence node the tree keeps, never a
+ *  spliceable reference, so `symToLit`/`blankStamps` substitution never
+ *  applies to it — both the bare-SYMBOL and the FIELD-wrapping-a-SYMBOL
+ *  cases return unchanged unless the ref is `inline === true`. ALIAS is
+ *  returned untouched (link's ALIAS wrapper is opaque to this rewrite;
+ *  `unwrapAliasForCheck` only sees through TOKEN, never ALIAS, when
+ *  checking a FIELD's inner shape for the same reason).
+ */
+```
+
 #### body
 
 ```text
@@ -10262,10 +10381,14 @@ source, one derivation.
 
 ```text
 /**
- * CHOICE: fold an empty-match member (`pattern("")`, empty seq) into `optional`;
- * collapse a single member; merge structurally-equivalent branches
- * (`mergeBranchesForChoice`). Variant wrappers are preserved for polymorph
- * detection.
+ * CHOICE: first splice any directly-nested CHOICE member into the parent's
+ * member list (choice associativity) — each spliced arm carries the nested
+ * node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …,
+ * already flattened to attributes by this phase) via `withAttrsFrom` onto
+ * that arm, not the nested CHOICE node itself. Then: fold an empty-match
+ * member (`pattern("")`, empty seq) into `optional`; collapse a single
+ * member; merge structurally-equivalent branches (`mergeBranchesForChoice`).
+ * Variant wrappers are preserved for polymorph detection.
  *
  * Constructs through `ctx.builder` (`RuleBuilder<'normalize'>` — always
  * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather

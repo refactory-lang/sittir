@@ -14,14 +14,27 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
+        "name",
+        "name",
+        "name",
+        "name",
         "name"
       ]
     }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "_enum_body_elements",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[5]] alongside union arm(s) [enum_assignment]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
   },
   {
     "scope": "grammar",
@@ -50,103 +63,6 @@
       "unionSlot": "content",
       "degenerateFields": [
         "declaration"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_jsx_opening_element_content",
-    "message": "[collect-slots] kind '_jsx_opening_element_content': choice rule:_jsx_opening_element_content:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [_jsx_start_opening_element_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "</",
-    "message": "[assemble] anonymous literal \"</\" resolved no parser kindId — keyed by raw text '</'",
-    "canProceed": true,
-    "details": {
-      "literalText": "</"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "/>",
-    "message": "[assemble] anonymous literal \"/>\" resolved no parser kindId — keyed by raw text '/>'",
-    "canProceed": true,
-    "details": {
-      "literalText": "/>"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_jsx_element",
-    "message": "[assemble] typeName collision: kind '_jsx_element' renamed 'JsxElement' → '_JsxElement' (visible sibling(s): 'jsx_element')",
-    "canProceed": true,
-    "details": {
-      "typeName": "JsxElement",
-      "newType": "_JsxElement",
-      "visibleKinds": [
-        "jsx_element"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_jsx_identifier",
-    "message": "[assemble] typeName collision: kind '_jsx_identifier' renamed 'JsxIdentifier' → '_JsxIdentifier' (visible sibling(s): 'jsx_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "JsxIdentifier",
-      "newType": "_JsxIdentifier",
-      "visibleKinds": [
-        "jsx_identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_jsx_attribute",
-    "message": "[assemble] typeName collision: kind '_jsx_attribute' renamed 'JsxAttribute' → '_JsxAttribute' (visible sibling(s): 'jsx_attribute')",
-    "canProceed": true,
-    "details": {
-      "typeName": "JsxAttribute",
-      "newType": "_JsxAttribute",
-      "visibleKinds": [
-        "jsx_attribute"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_call_signature",
-    "message": "[assemble] typeName collision: kind '_call_signature' renamed 'CallSignature' → '_CallSignature' (visible sibling(s): 'call_signature')",
-    "canProceed": true,
-    "details": {
-      "typeName": "CallSignature",
-      "newType": "_CallSignature",
-      "visibleKinds": [
-        "call_signature"
       ]
     }
   },
@@ -184,67 +100,6 @@
   },
   {
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_identifier",
-    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Identifier",
-      "newType": "_Identifier",
-      "visibleKinds": [
-        "identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_property_identifier",
-    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "PropertyIdentifier",
-      "newType": "_PropertyIdentifier",
-      "visibleKinds": [
-        "property_identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_module",
-    "message": "[assemble] typeName collision: kind '_module' renamed 'Module' → '_Module' (visible sibling(s): 'module')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Module",
-      "newType": "_Module",
-      "visibleKinds": [
-        "module"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "multi-slot-nested-seq",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_index_signature_optional1",
-    "message": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
-    "proposal": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
@@ -258,45 +113,14 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "35 referenced kind(s) resolved no parser kindId",
+    "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
-        "_export_specifier_optional1",
-        "_expressions",
-        "_identifier",
-        "_index_signature_optional1",
-        "_infer_type_optional1",
-        "_jsx_attribute",
-        "_jsx_attribute_name",
-        "_jsx_attribute_optional1",
-        "_jsx_attribute_value",
-        "_jsx_child",
-        "_jsx_element",
-        "_jsx_element_name",
-        "_jsx_identifier",
-        "_jsx_opening_element_content",
-        "_jsx_start_opening_element",
-        "_jsx_start_opening_element_arm",
-        "_jsx_string",
-        "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_mapped_type_clause_optional1",
         "_operator",
-        "_unary_expression_operator",
-        "html_character_reference",
-        "jsx_attribute",
-        "jsx_closing_element",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_identifier",
-        "jsx_namespace_name",
-        "jsx_opening_element",
-        "jsx_self_closing_element",
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
+        "_unary_expression_operator"
       ]
     },
     "severity": "warning",
@@ -305,13 +129,11 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "3 literal(s) resolved no parser kindId",
+    "message": "1 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\n",
-        "/>",
-        "</"
+        "\n"
       ]
     },
     "severity": "warning",
@@ -319,70 +141,13 @@
     "grammar": "typescript"
   },
   {
-    "code": "kindid-inline-excluded-symbols",
-    "message": "17 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_export_specifier_optional1",
-        "_expressions",
-        "_identifier",
-        "_index_signature_optional1",
-        "_infer_type_optional1",
-        "_jsx_attribute",
-        "_jsx_attribute_name",
-        "_jsx_attribute_optional1",
-        "_jsx_attribute_value",
-        "_jsx_child",
-        "_jsx_element",
-        "_jsx_element_name",
-        "_jsx_identifier",
-        "_jsx_start_opening_element",
-        "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_mapped_type_clause_optional1"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
-    "code": "kindid-vaporized-symbols",
-    "message": "14 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_jsx_opening_element_content",
-        "_jsx_start_opening_element_arm",
-        "_jsx_string",
-        "html_character_reference",
-        "jsx_attribute",
-        "jsx_closing_element",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_identifier",
-        "jsx_namespace_name",
-        "jsx_opening_element",
-        "jsx_self_closing_element",
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
     "code": "kindid-vaporized-literals",
-    "message": "3 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\n",
-        "/>",
-        "</"
+        "\n"
       ]
     },
     "scope": "grammar",

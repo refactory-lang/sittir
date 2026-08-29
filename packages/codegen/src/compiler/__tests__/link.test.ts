@@ -384,7 +384,7 @@ describe('Link — top-level alias bodies', () => {
 		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
 			type: 'PATTERN',
 			value: '[A-Za-z_]\\w*',
-			kind: 'identifier'
+			inlinedFrom: 'identifier'
 		});
 	});
 

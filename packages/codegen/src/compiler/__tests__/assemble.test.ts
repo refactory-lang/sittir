@@ -61,7 +61,7 @@ function makeNormalized(
 		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			const own = normalizedRules[kind];
-			normalizedRules[kind] = own === undefined ? rule : { ...rule, hidden: own.hidden, kind: own.kind };
+			normalizedRules[kind] = own === undefined ? rule : { ...rule, hidden: own.hidden, inlinedFrom: own.inlinedFrom };
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;

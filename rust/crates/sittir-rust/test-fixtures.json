@@ -42639,12 +42639,12 @@
                                         "$type": 397,
                                         "$source": 0,
                                         "$named": true,
+                                        "$text": "()",
                                         "$span": {
                                           "start": 101,
                                           "end": 103
                                         },
-                                        "$nodeHandle": 167503724649,
-                                        "_delim_tokens": []
+                                        "$nodeHandle": 167503724649
                                       }
                                     },
                                     {
@@ -42671,12 +42671,12 @@
                                         "$type": 397,
                                         "$source": 0,
                                         "$named": true,
+                                        "$text": "()",
                                         "$span": {
                                           "start": 104,
                                           "end": 106
                                         },
-                                        "$nodeHandle": 167503724650,
-                                        "_delim_tokens": []
+                                        "$nodeHandle": 167503724650
                                       }
                                     },
                                     {
@@ -43104,12 +43104,12 @@
                                 "$type": 397,
                                 "$source": 0,
                                 "$named": true,
+                                "$text": "()",
                                 "$span": {
                                   "start": 101,
                                   "end": 103
                                 },
-                                "$nodeHandle": 167503724796,
-                                "_delim_tokens": []
+                                "$nodeHandle": 167503724796
                               }
                             },
                             {
@@ -43136,12 +43136,12 @@
                                 "$type": 397,
                                 "$source": 0,
                                 "$named": true,
+                                "$text": "()",
                                 "$span": {
                                   "start": 104,
                                   "end": 106
                                 },
-                                "$nodeHandle": 167503724797,
-                                "_delim_tokens": []
+                                "$nodeHandle": 167503724797
                               }
                             },
                             {
@@ -43532,12 +43532,12 @@
                               "$type": 397,
                               "$source": 0,
                               "$named": true,
+                              "$text": "()",
                               "$span": {
                                 "start": 101,
                                 "end": 103
                               },
-                              "$nodeHandle": 167503724841,
-                              "_delim_tokens": []
+                              "$nodeHandle": 167503724841
                             }
                           },
                           {
@@ -43564,12 +43564,12 @@
                               "$type": 397,
                               "$source": 0,
                               "$named": true,
+                              "$text": "()",
                               "$span": {
                                 "start": 104,
                                 "end": 106
                               },
-                              "$nodeHandle": 167503724842,
-                              "_delim_tokens": []
+                              "$nodeHandle": 167503724842
                             }
                           },
                           {
@@ -43877,12 +43877,12 @@
                     "$type": 397,
                     "$source": 0,
                     "$named": true,
+                    "$text": "()",
                     "$span": {
                       "start": 101,
                       "end": 103
                     },
-                    "$nodeHandle": 167503724962,
-                    "_delim_tokens": []
+                    "$nodeHandle": 167503724962
                   }
                 },
                 {
@@ -43909,12 +43909,12 @@
                     "$type": 397,
                     "$source": 0,
                     "$named": true,
+                    "$text": "()",
                     "$span": {
                       "start": 104,
                       "end": 106
                     },
-                    "$nodeHandle": 167503724963,
-                    "_delim_tokens": []
+                    "$nodeHandle": 167503724963
                   }
                 },
                 {
@@ -44139,12 +44139,12 @@
               "$type": 397,
               "$source": 0,
               "$named": true,
+              "$text": "()",
               "$span": {
                 "start": 101,
                 "end": 103
               },
-              "$nodeHandle": 167503725064,
-              "_delim_tokens": []
+              "$nodeHandle": 167503725064
             }
           },
           {
@@ -44171,12 +44171,12 @@
               "$type": 397,
               "$source": 0,
               "$named": true,
+              "$text": "()",
               "$span": {
                 "start": 104,
                 "end": 106
               },
-              "$nodeHandle": 167503725065,
-              "_delim_tokens": []
+              "$nodeHandle": 167503725065
             }
           },
           {
@@ -44242,12 +44242,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 101,
           "end": 103
         },
-        "$nodeHandle": 167503725066,
-        "_delim_tokens": []
+        "$nodeHandle": 167503725066
       }
     },
     "expectedOutput": "()"
@@ -44279,12 +44279,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 104,
           "end": 106
         },
-        "$nodeHandle": 167503725067,
-        "_delim_tokens": []
+        "$nodeHandle": 167503725067
       }
     },
     "expectedOutput": "()"
@@ -60638,12 +60638,12 @@
                     "$type": 399,
                     "$source": 0,
                     "$named": true,
+                    "$text": "{}",
                     "$span": {
                       "start": 42,
                       "end": 44
                     },
-                    "$nodeHandle": 227633266710,
-                    "_delim_tokens": []
+                    "$nodeHandle": 227633266710
                   }
                 },
                 "$other": [
@@ -60764,7 +60764,7 @@
       },
       "$nodeHandle": 227633266688
     },
-    "expectedOutput": "pub trait A:B+C+D{ private_decl!{  }fn f(&self); }"
+    "expectedOutput": "pub trait A:B+C+D{ private_decl!{}fn f(&self); }"
   },
   {
     "kind": "roundtrip",
@@ -60772,9 +60772,9 @@
     "sourceIn": "pub trait A: B + C + D {\n    private_decl!{}\n    fn f(&self);\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub trait A:B+C+D{ private_decl!{  }fn f(&self); }",
+    "expectedSourceOut": "pub trait A:B+C+D{ private_decl!{}fn f(&self); }",
     "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier) bounds: (type_identifier)) body: (declaration_list declaration_statements: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace))) declaration_statements: (function_signature_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self)))))))))",
-    "wrappedText": "pub trait A:B+C+D{ private_decl!{  }fn f(&self); }",
+    "wrappedText": "pub trait A:B+C+D{ private_decl!{}fn f(&self); }",
     "wrappedOffset": 0
   },
   {
@@ -60847,12 +60847,12 @@
                 "$type": 399,
                 "$source": 0,
                 "$named": true,
+                "$text": "{}",
                 "$span": {
                   "start": 42,
                   "end": 44
                 },
-                "$nodeHandle": 227633266722,
-                "_delim_tokens": []
+                "$nodeHandle": 227633266722
               }
             },
             "$other": [
@@ -60966,7 +60966,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub trait A:B+C+D{ private_decl!{  }fn f(&self); }"
+    "expectedOutput": "pub trait A:B+C+D{ private_decl!{}fn f(&self); }"
   },
   {
     "kind": "roundtrip",
@@ -60974,9 +60974,9 @@
     "sourceIn": "pub trait A: B + C + D {\n    private_decl!{}\n    fn f(&self);\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub trait A:B+C+D{ private_decl!{  }fn f(&self); }",
+    "expectedSourceOut": "pub trait A:B+C+D{ private_decl!{}fn f(&self); }",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier) bounds: (type_identifier)) body: (declaration_list declaration_statements: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace))) declaration_statements: (function_signature_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))))))",
-    "wrappedText": "pub trait A:B+C+D{ private_decl!{  }fn f(&self); }",
+    "wrappedText": "pub trait A:B+C+D{ private_decl!{}fn f(&self); }",
     "wrappedOffset": 0
   },
   {
@@ -61037,12 +61037,12 @@
           "$type": 399,
           "$source": 0,
           "$named": true,
+          "$text": "{}",
           "$span": {
             "start": 42,
             "end": 44
           },
-          "$nodeHandle": 227633266737,
-          "_delim_tokens": []
+          "$nodeHandle": 227633266737
         }
       },
       "$other": [
@@ -61058,7 +61058,7 @@
         "token_tree"
       ]
     },
-    "expectedOutput": "private_decl!{  }"
+    "expectedOutput": "private_decl!{}"
   },
   {
     "kind": "roundtrip",
@@ -61066,9 +61066,9 @@
     "sourceIn": "private_decl!{}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "private_decl!{  }",
+    "expectedSourceOut": "private_decl!{}",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "private_decl!{  }",
+    "wrappedText": "private_decl!{}",
     "wrappedOffset": 0
   },
   {
@@ -61087,15 +61087,15 @@
         "$type": 399,
         "$source": 0,
         "$named": true,
+        "$text": "{}",
         "$span": {
           "start": 42,
           "end": 44
         },
-        "$nodeHandle": 227633266738,
-        "_delim_tokens": []
+        "$nodeHandle": 227633266738
       }
     },
-    "expectedOutput": "{  }"
+    "expectedOutput": "{}"
   },
   {
     "kind": "roundtrip",
@@ -61103,9 +61103,9 @@
     "sourceIn": "{}",
     "pattern": "delim_token_tree",
     "edits": [],
-    "expectedSourceOut": "{  }",
+    "expectedSourceOut": "{}",
     "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
-    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedText": "fn _f() { mac! {} }",
     "wrappedOffset": 15
   },
   {
@@ -110336,12 +110336,12 @@
                         "$type": 398,
                         "$source": 0,
                         "$named": true,
+                        "$text": "[]",
                         "$span": {
                           "start": 7,
                           "end": 9
                         },
-                        "$nodeHandle": 408021893137,
-                        "_delim_tokens": []
+                        "$nodeHandle": 408021893137
                       }
                     },
                     "$other": [
@@ -110465,12 +110465,12 @@
                 "$type": 398,
                 "$source": 0,
                 "$named": true,
+                "$text": "[]",
                 "$span": {
                   "start": 7,
                   "end": 9
                 },
-                "$nodeHandle": 408021893158,
-                "_delim_tokens": []
+                "$nodeHandle": 408021893158
               }
             },
             "$other": [
@@ -110573,12 +110573,12 @@
               "$type": 398,
               "$source": 0,
               "$named": true,
+              "$text": "[]",
               "$span": {
                 "start": 7,
                 "end": 9
               },
-              "$nodeHandle": 408021893163,
-              "_delim_tokens": []
+              "$nodeHandle": 408021893163
             }
           },
           "$other": [
@@ -110643,12 +110643,12 @@
           "$type": 398,
           "$source": 0,
           "$named": true,
+          "$text": "[]",
           "$span": {
             "start": 7,
             "end": 9
           },
-          "$nodeHandle": 408021893168,
-          "_delim_tokens": []
+          "$nodeHandle": 408021893168
         }
       },
       "$other": [
@@ -110693,12 +110693,12 @@
         "$type": 398,
         "$source": 0,
         "$named": true,
+        "$text": "[]",
         "$span": {
           "start": 7,
           "end": 9
         },
-        "$nodeHandle": 408021893169,
-        "_delim_tokens": []
+        "$nodeHandle": 408021893169
       }
     },
     "expectedOutput": "[]"
@@ -122421,12 +122421,12 @@
                   "$type": 397,
                   "$source": 0,
                   "$named": true,
+                  "$text": "()",
                   "$span": {
                     "start": 2,
                     "end": 4
                   },
-                  "$nodeHandle": 476741369893,
-                  "_delim_tokens": []
+                  "$nodeHandle": 476741369893
                 }
               },
               "$other": [
@@ -122483,12 +122483,12 @@
                   "$type": 398,
                   "$source": 0,
                   "$named": true,
+                  "$text": "[]",
                   "$span": {
                     "start": 8,
                     "end": 10
                   },
-                  "$nodeHandle": 476741369897,
-                  "_delim_tokens": []
+                  "$nodeHandle": 476741369897
                 }
               },
               "$other": [
@@ -122545,12 +122545,12 @@
                   "$type": 399,
                   "$source": 0,
                   "$named": true,
+                  "$text": "{}",
                   "$span": {
                     "start": 14,
                     "end": 16
                   },
-                  "$nodeHandle": 476741369901,
-                  "_delim_tokens": []
+                  "$nodeHandle": 476741369901
                 }
               },
               "$other": [
@@ -122625,12 +122625,12 @@
                   "$type": 397,
                   "$source": 0,
                   "$named": true,
+                  "$text": "()",
                   "$span": {
                     "start": 23,
                     "end": 25
                   },
-                  "$nodeHandle": 476741369906,
-                  "_delim_tokens": []
+                  "$nodeHandle": 476741369906
                 }
               },
               "$other": [
@@ -122723,12 +122723,12 @@
                   "$type": 399,
                   "$source": 0,
                   "$named": true,
+                  "$text": "{}",
                   "$span": {
                     "start": 35,
                     "end": 37
                   },
-                  "$nodeHandle": 476741369912,
-                  "_delim_tokens": []
+                  "$nodeHandle": 476741369912
                 }
               },
               "$other": [
@@ -122761,7 +122761,7 @@
       },
       "$nodeHandle": 476741369856
     },
-    "expectedOutput": "a!();b![];c!{  };d::e!();f::g::h!{  };"
+    "expectedOutput": "a!();b![];c!{};d::e!();f::g::h!{};"
   },
   {
     "kind": "roundtrip",
@@ -122769,9 +122769,9 @@
     "sourceIn": "a!();\nb![];\nc!{};\nd::e!();\nf::g::h!{};",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a!();b![];c!{  };d::e!();f::g::h!{  };",
+    "expectedSourceOut": "a!();b![];c!{};d::e!();f::g::h!{};",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_bracket))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (scoped_identifier path: (identifier) name: (identifier)) token_tree: (token_tree (delim_token_tree_paren))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) token_tree: (token_tree (delim_token_tree_brace))))))",
-    "wrappedText": "a!();b![];c!{  };d::e!();f::g::h!{  };",
+    "wrappedText": "a!();b![];c!{};d::e!();f::g::h!{};",
     "wrappedOffset": 0
   },
   {
@@ -122795,12 +122795,12 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
+          "$text": "()",
           "$span": {
             "start": 2,
             "end": 4
           },
-          "$nodeHandle": 476741369955,
-          "_delim_tokens": []
+          "$nodeHandle": 476741369955
         }
       },
       "$other": [
@@ -122850,12 +122850,12 @@
           "$type": 398,
           "$source": 0,
           "$named": true,
+          "$text": "[]",
           "$span": {
             "start": 8,
             "end": 10
           },
-          "$nodeHandle": 476741369957,
-          "_delim_tokens": []
+          "$nodeHandle": 476741369957
         }
       },
       "$other": [
@@ -122905,12 +122905,12 @@
           "$type": 399,
           "$source": 0,
           "$named": true,
+          "$text": "{}",
           "$span": {
             "start": 14,
             "end": 16
           },
-          "$nodeHandle": 476741369959,
-          "_delim_tokens": []
+          "$nodeHandle": 476741369959
         }
       },
       "$other": [
@@ -122926,7 +122926,7 @@
         "token_tree"
       ]
     },
-    "expectedOutput": "c!{  }"
+    "expectedOutput": "c!{}"
   },
   {
     "kind": "roundtrip",
@@ -122934,9 +122934,9 @@
     "sourceIn": "c!{}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "c!{  }",
+    "expectedSourceOut": "c!{}",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "c!{  }",
+    "wrappedText": "c!{}",
     "wrappedOffset": 0
   },
   {
@@ -122978,12 +122978,12 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
+          "$text": "()",
           "$span": {
             "start": 23,
             "end": 25
           },
-          "$nodeHandle": 476741369962,
-          "_delim_tokens": []
+          "$nodeHandle": 476741369962
         }
       },
       "$other": [
@@ -123069,12 +123069,12 @@
           "$type": 399,
           "$source": 0,
           "$named": true,
+          "$text": "{}",
           "$span": {
             "start": 35,
             "end": 37
           },
-          "$nodeHandle": 476741369966,
-          "_delim_tokens": []
+          "$nodeHandle": 476741369966
         }
       },
       "$other": [
@@ -123090,7 +123090,7 @@
         "token_tree"
       ]
     },
-    "expectedOutput": "f::g::h!{  }"
+    "expectedOutput": "f::g::h!{}"
   },
   {
     "kind": "roundtrip",
@@ -123098,9 +123098,9 @@
     "sourceIn": "f::g::h!{}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "f::g::h!{  }",
+    "expectedSourceOut": "f::g::h!{}",
     "expectedReparseTree": "(macro_invocation macro: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "f::g::h!{  }",
+    "wrappedText": "f::g::h!{}",
     "wrappedOffset": 0
   },
   {
@@ -123119,12 +123119,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 2,
           "end": 4
         },
-        "$nodeHandle": 476741369967,
-        "_delim_tokens": []
+        "$nodeHandle": 476741369967
       }
     },
     "expectedOutput": "()"
@@ -123156,12 +123156,12 @@
         "$type": 398,
         "$source": 0,
         "$named": true,
+        "$text": "[]",
         "$span": {
           "start": 8,
           "end": 10
         },
-        "$nodeHandle": 476741369968,
-        "_delim_tokens": []
+        "$nodeHandle": 476741369968
       }
     },
     "expectedOutput": "[]"
@@ -123193,15 +123193,15 @@
         "$type": 399,
         "$source": 0,
         "$named": true,
+        "$text": "{}",
         "$span": {
           "start": 14,
           "end": 16
         },
-        "$nodeHandle": 476741369969,
-        "_delim_tokens": []
+        "$nodeHandle": 476741369969
       }
     },
-    "expectedOutput": "{  }"
+    "expectedOutput": "{}"
   },
   {
     "kind": "roundtrip",
@@ -123209,9 +123209,9 @@
     "sourceIn": "{}",
     "pattern": "delim_token_tree",
     "edits": [],
-    "expectedSourceOut": "{  }",
+    "expectedSourceOut": "{}",
     "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
-    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedText": "fn _f() { mac! {} }",
     "wrappedOffset": 15
   },
   {
@@ -123230,12 +123230,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 23,
           "end": 25
         },
-        "$nodeHandle": 476741369970,
-        "_delim_tokens": []
+        "$nodeHandle": 476741369970
       }
     },
     "expectedOutput": "()"
@@ -123267,15 +123267,15 @@
         "$type": 399,
         "$source": 0,
         "$named": true,
+        "$text": "{}",
         "$span": {
           "start": 35,
           "end": 37
         },
-        "$nodeHandle": 476741369971,
-        "_delim_tokens": []
+        "$nodeHandle": 476741369971
       }
     },
-    "expectedOutput": "{  }"
+    "expectedOutput": "{}"
   },
   {
     "kind": "roundtrip",
@@ -123283,9 +123283,9 @@
     "sourceIn": "{}",
     "pattern": "delim_token_tree",
     "edits": [],
-    "expectedSourceOut": "{  }",
+    "expectedSourceOut": "{}",
     "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
-    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedText": "fn _f() { mac! {} }",
     "wrappedOffset": 15
   },
   {
@@ -124257,12 +124257,12 @@
                         "$type": 397,
                         "$source": 0,
                         "$named": true,
+                        "$text": "()",
                         "$span": {
                           "start": 135,
                           "end": 137
                         },
-                        "$nodeHandle": 481036337370,
-                        "_delim_tokens": []
+                        "$nodeHandle": 481036337370
                       }
                     }
                   ],
@@ -125453,12 +125453,12 @@
                 "$type": 397,
                 "$source": 0,
                 "$named": true,
+                "$text": "()",
                 "$span": {
                   "start": 135,
                   "end": 137
                 },
-                "$nodeHandle": 481036337662,
-                "_delim_tokens": []
+                "$nodeHandle": 481036337662
               }
             }
           ],
@@ -126426,12 +126426,12 @@
               "$type": 397,
               "$source": 0,
               "$named": true,
+              "$text": "()",
               "$span": {
                 "start": 135,
                 "end": 137
               },
-              "$nodeHandle": 481036337736,
-              "_delim_tokens": []
+              "$nodeHandle": 481036337736
             }
           }
         ],
@@ -126475,12 +126475,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 135,
           "end": 137
         },
-        "$nodeHandle": 481036337737,
-        "_delim_tokens": []
+        "$nodeHandle": 481036337737
       }
     },
     "expectedOutput": "()"
@@ -127051,12 +127051,12 @@
               "$type": 399,
               "$source": 0,
               "$named": true,
+              "$text": "{\n  // one\n  /* two */\n}",
               "$span": {
                 "start": 4,
                 "end": 28
               },
-              "$nodeHandle": 485331304454,
-              "_delim_tokens": []
+              "$nodeHandle": 485331304454
             }
           },
           "$other": [
@@ -127079,7 +127079,7 @@
       },
       "$nodeHandle": 485331304448
     },
-    "expectedOutput": "ok!{  }"
+    "expectedOutput": "ok!{\n  // one\n  /* two */\n}"
   },
   {
     "kind": "roundtrip",
@@ -127087,9 +127087,9 @@
     "sourceIn": "ok! {\n  // one\n  /* two */\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "ok!{  }",
-    "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace))))",
-    "wrappedText": "ok!{  }",
+    "expectedSourceOut": "ok!{\n  // one\n  /* two */\n}",
+    "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace (line_comment (line_comment_content)) (block_comment)))))",
+    "wrappedText": "ok!{\n  // one\n  /* two */\n}",
     "wrappedOffset": 0
   },
   {
@@ -127113,12 +127113,12 @@
           "$type": 399,
           "$source": 0,
           "$named": true,
+          "$text": "{\n  // one\n  /* two */\n}",
           "$span": {
             "start": 4,
             "end": 28
           },
-          "$nodeHandle": 485331304456,
-          "_delim_tokens": []
+          "$nodeHandle": 485331304456
         }
       },
       "$other": [
@@ -127134,7 +127134,7 @@
         "token_tree"
       ]
     },
-    "expectedOutput": "ok!{  }"
+    "expectedOutput": "ok!{\n  // one\n  /* two */\n}"
   },
   {
     "kind": "roundtrip",
@@ -127142,9 +127142,9 @@
     "sourceIn": "ok! {\n  // one\n  /* two */\n}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "ok!{  }",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "ok!{  }",
+    "expectedSourceOut": "ok!{\n  // one\n  /* two */\n}",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace (line_comment (line_comment_content)) (block_comment))))",
+    "wrappedText": "ok!{\n  // one\n  /* two */\n}",
     "wrappedOffset": 0
   },
   {
@@ -127163,15 +127163,15 @@
         "$type": 399,
         "$source": 0,
         "$named": true,
+        "$text": "{\n  // one\n  /* two */\n}",
         "$span": {
           "start": 4,
           "end": 28
         },
-        "$nodeHandle": 485331304457,
-        "_delim_tokens": []
+        "$nodeHandle": 485331304457
       }
     },
-    "expectedOutput": "{  }"
+    "expectedOutput": "{\n  // one\n  /* two */\n}"
   },
   {
     "kind": "roundtrip",
@@ -127179,9 +127179,9 @@
     "sourceIn": "{\n  // one\n  /* two */\n}",
     "pattern": "delim_token_tree",
     "edits": [],
-    "expectedSourceOut": "{  }",
-    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
-    "wrappedText": "fn _f() { mac! {  } }",
+    "expectedSourceOut": "{\n  // one\n  /* two */\n}",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace (line_comment (line_comment_content)) (block_comment)))",
+    "wrappedText": "fn _f() { mac! {\n  // one\n  /* two */\n} }",
     "wrappedOffset": 15
   },
   {
@@ -141412,12 +141412,12 @@
                         "$type": 397,
                         "$source": 0,
                         "$named": true,
+                        "$text": "()",
                         "$span": {
                           "start": 345,
                           "end": 347
                         },
-                        "$nodeHandle": 515396075753,
-                        "_delim_tokens": []
+                        "$nodeHandle": 515396075753
                       }
                     },
                     "$other": [
@@ -141451,12 +141451,12 @@
                         "$type": 397,
                         "$source": 0,
                         "$named": true,
+                        "$text": "()",
                         "$span": {
                           "start": 352,
                           "end": 354
                         },
-                        "$nodeHandle": 515396075756,
-                        "_delim_tokens": []
+                        "$nodeHandle": 515396075756
                       }
                     },
                     "$other": [
@@ -141836,12 +141836,12 @@
                   "$type": 397,
                   "$source": 0,
                   "$named": true,
+                  "$text": "()",
                   "$span": {
                     "start": 345,
                     "end": 347
                   },
-                  "$nodeHandle": 515396075855,
-                  "_delim_tokens": []
+                  "$nodeHandle": 515396075855
                 }
               },
               "$other": [
@@ -141875,12 +141875,12 @@
                   "$type": 397,
                   "$source": 0,
                   "$named": true,
+                  "$text": "()",
                   "$span": {
                     "start": 352,
                     "end": 354
                   },
-                  "$nodeHandle": 515396075858,
-                  "_delim_tokens": []
+                  "$nodeHandle": 515396075858
                 }
               },
               "$other": [
@@ -142963,12 +142963,12 @@
               "$type": 397,
               "$source": 0,
               "$named": true,
+              "$text": "()",
               "$span": {
                 "start": 345,
                 "end": 347
               },
-              "$nodeHandle": 515396075924,
-              "_delim_tokens": []
+              "$nodeHandle": 515396075924
             }
           },
           "$other": [
@@ -143002,12 +143002,12 @@
               "$type": 397,
               "$source": 0,
               "$named": true,
+              "$text": "()",
               "$span": {
                 "start": 352,
                 "end": 354
               },
-              "$nodeHandle": 515396075927,
-              "_delim_tokens": []
+              "$nodeHandle": 515396075927
             }
           },
           "$other": [
@@ -146974,12 +146974,12 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
+          "$text": "()",
           "$span": {
             "start": 345,
             "end": 347
           },
-          "$nodeHandle": 515396076204,
-          "_delim_tokens": []
+          "$nodeHandle": 515396076204
         }
       },
       "$other": [
@@ -147029,12 +147029,12 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
+          "$text": "()",
           "$span": {
             "start": 352,
             "end": 354
           },
-          "$nodeHandle": 515396076206,
-          "_delim_tokens": []
+          "$nodeHandle": 515396076206
         }
       },
       "$other": [
@@ -147079,12 +147079,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 345,
           "end": 347
         },
-        "$nodeHandle": 515396076207,
-        "_delim_tokens": []
+        "$nodeHandle": 515396076207
       }
     },
     "expectedOutput": "()"
@@ -147116,12 +147116,12 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
+        "$text": "()",
         "$span": {
           "start": 352,
           "end": 354
         },
-        "$nodeHandle": 515396076208,
-        "_delim_tokens": []
+        "$nodeHandle": 515396076208
       }
     },
     "expectedOutput": "()"

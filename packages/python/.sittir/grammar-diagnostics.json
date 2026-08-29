@@ -144,25 +144,13 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "15 referenced kind(s) resolved no parser kindId",
+    "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_statement",
-        "_except_clause_as_optional1",
-        "_exec_statement_optional1",
-        "_expressions",
-        "_function_definition_optional1",
-        "_kw_comma",
-        "_kw_eq_marker",
-        "_kw_real",
-        "_kw_sign",
-        "_left_hand_side",
-        "_raise_statement_optional1",
         "_simple_statement",
-        "_suite",
-        "_unary_operator_operator",
-        "keyword_identifier"
+        "_unary_operator_operator"
       ]
     },
     "severity": "warning",
@@ -188,25 +176,13 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "14 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
         "_compound_statement",
-        "_except_clause_as_optional1",
-        "_exec_statement_optional1",
-        "_expressions",
-        "_function_definition_optional1",
-        "_kw_comma",
-        "_kw_eq_marker",
-        "_kw_real",
-        "_kw_sign",
-        "_left_hand_side",
-        "_raise_statement_optional1",
-        "_simple_statement",
-        "_suite",
-        "keyword_identifier"
+        "_simple_statement"
       ]
     },
     "scope": "grammar",

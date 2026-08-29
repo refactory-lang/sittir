@@ -30,8 +30,8 @@ export const _fromMap = {
 	assert_statement: coerceToAssertStatement,
 	expression_statement: coerceToExpressionStatement$impl,
 	named_expression: coerceToNamedExpression,
-	return_statement: coerceToReturnStatement,
-	delete_statement: coerceToDeleteStatement,
+	return_statement: coerceToReturnStatement$impl,
+	delete_statement: coerceToDeleteStatement$impl,
 	raise_statement: coerceToRaiseStatement,
 	pass_statement: coerceToPassStatement,
 	break_statement: coerceToBreakStatement,
@@ -230,7 +230,11 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {
 	raise_statement: () => F.buildRaiseStatement(),
 	yield: () => F.buildYield()
 };
-const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['expression_statement', 'parenthesized_expression']);
+const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
+	'expression_statement',
+	'case_pattern',
+	'parenthesized_expression'
+]);
 
 function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
@@ -996,6 +1000,23 @@ const _K34: readonly string[] = [
 ];
 const _K35: readonly string[] = ['for_in_clause', 'if_clause'];
 
+function resolveSimplePatternNegative_content(
+	value: T.SimplePatternNegative.LooseConfig['content']
+): T.SimplePatternNegative['_content'] {
+	return _resolveOne<T.Integer | T.Float>(value, _K19, _K0);
+}
+
+function coerceToSimplePatternNegative(
+	input: T.SimplePatternNegative.Loose
+): ReturnType<typeof F.buildSimplePatternNegative> {
+	if (!_isLooseConfig<T.SimplePatternNegative.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildSimplePatternNegative>;
+	return F.buildSimplePatternNegative({
+		sign: _resolveBooleanKeyword(input.sign),
+		content: _requireField('_simple_pattern_negative', 'content', resolveSimplePatternNegative_content(input.content))
+	});
+}
+
 function resolveYieldFromClause_expression(
 	value: T.YieldFromClause.LooseConfig['expression']
 ): T.YieldFromClause['_expression'] {
@@ -1041,14 +1062,20 @@ function coerceToSliceGroup(input?: T.Expression | T.SliceGroup.Loose): ReturnTy
 }
 
 export function coerceToModule(
-	...input: readonly (T.Statement | T.Module | { statements: T.Statement | readonly T.Statement[] })[]
+	...input: readonly (
+		| (T.SimpleStatements | T.CompoundStatement)
+		| T.Module
+		| { statements: (T.SimpleStatements | T.CompoundStatement) | readonly (T.SimpleStatements | T.CompoundStatement)[] }
+	)[]
 ): ReturnType<typeof F.buildModule> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Module) {
 		const data = input[0];
 		const stored = (data as unknown as { _statements?: unknown })._statements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildModule(
-			...(_resolveMany<T.Statement>(children, _K0, _K1) as unknown as Parameters<typeof F.buildModule>)
+			...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(children, _K0, _K1) as unknown as Parameters<
+				typeof F.buildModule
+			>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -1058,7 +1085,11 @@ export function coerceToModule(
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildModule(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildModule>));
+	return F.buildModule(
+		...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(_elems, _K0, _K1) as unknown as Parameters<
+			typeof F.buildModule
+		>)
+	);
 }
 
 export function resolveImportStatement_importList(
@@ -1319,6 +1350,7 @@ export const coerceToExpressionStatement: typeof coerceToExpressionStatement$imp
 		strict: typeof F.buildExpressionStatement.yield;
 	};
 	yieldFromClause: typeof F.buildExpressionStatement.yieldFromClause;
+	expressionList: typeof F.buildExpressionStatement.expressionList;
 } = attachProps(coerceToExpressionStatement$impl, {
 	tuple: F.buildExpressionStatement.tuple,
 	assignment: attachProps(
@@ -1335,11 +1367,12 @@ export const coerceToExpressionStatement: typeof coerceToExpressionStatement$imp
 		(...args: _Args<typeof coerceToYield>) => coerceToExpressionStatement$impl(coerceToYield(...args) as T.Yield),
 		{ strict: F.buildExpressionStatement.yield }
 	),
-	yieldFromClause: F.buildExpressionStatement.yieldFromClause
+	yieldFromClause: F.buildExpressionStatement.yieldFromClause,
+	expressionList: F.buildExpressionStatement.expressionList
 });
 
 export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig['name']): T.NamedExpression['_name'] {
-	return _resolveOneLeaf<T.NamedExpressionLhs>(value, 'identifier');
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveNamedExpression_value(
@@ -1360,16 +1393,16 @@ export function coerceToNamedExpression(input: T.NamedExpression.Loose): ReturnT
 export function resolveReturnStatement_expressions(
 	value: T.ReturnStatement.LooseConfig['expressions']
 ): T.ReturnStatement['_expressions'] {
-	return _resolveOne<T.Expressions>(value, _K5, _K8);
+	return _resolveOne<T.Expression | T.ExpressionList>(value, _K5, _K8);
 }
 
-export function coerceToReturnStatement(
-	input?: T.Expressions | T.ReturnStatement.Loose
+function coerceToReturnStatement$impl(
+	input?: (T.Expression | T.ExpressionList) | T.ReturnStatement.Loose
 ): ReturnType<typeof F.buildReturnStatement> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ReturnStatement)
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement(
-		_resolveOne<T.Expressions>(
+		_resolveOne<T.Expression | T.ExpressionList>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'expressions' in input
 				? input.expressions
 				: input,
@@ -1379,14 +1412,26 @@ export function coerceToReturnStatement(
 	);
 }
 
+export const coerceToReturnStatement: typeof coerceToReturnStatement$impl & {
+	expressionList: ((
+		...args: _Args<typeof coerceToExpressionList>
+	) => ReturnType<typeof coerceToReturnStatement$impl>) & { strict: typeof F.buildReturnStatement.expressionList };
+} = attachProps(coerceToReturnStatement$impl, {
+	expressionList: attachProps(
+		(...args: _Args<typeof coerceToExpressionList>) =>
+			coerceToReturnStatement$impl(coerceToExpressionList(...args) as T.ExpressionList),
+		{ strict: F.buildReturnStatement.expressionList }
+	)
+});
+
 export function resolveDeleteStatement_expressions(
 	value: T.DeleteStatement.LooseConfig['expressions']
 ): T.DeleteStatement['_expressions'] {
-	return _resolveOne<T.Expressions>(value, _K5, _K8);
+	return _resolveOne<T.Expression | T.ExpressionList>(value, _K5, _K8);
 }
 
-export function coerceToDeleteStatement(
-	input: T.Expressions | T.DeleteStatement.Loose
+function coerceToDeleteStatement$impl(
+	input: (T.Expression | T.ExpressionList) | T.DeleteStatement.Loose
 ): ReturnType<typeof F.buildDeleteStatement> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DeleteStatement)
 		return input as unknown as ReturnType<typeof F.buildDeleteStatement>;
@@ -1394,7 +1439,7 @@ export function coerceToDeleteStatement(
 		_requireField(
 			'delete_statement',
 			'expressions',
-			_resolveOne<T.Expressions>(
+			_resolveOne<T.Expression | T.ExpressionList>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'expressions' in input
 					? input.expressions
 					: input,
@@ -1405,10 +1450,22 @@ export function coerceToDeleteStatement(
 	);
 }
 
+export const coerceToDeleteStatement: typeof coerceToDeleteStatement$impl & {
+	expressionList: ((
+		...args: _Args<typeof coerceToExpressionList>
+	) => ReturnType<typeof coerceToDeleteStatement$impl>) & { strict: typeof F.buildDeleteStatement.expressionList };
+} = attachProps(coerceToDeleteStatement$impl, {
+	expressionList: attachProps(
+		(...args: _Args<typeof coerceToExpressionList>) =>
+			coerceToDeleteStatement$impl(coerceToExpressionList(...args) as T.ExpressionList),
+		{ strict: F.buildDeleteStatement.expressionList }
+	)
+});
+
 export function resolveRaiseStatement_expressions(
 	value: T.RaiseStatement.LooseConfig['expressions']
 ): T.RaiseStatement['_expressions'] {
-	return _resolveOne<T.Expressions>(value, _K5, _K8);
+	return _resolveOne<T.Expression | T.ExpressionList>(value, _K5, _K8);
 }
 
 export function resolveRaiseStatement_cause(value: T.RaiseStatement.LooseConfig['cause']): T.RaiseStatement['_cause'] {
@@ -1560,11 +1617,11 @@ export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof
 }
 
 export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): T.ForStatement['_left'] {
-	return _resolveOne<T.LeftHandSide>(value, _super_keyword_identifier, _K11);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K11);
 }
 
 export function resolveForStatement_right(value: T.ForStatement.LooseConfig['right']): T.ForStatement['_right'] {
-	return _resolveOne<T.Expressions>(value, _K5, _K8);
+	return _resolveOne<T.Expression | T.ExpressionList>(value, _K5, _K8);
 }
 
 export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): T.ForStatement['_body'] {
@@ -1654,7 +1711,7 @@ export function resolveExceptClause_exceptClauseArm(
 	return _resolveOneBranch<T.ExceptClauseArm>(value, '_except_clause_arm');
 }
 
-export function resolveExceptClause_content(value: T.ExceptClause.LooseConfig['content']): T.ExceptClause['_content'] {
+export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): T.ExceptClause['_suite'] {
 	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K9);
 }
 
@@ -1664,7 +1721,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	return F.buildExceptClause({
 		starMarker: _resolveBooleanKeyword(input.starMarker),
 		exceptClauseArm: resolveExceptClause_exceptClauseArm(input.exceptClauseArm),
-		content: _requireField('except_clause', 'content', resolveExceptClause_content(input.content))
+		suite: _requireField('except_clause', 'suite', resolveExceptClause_suite(input.suite))
 	});
 }
 
@@ -2191,14 +2248,20 @@ export function coerceToDecorator(input: T.Expression | T.Decorator.Loose): Retu
 }
 
 export function coerceToBlock(
-	...input: readonly (T.Statement | T.Block | { statements: T.Statement | readonly T.Statement[] })[]
+	...input: readonly (
+		| (T.SimpleStatements | T.CompoundStatement)
+		| T.Block
+		| { statements: (T.SimpleStatements | T.CompoundStatement) | readonly (T.SimpleStatements | T.CompoundStatement)[] }
+	)[]
 ): ReturnType<typeof F.buildBlock> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Block) {
 		const data = input[0];
 		const stored = (data as unknown as { _statements?: unknown })._statements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildBlock(
-			...(_resolveMany<T.Statement>(children, _K0, _K1) as unknown as Parameters<typeof F.buildBlock>)
+			...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(children, _K0, _K1) as unknown as Parameters<
+				typeof F.buildBlock
+			>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -2208,7 +2271,11 @@ export function coerceToBlock(
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildBlock(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildBlock>));
+	return F.buildBlock(
+		...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(_elems, _K0, _K1) as unknown as Parameters<
+			typeof F.buildBlock
+		>)
+	);
 }
 
 export function resolveExpressionList_expression(
@@ -2259,11 +2326,49 @@ export function coerceToDottedName(
 }
 
 export function resolveCasePattern_content(value: T.CasePattern.LooseConfig['content']): T.CasePattern['_content'] {
-	return _resolveOne<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(value, _K16, _K17);
+	return _resolveOne<
+		| T.CaseAsPattern
+		| T.KeywordPattern
+		| T.ClassPattern
+		| T.SplatPattern
+		| T.UnionPattern
+		| T.CaseListPattern
+		| T.CaseTuplePattern
+		| T.DictPattern
+		| T.String
+		| T.ConcatenatedString
+		| T.True
+		| T.False
+		| T.None
+		| T.SimplePatternNegative
+		| T.ComplexPattern
+		| T.DottedName
+		| '_'
+	>(value, _K16, _K17);
 }
 
 function coerceToCasePattern$impl(
-	input: (T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) | T.CasePattern.Loose
+	input:
+		| (
+				| T.CaseAsPattern
+				| T.KeywordPattern
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| T.True
+				| T.False
+				| T.None
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+		  )
+		| T.CasePattern.Loose
 ): ReturnType<typeof F.buildCasePattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.CasePattern)
 		return input as unknown as ReturnType<typeof F.buildCasePattern>;
@@ -2271,7 +2376,25 @@ function coerceToCasePattern$impl(
 		_requireField(
 			'case_pattern',
 			'content',
-			_resolveOne<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(
+			_resolveOne<
+				| T.CaseAsPattern
+				| T.KeywordPattern
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| T.True
+				| T.False
+				| T.None
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K16,
 				_K17
@@ -2287,6 +2410,43 @@ export const coerceToCasePattern: typeof coerceToCasePattern$impl & {
 	keywordPattern: ((...args: _Args<typeof coerceToKeywordPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
 		strict: typeof F.buildCasePattern.keywordPattern;
 	};
+	classPattern: ((...args: _Args<typeof coerceToClassPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
+		strict: typeof F.buildCasePattern.classPattern;
+	};
+	splatPattern: ((...args: _Args<typeof coerceToSplatPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
+		strict: typeof F.buildCasePattern.splatPattern;
+	};
+	star: typeof F.buildCasePattern.star;
+	starStar: typeof F.buildCasePattern.starStar;
+	unionPattern: ((...args: _Args<typeof coerceToUnionPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
+		strict: typeof F.buildCasePattern.unionPattern;
+	};
+	caseListPattern: typeof F.buildCasePattern.caseListPattern;
+	caseTuplePattern: typeof F.buildCasePattern.caseTuplePattern;
+	dictPattern: typeof F.buildCasePattern.dictPattern;
+	string: ((...args: _Args<typeof coerceToString>) => ReturnType<typeof coerceToCasePattern$impl>) & {
+		strict: typeof F.buildCasePattern.string;
+	};
+	concatenatedString: ((
+		...args: _Args<typeof coerceToConcatenatedString>
+	) => ReturnType<typeof coerceToCasePattern$impl>) & { strict: typeof F.buildCasePattern.concatenatedString };
+	true: typeof F.buildCasePattern.true;
+	false: typeof F.buildCasePattern.false;
+	none: typeof F.buildCasePattern.none;
+	simplePatternNegative: ((
+		...args: _Args<typeof coerceToSimplePatternNegative>
+	) => ReturnType<typeof coerceToCasePattern$impl>) & { strict: typeof F.buildCasePattern.simplePatternNegative };
+	integer: typeof F.buildCasePattern.integer;
+	float: typeof F.buildCasePattern.float;
+	complexPattern: ((...args: _Args<typeof coerceToComplexPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
+		strict: typeof F.buildCasePattern.complexPattern;
+	};
+	plus: typeof F.buildCasePattern.plus;
+	dash: typeof F.buildCasePattern.dash;
+	dottedName: ((...args: _Args<typeof coerceToDottedName>) => ReturnType<typeof coerceToCasePattern$impl>) & {
+		strict: typeof F.buildCasePattern.dottedName;
+	};
+	wildcardPattern: typeof F.buildCasePattern.wildcardPattern;
 } = attachProps(coerceToCasePattern$impl, {
 	caseAsPattern: attachProps(
 		(...args: _Args<typeof coerceToCaseAsPattern>) =>
@@ -2297,14 +2457,118 @@ export const coerceToCasePattern: typeof coerceToCasePattern$impl & {
 		(...args: _Args<typeof coerceToKeywordPattern>) =>
 			coerceToCasePattern$impl(coerceToKeywordPattern(...args) as T.KeywordPattern),
 		{ strict: F.buildCasePattern.keywordPattern }
-	)
+	),
+	classPattern: attachProps(
+		(...args: _Args<typeof coerceToClassPattern>) =>
+			coerceToCasePattern$impl(coerceToClassPattern(...args) as T.ClassPattern),
+		{ strict: F.buildCasePattern.classPattern }
+	),
+	splatPattern: attachProps(
+		(...args: _Args<typeof coerceToSplatPattern>) =>
+			coerceToCasePattern$impl(coerceToSplatPattern(...args) as T.SplatPattern),
+		{ strict: F.buildCasePattern.splatPattern }
+	),
+	star: F.buildCasePattern.star,
+	starStar: F.buildCasePattern.starStar,
+	unionPattern: attachProps(
+		(...args: _Args<typeof coerceToUnionPattern>) =>
+			coerceToCasePattern$impl(coerceToUnionPattern(...args) as T.UnionPattern),
+		{ strict: F.buildCasePattern.unionPattern }
+	),
+	caseListPattern: F.buildCasePattern.caseListPattern,
+	caseTuplePattern: F.buildCasePattern.caseTuplePattern,
+	dictPattern: F.buildCasePattern.dictPattern,
+	string: attachProps(
+		(...args: _Args<typeof coerceToString>) => coerceToCasePattern$impl(coerceToString(...args) as T.String),
+		{ strict: F.buildCasePattern.string }
+	),
+	concatenatedString: attachProps(
+		(...args: _Args<typeof coerceToConcatenatedString>) =>
+			coerceToCasePattern$impl(coerceToConcatenatedString(...args) as T.ConcatenatedString),
+		{ strict: F.buildCasePattern.concatenatedString }
+	),
+	true: F.buildCasePattern.true,
+	false: F.buildCasePattern.false,
+	none: F.buildCasePattern.none,
+	simplePatternNegative: attachProps(
+		(...args: _Args<typeof coerceToSimplePatternNegative>) =>
+			coerceToCasePattern$impl(coerceToSimplePatternNegative(...args) as T.SimplePatternNegative),
+		{ strict: F.buildCasePattern.simplePatternNegative }
+	),
+	integer: F.buildCasePattern.integer,
+	float: F.buildCasePattern.float,
+	complexPattern: attachProps(
+		(...args: _Args<typeof coerceToComplexPattern>) =>
+			coerceToCasePattern$impl(coerceToComplexPattern(...args) as T.ComplexPattern),
+		{ strict: F.buildCasePattern.complexPattern }
+	),
+	plus: F.buildCasePattern.plus,
+	dash: F.buildCasePattern.dash,
+	dottedName: attachProps(
+		(...args: _Args<typeof coerceToDottedName>) =>
+			coerceToCasePattern$impl(coerceToDottedName(...args) as T.DottedName),
+		{ strict: F.buildCasePattern.dottedName }
+	),
+	wildcardPattern: F.buildCasePattern.wildcardPattern
 });
 
 export function coerceToUnionPattern(
 	...input: readonly (
-		| T.SimplePattern
+		| (
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| T.True
+				| T.False
+				| T.None
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+		  )
 		| T.UnionPattern
-		| { simplePattern: T.SimplePattern | readonly T.SimplePattern[] }
+		| {
+				simplePattern:
+					| (
+							| T.ClassPattern
+							| T.SplatPattern
+							| T.UnionPattern
+							| T.CaseListPattern
+							| T.CaseTuplePattern
+							| T.DictPattern
+							| T.String
+							| T.ConcatenatedString
+							| T.True
+							| T.False
+							| T.None
+							| T.SimplePatternNegative
+							| T.ComplexPattern
+							| T.DottedName
+							| '_'
+					  )
+					| readonly (
+							| T.ClassPattern
+							| T.SplatPattern
+							| T.UnionPattern
+							| T.CaseListPattern
+							| T.CaseTuplePattern
+							| T.DictPattern
+							| T.String
+							| T.ConcatenatedString
+							| T.True
+							| T.False
+							| T.None
+							| T.SimplePatternNegative
+							| T.ComplexPattern
+							| T.DottedName
+							| '_'
+					  )[];
+		  }
 	)[]
 ): ReturnType<typeof F.buildUnionPattern> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UnionPattern) {
@@ -2312,7 +2576,23 @@ export function coerceToUnionPattern(
 		const stored = (data as unknown as { _simple_pattern?: unknown })._simple_pattern;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUnionPattern(
-			...(_resolveMany<T.SimplePattern>(children, _K16, _K18) as unknown as Parameters<typeof F.buildUnionPattern>)
+			...(_resolveMany<
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| T.True
+				| T.False
+				| T.None
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+			>(children, _K16, _K18) as unknown as Parameters<typeof F.buildUnionPattern>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -2323,7 +2603,23 @@ export function coerceToUnionPattern(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildUnionPattern(
-		...(_resolveMany<T.SimplePattern>(_elems, _K16, _K18) as unknown as Parameters<typeof F.buildUnionPattern>)
+		...(_resolveMany<
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| T.True
+			| T.False
+			| T.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| '_'
+		>(_elems, _K16, _K18) as unknown as Parameters<typeof F.buildUnionPattern>)
 	);
 }
 
@@ -2357,7 +2653,23 @@ export function resolveKeywordPattern_identifier(
 export function resolveKeywordPattern_simplePattern(
 	value: T.KeywordPattern.LooseConfig['simplePattern']
 ): T.KeywordPattern['_simple_pattern'] {
-	return _resolveOne<T.SimplePattern>(value, _K16, _K18);
+	return _resolveOne<
+		| T.ClassPattern
+		| T.SplatPattern
+		| T.UnionPattern
+		| T.CaseListPattern
+		| T.CaseTuplePattern
+		| T.DictPattern
+		| T.String
+		| T.ConcatenatedString
+		| T.True
+		| T.False
+		| T.None
+		| T.SimplePatternNegative
+		| T.ComplexPattern
+		| T.DottedName
+		| '_'
+	>(value, _K16, _K18);
 }
 
 export function coerceToKeywordPattern(input: T.KeywordPattern.Loose): ReturnType<typeof F.buildKeywordPattern> {
@@ -2556,15 +2868,11 @@ export function coerceToTypedDefaultParameter(
 export function resolveListSplatPattern_content(
 	value: T.ListSplatPattern.LooseConfig['content']
 ): T.ListSplatPattern['_content'] {
-	return _resolveOne<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(
-		value,
-		_super_keyword_identifier,
-		_K21
-	);
+	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_keyword_identifier, _K21);
 }
 
 function coerceToListSplatPattern$impl(
-	input: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) | T.ListSplatPattern.Loose
+	input: (T.Identifier | T.Subscript | T.Attribute) | T.ListSplatPattern.Loose
 ): ReturnType<typeof F.buildListSplatPattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ListSplatPattern)
 		return input as unknown as ReturnType<typeof F.buildListSplatPattern>;
@@ -2572,7 +2880,7 @@ function coerceToListSplatPattern$impl(
 		_requireField(
 			'list_splat_pattern',
 			'content',
-			_resolveOne<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(
+			_resolveOne<T.Identifier | T.Subscript | T.Attribute>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_super_keyword_identifier,
 				_K21
@@ -2606,15 +2914,11 @@ export const coerceToListSplatPattern: typeof coerceToListSplatPattern$impl & {
 export function resolveDictionarySplatPattern_content(
 	value: T.DictionarySplatPattern.LooseConfig['content']
 ): T.DictionarySplatPattern['_content'] {
-	return _resolveOne<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(
-		value,
-		_super_keyword_identifier,
-		_K21
-	);
+	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_keyword_identifier, _K21);
 }
 
 function coerceToDictionarySplatPattern$impl(
-	input: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) | T.DictionarySplatPattern.Loose
+	input: (T.Identifier | T.Subscript | T.Attribute) | T.DictionarySplatPattern.Loose
 ): ReturnType<typeof F.buildDictionarySplatPattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DictionarySplatPattern)
 		return input as unknown as ReturnType<typeof F.buildDictionarySplatPattern>;
@@ -2622,7 +2926,7 @@ function coerceToDictionarySplatPattern$impl(
 		_requireField(
 			'dictionary_splat_pattern',
 			'content',
-			_resolveOne<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(
+			_resolveOne<T.Identifier | T.Subscript | T.Attribute>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_super_keyword_identifier,
 				_K21
@@ -2879,7 +3183,7 @@ export function resolveLambdaWithinForInClause_parameters(
 export function resolveLambdaWithinForInClause_body(
 	value: T.LambdaWithinForInClause.LooseConfig['body']
 ): T.LambdaWithinForInClause['_body'] {
-	return _resolveOne<T.ExpressionWithinForInClause>(value, _K5, _K23);
+	return _resolveOne<T.Expression | T.LambdaWithinForInClause>(value, _K5, _K23);
 }
 
 export function coerceToLambdaWithinForInClause(
@@ -2894,7 +3198,7 @@ export function coerceToLambdaWithinForInClause(
 }
 
 export function resolveAssignment_left(value: T.Assignment.LooseConfig['left']): T.Assignment['_left'] {
-	return _resolveOne<T.LeftHandSide>(value, _super_keyword_identifier, _K11);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K11);
 }
 
 export function resolveAssignment_content(value: T.Assignment.LooseConfig['content']): T.Assignment['_content'] {
@@ -2912,7 +3216,7 @@ export function coerceToAssignment(input: T.Assignment.Loose): ReturnType<typeof
 export function resolveAugmentedAssignment_left(
 	value: T.AugmentedAssignment.LooseConfig['left']
 ): T.AugmentedAssignment['_left'] {
-	return _resolveOne<T.LeftHandSide>(value, _super_keyword_identifier, _K11);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K11);
 }
 
 export function resolveAugmentedAssignment_operator(
@@ -2943,7 +3247,11 @@ export function resolveAugmentedAssignment_operator(
 export function resolveAugmentedAssignment_right(
 	value: T.AugmentedAssignment.LooseConfig['right']
 ): T.AugmentedAssignment['_right'] {
-	return _resolveOne<T.RightHandSide>(value, _K5, _K25);
+	return _resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
+		value,
+		_K5,
+		_K25
+	);
 }
 
 export function coerceToAugmentedAssignment(
@@ -2976,16 +3284,16 @@ export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<type
 }
 
 export function resolveYield_content(value: T.Yield.LooseConfig['content']): T.Yield['_content'] {
-	return _resolveOne<T.YieldFromClause | T.Expressions>(value, _K5, _K27);
+	return _resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K5, _K27);
 }
 
 function coerceToYield$impl(
-	input?: (T.YieldFromClause | T.Expressions) | T.Yield.Loose
+	input?: (T.YieldFromClause | T.Expression | T.ExpressionList) | T.Yield.Loose
 ): ReturnType<typeof F.buildYield> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Yield)
 		return input as unknown as ReturnType<typeof F.buildYield>;
 	return F.buildYield(
-		_resolveOne<T.YieldFromClause | T.Expressions>(
+		_resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 			_K5,
 			_K27
@@ -2997,11 +3305,19 @@ export const coerceToYield: typeof coerceToYield$impl & {
 	fromClause: ((...args: _Args<typeof coerceToYieldFromClause>) => ReturnType<typeof coerceToYield$impl>) & {
 		strict: typeof F.buildYield.fromClause;
 	};
+	expressionList: ((...args: _Args<typeof coerceToExpressionList>) => ReturnType<typeof coerceToYield$impl>) & {
+		strict: typeof F.buildYield.expressionList;
+	};
 } = attachProps(coerceToYield$impl, {
 	fromClause: attachProps(
 		(...args: _Args<typeof coerceToYieldFromClause>) =>
 			coerceToYield$impl(coerceToYieldFromClause(...args) as T.YieldFromClause),
 		{ strict: F.buildYield.fromClause }
+	),
+	expressionList: attachProps(
+		(...args: _Args<typeof coerceToExpressionList>) =>
+			coerceToYield$impl(coerceToExpressionList(...args) as T.ExpressionList),
+		{ strict: F.buildYield.expressionList }
 	)
 });
 
@@ -3284,7 +3600,7 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 }
 
 export function resolveKeywordArgument_name(value: T.KeywordArgument.LooseConfig['name']): T.KeywordArgument['_name'] {
-	return _resolveOneLeaf<T.Identifier | T.KeywordIdentifier>(value, 'identifier');
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveKeywordArgument_value(
@@ -3525,6 +3841,7 @@ export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpres
 		strict: typeof F.buildParenthesizedExpression.yield;
 	};
 	yieldFromClause: typeof F.buildParenthesizedExpression.yieldFromClause;
+	expressionList: typeof F.buildParenthesizedExpression.expressionList;
 	listSplat: ((...args: _Args<typeof coerceToListSplat>) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
 		strict: typeof F.buildParenthesizedExpression.listSplat;
 	};
@@ -3534,6 +3851,7 @@ export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpres
 		{ strict: F.buildParenthesizedExpression.yield }
 	),
 	yieldFromClause: F.buildParenthesizedExpression.yieldFromClause,
+	expressionList: F.buildParenthesizedExpression.expressionList,
 	listSplat: attachProps(
 		(...args: _Args<typeof coerceToListSplat>) =>
 			coerceToParenthesizedExpression$impl(coerceToListSplat(...args) as T.ListSplat),
@@ -3542,11 +3860,11 @@ export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpres
 });
 
 export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): T.ForInClause['_left'] {
-	return _resolveOne<T.LeftHandSide>(value, _super_keyword_identifier, _K11);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K11);
 }
 
 export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): T.ForInClause['_right'] {
-	const resolved = _resolveMany<T.ExpressionWithinForInClause>(value, _K5, _K23);
+	const resolved = _resolveMany<T.Expression | T.LambdaWithinForInClause>(value, _K5, _K23);
 	_assertNonEmpty(resolved, 'for_in_clause.rights');
 	return resolved;
 }
@@ -3710,7 +4028,7 @@ export function coerceToStringContent(
 export function resolveInterpolation_expression(
 	value: T.Interpolation.LooseConfig['expression']
 ): T.Interpolation['_expression'] {
-	return _resolveOne<T.FExpression>(value, _K5, _K34);
+	return _resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K5, _K34);
 }
 
 export function resolveInterpolation_typeConversion(

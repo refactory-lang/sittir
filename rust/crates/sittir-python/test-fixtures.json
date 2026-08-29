@@ -109958,7 +109958,7 @@
                 "except_clause_arm",
                 "suite_block_with_indent"
               ],
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -110066,7 +110066,7 @@
                 "except_clause_arm",
                 "suite_block_with_indent"
               ],
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -110172,7 +110172,7 @@
                 "except_clause_arm",
                 "suite_block_with_indent"
               ],
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -110247,7 +110247,7 @@
                 "end": 70
               },
               "$nodeHandle": 403726925935,
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -110433,7 +110433,7 @@
                 "except_clause_arm",
                 "suite_block_with_indent"
               ],
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -110809,7 +110809,7 @@
                 "except_clause_arm",
                 "suite_block_with_indent"
               ],
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -110919,7 +110919,7 @@
                 "except_clause_arm",
                 "suite_block_with_indent"
               ],
-              "_content": {
+              "_suite": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,

@@ -200,16 +200,14 @@ function materializeInlinedBody(
 	if (r.separator !== undefined) carry.separator = r.separator;
 	if (r.fieldName !== undefined) carry.fieldName = r.fieldName;
 
-	const meta = { ...body.metadata, inlinedFrom };
-
 	if (body.type === SEQ) {
-		return { ...body, ...carry, metadata: meta, splicedBody: true } as Rule<'link'>;
+		return { ...body, ...carry, inlinedFrom, splicedBody: true } as Rule<'link'>;
 	}
 	return {
 		type: SEQ,
 		members: [body],
 		...carry,
-		metadata: meta,
+		inlinedFrom,
 		splicedBody: true
 	} as Rule<'link'>;
 }

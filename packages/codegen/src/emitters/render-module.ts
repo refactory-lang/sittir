@@ -2038,6 +2038,8 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const parseEntry = findKindEntry(kindEntries, parseName);
 		const parseId = parseEntry?.parseId ?? parseEntry?.id;
 		if (parseId !== undefined) acceptedIds.push(parseId);
+		const storageId = findKindEntry(kindEntries, kind)?.id;
+		if (storageId !== undefined && !acceptedIds.includes(storageId)) acceptedIds.push(storageId);
 	}
 	if (node instanceof AssembledEnum) {
 		acceptedIds.push(...enumMemberAcceptedIds(node));

@@ -66,7 +66,7 @@ export const _fromMap = {
 	scoped_use_list: coerceToScopedUseList,
 	use_list: coerceToUseList,
 	use_as_clause: coerceToUseAsClause,
-	use_wildcard: coerceToUseWildcard,
+	use_wildcard: coerceToUseWildcard$impl,
 	parameters: coerceToParameters,
 	self_parameter: coerceToSelfParameter,
 	variadic_parameter: coerceToVariadicParameter,
@@ -292,7 +292,7 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {
 	_reference_expression_raw_mut: () => F.buildReferenceExpressionRawMut(),
 	_visibility_modifier_pub: () => F.buildVisibilityModifierPub()
 };
-const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['visibility_modifier']);
+const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['use_wildcard', 'visibility_modifier']);
 
 function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
@@ -789,7 +789,7 @@ const _K7: readonly string[] = [
 	'_delim_token_tree_brace'
 ];
 const _K8: readonly string[] = ['token_tree', 'token_repetition', 'string_literal', 'raw_string_literal'];
-const _K9: readonly string[] = ['self', 'identifier', 'metavariable', 'super', 'crate', '_reserved_identifier'];
+const _K9: readonly string[] = ['self', 'identifier', 'metavariable', 'super', 'crate'];
 const _K10: readonly string[] = ['scoped_identifier'];
 const _K11: readonly string[] = [
 	'const_item',
@@ -821,7 +821,6 @@ const _K14: readonly string[] = [
 	'integer_literal',
 	'float_literal',
 	'identifier',
-	'_reserved_identifier',
 	'self',
 	'unit_expression',
 	'metavariable'
@@ -917,7 +916,6 @@ const _K25: readonly string[] = [
 	'integer_literal',
 	'float_literal',
 	'identifier',
-	'_reserved_identifier',
 	'_wildcard_pattern'
 ];
 const _K26: readonly string[] = [
@@ -946,7 +944,6 @@ const _K28: readonly string[] = [
 	'integer_literal',
 	'float_literal',
 	'identifier',
-	'_reserved_identifier',
 	'_wildcard_pattern',
 	'self'
 ];
@@ -1162,8 +1159,7 @@ const _K68: readonly string[] = [
 	'identifier',
 	'metavariable',
 	'super',
-	'crate',
-	'_reserved_identifier'
+	'crate'
 ];
 const _K69: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
 
@@ -1196,7 +1192,9 @@ function coerceToExpressionStatementWithSemi(
 function resolveTokenTreePatternParen_tokenPatterns(
 	value: T.TokenTreePatternParen.LooseConfig['tokenPatterns']
 ): T.TokenTreePatternParen['_token_patterns'] {
-	return _resolveMany<T.TokenPattern>(value, _K5, _K6);
+	return _resolveMany<
+		T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+	>(value, _K5, _K6);
 }
 
 function coerceToTokenTreePatternParen(
@@ -1212,7 +1210,9 @@ function coerceToTokenTreePatternParen(
 function resolveTokenTreePatternBracket_tokenPatterns(
 	value: T.TokenTreePatternBracket.LooseConfig['tokenPatterns']
 ): T.TokenTreePatternBracket['_token_patterns'] {
-	return _resolveMany<T.TokenPattern>(value, _K5, _K6);
+	return _resolveMany<
+		T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+	>(value, _K5, _K6);
 }
 
 function coerceToTokenTreePatternBracket(
@@ -1228,7 +1228,9 @@ function coerceToTokenTreePatternBracket(
 function resolveTokenTreePatternBrace_tokenPatterns(
 	value: T.TokenTreePatternBrace.LooseConfig['tokenPatterns']
 ): T.TokenTreePatternBrace['_token_patterns'] {
-	return _resolveMany<T.TokenPattern>(value, _K5, _K6);
+	return _resolveMany<
+		T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+	>(value, _K5, _K6);
 }
 
 function coerceToTokenTreePatternBrace(
@@ -1242,7 +1244,7 @@ function coerceToTokenTreePatternBrace(
 }
 
 function resolveTokenTreeParen_tokens(value: T.TokenTreeParen.LooseConfig['tokens']): T.TokenTreeParen['_tokens'] {
-	return _resolveMany<T.Tokens>(value, _K5, _K8);
+	return _resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(value, _K5, _K8);
 }
 
 function coerceToTokenTreeParen(input?: T.TokenTreeParen.Loose): ReturnType<typeof F.buildTokenTreeParen> {
@@ -1256,7 +1258,7 @@ function coerceToTokenTreeParen(input?: T.TokenTreeParen.Loose): ReturnType<type
 function resolveTokenTreeBracket_tokens(
 	value: T.TokenTreeBracket.LooseConfig['tokens']
 ): T.TokenTreeBracket['_tokens'] {
-	return _resolveMany<T.Tokens>(value, _K5, _K8);
+	return _resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(value, _K5, _K8);
 }
 
 function coerceToTokenTreeBracket(input?: T.TokenTreeBracket.Loose): ReturnType<typeof F.buildTokenTreeBracket> {
@@ -1268,7 +1270,7 @@ function coerceToTokenTreeBracket(input?: T.TokenTreeBracket.Loose): ReturnType<
 }
 
 function resolveTokenTreeBrace_tokens(value: T.TokenTreeBrace.LooseConfig['tokens']): T.TokenTreeBrace['_tokens'] {
-	return _resolveMany<T.Tokens>(value, _K5, _K8);
+	return _resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(value, _K5, _K8);
 }
 
 function coerceToTokenTreeBrace(input?: T.TokenTreeBrace.Loose): ReturnType<typeof F.buildTokenTreeBrace> {
@@ -1282,7 +1284,7 @@ function coerceToTokenTreeBrace(input?: T.TokenTreeBrace.Loose): ReturnType<type
 function resolveDelimTokenTreeParen_delimTokens(
 	value: T.DelimTokenTreeParen.LooseConfig['delimTokens']
 ): T.DelimTokenTreeParen['_delim_tokens'] {
-	return _resolveMany<T.DelimTokens>(value, _K66, _K67);
+	return _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(value, _K66, _K67);
 }
 
 function coerceToDelimTokenTreeParen(
@@ -1298,7 +1300,7 @@ function coerceToDelimTokenTreeParen(
 function resolveDelimTokenTreeBracket_delimTokens(
 	value: T.DelimTokenTreeBracket.LooseConfig['delimTokens']
 ): T.DelimTokenTreeBracket['_delim_tokens'] {
-	return _resolveMany<T.DelimTokens>(value, _K66, _K67);
+	return _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(value, _K66, _K67);
 }
 
 function coerceToDelimTokenTreeBracket(
@@ -1314,7 +1316,7 @@ function coerceToDelimTokenTreeBracket(
 function resolveDelimTokenTreeBrace_delimTokens(
 	value: T.DelimTokenTreeBrace.LooseConfig['delimTokens']
 ): T.DelimTokenTreeBrace['_delim_tokens'] {
-	return _resolveMany<T.DelimTokens>(value, _K66, _K67);
+	return _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(value, _K66, _K67);
 }
 
 function coerceToDelimTokenTreeBrace(
@@ -1482,7 +1484,9 @@ function coerceToFieldPatternNamed(input: T.FieldPatternNamed.Loose): ReturnType
 }
 
 function resolveRangePatternArm2_left(value: T.RangePatternArm2.LooseConfig['left']): T.RangePatternArm2['_left'] {
-	return _resolveOne<T.LiteralPattern | T.Path>(value, _K68, _K69);
+	return _resolveOne<
+		T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+	>(value, _K68, _K69);
 }
 
 function resolveRangePatternArm2_content(
@@ -1514,7 +1518,9 @@ function resolveRangePatternPrefix_content(
 function resolveRangePatternPrefix_right(
 	value: T.RangePatternPrefix.LooseConfig['right']
 ): T.RangePatternPrefix['_right'] {
-	return _resolveOne<T.LiteralPattern | T.Path>(value, _K68, _K69);
+	return _resolveOne<
+		T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+	>(value, _K68, _K69);
 }
 
 function coerceToRangePatternPrefix(input: T.RangePatternPrefix.Loose): ReturnType<typeof F.buildRangePatternPrefix> {
@@ -1572,7 +1578,7 @@ export function resolveSourceFile_shebang(value: T.SourceFile.LooseConfig['sheba
 export function resolveSourceFile_statements(
 	value: T.SourceFile.LooseConfig['statements']
 ): T.SourceFile['_statements'] {
-	return _resolveMany<T.Statement>(value, _K0, _K1);
+	return _resolveMany<T.ExpressionStatement | T.DeclarationStatement>(value, _K0, _K1);
 }
 
 export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> {
@@ -1587,11 +1593,39 @@ export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeo
 export function resolveExpressionStatement_content(
 	value: T.ExpressionStatement.LooseConfig['content']
 ): T.ExpressionStatement['_content'] {
-	return _resolveOne<T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock>(value, _K0, _K2);
+	return _resolveOne<
+		| T.ExpressionStatementWithSemi
+		| T.UnsafeBlock
+		| T.AsyncBlock
+		| T.GenBlock
+		| T.TryBlock
+		| T.Block
+		| T.IfExpression
+		| T.MatchExpression
+		| T.WhileExpression
+		| T.LoopExpression
+		| T.ForExpression
+		| T.ConstBlock
+	>(value, _K0, _K2);
 }
 
 function coerceToExpressionStatement$impl(
-	input: (T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) | T.ExpressionStatement.Loose
+	input:
+		| (
+				| T.ExpressionStatementWithSemi
+				| T.UnsafeBlock
+				| T.AsyncBlock
+				| T.GenBlock
+				| T.TryBlock
+				| T.Block
+				| T.IfExpression
+				| T.MatchExpression
+				| T.WhileExpression
+				| T.LoopExpression
+				| T.ForExpression
+				| T.ConstBlock
+		  )
+		| T.ExpressionStatement.Loose
 ): ReturnType<typeof F.buildExpressionStatement> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExpressionStatement)
 		return input as unknown as ReturnType<typeof F.buildExpressionStatement>;
@@ -1599,7 +1633,20 @@ function coerceToExpressionStatement$impl(
 		_requireField(
 			'expression_statement',
 			'content',
-			_resolveOne<T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock>(
+			_resolveOne<
+				| T.ExpressionStatementWithSemi
+				| T.UnsafeBlock
+				| T.AsyncBlock
+				| T.GenBlock
+				| T.TryBlock
+				| T.Block
+				| T.IfExpression
+				| T.MatchExpression
+				| T.WhileExpression
+				| T.LoopExpression
+				| T.ForExpression
+				| T.ConstBlock
+			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
 				_K2
@@ -1612,12 +1659,91 @@ export const coerceToExpressionStatement: typeof coerceToExpressionStatement$imp
 	withSemi: ((
 		...args: _Args<typeof coerceToExpressionStatementWithSemi>
 	) => ReturnType<typeof coerceToExpressionStatement$impl>) & { strict: typeof F.buildExpressionStatement.withSemi };
+	unsafeBlock: typeof F.buildExpressionStatement.unsafeBlock;
+	asyncBlock: ((...args: _Args<typeof coerceToAsyncBlock>) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.asyncBlock;
+	};
+	genBlock: ((...args: _Args<typeof coerceToGenBlock>) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.genBlock;
+	};
+	tryBlock: typeof F.buildExpressionStatement.tryBlock;
+	block: ((...args: _Args<typeof coerceToBlock>) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.block;
+	};
+	ifExpression: ((
+		...args: _Args<typeof coerceToIfExpression>
+	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.ifExpression;
+	};
+	matchExpression: ((
+		...args: _Args<typeof coerceToMatchExpression>
+	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.matchExpression;
+	};
+	whileExpression: ((
+		...args: _Args<typeof coerceToWhileExpression>
+	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.whileExpression;
+	};
+	loopExpression: ((
+		...args: _Args<typeof coerceToLoopExpression>
+	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.loopExpression;
+	};
+	forExpression: ((
+		...args: _Args<typeof coerceToForExpression>
+	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
+		strict: typeof F.buildExpressionStatement.forExpression;
+	};
+	constBlock: typeof F.buildExpressionStatement.constBlock;
 } = attachProps(coerceToExpressionStatement$impl, {
 	withSemi: attachProps(
 		(...args: _Args<typeof coerceToExpressionStatementWithSemi>) =>
 			coerceToExpressionStatement$impl(coerceToExpressionStatementWithSemi(...args) as T.ExpressionStatementWithSemi),
 		{ strict: F.buildExpressionStatement.withSemi }
-	)
+	),
+	unsafeBlock: F.buildExpressionStatement.unsafeBlock,
+	asyncBlock: attachProps(
+		(...args: _Args<typeof coerceToAsyncBlock>) =>
+			coerceToExpressionStatement$impl(coerceToAsyncBlock(...args) as T.AsyncBlock),
+		{ strict: F.buildExpressionStatement.asyncBlock }
+	),
+	genBlock: attachProps(
+		(...args: _Args<typeof coerceToGenBlock>) =>
+			coerceToExpressionStatement$impl(coerceToGenBlock(...args) as T.GenBlock),
+		{ strict: F.buildExpressionStatement.genBlock }
+	),
+	tryBlock: F.buildExpressionStatement.tryBlock,
+	block: attachProps(
+		(...args: _Args<typeof coerceToBlock>) => coerceToExpressionStatement$impl(coerceToBlock(...args) as T.Block),
+		{ strict: F.buildExpressionStatement.block }
+	),
+	ifExpression: attachProps(
+		(...args: _Args<typeof coerceToIfExpression>) =>
+			coerceToExpressionStatement$impl(coerceToIfExpression(...args) as T.IfExpression),
+		{ strict: F.buildExpressionStatement.ifExpression }
+	),
+	matchExpression: attachProps(
+		(...args: _Args<typeof coerceToMatchExpression>) =>
+			coerceToExpressionStatement$impl(coerceToMatchExpression(...args) as T.MatchExpression),
+		{ strict: F.buildExpressionStatement.matchExpression }
+	),
+	whileExpression: attachProps(
+		(...args: _Args<typeof coerceToWhileExpression>) =>
+			coerceToExpressionStatement$impl(coerceToWhileExpression(...args) as T.WhileExpression),
+		{ strict: F.buildExpressionStatement.whileExpression }
+	),
+	loopExpression: attachProps(
+		(...args: _Args<typeof coerceToLoopExpression>) =>
+			coerceToExpressionStatement$impl(coerceToLoopExpression(...args) as T.LoopExpression),
+		{ strict: F.buildExpressionStatement.loopExpression }
+	),
+	forExpression: attachProps(
+		(...args: _Args<typeof coerceToForExpression>) =>
+			coerceToExpressionStatement$impl(coerceToForExpression(...args) as T.ForExpression),
+		{ strict: F.buildExpressionStatement.forExpression }
+	),
+	constBlock: F.buildExpressionStatement.constBlock
 });
 
 export function resolveMacroDefinition_name(value: T.MacroDefinition.LooseConfig['name']): T.MacroDefinition['_name'] {
@@ -1752,7 +1878,9 @@ export function coerceToTokenBindingPattern(
 export function resolveTokenRepetitionPattern_tokenPatterns(
 	value: T.TokenRepetitionPattern.LooseConfig['tokenPatterns']
 ): T.TokenRepetitionPattern['_token_patterns'] {
-	return _resolveMany<T.TokenPattern>(value, _K5, _K6);
+	return _resolveMany<
+		T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+	>(value, _K5, _K6);
 }
 
 export function resolveTokenRepetitionPattern_operator(
@@ -1897,7 +2025,7 @@ export const coerceToTokenTree: typeof coerceToTokenTree$impl & {
 export function resolveTokenRepetition_tokens(
 	value: T.TokenRepetition.LooseConfig['tokens']
 ): T.TokenRepetition['_tokens'] {
-	return _resolveMany<T.Tokens>(value, _K5, _K8);
+	return _resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(value, _K5, _K8);
 }
 
 export function resolveTokenRepetition_operator(
@@ -1980,7 +2108,7 @@ export function coerceToInnerAttributeItem(
 }
 
 export function resolveAttribute_path(value: T.Attribute.LooseConfig['path']): T.Attribute['_path'] {
-	return _resolveOne<T.Path>(value, _K9, _K10);
+	return _resolveOne<T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier>(value, _K9, _K10);
 }
 
 export function resolveAttribute_attributeArm(
@@ -2975,7 +3103,18 @@ export function resolveUseDeclaration_visibilityModifier(
 export function resolveUseDeclaration_argument(
 	value: T.UseDeclaration.LooseConfig['argument']
 ): T.UseDeclaration['_argument'] {
-	return _resolveOne<T.UseClause>(value, _K9, _K27);
+	return _resolveOne<
+		| T.Self
+		| T.Identifier
+		| T.Metavariable
+		| T.Super
+		| T.Crate
+		| T.ScopedIdentifier
+		| T.UseAsClause
+		| T.UseList
+		| T.ScopedUseList
+		| T.UseWildcard
+	>(value, _K9, _K27);
 }
 
 export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnType<typeof F.buildUseDeclaration> {
@@ -2988,7 +3127,7 @@ export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnTyp
 }
 
 export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['path']): T.ScopedUseList['_path'] {
-	return _resolveOne<T.Path>(value, _K9, _K10);
+	return _resolveOne<T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier>(value, _K9, _K10);
 }
 
 export function resolveScopedUseList_list(value: T.ScopedUseList.LooseConfig['list']): T.ScopedUseList['_list'] {
@@ -3009,7 +3148,19 @@ export function resolveUseList_useClauses(value: T.UseList.LooseConfig['useClaus
 }
 
 export function coerceToUseList(
-	input?: T.UseClauses | T.UseClause | T.UseList.Loose
+	input?:
+		| T.UseClauses
+		| T.Self
+		| T.Identifier
+		| T.Metavariable
+		| T.Super
+		| T.Crate
+		| T.ScopedIdentifier
+		| T.UseAsClause
+		| T.UseList
+		| T.ScopedUseList
+		| T.UseWildcard
+		| T.UseList.Loose
 ): ReturnType<typeof F.buildUseList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseList)
 		return input as unknown as ReturnType<typeof F.buildUseList>;
@@ -3024,7 +3175,7 @@ export function coerceToUseList(
 }
 
 export function resolveUseAsClause_path(value: T.UseAsClause.LooseConfig['path']): T.UseAsClause['_path'] {
-	return _resolveOne<T.Path>(value, _K9, _K10);
+	return _resolveOne<T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier>(value, _K9, _K10);
 }
 
 export function resolveUseAsClause_alias(value: T.UseAsClause.LooseConfig['alias']): T.UseAsClause['_alias'] {
@@ -3041,20 +3192,44 @@ export function coerceToUseAsClause(input: T.UseAsClause.Loose): ReturnType<type
 }
 
 export function resolveUseWildcard_path(value: T.UseWildcard.LooseConfig['path']): T.UseWildcard['_path'] {
-	return _resolveOne<T.Path>(value, _K9, _K10);
+	return _resolveOne<T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier>(value, _K9, _K10);
 }
 
-export function coerceToUseWildcard(input?: T.Path | T.UseWildcard.Loose): ReturnType<typeof F.buildUseWildcard> {
+function coerceToUseWildcard$impl(
+	input?: (T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier) | T.UseWildcard.Loose
+): ReturnType<typeof F.buildUseWildcard> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseWildcard)
 		return input as unknown as ReturnType<typeof F.buildUseWildcard>;
 	return F.buildUseWildcard(
-		_resolveOne<T.Path>(
+		_resolveOne<T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
 			_K9,
 			_K10
 		)
 	);
 }
+
+export const coerceToUseWildcard: typeof coerceToUseWildcard$impl & {
+	self: typeof F.buildUseWildcard.self;
+	identifier: typeof F.buildUseWildcard.identifier;
+	metavariable: typeof F.buildUseWildcard.metavariable;
+	super: typeof F.buildUseWildcard.super;
+	crate: typeof F.buildUseWildcard.crate;
+	scopedIdentifier: ((
+		...args: _Args<typeof coerceToScopedIdentifier>
+	) => ReturnType<typeof coerceToUseWildcard$impl>) & { strict: typeof F.buildUseWildcard.scopedIdentifier };
+} = attachProps(coerceToUseWildcard$impl, {
+	self: F.buildUseWildcard.self,
+	identifier: F.buildUseWildcard.identifier,
+	metavariable: F.buildUseWildcard.metavariable,
+	super: F.buildUseWildcard.super,
+	crate: F.buildUseWildcard.crate,
+	scopedIdentifier: attachProps(
+		(...args: _Args<typeof coerceToScopedIdentifier>) =>
+			coerceToUseWildcard$impl(coerceToScopedIdentifier(...args) as T.ScopedIdentifier),
+		{ strict: F.buildUseWildcard.scopedIdentifier }
+	)
+});
 
 export function resolveParameters_parametersElements(
 	value: T.Parameters.LooseConfig['parametersElements']
@@ -3192,12 +3367,18 @@ export const coerceToVisibilityModifier: typeof coerceToVisibilityModifier$impl 
 	self: typeof F.buildVisibilityModifier.self;
 	super: typeof F.buildVisibilityModifier.super;
 	inPath: typeof F.buildVisibilityModifier.inPath;
+	identifier: typeof F.buildVisibilityModifier.identifier;
+	metavariable: typeof F.buildVisibilityModifier.metavariable;
+	scopedIdentifier: typeof F.buildVisibilityModifier.scopedIdentifier;
 } = attachProps(coerceToVisibilityModifier$impl, {
 	crate: F.buildVisibilityModifier.crate,
 	pub: F.buildVisibilityModifier.pub,
 	self: F.buildVisibilityModifier.self,
 	super: F.buildVisibilityModifier.super,
-	inPath: F.buildVisibilityModifier.inPath
+	inPath: F.buildVisibilityModifier.inPath,
+	identifier: F.buildVisibilityModifier.identifier,
+	metavariable: F.buildVisibilityModifier.metavariable,
+	scopedIdentifier: F.buildVisibilityModifier.scopedIdentifier
 });
 
 export function resolveBracketedType_content(
@@ -3765,7 +3946,16 @@ export const coerceToDelimTokenTree: typeof coerceToDelimTokenTree$impl & {
 export function resolveScopedIdentifier_path(
 	value: T.ScopedIdentifier.LooseConfig['path']
 ): T.ScopedIdentifier['_path'] {
-	return _resolveOne<T.Path | T.BracketedType | T.GenericTypeWithTurbofish>(value, _K9, _K40);
+	return _resolveOne<
+		| T.Self
+		| T.Identifier
+		| T.Metavariable
+		| T.Super
+		| T.Crate
+		| T.ScopedIdentifier
+		| T.BracketedType
+		| T.GenericTypeWithTurbofish
+	>(value, _K9, _K40);
 }
 
 export function resolveScopedIdentifier_name(
@@ -3786,7 +3976,9 @@ export function coerceToScopedIdentifier(input: T.ScopedIdentifier.Loose): Retur
 export function resolveScopedTypeIdentifierInExpressionPosition_path(
 	value: T.ScopedTypeIdentifierInExpressionPosition.LooseConfig['path']
 ): T.ScopedTypeIdentifierInExpressionPosition['_path'] {
-	return _resolveOne<T.Path | T.GenericTypeWithTurbofish>(value, _K9, _K42);
+	return _resolveOne<
+		T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier | T.GenericTypeWithTurbofish
+	>(value, _K9, _K42);
 }
 
 export function resolveScopedTypeIdentifierInExpressionPosition_name(
@@ -3813,7 +4005,17 @@ export function coerceToScopedTypeIdentifierInExpressionPosition(
 export function resolveScopedTypeIdentifier_path(
 	value: T.ScopedTypeIdentifier.LooseConfig['path']
 ): T.ScopedTypeIdentifier['_path'] {
-	return _resolveOne<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType>(value, _K9, _K43);
+	return _resolveOne<
+		| T.Self
+		| T.Identifier
+		| T.Metavariable
+		| T.Super
+		| T.Crate
+		| T.ScopedIdentifier
+		| T.GenericTypeWithTurbofish
+		| T.BracketedType
+		| T.GenericType
+	>(value, _K9, _K43);
 }
 
 export function resolveScopedTypeIdentifier_name(
@@ -4232,7 +4434,47 @@ export function coerceToYieldExpression(
 export function resolveCallExpression_function(
 	value: T.CallExpression.LooseConfig['function']
 ): T.CallExpression['_function'] {
-	return _resolveOne<T.ExpressionExceptRange>(value, _K14, _K47);
+	return _resolveOne<
+		| T.UnaryExpression
+		| T.ReferenceExpression
+		| T.TryExpression
+		| T.BinaryExpression
+		| T.AssignmentExpression
+		| T.CompoundAssignmentExpr
+		| T.TypeCastExpression
+		| T.CallExpression
+		| T.ReturnExpression
+		| T.YieldExpression
+		| T.Literal
+		| T.Identifier
+		| T.Self
+		| T.ScopedIdentifier
+		| T.GenericFunction
+		| T.AwaitExpression
+		| T.FieldExpression
+		| T.ArrayExpression
+		| T.TupleExpression
+		| T.MacroInvocation
+		| T.UnitExpression
+		| T.BreakExpression
+		| T.ContinueExpression
+		| T.IndexExpression
+		| T.Metavariable
+		| T.ClosureExpression
+		| T.ParenthesizedExpression
+		| T.StructExpression
+		| T.UnsafeBlock
+		| T.AsyncBlock
+		| T.GenBlock
+		| T.TryBlock
+		| T.Block
+		| T.IfExpression
+		| T.MatchExpression
+		| T.WhileExpression
+		| T.LoopExpression
+		| T.ForExpression
+		| T.ConstBlock
+	>(value, _K14, _K47);
 }
 
 export function resolveCallExpression_arguments(
@@ -4512,7 +4754,7 @@ export function coerceToBaseFieldInitializer(
 export function resolveIfExpression_condition(
 	value: T.IfExpression.LooseConfig['condition']
 ): T.IfExpression['_condition'] {
-	return _resolveOne<T.Condition>(value, _K14, _K51);
+	return _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K14, _K51);
 }
 
 export function resolveIfExpression_consequence(
@@ -4644,7 +4886,20 @@ export function resolveMatchArm_pattern(value: T.MatchArm.LooseConfig['pattern']
 }
 
 export function resolveMatchArm_content(value: T.MatchArm.LooseConfig['content']): T.MatchArm['_content'] {
-	return _resolveOne<T.MatchArmWithComma | T.ExpressionEndingWithBlock>(value, _K0, _K54);
+	return _resolveOne<
+		| T.MatchArmWithComma
+		| T.UnsafeBlock
+		| T.AsyncBlock
+		| T.GenBlock
+		| T.TryBlock
+		| T.Block
+		| T.IfExpression
+		| T.MatchExpression
+		| T.WhileExpression
+		| T.LoopExpression
+		| T.ForExpression
+		| T.ConstBlock
+	>(value, _K0, _K54);
 }
 
 export function coerceToMatchArm(input: T.MatchArm.Loose): ReturnType<typeof F.buildMatchArm> {
@@ -4688,7 +4943,7 @@ export function resolveMatchPattern_pattern(value: T.MatchPattern.LooseConfig['p
 export function resolveMatchPattern_condition(
 	value: T.MatchPattern.LooseConfig['condition']
 ): T.MatchPattern['_condition'] {
-	return _resolveOne<T.Condition>(value, _K14, _K51);
+	return _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K14, _K51);
 }
 
 export function coerceToMatchPattern(input: T.MatchPattern.Loose): ReturnType<typeof F.buildMatchPattern> {
@@ -4709,7 +4964,7 @@ export function resolveWhileExpression_label(
 export function resolveWhileExpression_condition(
 	value: T.WhileExpression.LooseConfig['condition']
 ): T.WhileExpression['_condition'] {
-	return _resolveOne<T.Condition>(value, _K14, _K51);
+	return _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K14, _K51);
 }
 
 export function resolveWhileExpression_body(value: T.WhileExpression.LooseConfig['body']): T.WhileExpression['_body'] {
@@ -5044,7 +5299,7 @@ export function resolveBlock_label(value: T.Block.LooseConfig['label']): T.Block
 }
 
 export function resolveBlock_statements(value: T.Block.LooseConfig['statements']): T.Block['_statements'] {
-	return _resolveMany<T.Statement>(value, _K0, _K1);
+	return _resolveMany<T.ExpressionStatement | T.DeclarationStatement>(value, _K0, _K1);
 }
 
 export function resolveBlock_trailingExpression(

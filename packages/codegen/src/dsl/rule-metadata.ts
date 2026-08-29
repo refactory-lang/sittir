@@ -5,7 +5,6 @@ import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 export interface RuleMetadataShape {
 	author?: 'grammar' | 'override' | 'enrich' | 'evaluate';
 	classifiedBy?: 'grammar' | 'link';
-	inlinedFrom?: string;
 	fieldSource?: 'grammar' | 'override' | 'enriched';
 	symbolSource?: 'grammar' | 'link' | 'group-lift';
 }

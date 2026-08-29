@@ -6,18 +6,12 @@ const NODE_KINDS = [
 	'_enum_body_elements',
 	'_export_specifiers',
 	'_export_statement_default',
-	'_export_statement_default_clause_from',
 	'_export_statement_default_from_arm',
-	'_export_statement_default_ns_from',
-	'_export_statement_default_star_from',
 	'_for_header_lhs',
 	'_formal_parameters_elements',
 	'_import_clause_default_import',
 	'_import_clause_group',
 	'_import_specifiers',
-	'_import_statement_arm',
-	'_jsx_start_opening_element',
-	'_jsx_string',
 	'_tuple_type_members',
 	'_type_parameters_elements',
 	'_types',
@@ -70,7 +64,6 @@ const NODE_KINDS = [
 	'expression_statement',
 	'extends_clause',
 	'extends_type_clause',
-	'field_definition',
 	'finally_clause',
 	'flow_maybe_type',
 	'for_in_statement',
@@ -98,13 +91,6 @@ const NODE_KINDS = [
 	'interface_declaration',
 	'internal_module',
 	'intersection_type',
-	'jsx_attribute',
-	'jsx_closing_element',
-	'jsx_element',
-	'jsx_expression',
-	'jsx_namespace_name',
-	'jsx_opening_element',
-	'jsx_self_closing_element',
 	'labeled_statement',
 	'lexical_declaration',
 	'literal_type',
@@ -191,16 +177,17 @@ const LEAF_KINDS = [
 	'_augmented_assignment_expression_operator',
 	'_kind',
 	'_kw_abstract_marker',
+	'_kw_accessor_marker',
 	'_kw_async_marker',
+	'_kw_await_marker',
 	'_kw_const_marker',
 	'_kw_declare_marker',
-	'_kw_readonly_marker',
 	'_kw_static_marker',
+	'_kw_using_marker',
 	'_meta_property_arm1',
 	'_meta_property_arm2',
 	'_operator',
 	'_reserved_identifier',
-	'_semicolon',
 	'_template_chars',
 	'_ternary_qmark',
 	'_type_identifier',
@@ -238,7 +225,6 @@ const LEAF_KINDS = [
 	'function',
 	'global',
 	'hash_bang_line',
-	'html_character_reference',
 	'html_comment',
 	'identifier',
 	'if',
@@ -249,7 +235,6 @@ const LEAF_KINDS = [
 	'instanceof',
 	'interface',
 	'is',
-	'jsx_identifier',
 	'jsx_text',
 	'keyof',
 	'namespace',
@@ -275,9 +260,7 @@ const LEAF_KINDS = [
 	'try',
 	'typeof',
 	'undefined',
-	'unescaped_double_jsx_string_fragment',
 	'unescaped_double_string_fragment',
-	'unescaped_single_jsx_string_fragment',
 	'unescaped_single_string_fragment',
 	'using',
 	'var',
@@ -293,11 +276,13 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
 	'_kw_abstract_marker',
+	'_kw_accessor_marker',
 	'_kw_async_marker',
+	'_kw_await_marker',
 	'_kw_const_marker',
 	'_kw_declare_marker',
-	'_kw_readonly_marker',
 	'_kw_static_marker',
+	'_kw_using_marker',
 	'abstract',
 	'accessor',
 	'anon_asserts',
@@ -363,11 +348,8 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-	'/>',
-	'</',
 	'_automatic_semicolon',
 	'_function_signature_automatic_semicolon',
-	'_kw_optional_marker',
 	'amp',
 	'amp_amp',
 	'at',
@@ -2573,10 +2555,6 @@ export const _RESERVED_IDENTIFIERS = [
 	'let'
 ] as const;
 export type ReservedIdentifierValue = (typeof _RESERVED_IDENTIFIERS)[number];
-
-/** Valid values for `_semicolon` nodes. */
-export const _SEMICOLONS = ['\n', ';'] as const;
-export type SemicolonValue = (typeof _SEMICOLONS)[number];
 
 /** Valid values for `_unary_expression_operator` nodes. */
 export const _UNARY_EXPRESSION_OPERATORS = ['!', '~', '-', '+', 'typeof', 'void', 'delete'] as const;

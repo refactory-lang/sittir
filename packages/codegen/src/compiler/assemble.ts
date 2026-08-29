@@ -30,7 +30,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
-import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
+import { isEnumChoiceRule, isHiddenRule, isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -925,10 +925,6 @@ function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
 
 type ModelType = AssembledNode['modelType'];
 
-export function isNonInlinableLeafShape(rule: AnyRule): boolean {
-	if (isEnumChoiceRule(rule)) return true;
-	return rule.type === SUPERTYPE || rule.type === PATTERN || rule.type === STRING;
-}
 
 export function classifyNode(
 	kind: string,

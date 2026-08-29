@@ -306,7 +306,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::isContentSlot`
 
 ```text
-/** A slot boundary that resolves to the generic `content` storage name. */
+/** A slot boundary that resolves to the generic `content` storage name. A
+ *  fielded slot (`fieldName` set) or an inlined-body slot (`inlinedFrom`
+ *  set — see {@link RuleBase.inlinedFrom}, types/rule.ts) is never a
+ *  content slot regardless of its kind profile: both already carry a
+ *  meaningful name of their own (the field name; the fallback name
+ *  `projectSlotNaming` derives from `inlinedFrom`), so grouping them under
+ *  the generic content-slot count would double-count a slot this
+ *  diagnostic's collision check already has a real name for.
+ */
 ```
 
 ```text

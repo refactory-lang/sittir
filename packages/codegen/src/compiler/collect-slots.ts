@@ -334,11 +334,11 @@ function buildSlot(
 				if (rule.type === CHOICE && !sanctionedUnion) {
 					unnamedChoiceWarner(rule.id ?? kindForName);
 				}
-				baseName = 'content';
+				baseName = inlinedFromSlotName(rule) ?? 'content';
 				break;
 			}
 			default:
-				baseName = 'content';
+				baseName = inlinedFromSlotName(rule) ?? 'content';
 				break;
 		}
 	}
@@ -396,6 +396,7 @@ function buildSlot(
 	return new AssembledNonterminal({
 		values,
 		fieldName: (rule as { fieldName?: string }).fieldName,
+		inlinedFrom: rule.inlinedFrom,
 		hasTrailingDelimiter,
 		hasLeadingDelimiter,
 		trailingDelimiter,
@@ -539,4 +540,8 @@ export function collectSlots(
 			return slot ? [slot] : [];
 		}
 	}
+}
+
+function inlinedFromSlotName(rule: { readonly inlinedFrom?: string }): string | undefined {
+	return rule.inlinedFrom === undefined ? undefined : rule.inlinedFrom.replace(/^_+/, '') || undefined;
 }

@@ -32,7 +32,7 @@ describe('generate — new pipeline end-to-end', () => {
 		// All files should be non-empty strings
 		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
-		expect(result.types).toContain('readonly $type: "');
+		expect(result.types).toContain('readonly $type: TSKindId.');
 		expect(result.factories.length).toBeGreaterThan(0);
 		expect(result.consts.length).toBeGreaterThan(0);
 		expect(result.index.length).toBeGreaterThan(0);

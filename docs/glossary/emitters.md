@@ -15299,6 +15299,16 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
+// A `parseName` accepts both spellings: the parse entry's own id (the
+// alias display name a caller matches against) AND `kind`'s own storage
+// entry id. Native stamps the storage id on an aliased hidden kind that
+// has no `kindIdByKind` entry of its own — without this union that
+// occurrence's runtime kind_id would never satisfy the accepted set.
+```
+
+#### body
+
+```text
 // Supertype-expanded subtypes each carry their OWN stamped
 // storageKindId (assemble.ts's discovery-time stamp) — an alias
 // occurrence's id can genuinely differ from what the name-keyed

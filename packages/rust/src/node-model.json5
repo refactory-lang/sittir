@@ -1,26 +1,15 @@
 {
   "name": "rust",
-  "nodeCount": 369,
+  "nodeCount": 348,
   "word": "identifier",
   "supertypes": [
-    "_condition",
     "_declaration_statement",
-    "_delim_tokens",
     "_expression",
-    "_expression_ending_with_block",
-    "_expression_except_range",
     "_literal",
     "_literal_pattern",
-    "_non_delim_token",
     "_non_special_token",
-    "_path",
     "_pattern",
-    "_statement",
-    "_token_pattern",
-    "_tokens",
-    "_type",
-    "_use_clause",
-    "non_special_token"
+    "_type"
   ],
   "externals": [
     "_block_comment_content",
@@ -361,6 +350,15 @@
     "field_initializer.field": {
       "field_identifier": "identifier"
     },
+    "if_expression.condition": {
+      "let_chain": "_let_chain"
+    },
+    "match_pattern.condition": {
+      "let_chain": "_let_chain"
+    },
+    "while_expression.condition": {
+      "let_chain": "_let_chain"
+    },
     "field_expression.field": {
       "field_identifier": "identifier"
     },
@@ -375,18 +373,6 @@
     },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
-    },
-    "_function_item_optional1.return_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
-    },
-    "_type_parameter_optional1.default_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
-    },
-    "_let_declaration_optional1.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
     },
     "_use_bounds_elements.element": {
       "type_identifier": "identifier"
@@ -2819,15 +2805,6 @@
         "nonEmpty": false
       }
     },
-    "comment": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "line_comment": {
       "content": {
         "unnamed": false,
@@ -3641,41 +3618,6 @@
       "text": "_"
     },
     {
-      "kind": "_abstract_type_optional1",
-      "modelType": "group",
-      "typeName": "AbstractTypeOptional1",
-      "factoryName": "_abstractTypeOptional1",
-      "irKey": "abstractTypeOptional1",
-      "hidden": false,
-      "name": "_abstract_type_optional1",
-      "fields": [
-        {
-          "name": "type_parameters",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type_parameters",
-              "parseKind": "type_parameters",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_parameters"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_arguments_elements",
       "modelType": "separatedList",
       "typeName": "ArgumentsElements",
@@ -3882,41 +3824,6 @@
         "attributes",
         "array_expression_arm"
       ]
-    },
-    {
-      "kind": "_array_type_optional1",
-      "modelType": "group",
-      "typeName": "ArrayTypeOptional1",
-      "factoryName": "_arrayTypeOptional1",
-      "irKey": "arrayTypeOptional1",
-      "hidden": false,
-      "name": "_array_type_optional1",
-      "fields": [
-        {
-          "name": "length",
-          "propertyName": "length",
-          "paramName": "length",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_attribute_arm",
@@ -4665,167 +4572,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_condition",
-      "modelType": "supertype",
-      "typeName": "Condition",
-      "irKey": "condition",
-      "hidden": true,
-      "subtypes": [
-        "_expression",
-        "_expression_ending_with_block",
-        "_expression_except_range",
-        "_let_chain",
-        "_literal",
-        "_reserved_identifier",
-        "array_expression",
-        "assignment_expression",
-        "async_block",
-        "await_expression",
-        "binary_expression",
-        "block",
-        "boolean_literal",
-        "break_expression",
-        "call_expression",
-        "char_literal",
-        "closure_expression",
-        "compound_assignment_expr",
-        "const_block",
-        "continue_expression",
-        "field_expression",
-        "float_literal",
-        "for_expression",
-        "gen_block",
-        "generic_function",
-        "identifier",
-        "if_expression",
-        "index_expression",
-        "integer_literal",
-        "let_condition",
-        "loop_expression",
-        "macro_invocation",
-        "match_expression",
-        "metavariable",
-        "parenthesized_expression",
-        "range_expression",
-        "raw_string_literal",
-        "reference_expression",
-        "return_expression",
-        "scoped_identifier",
-        "self",
-        "string_literal",
-        "struct_expression",
-        "try_block",
-        "try_expression",
-        "tuple_expression",
-        "type_cast_expression",
-        "unary_expression",
-        "unit_expression",
-        "unsafe_block",
-        "while_expression",
-        "yield_expression"
-      ]
-    },
-    {
-      "kind": "_const_parameter_optional1",
-      "modelType": "group",
-      "typeName": "ConstParameterOptional1",
-      "factoryName": "_constParameterOptional1",
-      "irKey": "constParameterOptional1",
-      "hidden": false,
-      "name": "_const_parameter_optional1",
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_literal",
-              "parseKind": "_literal",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "negative_literal",
-              "parseKind": "negative_literal",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "block",
-              "identifier",
-              "_literal",
-              "negative_literal"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "namespacedConstructors": [
-        {
-          "name": "block",
-          "via": "form",
-          "slot": "value",
-          "childKind": "block",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "value",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "negativeLiteral",
-          "via": "form",
-          "slot": "value",
-          "childKind": "negative_literal",
-          "path": []
-        },
-        {
-          "name": "integerLiteral",
-          "via": "form",
-          "slot": "value",
-          "childKind": "negative_literal",
-          "path": [
-            "integerLiteral"
-          ]
-        },
-        {
-          "name": "floatLiteral",
-          "via": "form",
-          "slot": "value",
-          "childKind": "negative_literal",
-          "path": [
-            "floatLiteral"
-          ]
-        }
-      ]
-    },
-    {
       "kind": "_declaration_statement",
       "modelType": "supertype",
       "typeName": "DeclarationStatement",
@@ -4875,15 +4621,29 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_delim_tokens",
-              "parseKind": "_delim_tokens",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "$",
+              "parseKind": "token_tree_punctuation"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "delim_token_tree",
+              "parseKind": "token_tree",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_delim_tokens"
+              "_non_special_token",
+              "delim_token_tree"
             ]
           }
         }
@@ -4914,15 +4674,29 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_delim_tokens",
-              "parseKind": "_delim_tokens",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "$",
+              "parseKind": "token_tree_punctuation"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "delim_token_tree",
+              "parseKind": "token_tree",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_delim_tokens"
+              "_non_special_token",
+              "delim_token_tree"
             ]
           }
         }
@@ -4953,15 +4727,29 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_delim_tokens",
-              "parseKind": "_delim_tokens",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "$",
+              "parseKind": "token_tree_punctuation"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "delim_token_tree",
+              "parseKind": "token_tree",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_delim_tokens"
+              "_non_special_token",
+              "delim_token_tree"
             ]
           }
         }
@@ -4970,19 +4758,6 @@
       "factoryShape": "config",
       "factoryFields": [
         "delim_tokens"
-      ]
-    },
-    {
-      "kind": "_delim_tokens",
-      "modelType": "supertype",
-      "typeName": "DelimTokens",
-      "irKey": "delimTokens",
-      "hidden": true,
-      "subtypes": [
-        "_non_delim_token",
-        "_non_special_token",
-        "delim_token_tree",
-        "dollar"
       ]
     },
     {
@@ -5005,41 +4780,6 @@
       ]
     },
     {
-      "kind": "_enum_variant_optional1",
-      "modelType": "group",
-      "typeName": "EnumVariantOptional1",
-      "factoryName": "_enumVariantOptional1",
-      "irKey": "enumVariantOptional1",
-      "hidden": false,
-      "name": "_enum_variant_optional1",
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_error_sentinel",
       "modelType": "pattern",
       "typeName": "ErrorSentinel",
@@ -5054,10 +4794,7 @@
       "irKey": "expression",
       "hidden": true,
       "subtypes": [
-        "_expression_ending_with_block",
-        "_expression_except_range",
         "_literal",
-        "_reserved_identifier",
         "array_expression",
         "assignment_expression",
         "async_block",
@@ -5087,82 +4824,6 @@
         "metavariable",
         "parenthesized_expression",
         "range_expression",
-        "raw_string_literal",
-        "reference_expression",
-        "return_expression",
-        "scoped_identifier",
-        "self",
-        "string_literal",
-        "struct_expression",
-        "try_block",
-        "try_expression",
-        "tuple_expression",
-        "type_cast_expression",
-        "unary_expression",
-        "unit_expression",
-        "unsafe_block",
-        "while_expression",
-        "yield_expression"
-      ]
-    },
-    {
-      "kind": "_expression_ending_with_block",
-      "modelType": "supertype",
-      "typeName": "ExpressionEndingWithBlock",
-      "irKey": "expressionEndingWithBlock",
-      "hidden": true,
-      "subtypes": [
-        "async_block",
-        "block",
-        "const_block",
-        "for_expression",
-        "gen_block",
-        "if_expression",
-        "loop_expression",
-        "match_expression",
-        "try_block",
-        "unsafe_block",
-        "while_expression"
-      ]
-    },
-    {
-      "kind": "_expression_except_range",
-      "modelType": "supertype",
-      "typeName": "ExpressionExceptRange",
-      "irKey": "expressionExceptRange",
-      "hidden": true,
-      "subtypes": [
-        "_expression_ending_with_block",
-        "_literal",
-        "_reserved_identifier",
-        "array_expression",
-        "assignment_expression",
-        "async_block",
-        "await_expression",
-        "binary_expression",
-        "block",
-        "boolean_literal",
-        "break_expression",
-        "call_expression",
-        "char_literal",
-        "closure_expression",
-        "compound_assignment_expr",
-        "const_block",
-        "continue_expression",
-        "field_expression",
-        "float_literal",
-        "for_expression",
-        "gen_block",
-        "generic_function",
-        "identifier",
-        "if_expression",
-        "index_expression",
-        "integer_literal",
-        "loop_expression",
-        "macro_invocation",
-        "match_expression",
-        "metavariable",
-        "parenthesized_expression",
         "raw_string_literal",
         "reference_expression",
         "return_expression",
@@ -5219,41 +4880,6 @@
       "factoryFields": [
         "expression"
       ]
-    },
-    {
-      "kind": "_extern_crate_declaration_optional1",
-      "modelType": "group",
-      "typeName": "ExternCrateDeclarationOptional1",
-      "factoryName": "_externCrateDeclarationOptional1",
-      "irKey": "externCrateDeclarationOptional1",
-      "hidden": false,
-      "name": "_extern_crate_declaration_optional1",
-      "fields": [
-        {
-          "name": "alias",
-          "propertyName": "alias",
-          "paramName": "alias",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_field_declaration_list_elements",
@@ -5376,41 +5002,6 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
-    },
-    {
-      "kind": "_function_item_optional1",
-      "modelType": "group",
-      "typeName": "FunctionItemOptional1",
-      "factoryName": "_functionItemOptional1",
-      "irKey": "functionItemOptional1",
-      "hidden": false,
-      "name": "_function_item_optional1",
-      "fields": [
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_function_type_fn_form",
@@ -5719,6 +5310,18 @@
       "text": ";"
     },
     {
+      "kind": "_impl_item_unsafe_marker",
+      "modelType": "keyword",
+      "typeName": "ImplItemUnsafeMarker",
+      "factoryName": "implItemUnsafeMarker",
+      "irKey": "implItemUnsafeMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"unsafe\" as const",
+      "text": "unsafe",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_inner_block_doc_comment_marker",
       "modelType": "token",
       "typeName": "InnerBlockDocCommentMarker",
@@ -5739,6 +5342,18 @@
       "text": "!"
     },
     {
+      "kind": "_kw_async_marker",
+      "modelType": "keyword",
+      "typeName": "KwAsyncMarker",
+      "factoryName": "kwAsyncMarker",
+      "irKey": "kwAsyncMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "text": "async",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_kw_move_marker",
       "modelType": "keyword",
       "typeName": "KwMoveMarker",
@@ -5751,16 +5366,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_kw_operator",
-      "modelType": "token",
-      "typeName": "KwOperator",
-      "irKey": "kwOperator",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"..\" as const",
-      "text": ".."
-    },
-    {
       "kind": "_kw_ref_marker",
       "modelType": "keyword",
       "typeName": "KwRefMarker",
@@ -5770,6 +5375,30 @@
       "isParameterless": true,
       "stampExpression": "\"ref\" as const",
       "text": "ref",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_kw_static_marker",
+      "modelType": "keyword",
+      "typeName": "KwStaticMarker",
+      "factoryName": "kwStaticMarker",
+      "irKey": "kwStaticMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"static\" as const",
+      "text": "static",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_kw_unsafe_marker",
+      "modelType": "keyword",
+      "typeName": "KwUnsafeMarker",
+      "factoryName": "kwUnsafeMarker",
+      "irKey": "kwUnsafeMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"unsafe\" as const",
+      "text": "unsafe",
       "factoryShape": "text"
     },
     {
@@ -5857,76 +5486,6 @@
         "left",
         "right"
       ]
-    },
-    {
-      "kind": "_let_declaration_optional1",
-      "modelType": "group",
-      "typeName": "LetDeclarationOptional1",
-      "factoryName": "_letDeclarationOptional1",
-      "irKey": "letDeclarationOptional1",
-      "hidden": false,
-      "name": "_let_declaration_optional1",
-      "fields": [
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_let_declaration_optional2",
-      "modelType": "group",
-      "typeName": "LetDeclarationOptional2",
-      "factoryName": "_letDeclarationOptional2",
-      "irKey": "letDeclarationOptional2",
-      "hidden": false,
-      "name": "_let_declaration_optional2",
-      "fields": [
-        {
-          "name": "alternative",
-          "propertyName": "alternative",
-          "paramName": "alternative",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "block"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_lifetimes",
@@ -6339,41 +5898,6 @@
       ]
     },
     {
-      "kind": "_match_pattern_optional1",
-      "modelType": "group",
-      "typeName": "MatchPatternOptional1",
-      "factoryName": "_matchPatternOptional1",
-      "irKey": "matchPatternOptional1",
-      "hidden": false,
-      "name": "_match_pattern_optional1",
-      "fields": [
-        {
-          "name": "condition",
-          "propertyName": "condition",
-          "paramName": "condition",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_condition",
-              "parseKind": "_condition",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_condition"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_mod_item_external",
       "modelType": "token",
       "typeName": "ModItemExternal",
@@ -6384,20 +5908,9 @@
       "text": ";"
     },
     {
-      "kind": "_non_delim_token",
-      "modelType": "supertype",
-      "typeName": "NonDelimToken",
-      "irKey": "nonDelimToken",
-      "hidden": true,
-      "subtypes": [
-        "_non_special_token",
-        "dollar"
-      ]
-    },
-    {
       "kind": "_non_special_token",
       "modelType": "supertype",
-      "typeName": "_NonSpecialToken",
+      "typeName": "NonSpecialToken",
       "irKey": "nonSpecialToken",
       "hidden": true,
       "subtypes": [
@@ -6579,22 +6092,6 @@
       ]
     },
     {
-      "kind": "_path",
-      "modelType": "supertype",
-      "typeName": "Path",
-      "irKey": "path",
-      "hidden": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "crate",
-        "identifier",
-        "metavariable",
-        "scoped_identifier",
-        "self",
-        "super"
-      ]
-    },
-    {
       "kind": "_pattern",
       "modelType": "supertype",
       "typeName": "Pattern",
@@ -6602,7 +6099,6 @@
       "hidden": true,
       "subtypes": [
         "_literal_pattern",
-        "_reserved_identifier",
         "_wildcard_pattern",
         "boolean_literal",
         "captured_pattern",
@@ -6945,8 +6441,43 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
@@ -6954,7 +6485,12 @@
             "typeName": "",
             "kinds": [
               "_literal_pattern",
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         },
@@ -7066,8 +6602,43 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
@@ -7075,7 +6646,12 @@
             "typeName": "",
             "kinds": [
               "_literal_pattern",
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         }
@@ -7169,8 +6745,43 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
@@ -7178,7 +6789,12 @@
             "typeName": "",
             "kinds": [
               "_literal_pattern",
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         }
@@ -7268,38 +6884,6 @@
         "default",
         "union",
         "gen"
-      ]
-    },
-    {
-      "kind": "_statement",
-      "modelType": "supertype",
-      "typeName": "Statement",
-      "irKey": "statement",
-      "hidden": true,
-      "subtypes": [
-        "_declaration_statement",
-        "associated_type",
-        "attribute_item",
-        "const_item",
-        "empty_statement",
-        "enum_item",
-        "expression_statement",
-        "extern_crate_declaration",
-        "foreign_mod_item",
-        "function_item",
-        "function_signature_item",
-        "impl_item",
-        "inner_attribute_item",
-        "let_declaration",
-        "macro_definition",
-        "macro_invocation",
-        "mod_item",
-        "static_item",
-        "struct_item",
-        "trait_item",
-        "type_item",
-        "union_item",
-        "use_declaration"
       ]
     },
     {
@@ -7508,20 +7092,6 @@
       ]
     },
     {
-      "kind": "_token_pattern",
-      "modelType": "supertype",
-      "typeName": "TokenPattern",
-      "irKey": "tokenPattern",
-      "hidden": true,
-      "subtypes": [
-        "_non_special_token",
-        "metavariable",
-        "token_binding_pattern",
-        "token_repetition_pattern",
-        "token_tree_pattern"
-      ]
-    },
-    {
       "kind": "_token_tree_brace",
       "modelType": "group",
       "typeName": "TokenTreeBrace",
@@ -7541,15 +7111,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_tokens",
-              "parseKind": "_tokens",
+              "name": "token_tree",
+              "parseKind": "token_tree",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition",
+              "parseKind": "token_repetition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tokens"
+              "token_tree",
+              "token_repetition",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         }
@@ -7580,15 +7174,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_tokens",
-              "parseKind": "_tokens",
+              "name": "token_tree",
+              "parseKind": "token_tree",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition",
+              "parseKind": "token_repetition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tokens"
+              "token_tree",
+              "token_repetition",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         }
@@ -7619,15 +7237,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_tokens",
-              "parseKind": "_tokens",
+              "name": "token_tree",
+              "parseKind": "token_tree",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition",
+              "parseKind": "token_repetition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tokens"
+              "token_tree",
+              "token_repetition",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         }
@@ -7658,15 +7300,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_token_pattern",
-              "parseKind": "_token_pattern",
+              "name": "token_tree_pattern",
+              "parseKind": "token_tree_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition_pattern",
+              "parseKind": "token_repetition_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_binding_pattern",
+              "parseKind": "token_binding_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_token_pattern"
+              "token_tree_pattern",
+              "token_repetition_pattern",
+              "token_binding_pattern",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         }
@@ -7697,15 +7371,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_token_pattern",
-              "parseKind": "_token_pattern",
+              "name": "token_tree_pattern",
+              "parseKind": "token_tree_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition_pattern",
+              "parseKind": "token_repetition_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_binding_pattern",
+              "parseKind": "token_binding_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_token_pattern"
+              "token_tree_pattern",
+              "token_repetition_pattern",
+              "token_binding_pattern",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         }
@@ -7736,15 +7442,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_token_pattern",
-              "parseKind": "_token_pattern",
+              "name": "token_tree_pattern",
+              "parseKind": "token_tree_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition_pattern",
+              "parseKind": "token_repetition_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_binding_pattern",
+              "parseKind": "token_binding_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_token_pattern"
+              "token_tree_pattern",
+              "token_repetition_pattern",
+              "token_binding_pattern",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         }
@@ -7808,19 +7546,6 @@
         "#",
         "?",
         "$"
-      ]
-    },
-    {
-      "kind": "_tokens",
-      "modelType": "supertype",
-      "typeName": "Tokens",
-      "irKey": "tokens",
-      "hidden": true,
-      "subtypes": [
-        "_non_special_token",
-        "metavariable",
-        "token_repetition",
-        "token_tree"
       ]
     },
     {
@@ -8030,41 +7755,6 @@
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
     },
     {
-      "kind": "_type_parameter_optional1",
-      "modelType": "group",
-      "typeName": "TypeParameterOptional1",
-      "factoryName": "_typeParameterOptional1",
-      "irKey": "typeParameterOptional1",
-      "hidden": false,
-      "name": "_type_parameter_optional1",
-      "fields": [
-        {
-          "name": "default_type",
-          "propertyName": "defaultType",
-          "paramName": "defaultType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_type_parameters_elements",
       "modelType": "separatedList",
       "typeName": "TypeParametersElements",
@@ -8104,27 +7794,6 @@
       ]
     },
     {
-      "kind": "_use_clause",
-      "modelType": "supertype",
-      "typeName": "UseClause",
-      "irKey": "useClause",
-      "hidden": true,
-      "subtypes": [
-        "_path",
-        "_reserved_identifier",
-        "crate",
-        "identifier",
-        "metavariable",
-        "scoped_identifier",
-        "scoped_use_list",
-        "self",
-        "super",
-        "use_as_clause",
-        "use_list",
-        "use_wildcard"
-      ]
-    },
-    {
       "kind": "_use_clauses",
       "modelType": "separatedList",
       "typeName": "UseClauses",
@@ -8136,82 +7805,21 @@
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
       "elementKinds": [
-        "_use_clause"
+        "self",
+        "identifier",
+        "metavariable",
+        "super",
+        "crate",
+        "scoped_identifier",
+        "use_as_clause",
+        "use_list",
+        "scoped_use_list",
+        "use_wildcard"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "use_clause"
       ]
-    },
-    {
-      "kind": "_use_wildcard_clause",
-      "modelType": "group",
-      "typeName": "UseWildcardClause",
-      "factoryName": "_useWildcardClause",
-      "irKey": "useWildcardClause",
-      "hidden": false,
-      "name": "_use_wildcard_clause",
-      "fields": [
-        {
-          "name": "path",
-          "propertyName": "path",
-          "paramName": "path",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_path"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_variadic_parameter_optional1",
-      "modelType": "group",
-      "typeName": "VariadicParameterOptional1",
-      "factoryName": "_variadicParameterOptional1",
-      "irKey": "variadicParameterOptional1",
-      "hidden": false,
-      "name": "_variadic_parameter_optional1",
-      "fields": [
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_pattern",
-              "parseKind": "_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_pattern"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_visibility_modifier_group",
@@ -8302,6 +7910,33 @@
           "slot": "content",
           "childKind": "_visibility_modifier_in_path",
           "path": []
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_in_path",
+          "path": [
+            "identifier"
+          ]
+        },
+        {
+          "name": "metavariable",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_in_path",
+          "path": [
+            "metavariable"
+          ]
+        },
+        {
+          "name": "scopedIdentifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_in_path",
+          "path": [
+            "scopedIdentifier"
+          ]
         }
       ]
     },
@@ -8324,15 +7959,55 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         }
@@ -8341,6 +8016,50 @@
       "factoryShape": "direct",
       "factoryFields": [
         "path"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "path",
+          "childKind": "self",
+          "path": []
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "path",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "metavariable",
+          "via": "form",
+          "slot": "path",
+          "childKind": "metavariable",
+          "path": []
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "path",
+          "childKind": "super",
+          "path": []
+        },
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "path",
+          "childKind": "crate",
+          "path": []
+        },
+        {
+          "name": "scopedIdentifier",
+          "via": "form",
+          "slot": "path",
+          "childKind": "scoped_identifier",
+          "path": []
+        }
       ]
     },
     {
@@ -8417,6 +8136,133 @@
           "path": [
             "visibilityModifierInPath"
           ]
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "identifier"
+          ]
+        },
+        {
+          "name": "metavariable",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "metavariable"
+          ]
+        },
+        {
+          "name": "scopedIdentifier",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "scopedIdentifier"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_pub_parens",
+      "modelType": "group",
+      "typeName": "VisibilityModifierPubParens",
+      "factoryName": "_visibilityModifierPubParens",
+      "irKey": "visibilityModifierPubParens",
+      "hidden": false,
+      "name": "_visibility_modifier_pub_parens",
+      "fields": [
+        {
+          "name": "visibility_modifier_group",
+          "propertyName": "visibilityModifierGroup",
+          "paramName": "visibilityModifierGroup",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_visibility_modifier_group",
+              "parseKind": "visibility_modifier_group",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_visibility_modifier_group"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "self"
+          ]
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "super"
+          ]
+        },
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "crate"
+          ]
+        },
+        {
+          "name": "visibilityModifierInPath",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "visibilityModifierInPath"
+          ]
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "identifier"
+          ]
+        },
+        {
+          "name": "metavariable",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "metavariable"
+          ]
+        },
+        {
+          "name": "scopedIdentifier",
+          "via": "form",
+          "slot": "visibility_modifier_group",
+          "childKind": "_visibility_modifier_group",
+          "path": [
+            "scopedIdentifier"
+          ]
         }
       ]
     },
@@ -8438,41 +8284,6 @@
       "factoryFields": [
         "where_predicate"
       ]
-    },
-    {
-      "kind": "_while_expression_optional1",
-      "modelType": "group",
-      "typeName": "WhileExpressionOptional1",
-      "factoryName": "_whileExpressionOptional1",
-      "irKey": "whileExpressionOptional1",
-      "hidden": false,
-      "name": "_while_expression_optional1",
-      "fields": [
-        {
-          "name": "label",
-          "propertyName": "label",
-          "paramName": "label",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "label",
-              "parseKind": "label",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "label"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_wildcard_pattern",
@@ -9062,15 +8873,55 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         },
@@ -9650,15 +9501,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_statement",
-              "parseKind": "_statement",
+              "name": "expression_statement",
+              "parseKind": "expression_statement",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_declaration_statement",
+              "parseKind": "_declaration_statement",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_statement"
+              "expression_statement",
+              "_declaration_statement"
             ]
           }
         },
@@ -10025,15 +9884,319 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expression_except_range",
-              "parseKind": "_expression_except_range",
+              "name": "unary_expression",
+              "parseKind": "unary_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reference_expression",
+              "parseKind": "reference_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "try_expression",
+              "parseKind": "try_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "binary_expression",
+              "parseKind": "binary_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "assignment_expression",
+              "parseKind": "assignment_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "compound_assignment_expr",
+              "parseKind": "compound_assignment_expr",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_cast_expression",
+              "parseKind": "type_cast_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "call_expression",
+              "parseKind": "call_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "return_expression",
+              "parseKind": "return_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "yield_expression",
+              "parseKind": "yield_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_literal",
+              "parseKind": "_literal",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "generic_function",
+              "parseKind": "generic_function",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "await_expression",
+              "parseKind": "await_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "field_expression",
+              "parseKind": "field_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_expression",
+              "parseKind": "array_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "tuple_expression",
+              "parseKind": "tuple_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "macro_invocation",
+              "parseKind": "macro_invocation",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "unit_expression",
+              "parseKind": "unit_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "break_expression",
+              "parseKind": "break_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "continue_expression",
+              "parseKind": "continue_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "index_expression",
+              "parseKind": "index_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "closure_expression",
+              "parseKind": "closure_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_expression",
+              "parseKind": "parenthesized_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "struct_expression",
+              "parseKind": "struct_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "unsafe_block",
+              "parseKind": "unsafe_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "async_block",
+              "parseKind": "async_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "gen_block",
+              "parseKind": "gen_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "try_block",
+              "parseKind": "try_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "block",
+              "parseKind": "block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "if_expression",
+              "parseKind": "if_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_expression",
+              "parseKind": "match_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "while_expression",
+              "parseKind": "while_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "loop_expression",
+              "parseKind": "loop_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "for_expression",
+              "parseKind": "for_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "const_block",
+              "parseKind": "const_block",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression_except_range"
+              "unary_expression",
+              "reference_expression",
+              "try_expression",
+              "binary_expression",
+              "assignment_expression",
+              "compound_assignment_expr",
+              "type_cast_expression",
+              "call_expression",
+              "return_expression",
+              "yield_expression",
+              "_literal",
+              "identifier",
+              "self",
+              "scoped_identifier",
+              "generic_function",
+              "await_expression",
+              "field_expression",
+              "array_expression",
+              "tuple_expression",
+              "macro_invocation",
+              "unit_expression",
+              "break_expression",
+              "continue_expression",
+              "index_expression",
+              "metavariable",
+              "closure_expression",
+              "parenthesized_expression",
+              "struct_expression",
+              "unsafe_block",
+              "async_block",
+              "gen_block",
+              "try_block",
+              "block",
+              "if_expression",
+              "match_expression",
+              "while_expression",
+              "loop_expression",
+              "for_expression",
+              "const_block"
             ]
           }
         },
@@ -10166,15 +10329,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "static",
-              "parseKind": "static"
+              "name": "_kw_static_marker",
+              "parseKind": "_kw_static_marker",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_kw_static_marker"
+            ]
           }
         },
         {
@@ -10186,15 +10352,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "async",
-              "parseKind": "async"
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_kw_async_marker"
+            ]
           }
         },
         {
@@ -10357,131 +10526,6 @@
       "isParameterless": true,
       "stampExpression": "\",\" as const",
       "text": ","
-    },
-    {
-      "kind": "comment",
-      "modelType": "branch",
-      "typeName": "Comment",
-      "factoryName": "comment",
-      "irKey": "comment",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "line_comment",
-              "parseKind": "line_comment",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "block_comment",
-              "parseKind": "block_comment",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "line_comment",
-              "block_comment"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "lineComment",
-          "via": "form",
-          "slot": "content",
-          "childKind": "line_comment",
-          "path": []
-        },
-        {
-          "name": "lineCommentRegularDslash",
-          "via": "form",
-          "slot": "content",
-          "childKind": "line_comment",
-          "path": [
-            "regularDslash"
-          ]
-        },
-        {
-          "name": "lineCommentDocOuter",
-          "via": "form",
-          "slot": "content",
-          "childKind": "line_comment",
-          "path": [
-            "docOuter"
-          ]
-        },
-        {
-          "name": "lineCommentDocInner",
-          "via": "form",
-          "slot": "content",
-          "childKind": "line_comment",
-          "path": [
-            "docInner"
-          ]
-        },
-        {
-          "name": "lineCommentContent",
-          "via": "form",
-          "slot": "content",
-          "childKind": "line_comment",
-          "path": [
-            "content"
-          ]
-        },
-        {
-          "name": "blockComment",
-          "via": "form",
-          "slot": "content",
-          "childKind": "block_comment",
-          "path": []
-        },
-        {
-          "name": "blockCommentDocOuter",
-          "via": "form",
-          "slot": "content",
-          "childKind": "block_comment",
-          "path": [
-            "docOuter"
-          ]
-        },
-        {
-          "name": "blockCommentDocInner",
-          "via": "form",
-          "slot": "content",
-          "childKind": "block_comment",
-          "path": [
-            "docInner"
-          ]
-        },
-        {
-          "name": "blockCommentContent",
-          "via": "form",
-          "slot": "content",
-          "childKind": "block_comment",
-          "path": [
-            "content"
-          ]
-        }
-      ]
     },
     {
       "kind": "compound_assignment_expr",
@@ -11659,8 +11703,78 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expression_ending_with_block",
-              "parseKind": "_expression_ending_with_block",
+              "name": "unsafe_block",
+              "parseKind": "unsafe_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "async_block",
+              "parseKind": "async_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "gen_block",
+              "parseKind": "gen_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "try_block",
+              "parseKind": "try_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "block",
+              "parseKind": "block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "if_expression",
+              "parseKind": "if_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_expression",
+              "parseKind": "match_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "while_expression",
+              "parseKind": "while_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "loop_expression",
+              "parseKind": "loop_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "for_expression",
+              "parseKind": "for_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "const_block",
+              "parseKind": "const_block",
               "unresolved": true
             }
           ],
@@ -11668,7 +11782,17 @@
             "typeName": "",
             "kinds": [
               "_expression_statement_with_semi",
-              "_expression_ending_with_block"
+              "unsafe_block",
+              "async_block",
+              "gen_block",
+              "try_block",
+              "block",
+              "if_expression",
+              "match_expression",
+              "while_expression",
+              "loop_expression",
+              "for_expression",
+              "const_block"
             ]
           }
         }
@@ -11684,6 +11808,83 @@
           "via": "form",
           "slot": "content",
           "childKind": "_expression_statement_with_semi",
+          "path": []
+        },
+        {
+          "name": "unsafeBlock",
+          "via": "form",
+          "slot": "content",
+          "childKind": "unsafe_block",
+          "path": []
+        },
+        {
+          "name": "asyncBlock",
+          "via": "form",
+          "slot": "content",
+          "childKind": "async_block",
+          "path": []
+        },
+        {
+          "name": "genBlock",
+          "via": "form",
+          "slot": "content",
+          "childKind": "gen_block",
+          "path": []
+        },
+        {
+          "name": "tryBlock",
+          "via": "form",
+          "slot": "content",
+          "childKind": "try_block",
+          "path": []
+        },
+        {
+          "name": "block",
+          "via": "form",
+          "slot": "content",
+          "childKind": "block",
+          "path": []
+        },
+        {
+          "name": "ifExpression",
+          "via": "form",
+          "slot": "content",
+          "childKind": "if_expression",
+          "path": []
+        },
+        {
+          "name": "matchExpression",
+          "via": "form",
+          "slot": "content",
+          "childKind": "match_expression",
+          "path": []
+        },
+        {
+          "name": "whileExpression",
+          "via": "form",
+          "slot": "content",
+          "childKind": "while_expression",
+          "path": []
+        },
+        {
+          "name": "loopExpression",
+          "via": "form",
+          "slot": "content",
+          "childKind": "loop_expression",
+          "path": []
+        },
+        {
+          "name": "forExpression",
+          "via": "form",
+          "slot": "content",
+          "childKind": "for_expression",
+          "path": []
+        },
+        {
+          "name": "constBlock",
+          "via": "form",
+          "slot": "content",
+          "childKind": "const_block",
           "path": []
         }
       ]
@@ -13657,15 +13858,31 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_condition",
-              "parseKind": "_condition",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "let_condition",
+              "parseKind": "let_condition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_let_chain",
+              "parseKind": "let_chain",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_condition"
+              "_expression",
+              "let_condition",
+              "_let_chain"
             ]
           }
         },
@@ -13752,15 +13969,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "unsafe",
-              "parseKind": "unsafe"
+              "name": "_impl_item_unsafe_marker",
+              "parseKind": "_impl_item_unsafe_marker",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_impl_item_unsafe_marker"
+            ]
           }
         },
         {
@@ -15002,8 +15222,78 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expression_ending_with_block",
-              "parseKind": "_expression_ending_with_block",
+              "name": "unsafe_block",
+              "parseKind": "unsafe_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "async_block",
+              "parseKind": "async_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "gen_block",
+              "parseKind": "gen_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "try_block",
+              "parseKind": "try_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "block",
+              "parseKind": "block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "if_expression",
+              "parseKind": "if_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_expression",
+              "parseKind": "match_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "while_expression",
+              "parseKind": "while_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "loop_expression",
+              "parseKind": "loop_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "for_expression",
+              "parseKind": "for_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "const_block",
+              "parseKind": "const_block",
               "unresolved": true
             }
           ],
@@ -15011,7 +15301,17 @@
             "typeName": "",
             "kinds": [
               "_match_arm_with_comma",
-              "_expression_ending_with_block"
+              "unsafe_block",
+              "async_block",
+              "gen_block",
+              "try_block",
+              "block",
+              "if_expression",
+              "match_expression",
+              "while_expression",
+              "loop_expression",
+              "for_expression",
+              "const_block"
             ]
           }
         }
@@ -15167,15 +15467,31 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_condition",
-              "parseKind": "_condition",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "let_condition",
+              "parseKind": "let_condition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_let_chain",
+              "parseKind": "let_chain",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_condition"
+              "_expression",
+              "let_condition",
+              "_let_chain"
             ]
           }
         }
@@ -15452,30 +15768,6 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!"
-    },
-    {
-      "kind": "non_special_token",
-      "modelType": "supertype",
-      "typeName": "NonSpecialToken",
-      "irKey": "nonSpecialToken",
-      "hidden": true,
-      "subtypes": [
-        "_literal",
-        "_primitive_type",
-        "_token_keywords",
-        "_token_tree_punctuation",
-        "boolean_literal",
-        "char_literal",
-        "crate",
-        "float_literal",
-        "identifier",
-        "integer_literal",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super"
-      ]
     },
     {
       "kind": "or_pattern",
@@ -16658,8 +16950,43 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             },
             {
@@ -16680,7 +17007,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path",
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier",
               "bracketed_type",
               "generic_type_with_turbofish"
             ]
@@ -16744,8 +17076,43 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             },
             {
@@ -16773,7 +17140,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path",
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier",
               "generic_type_with_turbofish",
               "bracketed_type",
               "generic_type"
@@ -16830,8 +17202,43 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             },
             {
@@ -16845,7 +17252,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path",
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier",
               "generic_type_with_turbofish"
             ]
           }
@@ -16900,15 +17312,55 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         },
@@ -17237,15 +17689,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_statement",
-              "parseKind": "_statement",
+              "name": "expression_statement",
+              "parseKind": "expression_statement",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_declaration_statement",
+              "parseKind": "_declaration_statement",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_statement"
+              "expression_statement",
+              "_declaration_statement"
             ]
           }
         }
@@ -17920,15 +18380,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_tokens",
-              "parseKind": "_tokens",
+              "name": "token_tree",
+              "parseKind": "token_tree",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition",
+              "parseKind": "token_repetition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tokens"
+              "token_tree",
+              "token_repetition",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         },
@@ -18039,15 +18523,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_token_pattern",
-              "parseKind": "_token_pattern",
+              "name": "token_tree_pattern",
+              "parseKind": "token_tree_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_repetition_pattern",
+              "parseKind": "token_repetition_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "token_binding_pattern",
+              "parseKind": "token_binding_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_non_special_token",
+              "parseKind": "non_special_token",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_token_pattern"
+              "token_tree_pattern",
+              "token_repetition_pattern",
+              "token_binding_pattern",
+              "metavariable",
+              "_non_special_token"
             ]
           }
         },
@@ -18443,15 +18959,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "unsafe",
-              "parseKind": "unsafe"
+              "name": "_kw_unsafe_marker",
+              "parseKind": "_kw_unsafe_marker",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_kw_unsafe_marker"
+            ]
           }
         },
         {
@@ -19722,15 +20241,55 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         },
@@ -19846,15 +20405,87 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_use_clause",
-              "parseKind": "_use_clause",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "use_as_clause",
+              "parseKind": "use_as_clause",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "use_list",
+              "parseKind": "use_list",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_use_list",
+              "parseKind": "scoped_use_list",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "use_wildcard",
+              "parseKind": "use_wildcard",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_use_clause"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier",
+              "use_as_clause",
+              "use_list",
+              "scoped_use_list",
+              "use_wildcard"
             ]
           }
         }
@@ -19924,15 +20555,55 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "identifier",
+              "metavariable",
+              "super",
+              "crate",
+              "scoped_identifier"
             ]
           }
         }
@@ -19941,6 +20612,50 @@
       "factoryShape": "direct",
       "factoryFields": [
         "path"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "self",
+          "via": "form",
+          "slot": "path",
+          "childKind": "self",
+          "path": []
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "path",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "metavariable",
+          "via": "form",
+          "slot": "path",
+          "childKind": "metavariable",
+          "path": []
+        },
+        {
+          "name": "super",
+          "via": "form",
+          "slot": "path",
+          "childKind": "super",
+          "path": []
+        },
+        {
+          "name": "crate",
+          "via": "form",
+          "slot": "path",
+          "childKind": "crate",
+          "path": []
+        },
+        {
+          "name": "scopedIdentifier",
+          "via": "form",
+          "slot": "path",
+          "childKind": "scoped_identifier",
+          "path": []
+        }
       ]
     },
     {
@@ -20089,6 +20804,33 @@
           "childKind": "_visibility_modifier_pub",
           "path": [
             "visibilityModifierInPath"
+          ]
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": [
+            "identifier"
+          ]
+        },
+        {
+          "name": "metavariable",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": [
+            "metavariable"
+          ]
+        },
+        {
+          "name": "scopedIdentifier",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_visibility_modifier_pub",
+          "path": [
+            "scopedIdentifier"
           ]
         }
       ]
@@ -20330,15 +21072,31 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_condition",
-              "parseKind": "_condition",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "let_condition",
+              "parseKind": "let_condition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_let_chain",
+              "parseKind": "let_chain",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_condition"
+              "_expression",
+              "let_condition",
+              "_let_chain"
             ]
           }
         },

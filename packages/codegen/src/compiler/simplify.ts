@@ -280,15 +280,15 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
 	const b = ctx.builder;
-	const members = rule.members;
+	const members = rule.members.flatMap((m) => (m.type === CHOICE ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]));
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);
-		const inner: RenderRule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, b.choice(...nonEmpty));
+		const inner: RenderRule = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, ...b.choice(...nonEmpty) };
 		return withAttrsFrom(rule, b.optional(inner));
 	}
 	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-	return withAttrsFrom(rule, mergeBranchesForChoice(b.choice(...members)));
+	return { ...rule, ...mergeBranchesForChoice(b.choice(...members)) };
 }
 
 export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {

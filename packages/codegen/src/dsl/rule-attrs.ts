@@ -24,10 +24,10 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 }
 
 export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {
-	const { hidden, kind } = source;
-	const patch: { hidden?: boolean; kind?: string } = {};
+	const { hidden, inlinedFrom } = source;
+	const patch: { hidden?: boolean; inlinedFrom?: string } = {};
 	if (hidden !== undefined && result.hidden !== hidden) patch.hidden = hidden;
-	if (kind !== undefined && result.kind === undefined) patch.kind = kind;
+	if (inlinedFrom !== undefined && result.inlinedFrom === undefined) patch.inlinedFrom = inlinedFrom;
 	return Object.keys(patch).length === 0 ? result : { ...result, ...patch };
 }
 

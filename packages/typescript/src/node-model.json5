@@ -1,36 +1,19 @@
 {
   "name": "typescript",
-  "nodeCount": 413,
+  "nodeCount": 368,
   "word": "identifier",
   "supertypes": [
-    "_augmented_assignment_lhs",
-    "_destructuring_pattern",
-    "_expressions",
-    "_formal_parameter",
-    "_identifier",
-    "_import_identifier",
-    "_jsx_attribute",
-    "_jsx_attribute_name",
-    "_jsx_attribute_value",
-    "_jsx_child",
-    "_jsx_element",
-    "_jsx_element_name",
-    "_jsx_identifier",
     "_lhs_expression",
-    "_module_export_name",
     "_property_identifier",
-    "_property_name",
     "_shorthand_property_identifier",
     "_shorthand_property_identifier_pattern",
     "_statement_identifier",
-    "_tuple_type_member",
     "declaration",
     "expression",
     "lhs_expression",
     "pattern",
     "primary_expression",
     "primary_type",
-    "property_identifier",
     "statement",
     "type"
   ],
@@ -172,9 +155,6 @@
     }
   },
   "fieldAliasMap": {
-    "import_specifier.content": {
-      "identifier": "anon_type"
-    },
     "break_statement.label": {
       "statement_identifier": "identifier"
     },
@@ -185,26 +165,17 @@
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
-    "jsx_opening_element.jsx_opening_element_content": {
-      "jsx_opening_element_content": "_jsx_opening_element_content"
+    "assignment_pattern.left": {
+      "lhs_expression": "_lhs_expression"
+    },
+    "array_pattern.elements": {
+      "lhs_expression": "_lhs_expression"
     },
     "nested_identifier.object": {
       "member_expression": "nested_identifier"
     },
     "nested_identifier.property": {
       "property_identifier": "identifier"
-    },
-    "jsx_closing_element.name": {
-      "member_expression": "nested_identifier"
-    },
-    "jsx_self_closing_element.jsx_opening_element_content": {
-      "jsx_opening_element_content": "_jsx_opening_element_content"
-    },
-    "jsx_attribute.jsx_attribute_name": {
-      "property_identifier": "_jsx_identifier"
-    },
-    "jsx_attribute.jsx_attribute_value": {
-      "string": "_jsx_string"
     },
     "class.name": {
       "type_identifier": "identifier"
@@ -214,6 +185,9 @@
     },
     "member_expression.property": {
       "property_identifier": "identifier"
+    },
+    "assignment_expression.left": {
+      "lhs_expression": "_lhs_expression"
     },
     "decorator.content": {
       "member_expression": "decorator_member_expression",
@@ -229,8 +203,8 @@
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
     },
-    "_jsx_start_opening_element.jsx_opening_element_content": {
-      "jsx_opening_element_content": "_jsx_opening_element_content"
+    "pair_pattern.value": {
+      "lhs_expression": "_lhs_expression"
     },
     "decorator_parenthesized_expression.content": {
       "member_expression": "decorator_member_expression",
@@ -269,6 +243,12 @@
     "type_alias_declaration.value": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "required_parameter.pattern": {
+      "lhs_expression": "_lhs_expression"
+    },
+    "optional_parameter.pattern": {
+      "lhs_expression": "_lhs_expression"
     },
     "omitting_type_annotation.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
@@ -442,24 +422,15 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_infer_type_optional1.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "_mapped_type_clause_optional1.alias": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
     "_types.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_tuple_type_members.tuple_type_member": {
       "required_parameter": "tuple_parameter",
-      "optional_parameter": "optional_tuple_parameter"
-    },
-    "_jsx_start_opening_element_arm.name": {
-      "member_expression": "nested_identifier"
+      "optional_parameter": "optional_tuple_parameter",
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
@@ -468,18 +439,12 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_import_clause_default_import.import_identifier": {
-      "identifier": "anon_type"
-    },
-    "_import_specifier_as.alias": {
-      "identifier": "anon_type"
-    },
     "_index_signature_colon.index_type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_jsx_opening_element_content.jsx_start_opening_element_arm": {
-      "jsx_start_opening_element_arm": "_jsx_start_opening_element_arm"
+    "_for_header_lhs.left": {
+      "lhs_expression": "_lhs_expression"
     }
   },
   "factorySlots": {
@@ -804,13 +769,6 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "operator": {
         "unnamed": false,
         "slotCount": 1,
@@ -822,6 +780,27 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "for_header_lhs": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "for_header_var_kind": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "for_header_let_const_kind": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -1145,47 +1124,6 @@
         "nonEmpty": false
       }
     },
-    "jsx_element": {
-      "open_tag": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "jsx_childs": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "close_tag": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "jsx_expression": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "jsx_opening_element": {
-      "jsx_opening_element_content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "nested_identifier": {
       "object": {
         "unnamed": false,
@@ -1198,56 +1136,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "jsx_namespace_name": {
-      "namespace": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "jsx_closing_element": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "jsx_self_closing_element": {
-      "jsx_opening_element_content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "jsx_attribute": {
-      "jsx_attribute_name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "jsx_attribute_value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1899,36 +1787,6 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "field_definition": {
-      "decorator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "static_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "property": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3741,22 +3599,6 @@
         "nonEmpty": false
       }
     },
-    "_jsx_start_opening_element_arm": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type_arguments": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_ambient_declaration_global": {
       "body": {
         "unnamed": false,
@@ -3856,7 +3698,7 @@
       }
     },
     "_import_clause_default_import": {
-      "import_identifier": {
+      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3911,7 +3753,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "automatic_semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3993,7 +3835,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "automatic_semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4286,52 +4128,9 @@
         "multiple": false,
         "nonEmpty": false
       }
-    },
-    "_jsx_opening_element_content": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "jsx_start_opening_element_arm": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "attribute": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
     }
   },
   "nodes": [
-    {
-      "kind": "/>",
-      "modelType": "token",
-      "typeName": "TokSlashGt",
-      "irKey": "tokSlashGt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"/>\" as const",
-      "text": "/>"
-    },
-    {
-      "kind": "</",
-      "modelType": "token",
-      "typeName": "TokLtSlash",
-      "irKey": "tokLtSlash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"</\" as const",
-      "text": "</"
-    },
     {
       "kind": "__error_recovery",
       "modelType": "pattern",
@@ -4472,15 +4271,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -4489,8 +4294,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "type",
-        "semicolon"
+        "type"
       ]
     },
     {
@@ -4683,21 +4487,6 @@
         "??="
       ],
       "factoryShape": "text"
-    },
-    {
-      "kind": "_augmented_assignment_lhs",
-      "modelType": "supertype",
-      "typeName": "AugmentedAssignmentLhs",
-      "irKey": "augmentedAssignmentLhs",
-      "hidden": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier",
-        "member_expression",
-        "non_null_expression",
-        "parenthesized_expression",
-        "subscript_expression"
-      ]
     },
     {
       "kind": "_automatic_semicolon",
@@ -5041,103 +4830,6 @@
       ]
     },
     {
-      "kind": "_call_signature",
-      "modelType": "group",
-      "typeName": "_CallSignature",
-      "factoryName": "_callSignature",
-      "irKey": "callSignature",
-      "hidden": false,
-      "name": "_call_signature",
-      "fields": [
-        {
-          "name": "type_parameters",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_parameters",
-              "parseKind": "type_parameters",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_parameters"
-            ]
-          }
-        },
-        {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "formal_parameters",
-              "parseKind": "formal_parameters",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "formal_parameters"
-            ]
-          }
-        },
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_annotation",
-              "parseKind": "type_annotation",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "asserts_annotation",
-              "parseKind": "asserts_annotation",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_predicate_annotation",
-              "parseKind": "type_predicate_annotation",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_annotation",
-              "asserts_annotation",
-              "type_predicate_annotation"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_catch_clause_group",
       "modelType": "group",
       "typeName": "CatchClauseGroup",
@@ -5164,8 +4856,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "parseKind": "_destructuring_pattern",
+              "name": "object_pattern",
+              "parseKind": "object_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern",
               "unresolved": true
             }
           ],
@@ -5173,7 +4872,8 @@
             "typeName": "",
             "kinds": [
               "identifier",
-              "_destructuring_pattern"
+              "object_pattern",
+              "array_pattern"
             ]
           }
         },
@@ -5275,9 +4975,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             },
             {
               "kind": "terminal",
@@ -5289,7 +4995,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -5297,8 +5003,73 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
-        "terminator"
+        "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "abstractMethodSignature",
+          "via": "form",
+          "slot": "content",
+          "childKind": "abstract_method_signature",
+          "path": []
+        },
+        {
+          "name": "indexSignature",
+          "via": "form",
+          "slot": "content",
+          "childKind": "index_signature",
+          "path": []
+        },
+        {
+          "name": "dash",
+          "via": "form",
+          "slot": "content",
+          "childKind": "index_signature",
+          "path": [
+            "dash"
+          ]
+        },
+        {
+          "name": "plus",
+          "via": "form",
+          "slot": "content",
+          "childKind": "index_signature",
+          "path": [
+            "plus"
+          ]
+        },
+        {
+          "name": "methodSignature",
+          "via": "form",
+          "slot": "content",
+          "childKind": "method_signature",
+          "path": []
+        },
+        {
+          "name": "publicFieldDefinition",
+          "via": "form",
+          "slot": "content",
+          "childKind": "public_field_definition",
+          "path": []
+        },
+        {
+          "name": "qmark",
+          "via": "form",
+          "slot": "content",
+          "childKind": "public_field_definition",
+          "path": [
+            "qmark"
+          ]
+        },
+        {
+          "name": "bang",
+          "via": "form",
+          "slot": "content",
+          "childKind": "public_field_definition",
+          "path": [
+            "bang"
+          ]
+        }
       ]
     },
     {
@@ -5367,15 +5138,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -5384,8 +5161,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "method_definition",
-        "semicolon"
+        "method_definition"
       ]
     },
     {
@@ -5549,17 +5325,6 @@
       ]
     },
     {
-      "kind": "_destructuring_pattern",
-      "modelType": "supertype",
-      "typeName": "DestructuringPattern",
-      "irKey": "destructuringPattern",
-      "hidden": true,
-      "subtypes": [
-        "array_pattern",
-        "object_pattern"
-      ]
-    },
-    {
       "kind": "_enum_body_elements",
       "modelType": "separatedList",
       "typeName": "EnumBodyElements",
@@ -5571,48 +5336,17 @@
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
       "elementKinds": [
-        "_property_name",
+        "property_identifier",
+        "private_property_identifier",
+        "string",
+        "number",
+        "computed_property_name",
         "enum_assignment"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "content"
       ]
-    },
-    {
-      "kind": "_export_specifier_optional1",
-      "modelType": "group",
-      "typeName": "ExportSpecifierOptional1",
-      "factoryName": "_exportSpecifierOptional1",
-      "irKey": "exportSpecifierOptional1",
-      "hidden": false,
-      "name": "_export_specifier_optional1",
-      "fields": [
-        {
-          "name": "alias",
-          "propertyName": "alias",
-          "paramName": "alias",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_module_export_name",
-              "parseKind": "_module_export_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_module_export_name"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_export_specifiers",
@@ -5687,6 +5421,60 @@
           "path": []
         },
         {
+          "name": "starFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": [
+            "exportStatementDefaultStarFrom"
+          ]
+        },
+        {
+          "name": "stringDouble",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": [
+            "stringDouble"
+          ]
+        },
+        {
+          "name": "stringSingle",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": [
+            "stringSingle"
+          ]
+        },
+        {
+          "name": "nsFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": [
+            "exportStatementDefaultNsFrom"
+          ]
+        },
+        {
+          "name": "clauseFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": [
+            "exportStatementDefaultClauseFrom"
+          ]
+        },
+        {
+          "name": "exportClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": [
+            "exportClause"
+          ]
+        },
+        {
           "name": "declArm",
           "via": "form",
           "slot": "content",
@@ -5697,11 +5485,12 @@
     },
     {
       "kind": "_export_statement_default_clause_from",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExportStatementDefaultClauseFrom",
-      "factoryName": "exportStatementDefaultClauseFrom",
+      "factoryName": "_exportStatementDefaultClauseFrom",
       "irKey": "exportStatementDefaultClauseFrom",
       "hidden": false,
+      "name": "_export_statement_default_clause_from",
       "fields": [
         {
           "name": "export_clause",
@@ -5940,9 +5729,9 @@
           }
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5950,15 +5739,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -5966,17 +5761,65 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
-        "semicolon"
+        "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "exportStatementDefaultStarFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_star_from",
+          "path": []
+        },
+        {
+          "name": "stringDouble",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_star_from",
+          "path": [
+            "stringDouble"
+          ]
+        },
+        {
+          "name": "stringSingle",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_star_from",
+          "path": [
+            "stringSingle"
+          ]
+        },
+        {
+          "name": "exportStatementDefaultNsFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_ns_from",
+          "path": []
+        },
+        {
+          "name": "exportStatementDefaultClauseFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_clause_from",
+          "path": []
+        },
+        {
+          "name": "exportClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "export_clause",
+          "path": []
+        }
       ]
     },
     {
       "kind": "_export_statement_default_ns_from",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExportStatementDefaultNsFrom",
-      "factoryName": "exportStatementDefaultNsFrom",
+      "factoryName": "_exportStatementDefaultNsFrom",
       "irKey": "exportStatementDefaultNsFrom",
       "hidden": false,
+      "name": "_export_statement_default_ns_from",
       "fields": [
         {
           "name": "namespace_export",
@@ -6034,11 +5877,12 @@
     },
     {
       "kind": "_export_statement_default_star_from",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExportStatementDefaultStarFrom",
-      "factoryName": "exportStatementDefaultStarFrom",
+      "factoryName": "_exportStatementDefaultStarFrom",
       "irKey": "exportStatementDefaultStarFrom",
       "hidden": false,
+      "name": "_export_statement_default_star_from",
       "fields": [
         {
           "name": "source",
@@ -6124,9 +5968,9 @@
           }
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6134,15 +5978,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -6150,8 +6000,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "value",
-        "semicolon"
+        "value"
       ]
     },
     {
@@ -6197,15 +6046,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -6213,8 +6068,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expression",
-        "semicolon"
+        "expression"
       ]
     },
     {
@@ -6260,15 +6114,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -6276,8 +6136,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "identifier",
-        "semicolon"
+        "identifier"
       ]
     },
     {
@@ -6346,15 +6205,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -6363,19 +6228,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "export_clause",
-        "source",
-        "semicolon"
-      ]
-    },
-    {
-      "kind": "_expressions",
-      "modelType": "supertype",
-      "typeName": "Expressions",
-      "irKey": "expressions",
-      "hidden": true,
-      "subtypes": [
-        "expression",
-        "sequence_expression"
+        "source"
       ]
     },
     {
@@ -6442,103 +6295,6 @@
       ]
     },
     {
-      "kind": "_for_header",
-      "modelType": "group",
-      "typeName": "ForHeader",
-      "factoryName": "_forHeader",
-      "irKey": "forHeader",
-      "hidden": false,
-      "name": "_for_header",
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_for_header_lhs",
-              "parseKind": "for_header_lhs",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_for_header_var_kind",
-              "parseKind": "for_header_var_kind",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_for_header_let_const_kind",
-              "parseKind": "for_header_let_const_kind",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_lhs",
-              "_for_header_var_kind",
-              "_for_header_let_const_kind"
-            ]
-          }
-        },
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "__for_header_operator"
-            ]
-          }
-        },
-        {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expressions"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_for_header_let_const_kind",
       "modelType": "group",
       "typeName": "ForHeaderLetConstKind",
@@ -6588,8 +6344,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "parseKind": "_destructuring_pattern",
+              "name": "object_pattern",
+              "parseKind": "object_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern",
               "unresolved": true
             }
           ],
@@ -6597,7 +6360,8 @@
             "typeName": "",
             "kinds": [
               "identifier",
-              "_destructuring_pattern"
+              "object_pattern",
+              "array_pattern"
             ]
           }
         },
@@ -6759,8 +6523,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "parseKind": "_destructuring_pattern",
+              "name": "object_pattern",
+              "parseKind": "object_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern",
               "unresolved": true
             }
           ],
@@ -6768,7 +6539,8 @@
             "typeName": "",
             "kinds": [
               "identifier",
-              "_destructuring_pattern"
+              "object_pattern",
+              "array_pattern"
             ]
           }
         },
@@ -6811,17 +6583,6 @@
       ]
     },
     {
-      "kind": "_formal_parameter",
-      "modelType": "supertype",
-      "typeName": "FormalParameter",
-      "irKey": "formalParameter",
-      "hidden": true,
-      "subtypes": [
-        "optional_parameter",
-        "required_parameter"
-      ]
-    },
-    {
       "kind": "_formal_parameters_elements",
       "modelType": "separatedList",
       "typeName": "FormalParametersElements",
@@ -6833,66 +6594,12 @@
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
       "elementKinds": [
-        "_formal_parameter"
+        "required_parameter",
+        "optional_parameter"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "formal_parameter"
-      ]
-    },
-    {
-      "kind": "_from_clause",
-      "modelType": "group",
-      "typeName": "FromClause",
-      "factoryName": "_fromClause",
-      "irKey": "fromClause",
-      "hidden": false,
-      "name": "_from_clause",
-      "fields": [
-        {
-          "name": "source",
-          "propertyName": "source",
-          "paramName": "source",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "parseKind": "string",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "string"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "namespacedConstructors": [
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "source",
-          "childKind": "string",
-          "path": [
-            "double"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "source",
-          "childKind": "string",
-          "path": [
-            "single"
-          ]
-        }
       ]
     },
     {
@@ -6906,17 +6613,6 @@
       "text": "\n"
     },
     {
-      "kind": "_identifier",
-      "modelType": "supertype",
-      "typeName": "_Identifier",
-      "irKey": "identifier",
-      "hidden": true,
-      "subtypes": [
-        "identifier",
-        "undefined"
-      ]
-    },
-    {
       "kind": "_import_clause_default_import",
       "modelType": "branch",
       "typeName": "ImportClauseDefaultImport",
@@ -6925,9 +6621,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "import_identifier",
-          "propertyName": "importIdentifier",
-          "paramName": "importIdentifier",
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6935,15 +6631,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_identifier",
-              "parseKind": "_import_identifier",
+              "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "anon_type"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_identifier"
+              "identifier"
             ]
           }
         },
@@ -6974,7 +6676,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "import_identifier",
+        "identifier",
         "import_clause_group"
       ]
     },
@@ -7041,17 +6743,6 @@
       ]
     },
     {
-      "kind": "_import_identifier",
-      "modelType": "supertype",
-      "typeName": "ImportIdentifier",
-      "irKey": "importIdentifier",
-      "hidden": true,
-      "subtypes": [
-        "anon_type",
-        "identifier"
-      ]
-    },
-    {
       "kind": "_import_specifier_as",
       "modelType": "group",
       "typeName": "ImportSpecifierAs",
@@ -7071,8 +6762,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_module_export_name",
-              "parseKind": "_module_export_name",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
               "unresolved": true
             },
             {
@@ -7085,7 +6783,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_module_export_name"
+              "identifier",
+              "string"
             ]
           }
         },
@@ -7100,15 +6799,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_identifier",
-              "parseKind": "_import_identifier",
+              "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_identifier"
+              "identifier"
             ]
           }
         }
@@ -7141,11 +6846,12 @@
     },
     {
       "kind": "_import_statement_arm",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ImportStatementArm",
-      "factoryName": "importStatementArm",
+      "factoryName": "_importStatementArm",
       "irKey": "importStatementArm",
       "hidden": false,
+      "name": "_import_statement_arm",
       "fields": [
         {
           "name": "import_clause",
@@ -7273,496 +6979,6 @@
       ]
     },
     {
-      "kind": "_index_signature_optional1",
-      "modelType": "group",
-      "typeName": "IndexSignatureOptional1",
-      "factoryName": "_indexSignatureOptional1",
-      "irKey": "indexSignatureOptional1",
-      "hidden": false,
-      "isParameterless": true,
-      "name": "_index_signature_optional1",
-      "fields": [
-        {
-          "name": "sign",
-          "propertyName": "sign",
-          "paramName": "sign",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "-",
-              "parseKind": "dash"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "+",
-              "parseKind": "plus"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        }
-      ],
-      "children": [],
-      "determinedSlots": [
-        {
-          "name": "readonly_marker",
-          "storageKey": "_readonly_marker",
-          "text": "readonly"
-        }
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "sign",
-          "literal": "-",
-          "params": []
-        },
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "sign",
-          "literal": "+",
-          "params": []
-        }
-      ]
-    },
-    {
-      "kind": "_infer_type_optional1",
-      "modelType": "group",
-      "typeName": "InferTypeOptional1",
-      "factoryName": "_inferTypeOptional1",
-      "irKey": "inferTypeOptional1",
-      "hidden": false,
-      "name": "_infer_type_optional1",
-      "fields": [
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type",
-              "parseKind": "type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_initializer",
-      "modelType": "group",
-      "typeName": "Initializer",
-      "factoryName": "_initializer",
-      "irKey": "initializer",
-      "hidden": false,
-      "name": "_initializer",
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_jsx_attribute",
-      "modelType": "supertype",
-      "typeName": "_JsxAttribute",
-      "irKey": "jsxAttribute",
-      "hidden": true,
-      "subtypes": [
-        "jsx_attribute",
-        "jsx_expression"
-      ]
-    },
-    {
-      "kind": "_jsx_attribute_name",
-      "modelType": "supertype",
-      "typeName": "JsxAttributeName",
-      "irKey": "jsxAttributeName",
-      "hidden": true,
-      "subtypes": [
-        "_jsx_identifier",
-        "jsx_namespace_name"
-      ]
-    },
-    {
-      "kind": "_jsx_attribute_value",
-      "modelType": "supertype",
-      "typeName": "JsxAttributeValue",
-      "irKey": "jsxAttributeValue",
-      "hidden": true,
-      "subtypes": [
-        "_jsx_element",
-        "_jsx_string",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_self_closing_element"
-      ]
-    },
-    {
-      "kind": "_jsx_child",
-      "modelType": "supertype",
-      "typeName": "JsxChild",
-      "irKey": "jsxChild",
-      "hidden": true,
-      "subtypes": [
-        "_jsx_element",
-        "html_character_reference",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_self_closing_element",
-        "jsx_text"
-      ]
-    },
-    {
-      "kind": "_jsx_element",
-      "modelType": "supertype",
-      "typeName": "_JsxElement",
-      "irKey": "jsxElement",
-      "hidden": true,
-      "subtypes": [
-        "jsx_element",
-        "jsx_self_closing_element"
-      ]
-    },
-    {
-      "kind": "_jsx_element_name",
-      "modelType": "supertype",
-      "typeName": "JsxElementName",
-      "irKey": "jsxElementName",
-      "hidden": true,
-      "subtypes": [
-        "_jsx_identifier",
-        "jsx_namespace_name",
-        "nested_identifier"
-      ]
-    },
-    {
-      "kind": "_jsx_identifier",
-      "modelType": "supertype",
-      "typeName": "_JsxIdentifier",
-      "irKey": "jsxIdentifier",
-      "hidden": true,
-      "subtypes": [
-        "identifier",
-        "jsx_identifier"
-      ]
-    },
-    {
-      "kind": "_jsx_opening_element_content",
-      "modelType": "group",
-      "typeName": "JsxOpeningElementContent",
-      "factoryName": "_jsxOpeningElementContent",
-      "irKey": "jsxOpeningElementContent",
-      "hidden": false,
-      "name": "_jsx_opening_element_content",
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name"
-            ]
-          }
-        },
-        {
-          "name": "jsx_start_opening_element_arm",
-          "propertyName": "jsxStartOpeningElementArm",
-          "paramName": "jsxStartOpeningElementArm",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_start_opening_element_arm",
-              "parseKind": "jsx_start_opening_element_arm",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_start_opening_element_arm"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "name",
-        "jsx_start_opening_element_arm",
-        "attribute"
-      ]
-    },
-    {
-      "kind": "_jsx_start_opening_element",
-      "modelType": "branch",
-      "typeName": "JsxStartOpeningElement",
-      "factoryName": "jsxStartOpeningElement",
-      "irKey": "jsxStartOpeningElement",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "jsx_opening_element_content",
-          "propertyName": "jsxOpeningElementContent",
-          "paramName": "jsxOpeningElementContent",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_opening_element_content",
-              "parseKind": "jsx_opening_element_content",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_opening_element_content"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_jsx_start_opening_element_arm",
-      "modelType": "group",
-      "typeName": "JsxStartOpeningElementArm",
-      "factoryName": "_jsxStartOpeningElementArm",
-      "irKey": "jsxStartOpeningElementArm",
-      "hidden": false,
-      "name": "_jsx_start_opening_element_arm",
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "nested_identifier",
-              "parseKind": "member_expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier",
-              "nested_identifier"
-            ]
-          }
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_arguments",
-              "parseKind": "type_arguments",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_arguments"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "name",
-        "type_arguments"
-      ]
-    },
-    {
-      "kind": "_jsx_string",
-      "modelType": "branch",
-      "typeName": "JsxString",
-      "factoryName": "jsxString",
-      "irKey": "jsxString",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_double_jsx_string_fragment",
-              "parseKind": "unescaped_double_jsx_string_fragment",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "html_character_reference",
-              "parseKind": "html_character_reference",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "unescaped_double_jsx_string_fragment",
-              "html_character_reference"
-            ]
-          }
-        },
-        {
-          "name": "elements_2",
-          "propertyName": "elements2s",
-          "paramName": "elements2s",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_single_jsx_string_fragment",
-              "parseKind": "unescaped_single_jsx_string_fragment",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "html_character_reference",
-              "parseKind": "html_character_reference",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "unescaped_single_jsx_string_fragment",
-              "html_character_reference"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_kind",
       "modelType": "enum",
       "typeName": "Kind",
@@ -7788,6 +7004,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_kw_accessor_marker",
+      "modelType": "keyword",
+      "typeName": "KwAccessorMarker",
+      "factoryName": "kwAccessorMarker",
+      "irKey": "kwAccessorMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"accessor\" as const",
+      "text": "accessor",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_kw_async_marker",
       "modelType": "keyword",
       "typeName": "KwAsyncMarker",
@@ -7797,6 +7025,18 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_kw_await_marker",
+      "modelType": "keyword",
+      "typeName": "KwAwaitMarker",
+      "factoryName": "kwAwaitMarker",
+      "irKey": "kwAwaitMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"await\" as const",
+      "text": "await",
       "factoryShape": "text"
     },
     {
@@ -7824,28 +7064,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_kw_optional_marker",
-      "modelType": "token",
-      "typeName": "KwOptionalMarker",
-      "irKey": "kwOptionalMarker",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"?\" as const",
-      "text": "?"
-    },
-    {
-      "kind": "_kw_readonly_marker",
-      "modelType": "keyword",
-      "typeName": "KwReadonlyMarker",
-      "factoryName": "kwReadonlyMarker",
-      "irKey": "kwReadonlyMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"readonly\" as const",
-      "text": "readonly",
-      "factoryShape": "text"
-    },
-    {
       "kind": "_kw_static_marker",
       "modelType": "keyword",
       "typeName": "KwStaticMarker",
@@ -7858,14 +7076,24 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_kw_using_marker",
+      "modelType": "keyword",
+      "typeName": "KwUsingMarker",
+      "factoryName": "kwUsingMarker",
+      "irKey": "kwUsingMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"using\" as const",
+      "text": "using",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_lhs_expression",
       "modelType": "supertype",
       "typeName": "_LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
       "subtypes": [
-        "_destructuring_pattern",
-        "_identifier",
         "_reserved_identifier",
         "array_pattern",
         "identifier",
@@ -7875,41 +7103,6 @@
         "subscript_expression",
         "undefined"
       ]
-    },
-    {
-      "kind": "_mapped_type_clause_optional1",
-      "modelType": "group",
-      "typeName": "MappedTypeClauseOptional1",
-      "factoryName": "_mappedTypeClauseOptional1",
-      "irKey": "mappedTypeClauseOptional1",
-      "hidden": false,
-      "name": "_mapped_type_clause_optional1",
-      "fields": [
-        {
-          "name": "alias",
-          "propertyName": "alias",
-          "paramName": "alias",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type",
-              "parseKind": "type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_meta_property_arm1",
@@ -7930,91 +7123,6 @@
       "hidden": false,
       "text": "import . meta",
       "factoryShape": "text"
-    },
-    {
-      "kind": "_module",
-      "modelType": "group",
-      "typeName": "_Module",
-      "factoryName": "_module",
-      "irKey": "module",
-      "hidden": false,
-      "name": "_module",
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "parseKind": "string",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "nested_identifier",
-              "parseKind": "nested_identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "string",
-              "identifier",
-              "nested_identifier"
-            ]
-          }
-        },
-        {
-          "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "statement_block",
-              "parseKind": "statement_block",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "statement_block"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_module_export_name",
-      "modelType": "supertype",
-      "typeName": "ModuleExportName",
-      "irKey": "moduleExportName",
-      "hidden": true,
-      "subtypes": [
-        "identifier",
-        "string"
-      ]
     },
     {
       "kind": "_number",
@@ -8093,141 +7201,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_parameter_name",
-      "modelType": "group",
-      "typeName": "ParameterName",
-      "factoryName": "_parameterName",
-      "irKey": "parameterName",
-      "hidden": false,
-      "name": "_parameter_name",
-      "fields": [
-        {
-          "name": "decorator",
-          "propertyName": "decorators",
-          "paramName": "decorators",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "decorator",
-              "parseKind": "decorator",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "decorator"
-            ]
-          }
-        },
-        {
-          "name": "accessibility_modifier",
-          "propertyName": "accessibilityModifier",
-          "paramName": "accessibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "accessibility_modifier",
-              "parseKind": "accessibility_modifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "accessibility_modifier"
-            ]
-          }
-        },
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "parseKind": "override_modifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "override_modifier"
-            ]
-          }
-        },
-        {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
-          }
-        },
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern",
-              "parseKind": "pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "this",
-              "parseKind": "this",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "pattern",
-              "this"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_parenthesized_expression_typed",
       "modelType": "group",
       "typeName": "ParenthesizedExpressionTyped",
@@ -8293,26 +7266,12 @@
     {
       "kind": "_property_identifier",
       "modelType": "supertype",
-      "typeName": "_PropertyIdentifier",
+      "typeName": "PropertyIdentifier",
       "irKey": "propertyIdentifier",
       "hidden": true,
       "subtypes": [
         "_reserved_identifier",
         "identifier"
-      ]
-    },
-    {
-      "kind": "_property_name",
-      "modelType": "supertype",
-      "typeName": "PropertyName",
-      "irKey": "propertyName",
-      "hidden": true,
-      "subtypes": [
-        "_property_identifier",
-        "computed_property_name",
-        "number",
-        "private_property_identifier",
-        "string"
       ]
     },
     {
@@ -8345,19 +7304,6 @@
         "async",
         "static",
         "let"
-      ],
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_semicolon",
-      "modelType": "enum",
-      "typeName": "Semicolon",
-      "factoryName": "semicolon",
-      "irKey": "semicolon",
-      "hidden": false,
-      "values": [
-        "\n",
-        ";"
       ],
       "factoryShape": "text"
     },
@@ -8506,20 +7452,6 @@
       "hidden": false
     },
     {
-      "kind": "_tuple_type_member",
-      "modelType": "supertype",
-      "typeName": "TupleTypeMember",
-      "irKey": "tupleTypeMember",
-      "hidden": true,
-      "subtypes": [
-        "optional_tuple_parameter",
-        "optional_type",
-        "rest_type",
-        "tuple_parameter",
-        "type"
-      ]
-    },
-    {
       "kind": "_tuple_type_members",
       "modelType": "separatedList",
       "typeName": "TupleTypeMembers",
@@ -8531,7 +7463,11 @@
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
       "elementKinds": [
-        "_tuple_type_member"
+        "required_parameter",
+        "optional_parameter",
+        "optional_type",
+        "rest_type",
+        "type"
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -9350,8 +8286,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "parseKind": "_destructuring_pattern",
+              "name": "object_pattern",
+              "parseKind": "object_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern",
               "unresolved": true
             }
           ],
@@ -9359,7 +8302,8 @@
             "typeName": "",
             "kinds": [
               "identifier",
-              "_destructuring_pattern"
+              "object_pattern",
+              "array_pattern"
             ]
           }
         },
@@ -9723,15 +8667,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -9744,18 +8720,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_optional_marker",
-              "parseKind": "_kw_optional_marker",
-              "unresolved": true
+              "value": "?",
+              "parseKind": "qmark"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_optional_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -10622,15 +9595,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "using",
-              "parseKind": "using"
+              "name": "_kw_using_marker",
+              "parseKind": "_kw_using_marker",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_kw_using_marker"
+            ]
           }
         },
         {
@@ -10797,15 +9773,55 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_augmented_assignment_lhs",
-              "parseKind": "_augmented_assignment_lhs",
+              "name": "member_expression",
+              "parseKind": "member_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "parseKind": "subscript_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "parseKind": "reserved_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_expression",
+              "parseKind": "parenthesized_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
+              "parseKind": "non_null_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_augmented_assignment_lhs"
+              "member_expression",
+              "subscript_expression",
+              "_reserved_identifier",
+              "identifier",
+              "parenthesized_expression",
+              "non_null_expression"
             ]
           }
         },
@@ -11500,15 +10516,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -11516,8 +10538,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "label",
-        "semicolon"
+        "label"
       ]
     },
     {
@@ -12828,15 +11849,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -12844,8 +11871,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "label",
-        "semicolon"
+        "label"
       ]
     },
     {
@@ -12898,25 +11924,27 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "forwarded",
-      "forwardsTo": "_semicolon",
-      "factoryFields": [
-        "semicolon"
-      ]
+      "factoryShape": "config"
     },
     {
       "kind": "declaration",
@@ -13410,15 +12438,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -13427,8 +12461,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "condition",
-        "semicolon"
+        "condition"
       ]
     },
     {
@@ -13560,15 +12593,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -13881,15 +12946,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_module_export_name",
-              "parseKind": "_module_export_name",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_module_export_name"
+              "identifier",
+              "string"
             ]
           }
         },
@@ -13904,15 +12977,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_module_export_name",
-              "parseKind": "_module_export_name",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "string",
+              "parseKind": "string",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_module_export_name"
+              "identifier",
+              "string"
             ]
           }
         }
@@ -14026,6 +13107,60 @@
           ]
         },
         {
+          "name": "defaultStarFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "starFrom"
+          ]
+        },
+        {
+          "name": "stringDouble",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "stringDouble"
+          ]
+        },
+        {
+          "name": "stringSingle",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "stringSingle"
+          ]
+        },
+        {
+          "name": "defaultNsFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "nsFrom"
+          ]
+        },
+        {
+          "name": "defaultClauseFrom",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "clauseFrom"
+          ]
+        },
+        {
+          "name": "exportClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "exportClause"
+          ]
+        },
+        {
           "name": "defaultDeclArm",
           "via": "form",
           "slot": "content",
@@ -14100,15 +13235,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         },
@@ -14123,15 +13266,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -14139,8 +13288,16 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions",
-        "semicolon"
+        "expressions"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "sequenceExpression",
+          "via": "form",
+          "slot": "expressions",
+          "childKind": "sequence_expression",
+          "path": []
+        }
       ]
     },
     {
@@ -14259,115 +13416,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "field_definition",
-      "modelType": "branch",
-      "typeName": "FieldDefinition",
-      "factoryName": "fieldDefinition",
-      "irKey": "fieldDefinition",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "decorator",
-          "propertyName": "decorators",
-          "paramName": "decorators",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "decorator",
-              "parseKind": "decorator",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "decorator"
-            ]
-          }
-        },
-        {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_static_marker"
-            ]
-          }
-        },
-        {
-          "name": "property",
-          "propertyName": "property",
-          "paramName": "property",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_property_name"
-            ]
-          }
-        },
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "decorator",
-        "property",
-        "value"
-      ]
-    },
-    {
       "kind": "finally",
       "modelType": "keyword",
       "typeName": "Finally",
@@ -14483,53 +13531,17 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "await",
-              "parseKind": "await"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_for_header_lhs",
-              "parseKind": "for_header_lhs",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_for_header_var_kind",
-              "parseKind": "for_header_var_kind",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_for_header_let_const_kind",
-              "parseKind": "for_header_let_const_kind",
+              "name": "_kw_await_marker",
+              "parseKind": "_kw_await_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_for_header_lhs",
-              "_for_header_var_kind",
-              "_for_header_let_const_kind"
+              "_kw_await_marker"
             ]
           }
         },
@@ -14567,15 +13579,92 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
+            ]
+          }
+        },
+        {
+          "name": "for_header_lhs",
+          "propertyName": "forHeaderLhs",
+          "paramName": "forHeaderLhs",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_lhs",
+              "parseKind": "for_header_lhs",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_for_header_lhs"
+            ]
+          }
+        },
+        {
+          "name": "for_header_var_kind",
+          "propertyName": "forHeaderVarKind",
+          "paramName": "forHeaderVarKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_var_kind",
+              "parseKind": "for_header_var_kind",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_for_header_var_kind"
+            ]
+          }
+        },
+        {
+          "name": "for_header_let_const_kind",
+          "propertyName": "forHeaderLetConstKind",
+          "paramName": "forHeaderLetConstKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_let_const_kind",
+              "parseKind": "for_header_let_const_kind",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_for_header_let_const_kind"
             ]
           }
         },
@@ -14606,9 +13695,11 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
         "operator",
         "right",
+        "for_header_lhs",
+        "for_header_var_kind",
+        "for_header_let_const_kind",
         "body"
       ]
     },
@@ -14645,8 +13736,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             },
             {
@@ -14662,7 +13760,8 @@
             "kinds": [
               "lexical_declaration",
               "variable_declaration",
-              "_expressions",
+              "expression",
+              "sequence_expression",
               "empty_statement"
             ]
           }
@@ -14678,8 +13777,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             },
             {
@@ -14693,7 +13799,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions",
+              "expression",
+              "sequence_expression",
               "empty_statement"
             ]
           }
@@ -14709,15 +13816,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         },
@@ -15334,9 +14449,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             },
             {
               "kind": "node-ref",
@@ -15349,7 +14470,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon",
+              "_automatic_semicolon",
               "_function_signature_automatic_semicolon"
             ]
           }
@@ -15361,8 +14482,7 @@
         "name",
         "type_parameters",
         "parameters",
-        "return_type",
-        "semicolon"
+        "return_type"
       ]
     },
     {
@@ -15968,16 +15088,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "html_character_reference",
-      "modelType": "pattern",
-      "typeName": "HtmlCharacterReference",
-      "factoryName": "htmlCharacterReference",
-      "irKey": "htmlCharacterReference",
-      "hidden": false,
-      "pattern": "&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});",
-      "factoryShape": "text"
-    },
-    {
       "kind": "html_comment",
       "modelType": "pattern",
       "typeName": "HtmlComment",
@@ -15991,7 +15101,7 @@
       "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
-      "irKey": "identifier2",
+      "irKey": "identifier",
       "hidden": false,
       "factoryShape": "text"
     },
@@ -16226,15 +15336,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -16243,8 +15359,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "value",
-        "semicolon"
+        "value"
       ]
     },
     {
@@ -16516,9 +15631,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_identifier",
-              "parseKind": "_import_identifier",
+              "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "anon_type"
             },
             {
               "kind": "node-ref",
@@ -16531,7 +15652,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_identifier",
+              "identifier",
               "_import_specifier_as"
             ]
           }
@@ -16671,15 +15792,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -16689,8 +15816,7 @@
       "factoryFields": [
         "import_clause",
         "from_clause",
-        "import_attribute",
-        "semicolon"
+        "import_attribute"
       ],
       "namespacedConstructors": [
         {
@@ -16700,8 +15826,7 @@
           "literal": "type",
           "params": [
             "from_clause",
-            "import_attribute",
-            "semicolon"
+            "import_attribute"
           ]
         },
         {
@@ -16711,8 +15836,7 @@
           "literal": "typeof",
           "params": [
             "from_clause",
-            "import_attribute",
-            "semicolon"
+            "import_attribute"
           ]
         }
       ]
@@ -16771,18 +15895,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -17351,412 +16472,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "jsx_attribute",
-      "modelType": "branch",
-      "typeName": "JsxAttribute",
-      "factoryName": "jsxAttribute",
-      "irKey": "jsxAttribute2",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "jsx_attribute_name",
-          "propertyName": "jsxAttributeName",
-          "paramName": "jsxAttributeName",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_jsx_attribute_name",
-              "parseKind": "_jsx_attribute_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute_name"
-            ]
-          }
-        },
-        {
-          "name": "jsx_attribute_value",
-          "propertyName": "jsxAttributeValue",
-          "paramName": "jsxAttributeValue",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_attribute_value",
-              "parseKind": "_jsx_attribute_value",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute_value"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "jsx_attribute_name",
-        "jsx_attribute_value"
-      ]
-    },
-    {
-      "kind": "jsx_closing_element",
-      "modelType": "branch",
-      "typeName": "JsxClosingElement",
-      "factoryName": "jsxClosingElement",
-      "irKey": "jsxClosingElement",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_element_name",
-              "parseKind": "_jsx_element_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_element_name"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "name"
-      ]
-    },
-    {
-      "kind": "jsx_element",
-      "modelType": "branch",
-      "typeName": "JsxElement",
-      "factoryName": "jsxElement",
-      "irKey": "jsxElement2",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "open_tag",
-          "propertyName": "openTag",
-          "paramName": "openTag",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "jsx_opening_element",
-              "parseKind": "jsx_opening_element",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "jsx_opening_element"
-            ]
-          }
-        },
-        {
-          "name": "jsx_childs",
-          "propertyName": "jsxChilds",
-          "paramName": "jsxChilds",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_child",
-              "parseKind": "_jsx_child",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_child"
-            ]
-          }
-        },
-        {
-          "name": "close_tag",
-          "propertyName": "closeTag",
-          "paramName": "closeTag",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "jsx_closing_element",
-              "parseKind": "jsx_closing_element",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "jsx_closing_element"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "open_tag",
-        "jsx_childs",
-        "close_tag"
-      ]
-    },
-    {
-      "kind": "jsx_expression",
-      "modelType": "branch",
-      "typeName": "JsxExpression",
-      "factoryName": "jsxExpression",
-      "irKey": "jsxExpression",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "sequence_expression",
-              "parseKind": "sequence_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "spread_element",
-              "parseKind": "spread_element",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression",
-              "sequence_expression",
-              "spread_element"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "expression"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "expression",
-          "childKind": "sequence_expression",
-          "path": []
-        },
-        {
-          "name": "spreadElement",
-          "via": "form",
-          "slot": "expression",
-          "childKind": "spread_element",
-          "path": []
-        }
-      ]
-    },
-    {
-      "kind": "jsx_identifier",
-      "modelType": "pattern",
-      "typeName": "JsxIdentifier",
-      "factoryName": "jsxIdentifier",
-      "irKey": "jsxIdentifier2",
-      "hidden": false,
-      "pattern": "[a-zA-Z_$][a-zA-Z\\d_$]*-[a-zA-Z\\d_$\\-]*",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "jsx_namespace_name",
-      "modelType": "branch",
-      "typeName": "JsxNamespaceName",
-      "factoryName": "jsxNamespaceName",
-      "irKey": "jsxNamespaceName",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "namespace",
-          "propertyName": "namespace",
-          "paramName": "namespace",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier"
-            ]
-          }
-        },
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "namespace",
-        "name"
-      ]
-    },
-    {
-      "kind": "jsx_opening_element",
-      "modelType": "branch",
-      "typeName": "JsxOpeningElement",
-      "factoryName": "jsxOpeningElement",
-      "irKey": "jsxOpeningElement",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "jsx_opening_element_content",
-          "propertyName": "jsxOpeningElementContent",
-          "paramName": "jsxOpeningElementContent",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_opening_element_content",
-              "parseKind": "jsx_opening_element_content",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_opening_element_content"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "forwarded",
-      "forwardsTo": "_jsx_opening_element_content",
-      "factoryFields": [
-        "jsx_opening_element_content"
-      ]
-    },
-    {
-      "kind": "jsx_self_closing_element",
-      "modelType": "branch",
-      "typeName": "JsxSelfClosingElement",
-      "factoryName": "jsxSelfClosingElement",
-      "irKey": "jsxSelfClosingElement",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "jsx_opening_element_content",
-          "propertyName": "jsxOpeningElementContent",
-          "paramName": "jsxOpeningElementContent",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_opening_element_content",
-              "parseKind": "jsx_opening_element_content",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_opening_element_content"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "forwarded",
-      "forwardsTo": "_jsx_opening_element_content",
-      "factoryFields": [
-        "jsx_opening_element_content"
-      ]
-    },
-    {
       "kind": "jsx_text",
       "modelType": "pattern",
       "typeName": "JsxText",
@@ -17923,15 +16638,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -17940,8 +16661,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "kind",
-        "declarators",
-        "semicolon"
+        "declarators"
       ]
     },
     {
@@ -17951,8 +16671,6 @@
       "irKey": "lhsExpression",
       "hidden": true,
       "subtypes": [
-        "_destructuring_pattern",
-        "_identifier",
         "_reserved_identifier",
         "array_pattern",
         "identifier",
@@ -18556,18 +17274,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -18636,15 +17351,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -18657,18 +17404,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_optional_marker",
-              "parseKind": "_kw_optional_marker",
-              "unresolved": true
+              "value": "?",
+              "parseKind": "qmark"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_optional_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -18922,18 +17666,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -19002,15 +17743,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -19023,18 +17796,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_optional_marker",
-              "parseKind": "_kw_optional_marker",
-              "unresolved": true
+              "value": "?",
+              "parseKind": "qmark"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_optional_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -19322,15 +18092,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_module_export_name",
-              "parseKind": "_module_export_name",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_module_export_name"
+              "identifier",
+              "string"
             ]
           }
         }
@@ -19339,6 +18117,40 @@
       "factoryShape": "direct",
       "factoryFields": [
         "module_export_name"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "module_export_name",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "string",
+          "via": "form",
+          "slot": "module_export_name",
+          "childKind": "string",
+          "path": []
+        },
+        {
+          "name": "stringDouble",
+          "via": "form",
+          "slot": "module_export_name",
+          "childKind": "string",
+          "path": [
+            "double"
+          ]
+        },
+        {
+          "name": "stringSingle",
+          "via": "form",
+          "slot": "module_export_name",
+          "childKind": "string",
+          "path": [
+            "single"
+          ]
+        }
       ]
     },
     {
@@ -19764,8 +18576,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "parseKind": "_destructuring_pattern",
+              "name": "object_pattern",
+              "parseKind": "object_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern",
               "unresolved": true
             }
           ],
@@ -19773,7 +18592,8 @@
             "typeName": "",
             "kinds": [
               "_shorthand_property_identifier_pattern",
-              "_destructuring_pattern"
+              "object_pattern",
+              "array_pattern"
             ]
           }
         },
@@ -20158,18 +18978,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -20402,15 +19219,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -20464,15 +19313,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -20749,7 +19630,6 @@
       "irKey": "primaryExpression",
       "hidden": true,
       "subtypes": [
-        "_identifier",
         "_reserved_identifier",
         "array",
         "arrow_function",
@@ -20876,17 +19756,6 @@
       ]
     },
     {
-      "kind": "property_identifier",
-      "modelType": "supertype",
-      "typeName": "PropertyIdentifier",
-      "irKey": "propertyIdentifier",
-      "hidden": true,
-      "subtypes": [
-        "identifier",
-        "jsx_identifier"
-      ]
-    },
-    {
       "kind": "property_signature",
       "modelType": "branch",
       "typeName": "PropertySignature",
@@ -20972,18 +19841,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -20997,15 +19863,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -21018,18 +19916,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_optional_marker",
-              "parseKind": "_kw_optional_marker",
-              "unresolved": true
+              "value": "?",
+              "parseKind": "qmark"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_optional_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -21173,18 +20068,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -21219,15 +20111,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "accessor",
-              "parseKind": "accessor"
+              "name": "_kw_accessor_marker",
+              "parseKind": "_kw_accessor_marker",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_kw_accessor_marker"
+            ]
           }
         },
         {
@@ -21264,15 +20159,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_name",
-              "parseKind": "_property_name",
+              "name": "_property_identifier",
+              "parseKind": "property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name"
+              "_property_identifier",
+              "private_property_identifier",
+              "string",
+              "number",
+              "computed_property_name"
             ]
           }
         },
@@ -21684,18 +20611,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
+              "value": "readonly",
+              "parseKind": "readonly"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -21805,15 +20729,71 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_lhs_expression",
-              "parseKind": "_lhs_expression",
+              "name": "member_expression",
+              "parseKind": "member_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "parseKind": "subscript_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "undefined",
+              "parseKind": "undefined",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "parseKind": "reserved_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_pattern",
+              "parseKind": "object_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
+              "parseKind": "non_null_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_lhs_expression"
+              "member_expression",
+              "subscript_expression",
+              "undefined",
+              "identifier",
+              "_reserved_identifier",
+              "object_pattern",
+              "array_pattern",
+              "non_null_expression"
             ]
           }
         }
@@ -21822,6 +20802,64 @@
       "factoryShape": "direct",
       "factoryFields": [
         "lhs_expression"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "memberExpression",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "member_expression",
+          "path": []
+        },
+        {
+          "name": "subscriptExpression",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "subscript_expression",
+          "path": []
+        },
+        {
+          "name": "undefined",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "undefined",
+          "path": []
+        },
+        {
+          "name": "identifier",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "identifier",
+          "path": []
+        },
+        {
+          "name": "reservedIdentifier",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "_reserved_identifier",
+          "path": []
+        },
+        {
+          "name": "objectPattern",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "object_pattern",
+          "path": []
+        },
+        {
+          "name": "arrayPattern",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "array_pattern",
+          "path": []
+        },
+        {
+          "name": "nonNullExpression",
+          "via": "form",
+          "slot": "lhs_expression",
+          "childKind": "non_null_expression",
+          "path": []
+        }
       ]
     },
     {
@@ -21892,15 +20930,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         },
@@ -21915,15 +20961,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -21931,8 +20983,16 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions",
-        "semicolon"
+        "expressions"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "sequenceExpression",
+          "via": "form",
+          "slot": "expressions",
+          "childKind": "sequence_expression",
+          "path": []
+        }
       ]
     },
     {
@@ -22380,15 +21440,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         }
@@ -22488,15 +21556,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         },
@@ -22750,15 +21826,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         }
@@ -22767,6 +21851,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expressions"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "sequenceExpression",
+          "via": "form",
+          "slot": "expressions",
+          "childKind": "sequence_expression",
+          "path": []
+        }
       ]
     },
     {
@@ -22952,15 +22045,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expressions",
-              "parseKind": "_expressions",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expressions"
+              "expression",
+              "sequence_expression"
             ]
           }
         },
@@ -22975,15 +22076,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -22991,8 +22098,16 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions",
-        "semicolon"
+        "expressions"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "sequenceExpression",
+          "via": "form",
+          "slot": "expressions",
+          "childKind": "sequence_expression",
+          "path": []
+        }
       ]
     },
     {
@@ -23317,15 +22432,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -23335,8 +22456,7 @@
       "factoryFields": [
         "name",
         "type_parameters",
-        "value",
-        "semicolon"
+        "value"
       ]
     },
     {
@@ -23969,16 +23089,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "unescaped_double_jsx_string_fragment",
-      "modelType": "pattern",
-      "typeName": "UnescapedDoubleJsxStringFragment",
-      "factoryName": "unescapedDoubleJsxStringFragment",
-      "irKey": "unescapedDoubleJsxStringFragment",
-      "hidden": false,
-      "pattern": "([^\"&]|&[^#A-Za-z])+",
-      "factoryShape": "text"
-    },
-    {
       "kind": "unescaped_double_string_fragment",
       "modelType": "pattern",
       "typeName": "UnescapedDoubleStringFragment",
@@ -23986,16 +23096,6 @@
       "irKey": "unescapedDoubleStringFragment",
       "hidden": false,
       "pattern": "[^\"\\\\\\r\\n]+",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "unescaped_single_jsx_string_fragment",
-      "modelType": "pattern",
-      "typeName": "UnescapedSingleJsxStringFragment",
-      "factoryName": "unescapedSingleJsxStringFragment",
-      "irKey": "unescapedSingleJsxStringFragment",
-      "hidden": false,
-      "pattern": "([^'&]|&[^#A-Za-z])+",
       "factoryShape": "text"
     },
     {
@@ -24196,15 +23296,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_automatic_semicolon"
             ]
           }
         }
@@ -24212,8 +23318,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "declarators",
-        "semicolon"
+        "declarators"
       ]
     },
     {

@@ -454,6 +454,27 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  rule link minted that has no raw-grammar counterpart. */
 ```
 
+### `packages/codegen/src/types/rule.ts::inlinedFrom`
+
+```text
+/** The occurrence-site name of a reference whose target rule's body was
+ *  spliced into that position — the ref's own name, not the target's.
+ *  Two producers stamp it: link's `inlineReferences` (every
+ *  `inline === true` ref, fixed-point) and normalize's
+ *  `spliceFoldableRefs`/`materializeInlinedBody` (a narrower single-pass
+ *  fold of GROUP/multi-inline targets, guarded against array multiplicity
+ *  and an already-assigned `fieldName`). Storage source of a slot's
+ *  fallback name: `node-map.ts`'s `projectSlotNaming` falls back to
+ *  `inlinedFrom` (leading underscores stripped) before falling back to
+ *  `'content'`, and `collect-slots.ts`'s `inlinedFromSlotName` /
+ *  `diagnostics/slot-grouping.ts`'s `isContentSlot` read the same stamp
+ *  to exclude an inlined-body slot from content-slot grouping.
+ *  `withKindFacts` (`dsl/rule-attrs.ts`) carries it forward whenever a
+ *  later phase rebuilds the stamped rule's shape, so a splice survives
+ *  flatten/normalize/simplify without re-deriving it.
+ */
+```
+
 ### `packages/codegen/src/types/rule.ts::kind`
 
 ```text

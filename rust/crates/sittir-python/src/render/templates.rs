@@ -577,9 +577,9 @@ pub struct ElseClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "except_clause.jinja", escape = "none")]
 pub struct ExceptClauseTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
     pub except_clause_arm: OptionalNonterminalView<'a>,
     pub star_marker: OptionalNonterminalView<'a>,
+    pub suite: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

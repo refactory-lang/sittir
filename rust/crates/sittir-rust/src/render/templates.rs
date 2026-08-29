@@ -686,12 +686,6 @@ pub struct ClosureParametersTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "comment.jinja", escape = "none")]
-pub struct CommentTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "compound_assignment_expr.jinja", escape = "none")]
 pub struct CompoundAssignmentExprTemplate<'a> {
     pub left: SingleNonterminalView<'a>,

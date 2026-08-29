@@ -4809,7 +4809,7 @@ var grammar_sittir_default = grammar(
       // (these leaves render verbatim from wire text, never from the
       // pattern).
       renderAs: (_$) => ({
-        string_start: token.immediate(/[a-zA-Z]*["']+/),
+        string_start: /[a-zA-Z]*["']+/,
         _string_content: token.immediate(/[^"'\\{}\n]+/),
         escape_interpolation: token.immediate(/\{\{|\}\}/),
         string_end: token.immediate(/["']+/)
