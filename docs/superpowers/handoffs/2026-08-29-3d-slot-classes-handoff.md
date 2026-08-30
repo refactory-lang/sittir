@@ -72,6 +72,15 @@ each ruled at its source:
    singular references to determined kinds), not from a node fact.
    `parameterless` on compounds then means "every slot is optional"
    (measure the delta; today it requires a determined slot).
+   **The single switch is `nonterminal`** (user, same day): a reference to
+   a determined kind is `nonterminal: false` by default — template text,
+   stripped like a literal. If a census/audit shows a real need to keep a
+   determined child as a slot, the entry point is stamping `nonterminal:
+   true` on that reference (slot-promoted, exactly like a promoted
+   literal); only then may any determined-slot machinery exist, and it
+   serves those promoted references alone. Do not keep the machinery
+   speculatively — delete it, and reintroduce behind `nonterminal: true`
+   if the census justifies it.
 2. **Keyword-presence flags** (`async_block.move_marker`,
    `self_parameter`'s `&`/lifetime/`mut`, `field_pattern`'s `ref`/`mut`,
    python `_simple_pattern_negative.sign`): real slots → those kinds are
