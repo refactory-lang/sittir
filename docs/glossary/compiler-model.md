@@ -1305,15 +1305,6 @@ can't be unified.
 // ============================================================================
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
-
-```text
-/**
- * Slot taxonomy classification for branch/group nodes.
- * Computed post-assembly by `computeSlotClasses()`.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef`
 
 ```text
@@ -2408,17 +2399,6 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.slotClass`
-
-```text
-/**
-	 * Slot taxonomy — `singleSlot` when exactly one user-facing slot
-	 * survives after filtering auto-stamp, hidden-infra, and keyword-
-	 * presence fields; `multiSlot` otherwise. Set post-assembly by
-	 * `computeSlotClasses()`.
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound._slots`
 
 ```text
@@ -2497,14 +2477,6 @@ can't be unified.
  *  passthrough to exactly one nonterminal. `soleSlot` reads that single
  *  slot directly (returns `undefined` if more than one slot survived —
  *  callers that expect the envelope invariant should check it holds). */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnvelope.soleSlot`
-
-```text
-/** The envelope's one slot, or `undefined` if `slots` doesn't have
- *  exactly one entry (should not happen for a genuinely envelope-shaped
- *  rule; a defensive check rather than a load-bearing invariant). */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph`
@@ -3169,3 +3141,11 @@ can't be unified.
  *  template text and never encoded; a slot's permitted values are exactly
  *  the grammar's optional flanks (see `permittedDelimiters`). */
 ```
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`
+
+```text
+/** The one slot of a one-slot compound (an envelope's body, a polymorph's
+ *  union), `undefined` for zero or two-plus. The factory surface reads
+ *  this — the class is the surface. */
+```
+

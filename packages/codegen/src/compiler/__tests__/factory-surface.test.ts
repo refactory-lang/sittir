@@ -102,14 +102,11 @@ describe('child factory surface classification', () => {
 		expect(classifyFactoryShape(nodeMap.nodes.get('mut_pattern')!, nodeMap)).toBe('direct');
 	});
 
-	it('derives the container child slot from the classified sole user slot', () => {
-		// field_pattern's fields are [ref_marker, mutable_specifier, content]
-		// — the container's stamped slot must be the classified payload
-		// (content), not positionally fields[0] (ref_marker, a marker):
-		// stamping the child into `_ref_marker` while the read stores
-		// `_content` breaks every factory round-trip of the kind.
-		const facts = soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap);
-		expect(facts?.slot.name).toBe('content');
+	it('has no sole slot when markers sit beside the payload', () => {
+		// field_pattern's slots are [ref_marker, mutable_specifier, content]:
+		// three slots, so the kind is a branch with a config surface, never a
+		// container that positions one child.
+		expect(soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap)).toBeNull();
 	});
 
 	it('classifies multi-user-slot branches as config', () => {

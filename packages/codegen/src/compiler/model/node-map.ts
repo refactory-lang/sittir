@@ -142,16 +142,6 @@ export interface UnresolvedRef {
 	readonly name: string;
 }
 
-export type BranchSlotClass =
-	| { tag: 'multiSlot' }
-	| {
-			tag: 'singleSlot';
-			arity: 'singular' | 'multiple';
-			optional: boolean;
-			nonEmpty: boolean;
-			slot: AssembledNonterminal;
-	  };
-
 export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum';
 
 export interface FieldStorageInfo {
@@ -1485,8 +1475,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this.enrichment.hoisted?.overridePassthrough;
 	}
 
-	slotClass?: BranchSlotClass;
-
 	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
 
 	constructor(
@@ -1516,6 +1504,11 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
 		return this._slots;
+	}
+
+	get soleSlot(): AssembledNonterminal | undefined {
+		const slots = Object.values(this._slots);
+		return slots.length === 1 ? slots[0] : undefined;
 	}
 
 	get keywordConstructibleText(): string | undefined {
@@ -1563,11 +1556,6 @@ export class AssembledBranch extends AbstractAssembledCompound {
 
 export class AssembledEnvelope extends AbstractAssembledCompound {
 	readonly modelType = 'envelope' as const;
-
-	get soleSlot(): AssembledNonterminal | undefined {
-		const slots = Object.values(this.slots);
-		return slots.length === 1 ? slots[0] : undefined;
-	}
 }
 
 export class AssembledPolymorph extends AbstractAssembledCompound {

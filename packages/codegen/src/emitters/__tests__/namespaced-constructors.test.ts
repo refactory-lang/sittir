@@ -6,7 +6,6 @@
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
-import { computeSlotClasses } from '../shared.ts';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { Rule, SeqRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
@@ -68,7 +67,6 @@ function makeFormNodeMap(): ReturnType<typeof makeNodeMapWith> {
 	);
 	nodes.set('name', new AssembledPattern('name', { type: PATTERN, value: '[a-z]+' }));
 	const nodeMap = makeNodeMapWith(nodes);
-	computeSlotClasses(nodeMap);
 	return nodeMap;
 }
 
@@ -123,7 +121,6 @@ describe('namespacedConstructors — derivation', () => {
 		};
 		nodes.set('wrapper', branch('wrapper', rule));
 		const clashing = makeNodeMapWith(nodes);
-		computeSlotClasses(clashing);
 		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
 		expect(entries.map((e) => e.name)).toEqual(['let', 'b', 'const']);
 		expect(entries.find((e) => e.name === 'let')).toMatchObject({ childKind: '_wrapper_let', path: [] });
@@ -154,7 +151,6 @@ describe('namespacedConstructors — derivation', () => {
 		};
 		nodes.set('wrapper', branch('wrapper', rule));
 		const clashing = makeNodeMapWith(nodes);
-		computeSlotClasses(clashing);
 		const { entries, ambiguous } = namespacedConstructors(clashing.nodes.get('wrapper')!, clashing);
 		expect(entries).toEqual([]);
 		expect(ambiguous).toEqual([{ name: 'let', claimants: ['_wrapper_let', 'let'] }]);
@@ -166,7 +162,6 @@ describe('namespacedConstructors — derivation', () => {
 		nodes.set('_solo_a', branch('_solo_a', { type: SEQ, members: [field('name', NAME)] }));
 		nodes.set('name', new AssembledPattern('name', { type: PATTERN, value: '[a-z]+' }));
 		const nodeMap = makeNodeMapWith(nodes);
-		computeSlotClasses(nodeMap);
 		expect(namespacedConstructors(nodeMap.nodes.get('solo')!, nodeMap).entries).toEqual([]);
 	});
 });

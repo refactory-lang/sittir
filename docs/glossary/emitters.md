@@ -5494,64 +5494,15 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::classifyBranchSlots`
-
-```text
-/**
- * Classify a branch/group/polymorph node's user-facing slot count — the ONE
- * source of truth for single-slot vs multi-slot detection.
- *
- * Filters out:
- * - Auto-stamp fields (constant-valued, stamped by factory)
- * - Hidden-infra fields (all-hidden-kind slots, parser infrastructure)
- * - Keyword-presence fields (boolean / bitflag keyword toggles)
- *
- * Returns `multiSlot` when 0 or 2+ user-facing slots remain (0 maps to
- * the parameterless factory path, which is a multi-slot degenerate).
- * Returns `singleSlot` with full metadata when exactly 1 survives.
- *
- * @remarks
- * Replaces ad-hoc `isSingleFieldDirect` checks in factories.ts,
- * factory-map.ts, and from.ts. Those call sites should migrate to
- * this function (Task 3).
- *
- * @param node - An AssembledNode (only `branch`, `group`, and `polymorph` modelTypes
- *   produce meaningful results; other modelTypes always return `multiSlot`).
- * @param nodeMap - The assembled node map, needed by the filtering helpers.
- */
-```
-
-### `packages/codegen/src/emitters/shared.ts::computeSlotClasses`
-
-```text
-/**
- * Post-assembly pass: compute and store `slotClass` on every branch/group/
- * polymorph
- * node in the node map. Called from `generate.ts` after `hydrateSlotRefs`.
- */
-```
-
 ### `packages/codegen/src/emitters/shared.ts::resolveSingleFieldFactorySlot`
 
 ```text
-/**
- * Resolve the sole field eligible for the direct-value factory surface.
- *
- * @remarks
- * This is intentionally narrower than {@link classifyBranchSlots}: the slot
- * must be a named field slot (not an inferred child), and hidden
- * infrastructure kinds remain config-only even when they structurally
- * collapse to one field.
- */
-```
-
-#### body
-
-```text
-// A hidden kind is out unless it is user-facing — a namespaced constructor
-// reaches `_visibility_modifier_pub` as `ir.visibilityModifier.pub`, and a
-// kind callers can construct wants a constructible surface. Same predicate
-// `isWrapChildrenKind` applies for the same reason.
+/** The slot a kind's factory takes as its one positional value: the
+ *  compound's structural sole slot (`AbstractAssembledCompound.soleSlot`)
+ *  when it is singular and holds a child node (`verbatim` storage) — a
+ *  slot stored as a coerced literal (`kindEnum` / `boolean` / `bitflag`,
+ *  e.g. a statement terminator or a keyword form) is a config value, not a
+ *  positioned child; never for a hidden, non-user-facing kind. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::resolveFactoryFieldNames`
@@ -5636,59 +5587,13 @@ Surface`
 
 ```text
 /**
- * Shared factory-shape classification used by emitters and validator metadata.
- *
- * @remarks
- * This encodes only the validator-relevant calling convention:
- * - `direct` => factory takes one direct value (sole field OR sole child)
- * - `spread` => factory takes positional children (`...children`)
- * - `config` => factory takes a config object
+ * The factory surface, read from the model's class: leaves are `text`, a
+ * list is `elements`, a compound with a sole repeated slot is `spread`,
+ * with a sole singular slot `direct` (or `forwarded` when that slot names
+ * one kind with its own factory), anything else — two-plus slots, zero
+ * slots, a hidden non-user-facing kind — is `config`. A hoisted form is
+ * `direct`/`forwarded`/`config` by the same sole-slot test.
  */
-```
-
-#### body
-
-```text
-// A separatedList always has exactly one many-arity element slot
-// (canonicalSeparatedListField) — never branch's multi-shape
-// surface — and its factory always takes `(elements, options)`,
-// distinct from a branch spread factory's rest-param `(...children)`.
-```
-
-#### body
-
-```text
-// A configurable field beside the sole user slot (a keyword
-// marker, a bitflag, an enum) makes the kind multi-slot for
-// surface purposes — the config object is its home. Determined
-// slots left the record entirely (`pruneDeterminedSlots`), so
-// every remaining field counts.
-```
-
-#### body
-
-```text
-// A sole slot's real arity decides the surface, for named and
-// unnamed slots alike (per the rust-slot-surface-contract
-// architecture: one derivation path driven by arity, not by
-// field-name presence or kind-name prefix). A list is the
-// kind's identity — `dotted_name(...identifiers)` exactly as
-// a separated list takes `(...elements)` — so any many-arity
-// sole slot is 'spread'. A singular slot holding exactly one
-// concrete kind forwards that kind's constructor ('forwarded'
-// — see forwardedTargetKind; a singular ref to a separatedList
-// is how the list's spread surface hoists to its parent); a
-// union slot has no unique constructor and stays 'direct'.
-```
-
-#### body
-
-```text
-// Direct only when the emitter would emit the direct-value
-// signature — see resolveDirectFactorySlot. What keeps a kind
-// on the config surface is a hidden kind nothing user-facing
-// reaches, or a second caller-settable slot beside the sole
-// one; a determined marker does neither.
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::wordCharAsciiTable`
@@ -10238,85 +10143,27 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::userSlotsOf`
-
-```text
-/**
- * The user-facing slots of a slot-bearing compound: every field that is
- * neither auto-stamped, hidden-infra, nor a keyword-presence marker. The
- * single derivation behind the single-/multi-slot taxonomy and the
- * namespaced-constructor surface.
- */
-```
-
 ### `packages/codegen/src/emitters/shared.ts::resolveDirectFactorySlot`
 
 ```text
-/** The one derivation of the direct-value calling convention, consumed by
- *  both the factories emitter and `classifyFactoryShape` — they must never
- *  disagree, or every shape consumer calls the factory with the wrong
- *  argument shape. See the compiler glossary for the contract. */
-```
-
-#### body
-
-```text
-// Extras are the CALLER-SETTABLE slots, not the raw fields. A determined
-// marker sits in `fields` and never in `slots` — it is what the kind IS,
-// not something the caller supplies, so a positional signature has nothing
-// to accept for it and nothing is lost by omitting it. Counting raw fields
-// here would be a second, stricter notion of "extra" than the one
-// `classifyFactoryShape` already applies, and the two would disagree
-// exactly where a kind carries a marker beside its sole slot.
+/** Same as `resolveSingleFieldFactorySlot`: with the class read from the
+ *  model a sole slot is by definition the only slot. Kept as the name the
+ *  factory/from/ir emitters ask by. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::forwardedTargetKind`
 
 ```text
-/**
- * The stamped forwarding fact: a factory whose calling convention would be
- * 'direct' (one singular user slot) FORWARDS the slot's constructor when the
- * slot holds exactly ONE concrete node kind — the factory accepts that
- * kind's constructor arguments (building the child internally) or a
- * pre-built node, discriminated by `$type`. A union slot has no unique
- * constructor to forward and stays 'direct'; a literal-bearing slot
- * likewise. Classified ONCE here — every consumer (factory/from emitters,
- * node-model serialization, validators) reads the stamp, never re-derives
- * the single-slot-single-kind predicate.
- */
-```
-
-#### body
-
-```text
-// refine() kinds emit per-form config factories (emitRefineFormFactory)
-// — the forwarding wrapper's positional dispatch has no place there.
-```
-
-#### body
-
-```text
-// A field carrying per-instance flank options keeps the direct/config
-// surface (its factory signature carries an options parameter the
-// forwarding dispatch has no slot for).
-```
-
-#### body
-
-```text
-// The target must itself emit a factory to forward to.
+/** The kind a direct factory forwards to: the sole singular slot names
+ *  exactly one kind (no literal values, no optional delimiter on any slot)
+ *  that has a factory of its own. `null` for a refine-form kind. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::soleSlotFacts`
 
-#### body
-
 ```text
-// The stamped slot is the classified sole user slot — NOT
-// positionally `fields[0]`, which can be a keyword-presence marker
-// preceding the payload (e.g. rust field_pattern's [ref_marker,
-// mutable_specifier, content]). Same derivation classifyBranchSlots
-// uses to pick the sole-slot shape in the first place.
+/** Cardinality facts of a compound's structural sole slot, or `null` when
+ *  the kind has zero or two-plus slots. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::emitsBuildArgsAlias`

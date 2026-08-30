@@ -25,7 +25,6 @@ import {
 	configurableFactoryFields,
 	fieldResolverName,
 	needsNonEmptyHoist,
-	type BranchSlotClass,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
@@ -312,7 +311,6 @@ interface BranchLikeNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
-	readonly slotClass?: BranchSlotClass;
 }
 
 function buildBranchSignatureParts(

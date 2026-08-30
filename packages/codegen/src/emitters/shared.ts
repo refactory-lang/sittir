@@ -5,7 +5,6 @@ import type {
 	NodeOrTerminal,
 	NodeBackedRef,
 	AssembledNode,
-	BranchSlotClass,
 	FieldStorageInfo
 } from '../compiler/model/node-map.ts';
 import {
@@ -446,14 +445,8 @@ export function resolveFieldStorageInfo(
 	return field.storageInfo;
 }
 
-export type { BranchSlotClass } from '../compiler/model/node-map.ts';
 export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
 export type ChildFactorySurface = 'direct' | 'spread';
-
-export function userSlotsOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal[] {
-	if (!isSlotBearingCompound(node)) return [];
-	return node.fields.filter((f) => !isHiddenInfraSlot(f, nodeMap) && keywordPresenceKind(f, nodeMap) === null);
-}
 
 export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
 	const node = nodeMap.nodes.get(kind);
@@ -492,54 +485,23 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
-export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
-	if (!isSlotBearingCompound(node)) {
-		return { tag: 'multiSlot' };
-	}
-
-	const userSlots = userSlotsOf(node, nodeMap);
-
-	if (userSlots.length !== 1) return { tag: 'multiSlot' };
-
-	const sole = userSlots[0]!;
-	const multiple = isMultiple(sole);
-	return {
-		tag: 'singleSlot',
-		arity: multiple ? 'multiple' : 'singular',
-		optional: !isRequired(sole),
-		nonEmpty: isNonEmpty(sole),
-		slot: sole
-	};
-}
-
-export function computeSlotClasses(nodeMap: NodeMap): void {
-	for (const [, node] of nodeMap.nodes) {
-		if (isSlotBearingCompound(node)) {
-			node.slotClass = classifyBranchSlots(node, nodeMap);
-		}
-	}
-}
-
 export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
 	if (node.kind.startsWith('_') && !node.userFacing) return undefined;
-	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return undefined;
-	return slotClass.slot;
+	const slot = node.soleSlot;
+	if (slot === undefined || isMultiple(slot)) return undefined;
+	return resolveFieldStorageInfo(slot, nodeMap).kind === 'verbatim' ? slot : undefined;
 }
 
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
-	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
-	if (!slot) return undefined;
-	return allSlotsOf(node).every((f) => f === slot) ? slot : undefined;
+	return resolveSingleFieldFactorySlot(node, nodeMap);
 }
 
 export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): string | null {
 	if (!isSlotBearingCompound(node)) return null;
 	if (nodeMap.refineForms?.has(node.kind)) return null;
-	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return null;
-	const slot = slotClass.slot;
+	const slot = node.soleSlot;
+	if (slot === undefined || isMultiple(slot)) return null;
 	if (slotLiteralValues(slot).length > 0) return null;
 	const kinds = slotKindNames(slot);
 	if (kinds.length !== 1) return null;
@@ -580,11 +542,10 @@ export interface SoleSlotFacts {
 	readonly nonEmpty: boolean;
 }
 
-export function soleSlotFacts(node: AssembledNode, nodeMap: NodeMap): SoleSlotFacts | null {
+export function soleSlotFacts(node: AssembledNode, _nodeMap: NodeMap): SoleSlotFacts | null {
 	if (!isSlotBearingCompound(node)) return null;
-	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	if (slotClass.tag !== 'singleSlot') return null;
-	const slot = slotClass.slot;
+	const slot = node.soleSlot;
+	if (slot === undefined) return null;
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
@@ -601,11 +562,9 @@ export function classifyFactoryShape(
 			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 		}
-		const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-		if (slotClass.tag === 'singleSlot') {
-			const configurableExtras = allSlotsOf(node).filter((f) => f !== slotClass.slot);
-			if (configurableExtras.length > 0) return 'config';
-			if (slotClass.arity !== 'singular') return 'spread';
+		const slot = node.soleSlot;
+		if (slot !== undefined) {
+			if (isMultiple(slot)) return 'spread';
 			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 		}

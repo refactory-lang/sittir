@@ -16,7 +16,7 @@ import {
 	isValidIdent,
 	slotKindNames,
 	slotLiteralValues,
-	userSlotsOf
+	configurableFactoryFields
 } from './shared.ts';
 import { camelCase } from './refine-emit.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
@@ -122,7 +122,7 @@ function derive(
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return EMPTY;
 	if (!node.rawFactoryName || nodeMap.refineForms?.has(node.kind)) return EMPTY;
 	const isEmitted = options.isEmitted ?? (() => true);
-	const user = userSlotsOf(node, nodeMap);
+	const user = configurableFactoryFields(node.fields, nodeMap);
 	const candidates: { readonly entry: NamespacedConstructor; readonly claimant: string }[] = [];
 
 	const formSlot =
