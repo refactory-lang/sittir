@@ -2569,8 +2569,10 @@ can't be unified.
  * The single predicate deciding whether a compositional rule classifies
  * as `'envelope'`, `'polymorph'`, or `'branch'`: peel structural
  * passthroughs (`variant`/`group` wrappers) first, then — one symbol, or
- * an empty seq (every reference stripped as fixed text) → `'envelope'`; a
- * non-empty choice whose every member is leaf-shaped
+ * an empty seq (every reference stripped as fixed text), or a choice under
+ * array multiplicity (one list slot, exactly like a repeated symbol) →
+ * `'envelope'`; a non-empty single-cardinality choice whose every member is
+ * leaf-shaped
  * (`isLeafShapedMember`) → `'polymorph'`; anything else → `'branch'`.
  * `classifyNode` (assemble.ts) calls this for any rule shape that isn't
  * already resolved to `'enum'`/`'token'`/`'pattern'`/`'list'` earlier in

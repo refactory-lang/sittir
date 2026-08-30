@@ -4596,7 +4596,7 @@
     },
     {
       "kind": "_delim_token_tree_brace",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "DelimTokenTreeBrace",
       "factoryName": "_delimTokenTreeBrace",
       "irKey": "delimTokenTreeBrace",
@@ -4650,7 +4650,7 @@
     },
     {
       "kind": "_delim_token_tree_bracket",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "DelimTokenTreeBracket",
       "factoryName": "_delimTokenTreeBracket",
       "irKey": "delimTokenTreeBracket",
@@ -4704,7 +4704,7 @@
     },
     {
       "kind": "_delim_token_tree_paren",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "DelimTokenTreeParen",
       "factoryName": "_delimTokenTreeParen",
       "irKey": "delimTokenTreeParen",
@@ -7103,7 +7103,7 @@
     },
     {
       "kind": "_token_tree_brace",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TokenTreeBrace",
       "factoryName": "_tokenTreeBrace",
       "irKey": "tokenTreeBrace",
@@ -7167,7 +7167,7 @@
     },
     {
       "kind": "_token_tree_bracket",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TokenTreeBracket",
       "factoryName": "_tokenTreeBracket",
       "irKey": "tokenTreeBracket",
@@ -7231,7 +7231,7 @@
     },
     {
       "kind": "_token_tree_paren",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TokenTreeParen",
       "factoryName": "_tokenTreeParen",
       "irKey": "tokenTreeParen",
@@ -7295,7 +7295,7 @@
     },
     {
       "kind": "_token_tree_pattern_brace",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TokenTreePatternBrace",
       "factoryName": "_tokenTreePatternBrace",
       "irKey": "tokenTreePatternBrace",
@@ -7367,7 +7367,7 @@
     },
     {
       "kind": "_token_tree_pattern_bracket",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TokenTreePatternBracket",
       "factoryName": "_tokenTreePatternBracket",
       "irKey": "tokenTreePatternBracket",
@@ -7439,7 +7439,7 @@
     },
     {
       "kind": "_token_tree_pattern_paren",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TokenTreePatternParen",
       "factoryName": "_tokenTreePatternParen",
       "irKey": "tokenTreePatternParen",
@@ -10586,7 +10586,7 @@
     },
     {
       "kind": "closure_parameters",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "ClosureParameters",
       "factoryName": "closureParameters",
       "irKey": "closureParameters",
@@ -13274,7 +13274,7 @@
     },
     {
       "kind": "function_modifiers",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "FunctionModifiers",
       "factoryName": "functionModifiers",
       "irKey": "functionModifiers",
@@ -19523,7 +19523,7 @@
     },
     {
       "kind": "trait_bounds",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TraitBounds",
       "factoryName": "traitBounds",
       "irKey": "traitBounds",

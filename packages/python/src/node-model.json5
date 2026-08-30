@@ -4891,7 +4891,7 @@
     },
     {
       "kind": "block",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "Block",
       "factoryName": "block",
       "irKey": "block",
@@ -6274,7 +6274,7 @@
     },
     {
       "kind": "comprehension_clauses",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "ComprehensionClauses",
       "factoryName": "comprehensionClauses",
       "irKey": "comprehensionClauses",
@@ -8167,7 +8167,7 @@
     },
     {
       "kind": "format_specifier",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "FormatSpecifier",
       "factoryName": "formatSpecifier",
       "irKey": "formatSpecifier",
@@ -10100,7 +10100,7 @@
     },
     {
       "kind": "module",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "Module",
       "factoryName": "module",
       "irKey": "module",
@@ -11824,7 +11824,7 @@
     },
     {
       "kind": "string_content",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "StringContent",
       "factoryName": "stringContent",
       "irKey": "stringContent",
@@ -12689,7 +12689,7 @@
     },
     {
       "kind": "union_pattern",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "UnionPattern",
       "factoryName": "unionPattern",
       "irKey": "unionPattern",

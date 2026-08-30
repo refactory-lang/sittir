@@ -7366,7 +7366,7 @@
     },
     {
       "kind": "_string_double",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "StringDouble",
       "factoryName": "_stringDouble",
       "irKey": "stringDouble",
@@ -7414,7 +7414,7 @@
     },
     {
       "kind": "_string_single",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "StringSingle",
       "factoryName": "_stringSingle",
       "irKey": "stringSingle",
@@ -9198,7 +9198,7 @@
     },
     {
       "kind": "arguments",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
@@ -9245,7 +9245,7 @@
     },
     {
       "kind": "array",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "Array",
       "factoryName": "array",
       "irKey": "array",
@@ -9292,7 +9292,7 @@
     },
     {
       "kind": "array_pattern",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "ArrayPattern",
       "factoryName": "arrayPattern",
       "irKey": "arrayPattern",
@@ -11143,7 +11143,7 @@
     },
     {
       "kind": "class_body",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "ClassBody",
       "factoryName": "classBody",
       "irKey": "classBody",
@@ -13621,7 +13621,7 @@
     },
     {
       "kind": "extends_type_clause",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "ExtendsTypeClause",
       "factoryName": "extendsTypeClause",
       "irKey": "extendsTypeClause",
@@ -18875,7 +18875,7 @@
     },
     {
       "kind": "object",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "Object",
       "factoryName": "object",
       "irKey": "object",
@@ -19017,7 +19017,7 @@
     },
     {
       "kind": "object_pattern",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "ObjectPattern",
       "factoryName": "objectPattern",
       "irKey": "objectPattern",
@@ -22107,7 +22107,7 @@
     },
     {
       "kind": "switch_body",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "SwitchBody",
       "factoryName": "switchBody",
       "irKey": "switchBody",
@@ -22351,7 +22351,7 @@
     },
     {
       "kind": "template_literal_type",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TemplateLiteralType",
       "factoryName": "templateLiteralType",
       "irKey": "templateLiteralType",
@@ -22398,7 +22398,7 @@
     },
     {
       "kind": "template_string",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "TemplateString",
       "factoryName": "templateString",
       "irKey": "templateString",

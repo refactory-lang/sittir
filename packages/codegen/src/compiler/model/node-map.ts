@@ -1601,6 +1601,7 @@ export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
 export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
 	const body = unwrapStructuralPassthroughs(simplifiedRule);
 	if (body.type === SYMBOL || (body.type === SEQ && body.members.length === 0)) return 'envelope';
+	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray')) return 'envelope';
 	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
 	return 'branch';
 }
