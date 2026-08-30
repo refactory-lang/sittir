@@ -171,7 +171,7 @@ function derive(
 	const residualKeys = new Set(residual.map((f) => f.configKey));
 	const entries: SubFactory[] = [];
 	for (const entry of resolved) {
-		const keys = armConfigKeys(entry, nodeMap);
+		const keys = armConfigKeys(entry, nodeMap, { isEmitted }, nextVisiting);
 		const collides = keys.some((k) => residualKeys.has(k));
 		if (collides) {
 			diagnostics.push({ parent: node.kind, name: entry.name, reason: 'slot-collision', claimants: [claimantOf(entry)] });
@@ -184,6 +184,8 @@ function derive(
 }
 
 const cache = new WeakMap<NodeMap, WeakMap<IsEmittedPredicate, Map<string, SubFactorySet>>>();
+
+const inProgress = new WeakMap<NodeMap, WeakMap<IsEmittedPredicate, Set<string>>>();
 
 function subFactoriesInternal(
 	node: AssembledNode,
@@ -203,7 +205,23 @@ function subFactoriesInternal(
 	}
 	const cached = perPredicate.get(node.kind);
 	if (cached !== undefined) return cached;
+
+	let inProgressPerMap = inProgress.get(nodeMap);
+	if (inProgressPerMap === undefined) {
+		inProgressPerMap = new WeakMap();
+		inProgress.set(nodeMap, inProgressPerMap);
+	}
+	let inProgressKinds = inProgressPerMap.get(isEmitted);
+	if (inProgressKinds === undefined) {
+		inProgressKinds = new Set();
+		inProgressPerMap.set(isEmitted, inProgressKinds);
+	}
+	if (inProgressKinds.has(node.kind)) return EMPTY;
+
+	inProgressKinds.add(node.kind);
 	const result = derive(node, nodeMap, isEmitted, visiting);
+	inProgressKinds.delete(node.kind);
+
 	if (visiting.size === 0) perPredicate.set(node.kind, result);
 	return result;
 }
@@ -212,15 +230,26 @@ export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubF
 	return subFactoriesInternal(node, nodeMap, opts.isEmitted ?? DEFAULT_IS_EMITTED, new Set());
 }
 
-export function armConfigKeys(sub: SubFactory, nodeMap: NodeMap): readonly string[] {
+export function armConfigKeys(
+	sub: SubFactory,
+	nodeMap: NodeMap,
+	opts: SubFactoryOptions = {},
+	visiting: ReadonlySet<string> = new Set()
+): readonly string[] {
 	const arm = sub.arm;
 	if (arm.via === 'literal') return [];
 	if (arm.path.length === 0) {
 		if (classifyFactoryShape(arm.child, nodeMap) !== 'config') return [];
 		return isSlotBearingCompound(arm.child) ? arm.child.fields.map((f) => f.configKey) : [];
 	}
-	const nested = subFactoriesOf(arm.child, nodeMap).entries.find((e) => e.name === arm.path[0]);
+	if (visiting.has(arm.child.kind)) return [];
+	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
 	if (nested === undefined) return [];
 	const residualKeys = nested.residual.map((f) => f.configKey);
-	return [...residualKeys, ...armConfigKeys(nested, nodeMap)];
+	const nextVisiting = new Set([...visiting, arm.child.kind]);
+	if (nested.arm.via === 'literal') return residualKeys;
+	if (classifyFactoryShape(nested.arm.child, nodeMap) === 'config') {
+		return [...residualKeys, ...armConfigKeys(nested, nodeMap, opts, nextVisiting)];
+	}
+	return [...residualKeys, nested.slot.configKey];
 }

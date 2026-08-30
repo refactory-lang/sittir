@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "8b8601e72344f4e4f90bc3387aed16d786a52ce747ec8163c3a5c0a0c8c20edf",
+  "source_hash": "035d7625f35ffb489366c5dd778af92958e3807977a06eea4381ecee9fe2581e",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "31b958217aaedae45c2900a2ebb1aec937c7a6e39023bd6d1f4636b4564cc217",
     "packages/python/.sittir/grammar.js": "514c9e407a8abeea6658370e86c4194611f8f63cbac536f892f1d15fd200c733",
@@ -21,7 +21,7 @@
     "packages/python/src/consts.ts": "bb14dacbee825ce60e31afa953d1a7ec88aadf9d0d08b72cb6c541132772ea7b",
     "packages/python/src/engine.ts": "02d8b1a39342e7fc3e30663f618bce68186e0301f6c235948c7ba195bd79b90a",
     "packages/python/src/factories/index.ts": "1608feac862e78f57398de2e0b9ed12a9659549b24a6bef41a3644d231286d9e",
-    "packages/python/src/factories/overlays/polymorphs.ts": "acb0df5435e6a55741d5cf49767c0441a6c63b11eb4359d67b862fa5b2fce934",
+    "packages/python/src/factories/overlays/polymorphs.ts": "ea99b39e25cfc404e941d1a9ac31f27760a0507991b15bf6e8e7ead144b07182",
     "packages/python/src/factories/overlays/refines.ts": "70660a27debd8e3646ce5da3dabad1561e8044f14459c035c1f89926c826406e",
     "packages/python/src/factories/overlays/supertypes.ts": "cc899382479525733547428c9d00b7edb774c3ee936974369e45a07059b0a6f9",
     "packages/python/src/factories/raw.ts": "fe59f6f403bc3022ef3568d3bf19ed2ec8378161225f21a0181d28c98a039756",

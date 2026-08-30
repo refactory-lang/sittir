@@ -14735,7 +14735,16 @@ other overlay-specific shape.
  *  claimant. Surviving entries are then filtered once more: an entry whose
  *  `armConfigKeys` overlaps the parent's own residual field keys is
  *  dropped with a `slot-collision` diagnostic instead of being emitted —
- *  it would shadow a field the parent itself already exposes. */
+ *  it would shadow a field the parent itself already exposes.
+ *
+ *  The per-`nodeMap`/`isEmitted` cache only records a *completed* result
+ *  (set once `derive` returns, keyed by kind), so it can't by itself stop
+ *  a kind from being asked for again while its own derivation is still on
+ *  the stack — that path runs through `armConfigKeys`, which re-enters
+ *  `subFactoriesOf` on kinds outside the current `derive` call's own
+ *  `visiting` chain. A separate in-progress set (marked before `derive`
+ *  runs, cleared after) catches that re-entrance and returns an empty
+ *  set for it, independent of `visiting`. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
@@ -14750,12 +14759,27 @@ other overlay-specific shape.
  *  `[]` when the child's own factory shape (`classifyFactoryShape`) isn't
  *  `config`; otherwise it returns the child's own field config keys. A
  *  flattened arm (non-empty `path`) looks up the child's sub-factory named
- *  `path[0]` (whose own `path` is already the remaining chain, by
- *  construction) and returns that sub-factory's residual keys unioned
- *  with its own `armConfigKeys`, computed recursively the same way — the
- *  `classifyFactoryShape` gate is applied at that nested level by the
- *  recursive call, not re-checked against the flattened arm's direct
- *  child. */
+ *  `path[0]` (threading `opts` through the lookup so it agrees with
+ *  whatever `isEmitted` the caller resolved the arm under — a mismatched
+ *  default here would let the nested lookup diverge from the entry the
+ *  caller actually built) and returns that sub-factory's residual keys
+ *  unioned with what the nested step itself contributes: when the nested
+ *  arm's own child is `config`-shaped, that's `armConfigKeys` recursed
+ *  one level deeper (the nested sub-factory destructures its child's
+ *  fields individually, so the merged config needs each of those fields
+ *  by name); otherwise — a literal nested arm, or a kind arm whose child
+ *  is `text`/`direct`/`forwarded`/`spread`/`elements`-shaped — the nested
+ *  sub-factory calls its own child wholesale (`C(k)` / `C(...k)`, never
+ *  destructured), so the merged config needs the nested arm's own slot
+ *  key as one explicit prop instead (empty contribution for a literal arm,
+ *  which needs nothing beyond its residual). `visiting` guards this
+ *  recursion against the mutual cycle `derive → armConfigKeys →
+ *  subFactoriesOf → derive → …` can otherwise walk into: a flattened
+ *  step's own `subFactoriesOf` call always starts a fresh (empty)
+ *  `visiting` set, so without a caller-supplied one a cycle spanning
+ *  several distinct kinds is invisible to any single call's local
+ *  tracking — `derive`'s call site seeds it with its own ancestor chain
+ *  for exactly this reason. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::claimantOf`
@@ -14770,4 +14794,144 @@ other overlay-specific shape.
  *  a direct arm (empty `path`), `<child>.<path…>` for a flattened one, so
  *  a claimant several levels deep still names the full chain instead of
  *  just its first hop. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::childExpr`
+
+```text
+/** The kind arm's callee expression, `C` in `subFactoryProp`'s naming: a
+ *  direct arm (`path: []`) calls the previous overlay layer's own raw
+ *  builder, `F.<child.rawFactoryName>`; a flattened arm (`path` non-empty)
+ *  calls the local decorated const this same module attached to the
+ *  direct child earlier in the emission order, `<child.rawFactoryName>.
+ *  <path.join('.')>`, never `F.`-prefixed — the props a flattened path
+ *  walks through live only on the decorated version, not the raw import. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::safeBinding`
+
+```text
+/** The local variable name to destructure a config key into: the key
+ *  itself when it's safe to bind (not one of `FACTORY_NAME_RESERVED`'s
+ *  words — `arguments`, `eval`, `class`, … — which strict-mode generated
+ *  ESM can't declare as a binding identifier, only hold as a property
+ *  name), otherwise the key with a trailing `_`. Reuses the same reserved
+ *  list `nameNode` renames a colliding factory name against, rather than
+ *  inventing a second reserved-word policy for binding positions. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::renamedList`
+
+```text
+/** A comma-joined destructuring/reconstruction key list, each entry
+ *  `key` when `safeBinding(key) === key` or `key: binding` otherwise —
+ *  the same rename shorthand is correct in both the `const { … } =
+ *  config` destructure position and the `C({ … })` reconstruction
+ *  position a config-shaped kind arm builds back up from its bindings. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::parentConfigTypeExpr`
+
+```text
+/** The parent's own config parameter type, `Cfg` in `subFactoryProp`'s
+ *  naming — `Parameters<typeof F.<parent.rawFactoryName>>[0]`, wrapped in
+ *  `NonNullable<…>` when the parent's own factory declares that parameter
+ *  optional (`config?:`), which the emitted `Omit<Cfg, 'k'>` positions
+ *  need stripped off to stay assignable. Optionality is read straight off
+ *  the model rather than re-deriving the factory emitter's own `config?`
+ *  decision: a parent's fields are exactly `[slot, ...residual]`, so
+ *  `isRequired(slot) || residual.some(isRequired)` reproduces
+ *  `resolveConfigOptional`'s answer without importing it. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::subFactoryProp`
+
+```text
+/** One sub-factory's `AttachedProp` — the property `emitOverlayModule`
+ *  attaches to the parent's decorated builder. `P` = `F.<parent.
+ *  rawFactoryName>`, `C` = `childExpr(sub)`, `k` = `sub.slot.configKey`,
+ *  `Cfg` = `parentConfigTypeExpr(parent, sub)`, `val` =
+ *  `kindEnumConfigValue(literal, …)`. Seven shapes, chosen by residual
+ *  emptiness, arm kind, and (when residual is non-empty) the arm's own
+ *  child shape:
+ *
+ *  - literal arm, `residual: []`: `() => P(val)` when the parent takes
+ *    its slot positionally (`resolveDirectFactorySlot(parent) !==
+ *    undefined`), else `() => P({ k: val })`.
+ *  - literal arm, `residual` non-empty: `(config: Omit<Cfg, 'k'>) =>
+ *    P({ ...config, k: val })`.
+ *  - kind arm, `residual: []`: `(...args: Parameters<typeof C>) =>
+ *    P(C(...args))` positionally, or `(...args) => P({ k: C(...args) })`
+ *    when the parent is config-shaped — the rest-spread form works
+ *    unchanged for a parameterless `C` (`Parameters<typeof C>` is `[]`,
+ *    spreading it degrades to a plain `C()` call).
+ *  - kind arm, `residual` non-empty, child `config`-shaped: destructure
+ *    `armConfigKeys(sub)`'s keys (via `renamedList`) plus `...rest` from
+ *    `config`, call `C({ …the same keys… })`, and build `P({ ...rest, k:
+ *    that })`. Zero keys destructures as `...rest` alone and reconstructs
+ *    as `C({})`, never a bare `{ , ...rest }` (invalid syntax) or `C({  })`.
+ *  - kind arm, `residual` non-empty, `spread`/`elements`-shaped child, or
+ *    a *parameterless* child of any shape (`sub.arm.child.parameterless`
+ *    — a fixed keyword/leaf or an empty compound, whose `Parameters<typeof
+ *    C>` is `[]` and can't be indexed at `[0]`): destructure `{ k, ...rest
+ *    }` (`k` renamed via `safeBinding` where needed) and call `C(...k)`.
+ *  - kind arm, `residual` non-empty, `text`/`direct`/`forwarded`-shaped
+ *    (non-parameterless) child: same destructure, but `C(k)` — one
+ *    positional value, not spread.
+ *
+ *  A literal arm's `val` uses the branded `TSKindId` form only when the
+ *  slot itself is `kindEnum`-shaped storage (`resolveFieldStorageInfo(sub.
+ *  slot).kind === 'kindEnum'`) — a `KindEnum<Text, Id> = Id & {
+ *  __kindEnum__?: Text }` branded number, not assignable from a plain
+ *  string. A `verbatim`-shaped slot (a list separator, a leaf's sole
+ *  literal alternative, …) stores the literal text itself, where only the
+ *  quoted form type-checks; passing `kindEntries: undefined` in that case
+ *  forces `kindEnumConfigValue`'s quoted-literal fallback. Both forms
+ *  coerce to the same storage at runtime (`coerceKindEnumStorage`), so
+ *  this is a type-position choice, not a behavior one — re-derived from
+ *  the model fact the types emitter itself reads for the field's own type
+ *  expression, never guessed from whether the literal happens to resolve
+ *  a catalog kindId. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::polymorphAttachments`
+
+```text
+/** One `Attachment` per kind with at least one sub-factory
+ *  (`subFactoriesOf(node, nodeMap, opts).entries.length > 0`) or emit
+ *  diagnostic, built via a DFS over `nodeMap.nodes` post-ordered on the
+ *  flattened-arm dependency: before attaching a parent, first visit (and
+ *  attach) the direct child of every flattened entry (`arm.path.length >
+ *  0`) it references, so that child's decorated local const already
+ *  exists in this module by the time the parent's own prop expression
+ *  refers to it (`childExpr`'s flattened form). Direct kind arms need no
+ *  such ordering — they reference the previous overlay layer's `F.`
+ *  import, not a local const. `isEmitted` is `classifyFactoryEmission(kind,
+ *  node, { nodeMap, kindEntries }) === 'emit'`, not the looser "has a
+ *  catalog kindId" check `hasCatalogEntry` alone gives: a kind can carry a
+ *  parser kindId and still mint no builder (a hidden-keyword-literal kind,
+ *  a non-surface kind, a polymorph-form kind), and a kind arm naming one
+ *  of those would reference a `F.build…` that was never emitted.
+ *  Diagnostics from `subFactoriesOf` print through the same
+ *  `console.warn('[codegen] <parent>: sub-factory <name> skipped
+ *  (<reason>): <claimants>')` channel the removed js-dispatch emitter
+ *  used, regardless of whether the parent ends up with any surviving
+ *  entries to attach. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
+
+```text
+/** The polymorph layer of the overlay chain — sits on `refines.js`
+ *  (`overlayImportPath(1)`), decorating each eligible parent's refined
+ *  builder with one form constructor per kind arm and one member
+ *  constructor per literal arm via `polymorphAttachments`. Composes
+ *  `emitOverlayModule` with `polymorphAttachments` the same way
+ *  `emitRefinesOverlay` composes with `refineAttachments`; `emit.ts` calls
+ *  `polymorphAttachments` directly to populate `overlayAttachments.
+ *  polymorphs` for the shared `OVERLAY_CHAIN` mapping, and supplies the
+ *  same `TSKindId` import as this function's own preamble whenever
+ *  `generatedIdTables` is present — a literal arm's `kindEnum`-shaped
+ *  value needs it in scope, `KindEnum`-branded fields being the one case
+ *  `subFactoryProp` reaches for the numeric form. */
 ```

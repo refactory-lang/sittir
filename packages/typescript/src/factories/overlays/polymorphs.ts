@@ -2,3 +2,2311 @@
 import * as F from './refines.js';
 import { attachProps } from '../../utils.js';
 export * from './refines.js';
+
+import { TSKindId } from '../../types.js';
+
+export const buildExportStatementDefaultDeclArm: typeof F.buildExportStatementDefaultDeclArm & {
+	exportStatementDefaultDefaultKw: (
+		config: Omit<Parameters<typeof F.buildExportStatementDefaultDeclArm>[0], 'content'> & {
+			content: Parameters<typeof F.buildExportStatementDefaultDefaultKw>[0];
+		}
+	) => ReturnType<typeof F.buildExportStatementDefaultDeclArm>;
+} = attachProps(F.buildExportStatementDefaultDeclArm, {
+	exportStatementDefaultDefaultKw: (
+		config: Omit<Parameters<typeof F.buildExportStatementDefaultDeclArm>[0], 'content'> & {
+			content: Parameters<typeof F.buildExportStatementDefaultDefaultKw>[0];
+		}
+	) => {
+		const { content, ...rest } = config;
+		return F.buildExportStatementDefaultDeclArm({ ...rest, content: F.buildExportStatementDefaultDefaultKw(content) });
+	}
+});
+
+export const buildExportStatementDefault: typeof F.buildExportStatementDefault & {
+	fromArm: (
+		...args: Parameters<typeof F.buildExportStatementDefaultFromArm>
+	) => ReturnType<typeof F.buildExportStatementDefault>;
+	declArm: (
+		...args: Parameters<typeof F.buildExportStatementDefaultDeclArm>
+	) => ReturnType<typeof F.buildExportStatementDefault>;
+	defaultKw: (
+		...args: Parameters<typeof buildExportStatementDefaultDeclArm.exportStatementDefaultDefaultKw>
+	) => ReturnType<typeof F.buildExportStatementDefault>;
+} = attachProps(F.buildExportStatementDefault, {
+	fromArm: (...args: Parameters<typeof F.buildExportStatementDefaultFromArm>) =>
+		F.buildExportStatementDefault(F.buildExportStatementDefaultFromArm(...args)),
+	declArm: (...args: Parameters<typeof F.buildExportStatementDefaultDeclArm>) =>
+		F.buildExportStatementDefault(F.buildExportStatementDefaultDeclArm(...args)),
+	defaultKw: (...args: Parameters<typeof buildExportStatementDefaultDeclArm.exportStatementDefaultDefaultKw>) =>
+		F.buildExportStatementDefault(buildExportStatementDefaultDeclArm.exportStatementDefaultDefaultKw(...args))
+});
+
+export const buildExportStatement: typeof F.buildExportStatement & {
+	default: (...args: Parameters<typeof F.buildExportStatementDefault>) => ReturnType<typeof F.buildExportStatement>;
+	defaultFromArm: (
+		...args: Parameters<typeof buildExportStatementDefault.fromArm>
+	) => ReturnType<typeof F.buildExportStatement>;
+	typeExport: (
+		...args: Parameters<typeof F.buildExportStatementTypeExport>
+	) => ReturnType<typeof F.buildExportStatement>;
+	equalsExport: (
+		...args: Parameters<typeof F.buildExportStatementEqualsExport>
+	) => ReturnType<typeof F.buildExportStatement>;
+	namespaceExport: (
+		...args: Parameters<typeof F.buildExportStatementNamespaceExport>
+	) => ReturnType<typeof F.buildExportStatement>;
+} = attachProps(F.buildExportStatement, {
+	default: (...args: Parameters<typeof F.buildExportStatementDefault>) =>
+		F.buildExportStatement(F.buildExportStatementDefault(...args)),
+	defaultFromArm: (...args: Parameters<typeof buildExportStatementDefault.fromArm>) =>
+		F.buildExportStatement(buildExportStatementDefault.fromArm(...args)),
+	typeExport: (...args: Parameters<typeof F.buildExportStatementTypeExport>) =>
+		F.buildExportStatement(F.buildExportStatementTypeExport(...args)),
+	equalsExport: (...args: Parameters<typeof F.buildExportStatementEqualsExport>) =>
+		F.buildExportStatement(F.buildExportStatementEqualsExport(...args)),
+	namespaceExport: (...args: Parameters<typeof F.buildExportStatementNamespaceExport>) =>
+		F.buildExportStatement(F.buildExportStatementNamespaceExport(...args))
+});
+
+export const buildString: typeof F.buildString & {
+	double: (...args: Parameters<typeof F.buildStringDouble>) => ReturnType<typeof F.buildString>;
+	single: (...args: Parameters<typeof F.buildStringSingle>) => ReturnType<typeof F.buildString>;
+} = attachProps(F.buildString, {
+	double: (...args: Parameters<typeof F.buildStringDouble>) => F.buildString(F.buildStringDouble(...args)),
+	single: (...args: Parameters<typeof F.buildStringSingle>) => F.buildString(F.buildStringSingle(...args))
+});
+
+export const buildNamespaceExport: typeof F.buildNamespaceExport & {
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNamespaceExport>;
+	string: (...args: Parameters<typeof F.buildString>) => ReturnType<typeof F.buildNamespaceExport>;
+	stringDouble: (...args: Parameters<typeof buildString.double>) => ReturnType<typeof F.buildNamespaceExport>;
+	stringSingle: (...args: Parameters<typeof buildString.single>) => ReturnType<typeof F.buildNamespaceExport>;
+} = attachProps(F.buildNamespaceExport, {
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => F.buildNamespaceExport(F.buildIdentifier(...args)),
+	string: (...args: Parameters<typeof F.buildString>) => F.buildNamespaceExport(F.buildString(...args)),
+	stringDouble: (...args: Parameters<typeof buildString.double>) => F.buildNamespaceExport(buildString.double(...args)),
+	stringSingle: (...args: Parameters<typeof buildString.single>) => F.buildNamespaceExport(buildString.single(...args))
+});
+
+export const buildImportClauseDefaultImport: typeof F.buildImportClauseDefaultImport & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildImportClauseDefaultImport>[0], 'identifier'> & {
+			identifier: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildImportClauseDefaultImport>;
+	type: (
+		config: Omit<Parameters<typeof F.buildImportClauseDefaultImport>[0], 'identifier'>
+	) => ReturnType<typeof F.buildImportClauseDefaultImport>;
+} = attachProps(F.buildImportClauseDefaultImport, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildImportClauseDefaultImport>[0], 'identifier'> & {
+			identifier: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { identifier, ...rest } = config;
+		return F.buildImportClauseDefaultImport({ ...rest, identifier: F.buildIdentifier(identifier) });
+	},
+	type: (config: Omit<Parameters<typeof F.buildImportClauseDefaultImport>[0], 'identifier'>) =>
+		F.buildImportClauseDefaultImport({ ...config, identifier: 'type' })
+});
+
+export const buildImportClause: typeof F.buildImportClause & {
+	namespaceImport: (...args: Parameters<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
+	namedImports: (...args: Parameters<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClause>;
+	defaultImport: (
+		...args: Parameters<typeof F.buildImportClauseDefaultImport>
+	) => ReturnType<typeof F.buildImportClause>;
+	identifier: (
+		...args: Parameters<typeof buildImportClauseDefaultImport.identifier>
+	) => ReturnType<typeof F.buildImportClause>;
+	type: (...args: Parameters<typeof buildImportClauseDefaultImport.type>) => ReturnType<typeof F.buildImportClause>;
+} = attachProps(F.buildImportClause, {
+	namespaceImport: (...args: Parameters<typeof F.buildNamespaceImport>) =>
+		F.buildImportClause(F.buildNamespaceImport(...args)),
+	namedImports: (...args: Parameters<typeof F.buildNamedImports>) => F.buildImportClause(F.buildNamedImports(...args)),
+	defaultImport: (...args: Parameters<typeof F.buildImportClauseDefaultImport>) =>
+		F.buildImportClause(F.buildImportClauseDefaultImport(...args)),
+	identifier: (...args: Parameters<typeof buildImportClauseDefaultImport.identifier>) =>
+		F.buildImportClause(buildImportClauseDefaultImport.identifier(...args)),
+	type: (...args: Parameters<typeof buildImportClauseDefaultImport.type>) =>
+		F.buildImportClause(buildImportClauseDefaultImport.type(...args))
+});
+
+export const buildImportAttribute: typeof F.buildImportAttribute & {
+	with: (
+		config: Omit<Parameters<typeof F.buildImportAttribute>[0], 'attributeKind'>
+	) => ReturnType<typeof F.buildImportAttribute>;
+	assert: (
+		config: Omit<Parameters<typeof F.buildImportAttribute>[0], 'attributeKind'>
+	) => ReturnType<typeof F.buildImportAttribute>;
+} = attachProps(F.buildImportAttribute, {
+	with: (config: Omit<Parameters<typeof F.buildImportAttribute>[0], 'attributeKind'>) =>
+		F.buildImportAttribute({ ...config, attributeKind: TSKindId.With }),
+	assert: (config: Omit<Parameters<typeof F.buildImportAttribute>[0], 'attributeKind'>) =>
+		F.buildImportAttribute({ ...config, attributeKind: TSKindId.Assert })
+});
+
+export const buildVariableDeclaration: typeof F.buildVariableDeclaration & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaration>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildVariableDeclaration>;
+} = attachProps(F.buildVariableDeclaration, {
+	semi: (config: Omit<Parameters<typeof F.buildVariableDeclaration>[0], 'semicolon'>) =>
+		F.buildVariableDeclaration({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildLexicalDeclaration: typeof F.buildLexicalDeclaration & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildLexicalDeclaration>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildLexicalDeclaration>;
+} = attachProps(F.buildLexicalDeclaration, {
+	semi: (config: Omit<Parameters<typeof F.buildLexicalDeclaration>[0], 'semicolon'>) =>
+		F.buildLexicalDeclaration({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildVariableDeclaratorArm1: typeof F.buildVariableDeclaratorArm1 & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaratorArm1>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildVariableDeclaratorArm1>;
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaratorArm1>[0], 'name'> & {
+			name: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => ReturnType<typeof F.buildVariableDeclaratorArm1>;
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaratorArm1>[0], 'name'> & {
+			name: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => ReturnType<typeof F.buildVariableDeclaratorArm1>;
+} = attachProps(F.buildVariableDeclaratorArm1, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaratorArm1>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildVariableDeclaratorArm1({ ...rest, name: F.buildIdentifier(name) });
+	},
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaratorArm1>[0], 'name'> & {
+			name: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildVariableDeclaratorArm1({ ...rest, name: F.buildObjectPattern(...name) });
+	},
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildVariableDeclaratorArm1>[0], 'name'> & {
+			name: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildVariableDeclaratorArm1({ ...rest, name: F.buildArrayPattern(...name) });
+	}
+});
+
+export const buildVariableDeclarator: typeof F.buildVariableDeclarator & {
+	arm1: (...args: Parameters<typeof F.buildVariableDeclaratorArm1>) => ReturnType<typeof F.buildVariableDeclarator>;
+	identifier: (
+		...args: Parameters<typeof buildVariableDeclaratorArm1.identifier>
+	) => ReturnType<typeof F.buildVariableDeclarator>;
+	objectPattern: (
+		...args: Parameters<typeof buildVariableDeclaratorArm1.objectPattern>
+	) => ReturnType<typeof F.buildVariableDeclarator>;
+	arrayPattern: (
+		...args: Parameters<typeof buildVariableDeclaratorArm1.arrayPattern>
+	) => ReturnType<typeof F.buildVariableDeclarator>;
+	arm2: (...args: Parameters<typeof F.buildVariableDeclaratorArm2>) => ReturnType<typeof F.buildVariableDeclarator>;
+} = attachProps(F.buildVariableDeclarator, {
+	arm1: (...args: Parameters<typeof F.buildVariableDeclaratorArm1>) =>
+		F.buildVariableDeclarator(F.buildVariableDeclaratorArm1(...args)),
+	identifier: (...args: Parameters<typeof buildVariableDeclaratorArm1.identifier>) =>
+		F.buildVariableDeclarator(buildVariableDeclaratorArm1.identifier(...args)),
+	objectPattern: (...args: Parameters<typeof buildVariableDeclaratorArm1.objectPattern>) =>
+		F.buildVariableDeclarator(buildVariableDeclaratorArm1.objectPattern(...args)),
+	arrayPattern: (...args: Parameters<typeof buildVariableDeclaratorArm1.arrayPattern>) =>
+		F.buildVariableDeclarator(buildVariableDeclaratorArm1.arrayPattern(...args)),
+	arm2: (...args: Parameters<typeof F.buildVariableDeclaratorArm2>) =>
+		F.buildVariableDeclarator(F.buildVariableDeclaratorArm2(...args))
+});
+
+export const buildDoStatement: typeof F.buildDoStatement & {
+	semi: (config: Omit<Parameters<typeof F.buildDoStatement>[0], 'semicolon'>) => ReturnType<typeof F.buildDoStatement>;
+} = attachProps(F.buildDoStatement, {
+	semi: (config: Omit<Parameters<typeof F.buildDoStatement>[0], 'semicolon'>) =>
+		F.buildDoStatement({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildBreakStatement: typeof F.buildBreakStatement & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildBreakStatement>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildBreakStatement>;
+} = attachProps(F.buildBreakStatement, {
+	semi: (config: Omit<Parameters<typeof F.buildBreakStatement>[0], 'semicolon'>) =>
+		F.buildBreakStatement({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildContinueStatement: typeof F.buildContinueStatement & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildContinueStatement>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildContinueStatement>;
+} = attachProps(F.buildContinueStatement, {
+	semi: (config: Omit<Parameters<typeof F.buildContinueStatement>[0], 'semicolon'>) =>
+		F.buildContinueStatement({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildDebuggerStatement: typeof F.buildDebuggerStatement & {
+	semi: () => ReturnType<typeof F.buildDebuggerStatement>;
+} = attachProps(F.buildDebuggerStatement, {
+	semi: () => F.buildDebuggerStatement(TSKindId.Semi)
+});
+
+export const buildSwitchCase: typeof F.buildSwitchCase & {
+	sequenceExpression: (
+		config: Omit<Parameters<typeof F.buildSwitchCase>[0], 'value'> & {
+			value: Parameters<typeof F.buildSequenceExpression>;
+		}
+	) => ReturnType<typeof F.buildSwitchCase>;
+} = attachProps(F.buildSwitchCase, {
+	sequenceExpression: (
+		config: Omit<Parameters<typeof F.buildSwitchCase>[0], 'value'> & {
+			value: Parameters<typeof F.buildSequenceExpression>;
+		}
+	) => {
+		const { value, ...rest } = config;
+		return F.buildSwitchCase({ ...rest, value: F.buildSequenceExpression(...value) });
+	}
+});
+
+export const buildParenthesizedExpression: typeof F.buildParenthesizedExpression & {
+	typed: (
+		...args: Parameters<typeof F.buildParenthesizedExpressionTyped>
+	) => ReturnType<typeof F.buildParenthesizedExpression>;
+	sequenceExpression: (
+		...args: Parameters<typeof F.buildSequenceExpression>
+	) => ReturnType<typeof F.buildParenthesizedExpression>;
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildParenthesizedExpression>;
+	decoratorMemberExpression: (
+		...args: Parameters<typeof F.buildDecoratorMemberExpression>
+	) => ReturnType<typeof F.buildParenthesizedExpression>;
+	decoratorCallExpression: (
+		...args: Parameters<typeof F.buildDecoratorCallExpression>
+	) => ReturnType<typeof F.buildParenthesizedExpression>;
+} = attachProps(F.buildParenthesizedExpression, {
+	typed: (...args: Parameters<typeof F.buildParenthesizedExpressionTyped>) =>
+		F.buildParenthesizedExpression(F.buildParenthesizedExpressionTyped(...args)),
+	sequenceExpression: (...args: Parameters<typeof F.buildSequenceExpression>) =>
+		F.buildParenthesizedExpression(F.buildSequenceExpression(...args)),
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) =>
+		F.buildParenthesizedExpression(F.buildIdentifier(...args)),
+	decoratorMemberExpression: (...args: Parameters<typeof F.buildDecoratorMemberExpression>) =>
+		F.buildParenthesizedExpression(F.buildDecoratorMemberExpression(...args)),
+	decoratorCallExpression: (...args: Parameters<typeof F.buildDecoratorCallExpression>) =>
+		F.buildParenthesizedExpression(F.buildDecoratorCallExpression(...args))
+});
+
+export const buildObjectAssignmentPattern: typeof F.buildObjectAssignmentPattern & {
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildObjectAssignmentPattern>[0], 'left'> & {
+			left: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => ReturnType<typeof F.buildObjectAssignmentPattern>;
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildObjectAssignmentPattern>[0], 'left'> & {
+			left: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => ReturnType<typeof F.buildObjectAssignmentPattern>;
+} = attachProps(F.buildObjectAssignmentPattern, {
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildObjectAssignmentPattern>[0], 'left'> & {
+			left: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildObjectAssignmentPattern({ ...rest, left: F.buildObjectPattern(...left) });
+	},
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildObjectAssignmentPattern>[0], 'left'> & {
+			left: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildObjectAssignmentPattern({ ...rest, left: F.buildArrayPattern(...left) });
+	}
+});
+
+export const buildNestedIdentifier: typeof F.buildNestedIdentifier & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildNestedIdentifier>[0], 'object'> & {
+			object: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildNestedIdentifier>;
+} = attachProps(F.buildNestedIdentifier, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildNestedIdentifier>[0], 'object'> & {
+			object: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { object, ...rest } = config;
+		return F.buildNestedIdentifier({ ...rest, object: F.buildIdentifier(object) });
+	}
+});
+
+export const buildClassHeritage: typeof F.buildClassHeritage & {
+	extendsClause: (
+		...args: Parameters<typeof F.buildClassHeritageExtendsClause>
+	) => ReturnType<typeof F.buildClassHeritage>;
+	implementsClause: (...args: Parameters<typeof F.buildImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
+} = attachProps(F.buildClassHeritage, {
+	extendsClause: (...args: Parameters<typeof F.buildClassHeritageExtendsClause>) =>
+		F.buildClassHeritage(F.buildClassHeritageExtendsClause(...args)),
+	implementsClause: (...args: Parameters<typeof F.buildImplementsClause>) =>
+		F.buildClassHeritage(F.buildImplementsClause(...args))
+});
+
+export const buildFunctionExpression: typeof F.buildFunctionExpression & {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionExpression>;
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionExpression>;
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionExpression>;
+} = attachProps(F.buildFunctionExpression, {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionExpression({ ...rest, returnType: F.buildTypeAnnotation(returnType) });
+	},
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionExpression({ ...rest, returnType: F.buildAssertsAnnotation(returnType) });
+	},
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionExpression({ ...rest, returnType: F.buildTypePredicateAnnotation(returnType) });
+	}
+});
+
+export const buildFunctionDeclaration: typeof F.buildFunctionDeclaration & {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionDeclaration>;
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionDeclaration>;
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionDeclaration>;
+} = attachProps(F.buildFunctionDeclaration, {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionDeclaration({ ...rest, returnType: F.buildTypeAnnotation(returnType) });
+	},
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionDeclaration({ ...rest, returnType: F.buildAssertsAnnotation(returnType) });
+	},
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionDeclaration({ ...rest, returnType: F.buildTypePredicateAnnotation(returnType) });
+	}
+});
+
+export const buildGeneratorFunction: typeof F.buildGeneratorFunction & {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildGeneratorFunction>;
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildGeneratorFunction>;
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildGeneratorFunction>;
+} = attachProps(F.buildGeneratorFunction, {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildGeneratorFunction({ ...rest, returnType: F.buildTypeAnnotation(returnType) });
+	},
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildGeneratorFunction({ ...rest, returnType: F.buildAssertsAnnotation(returnType) });
+	},
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildGeneratorFunction({ ...rest, returnType: F.buildTypePredicateAnnotation(returnType) });
+	}
+});
+
+export const buildGeneratorFunctionDeclaration: typeof F.buildGeneratorFunctionDeclaration & {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
+} = attachProps(F.buildGeneratorFunctionDeclaration, {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildGeneratorFunctionDeclaration({ ...rest, returnType: F.buildTypeAnnotation(returnType) });
+	},
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildGeneratorFunctionDeclaration({ ...rest, returnType: F.buildAssertsAnnotation(returnType) });
+	},
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildGeneratorFunctionDeclaration({ ...rest, returnType: F.buildTypePredicateAnnotation(returnType) });
+	}
+});
+
+export const buildCallExpressionCall: typeof F.buildCallExpressionCall & {
+	import: (
+		config: Omit<Parameters<typeof F.buildCallExpressionCall>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => ReturnType<typeof F.buildCallExpressionCall>;
+} = attachProps(F.buildCallExpressionCall, {
+	import: (
+		config: Omit<Parameters<typeof F.buildCallExpressionCall>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildCallExpressionCall({ ...rest, function: F.buildImport(...function_) });
+	}
+});
+
+export const buildCallExpression: typeof F.buildCallExpression & {
+	call: (...args: Parameters<typeof F.buildCallExpressionCall>) => ReturnType<typeof F.buildCallExpression>;
+	import: (...args: Parameters<typeof buildCallExpressionCall.import>) => ReturnType<typeof F.buildCallExpression>;
+	templateCall: (
+		...args: Parameters<typeof F.buildCallExpressionTemplateCall>
+	) => ReturnType<typeof F.buildCallExpression>;
+	member: (...args: Parameters<typeof F.buildCallExpressionMember>) => ReturnType<typeof F.buildCallExpression>;
+} = attachProps(F.buildCallExpression, {
+	call: (...args: Parameters<typeof F.buildCallExpressionCall>) =>
+		F.buildCallExpression(F.buildCallExpressionCall(...args)),
+	import: (...args: Parameters<typeof buildCallExpressionCall.import>) =>
+		F.buildCallExpression(buildCallExpressionCall.import(...args)),
+	templateCall: (...args: Parameters<typeof F.buildCallExpressionTemplateCall>) =>
+		F.buildCallExpression(F.buildCallExpressionTemplateCall(...args)),
+	member: (...args: Parameters<typeof F.buildCallExpressionMember>) =>
+		F.buildCallExpression(F.buildCallExpressionMember(...args))
+});
+
+export const buildAssignmentExpression: typeof F.buildAssignmentExpression & {
+	parenthesizedExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildParenthesizedExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAssignmentExpression>;
+	parenthesizedExpressionTyped: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.typed>[0];
+		}
+	) => ReturnType<typeof F.buildAssignmentExpression>;
+	sequenceExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.sequenceExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAssignmentExpression>;
+	identifier: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.identifier>[0];
+		}
+	) => ReturnType<typeof F.buildAssignmentExpression>;
+	decoratorMemberExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAssignmentExpression>;
+	decoratorCallExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAssignmentExpression>;
+} = attachProps(F.buildAssignmentExpression, {
+	parenthesizedExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildParenthesizedExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAssignmentExpression({ ...rest, left: F.buildParenthesizedExpression(left) });
+	},
+	parenthesizedExpressionTyped: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.typed>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAssignmentExpression({ ...rest, left: buildParenthesizedExpression.typed(left) });
+	},
+	sequenceExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.sequenceExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAssignmentExpression({ ...rest, left: buildParenthesizedExpression.sequenceExpression(left) });
+	},
+	identifier: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.identifier>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAssignmentExpression({ ...rest, left: buildParenthesizedExpression.identifier(left) });
+	},
+	decoratorMemberExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAssignmentExpression({ ...rest, left: buildParenthesizedExpression.decoratorMemberExpression(left) });
+	},
+	decoratorCallExpression: (
+		config: Omit<Parameters<typeof F.buildAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAssignmentExpression({ ...rest, left: buildParenthesizedExpression.decoratorCallExpression(left) });
+	}
+});
+
+export const buildAugmentedAssignmentExpression: typeof F.buildAugmentedAssignmentExpression & {
+	memberExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> &
+			Parameters<typeof F.buildMemberExpression>[0]
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	subscriptExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> &
+			Parameters<typeof F.buildSubscriptExpression>[0]
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	reservedIdentifier: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildReservedIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	identifier: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	parenthesizedExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildParenthesizedExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	parenthesizedExpressionTyped: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.typed>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	sequenceExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.sequenceExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	decoratorMemberExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	decoratorCallExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+	nonNullExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildNonNullExpression>[0];
+		}
+	) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+} = attachProps(F.buildAugmentedAssignmentExpression, {
+	memberExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> &
+			Parameters<typeof F.buildMemberExpression>[0]
+	) => {
+		const { object, separator, property, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({
+			...rest,
+			left: F.buildMemberExpression({ object, separator, property })
+		});
+	},
+	subscriptExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> &
+			Parameters<typeof F.buildSubscriptExpression>[0]
+	) => {
+		const { object, optionalChain, index, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({
+			...rest,
+			left: F.buildSubscriptExpression({ object, optionalChain, index })
+		});
+	},
+	reservedIdentifier: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildReservedIdentifier>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({ ...rest, left: F.buildReservedIdentifier(left) });
+	},
+	identifier: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({ ...rest, left: F.buildIdentifier(left) });
+	},
+	parenthesizedExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildParenthesizedExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({ ...rest, left: F.buildParenthesizedExpression(left) });
+	},
+	parenthesizedExpressionTyped: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.typed>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({ ...rest, left: buildParenthesizedExpression.typed(left) });
+	},
+	sequenceExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.sequenceExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({
+			...rest,
+			left: buildParenthesizedExpression.sequenceExpression(left)
+		});
+	},
+	decoratorMemberExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({
+			...rest,
+			left: buildParenthesizedExpression.decoratorMemberExpression(left)
+		});
+	},
+	decoratorCallExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({
+			...rest,
+			left: buildParenthesizedExpression.decoratorCallExpression(left)
+		});
+	},
+	nonNullExpression: (
+		config: Omit<Parameters<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+			left: Parameters<typeof F.buildNonNullExpression>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildAugmentedAssignmentExpression({ ...rest, left: F.buildNonNullExpression(left) });
+	}
+});
+
+export const buildBinaryExpression: typeof F.buildBinaryExpression & {
+	ampAmp: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	pipePipe: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	gtGt: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	gtGtGt: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	ltLt: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	amp: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	caret: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	pipe: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	plus: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	dash: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	star: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	slash: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	percent: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	starStar: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	lt: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	ltEq: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	eqEq: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	eqEqEq: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	bangEq: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	bangEqEq: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	gtEq: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	gt: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	qmarkQmark: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	instanceof: (
+		config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>
+	) => ReturnType<typeof F.buildBinaryExpression>;
+} = attachProps(F.buildBinaryExpression, {
+	ampAmp: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.AmpAmp }),
+	pipePipe: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.PipePipe }),
+	gtGt: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.GtGt }),
+	gtGtGt: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.GtGtGt }),
+	ltLt: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.LtLt }),
+	amp: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Amp }),
+	caret: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Caret }),
+	pipe: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Pipe }),
+	plus: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Plus }),
+	dash: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Dash }),
+	star: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Star }),
+	slash: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Slash }),
+	percent: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Percent }),
+	starStar: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.StarStar }),
+	lt: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Lt }),
+	ltEq: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.LtEq }),
+	eqEq: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.EqEq }),
+	eqEqEq: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.EqEqEq }),
+	bangEq: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.BangEq }),
+	bangEqEq: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.BangEqEq }),
+	gtEq: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.GtEq }),
+	gt: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Gt }),
+	qmarkQmark: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.QmarkQmark }),
+	instanceof: (config: Omit<NonNullable<Parameters<typeof F.buildBinaryExpression>[0]>, 'operator'>) =>
+		F.buildBinaryExpression({ ...config, operator: TSKindId.Instanceof })
+});
+
+export const buildUpdateExpression: typeof F.buildUpdateExpression & {
+	postfix: (...args: Parameters<typeof F.buildUpdateExpressionPostfix>) => ReturnType<typeof F.buildUpdateExpression>;
+	prefix: (...args: Parameters<typeof F.buildUpdateExpressionPrefix>) => ReturnType<typeof F.buildUpdateExpression>;
+} = attachProps(F.buildUpdateExpression, {
+	postfix: (...args: Parameters<typeof F.buildUpdateExpressionPostfix>) =>
+		F.buildUpdateExpression(F.buildUpdateExpressionPostfix(...args)),
+	prefix: (...args: Parameters<typeof F.buildUpdateExpressionPrefix>) =>
+		F.buildUpdateExpression(F.buildUpdateExpressionPrefix(...args))
+});
+
+export const buildTemplateSubstitution: typeof F.buildTemplateSubstitution & {
+	sequenceExpression: (
+		...args: Parameters<typeof F.buildSequenceExpression>
+	) => ReturnType<typeof F.buildTemplateSubstitution>;
+} = attachProps(F.buildTemplateSubstitution, {
+	sequenceExpression: (...args: Parameters<typeof F.buildSequenceExpression>) =>
+		F.buildTemplateSubstitution(F.buildSequenceExpression(...args))
+});
+
+export const buildDecorator: typeof F.buildDecorator & {
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildDecorator>;
+	memberExpression: (
+		...args: Parameters<typeof F.buildDecoratorMemberExpression>
+	) => ReturnType<typeof F.buildDecorator>;
+	callExpression: (...args: Parameters<typeof F.buildDecoratorCallExpression>) => ReturnType<typeof F.buildDecorator>;
+	parenthesizedExpression: (
+		...args: Parameters<typeof F.buildDecoratorParenthesizedExpression>
+	) => ReturnType<typeof F.buildDecorator>;
+} = attachProps(F.buildDecorator, {
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => F.buildDecorator(F.buildIdentifier(...args)),
+	memberExpression: (...args: Parameters<typeof F.buildDecoratorMemberExpression>) =>
+		F.buildDecorator(F.buildDecoratorMemberExpression(...args)),
+	callExpression: (...args: Parameters<typeof F.buildDecoratorCallExpression>) =>
+		F.buildDecorator(F.buildDecoratorCallExpression(...args)),
+	parenthesizedExpression: (...args: Parameters<typeof F.buildDecoratorParenthesizedExpression>) =>
+		F.buildDecorator(F.buildDecoratorParenthesizedExpression(...args))
+});
+
+export const buildDecoratorMemberExpression: typeof F.buildDecoratorMemberExpression & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildDecoratorMemberExpression>[0], 'object'> & {
+			object: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildDecoratorMemberExpression>;
+} = attachProps(F.buildDecoratorMemberExpression, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildDecoratorMemberExpression>[0], 'object'> & {
+			object: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { object, ...rest } = config;
+		return F.buildDecoratorMemberExpression({ ...rest, object: F.buildIdentifier(object) });
+	}
+});
+
+export const buildDecoratorCallExpression: typeof F.buildDecoratorCallExpression & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildDecoratorCallExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildDecoratorCallExpression>;
+	decoratorMemberExpression: (
+		config: Omit<Parameters<typeof F.buildDecoratorCallExpression>[0], 'function'> &
+			Parameters<typeof F.buildDecoratorMemberExpression>[0]
+	) => ReturnType<typeof F.buildDecoratorCallExpression>;
+} = attachProps(F.buildDecoratorCallExpression, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildDecoratorCallExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildDecoratorCallExpression({ ...rest, function: F.buildIdentifier(function_) });
+	},
+	decoratorMemberExpression: (
+		config: Omit<Parameters<typeof F.buildDecoratorCallExpression>[0], 'function'> &
+			Parameters<typeof F.buildDecoratorMemberExpression>[0]
+	) => {
+		const { object, property, ...rest } = config;
+		return F.buildDecoratorCallExpression({
+			...rest,
+			function: F.buildDecoratorMemberExpression({ object, property })
+		});
+	}
+});
+
+export const buildRestPattern: typeof F.buildRestPattern & {
+	memberExpression: (...args: Parameters<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
+	subscriptExpression: (
+		...args: Parameters<typeof F.buildSubscriptExpression>
+	) => ReturnType<typeof F.buildRestPattern>;
+	undefined: (...args: Parameters<typeof F.buildUndefined>) => ReturnType<typeof F.buildRestPattern>;
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildRestPattern>;
+	reservedIdentifier: (...args: Parameters<typeof F.buildReservedIdentifier>) => ReturnType<typeof F.buildRestPattern>;
+	objectPattern: (...args: Parameters<typeof F.buildObjectPattern>) => ReturnType<typeof F.buildRestPattern>;
+	arrayPattern: (...args: Parameters<typeof F.buildArrayPattern>) => ReturnType<typeof F.buildRestPattern>;
+	nonNullExpression: (...args: Parameters<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
+} = attachProps(F.buildRestPattern, {
+	memberExpression: (...args: Parameters<typeof F.buildMemberExpression>) =>
+		F.buildRestPattern(F.buildMemberExpression(...args)),
+	subscriptExpression: (...args: Parameters<typeof F.buildSubscriptExpression>) =>
+		F.buildRestPattern(F.buildSubscriptExpression(...args)),
+	undefined: (...args: Parameters<typeof F.buildUndefined>) => F.buildRestPattern(F.buildUndefined(...args)),
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => F.buildRestPattern(F.buildIdentifier(...args)),
+	reservedIdentifier: (...args: Parameters<typeof F.buildReservedIdentifier>) =>
+		F.buildRestPattern(F.buildReservedIdentifier(...args)),
+	objectPattern: (...args: Parameters<typeof F.buildObjectPattern>) =>
+		F.buildRestPattern(F.buildObjectPattern(...args)),
+	arrayPattern: (...args: Parameters<typeof F.buildArrayPattern>) => F.buildRestPattern(F.buildArrayPattern(...args)),
+	nonNullExpression: (...args: Parameters<typeof F.buildNonNullExpression>) =>
+		F.buildRestPattern(F.buildNonNullExpression(...args))
+});
+
+export const buildPair: typeof F.buildPair & {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & {
+			key: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildPair>;
+	string: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof F.buildString>[0] }
+	) => ReturnType<typeof F.buildPair>;
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof buildString.double>[0] }
+	) => ReturnType<typeof F.buildPair>;
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof buildString.single>[0] }
+	) => ReturnType<typeof F.buildPair>;
+	number: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof F.buildNumber>[0] }
+	) => ReturnType<typeof F.buildPair>;
+	computedPropertyName: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof F.buildComputedPropertyName>[0] }
+	) => ReturnType<typeof F.buildPair>;
+} = attachProps(F.buildPair, {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & {
+			key: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => {
+		const { key, ...rest } = config;
+		return F.buildPair({ ...rest, key: F.buildPrivatePropertyIdentifier(key) });
+	},
+	string: (config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof F.buildString>[0] }) => {
+		const { key, ...rest } = config;
+		return F.buildPair({ ...rest, key: F.buildString(key) });
+	},
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof buildString.double>[0] }
+	) => {
+		const { key, ...rest } = config;
+		return F.buildPair({ ...rest, key: buildString.double(key) });
+	},
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof buildString.single>[0] }
+	) => {
+		const { key, ...rest } = config;
+		return F.buildPair({ ...rest, key: buildString.single(key) });
+	},
+	number: (config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof F.buildNumber>[0] }) => {
+		const { key, ...rest } = config;
+		return F.buildPair({ ...rest, key: F.buildNumber(key) });
+	},
+	computedPropertyName: (
+		config: Omit<Parameters<typeof F.buildPair>[0], 'key'> & { key: Parameters<typeof F.buildComputedPropertyName>[0] }
+	) => {
+		const { key, ...rest } = config;
+		return F.buildPair({ ...rest, key: F.buildComputedPropertyName(key) });
+	}
+});
+
+export const buildDecoratorParenthesizedExpression: typeof F.buildDecoratorParenthesizedExpression & {
+	identifier: (
+		...args: Parameters<typeof F.buildIdentifier>
+	) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
+	decoratorMemberExpression: (
+		...args: Parameters<typeof F.buildDecoratorMemberExpression>
+	) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
+	decoratorCallExpression: (
+		...args: Parameters<typeof F.buildDecoratorCallExpression>
+	) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
+} = attachProps(F.buildDecoratorParenthesizedExpression, {
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) =>
+		F.buildDecoratorParenthesizedExpression(F.buildIdentifier(...args)),
+	decoratorMemberExpression: (...args: Parameters<typeof F.buildDecoratorMemberExpression>) =>
+		F.buildDecoratorParenthesizedExpression(F.buildDecoratorMemberExpression(...args)),
+	decoratorCallExpression: (...args: Parameters<typeof F.buildDecoratorCallExpression>) =>
+		F.buildDecoratorParenthesizedExpression(F.buildDecoratorCallExpression(...args))
+});
+
+export const buildAsExpression: typeof F.buildAsExpression & {
+	const: (
+		config: Omit<Parameters<typeof F.buildAsExpression>[0], 'typeAnnotation'>
+	) => ReturnType<typeof F.buildAsExpression>;
+} = attachProps(F.buildAsExpression, {
+	const: (config: Omit<Parameters<typeof F.buildAsExpression>[0], 'typeAnnotation'>) =>
+		F.buildAsExpression({ ...config, typeAnnotation: 'const' })
+});
+
+export const buildAmbientDeclarationModule: typeof F.buildAmbientDeclarationModule & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildAmbientDeclarationModule>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildAmbientDeclarationModule>;
+} = attachProps(F.buildAmbientDeclarationModule, {
+	semi: (config: Omit<Parameters<typeof F.buildAmbientDeclarationModule>[0], 'semicolon'>) =>
+		F.buildAmbientDeclarationModule({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildAmbientDeclaration: typeof F.buildAmbientDeclaration & {
+	global: (...args: Parameters<typeof F.buildAmbientDeclarationGlobal>) => ReturnType<typeof F.buildAmbientDeclaration>;
+	module: (...args: Parameters<typeof F.buildAmbientDeclarationModule>) => ReturnType<typeof F.buildAmbientDeclaration>;
+	semi: (
+		...args: Parameters<typeof buildAmbientDeclarationModule.semi>
+	) => ReturnType<typeof F.buildAmbientDeclaration>;
+} = attachProps(F.buildAmbientDeclaration, {
+	global: (...args: Parameters<typeof F.buildAmbientDeclarationGlobal>) =>
+		F.buildAmbientDeclaration(F.buildAmbientDeclarationGlobal(...args)),
+	module: (...args: Parameters<typeof F.buildAmbientDeclarationModule>) =>
+		F.buildAmbientDeclaration(F.buildAmbientDeclarationModule(...args)),
+	semi: (...args: Parameters<typeof buildAmbientDeclarationModule.semi>) =>
+		F.buildAmbientDeclaration(buildAmbientDeclarationModule.semi(...args))
+});
+
+export const buildModule: typeof F.buildModule & {
+	string: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => ReturnType<typeof F.buildModule>;
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof buildString.double>[0] }
+	) => ReturnType<typeof F.buildModule>;
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof buildString.single>[0] }
+	) => ReturnType<typeof F.buildModule>;
+	identifier: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof F.buildIdentifier>[0] }
+	) => ReturnType<typeof F.buildModule>;
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & Parameters<typeof F.buildNestedIdentifier>[0]
+	) => ReturnType<typeof F.buildModule>;
+} = attachProps(F.buildModule, {
+	string: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildModule({ ...rest, name: F.buildString(name) });
+	},
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof buildString.double>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildModule({ ...rest, name: buildString.double(name) });
+	},
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof buildString.single>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildModule({ ...rest, name: buildString.single(name) });
+	},
+	identifier: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & { name: Parameters<typeof F.buildIdentifier>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildModule({ ...rest, name: F.buildIdentifier(name) });
+	},
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildModule>[0], 'name'> & Parameters<typeof F.buildNestedIdentifier>[0]
+	) => {
+		const { object, property, ...rest } = config;
+		return F.buildModule({ ...rest, name: F.buildNestedIdentifier({ object, property }) });
+	}
+});
+
+export const buildInternalModule: typeof F.buildInternalModule & {
+	string: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => ReturnType<typeof F.buildInternalModule>;
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & {
+			name: Parameters<typeof buildString.double>[0];
+		}
+	) => ReturnType<typeof F.buildInternalModule>;
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & {
+			name: Parameters<typeof buildString.single>[0];
+		}
+	) => ReturnType<typeof F.buildInternalModule>;
+	identifier: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildInternalModule>;
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & Parameters<typeof F.buildNestedIdentifier>[0]
+	) => ReturnType<typeof F.buildInternalModule>;
+} = attachProps(F.buildInternalModule, {
+	string: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildInternalModule({ ...rest, name: F.buildString(name) });
+	},
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & {
+			name: Parameters<typeof buildString.double>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildInternalModule({ ...rest, name: buildString.double(name) });
+	},
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & {
+			name: Parameters<typeof buildString.single>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildInternalModule({ ...rest, name: buildString.single(name) });
+	},
+	identifier: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildInternalModule({ ...rest, name: F.buildIdentifier(name) });
+	},
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildInternalModule>[0], 'name'> & Parameters<typeof F.buildNestedIdentifier>[0]
+	) => {
+		const { object, property, ...rest } = config;
+		return F.buildInternalModule({ ...rest, name: F.buildNestedIdentifier({ object, property }) });
+	}
+});
+
+export const buildNestedTypeIdentifier: typeof F.buildNestedTypeIdentifier & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildNestedTypeIdentifier>[0], 'module'> & {
+			module: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildNestedTypeIdentifier>;
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildNestedTypeIdentifier>[0], 'module'> &
+			Parameters<typeof F.buildNestedIdentifier>[0]
+	) => ReturnType<typeof F.buildNestedTypeIdentifier>;
+} = attachProps(F.buildNestedTypeIdentifier, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildNestedTypeIdentifier>[0], 'module'> & {
+			module: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { module, ...rest } = config;
+		return F.buildNestedTypeIdentifier({ ...rest, module: F.buildIdentifier(module) });
+	},
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildNestedTypeIdentifier>[0], 'module'> &
+			Parameters<typeof F.buildNestedIdentifier>[0]
+	) => {
+		const { object, property, ...rest } = config;
+		return F.buildNestedTypeIdentifier({ ...rest, module: F.buildNestedIdentifier({ object, property }) });
+	}
+});
+
+export const buildEnumAssignment: typeof F.buildEnumAssignment & {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildEnumAssignment>;
+	string: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => ReturnType<typeof F.buildEnumAssignment>;
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof buildString.double>[0];
+		}
+	) => ReturnType<typeof F.buildEnumAssignment>;
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof buildString.single>[0];
+		}
+	) => ReturnType<typeof F.buildEnumAssignment>;
+	number: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & { name: Parameters<typeof F.buildNumber>[0] }
+	) => ReturnType<typeof F.buildEnumAssignment>;
+	computedPropertyName: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof F.buildComputedPropertyName>[0];
+		}
+	) => ReturnType<typeof F.buildEnumAssignment>;
+} = attachProps(F.buildEnumAssignment, {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildEnumAssignment({ ...rest, name: F.buildPrivatePropertyIdentifier(name) });
+	},
+	string: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildEnumAssignment({ ...rest, name: F.buildString(name) });
+	},
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof buildString.double>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildEnumAssignment({ ...rest, name: buildString.double(name) });
+	},
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof buildString.single>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildEnumAssignment({ ...rest, name: buildString.single(name) });
+	},
+	number: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & { name: Parameters<typeof F.buildNumber>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildEnumAssignment({ ...rest, name: F.buildNumber(name) });
+	},
+	computedPropertyName: (
+		config: Omit<Parameters<typeof F.buildEnumAssignment>[0], 'name'> & {
+			name: Parameters<typeof F.buildComputedPropertyName>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildEnumAssignment({ ...rest, name: F.buildComputedPropertyName(name) });
+	}
+});
+
+export const buildTypeAliasDeclaration: typeof F.buildTypeAliasDeclaration & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildTypeAliasDeclaration>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildTypeAliasDeclaration>;
+} = attachProps(F.buildTypeAliasDeclaration, {
+	semi: (config: Omit<Parameters<typeof F.buildTypeAliasDeclaration>[0], 'semicolon'>) =>
+		F.buildTypeAliasDeclaration({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildRequiredParameter: typeof F.buildRequiredParameter & {
+	this: (
+		config: Omit<Parameters<typeof F.buildRequiredParameter>[0], 'pattern'> & {
+			pattern: Parameters<typeof F.buildThis>;
+		}
+	) => ReturnType<typeof F.buildRequiredParameter>;
+} = attachProps(F.buildRequiredParameter, {
+	this: (
+		config: Omit<Parameters<typeof F.buildRequiredParameter>[0], 'pattern'> & {
+			pattern: Parameters<typeof F.buildThis>;
+		}
+	) => {
+		const { pattern, ...rest } = config;
+		return F.buildRequiredParameter({ ...rest, pattern: F.buildThis(...pattern) });
+	}
+});
+
+export const buildOptionalParameter: typeof F.buildOptionalParameter & {
+	this: (
+		config: Omit<Parameters<typeof F.buildOptionalParameter>[0], 'pattern'> & {
+			pattern: Parameters<typeof F.buildThis>;
+		}
+	) => ReturnType<typeof F.buildOptionalParameter>;
+} = attachProps(F.buildOptionalParameter, {
+	this: (
+		config: Omit<Parameters<typeof F.buildOptionalParameter>[0], 'pattern'> & {
+			pattern: Parameters<typeof F.buildThis>;
+		}
+	) => {
+		const { pattern, ...rest } = config;
+		return F.buildOptionalParameter({ ...rest, pattern: F.buildThis(...pattern) });
+	}
+});
+
+export const buildTypeQueryCallExpressionInTypeAnnotation: typeof F.buildTypeQueryCallExpressionInTypeAnnotation & {
+	import: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => ReturnType<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>;
+	typeQueryMemberExpressionInTypeAnnotation: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> &
+			Parameters<typeof F.buildTypeQueryMemberExpressionInTypeAnnotation>[0]
+	) => ReturnType<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>;
+} = attachProps(F.buildTypeQueryCallExpressionInTypeAnnotation, {
+	import: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildTypeQueryCallExpressionInTypeAnnotation({ ...rest, function: F.buildImport(...function_) });
+	},
+	typeQueryMemberExpressionInTypeAnnotation: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> &
+			Parameters<typeof F.buildTypeQueryMemberExpressionInTypeAnnotation>[0]
+	) => {
+		const { object, property, ...rest } = config;
+		return F.buildTypeQueryCallExpressionInTypeAnnotation({
+			...rest,
+			function: F.buildTypeQueryMemberExpressionInTypeAnnotation({ object, property })
+		});
+	}
+});
+
+export const buildTypePredicate: typeof F.buildTypePredicate & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTypePredicate>[0], 'name'> & { name: Parameters<typeof F.buildIdentifier>[0] }
+	) => ReturnType<typeof F.buildTypePredicate>;
+	this: (
+		config: Omit<Parameters<typeof F.buildTypePredicate>[0], 'name'> & { name: Parameters<typeof F.buildThis> }
+	) => ReturnType<typeof F.buildTypePredicate>;
+	predefinedType: (
+		config: Omit<Parameters<typeof F.buildTypePredicate>[0], 'name'> & {
+			name: Parameters<typeof F.buildPredefinedType>[0];
+		}
+	) => ReturnType<typeof F.buildTypePredicate>;
+} = attachProps(F.buildTypePredicate, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTypePredicate>[0], 'name'> & { name: Parameters<typeof F.buildIdentifier>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTypePredicate({ ...rest, name: F.buildIdentifier(name) });
+	},
+	this: (
+		config: Omit<Parameters<typeof F.buildTypePredicate>[0], 'name'> & { name: Parameters<typeof F.buildThis> }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTypePredicate({ ...rest, name: F.buildThis(...name) });
+	},
+	predefinedType: (
+		config: Omit<Parameters<typeof F.buildTypePredicate>[0], 'name'> & {
+			name: Parameters<typeof F.buildPredefinedType>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTypePredicate({ ...rest, name: F.buildPredefinedType(name) });
+	}
+});
+
+export const buildAsserts: typeof F.buildAsserts & {
+	typePredicate: (...args: Parameters<typeof F.buildTypePredicate>) => ReturnType<typeof F.buildAsserts>;
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildAsserts>;
+	this: (...args: Parameters<typeof F.buildThis>) => ReturnType<typeof F.buildAsserts>;
+	predefinedType: (...args: Parameters<typeof buildTypePredicate.predefinedType>) => ReturnType<typeof F.buildAsserts>;
+} = attachProps(F.buildAsserts, {
+	typePredicate: (...args: Parameters<typeof F.buildTypePredicate>) => F.buildAsserts(F.buildTypePredicate(...args)),
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => F.buildAsserts(F.buildIdentifier(...args)),
+	this: (...args: Parameters<typeof F.buildThis>) => F.buildAsserts(F.buildThis(...args)),
+	predefinedType: (...args: Parameters<typeof buildTypePredicate.predefinedType>) =>
+		F.buildAsserts(buildTypePredicate.predefinedType(...args))
+});
+
+export const buildTupleParameter: typeof F.buildTupleParameter & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	restPattern: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof F.buildRestPattern>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	memberExpression: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.memberExpression>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	subscriptExpression: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.subscriptExpression>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	undefined: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.undefined>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	reservedIdentifier: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.reservedIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.objectPattern>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.arrayPattern>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+	nonNullExpression: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.nonNullExpression>[0];
+		}
+	) => ReturnType<typeof F.buildTupleParameter>;
+} = attachProps(F.buildTupleParameter, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: F.buildIdentifier(name) });
+	},
+	restPattern: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof F.buildRestPattern>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: F.buildRestPattern(name) });
+	},
+	memberExpression: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.memberExpression>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.memberExpression(name) });
+	},
+	subscriptExpression: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.subscriptExpression>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.subscriptExpression(name) });
+	},
+	undefined: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.undefined>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.undefined(name) });
+	},
+	reservedIdentifier: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.reservedIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.reservedIdentifier(name) });
+	},
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.objectPattern>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.objectPattern(name) });
+	},
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.arrayPattern>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.arrayPattern(name) });
+	},
+	nonNullExpression: (
+		config: Omit<Parameters<typeof F.buildTupleParameter>[0], 'name'> & {
+			name: Parameters<typeof buildRestPattern.nonNullExpression>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildTupleParameter({ ...rest, name: buildRestPattern.nonNullExpression(name) });
+	}
+});
+
+export const buildTemplateType: typeof F.buildTemplateType & {
+	inferType: (...args: Parameters<typeof F.buildInferType>) => ReturnType<typeof F.buildTemplateType>;
+} = attachProps(F.buildTemplateType, {
+	inferType: (...args: Parameters<typeof F.buildInferType>) => F.buildTemplateType(F.buildInferType(...args))
+});
+
+export const buildGenericType: typeof F.buildGenericType & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildGenericType>[0], 'name'> & { name: Parameters<typeof F.buildIdentifier>[0] }
+	) => ReturnType<typeof F.buildGenericType>;
+	nestedTypeIdentifier: (
+		config: Omit<Parameters<typeof F.buildGenericType>[0], 'name'> & Parameters<typeof F.buildNestedTypeIdentifier>[0]
+	) => ReturnType<typeof F.buildGenericType>;
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildGenericType>[0], 'name'> &
+			Parameters<typeof buildNestedTypeIdentifier.nestedIdentifier>[0]
+	) => ReturnType<typeof F.buildGenericType>;
+} = attachProps(F.buildGenericType, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildGenericType>[0], 'name'> & { name: Parameters<typeof F.buildIdentifier>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildGenericType({ ...rest, name: F.buildIdentifier(name) });
+	},
+	nestedTypeIdentifier: (
+		config: Omit<Parameters<typeof F.buildGenericType>[0], 'name'> & Parameters<typeof F.buildNestedTypeIdentifier>[0]
+	) => {
+		const { module, name, ...rest } = config;
+		return F.buildGenericType({ ...rest, name: F.buildNestedTypeIdentifier({ module, name }) });
+	},
+	nestedIdentifier: (
+		config: Omit<Parameters<typeof F.buildGenericType>[0], 'name'> &
+			Parameters<typeof buildNestedTypeIdentifier.nestedIdentifier>[0]
+	) => {
+		const { name, object, property, ...rest } = config;
+		return F.buildGenericType({
+			...rest,
+			name: buildNestedTypeIdentifier.nestedIdentifier({ name, object, property })
+		});
+	}
+});
+
+export const buildTypeQueryCallExpression: typeof F.buildTypeQueryCallExpression & {
+	import: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+	typeQueryMemberExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQueryMemberExpression>[0]
+	) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+	typeQuerySubscriptExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQuerySubscriptExpression>[0]
+	) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+} = attachProps(F.buildTypeQueryCallExpression, {
+	import: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildTypeQueryCallExpression({ ...rest, function: F.buildImport(...function_) });
+	},
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildTypeQueryCallExpression({ ...rest, function: F.buildIdentifier(function_) });
+	},
+	typeQueryMemberExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQueryMemberExpression>[0]
+	) => {
+		const { object, content, property, ...rest } = config;
+		return F.buildTypeQueryCallExpression({
+			...rest,
+			function: F.buildTypeQueryMemberExpression({ object, content, property })
+		});
+	},
+	typeQuerySubscriptExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryCallExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQuerySubscriptExpression>[0]
+	) => {
+		const { object, index, ...rest } = config;
+		return F.buildTypeQueryCallExpression({
+			...rest,
+			function: F.buildTypeQuerySubscriptExpression({ object, index })
+		});
+	}
+});
+
+export const buildTypeQueryInstantiationExpression: typeof F.buildTypeQueryInstantiationExpression & {
+	import: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+	typeQueryMemberExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQueryMemberExpression>[0]
+	) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+	typeQuerySubscriptExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQuerySubscriptExpression>[0]
+	) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+} = attachProps(F.buildTypeQueryInstantiationExpression, {
+	import: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildImport>;
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildTypeQueryInstantiationExpression({ ...rest, function: F.buildImport(...function_) });
+	},
+	identifier: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+			function: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { function: function_, ...rest } = config;
+		return F.buildTypeQueryInstantiationExpression({ ...rest, function: F.buildIdentifier(function_) });
+	},
+	typeQueryMemberExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQueryMemberExpression>[0]
+	) => {
+		const { object, content, property, ...rest } = config;
+		return F.buildTypeQueryInstantiationExpression({
+			...rest,
+			function: F.buildTypeQueryMemberExpression({ object, content, property })
+		});
+	},
+	typeQuerySubscriptExpression: (
+		config: Omit<Parameters<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> &
+			Parameters<typeof F.buildTypeQuerySubscriptExpression>[0]
+	) => {
+		const { object, index, ...rest } = config;
+		return F.buildTypeQueryInstantiationExpression({
+			...rest,
+			function: F.buildTypeQuerySubscriptExpression({ object, index })
+		});
+	}
+});
+
+export const buildTypeQuery: typeof F.buildTypeQuery & {
+	subscriptExpression: (
+		...args: Parameters<typeof F.buildTypeQuerySubscriptExpression>
+	) => ReturnType<typeof F.buildTypeQuery>;
+	memberExpression: (
+		...args: Parameters<typeof F.buildTypeQueryMemberExpression>
+	) => ReturnType<typeof F.buildTypeQuery>;
+	callExpression: (...args: Parameters<typeof F.buildTypeQueryCallExpression>) => ReturnType<typeof F.buildTypeQuery>;
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildTypeQuery>;
+	instantiationExpression: (
+		...args: Parameters<typeof F.buildTypeQueryInstantiationExpression>
+	) => ReturnType<typeof F.buildTypeQuery>;
+	this: (...args: Parameters<typeof F.buildThis>) => ReturnType<typeof F.buildTypeQuery>;
+} = attachProps(F.buildTypeQuery, {
+	subscriptExpression: (...args: Parameters<typeof F.buildTypeQuerySubscriptExpression>) =>
+		F.buildTypeQuery(F.buildTypeQuerySubscriptExpression(...args)),
+	memberExpression: (...args: Parameters<typeof F.buildTypeQueryMemberExpression>) =>
+		F.buildTypeQuery(F.buildTypeQueryMemberExpression(...args)),
+	callExpression: (...args: Parameters<typeof F.buildTypeQueryCallExpression>) =>
+		F.buildTypeQuery(F.buildTypeQueryCallExpression(...args)),
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => F.buildTypeQuery(F.buildIdentifier(...args)),
+	instantiationExpression: (...args: Parameters<typeof F.buildTypeQueryInstantiationExpression>) =>
+		F.buildTypeQuery(F.buildTypeQueryInstantiationExpression(...args)),
+	this: (...args: Parameters<typeof F.buildThis>) => F.buildTypeQuery(F.buildThis(...args))
+});
+
+export const buildLiteralType: typeof F.buildLiteralType & {
+	string: (...args: Parameters<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
+	stringDouble: (...args: Parameters<typeof buildString.double>) => ReturnType<typeof F.buildLiteralType>;
+	stringSingle: (...args: Parameters<typeof buildString.single>) => ReturnType<typeof F.buildLiteralType>;
+	true: (...args: Parameters<typeof F.buildTrue>) => ReturnType<typeof F.buildLiteralType>;
+	false: (...args: Parameters<typeof F.buildFalse>) => ReturnType<typeof F.buildLiteralType>;
+	null: (...args: Parameters<typeof F.buildNull>) => ReturnType<typeof F.buildLiteralType>;
+	undefined: (...args: Parameters<typeof F.buildUndefined>) => ReturnType<typeof F.buildLiteralType>;
+} = attachProps(F.buildLiteralType, {
+	string: (...args: Parameters<typeof F.buildString>) => F.buildLiteralType(F.buildString(...args)),
+	stringDouble: (...args: Parameters<typeof buildString.double>) => F.buildLiteralType(buildString.double(...args)),
+	stringSingle: (...args: Parameters<typeof buildString.single>) => F.buildLiteralType(buildString.single(...args)),
+	true: (...args: Parameters<typeof F.buildTrue>) => F.buildLiteralType(F.buildTrue(...args)),
+	false: (...args: Parameters<typeof F.buildFalse>) => F.buildLiteralType(F.buildFalse(...args)),
+	null: (...args: Parameters<typeof F.buildNull>) => F.buildLiteralType(F.buildNull(...args)),
+	undefined: (...args: Parameters<typeof F.buildUndefined>) => F.buildLiteralType(F.buildUndefined(...args))
+});
+
+export const buildCallSignature: typeof F.buildCallSignature & {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildCallSignature>;
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildCallSignature>;
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildCallSignature>;
+} = attachProps(F.buildCallSignature, {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildCallSignature({ ...rest, returnType: F.buildTypeAnnotation(returnType) });
+	},
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildCallSignature({ ...rest, returnType: F.buildAssertsAnnotation(returnType) });
+	},
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildCallSignature({ ...rest, returnType: F.buildTypePredicateAnnotation(returnType) });
+	}
+});
+
+export const buildPropertySignature: typeof F.buildPropertySignature & {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildPropertySignature>;
+	string: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => ReturnType<typeof F.buildPropertySignature>;
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof buildString.double>[0];
+		}
+	) => ReturnType<typeof F.buildPropertySignature>;
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof buildString.single>[0];
+		}
+	) => ReturnType<typeof F.buildPropertySignature>;
+	number: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & { name: Parameters<typeof F.buildNumber>[0] }
+	) => ReturnType<typeof F.buildPropertySignature>;
+	computedPropertyName: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof F.buildComputedPropertyName>[0];
+		}
+	) => ReturnType<typeof F.buildPropertySignature>;
+} = attachProps(F.buildPropertySignature, {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildPropertySignature({ ...rest, name: F.buildPrivatePropertyIdentifier(name) });
+	},
+	string: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & { name: Parameters<typeof F.buildString>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildPropertySignature({ ...rest, name: F.buildString(name) });
+	},
+	stringDouble: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof buildString.double>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildPropertySignature({ ...rest, name: buildString.double(name) });
+	},
+	stringSingle: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof buildString.single>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildPropertySignature({ ...rest, name: buildString.single(name) });
+	},
+	number: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & { name: Parameters<typeof F.buildNumber>[0] }
+	) => {
+		const { name, ...rest } = config;
+		return F.buildPropertySignature({ ...rest, name: F.buildNumber(name) });
+	},
+	computedPropertyName: (
+		config: Omit<Parameters<typeof F.buildPropertySignature>[0], 'name'> & {
+			name: Parameters<typeof F.buildComputedPropertyName>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildPropertySignature({ ...rest, name: F.buildComputedPropertyName(name) });
+	}
+});
+
+export const buildConstraint: typeof F.buildConstraint & {
+	extends: (config: Omit<Parameters<typeof F.buildConstraint>[0], 'content'>) => ReturnType<typeof F.buildConstraint>;
+	colon: (config: Omit<Parameters<typeof F.buildConstraint>[0], 'content'>) => ReturnType<typeof F.buildConstraint>;
+} = attachProps(F.buildConstraint, {
+	extends: (config: Omit<Parameters<typeof F.buildConstraint>[0], 'content'>) =>
+		F.buildConstraint({ ...config, content: TSKindId.Extends }),
+	colon: (config: Omit<Parameters<typeof F.buildConstraint>[0], 'content'>) =>
+		F.buildConstraint({ ...config, content: TSKindId.Colon })
+});
+
+export const buildFunctionType: typeof F.buildFunctionType & {
+	asserts: (
+		config: Omit<Parameters<typeof F.buildFunctionType>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAsserts>[0];
+		}
+	) => ReturnType<typeof F.buildFunctionType>;
+	typePredicate: (
+		config: Omit<Parameters<typeof F.buildFunctionType>[0], 'returnType'> & Parameters<typeof F.buildTypePredicate>[0]
+	) => ReturnType<typeof F.buildFunctionType>;
+	predefinedType: (
+		config: Omit<Parameters<typeof F.buildFunctionType>[0], 'returnType'> &
+			Parameters<typeof buildTypePredicate.predefinedType>[0]
+	) => ReturnType<typeof F.buildFunctionType>;
+} = attachProps(F.buildFunctionType, {
+	asserts: (
+		config: Omit<Parameters<typeof F.buildFunctionType>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAsserts>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildFunctionType({ ...rest, returnType: F.buildAsserts(returnType) });
+	},
+	typePredicate: (
+		config: Omit<Parameters<typeof F.buildFunctionType>[0], 'returnType'> & Parameters<typeof F.buildTypePredicate>[0]
+	) => {
+		const { name, type, ...rest } = config;
+		return F.buildFunctionType({ ...rest, returnType: F.buildTypePredicate({ name, type }) });
+	},
+	predefinedType: (
+		config: Omit<Parameters<typeof F.buildFunctionType>[0], 'returnType'> &
+			Parameters<typeof buildTypePredicate.predefinedType>[0]
+	) => {
+		const { type, name, ...rest } = config;
+		return F.buildFunctionType({ ...rest, returnType: buildTypePredicate.predefinedType({ type, name }) });
+	}
+});
+
+export const buildImportClauseGroup: typeof F.buildImportClauseGroup & {
+	namespaceImport: (...args: Parameters<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
+	namedImports: (...args: Parameters<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
+} = attachProps(F.buildImportClauseGroup, {
+	namespaceImport: (...args: Parameters<typeof F.buildNamespaceImport>) =>
+		F.buildImportClauseGroup(F.buildNamespaceImport(...args)),
+	namedImports: (...args: Parameters<typeof F.buildNamedImports>) =>
+		F.buildImportClauseGroup(F.buildNamedImports(...args))
+});
+
+export const buildCatchClauseGroup: typeof F.buildCatchClauseGroup & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+			parameter: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildCatchClauseGroup>;
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+			parameter: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => ReturnType<typeof F.buildCatchClauseGroup>;
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+			parameter: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => ReturnType<typeof F.buildCatchClauseGroup>;
+} = attachProps(F.buildCatchClauseGroup, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+			parameter: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { parameter, ...rest } = config;
+		return F.buildCatchClauseGroup({ ...rest, parameter: F.buildIdentifier(parameter) });
+	},
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+			parameter: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => {
+		const { parameter, ...rest } = config;
+		return F.buildCatchClauseGroup({ ...rest, parameter: F.buildObjectPattern(...parameter) });
+	},
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+			parameter: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => {
+		const { parameter, ...rest } = config;
+		return F.buildCatchClauseGroup({ ...rest, parameter: F.buildArrayPattern(...parameter) });
+	}
+});
+
+export const buildBinaryExpressionArm: typeof F.buildBinaryExpressionArm & {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildBinaryExpressionArm>[0], 'left'> & {
+			left: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildBinaryExpressionArm>;
+} = attachProps(F.buildBinaryExpressionArm, {
+	privatePropertyIdentifier: (
+		config: Omit<Parameters<typeof F.buildBinaryExpressionArm>[0], 'left'> & {
+			left: Parameters<typeof F.buildPrivatePropertyIdentifier>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildBinaryExpressionArm({ ...rest, left: F.buildPrivatePropertyIdentifier(left) });
+	}
+});
+
+export const buildArrowFunctionParameter: typeof F.buildArrowFunctionParameter & {
+	reservedIdentifier: (
+		...args: Parameters<typeof F.buildReservedIdentifier>
+	) => ReturnType<typeof F.buildArrowFunctionParameter>;
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
+} = attachProps(F.buildArrowFunctionParameter, {
+	reservedIdentifier: (...args: Parameters<typeof F.buildReservedIdentifier>) =>
+		F.buildArrowFunctionParameter(F.buildReservedIdentifier(...args)),
+	identifier: (...args: Parameters<typeof F.buildIdentifier>) =>
+		F.buildArrowFunctionParameter(F.buildIdentifier(...args))
+});
+
+export const buildArrowFunctionUCallSignature: typeof F.buildArrowFunctionUCallSignature & {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildArrowFunctionUCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildArrowFunctionUCallSignature>;
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildArrowFunctionUCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildArrowFunctionUCallSignature>;
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildArrowFunctionUCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => ReturnType<typeof F.buildArrowFunctionUCallSignature>;
+} = attachProps(F.buildArrowFunctionUCallSignature, {
+	typeAnnotation: (
+		config: Omit<Parameters<typeof F.buildArrowFunctionUCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypeAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildArrowFunctionUCallSignature({ ...rest, returnType: F.buildTypeAnnotation(returnType) });
+	},
+	assertsAnnotation: (
+		config: Omit<Parameters<typeof F.buildArrowFunctionUCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildAssertsAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildArrowFunctionUCallSignature({ ...rest, returnType: F.buildAssertsAnnotation(returnType) });
+	},
+	typePredicateAnnotation: (
+		config: Omit<Parameters<typeof F.buildArrowFunctionUCallSignature>[0], 'returnType'> & {
+			returnType: Parameters<typeof F.buildTypePredicateAnnotation>[0];
+		}
+	) => {
+		const { returnType, ...rest } = config;
+		return F.buildArrowFunctionUCallSignature({ ...rest, returnType: F.buildTypePredicateAnnotation(returnType) });
+	}
+});
+
+export const buildIndexSignatureColon: typeof F.buildIndexSignatureColon & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildIndexSignatureColon>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildIndexSignatureColon>;
+	reservedIdentifier: (
+		config: Omit<Parameters<typeof F.buildIndexSignatureColon>[0], 'name'> & {
+			name: Parameters<typeof F.buildReservedIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildIndexSignatureColon>;
+} = attachProps(F.buildIndexSignatureColon, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildIndexSignatureColon>[0], 'name'> & {
+			name: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildIndexSignatureColon({ ...rest, name: F.buildIdentifier(name) });
+	},
+	reservedIdentifier: (
+		config: Omit<Parameters<typeof F.buildIndexSignatureColon>[0], 'name'> & {
+			name: Parameters<typeof F.buildReservedIdentifier>[0];
+		}
+	) => {
+		const { name, ...rest } = config;
+		return F.buildIndexSignatureColon({ ...rest, name: F.buildReservedIdentifier(name) });
+	}
+});
+
+export const buildExportStatementDefaultValue: typeof F.buildExportStatementDefaultValue & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildExportStatementDefaultValue>[0], 'automaticSemicolon'>
+	) => ReturnType<typeof F.buildExportStatementDefaultValue>;
+} = attachProps(F.buildExportStatementDefaultValue, {
+	semi: (config: Omit<Parameters<typeof F.buildExportStatementDefaultValue>[0], 'automaticSemicolon'>) =>
+		F.buildExportStatementDefaultValue({ ...config, automaticSemicolon: TSKindId.Semi })
+});
+
+export const buildExportStatementDefaultDefaultKw: typeof F.buildExportStatementDefaultDefaultKw & {
+	exportStatementDefaultValue: (
+		...args: Parameters<typeof F.buildExportStatementDefaultValue>
+	) => ReturnType<typeof F.buildExportStatementDefaultDefaultKw>;
+	semi: (
+		...args: Parameters<typeof buildExportStatementDefaultValue.semi>
+	) => ReturnType<typeof F.buildExportStatementDefaultDefaultKw>;
+} = attachProps(F.buildExportStatementDefaultDefaultKw, {
+	exportStatementDefaultValue: (...args: Parameters<typeof F.buildExportStatementDefaultValue>) =>
+		F.buildExportStatementDefaultDefaultKw(F.buildExportStatementDefaultValue(...args)),
+	semi: (...args: Parameters<typeof buildExportStatementDefaultValue.semi>) =>
+		F.buildExportStatementDefaultDefaultKw(buildExportStatementDefaultValue.semi(...args))
+});
+
+export const buildClassBodyMethod: typeof F.buildClassBodyMethod & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildClassBodyMethod>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildClassBodyMethod>;
+} = attachProps(F.buildClassBodyMethod, {
+	semi: (config: Omit<Parameters<typeof F.buildClassBodyMethod>[0], 'semicolon'>) =>
+		F.buildClassBodyMethod({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildClassBodyMethodSig: typeof F.buildClassBodyMethodSig & {
+	comma: (
+		config: Omit<Parameters<typeof F.buildClassBodyMethodSig>[0], 'terminator'>
+	) => ReturnType<typeof F.buildClassBodyMethodSig>;
+} = attachProps(F.buildClassBodyMethodSig, {
+	comma: (config: Omit<Parameters<typeof F.buildClassBodyMethodSig>[0], 'terminator'>) =>
+		F.buildClassBodyMethodSig({ ...config, terminator: TSKindId.Comma })
+});
+
+export const buildForHeaderLhs: typeof F.buildForHeaderLhs & {
+	parenthesizedExpression: (
+		...args: Parameters<typeof F.buildParenthesizedExpression>
+	) => ReturnType<typeof F.buildForHeaderLhs>;
+	parenthesizedExpressionTyped: (
+		...args: Parameters<typeof buildParenthesizedExpression.typed>
+	) => ReturnType<typeof F.buildForHeaderLhs>;
+	sequenceExpression: (
+		...args: Parameters<typeof buildParenthesizedExpression.sequenceExpression>
+	) => ReturnType<typeof F.buildForHeaderLhs>;
+	identifier: (
+		...args: Parameters<typeof buildParenthesizedExpression.identifier>
+	) => ReturnType<typeof F.buildForHeaderLhs>;
+	decoratorMemberExpression: (
+		...args: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>
+	) => ReturnType<typeof F.buildForHeaderLhs>;
+	decoratorCallExpression: (
+		...args: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>
+	) => ReturnType<typeof F.buildForHeaderLhs>;
+} = attachProps(F.buildForHeaderLhs, {
+	parenthesizedExpression: (...args: Parameters<typeof F.buildParenthesizedExpression>) =>
+		F.buildForHeaderLhs(F.buildParenthesizedExpression(...args)),
+	parenthesizedExpressionTyped: (...args: Parameters<typeof buildParenthesizedExpression.typed>) =>
+		F.buildForHeaderLhs(buildParenthesizedExpression.typed(...args)),
+	sequenceExpression: (...args: Parameters<typeof buildParenthesizedExpression.sequenceExpression>) =>
+		F.buildForHeaderLhs(buildParenthesizedExpression.sequenceExpression(...args)),
+	identifier: (...args: Parameters<typeof buildParenthesizedExpression.identifier>) =>
+		F.buildForHeaderLhs(buildParenthesizedExpression.identifier(...args)),
+	decoratorMemberExpression: (...args: Parameters<typeof buildParenthesizedExpression.decoratorMemberExpression>) =>
+		F.buildForHeaderLhs(buildParenthesizedExpression.decoratorMemberExpression(...args)),
+	decoratorCallExpression: (...args: Parameters<typeof buildParenthesizedExpression.decoratorCallExpression>) =>
+		F.buildForHeaderLhs(buildParenthesizedExpression.decoratorCallExpression(...args))
+});
+
+export const buildForHeaderVarKind: typeof F.buildForHeaderVarKind & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildForHeaderVarKind>;
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => ReturnType<typeof F.buildForHeaderVarKind>;
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => ReturnType<typeof F.buildForHeaderVarKind>;
+} = attachProps(F.buildForHeaderVarKind, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildForHeaderVarKind({ ...rest, left: F.buildIdentifier(left) });
+	},
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildForHeaderVarKind({ ...rest, left: F.buildObjectPattern(...left) });
+	},
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildForHeaderVarKind({ ...rest, left: F.buildArrayPattern(...left) });
+	}
+});
+
+export const buildForHeaderLetConstKind: typeof F.buildForHeaderLetConstKind & {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => ReturnType<typeof F.buildForHeaderLetConstKind>;
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => ReturnType<typeof F.buildForHeaderLetConstKind>;
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => ReturnType<typeof F.buildForHeaderLetConstKind>;
+} = attachProps(F.buildForHeaderLetConstKind, {
+	identifier: (
+		config: Omit<Parameters<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildIdentifier>[0];
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildForHeaderLetConstKind({ ...rest, left: F.buildIdentifier(left) });
+	},
+	objectPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildObjectPattern>;
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildForHeaderLetConstKind({ ...rest, left: F.buildObjectPattern(...left) });
+	},
+	arrayPattern: (
+		config: Omit<Parameters<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+			left: Parameters<typeof F.buildArrayPattern>;
+		}
+	) => {
+		const { left, ...rest } = config;
+		return F.buildForHeaderLetConstKind({ ...rest, left: F.buildArrayPattern(...left) });
+	}
+});
+
+export const buildExportStatementTypeExport: typeof F.buildExportStatementTypeExport & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildExportStatementTypeExport>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildExportStatementTypeExport>;
+} = attachProps(F.buildExportStatementTypeExport, {
+	semi: (config: Omit<Parameters<typeof F.buildExportStatementTypeExport>[0], 'semicolon'>) =>
+		F.buildExportStatementTypeExport({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildExportStatementEqualsExport: typeof F.buildExportStatementEqualsExport & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildExportStatementEqualsExport>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildExportStatementEqualsExport>;
+} = attachProps(F.buildExportStatementEqualsExport, {
+	semi: (config: Omit<Parameters<typeof F.buildExportStatementEqualsExport>[0], 'semicolon'>) =>
+		F.buildExportStatementEqualsExport({ ...config, semicolon: TSKindId.Semi })
+});
+
+export const buildExportStatementNamespaceExport: typeof F.buildExportStatementNamespaceExport & {
+	semi: (
+		config: Omit<Parameters<typeof F.buildExportStatementNamespaceExport>[0], 'semicolon'>
+	) => ReturnType<typeof F.buildExportStatementNamespaceExport>;
+} = attachProps(F.buildExportStatementNamespaceExport, {
+	semi: (config: Omit<Parameters<typeof F.buildExportStatementNamespaceExport>[0], 'semicolon'>) =>
+		F.buildExportStatementNamespaceExport({ ...config, semicolon: TSKindId.Semi })
+});

@@ -864,7 +864,7 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	return result;
 }
 
-const FACTORY_NAME_RESERVED = new Set([
+export const FACTORY_NAME_RESERVED = new Set([
 	'arguments',
 	'eval',
 	'yield',

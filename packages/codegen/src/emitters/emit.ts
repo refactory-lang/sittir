@@ -26,6 +26,7 @@ import {
 } from './shared.ts';
 import { emitOverlayModule, emitFactoriesIndex, overlayImportPath, OVERLAY_CHAIN } from './overlays/module.ts';
 import { refineAttachments } from './overlays/refines.ts';
+import { polymorphAttachments } from './overlays/polymorphs.ts';
 import type { Attachment, OverlayName } from './overlays/module.ts';
 
 export interface EmitAllConfig {
@@ -143,13 +144,20 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const overlayAttachments: Record<OverlayName, readonly Attachment[]> = {
 		refines: refineAttachments(nodeMap),
-		polymorphs: [],
+		polymorphs: polymorphAttachments(nodeMap, generatedIdTables),
 		supertypes: []
+	};
+	const overlayPreambles: Partial<Record<OverlayName, readonly string[]>> = {
+		polymorphs: generatedIdTables ? ["import { TSKindId } from '../../types.js';"] : undefined
 	};
 	const overlays = Object.fromEntries(
 		OVERLAY_CHAIN.map((name, index) => [
 			name,
-			emitOverlayModule({ importPath: overlayImportPath(index), attachments: overlayAttachments[name] })
+			emitOverlayModule({
+				importPath: overlayImportPath(index),
+				attachments: overlayAttachments[name],
+				preamble: overlayPreambles[name]
+			})
 		])
 	) as Record<OverlayName, string>;
 	const factoriesIndex = emitFactoriesIndex(OVERLAY_CHAIN[OVERLAY_CHAIN.length - 1]);
