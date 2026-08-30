@@ -1098,25 +1098,21 @@ export type ForInStatementBuilt = T.ForInStatement & {
 	readonly $named: true;
 	readonly $with: {
 		awaitMarker(value?: NonNullable<Parameters<typeof buildForInStatement>[0]>['awaitMarker']): ForInStatementBuilt;
+		content(value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind): ForInStatementBuilt;
 		operator(value: NonNullable<Parameters<typeof buildForInStatement>[0]>['operator']): ForInStatementBuilt;
 		right(value: T.Expression | T.SequenceExpression): ForInStatementBuilt;
-		forHeaderLhs(value?: T.ForHeaderLhs): ForInStatementBuilt;
-		forHeaderVarKind(value?: T.ForHeaderVarKind): ForInStatementBuilt;
-		forHeaderLetConstKind(value?: T.ForHeaderLetConstKind): ForInStatementBuilt;
 		body(value: T.Statement): ForInStatementBuilt;
 	};
 } & _NodeMethods;
 
 export function buildForInStatement(config: T.ForInStatement.Config): ForInStatementBuilt {
 	const _await_marker = coerceBooleanKeywordStorage(config.awaitMarker);
+	const _content = config.content;
 	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['in', TSKindId.In] as const,
 		['of', TSKindId.Of] as const
 	]);
 	const _right = config.right;
-	const _for_header_lhs = config.forHeaderLhs;
-	const _for_header_var_kind = config.forHeaderVarKind;
-	const _for_header_let_const_kind = config.forHeaderLetConstKind;
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -1125,32 +1121,26 @@ export function buildForInStatement(config: T.ForInStatement.Config): ForInState
 				$source: 2 as const,
 				$named: true as const,
 				_await_marker,
+				_content,
 				_operator,
 				_right,
-				_for_header_lhs,
-				_for_header_var_kind,
-				_for_header_let_const_kind,
 				_body,
 				$with: {
 					awaitMarker: (value?: NonNullable<Parameters<typeof buildForInStatement>[0]>['awaitMarker']) =>
 						buildForInStatement({ ...config, awaitMarker: value }),
+					content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) =>
+						buildForInStatement({ ...config, content: value }),
 					operator: (value: NonNullable<Parameters<typeof buildForInStatement>[0]>['operator']) =>
 						buildForInStatement({ ...config, operator: value }),
 					right: (value: T.Expression | T.SequenceExpression) => buildForInStatement({ ...config, right: value }),
-					forHeaderLhs: (value?: T.ForHeaderLhs) => buildForInStatement({ ...config, forHeaderLhs: value }),
-					forHeaderVarKind: (value?: T.ForHeaderVarKind) => buildForInStatement({ ...config, forHeaderVarKind: value }),
-					forHeaderLetConstKind: (value?: T.ForHeaderLetConstKind) =>
-						buildForInStatement({ ...config, forHeaderLetConstKind: value }),
 					body: (value: T.Statement) => buildForInStatement({ ...config, body: value })
 				}
 			},
 			{
 				awaitMarker: () => _await_marker,
+				content: () => _content,
 				operator: () => _operator,
 				right: () => _right,
-				forHeaderLhs: () => _for_header_lhs,
-				forHeaderVarKind: () => _for_header_var_kind,
-				forHeaderLetConstKind: () => _for_header_let_const_kind,
 				body: () => _body
 			}
 		),

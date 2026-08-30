@@ -288,7 +288,7 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 }
 
 function isSlotNode(rule: SimplifiedRule): boolean {
-	if (rule.nonterminal === true) return true;
+	if (rule.nonterminal !== undefined) return rule.nonterminal;
 	return isNonterminalRuleType(rule);
 }
 

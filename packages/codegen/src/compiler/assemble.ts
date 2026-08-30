@@ -157,6 +157,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 			const simplifiedRule = normalized.rules[kind]!;
 			const modelType = classifyNode(kind, simplifiedRule, {
+				renderRule,
 				variantParents,
 				parentAliasedKinds: normalized.parentAliasedKinds,
 				wordMatcher: wordMatcherRegex
@@ -897,7 +898,12 @@ type ModelType = AssembledNode['modelType'];
 export function classifyNode(
 	kind: string,
 	rule: SimplifiedRule,
-	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
+	opts?: {
+		variantParents?: ReadonlySet<string>;
+		parentAliasedKinds?: ReadonlySet<string>;
+		wordMatcher?: RegExp;
+		renderRule?: RenderRule;
+	}
 ): ModelType {
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		if (isEnumChoiceRule(rule)) return 'enum';
@@ -916,7 +922,24 @@ export function classifyNode(
 
 	if (isSeparatedListShape(rule)) return 'list';
 	if (hasSlotBearingContent(rule)) return compoundModelType(rule);
+	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelType(rule);
 	return classifyTerminalFallback(kind, rule);
+}
+
+function referencesKind(rule: RenderRule): boolean {
+	switch (rule.type) {
+		case SYMBOL:
+		case SUPERTYPE:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(referencesKind);
+		case VARIANT:
+		case GROUP:
+			return referencesKind(rule.content);
+		default:
+			return false;
+	}
 }
 
 function compoundModelType(rule: SimplifiedRule): 'envelope' | 'branch' | 'polymorph' {

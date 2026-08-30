@@ -3773,20 +3773,16 @@ export interface ForLifetimes {
 export interface FunctionType {
 	readonly $type: TSKindId.FunctionType;
 	readonly _for_lifetimes?: ForLifetimes;
+	readonly _content: FunctionTypeTraitForm | FunctionTypeFnForm;
 	readonly _parameters: Parameters;
-	readonly _function_type_trait_form?: FunctionTypeTraitForm;
-	readonly _function_type_fn_form?: FunctionTypeFnForm;
 	readonly _return_type?: _Type;
 	readonly __looseHints__?: {
 		readonly for_lifetimes?: readonly Lifetime[];
 		readonly parameters: readonly AttributedParameter[];
-		readonly function_type_trait_form?: readonly (Identifier | ScopedTypeIdentifier)[];
-		readonly function_type_fn_form?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 	};
 	forLifetimes(): ForLifetimes | undefined;
+	content(): FunctionTypeTraitForm | FunctionTypeFnForm;
 	parameters(): Parameters;
-	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
-	functionTypeFnForm(): FunctionTypeFnForm | undefined;
 	returnType(): _Type | undefined;
 }
 

@@ -876,7 +876,10 @@ parents.
  * (`isSeparatedListShape`) → 'list'; a slot-bearing body
  * (`hasSlotBearingContent`) → `compoundModelType`; anything left falls to
  * `classifyTerminalFallback` (an enum choice or an all-text pattern that
- * only becomes slot-free at this later, structural check). A hidden repeat
+ * only becomes slot-free at this later, structural check) — unless the
+ * RENDER rule still references a kind (`referencesKind`): a body whose
+ * every reference was stripped as fixed text is a compound with no slots,
+ * not a leaf (rust `_reference_expression_raw_mut` → `raw mut`). A hidden repeat
  * helper has no dedicated classification of its own — such a rule
  * classifies by these same general rules (typically `'polymorph'` for a
  * repeated choice-of-symbols with no separator, or `'list'` if it does
@@ -933,6 +936,13 @@ parents.
 // The keyword-vs-token split (AssembledKeyword vs AssembledToken, honouring
 // the grammar's `word` rule via matchesWordShape) happens in assemble()'s
 // own switch on this function's 'token' return value, not here.
+```
+
+### `packages/codegen/src/compiler/assemble.ts::referencesKind`
+
+```text
+/** Does this render rule reference another kind anywhere? The compound
+ *  test `classifyNode` applies when the simplified body has no slots. */
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::isSeparatedListShape`
@@ -1213,7 +1223,9 @@ parents.
 ### `packages/codegen/src/compiler/collect-slots.ts::isSlotNode`
 
 ```text
-/** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
+/** True iff this node is a slot. An explicit `nonterminal` stamp decides
+ *  (`flatten.ts::stampTerminality`); an unstamped node falls back to its
+ *  intrinsic shape (`isNonterminalRuleType`). */
 ```
 
 #### body
@@ -5693,54 +5705,6 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::FixedLiteralCtx`
-
-```text
-/**
- * @param joiner - separator used when concatenating a multi-member SEQ's
- *   literals: a single space at grammar level (canonical token
- *   separation), an empty string inside a `tokenized` subtree (contiguous
- *   by construction — a `tokenized` rule forces this joiner for its own
- *   recursive calls).
- * @param deterministic - when true, any optionality (`multiplicity:
- *   'optional'`, a blank CHOICE arm) makes the subtree non-fixed. Set for
- *   the members of a multi-member SEQ, where "same text OR absent" is no
- *   longer a single fixed realisation.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::collectFixedLiteral`
-
-```text
-/**
- * The single derivation of a literal-only body's rendered text — the
- * fixed-literal join every literal-text consumer (`isAllTextRender`'s
- * SEQ/CHOICE fold in `simplifySeqRule`, `AssembledPattern.fixedLiteralText`)
- * goes through rather than re-walking the tree itself.
- *
- * Walks `rule` collecting leaf `string` values and returns the single
- * distinct string every parse produces, or `undefined` the moment a
- * content-bearing symbol or a multi-value divergence is found. Undefined
- * for a nonterminal rule, an array-multiplicity rule (`array` /
- * `nonEmptyArray` — repetition has no single realisation), and an
- * `optional`-multiplicity rule when `ctx.deterministic` is set (two
- * realisations: present or absent). Blanks (an empty `choice` or `seq`)
- * are skipped in non-deterministic mode — they contribute no text and
- * represent the "omit" arm of an optional — but bail the whole CHOICE to
- * `undefined` in deterministic mode, where a blank arm IS a second
- * realisation.
- *
- * A CHOICE is fixed only when every non-blank arm resolves to the SAME
- * string. A SEQ with exactly one non-blank member recurses directly on it
- * (no join needed); with more than one, every member is walked in
- * `deterministic` mode (an optional member or a blank-arm CHOICE inside a
- * seq means divergent realisations, not a fixed one) and the results are
- * joined with `ctx.joiner` — e.g. python's `_not_in` = `seq('not', 'in')`,
- * aliased to `'not in'`, IS a fixed realisation: every parse produces
- * exactly the same token sequence.
- */
-```
-
 ### `packages/codegen/src/compiler/simplify.ts::simplifySeqRule`
 
 ```text
@@ -5750,8 +5714,9 @@ parents.
  * for the whole seq — the leaf/enum boundary where a run of literal-only
  * members becomes one token — and is retained whole when no such single
  * realisation exists (a divergent CHOICE arm, an array-multiplicity
- * member, a nonterminal). Otherwise, beside a slot, a bare STRING member
- * (not slot-promoted) and an all-text SEQ member are stripped, and empty
+ * member, a nonterminal). Otherwise, beside a slot, every member stamped
+ * `nonterminal: false` (`flatten.ts::stampTerminality`: a literal, a layout
+ * token, a reference to a literal) and an all-text SEQ member are stripped, and empty
  * seqs are dropped; a spliceable bare seq member is spliced into this
  * seq's own member list. A single surviving member carries the seq's own
  * attrs (`withAttrsFrom`) and combines multiplicity with its own via the
@@ -5779,7 +5744,7 @@ parents.
 #### body
 
 ```text
-// Strips a bare STRING member (not slot-promoted) and a SEQ member that
+// Strips a member stamped `nonterminal: false` and a SEQ member that
 // is empty or itself all-text — either would otherwise sit inert beside
 // a slot with nothing left for a factory to address.
 ```
@@ -6021,7 +5986,10 @@ parents.
  * PRE-flatten rule's `hidden`/`inlinedFrom` facts onto the flattened root
  * (`dsl/rule-attrs.ts::withKindFacts`) — flattening can rebuild the root
  * node fresh (a collapsed singleton, a spliced seq), so those facts don't
- * survive the rebuild on their own.
+ * survive the rebuild on their own. Then, over the whole map:
+ * `factorChoiceArmsToFixpoint` (distributed choices and permutations become
+ * one seq) and `stampTerminality` (references to a literal rule — it needs
+ * every rule flattened to know which those are).
  */
 ```
 
@@ -6032,6 +6000,75 @@ parents.
 // flattening has pushed multiplicity/separator to leaves, so the
 // renderRule the emitter consumes already has the canonical single
 // multi slot (no head single + tail array split).
+```
+
+### `packages/codegen/src/compiler/flatten.ts::stampTerminality`
+
+```text
+/**
+ * The one terminality stamp the builders cannot make: a single-cardinality
+ * symbol that references a literal rule — a link-minted literal kind
+ * (`literal`), or a rule whose body is one fixed string
+ * (`collectFixedLiteral`) — is `nonterminal: false`; its text is the
+ * template's. Runs after `factorChoiceArmsToFixpoint` over the whole map,
+ * then recomputes every seq's own stamp bottom-up (a seq is nonterminal
+ * iff any member is). An optional or repeated reference keeps `true`: it
+ * carries presence. `simplifySeqRule` strips every `false` member; the
+ * template emitter renders a `false` reference as fixed text.
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::shapeKey`
+
+```text
+/** Structural identity of a rule for arm comparison — ids excluded. */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::factorChoiceArms`
+
+```text
+/**
+ * A choice distributed over seq arms is one seq with a choice at the
+ * position that varies: `choice(seq(l, op1, r), seq(l, op2, r), …)` →
+ * `seq(l, choice(op1, op2, …), r)`. Applies when the seq arms have equal
+ * length and differ (by `shapeKey`) at exactly one position; other arms
+ * (a hoisted form referenced as a symbol, `_binary_expression_arm`) stay
+ * beside the factored seq. The rebuilt choice directly wraps the varying
+ * members, so `attributeBuilder.choice` makes it the slot — this is how a
+ * fielded literal that differs between arms (`binary_expression.operator`)
+ * is an enum slot without any field-based rule. The choice carries the
+ * arms' unanimous fieldName / multiplicity (`sharedArmAttrs`).
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::permutationKey`
+
+```text
+/** Structural identity ignoring ids AND multiplicity — the same member in
+ *  two permutation arms differs only in being required vs optional. */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::foldPermutationArms`
+
+```text
+/**
+ * Tree-sitter's "either order" idiom, `choice(seq(A, optional(B)),
+ * seq(B, optional(A)))`, is one seq of presence flags: `seq(optional(A),
+ * optional(B))` in the first arm's order (a member required in every arm
+ * stays required). Applies when every arm is a seq of the same members
+ * (by `permutationKey`, each single or optional) in a different order.
+ * A folded seq whose members are all optional drops an `optional`
+ * multiplicity of its own — it is already optional — so simplify splices
+ * it into the parent and each keyword is its own optional slot
+ * (`public_field_definition`'s `declare` / `accessibility_modifier`).
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::factorChoiceArmsToFixpoint`
+
+```text
+/** `factorChoiceArms` then `foldPermutationArms`, bottom-up over every
+ *  rule, to a fixpoint — nested choices factor inside-out. */
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`
@@ -8030,6 +8067,14 @@ source, one derivation.
 // onto `content`, so the SOURCE (storage) identity on `content` and the
 // ALIAS's own display identity travel as two independent facts through
 // the same call.
+```
+
+#### body
+
+```text
+// Every leaf is rebuilt through its attribute builder so it carries the
+// builder's terminality stamp (`attributeBuilder`); link-phase attrs on the
+// node (literal, kindId, hidden, …) are kept by spreading the node first.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`

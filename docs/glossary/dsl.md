@@ -2599,8 +2599,10 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
  *    e.g. `choice(commaSep1(X), X)`).
  *
- * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
- * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
+ * `fieldName` / `multiplicity` / `separator` are UNANIMOUS — present and
+ * equal on EVERY arm, else `undefined`; `nonterminal` lifts only a unanimous
+ * `true` (arms that are each fixed text do not make the choice text — a
+ * choice is nonterminal). `strongestMultiplicity` is
  * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
  * optional`; `single` / absent ignored), regardless of unanimity.
  */
@@ -3028,6 +3030,14 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+#### body
+
+```text
+// The seq's own stamp: nonterminal iff any member is. Multiplicity pushed
+// down from an enclosing optional/repeat lands on the members; their
+// terminality does not change — `optional` reaches one level only.
+```
+
 ### `packages/codegen/src/dsl/builders.ts::buildRepeatLike`
 
 ```text
@@ -3165,6 +3175,29 @@ registered but later unused still counts as a sibling.
  *  the empty seq (→ `Rule`), otherwise `R`; `choice` is always a
  *  ChoiceRule (no FIELD exists on this view). A catch-all `(Rule) → Rule`
  *  overload closes each set so a wide argument stays honest. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::attributeBuilder`
+
+```text
+/**
+ * Every attribute builder stamps the terminality of the node it builds —
+ * `nonterminal` is the single slot switch, and this table is its one
+ * source (`dsl/rule-patterns.ts::classifyByType` is the same table read
+ * off the type tags):
+ *   string / indent / dedent / newline → false
+ *   pattern / symbol / supertype       → true
+ *   choice                             → true, always: the choice node is the
+ *                                        slot; its arms keep their own stamps
+ *   seq                                → true iff any member is true
+ *   repeat / repeat1                   → true
+ *   optional                           → its content's (`buildOptional`), one
+ *                                        level down — never into a seq's members
+ *   field / alias / token / group / variant → the content's, untouched
+ * The one stamp no builder can make is a symbol that references a literal
+ * rule (it needs the rule map): `compiler/flatten.ts::stampTerminality`
+ * flips that to false after the whole map is built.
+ */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::AttributeToken`
@@ -3367,7 +3400,8 @@ registered but later unused still counts as a sibling.
 
 ```text
 // The one expression for any content: `{...content, aliasedTo: target.name,
-// aliasedToId: target.kindId, inline: false, nonterminal: true}`. `name`/
+// aliasedToId: target.kindId, inline: false}` — an alias never changes
+// terminality. `name`/
 // `kindId` on `content` stay the SOURCE (storage) kind; `aliasedTo` is the
 // alias TARGET (the parse kind). No branching on content shape — a literal,
 // a symbol, or any other built rule all take the same stamp uniformly.
@@ -3687,6 +3721,56 @@ registered but later unused still counts as a sibling.
 /* IMMEDIATE_TOKEN is folded into TOKEN+immediate by evaluate.ts's
 		   `normalizeImmediateTokens` before this runs — unreachable at
 		   runtime, transparent single-child wrapper like TOKEN. */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::collectFixedLiteral`
+
+```text
+/**
+ * The single derivation of a literal-only body's rendered text — the
+ * fixed-literal join every literal-text consumer (`isAllTextRender`'s
+ * SEQ/CHOICE fold in `simplifySeqRule`, `AssembledPattern.fixedLiteralText`,
+ * `flatten.ts::stampTerminality`'s "is this rule a literal" test, the
+ * template emitter's fixed-text render of a `nonterminal: false` reference)
+ * goes through rather than re-walking the tree itself.
+ *
+ * Walks `rule` collecting leaf `string` values and returns the single
+ * distinct string every parse produces, or `undefined` the moment a
+ * content-bearing symbol or a multi-value divergence is found. Undefined
+ * for a nonterminal rule, an array-multiplicity rule (`array` /
+ * `nonEmptyArray` — repetition has no single realisation), and an
+ * `optional`-multiplicity rule when `ctx.deterministic` is set (two
+ * realisations: present or absent). Blanks (an empty `choice` or `seq`)
+ * are skipped in non-deterministic mode — they contribute no text and
+ * represent the "omit" arm of an optional — but bail the whole CHOICE to
+ * `undefined` in deterministic mode, where a blank arm IS a second
+ * realisation.
+ *
+ * A CHOICE is fixed only when every non-blank arm resolves to the SAME
+ * string. A SEQ with exactly one non-blank member recurses directly on it
+ * (no join needed); with more than one, every member is walked in
+ * `deterministic` mode (an optional member or a blank-arm CHOICE inside a
+ * seq means divergent realisations, not a fixed one) and the results are
+ * joined with `ctx.joiner` — e.g. python's `_not_in` = `seq('not', 'in')`,
+ * aliased to `'not in'`, IS a fixed realisation: every parse produces
+ * exactly the same token sequence.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::FixedLiteralCtx`
+
+```text
+/**
+ * @param joiner - separator used when concatenating a multi-member SEQ's
+ *   literals: a single space at grammar level (canonical token
+ *   separation), an empty string inside a `tokenized` subtree (contiguous
+ *   by construction — a `tokenized` rule forces this joiner for its own
+ *   recursive calls).
+ * @param deterministic - when true, any optionality (`multiplicity:
+ *   'optional'`, a blank CHOICE arm) makes the subtree non-fixed. Set for
+ *   the members of a multi-member SEQ, where "same text OR absent" is no
+ *   longer a single fixed realisation.
+ */
 ```
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::ruleChildren`
@@ -5298,9 +5382,9 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/enrich.ts::applyOptionalKeyword`
 
 ```text
-// `enrichFieldWrappers` REMOVED — `fieldName`/`nonterminal` are derived by
-// `flattenRules`'s FIELD case (push the field's name + nonterminal onto
-// its content) and its SEQ case (retains fieldName on the seq node), with
+// `enrichFieldWrappers` REMOVED — `fieldName` is derived by
+// `flattenRules`'s FIELD case (push the field's name onto its content; a
+// field never changes terminality) and its SEQ case (retains fieldName on the seq node), with
 // `materializeInlinedBody` carrying fieldName through group inlining. Stamping it
 // in enrich was premature (nothing reads it before wrapper-deletion); enrich no
 // longer stamps the derived slot attributes at all (see also the removed

@@ -98,7 +98,6 @@ describe('Assemble — simplifyRule', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		// wrapper-deletion: field('body', sym('block')) → sym('block', {fieldName:'body', nonterminal:true})
 		const rule = flattenRules({ x: rawRule }).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// After stripping { and }, only the symbol (with fieldName attr) remains

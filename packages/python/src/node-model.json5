@@ -3306,7 +3306,7 @@
     },
     {
       "kind": "_match_block_block",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "MatchBlockBlock",
       "factoryName": "_matchBlockBlock",
       "irKey": "matchBlockBlock",
@@ -3573,7 +3573,7 @@
     },
     {
       "kind": "_simple_statements",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "SimpleStatements",
       "factoryName": "simpleStatements",
       "irKey": "simpleStatements",
@@ -3609,13 +3609,6 @@
       "forwardsTo": "_simple_statements_elements",
       "factoryFields": [
         "simple_statements_elements"
-      ],
-      "determinedSlots": [
-        {
-          "name": "newline",
-          "storageKey": "_newline",
-          "text": "\n"
-        }
       ]
     },
     {
@@ -3727,7 +3720,7 @@
     },
     {
       "kind": "_suite_block_with_indent",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "SuiteBlockWithIndent",
       "factoryName": "suiteBlockWithIndent",
       "irKey": "suiteBlockWithIndent",
@@ -4898,7 +4891,7 @@
     },
     {
       "kind": "block",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "Block",
       "factoryName": "block",
       "irKey": "block",
@@ -6065,6 +6058,7 @@
       "factoryName": "comment",
       "irKey": "comment",
       "hidden": false,
+      "pattern": ".*",
       "factoryShape": "text"
     },
     {
@@ -6645,7 +6639,7 @@
     },
     {
       "kind": "decorator",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "Decorator",
       "factoryName": "decorator",
       "irKey": "decorator",
@@ -6680,13 +6674,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
-      ],
-      "determinedSlots": [
-        {
-          "name": "newline",
-          "storageKey": "_newline",
-          "text": "\n"
-        }
       ]
     },
     {

@@ -3,7 +3,6 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { pruneDeterminedSlots } from '../model/node-map.ts';
 import { resolveGrammarJsPath } from '../resolve-grammar.ts';
 import { classifyBranchSlots } from '../../emitters/shared.ts';
 import type { NodeMap } from '../types.ts';
@@ -31,7 +30,6 @@ beforeAll(async () => {
 	nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record
 	// before any classification runs.
-	pruneDeterminedSlots(nodeMap);
 });
 
 describe('classifyBranchSlots', () => {

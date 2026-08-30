@@ -27,7 +27,7 @@ import type {
 	RuleId,
 	DelimiterMode
 } from '../../types/rule.ts';
-import { isEnumChoiceRule } from '../../dsl/rule-patterns.ts';
+import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
 	literalTextOf,
 	isLinkSymbol,
@@ -42,7 +42,6 @@ import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
-import { collectFixedLiteral } from '../simplify.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import {
@@ -1050,7 +1049,6 @@ export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | unde
 }
 
 export class AssembledNonterminal {
-	determined?: true;
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
 	readonly inlinedFrom?: string;
@@ -1432,27 +1430,10 @@ function buildSlotsRecord(rule: SimplifiedRule, ctx: KindedDeriveCtx): Readonly<
 	return Object.freeze(out);
 }
 
-export function isDeterminedSlot(slot: AssembledNonterminal, ctx?: DeriveCtx): boolean {
-	return determinedSlotText(slot, ctx) !== undefined;
-}
-
-export function determinedSlotText(slot: AssembledNonterminal, ctx?: DeriveCtx): string | undefined {
-	if (!isRequired(slot) || isMultiple(slot)) return undefined;
-	if (slot.values.length !== 1) return undefined;
-	const v = slot.values[0]!;
-	if (isTerminalValue(v)) return v.value;
-	if (!isNodeRef(v)) return undefined;
-	const target = isUnresolvedRef(v.node) ? ctx?.nodes?.get(v.node.name) : v.node;
-	if (target instanceof AssembledKeyword) return target.text;
-	if (target instanceof AssembledToken && target.parameterless) return target.text;
+export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
+	if (node instanceof AssembledKeyword) return node.text;
+	if (node instanceof AssembledToken && node.parameterless) return node.text;
 	return undefined;
-}
-
-export function pruneDeterminedSlots(nodeMap: { nodes: ReadonlyMap<string, AssembledNode> }): void {
-	for (const node of nodeMap.nodes.values()) {
-		if (!(node instanceof AbstractAssembledCompound)) continue;
-		node.pruneDeterminedSlots(nodeMap.nodes);
-	}
 }
 
 export interface HoistedFacts {
@@ -1507,7 +1488,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	slotClass?: BranchSlotClass;
 
 	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
-	#determinedSlots: AssembledNonterminal[] = [];
 
 	constructor(
 		kind: string,
@@ -1536,23 +1516,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
 		return this._slots;
-	}
-
-	get determinedSlots(): readonly AssembledNonterminal[] {
-		return this.#determinedSlots;
-	}
-
-	pruneDeterminedSlots(nodes: ReadonlyMap<string, AssembledNode>): void {
-		const kept: Record<string, AssembledNonterminal> = {};
-		for (const [name, slot] of Object.entries(this._slots)) {
-			if (isDeterminedSlot(slot, { nodes })) {
-				slot.determined = true;
-				this.#determinedSlots.push(slot);
-			} else {
-				kept[name] = slot;
-			}
-		}
-		if (this.#determinedSlots.length > 0) this._slots = kept;
 	}
 
 	get keywordConstructibleText(): string | undefined {
@@ -1586,10 +1549,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	#computeParameterless(): boolean {
-		if (!this.rawFactoryName) return false;
-		const pending = Object.values(this._slots).filter((s) => isDeterminedSlot(s, { nodes: this.#nodes }));
-		if (this.determinedSlots.length + pending.length === 0) return false;
-		return Object.values(this._slots).every((s) => !isRequired(s) || isDeterminedSlot(s, { nodes: this.#nodes }));
+		return this.rawFactoryName !== undefined && Object.keys(this._slots).length === 0;
 	}
 
 	get fields(): readonly AssembledNonterminal[] {
@@ -1640,7 +1600,7 @@ export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
 
 export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
 	const body = unwrapStructuralPassthroughs(simplifiedRule);
-	if (body.type === SYMBOL) return 'envelope';
+	if (body.type === SYMBOL || (body.type === SEQ && body.members.length === 0)) return 'envelope';
 	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
 	return 'branch';
 }

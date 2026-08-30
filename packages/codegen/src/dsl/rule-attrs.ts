@@ -84,7 +84,7 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 	return {
 		fieldName: unanimous((r) => r.fieldName),
 		multiplicity: unanimous((r) => r.multiplicity),
-		nonterminal: unanimous((r) => r.nonterminal),
+		nonterminal: unanimous((r) => r.nonterminal) === true ? true : undefined,
 		separator,
 		strongestMultiplicity
 	};

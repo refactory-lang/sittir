@@ -769,6 +769,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "operator": {
         "unnamed": false,
         "slotCount": 1,
@@ -780,27 +787,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "for_header_lhs": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "for_header_var_kind": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "for_header_let_const_kind": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -4573,13 +4559,6 @@
       "factoryFields": [
         "left",
         "right"
-      ],
-      "determinedSlots": [
-        {
-          "name": "operator",
-          "storageKey": "_operator",
-          "text": "in"
-        }
       ]
     },
     {
@@ -6602,13 +6581,6 @@
       "factoryFields": [
         "left",
         "value"
-      ],
-      "determinedSlots": [
-        {
-          "name": "kind",
-          "storageKey": "_kind",
-          "text": "var"
-        }
       ]
     },
     {
@@ -13851,6 +13823,45 @@
           }
         },
         {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_for_header_lhs",
+              "parseKind": "for_header_lhs",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_for_header_var_kind",
+              "parseKind": "for_header_var_kind",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_for_header_let_const_kind",
+              "parseKind": "for_header_let_const_kind",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_for_header_lhs",
+              "_for_header_var_kind",
+              "_for_header_let_const_kind"
+            ]
+          }
+        },
+        {
           "name": "operator",
           "propertyName": "operator",
           "paramName": "operator",
@@ -13905,75 +13916,6 @@
           }
         },
         {
-          "name": "for_header_lhs",
-          "propertyName": "forHeaderLhs",
-          "paramName": "forHeaderLhs",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_for_header_lhs",
-              "parseKind": "for_header_lhs",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_lhs"
-            ]
-          }
-        },
-        {
-          "name": "for_header_var_kind",
-          "propertyName": "forHeaderVarKind",
-          "paramName": "forHeaderVarKind",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_for_header_var_kind",
-              "parseKind": "for_header_var_kind",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_var_kind"
-            ]
-          }
-        },
-        {
-          "name": "for_header_let_const_kind",
-          "propertyName": "forHeaderLetConstKind",
-          "paramName": "forHeaderLetConstKind",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_for_header_let_const_kind",
-              "parseKind": "for_header_let_const_kind",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_let_const_kind"
-            ]
-          }
-        },
-        {
           "name": "body",
           "propertyName": "body",
           "paramName": "body",
@@ -14000,11 +13942,9 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "content",
         "operator",
         "right",
-        "for_header_lhs",
-        "for_header_var_kind",
-        "for_header_let_const_kind",
         "body"
       ]
     },

@@ -280,7 +280,7 @@ function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }):
 		return combined !== undefined ? { ...m, multiplicity: combined } : m;
 	});
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
-	const seq: BuiltSeq = { type: SEQ, members: pushed };
+	const seq: BuiltSeq = { type: SEQ, members: pushed, nonterminal: pushed.some((m) => m.nonterminal === true) };
 	const withMult: BuiltSeq = hasBareLiteral && multToPush !== undefined ? { ...seq, multiplicity: multToPush } : seq;
 	return pushed.length === 1 ? collapseSingletonSeq(withMult) : withMult;
 }
@@ -394,18 +394,18 @@ function attributeRepeat1(content: Built): Built {
 }
 
 function attributeField<R extends Built>(name: string, content: R): R {
-	return { ...content, fieldName: name, nonterminal: true };
+	return { ...content, fieldName: name };
 }
 
 function attributeAlias<R extends Built>(content: R, target: string | SymbolRule<'normalize'>): R {
 	const aliasedTo = typeof target === 'string' ? target : target.name;
 	const aliasedToId = typeof target === 'string' ? undefined : target.kindId;
-	return { ...content, aliasedTo, aliasedToId, inline: false, nonterminal: true };
+	return { ...content, aliasedTo, aliasedToId, inline: false };
 }
 
 export const attributeBuilder: AttributeBuilder = {
 	seq: (...members) => buildSeq({ members }),
-	choice: (...members) => ({ type: CHOICE, members }),
+	choice: (...members) => ({ type: CHOICE, members, nonterminal: true }),
 	optional: attributeOptional,
 	repeat: attributeRepeat,
 	repeat1: attributeRepeat1,
@@ -415,13 +415,13 @@ export const attributeBuilder: AttributeBuilder = {
 	prec: attributePrec,
 	variant: (name, content) => ({ type: VARIANT, name, content }),
 	group: (name, content) => ({ type: GROUP, name, content }),
-	string: (value) => ({ type: STRING, value }),
-	pattern: (value) => ({ type: PATTERN, value }),
-	symbol: (name) => ({ type: SYMBOL, name }),
-	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes }),
-	indent: () => ({ type: INDENT }),
-	dedent: () => ({ type: DEDENT }),
-	newline: () => ({ type: NEWLINE })
+	string: (value) => ({ type: STRING, value, nonterminal: false }),
+	pattern: (value) => ({ type: PATTERN, value, nonterminal: true }),
+	symbol: (name) => ({ type: SYMBOL, name, nonterminal: true }),
+	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes, nonterminal: true }),
+	indent: () => ({ type: INDENT, nonterminal: false }),
+	dedent: () => ({ type: DEDENT, nonterminal: false }),
+	newline: () => ({ type: NEWLINE, nonterminal: false })
 };
 
 export function isSlotPromotedLiteral(rule: Built): boolean {

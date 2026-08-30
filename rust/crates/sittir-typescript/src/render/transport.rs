@@ -9926,6 +9926,112 @@ impl RenderableTransport for ForInStatementRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ForInStatementContentTransportSlot {
+    ForHeaderLhs(ForHeaderLhsTransport),
+    ForHeaderVarKind(ForHeaderVarKindTransport),
+    ForHeaderLetConstKind(ForHeaderLetConstKindTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    399 => Ok(Self::ForHeaderLhs(
+                        ForHeaderLhsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    400 => Ok(Self::ForHeaderVarKind(
+                        ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
+                    )),
+                    401 => Ok(Self::ForHeaderLetConstKind(
+                        ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForInStatementContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ForInStatementContentTransportSlot")
+                )?;
+                match kind_id {
+                    399 => Ok(Self::ForHeaderLhs(
+                        ForHeaderLhsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    400 => Ok(Self::ForHeaderVarKind(
+                        ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
+                    )),
+                    401 => Ok(Self::ForHeaderLetConstKind(
+                        ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForInStatementContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ForInStatementContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForInStatementContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForInStatementContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForInStatementContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ForInStatementContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInStatementContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ForInStatementContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn for_in_statement_content_transport_slot_to_any(t: ForInStatementContentTransportSlot) -> AnyTransport {
+    match t {
+        ForInStatementContentTransportSlot::ForHeaderLhs(inner) => AnyTransport::ForHeaderLhs(inner),
+        ForInStatementContentTransportSlot::ForHeaderVarKind(inner) => AnyTransport::ForHeaderVarKind(inner),
+        ForInStatementContentTransportSlot::ForHeaderLetConstKind(inner) => AnyTransport::ForHeaderLetConstKind(inner),
+    }
+}
+
+impl RenderableTransport for ForInStatementContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ForInStatementContentTransportSlot::ForHeaderLhs(inner) => inner.render_into(dest),
+            ForInStatementContentTransportSlot::ForHeaderVarKind(inner) => inner.render_into(dest),
+            ForInStatementContentTransportSlot::ForHeaderLetConstKind(inner) => inner.render_into(dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum DoStatementSemicolonTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_3b,
@@ -40074,12 +40180,8 @@ pub struct ForInStatementTransport {
     pub right: ::sittir_core::SlotValue<ForInStatementRightTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_lhs"))]
-    pub for_header_lhs: Option<::sittir_core::SlotValue<ForHeaderLhsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_var_kind"))]
-    pub for_header_var_kind: Option<::sittir_core::SlotValue<ForHeaderVarKindTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_let_const_kind"))]
-    pub for_header_let_const_kind: Option<::sittir_core::SlotValue<ForHeaderLetConstKindTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<ForInStatementContentTransportSlot>,
 }
 
 impl RenderableTransport for ForInStatementTransport {
@@ -70430,18 +70532,7 @@ fn render_for_in_statement(node: &ForInStatementTransport, dest: &mut dyn ::std:
             None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        for_header_let_const_kind: match &node.for_header_let_const_kind {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        for_header_lhs: match &node.for_header_lhs {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        for_header_var_kind: match &node.for_header_var_kind {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };

@@ -1019,22 +1019,9 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
 
 ```text
-/**
-	 * Recursive, cascade-preserving parameterless check. Replicates the
-	 * former `markParameterlessKinds` fixpoint semantics as a structural
-	 * getter:
-	 *
-	 * - At least one required slot must exist (no "vacuous" parameterless).
-	 * - Every slot must be auto-stamp-eligible (optional, or single-value
-	 *   terminal, or single-value ref to a parameterless child).
-	 * - The node must have a `rawFactoryName` (hidden nodes can't be stamped).
-	 * - Cycle guard: re-entrant calls return `false` (LFP-from-false semantics).
-	 *
-	 * Not memoized: slot refs are UnresolvedRef until `hydrateSlotRefs` runs;
-	 * caching before hydration would lock in a spurious `false`. Shared by
-	 * every `AbstractAssembledCompound` subclass except `AssembledList`,
-	 * which overrides the getter to always return `false`.
-	 */
+/** A compound with a factory and no slots takes no arguments — every
+ *  reference in its render rule is fixed text (`_reference_expression_raw_mut`
+ *  → `raw mut`). Guarded against re-entrancy: a cycle reads as false. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.stampExpression`
@@ -2259,13 +2246,6 @@ can't be unified.
 /** See `trailingDelimiter`'s doc comment — same rationale, `leading` side. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.determined`
-
-```text
-/** Stamped by `pruneDeterminedSlots`: this slot's value is grammar-fixed
-	 *  and it renders as template text — it is no longer in any slot record. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.trailingDelimiter`
 
 ```text
@@ -2340,54 +2320,13 @@ can't be unified.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isDeterminedSlot`
+### `packages/codegen/src/compiler/model/node-map.ts::fixedTextOfKind`
 
 ```text
-/**
- * A determined slot is an enum of cardinality 1: a required, singular slot
- * whose value set has exactly one member — an inline literal, or a
- * reference to a leaf whose rendered text is a constant (keyword, or a
- * string-bodied token). Such a slot carries zero information per instance;
- * it is not a slot: `pruneDeterminedSlots` moves it out of the slot record
- * (no storage, transport, wrap capture, accessor, or `from()` handling) and
- * its text renders as template text (`determinedSlotText`).
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::determinedSlotText`
-
-```text
-/** The constant text a determined slot renders as — `undefined` when the
- *  slot is not determined. The single classification AND text source. */
-```
-
-#### body
-
-```text
-// Leaf targets only: a keyword or a string-bodied token has one constant
-// render. A parameterless COMPOUND target is deliberately excluded — its
-// render is its own template, and inlining that here would re-derive it;
-// no current grammar has such a slot, and one that appears stays a real
-// (caller-supplied) slot, surfacing loudly in the factory Config.
-```
-
-#### body
-
-```text
-// A token is parameterless exactly when its body is a single string.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::pruneDeterminedSlots`
-
-```text
-/**
- * The determined-slot pruning pass — runs post-hydration (a ref target is
- * not resolvable at construction). Determined slots leave the slot record
- * (every record-driven emitter drops them atomically) and land on the
- * node's `determinedSlots`, each stamped `determined` so the template
- * emitter — which still reaches them through `slotByRuleId` — inlines
- * their text instead of a slot reference.
- */
+/** The constant text a leaf kind renders as — a keyword, or a token whose
+ *  body is a single string — else `undefined`. The one text source for a
+ *  reference stamped `nonterminal: false` (template emitter) — a compound
+ *  target is never fixed text: its render is its own template. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound`
@@ -2502,13 +2441,6 @@ can't be unified.
 	 *     keys retained, collisions don't naturally occur in the current
 	 *     grammars.
 	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.determinedSlots`
-
-```text
-/** The slots `pruneDeterminedSlots` removed from the record — their
-	 *  value is grammar-fixed and renders as template text. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.<unknown>`
@@ -2636,8 +2568,9 @@ can't be unified.
 /**
  * The single predicate deciding whether a compositional rule classifies
  * as `'envelope'`, `'polymorph'`, or `'branch'`: peel structural
- * passthroughs (`variant`/`group` wrappers) first, then — one symbol →
- * `'envelope'`; a non-empty choice whose every member is leaf-shaped
+ * passthroughs (`variant`/`group` wrappers) first, then — one symbol, or
+ * an empty seq (every reference stripped as fixed text) → `'envelope'`; a
+ * non-empty choice whose every member is leaf-shaped
  * (`isLeafShapedMember`) → `'polymorph'`; anything else → `'branch'`.
  * `classifyNode` (assemble.ts) calls this for any rule shape that isn't
  * already resolved to `'enum'`/`'token'`/`'pattern'`/`'list'` earlier in

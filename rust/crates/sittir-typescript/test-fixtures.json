@@ -1442,17 +1442,6 @@
                   "$type": 192,
                   "$source": 0,
                   "$named": true,
-                  "_for_header_lhs": {
-                    "$type": 399,
-                    "$source": 0,
-                    "$named": true,
-                    "_left": "x",
-                    "$span": {
-                      "start": 656,
-                      "end": 657
-                    },
-                    "$nodeHandle": 251
-                  },
                   "_operator": 144,
                   "_right": "null",
                   "_body": {
@@ -1468,7 +1457,7 @@
                       "start": 667,
                       "end": 670
                     },
-                    "$nodeHandle": 253,
+                    "$nodeHandle": 251,
                     "_statements": []
                   },
                   "$other": [
@@ -1486,7 +1475,18 @@
                     "operator",
                     "right",
                     "body"
-                  ]
+                  ],
+                  "_content": {
+                    "$type": 399,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "x",
+                    "$span": {
+                      "start": 656,
+                      "end": 657
+                    },
+                    "$nodeHandle": 252
+                  }
                 },
                 {
                   "$type": 191,
@@ -3538,17 +3538,6 @@
               "$type": 192,
               "$source": 0,
               "$named": true,
-              "_for_header_lhs": {
-                "$type": 399,
-                "$source": 0,
-                "$named": true,
-                "_left": "x",
-                "$span": {
-                  "start": 656,
-                  "end": 657
-                },
-                "$nodeHandle": 380
-              },
               "_operator": 144,
               "_right": "null",
               "_body": {
@@ -3564,7 +3553,7 @@
                   "start": 667,
                   "end": 670
                 },
-                "$nodeHandle": 382,
+                "$nodeHandle": 380,
                 "_statements": []
               },
               "$other": [
@@ -3582,7 +3571,18 @@
                 "operator",
                 "right",
                 "body"
-              ]
+              ],
+              "_content": {
+                "$type": 399,
+                "$source": 0,
+                "$named": true,
+                "_left": "x",
+                "$span": {
+                  "start": 656,
+                  "end": 657
+                },
+                "$nodeHandle": 381
+              }
             },
             {
               "$type": 191,
@@ -7885,17 +7885,6 @@
           "$type": 192,
           "$source": 0,
           "$named": true,
-          "_for_header_lhs": {
-            "$type": 399,
-            "$source": 0,
-            "$named": true,
-            "_left": "x",
-            "$span": {
-              "start": 656,
-              "end": 657
-            },
-            "$nodeHandle": 650
-          },
           "_operator": 144,
           "_right": "null",
           "_body": {
@@ -7911,7 +7900,7 @@
               "start": 667,
               "end": 670
             },
-            "$nodeHandle": 652,
+            "$nodeHandle": 650,
             "_statements": []
           },
           "$other": [
@@ -7929,7 +7918,18 @@
             "operator",
             "right",
             "body"
-          ]
+          ],
+          "_content": {
+            "$type": 399,
+            "$source": 0,
+            "$named": true,
+            "_left": "x",
+            "$span": {
+              "start": 656,
+              "end": 657
+            },
+            "$nodeHandle": 651
+          }
         },
         {
           "$type": 191,
@@ -8464,7 +8464,7 @@
         "start": 667,
         "end": 670
       },
-      "$nodeHandle": 115,
+      "$nodeHandle": 113,
       "_statements": []
     },
     "expectedOutput": "{  }\n"
@@ -9715,17 +9715,6 @@
             "$type": 192,
             "$source": 0,
             "$named": true,
-            "_for_header_lhs": {
-              "$type": 399,
-              "$source": 0,
-              "$named": true,
-              "_left": "x",
-              "$span": {
-                "start": 656,
-                "end": 657
-              },
-              "$nodeHandle": 759
-            },
             "_operator": 144,
             "_right": "null",
             "_body": {
@@ -9741,7 +9730,7 @@
                 "start": 667,
                 "end": 670
               },
-              "$nodeHandle": 761,
+              "$nodeHandle": 759,
               "_statements": []
             },
             "$other": [
@@ -9759,7 +9748,18 @@
               "operator",
               "right",
               "body"
-            ]
+            ],
+            "_content": {
+              "$type": 399,
+              "$source": 0,
+              "$named": true,
+              "_left": "x",
+              "$span": {
+                "start": 656,
+                "end": 657
+              },
+              "$nodeHandle": 760
+            }
           },
           {
             "$type": 191,
@@ -10707,17 +10707,6 @@
       "$type": 192,
       "$source": 0,
       "$named": true,
-      "_for_header_lhs": {
-        "$type": 399,
-        "$source": 0,
-        "$named": true,
-        "_left": "x",
-        "$span": {
-          "start": 656,
-          "end": 657
-        },
-        "$nodeHandle": 803
-      },
       "_operator": 144,
       "_right": "null",
       "_body": {
@@ -10733,7 +10722,7 @@
           "start": 667,
           "end": 670
         },
-        "$nodeHandle": 805,
+        "$nodeHandle": 803,
         "_statements": []
       },
       "$other": [
@@ -10751,7 +10740,18 @@
         "operator",
         "right",
         "body"
-      ]
+      ],
+      "_content": {
+        "$type": 399,
+        "$source": 0,
+        "$named": true,
+        "_left": "x",
+        "$span": {
+          "start": 656,
+          "end": 657
+        },
+        "$nodeHandle": 804
+      }
     },
     "expectedOutput": "for(x in null){  }\n"
   },

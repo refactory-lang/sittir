@@ -3,7 +3,6 @@ import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
-import { pruneDeterminedSlots } from './model/node-map.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -133,8 +132,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 	computeFieldStorageInfo(nodeMap);
-
-	pruneDeterminedSlots(nodeMap);
 
 	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
 

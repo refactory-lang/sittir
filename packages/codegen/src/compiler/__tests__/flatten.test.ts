@@ -74,7 +74,7 @@ describe('flatten — repeat', () => {
 		const out = flatten(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
-		expect(out.separator).toEqual({ value: { type: 'STRING', value: ',' } });
+		expect(out.separator).toEqual({ value: { type: 'STRING', value: ',', nonterminal: false } });
 	});
 
 	it('lifts repeat with separator + trailing/leading → nested object rides along for free', () => {
@@ -90,7 +90,7 @@ describe('flatten — repeat', () => {
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toEqual({
-			value: { type: 'STRING', value: ',' },
+			value: { type: 'STRING', value: ',', nonterminal: false },
 			trailing: 'optional',
 			leading: 'mandatory'
 		});

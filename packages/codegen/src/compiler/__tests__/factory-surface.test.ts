@@ -3,7 +3,6 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { pruneDeterminedSlots } from '../model/node-map.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { existsSync } from 'node:fs';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
@@ -44,7 +43,6 @@ async function assembleGrammar(grammar: string): Promise<NodeMap> {
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record
 	// before any classification runs.
-	pruneDeterminedSlots(nodeMap);
 	return nodeMap;
 }
 

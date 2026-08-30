@@ -862,6 +862,13 @@ describe('for_statement', () => {
 describe('for_in_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forInStatement({
+			content: {
+				$type: TSKindId.ForHeaderLhs,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any
@@ -871,6 +878,13 @@ describe('for_in_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.forInStatement({
+			content: {
+				$type: TSKindId.ForHeaderLhs,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any

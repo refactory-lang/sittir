@@ -11,7 +11,7 @@ import {
 	SYMBOL,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
+import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
@@ -26,7 +26,7 @@ import {
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
 	storageKindOfValue,
-	determinedSlotText
+	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
@@ -293,12 +293,8 @@ function renderRuleEdge(
 
 function ownerSlotsFor(node: {
 	slots?: Readonly<Record<string, AssembledNonterminal>>;
-	determinedSlots?: readonly AssembledNonterminal[];
 }): Readonly<Record<string, AssembledNonterminal>> | undefined {
-	if (!node.slots) return undefined;
-	const determined = node.determinedSlots ?? [];
-	if (determined.length === 0) return node.slots;
-	return { ...node.slots, ...Object.fromEntries(determined.map((s) => [s.name, s])) };
+	return node.slots;
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
@@ -644,11 +640,11 @@ function emitScalarSlot(slotName: string): string {
 	return `{{ ${slotName} }}`;
 }
 
+function emitFixedText(text: string): string {
+	return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
+}
+
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): string {
-	if (slot.determined) {
-		const text = determinedSlotText(slot, { nodes: ctx.nodeMap.nodes })!;
-		return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
-	}
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	if (ctx.emittedSlotNames.has(slotName)) return '';
 	ctx.emittedSlotNames.add(slotName);
@@ -679,6 +675,11 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
 		return escapeLiteral(rule.literal);
+	}
+	if (rule.nonterminal === false) {
+		const text = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
+		if (text === undefined) throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
+		return emitFixedText(text);
 	}
 
 	const isInlineableHiddenHelper =

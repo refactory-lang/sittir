@@ -1119,10 +1119,6 @@ const NODE_MODEL_PATHS: Record<string, string> = {
 export interface LoadedNodeModel {
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
-	/** Per-kind storage keys of determined (grammar-fixed) slots — present
-	 *  on the read wire via tree-sitter field labels, absent from factory
-	 *  storage; comparisons skip them. */
-	readonly determinedStorageKeys: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly polymorphVariants: PolymorphVariantMap;
@@ -1136,7 +1132,6 @@ interface ParsedNodeModel {
 		kind: string;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
-		determinedSlots?: ReadonlyArray<{ name: string; storageKey: string; text: string }>;
 	}>;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
@@ -1145,7 +1140,6 @@ interface ParsedNodeModel {
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	factoryShapes: {},
-	determinedStorageKeys: {},
 	factoryFields: {},
 	factorySlots: {},
 	fieldAliasMap: {},
@@ -1173,18 +1167,13 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
-	const determinedStorageKeys: Record<string, readonly string[]> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
-		if (node.determinedSlots !== undefined && node.determinedSlots.length > 0) {
-			determinedStorageKeys[node.kind] = node.determinedSlots.map((slot) => slot.storageKey);
-		}
 	}
 	return {
 		factoryShapes,
 		factoryFields,
-		determinedStorageKeys,
 		factorySlots: model.factorySlots ?? {},
 		fieldAliasMap: model.fieldAliasMap ?? {},
 		polymorphVariants: model.polymorphVariants ?? {}

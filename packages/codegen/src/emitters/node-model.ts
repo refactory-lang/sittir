@@ -21,7 +21,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
-import { determinedSlotText } from '../compiler/model/node-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -75,7 +74,6 @@ interface SerializedNodeBase {
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	factoryFields?: string[];
-	determinedSlots?: { name: string; storageKey: string; text: string }[];
 	namespacedConstructors?: SerializedNamespacedConstructor[];
 }
 
@@ -164,13 +162,6 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
-		if (node instanceof AbstractAssembledCompound && node.determinedSlots.length > 0) {
-			serialized.determinedSlots = node.determinedSlots.map((slot) => ({
-				name: slot.name,
-				storageKey: slot.storageKey,
-				text: determinedSlotText(slot, { nodes: nodeMap.nodes })!
-			}));
-		}
 		const namespace = namespacedConstructors(node, nodeMap).entries;
 		if (namespace.length > 0) serialized.namespacedConstructors = namespace.map(serializeNamespacedConstructor);
 		nodes.push(serialized);

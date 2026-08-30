@@ -255,12 +255,9 @@ function classifyRule(
 		readonly force: ClassificationForce;
 	}
 ): RuleClassification {
-	const intrinsicKind = classifyIntrinsic(rule, { children: ctx.children });
-	const forcedKind =
-		ctx.force.forcedBy === 'field' || ctx.force.forcedBy === 'named-alias' ? 'nonterminal' : intrinsicKind;
 	return {
 		ruleId: ctx.id,
-		kind: forcedKind,
+		kind: classifyIntrinsic(rule, { children: ctx.children }),
 		...(ctx.force.forcedBy ? { forcedBy: ctx.force.forcedBy } : {}),
 		...(ctx.force.edgeName ? { edgeName: ctx.force.edgeName } : {}),
 		...(ctx.force.cstSurface ? { cstSurface: ctx.force.cstSurface } : {})

@@ -106,16 +106,6 @@ function isComparableNode(v: unknown): v is Record<string, unknown> {
 interface CompareCtx {
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly kindNameFromId?: (id: number) => string | undefined;
-	/** Per-kind storage keys of determined (grammar-fixed) slots — the read
-	 *  wire still carries them (tree-sitter field labels are load-bearing
-	 *  for parsing and form dispatch), the factory contract does not; they
-	 *  hold zero per-instance information, so comparison skips them. */
-	readonly determinedStorageKeys?: Record<string, readonly string[]>;
-}
-
-function isDeterminedKey(node: Record<string, unknown>, key: string, ctx: CompareCtx): boolean {
-	const kind = kindOf(node, ctx);
-	return kind !== undefined && (ctx.determinedStorageKeys?.[kind]?.includes(key) ?? false);
 }
 
 function kindOf(node: Record<string, unknown>, ctx: CompareCtx): string | undefined {
@@ -233,7 +223,6 @@ function compareNodeStorage(
 	const seen = new Set<string>();
 	for (const key of expectedKeys) {
 		if (key === '$type') continue;
-		if (isDeterminedKey(expected, key, ctx)) continue;
 		seen.add(key);
 		const ev = expected[key];
 		if (!actualKeys.has(key)) {
@@ -245,7 +234,6 @@ function compareNodeStorage(
 	}
 	for (const key of actualKeys) {
 		if (key === '$type' || seen.has(key)) continue;
-		if (isDeterminedKey(actual, key, ctx)) continue;
 		const av = actual[key];
 		if (isEmptyStorageValue(av)) continue;
 		return `${path || 'root'}.${key}: unexpected extra field on factory output`;
@@ -312,7 +300,6 @@ export interface FactoryRenderParseResult {
 async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryMap: Record<string, (config?: any) => unknown>;
 	factoryShapes: Record<string, FactoryShape>;
-	determinedStorageKeys: Record<string, readonly string[]>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
@@ -324,7 +311,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
-	let determinedStorageKeys: Record<string, readonly string[]> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
@@ -335,7 +321,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		return {
 			factoryMap,
 			factoryShapes,
-			determinedStorageKeys,
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
@@ -352,7 +337,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		// data, loaded separately from the factory functions.
 		const mapData = await loadNodeModel(grammar);
 		factoryShapes = mapData.factoryShapes;
-		determinedStorageKeys = mapData.determinedStorageKeys;
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
@@ -387,8 +371,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				return {
 					factoryMap,
 					factoryShapes,
-					determinedStorageKeys,
-					fieldAliasMap,
+							fieldAliasMap,
 					factoryFields,
 					factorySlots,
 					polymorphVariants,
@@ -401,7 +384,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		return {
 			factoryMap,
 			factoryShapes,
-			determinedStorageKeys,
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
@@ -416,7 +398,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		return {
 			factoryMap,
 			factoryShapes,
-			determinedStorageKeys,
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
@@ -552,7 +533,6 @@ export async function validateFactoryRenderParse(
 	const {
 		factoryMap,
 		factoryShapes,
-		determinedStorageKeys,
 		fieldAliasMap,
 		factoryFields,
 		factorySlots,
@@ -713,7 +693,7 @@ export async function validateFactoryRenderParse(
 					referenceData as unknown as Record<string, unknown>,
 					factoryData as unknown as Record<string, unknown>,
 					'',
-					{ factoryShapes, kindNameFromId, determinedStorageKeys }
+					{ factoryShapes, kindNameFromId }
 				);
 				if (diff) {
 					astMismatches.push({

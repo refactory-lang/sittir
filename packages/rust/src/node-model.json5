@@ -1612,24 +1612,17 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "parameters": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "function_type_trait_form": {
+      "parameters": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "function_type_fn_form": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       },
@@ -4360,12 +4353,11 @@
     },
     {
       "kind": "_block_comment_doc_inner",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "BlockCommentDocInner",
       "factoryName": "_blockCommentDocInner",
       "irKey": "blockCommentDocInner",
       "hidden": false,
-      "isParameterless": true,
       "hoisted": true,
       "fields": [
         {
@@ -4398,23 +4390,15 @@
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
         "doc"
-      ],
-      "determinedSlots": [
-        {
-          "name": "inner",
-          "storageKey": "_inner",
-          "text": "!"
-        }
       ]
     },
     {
       "kind": "_block_comment_doc_outer",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "BlockCommentDocOuter",
       "factoryName": "_blockCommentDocOuter",
       "irKey": "blockCommentDocOuter",
       "hidden": false,
-      "isParameterless": true,
       "hoisted": true,
       "fields": [
         {
@@ -4447,13 +4431,6 @@
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
         "doc"
-      ],
-      "determinedSlots": [
-        {
-          "name": "outer",
-          "storageKey": "_outer",
-          "text": "*"
-        }
       ]
     },
     {
@@ -5556,7 +5533,7 @@
     },
     {
       "kind": "_line_comment_doc_inner",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "LineCommentDocInner",
       "factoryName": "_lineCommentDocInner",
       "irKey": "lineCommentDocInner",
@@ -5593,18 +5570,11 @@
       "forwardsTo": "_line_doc_content",
       "factoryFields": [
         "doc"
-      ],
-      "determinedSlots": [
-        {
-          "name": "inner",
-          "storageKey": "_inner",
-          "text": "!"
-        }
       ]
     },
     {
       "kind": "_line_comment_doc_outer",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "LineCommentDocOuter",
       "factoryName": "_lineCommentDocOuter",
       "irKey": "lineCommentDocOuter",
@@ -5641,13 +5611,6 @@
       "forwardsTo": "_line_doc_content",
       "factoryFields": [
         "doc"
-      ],
-      "determinedSlots": [
-        {
-          "name": "outer",
-          "storageKey": "_outer",
-          "text": "/"
-        }
       ]
     },
     {
@@ -6381,7 +6344,7 @@
     },
     {
       "kind": "_range_expression_postfix",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "RangeExpressionPostfix",
       "factoryName": "_rangeExpressionPostfix",
       "irKey": "rangeExpressionPostfix",
@@ -6417,18 +6380,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "start"
-      ],
-      "determinedSlots": [
-        {
-          "name": "operator",
-          "storageKey": "_operator",
-          "text": ".."
-        }
       ]
     },
     {
       "kind": "_range_expression_prefix",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "RangeExpressionPrefix",
       "factoryName": "_rangeExpressionPrefix",
       "irKey": "rangeExpressionPrefix",
@@ -6464,13 +6420,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "end"
-      ],
-      "determinedSlots": [
-        {
-          "name": "operator",
-          "storageKey": "_operator",
-          "text": ".."
-        }
       ]
     },
     {
@@ -6929,14 +6878,7 @@
       "hoisted": false,
       "fields": [],
       "children": [],
-      "factoryShape": "config",
-      "determinedSlots": [
-        {
-          "name": "mutable_specifier",
-          "storageKey": "_mutable_specifier",
-          "text": "mut"
-        }
-      ]
+      "factoryShape": "config"
     },
     {
       "kind": "_reserved_identifier",
@@ -12279,13 +12221,6 @@
         "visibility_modifier",
         "name",
         "alias"
-      ],
-      "determinedSlots": [
-        {
-          "name": "crate",
-          "storageKey": "_crate",
-          "text": "crate"
-        }
       ]
     },
     {
@@ -13624,6 +13559,37 @@
           }
         },
         {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_function_type_trait_form",
+              "parseKind": "function_type_trait_form",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_function_type_fn_form",
+              "parseKind": "function_type_fn_form",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_function_type_trait_form",
+              "_function_type_fn_form"
+            ]
+          }
+        },
+        {
           "name": "parameters",
           "propertyName": "parameters",
           "paramName": "parameters",
@@ -13643,52 +13609,6 @@
             "typeName": "",
             "kinds": [
               "parameters"
-            ]
-          }
-        },
-        {
-          "name": "function_type_trait_form",
-          "propertyName": "functionTypeTraitForm",
-          "paramName": "functionTypeTraitForm",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_function_type_trait_form",
-              "parseKind": "function_type_trait_form",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_function_type_trait_form"
-            ]
-          }
-        },
-        {
-          "name": "function_type_fn_form",
-          "propertyName": "functionTypeFnForm",
-          "paramName": "functionTypeFnForm",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_function_type_fn_form",
-              "parseKind": "function_type_fn_form",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_function_type_fn_form"
             ]
           }
         },
@@ -13720,9 +13640,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "for_lifetimes",
+        "content",
         "parameters",
-        "function_type_trait_form",
-        "function_type_fn_form",
         "return_type"
       ]
     },
@@ -16205,7 +16124,7 @@
     },
     {
       "kind": "mut_pattern",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "MutPattern",
       "factoryName": "mutPattern",
       "irKey": "mutPattern",
@@ -16240,13 +16159,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "pattern"
-      ],
-      "determinedSlots": [
-        {
-          "name": "mutable_specifier",
-          "storageKey": "_mutable_specifier",
-          "text": "mut"
-        }
       ]
     },
     {
@@ -18095,7 +18007,6 @@
       "factoryName": "selfParameter",
       "irKey": "selfParameter",
       "hidden": false,
-      "isParameterless": true,
       "hoisted": false,
       "fields": [
         {
@@ -18169,13 +18080,6 @@
       "factoryShape": "config",
       "factoryFields": [
         "lifetime"
-      ],
-      "determinedSlots": [
-        {
-          "name": "self",
-          "storageKey": "_self",
-          "text": "self"
-        }
       ]
     },
     {

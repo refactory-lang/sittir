@@ -17,7 +17,7 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
-import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
+import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
@@ -352,58 +352,6 @@ function simplifyToFixpoint(
 	return current;
 }
 
-export interface FixedLiteralCtx {
-	joiner: string;
-	deterministic: boolean;
-}
-
-export function collectFixedLiteral(
-	rule: RenderRule,
-	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
-): string | undefined {
-	if (rule.nonterminal || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') return undefined;
-	if (rule.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
-	const ctx = rule.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
-	switch (rule.type) {
-		case STRING:
-			return rule.value || undefined;
-		case CHOICE: {
-			if (rule.members.length === 0) return undefined;
-			let found: string | undefined;
-			for (const m of rule.members) {
-				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
-				if (isBlank) {
-					if (ctx.deterministic) return undefined;
-					continue;
-				}
-				const v = collectFixedLiteral(m, ctx);
-				if (v === undefined) return undefined;
-				if (found === undefined) found = v;
-				else if (found !== v) return undefined;
-			}
-			return found;
-		}
-		case SEQ: {
-			if (rule.members.length === 0) return undefined;
-			const nonBlanks = rule.members.filter(
-				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
-			);
-			const [only] = nonBlanks;
-			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
-			const parts: string[] = [];
-			for (const m of nonBlanks) {
-				const v = collectFixedLiteral(m, { ...ctx, deterministic: true });
-				if (v === undefined) return undefined;
-				parts.push(v);
-			}
-			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
-		}
-		default:
-			return undefined;
-	}
-}
-
-
 function isAllTextRender(rule: RenderRule): boolean {
 	if (isSlotPromotedLiteral(rule)) return false;
 	switch (rule.type) {
@@ -427,7 +375,7 @@ function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): R
 		return text === undefined ? rule : withAttrsFrom(rule, { type: STRING, value: text });
 	}
 	const filtered = rule.members.filter((m) => {
-		if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;
+		if (m.nonterminal === false) return false;
 		if (m.type === SEQ && (m.members.length === 0 || isAllTextRender(m))) return false;
 		return true;
 	});

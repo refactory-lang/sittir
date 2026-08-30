@@ -1220,6 +1220,13 @@ describe('for_lifetimes', () => {
 describe('function_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.functionType({
+			content: {
+				$type: TSKindId.FunctionTypeTraitForm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_trait: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.FunctionType);
@@ -1227,6 +1234,13 @@ describe('function_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.functionType({
+			content: {
+				$type: TSKindId.FunctionTypeTraitForm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_trait: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -1643,6 +1657,13 @@ describe('dynamic_type namespaced constructors', () => {
 	});
 	it('functionType builds the parent', () => {
 		const node = ir.dynamicType.functionType({
+			content: {
+				$type: TSKindId.FunctionTypeTraitForm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_trait: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.DynamicType);

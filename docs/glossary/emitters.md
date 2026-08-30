@@ -2888,6 +2888,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // otherwise fall back to the canonical kind string.
 ```
 
+#### body
+
+```text
+// (the reader stays grammar-agnostic; wrap is the model-driven boundary —
+// see `wrap.ts::_keepModelledSlots`.)
+```
+
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
 ```text
@@ -6045,20 +6052,18 @@ Surface`
 #### body
 
 ```text
-// A determined slot is not a slot: its grammar-fixed value IS the
-// template text (`pruneDeterminedSlots` removed it from the record; it
-// still resolves here through slotByRuleId). Whitespace-only text (the
-// newline externals) is emitted as an expression tag — raw template
-// whitespace adjacent to the header comment's `-#}` trim would be eaten
-// (see the INDENT case).
-```
-
-#### body
-
-```text
 // See EmitCtx.emittedSlotNames' doc comment: multiple grammar-tree
 // positions (possibly straddling a SEQ/CHOICE boundary) can resolve to
 // this SAME merged slot — emit the reference only once per kind.
+```
+
+### `packages/codegen/src/emitters/templates.ts::emitFixedText`
+
+```text
+/** Emit fixed text into a template. Whitespace-only text (the newline
+ *  externals) goes out as an expression tag — raw template whitespace
+ *  adjacent to the header comment's `-#}` trim would be eaten (see the
+ *  INDENT case). */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitFieldNameSlot`
@@ -6116,23 +6121,21 @@ Surface`
 // it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
 // `foo` not as a slot reference.
 //
-// Chunk D2: a link-symbol renders its literal verbatim ONLY when it has no
-// `fieldName`. A field-wrapped link-operator literal (stamped by
-// flatten from a surrounding field() wrapper, e.g.
-// `field('operator', symbol(name='amp_amp', literal='&&'))`)
-// is a SLOT — it must fall through to the standard slot path below so the
-// renderer substitutes the actual operator from the parse tree (the now-
-// separate operator slot, Chunk D1) instead of the first arm's hard-coded
-// literal. (`binary_expression` / `comparison_operator` share one
-// `fieldName: 'operator'` across arms with different literals.) Emitting the
-// literal here would render `a < b` as the first arm's operator regardless
-// of the parsed operator and leave read unable to populate the slot.
-//
-// (debt PR-P1) Was `rule.source === 'link'`; `literal` is set ONLY by
-// link.ts's `canonicalizeRuleLiterals` alongside the deleted `source:
-// 'link'` stamp (its only writer), so checking `literal !== undefined`
-// directly is the exact same condition, structurally — not an inference,
-// the same write site produced both facts together.
+// A link-symbol renders its literal verbatim ONLY when it has no
+// `fieldName`; a fielded one goes through the terminality stamp below.
+```
+
+#### body
+
+```text
+// `nonterminal: false` is the one switch that makes a reference text
+// rather than a slot (`flatten.ts::stampTerminality`): a reference to a
+// literal — a keyword/token leaf, a link-minted literal kind, a rule whose
+// body is one fixed string — renders that text here and never reaches the
+// slot lookup. `binary_expression`'s `operator` is NOT such a reference:
+// its fielded position varies across the choice's arms, so the stamp
+// marks it `nonterminal: true` and it falls through to the slot path,
+// where the renderer substitutes the parsed operator.
 ```
 
 #### body
@@ -7784,6 +7787,17 @@ Surface`
  * the SAME raw un-dispatched shadow stubs instead of drifting apart — see
  * `_omitWrapKeys`'s doc comment for the masking bug this prevents.
  */
+```
+
+### `packages/codegen/src/emitters/wrap.ts::_keepModelledSlots`
+
+```text
+// Emitted prelude helper, called first in every wrap function with the
+// keys that kind's wrap reads (its slots' storage keys plus the kind-keyed
+// candidates of its unnamed slots). The grammar-agnostic reader still
+// emits a `_<key>` for every named child, including a reference to a
+// literal the model has no slot for; wrap is the model-driven boundary
+// and drops those before they can be spread into the wrapped node.
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::collectWrapWireKeyTypes`
@@ -11160,9 +11174,7 @@ pipeline — which falls back to string equality.
 ### `packages/codegen/src/emitters/templates.ts::ownerSlotsFor`
 
 ```text
-/** The owner's slots keyed by name for `lookupSlot`'s fallbacks —
- *  including determined slots, which left the record but still ARE the
- *  field's slot at their template position. */
+/** The owner's slots keyed by name for `lookupSlot`'s fallbacks. */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitOne`
@@ -11992,13 +12004,6 @@ pipeline — which falls back to string equality.
 ```text
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
-```
-
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.determinedSlots`
-
-```text
-/** Grammar-fixed slots `pruneDeterminedSlots` removed from the record —
-	 *  each renders as template text, never stored on the wire. */
 ```
 
 ### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.namespacedConstructors`

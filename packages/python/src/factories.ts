@@ -42,6 +42,7 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildTypeConversion = /^(?:![a-z])/u;
 const _leafRe_buildIdentifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_buildComment = /^(?:.*)/u;
 const _leafRe_buildStringStart = /^(?:[a-zA-Z]*["']+)/u;
 const _leafRe_build_StringContent = /^(?:[^"'\\{}\n]+)/u;
 const _leafRe_buildEscapeInterpolation = /^(?:\{\{|\}\})/u;
@@ -5220,6 +5221,8 @@ export type CommentLooseArgs = [text: string];
 export function buildComment(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`comment: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildComment.test(text))
+		throw new Error(`comment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Comment as const,

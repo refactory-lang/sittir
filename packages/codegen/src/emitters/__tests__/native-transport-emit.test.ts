@@ -40,7 +40,7 @@ function makeMinimalNodeMap(): NodeMap {
 			{
 				type: FIELD,
 				name: 'semicolon',
-				content: { type: STRING, value: ';' }
+				content: { type: REPEAT, content: { type: STRING, value: ';' } }
 			}
 		]
 	};

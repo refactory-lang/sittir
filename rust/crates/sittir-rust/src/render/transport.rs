@@ -11974,6 +11974,103 @@ impl RenderableTransport for BracketedTypeContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum FunctionTypeContentTransportSlot {
+    FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
+    FunctionTypeFnForm(FunctionTypeFnFormTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    363 => Ok(Self::FunctionTypeTraitForm(
+                        FunctionTypeTraitFormTransport::from_napi_value(env, napi_val)?
+                    )),
+                    364 => Ok(Self::FunctionTypeFnForm(
+                        FunctionTypeFnFormTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionTypeContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FunctionTypeContentTransportSlot")
+                )?;
+                match kind_id {
+                    363 => Ok(Self::FunctionTypeTraitForm(
+                        FunctionTypeTraitFormTransport::from_napi_value(env, napi_val)?
+                    )),
+                    364 => Ok(Self::FunctionTypeFnForm(
+                        FunctionTypeFnFormTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionTypeContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FunctionTypeContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionTypeContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionTypeContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionTypeContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionTypeContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionTypeContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionTypeContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_type_content_transport_slot_to_any(t: FunctionTypeContentTransportSlot) -> AnyTransport {
+    match t {
+        FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => AnyTransport::FunctionTypeTraitForm(inner),
+        FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => AnyTransport::FunctionTypeFnForm(inner),
+    }
+}
+
+impl RenderableTransport for FunctionTypeContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render_into(dest),
+            FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render_into(dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum GenericFunctionFunctionTransportSlot {
     Identifier(IdentifierTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -39888,10 +39985,8 @@ pub struct FunctionTypeTransport {
     pub parameters: ::sittir_core::SlotValue<ParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<Box<_TypeTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_trait_form"))]
-    pub function_type_trait_form: Option<::sittir_core::SlotValue<Box<FunctionTypeTraitFormTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_fn_form"))]
-    pub function_type_fn_form: Option<::sittir_core::SlotValue<FunctionTypeFnFormTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<Box<FunctionTypeContentTransportSlot>>,
 }
 
 impl RenderableTransport for FunctionTypeTransport {
@@ -68324,15 +68419,8 @@ fn render_for_lifetimes(node: &ForLifetimesTransport, dest: &mut dyn ::std::fmt:
 
 fn render_function_type(node: &FunctionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FunctionTypeTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         for_lifetimes: match &node.for_lifetimes {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        function_type_fn_form: match &node.function_type_fn_form {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        function_type_trait_form: match &node.function_type_trait_form {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },

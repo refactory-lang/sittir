@@ -3138,18 +3138,16 @@ export type FunctionTypeBuilt = T.FunctionType & {
 	readonly $named: true;
 	readonly $with: {
 		forLifetimes(value?: T.ForLifetimes): FunctionTypeBuilt;
+		content(value: T.FunctionTypeTraitForm | T.FunctionTypeFnForm): FunctionTypeBuilt;
 		parameters(value: T.Parameters): FunctionTypeBuilt;
-		functionTypeTraitForm(value?: T.FunctionTypeTraitForm): FunctionTypeBuilt;
-		functionTypeFnForm(value?: T.FunctionTypeFnForm): FunctionTypeBuilt;
 		returnType(value?: T._Type): FunctionTypeBuilt;
 	};
 } & _NodeMethods;
 
 export function buildFunctionType(config: T.FunctionType.Config): FunctionTypeBuilt {
 	const _for_lifetimes = config.forLifetimes;
+	const _content = config.content;
 	const _parameters = config.parameters;
-	const _function_type_trait_form = config.functionTypeTraitForm;
-	const _function_type_fn_form = config.functionTypeFnForm;
 	const _return_type = config.returnType;
 	return withMethods(
 		withAccessors(
@@ -3158,25 +3156,21 @@ export function buildFunctionType(config: T.FunctionType.Config): FunctionTypeBu
 				$source: 2 as const,
 				$named: true as const,
 				_for_lifetimes,
+				_content,
 				_parameters,
-				_function_type_trait_form,
-				_function_type_fn_form,
 				_return_type,
 				$with: {
 					forLifetimes: (value?: T.ForLifetimes) => buildFunctionType({ ...config, forLifetimes: value }),
+					content: (value: T.FunctionTypeTraitForm | T.FunctionTypeFnForm) =>
+						buildFunctionType({ ...config, content: value }),
 					parameters: (value: T.Parameters) => buildFunctionType({ ...config, parameters: value }),
-					functionTypeTraitForm: (value?: T.FunctionTypeTraitForm) =>
-						buildFunctionType({ ...config, functionTypeTraitForm: value }),
-					functionTypeFnForm: (value?: T.FunctionTypeFnForm) =>
-						buildFunctionType({ ...config, functionTypeFnForm: value }),
 					returnType: (value?: T._Type) => buildFunctionType({ ...config, returnType: value })
 				}
 			},
 			{
 				forLifetimes: () => _for_lifetimes,
+				content: () => _content,
 				parameters: () => _parameters,
-				functionTypeTraitForm: () => _function_type_trait_form,
-				functionTypeFnForm: () => _function_type_fn_form,
 				returnType: () => _return_type
 			}
 		),

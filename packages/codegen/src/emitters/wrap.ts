@@ -6,6 +6,7 @@ import {
 	AssembledEnum,
 	AssembledSupertype,
 	AssembledList,
+	AbstractAssembledCompound,
 	AssembledKeyword,
 	AssembledNonterminal,
 	valueParseKindsOf,
@@ -425,6 +426,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	return [
 		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
+		`  data = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
 		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)});`,
 		`  if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {`,
@@ -533,6 +535,7 @@ function emitSeparatedListWrap(
 	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...canonicalKeys, ...wireKeyTypes.keys()])])});`);
 	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
@@ -754,6 +757,9 @@ function emitFieldCarryingWrap(
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	lines.push(
+		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...fields.map((f) => f.storageKey), ...wireKeyTypes.keys()])])});`
+	);
 	if (wrapsAnonLiteralContent(fields, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
@@ -1443,6 +1449,18 @@ export class WrapEmitter implements CodegenEmitter<string> {
 							? ['  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);']
 							: []),
 						'  return typeof raw === "string" ? raw : undefined;',
+						'}',
+						'',
+						'// The model is the wire contract: a `_<key>` the model has no slot for',
+						'// (a reference to a literal — the grammar-agnostic reader still emits it)',
+						'// never enters a wrapped node.',
+						'function _keepModelledSlots<T extends object>(data: T, keys: readonly string[]): T {',
+						'  const out: Record<string, unknown> = {};',
+						'  for (const key of Object.keys(data)) {',
+						'    if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) continue;',
+						'    out[key] = (data as Record<string, unknown>)[key];',
+						'  }',
+						'  return out as T;',
 						'}',
 						'',
 						'function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {',

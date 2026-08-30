@@ -3080,11 +3080,9 @@ export interface ForStatement {
 export interface ForInStatement {
 	readonly $type: TSKindId.ForInStatement;
 	readonly _await_marker?: boolean;
+	readonly _content: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
-	readonly _for_header_lhs?: ForHeaderLhs;
-	readonly _for_header_var_kind?: ForHeaderVarKind;
-	readonly _for_header_let_const_kind?: ForHeaderLetConstKind;
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly await_marker?: BooleanKeyword<'await'>;
@@ -3092,14 +3090,11 @@ export interface ForInStatement {
 	};
 	readonly __looseHints__?: {
 		readonly await_marker?: 'await' | 'await';
-		readonly for_header_lhs?: readonly (_LhsExpression | ParenthesizedExpression)[];
 	};
 	awaitMarker(): boolean | undefined;
+	content(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 	operator(): number;
 	right(): Expression | SequenceExpression;
-	forHeaderLhs(): ForHeaderLhs | undefined;
-	forHeaderVarKind(): ForHeaderVarKind | undefined;
-	forHeaderLetConstKind(): ForHeaderLetConstKind | undefined;
 	body(): Statement;
 }
 

@@ -31,7 +31,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, ChoiceRule, PhaseName, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, PhaseName, RenderRule, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
@@ -943,4 +943,55 @@ export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b
 		return JSON.stringify(x) === JSON.stringify(y);
 	};
 	return same(a, b) && literalDeltas === 1;
+}
+
+export interface FixedLiteralCtx {
+	joiner: string;
+	deterministic: boolean;
+}
+
+export function collectFixedLiteral(
+	rule: RenderRule,
+	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
+): string | undefined {
+	if (rule.nonterminal || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') return undefined;
+	if (rule.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
+	const ctx = rule.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
+	switch (rule.type) {
+		case STRING:
+			return rule.value || undefined;
+		case CHOICE: {
+			if (rule.members.length === 0) return undefined;
+			let found: string | undefined;
+			for (const m of rule.members) {
+				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
+				if (isBlank) {
+					if (ctx.deterministic) return undefined;
+					continue;
+				}
+				const v = collectFixedLiteral(m, ctx);
+				if (v === undefined) return undefined;
+				if (found === undefined) found = v;
+				else if (found !== v) return undefined;
+			}
+			return found;
+		}
+		case SEQ: {
+			if (rule.members.length === 0) return undefined;
+			const nonBlanks = rule.members.filter(
+				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
+			);
+			const [only] = nonBlanks;
+			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
+			const parts: string[] = [];
+			for (const m of nonBlanks) {
+				const v = collectFixedLiteral(m, { ...ctx, deterministic: true });
+				if (v === undefined) return undefined;
+				parts.push(v);
+			}
+			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
+		}
+		default:
+			return undefined;
+	}
 }

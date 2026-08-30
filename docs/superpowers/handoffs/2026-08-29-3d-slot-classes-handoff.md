@@ -41,82 +41,69 @@ mechanical fan-outs and glossary sweeps to `sittir-codegen` (sonnet) agents.
   propose-14 OK; `DBG_SLOT_MISS` rust 5 (3 structural) / ts 4 (4 structural)
   / py 0; `unclassifiable-shape` rust 2 / ts 4 / py 0.
 
-## Rulings (user, 2026-08-29) — implement next
+## Rulings (user, 2026-08-29/30) — step 1 landed, step 2 next
 
-The derived single-slot classifier (`BranchSlotClass`, `classifyBranchSlots`,
-`computeSlotClasses`, `userSlotsOf` in `emitters/shared.ts`; `slotClass` on
-the compound) is **deleted, not relocated**. `AssembledEnvelope` = exactly one
-slot, structurally; `AssembledBranch` = more than one (or none). The census of
-where the derived fact and the structural class disagree
-(`scratchpad/outliers.mts` of the prior session; rerun it) had four families,
-each ruled at its source:
+`nonterminal` is the single slot switch. Landed on this branch:
 
-1. **Determined-literal siblings** (rust `mut_pattern.mutable_specifier`,
-   `_range_expression_{prefix,postfix}.operator`, doc-comment markers;
-   python `decorator`/`_simple_statements` `_newline`): simplify strips a
-   reference to a determined kind (a kind whose render rule is one fixed
-   literal — keyword/token leaf) beside slots exactly as it strips a literal.
-   The text is **template only**: the render rule keeps the reference and the
-   template emitter renders the kind's fixed text; no stamping at
-   construction, no `determinedSlots` on the node, no wire key. Delete
-   `determinedSlots`, `pruneDeterminedSlots`, `isDeterminedSlot`,
-   `determinedSlotText`, `stampExpression`/`stampChildExpression`, the
-   `determined` flag on `AssembledNonterminal`, `generate.ts`'s prune call,
-   and `node-model.ts`'s `determinedSlots`/`stampExpression` serialization.
-   Caveat found in `tools/src/validate/factory-render-parse.ts`
-   (`determinedStorageKeys`, `isDeterminedKey`) and
-   `template-coverage.ts` (`determinedFieldsByKind`): the **read** wire still
-   carries the determined child (tree-sitter field labels are load-bearing),
-   so the validator must still skip those keys — derive that per-kind list
-   from the render rule (one derivation in the node-model emitter: required
-   singular references to determined kinds), not from a node fact.
-   `parameterless` on compounds then means "every slot is optional"
-   (measure the delta; today it requires a determined slot).
-   **The single switch is `nonterminal`** (user, same day): a reference to
-   a determined kind is `nonterminal: false` by default — template text,
-   stripped like a literal. If a census/audit shows a real need to keep a
-   determined child as a slot, the entry point is stamping `nonterminal:
-   true` on that reference (slot-promoted, exactly like a promoted
-   literal); only then may any determined-slot machinery exist, and it
-   serves those promoted references alone. Do not keep the machinery
-   speculatively — delete it, and reintroduce behind `nonterminal: true`
-   if the census justifies it.
-   **Stop-and-ask edge case**: flatten stamps `nonterminal: true` on any
-   fielded reference (`field('operator', $._kw_operator)`), so a
-   determined-kind reference can read as slot-promoted only because the
-   grammar labelled it — a tree-sitter field label is load-bearing for the
-   parser, not evidence of a slot. Do not treat those as promoted
-   automatically: census them (kind, field name, determined target) and
-   report them for a ruling on whether a field name alone makes it a slot.
-2. **Keyword-presence flags** (`async_block.move_marker`,
-   `self_parameter`'s `&`/lifetime/`mut`, `field_pattern`'s `ref`/`mut`,
-   python `_simple_pattern_negative.sign`): real slots → those kinds are
-   `AssembledBranch`; their factories become config surfaces (output changes
-   by design; validators are the gate).
-3. **Hidden terminators** (typescript `_automatic_semicolon | ";"` on every
-   statement, `_class_body_member.terminator`): multiple slots →
-   `AssembledBranch`.
-4. **Layout** (`INDENT`/`DEDENT`/`NEWLINE`): `nonterminal: false` — layout
-   terminals the render rule owns, never slots; simplify strips them beside
-   slots like literals (python `block`, `_suite_block_with_indent`,
-   `_match_block_block` become envelopes by structure).
+- `flatten.ts::stampTerminality` stamps `nonterminal: false` on literals,
+  layout tokens (INDENT/DEDENT/NEWLINE), and references to a literal (a
+  keyword/token leaf, a link-minted literal kind, a rule whose body is one
+  fixed string). A field never makes a slot; an alias never changes
+  terminality (`attributeField`/`attributeAlias`, `rule-catalog`'s
+  `classifyRule`). The three exclusions are all "a choice is nonterminal":
+  a literal that is a CHOICE arm, an optional/repeated literal, and a
+  fielded literal whose text/cardinality/presence varies across the
+  enclosing choice's arms (`binary_expression.operator`, `declare_marker`)
+  stay slots. `simplifySeqRule` strips every `false` member generically;
+  the template emitter renders a `false` reference as fixed text
+  (`fixedTextOfKind` / `collectFixedLiteral`, now in `dsl/rule-patterns`).
+- The determined-slot machinery is gone: `pruneDeterminedSlots`,
+  `determinedSlots`, the `determined` flag, `isDeterminedSlot`,
+  `determinedSlotText`, node-model `determinedSlots`, and the validators'
+  `determinedStorageKeys` / `isDeterminedKey` / `determinedFieldsByKind`.
+  The 12 fielded references to a literal (rust `mut_pattern`,
+  `extern_crate_declaration.crate`, `self_parameter.self`,
+  `_range_expression_{prefix,postfix}.operator`, four doc-comment marker
+  forms; ts `_binary_expression_arm.operator`, `_for_header_var_kind.kind`;
+  python `decorator.newline`) are template text like the unlabelled ones.
+  3e rebuilds `binary_expression`'s `in`-form surface with an overlay — it
+  must not stay a separate parser node (`binary_expression_arm` in
+  node-types, `binary_expression` missing `in` / `private_property_identifier`).
+- Every attribute builder stamps the node it builds (`dsl.md::attributeBuilder`
+  table): string/layout false; pattern/symbol/supertype true; choice true
+  (the choice node is the slot, no push-down onto arms); seq = any member;
+  repeat true; optional = content's, one level only. Distributed choices
+  and permutation arms are factored in normalize's post-flatten fixpoint
+  (`flatten.ts::factorChoiceArms`, `foldPermutationArms`) so the rebuilt
+  choice/optional wraps the literals directly — no field-based rule anywhere.
+- The native reader stays grammar-agnostic (it emits a `_<key>` for every
+  named child); wrap is the model-driven boundary: every wrap function first
+  runs `_keepModelledSlots(data, keys)` with the keys that kind reads, so a
+  reference to a literal the model has no slot for never enters a wrapped
+  node. `template-coverage` checks the model's fields, not the parser's. No
+  validator exemption list exists.
+- `AssembledEnvelope` = zero or one slot, structurally; `AssembledBranch` =
+  two or more. Compound `parameterless` = a factory and zero slots.
+- Gate result for step 1: templates and every generated source byte-identical
+  across the three grammars; `node-model.json5` differs only in labels
+  (`modelType` branch→envelope for the one-slot kinds, python `block` →
+  polymorph like every other array-of-choice body, `isParameterless` off
+  `self_parameter` / `_block_comment_doc_*`, `determinedSlots` gone).
 
-After 1–4 the structural class and the factory surface coincide, so
-`classifyFactoryShape`, `resolveSingleFieldFactorySlot`,
+Step 2: delete the derived classifier (`BranchSlotClass`,
+`classifyBranchSlots`, `computeSlotClasses`, `userSlotsOf`, `slotClass`);
+`compoundModelTypeFor` classifies by slot count (0/1 → envelope, choice of
+leaves → polymorph, else branch — the array-of-choice bodies are the open
+question); `classifyFactoryShape`, `resolveSingleFieldFactorySlot`,
 `resolveDirectFactorySlot`, `forwardedTargetKind`, `soleSlotFacts`,
 `classifyChildFactorySurface` read `instanceof AssembledEnvelope` /
-`node.soleSlot` (Envelope's structural sole slot; `AssembledPolymorph`'s union
-slot counts as one slot). `from.ts` reads `slotClass` at 3 sites,
-`test.ts`/`factories.ts` via `soleSlotFacts`; tests: `taxonomy.test.ts`
-(`classifyBranchSlots`), `factory-surface.test.ts`, `determined-slots.test.ts`
-(19 refs — retire with the machinery), `factories-single-field-reserved-word`
-and `namespaced-constructors` tests call `computeSlotClasses`.
-
-Order: (1) simplify strips determined refs + layout, template renders
-determined text, machinery deleted, validator skip list derived from render
-rules — gate: rendered templates unchanged, validators at floor; (2) delete the
-derived classifier, factory surface on the class — review-gated (case 2
-factories move direct→config; report the kinds); (3) glossary sweep; PR body.
+`node.soleSlot` — the factory surface reads the class from the model, never
+infers it from param count. `from.ts` reads `slotClass` at 3 sites,
+`test.ts`/`factories.ts` via `soleSlotFacts`; tests: `taxonomy.test.ts`,
+`factory-surface.test.ts`, `factories-single-field-reserved-word`,
+`namespaced-constructors` call `computeSlotClasses`. Review-gated: case-2
+keyword-presence kinds may move direct→config; report the kinds. Then the
+glossary sweep and PR body.
 
 ## Then
 

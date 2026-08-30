@@ -204,7 +204,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 			rawTemplate,
 			templatePath,
 			aliasDealiasedByKind.get(entry.type),
-			nodeModelFacts.determinedFieldsByKind.get(entry.type)
+			nodeModelFacts.modelFieldsByKind.get(entry.type)
 		);
 		if (kindIssues.length === 0) {
 			pass++;
@@ -285,7 +285,7 @@ export function checkRule(
 	rawTemplate: string | undefined,
 	templatePath: string,
 	aliasDealiased: Set<string> | undefined = undefined,
-	determinedFields: Set<string> | undefined = undefined
+	modelFields: Set<string> | undefined = undefined
 ): CoverageIssue[] {
 	const fields = entry.fields ?? {};
 	const fieldNames = Object.keys(fields);
@@ -348,10 +348,10 @@ export function checkRule(
 		// Unconditional exempt (no template-reference check): this kind's
 		// template has no slot that could ever carry the field.
 		if (aliasDealiased?.has(fname)) continue;
-		// Determined slot (`pruneDeterminedSlots`): the field's value is
-		// grammar-fixed and rendered as template TEXT — there is no
-		// placeholder to require.
-		if (determinedFields?.has(fname)) continue;
+		// The model is the wire contract: a parser field the model has no slot
+		// for (a reference to a literal) never reaches the wire and renders as
+		// template text, so there is no placeholder to require.
+		if (modelFields !== undefined && !modelFields.has(fname)) continue;
 		// Quote the real jinja source so the message points at what's
 		// actually on disk — `variants[].template` is this checker's own
 		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
@@ -908,16 +908,15 @@ interface NodeModelFacts {
 	readonly factorySlots: Record<string, Record<string, unknown>>;
 	readonly polymorphVariants: PolymorphVariantMap;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
-	/** Visible kind → grammar field names of determined slots (grammar-fixed
-	 *  values rendering as template text — no placeholder to require). */
-	determinedFieldsByKind: Map<string, Set<string>>;
+	/** Visible kind → the model's slot names for it. */
+	readonly modelFieldsByKind: Map<string, Set<string>>;
 }
 
 const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 	factorySlots: {},
 	polymorphVariants: {},
 	fieldAliasMap: {},
-	determinedFieldsByKind: new Map()
+	modelFieldsByKind: new Map()
 };
 
 /**
@@ -934,20 +933,18 @@ function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
 	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts> & {
-		nodes?: ReadonlyArray<{ kind: string; determinedSlots?: ReadonlyArray<{ name: string }> }>;
+		nodes?: ReadonlyArray<{ kind: string; fields?: ReadonlyArray<{ name: string }> }>;
 	};
-	const determinedFieldsByKind = new Map<string, Set<string>>();
+	const modelFieldsByKind = new Map<string, Set<string>>();
 	for (const node of parsed.nodes ?? []) {
-		if (!node.determinedSlots?.length) continue;
-		// node-types.json carries the visible name; the model kind may be
-		// the `_`-prefixed hidden spelling.
-		determinedFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.determinedSlots.map((s) => s.name)));
+		if (node.fields === undefined) continue;
+		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.fields.map((f) => f.name)));
 	}
 	return {
 		factorySlots: parsed.factorySlots ?? {},
 		polymorphVariants: parsed.polymorphVariants ?? {},
 		fieldAliasMap: parsed.fieldAliasMap ?? {},
-		determinedFieldsByKind
+		modelFieldsByKind
 	};
 }
 
