@@ -81,6 +81,13 @@ each ruled at its source:
    serves those promoted references alone. Do not keep the machinery
    speculatively — delete it, and reintroduce behind `nonterminal: true`
    if the census justifies it.
+   **Stop-and-ask edge case**: flatten stamps `nonterminal: true` on any
+   fielded reference (`field('operator', $._kw_operator)`), so a
+   determined-kind reference can read as slot-promoted only because the
+   grammar labelled it — a tree-sitter field label is load-bearing for the
+   parser, not evidence of a slot. Do not treat those as promoted
+   automatically: census them (kind, field name, determined target) and
+   report them for a ruling on whether a field name alone makes it a slot.
 2. **Keyword-presence flags** (`async_block.move_marker`,
    `self_parameter`'s `&`/lifetime/`mut`, `field_pattern`'s `ref`/`mut`,
    python `_simple_pattern_negative.sign`): real slots → those kinds are
