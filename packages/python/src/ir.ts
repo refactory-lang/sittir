@@ -13,649 +13,221 @@
 
 import * as F from './factories/index.js';
 import * as FR from './from.js';
-import { attachProps } from './utils.js';
-
-const _b$futureImportStatement: typeof FR.coerceToFutureImportStatement & {
-	strict: typeof F.buildFutureImportStatement;
-} = attachProps(FR.coerceToFutureImportStatement, {
-	strict: F.buildFutureImportStatement
-});
-
-const _b$importStatement: typeof FR.coerceToImportStatement & {
-	strict: typeof F.buildImportStatement;
-} = attachProps(FR.coerceToImportStatement, {
-	strict: F.buildImportStatement
-});
-
-const _b$importFromStatement: typeof FR.coerceToImportFromStatement & {
-	strict: typeof F.buildImportFromStatement;
-} = attachProps(FR.coerceToImportFromStatement, {
-	strict: F.buildImportFromStatement
-});
-
-const _b$printStatement: typeof FR.coerceToPrintStatement & {
-	strict: typeof F.buildPrintStatement;
-} = attachProps(FR.coerceToPrintStatement, {
-	strict: F.buildPrintStatement
-});
-
-const _b$assertStatement: typeof FR.coerceToAssertStatement & {
-	strict: typeof F.buildAssertStatement;
-} = attachProps(FR.coerceToAssertStatement, {
-	strict: F.buildAssertStatement
-});
-
-const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
-	strict: typeof F.buildExpressionStatement;
-} = attachProps(FR.coerceToExpressionStatement, {
-	strict: F.buildExpressionStatement
-});
-
-const _b$returnStatement: typeof FR.coerceToReturnStatement & {
-	strict: typeof F.buildReturnStatement;
-} = attachProps(FR.coerceToReturnStatement, {
-	strict: F.buildReturnStatement
-});
-
-const _b$deleteStatement: typeof FR.coerceToDeleteStatement & {
-	strict: typeof F.buildDeleteStatement;
-} = attachProps(FR.coerceToDeleteStatement, {
-	strict: F.buildDeleteStatement
-});
-
-const _b$raiseStatement: typeof FR.coerceToRaiseStatement & {
-	strict: typeof F.buildRaiseStatement;
-} = attachProps(FR.coerceToRaiseStatement, {
-	strict: F.buildRaiseStatement
-});
-
-const _b$globalStatement: typeof FR.coerceToGlobalStatement & {
-	strict: typeof F.buildGlobalStatement;
-} = attachProps(FR.coerceToGlobalStatement, {
-	strict: F.buildGlobalStatement
-});
-
-const _b$nonlocalStatement: typeof FR.coerceToNonlocalStatement & {
-	strict: typeof F.buildNonlocalStatement;
-} = attachProps(FR.coerceToNonlocalStatement, {
-	strict: F.buildNonlocalStatement
-});
-
-const _b$execStatement: typeof FR.coerceToExecStatement & {
-	strict: typeof F.buildExecStatement;
-} = attachProps(FR.coerceToExecStatement, {
-	strict: F.buildExecStatement
-});
-
-const _b$typeAliasStatement: typeof FR.coerceToTypeAliasStatement & {
-	strict: typeof F.buildTypeAliasStatement;
-} = attachProps(FR.coerceToTypeAliasStatement, {
-	strict: F.buildTypeAliasStatement
-});
-
-const _b$ifStatement: typeof FR.coerceToIfStatement & {
-	strict: typeof F.buildIfStatement;
-} = attachProps(FR.coerceToIfStatement, {
-	strict: F.buildIfStatement
-});
-
-const _b$forStatement: typeof FR.coerceToForStatement & {
-	strict: typeof F.buildForStatement;
-} = attachProps(FR.coerceToForStatement, {
-	strict: F.buildForStatement
-});
-
-const _b$whileStatement: typeof FR.coerceToWhileStatement & {
-	strict: typeof F.buildWhileStatement;
-} = attachProps(FR.coerceToWhileStatement, {
-	strict: F.buildWhileStatement
-});
-
-const _b$tryStatement: typeof FR.coerceToTryStatement & {
-	strict: typeof F.buildTryStatement;
-} = attachProps(FR.coerceToTryStatement, {
-	strict: F.buildTryStatement
-});
-
-const _b$withStatement: typeof FR.coerceToWithStatement & {
-	strict: typeof F.buildWithStatement;
-} = attachProps(FR.coerceToWithStatement, {
-	strict: F.buildWithStatement
-});
-
-const _b$functionDefinition: typeof FR.coerceToFunctionDefinition & {
-	strict: typeof F.buildFunctionDefinition;
-} = attachProps(FR.coerceToFunctionDefinition, {
-	strict: F.buildFunctionDefinition
-});
-
-const _b$classDefinition: typeof FR.coerceToClassDefinition & {
-	strict: typeof F.buildClassDefinition;
-} = attachProps(FR.coerceToClassDefinition, {
-	strict: F.buildClassDefinition
-});
-
-const _b$decoratedDefinition: typeof FR.coerceToDecoratedDefinition & {
-	strict: typeof F.buildDecoratedDefinition;
-} = attachProps(FR.coerceToDecoratedDefinition, {
-	strict: F.buildDecoratedDefinition
-});
-
-const _b$matchStatement: typeof FR.coerceToMatchStatement & {
-	strict: typeof F.buildMatchStatement;
-} = attachProps(FR.coerceToMatchStatement, {
-	strict: F.buildMatchStatement
-});
-
-const _b$typedParameter: typeof FR.coerceToTypedParameter & {
-	strict: typeof F.buildTypedParameter;
-} = attachProps(FR.coerceToTypedParameter, {
-	strict: F.buildTypedParameter
-});
-
-const _b$defaultParameter: typeof FR.coerceToDefaultParameter & {
-	strict: typeof F.buildDefaultParameter;
-} = attachProps(FR.coerceToDefaultParameter, {
-	strict: F.buildDefaultParameter
-});
-
-const _b$typedDefaultParameter: typeof FR.coerceToTypedDefaultParameter & {
-	strict: typeof F.buildTypedDefaultParameter;
-} = attachProps(FR.coerceToTypedDefaultParameter, {
-	strict: F.buildTypedDefaultParameter
-});
-
-const _b$listSplatPattern: typeof FR.coerceToListSplatPattern & {
-	strict: typeof F.buildListSplatPattern;
-} = attachProps(FR.coerceToListSplatPattern, {
-	strict: F.buildListSplatPattern
-});
-
-const _b$tuplePattern: typeof FR.coerceToTuplePattern & {
-	strict: typeof F.buildTuplePattern;
-} = attachProps(FR.coerceToTuplePattern, {
-	strict: F.buildTuplePattern
-});
-
-const _b$dictionarySplatPattern: typeof FR.coerceToDictionarySplatPattern & {
-	strict: typeof F.buildDictionarySplatPattern;
-} = attachProps(FR.coerceToDictionarySplatPattern, {
-	strict: F.buildDictionarySplatPattern
-});
-
-const _b$subscript: typeof FR.coerceToSubscript & {
-	strict: typeof F.buildSubscript;
-} = attachProps(FR.coerceToSubscript, {
-	strict: F.buildSubscript
-});
-
-const _b$attribute: typeof FR.coerceToAttribute & {
-	strict: typeof F.buildAttribute;
-} = attachProps(FR.coerceToAttribute, {
-	strict: F.buildAttribute
-});
-
-const _b$listPattern: typeof FR.coerceToListPattern & {
-	strict: typeof F.buildListPattern;
-} = attachProps(FR.coerceToListPattern, {
-	strict: F.buildListPattern
-});
-
-const _b$comparisonOperator: typeof FR.coerceToComparisonOperator & {
-	strict: typeof F.buildComparisonOperator;
-} = attachProps(FR.coerceToComparisonOperator, {
-	strict: F.buildComparisonOperator
-});
-
-const _b$notOperator: typeof FR.coerceToNotOperator & {
-	strict: typeof F.buildNotOperator;
-} = attachProps(FR.coerceToNotOperator, {
-	strict: F.buildNotOperator
-});
-
-const _b$booleanOperator: typeof FR.coerceToBooleanOperator & {
-	strict: typeof F.buildBooleanOperator;
-} = attachProps(FR.coerceToBooleanOperator, {
-	strict: F.buildBooleanOperator
-});
-
-const _b$lambda: typeof FR.coerceToLambda & {
-	strict: typeof F.buildLambda;
-} = attachProps(FR.coerceToLambda, {
-	strict: F.buildLambda
-});
-
-const _b$conditionalExpression: typeof FR.coerceToConditionalExpression & {
-	strict: typeof F.buildConditionalExpression;
-} = attachProps(FR.coerceToConditionalExpression, {
-	strict: F.buildConditionalExpression
-});
-
-const _b$namedExpression: typeof FR.coerceToNamedExpression & {
-	strict: typeof F.buildNamedExpression;
-} = attachProps(FR.coerceToNamedExpression, {
-	strict: F.buildNamedExpression
-});
-
-const _b$asPattern: typeof FR.coerceToAsPattern & {
-	strict: typeof F.buildAsPattern;
-} = attachProps(FR.coerceToAsPattern, {
-	strict: F.buildAsPattern
-});
-
-const _b$await: typeof FR.coerceToAwait & {
-	strict: typeof F.buildAwait;
-} = attachProps(FR.coerceToAwait, {
-	strict: F.buildAwait
-});
-
-const _b$binaryOperator: typeof FR.coerceToBinaryOperator & {
-	strict: typeof F.buildBinaryOperator;
-} = attachProps(FR.coerceToBinaryOperator, {
-	strict: F.buildBinaryOperator
-});
-
-const _b$string: typeof FR.coerceToString & {
-	strict: typeof F.buildString;
-} = attachProps(FR.coerceToString, {
-	strict: F.buildString
-});
-
-const _b$concatenatedString: typeof FR.coerceToConcatenatedString & {
-	strict: typeof F.buildConcatenatedString;
-} = attachProps(FR.coerceToConcatenatedString, {
-	strict: F.buildConcatenatedString
-});
-
-const _b$unaryOperator: typeof FR.coerceToUnaryOperator & {
-	strict: typeof F.buildUnaryOperator;
-} = attachProps(FR.coerceToUnaryOperator, {
-	strict: F.buildUnaryOperator
-});
-
-const _b$call: typeof FR.coerceToCall & {
-	strict: typeof F.buildCall;
-} = attachProps(FR.coerceToCall, {
-	strict: F.buildCall
-});
-
-const _b$list: typeof FR.coerceToList & {
-	strict: typeof F.buildList;
-} = attachProps(FR.coerceToList, {
-	strict: F.buildList
-});
-
-const _b$listComprehension: typeof FR.coerceToListComprehension & {
-	strict: typeof F.buildListComprehension;
-} = attachProps(FR.coerceToListComprehension, {
-	strict: F.buildListComprehension
-});
-
-const _b$dictionary: typeof FR.coerceToDictionary & {
-	strict: typeof F.buildDictionary;
-} = attachProps(FR.coerceToDictionary, {
-	strict: F.buildDictionary
-});
-
-const _b$dictionaryComprehension: typeof FR.coerceToDictionaryComprehension & {
-	strict: typeof F.buildDictionaryComprehension;
-} = attachProps(FR.coerceToDictionaryComprehension, {
-	strict: F.buildDictionaryComprehension
-});
-
-const _b$set: typeof FR.coerceToSet & {
-	strict: typeof F.buildSet;
-} = attachProps(FR.coerceToSet, {
-	strict: F.buildSet
-});
-
-const _b$setComprehension: typeof FR.coerceToSetComprehension & {
-	strict: typeof F.buildSetComprehension;
-} = attachProps(FR.coerceToSetComprehension, {
-	strict: F.buildSetComprehension
-});
-
-const _b$tuple: typeof FR.coerceToTuple & {
-	strict: typeof F.buildTuple;
-} = attachProps(FR.coerceToTuple, {
-	strict: F.buildTuple
-});
-
-const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
-	strict: typeof F.buildParenthesizedExpression;
-} = attachProps(FR.coerceToParenthesizedExpression, {
-	strict: F.buildParenthesizedExpression
-});
-
-const _b$generatorExpression: typeof FR.coerceToGeneratorExpression & {
-	strict: typeof F.buildGeneratorExpression;
-} = attachProps(FR.coerceToGeneratorExpression, {
-	strict: F.buildGeneratorExpression
-});
-
-const _b$module: typeof FR.coerceToModule & {
-	strict: typeof F.buildModule;
-} = attachProps(FR.coerceToModule, {
-	strict: F.buildModule
-});
-
-const _b$relativeImport: typeof FR.coerceToRelativeImport & {
-	strict: typeof F.buildRelativeImport;
-} = attachProps(FR.coerceToRelativeImport, {
-	strict: F.buildRelativeImport
-});
-
-const _b$aliasedImport: typeof FR.coerceToAliasedImport & {
-	strict: typeof F.buildAliasedImport;
-} = attachProps(FR.coerceToAliasedImport, {
-	strict: F.buildAliasedImport
-});
-
-const _b$chevron: typeof FR.coerceToChevron & {
-	strict: typeof F.buildChevron;
-} = attachProps(FR.coerceToChevron, {
-	strict: F.buildChevron
-});
-
-const _b$elifClause: typeof FR.coerceToElifClause & {
-	strict: typeof F.buildElifClause;
-} = attachProps(FR.coerceToElifClause, {
-	strict: F.buildElifClause
-});
-
-const _b$elseClause: typeof FR.coerceToElseClause & {
-	strict: typeof F.buildElseClause;
-} = attachProps(FR.coerceToElseClause, {
-	strict: F.buildElseClause
-});
-
-const _b$caseClause: typeof FR.coerceToCaseClause & {
-	strict: typeof F.buildCaseClause;
-} = attachProps(FR.coerceToCaseClause, {
-	strict: F.buildCaseClause
-});
-
-const _b$exceptClause: typeof FR.coerceToExceptClause & {
-	strict: typeof F.buildExceptClause;
-} = attachProps(FR.coerceToExceptClause, {
-	strict: F.buildExceptClause
-});
-
-const _b$finallyClause: typeof FR.coerceToFinallyClause & {
-	strict: typeof F.buildFinallyClause;
-} = attachProps(FR.coerceToFinallyClause, {
-	strict: F.buildFinallyClause
-});
-
-const _b$withClause: typeof FR.coerceToWithClause & {
-	strict: typeof F.buildWithClause;
-} = attachProps(FR.coerceToWithClause, {
-	strict: F.buildWithClause
-});
-
-const _b$withItem: typeof FR.coerceToWithItem & {
-	strict: typeof F.buildWithItem;
-} = attachProps(FR.coerceToWithItem, {
-	strict: F.buildWithItem
-});
-
-const _b$parameters: typeof FR.coerceToParameters & {
-	strict: typeof F.buildParameters;
-} = attachProps(FR.coerceToParameters, {
-	strict: F.buildParameters
-});
-
-const _b$lambdaParameters: typeof FR.coerceToLambdaParameters & {
-	strict: typeof F.buildLambdaParameters;
-} = attachProps(FR.coerceToLambdaParameters, {
-	strict: F.buildLambdaParameters
-});
-
-const _b$listSplat: typeof FR.coerceToListSplat & {
-	strict: typeof F.buildListSplat;
-} = attachProps(FR.coerceToListSplat, {
-	strict: F.buildListSplat
-});
-
-const _b$dictionarySplat: typeof FR.coerceToDictionarySplat & {
-	strict: typeof F.buildDictionarySplat;
-} = attachProps(FR.coerceToDictionarySplat, {
-	strict: F.buildDictionarySplat
-});
-
-const _b$typeParameter: typeof FR.coerceToTypeParameter & {
-	strict: typeof F.buildTypeParameter;
-} = attachProps(FR.coerceToTypeParameter, {
-	strict: F.buildTypeParameter
-});
-
-const _b$parenthesizedListSplat: typeof FR.coerceToParenthesizedListSplat & {
-	strict: typeof F.buildParenthesizedListSplat;
-} = attachProps(FR.coerceToParenthesizedListSplat, {
-	strict: F.buildParenthesizedListSplat
-});
-
-const _b$argumentList: typeof FR.coerceToArgumentList & {
-	strict: typeof F.buildArgumentList;
-} = attachProps(FR.coerceToArgumentList, {
-	strict: F.buildArgumentList
-});
-
-const _b$decorator: typeof FR.coerceToDecorator & {
-	strict: typeof F.buildDecorator;
-} = attachProps(FR.coerceToDecorator, {
-	strict: F.buildDecorator
-});
-
-const _b$block: typeof FR.coerceToBlock & {
-	strict: typeof F.buildBlock;
-} = attachProps(FR.coerceToBlock, {
-	strict: F.buildBlock
-});
-
-const _b$expressionList: typeof FR.coerceToExpressionList & {
-	strict: typeof F.buildExpressionList;
-} = attachProps(FR.coerceToExpressionList, {
-	strict: F.buildExpressionList
-});
-
-const _b$dottedName: typeof FR.coerceToDottedName & {
-	strict: typeof F.buildDottedName;
-} = attachProps(FR.coerceToDottedName, {
-	strict: F.buildDottedName
-});
-
-const _b$casePattern: typeof FR.coerceToCasePattern & {
-	strict: typeof F.buildCasePattern;
-} = attachProps(FR.coerceToCasePattern, {
-	strict: F.buildCasePattern
-});
-
-const _b$unionPattern: typeof FR.coerceToUnionPattern & {
-	strict: typeof F.buildUnionPattern;
-} = attachProps(FR.coerceToUnionPattern, {
-	strict: F.buildUnionPattern
-});
-
-const _b$dictPattern: typeof FR.coerceToDictPattern & {
-	strict: typeof F.buildDictPattern;
-} = attachProps(FR.coerceToDictPattern, {
-	strict: F.buildDictPattern
-});
-
-const _b$keywordPattern: typeof FR.coerceToKeywordPattern & {
-	strict: typeof F.buildKeywordPattern;
-} = attachProps(FR.coerceToKeywordPattern, {
-	strict: F.buildKeywordPattern
-});
-
-const _b$splatPattern: typeof FR.coerceToSplatPattern & {
-	strict: typeof F.buildSplatPattern;
-} = attachProps(FR.coerceToSplatPattern, {
-	strict: F.buildSplatPattern
-});
-
-const _b$classPattern: typeof FR.coerceToClassPattern & {
-	strict: typeof F.buildClassPattern;
-} = attachProps(FR.coerceToClassPattern, {
-	strict: F.buildClassPattern
-});
-
-const _b$complexPattern: typeof FR.coerceToComplexPattern & {
-	strict: typeof F.buildComplexPattern;
-} = attachProps(FR.coerceToComplexPattern, {
-	strict: F.buildComplexPattern
-});
-
-const _b$lambdaWithinForInClause: typeof FR.coerceToLambdaWithinForInClause & {
-	strict: typeof F.buildLambdaWithinForInClause;
-} = attachProps(FR.coerceToLambdaWithinForInClause, {
-	strict: F.buildLambdaWithinForInClause
-});
-
-const _b$assignment: typeof FR.coerceToAssignment & {
-	strict: typeof F.buildAssignment;
-} = attachProps(FR.coerceToAssignment, {
-	strict: F.buildAssignment
-});
-
-const _b$augmentedAssignment: typeof FR.coerceToAugmentedAssignment & {
-	strict: typeof F.buildAugmentedAssignment;
-} = attachProps(FR.coerceToAugmentedAssignment, {
-	strict: F.buildAugmentedAssignment
-});
-
-const _b$patternList: typeof FR.coerceToPatternList & {
-	strict: typeof F.buildPatternList;
-} = attachProps(FR.coerceToPatternList, {
-	strict: F.buildPatternList
-});
-
-const _b$yield: typeof FR.coerceToYield & {
-	strict: typeof F.buildYield;
-} = attachProps(FR.coerceToYield, {
-	strict: F.buildYield
-});
-
-const _b$slice: typeof FR.coerceToSlice & {
-	strict: typeof F.buildSlice;
-} = attachProps(FR.coerceToSlice, {
-	strict: F.buildSlice
-});
-
-const _b$type: typeof FR.coerceToType & {
-	strict: typeof F.buildType;
-} = attachProps(FR.coerceToType, {
-	strict: F.buildType
-});
-
-const _b$splatType: typeof FR.coerceToSplatType & {
-	strict: typeof F.buildSplatType;
-} = attachProps(FR.coerceToSplatType, {
-	strict: F.buildSplatType
-});
-
-const _b$genericType: typeof FR.coerceToGenericType & {
-	strict: typeof F.buildGenericType;
-} = attachProps(FR.coerceToGenericType, {
-	strict: F.buildGenericType
-});
-
-const _b$unionType: typeof FR.coerceToUnionType & {
-	strict: typeof F.buildUnionType;
-} = attachProps(FR.coerceToUnionType, {
-	strict: F.buildUnionType
-});
-
-const _b$constrainedType: typeof FR.coerceToConstrainedType & {
-	strict: typeof F.buildConstrainedType;
-} = attachProps(FR.coerceToConstrainedType, {
-	strict: F.buildConstrainedType
-});
-
-const _b$memberType: typeof FR.coerceToMemberType & {
-	strict: typeof F.buildMemberType;
-} = attachProps(FR.coerceToMemberType, {
-	strict: F.buildMemberType
-});
-
-const _b$keywordArgument: typeof FR.coerceToKeywordArgument & {
-	strict: typeof F.buildKeywordArgument;
-} = attachProps(FR.coerceToKeywordArgument, {
-	strict: F.buildKeywordArgument
-});
-
-const _b$pair: typeof FR.coerceToPair & {
-	strict: typeof F.buildPair;
-} = attachProps(FR.coerceToPair, {
-	strict: F.buildPair
-});
-
-const _b$forInClause: typeof FR.coerceToForInClause & {
-	strict: typeof F.buildForInClause;
-} = attachProps(FR.coerceToForInClause, {
-	strict: F.buildForInClause
-});
-
-const _b$ifClause: typeof FR.coerceToIfClause & {
-	strict: typeof F.buildIfClause;
-} = attachProps(FR.coerceToIfClause, {
-	strict: F.buildIfClause
-});
-
-const _b$stringContent: typeof FR.coerceToStringContent & {
-	strict: typeof F.buildStringContent;
-} = attachProps(FR.coerceToStringContent, {
-	strict: F.buildStringContent
-});
-
-const _b$interpolation: typeof FR.coerceToInterpolation & {
-	strict: typeof F.buildInterpolation;
-} = attachProps(FR.coerceToInterpolation, {
-	strict: F.buildInterpolation
-});
-
-const _b$formatSpecifier: typeof FR.coerceToFormatSpecifier & {
-	strict: typeof F.buildFormatSpecifier;
-} = attachProps(FR.coerceToFormatSpecifier, {
-	strict: F.buildFormatSpecifier
-});
-
-const _b$caseTuplePattern: typeof FR.coerceToCaseTuplePattern & {
-	strict: typeof F.buildCaseTuplePattern;
-} = attachProps(FR.coerceToCaseTuplePattern, {
-	strict: F.buildCaseTuplePattern
-});
-
-const _b$caseListPattern: typeof FR.coerceToCaseListPattern & {
-	strict: typeof F.buildCaseListPattern;
-} = attachProps(FR.coerceToCaseListPattern, {
-	strict: F.buildCaseListPattern
-});
-
-const _b$caseAsPattern: typeof FR.coerceToCaseAsPattern & {
-	strict: typeof F.buildCaseAsPattern;
-} = attachProps(FR.coerceToCaseAsPattern, {
-	strict: F.buildCaseAsPattern
-});
-
-const _b$comprehensionClauses: typeof FR.coerceToComprehensionClauses & {
-	strict: typeof F.buildComprehensionClauses;
-} = attachProps(FR.coerceToComprehensionClauses, {
-	strict: F.buildComprehensionClauses
-});
-
-const _b$printStatementArm1: typeof FR.coerceToPrintStatementArm1 & {
-	strict: typeof F.buildPrintStatementArm1;
-} = attachProps(FR.coerceToPrintStatementArm1, {
-	strict: F.buildPrintStatementArm1
-});
-
-const _b$printStatementArm2: typeof FR.coerceToPrintStatementArm2 & {
-	strict: typeof F.buildPrintStatementArm2;
-} = attachProps(FR.coerceToPrintStatementArm2, {
-	strict: F.buildPrintStatementArm2
-});
+import { bundle } from './utils.js';
+
+const _b$futureImportStatement = bundle(FR.coerceToFutureImportStatement, F.buildFutureImportStatement);
+
+const _b$importStatement = bundle(FR.coerceToImportStatement, F.buildImportStatement);
+
+const _b$importFromStatement = bundle(FR.coerceToImportFromStatement, F.buildImportFromStatement);
+
+const _b$printStatement = bundle(FR.coerceToPrintStatement, F.buildPrintStatement);
+
+const _b$assertStatement = bundle(FR.coerceToAssertStatement, F.buildAssertStatement);
+
+const _b$expressionStatement = bundle(FR.coerceToExpressionStatement, F.buildExpressionStatement);
+
+const _b$returnStatement = bundle(FR.coerceToReturnStatement, F.buildReturnStatement);
+
+const _b$deleteStatement = bundle(FR.coerceToDeleteStatement, F.buildDeleteStatement);
+
+const _b$raiseStatement = bundle(FR.coerceToRaiseStatement, F.buildRaiseStatement);
+
+const _b$globalStatement = bundle(FR.coerceToGlobalStatement, F.buildGlobalStatement);
+
+const _b$nonlocalStatement = bundle(FR.coerceToNonlocalStatement, F.buildNonlocalStatement);
+
+const _b$execStatement = bundle(FR.coerceToExecStatement, F.buildExecStatement);
+
+const _b$typeAliasStatement = bundle(FR.coerceToTypeAliasStatement, F.buildTypeAliasStatement);
+
+const _b$ifStatement = bundle(FR.coerceToIfStatement, F.buildIfStatement);
+
+const _b$forStatement = bundle(FR.coerceToForStatement, F.buildForStatement);
+
+const _b$whileStatement = bundle(FR.coerceToWhileStatement, F.buildWhileStatement);
+
+const _b$tryStatement = bundle(FR.coerceToTryStatement, F.buildTryStatement);
+
+const _b$withStatement = bundle(FR.coerceToWithStatement, F.buildWithStatement);
+
+const _b$functionDefinition = bundle(FR.coerceToFunctionDefinition, F.buildFunctionDefinition);
+
+const _b$classDefinition = bundle(FR.coerceToClassDefinition, F.buildClassDefinition);
+
+const _b$decoratedDefinition = bundle(FR.coerceToDecoratedDefinition, F.buildDecoratedDefinition);
+
+const _b$matchStatement = bundle(FR.coerceToMatchStatement, F.buildMatchStatement);
+
+const _b$typedParameter = bundle(FR.coerceToTypedParameter, F.buildTypedParameter);
+
+const _b$defaultParameter = bundle(FR.coerceToDefaultParameter, F.buildDefaultParameter);
+
+const _b$typedDefaultParameter = bundle(FR.coerceToTypedDefaultParameter, F.buildTypedDefaultParameter);
+
+const _b$listSplatPattern = bundle(FR.coerceToListSplatPattern, F.buildListSplatPattern);
+
+const _b$tuplePattern = bundle(FR.coerceToTuplePattern, F.buildTuplePattern);
+
+const _b$dictionarySplatPattern = bundle(FR.coerceToDictionarySplatPattern, F.buildDictionarySplatPattern);
+
+const _b$subscript = bundle(FR.coerceToSubscript, F.buildSubscript);
+
+const _b$attribute = bundle(FR.coerceToAttribute, F.buildAttribute);
+
+const _b$listPattern = bundle(FR.coerceToListPattern, F.buildListPattern);
+
+const _b$comparisonOperator = bundle(FR.coerceToComparisonOperator, F.buildComparisonOperator);
+
+const _b$notOperator = bundle(FR.coerceToNotOperator, F.buildNotOperator);
+
+const _b$booleanOperator = bundle(FR.coerceToBooleanOperator, F.buildBooleanOperator);
+
+const _b$lambda = bundle(FR.coerceToLambda, F.buildLambda);
+
+const _b$conditionalExpression = bundle(FR.coerceToConditionalExpression, F.buildConditionalExpression);
+
+const _b$namedExpression = bundle(FR.coerceToNamedExpression, F.buildNamedExpression);
+
+const _b$asPattern = bundle(FR.coerceToAsPattern, F.buildAsPattern);
+
+const _b$await = bundle(FR.coerceToAwait, F.buildAwait);
+
+const _b$binaryOperator = bundle(FR.coerceToBinaryOperator, F.buildBinaryOperator);
+
+const _b$string = bundle(FR.coerceToString, F.buildString);
+
+const _b$concatenatedString = bundle(FR.coerceToConcatenatedString, F.buildConcatenatedString);
+
+const _b$unaryOperator = bundle(FR.coerceToUnaryOperator, F.buildUnaryOperator);
+
+const _b$call = bundle(FR.coerceToCall, F.buildCall);
+
+const _b$list = bundle(FR.coerceToList, F.buildList);
+
+const _b$listComprehension = bundle(FR.coerceToListComprehension, F.buildListComprehension);
+
+const _b$dictionary = bundle(FR.coerceToDictionary, F.buildDictionary);
+
+const _b$dictionaryComprehension = bundle(FR.coerceToDictionaryComprehension, F.buildDictionaryComprehension);
+
+const _b$set = bundle(FR.coerceToSet, F.buildSet);
+
+const _b$setComprehension = bundle(FR.coerceToSetComprehension, F.buildSetComprehension);
+
+const _b$tuple = bundle(FR.coerceToTuple, F.buildTuple);
+
+const _b$parenthesizedExpression = bundle(FR.coerceToParenthesizedExpression, F.buildParenthesizedExpression);
+
+const _b$generatorExpression = bundle(FR.coerceToGeneratorExpression, F.buildGeneratorExpression);
+
+const _b$module = bundle(FR.coerceToModule, F.buildModule);
+
+const _b$relativeImport = bundle(FR.coerceToRelativeImport, F.buildRelativeImport);
+
+const _b$aliasedImport = bundle(FR.coerceToAliasedImport, F.buildAliasedImport);
+
+const _b$chevron = bundle(FR.coerceToChevron, F.buildChevron);
+
+const _b$elifClause = bundle(FR.coerceToElifClause, F.buildElifClause);
+
+const _b$elseClause = bundle(FR.coerceToElseClause, F.buildElseClause);
+
+const _b$caseClause = bundle(FR.coerceToCaseClause, F.buildCaseClause);
+
+const _b$exceptClause = bundle(FR.coerceToExceptClause, F.buildExceptClause);
+
+const _b$finallyClause = bundle(FR.coerceToFinallyClause, F.buildFinallyClause);
+
+const _b$withClause = bundle(FR.coerceToWithClause, F.buildWithClause);
+
+const _b$withItem = bundle(FR.coerceToWithItem, F.buildWithItem);
+
+const _b$parameters = bundle(FR.coerceToParameters, F.buildParameters);
+
+const _b$lambdaParameters = bundle(FR.coerceToLambdaParameters, F.buildLambdaParameters);
+
+const _b$listSplat = bundle(FR.coerceToListSplat, F.buildListSplat);
+
+const _b$dictionarySplat = bundle(FR.coerceToDictionarySplat, F.buildDictionarySplat);
+
+const _b$typeParameter = bundle(FR.coerceToTypeParameter, F.buildTypeParameter);
+
+const _b$parenthesizedListSplat = bundle(FR.coerceToParenthesizedListSplat, F.buildParenthesizedListSplat);
+
+const _b$argumentList = bundle(FR.coerceToArgumentList, F.buildArgumentList);
+
+const _b$decorator = bundle(FR.coerceToDecorator, F.buildDecorator);
+
+const _b$block = bundle(FR.coerceToBlock, F.buildBlock);
+
+const _b$expressionList = bundle(FR.coerceToExpressionList, F.buildExpressionList);
+
+const _b$dottedName = bundle(FR.coerceToDottedName, F.buildDottedName);
+
+const _b$casePattern = bundle(FR.coerceToCasePattern, F.buildCasePattern);
+
+const _b$unionPattern = bundle(FR.coerceToUnionPattern, F.buildUnionPattern);
+
+const _b$dictPattern = bundle(FR.coerceToDictPattern, F.buildDictPattern);
+
+const _b$keywordPattern = bundle(FR.coerceToKeywordPattern, F.buildKeywordPattern);
+
+const _b$splatPattern = bundle(FR.coerceToSplatPattern, F.buildSplatPattern);
+
+const _b$classPattern = bundle(FR.coerceToClassPattern, F.buildClassPattern);
+
+const _b$complexPattern = bundle(FR.coerceToComplexPattern, F.buildComplexPattern);
+
+const _b$lambdaWithinForInClause = bundle(FR.coerceToLambdaWithinForInClause, F.buildLambdaWithinForInClause);
+
+const _b$assignment = bundle(FR.coerceToAssignment, F.buildAssignment);
+
+const _b$augmentedAssignment = bundle(FR.coerceToAugmentedAssignment, F.buildAugmentedAssignment);
+
+const _b$patternList = bundle(FR.coerceToPatternList, F.buildPatternList);
+
+const _b$yield = bundle(FR.coerceToYield, F.buildYield);
+
+const _b$slice = bundle(FR.coerceToSlice, F.buildSlice);
+
+const _b$type = bundle(FR.coerceToType, F.buildType);
+
+const _b$splatType = bundle(FR.coerceToSplatType, F.buildSplatType);
+
+const _b$genericType = bundle(FR.coerceToGenericType, F.buildGenericType);
+
+const _b$unionType = bundle(FR.coerceToUnionType, F.buildUnionType);
+
+const _b$constrainedType = bundle(FR.coerceToConstrainedType, F.buildConstrainedType);
+
+const _b$memberType = bundle(FR.coerceToMemberType, F.buildMemberType);
+
+const _b$keywordArgument = bundle(FR.coerceToKeywordArgument, F.buildKeywordArgument);
+
+const _b$pair = bundle(FR.coerceToPair, F.buildPair);
+
+const _b$forInClause = bundle(FR.coerceToForInClause, F.buildForInClause);
+
+const _b$ifClause = bundle(FR.coerceToIfClause, F.buildIfClause);
+
+const _b$stringContent = bundle(FR.coerceToStringContent, F.buildStringContent);
+
+const _b$interpolation = bundle(FR.coerceToInterpolation, F.buildInterpolation);
+
+const _b$formatSpecifier = bundle(FR.coerceToFormatSpecifier, F.buildFormatSpecifier);
+
+const _b$caseTuplePattern = bundle(FR.coerceToCaseTuplePattern, F.buildCaseTuplePattern);
+
+const _b$caseListPattern = bundle(FR.coerceToCaseListPattern, F.buildCaseListPattern);
+
+const _b$caseAsPattern = bundle(FR.coerceToCaseAsPattern, F.buildCaseAsPattern);
+
+const _b$comprehensionClauses = bundle(FR.coerceToComprehensionClauses, F.buildComprehensionClauses);
+
+const _b$printStatementArm1 = bundle(FR.coerceToPrintStatementArm1, F.buildPrintStatementArm1);
+
+const _b$printStatementArm2 = bundle(FR.coerceToPrintStatementArm2, F.buildPrintStatementArm2);
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.

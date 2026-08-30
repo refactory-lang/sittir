@@ -11437,12 +11437,16 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitAttachProps`
 
-#### body
-
 ```text
-// defineProperty rather than Object.assign: a function's reserved
-// read-only properties (name, length, arguments, caller) make [[Set]]
-// throw, and a namespaced constructor may legitimately be called `name`.
+Emits attachProps, ownProps, and bundle. attachProps uses defineProperty
+rather than Object.assign: a function's reserved read-only properties
+(name, length, arguments, caller) make [[Set]] throw, and a namespaced
+constructor may legitimately be called `name`. ownProps copies a
+function's own enumerable keys — exactly what attachProps defines with
+enumerable: true — so `name`/`length` are never copied. bundle composes
+the two: a bundle carries `strict` plus every own enumerable property of
+the strict builder, so whatever an overlay attaches to a strict builder
+surfaces on the coercing bundle automatically.
 ```
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
@@ -12575,8 +12579,8 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// One hoisted, typeof-annotated const per bundle kind — the group/`ir`
-// namespace consts reference these by NAME (see hoistedBundleLines).
+// One hoisted const per bundle kind — the group/`ir` namespace consts
+// reference these by NAME (see bundleLine).
 ```
 
 #### body
@@ -12625,7 +12629,7 @@ pipeline — which falls back to string equality.
 // hoisted bundle consts above.
 ```
 
-### `packages/codegen/src/emitters/ir.ts::BundleParts`
+### `packages/codegen/src/emitters/ir.ts::bundleLine`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -12633,41 +12637,14 @@ pipeline — which falls back to string equality.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/ir.ts::bundleParts`
-
-#### body
-
 ```text
-// 'list' participates in this scan uniformly alongside 'branch' — see
-// isSlotBearingCompound's doc comment (shared.ts).
-```
-
-#### body
-
-```text
-// The namespaced constructors ride along on the bundle
-// (`ir.forHeader.var(...)`); the bundle's own keys win a clash. Taken
-// from the FROM surface, not the factory: `ir.<kind>` coerces and
-// `.strict` is the factory, and a form under it keeps that same
-// pairing — `coerceTo<Kind>` already carries whichever of the two
-// each form resolved to.
-```
-
-#### body
-
-```text
-// One convention across the whole surface: the entry coerces, `.strict` is
-// the strict factory. No `from` prop — it was the entry itself under a
-// second name.
-```
-
-### `packages/codegen/src/emitters/ir.ts::hoistedBundleLines`
-
-```text
-/** Hoisted, explicitly-annotated bundle const. The typeof-composed
- *  annotation keeps declaration emit finite: the mega-namespace consts
- *  below reference these by NAME, so no node's inferred type ever expands
- *  the whole surface structurally (TS7056). */
+One `const _b$<kind> = bundle(FR.<coerce>, F.<rawFactoryName>);` line per
+hoisted bundle kind — the group/`ir` namespace consts reference these by
+NAME. A kind with no raw factory stays bare: `const _b$<kind> = FR.<coerce>;`.
+Whatever an overlay later attaches to the strict builder (`F.<rawFactoryName>`)
+surfaces on the bundle automatically through `bundle`'s own-prop spread —
+`ir.ts` composes bundles only, it no longer knows about refine forms or any
+other overlay-specific shape.
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::GROUP_TOKEN_SYNONYMS`

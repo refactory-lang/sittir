@@ -13,923 +13,320 @@
 
 import * as F from './factories/index.js';
 import * as FR from './from.js';
-import { attachProps } from './utils.js';
-
-const _b$functionDeclaration: typeof FR.coerceToFunctionDeclaration & {
-	strict: typeof F.buildFunctionDeclaration;
-} = attachProps(FR.coerceToFunctionDeclaration, {
-	strict: F.buildFunctionDeclaration
-});
-
-const _b$generatorFunctionDeclaration: typeof FR.coerceToGeneratorFunctionDeclaration & {
-	strict: typeof F.buildGeneratorFunctionDeclaration;
-} = attachProps(FR.coerceToGeneratorFunctionDeclaration, {
-	strict: F.buildGeneratorFunctionDeclaration
-});
-
-const _b$classDeclaration: typeof FR.coerceToClassDeclaration & {
-	strict: typeof F.buildClassDeclaration;
-} = attachProps(FR.coerceToClassDeclaration, {
-	strict: F.buildClassDeclaration
-});
-
-const _b$lexicalDeclaration: typeof FR.coerceToLexicalDeclaration & {
-	strict: typeof F.buildLexicalDeclaration;
-} = attachProps(FR.coerceToLexicalDeclaration, {
-	strict: F.buildLexicalDeclaration
-});
-
-const _b$variableDeclaration: typeof FR.coerceToVariableDeclaration & {
-	strict: typeof F.buildVariableDeclaration;
-} = attachProps(FR.coerceToVariableDeclaration, {
-	strict: F.buildVariableDeclaration
-});
-
-const _b$functionSignature: typeof FR.coerceToFunctionSignature & {
-	strict: typeof F.buildFunctionSignature;
-} = attachProps(FR.coerceToFunctionSignature, {
-	strict: F.buildFunctionSignature
-});
-
-const _b$abstractClassDeclaration: typeof FR.coerceToAbstractClassDeclaration & {
-	strict: typeof F.buildAbstractClassDeclaration;
-} = attachProps(FR.coerceToAbstractClassDeclaration, {
-	strict: F.buildAbstractClassDeclaration
-});
-
-const _b$module: typeof FR.coerceToModule & {
-	strict: typeof F.buildModule;
-} = attachProps(FR.coerceToModule, {
-	strict: F.buildModule
-});
-
-const _b$internalModule: typeof FR.coerceToInternalModule & {
-	strict: typeof F.buildInternalModule;
-} = attachProps(FR.coerceToInternalModule, {
-	strict: F.buildInternalModule
-});
-
-const _b$typeAliasDeclaration: typeof FR.coerceToTypeAliasDeclaration & {
-	strict: typeof F.buildTypeAliasDeclaration;
-} = attachProps(FR.coerceToTypeAliasDeclaration, {
-	strict: F.buildTypeAliasDeclaration
-});
-
-const _b$enumDeclaration: typeof FR.coerceToEnumDeclaration & {
-	strict: typeof F.buildEnumDeclaration;
-} = attachProps(FR.coerceToEnumDeclaration, {
-	strict: F.buildEnumDeclaration
-});
-
-const _b$interfaceDeclaration: typeof FR.coerceToInterfaceDeclaration & {
-	strict: typeof F.buildInterfaceDeclaration;
-} = attachProps(FR.coerceToInterfaceDeclaration, {
-	strict: F.buildInterfaceDeclaration
-});
-
-const _b$importAlias: typeof FR.coerceToImportAlias & {
-	strict: typeof F.buildImportAlias;
-} = attachProps(FR.coerceToImportAlias, {
-	strict: F.buildImportAlias
-});
-
-const _b$ambientDeclaration: typeof FR.coerceToAmbientDeclaration & {
-	strict: typeof F.buildAmbientDeclaration;
-} = attachProps(FR.coerceToAmbientDeclaration, {
-	strict: F.buildAmbientDeclaration
-});
-
-const _b$exportStatement: typeof FR.coerceToExportStatement & {
-	strict: typeof F.buildExportStatement;
-} = attachProps(FR.coerceToExportStatement, {
-	strict: F.buildExportStatement
-});
-
-const _b$importStatement: typeof FR.coerceToImportStatement & {
-	strict: typeof F.buildImportStatement;
-} = attachProps(FR.coerceToImportStatement, {
-	strict: F.buildImportStatement
-});
-
-const _b$debuggerStatement: typeof FR.coerceToDebuggerStatement & {
-	strict: typeof F.buildDebuggerStatement;
-} = attachProps(FR.coerceToDebuggerStatement, {
-	strict: F.buildDebuggerStatement
-});
-
-const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
-	strict: typeof F.buildExpressionStatement;
-} = attachProps(FR.coerceToExpressionStatement, {
-	strict: F.buildExpressionStatement
-});
-
-const _b$statementBlock: typeof FR.coerceToStatementBlock & {
-	strict: typeof F.buildStatementBlock;
-} = attachProps(FR.coerceToStatementBlock, {
-	strict: F.buildStatementBlock
-});
-
-const _b$ifStatement: typeof FR.coerceToIfStatement & {
-	strict: typeof F.buildIfStatement;
-} = attachProps(FR.coerceToIfStatement, {
-	strict: F.buildIfStatement
-});
-
-const _b$switchStatement: typeof FR.coerceToSwitchStatement & {
-	strict: typeof F.buildSwitchStatement;
-} = attachProps(FR.coerceToSwitchStatement, {
-	strict: F.buildSwitchStatement
-});
-
-const _b$forStatement: typeof FR.coerceToForStatement & {
-	strict: typeof F.buildForStatement;
-} = attachProps(FR.coerceToForStatement, {
-	strict: F.buildForStatement
-});
-
-const _b$forInStatement: typeof FR.coerceToForInStatement & {
-	strict: typeof F.buildForInStatement;
-} = attachProps(FR.coerceToForInStatement, {
-	strict: F.buildForInStatement
-});
-
-const _b$whileStatement: typeof FR.coerceToWhileStatement & {
-	strict: typeof F.buildWhileStatement;
-} = attachProps(FR.coerceToWhileStatement, {
-	strict: F.buildWhileStatement
-});
-
-const _b$doStatement: typeof FR.coerceToDoStatement & {
-	strict: typeof F.buildDoStatement;
-} = attachProps(FR.coerceToDoStatement, {
-	strict: F.buildDoStatement
-});
-
-const _b$tryStatement: typeof FR.coerceToTryStatement & {
-	strict: typeof F.buildTryStatement;
-} = attachProps(FR.coerceToTryStatement, {
-	strict: F.buildTryStatement
-});
-
-const _b$withStatement: typeof FR.coerceToWithStatement & {
-	strict: typeof F.buildWithStatement;
-} = attachProps(FR.coerceToWithStatement, {
-	strict: F.buildWithStatement
-});
-
-const _b$breakStatement: typeof FR.coerceToBreakStatement & {
-	strict: typeof F.buildBreakStatement;
-} = attachProps(FR.coerceToBreakStatement, {
-	strict: F.buildBreakStatement
-});
-
-const _b$continueStatement: typeof FR.coerceToContinueStatement & {
-	strict: typeof F.buildContinueStatement;
-} = attachProps(FR.coerceToContinueStatement, {
-	strict: F.buildContinueStatement
-});
-
-const _b$returnStatement: typeof FR.coerceToReturnStatement & {
-	strict: typeof F.buildReturnStatement;
-} = attachProps(FR.coerceToReturnStatement, {
-	strict: F.buildReturnStatement
-});
-
-const _b$throwStatement: typeof FR.coerceToThrowStatement & {
-	strict: typeof F.buildThrowStatement;
-} = attachProps(FR.coerceToThrowStatement, {
-	strict: F.buildThrowStatement
-});
-
-const _b$labeledStatement: typeof FR.coerceToLabeledStatement & {
-	strict: typeof F.buildLabeledStatement;
-} = attachProps(FR.coerceToLabeledStatement, {
-	strict: F.buildLabeledStatement
-});
-
-const _b$asExpression: typeof FR.coerceToAsExpression & {
-	strict: typeof F.buildAsExpression;
-} = attachProps(FR.coerceToAsExpression, {
-	strict: F.buildAsExpression
-});
-
-const _b$satisfiesExpression: typeof FR.coerceToSatisfiesExpression & {
-	strict: typeof F.buildSatisfiesExpression;
-} = attachProps(FR.coerceToSatisfiesExpression, {
-	strict: F.buildSatisfiesExpression
-});
-
-const _b$instantiationExpression: typeof FR.coerceToInstantiationExpression & {
-	strict: typeof F.buildInstantiationExpression;
-} = attachProps(FR.coerceToInstantiationExpression, {
-	strict: F.buildInstantiationExpression
-});
-
-const _b$typeAssertion: typeof FR.coerceToTypeAssertion & {
-	strict: typeof F.buildTypeAssertion;
-} = attachProps(FR.coerceToTypeAssertion, {
-	strict: F.buildTypeAssertion
-});
-
-const _b$assignmentExpression: typeof FR.coerceToAssignmentExpression & {
-	strict: typeof F.buildAssignmentExpression;
-} = attachProps(FR.coerceToAssignmentExpression, {
-	strict: F.buildAssignmentExpression
-});
-
-const _b$augmentedAssignmentExpression: typeof FR.coerceToAugmentedAssignmentExpression & {
-	strict: typeof F.buildAugmentedAssignmentExpression;
-} = attachProps(FR.coerceToAugmentedAssignmentExpression, {
-	strict: F.buildAugmentedAssignmentExpression
-});
-
-const _b$awaitExpression: typeof FR.coerceToAwaitExpression & {
-	strict: typeof F.buildAwaitExpression;
-} = attachProps(FR.coerceToAwaitExpression, {
-	strict: F.buildAwaitExpression
-});
-
-const _b$unaryExpression: typeof FR.coerceToUnaryExpression & {
-	strict: typeof F.buildUnaryExpression;
-} = attachProps(FR.coerceToUnaryExpression, {
-	strict: F.buildUnaryExpression
-});
-
-const _b$binaryExpression: typeof FR.coerceToBinaryExpression & {
-	strict: typeof F.buildBinaryExpression;
-} = attachProps(FR.coerceToBinaryExpression, {
-	strict: F.buildBinaryExpression
-});
-
-const _b$ternaryExpression: typeof FR.coerceToTernaryExpression & {
-	strict: typeof F.buildTernaryExpression;
-} = attachProps(FR.coerceToTernaryExpression, {
-	strict: F.buildTernaryExpression
-});
-
-const _b$updateExpression: typeof FR.coerceToUpdateExpression & {
-	strict: typeof F.buildUpdateExpression;
-} = attachProps(FR.coerceToUpdateExpression, {
-	strict: F.buildUpdateExpression
-});
-
-const _b$newExpression: typeof FR.coerceToNewExpression & {
-	strict: typeof F.buildNewExpression;
-} = attachProps(FR.coerceToNewExpression, {
-	strict: F.buildNewExpression
-});
-
-const _b$yieldExpression: typeof FR.coerceToYieldExpression & {
-	strict: typeof F.buildYieldExpression;
-} = attachProps(FR.coerceToYieldExpression, {
-	strict: F.buildYieldExpression
-});
-
-const _b$subscriptExpression: typeof FR.coerceToSubscriptExpression & {
-	strict: typeof F.buildSubscriptExpression;
-} = attachProps(FR.coerceToSubscriptExpression, {
-	strict: F.buildSubscriptExpression
-});
-
-const _b$memberExpression: typeof FR.coerceToMemberExpression & {
-	strict: typeof F.buildMemberExpression;
-} = attachProps(FR.coerceToMemberExpression, {
-	strict: F.buildMemberExpression
-});
-
-const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
-	strict: typeof F.buildParenthesizedExpression;
-} = attachProps(FR.coerceToParenthesizedExpression, {
-	strict: F.buildParenthesizedExpression
-});
-
-const _b$string: typeof FR.coerceToString & {
-	strict: typeof F.buildString;
-} = attachProps(FR.coerceToString, {
-	strict: F.buildString
-});
-
-const _b$templateString: typeof FR.coerceToTemplateString & {
-	strict: typeof F.buildTemplateString;
-} = attachProps(FR.coerceToTemplateString, {
-	strict: F.buildTemplateString
-});
-
-const _b$regex: typeof FR.coerceToRegex & {
-	strict: typeof F.buildRegex;
-} = attachProps(FR.coerceToRegex, {
-	strict: F.buildRegex
-});
-
-const _b$object: typeof FR.coerceToObject & {
-	strict: typeof F.buildObject;
-} = attachProps(FR.coerceToObject, {
-	strict: F.buildObject
-});
-
-const _b$array: typeof FR.coerceToArray & {
-	strict: typeof F.buildArray;
-} = attachProps(FR.coerceToArray, {
-	strict: F.buildArray
-});
-
-const _b$functionExpression: typeof FR.coerceToFunctionExpression & {
-	strict: typeof F.buildFunctionExpression;
-} = attachProps(FR.coerceToFunctionExpression, {
-	strict: F.buildFunctionExpression
-});
-
-const _b$arrowFunction: typeof FR.coerceToArrowFunction & {
-	strict: typeof F.buildArrowFunction;
-} = attachProps(FR.coerceToArrowFunction, {
-	strict: F.buildArrowFunction
-});
-
-const _b$generatorFunction: typeof FR.coerceToGeneratorFunction & {
-	strict: typeof F.buildGeneratorFunction;
-} = attachProps(FR.coerceToGeneratorFunction, {
-	strict: F.buildGeneratorFunction
-});
-
-const _b$class: typeof FR.coerceToClass & {
-	strict: typeof F.buildClass;
-} = attachProps(FR.coerceToClass, {
-	strict: F.buildClass
-});
-
-const _b$metaProperty: typeof FR.coerceToMetaProperty & {
-	strict: typeof F.buildMetaProperty;
-} = attachProps(FR.coerceToMetaProperty, {
-	strict: F.buildMetaProperty
-});
-
-const _b$callExpression: typeof FR.coerceToCallExpression & {
-	strict: typeof F.buildCallExpression;
-} = attachProps(FR.coerceToCallExpression, {
-	strict: F.buildCallExpression
-});
-
-const _b$nonNullExpression: typeof FR.coerceToNonNullExpression & {
-	strict: typeof F.buildNonNullExpression;
-} = attachProps(FR.coerceToNonNullExpression, {
-	strict: F.buildNonNullExpression
-});
-
-const _b$objectPattern: typeof FR.coerceToObjectPattern & {
-	strict: typeof F.buildObjectPattern;
-} = attachProps(FR.coerceToObjectPattern, {
-	strict: F.buildObjectPattern
-});
-
-const _b$arrayPattern: typeof FR.coerceToArrayPattern & {
-	strict: typeof F.buildArrayPattern;
-} = attachProps(FR.coerceToArrayPattern, {
-	strict: F.buildArrayPattern
-});
-
-const _b$restPattern: typeof FR.coerceToRestPattern & {
-	strict: typeof F.buildRestPattern;
-} = attachProps(FR.coerceToRestPattern, {
-	strict: F.buildRestPattern
-});
-
-const _b$functionType: typeof FR.coerceToFunctionType & {
-	strict: typeof F.buildFunctionType;
-} = attachProps(FR.coerceToFunctionType, {
-	strict: F.buildFunctionType
-});
-
-const _b$readonlyType: typeof FR.coerceToReadonlyType & {
-	strict: typeof F.buildReadonlyType;
-} = attachProps(FR.coerceToReadonlyType, {
-	strict: F.buildReadonlyType
-});
-
-const _b$constructorType: typeof FR.coerceToConstructorType & {
-	strict: typeof F.buildConstructorType;
-} = attachProps(FR.coerceToConstructorType, {
-	strict: F.buildConstructorType
-});
-
-const _b$inferType: typeof FR.coerceToInferType & {
-	strict: typeof F.buildInferType;
-} = attachProps(FR.coerceToInferType, {
-	strict: F.buildInferType
-});
-
-const _b$parenthesizedType: typeof FR.coerceToParenthesizedType & {
-	strict: typeof F.buildParenthesizedType;
-} = attachProps(FR.coerceToParenthesizedType, {
-	strict: F.buildParenthesizedType
-});
-
-const _b$nestedTypeIdentifier: typeof FR.coerceToNestedTypeIdentifier & {
-	strict: typeof F.buildNestedTypeIdentifier;
-} = attachProps(FR.coerceToNestedTypeIdentifier, {
-	strict: F.buildNestedTypeIdentifier
-});
-
-const _b$genericType: typeof FR.coerceToGenericType & {
-	strict: typeof F.buildGenericType;
-} = attachProps(FR.coerceToGenericType, {
-	strict: F.buildGenericType
-});
-
-const _b$objectType: typeof FR.coerceToObjectType & {
-	strict: typeof F.buildObjectType;
-	curly: typeof F.buildObjectTypeCurly;
-	flow: typeof F.buildObjectTypeFlow;
-} = attachProps(FR.coerceToObjectType, {
-	strict: F.buildObjectType,
-	curly: F.buildObjectTypeCurly,
-	flow: F.buildObjectTypeFlow
-});
-
-const _b$arrayType: typeof FR.coerceToArrayType & {
-	strict: typeof F.buildArrayType;
-} = attachProps(FR.coerceToArrayType, {
-	strict: F.buildArrayType
-});
-
-const _b$tupleType: typeof FR.coerceToTupleType & {
-	strict: typeof F.buildTupleType;
-} = attachProps(FR.coerceToTupleType, {
-	strict: F.buildTupleType
-});
-
-const _b$flowMaybeType: typeof FR.coerceToFlowMaybeType & {
-	strict: typeof F.buildFlowMaybeType;
-} = attachProps(FR.coerceToFlowMaybeType, {
-	strict: F.buildFlowMaybeType
-});
-
-const _b$typeQuery: typeof FR.coerceToTypeQuery & {
-	strict: typeof F.buildTypeQuery;
-} = attachProps(FR.coerceToTypeQuery, {
-	strict: F.buildTypeQuery
-});
-
-const _b$indexTypeQuery: typeof FR.coerceToIndexTypeQuery & {
-	strict: typeof F.buildIndexTypeQuery;
-} = attachProps(FR.coerceToIndexTypeQuery, {
-	strict: F.buildIndexTypeQuery
-});
-
-const _b$literalType: typeof FR.coerceToLiteralType & {
-	strict: typeof F.buildLiteralType;
-} = attachProps(FR.coerceToLiteralType, {
-	strict: F.buildLiteralType
-});
-
-const _b$lookupType: typeof FR.coerceToLookupType & {
-	strict: typeof F.buildLookupType;
-} = attachProps(FR.coerceToLookupType, {
-	strict: F.buildLookupType
-});
-
-const _b$conditionalType: typeof FR.coerceToConditionalType & {
-	strict: typeof F.buildConditionalType;
-} = attachProps(FR.coerceToConditionalType, {
-	strict: F.buildConditionalType
-});
-
-const _b$templateLiteralType: typeof FR.coerceToTemplateLiteralType & {
-	strict: typeof F.buildTemplateLiteralType;
-} = attachProps(FR.coerceToTemplateLiteralType, {
-	strict: F.buildTemplateLiteralType
-});
-
-const _b$intersectionType: typeof FR.coerceToIntersectionType & {
-	strict: typeof F.buildIntersectionType;
-} = attachProps(FR.coerceToIntersectionType, {
-	strict: F.buildIntersectionType
-});
-
-const _b$unionType: typeof FR.coerceToUnionType & {
-	strict: typeof F.buildUnionType;
-} = attachProps(FR.coerceToUnionType, {
-	strict: F.buildUnionType
-});
-
-const _b$program: typeof FR.coerceToProgram & {
-	strict: typeof F.buildProgram;
-} = attachProps(FR.coerceToProgram, {
-	strict: F.buildProgram
-});
-
-const _b$namespaceExport: typeof FR.coerceToNamespaceExport & {
-	strict: typeof F.buildNamespaceExport;
-} = attachProps(FR.coerceToNamespaceExport, {
-	strict: F.buildNamespaceExport
-});
-
-const _b$exportClause: typeof FR.coerceToExportClause & {
-	strict: typeof F.buildExportClause;
-} = attachProps(FR.coerceToExportClause, {
-	strict: F.buildExportClause
-});
-
-const _b$exportSpecifier: typeof FR.coerceToExportSpecifier & {
-	strict: typeof F.buildExportSpecifier;
-} = attachProps(FR.coerceToExportSpecifier, {
-	strict: F.buildExportSpecifier
-});
-
-const _b$importClause: typeof FR.coerceToImportClause & {
-	strict: typeof F.buildImportClause;
-} = attachProps(FR.coerceToImportClause, {
-	strict: F.buildImportClause
-});
-
-const _b$namespaceImport: typeof FR.coerceToNamespaceImport & {
-	strict: typeof F.buildNamespaceImport;
-} = attachProps(FR.coerceToNamespaceImport, {
-	strict: F.buildNamespaceImport
-});
-
-const _b$namedImports: typeof FR.coerceToNamedImports & {
-	strict: typeof F.buildNamedImports;
-} = attachProps(FR.coerceToNamedImports, {
-	strict: F.buildNamedImports
-});
-
-const _b$importSpecifier: typeof FR.coerceToImportSpecifier & {
-	strict: typeof F.buildImportSpecifier;
-} = attachProps(FR.coerceToImportSpecifier, {
-	strict: F.buildImportSpecifier
-});
-
-const _b$importAttribute: typeof FR.coerceToImportAttribute & {
-	strict: typeof F.buildImportAttribute;
-} = attachProps(FR.coerceToImportAttribute, {
-	strict: F.buildImportAttribute
-});
-
-const _b$variableDeclarator: typeof FR.coerceToVariableDeclarator & {
-	strict: typeof F.buildVariableDeclarator;
-} = attachProps(FR.coerceToVariableDeclarator, {
-	strict: F.buildVariableDeclarator
-});
-
-const _b$elseClause: typeof FR.coerceToElseClause & {
-	strict: typeof F.buildElseClause;
-} = attachProps(FR.coerceToElseClause, {
-	strict: F.buildElseClause
-});
-
-const _b$switchBody: typeof FR.coerceToSwitchBody & {
-	strict: typeof F.buildSwitchBody;
-} = attachProps(FR.coerceToSwitchBody, {
-	strict: F.buildSwitchBody
-});
-
-const _b$switchCase: typeof FR.coerceToSwitchCase & {
-	strict: typeof F.buildSwitchCase;
-} = attachProps(FR.coerceToSwitchCase, {
-	strict: F.buildSwitchCase
-});
-
-const _b$switchDefault: typeof FR.coerceToSwitchDefault & {
-	strict: typeof F.buildSwitchDefault;
-} = attachProps(FR.coerceToSwitchDefault, {
-	strict: F.buildSwitchDefault
-});
-
-const _b$catchClause: typeof FR.coerceToCatchClause & {
-	strict: typeof F.buildCatchClause;
-} = attachProps(FR.coerceToCatchClause, {
-	strict: F.buildCatchClause
-});
-
-const _b$finallyClause: typeof FR.coerceToFinallyClause & {
-	strict: typeof F.buildFinallyClause;
-} = attachProps(FR.coerceToFinallyClause, {
-	strict: F.buildFinallyClause
-});
-
-const _b$assignmentPattern: typeof FR.coerceToAssignmentPattern & {
-	strict: typeof F.buildAssignmentPattern;
-} = attachProps(FR.coerceToAssignmentPattern, {
-	strict: F.buildAssignmentPattern
-});
-
-const _b$objectAssignmentPattern: typeof FR.coerceToObjectAssignmentPattern & {
-	strict: typeof F.buildObjectAssignmentPattern;
-} = attachProps(FR.coerceToObjectAssignmentPattern, {
-	strict: F.buildObjectAssignmentPattern
-});
-
-const _b$nestedIdentifier: typeof FR.coerceToNestedIdentifier & {
-	strict: typeof F.buildNestedIdentifier;
-} = attachProps(FR.coerceToNestedIdentifier, {
-	strict: F.buildNestedIdentifier
-});
-
-const _b$classHeritage: typeof FR.coerceToClassHeritage & {
-	strict: typeof F.buildClassHeritage;
-} = attachProps(FR.coerceToClassHeritage, {
-	strict: F.buildClassHeritage
-});
-
-const _b$spreadElement: typeof FR.coerceToSpreadElement & {
-	strict: typeof F.buildSpreadElement;
-} = attachProps(FR.coerceToSpreadElement, {
-	strict: F.buildSpreadElement
-});
-
-const _b$sequenceExpression: typeof FR.coerceToSequenceExpression & {
-	strict: typeof F.buildSequenceExpression;
-} = attachProps(FR.coerceToSequenceExpression, {
-	strict: F.buildSequenceExpression
-});
-
-const _b$templateSubstitution: typeof FR.coerceToTemplateSubstitution & {
-	strict: typeof F.buildTemplateSubstitution;
-} = attachProps(FR.coerceToTemplateSubstitution, {
-	strict: F.buildTemplateSubstitution
-});
-
-const _b$arguments: typeof FR.coerceToArguments & {
-	strict: typeof F.buildArguments;
-} = attachProps(FR.coerceToArguments, {
-	strict: F.buildArguments
-});
-
-const _b$decorator: typeof FR.coerceToDecorator & {
-	strict: typeof F.buildDecorator;
-} = attachProps(FR.coerceToDecorator, {
-	strict: F.buildDecorator
-});
-
-const _b$decoratorMemberExpression: typeof FR.coerceToDecoratorMemberExpression & {
-	strict: typeof F.buildDecoratorMemberExpression;
-} = attachProps(FR.coerceToDecoratorMemberExpression, {
-	strict: F.buildDecoratorMemberExpression
-});
-
-const _b$decoratorCallExpression: typeof FR.coerceToDecoratorCallExpression & {
-	strict: typeof F.buildDecoratorCallExpression;
-} = attachProps(FR.coerceToDecoratorCallExpression, {
-	strict: F.buildDecoratorCallExpression
-});
-
-const _b$classBody: typeof FR.coerceToClassBody & {
-	strict: typeof F.buildClassBody;
-} = attachProps(FR.coerceToClassBody, {
-	strict: F.buildClassBody
-});
-
-const _b$formalParameters: typeof FR.coerceToFormalParameters & {
-	strict: typeof F.buildFormalParameters;
-} = attachProps(FR.coerceToFormalParameters, {
-	strict: F.buildFormalParameters
-});
-
-const _b$classStaticBlock: typeof FR.coerceToClassStaticBlock & {
-	strict: typeof F.buildClassStaticBlock;
-} = attachProps(FR.coerceToClassStaticBlock, {
-	strict: F.buildClassStaticBlock
-});
-
-const _b$methodDefinition: typeof FR.coerceToMethodDefinition & {
-	strict: typeof F.buildMethodDefinition;
-} = attachProps(FR.coerceToMethodDefinition, {
-	strict: F.buildMethodDefinition
-});
-
-const _b$pair: typeof FR.coerceToPair & {
-	strict: typeof F.buildPair;
-} = attachProps(FR.coerceToPair, {
-	strict: F.buildPair
-});
-
-const _b$pairPattern: typeof FR.coerceToPairPattern & {
-	strict: typeof F.buildPairPattern;
-} = attachProps(FR.coerceToPairPattern, {
-	strict: F.buildPairPattern
-});
-
-const _b$computedPropertyName: typeof FR.coerceToComputedPropertyName & {
-	strict: typeof F.buildComputedPropertyName;
-} = attachProps(FR.coerceToComputedPropertyName, {
-	strict: F.buildComputedPropertyName
-});
-
-const _b$publicFieldDefinition: typeof FR.coerceToPublicFieldDefinition & {
-	strict: typeof F.buildPublicFieldDefinition;
-} = attachProps(FR.coerceToPublicFieldDefinition, {
-	strict: F.buildPublicFieldDefinition
-});
-
-const _b$methodSignature: typeof FR.coerceToMethodSignature & {
-	strict: typeof F.buildMethodSignature;
-} = attachProps(FR.coerceToMethodSignature, {
-	strict: F.buildMethodSignature
-});
-
-const _b$abstractMethodSignature: typeof FR.coerceToAbstractMethodSignature & {
-	strict: typeof F.buildAbstractMethodSignature;
-} = attachProps(FR.coerceToAbstractMethodSignature, {
-	strict: F.buildAbstractMethodSignature
-});
-
-const _b$decoratorParenthesizedExpression: typeof FR.coerceToDecoratorParenthesizedExpression & {
-	strict: typeof F.buildDecoratorParenthesizedExpression;
-} = attachProps(FR.coerceToDecoratorParenthesizedExpression, {
-	strict: F.buildDecoratorParenthesizedExpression
-});
-
-const _b$importRequireClause: typeof FR.coerceToImportRequireClause & {
-	strict: typeof F.buildImportRequireClause;
-} = attachProps(FR.coerceToImportRequireClause, {
-	strict: F.buildImportRequireClause
-});
-
-const _b$extendsClause: typeof FR.coerceToExtendsClause & {
-	strict: typeof F.buildExtendsClause;
-} = attachProps(FR.coerceToExtendsClause, {
-	strict: F.buildExtendsClause
-});
-
-const _b$implementsClause: typeof FR.coerceToImplementsClause & {
-	strict: typeof F.buildImplementsClause;
-} = attachProps(FR.coerceToImplementsClause, {
-	strict: F.buildImplementsClause
-});
-
-const _b$extendsTypeClause: typeof FR.coerceToExtendsTypeClause & {
-	strict: typeof F.buildExtendsTypeClause;
-} = attachProps(FR.coerceToExtendsTypeClause, {
-	strict: F.buildExtendsTypeClause
-});
-
-const _b$enumBody: typeof FR.coerceToEnumBody & {
-	strict: typeof F.buildEnumBody;
-} = attachProps(FR.coerceToEnumBody, {
-	strict: F.buildEnumBody
-});
-
-const _b$enumAssignment: typeof FR.coerceToEnumAssignment & {
-	strict: typeof F.buildEnumAssignment;
-} = attachProps(FR.coerceToEnumAssignment, {
-	strict: F.buildEnumAssignment
-});
-
-const _b$requiredParameter: typeof FR.coerceToRequiredParameter & {
-	strict: typeof F.buildRequiredParameter;
-} = attachProps(FR.coerceToRequiredParameter, {
-	strict: F.buildRequiredParameter
-});
-
-const _b$optionalParameter: typeof FR.coerceToOptionalParameter & {
-	strict: typeof F.buildOptionalParameter;
-} = attachProps(FR.coerceToOptionalParameter, {
-	strict: F.buildOptionalParameter
-});
-
-const _b$omittingTypeAnnotation: typeof FR.coerceToOmittingTypeAnnotation & {
-	strict: typeof F.buildOmittingTypeAnnotation;
-} = attachProps(FR.coerceToOmittingTypeAnnotation, {
-	strict: F.buildOmittingTypeAnnotation
-});
-
-const _b$addingTypeAnnotation: typeof FR.coerceToAddingTypeAnnotation & {
-	strict: typeof F.buildAddingTypeAnnotation;
-} = attachProps(FR.coerceToAddingTypeAnnotation, {
-	strict: F.buildAddingTypeAnnotation
-});
-
-const _b$optingTypeAnnotation: typeof FR.coerceToOptingTypeAnnotation & {
-	strict: typeof F.buildOptingTypeAnnotation;
-} = attachProps(FR.coerceToOptingTypeAnnotation, {
-	strict: F.buildOptingTypeAnnotation
-});
-
-const _b$typeAnnotation: typeof FR.coerceToTypeAnnotation & {
-	strict: typeof F.buildTypeAnnotation;
-} = attachProps(FR.coerceToTypeAnnotation, {
-	strict: F.buildTypeAnnotation
-});
-
-const _b$asserts: typeof FR.coerceToAsserts & {
-	strict: typeof F.buildAsserts;
-} = attachProps(FR.coerceToAsserts, {
-	strict: F.buildAsserts
-});
-
-const _b$assertsAnnotation: typeof FR.coerceToAssertsAnnotation & {
-	strict: typeof F.buildAssertsAnnotation;
-} = attachProps(FR.coerceToAssertsAnnotation, {
-	strict: F.buildAssertsAnnotation
-});
-
-const _b$tupleParameter: typeof FR.coerceToTupleParameter & {
-	strict: typeof F.buildTupleParameter;
-} = attachProps(FR.coerceToTupleParameter, {
-	strict: F.buildTupleParameter
-});
-
-const _b$optionalTupleParameter: typeof FR.coerceToOptionalTupleParameter & {
-	strict: typeof F.buildOptionalTupleParameter;
-} = attachProps(FR.coerceToOptionalTupleParameter, {
-	strict: F.buildOptionalTupleParameter
-});
-
-const _b$optionalType: typeof FR.coerceToOptionalType & {
-	strict: typeof F.buildOptionalType;
-} = attachProps(FR.coerceToOptionalType, {
-	strict: F.buildOptionalType
-});
-
-const _b$restType: typeof FR.coerceToRestType & {
-	strict: typeof F.buildRestType;
-} = attachProps(FR.coerceToRestType, {
-	strict: F.buildRestType
-});
-
-const _b$templateType: typeof FR.coerceToTemplateType & {
-	strict: typeof F.buildTemplateType;
-} = attachProps(FR.coerceToTemplateType, {
-	strict: F.buildTemplateType
-});
-
-const _b$typePredicate: typeof FR.coerceToTypePredicate & {
-	strict: typeof F.buildTypePredicate;
-} = attachProps(FR.coerceToTypePredicate, {
-	strict: F.buildTypePredicate
-});
-
-const _b$typePredicateAnnotation: typeof FR.coerceToTypePredicateAnnotation & {
-	strict: typeof F.buildTypePredicateAnnotation;
-} = attachProps(FR.coerceToTypePredicateAnnotation, {
-	strict: F.buildTypePredicateAnnotation
-});
-
-const _b$mappedTypeClause: typeof FR.coerceToMappedTypeClause & {
-	strict: typeof F.buildMappedTypeClause;
-} = attachProps(FR.coerceToMappedTypeClause, {
-	strict: F.buildMappedTypeClause
-});
-
-const _b$typeArguments: typeof FR.coerceToTypeArguments & {
-	strict: typeof F.buildTypeArguments;
-} = attachProps(FR.coerceToTypeArguments, {
-	strict: F.buildTypeArguments
-});
-
-const _b$callSignature: typeof FR.coerceToCallSignature & {
-	strict: typeof F.buildCallSignature;
-} = attachProps(FR.coerceToCallSignature, {
-	strict: F.buildCallSignature
-});
-
-const _b$propertySignature: typeof FR.coerceToPropertySignature & {
-	strict: typeof F.buildPropertySignature;
-} = attachProps(FR.coerceToPropertySignature, {
-	strict: F.buildPropertySignature
-});
-
-const _b$typeParameters: typeof FR.coerceToTypeParameters & {
-	strict: typeof F.buildTypeParameters;
-} = attachProps(FR.coerceToTypeParameters, {
-	strict: F.buildTypeParameters
-});
-
-const _b$typeParameter: typeof FR.coerceToTypeParameter & {
-	strict: typeof F.buildTypeParameter;
-} = attachProps(FR.coerceToTypeParameter, {
-	strict: F.buildTypeParameter
-});
-
-const _b$defaultType: typeof FR.coerceToDefaultType & {
-	strict: typeof F.buildDefaultType;
-} = attachProps(FR.coerceToDefaultType, {
-	strict: F.buildDefaultType
-});
-
-const _b$constraint: typeof FR.coerceToConstraint & {
-	strict: typeof F.buildConstraint;
-} = attachProps(FR.coerceToConstraint, {
-	strict: F.buildConstraint
-});
-
-const _b$constructSignature: typeof FR.coerceToConstructSignature & {
-	strict: typeof F.buildConstructSignature;
-} = attachProps(FR.coerceToConstructSignature, {
-	strict: F.buildConstructSignature
-});
-
-const _b$indexSignature: typeof FR.coerceToIndexSignature & {
-	strict: typeof F.buildIndexSignature;
-} = attachProps(FR.coerceToIndexSignature, {
-	strict: F.buildIndexSignature
-});
-
-const _b$objectTypeContent: typeof FR.coerceToObjectTypeContent & {
-	strict: typeof F.buildObjectTypeContent;
-} = attachProps(FR.coerceToObjectTypeContent, {
-	strict: F.buildObjectTypeContent
-});
+import { bundle } from './utils.js';
+
+const _b$functionDeclaration = bundle(FR.coerceToFunctionDeclaration, F.buildFunctionDeclaration);
+
+const _b$generatorFunctionDeclaration = bundle(
+	FR.coerceToGeneratorFunctionDeclaration,
+	F.buildGeneratorFunctionDeclaration
+);
+
+const _b$classDeclaration = bundle(FR.coerceToClassDeclaration, F.buildClassDeclaration);
+
+const _b$lexicalDeclaration = bundle(FR.coerceToLexicalDeclaration, F.buildLexicalDeclaration);
+
+const _b$variableDeclaration = bundle(FR.coerceToVariableDeclaration, F.buildVariableDeclaration);
+
+const _b$functionSignature = bundle(FR.coerceToFunctionSignature, F.buildFunctionSignature);
+
+const _b$abstractClassDeclaration = bundle(FR.coerceToAbstractClassDeclaration, F.buildAbstractClassDeclaration);
+
+const _b$module = bundle(FR.coerceToModule, F.buildModule);
+
+const _b$internalModule = bundle(FR.coerceToInternalModule, F.buildInternalModule);
+
+const _b$typeAliasDeclaration = bundle(FR.coerceToTypeAliasDeclaration, F.buildTypeAliasDeclaration);
+
+const _b$enumDeclaration = bundle(FR.coerceToEnumDeclaration, F.buildEnumDeclaration);
+
+const _b$interfaceDeclaration = bundle(FR.coerceToInterfaceDeclaration, F.buildInterfaceDeclaration);
+
+const _b$importAlias = bundle(FR.coerceToImportAlias, F.buildImportAlias);
+
+const _b$ambientDeclaration = bundle(FR.coerceToAmbientDeclaration, F.buildAmbientDeclaration);
+
+const _b$exportStatement = bundle(FR.coerceToExportStatement, F.buildExportStatement);
+
+const _b$importStatement = bundle(FR.coerceToImportStatement, F.buildImportStatement);
+
+const _b$debuggerStatement = bundle(FR.coerceToDebuggerStatement, F.buildDebuggerStatement);
+
+const _b$expressionStatement = bundle(FR.coerceToExpressionStatement, F.buildExpressionStatement);
+
+const _b$statementBlock = bundle(FR.coerceToStatementBlock, F.buildStatementBlock);
+
+const _b$ifStatement = bundle(FR.coerceToIfStatement, F.buildIfStatement);
+
+const _b$switchStatement = bundle(FR.coerceToSwitchStatement, F.buildSwitchStatement);
+
+const _b$forStatement = bundle(FR.coerceToForStatement, F.buildForStatement);
+
+const _b$forInStatement = bundle(FR.coerceToForInStatement, F.buildForInStatement);
+
+const _b$whileStatement = bundle(FR.coerceToWhileStatement, F.buildWhileStatement);
+
+const _b$doStatement = bundle(FR.coerceToDoStatement, F.buildDoStatement);
+
+const _b$tryStatement = bundle(FR.coerceToTryStatement, F.buildTryStatement);
+
+const _b$withStatement = bundle(FR.coerceToWithStatement, F.buildWithStatement);
+
+const _b$breakStatement = bundle(FR.coerceToBreakStatement, F.buildBreakStatement);
+
+const _b$continueStatement = bundle(FR.coerceToContinueStatement, F.buildContinueStatement);
+
+const _b$returnStatement = bundle(FR.coerceToReturnStatement, F.buildReturnStatement);
+
+const _b$throwStatement = bundle(FR.coerceToThrowStatement, F.buildThrowStatement);
+
+const _b$labeledStatement = bundle(FR.coerceToLabeledStatement, F.buildLabeledStatement);
+
+const _b$asExpression = bundle(FR.coerceToAsExpression, F.buildAsExpression);
+
+const _b$satisfiesExpression = bundle(FR.coerceToSatisfiesExpression, F.buildSatisfiesExpression);
+
+const _b$instantiationExpression = bundle(FR.coerceToInstantiationExpression, F.buildInstantiationExpression);
+
+const _b$typeAssertion = bundle(FR.coerceToTypeAssertion, F.buildTypeAssertion);
+
+const _b$assignmentExpression = bundle(FR.coerceToAssignmentExpression, F.buildAssignmentExpression);
+
+const _b$augmentedAssignmentExpression = bundle(
+	FR.coerceToAugmentedAssignmentExpression,
+	F.buildAugmentedAssignmentExpression
+);
+
+const _b$awaitExpression = bundle(FR.coerceToAwaitExpression, F.buildAwaitExpression);
+
+const _b$unaryExpression = bundle(FR.coerceToUnaryExpression, F.buildUnaryExpression);
+
+const _b$binaryExpression = bundle(FR.coerceToBinaryExpression, F.buildBinaryExpression);
+
+const _b$ternaryExpression = bundle(FR.coerceToTernaryExpression, F.buildTernaryExpression);
+
+const _b$updateExpression = bundle(FR.coerceToUpdateExpression, F.buildUpdateExpression);
+
+const _b$newExpression = bundle(FR.coerceToNewExpression, F.buildNewExpression);
+
+const _b$yieldExpression = bundle(FR.coerceToYieldExpression, F.buildYieldExpression);
+
+const _b$subscriptExpression = bundle(FR.coerceToSubscriptExpression, F.buildSubscriptExpression);
+
+const _b$memberExpression = bundle(FR.coerceToMemberExpression, F.buildMemberExpression);
+
+const _b$parenthesizedExpression = bundle(FR.coerceToParenthesizedExpression, F.buildParenthesizedExpression);
+
+const _b$string = bundle(FR.coerceToString, F.buildString);
+
+const _b$templateString = bundle(FR.coerceToTemplateString, F.buildTemplateString);
+
+const _b$regex = bundle(FR.coerceToRegex, F.buildRegex);
+
+const _b$object = bundle(FR.coerceToObject, F.buildObject);
+
+const _b$array = bundle(FR.coerceToArray, F.buildArray);
+
+const _b$functionExpression = bundle(FR.coerceToFunctionExpression, F.buildFunctionExpression);
+
+const _b$arrowFunction = bundle(FR.coerceToArrowFunction, F.buildArrowFunction);
+
+const _b$generatorFunction = bundle(FR.coerceToGeneratorFunction, F.buildGeneratorFunction);
+
+const _b$class = bundle(FR.coerceToClass, F.buildClass);
+
+const _b$metaProperty = bundle(FR.coerceToMetaProperty, F.buildMetaProperty);
+
+const _b$callExpression = bundle(FR.coerceToCallExpression, F.buildCallExpression);
+
+const _b$nonNullExpression = bundle(FR.coerceToNonNullExpression, F.buildNonNullExpression);
+
+const _b$objectPattern = bundle(FR.coerceToObjectPattern, F.buildObjectPattern);
+
+const _b$arrayPattern = bundle(FR.coerceToArrayPattern, F.buildArrayPattern);
+
+const _b$restPattern = bundle(FR.coerceToRestPattern, F.buildRestPattern);
+
+const _b$functionType = bundle(FR.coerceToFunctionType, F.buildFunctionType);
+
+const _b$readonlyType = bundle(FR.coerceToReadonlyType, F.buildReadonlyType);
+
+const _b$constructorType = bundle(FR.coerceToConstructorType, F.buildConstructorType);
+
+const _b$inferType = bundle(FR.coerceToInferType, F.buildInferType);
+
+const _b$parenthesizedType = bundle(FR.coerceToParenthesizedType, F.buildParenthesizedType);
+
+const _b$nestedTypeIdentifier = bundle(FR.coerceToNestedTypeIdentifier, F.buildNestedTypeIdentifier);
+
+const _b$genericType = bundle(FR.coerceToGenericType, F.buildGenericType);
+
+const _b$objectType = bundle(FR.coerceToObjectType, F.buildObjectType);
+
+const _b$arrayType = bundle(FR.coerceToArrayType, F.buildArrayType);
+
+const _b$tupleType = bundle(FR.coerceToTupleType, F.buildTupleType);
+
+const _b$flowMaybeType = bundle(FR.coerceToFlowMaybeType, F.buildFlowMaybeType);
+
+const _b$typeQuery = bundle(FR.coerceToTypeQuery, F.buildTypeQuery);
+
+const _b$indexTypeQuery = bundle(FR.coerceToIndexTypeQuery, F.buildIndexTypeQuery);
+
+const _b$literalType = bundle(FR.coerceToLiteralType, F.buildLiteralType);
+
+const _b$lookupType = bundle(FR.coerceToLookupType, F.buildLookupType);
+
+const _b$conditionalType = bundle(FR.coerceToConditionalType, F.buildConditionalType);
+
+const _b$templateLiteralType = bundle(FR.coerceToTemplateLiteralType, F.buildTemplateLiteralType);
+
+const _b$intersectionType = bundle(FR.coerceToIntersectionType, F.buildIntersectionType);
+
+const _b$unionType = bundle(FR.coerceToUnionType, F.buildUnionType);
+
+const _b$program = bundle(FR.coerceToProgram, F.buildProgram);
+
+const _b$namespaceExport = bundle(FR.coerceToNamespaceExport, F.buildNamespaceExport);
+
+const _b$exportClause = bundle(FR.coerceToExportClause, F.buildExportClause);
+
+const _b$exportSpecifier = bundle(FR.coerceToExportSpecifier, F.buildExportSpecifier);
+
+const _b$importClause = bundle(FR.coerceToImportClause, F.buildImportClause);
+
+const _b$namespaceImport = bundle(FR.coerceToNamespaceImport, F.buildNamespaceImport);
+
+const _b$namedImports = bundle(FR.coerceToNamedImports, F.buildNamedImports);
+
+const _b$importSpecifier = bundle(FR.coerceToImportSpecifier, F.buildImportSpecifier);
+
+const _b$importAttribute = bundle(FR.coerceToImportAttribute, F.buildImportAttribute);
+
+const _b$variableDeclarator = bundle(FR.coerceToVariableDeclarator, F.buildVariableDeclarator);
+
+const _b$elseClause = bundle(FR.coerceToElseClause, F.buildElseClause);
+
+const _b$switchBody = bundle(FR.coerceToSwitchBody, F.buildSwitchBody);
+
+const _b$switchCase = bundle(FR.coerceToSwitchCase, F.buildSwitchCase);
+
+const _b$switchDefault = bundle(FR.coerceToSwitchDefault, F.buildSwitchDefault);
+
+const _b$catchClause = bundle(FR.coerceToCatchClause, F.buildCatchClause);
+
+const _b$finallyClause = bundle(FR.coerceToFinallyClause, F.buildFinallyClause);
+
+const _b$assignmentPattern = bundle(FR.coerceToAssignmentPattern, F.buildAssignmentPattern);
+
+const _b$objectAssignmentPattern = bundle(FR.coerceToObjectAssignmentPattern, F.buildObjectAssignmentPattern);
+
+const _b$nestedIdentifier = bundle(FR.coerceToNestedIdentifier, F.buildNestedIdentifier);
+
+const _b$classHeritage = bundle(FR.coerceToClassHeritage, F.buildClassHeritage);
+
+const _b$spreadElement = bundle(FR.coerceToSpreadElement, F.buildSpreadElement);
+
+const _b$sequenceExpression = bundle(FR.coerceToSequenceExpression, F.buildSequenceExpression);
+
+const _b$templateSubstitution = bundle(FR.coerceToTemplateSubstitution, F.buildTemplateSubstitution);
+
+const _b$arguments = bundle(FR.coerceToArguments, F.buildArguments);
+
+const _b$decorator = bundle(FR.coerceToDecorator, F.buildDecorator);
+
+const _b$decoratorMemberExpression = bundle(FR.coerceToDecoratorMemberExpression, F.buildDecoratorMemberExpression);
+
+const _b$decoratorCallExpression = bundle(FR.coerceToDecoratorCallExpression, F.buildDecoratorCallExpression);
+
+const _b$classBody = bundle(FR.coerceToClassBody, F.buildClassBody);
+
+const _b$formalParameters = bundle(FR.coerceToFormalParameters, F.buildFormalParameters);
+
+const _b$classStaticBlock = bundle(FR.coerceToClassStaticBlock, F.buildClassStaticBlock);
+
+const _b$methodDefinition = bundle(FR.coerceToMethodDefinition, F.buildMethodDefinition);
+
+const _b$pair = bundle(FR.coerceToPair, F.buildPair);
+
+const _b$pairPattern = bundle(FR.coerceToPairPattern, F.buildPairPattern);
+
+const _b$computedPropertyName = bundle(FR.coerceToComputedPropertyName, F.buildComputedPropertyName);
+
+const _b$publicFieldDefinition = bundle(FR.coerceToPublicFieldDefinition, F.buildPublicFieldDefinition);
+
+const _b$methodSignature = bundle(FR.coerceToMethodSignature, F.buildMethodSignature);
+
+const _b$abstractMethodSignature = bundle(FR.coerceToAbstractMethodSignature, F.buildAbstractMethodSignature);
+
+const _b$decoratorParenthesizedExpression = bundle(
+	FR.coerceToDecoratorParenthesizedExpression,
+	F.buildDecoratorParenthesizedExpression
+);
+
+const _b$importRequireClause = bundle(FR.coerceToImportRequireClause, F.buildImportRequireClause);
+
+const _b$extendsClause = bundle(FR.coerceToExtendsClause, F.buildExtendsClause);
+
+const _b$implementsClause = bundle(FR.coerceToImplementsClause, F.buildImplementsClause);
+
+const _b$extendsTypeClause = bundle(FR.coerceToExtendsTypeClause, F.buildExtendsTypeClause);
+
+const _b$enumBody = bundle(FR.coerceToEnumBody, F.buildEnumBody);
+
+const _b$enumAssignment = bundle(FR.coerceToEnumAssignment, F.buildEnumAssignment);
+
+const _b$requiredParameter = bundle(FR.coerceToRequiredParameter, F.buildRequiredParameter);
+
+const _b$optionalParameter = bundle(FR.coerceToOptionalParameter, F.buildOptionalParameter);
+
+const _b$omittingTypeAnnotation = bundle(FR.coerceToOmittingTypeAnnotation, F.buildOmittingTypeAnnotation);
+
+const _b$addingTypeAnnotation = bundle(FR.coerceToAddingTypeAnnotation, F.buildAddingTypeAnnotation);
+
+const _b$optingTypeAnnotation = bundle(FR.coerceToOptingTypeAnnotation, F.buildOptingTypeAnnotation);
+
+const _b$typeAnnotation = bundle(FR.coerceToTypeAnnotation, F.buildTypeAnnotation);
+
+const _b$asserts = bundle(FR.coerceToAsserts, F.buildAsserts);
+
+const _b$assertsAnnotation = bundle(FR.coerceToAssertsAnnotation, F.buildAssertsAnnotation);
+
+const _b$tupleParameter = bundle(FR.coerceToTupleParameter, F.buildTupleParameter);
+
+const _b$optionalTupleParameter = bundle(FR.coerceToOptionalTupleParameter, F.buildOptionalTupleParameter);
+
+const _b$optionalType = bundle(FR.coerceToOptionalType, F.buildOptionalType);
+
+const _b$restType = bundle(FR.coerceToRestType, F.buildRestType);
+
+const _b$templateType = bundle(FR.coerceToTemplateType, F.buildTemplateType);
+
+const _b$typePredicate = bundle(FR.coerceToTypePredicate, F.buildTypePredicate);
+
+const _b$typePredicateAnnotation = bundle(FR.coerceToTypePredicateAnnotation, F.buildTypePredicateAnnotation);
+
+const _b$mappedTypeClause = bundle(FR.coerceToMappedTypeClause, F.buildMappedTypeClause);
+
+const _b$typeArguments = bundle(FR.coerceToTypeArguments, F.buildTypeArguments);
+
+const _b$callSignature = bundle(FR.coerceToCallSignature, F.buildCallSignature);
+
+const _b$propertySignature = bundle(FR.coerceToPropertySignature, F.buildPropertySignature);
+
+const _b$typeParameters = bundle(FR.coerceToTypeParameters, F.buildTypeParameters);
+
+const _b$typeParameter = bundle(FR.coerceToTypeParameter, F.buildTypeParameter);
+
+const _b$defaultType = bundle(FR.coerceToDefaultType, F.buildDefaultType);
+
+const _b$constraint = bundle(FR.coerceToConstraint, F.buildConstraint);
+
+const _b$constructSignature = bundle(FR.coerceToConstructSignature, F.buildConstructSignature);
+
+const _b$indexSignature = bundle(FR.coerceToIndexSignature, F.buildIndexSignature);
+
+const _b$objectTypeContent = bundle(FR.coerceToObjectTypeContent, F.buildObjectTypeContent);
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.

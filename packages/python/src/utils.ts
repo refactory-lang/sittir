@@ -122,3 +122,16 @@ export function attachProps<T extends (...args: never[]) => unknown, P extends R
 	}
 	return fn as T & P;
 }
+
+function ownProps<S extends object>(fn: S): Pick<S, keyof S> {
+	const out: Record<string, unknown> = {};
+	for (const key of Object.keys(fn)) out[key] = (fn as Record<string, unknown>)[key];
+	return out as Pick<S, keyof S>;
+}
+
+export function bundle<C extends (...args: never[]) => unknown, S extends (...args: never[]) => unknown>(
+	coerce: C,
+	strict: S
+): C & { strict: S } & Pick<S, keyof S> {
+	return attachProps(coerce, { strict, ...ownProps(strict) }) as C & { strict: S } & Pick<S, keyof S>;
+}

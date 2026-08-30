@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "1502cb29ba8dc2ca460649e01d3a6de5fd4ee181ab65d04779cd147e7455114d",
+  "source_hash": "430f142b5a09f0764c66d44985cfc9b58fd8ab7b12ff421dd505788a013acddf",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "6147c824f6a42ee30007805a482d34c37f46131303794966d8869ff21e216243",
     "packages/typescript/.sittir/grammar.js": "73fced498631ad72205f4720e03d4b94f29e4c4b23436aecb394b4cd5c96dee9",
@@ -30,12 +30,12 @@
     "packages/typescript/src/grammar.ts": "ca919cd082e7df26da6c2faee75fdc04e21e841f7d415b3a73691fb0e0e81630",
     "packages/typescript/src/hash.ts": "ba527b5f817a372939f1308e2cad78edbcda0bf556dcf7a3ec02d69c0ffa093b",
     "packages/typescript/src/index.ts": "e2d3dcf7b69dcb721c3e8760775e2147815eb5aadb4c18492eae9e054d0a04ea",
-    "packages/typescript/src/ir.ts": "b7dcd748f9841d91eba1837511c72e0d8eab2499e57336f47c6300f314e8c7bf",
+    "packages/typescript/src/ir.ts": "b458c1fe9564526d49ae54ebdeed7af1fcbc8d318743f70523ac2136925da50a",
     "packages/typescript/src/is.ts": "20db421ead760e49f008755b5d38486acbe6ccbedeeee4d57fc89ede41aa9176",
     "packages/typescript/src/node-model.json5": "78d108ceac00bcbe2847dd96cc59f01c2d3d696bb744a11005eed86009c06aab",
     "packages/typescript/src/render-engine.ts": "b415bd4c54ec5b261fb892de9c602f3931ec046ffcb62398ce7e10252eac3bed",
     "packages/typescript/src/types.ts": "d209381e21436a854236069e3f64268cb910a3e8c92d218f48132feeca474eee",
-    "packages/typescript/src/utils.ts": "d519b5c8d01399622b5418c38c127cfbf2d11e5e2e45b5db0290e931e39459cf",
+    "packages/typescript/src/utils.ts": "99a91674f26cc25e7fd7d29b6eef36b71928b91ba59fd259bfe64e861853ca2d",
     "packages/typescript/src/wrap.ts": "d91fcfdd89eb331c992fcc2f3a8ed76833c185fee92aa89b7328bcea1cd001b9",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/typescript/templates/_ambient_declaration_global.jinja": "9c78483e215a5b1f64449a4d4a6680a4c3500d608c93f5877eed3c96d09a8621",

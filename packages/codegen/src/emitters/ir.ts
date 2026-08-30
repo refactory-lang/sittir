@@ -12,8 +12,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';
-import type { RefineKindInfo } from './refine-emit.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -30,9 +28,6 @@ export function emitIr(config: EmitIrConfig): string {
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
-	const refineInfos = collectRefineKindInfos(nodeMap);
-	const refineByKind = new Map<string, RefineKindInfo>();
-	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
 	const hoisted = new Map<string, string>();
 	const hoistedLines: string[] = [];
 	const bundleRef = (node: AssembledNode): string => {
@@ -40,10 +35,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (existing !== undefined) return existing;
 		const name = `_b$${toCamel(node.kind.replace(/^_+/, ''))}`;
 		hoisted.set(node.kind, name);
-		hoistedLines.push(
-			...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind))),
-			''
-		);
+		hoistedLines.push(bundleLine(name, node), '');
 		return name;
 	};
 
@@ -63,7 +55,7 @@ export function emitIr(config: EmitIrConfig): string {
 		'',
 		"import * as F from './factories/index.js';",
 		"import * as FR from './from.js';",
-		"import { attachProps } from './utils.js';",
+		"import { bundle } from './utils.js';",
 		''
 	];
 
@@ -243,40 +235,11 @@ export function emitIr(config: EmitIrConfig): string {
 	return [...lines, ...hoistedLines, ...body].join('\n');
 }
 
-interface BundleParts {
-	readonly base: string;
-	readonly props: readonly { readonly key: string; readonly expr: string }[];
-}
-
-function bundleParts(
-	node: AssembledNode,
-	refineInfo: RefineKindInfo | undefined
-): BundleParts {
-	if ((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList) {
-		if (!node.rawFactoryName) {
-			return { base: `FR.${node.fromFunctionName}`, props: [] };
-		}
-		const baseFactoryName = node.rawFactoryName;
-		const props: { key: string; expr: string }[] = [{ key: 'strict', expr: `F.${baseFactoryName}` }];
-		for (const form of refineInfo?.forms ?? []) {
-			const factoryName = refineFormFactoryName(baseFactoryName, form.name);
-			const keys = [camelCase(form.name)];
-			if (camelCase(form.name) !== form.name) keys.push(form.name);
-			for (const key of keys) props.push({ key: JSON.stringify(key), expr: `F.${factoryName}` });
-		}
-		return { base: `FR.${node.fromFunctionName}`, props };
-	}
-	return { base: `FR.${node.fromFunctionName}`, props: [{ key: 'strict', expr: `F.${node.rawFactoryName}` }] };
-}
-
-function hoistedBundleLines(name: string, parts: BundleParts): string[] {
-	return [
-		`const ${name}: typeof ${parts.base} & {`,
-		...parts.props.map((p) => `  ${p.key}: typeof ${p.expr};`),
-		`} = attachProps(${parts.base}, {`,
-		...parts.props.map((p) => `  ${p.key}: ${p.expr},`),
-		'});'
-	];
+function bundleLine(name: string, node: AssembledNode): string {
+	const coerce = `FR.${node.fromFunctionName}`;
+	return node.rawFactoryName === undefined
+		? `const ${name} = ${coerce};`
+		: `const ${name} = bundle(${coerce}, F.${node.rawFactoryName});`;
 }
 
 function groupNameFor(supertypeKind: string): string {

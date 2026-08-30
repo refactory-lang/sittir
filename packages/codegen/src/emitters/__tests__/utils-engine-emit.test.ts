@@ -30,4 +30,11 @@ describe('utils engine facade emission', () => {
 		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
 		expect(wrapSrc).toContain('}, _treeEngine(tree));');
 	});
+
+	it('emits bundle() beside attachProps()', () => {
+		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
+
+		expect(contents).toContain('export function bundle<');
+		expect(contents).toContain("attachProps(coerce, { strict, ...ownProps(strict) })");
+	});
 });

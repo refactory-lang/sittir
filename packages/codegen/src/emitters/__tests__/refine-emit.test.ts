@@ -479,20 +479,13 @@ describe('factories emitter — per-form factory emission', () => {
 	});
 });
 
-describe('ir emitter — per-form key attachment', () => {
-	it('attaches per-form factories under the parent ir key', () => {
+describe('ir emitter — bundle composition', () => {
+	it('bundles the ir key on the raw factory; per-form keys are an overlay concern', () => {
 		const { irSrc } = runPipeline([
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		// The bundle is hoisted to a typeof-annotated const (declaration-emit
-		// finiteness) that lists curly and flow entries alongside `from`;
-		// the ir key references it by name.
-		expect(irSrc).toContain('const _b$ifaceBody: typeof FR.coerceToIfaceBody & {');
-		expect(irSrc).toContain('"curly": typeof F.buildIfaceBodyCurly;');
-		expect(irSrc).toContain('= attachProps(FR.coerceToIfaceBody, {');
-		expect(irSrc).toContain('"curly": F.buildIfaceBodyCurly,');
-		expect(irSrc).toContain('"flow": F.buildIfaceBodyFlow,');
+		expect(irSrc).toContain('const _b$ifaceBody = bundle(FR.coerceToIfaceBody, F.buildIfaceBody);');
 		expect(irSrc).toContain('ifaceBody: _b$ifaceBody,');
 	});
 });
