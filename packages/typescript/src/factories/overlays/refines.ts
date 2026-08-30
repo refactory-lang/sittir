@@ -2,3 +2,11 @@
 import * as F from '../raw.js';
 import { attachProps } from '../../utils.js';
 export * from '../raw.js';
+
+export const buildObjectType: typeof F.buildObjectType & {
+	curly: typeof F.buildObjectTypeCurly;
+	flow: typeof F.buildObjectTypeFlow;
+} = attachProps(F.buildObjectType, {
+	curly: F.buildObjectTypeCurly,
+	flow: F.buildObjectTypeFlow
+});

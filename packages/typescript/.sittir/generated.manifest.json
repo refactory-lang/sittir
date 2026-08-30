@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "430f142b5a09f0764c66d44985cfc9b58fd8ab7b12ff421dd505788a013acddf",
+  "source_hash": "5ad2a6e8083d2c136b250f6396f353b0acd13713ea73d58a93edca90eb53b287",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "6147c824f6a42ee30007805a482d34c37f46131303794966d8869ff21e216243",
     "packages/typescript/.sittir/grammar.js": "73fced498631ad72205f4720e03d4b94f29e4c4b23436aecb394b4cd5c96dee9",
@@ -23,7 +23,7 @@
     "packages/typescript/src/engine.ts": "bd8e4c4316190409dc34b8d05fbb9866190bb57b87199dfb3a1fa5d7d6357d47",
     "packages/typescript/src/factories/index.ts": "1608feac862e78f57398de2e0b9ed12a9659549b24a6bef41a3644d231286d9e",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "acb0df5435e6a55741d5cf49767c0441a6c63b11eb4359d67b862fa5b2fce934",
-    "packages/typescript/src/factories/overlays/refines.ts": "70660a27debd8e3646ce5da3dabad1561e8044f14459c035c1f89926c826406e",
+    "packages/typescript/src/factories/overlays/refines.ts": "b7dadc45641558be24d741a38f3dbd9240e5555978da4d59c755dc57f649b657",
     "packages/typescript/src/factories/overlays/supertypes.ts": "cc899382479525733547428c9d00b7edb774c3ee936974369e45a07059b0a6f9",
     "packages/typescript/src/factories/raw.ts": "5a3d16a80a6fb4751d8d2503ca65ee667870b7392e7fc437641bf9f0e3e6c601",
     "packages/typescript/src/from.ts": "f2773d58c6c33f3334d4f8d1cd8efab5c0ede494f401f91eb9bf4420dcfa0e8b",

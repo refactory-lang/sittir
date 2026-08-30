@@ -25,6 +25,7 @@ import {
 	warnSkippedParserSymbol
 } from './shared.ts';
 import { emitOverlayModule, emitFactoriesIndex, overlayImportPath, OVERLAY_CHAIN } from './overlays/module.ts';
+import { refineAttachments } from './overlays/refines.ts';
 import type { Attachment, OverlayName } from './overlays/module.ts';
 
 export interface EmitAllConfig {
@@ -141,7 +142,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 
 	const overlayAttachments: Record<OverlayName, readonly Attachment[]> = {
-		refines: [],
+		refines: refineAttachments(nodeMap),
 		polymorphs: [],
 		supertypes: []
 	};

@@ -14593,3 +14593,32 @@ other overlay-specific shape.
  *  a type cycle through the overlays — import `factories/raw.js`
  *  directly instead. */
 ```
+
+### `packages/codegen/src/emitters/overlays/refines.ts::refineAttachments`
+
+```text
+/** One `Attachment` per refined kind: the parent's raw builder gets a
+ *  property per declared form, keyed by `camelCase(form.name)` and, when
+ *  that differs from the raw form name, by the raw name too — the same
+ *  dual-key pair `ir.ts` used to attach before this overlay existed.
+ *  Each key's value is the form's own raw factory
+ *  (`F.<refineFormFactoryName(...)>`), so `ir.objectType.curly` and
+ *  `ir.objectType.curly` (raw-cased) both resolve to the same function.
+ *  Skips kinds whose node isn't slot-bearing, is an `AssembledList`, or
+ *  has no `rawFactoryName` — none of those has a builder to attach a
+ *  form onto. A grammar with no refine forms yields an empty array, and
+ *  `emitOverlayModule` renders that as a pass-through module (header +
+ *  `export *`, no local exports). */
+```
+
+### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
+
+```text
+/** The refines layer of the overlay chain — sits directly on
+ *  `factories/raw.ts` (`overlayImportPath(0)`), decorating each refined
+ *  kind's raw builder with its per-form factories via
+ *  `refineAttachments`. Composes `emitOverlayModule` with
+ *  `refineAttachments` so the two are exercised together in one call;
+ *  `emit.ts` calls `refineAttachments` directly to populate
+ *  `overlayAttachments.refines` for the shared `OVERLAY_CHAIN` mapping. */
+```

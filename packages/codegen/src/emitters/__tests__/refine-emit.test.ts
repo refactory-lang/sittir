@@ -23,6 +23,7 @@ import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
+import { emitRefinesOverlay } from '../overlays/refines.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 
 // ---------------------------------------------------------------------------
@@ -487,5 +488,19 @@ describe('ir emitter — bundle composition', () => {
 		]);
 		expect(irSrc).toContain('const _b$ifaceBody = bundle(FR.coerceToIfaceBody, F.buildIfaceBody);');
 		expect(irSrc).toContain('ifaceBody: _b$ifaceBody,');
+	});
+});
+
+describe('refines overlay — attaches per-form factories on the parent builder', () => {
+	it('refines overlay attaches each form factory on the parent builder', () => {
+		const { nodeMap } = runPipeline([
+			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
+			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
+		]);
+		const text = emitRefinesOverlay({ nodeMap });
+		expect(text).toContain("import * as F from '../raw.js';");
+		expect(text).toContain('export const buildIfaceBody: typeof F.buildIfaceBody & {');
+		expect(text).toContain('  curly: typeof F.buildIfaceBodyCurly;');
+		expect(text).toContain('  curly: F.buildIfaceBodyCurly,');
 	});
 });
