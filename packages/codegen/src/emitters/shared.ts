@@ -510,18 +510,10 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 	return kinds[0]!;
 }
 
-export function configurableFactoryFields(
-	fields: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-): AssembledNonterminal[] {
-	return fields.filter((field) => !isHiddenInfraSlot(field, nodeMap) && keywordPresenceKind(field, nodeMap) === null);
-}
-
-export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
+export function resolveFactoryFieldNames(node: AssembledNode): readonly string[] | undefined {
 	if (node instanceof AbstractAssembledCompound) {
-		const fields = configurableFactoryFields(node.fields, nodeMap);
-		if (fields.length === 0) return undefined;
-		return fields.map((field) => field.name);
+		if (node.fields.length === 0) return undefined;
+		return node.fields.map((field) => field.name);
 	}
 	if (node instanceof AssembledList) return [canonicalSeparatedListField(node).name];
 	return undefined;

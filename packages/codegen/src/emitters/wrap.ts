@@ -33,7 +33,6 @@ import {
 	fieldTypeComponents,
 	emitsFieldResolvers,
 	fieldResolverName,
-	configurableFactoryFields
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';

@@ -301,39 +301,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  actually-emitted aliases drift. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::namespaceOf`
-
-```text
-/**
- * The factory's namespaced constructors for a node, with each ambiguity
- * reported once — a name two candidates claim is emitted for neither.
- *
- * @remarks
- * Entries are pre-filtered to the emittable set (`namespacedEntryEligible`)
- * before being returned, so every consumer — the factory's attachProps
- * const, ir's hoisted bundles, from's mirrored props, and
- * `emitFromMapDeclaration`'s `$impl`-vs-plain-name decision — sees the
- * SAME surface. Filtering at any single consumer instead would let the
- * others disagree (e.g. `_fromMap` referencing a `<fn>$impl` that
- * `withNamespaceProps` never declared because all entries were
- * ineligible).
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Namespace — taxonomy-keyed factory dispatch API
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** The factory's namespaced constructors — ambiguous names reported once
- *  and dropped; entries pre-filtered to the emittable set (see
- *  namespacedEntryEligible) so every consumer — factory consts, ir
- *  bundles, from mirrors, `_fromMap`'s `$impl` decision — sees the same
- *  surface. */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
@@ -1287,90 +1254,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/emitters/from.ts::withNamespaceProps`
-
-```text
-/**
- * Mirror the factory's namespaced sub-constructors onto the from() surface:
- * rename the emitted coercer to `<fn>$impl` and export the public name as
- * `attachProps(<fn>$impl, { <key>: F.<factory>.<key>, ... })`, so
- * `FR.coerceToX.<form>` and `F.buildX.<form>` are the same constructors.
- * `_fromMap` keeps referencing the hoisted `$impl` declaration (a const
- * initializer at module top would hit the TDZ).
- *
- * @remarks
- * Consumes `namespaceOf`'s already-eligibility-filtered entries — the same
- * set `emitFromMapDeclaration` consults for its `$impl`-vs-plain-name
- * decision, so a node whose candidate entries are all ineligible keeps its
- * plain exported coercer and `_fromMap` never references an undeclared
- * `$impl` symbol.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Namespace — taxonomy-keyed from() dispatch API
-// ---------------------------------------------------------------------------
-```
-
-```text
-// `_fromMap` must keep referencing the hoisted `$impl` declaration — a
-// const initializer at module top would hit the TDZ.
-```
-
-#### body
-
-```text
-// Strip `export` BEFORE the rename: `impl` contains `$`, which a RegExp
-// source would read as an end-anchor, so the match must run on the
-// metacharacter-free original name.
-```
-
-#### body
-
-```text
-// A form whose child declares a loose input becomes the COERCING
-// constructor here, carrying the factory's strict one as `.strict` —
-// the same pairing `ir.<kind>` / `ir.<kind>.strict` already uses, one
-// level down. Everything else re-exposes the factory prop unchanged.
-```
-
-#### body
-
-```text
-// The mirror forwards to the child's coercer, so it declares THAT
-// function's parameters rather than re-composing a signature the two
-// could spell differently.
-```
-
-#### body
-
-```text
-// Upcast the coerced child to its base interface, exactly as the
-// factory's own form constructor does: the Built literal is deep
-// enough to blow TS's comparison depth against the parent's input
-// union, and the base interface IS a union member, so the compare
-// short-circuits.
-```
-
-#### body
-
-```text
-// How the parent's own coercer takes the slot value — the decision
-// its signature came from. `emitBranchFrom` hands a kind with a child
-// factory surface to `emitContainerFrom`, which takes the child
-// POSITIONALLY; every other branch takes `T.<Parent>.Loose`, so the
-// arm rides under its slot's config key.
-```
-
-#### body
-
-```text
-// Explicit typeof-composed annotation: without it the const's INFERRED
-// type expands every prop structurally and can blow declaration emit
-// (TS7056); typeof references keep the .d.ts one line per member.
-```
-
 ### `packages/codegen/src/emitters/from.ts::emitFromMapDeclaration`
 
 ```text
@@ -1538,7 +1421,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // A field forces required input only if the caller must actually supply
 // it: auto-stamped fields (always `required` but have no Config slot) and
 // keyword-presence fields (default to absent/false) are excluded, same as
-// configurableFactoryFields' definition of the real Config surface
+// the model's slot record — every slot is a Config field
 // (shared.ts) — a caller only ever HAS to supply what that surface lists.
 ```
 
@@ -5506,15 +5389,9 @@ Surface`
 ### `packages/codegen/src/emitters/shared.ts::resolveFactoryFieldNames`
 
 ```text
-/**
- * Resolve the raw field names visible on a kind's factory surface.
- *
- * @remarks
- * Validator metadata uses this to decide when orphan `$children` should be
- * promoted back into named config slots. The field list must match the actual
- * factory surface, so auto-stamped fields, keyword-presence toggles, and
- * hidden infra are excluded.
- */
+/** The factory's declared field names — a compound's slots as the model
+ *  holds them (every slot is a factory field; the class is the surface),
+ *  a list's canonical element field. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::classifyChildFactorySurface`
@@ -9836,170 +9713,6 @@ pipeline — which falls back to string equality.
  */
 ```
 
-### `packages/codegen/src/emitters/namespaced-constructors.ts::module`
-
-```text
-/**
- * Namespaced constructors — the derivation behind `buildX.form(...)` /
- * `buildX.member(...)` on a factory.
- *
- * A parent whose sole user slot is a choice of concrete kinds carries one
- * constructor per choice member (a FORM constructor: the parent built with
- * its slot holding the form, named by the form's own name). A parent whose
- * single kind-enum slot discriminates it carries one constructor per enum
- * member (a MEMBER constructor: the slot fixed to that literal, the other
- * user slots as parameters in slot order). A form's own constructors hoist
- * into the parent's namespace (`forHeader.let` from the let/const form's
- * enum), recursively, so a caller never names an intermediate kind. Two
- * claimants of one name cancel each other out (`ambiguous`) — never
- * first-wins.
- *
- * Pure derivation over the assembled model: the factory, ir, node-model and
- * test emitters all consume it, so the surface has one source.
- */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::FormConstructor.slot`
-
-```text
-/** The parent slot the built form fills. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::FormConstructor.path`
-
-```text
-/** Empty: call the child's factory. One name: call that namespaced
-	 *  constructor on the child's factory (a hoisted sub-constructor). */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::FormConstructor.formKind`
-
-```text
-/** The kind this constructor ultimately builds — `childKind` for a direct
-	 *  form, the originating arm for a hoisted one. The name is derived from
-	 *  it against whichever parent the constructor is attached to, so a form
-	 *  minted under the TOP parent keeps its authored variant name however
-	 *  many hops it flattens through. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::MemberConstructor.slot`
-
-```text
-/** The kind-enum slot this constructor fixes. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::MemberConstructor.params`
-
-```text
-/** Remaining user slots, in slot order — the constructor's parameters. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::NamespacedAmbiguity`
-
-```text
-/** A name more than one candidate claims. Flattening stops at the ambiguity:
- *  no HOISTED candidate takes the name. The parent's own direct arm was never
- *  hoisted, so when exactly one claimant is one it keeps the name and is named
- *  in `kept`; otherwise the name goes unclaimed. Reported either way — never a
- *  silent resolution. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::NamespacedConstructorOptions.isEmitted`
-
-```text
-/** Whether a kind's factory is actually emitted (catalog-backed). A
-	 *  child without an emitted factory cannot be constructed through the
-	 *  parent. Defaults to every kind. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::isArmOf`
-
-```text
-/** Whether `kind` is one of `parentKind`'s own arms: a registered polymorph
- *  form, or a kind minted under the parent's name (`_<parent>_<arm>`). */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::isFormSlot`
-
-```text
-/** A slot holding only the parent's own arms — an alternative to the
- *  parent's other slots, never a parameter beside them. */
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::namespacedConstructors`
-
-#### body
-
-```text
-// A cycle-cut result (some form skipped because it was being visited)
-// is not the node's full namespace — only top-level derivations cache.
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::derive`
-
-#### body
-
-```text
-// Form constructors: a singular choice of ≥2 concrete kinds, each with
-// its own factory — either the sole user slot, or a slot of the parent's
-// own polymorph arms beside siblings that are all optional (the arm is a
-// complete alternative: the parent builds from it alone).
-```
-
-#### body
-
-```text
-// An arm is form-capable when it reaches a factory of its own: a
-// slot-bearing compound (its own config surface) or a text leaf
-// (keyword / pattern / enum). A supertype arm has none, so it takes no
-// constructor — and does not disqualify the siblings that do.
-```
-
-#### body
-
-```text
-// A sole slot with exactly one kind is the forwarded shape: the parent
-// already IS that kind's surface, so it gets no constructor named for
-// it. The child's own namespace still flattens through — that hop is
-// the only route to an arm two levels down.
-```
-
-#### body
-
-```text
-// Sub-constructors flatten upward, recursively: the child's
-// namespace is already flat, so one level suffices. A hoisted
-// FORM is re-named against THIS parent — the arm it builds may
-// be minted under this kind even though the hop it travelled
-// through is not, which is how `visibility_modifier`'s `in_path`
-// keeps its authored name three levels up. A hoisted enum MEMBER
-// carries the authored member name and is never re-derived.
-```
-
-#### body
-
-```text
-// Member constructors: exactly one kind-enum slot discriminates the
-// kind; form slots (alternative arms with their own constructors above)
-// are not parameters.
-```
-
-#### body
-
-```text
-// Flattening stops at the ambiguity: no hoisted candidate takes the
-// name. A direct arm of this parent was never hoisted, so one of those
-// still keeps it — two of them cancel each other exactly as two hoists
-// do. Reported in every case.
-```
-
-### `packages/codegen/src/emitters/namespaced-constructors.ts::emittedByCatalog`
-
-```text
-/** The factory-emission predicate every consumer shares: a kind's factory
- *  exists iff the kind is catalog-backed (or no catalog is in play). */
-```
-
 ### `packages/codegen/src/emitters/config.ts::EmitConfigConfig`
 
 ```text
@@ -11844,15 +11557,6 @@ pipeline — which falls back to string equality.
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.namespacedConstructors`
-
-```text
-/** The factory's namespaced constructors (`buildX.<name>(...)`) — see
-	 *  `namespacedConstructors`. A form entry builds the parent around the
-	 *  child kind's factory (or its own `path` sub-constructor); a member
-	 *  entry fixes `slot` to `literal` and takes `params` positionally. */
-```
-
 ### `packages/codegen/src/emitters/node-model.ts::serializeNode`
 
 #### body
@@ -12501,100 +12205,6 @@ pipeline — which falls back to string equality.
  *  NAME — what keeps declaration emit finite), and the shared method tail. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::emitNamespacedConstructors`
-
-```text
-/**
- * `export const buildX = attachProps(buildX$impl, {...})` — the factory's
- * namespaced constructors. A form constructor declares its child's own
- * parameters (`constructorSurface`) and stores the built child in the
- * parent slot; a member constructor fixes its kind-enum slot to the
- * member's discriminant and takes the remaining user slots positionally.
- */
-```
-
-#### body
-
-```text
-// How the parent takes its slot value: positionally (container / direct
-// convention) or as a config key — the decision its signature came from.
-```
-
-#### body
-
-```text
-// A hoisted sub-constructor already declares its own parameters;
-// a direct form takes what its factory (or forwarding target)
-// takes.
-```
-
-#### body
-
-```text
-// Unreachable when callers pre-filter via namespacedEntryEligible;
-// kept as a hard guard so a stale caller can't emit a dangling ref.
-```
-
-#### body
-
-```text
-// An `(options | element)[]` surface has no overload to resolve
-// against — the same untyped-args call the forwarded wrapper makes.
-```
-
-#### body
-
-```text
-// Upcast the built child to its base interface: the Built literal
-// is deep enough to blow TS's comparison depth against the
-// parent's Config union; the base interface IS a union member, so
-// the compare short-circuits (a shallow supertype hop, not an
-// escape hatch).
-```
-
-#### body
-
-```text
-// TS forbids a required parameter after an optional one: a slot is
-// declared optional only when every later parameter is too;
-// otherwise it is required with an explicit `| undefined`.
-```
-
-### `packages/codegen/src/emitters/factories.ts::namespacedEntryEligible`
-
-```text
-/** Whether a namespaced constructor entry can actually be emitted as a
- *  factory prop: a direct form entry needs a resolvable constructor
- *  surface for its child kind. The ir/from surfaces attach the SAME prop
- *  set the factory carries, so all three consult this one predicate. */
-```
-
-### `packages/codegen/src/emitters/factories.ts::formLooseChildKind`
-
-```text
-/** The child kind whose COERCER a form constructor's loose mirror routes
- *  through, or undefined where no mirror is warranted.
- *
- *  `ir.<parent>.<form>` coerces and `.strict` is the factory's own form —
- *  the pairing `ir.<kind>` / `ir.<kind>.strict` already uses, one level
- *  down. The mirror declares the COERCER's parameters (`Parameters<typeof
- *  coerceTo<Child>>`), never a projection of the factory surface: the two
- *  disagree for a container-shaped child, whose factory takes a widened
- *  `LooseValue<...>` while its coercer takes the positional arm union. The
- *  factory's `looseParams` is read here only as the GATE — it says whether
- *  the child declares a loose input distinct from its strict one at all.
- *
- *  No mirror when:
- *   - the entry is a MEMBER constructor, or a form HOISTED through a hop —
- *     a hoisted form declares the sub-constructor's own parameters, and the
- *     coercer that matches them is the hop's, not the arm's;
- *   - the child FORWARDS to another kind, so the coercer matching those
- *     parameters builds the target rather than the slot's own kind;
- *   - the child's loose parameter list IS its strict one — a text leaf
- *     already accepts what a coercing caller would pass, so a mirror would
- *     be a second name for one signature. */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::kindEnumConfigValue`
 
 ```text
@@ -12891,64 +12501,6 @@ pipeline — which falls back to string equality.
 // `emitFieldCarryingFactory` (factories.ts) bases its real signature
 // on. Read it here too, so the test placeholder matches what the
 // factory actually requires.
-```
-
-### `packages/codegen/src/emitters/test.ts::namespacedCallArgs`
-
-```text
-/**
- * The arguments a namespaced constructor takes in the emitted tests — a
- * form constructor takes what its child's factory (or hoisted
- * sub-constructor) takes; a member constructor takes its parameters'
- * dummies positionally.
- */
-```
-
-#### body
-
-```text
-// A zero-arg call is the honest test when the surface allows it (a
-// parameterless keyword arm, or a single OPTIONAL param) — no dummy
-// literal, no cast.
-```
-
-#### body
-
-```text
-// A form constructor declares its forwarding target's parameters
-// (`constructorTargetKind`, factories.ts) — build the dummies for that.
-```
-
-#### body
-
-```text
-// Two elements: a lone element can be a grammar's special case
-// (rust's single-element tuple demands a trailing comma).
-```
-
-#### body
-
-```text
-// A text leaf's factory enforces its own pattern at construction,
-// so the sample has to satisfy it; an exotic shape yields none and
-// the constructor goes untested rather than known-failing.
-```
-
-### `packages/codegen/src/emitters/test.ts::emitNamespacedTests`
-
-#### body
-
-```text
-// Collected first: a constructor whose arguments cannot be synthesized is
-// skipped, and a describe with no `it` left in it is a suite failure.
-```
-
-#### body
-
-```text
-// A `<kind>.<constructor>` key in `expectTestFailures:` pins one
-// constructor's test as known-failing (the dummy builder cannot
-// stub every child shape), without skipping the kind's own tests.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::emitLeafTest`
@@ -13309,13 +12861,6 @@ pipeline — which falls back to string equality.
  *  forward their child coercer's parameters, so they reflect through this
  *  instead. Pushed as ONE line entry so `finalize` can drop it whole when no
  *  mirror was emitted. */
-```
-
-### `packages/codegen/src/emitters/from.ts::fromUsesAttachProps`
-
-```text
-/** True when any emitted from() function carries namespaced props (drives
- *  the generated attachProps import). */
 ```
 
 ### `packages/codegen/src/emitters/from.ts::BranchLikeNode`

@@ -5088,22 +5088,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "scopedTypeIdentifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "scoped_type_identifier",
-          "path": []
-        }
       ]
     },
     {
@@ -5200,29 +5184,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "scopedTypeIdentifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "scoped_type_identifier",
-          "path": []
-        },
-        {
-          "name": "genericType",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "generic_type",
-          "path": []
-        }
       ]
     },
     {
@@ -5279,29 +5240,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "scopedTypeIdentifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "scoped_type_identifier",
-          "path": []
-        },
-        {
-          "name": "genericType",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "generic_type",
-          "path": []
-        }
       ]
     },
     {
@@ -6308,38 +6246,6 @@
         "start",
         "operator",
         "end"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dotDot",
-          "via": "member",
-          "slot": "operator",
-          "literal": "..",
-          "params": [
-            "start",
-            "end"
-          ]
-        },
-        {
-          "name": "dotDotDot",
-          "via": "member",
-          "slot": "operator",
-          "literal": "...",
-          "params": [
-            "start",
-            "end"
-          ]
-        },
-        {
-          "name": "dotDotEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "..=",
-          "params": [
-            "start",
-            "end"
-          ]
-        }
       ]
     },
     {
@@ -6672,35 +6578,6 @@
       "factoryFields": [
         "content",
         "right"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dotDotDot",
-          "via": "member",
-          "slot": "content",
-          "literal": "...",
-          "params": [
-            "right"
-          ]
-        },
-        {
-          "name": "dotDotEq",
-          "via": "member",
-          "slot": "content",
-          "literal": "..=",
-          "params": [
-            "right"
-          ]
-        },
-        {
-          "name": "dotDot",
-          "via": "member",
-          "slot": "content",
-          "literal": "..",
-          "params": [
-            "right"
-          ]
-        }
       ]
     },
     {
@@ -6816,26 +6693,6 @@
       "factoryFields": [
         "content",
         "right"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dotDotEq",
-          "via": "member",
-          "slot": "content",
-          "literal": "..=",
-          "params": [
-            "right"
-          ]
-        },
-        {
-          "name": "dotDot",
-          "via": "member",
-          "slot": "content",
-          "literal": "..",
-          "params": [
-            "right"
-          ]
-        }
       ]
     },
     {
@@ -7900,63 +7757,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "content",
-          "childKind": "self",
-          "path": []
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "content",
-          "childKind": "super",
-          "path": []
-        },
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "content",
-          "childKind": "crate",
-          "path": []
-        },
-        {
-          "name": "visibilityModifierInPath",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_in_path",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_in_path",
-          "path": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "metavariable",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_in_path",
-          "path": [
-            "metavariable"
-          ]
-        },
-        {
-          "name": "scopedIdentifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_in_path",
-          "path": [
-            "scopedIdentifier"
-          ]
-        }
       ]
     },
     {
@@ -8036,50 +7836,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "path"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "path",
-          "childKind": "self",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "path",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "metavariable",
-          "via": "form",
-          "slot": "path",
-          "childKind": "metavariable",
-          "path": []
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "path",
-          "childKind": "super",
-          "path": []
-        },
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "path",
-          "childKind": "crate",
-          "path": []
-        },
-        {
-          "name": "scopedIdentifier",
-          "via": "form",
-          "slot": "path",
-          "childKind": "scoped_identifier",
-          "path": []
-        }
       ]
     },
     {
@@ -8120,71 +7876,6 @@
       "forwardsTo": "_visibility_modifier_group",
       "factoryFields": [
         "visibility_modifier_group"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "self"
-          ]
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "super"
-          ]
-        },
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "crate"
-          ]
-        },
-        {
-          "name": "visibilityModifierInPath",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "visibilityModifierInPath"
-          ]
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "metavariable",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "metavariable"
-          ]
-        },
-        {
-          "name": "scopedIdentifier",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "scopedIdentifier"
-          ]
-        }
       ]
     },
     {
@@ -8221,72 +7912,7 @@
         }
       ],
       "children": [],
-      "name": "_visibility_modifier_pub_parens",
-      "namespacedConstructors": [
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "self"
-          ]
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "super"
-          ]
-        },
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "crate"
-          ]
-        },
-        {
-          "name": "visibilityModifierInPath",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "visibilityModifierInPath"
-          ]
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "metavariable",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "metavariable"
-          ]
-        },
-        {
-          "name": "scopedIdentifier",
-          "via": "form",
-          "slot": "visibility_modifier_group",
-          "childKind": "_visibility_modifier_group",
-          "path": [
-            "scopedIdentifier"
-          ]
-        }
-      ]
+      "name": "_visibility_modifier_pub_parens"
     },
     {
       "kind": "_where_predicates",
@@ -8572,22 +8198,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "semi",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_array_expression_semi",
-          "path": []
-        },
-        {
-          "name": "list",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_array_expression_list",
-          "path": []
-        }
       ]
     },
     {
@@ -8910,6 +8520,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "move_marker",
         "block"
       ]
     },
@@ -9363,188 +8974,6 @@
         "left",
         "operator",
         "right"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "ampAmp",
-          "via": "member",
-          "slot": "operator",
-          "literal": "&&",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "pipePipe",
-          "via": "member",
-          "slot": "operator",
-          "literal": "||",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "amp",
-          "via": "member",
-          "slot": "operator",
-          "literal": "&",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "pipe",
-          "via": "member",
-          "slot": "operator",
-          "literal": "|",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "caret",
-          "via": "member",
-          "slot": "operator",
-          "literal": "^",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "eqEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "==",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "bangEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "!=",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "lt",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "ltEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<=",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gt",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gtEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">=",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "ltLt",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<<",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gtGt",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">>",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "operator",
-          "literal": "+",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "-",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "slash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "/",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "percent",
-          "via": "member",
-          "slot": "operator",
-          "literal": "%",
-          "params": [
-            "left",
-            "right"
-          ]
-        }
       ]
     },
     {
@@ -9695,29 +9124,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "docOuter",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_block_comment_doc_outer",
-          "path": []
-        },
-        {
-          "name": "docInner",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_block_comment_doc_inner",
-          "path": []
-        },
-        {
-          "name": "content",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_block_comment_content",
-          "path": []
-        }
       ]
     },
     {
@@ -9885,15 +9291,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "qualifiedType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "qualified_type",
-          "path": []
-        }
       ]
     },
     {
@@ -10580,6 +9977,9 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "static_marker",
+        "async_marker",
+        "move_marker",
         "parameters",
         "content"
       ]
@@ -11227,29 +10627,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "paren",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_delim_token_tree_paren",
-          "path": []
-        },
-        {
-          "name": "bracket",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_delim_token_tree_bracket",
-          "path": []
-        },
-        {
-          "name": "brace",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_delim_token_tree_brace",
-          "path": []
-        }
       ]
     },
     {
@@ -11407,50 +10784,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "higherRankedTraitBound",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "higher_ranked_trait_bound",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "scopedTypeIdentifier",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "scoped_type_identifier",
-          "path": []
-        },
-        {
-          "name": "genericType",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "generic_type",
-          "path": []
-        },
-        {
-          "name": "functionType",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "function_type",
-          "path": []
-        },
-        {
-          "name": "tupleType",
-          "via": "form",
-          "slot": "trait",
-          "childKind": "tuple_type",
-          "path": []
-        }
       ]
     },
     {
@@ -11510,22 +10843,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "block",
-          "via": "form",
-          "slot": "content",
-          "childKind": "block",
-          "path": []
-        },
-        {
-          "name": "ifExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "if_expression",
-          "path": []
-        }
       ]
     },
     {
@@ -12038,92 +11355,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "withSemi",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_expression_statement_with_semi",
-          "path": []
-        },
-        {
-          "name": "unsafeBlock",
-          "via": "form",
-          "slot": "content",
-          "childKind": "unsafe_block",
-          "path": []
-        },
-        {
-          "name": "asyncBlock",
-          "via": "form",
-          "slot": "content",
-          "childKind": "async_block",
-          "path": []
-        },
-        {
-          "name": "genBlock",
-          "via": "form",
-          "slot": "content",
-          "childKind": "gen_block",
-          "path": []
-        },
-        {
-          "name": "tryBlock",
-          "via": "form",
-          "slot": "content",
-          "childKind": "try_block",
-          "path": []
-        },
-        {
-          "name": "block",
-          "via": "form",
-          "slot": "content",
-          "childKind": "block",
-          "path": []
-        },
-        {
-          "name": "ifExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "if_expression",
-          "path": []
-        },
-        {
-          "name": "matchExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "match_expression",
-          "path": []
-        },
-        {
-          "name": "whileExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "while_expression",
-          "path": []
-        },
-        {
-          "name": "loopExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "loop_expression",
-          "path": []
-        },
-        {
-          "name": "forExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "for_expression",
-          "path": []
-        },
-        {
-          "name": "constBlock",
-          "via": "form",
-          "slot": "content",
-          "childKind": "const_block",
-          "path": []
-        }
       ]
     },
     {
@@ -12263,17 +11494,6 @@
       "forwardsTo": "string_literal",
       "factoryFields": [
         "string_literal"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "stringLiteralOpen",
-          "via": "form",
-          "slot": "string_literal",
-          "childKind": "string_literal",
-          "path": [
-            "open"
-          ]
-        }
       ]
     },
     {
@@ -12735,23 +11955,9 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "ref_marker",
+        "mutable_specifier",
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "named",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_field_pattern_named",
-          "path": []
-        }
       ]
     },
     {
@@ -13718,6 +12924,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "move_marker",
         "block"
       ]
     },
@@ -14503,6 +13710,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "unsafe_marker",
         "type_parameters",
         "trait_clause",
         "type",
@@ -14810,7 +14018,8 @@
       "factoryFields": [
         "attributes",
         "pattern",
-        "value"
+        "value",
+        "comma"
       ]
     },
     {
@@ -15038,6 +14247,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "mutable_specifier",
         "pattern",
         "type",
         "value",
@@ -15208,36 +14418,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "regularDslash",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_line_comment_regular_dslash",
-          "path": []
-        },
-        {
-          "name": "docOuter",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_line_comment_doc_outer",
-          "path": []
-        },
-        {
-          "name": "docInner",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_line_comment_doc_inner",
-          "path": []
-        },
-        {
-          "name": "content",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_line_comment_content",
-          "path": []
-        }
       ]
     },
     {
@@ -16221,22 +15401,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "integerLiteral",
-          "via": "form",
-          "slot": "value",
-          "childKind": "integer_literal",
-          "path": []
-        },
-        {
-          "name": "floatLiteral",
-          "via": "form",
-          "slot": "value",
-          "childKind": "float_literal",
-          "path": []
-        }
       ]
     },
     {
@@ -16297,22 +15461,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "binary",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_or_pattern_binary",
-          "path": []
-        },
-        {
-          "name": "prefix",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_or_pattern_prefix",
-          "path": []
-        }
       ]
     },
     {
@@ -16445,6 +15593,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "mutable_specifier",
         "name",
         "type"
       ]
@@ -16870,56 +16019,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "binary",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_expression_binary",
-          "path": []
-        },
-        {
-          "name": "dotDot",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_expression_binary",
-          "path": [
-            "dotDot"
-          ]
-        },
-        {
-          "name": "dotDotDot",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_expression_binary",
-          "path": [
-            "dotDotDot"
-          ]
-        },
-        {
-          "name": "dotDotEq",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_expression_binary",
-          "path": [
-            "dotDotEq"
-          ]
-        },
-        {
-          "name": "postfix",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_expression_postfix",
-          "path": []
-        },
-        {
-          "name": "prefix",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_expression_prefix",
-          "path": []
-        }
       ]
     },
     {
@@ -16967,40 +16066,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "arm2",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_pattern_arm2",
-          "path": []
-        },
-        {
-          "name": "prefix",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_pattern_prefix",
-          "path": []
-        },
-        {
-          "name": "dotDotEq",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_pattern_prefix",
-          "path": [
-            "dotDotEq"
-          ]
-        },
-        {
-          "name": "dotDot",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_range_pattern_prefix",
-          "path": [
-            "dotDot"
-          ]
-        }
       ]
     },
     {
@@ -17322,6 +16387,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "mutable_specifier",
         "pattern"
       ]
     },
@@ -17408,6 +16474,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "lifetime",
+        "mutable_specifier",
         "type"
       ]
     },
@@ -18085,7 +17152,9 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "lifetime"
+        "reference",
+        "lifetime",
+        "mutable_specifier"
       ]
     },
     {
@@ -18535,6 +17604,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
+        "ref_marker",
+        "mutable_specifier",
         "name",
         "type",
         "value"
@@ -18642,15 +17713,6 @@
       "factoryFields": [
         "string_open",
         "elements"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "open",
-          "via": "form",
-          "slot": "string_open",
-          "childKind": "_string_literal_open",
-          "path": []
-        }
       ]
     },
     {
@@ -19130,36 +18192,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "tokens",
+        "separator",
         "operator"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "operator",
-          "literal": "+",
-          "params": [
-            "tokens"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "tokens"
-          ]
-        },
-        {
-          "name": "qmark",
-          "via": "member",
-          "slot": "operator",
-          "literal": "?",
-          "params": [
-            "tokens"
-          ]
-        }
       ]
     },
     {
@@ -19282,36 +18316,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "token_patterns",
+        "separator",
         "operator"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "operator",
-          "literal": "+",
-          "params": [
-            "token_patterns"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "token_patterns"
-          ]
-        },
-        {
-          "name": "qmark",
-          "via": "member",
-          "slot": "operator",
-          "literal": "?",
-          "params": [
-            "token_patterns"
-          ]
-        }
       ]
     },
     {
@@ -19391,50 +18397,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "paren",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_token_tree_paren",
-          "path": []
-        },
-        {
-          "name": "bracket",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_token_tree_bracket",
-          "path": []
-        },
-        {
-          "name": "brace",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_token_tree_brace",
-          "path": []
-        },
-        {
-          "name": "delimTokenTreeParen",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_delim_token_tree_paren",
-          "path": []
-        },
-        {
-          "name": "delimTokenTreeBracket",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_delim_token_tree_bracket",
-          "path": []
-        },
-        {
-          "name": "delimTokenTreeBrace",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_delim_token_tree_brace",
-          "path": []
-        }
       ]
     },
     {
@@ -19490,29 +18452,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "paren",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_token_tree_pattern_paren",
-          "path": []
-        },
-        {
-          "name": "bracket",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_token_tree_pattern_bracket",
-          "path": []
-        },
-        {
-          "name": "brace",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_token_tree_pattern_brace",
-          "path": []
-        }
       ]
     },
     {
@@ -19757,6 +18696,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
+        "unsafe_marker",
         "name",
         "type_parameters",
         "bounds",
@@ -19940,15 +18880,6 @@
       "factoryFields": [
         "attributes",
         "tuple_expression_elements"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "elements",
-          "via": "form",
-          "slot": "tuple_expression_elements",
-          "childKind": "_tuple_expression_elements",
-          "path": []
-        }
       ]
     },
     {
@@ -20740,35 +19671,6 @@
       "factoryFields": [
         "operator",
         "operand"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "-",
-          "params": [
-            "operand"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "operand"
-          ]
-        },
-        {
-          "name": "bang",
-          "via": "member",
-          "slot": "operator",
-          "literal": "!",
-          "params": [
-            "operand"
-          ]
-        }
       ]
     },
     {
@@ -21403,50 +20305,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "path"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "path",
-          "childKind": "self",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "path",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "metavariable",
-          "via": "form",
-          "slot": "path",
-          "childKind": "metavariable",
-          "path": []
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "path",
-          "childKind": "super",
-          "path": []
-        },
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "path",
-          "childKind": "crate",
-          "path": []
-        },
-        {
-          "name": "scopedIdentifier",
-          "via": "form",
-          "slot": "path",
-          "childKind": "scoped_identifier",
-          "path": []
-        }
       ]
     },
     {
@@ -21520,6 +20378,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "mutable_specifier",
         "pattern"
       ]
     },
@@ -21580,76 +20439,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "crate",
-          "via": "form",
-          "slot": "content",
-          "childKind": "crate",
-          "path": []
-        },
-        {
-          "name": "pub",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": []
-        },
-        {
-          "name": "self",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": [
-            "self"
-          ]
-        },
-        {
-          "name": "super",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": [
-            "super"
-          ]
-        },
-        {
-          "name": "inPath",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": [
-            "visibilityModifierInPath"
-          ]
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "metavariable",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": [
-            "metavariable"
-          ]
-        },
-        {
-          "name": "scopedIdentifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_visibility_modifier_pub",
-          "path": [
-            "scopedIdentifier"
-          ]
-        }
       ]
     },
     {

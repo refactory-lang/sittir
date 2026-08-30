@@ -32,7 +32,6 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { emittedByCatalog, namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
 import { constructorSurface, constructorTargetKind, kindEnumConfigValue } from './factories.ts';
 
 export interface EmitTestsConfig {
@@ -97,11 +96,9 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'branch':
 			case 'envelope':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
-				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
 				break;
 			case 'polymorph':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
-				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
 				break;
 			case 'supertype':
 				break;
@@ -242,87 +239,6 @@ function emitContainerTest(
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
-	lines.push('});');
-	lines.push('');
-}
-
-function namespacedCallArgs(
-	entry: NamespacedConstructor,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	isEmitted: (kind: string) => boolean
-): string | undefined {
-	if (entry.via === 'member') return entry.params.map((p) => dummyValue(p, nodeMap, kindEntries, true)).join(', ');
-	if (entry.path.length > 0) {
-		const child = nodeMap.nodes.get(entry.childKind);
-		const sub =
-			child === undefined
-				? undefined
-				: namespacedConstructors(child, nodeMap, { isEmitted }).entries.find((e) => e.name === entry.path[0]);
-		return sub === undefined ? undefined : namespacedCallArgs(sub, nodeMap, kindEntries, isEmitted);
-	}
-	const sig = constructorSurface(entry.childKind, nodeMap, kindEntries);
-	if (sig !== undefined && (sig.params === '' || /^\w+\?:/.test(sig.params))) return '';
-	const target = nodeMap.nodes.get(constructorTargetKind(entry.childKind, nodeMap));
-	if (target === undefined) return undefined;
-	switch (target.modelType) {
-		case 'branch':
-		case 'envelope':
-			return classifyChildFactorySurface(target, nodeMap) !== null
-				? containerCallArgs(target, nodeMap, kindEntries)
-				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
-		case 'polymorph':
-			return classifyChildFactorySurface(target, nodeMap) !== null
-				? containerCallArgs(target, nodeMap, kindEntries)
-				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
-		case 'supertype':
-			return undefined;
-		case 'list': {
-			const element = dummyValueForField(buildSeparatedListContentSlot(target), nodeMap, kindEntries, 0, new Set());
-			return `${element}, ${element}`;
-		}
-		case 'pattern': {
-			const sample = pickSampleForPattern(target.pattern);
-			return sample === null ? undefined : JSON.stringify(sample);
-		}
-		case 'enum': {
-			const first = target.values[0];
-			return first === undefined ? undefined : JSON.stringify(first);
-		}
-		default:
-			return undefined;
-	}
-}
-
-function emitNamespacedTests(
-	lines: string[],
-	node: AssembledNode,
-	kind: string,
-	key: string,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	expectTestFailures: Readonly<Record<string, string>> | undefined
-): void {
-	const isEmitted = emittedByCatalog(kindEntries);
-	const entries = namespacedConstructors(node, nodeMap, { isEmitted }).entries;
-	const cases: string[] = [];
-	for (const entry of entries) {
-		const args = namespacedCallArgs(entry, nodeMap, kindEntries, isEmitted);
-		if (args === undefined) continue;
-		const access = isValidIdent(entry.name) ? `.${entry.name}` : `[${JSON.stringify(entry.name)}]`;
-		const knownFailure = expectTestFailures?.[`${kind}.${entry.name}`];
-		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
-		cases.push(
-			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(entry.name)} builds the parent', () => {`
-		);
-		cases.push(`    const node = ir.${key}${access}(${args});`);
-		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		cases.push('  });');
-	}
-	if (cases.length === 0) return;
-	lines.push(`describe('${kind} namespaced constructors', () => {`);
-	lines.push(...cases);
 	lines.push('});');
 	lines.push('');
 }

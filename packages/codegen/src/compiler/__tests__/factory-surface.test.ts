@@ -132,7 +132,7 @@ describe('factory field metadata', () => {
 		// distinct kinds — not a single keyword-presence toggle, so no
 		// filter removes it). Matches the committed node-model.json5
 		// factoryFields and the generated buildReferenceExpression config.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression')!, nodeMap)).toEqual(['content', 'value']);
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression')!)).toEqual(['content', 'value']);
 	});
 
 	it('keeps enum-valued operator fields in validator field metadata', () => {
@@ -142,7 +142,7 @@ describe('factory field metadata', () => {
 		// buildBinaryExpression takes config.operator via
 		// coerceKindEnumStorage), so it belongs in the metadata. Matches the
 		// committed node-model.json5 factoryFields.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('binary_expression')!, nodeMap)).toEqual([
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('binary_expression')!)).toEqual([
 			'left',
 			'operator',
 			'right'

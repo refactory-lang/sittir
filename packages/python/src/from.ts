@@ -4,51 +4,43 @@ import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
 import type { AnyNodeData } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
+import { coerceKindEnumStorage, isNodeData } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
-
-/** A function's parameters, including the readonly-rest signatures
- *  `Parameters` cannot reflect. */
-type _Args<F> = F extends (...args: infer P) => unknown
-	? P
-	: F extends (...args: readonly (infer E)[]) => unknown
-		? E[]
-		: never;
 
 export const _fromMap = {
 	module: coerceToModule,
 	import_statement: coerceToImportStatement,
 	import_prefix: coerceToImportPrefix,
 	relative_import: coerceToRelativeImport,
-	future_import_statement: coerceToFutureImportStatement$impl,
+	future_import_statement: coerceToFutureImportStatement,
 	import_from_statement: coerceToImportFromStatement,
 	aliased_import: coerceToAliasedImport,
 	wildcard_import: coerceToWildcardImport,
-	print_statement: coerceToPrintStatement$impl,
+	print_statement: coerceToPrintStatement,
 	chevron: coerceToChevron,
 	assert_statement: coerceToAssertStatement,
-	expression_statement: coerceToExpressionStatement$impl,
+	expression_statement: coerceToExpressionStatement,
 	named_expression: coerceToNamedExpression,
-	return_statement: coerceToReturnStatement$impl,
-	delete_statement: coerceToDeleteStatement$impl,
+	return_statement: coerceToReturnStatement,
+	delete_statement: coerceToDeleteStatement,
 	raise_statement: coerceToRaiseStatement,
 	pass_statement: coerceToPassStatement,
 	break_statement: coerceToBreakStatement,
 	continue_statement: coerceToContinueStatement,
 	if_statement: coerceToIfStatement,
 	elif_clause: coerceToElifClause,
-	else_clause: coerceToElseClause$impl,
+	else_clause: coerceToElseClause,
 	match_statement: coerceToMatchStatement,
 	case_clause: coerceToCaseClause,
 	for_statement: coerceToForStatement,
 	while_statement: coerceToWhileStatement,
 	try_statement: coerceToTryStatement,
 	except_clause: coerceToExceptClause,
-	finally_clause: coerceToFinallyClause$impl,
+	finally_clause: coerceToFinallyClause,
 	with_statement: coerceToWithStatement,
-	with_clause: coerceToWithClause$impl,
+	with_clause: coerceToWithClause,
 	with_item: coerceToWithItem,
 	function_definition: coerceToFunctionDefinition,
 	parameters: coerceToParameters,
@@ -61,30 +53,30 @@ export const _fromMap = {
 	type_alias_statement: coerceToTypeAliasStatement,
 	class_definition: coerceToClassDefinition,
 	type_parameter: coerceToTypeParameter,
-	parenthesized_list_splat: coerceToParenthesizedListSplat$impl,
+	parenthesized_list_splat: coerceToParenthesizedListSplat,
 	argument_list: coerceToArgumentList,
 	decorated_definition: coerceToDecoratedDefinition,
 	decorator: coerceToDecorator,
 	block: coerceToBlock,
 	expression_list: coerceToExpressionList,
 	dotted_name: coerceToDottedName,
-	case_pattern: coerceToCasePattern$impl,
+	case_pattern: coerceToCasePattern,
 	union_pattern: coerceToUnionPattern,
 	dict_pattern: coerceToDictPattern,
 	keyword_pattern: coerceToKeywordPattern,
-	splat_pattern: coerceToSplatPattern$impl,
+	splat_pattern: coerceToSplatPattern,
 	class_pattern: coerceToClassPattern,
-	complex_pattern: coerceToComplexPattern$impl,
+	complex_pattern: coerceToComplexPattern,
 	tuple_pattern: coerceToTuplePattern,
 	list_pattern: coerceToListPattern,
 	default_parameter: coerceToDefaultParameter,
 	typed_default_parameter: coerceToTypedDefaultParameter,
-	list_splat_pattern: coerceToListSplatPattern$impl,
-	dictionary_splat_pattern: coerceToDictionarySplatPattern$impl,
+	list_splat_pattern: coerceToListSplatPattern,
+	dictionary_splat_pattern: coerceToDictionarySplatPattern,
 	as_pattern: coerceToAsPattern,
 	not_operator: coerceToNotOperator,
-	boolean_operator: coerceToBooleanOperator$impl,
-	binary_operator: coerceToBinaryOperator$impl,
+	boolean_operator: coerceToBooleanOperator,
+	binary_operator: coerceToBinaryOperator,
 	unary_operator: coerceToUnaryOperator,
 	comparison_operator: coerceToComparisonOperator,
 	lambda: coerceToLambda,
@@ -92,15 +84,15 @@ export const _fromMap = {
 	assignment: coerceToAssignment,
 	augmented_assignment: coerceToAugmentedAssignment,
 	pattern_list: coerceToPatternList,
-	yield: coerceToYield$impl,
+	yield: coerceToYield,
 	attribute: coerceToAttribute,
 	subscript: coerceToSubscript,
-	slice: coerceToSlice$impl,
+	slice: coerceToSlice,
 	ellipsis: coerceToEllipsis,
 	call: coerceToCall,
 	typed_parameter: coerceToTypedParameter,
-	type: coerceToType$impl,
-	splat_type: coerceToSplatType$impl,
+	type: coerceToType,
+	splat_type: coerceToSplatType,
 	generic_type: coerceToGenericType,
 	union_type: coerceToUnionType,
 	constrained_type: coerceToConstrainedType,
@@ -115,7 +107,7 @@ export const _fromMap = {
 	dictionary_comprehension: coerceToDictionaryComprehension,
 	set_comprehension: coerceToSetComprehension,
 	generator_expression: coerceToGeneratorExpression,
-	parenthesized_expression: coerceToParenthesizedExpression$impl,
+	parenthesized_expression: coerceToParenthesizedExpression,
 	for_in_clause: coerceToForInClause,
 	if_clause: coerceToIfClause,
 	conditional_expression: coerceToConditionalExpression,
@@ -1009,67 +1001,6 @@ const _K35: readonly string[] = [
 ];
 const _K36: readonly string[] = ['for_in_clause', 'if_clause'];
 
-function resolveSimplePatternNegative_content(
-	value: T.SimplePatternNegative.LooseConfig['content']
-): T.SimplePatternNegative['_content'] {
-	return _resolveOne<T.Integer | T.Float>(value, _K20, _K0);
-}
-
-function coerceToSimplePatternNegative(
-	input: T.SimplePatternNegative.Loose
-): ReturnType<typeof F.buildSimplePatternNegative> {
-	if (!_isLooseConfig<T.SimplePatternNegative.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildSimplePatternNegative>;
-	return F.buildSimplePatternNegative({
-		sign: _resolveBooleanKeyword(input.sign),
-		content: _requireField('_simple_pattern_negative', 'content', resolveSimplePatternNegative_content(input.content))
-	});
-}
-
-function resolveYieldFromClause_expression(
-	value: T.YieldFromClause.LooseConfig['expression']
-): T.YieldFromClause['_expression'] {
-	return _resolveOne<T.Expression>(value, _K6, _K7);
-}
-
-function coerceToYieldFromClause(
-	input: T.Expression | T.YieldFromClause.Loose
-): ReturnType<typeof F.buildYieldFromClause> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.YieldFromClause)
-		return input as unknown as ReturnType<typeof F.buildYieldFromClause>;
-	return F.buildYieldFromClause(
-		_requireField(
-			'_yield_from_clause',
-			'expression',
-			_resolveOne<T.Expression>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
-					? input.expression
-					: input,
-				_K6,
-				_K7
-			)
-		)
-	);
-}
-
-function resolveSliceGroup_expression(value: T.SliceGroup.LooseConfig['expression']): T.SliceGroup['_expression'] {
-	return _resolveOne<T.Expression>(value, _K6, _K7);
-}
-
-function coerceToSliceGroup(input?: T.Expression | T.SliceGroup.Loose): ReturnType<typeof F.buildSliceGroup> {
-	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.SliceGroup)
-		return input as unknown as ReturnType<typeof F.buildSliceGroup>;
-	return F.buildSliceGroup(
-		_resolveOne<T.Expression>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
-				? input.expression
-				: input,
-			_K6,
-			_K7
-		)
-	);
-}
-
 export function coerceToModule(
 	...input: readonly (
 		| (T.SimpleStatements | T.CompoundStatement)
@@ -1162,7 +1093,7 @@ export function resolveFutureImportStatement_content(
 	return _resolveOne<T.ImportList | T.FutureImportStatementArm>(value, _K0, _K2);
 }
 
-function coerceToFutureImportStatement$impl(
+export function coerceToFutureImportStatement(
 	input: (T.ImportList | T.FutureImportStatementArm) | T.FutureImportStatement.Loose
 ): ReturnType<typeof F.buildFutureImportStatement> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FutureImportStatement)
@@ -1179,14 +1110,6 @@ function coerceToFutureImportStatement$impl(
 		)
 	);
 }
-
-export const coerceToFutureImportStatement: typeof coerceToFutureImportStatement$impl & {
-	importList: typeof F.buildFutureImportStatement.importList;
-	arm: typeof F.buildFutureImportStatement.arm;
-} = attachProps(coerceToFutureImportStatement$impl, {
-	importList: F.buildFutureImportStatement.importList,
-	arm: F.buildFutureImportStatement.arm
-});
 
 export function resolveImportFromStatement_moduleName(
 	value: T.ImportFromStatement.LooseConfig['moduleName']
@@ -1243,7 +1166,7 @@ export function resolvePrintStatement_content(
 	return _resolveOne<T.PrintStatementArm1 | T.PrintStatementArm2>(value, _K0, _K5);
 }
 
-function coerceToPrintStatement$impl(
+export function coerceToPrintStatement(
 	input: (T.PrintStatementArm1 | T.PrintStatementArm2) | T.PrintStatement.Loose
 ): ReturnType<typeof F.buildPrintStatement> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.PrintStatement)
@@ -1260,20 +1183,6 @@ function coerceToPrintStatement$impl(
 		)
 	);
 }
-
-export const coerceToPrintStatement: typeof coerceToPrintStatement$impl & {
-	arm1: ((...args: _Args<typeof coerceToPrintStatementArm1>) => ReturnType<typeof coerceToPrintStatement$impl>) & {
-		strict: typeof F.buildPrintStatement.arm1;
-	};
-	arm2: typeof F.buildPrintStatement.arm2;
-} = attachProps(coerceToPrintStatement$impl, {
-	arm1: attachProps(
-		(...args: _Args<typeof coerceToPrintStatementArm1>) =>
-			coerceToPrintStatement$impl(coerceToPrintStatementArm1(...args) as T.PrintStatementArm1),
-		{ strict: F.buildPrintStatement.arm1 }
-	),
-	arm2: F.buildPrintStatement.arm2
-});
 
 export function resolveChevron_expression(value: T.Chevron.LooseConfig['expression']): T.Chevron['_expression'] {
 	return _resolveOne<T.Expression>(value, _K6, _K7);
@@ -1330,7 +1239,7 @@ export function resolveExpressionStatement_content(
 	);
 }
 
-function coerceToExpressionStatement$impl(
+export function coerceToExpressionStatement(
 	input:
 		| (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)
 		| T.ExpressionStatement.Loose
@@ -1349,41 +1258,6 @@ function coerceToExpressionStatement$impl(
 		)
 	);
 }
-
-export const coerceToExpressionStatement: typeof coerceToExpressionStatement$impl & {
-	tuple: typeof F.buildExpressionStatement.tuple;
-	assignment: ((...args: _Args<typeof coerceToAssignment>) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
-		strict: typeof F.buildExpressionStatement.assignment;
-	};
-	augmentedAssignment: ((
-		...args: _Args<typeof coerceToAugmentedAssignment>
-	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
-		strict: typeof F.buildExpressionStatement.augmentedAssignment;
-	};
-	yield: ((...args: _Args<typeof coerceToYield>) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
-		strict: typeof F.buildExpressionStatement.yield;
-	};
-	yieldFromClause: typeof F.buildExpressionStatement.yieldFromClause;
-	expressionList: typeof F.buildExpressionStatement.expressionList;
-} = attachProps(coerceToExpressionStatement$impl, {
-	tuple: F.buildExpressionStatement.tuple,
-	assignment: attachProps(
-		(...args: _Args<typeof coerceToAssignment>) =>
-			coerceToExpressionStatement$impl(coerceToAssignment(...args) as T.Assignment),
-		{ strict: F.buildExpressionStatement.assignment }
-	),
-	augmentedAssignment: attachProps(
-		(...args: _Args<typeof coerceToAugmentedAssignment>) =>
-			coerceToExpressionStatement$impl(coerceToAugmentedAssignment(...args) as T.AugmentedAssignment),
-		{ strict: F.buildExpressionStatement.augmentedAssignment }
-	),
-	yield: attachProps(
-		(...args: _Args<typeof coerceToYield>) => coerceToExpressionStatement$impl(coerceToYield(...args) as T.Yield),
-		{ strict: F.buildExpressionStatement.yield }
-	),
-	yieldFromClause: F.buildExpressionStatement.yieldFromClause,
-	expressionList: F.buildExpressionStatement.expressionList
-});
 
 export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig['name']): T.NamedExpression['_name'] {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
@@ -1410,7 +1284,7 @@ export function resolveReturnStatement_expressions(
 	return _resolveOne<T.Expression | T.ExpressionList>(value, _K6, _K9);
 }
 
-function coerceToReturnStatement$impl(
+export function coerceToReturnStatement(
 	input?: (T.Expression | T.ExpressionList) | T.ReturnStatement.Loose
 ): ReturnType<typeof F.buildReturnStatement> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ReturnStatement)
@@ -1426,25 +1300,13 @@ function coerceToReturnStatement$impl(
 	);
 }
 
-export const coerceToReturnStatement: typeof coerceToReturnStatement$impl & {
-	expressionList: ((
-		...args: _Args<typeof coerceToExpressionList>
-	) => ReturnType<typeof coerceToReturnStatement$impl>) & { strict: typeof F.buildReturnStatement.expressionList };
-} = attachProps(coerceToReturnStatement$impl, {
-	expressionList: attachProps(
-		(...args: _Args<typeof coerceToExpressionList>) =>
-			coerceToReturnStatement$impl(coerceToExpressionList(...args) as T.ExpressionList),
-		{ strict: F.buildReturnStatement.expressionList }
-	)
-});
-
 export function resolveDeleteStatement_expressions(
 	value: T.DeleteStatement.LooseConfig['expressions']
 ): T.DeleteStatement['_expressions'] {
 	return _resolveOne<T.Expression | T.ExpressionList>(value, _K6, _K9);
 }
 
-function coerceToDeleteStatement$impl(
+export function coerceToDeleteStatement(
 	input: (T.Expression | T.ExpressionList) | T.DeleteStatement.Loose
 ): ReturnType<typeof F.buildDeleteStatement> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DeleteStatement)
@@ -1463,18 +1325,6 @@ function coerceToDeleteStatement$impl(
 		)
 	);
 }
-
-export const coerceToDeleteStatement: typeof coerceToDeleteStatement$impl & {
-	expressionList: ((
-		...args: _Args<typeof coerceToExpressionList>
-	) => ReturnType<typeof coerceToDeleteStatement$impl>) & { strict: typeof F.buildDeleteStatement.expressionList };
-} = attachProps(coerceToDeleteStatement$impl, {
-	expressionList: attachProps(
-		(...args: _Args<typeof coerceToExpressionList>) =>
-			coerceToDeleteStatement$impl(coerceToExpressionList(...args) as T.ExpressionList),
-		{ strict: F.buildDeleteStatement.expressionList }
-	)
-});
 
 export function resolveRaiseStatement_expressions(
 	value: T.RaiseStatement.LooseConfig['expressions']
@@ -1560,7 +1410,7 @@ export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']):
 	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
 }
 
-function coerceToElseClause$impl(
+export function coerceToElseClause(
 	input: (T.SimpleStatements | T.SuiteBlockWithIndent | '\n') | T.ElseClause.Loose
 ): ReturnType<typeof F.buildElseClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ElseClause)
@@ -1577,14 +1427,6 @@ function coerceToElseClause$impl(
 		)
 	);
 }
-
-export const coerceToElseClause: typeof coerceToElseClause$impl & {
-	simpleStatements: typeof F.buildElseClause.simpleStatements;
-	suiteBlockWithIndent: typeof F.buildElseClause.suiteBlockWithIndent;
-} = attachProps(coerceToElseClause$impl, {
-	simpleStatements: F.buildElseClause.simpleStatements,
-	suiteBlockWithIndent: F.buildElseClause.suiteBlockWithIndent
-});
 
 export function resolveMatchStatement_subjects(
 	value: T.MatchStatement.LooseConfig['subjects']
@@ -1630,6 +1472,12 @@ export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof
 	});
 }
 
+export function resolveForStatement_asyncMarker(
+	value: T.ForStatement.LooseConfig['asyncMarker']
+): T.ForStatement['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): T.ForStatement['_left'] {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K12);
 }
@@ -1652,7 +1500,7 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ForStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForStatement>;
 	return F.buildForStatement({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveForStatement_asyncMarker(input.asyncMarker),
 		left: _requireField('for_statement', 'left', resolveForStatement_left(input.left)),
 		right: _requireField('for_statement', 'right', resolveForStatement_right(input.right)),
 		body: _requireField('for_statement', 'body', resolveForStatement_body(input.body)),
@@ -1719,6 +1567,12 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 	});
 }
 
+export function resolveExceptClause_starMarker(
+	value: T.ExceptClause.LooseConfig['starMarker']
+): T.ExceptClause['_star_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveExceptClause_exceptClauseArm(
 	value: T.ExceptClause.LooseConfig['exceptClauseArm']
 ): T.ExceptClause['_except_clause_arm'] {
@@ -1733,7 +1587,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ExceptClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
-		starMarker: _resolveBooleanKeyword(input.starMarker),
+		starMarker: resolveExceptClause_starMarker(input.starMarker),
 		exceptClauseArm: resolveExceptClause_exceptClauseArm(input.exceptClauseArm),
 		suite: _requireField('except_clause', 'suite', resolveExceptClause_suite(input.suite))
 	});
@@ -1743,7 +1597,7 @@ export function resolveFinallyClause_block(value: T.FinallyClause.LooseConfig['b
 	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
 }
 
-function coerceToFinallyClause$impl(
+export function coerceToFinallyClause(
 	input: (T.SimpleStatements | T.SuiteBlockWithIndent | '\n') | T.FinallyClause.Loose
 ): ReturnType<typeof F.buildFinallyClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FinallyClause)
@@ -1761,13 +1615,11 @@ function coerceToFinallyClause$impl(
 	);
 }
 
-export const coerceToFinallyClause: typeof coerceToFinallyClause$impl & {
-	simpleStatements: typeof F.buildFinallyClause.simpleStatements;
-	suiteBlockWithIndent: typeof F.buildFinallyClause.suiteBlockWithIndent;
-} = attachProps(coerceToFinallyClause$impl, {
-	simpleStatements: F.buildFinallyClause.simpleStatements,
-	suiteBlockWithIndent: F.buildFinallyClause.suiteBlockWithIndent
-});
+export function resolveWithStatement_asyncMarker(
+	value: T.WithStatement.LooseConfig['asyncMarker']
+): T.WithStatement['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
 
 export function resolveWithStatement_withClause(
 	value: T.WithStatement.LooseConfig['withClause']
@@ -1783,7 +1635,7 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 	if (!_isLooseConfig<T.WithStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildWithStatement>;
 	return F.buildWithStatement({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveWithStatement_asyncMarker(input.asyncMarker),
 		withClause: _requireField('with_statement', 'withClause', resolveWithStatement_withClause(input.withClause)),
 		body: _requireField('with_statement', 'body', resolveWithStatement_body(input.body))
 	});
@@ -1793,7 +1645,7 @@ export function resolveWithClause_content(value: T.WithClause.LooseConfig['conte
 	return _resolveOne<T.WithClauseBare | T.WithClauseParen>(value, _K0, _K13);
 }
 
-function coerceToWithClause$impl(
+export function coerceToWithClause(
 	input: (T.WithClauseBare | T.WithClauseParen) | T.WithClause.Loose
 ): ReturnType<typeof F.buildWithClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.WithClause)
@@ -1810,14 +1662,6 @@ function coerceToWithClause$impl(
 		)
 	);
 }
-
-export const coerceToWithClause: typeof coerceToWithClause$impl & {
-	bare: typeof F.buildWithClause.bare;
-	paren: typeof F.buildWithClause.paren;
-} = attachProps(coerceToWithClause$impl, {
-	bare: F.buildWithClause.bare,
-	paren: F.buildWithClause.paren
-});
 
 export function resolveWithItem_value(value: T.WithItem.LooseConfig['value']): T.WithItem['_value'] {
 	return _resolveOne<T.Expression>(value, _K6, _K7);
@@ -1837,6 +1681,12 @@ export function coerceToWithItem(input: T.Expression | T.WithItem.Loose): Return
 			)
 		)
 	);
+}
+
+export function resolveFunctionDefinition_asyncMarker(
+	value: T.FunctionDefinition.LooseConfig['asyncMarker']
+): T.FunctionDefinition['_async_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveFunctionDefinition_name(
@@ -1875,7 +1725,7 @@ export function coerceToFunctionDefinition(
 	if (!_isLooseConfig<T.FunctionDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionDefinition>;
 	return F.buildFunctionDefinition({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveFunctionDefinition_asyncMarker(input.asyncMarker),
 		name: _requireField('function_definition', 'name', resolveFunctionDefinition_name(input.name)),
 		typeParameters: resolveFunctionDefinition_typeParameters(input.typeParameters),
 		parameters: resolveFunctionDefinition_parameters(input.parameters) ?? F.buildParameters(),
@@ -2138,7 +1988,7 @@ export function resolveParenthesizedListSplat_content(
 	return _resolveOne<T.ParenthesizedListSplat | T.ListSplat>(value, _K0, _K15);
 }
 
-function coerceToParenthesizedListSplat$impl(
+export function coerceToParenthesizedListSplat(
 	input: (T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedListSplat.Loose
 ): ReturnType<typeof F.buildParenthesizedListSplat> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ParenthesizedListSplat)
@@ -2155,28 +2005,6 @@ function coerceToParenthesizedListSplat$impl(
 		)
 	);
 }
-
-export const coerceToParenthesizedListSplat: typeof coerceToParenthesizedListSplat$impl & {
-	parenthesizedListSplat: ((
-		...args: _Args<typeof coerceToParenthesizedListSplat>
-	) => ReturnType<typeof coerceToParenthesizedListSplat$impl>) & {
-		strict: typeof F.buildParenthesizedListSplat.parenthesizedListSplat;
-	};
-	listSplat: ((...args: _Args<typeof coerceToListSplat>) => ReturnType<typeof coerceToParenthesizedListSplat$impl>) & {
-		strict: typeof F.buildParenthesizedListSplat.listSplat;
-	};
-} = attachProps(coerceToParenthesizedListSplat$impl, {
-	parenthesizedListSplat: attachProps(
-		(...args: _Args<typeof coerceToParenthesizedListSplat>) =>
-			coerceToParenthesizedListSplat$impl(coerceToParenthesizedListSplat(...args) as T.ParenthesizedListSplat),
-		{ strict: F.buildParenthesizedListSplat.parenthesizedListSplat }
-	),
-	listSplat: attachProps(
-		(...args: _Args<typeof coerceToListSplat>) =>
-			coerceToParenthesizedListSplat$impl(coerceToListSplat(...args) as T.ListSplat),
-		{ strict: F.buildParenthesizedListSplat.listSplat }
-	)
-});
 
 export function resolveArgumentList_arguments(
 	value: T.ArgumentList.LooseConfig['arguments']
@@ -2361,7 +2189,7 @@ export function resolveCasePattern_content(value: T.CasePattern.LooseConfig['con
 	>(value, _K17, _K18);
 }
 
-function coerceToCasePattern$impl(
+export function coerceToCasePattern(
 	input:
 		| (
 				| T.CaseAsPattern
@@ -2416,115 +2244,6 @@ function coerceToCasePattern$impl(
 		)
 	);
 }
-
-export const coerceToCasePattern: typeof coerceToCasePattern$impl & {
-	caseAsPattern: ((...args: _Args<typeof coerceToCaseAsPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.caseAsPattern;
-	};
-	keywordPattern: ((...args: _Args<typeof coerceToKeywordPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.keywordPattern;
-	};
-	classPattern: ((...args: _Args<typeof coerceToClassPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.classPattern;
-	};
-	splatPattern: ((...args: _Args<typeof coerceToSplatPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.splatPattern;
-	};
-	star: typeof F.buildCasePattern.star;
-	starStar: typeof F.buildCasePattern.starStar;
-	unionPattern: ((...args: _Args<typeof coerceToUnionPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.unionPattern;
-	};
-	caseListPattern: typeof F.buildCasePattern.caseListPattern;
-	caseTuplePattern: typeof F.buildCasePattern.caseTuplePattern;
-	dictPattern: typeof F.buildCasePattern.dictPattern;
-	string: ((...args: _Args<typeof coerceToString>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.string;
-	};
-	concatenatedString: ((
-		...args: _Args<typeof coerceToConcatenatedString>
-	) => ReturnType<typeof coerceToCasePattern$impl>) & { strict: typeof F.buildCasePattern.concatenatedString };
-	true: typeof F.buildCasePattern.true;
-	false: typeof F.buildCasePattern.false;
-	none: typeof F.buildCasePattern.none;
-	simplePatternNegative: ((
-		...args: _Args<typeof coerceToSimplePatternNegative>
-	) => ReturnType<typeof coerceToCasePattern$impl>) & { strict: typeof F.buildCasePattern.simplePatternNegative };
-	integer: typeof F.buildCasePattern.integer;
-	float: typeof F.buildCasePattern.float;
-	complexPattern: ((...args: _Args<typeof coerceToComplexPattern>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.complexPattern;
-	};
-	plus: typeof F.buildCasePattern.plus;
-	dash: typeof F.buildCasePattern.dash;
-	dottedName: ((...args: _Args<typeof coerceToDottedName>) => ReturnType<typeof coerceToCasePattern$impl>) & {
-		strict: typeof F.buildCasePattern.dottedName;
-	};
-	wildcardPattern: typeof F.buildCasePattern.wildcardPattern;
-} = attachProps(coerceToCasePattern$impl, {
-	caseAsPattern: attachProps(
-		(...args: _Args<typeof coerceToCaseAsPattern>) =>
-			coerceToCasePattern$impl(coerceToCaseAsPattern(...args) as T.CaseAsPattern),
-		{ strict: F.buildCasePattern.caseAsPattern }
-	),
-	keywordPattern: attachProps(
-		(...args: _Args<typeof coerceToKeywordPattern>) =>
-			coerceToCasePattern$impl(coerceToKeywordPattern(...args) as T.KeywordPattern),
-		{ strict: F.buildCasePattern.keywordPattern }
-	),
-	classPattern: attachProps(
-		(...args: _Args<typeof coerceToClassPattern>) =>
-			coerceToCasePattern$impl(coerceToClassPattern(...args) as T.ClassPattern),
-		{ strict: F.buildCasePattern.classPattern }
-	),
-	splatPattern: attachProps(
-		(...args: _Args<typeof coerceToSplatPattern>) =>
-			coerceToCasePattern$impl(coerceToSplatPattern(...args) as T.SplatPattern),
-		{ strict: F.buildCasePattern.splatPattern }
-	),
-	star: F.buildCasePattern.star,
-	starStar: F.buildCasePattern.starStar,
-	unionPattern: attachProps(
-		(...args: _Args<typeof coerceToUnionPattern>) =>
-			coerceToCasePattern$impl(coerceToUnionPattern(...args) as T.UnionPattern),
-		{ strict: F.buildCasePattern.unionPattern }
-	),
-	caseListPattern: F.buildCasePattern.caseListPattern,
-	caseTuplePattern: F.buildCasePattern.caseTuplePattern,
-	dictPattern: F.buildCasePattern.dictPattern,
-	string: attachProps(
-		(...args: _Args<typeof coerceToString>) => coerceToCasePattern$impl(coerceToString(...args) as T.String),
-		{ strict: F.buildCasePattern.string }
-	),
-	concatenatedString: attachProps(
-		(...args: _Args<typeof coerceToConcatenatedString>) =>
-			coerceToCasePattern$impl(coerceToConcatenatedString(...args) as T.ConcatenatedString),
-		{ strict: F.buildCasePattern.concatenatedString }
-	),
-	true: F.buildCasePattern.true,
-	false: F.buildCasePattern.false,
-	none: F.buildCasePattern.none,
-	simplePatternNegative: attachProps(
-		(...args: _Args<typeof coerceToSimplePatternNegative>) =>
-			coerceToCasePattern$impl(coerceToSimplePatternNegative(...args) as T.SimplePatternNegative),
-		{ strict: F.buildCasePattern.simplePatternNegative }
-	),
-	integer: F.buildCasePattern.integer,
-	float: F.buildCasePattern.float,
-	complexPattern: attachProps(
-		(...args: _Args<typeof coerceToComplexPattern>) =>
-			coerceToCasePattern$impl(coerceToComplexPattern(...args) as T.ComplexPattern),
-		{ strict: F.buildCasePattern.complexPattern }
-	),
-	plus: F.buildCasePattern.plus,
-	dash: F.buildCasePattern.dash,
-	dottedName: attachProps(
-		(...args: _Args<typeof coerceToDottedName>) =>
-			coerceToCasePattern$impl(coerceToDottedName(...args) as T.DottedName),
-		{ strict: F.buildCasePattern.dottedName }
-	),
-	wildcardPattern: F.buildCasePattern.wildcardPattern
-});
 
 export function coerceToUnionPattern(
 	...input: readonly (
@@ -2714,7 +2433,7 @@ export function resolveSplatPattern_identifier(
 	return _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier');
 }
 
-function coerceToSplatPattern$impl(input: T.SplatPattern.Loose): ReturnType<typeof F.buildSplatPattern> {
+export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<typeof F.buildSplatPattern> {
 	if (!_isLooseConfig<T.SplatPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSplatPattern>;
 	return F.buildSplatPattern({
@@ -2722,14 +2441,6 @@ function coerceToSplatPattern$impl(input: T.SplatPattern.Loose): ReturnType<type
 		identifier: _requireField('splat_pattern', 'identifier', resolveSplatPattern_identifier(input.identifier))
 	});
 }
-
-export const coerceToSplatPattern: typeof coerceToSplatPattern$impl & {
-	star: typeof F.buildSplatPattern.star;
-	starStar: typeof F.buildSplatPattern.starStar;
-} = attachProps(coerceToSplatPattern$impl, {
-	star: F.buildSplatPattern.star,
-	starStar: F.buildSplatPattern.starStar
-});
 
 export function resolveClassPattern_dottedName(
 	value: T.ClassPattern.LooseConfig['dottedName']
@@ -2750,6 +2461,10 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 		dottedName: resolveClassPattern_dottedName(input.dottedName) ?? F.buildDottedName(),
 		arguments: resolveClassPattern_arguments(input.arguments)
 	});
+}
+
+export function resolveComplexPattern_real(value: T.ComplexPattern.LooseConfig['real']): T.ComplexPattern['_real'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveComplexPattern_imaginary(
@@ -2773,24 +2488,16 @@ export function resolveComplexPattern_content(
 	return _resolveOne<T.Integer | T.Float>(value, _K20, _K0);
 }
 
-function coerceToComplexPattern$impl(input: T.ComplexPattern.Loose): ReturnType<typeof F.buildComplexPattern> {
+export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnType<typeof F.buildComplexPattern> {
 	if (!_isLooseConfig<T.ComplexPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildComplexPattern>;
 	return F.buildComplexPattern({
-		real: _resolveBooleanKeyword(input.real),
+		real: resolveComplexPattern_real(input.real),
 		imaginary: _requireField('complex_pattern', 'imaginary', resolveComplexPattern_imaginary(input.imaginary)),
 		operator: _requireField('complex_pattern', 'operator', resolveComplexPattern_operator(input.operator)),
 		content: _requireField('complex_pattern', 'content', resolveComplexPattern_content(input.content))
 	});
 }
-
-export const coerceToComplexPattern: typeof coerceToComplexPattern$impl & {
-	plus: typeof F.buildComplexPattern.plus;
-	dash: typeof F.buildComplexPattern.dash;
-} = attachProps(coerceToComplexPattern$impl, {
-	plus: F.buildComplexPattern.plus,
-	dash: F.buildComplexPattern.dash
-});
 
 export function resolveTuplePattern_patterns(
 	value: T.TuplePattern.LooseConfig['patterns']
@@ -2885,7 +2592,7 @@ export function resolveListSplatPattern_content(
 	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_keyword_identifier, _K22);
 }
 
-function coerceToListSplatPattern$impl(
+export function coerceToListSplatPattern(
 	input: (T.Identifier | T.Subscript | T.Attribute) | T.ListSplatPattern.Loose
 ): ReturnType<typeof F.buildListSplatPattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ListSplatPattern)
@@ -2903,35 +2610,13 @@ function coerceToListSplatPattern$impl(
 	);
 }
 
-export const coerceToListSplatPattern: typeof coerceToListSplatPattern$impl & {
-	identifier: typeof F.buildListSplatPattern.identifier;
-	subscript: ((...args: _Args<typeof coerceToSubscript>) => ReturnType<typeof coerceToListSplatPattern$impl>) & {
-		strict: typeof F.buildListSplatPattern.subscript;
-	};
-	attribute: ((...args: _Args<typeof coerceToAttribute>) => ReturnType<typeof coerceToListSplatPattern$impl>) & {
-		strict: typeof F.buildListSplatPattern.attribute;
-	};
-} = attachProps(coerceToListSplatPattern$impl, {
-	identifier: F.buildListSplatPattern.identifier,
-	subscript: attachProps(
-		(...args: _Args<typeof coerceToSubscript>) =>
-			coerceToListSplatPattern$impl(coerceToSubscript(...args) as T.Subscript),
-		{ strict: F.buildListSplatPattern.subscript }
-	),
-	attribute: attachProps(
-		(...args: _Args<typeof coerceToAttribute>) =>
-			coerceToListSplatPattern$impl(coerceToAttribute(...args) as T.Attribute),
-		{ strict: F.buildListSplatPattern.attribute }
-	)
-});
-
 export function resolveDictionarySplatPattern_content(
 	value: T.DictionarySplatPattern.LooseConfig['content']
 ): T.DictionarySplatPattern['_content'] {
 	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_keyword_identifier, _K22);
 }
 
-function coerceToDictionarySplatPattern$impl(
+export function coerceToDictionarySplatPattern(
 	input: (T.Identifier | T.Subscript | T.Attribute) | T.DictionarySplatPattern.Loose
 ): ReturnType<typeof F.buildDictionarySplatPattern> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DictionarySplatPattern)
@@ -2948,28 +2633,6 @@ function coerceToDictionarySplatPattern$impl(
 		)
 	);
 }
-
-export const coerceToDictionarySplatPattern: typeof coerceToDictionarySplatPattern$impl & {
-	identifier: typeof F.buildDictionarySplatPattern.identifier;
-	subscript: ((...args: _Args<typeof coerceToSubscript>) => ReturnType<typeof coerceToDictionarySplatPattern$impl>) & {
-		strict: typeof F.buildDictionarySplatPattern.subscript;
-	};
-	attribute: ((...args: _Args<typeof coerceToAttribute>) => ReturnType<typeof coerceToDictionarySplatPattern$impl>) & {
-		strict: typeof F.buildDictionarySplatPattern.attribute;
-	};
-} = attachProps(coerceToDictionarySplatPattern$impl, {
-	identifier: F.buildDictionarySplatPattern.identifier,
-	subscript: attachProps(
-		(...args: _Args<typeof coerceToSubscript>) =>
-			coerceToDictionarySplatPattern$impl(coerceToSubscript(...args) as T.Subscript),
-		{ strict: F.buildDictionarySplatPattern.subscript }
-	),
-	attribute: attachProps(
-		(...args: _Args<typeof coerceToAttribute>) =>
-			coerceToDictionarySplatPattern$impl(coerceToAttribute(...args) as T.Attribute),
-		{ strict: F.buildDictionarySplatPattern.attribute }
-	)
-});
 
 export function resolveAsPattern_expression(value: T.AsPattern.LooseConfig['expression']): T.AsPattern['_expression'] {
 	return _resolveOne<T.Expression>(value, _K6, _K7);
@@ -3028,7 +2691,7 @@ export function resolveBooleanOperator_right(
 	return _resolveOne<T.Expression>(value, _K6, _K7);
 }
 
-function coerceToBooleanOperator$impl(input: T.BooleanOperator.Loose): ReturnType<typeof F.buildBooleanOperator> {
+export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnType<typeof F.buildBooleanOperator> {
 	if (!_isLooseConfig<T.BooleanOperator.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildBooleanOperator>;
 	return F.buildBooleanOperator({
@@ -3037,14 +2700,6 @@ function coerceToBooleanOperator$impl(input: T.BooleanOperator.Loose): ReturnTyp
 		right: _requireField('boolean_operator', 'right', resolveBooleanOperator_right(input.right))
 	});
 }
-
-export const coerceToBooleanOperator: typeof coerceToBooleanOperator$impl & {
-	and: typeof F.buildBooleanOperator.and;
-	or: typeof F.buildBooleanOperator.or;
-} = attachProps(coerceToBooleanOperator$impl, {
-	and: F.buildBooleanOperator.and,
-	or: F.buildBooleanOperator.or
-});
 
 export function resolveBinaryOperator_left(value: T.BinaryOperator.LooseConfig['left']): T.BinaryOperator['_left'] {
 	return _resolveOne<T.PrimaryExpression>(value, _K6, _K23);
@@ -3079,7 +2734,7 @@ export function resolveBinaryOperator_right(value: T.BinaryOperator.LooseConfig[
 	return _resolveOne<T.PrimaryExpression>(value, _K6, _K23);
 }
 
-function coerceToBinaryOperator$impl(input: T.BinaryOperator.Loose): ReturnType<typeof F.buildBinaryOperator> {
+export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnType<typeof F.buildBinaryOperator> {
 	if (!_isLooseConfig<T.BinaryOperator.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildBinaryOperator>;
 	return F.buildBinaryOperator({
@@ -3088,36 +2743,6 @@ function coerceToBinaryOperator$impl(input: T.BinaryOperator.Loose): ReturnType<
 		right: _requireField('binary_operator', 'right', resolveBinaryOperator_right(input.right))
 	});
 }
-
-export const coerceToBinaryOperator: typeof coerceToBinaryOperator$impl & {
-	plus: typeof F.buildBinaryOperator.plus;
-	dash: typeof F.buildBinaryOperator.dash;
-	star: typeof F.buildBinaryOperator.star;
-	at: typeof F.buildBinaryOperator.at;
-	slash: typeof F.buildBinaryOperator.slash;
-	percent: typeof F.buildBinaryOperator.percent;
-	slashSlash: typeof F.buildBinaryOperator.slashSlash;
-	starStar: typeof F.buildBinaryOperator.starStar;
-	pipe: typeof F.buildBinaryOperator.pipe;
-	amp: typeof F.buildBinaryOperator.amp;
-	caret: typeof F.buildBinaryOperator.caret;
-	ltLt: typeof F.buildBinaryOperator.ltLt;
-	gtGt: typeof F.buildBinaryOperator.gtGt;
-} = attachProps(coerceToBinaryOperator$impl, {
-	plus: F.buildBinaryOperator.plus,
-	dash: F.buildBinaryOperator.dash,
-	star: F.buildBinaryOperator.star,
-	at: F.buildBinaryOperator.at,
-	slash: F.buildBinaryOperator.slash,
-	percent: F.buildBinaryOperator.percent,
-	slashSlash: F.buildBinaryOperator.slashSlash,
-	starStar: F.buildBinaryOperator.starStar,
-	pipe: F.buildBinaryOperator.pipe,
-	amp: F.buildBinaryOperator.amp,
-	caret: F.buildBinaryOperator.caret,
-	ltLt: F.buildBinaryOperator.ltLt,
-	gtGt: F.buildBinaryOperator.gtGt
-});
 
 export function resolveUnaryOperator_operator(
 	value: T.UnaryOperator.LooseConfig['operator']
@@ -3301,7 +2926,7 @@ export function resolveYield_content(value: T.Yield.LooseConfig['content']): T.Y
 	return _resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K6, _K28);
 }
 
-function coerceToYield$impl(
+export function coerceToYield(
 	input?: (T.YieldFromClause | T.Expression | T.ExpressionList) | T.Yield.Loose
 ): ReturnType<typeof F.buildYield> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Yield)
@@ -3314,26 +2939,6 @@ function coerceToYield$impl(
 		)
 	);
 }
-
-export const coerceToYield: typeof coerceToYield$impl & {
-	fromClause: ((...args: _Args<typeof coerceToYieldFromClause>) => ReturnType<typeof coerceToYield$impl>) & {
-		strict: typeof F.buildYield.fromClause;
-	};
-	expressionList: ((...args: _Args<typeof coerceToExpressionList>) => ReturnType<typeof coerceToYield$impl>) & {
-		strict: typeof F.buildYield.expressionList;
-	};
-} = attachProps(coerceToYield$impl, {
-	fromClause: attachProps(
-		(...args: _Args<typeof coerceToYieldFromClause>) =>
-			coerceToYield$impl(coerceToYieldFromClause(...args) as T.YieldFromClause),
-		{ strict: F.buildYield.fromClause }
-	),
-	expressionList: attachProps(
-		(...args: _Args<typeof coerceToExpressionList>) =>
-			coerceToYield$impl(coerceToExpressionList(...args) as T.ExpressionList),
-		{ strict: F.buildYield.expressionList }
-	)
-});
 
 export function resolveAttribute_object(value: T.Attribute.LooseConfig['object']): T.Attribute['_object'] {
 	return _resolveOne<T.PrimaryExpression>(value, _K6, _K23);
@@ -3379,7 +2984,7 @@ export function resolveSlice_step(value: T.Slice.LooseConfig['step']): T.Slice['
 	return _resolveOneBranch<T.SliceGroup>(value, '_slice_group');
 }
 
-function coerceToSlice$impl(input?: T.Slice.Loose): ReturnType<typeof F.buildSlice> {
+export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildSlice> {
 	if (!_isLooseConfig<T.Slice.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildSlice>;
 	return F.buildSlice({
@@ -3388,18 +2993,6 @@ function coerceToSlice$impl(input?: T.Slice.Loose): ReturnType<typeof F.buildSli
 		step: resolveSlice_step(input?.step)
 	});
 }
-
-export const coerceToSlice: typeof coerceToSlice$impl & {
-	group: ((...args: _Args<typeof coerceToSliceGroup>) => ReturnType<typeof coerceToSlice$impl>) & {
-		strict: typeof F.buildSlice.group;
-	};
-} = attachProps(coerceToSlice$impl, {
-	group: attachProps(
-		(...args: _Args<typeof coerceToSliceGroup>) =>
-			coerceToSlice$impl({ step: coerceToSliceGroup(...args) as T.SliceGroup }),
-		{ strict: F.buildSlice.group }
-	)
-});
 
 export function coerceToEllipsis(input?: T.Ellipsis): ReturnType<typeof F.buildEllipsis> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildEllipsis>;
@@ -3453,7 +3046,7 @@ export function resolveType_content(value: T.Type.LooseConfig['content']): T.Typ
 	);
 }
 
-function coerceToType$impl(
+export function coerceToType(
 	input: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) | T.Type.Loose
 ): ReturnType<typeof F.buildType> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Type)
@@ -3471,50 +3064,6 @@ function coerceToType$impl(
 	);
 }
 
-export const coerceToType: typeof coerceToType$impl & {
-	splatType: ((...args: _Args<typeof coerceToSplatType>) => ReturnType<typeof coerceToType$impl>) & {
-		strict: typeof F.buildType.splatType;
-	};
-	star: typeof F.buildType.star;
-	starStar: typeof F.buildType.starStar;
-	genericType: ((...args: _Args<typeof coerceToGenericType>) => ReturnType<typeof coerceToType$impl>) & {
-		strict: typeof F.buildType.genericType;
-	};
-	unionType: ((...args: _Args<typeof coerceToUnionType>) => ReturnType<typeof coerceToType$impl>) & {
-		strict: typeof F.buildType.unionType;
-	};
-	constrainedType: ((...args: _Args<typeof coerceToConstrainedType>) => ReturnType<typeof coerceToType$impl>) & {
-		strict: typeof F.buildType.constrainedType;
-	};
-	memberType: ((...args: _Args<typeof coerceToMemberType>) => ReturnType<typeof coerceToType$impl>) & {
-		strict: typeof F.buildType.memberType;
-	};
-} = attachProps(coerceToType$impl, {
-	splatType: attachProps(
-		(...args: _Args<typeof coerceToSplatType>) => coerceToType$impl(coerceToSplatType(...args) as T.SplatType),
-		{ strict: F.buildType.splatType }
-	),
-	star: F.buildType.star,
-	starStar: F.buildType.starStar,
-	genericType: attachProps(
-		(...args: _Args<typeof coerceToGenericType>) => coerceToType$impl(coerceToGenericType(...args) as T.GenericType),
-		{ strict: F.buildType.genericType }
-	),
-	unionType: attachProps(
-		(...args: _Args<typeof coerceToUnionType>) => coerceToType$impl(coerceToUnionType(...args) as T.UnionType),
-		{ strict: F.buildType.unionType }
-	),
-	constrainedType: attachProps(
-		(...args: _Args<typeof coerceToConstrainedType>) =>
-			coerceToType$impl(coerceToConstrainedType(...args) as T.ConstrainedType),
-		{ strict: F.buildType.constrainedType }
-	),
-	memberType: attachProps(
-		(...args: _Args<typeof coerceToMemberType>) => coerceToType$impl(coerceToMemberType(...args) as T.MemberType),
-		{ strict: F.buildType.memberType }
-	)
-});
-
 export function resolveSplatType_operator(value: T.SplatType.LooseConfig['operator']): T.SplatType['_operator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
@@ -3526,21 +3075,13 @@ export function resolveSplatType_identifier(value: T.SplatType.LooseConfig['iden
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-function coerceToSplatType$impl(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
+export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
 	if (!_isLooseConfig<T.SplatType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildSplatType>;
 	return F.buildSplatType({
 		operator: _requireField('splat_type', 'operator', resolveSplatType_operator(input.operator)),
 		identifier: _requireField('splat_type', 'identifier', resolveSplatType_identifier(input.identifier))
 	});
 }
-
-export const coerceToSplatType: typeof coerceToSplatType$impl & {
-	star: typeof F.buildSplatType.star;
-	starStar: typeof F.buildSplatType.starStar;
-} = attachProps(coerceToSplatType$impl, {
-	star: F.buildSplatType.star,
-	starStar: F.buildSplatType.starStar
-});
 
 export function resolveGenericType_identifier(
 	value: T.GenericType.LooseConfig['identifier']
@@ -3837,7 +3378,7 @@ export function resolveParenthesizedExpression_content(
 	return _resolveOne<T.Expression | T.Yield | T.ListSplat>(value, _K6, _K32);
 }
 
-function coerceToParenthesizedExpression$impl(
+export function coerceToParenthesizedExpression(
 	input: (T.Expression | T.Yield | T.ListSplat) | T.ParenthesizedExpression.Loose
 ): ReturnType<typeof F.buildParenthesizedExpression> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ParenthesizedExpression)
@@ -3855,28 +3396,11 @@ function coerceToParenthesizedExpression$impl(
 	);
 }
 
-export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpression$impl & {
-	yield: ((...args: _Args<typeof coerceToYield>) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
-		strict: typeof F.buildParenthesizedExpression.yield;
-	};
-	yieldFromClause: typeof F.buildParenthesizedExpression.yieldFromClause;
-	expressionList: typeof F.buildParenthesizedExpression.expressionList;
-	listSplat: ((...args: _Args<typeof coerceToListSplat>) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
-		strict: typeof F.buildParenthesizedExpression.listSplat;
-	};
-} = attachProps(coerceToParenthesizedExpression$impl, {
-	yield: attachProps(
-		(...args: _Args<typeof coerceToYield>) => coerceToParenthesizedExpression$impl(coerceToYield(...args) as T.Yield),
-		{ strict: F.buildParenthesizedExpression.yield }
-	),
-	yieldFromClause: F.buildParenthesizedExpression.yieldFromClause,
-	expressionList: F.buildParenthesizedExpression.expressionList,
-	listSplat: attachProps(
-		(...args: _Args<typeof coerceToListSplat>) =>
-			coerceToParenthesizedExpression$impl(coerceToListSplat(...args) as T.ListSplat),
-		{ strict: F.buildParenthesizedExpression.listSplat }
-	)
-});
+export function resolveForInClause_asyncMarker(
+	value: T.ForInClause.LooseConfig['asyncMarker']
+): T.ForInClause['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
 
 export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): T.ForInClause['_left'] {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K12);
@@ -3888,14 +3412,18 @@ export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['righ
 	return resolved;
 }
 
+export function resolveForInClause_comma(value: T.ForInClause.LooseConfig['comma']): T.ForInClause['_comma'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<typeof F.buildForInClause> {
 	if (!_isLooseConfig<T.ForInClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForInClause>;
 	return F.buildForInClause({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveForInClause_asyncMarker(input.asyncMarker),
 		left: _requireField('for_in_clause', 'left', resolveForInClause_left(input.left)),
 		right: _requireField('for_in_clause', 'right', resolveForInClause_rights(input.right)),
-		comma: _resolveBooleanKeyword(input.comma)
+		comma: resolveForInClause_comma(input.comma)
 	});
 }
 
@@ -4050,6 +3578,12 @@ export function resolveInterpolation_expression(
 	return _resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K6, _K35);
 }
 
+export function resolveInterpolation_eqMarker(
+	value: T.Interpolation.LooseConfig['eqMarker']
+): T.Interpolation['_eq_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveInterpolation_typeConversion(
 	value: T.Interpolation.LooseConfig['typeConversion']
 ): T.Interpolation['_type_conversion'] {
@@ -4067,7 +3601,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 		return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
 		expression: _requireField('interpolation', 'expression', resolveInterpolation_expression(input.expression)),
-		eqMarker: _resolveBooleanKeyword(input.eqMarker),
+		eqMarker: resolveInterpolation_eqMarker(input.eqMarker),
 		typeConversion: resolveInterpolation_typeConversion(input.typeConversion),
 		formatSpecifier: resolveInterpolation_formatSpecifier(input.formatSpecifier)
 	});

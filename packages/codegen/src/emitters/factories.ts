@@ -59,7 +59,6 @@ import {
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { emittedByCatalog, namespacedConstructors, type NamespacedConstructorSet } from './namespaced-constructors.ts';
 import { buildTriviaParamType, resolveTriviaTypeNames } from './client-utils.ts';
 
 export interface EmitFactoriesConfig {
@@ -235,25 +234,6 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 	return lines;
 }
 
-export function namespaceOf(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): NamespacedConstructorSet {
-	const set = namespacedConstructors(node, nodeMap, { isEmitted: emittedByCatalog(kindEntries) });
-	for (const a of set.ambiguous) {
-		if (warnedAmbiguous.has(`${node.kind}.${a.name}`)) continue;
-		warnedAmbiguous.add(`${node.kind}.${a.name}`);
-		console.warn(
-			`[codegen] '${node.kind}': namespaced constructor '${a.name}' is claimed by ${a.claimants.join(' and ')} — ${
-				a.kept === undefined ? 'none hoisted' : `only ${a.kept}, this kind's own arm, keeps it`
-			}`
-		);
-	}
-	const entries = set.entries.filter((e) => namespacedEntryEligible(e, nodeMap, kindEntries));
-	return entries.length === set.entries.length ? set : { ...set, entries };
-}
-const warnedAmbiguous = new Set<string>();
 
 export namespace factory {
 	export function leaf(
@@ -295,7 +275,7 @@ export namespace factory {
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		output.push(
-			emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries, namespaceOf(node, nodeMap, kindEntries))
+			emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries)
 		);
 	}
 
@@ -306,7 +286,7 @@ export namespace factory {
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		output.push(
-			emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries, namespaceOf(node, nodeMap, kindEntries))
+			emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries)
 		);
 	}
 
@@ -763,13 +743,11 @@ function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined,
-	namespace: NamespacedConstructorSet | null = null
+	kindEntries: readonly KindEnumEntry[] | undefined = undefined
 ): string {
 	const exportName = node.rawFactoryName!;
-	const namespaced = namespace !== null && namespace.entries.length > 0;
-	const fn = namespaced ? `${exportName}$impl` : exportName;
-	const exportKw = namespaced ? '' : 'export ';
+	const fn = exportName;
+	const exportKw = 'export ';
 	fields = fields ?? [];
 	const typeKind = node.hoisted ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node) : undefined;
@@ -896,87 +874,10 @@ function emitFieldCarryingFactory(
 		lines.unshift(...wrapper);
 	}
 	lines.unshift(...builtAliasLines(builtName, `T.${node.typeName}`, withTypeMembers, variantName));
-	if (namespaced) {
-		lines.push('', ...emitNamespacedConstructors(node, namespace!, fn, exportName, surface, nodeMap, kindEntries));
-	}
 	return [
 		...buildArgsAliasLines(node.typeName, surface.params, surface.looseParams),
 		renameUnusedConfigParam(lines)
 	].join('\n');
-}
-
-function emitNamespacedConstructors(
-	node: FieldCarryingNode,
-	namespace: NamespacedConstructorSet,
-	fn: string,
-	exportName: string,
-	surface: FactorySurface,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string[] {
-	const positionalSlot = surface.spreadFacts?.slot ?? surface.singleField;
-	const fill = (slot: AssembledNonterminal, value: string): string =>
-		slot === positionalSlot ? `${fn}(${value})` : `${fn}({ ${slot.configKey}: ${value} })`;
-	const lines = [`export const ${exportName} = attachProps(${fn}, {`];
-	for (const entry of namespace.entries) {
-		const key = isValidIdent(entry.name) ? entry.name : JSON.stringify(entry.name);
-		if (entry.via === 'form') {
-			const ctor = [entry.childFactory, ...entry.path].join('.');
-			const sig =
-				entry.path.length > 0
-					? { params: `...args: Parameters<typeof ${ctor}>`, args: '...args' }
-					: constructorSurface(entry.childKind, nodeMap, kindEntries);
-			if (sig === undefined) continue;
-			let call =
-				sig.args === '...args' && entry.path.length === 0
-					? `(${ctor} as (...a: unknown[]) => ReturnType<typeof ${ctor}>)(...args)`
-					: sig.argOptional === true
-						? `${sig.args} === undefined ? ${ctor}() : ${ctor}(${sig.args})`
-						: `${ctor}(${sig.args})`;
-			const childTypeName = nodeMap.nodes.get(entry.childKind)?.typeName;
-			if (childTypeName !== undefined) call = `(${call}) as T.${childTypeName}`;
-			lines.push(`  ${key}: (${sig.params}) => ${fill(entry.slot, call)},`);
-		} else {
-			const params = entry.params.map((p, i) => {
-				const restOptional = entry.params.slice(i + 1).every((q) => !isRequired(q));
-				const type = `T.${node.typeName}.Config['${p.configKey}']`;
-				return isRequired(p)
-					? `${p.paramName}: ${type}`
-					: restOptional
-						? `${p.paramName}?: ${type}`
-						: `${p.paramName}: ${type} | undefined`;
-			});
-			const literal = kindEnumConfigValue(entry.literal, kindEntries);
-			const call =
-				entry.slot === positionalSlot
-					? `${fn}(${literal})`
-					: `${fn}({ ${[...entry.params.map((p) => `${p.configKey}: ${p.paramName}`), `${entry.slot.configKey}: ${literal}`].join(', ')} })`;
-			lines.push(`  ${key}: (${params.join(', ')}) => ${call},`);
-		}
-	}
-	lines.push('});');
-	return lines;
-}
-
-export function namespacedEntryEligible(
-	entry: NamespacedConstructorSet['entries'][number],
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): boolean {
-	if (entry.via !== 'form' || entry.path.length > 0) return true;
-	return constructorSurface(entry.childKind, nodeMap, kindEntries) !== undefined;
-}
-
-export function formLooseChildKind(
-	entry: NamespacedConstructorSet['entries'][number],
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string | undefined {
-	if (entry.via !== 'form' || entry.path.length > 0) return undefined;
-	if (constructorTargetKind(entry.childKind, nodeMap) !== entry.childKind) return undefined;
-	const surface = constructorSurface(entry.childKind, nodeMap, kindEntries);
-	if (surface?.looseParams === undefined || surface.looseParams === surface.params) return undefined;
-	return entry.childKind;
 }
 
 export function kindEnumConfigValue(literal: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
@@ -1432,18 +1333,13 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
 		);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
-		const usesAttachProps = [...nodeMap.nodes.values()].some(
-			(node) =>
-				classifyFactoryEmission(node.kind, node, { nodeMap, kindEntries, inlineKinds, synthesizedKinds }) === 'emit' &&
-				namespaceOf(node, nodeMap, kindEntries).entries.length > 0
-		);
 		const refineKindInfos = collectRefineKindInfos(nodeMap) ?? [];
 		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'LooseValue'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		if (refineKindInfos.length > 0) utilImports.push('ConfigOf');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesAttachProps ? ['attachProps'] : []), ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from './utils.js';`
+			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from './utils.js';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

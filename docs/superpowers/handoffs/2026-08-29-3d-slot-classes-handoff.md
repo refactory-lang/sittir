@@ -102,6 +102,21 @@ Generated output byte-identical throughout; validators at floor.
 Next: glossary sweep (redundant `compound || list` sites can fold —
 `AssembledList` is a compound), PR body, push.
 
+## 3e debt (surface ergonomics deliberately dropped by 3d; overlays restore them)
+
+- No slot filtering anywhere: `configurableFactoryFields` is gone; every slot
+  is a factory/`from()` config field (markers, terminators included).
+- Namespaced constructors (`forHeader.varKind(…)`, `binaryExpression.ampAmp(…)`
+  — the form/enum-member surface) are not emitted at all: the module, its
+  node-model section, the `$impl`/`attachProps` factory and `from()` wrappers
+  and the generated namespaced tests are gone. 3e's overlays are where a form
+  surface is authored; when it returns it is non-positional (a config object).
+- `debugger_statement(value)` / `meta_property(value)` take their sole
+  enum slot directly.
+- `binary_expression`'s `in` form: the parser-visible `_binary_expression_arm`
+  must dissolve into an overlay form of `binary_expression`; all 13
+  enrich-minted `_arm` kinds are parser-visible today.
+
 ## Then
 
 - `block_comment`'s id-less synthesized PATTERN (one `DBG_SLOT_MISS` line).

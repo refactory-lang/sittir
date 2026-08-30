@@ -2183,52 +2183,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "right"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "expressionList",
-          "via": "form",
-          "slot": "right",
-          "childKind": "expression_list",
-          "path": []
-        },
-        {
-          "name": "assignment",
-          "via": "form",
-          "slot": "right",
-          "childKind": "assignment",
-          "path": []
-        },
-        {
-          "name": "augmentedAssignment",
-          "via": "form",
-          "slot": "right",
-          "childKind": "augmented_assignment",
-          "path": []
-        },
-        {
-          "name": "patternList",
-          "via": "form",
-          "slot": "right",
-          "childKind": "pattern_list",
-          "path": []
-        },
-        {
-          "name": "yield",
-          "via": "form",
-          "slot": "right",
-          "childKind": "yield",
-          "path": []
-        },
-        {
-          "name": "yieldFromClause",
-          "via": "form",
-          "slot": "right",
-          "childKind": "yield",
-          "path": [
-            "fromClause"
-          ]
-        }
       ]
     },
     {
@@ -2270,44 +2224,6 @@
       "forwardsTo": "type",
       "factoryFields": [
         "type"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "genericType",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "genericType"
-          ]
-        },
-        {
-          "name": "unionType",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "unionType"
-          ]
-        },
-        {
-          "name": "constrainedType",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "constrainedType"
-          ]
-        },
-        {
-          "name": "memberType",
-          "via": "form",
-          "slot": "type",
-          "childKind": "type",
-          "path": [
-            "memberType"
-          ]
-        }
       ]
     },
     {
@@ -2598,107 +2514,6 @@
       "factoryFields": [
         "operators",
         "primary_expression"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "lt",
-          "via": "member",
-          "slot": "operators",
-          "literal": "<",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "ltEq",
-          "via": "member",
-          "slot": "operators",
-          "literal": "<=",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "eqEq",
-          "via": "member",
-          "slot": "operators",
-          "literal": "==",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "bangEq",
-          "via": "member",
-          "slot": "operators",
-          "literal": "!=",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "gtEq",
-          "via": "member",
-          "slot": "operators",
-          "literal": ">=",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "gt",
-          "via": "member",
-          "slot": "operators",
-          "literal": ">",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "ltGt",
-          "via": "member",
-          "slot": "operators",
-          "literal": "<>",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "in",
-          "via": "member",
-          "slot": "operators",
-          "literal": "in",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "notIn",
-          "via": "member",
-          "slot": "operators",
-          "literal": "not in",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "is",
-          "via": "member",
-          "slot": "operators",
-          "literal": "is",
-          "params": [
-            "primary_expression"
-          ]
-        },
-        {
-          "name": "isNot",
-          "via": "member",
-          "slot": "operators",
-          "literal": "is not",
-          "params": [
-            "primary_expression"
-          ]
-        }
       ]
     },
     {
@@ -2813,22 +2628,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "exceptClauseAs",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_except_clause_as",
-          "path": []
-        },
-        {
-          "name": "exceptClauseList",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_except_clause_list",
-          "path": []
-        }
       ]
     },
     {
@@ -3293,15 +3092,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "block",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_match_block_block",
-          "path": []
-        }
       ]
     },
     {
@@ -3526,23 +3316,8 @@
       "name": "_simple_pattern_negative",
       "factoryShape": "config",
       "factoryFields": [
+        "sign",
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "integer",
-          "via": "form",
-          "slot": "content",
-          "childKind": "integer",
-          "path": []
-        },
-        {
-          "name": "float",
-          "via": "form",
-          "slot": "content",
-          "childKind": "float",
-          "path": []
-        }
       ]
     },
     {
@@ -4755,138 +4530,6 @@
         "left",
         "operator",
         "right"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "operator",
-          "literal": "+",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "-",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "at",
-          "via": "member",
-          "slot": "operator",
-          "literal": "@",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "slash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "/",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "percent",
-          "via": "member",
-          "slot": "operator",
-          "literal": "%",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "slashSlash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "//",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "member",
-          "slot": "operator",
-          "literal": "**",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "pipe",
-          "via": "member",
-          "slot": "operator",
-          "literal": "|",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "amp",
-          "via": "member",
-          "slot": "operator",
-          "literal": "&",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "caret",
-          "via": "member",
-          "slot": "operator",
-          "literal": "^",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "ltLt",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<<",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gtGt",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">>",
-          "params": [
-            "left",
-            "right"
-          ]
-        }
       ]
     },
     {
@@ -5024,28 +4667,6 @@
         "left",
         "operator",
         "right"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "and",
-          "via": "member",
-          "slot": "operator",
-          "literal": "and",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "or",
-          "via": "member",
-          "slot": "operator",
-          "literal": "or",
-          "params": [
-            "left",
-            "right"
-          ]
-        }
       ]
     },
     {
@@ -5560,181 +5181,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "caseAsPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "case_as_pattern",
-          "path": []
-        },
-        {
-          "name": "keywordPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "keyword_pattern",
-          "path": []
-        },
-        {
-          "name": "classPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "class_pattern",
-          "path": []
-        },
-        {
-          "name": "splatPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "splat_pattern",
-          "path": []
-        },
-        {
-          "name": "star",
-          "via": "form",
-          "slot": "content",
-          "childKind": "splat_pattern",
-          "path": [
-            "star"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "form",
-          "slot": "content",
-          "childKind": "splat_pattern",
-          "path": [
-            "starStar"
-          ]
-        },
-        {
-          "name": "unionPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "union_pattern",
-          "path": []
-        },
-        {
-          "name": "caseListPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "case_list_pattern",
-          "path": []
-        },
-        {
-          "name": "caseTuplePattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "case_tuple_pattern",
-          "path": []
-        },
-        {
-          "name": "dictPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "dict_pattern",
-          "path": []
-        },
-        {
-          "name": "string",
-          "via": "form",
-          "slot": "content",
-          "childKind": "string",
-          "path": []
-        },
-        {
-          "name": "concatenatedString",
-          "via": "form",
-          "slot": "content",
-          "childKind": "concatenated_string",
-          "path": []
-        },
-        {
-          "name": "true",
-          "via": "form",
-          "slot": "content",
-          "childKind": "true",
-          "path": []
-        },
-        {
-          "name": "false",
-          "via": "form",
-          "slot": "content",
-          "childKind": "false",
-          "path": []
-        },
-        {
-          "name": "none",
-          "via": "form",
-          "slot": "content",
-          "childKind": "none",
-          "path": []
-        },
-        {
-          "name": "simplePatternNegative",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_simple_pattern_negative",
-          "path": []
-        },
-        {
-          "name": "integer",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_simple_pattern_negative",
-          "path": [
-            "integer"
-          ]
-        },
-        {
-          "name": "float",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_simple_pattern_negative",
-          "path": [
-            "float"
-          ]
-        },
-        {
-          "name": "complexPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "complex_pattern",
-          "path": []
-        },
-        {
-          "name": "plus",
-          "via": "form",
-          "slot": "content",
-          "childKind": "complex_pattern",
-          "path": [
-            "plus"
-          ]
-        },
-        {
-          "name": "dash",
-          "via": "form",
-          "slot": "content",
-          "childKind": "complex_pattern",
-          "path": [
-            "dash"
-          ]
-        },
-        {
-          "name": "dottedName",
-          "via": "form",
-          "slot": "content",
-          "childKind": "dotted_name",
-          "path": []
-        },
-        {
-          "name": "wildcardPattern",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_wildcard_pattern",
-          "path": []
-        }
       ]
     },
     {
@@ -6245,31 +5691,10 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "real",
         "imaginary",
         "operator",
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "operator",
-          "literal": "+",
-          "params": [
-            "imaginary",
-            "content"
-          ]
-        },
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "-",
-          "params": [
-            "imaginary",
-            "content"
-          ]
-        }
       ]
     },
     {
@@ -6816,15 +6241,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expressions"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "expressionList",
-          "via": "form",
-          "slot": "expressions",
-          "childKind": "expression_list",
-          "path": []
-        }
       ]
     },
     {
@@ -7062,29 +6478,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "subscript",
-          "via": "form",
-          "slot": "content",
-          "childKind": "subscript",
-          "path": []
-        },
-        {
-          "name": "attribute",
-          "via": "form",
-          "slot": "content",
-          "childKind": "attribute",
-          "path": []
-        }
       ]
     },
     {
@@ -7306,22 +6699,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "body"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "simpleStatements",
-          "via": "form",
-          "slot": "body",
-          "childKind": "_simple_statements",
-          "path": []
-        },
-        {
-          "name": "suiteBlockWithIndent",
-          "via": "form",
-          "slot": "body",
-          "childKind": "_suite_block_with_indent",
-          "path": []
-        }
       ]
     },
     {
@@ -7469,6 +6846,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "star_marker",
         "except_clause_arm",
         "suite"
       ]
@@ -7712,54 +7090,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "tuple",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_expression_statement_tuple",
-          "path": []
-        },
-        {
-          "name": "assignment",
-          "via": "form",
-          "slot": "content",
-          "childKind": "assignment",
-          "path": []
-        },
-        {
-          "name": "augmentedAssignment",
-          "via": "form",
-          "slot": "content",
-          "childKind": "augmented_assignment",
-          "path": []
-        },
-        {
-          "name": "yield",
-          "via": "form",
-          "slot": "content",
-          "childKind": "yield",
-          "path": []
-        },
-        {
-          "name": "yieldFromClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "yield",
-          "path": [
-            "fromClause"
-          ]
-        },
-        {
-          "name": "expressionList",
-          "via": "form",
-          "slot": "content",
-          "childKind": "yield",
-          "path": [
-            "expressionList"
-          ]
-        }
       ]
     },
     {
@@ -7840,22 +7170,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "block"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "simpleStatements",
-          "via": "form",
-          "slot": "block",
-          "childKind": "_simple_statements",
-          "path": []
-        },
-        {
-          "name": "suiteBlockWithIndent",
-          "via": "form",
-          "slot": "block",
-          "childKind": "_suite_block_with_indent",
-          "path": []
-        }
       ]
     },
     {
@@ -7997,8 +7311,10 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "left",
-        "right"
+        "right",
+        "comma"
       ]
     },
     {
@@ -8161,6 +7477,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "left",
         "right",
         "body",
@@ -8390,6 +7707,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "name",
         "type_parameters",
         "parameters",
@@ -8442,22 +7760,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "importList",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_import_list",
-          "path": []
-        },
-        {
-          "name": "arm",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_future_import_statement_arm",
-          "path": []
-        }
       ]
     },
     {
@@ -9155,6 +8457,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
+        "eq_marker",
         "type_conversion",
         "format_specifier"
       ]
@@ -9873,29 +9176,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "subscript",
-          "via": "form",
-          "slot": "content",
-          "childKind": "subscript",
-          "path": []
-        },
-        {
-          "name": "attribute",
-          "via": "form",
-          "slot": "content",
-          "childKind": "attribute",
-          "path": []
-        }
       ]
     },
     {
@@ -10514,40 +9794,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "yield",
-          "via": "form",
-          "slot": "content",
-          "childKind": "yield",
-          "path": []
-        },
-        {
-          "name": "yieldFromClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "yield",
-          "path": [
-            "fromClause"
-          ]
-        },
-        {
-          "name": "expressionList",
-          "via": "form",
-          "slot": "content",
-          "childKind": "yield",
-          "path": [
-            "expressionList"
-          ]
-        },
-        {
-          "name": "listSplat",
-          "via": "form",
-          "slot": "content",
-          "childKind": "list_splat",
-          "path": []
-        }
       ]
     },
     {
@@ -10595,22 +9841,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "parenthesizedListSplat",
-          "via": "form",
-          "slot": "content",
-          "childKind": "parenthesized_list_splat",
-          "path": []
-        },
-        {
-          "name": "listSplat",
-          "via": "form",
-          "slot": "content",
-          "childKind": "list_splat",
-          "path": []
-        }
       ]
     },
     {
@@ -10894,22 +10124,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "arm1",
-          "via": "form",
-          "slot": "content",
-          "childKind": "print_statement_arm1",
-          "path": []
-        },
-        {
-          "name": "arm2",
-          "via": "form",
-          "slot": "content",
-          "childKind": "print_statement_arm2",
-          "path": []
-        }
       ]
     },
     {
@@ -11246,15 +10460,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expressions"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "expressionList",
-          "via": "form",
-          "slot": "expressions",
-          "childKind": "expression_list",
-          "path": []
-        }
       ]
     },
     {
@@ -11500,15 +10705,6 @@
         "start",
         "stop",
         "step"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "group",
-          "via": "form",
-          "slot": "step",
-          "childKind": "_slice_group",
-          "path": []
-        }
       ]
     },
     {
@@ -11581,26 +10777,6 @@
       "factoryFields": [
         "operator",
         "identifier"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "member",
-          "slot": "operator",
-          "literal": "**",
-          "params": [
-            "identifier"
-          ]
-        }
       ]
     },
     {
@@ -11667,26 +10843,6 @@
       "factoryFields": [
         "operator",
         "identifier"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "member",
-          "slot": "operator",
-          "literal": "**",
-          "params": [
-            "identifier"
-          ]
-        }
       ]
     },
     {
@@ -12294,61 +11450,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "splatType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "splat_type",
-          "path": []
-        },
-        {
-          "name": "star",
-          "via": "form",
-          "slot": "content",
-          "childKind": "splat_type",
-          "path": [
-            "star"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "form",
-          "slot": "content",
-          "childKind": "splat_type",
-          "path": [
-            "starStar"
-          ]
-        },
-        {
-          "name": "genericType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "generic_type",
-          "path": []
-        },
-        {
-          "name": "unionType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "union_type",
-          "path": []
-        },
-        {
-          "name": "constrainedType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "constrained_type",
-          "path": []
-        },
-        {
-          "name": "memberType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "member_type",
-          "path": []
-        }
       ]
     },
     {
@@ -13092,22 +12193,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "bare",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_with_clause_bare",
-          "path": []
-        },
-        {
-          "name": "paren",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_with_clause_paren",
-          "path": []
-        }
       ]
     },
     {
@@ -13247,6 +12332,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "with_clause",
         "body"
       ]
@@ -13304,22 +12390,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "fromClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_yield_from_clause",
-          "path": []
-        },
-        {
-          "name": "expressionList",
-          "via": "form",
-          "slot": "content",
-          "childKind": "expression_list",
-          "path": []
-        }
       ]
     },
     {

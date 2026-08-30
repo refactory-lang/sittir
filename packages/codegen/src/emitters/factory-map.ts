@@ -59,7 +59,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
-		const fieldNames = resolveFactoryFieldNames(node, nodeMap);
+		const fieldNames = resolveFactoryFieldNames(node);
 		if (fieldNames) factoryFields[kind] = fieldNames;
 	}
 

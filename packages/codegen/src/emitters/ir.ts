@@ -14,8 +14,6 @@ import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import type { NamespacedConstructor } from './namespaced-constructors.ts';
-import { namespaceOf as factoryNamespaceOf } from './factories.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -35,7 +33,6 @@ export function emitIr(config: EmitIrConfig): string {
 	const refineInfos = collectRefineKindInfos(nodeMap);
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
-	const namespaceOf = (node: AssembledNode) => factoryNamespaceOf(node, nodeMap, kindEntries).entries;
 	const hoisted = new Map<string, string>();
 	const hoistedLines: string[] = [];
 	const bundleRef = (node: AssembledNode): string => {
@@ -44,7 +41,7 @@ export function emitIr(config: EmitIrConfig): string {
 		const name = `_b$${toCamel(node.kind.replace(/^_+/, ''))}`;
 		hoisted.set(node.kind, name);
 		hoistedLines.push(
-			...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind), namespaceOf(node))),
+			...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind))),
 			''
 		);
 		return name;
@@ -253,8 +250,7 @@ interface BundleParts {
 
 function bundleParts(
 	node: AssembledNode,
-	refineInfo: RefineKindInfo | undefined,
-	namespace: readonly NamespacedConstructor[]
+	refineInfo: RefineKindInfo | undefined
 ): BundleParts {
 	if ((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList) {
 		if (!node.rawFactoryName) {
@@ -267,16 +263,6 @@ function bundleParts(
 			const keys = [camelCase(form.name)];
 			if (camelCase(form.name) !== form.name) keys.push(form.name);
 			for (const key of keys) props.push({ key: JSON.stringify(key), expr: `F.${factoryName}` });
-		}
-		const taken = new Set(props.map((p) => JSON.parse(p.key.startsWith('"') ? p.key : JSON.stringify(p.key))));
-		for (const entry of namespace) {
-			if (taken.has(entry.name)) {
-				console.warn(
-					`[codegen] '${node.kind}': namespaced constructor '${entry.name}' clashes with an ir bundle key — reachable only as F.${baseFactoryName}.${entry.name}`
-				);
-				continue;
-			}
-			props.push({ key: JSON.stringify(entry.name), expr: `FR.${node.fromFunctionName}.${entry.name}` });
 		}
 		return { base: `FR.${node.fromFunctionName}`, props };
 	}
