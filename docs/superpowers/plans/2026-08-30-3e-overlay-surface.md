@@ -458,14 +458,14 @@ export interface SubFactorySet { readonly entries: readonly SubFactory[]; readon
 export function choiceSlotOf(node: AssembledNode): AssembledNonterminal | undefined;
 export function armName(parent: AssembledNode, value: NodeOrTerminal, nodeMap: NodeMap): string | undefined;
 export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts?: { isEmitted?: (kind: string) => boolean }): SubFactorySet;
-export function armConfigKeys(sub: SubFactory, nodeMap: NodeMap): readonly string[] | 'positional';
+export function armConfigKeys(sub: SubFactory, nodeMap: NodeMap): readonly string[];
 ```
 
 Rules (from the spec):
 - `choiceSlotOf`: the slots of a slot-bearing compound that is not a list; a *choice slot* has `values.length >= 2` and `!isMultiple(slot)`; eligible iff exactly one choice slot exists → return it, else `undefined`.
 - `armName`: kind arm → if child is an `AbstractAssembledCompound` with `child.hoisted && child.parentKind === parent.kind` → `camelCase(child.name)`; else `camelCase(prefixNamedSuffix(parent.kind, child.kind) ?? child.kind.replace(/^_+/, ''))` (`prefixNamedSuffix` from `compiler/variant-structural.ts`). Literal arm → `isValidIdent(value)` ? `value` : `camelCase(resolvedKind)` where `resolvedKind` is the ref's resolved token-kind name (the field the removed emitter read as `v.resolvedKind`; if the `NodeRef` type carries it under another name today, use that — never derive it from the literal text) ; `undefined` when neither exists → arm skipped. An authored `variant()` on a literal arm reaches the overlay as a *kind* arm: enrich hoists that arm into `<parent>_<variant>` with the literal fixed inside it, so the rename needs no literal-specific code here — `armName`'s hoisted-child branch already yields the variant name.
 - `subFactoriesOf`: parent must satisfy `isSlotBearingCompound && !(instanceof AssembledList) && rawFactoryName && !nodeMap.refineForms?.has(kind)`; for each value of the choice slot: kind arm requires `child.rawFactoryName && isEmitted(child.kind)` and child is `isSlotBearingCompound || isTextLeaf`; literal arm as above. Recursion: for a kind arm whose child is itself eligible (guard with a `visiting` set), each child sub-factory `s` yields a flattened entry `{ name: s.arm.via === 'kind' ? armName(parent, thatChildRef) : s.name, path: [s.name, ...], arm: kind arm of the *direct* child }` — i.e. the flattened entry always targets the direct child and records the path of sub-factory names to call on it. Direct entries win a name over flattened ones (drop the flattened one silently — the direct arm is the canonical claimant); two flattened claimants → neither, diagnostic `ambiguous` listing `<child>.<path>` claimants.
-- `armConfigKeys`: `'positional'` when the arm is a literal with empty residual, or a kind arm whose child surface (`classifyFactoryShape(child)`) is `text`/`direct`/`forwarded`/`spread`/`elements`; otherwise the child's `fields.map(f => f.configKey)` (for a flattened path, the keys of the child's sub-factory: residual of the child ∪ grand-arm keys, recursively). Slot collision: any key ∈ `residual.map(f => f.configKey)` → diagnostic `slot-collision`, entry dropped.
+- `armConfigKeys`: the arm's config keys — `[]` for a literal arm or a kind arm whose child surface (`classifyFactoryShape(child)`) is not `config`; otherwise the child's `fields.map(f => f.configKey)` (for a flattened path, the keys of the child's sub-factory: residual of the child ∪ grand-arm keys, recursively). The calling convention itself is never re-derived here: consumers ask `classifyFactoryShape(child)`. Slot collision: any key ∈ `residual.map(f => f.configKey)` → diagnostic `slot-collision`, entry dropped.
 - Results are cached per `nodeMap` in a `WeakMap`, like the removed emitter.
 
 - [ ] **Step 1: Failing tests on a synthetic grammar**
@@ -493,7 +493,7 @@ Tests:
 		const set = subFactoriesOf(nodeMap.nodes.get('logic')!, nodeMap);
 		expect(set.entries.map((e) => e.name).sort()).toEqual(['and', 'or']);
 		expect(set.entries[0]!.residual.map((f) => f.name).sort()).toEqual(['left', 'right']);
-		expect(armConfigKeys(set.entries[0]!, nodeMap)).toBe('positional');
+		expect(armConfigKeys(set.entries[0]!, nodeMap)).toEqual([]);
 	});
 	it('a kind with two choice slots is not eligible', () => { /* add `pair: seq(field('a', choice(x,y)), field('b', choice(x,y)))` */
 		expect(choiceSlotOf(nodeMap.nodes.get('pair')!)).toBeUndefined();
@@ -561,8 +561,8 @@ Prop shapes (`P` = `F.<parent.rawFactoryName>`, `C` = `F.<child.rawFactoryName>`
 | residual ∅, kind arm, parent config-shaped | `(...args: Parameters<typeof C>) => P({ k: C(...args) })` | same |
 | residual ∅, literal arm | `() => P(val)` (positional parent) or `() => P({ k: val })` | `() => ReturnType<typeof P>` |
 | residual ≠ ∅, literal arm | `(config: Omit<Cfg, 'k'>) => P({ ...config, k: val })` | `(config: Omit<Cfg, 'k'>) => ReturnType<typeof P>` |
-| residual ≠ ∅, kind arm, `armConfigKeys` = keys `c1…cn` | `(config: Omit<Cfg, 'k'> & Parameters<typeof C>[0]) => { const { c1, …, cn, ...rest } = config; return P({ ...rest, k: C({ c1, …, cn }) }); }` | `(config: Omit<Cfg, 'k'> & Parameters<typeof C>[0]) => ReturnType<typeof P>` |
-| residual ≠ ∅, kind arm positional (child `text`/`direct`/`forwarded`) | `(config: Omit<Cfg, 'k'> & { k: Parameters<typeof C>[0] }) => { const { k, ...rest } = config; return P({ ...rest, k: C(k) }); }` | analogous |
+| residual ≠ ∅, kind arm, `classifyFactoryShape(child) === 'config'`, `armConfigKeys` = `c1…cn` | `(config: Omit<Cfg, 'k'> & Parameters<typeof C>[0]) => { const { c1, …, cn, ...rest } = config; return P({ ...rest, k: C({ c1, …, cn }) }); }` | `(config: Omit<Cfg, 'k'> & Parameters<typeof C>[0]) => ReturnType<typeof P>` |
+| residual ≠ ∅, kind arm, `classifyFactoryShape(child)` ∈ {`text`, `direct`, `forwarded`} | `(config: Omit<Cfg, 'k'> & { k: Parameters<typeof C>[0] }) => { const { k, ...rest } = config; return P({ ...rest, k: C(k) }); }` | analogous |
 | residual ≠ ∅, kind arm spread (`spread`/`elements`) | `(config: Omit<Cfg, 'k'> & { k: Parameters<typeof C> }) => { const { k, ...rest } = config; return P({ ...rest, k: C(...k) }); }` | analogous |
 
 When a parent's own factory is `config`-shaped but `Cfg` may be optional (`config?:`), use `NonNullable<Parameters<typeof P>[0]>` for `Cfg`.
