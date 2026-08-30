@@ -36,6 +36,7 @@ import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
+import type { OverlayName } from '../emitters/overlays/module.ts';
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -44,7 +45,7 @@ export interface GeneratedFiles {
 	renderEngine: string;
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
-	overlays: { refines: string; polymorphs: string; supertypes: string };
+	overlays: Record<OverlayName, string>;
 	factoriesIndex: string;
 	wrap: string;
 	utils: string;

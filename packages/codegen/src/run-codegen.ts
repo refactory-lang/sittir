@@ -28,6 +28,7 @@ import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
+import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
 
 export interface CodegenOptions {
 	grammar: string;
@@ -224,9 +225,9 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
 	rmSync(join(outDir, 'factories.ts'), { force: true });
 	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
-	await writeFile(join(factoriesDir, 'overlays', 'refines.ts'), result.overlays.refines);
-	await writeFile(join(factoriesDir, 'overlays', 'polymorphs.ts'), result.overlays.polymorphs);
-	await writeFile(join(factoriesDir, 'overlays', 'supertypes.ts'), result.overlays.supertypes);
+	for (const name of OVERLAY_CHAIN) {
+		await writeFile(join(factoriesDir, 'overlays', `${name}.ts`), result.overlays[name]);
+	}
 	await writeFile(join(factoriesDir, 'index.ts'), result.factoriesIndex);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
