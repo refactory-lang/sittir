@@ -44,9 +44,13 @@ export interface SubFactorySet {
 	readonly diagnostics: readonly SubFactoryDiagnostic[];
 }
 
+type IsEmittedPredicate = (kind: string) => boolean;
+
 interface SubFactoryOptions {
-	readonly isEmitted?: (kind: string) => boolean;
+	readonly isEmitted?: IsEmittedPredicate;
 }
+
+const DEFAULT_IS_EMITTED: IsEmittedPredicate = () => true;
 
 const EMPTY: SubFactorySet = { entries: [], diagnostics: [] };
 
@@ -86,13 +90,14 @@ function isDirect(entry: SubFactory): boolean {
 }
 
 function claimantOf(entry: SubFactory): string {
-	return entry.arm.via === 'literal' ? `'${entry.arm.literal}'` : entry.arm.child.kind;
+	if (entry.arm.via === 'literal') return `'${entry.arm.literal}'`;
+	return [entry.arm.child.kind, ...entry.arm.path].join('.');
 }
 
 function derive(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	opts: SubFactoryOptions,
+	isEmitted: IsEmittedPredicate,
 	visiting: ReadonlySet<string>
 ): SubFactorySet {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return EMPTY;
@@ -100,7 +105,6 @@ function derive(
 	const slot = choiceSlotOf(node);
 	if (slot === undefined) return EMPTY;
 
-	const isEmitted = opts.isEmitted ?? (() => true);
 	const residual = node.fields.filter((f) => f !== slot);
 	const nextVisiting = new Set([...visiting, node.kind]);
 	const candidates: Candidate[] = [];
@@ -111,7 +115,7 @@ function derive(
 			if (name === undefined) continue;
 			const arm: LiteralArm = { via: 'literal', literal: value.value };
 			const entry: SubFactory = { name, slot, residual, arm };
-			candidates.push({ name, entry, claimant: `'${value.value}'` });
+			candidates.push({ name, entry, claimant: claimantOf(entry) });
 			continue;
 		}
 		if (!isNodeRef(value)) continue;
@@ -123,17 +127,17 @@ function derive(
 		if (name !== undefined) {
 			const arm: KindArm = { via: 'kind', child, path: [] };
 			const entry: SubFactory = { name, slot, residual, arm };
-			candidates.push({ name, entry, claimant: child.kind });
+			candidates.push({ name, entry, claimant: claimantOf(entry) });
 		}
 
 		if (nextVisiting.has(child.kind)) continue;
-		const childSet = subFactoriesInternal(child, nodeMap, opts, nextVisiting);
+		const childSet = subFactoriesInternal(child, nodeMap, isEmitted, nextVisiting);
 		for (const s of childSet.entries) {
 			const flatName = s.arm.via === 'kind' ? kindArmName(node.kind, s.arm.child) : s.name;
 			const path = s.arm.via === 'kind' ? [s.name, ...s.arm.path] : [s.name];
 			const arm: KindArm = { via: 'kind', child, path };
 			const entry: SubFactory = { name: flatName, slot, residual, arm };
-			candidates.push({ name: flatName, entry, claimant: `${child.kind}.${s.name}` });
+			candidates.push({ name: flatName, entry, claimant: claimantOf(entry) });
 		}
 	}
 
@@ -168,7 +172,7 @@ function derive(
 	const entries: SubFactory[] = [];
 	for (const entry of resolved) {
 		const keys = armConfigKeys(entry, nodeMap);
-		const collides = keys !== 'positional' && keys.some((k) => residualKeys.has(k));
+		const collides = keys.some((k) => residualKeys.has(k));
 		if (collides) {
 			diagnostics.push({ parent: node.kind, name: entry.name, reason: 'slot-collision', claimants: [claimantOf(entry)] });
 			continue;
@@ -179,44 +183,44 @@ function derive(
 	return { entries, diagnostics };
 }
 
-const cache = new WeakMap<NodeMap, Map<string, SubFactorySet>>();
+const cache = new WeakMap<NodeMap, WeakMap<IsEmittedPredicate, Map<string, SubFactorySet>>>();
 
 function subFactoriesInternal(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	opts: SubFactoryOptions,
+	isEmitted: IsEmittedPredicate,
 	visiting: ReadonlySet<string>
 ): SubFactorySet {
 	let perMap = cache.get(nodeMap);
 	if (perMap === undefined) {
-		perMap = new Map();
+		perMap = new WeakMap();
 		cache.set(nodeMap, perMap);
 	}
-	const cached = perMap.get(node.kind);
+	let perPredicate = perMap.get(isEmitted);
+	if (perPredicate === undefined) {
+		perPredicate = new Map();
+		perMap.set(isEmitted, perPredicate);
+	}
+	const cached = perPredicate.get(node.kind);
 	if (cached !== undefined) return cached;
-	const result = derive(node, nodeMap, opts, visiting);
-	if (visiting.size === 0) perMap.set(node.kind, result);
+	const result = derive(node, nodeMap, isEmitted, visiting);
+	if (visiting.size === 0) perPredicate.set(node.kind, result);
 	return result;
 }
 
 export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubFactoryOptions = {}): SubFactorySet {
-	return subFactoriesInternal(node, nodeMap, opts, new Set());
+	return subFactoriesInternal(node, nodeMap, opts.isEmitted ?? DEFAULT_IS_EMITTED, new Set());
 }
 
-export function armConfigKeys(sub: SubFactory, nodeMap: NodeMap): readonly string[] | 'positional' {
+export function armConfigKeys(sub: SubFactory, nodeMap: NodeMap): readonly string[] {
 	const arm = sub.arm;
-	if (arm.via === 'literal') return 'positional';
-	const shape = classifyFactoryShape(arm.child, nodeMap);
-	if (shape === 'text' || shape === 'direct' || shape === 'forwarded' || shape === 'spread' || shape === 'elements') {
-		return 'positional';
-	}
-	const childFields = isSlotBearingCompound(arm.child) ? arm.child.fields : [];
+	if (arm.via === 'literal') return [];
 	if (arm.path.length === 0) {
-		return childFields.map((f) => f.configKey);
+		if (classifyFactoryShape(arm.child, nodeMap) !== 'config') return [];
+		return isSlotBearingCompound(arm.child) ? arm.child.fields.map((f) => f.configKey) : [];
 	}
 	const nested = subFactoriesOf(arm.child, nodeMap).entries.find((e) => e.name === arm.path[0]);
 	if (nested === undefined) return [];
 	const residualKeys = nested.residual.map((f) => f.configKey);
-	const grandKeys = armConfigKeys(nested, nodeMap);
-	return grandKeys === 'positional' ? residualKeys : [...residualKeys, ...grandKeys];
+	return [...residualKeys, ...armConfigKeys(nested, nodeMap)];
 }

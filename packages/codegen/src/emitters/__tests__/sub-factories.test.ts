@@ -6,7 +6,13 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { armConfigKeys, choiceSlotOf, subFactoriesOf } from '../overlays/sub-factories.ts';
+import { armConfigKeys, choiceSlotOf, subFactoriesOf, type KindArm, type SubFactory } from '../overlays/sub-factories.ts';
+
+function kindArmOf(entries: readonly SubFactory[], name: string): KindArm {
+	const entry = entries.find((e) => e.name === name);
+	if (entry === undefined || entry.arm.via !== 'kind') throw new Error(`no kind arm named '${name}'`);
+	return entry.arm;
+}
 
 // ---------------------------------------------------------------------------
 // Synthetic grammars.
@@ -104,6 +110,97 @@ function pairNodeMap(): NodeMap {
 	return buildNodeMap(rules);
 }
 
+function flattenNodeMap(): NodeMap {
+	const rules: Record<string, Rule<'evaluate'>> = {
+		grandparent: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'parent' },
+				{ type: SYMBOL, name: 'leaf_a' }
+			]
+		},
+		parent: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'leaf_a' },
+				{ type: SYMBOL, name: 'leaf_b' }
+			]
+		},
+		leaf_a: { type: PATTERN, value: '[a-z]+' },
+		leaf_b: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'identifier' } },
+				{ type: FIELD, name: 'y', content: { type: SYMBOL, name: 'identifier' } }
+			]
+		},
+		identifier: { type: PATTERN, value: '[0-9]+' }
+	};
+	return buildNodeMap(rules);
+}
+
+function ambiguousNodeMap(): NodeMap {
+	const rules: Record<string, Rule<'evaluate'>> = {
+		grandparent_b: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'parent_x' },
+				{ type: SYMBOL, name: 'parent_y' }
+			]
+		},
+		parent_x: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'shared_leaf' },
+				{ type: SYMBOL, name: 'other_x' }
+			]
+		},
+		parent_y: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'shared_leaf' },
+				{ type: SYMBOL, name: 'other_y' }
+			]
+		},
+		shared_leaf: { type: PATTERN, value: '[a-z]+' },
+		other_x: { type: PATTERN, value: '[0-9]+' },
+		other_y: { type: PATTERN, value: '[0-9]+' }
+	};
+	return buildNodeMap(rules);
+}
+
+function collideNodeMap(): NodeMap {
+	const rules: Record<string, Rule<'evaluate'>> = {
+		collide_parent: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'shared', content: { type: SYMBOL, name: 'identifier' } },
+				{
+					type: FIELD,
+					name: 'picked',
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'shape_a' },
+							{ type: SYMBOL, name: 'shape_b' }
+						]
+					}
+				}
+			]
+		},
+		shape_a: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'shared', content: { type: SYMBOL, name: 'identifier' } },
+				{ type: FIELD, name: 'extra', content: { type: SYMBOL, name: 'identifier' } }
+			]
+		},
+		shape_b: { type: PATTERN, value: '[0-9]+' },
+		identifier: { type: PATTERN, value: '[a-z]+' }
+	};
+	return buildNodeMap(rules);
+}
+
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
@@ -137,11 +234,50 @@ describe('sub-factories — subFactoriesOf', () => {
 		const set = subFactoriesOf(nodeMap.nodes.get('logic')!, nodeMap);
 		expect(set.entries.map((e) => e.name).sort()).toEqual(['and', 'or']);
 		expect(set.entries[0]!.residual.map((f) => f.name).sort()).toEqual(['left', 'right']);
-		expect(armConfigKeys(set.entries[0]!, nodeMap)).toBe('positional');
+		expect(armConfigKeys(set.entries[0]!, nodeMap)).toEqual([]);
 	});
 
 	it('a kind with two choice slots is not eligible', () => {
 		const nodeMap = pairNodeMap();
 		expect(choiceSlotOf(nodeMap.nodes.get('pair')!)).toBeUndefined();
+	});
+
+	it('a grand-arm flattens onto the grandparent, and a direct arm wins over a flattened one of the same name', () => {
+		const nodeMap = flattenNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('grandparent')!, nodeMap);
+		expect(set.entries.map((e) => e.name).sort()).toEqual(['leafA', 'leafB', 'parent']);
+		expect(set.diagnostics).toEqual([]);
+
+		const leafA = kindArmOf(set.entries, 'leafA');
+		expect(leafA.path).toEqual([]);
+		expect(leafA.child.kind).toBe('leaf_a');
+
+		const leafB = kindArmOf(set.entries, 'leafB');
+		expect(leafB.path).toEqual(['leafB']);
+		expect(leafB.child.kind).toBe('parent');
+		expect(armConfigKeys(set.entries.find((e) => e.name === 'leafB')!, nodeMap)).toEqual(['x', 'y']);
+	});
+
+	it('two flattened claimants for the same name produce an ambiguous diagnostic naming both full paths', () => {
+		const nodeMap = ambiguousNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_b')!, nodeMap);
+		expect(set.entries.some((e) => e.name === 'sharedLeaf')).toBe(false);
+		expect(set.diagnostics).toEqual([
+			{
+				parent: 'grandparent_b',
+				name: 'sharedLeaf',
+				reason: 'ambiguous',
+				claimants: ['parent_x.sharedLeaf', 'parent_y.sharedLeaf']
+			}
+		]);
+	});
+
+	it('a config-shaped arm whose configKey collides with a residual slot is dropped with a slot-collision diagnostic', () => {
+		const nodeMap = collideNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('collide_parent')!, nodeMap);
+		expect(set.entries.map((e) => e.name)).toEqual(['shapeB']);
+		expect(set.diagnostics).toEqual([
+			{ parent: 'collide_parent', name: 'shapeA', reason: 'slot-collision', claimants: ['shape_a'] }
+		]);
 	});
 });

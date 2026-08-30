@@ -14741,17 +14741,33 @@ other overlay-specific shape.
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
 
 ```text
-/** The config keys a sub-factory's arm accepts, or `'positional'` when it
- *  takes its residual fields positionally instead of a config object. A
- *  literal arm is always positional — the literal fixes nothing of its
- *  own, so the call takes exactly the residual fields in declaration
- *  order. A kind arm is positional when its *direct* child's factory
- *  shape (`classifyFactoryShape`) is `text`, `direct`, `forwarded`,
- *  `spread`, or `elements` — shapes that already take a single positional
- *  value rather than a config object. Otherwise, a direct arm (empty
- *  `path`) reports the child's own field config keys; a flattened arm
- *  looks up the child's sub-factory named `path[0]` (whose own `path` is
- *  already the remaining chain, by construction) and reports that
- *  sub-factory's residual keys unioned with its `armConfigKeys`, computed
- *  recursively the same way. */
+/** The config keys a sub-factory's arm accepts as a config object; empty
+ *  when the arm's call takes its residual fields positionally instead —
+ *  callers ask `classifyFactoryShape(child)` themselves to tell the two
+ *  apart, this function never re-derives or reports the calling
+ *  convention. A literal arm always returns `[]` — a literal has no child
+ *  to read config keys from. A direct kind arm (empty `path`) returns
+ *  `[]` when the child's own factory shape (`classifyFactoryShape`) isn't
+ *  `config`; otherwise it returns the child's own field config keys. A
+ *  flattened arm (non-empty `path`) looks up the child's sub-factory named
+ *  `path[0]` (whose own `path` is already the remaining chain, by
+ *  construction) and returns that sub-factory's residual keys unioned
+ *  with its own `armConfigKeys`, computed recursively the same way — the
+ *  `classifyFactoryShape` gate is applied at that nested level by the
+ *  recursive call, not re-checked against the flattened arm's direct
+ *  child. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::claimantOf`
+
+```text
+/** Renders one `SubFactory` as the diagnostic-facing string that names it
+ *  in `SubFactoryDiagnostic.claimants` — the single formatter both the
+ *  `ambiguous` candidate list and the `slot-collision` diagnostic build
+ *  from, so the two diagnostics never disagree on how a claimant reads. A
+ *  literal arm renders as `'<literal>'`; a kind arm renders as
+ *  `<child.kind>` joined by `.` with every name in `path` — `<child>` for
+ *  a direct arm (empty `path`), `<child>.<path…>` for a flattened one, so
+ *  a claimant several levels deep still names the full chain instead of
+ *  just its first hop. */
 ```
