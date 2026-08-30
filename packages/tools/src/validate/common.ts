@@ -1717,17 +1717,32 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return elementsOptions !== undefined ? listFactory(elementsOptions, ...childArgs) : listFactory(...childArgs);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
-	// object. Field-backed direct calls use factoryFields metadata; child-
-	// backed direct calls take the first `children` element.
+	// object — the kind's sole slot (factorySlots, the model's structural
+	// slot record); child-backed direct calls take the first `children`
+	// element.
 	if (shape === 'direct' || shape === 'forwarded') {
-		const { factoryFields } = opts;
-		const fieldNames = factoryFields?.[kind];
-		const rawName = fieldNames?.[0];
-		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-		const value = camelName ? (childConfig as Record<string, unknown>)[camelName] : childArgs[0];
-		return factory(value);
+		return factory(directFactoryValue(kind, childConfig, opts.factorySlots, opts.factoryFields));
 	}
 	return factory(childConfig);
+}
+
+/**
+ * The one positional value a `direct` / `forwarded` factory takes: the
+ * kind's sole slot (the model's structural slot record, `factorySlots`),
+ * else the first declared factory field, else the first child.
+ */
+function directFactoryValue(
+	kind: string,
+	config: unknown,
+	factorySlots: NodeToConfigOpts['factorySlots'],
+	factoryFields: NodeToConfigOpts['factoryFields']
+): unknown {
+	const slotNames = Object.keys(factorySlots?.[kind] ?? {});
+	const rawName = slotNames.length === 1 ? slotNames[0] : factoryFields?.[kind]?.[0];
+	const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+	const record = config as Record<string, unknown>;
+	if (camelName !== undefined) return record[camelName];
+	return getChildFactoryArgs(kind, record, factorySlots, factoryFields)[0];
 }
 
 /**
@@ -2872,13 +2887,7 @@ export function buildFactoryNodeFromReference(
 	}
 	const config = nodeToConfig(referenceData, configOpts);
 	if (shape === 'direct' || shape === 'forwarded') {
-		// Direct-call shape: extract the sole field value when metadata names
-		// one, otherwise treat it as a single child call.
-		const rawName = factoryFields[kind]?.[0];
-		const camelName = rawName?.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
-		const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-		return factory(value);
+		return factory(directFactoryValue(kind, config, factorySlots, factoryFields));
 	}
 	if (shape === 'elements') {
 		// separatedList factory: spread with a LEADING optional options bag —

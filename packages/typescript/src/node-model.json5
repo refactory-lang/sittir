@@ -12168,7 +12168,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config"
+      "factoryShape": "direct"
     },
     {
       "kind": "declaration",
@@ -17546,7 +17546,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config"
+      "factoryShape": "direct"
     },
     {
       "kind": "method_definition",

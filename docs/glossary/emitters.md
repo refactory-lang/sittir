@@ -5499,10 +5499,8 @@ Surface`
 ```text
 /** The slot a kind's factory takes as its one positional value: the
  *  compound's structural sole slot (`AbstractAssembledCompound.soleSlot`)
- *  when it is singular and holds a child node (`verbatim` storage) — a
- *  slot stored as a coerced literal (`kindEnum` / `boolean` / `bitflag`,
- *  e.g. a statement terminator or a keyword form) is a config value, not a
- *  positioned child; never for a hidden, non-user-facing kind. */
+ *  when it is singular; never for a hidden, non-user-facing kind. The
+ *  class is the surface — no derived "user slot" filtering. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::resolveFactoryFieldNames`

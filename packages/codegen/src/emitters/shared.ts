@@ -485,12 +485,11 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
-export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
+export function resolveSingleFieldFactorySlot(node: AssembledNode, _nodeMap: NodeMap): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
 	if (node.kind.startsWith('_') && !node.userFacing) return undefined;
 	const slot = node.soleSlot;
-	if (slot === undefined || isMultiple(slot)) return undefined;
-	return resolveFieldStorageInfo(slot, nodeMap).kind === 'verbatim' ? slot : undefined;
+	return slot !== undefined && !isMultiple(slot) ? slot : undefined;
 }
 
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {

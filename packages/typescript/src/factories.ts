@@ -1392,19 +1392,21 @@ export function buildContinueStatement(config: T.ContinueStatement.Config): Cont
 	);
 }
 
-export type DebuggerStatementBuildArgs = [config: T.DebuggerStatement.Config];
-export type DebuggerStatementLooseArgs = [config: T.DebuggerStatement.Loose];
+export type DebuggerStatementBuildArgs = [value: '\n' | ';'];
+export type DebuggerStatementLooseArgs = [
+	value: LooseValue<'\n' | ';', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+];
 
 export type DebuggerStatementBuilt = T.DebuggerStatement & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		semicolon(value: NonNullable<Parameters<typeof buildDebuggerStatement>[0]>['semicolon']): DebuggerStatementBuilt;
+		semicolon(value: NonNullable<Parameters<typeof buildDebuggerStatement>[0]>): DebuggerStatementBuilt;
 	};
 } & _NodeMethods;
 
-export function buildDebuggerStatement(config: T.DebuggerStatement.Config): DebuggerStatementBuilt {
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+export function buildDebuggerStatement(value: '\n' | ';'): DebuggerStatementBuilt {
+	const _semicolon = coerceKindEnumStorage<number>(value, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -1416,8 +1418,7 @@ export function buildDebuggerStatement(config: T.DebuggerStatement.Config): Debu
 				$named: true as const,
 				_semicolon,
 				$with: {
-					semicolon: (value: NonNullable<Parameters<typeof buildDebuggerStatement>[0]>['semicolon']) =>
-						buildDebuggerStatement({ ...config, semicolon: value })
+					semicolon: (value: NonNullable<Parameters<typeof buildDebuggerStatement>[0]>) => buildDebuggerStatement(value)
 				}
 			},
 			{
@@ -3607,19 +3608,21 @@ export function buildPrivatePropertyIdentifier(text: string) {
 	);
 }
 
-export type MetaPropertyBuildArgs = [config: T.MetaProperty.Config];
-export type MetaPropertyLooseArgs = [config: T.MetaProperty.Loose];
+export type MetaPropertyBuildArgs = [value: 'new . target' | 'import . meta'];
+export type MetaPropertyLooseArgs = [
+	value: LooseValue<'new . target' | 'import . meta', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+];
 
 export type MetaPropertyBuilt = T.MetaProperty & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: NonNullable<Parameters<typeof buildMetaProperty>[0]>['content']): MetaPropertyBuilt;
+		content(value: NonNullable<Parameters<typeof buildMetaProperty>[0]>): MetaPropertyBuilt;
 	};
 } & _NodeMethods;
 
-export function buildMetaProperty(config: T.MetaProperty.Config): MetaPropertyBuilt {
-	const _content = coerceKindEnumStorage<number>(config.content, [
+export function buildMetaProperty(value: 'new . target' | 'import . meta'): MetaPropertyBuilt {
+	const _content = coerceKindEnumStorage<number>(value, [
 		['new . target', TSKindId.MetaPropertyArm1] as const,
 		['import . meta', TSKindId.MetaPropertyArm2] as const
 	]);
@@ -3631,8 +3634,7 @@ export function buildMetaProperty(config: T.MetaProperty.Config): MetaPropertyBu
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<Parameters<typeof buildMetaProperty>[0]>['content']) =>
-						buildMetaProperty({ ...config, content: value })
+					content: (value: NonNullable<Parameters<typeof buildMetaProperty>[0]>) => buildMetaProperty(value)
 				}
 			},
 			{

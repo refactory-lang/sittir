@@ -359,6 +359,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	named_imports: TSKindId.NamedImports,
 	variable_declarator: TSKindId.VariableDeclarator,
 	else_clause: TSKindId.ElseClause,
+	debugger_statement: TSKindId.DebuggerStatement,
 	switch_body: TSKindId.SwitchBody,
 	switch_default: TSKindId.SwitchDefault,
 	finally_clause: TSKindId.FinallyClause,
@@ -377,6 +378,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string: TSKindId.String,
 	template_string: TSKindId.TemplateString,
 	template_substitution: TSKindId.TemplateSubstitution,
+	meta_property: TSKindId.MetaProperty,
 	arguments: TSKindId.Arguments,
 	decorator: TSKindId.Decorator,
 	class_body: TSKindId.ClassBody,
@@ -444,6 +446,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildVariableDeclarator(children[0] as Parameters<typeof F.buildVariableDeclarator>[0]);
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
+		case 'debugger_statement':
+			return F.buildDebuggerStatement(children[0] as Parameters<typeof F.buildDebuggerStatement>[0]);
 		case 'switch_body':
 			return F.buildSwitchBody(...(children as Parameters<typeof F.buildSwitchBody>));
 		case 'switch_default':
@@ -480,6 +484,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTemplateString(...(children as Parameters<typeof F.buildTemplateString>));
 		case 'template_substitution':
 			return F.buildTemplateSubstitution(children[0] as Parameters<typeof F.buildTemplateSubstitution>[0]);
+		case 'meta_property':
+			return F.buildMetaProperty(children[0] as Parameters<typeof F.buildMetaProperty>[0]);
 		case 'arguments':
 			return F.buildArguments(...(children as Parameters<typeof F.buildArguments>));
 		case 'decorator':
@@ -2640,20 +2646,32 @@ export function coerceToContinueStatement(
 }
 
 export function coerceToDebuggerStatement(
-	input?: T.DebuggerStatement.Loose
+	input?: ('\n' | ';') | T.DebuggerStatement.Loose
 ): ReturnType<typeof F.buildDebuggerStatement> {
-	if (!_isLooseConfig<T.DebuggerStatement.LooseConfig | undefined>(input))
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.DebuggerStatement)
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
-	return F.buildDebuggerStatement({
-		semicolon: _requireField(
+	return F.buildDebuggerStatement(
+		_requireField(
 			'debugger_statement',
 			'semicolon',
 			coerceKindEnumStorage(
-				_resolveKindEnum(input?.semicolon, () => _resolveOne<'\n' | ';'>(input?.semicolon, _K0, _K0)),
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
+						? input.semicolon
+						: input,
+					() =>
+						_resolveOne<'\n' | ';'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
+								? input.semicolon
+								: input,
+							_K0,
+							_K0
+						)
+				),
 				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 			)
 		)
-	});
+	);
 }
 
 export function resolveReturnStatement_expressions(
@@ -4281,19 +4299,33 @@ export function coerceToPrivatePropertyIdentifier(
 	return F.buildPrivatePropertyIdentifier(input as Parameters<typeof F.buildPrivatePropertyIdentifier>[0]);
 }
 
-export function coerceToMetaProperty(input?: T.MetaProperty.Loose): ReturnType<typeof F.buildMetaProperty> {
-	if (!_isLooseConfig<T.MetaProperty.LooseConfig | undefined>(input))
+export function coerceToMetaProperty(
+	input?: ('new . target' | 'import . meta') | T.MetaProperty.Loose
+): ReturnType<typeof F.buildMetaProperty> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.MetaProperty)
 		return input as unknown as ReturnType<typeof F.buildMetaProperty>;
-	return F.buildMetaProperty({
-		content: _requireField(
+	return F.buildMetaProperty(
+		_requireField(
 			'meta_property',
 			'content',
 			coerceKindEnumStorage(
-				_resolveKindEnum(input?.content, () => _resolveOne<'new . target' | 'import . meta'>(input?.content, _K0, _K0)),
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<'new . target' | 'import . meta'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K0,
+							_K0
+						)
+				),
 				[['new . target', TSKindId.MetaPropertyArm1] as const, ['import . meta', TSKindId.MetaPropertyArm2] as const]
 			)
 		)
-	});
+	);
 }
 
 export function coerceToThis(input?: T.This): ReturnType<typeof F.buildThis> {
