@@ -90,20 +90,17 @@ mechanical fan-outs and glossary sweeps to `sittir-codegen` (sonnet) agents.
   polymorph like every other array-of-choice body, `isParameterless` off
   `self_parameter` / `_block_comment_doc_*`, `determinedSlots` gone).
 
-Step 2: delete the derived classifier (`BranchSlotClass`,
-`classifyBranchSlots`, `computeSlotClasses`, `userSlotsOf`, `slotClass`);
-`compoundModelTypeFor` classifies by slot count (0/1 → envelope, choice of
-leaves → polymorph, else branch — the array-of-choice bodies are the open
-question); `classifyFactoryShape`, `resolveSingleFieldFactorySlot`,
-`resolveDirectFactorySlot`, `forwardedTargetKind`, `soleSlotFacts`,
-`classifyChildFactorySurface` read `instanceof AssembledEnvelope` /
-`node.soleSlot` — the factory surface reads the class from the model, never
-infers it from param count. `from.ts` reads `slotClass` at 3 sites,
-`test.ts`/`factories.ts` via `soleSlotFacts`; tests: `taxonomy.test.ts`,
-`factory-surface.test.ts`, `factories-single-field-reserved-word`,
-`namespaced-constructors` call `computeSlotClasses`. Review-gated: case-2
-keyword-presence kinds may move direct→config; report the kinds. Then the
-glossary sweep and PR body.
+Step 2 (landed): the derived classifier is deleted; `AbstractAssembledCompound.soleSlot`
+is what the factory-surface helpers read (sole repeated slot → spread; sole
+singular child-node slot → direct/forwarded; a sole slot with coerced literal
+storage — terminator, keyword form — is a config value; else config). An
+array-of-choice body is an envelope like an array of symbols.
+`AssembledPolymorph` and `AssembledList` extend `AssembledEnvelope`: the
+only distinctions are variant/form handling (3e lifts it) and list facts.
+Generated output byte-identical throughout; validators at floor.
+
+Next: glossary sweep (redundant `compound || list` sites can fold —
+`AssembledList` is a compound), PR body, push.
 
 ## Then
 

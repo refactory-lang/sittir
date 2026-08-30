@@ -1554,12 +1554,15 @@ export class AssembledBranch extends AbstractAssembledCompound {
 	readonly modelType = 'branch' as const;
 }
 
-export class AssembledEnvelope extends AbstractAssembledCompound {
-	readonly modelType = 'envelope' as const;
+export class AssembledEnvelope<
+	R extends RenderRule = RenderRule,
+	M extends 'envelope' | 'polymorph' | 'list' = 'envelope'
+> extends AbstractAssembledCompound<R> {
+	readonly modelType: M = 'envelope' as M;
 }
 
-export class AssembledPolymorph extends AbstractAssembledCompound {
-	readonly modelType = 'polymorph' as const;
+export class AssembledPolymorph extends AssembledEnvelope<RenderRule, 'polymorph'> {
+	override readonly modelType = 'polymorph' as const;
 
 	get arms(): readonly SimplifiedRule[] {
 		const body = unwrapStructuralPassthroughs(this.simplifiedRule);
@@ -1816,8 +1819,8 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 export type SeparatedListElementRule = SymbolRule | ChoiceRule;
 
-export class AssembledList extends AbstractAssembledCompound<SeparatedListElementRule> {
-	readonly modelType = 'list' as const;
+export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, 'list'> {
+	override readonly modelType = 'list' as const;
 	readonly elements: readonly NodeOrTerminal[];
 	readonly separatorRule: RenderRule | undefined;
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';

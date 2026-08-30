@@ -1533,39 +1533,8 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList`
 
 ```text
-/**
- * A repeated element, `modelType: 'list'`: a rule with genuine per-instance
- * separator variability — either the separator is nonterminal (multiple
- * possible literal kinds), or it is a literal separator with an optional
- * leading/trailing flank. Classified by `assemble.ts`'s
- * `isSeparatedListShape`.
- *
- * A hidden repeat helper tree-sitter inlines at parse time is not force-
- * classified to its own dedicated shape. One WITHOUT a separator classifies
- * by the same rules as any other rule (`hasSlotBearingContent` →
- * `compoundModelType`, typically `'polymorph'` for a repeated
- * choice-of-symbols) and is suppressed from user-facing emission by the
- * ordinary hidden/`userFacing` mechanism rather than a dedicated modelType;
- * some such kinds are also inlined at their referrer before assemble ever
- * runs, via `resolveGroupOrMultiInlineTarget` (dsl/rule-transforms.ts,
- * called from simplify's `inlineRefs`), so they never reach classification
- * at all. One WITH a separator classifies as `'list'` (this class) the
- * same as any other separated-list shape.
- *
- * `AssembledList` extends `AbstractAssembledCompound` directly, so
- * `simplifiedRule`, `renderRule`, `slots`/`fields`, and `slotClass` are
- * inherited from the base — the same `buildSlotsRecord` construction every
- * other compound uses. Only the list-specific facts (`elements`,
- * `separatorRule`, `leadingDelimiter`/`trailingDelimiter`, `nonEmpty`,
- * `terminatedSeparator`) are this class's own, derived directly via
- * `deriveValuesForRule` rather than through `buildSlotsRecord`.
- *
- * The constructor's `rule` (its `R` type parameter,
- * `SeparatedListElementRule`) is the list ELEMENT on the normalize view — a
- * `SymbolRule`, or a `ChoiceRule` of symbols for a union-valued element —
- * carrying the list facts itself (`multiplicity` in array/nonEmptyArray and
- * `separator`).
- */
+/** An envelope whose sole slot is a separated list: the element values,
+ *  the separator rule, and the leading/trailing delimiter facts. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
@@ -2472,25 +2441,23 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnvelope`
 
 ```text
-/** `modelType: 'envelope'` — the rule's body (after peeling
- *  `unwrapStructuralPassthroughs`) is a single `SYMBOL`, i.e. a
- *  passthrough to exactly one nonterminal. `soleSlot` reads that single
- *  slot directly (returns `undefined` if more than one slot survived —
- *  callers that expect the envelope invariant should check it holds). */
+/**
+ * A compound with zero or one slot. `AssembledPolymorph` (the slot is a
+ * union chosen once per instance) and `AssembledList` (the slot is
+ * repeated, with separator/delimiter facts) extend it — what sets them
+ * apart is variant/form handling and list facts, not slot structure, so
+ * every envelope consumer (`soleSlot`, the factory-surface helpers) covers
+ * all three. `M` is the `modelType` label each subclass narrows to, kept
+ * as a type parameter so `modelType` still discriminates the
+ * `AssembledNode` union.
+ */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph`
 
 ```text
-/** `modelType: 'polymorph'` — the rule's body (after peeling structural
- *  passthroughs) is a `CHOICE` whose every member is leaf-shaped
- *  (`isLeafShapedMember`: SYMBOL, SUPERTYPE, STRING, PATTERN, INDENT,
- *  DEDENT, NEWLINE — never a nested SEQ/CHOICE). `arms` re-peels the
- *  simplified rule and returns the choice's members, or `[]` if the body
- *  isn't a CHOICE (should not happen for a genuinely polymorph-shaped
- *  rule). `transparent` is `false` — unlike `AssembledSupertype`, a
- *  polymorph compound has its own slots and factory surface, it doesn't
- *  dispatch straight through to a subtype. */
+/** An envelope whose sole slot is a choice of leaf-shaped arms — the
+ *  variant/form dispatch surface until the enrichment overlays lift it. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph.arms`
