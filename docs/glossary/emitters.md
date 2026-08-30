@@ -14622,3 +14622,136 @@ other overlay-specific shape.
  *  `emit.ts` calls `refineAttachments` directly to populate
  *  `overlayAttachments.refines` for the shared `OVERLAY_CHAIN` mapping. */
 ```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::LiteralArm`
+
+```text
+/** A sub-factory arm backed by one literal branch of the parent's choice
+ *  slot (`op: choice('and', 'or')` yields a `LiteralArm` per string). */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::KindArm`
+
+```text
+/** A sub-factory arm backed by a child kind reachable through the parent's
+ *  choice slot. `child` is always the *direct* child under that slot, even
+ *  for a flattened entry reached through the child's own sub-factories;
+ *  `path` is empty for a direct arm and holds the chain of sub-factory
+ *  names to call on `child` to reach the flattened target otherwise. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactory`
+
+```text
+/** One named narrowing of a parent's factory: `subfactory = parent slots −
+ *  choice slot ∪ arm slots` — `residual` is every parent field except the
+ *  chosen `slot`, and the arm (`literal` or `kind`) supplies whatever the
+ *  narrowing itself fixes. `slot` is the parent's own choice slot, kept on
+ *  every entry (direct and flattened alike) so a caller can tell which
+ *  field the sub-factory narrows without re-deriving it via `choiceSlotOf`. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactoryDiagnostic`
+
+```text
+/** Recorded instead of a `SubFactory` entry when a name can't be resolved
+ *  to one canonical claimant: `ambiguous` when two or more claimants (direct
+ *  or flattened) land on the same name with no single direct winner among
+ *  them, `slot-collision` when a would-be entry's own config keys overlap
+ *  the parent's residual field keys. `claimants` lists what collided —
+ *  `'<literal>'` for a literal arm, `<kind>` for a direct kind arm,
+ *  `<child>.<path>` for a flattened one. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactorySet`
+
+```text
+/** The complete result of deriving sub-factories for one node: the
+ *  survivors in `entries`, everything dropped (and why) in `diagnostics`. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::choiceSlotOf`
+
+```text
+/** The parent's eligible choice slot, or `undefined` when there isn't
+ *  exactly one. A slot qualifies when it holds two or more values
+ *  (`values.length >= 2`) and isn't a multi/array slot (`!isMultiple`) —
+ *  a single value has nothing to choose between, and an array slot picks
+ *  a set of children rather than one arm. A node with zero or more than
+ *  one such slot has no unambiguous narrowing target, so it isn't
+ *  eligible for sub-factories at all. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armName`
+
+```text
+/** The sub-factory name a choice-slot value contributes, or `undefined`
+ *  when the value can't be named (the arm is then skipped, not defaulted).
+ *  A kind-backed value always names successfully: a hoisted compound whose
+ *  `parentKind` matches `parent.kind` contributes its own `name` (the
+ *  variant name enrich minted it under); every other kind-backed value
+ *  contributes the suffix `prefixNamedSuffix(parent.kind, child.kind)`
+ *  strips off the parent's kind prefix, or — when the child's kind doesn't
+ *  carry that prefix — the child's own kind with any leading `_`
+ *  stripped. A literal value names itself when it's already a valid
+ *  identifier; otherwise it falls back to the literal's resolved token
+ *  kind (`resolvedKind`, never re-derived from the literal text), and
+ *  skips entirely when neither is available. An authored `variant()` on a
+ *  literal arm never needs literal-specific handling here: enrich hoists
+ *  that arm into a `<parent>_<variant>` kind with the literal fixed
+ *  inside it, so it already takes the kind-arm branch above. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
+
+```text
+/** Derive every sub-factory `node`'s single eligible choice slot supports,
+ *  cached per `nodeMap` (a node's sub-factories never change once the
+ *  `NodeMap` is built). Ineligible parents — not slot-bearing, a list, no
+ *  raw factory, or a refined kind (its own forms already narrow it) — and
+ *  parents with no single choice slot (`choiceSlotOf` returns `undefined`)
+ *  derive to an empty set.
+ *
+ *  For each value of the choice slot: a literal value becomes a
+ *  `LiteralArm` when `armName` can name it. A kind-backed value becomes a
+ *  direct `KindArm` (`path: []`) when the child has its own raw factory,
+ *  is emitted (`opts.isEmitted`, default: everything is), and is either
+ *  slot-bearing or a text leaf — and, when that child is itself eligible,
+ *  recurses into the child's own sub-factories (guarded by a `visiting`
+ *  set against cycles) and flattens each of the child's entries `s` into
+ *  one more candidate on the parent: named `kindArmName(parent.kind,
+ *  s.arm.child)` when `s` is itself a kind arm (renaming straight from the
+ *  parent's perspective, skipping the intermediate child) or `s.name`
+ *  unchanged when `s` is a literal arm, with `arm.child` fixed to the
+ *  *direct* child and `arm.path` recording the chain of names
+ *  (`[s.name, ...s.arm.path]`) needed to reach it.
+ *
+ *  Candidates are then grouped by name. A name with exactly one candidate
+ *  keeps it. A name with several candidates keeps the sole *direct* one
+ *  (path length zero) when there is exactly one — the direct arm is the
+ *  canonical claimant, and every flattened claimant for that name is
+ *  dropped silently. Otherwise (zero or more than one direct claimant)
+ *  the name resolves to no entry and an `ambiguous` diagnostic lists every
+ *  claimant. Surviving entries are then filtered once more: an entry whose
+ *  `armConfigKeys` overlaps the parent's own residual field keys is
+ *  dropped with a `slot-collision` diagnostic instead of being emitted —
+ *  it would shadow a field the parent itself already exposes. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
+
+```text
+/** The config keys a sub-factory's arm accepts, or `'positional'` when it
+ *  takes its residual fields positionally instead of a config object. A
+ *  literal arm is always positional — the literal fixes nothing of its
+ *  own, so the call takes exactly the residual fields in declaration
+ *  order. A kind arm is positional when its *direct* child's factory
+ *  shape (`classifyFactoryShape`) is `text`, `direct`, `forwarded`,
+ *  `spread`, or `elements` — shapes that already take a single positional
+ *  value rather than a config object. Otherwise, a direct arm (empty
+ *  `path`) reports the child's own field config keys; a flattened arm
+ *  looks up the child's sub-factory named `path[0]` (whose own `path` is
+ *  already the remaining chain, by construction) and reports that
+ *  sub-factory's residual keys unioned with its `armConfigKeys`, computed
+ *  recursively the same way. */
+```
