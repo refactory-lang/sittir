@@ -14561,3 +14561,58 @@ pipeline — which falls back to string equality.
 // detection in rustTransportSlotType to map a supertype-classified slot
 // to the supertype kind that the SCC graph carries as a relay node.
 ```
+
+### `packages/codegen/src/emitters/overlays/module.ts::OVERLAY_CHAIN`
+
+```text
+/** Fixed decoration order for the factories overlay stack: `refines` wraps
+ *  `raw`, `polymorphs` wraps `refines`, `supertypes` wraps `polymorphs`.
+ *  The order is fixed rather than derived because each layer's
+ *  decorations depend on facts only available once the layer before it
+ *  has resolved — a supertype attachment reads the polymorph layer's
+ *  resolved variant surface, which reads the refine layer's resolved
+ *  refinement forms, which reads the raw builders — so reordering the
+ *  chain would reorder which facts are visible to which layer. */
+```
+
+### `packages/codegen/src/emitters/overlays/module.ts::overlayImportPath`
+
+```text
+/** The import specifier the overlay module at `OVERLAY_CHAIN[index]` uses
+ *  to reach the layer beneath it: `../raw.js` for index 0 (the first
+ *  overlay sits directly on the raw builders, one directory up from
+ *  `overlays/`), `./<OVERLAY_CHAIN[index - 1]>.js` for every later index
+ *  (each overlay after the first sits beside its predecessor inside
+ *  `overlays/`). */
+```
+
+### `packages/codegen/src/emitters/overlays/module.ts::emitOverlayModule`
+
+```text
+/** Render one overlay module's source. `export * from <importPath>`
+ *  re-exports everything from the layer beneath unchanged; for each
+ *  attachment, a same-named `export const <builder> = attachProps(...)`
+ *  then shadows the star-exported builder with a decorated one carrying
+ *  the attached props on its type and value. `export *` plus a
+ *  same-named local `export const` is legal ESM/TS — the local
+ *  declaration wins over the star re-export — so an overlay only
+ *  declares the builders it actually decorates; everything else passes
+ *  through untouched. A builder whose `props` array is empty is skipped
+ *  entirely, which is what keeps a pass-through layer trivial: no
+ *  attachments in, no local exports out, just the re-export. Prop keys
+ *  that aren't valid identifiers are JSON-quoted so they sit legally in
+ *  the decorated type's member position and the `attachProps` call's
+ *  object literal. */
+```
+
+### `packages/codegen/src/emitters/overlays/module.ts::emitFactoriesIndex`
+
+```text
+/** Render `factories/index.ts`: a single re-export pointing at the head
+ *  of the overlay chain (`overlays/<head>.js`), or at `raw.js` directly
+ *  when `head` is `undefined` (no overlay layer exists yet). Consumers
+ *  wanting the fully decorated surface import from this index;
+ *  consumers needing the raw, undecorated builders — or that must avoid
+ *  a type cycle through the overlays — import `factories/raw.js`
+ *  directly instead. */
+```

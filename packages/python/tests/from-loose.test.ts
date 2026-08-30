@@ -9,7 +9,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
-import * as F from '../src/factories.js';
+import * as F from '../src/factories/index.js';
 import { TSKindId } from '../src/types.js';
 
 describe('loose from() — string input for leaf-typed fields (T052d-i)', () => {

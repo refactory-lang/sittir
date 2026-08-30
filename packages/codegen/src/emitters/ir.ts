@@ -61,7 +61,7 @@ export function emitIr(config: EmitIrConfig): string {
 		'// straight to an entry, use the typed wrapper (`readTreeNode`) so the',
 		'// entry sees a wrapped node and takes the identity quick-return path.',
 		'',
-		"import * as F from './factories.js';",
+		"import * as F from './factories/index.js';",
 		"import * as FR from './from.js';",
 		"import { attachProps } from './utils.js';",
 		''

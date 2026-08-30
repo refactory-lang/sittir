@@ -128,9 +128,9 @@ export interface ExerciseOptions {
 
 const COMMON_MODULE_PATH = '../validate/common.ts';
 const FACTORY_MODULE_PATHS: Record<GrammarName, string> = {
-	rust: '../../../rust/src/factories.ts',
-	typescript: '../../../typescript/src/factories.ts',
-	python: '../../../python/src/factories.ts'
+	rust: '../../../rust/src/factories/raw.ts',
+	typescript: '../../../typescript/src/factories/raw.ts',
+	python: '../../../python/src/factories/raw.ts'
 };
 const BUILTIN_CASES: Record<GrammarName, readonly ExerciseCase[]> = {
 	rust: [

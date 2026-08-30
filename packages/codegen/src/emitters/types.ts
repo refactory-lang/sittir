@@ -283,7 +283,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	if (/\bF\$\./.test(body)) {
-		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories.js';`);
+		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);

@@ -24,6 +24,7 @@ import {
 	classifyWrapEmission,
 	warnSkippedParserSymbol
 } from './shared.ts';
+import { emitOverlayModule, emitFactoriesIndex, overlayImportPath } from './overlays/module.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -40,6 +41,8 @@ export interface EmitAllConfig {
 
 export interface EmitAllResult {
 	factories: string;
+	overlays: { refines: string; polymorphs: string; supertypes: string };
+	factoriesIndex: string;
 	from: string;
 	wrap: string;
 	types: string;
@@ -136,8 +139,17 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 
+	const overlays = {
+		refines: emitOverlayModule({ importPath: overlayImportPath(0), attachments: [] }),
+		polymorphs: emitOverlayModule({ importPath: overlayImportPath(1), attachments: [] }),
+		supertypes: emitOverlayModule({ importPath: overlayImportPath(2), attachments: [] })
+	};
+	const factoriesIndex = emitFactoriesIndex('supertypes');
+
 	return {
 		factories,
+		overlays,
+		factoriesIndex,
 		from,
 		wrap,
 		types,

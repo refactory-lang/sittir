@@ -44,6 +44,8 @@ export interface GeneratedFiles {
 	renderEngine: string;
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
+	overlays: { refines: string; polymorphs: string; supertypes: string };
+	factoriesIndex: string;
 	wrap: string;
 	utils: string;
 	from: string;
@@ -172,6 +174,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		types: emitted.types,
 		jinjaTemplates: emitted.jinjaTemplates,
 		factories: emitted.factories,
+		overlays: emitted.overlays,
+		factoriesIndex: emitted.factoriesIndex,
 		wrap: emitted.wrap,
 		utils: emitted.utils,
 		from: emitted.from,

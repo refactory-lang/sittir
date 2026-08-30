@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import * as F from '../src/factories.js';
+import * as F from '../src/factories/index.js';
 import type { LineComment } from '../src/types.js';
 
 function makeFn(name: string) {

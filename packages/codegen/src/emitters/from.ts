@@ -112,7 +112,7 @@ function emitNamespaceImports(
 	usesKindLiteralText: boolean,
 	usesAttachProps: boolean
 ): void {
-	lines.push(`import * as F from './factories.js';`);
+	lines.push(`import * as F from './factories/index.js';`);
 	lines.push(`import type * as T from './types.js';`);
 	if (kindEntries) {
 		const valueImports = ['TSKindId', ...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []), 'Delimiter'];

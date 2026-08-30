@@ -13,7 +13,7 @@ import type {
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
-import type * as F$ from './factories.js';
+import type * as F$ from './factories/raw.js';
 
 export type { PythonGrammar };
 

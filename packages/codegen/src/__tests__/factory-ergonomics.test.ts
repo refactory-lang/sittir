@@ -44,7 +44,7 @@ describe('factory ergonomics', () => {
 		it('emits direct-value signature for single-field-no-children factories', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// label's sole slot holds a single concrete kind, so the factory is
 			// the FORWARDED refinement of the direct form: a public wrapper
 			// accepting the child or the child's constructor args, over a
@@ -68,7 +68,7 @@ describe('factory ergonomics', () => {
 		it('keeps config form for single-field-with-children factories', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// block has label (1 field) + children — must keep config form
 			expect(content).toMatch(/export function buildBlock\(config/);
 		});
@@ -76,7 +76,7 @@ describe('factory ergonomics', () => {
 		it('emits $with setter that calls factory with direct value', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
 			// Find the label factory implementation and check its $with block
 			const labelMatch = content.match(/function _buildLabel\(value[\s\S]*?\n\}/);

@@ -220,7 +220,14 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'engine.ts'), result.engine);
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'types.ts'), result.types);
-	await writeFile(join(outDir, 'factories.ts'), result.factories);
+	const factoriesDir = join(outDir, 'factories');
+	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
+	rmSync(join(outDir, 'factories.ts'), { force: true });
+	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'overlays', 'refines.ts'), result.overlays.refines);
+	await writeFile(join(factoriesDir, 'overlays', 'polymorphs.ts'), result.overlays.polymorphs);
+	await writeFile(join(factoriesDir, 'overlays', 'supertypes.ts'), result.overlays.supertypes);
+	await writeFile(join(factoriesDir, 'index.ts'), result.factoriesIndex);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
 	await writeFile(join(outDir, 'from.ts'), result.from);
@@ -369,7 +376,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	console.log(`
 Done! Generated:
-  templates/*.jinja, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  templates/*.jinja, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
 	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
