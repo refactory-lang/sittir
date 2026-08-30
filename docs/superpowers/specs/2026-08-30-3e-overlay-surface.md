@@ -31,31 +31,51 @@ composition — a second, private "forms on a builder" mechanism.
 
 ### One principle
 
-**A raw builder is decorated, never rewritten.** The core `factories`
-emitter keeps producing plain builders. Each ergonomic layer is a separate
-generated module that imports the previous layer's exports, attaches
-properties onto the builders it decorates (`attachProps`), and re-exports
-everything. Consumers import the top of the chain. No layer changes a
-builder's own signature, storage, `from()`, wrap, transport, render, or the
-validators — the overlays are surface only, and there is no wire change.
+**Bundles are plain objects; overlays are static wiring; one method per
+builder.** The core emitters keep producing plain strict builders and plain
+coercers. A *bundle* pairs the two for one kind — `{ strict, coerce }`,
+made by the one generic `bundle()` helper — and every ergonomic layer
+decorates bundles by object spread, never by mutating a function. A
+sub-factory's mechanics ("build the child, seat it in the parent slot")
+are identical for the strict and coerce flavors, so each sub-factory is
+ONE module-local method in the generated overlay — its slot key, fixed
+value, and destructure list baked in statically, generic only over the
+(parent, child) function pair — applied twice: once to the strict pair,
+once to the coerce pair. Bundling and the final hoisting are the only
+dynamic stages (`bundle()` and `hoist()` in `utils.ts`), because they are
+uniform across all kinds. No TypeScript `namespace` merging, no
+`attachProps`-style property definition on imported functions, no
+hand-assembled type unions — types fall out of generic inference over the
+paired function types. Where a child has no emitted coercer, the coerce
+application seats the child's strict builder inside the parent's coercer.
+No layer changes storage, wrap, transport, render, or the validators — the
+overlays are surface only, and there is no wire change.
 
 ### Generated layout (per grammar, under `packages/<lang>/src/`)
 
 ```
-factories/raw.ts                  the plain builders (today's factories.ts, unchanged content)
-factories/overlays/refines.ts     imports ../raw.js        → refine-form factories attached
-factories/overlays/polymorphs.ts  imports ./refines.js     → arm sub-factories and enum members attached
-factories/overlays/supertypes.ts  imports ./polymorphs.js  → grouped namespaces
-factories/index.ts                re-exports ./overlays/supertypes.js — the public strict surface
+factories/raw.ts                  the plain strict builders (today's factories.ts, unchanged content)
+factories/coerce.ts               the coercers and per-field resolvers (formerly from.ts, unchanged content)
+factories/bundle.ts               one line per kind: export const <irKey> = bundle(F.build<X>, C.coerceTo<X>)
+factories/overlays/refines.ts     spreads bundles, wires refine-form factories (static)
+factories/overlays/polymorphs.ts  spreads the refines layer; one method per sub-factory, applied to both flavors (static)
+factories/overlays/supertypes.ts  grouped namespaces over the decorated bundles (static)
+factories/index.ts                hoist() — the callable, coerce-first consumer surface (dynamic)
 ```
 
-The order is fixed by dependency: the polymorph overlay must see refine-
-decorated arm builders (so `forHeader.letConst.<refineForm>` exists), and
-the supertype overlay must group fully decorated builders.
+The chain order is fixed by dependency; each layer re-exports the previous
+one and shadows only the bundles it decorates, carrying lower props forward
+by spread (`{ ...B.x, docInner: form(B.x, B.xDocInner) }`).
 
-`ir.ts` and `from.ts` import `F` from `./factories/index.js`. The barrel
-(`index.ts`) exports the decorated surface, never `raw`. Tests that pin the
-plain shape import `factories/raw.ts` explicitly.
+**Below `index.ts`, the caller always chooses a flavor** — every layer's
+surface point is a plain `{ strict, coerce }` pair. `factories/index.ts`
+is the final, dynamic step: `hoist()` wraps each decorated bundle as a
+callable whose bare call is the coerce flavor, recursively (sub-factory
+pairs hoist the same way), with `.strict` always reachable — so the
+consumer surface keeps today's shapes: `ir.x(...)` (loose),
+`ir.x.strict(...)`, `ir.x.docInner(' hi')`, `ir.x.docInner.strict(' hi')`.
+`ir.ts` assembles the `ir` object from `factories/index.js` by reference
+and emits no composition logic of its own.
 
 ### Derivation sources
 
@@ -108,14 +128,17 @@ only how the merged set is produced (an envelope parent contributes no
 residual; a branch contributes its residual; the child contributes its own
 slots, or none for a literal arm).
 
-Consequences:
+Consequences (each shape is one generic combinator, applied twice — once
+over the strict pair, once over the coerce pair):
 
-- envelope parent: the constructor is the arm factory's own signature,
-  wrapped — `lineComment.docInner(' hi')`, `visibilityModifier.inPath(path)`;
-- branch parent, literal arm: `Omit<Config, slot>` —
-  `binaryExpression.ampAmp({ left, right })`;
-- branch parent, config arm: one merged config; the overlay splits keys by
-  owner, builds the arm, builds the parent with the arm in the choice slot.
+- envelope parent: `form(parent, child)` — the constructor is the arm
+  factory's own signature, wrapped: `lineComment.docInner.strict(' hi')`;
+- branch parent, literal arm: `member(parent, slotKey, value)` —
+  `Omit<Config, slot>`: `binaryExpression.ampAmp.strict({ left, right })`;
+  the fixed value matches the slot's storage (a kind id for kindEnum
+  storage; the child factory's product when the arm is kind-backed);
+- branch parent, config arm: the residual-merge combinator — one merged
+  config, keys split by owner, child built and seated in the choice slot.
 
 Everything stays non-positional beyond what the classifier already yields
 for the merged set; presence flags remain config fields.
@@ -132,24 +155,25 @@ never a silent shadow.
 
 ### `ir.ts` after the overlays
 
-`ir.ts` composes bundles only: `attachProps(FR.x, { strict: F.x, ...F.x })`
-— whatever an overlay attached to the decorated builder surfaces on the
-coercing bundle automatically (`ir.lineComment.docInner`,
-`ir.binaryExpression.ampAmp`, `ir.functionItem.<refineForm>`). It attaches
-the supertype overlay's groups to `ir` and emits no groups and no forms of
-its own; `bundleParts` loses its refine-form branch.
+`ir.ts` only assembles: it imports the decorated bundles from
+`factories/index.js` and builds the `ir` object (flat keys, short aliases,
+groups, synonyms) by reference. It contains no composition logic — no
+bundling, no forms, no groups of its own.
 
 ### Consumers
 
+Every consumer call names a flavor: the old `ir.x(...)` loose call becomes
+`ir.x.coerce(...)`, and `ir.x.strict(...)` keeps its meaning.
+
 | call shape | served by |
 | --- | --- |
-| `ir.lineComment.docInner(text)`, `.docOuter`, `.content` | polymorph overlay, envelope parent |
-| `ir.visibilityModifier.pub()`, `.inPath(path)`, `.self()`, `.crate()` | polymorph overlay, recursive through `_visibility_modifier_pub` / group arm |
-| `ir.expressionStatement.withSemi({ expression })` | polymorph overlay, branch parent, config arm |
-| `ir.binaryExpression.in(...)` / `.ampAmp(...)` | polymorph overlay, kind arm / literal arm |
-| `ir.statement.function(...)`, `ir.declaration.function(...)`, `ir.expression.binary(...)` | supertype overlay (hidden choice-of-kinds and supertypes) |
-| `ir.x.form.strict(...)` | bundle spread: `.strict` is the decorated builder |
-| `ir.identifier.identifier(name)` (typescript) | not served — a stale shape; rewritten to `ir.identifier(name)` |
+| `ir.lineComment.docInner.strict(text)` / `.coerce(text)`, `.docOuter`, `.content` | polymorph overlay wiring, envelope parent |
+| `ir.visibilityModifier.pub.strict()`, `.crate.strict()` | polymorph overlay wiring, recursive arm |
+| `ir.expressionStatement.withSemi.strict(expr)` | polymorph overlay wiring (forwarded child → positional) |
+| `ir.binaryExpression.ampAmp.strict({ left, right })` | member wiring, enum slot fixed |
+| `ir.statement.function.strict(...)` / `.coerce(...)`, `ir.expression.binary.*` | supertype overlay (hidden choice-of-kinds and supertypes) |
+| `ir.identifier.identifier(name)` (typescript) | not served — a stale shape; rewritten to `ir.identifier.strict(name)` |
+| `binaryExpression.in`, `visibilityModifier.inPath` | deferred: the `in` arm rename trips the typescript LR conflict table (`for (var x = e in …)`), and `inPath` sits behind the pre-existing `_visibility_modifier_pub_parens` phantom — both tracked outside this design |
 
 Type-level access paths (`NamespaceMap`, `ConfigFor`, `FluentFor`) are
 untouched: the overlays add properties to values, not members to the type

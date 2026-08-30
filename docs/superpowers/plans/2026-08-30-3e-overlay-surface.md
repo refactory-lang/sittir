@@ -10,6 +10,17 @@
 
 **Spec:** `docs/superpowers/specs/2026-08-30-3e-overlay-surface.md`
 
+> **Architecture revision (2026-08-30, supersedes Tasks 2/3/5 as written):**
+> bundles are plain `{ strict, coerce }` objects made by one generic
+> `bundle()` helper; sub-factories are generic combinators (`form`,
+> `member`, residual-merge) applied identically to both flavors; overlays
+> decorate bundles by object spread (no `attachProps`, no namespace
+> merging, no callable bundles); `from.ts` moves to `factories/coerce.ts`;
+> a new `factories/bundle.ts` holds the per-kind bundle lines; `ir.ts`
+> only assembles. The spec's "One principle" and layout sections are the
+> authority; the task texts below predate the revision and are being
+> executed inline by the controller against the revised spec.
+
 ## Global Constraints
 
 - Never hand-edit generated output: `packages/{rust,python,typescript}/src/*`, `templates/*.jinja`, `.sittir/*`, `overrides.suggested.ts`. Regenerate with `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <rust|typescript|python> --all --output packages/<lang>/src`.
