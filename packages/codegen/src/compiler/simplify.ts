@@ -21,7 +21,7 @@ import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.t
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
-import { withAttrsFrom, sharedArmAttrs, absorbIds } from '../dsl/rule-attrs.ts';
+import { withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { attributeBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -132,15 +132,15 @@ function positionsAreMergeable(position: readonly RenderRule[]): boolean {
 	if (first.type === STRING) {
 		return position.every((p) => p.type === STRING && p.value === first.value);
 	}
-	const firstJson = JSON.stringify(first);
-	return position.every((p) => JSON.stringify(p) === firstJson);
+	const firstKey = structuralKey(first);
+	return position.every((p) => structuralKey(p) === firstKey);
 }
 
 function dedupeByJson(rules: readonly RenderRule[]): RenderRule[] {
 	const seen = new Set<string>();
 	const out: RenderRule[] = [];
 	for (const r of rules) {
-		const key = JSON.stringify(r);
+		const key = structuralKey(r);
 		if (seen.has(key)) continue;
 		seen.add(key);
 		out.push(r);
@@ -149,7 +149,7 @@ function dedupeByJson(rules: readonly RenderRule[]): RenderRule[] {
 }
 
 export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
-	return JSON.stringify(a) === JSON.stringify(b);
+	return structuralKey(a) === structuralKey(b);
 }
 
 export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {

@@ -1646,9 +1646,10 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'token' as const;
+	readonly #word: boolean;
 
 	override get word(): boolean {
-		return true;
+		return this.#word;
 	}
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
@@ -1661,9 +1662,11 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 			irKey?: string;
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
+			word?: boolean;
 		}
 	) {
 		super(kind, rule, opts);
+		this.#word = opts?.word ?? true;
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;

@@ -331,7 +331,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case STRING:
 			const stringFieldName = (rule as { fieldName?: string }).fieldName;
-			if (stringFieldName !== undefined) {
+			if (rule.nonterminal === true && stringFieldName !== undefined) {
 				return emitScalarSlot(stringFieldName.toLowerCase());
 			}
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {

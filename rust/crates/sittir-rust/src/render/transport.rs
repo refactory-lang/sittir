@@ -36625,7 +36625,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -40107,7 +40107,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -40680,7 +40680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -42055,7 +42055,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -44084,7 +44084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,

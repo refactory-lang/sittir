@@ -11110,18 +11110,11 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// If a string literal carries `fieldName` (stamped by flatten
-// when peeling a field() wrapper), emit it as a slot reference rather
-// than the literal value. This makes
-// `field('operator', string('&&'))` emit `{{ operator }}` instead of
-// `&&` for field-wrapped operator strings.
-//
-// The original code also required `nonterminal: true`, but that
-// attribute is only stamped by the DSL enrich pass (dsl/enrich.ts)
-// and is NOT propagated by flatten at emitter time. Since
-// `fieldName` on a string can only come from flatten peeling a
-// `field()` wrapper, the `nonterminal` check is redundant and
-// incorrect — the presence of `fieldName` is sufficient.
+// A string literal is a slot reference only when it is a slot:
+// `nonterminal: true` (a repeated literal, or an arm of a choice —
+// `attributeBuilder`'s table). A field name alone never makes a
+// literal a slot; a fielded single literal is `false` and renders as
+// its text.
 ```
 
 #### body

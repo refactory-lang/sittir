@@ -60,9 +60,9 @@ export interface TokenBuilder<P extends PhaseName> {
 }
 
 export interface PrecBuilder<P extends PhaseName> {
-	(value: number, content: Rule<P>): Rule<P>;
-	left(value: number, content: Rule<P>): Rule<P>;
-	right(value: number, content: Rule<P>): Rule<P>;
+	(value: number | string, content: Rule<P>): Rule<P>;
+	left(value: number | string, content: Rule<P>): Rule<P>;
+	right(value: number | string, content: Rule<P>): Rule<P>;
 	dynamic(value: number, content: Rule<P>): Rule<P>;
 }
 
@@ -93,9 +93,9 @@ export interface StructuralToken extends TokenBuilder<'evaluate'> {
 }
 
 export interface StructuralPrec extends PrecBuilder<'evaluate'> {
-	(value: number, content: Rule<'evaluate'>): PrecRule<'evaluate'>;
-	left(value: number, content: Rule<'evaluate'>): PrecLeftRule<'evaluate'>;
-	right(value: number, content: Rule<'evaluate'>): PrecRightRule<'evaluate'>;
+	(value: number | string, content: Rule<'evaluate'>): PrecRule<'evaluate'>;
+	left(value: number | string, content: Rule<'evaluate'>): PrecLeftRule<'evaluate'>;
+	right(value: number | string, content: Rule<'evaluate'>): PrecRightRule<'evaluate'>;
 	dynamic(value: number, content: Rule<'evaluate'>): PrecDynamicRule<'evaluate'>;
 }
 
@@ -123,9 +123,9 @@ export interface AttributeToken extends TokenBuilder<'normalize'> {
 }
 
 export interface AttributePrec extends PrecBuilder<'normalize'> {
-	<R extends Built>(value: number, content: R): R;
-	left<R extends Built>(value: number, content: R): R;
-	right<R extends Built>(value: number, content: R): R;
+	<R extends Built>(value: number | string, content: R): R;
+	left<R extends Built>(value: number | string, content: R): R;
+	right<R extends Built>(value: number | string, content: R): R;
 	dynamic<R extends Built>(value: number, content: R): R;
 }
 
@@ -154,10 +154,10 @@ const structuralToken: StructuralToken = Object.assign(
 );
 
 const structuralPrec: StructuralPrec = Object.assign(
-	(value: number, content: Structural): PrecRule<'evaluate'> => ({ type: 'PREC', content, value }),
+	(value: number | string, content: Structural): PrecRule<'evaluate'> => ({ type: 'PREC', content, value }),
 	{
-		left: (value: number, content: Structural): PrecLeftRule<'evaluate'> => ({ type: 'PREC_LEFT', content, value }),
-		right: (value: number, content: Structural): PrecRightRule<'evaluate'> => ({ type: 'PREC_RIGHT', content, value }),
+		left: (value: number | string, content: Structural): PrecLeftRule<'evaluate'> => ({ type: 'PREC_LEFT', content, value }),
+		right: (value: number | string, content: Structural): PrecRightRule<'evaluate'> => ({ type: 'PREC_RIGHT', content, value }),
 		dynamic: (value: number, content: Structural): PrecDynamicRule<'evaluate'> => ({
 			type: 'PREC_DYNAMIC',
 			content,
@@ -364,7 +364,7 @@ const attributeToken: AttributeToken = Object.assign(
 
 const attributePrecOf =
 	(kind: PrecKind) =>
-	<R extends Built>(value: number, content: R): R => ({ ...content, prec: { kind, value } });
+	<R extends Built>(value: number | string, content: R): R => ({ ...content, prec: { kind, value } });
 
 const attributePrec: AttributePrec = Object.assign(attributePrecOf(undefined), {
 	left: attributePrecOf('left'),

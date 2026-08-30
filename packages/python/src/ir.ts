@@ -930,6 +930,8 @@ export const parameter: {
 	readonly typedDefault: typeof _b$typedDefaultParameter;
 	readonly listSplat: typeof _b$listSplatPattern;
 	readonly tuple: typeof _b$tuplePattern;
+	readonly keywordSeparator: typeof F.buildKeywordSeparator;
+	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly dictionarySplat: typeof _b$dictionarySplatPattern;
 } = {
 	identifier: F.buildIdentifier,
@@ -938,6 +940,8 @@ export const parameter: {
 	typedDefault: _b$typedDefaultParameter,
 	listSplat: _b$listSplatPattern,
 	tuple: _b$tuplePattern,
+	keywordSeparator: F.buildKeywordSeparator,
+	positionalSeparator: F.buildPositionalSeparator,
 	dictionarySplat: _b$dictionarySplatPattern
 };
 
@@ -999,6 +1003,7 @@ export const primaryExpression: {
 	readonly tuple: typeof _b$tuple;
 	readonly parenthesized: typeof _b$parenthesizedExpression;
 	readonly generator: typeof _b$generatorExpression;
+	readonly ellipsis: typeof F.buildEllipsis;
 	readonly listSplat: typeof _b$listSplatPattern;
 } = {
 	await: _b$await,
@@ -1024,6 +1029,7 @@ export const primaryExpression: {
 	tuple: _b$tuple,
 	parenthesized: _b$parenthesizedExpression,
 	generator: _b$generatorExpression,
+	ellipsis: F.buildEllipsis,
 	listSplat: _b$listSplatPattern
 };
 
@@ -1141,12 +1147,16 @@ export const ir: {
 	readonly comprehensionClauses: typeof _b$comprehensionClauses;
 	readonly printStatementArm1: typeof _b$printStatementArm1;
 	readonly printStatementArm2: typeof _b$printStatementArm2;
+	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
 	readonly continueStatement: typeof F.buildContinueStatement;
+	readonly ellipsis: typeof F.buildEllipsis;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
+	readonly positionalSeparator: typeof F.buildPositionalSeparator;
+	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly typeConversion: typeof F.buildTypeConversion;
@@ -1315,12 +1325,16 @@ export const ir: {
 	printStatementArm2: _b$printStatementArm2,
 
 	// Keyword factories
+	wildcardImport: F.buildWildcardImport,
 	passStatement: F.buildPassStatement,
 	breakStatement: F.buildBreakStatement,
 	continueStatement: F.buildContinueStatement,
+	ellipsis: F.buildEllipsis,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
+	positionalSeparator: F.buildPositionalSeparator,
+	keywordSeparator: F.buildKeywordSeparator,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,

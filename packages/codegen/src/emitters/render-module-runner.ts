@@ -4,7 +4,7 @@ import type { EmittedTemplates } from './templates.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
-import { AssembledSupertype } from '../compiler/model/node-map.ts';
+import { AssembledKeyword, AssembledSupertype } from '../compiler/model/node-map.ts';
 
 export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
@@ -29,7 +29,7 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				renderModuleEmitter.emitLeaf?.(node);
 				break;
 			case 'token':
-				if (node.word) {
+				if (node instanceof AssembledKeyword) {
 					templateEmitter.emitLeaf?.(node);
 					renderModuleEmitter.emitLeaf?.(node);
 				}

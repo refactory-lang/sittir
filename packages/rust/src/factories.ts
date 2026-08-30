@@ -93,6 +93,21 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): Sour
 	);
 }
 
+export type EmptyStatementBuildArgs = [];
+export type EmptyStatementLooseArgs = [];
+
+export function buildEmptyStatement() {
+	return withMethods(
+		{
+			$type: TSKindId.EmptyStatement as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: ';' as const
+		},
+		methodsEngine
+	);
+}
+
 export type ExpressionStatementBuildArgs = [
 	value:
 		| T.ExpressionStatementWithSemi
@@ -3229,6 +3244,21 @@ function _buildTupleType(value: T.TupleTypeElements): TupleTypeBuilt {
 	);
 }
 
+export type UnitTypeBuildArgs = [];
+export type UnitTypeLooseArgs = [];
+
+export function buildUnitType() {
+	return withMethods(
+		{
+			$type: TSKindId.UnitType as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '( )' as const
+		},
+		methodsEngine
+	);
+}
+
 export type GenericFunctionBuildArgs = [config: T.GenericFunction.Config];
 export type GenericFunctionLooseArgs = [config: T.GenericFunction.Loose];
 
@@ -3611,6 +3641,21 @@ export function buildPointerType(config: T.PointerType.Config): PointerTypeBuilt
 				type: () => _type
 			}
 		),
+		methodsEngine
+	);
+}
+
+export type NeverTypeBuildArgs = [];
+export type NeverTypeLooseArgs = [];
+
+export function buildNeverType() {
+	return withMethods(
+		{
+			$type: TSKindId.NeverType as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '!' as const
+		},
 		methodsEngine
 	);
 }
@@ -4797,6 +4842,21 @@ export const buildTupleExpression = attachProps(buildTupleExpression$impl, {
 			)(...args) as T.TupleExpressionElements
 		})
 });
+
+export type UnitExpressionBuildArgs = [];
+export type UnitExpressionLooseArgs = [];
+
+export function buildUnitExpression() {
+	return withMethods(
+		{
+			$type: TSKindId.UnitExpression as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '( )' as const
+		},
+		methodsEngine
+	);
+}
 
 export type StructExpressionBuildArgs = [config: T.StructExpression.Config];
 export type StructExpressionLooseArgs = [config: T.StructExpression.Loose];
@@ -6397,6 +6457,21 @@ export const buildFieldPattern = attachProps(buildFieldPattern$impl, {
 	named: (config: T.FieldPatternNamed.Config) =>
 		buildFieldPattern$impl({ content: buildFieldPatternNamed(config) as T.FieldPatternNamed })
 });
+
+export type RemainingFieldPatternBuildArgs = [];
+export type RemainingFieldPatternLooseArgs = [];
+
+export function buildRemainingFieldPattern() {
+	return withMethods(
+		{
+			$type: TSKindId.RemainingFieldPattern as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '..' as const
+		},
+		methodsEngine
+	);
+}
 
 export type MutPatternBuildArgs = [value: T.Pattern];
 export type MutPatternLooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
@@ -11144,6 +11219,7 @@ export function buildErrorSentinel(text: string) {
 
 export type FluentKindMap = {
 	source_file: SourceFileBuilt;
+	empty_statement: T.EmptyStatement;
 	expression_statement: ExpressionStatementBuilt;
 	macro_definition: MacroDefinitionBuilt;
 	macro_rule: MacroRuleBuilt;
@@ -11205,6 +11281,7 @@ export type FluentKindMap = {
 	for_lifetimes: ForLifetimesBuilt;
 	function_type: FunctionTypeBuilt;
 	tuple_type: TupleTypeBuilt;
+	unit_type: T.UnitType;
 	generic_function: GenericFunctionBuilt;
 	generic_type: GenericTypeBuilt;
 	generic_type_with_turbofish: GenericTypeWithTurbofishBuilt;
@@ -11214,6 +11291,7 @@ export type FluentKindMap = {
 	type_binding: TypeBindingBuilt;
 	reference_type: ReferenceTypeBuilt;
 	pointer_type: PointerTypeBuilt;
+	never_type: T.NeverType;
 	abstract_type: AbstractTypeBuilt;
 	dynamic_type: DynamicTypeBuilt;
 	mutable_specifier: T.MutableSpecifier;
@@ -11237,6 +11315,7 @@ export type FluentKindMap = {
 	array_expression: ArrayExpressionBuilt;
 	parenthesized_expression: ParenthesizedExpressionBuilt;
 	tuple_expression: TupleExpressionBuilt;
+	unit_expression: T.UnitExpression;
 	struct_expression: StructExpressionBuilt;
 	field_initializer_list: FieldInitializerListBuilt;
 	shorthand_field_initializer: ShorthandFieldInitializerBuilt;
@@ -11274,6 +11353,7 @@ export type FluentKindMap = {
 	tuple_struct_pattern: TupleStructPatternBuilt;
 	struct_pattern: StructPatternBuilt;
 	field_pattern: FieldPatternBuilt;
+	remaining_field_pattern: T.RemainingFieldPattern;
 	mut_pattern: MutPatternBuilt;
 	range_pattern: RangePatternBuilt;
 	ref_pattern: RefPatternBuilt;
@@ -11384,6 +11464,7 @@ export type FluentKindMap = {
 
 export const _factoryMap = {
 	source_file: buildSourceFile,
+	empty_statement: buildEmptyStatement,
 	expression_statement: buildExpressionStatement,
 	macro_definition: buildMacroDefinition,
 	macro_rule: buildMacroRule,
@@ -11445,6 +11526,7 @@ export const _factoryMap = {
 	for_lifetimes: buildForLifetimes,
 	function_type: buildFunctionType,
 	tuple_type: buildTupleType,
+	unit_type: buildUnitType,
 	generic_function: buildGenericFunction,
 	generic_type: buildGenericType,
 	generic_type_with_turbofish: buildGenericTypeWithTurbofish,
@@ -11454,6 +11536,7 @@ export const _factoryMap = {
 	type_binding: buildTypeBinding,
 	reference_type: buildReferenceType,
 	pointer_type: buildPointerType,
+	never_type: buildNeverType,
 	abstract_type: buildAbstractType,
 	dynamic_type: buildDynamicType,
 	mutable_specifier: buildMutableSpecifier,
@@ -11477,6 +11560,7 @@ export const _factoryMap = {
 	array_expression: buildArrayExpression,
 	parenthesized_expression: buildParenthesizedExpression,
 	tuple_expression: buildTupleExpression,
+	unit_expression: buildUnitExpression,
 	struct_expression: buildStructExpression,
 	field_initializer_list: buildFieldInitializerList,
 	shorthand_field_initializer: buildShorthandFieldInitializer,
@@ -11514,6 +11598,7 @@ export const _factoryMap = {
 	tuple_struct_pattern: buildTupleStructPattern,
 	struct_pattern: buildStructPattern,
 	field_pattern: buildFieldPattern,
+	remaining_field_pattern: buildRemainingFieldPattern,
 	mut_pattern: buildMutPattern,
 	range_pattern: buildRangePattern,
 	ref_pattern: buildRefPattern,

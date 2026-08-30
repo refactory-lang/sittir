@@ -1974,6 +1974,15 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
+#### body
+
+```text
+// Identity rides along with the attrs: the result absorbs the original's
+// `id` (when it did not take it over) and `absorbedIds`, so a rewrite that
+// replaces a node — a literal-only seq folded to one STRING — keeps every
+// slot id the replaced subtree carried (`slotByRuleId` coverage).
+```
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::absorbIds`
 
 ```text
@@ -3106,6 +3115,14 @@ registered but later unused still counts as a sibling.
  *  spelling. On the normalize view the family is vocabulary only —
  *  precedence never reaches link (evaluate strips it), so
  *  `attributeBuilder.prec` stamps `prec` but nothing routes through it. */
+```
+
+#### body
+
+```text
+// `prec` / `prec.left` / `prec.right` take tree-sitter's named precedences
+// (`prec.left('binary_relation', …)`) as well as numbers; only
+// `prec.dynamic` is numeric.
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::RuleBuilder`
@@ -5995,3 +6012,13 @@ registered but later unused still counts as a sibling.
 // `prec.left`/`prec.right`/`prec.dynamic` around a choice-of-strings is
 // just as reusable as one wrapped in plain `prec`.
 ```
+### `packages/codegen/src/dsl/rule-attrs.ts::structuralKey`
+
+```text
+/** A rule's grammar shape as a string — `id` / `absorbedIds` (identity
+ *  provenance, distinct per occurrence) excluded. The one comparison every
+ *  structural equality goes through: `flatten`'s arm factoring,
+ *  `simplify`'s arm merge and fixpoint test. Comparing whole-rule JSON
+ *  would make every position differ by its ids. */
+```
+

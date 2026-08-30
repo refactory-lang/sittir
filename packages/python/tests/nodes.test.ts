@@ -169,6 +169,15 @@ describe('aliased_import', () => {
 	});
 });
 
+describe('wildcard_import', () => {
+	it('factory produces keyword', () => {
+		const node = ir.wildcardImport();
+		expect(node.$type).toBe(TSKindId.WildcardImport);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('*');
+	});
+});
+
 describe('print_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.printStatement({
@@ -2087,6 +2096,15 @@ describe('slice namespaced constructors', () => {
 	});
 });
 
+describe('ellipsis', () => {
+	it('factory produces keyword', () => {
+		const node = ir.ellipsis();
+		expect(node.$type).toBe(TSKindId.Ellipsis);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('...');
+	});
+});
+
 describe('call', () => {
 	it('factory produces correct type', () => {
 		const node = ir.call({
@@ -2875,6 +2893,24 @@ describe('line_continuation', () => {
 		expect(node.$type).toBe(TSKindId.LineContinuation);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('test');
+	});
+});
+
+describe('positional_separator', () => {
+	it('factory produces keyword', () => {
+		const node = ir.positionalSeparator();
+		expect(node.$type).toBe(TSKindId.PositionalSeparator);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('/');
+	});
+});
+
+describe('keyword_separator', () => {
+	it('factory produces keyword', () => {
+		const node = ir.keywordSeparator();
+		expect(node.$type).toBe(TSKindId.KeywordSeparator);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('*');
 	});
 });
 

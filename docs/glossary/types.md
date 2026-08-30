@@ -1299,12 +1299,12 @@ narrowing guard.
 ```text
 // All stamped attributes below are populated by
 // `flattenRules` (Normalize) — the structured `separator`
-// object included: wrapper-deletion carries the repeat node's own
-// link-lifted `separator` object across unchanged as it deletes
-// the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>
-// share this identical nested shape). None of them exist on
-// evaluate/link views' RuleBase (they exist on the repeat/repeat1
-// wrapper nodes themselves pre-deletion).
+// object included: `flatten` rebuilds the separator's own `value`
+// bottom-up (`withSeparator`) and keeps the placement flags
+// (`trailing` / `leading` / `terminated`) as the repeat wrapper
+// carried them. None of them exist on evaluate/link views'
+// RuleBase (they exist on the repeat/repeat1 wrapper nodes
+// themselves pre-flatten).
 ```
 
 ### `packages/codegen/src/types/rule.ts::RuleBase.separator.terminated`

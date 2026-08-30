@@ -12809,12 +12809,14 @@
       "kind": "empty_statement",
       "modelType": "token",
       "typeName": "EmptyStatement",
+      "factoryName": "emptyStatement",
       "irKey": "emptyStatement",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "word": false,
-      "text": ";"
+      "text": ";",
+      "factoryShape": "text"
     },
     {
       "kind": "enum",
@@ -13106,12 +13108,14 @@
       "kind": "existential_type",
       "modelType": "token",
       "typeName": "ExistentialType",
+      "factoryName": "existentialType",
       "irKey": "existentialType",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "word": false,
-      "text": "*"
+      "text": "*",
+      "factoryShape": "text"
     },
     {
       "kind": "export",
@@ -19289,12 +19293,14 @@
       "kind": "optional_chain",
       "modelType": "token",
       "typeName": "OptionalChain",
+      "factoryName": "optionalChain",
       "irKey": "optionalChain",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
       "word": false,
-      "text": "?."
+      "text": "?.",
+      "factoryShape": "text"
     },
     {
       "kind": "optional_parameter",

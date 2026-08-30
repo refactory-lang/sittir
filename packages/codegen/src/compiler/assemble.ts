@@ -199,10 +199,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					if (simplifiedRule.type !== STRING) {
 						throw new Error(`[assemble] token kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 					}
+					const word = matchesWordShape(simplifiedRule.value, wordMatcherRegex);
+					const named = !kind.startsWith('_') && findEntryForKindName(kindEntries, kind)?.anon !== true;
 					nodes.set(
 						kind,
-						matchesWordShape(simplifiedRule.value, wordMatcherRegex)
-							? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
+						word || named
+							? new AssembledKeyword(kind, simplifiedRule, { kindEntries, word })
 							: new AssembledToken(kind, simplifiedRule, { kindEntries })
 					);
 					break;

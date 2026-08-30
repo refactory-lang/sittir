@@ -15,6 +15,15 @@ describe('source_file', () => {
 	});
 });
 
+describe('empty_statement', () => {
+	it('factory produces keyword', () => {
+		const node = ir.emptyStatement();
+		expect(node.$type).toBe(TSKindId.EmptyStatement);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe(';');
+	});
+});
+
 describe('expression_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.expressionStatement({
@@ -1261,6 +1270,15 @@ describe('tuple_type', () => {
 	});
 });
 
+describe('unit_type', () => {
+	it('factory produces keyword', () => {
+		const node = ir.unitType();
+		expect(node.$type).toBe(TSKindId.UnitType);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('( )');
+	});
+});
+
 describe('generic_function', () => {
 	it('factory produces correct type', () => {
 		const node = ir.genericFunction({
@@ -1532,6 +1550,15 @@ describe('pointer_type', () => {
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('never_type', () => {
+	it('factory produces keyword', () => {
+		const node = ir.neverType();
+		expect(node.$type).toBe(TSKindId.NeverType);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('!');
 	});
 });
 
@@ -2304,6 +2331,15 @@ describe('tuple_expression namespaced constructors', () => {
 	});
 });
 
+describe('unit_expression', () => {
+	it('factory produces keyword', () => {
+		const node = ir.unitExpression();
+		expect(node.$type).toBe(TSKindId.UnitExpression);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('( )');
+	});
+});
+
 describe('struct_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.structExpression({
@@ -2906,6 +2942,15 @@ describe('field_pattern namespaced constructors', () => {
 		});
 		expect(node.$type).toBe(TSKindId.FieldPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('remaining_field_pattern', () => {
+	it('factory produces keyword', () => {
+		const node = ir.remainingFieldPattern();
+		expect(node.$type).toBe(TSKindId.RemainingFieldPattern);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('..');
 	});
 });
 

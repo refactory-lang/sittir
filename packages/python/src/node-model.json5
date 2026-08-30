@@ -7232,12 +7232,14 @@
       "kind": "ellipsis",
       "modelType": "token",
       "typeName": "Ellipsis",
+      "factoryName": "ellipsis",
       "irKey": "ellipsis",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "word": false,
-      "text": "..."
+      "text": "...",
+      "factoryShape": "text"
     },
     {
       "kind": "else",
@@ -9422,12 +9424,14 @@
       "kind": "keyword_separator",
       "modelType": "token",
       "typeName": "KeywordSeparator",
+      "factoryName": "keywordSeparator",
       "irKey": "keywordSeparator",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "word": false,
-      "text": "*"
+      "text": "*",
+      "factoryShape": "text"
     },
     {
       "kind": "lambda",
@@ -10789,12 +10793,14 @@
       "kind": "positional_separator",
       "modelType": "token",
       "typeName": "PositionalSeparator",
+      "factoryName": "positionalSeparator",
       "irKey": "positionalSeparator",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "word": false,
-      "text": "/"
+      "text": "/",
+      "factoryShape": "text"
     },
     {
       "kind": "primary_expression",
@@ -13020,12 +13026,14 @@
       "kind": "wildcard_import",
       "modelType": "token",
       "typeName": "WildcardImport",
+      "factoryName": "wildcardImport",
       "irKey": "wildcardImport",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "word": false,
-      "text": "*"
+      "text": "*",
+      "factoryShape": "text"
     },
     {
       "kind": "with",

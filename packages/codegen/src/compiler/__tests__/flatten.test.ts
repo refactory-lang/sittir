@@ -229,3 +229,21 @@ describe('separator sub-rules get the same push-down as ordinary content', () =>
 		expect(out.separator.value.members[0]!.type).toBe('STRING');
 	});
 });
+
+describe('flatten — rule identity', () => {
+	it('an outer wrapper id wins over its content id', () => {
+		const out = flatten({ type: OPTIONAL, id: 'outer', content: { ...sym('x'), id: 'inner' } } as Rule<'link'>);
+		expect(out.id).toBe('outer');
+	});
+
+	it('a built node keeps its own id when the wrapper has none', () => {
+		const out = flatten({ type: OPTIONAL, content: { ...sym('x'), id: 'inner' } } as Rule<'link'>);
+		expect(out.id).toBe('inner');
+	});
+
+	it('a singleton seq collapses onto its member and carries the seq id', () => {
+		const out = flatten({ type: 'SEQ', id: 'seq', members: [{ ...sym('x'), id: 'inner' }] } as Rule<'link'>);
+		expect(out.type).toBe('SYMBOL');
+		expect(out.id).toBe('seq');
+	});
+});

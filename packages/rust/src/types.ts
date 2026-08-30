@@ -24,6 +24,7 @@ export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar
 export type LeafScalarMap = {};
 
 export type LeafStringMap = {
+	empty_statement: ';';
 	fragment_specifier:
 		| 'block'
 		| 'expr'
@@ -40,7 +41,11 @@ export type LeafStringMap = {
 		| 'tt'
 		| 'ty'
 		| 'vis';
+	unit_type: '( )';
+	never_type: '!';
 	mutable_specifier: 'mut';
+	unit_expression: '( )';
+	remaining_field_pattern: '..';
 	boolean_literal: 'true' | 'false';
 	_reserved_identifier: 'default' | 'union' | 'gen';
 	self: 'self';
@@ -5288,6 +5293,7 @@ export interface VisibilityModifierPubParens {
 }
 
 // Leaf node types
+export type EmptyStatement = Terminal<TSKindId.EmptyStatement, ';'>;
 export type FragmentSpecifier = Terminal<
 	| TSKindId.AnonBlock
 	| TSKindId.Expr
@@ -5320,7 +5326,11 @@ export type FragmentSpecifier = Terminal<
 	| 'ty'
 	| 'vis'
 >;
+export type UnitType = Terminal<TSKindId.UnitType, '( )'>;
+export type NeverType = Terminal<TSKindId.NeverType, '!'>;
 export type MutableSpecifier = Terminal<TSKindId.MutableSpecifier, 'mut'>;
+export type UnitExpression = Terminal<TSKindId.UnitExpression, '( )'>;
+export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern, '..'>;
 export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
 export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
@@ -5910,9 +5920,24 @@ export interface MatchBlockArmsTree extends AnyTreeNode {
 export interface VisibilityModifierPubParensTree extends AnyTreeNode {
 	readonly type: '_visibility_modifier_pub_parens';
 }
+export interface EmptyStatementTree extends AnyTreeNode {
+	readonly type: 'empty_statement';
+}
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
+export interface UnitTypeTree extends AnyTreeNode {
+	readonly type: 'unit_type';
+}
+export interface NeverTypeTree extends AnyTreeNode {
+	readonly type: 'never_type';
+}
 export interface MutableSpecifierTree extends AnyTreeNode {
 	readonly type: 'mutable_specifier';
+}
+export interface UnitExpressionTree extends AnyTreeNode {
+	readonly type: 'unit_expression';
+}
+export interface RemainingFieldPatternTree extends AnyTreeNode {
+	readonly type: 'remaining_field_pattern';
 }
 export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
 export interface CharLiteralTree extends TreeNode<'char_literal'> {}
@@ -6199,6 +6224,7 @@ export type DeclarationStatement =
 	| ConstItem
 	| MacroInvocation
 	| MacroDefinition
+	| EmptyStatement
 	| AttributeItem
 	| InnerAttributeItem
 	| ModItem
@@ -6221,6 +6247,7 @@ export type DeclarationStatementTree =
 	| ConstItemTree
 	| MacroInvocationTree
 	| MacroDefinitionTree
+	| EmptyStatementTree
 	| AttributeItemTree
 	| InnerAttributeItemTree
 	| ModItemTree
@@ -6280,10 +6307,12 @@ export type _Type =
 	| GenericType
 	| ScopedTypeIdentifier
 	| TupleType
+	| UnitType
 	| ArrayType
 	| FunctionType
 	| Identifier
 	| MacroInvocation
+	| NeverType
 	| DynamicType
 	| BoundedType
 	| RemovedTraitBound
@@ -6297,10 +6326,12 @@ export type _TypeTree =
 	| GenericTypeTree
 	| ScopedTypeIdentifierTree
 	| TupleTypeTree
+	| UnitTypeTree
 	| ArrayTypeTree
 	| FunctionTypeTree
 	| IdentifierTree
 	| MacroInvocationTree
+	| NeverTypeTree
 	| DynamicTypeTree
 	| BoundedTypeTree
 	| RemovedTraitBoundTree
@@ -6333,6 +6364,7 @@ export type Expression =
 	| ArrayExpression
 	| TupleExpression
 	| MacroInvocation
+	| UnitExpression
 	| BreakExpression
 	| ContinueExpression
 	| IndexExpression
@@ -6379,6 +6411,7 @@ export type ExpressionTree =
 	| ArrayExpressionTree
 	| TupleExpressionTree
 	| MacroInvocationTree
+	| UnitExpressionTree
 	| BreakExpressionTree
 	| ContinueExpressionTree
 	| IndexExpressionTree
@@ -6418,6 +6451,7 @@ export type Pattern =
 	| SlicePattern
 	| CapturedPattern
 	| ReferencePattern
+	| RemainingFieldPattern
 	| MutPattern
 	| RangePattern
 	| OrPattern
@@ -6442,6 +6476,7 @@ export type PatternTree =
 	| SlicePatternTree
 	| CapturedPatternTree
 	| ReferencePatternTree
+	| RemainingFieldPatternTree
 	| MutPatternTree
 	| RangePatternTree
 	| OrPatternTree
@@ -6477,26 +6512,6 @@ export type LiteralPatternTree =
 	| NegativeLiteralTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
-export interface EmptyStatementTree extends AnyTreeNode {
-	readonly type: 'empty_statement';
-}
-export type UnitType = Terminal<TSKindId.UnitType>;
-export interface UnitTypeTree extends AnyTreeNode {
-	readonly type: 'unit_type';
-}
-export type NeverType = Terminal<TSKindId.NeverType>;
-export interface NeverTypeTree extends AnyTreeNode {
-	readonly type: 'never_type';
-}
-export type UnitExpression = Terminal<TSKindId.UnitExpression>;
-export interface UnitExpressionTree extends AnyTreeNode {
-	readonly type: 'unit_expression';
-}
-export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
-export interface RemainingFieldPatternTree extends AnyTreeNode {
-	readonly type: 'remaining_field_pattern';
-}
 
 export type RustNode =
 	| SourceFile
@@ -6923,8 +6938,13 @@ export interface KindMap {
 	_type_argument: TypeArgument;
 	_match_block_arms: MatchBlockArms;
 	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
+	empty_statement: EmptyStatement;
 	fragment_specifier: FragmentSpecifier;
+	unit_type: UnitType;
+	never_type: NeverType;
 	mutable_specifier: MutableSpecifier;
+	unit_expression: UnitExpression;
+	remaining_field_pattern: RemainingFieldPattern;
 	integer_literal: IntegerLiteral;
 	char_literal: CharLiteral;
 	escape_sequence: EscapeSequence;

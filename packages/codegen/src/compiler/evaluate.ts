@@ -188,14 +188,14 @@ const token: TokenFn = Object.assign(
 );
 
 interface PrecFn {
-	(precedence: number, content: Input): Rule<'evaluate'>;
-	left: (precedence: number, content: Input) => Rule<'evaluate'>;
-	right: (precedence: number, content: Input) => Rule<'evaluate'>;
+	(precedence: number | string, content: Input): Rule<'evaluate'>;
+	left: (precedence: number | string, content: Input) => Rule<'evaluate'>;
+	right: (precedence: number | string, content: Input) => Rule<'evaluate'>;
 	dynamic: (precedence: number, content: Input) => Rule<'evaluate'>;
 }
 
 const prec: PrecFn = Object.assign(
-	function prec(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
+	function prec(precedenceOrContent: number | string | Input, content?: Input): Rule<'evaluate'> {
 		if (content === undefined) return coerceToRule(precedenceOrContent as Input);
 		return structuralBuilder.prec(precedenceOrContent as number, coerceToRule(content));
 	},
@@ -256,7 +256,7 @@ function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void
 
 function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
 	const content = coerceToRule(rule);
-	if (typeof value === 'string' || value.type === SYMBOL) {
+	if (typeof value === 'string' || (value !== null && typeof value === 'object' && value.type === SYMBOL)) {
 		return structuralBuilder.alias(content, value);
 	}
 	throw new Error(`Invalid alias value: ${value}`);

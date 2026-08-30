@@ -18662,7 +18662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22756,7 +22756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -25500,7 +25500,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -25605,7 +25605,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,

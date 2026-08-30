@@ -327,6 +327,18 @@ parents.
 // feedback_ruleid_backpointer.
 ```
 
+#### body
+
+```text
+// A literal-bodied kind is a keyword-class leaf (a factory, a type, a
+// union member, an `is` guard) when its text is word-shaped OR the kind is
+// a visible parser kind (a catalog entry that is neither anonymous nor a
+// hidden `_` rule): `unit_expression`, `never_type`, `empty_statement`,
+// `ellipsis`, `wildcard_import`. Only an anonymous punctuation token has no
+// surface of its own (`AssembledToken`). Word shape stays the spacing fact
+// (`AssembledKeyword.word`), not the surface fact.
+```
+
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
 
 ```text
@@ -8776,6 +8788,14 @@ source, one derivation.
 ```text
 // Both evaluate's own runtime and wire's makeSimpleDollarProxy produce
 // uppercase SYMBOL $ references, so this is a plain equality check.
+```
+
+#### body
+
+```text
+// Grammar files are untyped JavaScript: the target may be `undefined` /
+// `null`, so guard before reading `.type` and report the invalid alias
+// value instead of a property-access TypeError.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::blank`

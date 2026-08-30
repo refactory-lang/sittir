@@ -3116,3 +3116,12 @@ can't be unified.
  *  this — the class is the surface. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.word`
+
+```text
+/** Whether the keyword's text is word-shaped (`wordMatcher`) — the spacing
+ *  fact, independent of the kind's surface. A named literal kind that is
+ *  not a word (rust `unit_expression` `()`, python `ellipsis` `...`) is a
+ *  keyword-class leaf with `word: false`. */
+```
+

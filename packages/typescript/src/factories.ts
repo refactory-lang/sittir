@@ -1523,6 +1523,21 @@ export const buildThrowStatement = attachProps(buildThrowStatement$impl, {
 		buildThrowStatement$impl({ expressions: buildSequenceExpression(...children) as T.SequenceExpression })
 });
 
+export type EmptyStatementBuildArgs = [];
+export type EmptyStatementLooseArgs = [];
+
+export function buildEmptyStatement() {
+	return withMethods(
+		{
+			$type: TSKindId.EmptyStatement as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: ';' as const
+		},
+		methodsEngine
+	);
+}
+
 export type LabeledStatementBuildArgs = [config: T.LabeledStatement.Config];
 export type LabeledStatementLooseArgs = [config: T.LabeledStatement.Loose];
 
@@ -2598,6 +2613,21 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): ArrowFunctio
 				body: () => _body
 			}
 		),
+		methodsEngine
+	);
+}
+
+export type OptionalChainBuildArgs = [];
+export type OptionalChainLooseArgs = [];
+
+export function buildOptionalChain() {
+	return withMethods(
+		{
+			$type: TSKindId.OptionalChain as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '?.' as const
+		},
 		methodsEngine
 	);
 }
@@ -7523,6 +7553,21 @@ export function build_Number(config: T._Number.Config): _NumberBuilt {
 	);
 }
 
+export type ExistentialTypeBuildArgs = [];
+export type ExistentialTypeLooseArgs = [];
+
+export function buildExistentialType() {
+	return withMethods(
+		{
+			$type: TSKindId.ExistentialType as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '*' as const
+		},
+		methodsEngine
+	);
+}
+
 export type FlowMaybeTypeBuildArgs = [value: T.PrimaryType];
 export type FlowMaybeTypeLooseArgs = [
 	value: LooseValue<T.PrimaryType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
@@ -11142,6 +11187,7 @@ export type FluentKindMap = {
 	debugger_statement: DebuggerStatementBuilt;
 	return_statement: ReturnStatementBuilt;
 	throw_statement: ThrowStatementBuilt;
+	empty_statement: T.EmptyStatement;
 	labeled_statement: LabeledStatementBuilt;
 	switch_body: SwitchBodyBuilt;
 	switch_case: SwitchCaseBuilt;
@@ -11165,6 +11211,7 @@ export type FluentKindMap = {
 	generator_function: GeneratorFunctionBuilt;
 	generator_function_declaration: GeneratorFunctionDeclarationBuilt;
 	arrow_function: ArrowFunctionBuilt;
+	optional_chain: T.OptionalChain;
 	call_expression: CallExpressionBuilt;
 	new_expression: NewExpressionBuilt;
 	await_expression: AwaitExpressionBuilt;
@@ -11271,6 +11318,7 @@ export type FluentKindMap = {
 	mapped_type_clause: MappedTypeClauseBuilt;
 	literal_type: LiteralTypeBuilt;
 	_number: _NumberBuilt;
+	existential_type: T.ExistentialType;
 	flow_maybe_type: FlowMaybeTypeBuilt;
 	parenthesized_type: ParenthesizedTypeBuilt;
 	predefined_type: T.PredefinedType;
@@ -11381,6 +11429,7 @@ export const _factoryMap = {
 	debugger_statement: buildDebuggerStatement,
 	return_statement: buildReturnStatement,
 	throw_statement: buildThrowStatement,
+	empty_statement: buildEmptyStatement,
 	labeled_statement: buildLabeledStatement,
 	switch_body: buildSwitchBody,
 	switch_case: buildSwitchCase,
@@ -11404,6 +11453,7 @@ export const _factoryMap = {
 	generator_function: buildGeneratorFunction,
 	generator_function_declaration: buildGeneratorFunctionDeclaration,
 	arrow_function: buildArrowFunction,
+	optional_chain: buildOptionalChain,
 	call_expression: buildCallExpression,
 	new_expression: buildNewExpression,
 	await_expression: buildAwaitExpression,
@@ -11510,6 +11560,7 @@ export const _factoryMap = {
 	mapped_type_clause: buildMappedTypeClause,
 	literal_type: buildLiteralType,
 	_number: build_Number,
+	existential_type: buildExistentialType,
 	flow_maybe_type: buildFlowMaybeType,
 	parenthesized_type: buildParenthesizedType,
 	predefined_type: buildPredefinedType,

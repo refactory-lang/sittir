@@ -1088,6 +1088,15 @@ describe('throw_statement namespaced constructors', () => {
 	});
 });
 
+describe('empty_statement', () => {
+	it('factory produces keyword', () => {
+		const node = ir.emptyStatement();
+		expect(node.$type).toBe(TSKindId.EmptyStatement);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe(';');
+	});
+});
+
 describe('labeled_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.labeledStatement({
@@ -1499,6 +1508,15 @@ describe('arrow_function', () => {
 			body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('optional_chain', () => {
+	it('factory produces keyword', () => {
+		const node = ir.optionalChain();
+		expect(node.$type).toBe(TSKindId.OptionalChain);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('?.');
 	});
 });
 
@@ -3912,6 +3930,15 @@ describe('literal_type namespaced constructors', () => {
 		const node = ir.literalType.undefined();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('existential_type', () => {
+	it('factory produces keyword', () => {
+		const node = ir.existentialType();
+		expect(node.$type).toBe(TSKindId.ExistentialType);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('*');
 	});
 });
 

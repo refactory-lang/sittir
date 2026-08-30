@@ -25,6 +25,8 @@ export type LeafScalarMap = {};
 
 export type LeafStringMap = {
 	import: 'import';
+	empty_statement: ';';
+	optional_chain: '?.';
 	this: 'this';
 	super: 'super';
 	true: 'true';
@@ -56,6 +58,7 @@ export type LeafStringMap = {
 		| 'let';
 	accessibility_modifier: 'public' | 'private' | 'protected';
 	override_modifier: 'override';
+	existential_type: '*';
 	predefined_type:
 		| 'any'
 		| 'number'
@@ -5360,6 +5363,8 @@ export interface UpdateExpressionPrefix {
 // Leaf node types
 export type HashBangLine = Terminal<TSKindId.HashBangLine, string>;
 export type Import = Terminal<TSKindId.Import, 'import'>;
+export type EmptyStatement = Terminal<TSKindId.EmptyStatement, ';'>;
+export type OptionalChain = Terminal<TSKindId.OptionalChain, '?.'>;
 export type UnescapedDoubleStringFragment = Terminal<TSKindId.UnescapedDoubleStringFragment, string>;
 export type UnescapedSingleStringFragment = Terminal<TSKindId.UnescapedSingleStringFragment, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
@@ -5426,6 +5431,7 @@ export type AccessibilityModifier = Terminal<
 	'public' | 'private' | 'protected'
 >;
 export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
+export type ExistentialType = Terminal<TSKindId.ExistentialType, '*'>;
 export type PredefinedType = Terminal<
 	| TSKindId.Any
 	| TSKindId.AnonNumber
@@ -5802,6 +5808,12 @@ export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
 export interface ImportTree extends AnyTreeNode {
 	readonly type: 'import';
 }
+export interface EmptyStatementTree extends AnyTreeNode {
+	readonly type: 'empty_statement';
+}
+export interface OptionalChainTree extends AnyTreeNode {
+	readonly type: 'optional_chain';
+}
 export interface UnescapedDoubleStringFragmentTree extends TreeNode<'unescaped_double_string_fragment'> {}
 export interface UnescapedSingleStringFragmentTree extends TreeNode<'unescaped_single_string_fragment'> {}
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
@@ -5835,6 +5847,9 @@ export interface ReservedIdentifierTree extends AnyTreeNode {
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode {
 	readonly type: 'override_modifier';
+}
+export interface ExistentialTypeTree extends AnyTreeNode {
+	readonly type: 'existential_type';
 }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface TypeIdentifierTree extends AnyTreeNode {
@@ -6150,6 +6165,7 @@ export type Statement =
 	| ContinueStatement
 	| ReturnStatement
 	| ThrowStatement
+	| EmptyStatement
 	| LabeledStatement;
 
 export type StatementTree =
@@ -6170,6 +6186,7 @@ export type StatementTree =
 	| ContinueStatementTree
 	| ReturnStatementTree
 	| ThrowStatementTree
+	| EmptyStatementTree
 	| LabeledStatementTree;
 
 export type Expression =
@@ -6327,6 +6344,7 @@ export type PrimaryType =
 	| TypeQuery
 	| IndexTypeQuery
 	| This
+	| ExistentialType
 	| LiteralType
 	| LookupType
 	| ConditionalType
@@ -6347,6 +6365,7 @@ export type PrimaryTypeTree =
 	| TypeQueryTree
 	| IndexTypeQueryTree
 	| ThisTree
+	| ExistentialTypeTree
 	| LiteralTypeTree
 	| LookupTypeTree
 	| ConditionalTypeTree
@@ -6375,18 +6394,6 @@ export type LhsExpressionTree =
 	| NonNullExpressionTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
-export interface EmptyStatementTree extends AnyTreeNode {
-	readonly type: 'empty_statement';
-}
-export type OptionalChain = Terminal<TSKindId.OptionalChain>;
-export interface OptionalChainTree extends AnyTreeNode {
-	readonly type: 'optional_chain';
-}
-export type ExistentialType = Terminal<TSKindId.ExistentialType>;
-export interface ExistentialTypeTree extends AnyTreeNode {
-	readonly type: 'existential_type';
-}
 
 export type TypescriptNode =
 	| Program
@@ -6805,6 +6812,8 @@ export interface KindMap {
 	_update_expression_prefix: UpdateExpressionPrefix;
 	hash_bang_line: HashBangLine;
 	import: Import;
+	empty_statement: EmptyStatement;
+	optional_chain: OptionalChain;
 	unescaped_double_string_fragment: UnescapedDoubleStringFragment;
 	unescaped_single_string_fragment: UnescapedSingleStringFragment;
 	escape_sequence: EscapeSequence;
@@ -6823,6 +6832,7 @@ export interface KindMap {
 	_reserved_identifier: ReservedIdentifier;
 	accessibility_modifier: AccessibilityModifier;
 	override_modifier: OverrideModifier;
+	existential_type: ExistentialType;
 	predefined_type: PredefinedType;
 	_type_identifier: TypeIdentifier;
 	_kind: Kind;

@@ -304,13 +304,13 @@ export type ImmediateTokenRule<Phase extends PhaseName = 'evaluate'> = Phase ext
 	: never;
 
 export type PrecRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
-	? RuleBase<Phase> & { readonly type: 'PREC'; readonly content: Rule<Phase>; readonly value: number }
+	? RuleBase<Phase> & { readonly type: 'PREC'; readonly content: Rule<Phase>; readonly value: number | string }
 	: never;
 export type PrecLeftRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
-	? RuleBase<Phase> & { readonly type: 'PREC_LEFT'; readonly content: Rule<Phase>; readonly value: number }
+	? RuleBase<Phase> & { readonly type: 'PREC_LEFT'; readonly content: Rule<Phase>; readonly value: number | string }
 	: never;
 export type PrecRightRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
-	? RuleBase<Phase> & { readonly type: 'PREC_RIGHT'; readonly content: Rule<Phase>; readonly value: number }
+	? RuleBase<Phase> & { readonly type: 'PREC_RIGHT'; readonly content: Rule<Phase>; readonly value: number | string }
 	: never;
 export type PrecDynamicRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
 	? RuleBase<Phase> & { readonly type: 'PREC_DYNAMIC'; readonly content: Rule<Phase>; readonly value: number }

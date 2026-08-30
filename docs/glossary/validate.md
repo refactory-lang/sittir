@@ -196,13 +196,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-/* 'branch'/'envelope'/'list' all render via a template (`AssembledList`
-		   genuinely inherits `AbstractAssembledCompound`'s slot/template surface,
-		   not a byte-identity workaround); 'polymorph' is 'dispatch' only for a
-		   genuine `AssembledSupertype`, else 'template' (an ordinary polymorph
-		   compound). 'token' is 'text' only for `AssembledKeyword` (a named
-		   literal) — `AssembledToken` (anonymous) has no rendered surface of its
-		   own. See isSlotBearingCompound's doc comment (emitters/shared.ts). */
+/* 'branch'/'envelope'/'polymorph'/'list' all render via a template — a
+		   polymorph is an envelope whose sole slot is a union; 'supertype' is
+		   its own model type and dispatches to the subtype's template.
+		   'token' is 'text' only for `AssembledKeyword` (a named literal, word
+		   or not) — `AssembledToken` (anonymous) has no rendered surface of its
+		   own. */
 ```
 
 ### `packages/codegen/src/validate/node-types-loader.ts::module`

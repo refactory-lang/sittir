@@ -413,11 +413,11 @@ const _supertype_simpleStatement_ids = new Set<number>([
 	114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153
 ]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
-const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
+const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 235, 234, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
 const _supertype_expression_ids = new Set<number>([192, 186, 187, 193, 225, 123, 182]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	233, 188, 1, 227, 226, 69, 70, 74, 75, 76, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
+	233, 188, 1, 227, 226, 69, 70, 74, 75, 76, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 64, 180
 ]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 

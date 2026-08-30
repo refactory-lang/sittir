@@ -424,6 +424,21 @@ export function buildAliasedImport(config: T.AliasedImport.Config): AliasedImpor
 	);
 }
 
+export type WildcardImportBuildArgs = [];
+export type WildcardImportLooseArgs = [];
+
+export function buildWildcardImport() {
+	return withMethods(
+		{
+			$type: TSKindId.WildcardImport as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '*' as const
+		},
+		methodsEngine
+	);
+}
+
 export type PrintStatementBuildArgs = [value: T.PrintStatementArm1 | T.PrintStatementArm2];
 export type PrintStatementLooseArgs = [
 	value: LooseValue<T.PrintStatementArm1 | T.PrintStatementArm2, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
@@ -3845,6 +3860,21 @@ export const buildSlice = attachProps(buildSlice$impl, {
 	group: (value?: T.Expression) => buildSlice$impl({ step: buildSliceGroup(value) as T.SliceGroup })
 });
 
+export type EllipsisBuildArgs = [];
+export type EllipsisLooseArgs = [];
+
+export function buildEllipsis() {
+	return withMethods(
+		{
+			$type: TSKindId.Ellipsis as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '...' as const
+		},
+		methodsEngine
+	);
+}
+
 export type CallBuildArgs = [config: T.Call.Config];
 export type CallLooseArgs = [config: T.Call.Loose];
 
@@ -5246,6 +5276,36 @@ export function buildLineContinuation(text: string) {
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export type PositionalSeparatorBuildArgs = [];
+export type PositionalSeparatorLooseArgs = [];
+
+export function buildPositionalSeparator() {
+	return withMethods(
+		{
+			$type: TSKindId.PositionalSeparator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '/' as const
+		},
+		methodsEngine
+	);
+}
+
+export type KeywordSeparatorBuildArgs = [];
+export type KeywordSeparatorLooseArgs = [];
+
+export function buildKeywordSeparator() {
+	return withMethods(
+		{
+			$type: TSKindId.KeywordSeparator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: '*' as const
 		},
 		methodsEngine
 	);
@@ -7382,6 +7442,7 @@ export type FluentKindMap = {
 	import_from_statement: ImportFromStatementBuilt;
 	_import_list: ImportListBuilt;
 	aliased_import: AliasedImportBuilt;
+	wildcard_import: T.WildcardImport;
 	print_statement: PrintStatementBuilt;
 	chevron: ChevronBuilt;
 	assert_statement: AssertStatementBuilt;
@@ -7456,6 +7517,7 @@ export type FluentKindMap = {
 	attribute: AttributeBuilt;
 	subscript: SubscriptBuilt;
 	slice: SliceBuilt;
+	ellipsis: T.Ellipsis;
 	call: CallBuilt;
 	typed_parameter: TypedParameterBuilt;
 	type: TypeBuilt;
@@ -7495,6 +7557,8 @@ export type FluentKindMap = {
 	await: AwaitBuilt;
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
+	positional_separator: T.PositionalSeparator;
+	keyword_separator: T.KeywordSeparator;
 	_simple_statements_elements: SimpleStatementsElementsBuilt;
 	_subjects: SubjectsBuilt;
 	_case_patterns: CasePatternsBuilt;
@@ -7554,6 +7618,7 @@ export const _factoryMap = {
 	import_from_statement: buildImportFromStatement,
 	_import_list: buildImportList,
 	aliased_import: buildAliasedImport,
+	wildcard_import: buildWildcardImport,
 	print_statement: buildPrintStatement,
 	chevron: buildChevron,
 	assert_statement: buildAssertStatement,
@@ -7628,6 +7693,7 @@ export const _factoryMap = {
 	attribute: buildAttribute,
 	subscript: buildSubscript,
 	slice: buildSlice,
+	ellipsis: buildEllipsis,
 	call: buildCall,
 	typed_parameter: buildTypedParameter,
 	type: buildType,
@@ -7667,6 +7733,8 @@ export const _factoryMap = {
 	await: buildAwait,
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
+	positional_separator: buildPositionalSeparator,
+	keyword_separator: buildKeywordSeparator,
 	_simple_statements_elements: buildSimpleStatementsElements,
 	_subjects: buildSubjects,
 	_case_patterns: buildCasePatterns,

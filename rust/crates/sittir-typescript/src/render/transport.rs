@@ -40722,7 +40722,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -42061,7 +42061,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -42082,7 +42082,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
                 let text = String::from_napi_value(env, napi_val)?;
                 return Ok(Self {
                     transport_source: None,
-                    transport_named: Some(false),
+                    transport_named: Some(true),
                     transport_span: None,
                     transport_node_handle: None,
                     transport_child_index: None,
@@ -42096,7 +42096,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
                 }
                 return Ok(Self {
                     transport_source: None,
-                    transport_named: Some(false),
+                    transport_named: Some(true),
                     transport_span: None,
                     transport_node_handle: None,
                     transport_child_index: None,
@@ -48880,7 +48880,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,

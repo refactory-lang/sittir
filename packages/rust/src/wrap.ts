@@ -11145,6 +11145,7 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle) {
 
 const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	[TSKindId.SourceFile]: (d, t) => wrapSourceFile(d as unknown as T.SourceFile, t),
+	[TSKindId.EmptyStatement]: (d) => ({ ...d, $type: TSKindId.EmptyStatement as const }),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.MacroDefinition]: (d, t) => wrapMacroDefinition(d as unknown as T.MacroDefinition, t),
 	[TSKindId.MacroRule]: (d, t) => wrapMacroRule(d as unknown as T.MacroRule, t),
@@ -11209,6 +11210,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForLifetimes]: (d, t) => wrapForLifetimes(d as unknown as T.ForLifetimes, t),
 	[TSKindId.FunctionType]: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
 	[TSKindId.TupleType]: (d, t) => wrapTupleType(d as unknown as T.TupleType, t),
+	[TSKindId.UnitType]: (d) => ({ ...d, $type: TSKindId.UnitType as const }),
 	[TSKindId.GenericFunction]: (d, t) => wrapGenericFunction(d as unknown as T.GenericFunction, t),
 	[TSKindId.GenericType]: (d, t) => wrapGenericType(d as unknown as T.GenericType, t),
 	[TSKindId.GenericTypeWithTurbofish]: (d, t) =>
@@ -11219,6 +11221,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TypeBinding]: (d, t) => wrapTypeBinding(d as unknown as T.TypeBinding, t),
 	[TSKindId.ReferenceType]: (d, t) => wrapReferenceType(d as unknown as T.ReferenceType, t),
 	[TSKindId.PointerType]: (d, t) => wrapPointerType(d as unknown as T.PointerType, t),
+	[TSKindId.NeverType]: (d) => ({ ...d, $type: TSKindId.NeverType as const }),
 	[TSKindId.AbstractType]: (d, t) => wrapAbstractType(d as unknown as T.AbstractType, t),
 	[TSKindId.DynamicType]: (d, t) => wrapDynamicType(d as unknown as T.DynamicType, t),
 	[TSKindId.MutableSpecifier]: (d) => ({ ...d, $type: TSKindId.MutableSpecifier as const }),
@@ -11245,6 +11248,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ParenthesizedExpression]: (d, t) =>
 		wrapParenthesizedExpression(d as unknown as T.ParenthesizedExpression, t),
 	[TSKindId.TupleExpression]: (d, t) => wrapTupleExpression(d as unknown as T.TupleExpression, t),
+	[TSKindId.UnitExpression]: (d) => ({ ...d, $type: TSKindId.UnitExpression as const }),
 	[TSKindId.StructExpression]: (d, t) => wrapStructExpression(d as unknown as T.StructExpression, t),
 	[TSKindId.FieldInitializerList]: (d, t) => wrapFieldInitializerList(d as unknown as T.FieldInitializerList, t),
 	[TSKindId.ShorthandFieldInitializer]: (d, t) =>
@@ -11284,6 +11288,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TupleStructPattern]: (d, t) => wrapTupleStructPattern(d as unknown as T.TupleStructPattern, t),
 	[TSKindId.StructPattern]: (d, t) => wrapStructPattern(d as unknown as T.StructPattern, t),
 	[TSKindId.FieldPattern]: (d, t) => wrapFieldPattern(d as unknown as T.FieldPattern, t),
+	[TSKindId.RemainingFieldPattern]: (d) => ({ ...d, $type: TSKindId.RemainingFieldPattern as const }),
 	[TSKindId.MutPattern]: (d, t) => wrapMutPattern(d as unknown as T.MutPattern, t),
 	[TSKindId.RangePattern]: (d, t) => wrapRangePattern(d as unknown as T.RangePattern, t),
 	[TSKindId.RefPattern]: (d, t) => wrapRefPattern(d as unknown as T.RefPattern, t),
@@ -11417,6 +11422,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 
 interface _WrapReturnByKindId {
 	[TSKindId.SourceFile]: ReturnType<typeof wrapSourceFile>;
+	[TSKindId.EmptyStatement]: _NodeData & { readonly $type: TSKindId.EmptyStatement };
 	[TSKindId.ExpressionStatement]: ReturnType<typeof wrapExpressionStatement>;
 	[TSKindId.MacroDefinition]: ReturnType<typeof wrapMacroDefinition>;
 	[TSKindId.MacroRule]: ReturnType<typeof wrapMacroRule>;
@@ -11480,6 +11486,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ForLifetimes]: ReturnType<typeof wrapForLifetimes>;
 	[TSKindId.FunctionType]: ReturnType<typeof wrapFunctionType>;
 	[TSKindId.TupleType]: ReturnType<typeof wrapTupleType>;
+	[TSKindId.UnitType]: _NodeData & { readonly $type: TSKindId.UnitType };
 	[TSKindId.GenericFunction]: ReturnType<typeof wrapGenericFunction>;
 	[TSKindId.GenericType]: ReturnType<typeof wrapGenericType>;
 	[TSKindId.GenericTypeWithTurbofish]: ReturnType<typeof wrapGenericTypeWithTurbofish>;
@@ -11489,6 +11496,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.TypeBinding]: ReturnType<typeof wrapTypeBinding>;
 	[TSKindId.ReferenceType]: ReturnType<typeof wrapReferenceType>;
 	[TSKindId.PointerType]: ReturnType<typeof wrapPointerType>;
+	[TSKindId.NeverType]: _NodeData & { readonly $type: TSKindId.NeverType };
 	[TSKindId.AbstractType]: ReturnType<typeof wrapAbstractType>;
 	[TSKindId.DynamicType]: ReturnType<typeof wrapDynamicType>;
 	[TSKindId.MutableSpecifier]: _NodeData & { readonly $type: TSKindId.MutableSpecifier };
@@ -11513,6 +11521,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ArrayExpression]: ReturnType<typeof wrapArrayExpression>;
 	[TSKindId.ParenthesizedExpression]: ReturnType<typeof wrapParenthesizedExpression>;
 	[TSKindId.TupleExpression]: ReturnType<typeof wrapTupleExpression>;
+	[TSKindId.UnitExpression]: _NodeData & { readonly $type: TSKindId.UnitExpression };
 	[TSKindId.StructExpression]: ReturnType<typeof wrapStructExpression>;
 	[TSKindId.FieldInitializerList]: ReturnType<typeof wrapFieldInitializerList>;
 	[TSKindId.ShorthandFieldInitializer]: ReturnType<typeof wrapShorthandFieldInitializer>;
@@ -11551,6 +11560,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.TupleStructPattern]: ReturnType<typeof wrapTupleStructPattern>;
 	[TSKindId.StructPattern]: ReturnType<typeof wrapStructPattern>;
 	[TSKindId.FieldPattern]: ReturnType<typeof wrapFieldPattern>;
+	[TSKindId.RemainingFieldPattern]: _NodeData & { readonly $type: TSKindId.RemainingFieldPattern };
 	[TSKindId.MutPattern]: ReturnType<typeof wrapMutPattern>;
 	[TSKindId.RangePattern]: ReturnType<typeof wrapRangePattern>;
 	[TSKindId.RefPattern]: ReturnType<typeof wrapRefPattern>;

@@ -11532,12 +11532,14 @@
       "kind": "empty_statement",
       "modelType": "token",
       "typeName": "EmptyStatement",
+      "factoryName": "emptyStatement",
       "irKey": "emptyStatement",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "word": false,
-      "text": ";"
+      "text": ";",
+      "factoryShape": "text"
     },
     {
       "kind": "enum",
@@ -16241,12 +16243,14 @@
       "kind": "never_type",
       "modelType": "token",
       "typeName": "NeverType",
+      "factoryName": "neverType",
       "irKey": "neverType",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "word": false,
-      "text": "!"
+      "text": "!",
+      "factoryShape": "text"
     },
     {
       "kind": "or_pattern",
@@ -17411,12 +17415,14 @@
       "kind": "remaining_field_pattern",
       "modelType": "token",
       "typeName": "RemainingFieldPattern",
+      "factoryName": "remainingFieldPattern",
       "irKey": "remainingFieldPattern",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "word": false,
-      "text": ".."
+      "text": "..",
+      "factoryShape": "text"
     },
     {
       "kind": "removed_trait_bound",
@@ -20916,23 +20922,27 @@
       "kind": "unit_expression",
       "modelType": "token",
       "typeName": "UnitExpression",
+      "factoryName": "unitExpression",
       "irKey": "unitExpression",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"( )\" as const",
       "word": false,
-      "text": "( )"
+      "text": "( )",
+      "factoryShape": "text"
     },
     {
       "kind": "unit_type",
       "modelType": "token",
       "typeName": "UnitType",
+      "factoryName": "unitType",
       "irKey": "unitType",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"( )\" as const",
       "word": false,
-      "text": "( )"
+      "text": "( )",
+      "factoryShape": "text"
     },
     {
       "kind": "unsafe",

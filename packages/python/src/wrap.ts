@@ -8590,6 +8590,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ImportFromStatement]: (d, t) => wrapImportFromStatement(d as unknown as T.ImportFromStatement, t),
 	[TSKindId.ImportList]: (d, t) => wrapImportList(d as unknown as T.ImportList, t),
 	[TSKindId.AliasedImport]: (d, t) => wrapAliasedImport(d as unknown as T.AliasedImport, t),
+	[TSKindId.WildcardImport]: (d) => ({ ...d, $type: TSKindId.WildcardImport as const }),
 	[TSKindId.PrintStatement]: (d, t) => wrapPrintStatement(d as unknown as T.PrintStatement, t),
 	[TSKindId.Chevron]: (d, t) => wrapChevron(d as unknown as T.Chevron, t),
 	[TSKindId.AssertStatement]: (d, t) => wrapAssertStatement(d as unknown as T.AssertStatement, t),
@@ -8669,6 +8670,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Attribute]: (d, t) => wrapAttribute(d as unknown as T.Attribute, t),
 	[TSKindId.Subscript]: (d, t) => wrapSubscript(d as unknown as T.Subscript, t),
 	[TSKindId.Slice]: (d, t) => wrapSlice(d as unknown as T.Slice, t),
+	[TSKindId.Ellipsis]: (d) => ({ ...d, $type: TSKindId.Ellipsis as const }),
 	[TSKindId.Call]: (d, t) => wrapCall(d as unknown as T.Call, t),
 	[TSKindId.TypedParameter]: (d, t) => wrapTypedParameter(d as unknown as T.TypedParameter, t),
 	[TSKindId.Type]: (d, t) => wrapType(d as unknown as T.Type, t),
@@ -8710,6 +8712,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Await]: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	[TSKindId.Comment]: (d) => ({ ...d, $type: TSKindId.Comment as const }),
 	[TSKindId.LineContinuation]: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
+	[TSKindId.PositionalSeparator]: (d) => ({ ...d, $type: TSKindId.PositionalSeparator as const }),
+	[TSKindId.KeywordSeparator]: (d) => ({ ...d, $type: TSKindId.KeywordSeparator as const }),
 	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	[TSKindId.SimpleStatementsElements]: (d, t) =>
 		wrapSimpleStatementsElements(d as unknown as T.SimpleStatementsElements, t),
@@ -8777,6 +8781,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ImportFromStatement]: ReturnType<typeof wrapImportFromStatement>;
 	[TSKindId.ImportList]: ReturnType<typeof wrapImportList>;
 	[TSKindId.AliasedImport]: ReturnType<typeof wrapAliasedImport>;
+	[TSKindId.WildcardImport]: _NodeData & { readonly $type: TSKindId.WildcardImport };
 	[TSKindId.PrintStatement]: ReturnType<typeof wrapPrintStatement>;
 	[TSKindId.Chevron]: ReturnType<typeof wrapChevron>;
 	[TSKindId.AssertStatement]: ReturnType<typeof wrapAssertStatement>;
@@ -8855,6 +8860,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.Attribute]: ReturnType<typeof wrapAttribute>;
 	[TSKindId.Subscript]: ReturnType<typeof wrapSubscript>;
 	[TSKindId.Slice]: ReturnType<typeof wrapSlice>;
+	[TSKindId.Ellipsis]: _NodeData & { readonly $type: TSKindId.Ellipsis };
 	[TSKindId.Call]: ReturnType<typeof wrapCall>;
 	[TSKindId.TypedParameter]: ReturnType<typeof wrapTypedParameter>;
 	[TSKindId.Type]: ReturnType<typeof wrapType>;
@@ -8894,6 +8900,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.Await]: ReturnType<typeof wrapAwait>;
 	[TSKindId.Comment]: _NodeData & { readonly $type: TSKindId.Comment };
 	[TSKindId.LineContinuation]: _NodeData & { readonly $type: TSKindId.LineContinuation };
+	[TSKindId.PositionalSeparator]: _NodeData & { readonly $type: TSKindId.PositionalSeparator };
+	[TSKindId.KeywordSeparator]: _NodeData & { readonly $type: TSKindId.KeywordSeparator };
 	[TSKindId.KwAsyncMarker]: _NodeData & { readonly $type: TSKindId.KwAsyncMarker };
 	[TSKindId.SimpleStatementsElements]: ReturnType<typeof wrapSimpleStatementsElements>;
 	[TSKindId.Subjects]: ReturnType<typeof wrapSubjects>;

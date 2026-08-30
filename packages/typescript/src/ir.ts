@@ -1279,6 +1279,7 @@ export const statement: {
 	readonly continue: typeof _b$continueStatement;
 	readonly return: typeof _b$returnStatement;
 	readonly throw: typeof _b$throwStatement;
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly labeled: typeof _b$labeledStatement;
 } = {
 	export: _b$exportStatement,
@@ -1298,6 +1299,7 @@ export const statement: {
 	continue: _b$continueStatement,
 	return: _b$returnStatement,
 	throw: _b$throwStatement,
+	empty: F.buildEmptyStatement,
 	labeled: _b$labeledStatement
 };
 
@@ -1456,6 +1458,7 @@ export const primaryType: {
 	readonly query: typeof _b$typeQuery;
 	readonly indexQuery: typeof _b$indexTypeQuery;
 	readonly this: typeof F.buildThis;
+	readonly existential: typeof F.buildExistentialType;
 	readonly literal: typeof _b$literalType;
 	readonly lookup: typeof _b$lookupType;
 	readonly conditional: typeof _b$conditionalType;
@@ -1475,6 +1478,7 @@ export const primaryType: {
 	query: _b$typeQuery,
 	indexQuery: _b$indexTypeQuery,
 	this: F.buildThis,
+	existential: F.buildExistentialType,
 	literal: _b$literalType,
 	lookup: _b$lookupType,
 	conditional: _b$conditionalType,
@@ -1637,6 +1641,8 @@ export const ir: {
 	readonly functionType: typeof _b$functionType;
 	readonly objectTypeContent: typeof _b$objectTypeContent;
 	readonly import: typeof F.buildImport;
+	readonly emptyStatement: typeof F.buildEmptyStatement;
+	readonly optionalChain: typeof F.buildOptionalChain;
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
 	readonly true: typeof F.buildTrue;
@@ -1644,6 +1650,7 @@ export const ir: {
 	readonly null: typeof F.buildNull;
 	readonly undefined: typeof F.buildUndefined;
 	readonly overrideModifier: typeof F.buildOverrideModifier;
+	readonly existentialType: typeof F.buildExistentialType;
 	readonly hashBangLine: typeof F.buildHashBangLine;
 	readonly unescapedDoubleStringFragment: typeof F.buildUnescapedDoubleStringFragment;
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
@@ -1673,7 +1680,9 @@ export const ir: {
 	readonly continue: typeof _b$continueStatement;
 	readonly debugger: typeof _b$debuggerStatement;
 	readonly do: typeof _b$doStatement;
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly enum: typeof _b$enumDeclaration;
+	readonly existential: typeof F.buildExistentialType;
 	readonly export: typeof _b$exportStatement;
 	readonly flowMaybe: typeof _b$flowMaybeType;
 	readonly for: typeof _b$forStatement;
@@ -1885,6 +1894,8 @@ export const ir: {
 
 	// Keyword factories
 	import: F.buildImport,
+	emptyStatement: F.buildEmptyStatement,
+	optionalChain: F.buildOptionalChain,
 	this: F.buildThis,
 	super: F.buildSuper,
 	true: F.buildTrue,
@@ -1892,6 +1903,7 @@ export const ir: {
 	null: F.buildNull,
 	undefined: F.buildUndefined,
 	overrideModifier: F.buildOverrideModifier,
+	existentialType: F.buildExistentialType,
 
 	// Leaf node factories
 	hashBangLine: F.buildHashBangLine,
@@ -1925,7 +1937,9 @@ export const ir: {
 	continue: _b$continueStatement,
 	debugger: _b$debuggerStatement,
 	do: _b$doStatement,
+	empty: F.buildEmptyStatement,
 	enum: _b$enumDeclaration,
+	existential: F.buildExistentialType,
 	export: _b$exportStatement,
 	flowMaybe: _b$flowMaybeType,
 	for: _b$forStatement,

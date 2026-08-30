@@ -1106,6 +1106,7 @@ export const declarationStatement: {
 	readonly const: typeof _b$constItem;
 	readonly macroInvocation: typeof _b$macroInvocation;
 	readonly macro: typeof _b$macroDefinition;
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly attribute: typeof _b$attributeItem;
 	readonly innerAttribute: typeof _b$innerAttributeItem;
 	readonly mod: typeof _b$modItem;
@@ -1127,6 +1128,7 @@ export const declarationStatement: {
 	const: _b$constItem,
 	macroInvocation: _b$macroInvocation,
 	macro: _b$macroDefinition,
+	empty: F.buildEmptyStatement,
 	attribute: _b$attributeItem,
 	innerAttribute: _b$innerAttributeItem,
 	mod: _b$modItem,
@@ -1180,10 +1182,12 @@ export const type: {
 	readonly generic: typeof _b$genericType;
 	readonly scopedIdentifier: typeof _b$scopedTypeIdentifier;
 	readonly tuple: typeof _b$tupleType;
+	readonly unit: typeof F.buildUnitType;
 	readonly array: typeof _b$arrayType;
 	readonly function: typeof _b$functionType;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly macroInvocation: typeof _b$macroInvocation;
+	readonly never: typeof F.buildNeverType;
 	readonly dynamic: typeof _b$dynamicType;
 	readonly bounded: typeof _b$boundedType;
 	readonly removedTraitBound: typeof _b$removedTraitBound;
@@ -1195,10 +1199,12 @@ export const type: {
 	generic: _b$genericType,
 	scopedIdentifier: _b$scopedTypeIdentifier,
 	tuple: _b$tupleType,
+	unit: F.buildUnitType,
 	array: _b$arrayType,
 	function: _b$functionType,
 	identifier: F.buildIdentifier,
 	macroInvocation: _b$macroInvocation,
+	never: F.buildNeverType,
 	dynamic: _b$dynamicType,
 	bounded: _b$boundedType,
 	removedTraitBound: _b$removedTraitBound
@@ -1230,6 +1236,7 @@ export const expression: {
 	readonly array: typeof _b$arrayExpression;
 	readonly tuple: typeof _b$tupleExpression;
 	readonly macroInvocation: typeof _b$macroInvocation;
+	readonly unit: typeof F.buildUnitExpression;
 	readonly break: typeof _b$breakExpression;
 	readonly continue: typeof _b$continueExpression;
 	readonly index: typeof _b$indexExpression;
@@ -1275,6 +1282,7 @@ export const expression: {
 	array: _b$arrayExpression,
 	tuple: _b$tupleExpression,
 	macroInvocation: _b$macroInvocation,
+	unit: F.buildUnitExpression,
 	break: _b$breakExpression,
 	continue: _b$continueExpression,
 	index: _b$indexExpression,
@@ -1314,6 +1322,7 @@ export const pattern: {
 	readonly slice: typeof _b$slicePattern;
 	readonly captured: typeof _b$capturedPattern;
 	readonly reference: typeof _b$referencePattern;
+	readonly remainingField: typeof F.buildRemainingFieldPattern;
 	readonly mut: typeof _b$mutPattern;
 	readonly range: typeof _b$rangePattern;
 	readonly or: typeof _b$orPattern;
@@ -1337,6 +1346,7 @@ export const pattern: {
 	slice: _b$slicePattern,
 	captured: _b$capturedPattern,
 	reference: _b$referencePattern,
+	remainingField: F.buildRemainingFieldPattern,
 	mut: _b$mutPattern,
 	range: _b$rangePattern,
 	or: _b$orPattern,
@@ -1518,7 +1528,12 @@ export const ir: {
 	readonly rawStringLiteral: typeof _b$rawStringLiteral;
 	readonly lineComment: typeof _b$lineComment;
 	readonly blockComment: typeof _b$blockComment;
+	readonly emptyStatement: typeof F.buildEmptyStatement;
+	readonly unitType: typeof F.buildUnitType;
+	readonly neverType: typeof F.buildNeverType;
 	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly unitExpression: typeof F.buildUnitExpression;
+	readonly remainingFieldPattern: typeof F.buildRemainingFieldPattern;
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
@@ -1550,6 +1565,7 @@ export const ir: {
 	readonly const: typeof _b$constItem;
 	readonly continue: typeof _b$continueExpression;
 	readonly dynamic: typeof _b$dynamicType;
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly enum: typeof _b$enumItem;
 	readonly externCrate: typeof _b$externCrateDeclaration;
 	readonly field: typeof _b$fieldExpression;
@@ -1571,6 +1587,7 @@ export const ir: {
 	readonly mod: typeof _b$modItem;
 	readonly mut: typeof _b$mutPattern;
 	readonly negative: typeof _b$negativeLiteral;
+	readonly never: typeof F.buildNeverType;
 	readonly or: typeof _b$orPattern;
 	readonly parenthesized: typeof _b$parenthesizedExpression;
 	readonly pointer: typeof _b$pointerType;
@@ -1578,6 +1595,7 @@ export const ir: {
 	readonly rawString: typeof _b$rawStringLiteral;
 	readonly ref: typeof _b$refPattern;
 	readonly reference: typeof _b$referenceType;
+	readonly remainingField: typeof F.buildRemainingFieldPattern;
 	readonly return: typeof _b$returnExpression;
 	readonly slice: typeof _b$slicePattern;
 	readonly static: typeof _b$staticItem;
@@ -1590,6 +1608,7 @@ export const ir: {
 	readonly typeCast: typeof _b$typeCastExpression;
 	readonly unary: typeof _b$unaryExpression;
 	readonly union: typeof _b$unionItem;
+	readonly unit: typeof F.buildUnitType;
 	readonly use: typeof _b$useDeclaration;
 	readonly while: typeof _b$whileExpression;
 	readonly yield: typeof _b$yieldExpression;
@@ -1744,7 +1763,12 @@ export const ir: {
 	blockComment: _b$blockComment,
 
 	// Keyword factories
+	emptyStatement: F.buildEmptyStatement,
+	unitType: F.buildUnitType,
+	neverType: F.buildNeverType,
 	mutableSpecifier: F.buildMutableSpecifier,
+	unitExpression: F.buildUnitExpression,
+	remainingFieldPattern: F.buildRemainingFieldPattern,
 	self: F.buildSelf,
 	super: F.buildSuper,
 	crate: F.buildCrate,
@@ -1780,6 +1804,7 @@ export const ir: {
 	const: _b$constItem,
 	continue: _b$continueExpression,
 	dynamic: _b$dynamicType,
+	empty: F.buildEmptyStatement,
 	enum: _b$enumItem,
 	externCrate: _b$externCrateDeclaration,
 	field: _b$fieldExpression,
@@ -1801,6 +1826,7 @@ export const ir: {
 	mod: _b$modItem,
 	mut: _b$mutPattern,
 	negative: _b$negativeLiteral,
+	never: F.buildNeverType,
 	or: _b$orPattern,
 	parenthesized: _b$parenthesizedExpression,
 	pointer: _b$pointerType,
@@ -1808,6 +1834,7 @@ export const ir: {
 	rawString: _b$rawStringLiteral,
 	ref: _b$refPattern,
 	reference: _b$referenceType,
+	remainingField: F.buildRemainingFieldPattern,
 	return: _b$returnExpression,
 	slice: _b$slicePattern,
 	static: _b$staticItem,
@@ -1820,6 +1847,7 @@ export const ir: {
 	typeCast: _b$typeCastExpression,
 	unary: _b$unaryExpression,
 	union: _b$unionItem,
+	unit: F.buildUnitType,
 	use: _b$useDeclaration,
 	while: _b$whileExpression,
 	yield: _b$yieldExpression,

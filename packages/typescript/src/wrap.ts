@@ -12680,6 +12680,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.DebuggerStatement]: (d, t) => wrapDebuggerStatement(d as unknown as T.DebuggerStatement, t),
 	[TSKindId.ReturnStatement]: (d, t) => wrapReturnStatement(d as unknown as T.ReturnStatement, t),
 	[TSKindId.ThrowStatement]: (d, t) => wrapThrowStatement(d as unknown as T.ThrowStatement, t),
+	[TSKindId.EmptyStatement]: (d) => ({ ...d, $type: TSKindId.EmptyStatement as const }),
 	[TSKindId.LabeledStatement]: (d, t) => wrapLabeledStatement(d as unknown as T.LabeledStatement, t),
 	[TSKindId.SwitchBody]: (d, t) => wrapSwitchBody(d as unknown as T.SwitchBody, t),
 	[TSKindId.SwitchCase]: (d, t) => wrapSwitchCase(d as unknown as T.SwitchCase, t),
@@ -12708,6 +12709,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.GeneratorFunctionDeclaration]: (d, t) =>
 		wrapGeneratorFunctionDeclaration(d as unknown as T.GeneratorFunctionDeclaration, t),
 	[TSKindId.ArrowFunction]: (d, t) => wrapArrowFunction(d as unknown as T.ArrowFunction, t),
+	[TSKindId.OptionalChain]: (d) => ({ ...d, $type: TSKindId.OptionalChain as const }),
 	[TSKindId.CallExpression]: (d, t) => wrapCallExpression(d as unknown as T.CallExpression, t),
 	[TSKindId.NewExpression]: (d, t) => wrapNewExpression(d as unknown as T.NewExpression, t),
 	[TSKindId.AwaitExpression]: (d, t) => wrapAwaitExpression(d as unknown as T.AwaitExpression, t),
@@ -12838,6 +12840,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.MappedTypeClause]: (d, t) => wrapMappedTypeClause(d as unknown as T.MappedTypeClause, t),
 	[TSKindId.LiteralType]: (d, t) => wrapLiteralType(d as unknown as T.LiteralType, t),
 	[TSKindId._Number]: (d, t) => wrap_Number(d as unknown as T._Number, t),
+	[TSKindId.ExistentialType]: (d) => ({ ...d, $type: TSKindId.ExistentialType as const }),
 	[TSKindId.FlowMaybeType]: (d, t) => wrapFlowMaybeType(d as unknown as T.FlowMaybeType, t),
 	[TSKindId.ParenthesizedType]: (d, t) => wrapParenthesizedType(d as unknown as T.ParenthesizedType, t),
 	[TSKindId.PredefinedType]: (d) => ({ ...d, $type: TSKindId.PredefinedType as const }),
@@ -12977,6 +12980,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.DebuggerStatement]: ReturnType<typeof wrapDebuggerStatement>;
 	[TSKindId.ReturnStatement]: ReturnType<typeof wrapReturnStatement>;
 	[TSKindId.ThrowStatement]: ReturnType<typeof wrapThrowStatement>;
+	[TSKindId.EmptyStatement]: _NodeData & { readonly $type: TSKindId.EmptyStatement };
 	[TSKindId.LabeledStatement]: ReturnType<typeof wrapLabeledStatement>;
 	[TSKindId.SwitchBody]: ReturnType<typeof wrapSwitchBody>;
 	[TSKindId.SwitchCase]: ReturnType<typeof wrapSwitchCase>;
@@ -13002,6 +13006,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.GeneratorFunction]: ReturnType<typeof wrapGeneratorFunction>;
 	[TSKindId.GeneratorFunctionDeclaration]: ReturnType<typeof wrapGeneratorFunctionDeclaration>;
 	[TSKindId.ArrowFunction]: ReturnType<typeof wrapArrowFunction>;
+	[TSKindId.OptionalChain]: _NodeData & { readonly $type: TSKindId.OptionalChain };
 	[TSKindId.CallExpression]: ReturnType<typeof wrapCallExpression>;
 	[TSKindId.NewExpression]: ReturnType<typeof wrapNewExpression>;
 	[TSKindId.AwaitExpression]: ReturnType<typeof wrapAwaitExpression>;
@@ -13118,6 +13123,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.MappedTypeClause]: ReturnType<typeof wrapMappedTypeClause>;
 	[TSKindId.LiteralType]: ReturnType<typeof wrapLiteralType>;
 	[TSKindId._Number]: ReturnType<typeof wrap_Number>;
+	[TSKindId.ExistentialType]: _NodeData & { readonly $type: TSKindId.ExistentialType };
 	[TSKindId.FlowMaybeType]: ReturnType<typeof wrapFlowMaybeType>;
 	[TSKindId.ParenthesizedType]: ReturnType<typeof wrapParenthesizedType>;
 	[TSKindId.PredefinedType]: _NodeData & { readonly $type: TSKindId.PredefinedType };

@@ -21,7 +21,7 @@ import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts'
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
-import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
@@ -136,10 +136,6 @@ function stampTerminality(rules: Record<string, RenderRule>): Record<string, Ren
 
 const ruleWalker = new RuleWalker<RenderRule>();
 
-function shapeKey(rule: RenderRule): string {
-	return JSON.stringify(rule, (key, value: unknown) => (key === 'id' ? undefined : value));
-}
-
 function factorChoiceArms(rule: RenderRule): RenderRule {
 	if (rule.type !== CHOICE) return rule;
 	const seqArms = rule.members.filter((arm): arm is SeqRule<'normalize'> => arm.type === SEQ);
@@ -148,8 +144,8 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 	if (len === 0 || !seqArms.every((arm) => arm.members.length === len)) return rule;
 	const differing: number[] = [];
 	for (let i = 0; i < len; i++) {
-		const first = shapeKey(seqArms[0]!.members[i]!);
-		if (seqArms.some((arm) => shapeKey(arm.members[i]!) !== first)) differing.push(i);
+		const first = structuralKey(seqArms[0]!.members[i]!);
+		if (seqArms.some((arm) => structuralKey(arm.members[i]!) !== first)) differing.push(i);
 	}
 	if (differing.length !== 1) return rule;
 	const at = differing[0]!;
@@ -157,7 +153,7 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 	const variants: RenderRule[] = [];
 	for (const arm of seqArms) {
 		const m = arm.members[at]!;
-		const key = shapeKey(m);
+		const key = structuralKey(m);
 		if (seen.has(key)) continue;
 		seen.add(key);
 		variants.push(m);
@@ -184,7 +180,9 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 }
 
 function permutationKey(rule: RenderRule): string {
-	return JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'multiplicity' ? undefined : value));
+	return JSON.stringify(rule, (key, value: unknown) =>
+		key === 'id' || key === 'absorbedIds' || key === 'multiplicity' ? undefined : value
+	);
 }
 
 function foldPermutationArms(rule: RenderRule): RenderRule {
@@ -228,7 +226,7 @@ function factorChoiceArmsToFixpoint(rules: Record<string, RenderRule>): Record<s
 		for (let i = 0; i < 16; i++) {
 			const step = (r: RenderRule): RenderRule => foldPermutationArms(factorChoiceArms(r));
 			const next = step(ruleWalker.map(current, step));
-			if (next === current || shapeKey(next) === shapeKey(current)) break;
+			if (next === current || structuralKey(next) === structuralKey(current)) break;
 			current = next;
 		}
 		out[name] = current;
