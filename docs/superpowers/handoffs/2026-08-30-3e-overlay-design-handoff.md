@@ -18,6 +18,27 @@ at floor (coverage 208/208·194/194·142/142, factory-render-parse
 149·144/145·126); unit `pnpm exec vitest run --root packages/codegen`;
 `pnpm run type-check` baseline is 4 errors.
 
+## Status at `a543247f3`
+
+Green: validators at floor on all three grammars (the two read-render-parse
+shortfalls and the ts `member_expression` from() case are pre-existing
+floors); codegen unit suite 106 files / 1079 tests; `sittir-core` cargo
+tests and cargo check; `DBG_SLOT_MISS` 0 on every grammar; propose-14 and
+S-class ratchets clean.
+
+Broken, deliberately: `pnpm run type-check` at 126 errors (baseline 4) —
+only the consumers listed below; nothing generated is red.
+
+Changed by design (also listed in the 3d handoff's "3e debt"):
+`debugger_statement` / `meta_property` take their sole enum slot directly;
+form namespaces gone where a terminator sits beside the payload; every
+marker / terminator is a config field; `binary_expression`'s `in` form is
+still the parser-visible `_binary_expression_arm`.
+
+Outside this branch: Copilot review on #248 / #247 / #246 / #245 must be
+requested from the PR UI (the API refuses: reviewer is not a collaborator);
+one Copilot thread on #243 (builder return-type tests) is intentionally open.
+
 ## What 3d left behind (rulings, all landed)
 
 - `nonterminal` is the single slot switch, stamped by the attribute
