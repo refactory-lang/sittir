@@ -933,22 +933,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::resolveContainerElementType`
-
-```text
-/**
- * Resolve the element type for a container node's children parameter.
- *
- * @param node - The container node descriptor.
- * @param nodeMap - The assembled node map for type resolution.
- * @returns A TS source string for the element type (e.g. `T.FunctionItem | T.Block`).
- * @remarks
- *   Uses the concrete element type union (e.g. `FunctionItem | Block`) instead of
- *   the generic `ChildOf<X>` alias so consumers see the actual types in
- *   hover/autocomplete with no indirection.
- */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::emitSeparatedListFactory`
 
 ```text
@@ -1533,7 +1517,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // structural overlap (children + leaf shape) is enough at runtime.
 ```
 
-### `packages/codegen/src/emitters/from.ts::containerTypeCheck`
+### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 
 ```text
 /**
@@ -1559,7 +1543,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Shared body for a rest-param (`...input`) from() resolver that reconstructs
  * either from a flat list of already-resolved elements or by unwrapping an
- * existing self-NodeData value's storage. Both `emitRepeatedContainerFrom`
+ * existing self-NodeData value's storage. Both `emitRepeatedChildrenFrom`
  * (container-shape branches — spreads the resolved elements into the
  * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
  * (`'list'` kinds — passes the resolved elements as the single
@@ -1584,7 +1568,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   `emitSeparatedListFrom` needs this so its direct (non-`unknown`-laundered)
  *   cast type-checks; the local's inferred type otherwise widens to `any[]`
  *   via the `Array.isArray` ternary, which a direct cast rejects even though
- *   the runtime value is the same. `emitRepeatedContainerFrom` doesn't need
+ *   the runtime value is the same. `emitRepeatedChildrenFrom` doesn't need
  *   it since its cast still routes through `unknown` first.
  * @returns The emitted function source string.
  */
@@ -1629,7 +1613,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // boundary cast.
 ```
 
-### `packages/codegen/src/emitters/from.ts::emitRepeatedContainerFrom`
+### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
 ```text
 /**
@@ -1667,7 +1651,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // element. Route through unknown.
 ```
 
-### `packages/codegen/src/emitters/from.ts::emitSingularContainerFrom`
+### `packages/codegen/src/emitters/from.ts::emitSingularChildrenFrom`
 
 ```text
 /**
@@ -1738,16 +1722,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `emitSeparatedListFactory`'s doc comment, factories.ts).
  *
  * Shares `emitRestParamFromResolver`'s three-shape structure with
- * `emitRepeatedContainerFrom` (see that function's doc comment for the
+ * `emitRepeatedChildrenFrom` (see that function's doc comment for the
  * shared shape), with ONE deliberate difference in the call expression: the
  * resolved elements are passed to the factory as the `elements` ARRAY
  * argument directly (`factory(children as Parameters<typeof
  * factory>[0])`), never spread and never indexed — factories.ts's Task 6
  * signature is `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`,
- * not the old `factory(...children: T[])` `emitRepeatedContainerFrom`
+ * not the old `factory(...children: T[])` `emitRepeatedChildrenFrom`
  * assumes. Before this function existed, `classifyChildFactorySurface`'s
  * stub-based 'spread'/'direct' classification routed `'list'`
- * kinds through the SAME spread/index call shape `emitRepeatedContainerFrom`
+ * kinds through the SAME spread/index call shape `emitRepeatedChildrenFrom`
  * still uses for real container-shape branches — which silently bound
  * `children[0]` to `elements` and `children[1]` to `options` instead of the
  * whole array once the Task 6 factory signature landed (found in
@@ -1982,7 +1966,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * siblings (the `altKinds` argument of `_resolveOneBranch`). Resolution
  * order per token kind (PR-K3d): the slot value's mint `storageKindId`
  * stamp when present (collision-free id), else the name chain via
- * {@link containerTypeCheck} (`TSKindId.X` for catalog-backed kinds,
+ * {@link kindDiscriminantCheck} (`TSKindId.X` for catalog-backed kinds,
  * string literal for catalog-less fixtures — matching the string `$type`
  * world those pipelines run in).
  */
@@ -9905,7 +9889,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
  *  those resolvers, so a local re-derivation would let a setter reference a
  *  resolver that was never emitted. Mirrors `emitBranchFrom`'s own
  *  delegation check: a kind carrying a child factory surface is handed to
- *  `emitContainerFrom`, which declares no per-field resolvers. */
+ *  `emitChildrenFrom`, which declares no per-field resolvers. */
 ```
 
 #### body
@@ -12437,7 +12421,7 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // Optional field: type test passes no arg; render test passes dummy.
 ```
 
-### `packages/codegen/src/emitters/test.ts::containerCallArgs`
+### `packages/codegen/src/emitters/test.ts::childrenCallArgs`
 
 ```text
 /** The positional argument a container-shape factory call takes in the
@@ -12466,7 +12450,7 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // a type tag.
 ```
 
-### `packages/codegen/src/emitters/test.ts::emitContainerTest`
+### `packages/codegen/src/emitters/test.ts::emitChildrenTest`
 
 #### body
 
@@ -12833,7 +12817,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // type of every `input.<field>` read below.
 ```
 
-### `packages/codegen/src/emitters/from.ts::ContainerFromNode`
+### `packages/codegen/src/emitters/from.ts::ChildrenFromNode`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -12841,7 +12825,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::ContainerFromNode.childSlotFacts`
+### `packages/codegen/src/emitters/from.ts::ChildrenFromNode.childSlotFacts`
 
 ```text
 // The container's classified sole user slot (soleSlotFacts) —
@@ -12860,7 +12844,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
  */
 ```
 
-### `packages/codegen/src/emitters/from.ts::emitContainerFrom`
+### `packages/codegen/src/emitters/from.ts::emitChildrenFrom`
 
 #### body
 

@@ -142,7 +142,7 @@ function emitBranchTest(
 ): void {
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.hoisted) return;
 	if (testConstructsWithChildren(node, nodeMap)) {
-		emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
+		emitChildrenTest(lines, node, kind, key, kindEntries, nodeMap);
 		return;
 	}
 
@@ -218,7 +218,7 @@ function soleSlotDummyKind(
 	return { facts, firstKindName };
 }
 
-function containerCallArgs(
+function childrenCallArgs(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -230,7 +230,7 @@ function containerCallArgs(
 	return requiredSingular || facts.nonEmpty ? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set()) : '';
 }
 
-function subFactoryContainerArgs(
+function subFactoryChildrenArgs(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -253,7 +253,7 @@ function childBareCallArgs(
 		case 'polymorph': {
 			if (!(child instanceof AbstractAssembledCompound) || child instanceof AssembledList) return undefined;
 			if (testConstructsWithChildren(child, nodeMap)) {
-				return subFactoryContainerArgs(child, nodeMap, kindEntries);
+				return subFactoryChildrenArgs(child, nodeMap, kindEntries);
 			}
 			return factoryCallArgs(child, nodeMap, kindEntries).renderConfigArg;
 		}
@@ -415,7 +415,7 @@ function emitSubFactoryTests(
 	lines.push('');
 }
 
-function emitContainerTest(
+function emitChildrenTest(
 	lines: string[],
 	node: AssembledNode,
 	kind: string,
@@ -426,7 +426,7 @@ function emitContainerTest(
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList) return;
 	if (!testConstructsWithChildren(node, nodeMap)) return;
 
-	const placeholder = containerCallArgs(node, nodeMap, kindEntries);
+	const placeholder = childrenCallArgs(node, nodeMap, kindEntries);
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}(${placeholder});`);
