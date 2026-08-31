@@ -170,6 +170,13 @@ const ERASED_HELPERS = [
 	'// every wire method routes through these two sites.',
 	'const _p = <R,>(f: unknown) => f as (arg: unknown) => R;',
 	'const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;',
+	'// A kind\'s Config is a declared interface, and those are not assignable',
+	'// to an index signature — so reading or spreading one generically needs',
+	'// an erasure. It lives here, once, rather than at every method that',
+	'// merges or partitions a config.',
+	'const _o = (config: unknown) => config as Record<string, unknown>;',
+	'const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> =>',
+	'\t({ ..._o(config), ...extra });',
 	''
 ];
 
@@ -217,18 +224,31 @@ function shape(
 		};
 	}
 	if (mergeKeys !== undefined) {
-		const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ') || 'false';
+		if (mergeKeys.length === 0) {
+			// No key routes to the child, so the partition below would send
+			// every key to `rest` and hand the child an empty object. Say
+			// that directly instead of emitting a loop guarded by `false`.
+			return {
+				method: [
+					`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
+					`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0]): ReturnType<PF> =>`,
+					`		${CALL_P}(_m(config, { ${k}: ${CALL_C}({}) }));`
+				],
+				paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0])`
+			};
+		}
+		const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
 		return {
 			method: [
 				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0]): ReturnType<PF> => {`,
 				`		const rest: Record<string, unknown> = {};`,
 				`		const inner: Record<string, unknown> = {};`,
-				`		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {`,
+				`		for (const [key, value] of Object.entries(_o(config))) {`,
 				`			if (${keyTests}) inner[key] = value;`,
 				`			else rest[key] = value;`,
 				`		}`,
-				`		return ${CALL_P}({ ...rest, ${k}: (child as unknown as (arg: unknown) => unknown)(inner) });`,
+				`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(inner) });`,
 				`	};`
 			],
 			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0])`

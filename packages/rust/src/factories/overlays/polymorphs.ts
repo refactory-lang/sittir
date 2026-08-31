@@ -12,6 +12,12 @@ export * from './refines.js';
 // every wire method routes through these two sites.
 const _p = <R>(f: unknown) => f as (arg: unknown) => R;
 const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+// A kind's Config is a declared interface, and those are not assignable
+// to an index signature — so reading or spreading one generically needs
+// an erasure. It lives here, once, rather than at every method that
+// merges or partitions a config.
+const _o = (config: unknown) => config as Record<string, unknown>;
+const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
 
 const expressionStatement$withSemi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -496,11 +502,11 @@ const attribute$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, path: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) });
 	};
 export const attribute: typeof B.attribute & {
 	self: {
@@ -792,22 +798,22 @@ const structItem$brace =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'whereClause' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const structItem$tuple =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'body' || key === 'whereClause') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 export const structItem: typeof B.structItem & {
 	brace: {
@@ -1031,11 +1037,11 @@ const scopedTypeIdentifier$genericTypeWithTurbofish =
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, path: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) });
 	};
 const scopedTypeIdentifier$bracketedType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1054,11 +1060,11 @@ const scopedTypeIdentifier$genericType =
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, path: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) });
 	};
 export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 	self: {
@@ -1245,11 +1251,11 @@ const wherePredicate$scopedTypeIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const wherePredicate$genericTypeWithTurbofish =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1262,33 +1268,33 @@ const wherePredicate$genericType =
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const wherePredicate$referenceType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'lifetime' || key === 'mutableSpecifier' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const wherePredicate$pointerType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'content' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const wherePredicate$mutableSpecifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1307,22 +1313,22 @@ const wherePredicate$arrayType =
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'element' || key === 'length') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const wherePredicate$higherRankedTraitBound =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'typeParameters' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 export const wherePredicate: typeof B.wherePredicate & {
 	lifetime: {
@@ -1527,11 +1533,11 @@ const constParameter$block =
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) });
 	};
 const constParameter$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1671,22 +1677,22 @@ const useDeclaration$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, argument: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
 const useDeclaration$useAsClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'alias') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, argument: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
 const useDeclaration$useList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1699,11 +1705,11 @@ const useDeclaration$scopedUseList =
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'list') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, argument: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
 const useDeclaration$useWildcard =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1895,11 +1901,11 @@ const scopedUseList$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, path: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) });
 	};
 export const scopedUseList: typeof B.scopedUseList & {
 	self: {
@@ -2017,11 +2023,11 @@ const useAsClause$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, path: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) });
 	};
 export const useAsClause: typeof B.useAsClause & {
 	self: {
@@ -3192,22 +3198,22 @@ const genericFunction$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const genericFunction$fieldExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'value' || key === 'field') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const genericFunction$integerLiteral =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3283,11 +3289,11 @@ const genericType$scopedTypeIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, type: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) });
 	};
 export const genericType: typeof B.genericType & {
 	scopedTypeIdentifier: {
@@ -3318,11 +3324,11 @@ const genericTypeWithTurbofish$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, type: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) });
 	};
 export const genericTypeWithTurbofish: typeof B.genericTypeWithTurbofish & {
 	identifier: {
@@ -3370,22 +3376,22 @@ const abstractType$scopedTypeIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, trait: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) });
 	};
 const abstractType$genericType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, trait: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) });
 	};
 const abstractType$removedTraitBound =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3398,12 +3404,12 @@ const abstractType$functionType =
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'forLifetimes' || key === 'content' || key === 'parameters' || key === 'returnType')
 				inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, trait: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) });
 	};
 const abstractType$functionTypeTraitForm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3428,11 +3434,11 @@ const abstractType$boundedType =
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, trait: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) });
 	};
 export const abstractType: typeof B.abstractType & {
 	identifier: {
@@ -3670,11 +3676,11 @@ const macroInvocation$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'macro'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, macro: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, macro: _c(child)(inner) });
 	};
 const macroInvocation$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3790,11 +3796,11 @@ const scopedTypeIdentifierInExpressionPosition$genericTypeWithTurbofish =
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, path: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) });
 	};
 export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdentifierInExpressionPosition & {
 	self: {
@@ -4024,15 +4030,8 @@ export const unaryExpression: typeof B.unaryExpression & {
 
 const referenceExpression$rawMut =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
-			if (false) inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_m(config, { content: _c(child)({}) }));
 const referenceExpression$mutableSpecifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
@@ -4418,11 +4417,11 @@ const closureExpression$block =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'returnType' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const closureExpression$expr =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4498,11 +4497,11 @@ const structExpression$scopedTypeIdentifierInExpressionPosition =
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const structExpression$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4533,11 +4532,11 @@ const structExpression$genericTypeWithTurbofish =
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const structExpression$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4695,11 +4694,11 @@ const callExpression$unaryExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'operator' || key === 'operand') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$bang =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4712,11 +4711,11 @@ const callExpression$referenceExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'content' || key === 'value') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$referenceExpressionRawMut =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4741,11 +4740,11 @@ const callExpression$binaryExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$ampAmp =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4848,33 +4847,33 @@ const callExpression$assignmentExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$compoundAssignmentExpr =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$typeCastExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'value' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$returnExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4905,33 +4904,33 @@ const callExpression$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$genericFunction =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'function' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$fieldExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'value' || key === 'field') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$awaitExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4962,22 +4961,22 @@ const callExpression$tupleExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'attributes' || key === 'tupleExpressionElements') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$macroInvocation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'macro' || key === 'tokenTree') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$unitExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4990,11 +4989,11 @@ const callExpression$breakExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'expression') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$continueExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5007,11 +5006,11 @@ const callExpression$indexExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'index') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5024,7 +5023,7 @@ const callExpression$closureExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (
 				key === 'staticMarker' ||
 				key === 'asyncMarker' ||
@@ -5035,7 +5034,7 @@ const callExpression$closureExpression =
 				inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$closureExpressionBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5054,11 +5053,11 @@ const callExpression$structExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$scopedTypeIdentifierInExpressionPosition =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5095,22 +5094,22 @@ const callExpression$asyncBlock =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'moveMarker' || key === 'block') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$genBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'moveMarker' || key === 'block') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$tryBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5123,66 +5122,66 @@ const callExpression$block =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$ifExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$matchExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'value' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$whileExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'condition' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$loopExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$forExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'pattern' || key === 'value' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 const callExpression$constBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6197,22 +6196,22 @@ const ifExpression$letCondition =
 	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'pattern' || key === 'value') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, condition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) });
 	};
 const ifExpression$letChain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, condition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) });
 	};
 export const ifExpression: typeof B.ifExpression & {
 	letCondition: {
@@ -6248,11 +6247,11 @@ const letChain$letCondition =
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'pattern' || key === 'value') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 export const letChain: typeof B.letChain & {
 	letCondition: {
@@ -6341,22 +6340,22 @@ const matchArm$asyncBlock =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'moveMarker' || key === 'block') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$genBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'moveMarker' || key === 'block') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$tryBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6369,55 +6368,55 @@ const matchArm$block =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$ifExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$matchExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'value' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$whileExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'condition' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$loopExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const matchArm$constBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6575,11 +6574,11 @@ const matchPattern$letChain =
 	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, condition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) });
 	};
 export const matchPattern: typeof B.matchPattern & {
 	letChain: {
@@ -6603,22 +6602,22 @@ const whileExpression$letCondition =
 	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'pattern' || key === 'value') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, condition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) });
 	};
 const whileExpression$letChain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'left' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, condition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) });
 	};
 export const whileExpression: typeof B.whileExpression & {
 	letCondition: {
@@ -6661,11 +6660,11 @@ const genericPattern$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 export const genericPattern: typeof B.genericPattern & {
 	identifier: {
@@ -6712,22 +6711,22 @@ const tupleStructPattern$scopedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, type: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) });
 	};
 const tupleStructPattern$genericTypeWithTurbofish =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'type' || key === 'typeArguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, type: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) });
 	};
 export const tupleStructPattern: typeof B.tupleStructPattern & {
 	identifier: {
@@ -6789,11 +6788,11 @@ const structPattern$scopedTypeIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'path' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, type: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) });
 	};
 const structPattern$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7020,11 +7019,11 @@ const fieldPattern$named =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'pattern') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 export const fieldPattern: typeof B.fieldPattern & {
 	identifier: {
@@ -7214,11 +7213,11 @@ const attributedParameter$parameter =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'mutableSpecifier' || key === 'name' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const attributedParameter$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7231,22 +7230,22 @@ const attributedParameter$selfParameter =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'reference' || key === 'lifetime' || key === 'mutableSpecifier') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const attributedParameter$variadicParameter =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'mutableSpecifier' || key === 'pattern') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const attributedParameter$_ =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -7336,33 +7335,33 @@ const attributedTypeParameter$typeParameter =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'bounds' || key === 'defaultType') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const attributedTypeParameter$lifetimeParameter =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'bounds') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const attributedTypeParameter$constParameter =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'type' || key === 'value') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const attributedTypeParameter$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7554,11 +7553,11 @@ const typeArgument$typeBinding =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'typeArguments' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const typeArgument$lifetime =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7571,11 +7570,11 @@ const typeArgument$block =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 export const typeArgument: typeof B.typeArgument & {
 	typeBinding: {
