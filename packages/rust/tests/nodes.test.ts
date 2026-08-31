@@ -572,9 +572,8 @@ describe('mod_item', () => {
 });
 
 describe('mod_item sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('declarationList builds the parent', () => {
-		const node = (ir.modItem as any).declarationList({
+	it('declarationList builds the parent', () => {
+		const node = ir.modItem.declarationList({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			content: []
 		});
@@ -602,9 +601,8 @@ describe('foreign_mod_item', () => {
 });
 
 describe('foreign_mod_item sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('declarationList builds the parent', () => {
-		const node = (ir.foreignModItem as any).declarationList({
+	it('declarationList builds the parent', () => {
+		const node = ir.foreignModItem.declarationList({
 			externModifier: { $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any,
 			content: []
 		});
@@ -2399,137 +2397,6 @@ describe('generic_type sub-factories', () => {
 				} as any
 			} as any,
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.GenericType);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	// known-failing: sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names
-	it.skip('self builds the parent', () => {
-		const node = (ir.genericType as any).self({
-			typeArguments: {
-				$type: TSKindId.TypeArguments,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type_arguments_elements: {
-					$type: TSKindId.TypeArgumentsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.TypeArgument,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				} as any
-			} as any,
-			type: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.GenericType);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	// known-failing: sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names
-	it.skip('metavariable builds the parent', () => {
-		const node = (ir.genericType as any).metavariable({
-			typeArguments: {
-				$type: TSKindId.TypeArguments,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type_arguments_elements: {
-					$type: TSKindId.TypeArgumentsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.TypeArgument,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				} as any
-			} as any,
-			type: [{ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, path: ['$x'] }]
-		});
-		expect(node.$type).toBe(TSKindId.GenericType);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	// known-failing: sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names
-	it.skip('super builds the parent', () => {
-		const node = (ir.genericType as any).super({
-			typeArguments: {
-				$type: TSKindId.TypeArguments,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type_arguments_elements: {
-					$type: TSKindId.TypeArgumentsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.TypeArgument,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				} as any
-			} as any,
-			type: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.GenericType);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	// known-failing: sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names
-	it.skip('crate builds the parent', () => {
-		const node = (ir.genericType as any).crate({
-			typeArguments: {
-				$type: TSKindId.TypeArguments,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type_arguments_elements: {
-					$type: TSKindId.TypeArgumentsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.TypeArgument,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				} as any
-			} as any,
-			type: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
-				}
-			]
 		});
 		expect(node.$type).toBe(TSKindId.GenericType);
 		expect(node.$render!().length).toBeGreaterThan(0);

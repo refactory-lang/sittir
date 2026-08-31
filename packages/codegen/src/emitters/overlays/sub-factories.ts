@@ -203,8 +203,10 @@ function subFactoriesInternal(
 		perPredicate = new Map();
 		perMap.set(isEmitted, perPredicate);
 	}
-	const cached = perPredicate.get(node.kind);
-	if (cached !== undefined) return cached;
+	if (visiting.size === 0) {
+		const cached = perPredicate.get(node.kind);
+		if (cached !== undefined) return cached;
+	}
 
 	let inProgressPerMap = inProgress.get(nodeMap);
 	if (inProgressPerMap === undefined) {

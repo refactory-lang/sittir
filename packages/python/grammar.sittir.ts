@@ -35,29 +35,7 @@ export default grammar(
 			},
 			expectTestFailures: {
 				'parenthesized_list_splat.parenthesizedListSplat':
-					'dummy stub — the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects',
-				'decorated_definition.classDefinition':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'decorated_definition.functionDefinition':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'case_pattern.unionPattern':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'case_pattern.concatenatedString':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'case_pattern.dottedName':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'keyword_pattern.unionPattern':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'keyword_pattern.concatenatedString':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'keyword_pattern.dottedName':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'for_in_clause.patternList':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'for_in_clause.comma':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
-				'for_in_clause.patternListPatterns':
-					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter"
+					'dummy stub — the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects'
 			},
 			conflicts: ($, previous) => [
 				...(previous ?? []),

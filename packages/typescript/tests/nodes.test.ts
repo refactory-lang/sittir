@@ -960,9 +960,8 @@ describe('switch_case', () => {
 });
 
 describe('switch_case sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('sequenceExpression builds the parent', () => {
-		const node = (ir.switchCase as any).sequenceExpression({
+	it('sequenceExpression builds the parent', () => {
+		const node = ir.switchCase.sequenceExpression({
 			value: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.SwitchCase);
@@ -1023,9 +1022,8 @@ describe('parenthesized_expression sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ParenthesizedExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('sequenceExpression builds the parent', () => {
-		const node = (ir.parenthesizedExpression as any).sequenceExpression({
+	it('sequenceExpression builds the parent', () => {
+		const node = ir.parenthesizedExpression.sequenceExpression({
 			$type: TSKindId.Undefined,
 			$text: 'undefined',
 			$source: 2,
@@ -1118,18 +1116,16 @@ describe('object_assignment_pattern', () => {
 });
 
 describe('object_assignment_pattern sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('objectPattern builds the parent', () => {
-		const node = (ir.objectAssignmentPattern as any).objectPattern({
+	it('objectPattern builds the parent', () => {
+		const node = ir.objectAssignmentPattern.objectPattern({
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			left: []
 		});
 		expect(node.$type).toBe(TSKindId.ObjectAssignmentPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('arrayPattern builds the parent', () => {
-		const node = (ir.objectAssignmentPattern as any).arrayPattern({
+	it('arrayPattern builds the parent', () => {
+		const node = ir.objectAssignmentPattern.arrayPattern({
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			left: []
 		});
@@ -1249,9 +1245,8 @@ describe('class_heritage sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ClassHeritage);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('implementsClause builds the parent', () => {
-		const node = (ir.classHeritage as any).implementsClause({
+	it('implementsClause builds the parent', () => {
+		const node = ir.classHeritage.implementsClause({
 			$type: TSKindId.PredefinedType,
 			$text: 'any',
 			$source: 2,
@@ -1710,9 +1705,8 @@ describe('assignment_expression sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.AssignmentExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('sequenceExpression builds the parent', () => {
-		const node = (ir.assignmentExpression as any).sequenceExpression({
+	it('sequenceExpression builds the parent', () => {
+		const node = ir.assignmentExpression.sequenceExpression({
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			left: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
@@ -1833,9 +1827,8 @@ describe('augmented_assignment_expression sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('sequenceExpression builds the parent', () => {
-		const node = (ir.augmentedAssignmentExpression as any).sequenceExpression({
+	it('sequenceExpression builds the parent', () => {
+		const node = ir.augmentedAssignmentExpression.sequenceExpression({
 			operator: '+=',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			left: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
@@ -2190,9 +2183,8 @@ describe('template_substitution', () => {
 });
 
 describe('template_substitution sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('sequenceExpression builds the parent', () => {
-		const node = (ir.templateSubstitution as any).sequenceExpression({
+	it('sequenceExpression builds the parent', () => {
+		const node = ir.templateSubstitution.sequenceExpression({
 			$type: TSKindId.Undefined,
 			$text: 'undefined',
 			$source: 2,
@@ -2521,15 +2513,13 @@ describe('rest_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('objectPattern builds the parent', () => {
-		const node = (ir.restPattern as any).objectPattern();
+	it('objectPattern builds the parent', () => {
+		const node = ir.restPattern.objectPattern();
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect(() => node.$render!()).not.toThrow();
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('arrayPattern builds the parent', () => {
-		const node = (ir.restPattern as any).arrayPattern();
+	it('arrayPattern builds the parent', () => {
+		const node = ir.restPattern.arrayPattern();
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect(() => node.$render!()).not.toThrow();
 	});
@@ -3643,9 +3633,8 @@ describe('tuple_parameter sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.TupleParameter);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('objectPattern builds the parent', () => {
-		const node = (ir.tupleParameter as any).objectPattern({
+	it('objectPattern builds the parent', () => {
+		const node = ir.tupleParameter.objectPattern({
 			type: {
 				$type: TSKindId.TypeAnnotation,
 				$text: 'test',
@@ -3658,9 +3647,8 @@ describe('tuple_parameter sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.TupleParameter);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('arrayPattern builds the parent', () => {
-		const node = (ir.tupleParameter as any).arrayPattern({
+	it('arrayPattern builds the parent', () => {
+		const node = ir.tupleParameter.arrayPattern({
 			type: {
 				$type: TSKindId.TypeAnnotation,
 				$text: 'test',

@@ -134,6 +134,14 @@ export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
 
 type AnyFlavorFn = (...args: never[]) => unknown;
 
+export type ArgsOf<F> = F extends (...args: infer P) => unknown
+	? P
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E[]
+		: never;
+
+export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
 export type Hoisted<B> = B extends { coerce: infer C }
 	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
 	: B extends { strict: infer S }

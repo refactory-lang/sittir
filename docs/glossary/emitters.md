@@ -6421,101 +6421,7 @@ Surface`
 
 ### `packages/codegen/src/emitters/test.ts::emitSubFactoryTests`
 
-One generated test per sub-factory (`subFactoriesOf`, `overlays/sub-factories.ts`)
-of a branch/envelope/polymorph kind, called from `emitTests` right after
-`emitBranchTest`. Each case calls the sub-factory through the hoisted bundle
-(`ir.<key>.<name>(<args>)`, coerce flavor — the bare call `subFactoriesOf`
-entries resolve to at runtime) and asserts `$type` and — content-dependent —
-`$render()`.
-
-Args derivation (`subFactoryCallArgs`) mirrors `overlays/polymorphs.ts`'s own
-`shape()`/`emitSub` wiring logic exactly, since the two must agree on the
-call shape the wired function actually accepts:
-
-- literal arm, empty residual → `()`.
-- literal arm, non-empty residual → a config object of the residual's
-  required-field dummies (`requiredFieldParts`).
-- kind arm, empty residual → the child's own bare-call args
-  (`childBareCallArgs`: `subFactoryContainerArgs` when
-  `classifyChildFactorySurface` recognizes a container shape, else
-  `factoryCallArgs`'s render-config branch; a separated list's sole
-  content-slot dummy, led by an empty `{}` options arg when
-  `separatedListSurface(child).optionsType` is defined — the raw list
-  factory's overloaded signature makes `Parameters<>` pick the
-  options-leading overload; a pattern sample; a dummy node literal for a
-  keyword (never a bare `()` — a keyword's coerce factory commonly takes an
-  optional pass-through node, and `Parameters<CF>` on the wire, inferred
-  through the generic `CF extends (...args: never[]) => unknown`, can lose
-  that optionality and type as required — passing a value is always valid
-  either way); the first enum value otherwise) — or, for a flattened
-  (nested, `path.length > 0`) entry, the same computed recursively for the
-  child's own named sub-factory.
-- kind arm, non-empty residual, direct config-shaped child
-  (`armIsConfigShaped`) → the residual dummies merged flat with the child's
-  own config fields (matches the wire's `Omit<...> & Parameters<CF>[0]`
-  merge shape).
-- kind arm, non-empty residual, otherwise → the residual dummies plus the
-  slot's own key holding the child's args as a one-element tuple (matches
-  the wire's `Omit<...> & { <slotKey>: Parameters<CF> }` shape) — a nested
-  entry only ever takes this tuple shape (the wire's `mergeKeys` is never
-  computed for `path.length > 0`), and only if the flattened-through child
-  itself carries a top-level bundle key (`bundleEntries` — otherwise the
-  reference `<childKey>.<path>` the wire would emit doesn't resolve, so the
-  entry is skipped, mirroring how `emitSub` silently drops it).
-
-`subFactoryContainerArgs` differs from `containerCallArgs` (used for the
-kind's own top-level container test) in one respect: for a non-multiple sole
-slot it always builds a dummy, never `''`, even when the slot is optional.
-`containerCallArgs`'s `''`-when-optional is safe there because it calls the
-kind's own (possibly overloaded) exported factory directly, where every
-overload is visible; a sub-factory wire instead exposes
-`Parameters<typeof F.xxx>` — and for an overloaded raw factory, `Parameters<>`
-resolves only the *last* declared overload, which is sometimes the more
-restrictive (required-value) one even though the first overload (used by a
-direct call) accepts zero args. Passing a dummy is valid under either
-overload, so it sidesteps the mismatch generally rather than special-casing
-the shapes known to trigger it.
-
-An entry is skipped (no test emitted) when any of the above can't produce
-text — an unmatched pattern sample, an unresolved nested sub-factory lookup,
-or an unbundled flattened child.
-
-Mirrors `emitBranchTest`'s own two-tier render assertion: when the computed
-args carry no content (`''` or `'{}'`), the constructed node's fields are
-all-default, and the stronger non-empty assertion doesn't hold in general —
-asserts `$render()` doesn't throw instead of asserting its length.
-
-`expectTestFailures['<kind>.<name>']` (same map `emitTests` already reads,
-keyed by the sub-factory's own name rather than the kind) pins a case as
-`it.skip` with a `// known-failing: <reason>` line, for two independent
-categories of case the overlay wiring never actually reaches or never
-actually type-checks:
-
-- Sub-factory derivation is visiting-context-sensitive (`derive` in
-  `sub-factories.ts` threads a `visiting` set for cycle safety, but its
-  cache keys only on `(nodeMap, isEmitted, kind)` — a cached top-level
-  result computed under one visiting context can get reused by a nested
-  lookup under a different one), so a name that resolves unambiguously in
-  `subFactoriesOf` here can still be one `emitSub` drops as ambiguous when
-  wiring the actual overlay — the property genuinely doesn't exist at
-  runtime.
-- A wire's declared parameter type derives `Parameters<CF>` directly off
-  the child's coerce/strict factory reference, sometimes Omitting the
-  choice-slot key off the parent's own `Loose` union config type first —
-  when the child factory's own parameter is itself loose-union-shaped or
-  overloaded in a way `Parameters<>` can't cleanly resolve, that position
-  types as `never` regardless of the args this test builds. The property
-  exists at runtime and the call would succeed, but no args satisfy its
-  declared type.
-
-For a pinned case, the call target is loosened to `(ir.<key> as any).<name>`
-(rather than `ir.<key>.<name>`) so the skipped test stays present without
-type-erroring — `any` was chosen over a narrower cast (e.g. through
-`Record<string, (...args: never[]) => ...>`) because the `never[]` rest
-parameter that keeps the untyped case honest for a *missing* property still
-rejects every real argument for an *existing but mistyped* one, and
-`noUncheckedIndexedAccess` adds an `| undefined` an indexed-access cast would
-have to re-assert past.
+One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors.
 
 ### `packages/codegen/src/emitters/test.ts::emitSeparatedListTest`
 
@@ -11535,9 +11441,7 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitAttachProps`
 
-Emits `attachProps` (property definition on a function — used by the coerce module's helpers), the `FlavorPair`/`bundle` pair constructor (`bundle(strict, coerce)` → plain `{ strict, coerce }` object; the only dynamic pairing stage), and `hoist` (wraps a pair as a callable, copying every prop and recursively hoisting nested pairs — the `Hoisted<B>` mapped type carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
-
-A hoisted object's bare call is the coerce flavor when one exists, else the strict flavor — a strict-only sub-factory wire (`{ strict: X }`, no `coerce` key; `overlays/polymorphs.ts` emits these when the child of a kind-arm entry isn't itself coerce-emitted) still hoists to a callable rather than falling back to the unreachable `() => never`. `Hoisted<B>` checks `B extends { coerce: infer C }` first, then `B extends { strict: infer S }`, then the plain object/leaf mapping; `isFlavorPair`/`hoist` mirror the same fallback at runtime (`typeof b.coerce === 'function' ? b.coerce : b.strict`).
+Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (a function's argument tuple, covering the readonly-rest signatures `Parameters` degrades to `never` on — the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
 
@@ -14660,6 +14564,10 @@ The strict/coerce expression pair for an arm: a direct child uses its own factor
 
 Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with non-identifier characters in the name replaced by `_`.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::collectPolymorphWires`
+
+The single derivation of which sub-factories the polymorph overlay actually wires — traversal order (children before flattened parents), per-parent filtered entry lists (ambiguity and slot-collision resolved in `subFactoriesOf`; context-mismatch and unreferenceable children filtered here), the emission predicates, and the bundle key map. Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. Any consumer deriving the wire set independently will drift — this map is the fact.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
 Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
@@ -14749,48 +14657,7 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
 
-```text
-/** Derive every sub-factory `node`'s single eligible choice slot supports,
- *  cached per `nodeMap` (a node's sub-factories never change once the
- *  `NodeMap` is built). Ineligible parents — not slot-bearing, a list, no
- *  raw factory, or a refined kind (its own forms already narrow it) — and
- *  parents with no single choice slot (`choiceSlotOf` returns `undefined`)
- *  derive to an empty set.
- *
- *  For each value of the choice slot: a literal value becomes a
- *  `LiteralArm` when `armName` can name it. A kind-backed value becomes a
- *  direct `KindArm` (`path: []`) when the child has its own raw factory,
- *  is emitted (`opts.isEmitted`, default: everything is), and is either
- *  slot-bearing or a text leaf — and, when that child is itself eligible,
- *  recurses into the child's own sub-factories (guarded by a `visiting`
- *  set against cycles) and flattens each of the child's entries `s` into
- *  one more candidate on the parent: named `kindArmName(parent.kind,
- *  s.arm.child)` when `s` is itself a kind arm (renaming straight from the
- *  parent's perspective, skipping the intermediate child) or `s.name`
- *  unchanged when `s` is a literal arm, with `arm.child` fixed to the
- *  *direct* child and `arm.path` recording the chain of names
- *  (`[s.name, ...s.arm.path]`) needed to reach it.
- *
- *  Candidates are then grouped by name. A name with exactly one candidate
- *  keeps it. A name with several candidates keeps the sole *direct* one
- *  (path length zero) when there is exactly one — the direct arm is the
- *  canonical claimant, and every flattened claimant for that name is
- *  dropped silently. Otherwise (zero or more than one direct claimant)
- *  the name resolves to no entry and an `ambiguous` diagnostic lists every
- *  claimant. Surviving entries are then filtered once more: an entry whose
- *  `armConfigKeys` overlaps the parent's own residual field keys is
- *  dropped with a `slot-collision` diagnostic instead of being emitted —
- *  it would shadow a field the parent itself already exposes.
- *
- *  The per-`nodeMap`/`isEmitted` cache only records a *completed* result
- *  (set once `derive` returns, keyed by kind), so it can't by itself stop
- *  a kind from being asked for again while its own derivation is still on
- *  the stack — that path runs through `armConfigKeys`, which re-enters
- *  `subFactoriesOf` on kinds outside the current `derive` call's own
- *  `visiting` chain. A separate in-progress set (marked before `derive`
- *  runs, cleared after) catches that re-entrance and returns an empty
- *  set for it, independent of `visiting`. */
-```
+Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
 

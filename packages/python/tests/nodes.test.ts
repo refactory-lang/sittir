@@ -1468,9 +1468,8 @@ describe('decorated_definition', () => {
 });
 
 describe('decorated_definition sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('classDefinition builds the parent', () => {
-		const node = (ir.decoratedDefinition as any).classDefinition({
+	it('classDefinition builds the parent', () => {
+		const node = ir.decoratedDefinition.classDefinition({
 			decorator: [
 				{
 					$type: TSKindId.Decorator,
@@ -1486,9 +1485,8 @@ describe('decorated_definition sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.DecoratedDefinition);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('functionDefinition builds the parent', () => {
-		const node = (ir.decoratedDefinition as any).functionDefinition({
+	it('functionDefinition builds the parent', () => {
+		const node = ir.decoratedDefinition.functionDefinition({
 			decorator: [
 				{
 					$type: TSKindId.Decorator,
@@ -1623,14 +1621,8 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('unionPattern builds the parent', () => {
-		const node = (ir.casePattern as any).unionPattern({
-			$type: TSKindId.True,
-			$text: 'True',
-			$source: 2,
-			$named: true
-		} as any);
+	it('unionPattern builds the parent', () => {
+		const node = ir.casePattern.unionPattern({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -1706,9 +1698,8 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('concatenatedString builds the parent', () => {
-		const node = (ir.casePattern as any).concatenatedString({
+	it('concatenatedString builds the parent', () => {
+		const node = ir.casePattern.concatenatedString({
 			$type: TSKindId.String,
 			$text: 'test',
 			$source: 2,
@@ -1750,9 +1741,8 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('dottedName builds the parent', () => {
-		const node = (ir.casePattern as any).dottedName({
+	it('dottedName builds the parent', () => {
+		const node = ir.casePattern.dottedName({
 			$type: TSKindId.Identifier,
 			$text: 'test',
 			$source: 2,
@@ -1820,9 +1810,8 @@ describe('keyword_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('unionPattern builds the parent', () => {
-		const node = (ir.keywordPattern as any).unionPattern({
+	it('unionPattern builds the parent', () => {
+		const node = ir.keywordPattern.unionPattern({
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			simplePattern: [{ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any]
 		});
@@ -1917,9 +1906,8 @@ describe('keyword_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('concatenatedString builds the parent', () => {
-		const node = (ir.keywordPattern as any).concatenatedString({
+	it('concatenatedString builds the parent', () => {
+		const node = ir.keywordPattern.concatenatedString({
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			simplePattern: [
 				{
@@ -1977,9 +1965,8 @@ describe('keyword_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference — when that factory's own parameter is loose-union-shaped or overloaded, `Parameters<CF>` degrades to `never` here regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('dottedName builds the parent', () => {
-		const node = (ir.keywordPattern as any).dottedName({
+	it('dottedName builds the parent', () => {
+		const node = ir.keywordPattern.dottedName({
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			simplePattern: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		});
@@ -3509,9 +3496,8 @@ describe('for_in_clause', () => {
 });
 
 describe('for_in_clause sub-factories', () => {
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('patternList builds the parent', () => {
-		const node = (ir.forInClause as any).patternList({
+	it('patternList builds the parent', () => {
+		const node = ir.forInClause.patternList({
 			right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
 			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			tail: {
@@ -3525,18 +3511,16 @@ describe('for_in_clause sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ForInClause);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('comma builds the parent', () => {
-		const node = (ir.forInClause as any).comma({
+	it('comma builds the parent', () => {
+		const node = ir.forInClause.comma({
 			right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
 			left: [{ pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.ForInClause);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter
-	it.skip('patternListPatterns builds the parent', () => {
-		const node = (ir.forInClause as any).patternListPatterns({
+	it('patternListPatterns builds the parent', () => {
+		const node = ir.forInClause.patternListPatterns({
 			right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
 			left: [
 				{

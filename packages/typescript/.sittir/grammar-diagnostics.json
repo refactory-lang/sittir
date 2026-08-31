@@ -119,6 +119,38 @@
   },
   {
     "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_identifier",
+    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Identifier",
+      "newType": "_Identifier",
+      "visibleKinds": [
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_property_identifier",
+    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "PropertyIdentifier",
+      "newType": "_PropertyIdentifier",
+      "visibleKinds": [
+        "property_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
