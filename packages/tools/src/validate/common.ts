@@ -1372,6 +1372,28 @@ export async function loadKindLiteralText(grammar: string): Promise<ReadonlyMap<
 	}
 }
 
+/**
+ * Storage-identity resolver: id → the canonical catalog kind name
+ * (KIND_NAMES). The display resolver below serves the native<->WASM
+ * locator, whose names must match tree-sitter's raw `.type` label — an
+ * ALIASED id therefore resolves to its parse FACE there, never to the
+ * storage kind. Identity decisions (which from/factory pair owns a read
+ * node) must use THIS resolver instead.
+ */
+export async function loadStorageKindNameFromId(
+	grammar: string
+): Promise<((id: number) => string | undefined) | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		return kindNames ? (id: number) => kindNames.get(id) : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;

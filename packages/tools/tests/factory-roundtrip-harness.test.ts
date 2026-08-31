@@ -8,7 +8,7 @@ describe('factory-roundtrip harness', () => {
 	// exercise tool alike.
 	it('uses metadata-driven child args for child-backed direct factories', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/common.ts'), 'utf-8');
-		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(kind, config, factorySlots, factoryFields\);/);
+		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(readKind, config, factorySlots, factoryFields\);/);
 		expect(content).toMatch(/\? \(config as Record<string, unknown>\)\[camelName\]\s*:\s*childArgs\[0\]/);
 		expect(content).not.toMatch(/: \(\(readData\.\$children \?\? \[\]\)\.filter/);
 		expect(content).not.toMatch(/: \(\(config\.children \?\? \[\]\) as unknown\[\]\)\[0\]/);
@@ -34,7 +34,7 @@ describe('factory-roundtrip harness', () => {
 
 	it('uses metadata-driven child args in from validation spread reconstruction', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/from.ts'), 'utf-8');
-		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(kind, config, factorySlots, factoryFields\);/);
+		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(readKind, config, factorySlots, factoryFields\);/);
 		expect(content).toMatch(
 			/factoryResult = \(factory as \(\.\.\.args: unknown\[\]\) => AnyNodeData\)\(\.\.\.childArgs\);/
 		);
