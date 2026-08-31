@@ -73,6 +73,7 @@ pub enum AnyTransport {
     ArgumentList(ArgumentListTransport),
     DecoratedDefinition(DecoratedDefinitionTransport),
     Decorator(DecoratorTransport),
+    Suite(SuiteTransport),
     Block(BlockTransport),
     ExpressionList(ExpressionListTransport),
     DottedName(DottedNameTransport),
@@ -8042,6 +8043,108 @@ impl RenderableTransport for DecoratedDefinitionDefinitionTransportSlot {
         match self {
             DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render_into(dest),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.render_into(dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SuiteContentTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    Literal0_5f_6e_65_77_6c_69_6e_65,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    110 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlockWithIndent(
+                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SuiteContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SuiteContentTransportSlot")
+                )?;
+                match kind_id {
+                    110 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlockWithIndent(
+                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SuiteContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SuiteContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SuiteContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SuiteContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SuiteContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SuiteContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn suite_content_transport_slot_to_any(t: SuiteContentTransportSlot) -> AnyTransport {
+    match t {
+        SuiteContentTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        SuiteContentTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        SuiteContentTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
+    }
+}
+
+impl RenderableTransport for SuiteContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            SuiteContentTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
+            SuiteContentTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            SuiteContentTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
 }
@@ -20954,6 +21057,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DecoratorTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct SuiteTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<SuiteContentTransportSlot>,
+}
+
+impl RenderableTransport for SuiteTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_suite(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SuiteTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SuiteTransport::to_napi_value(env, *val)
     }
 }
 
@@ -38667,6 +38820,11 @@ fn render_decorator(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write)
     template.render_into(dest)
 }
 
+fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    node.content.render_into(dest)?;
+    Ok(())
+}
+
 fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
@@ -40573,6 +40731,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ArgumentList(t) => t.render_into(dest),
             AnyTransport::DecoratedDefinition(t) => t.render_into(dest),
             AnyTransport::Decorator(t) => t.render_into(dest),
+            AnyTransport::Suite(t) => t.render_into(dest),
             AnyTransport::Block(t) => t.render_into(dest),
             AnyTransport::ExpressionList(t) => t.render_into(dest),
             AnyTransport::DottedName(t) => t.render_into(dest),
