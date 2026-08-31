@@ -20,7 +20,7 @@ import type { NodeOrTerminal } from '../model/node-map.ts';
 import type { AssembledNonterminal } from '../model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 function slot(values: NodeOrTerminal[]): AssembledNonterminal {
 	return {
@@ -68,7 +68,7 @@ describe('pruneDeterminedSlots', () => {
 			]
 		};
 		const nodes = new Map<string, AssembledNode>();
-		nodes.set('mut_pattern', new AssembledBranch('mut_pattern', rule, deleteWrapper(rule), deleteWrapper(rule)));
+		nodes.set('mut_pattern', new AssembledBranch('mut_pattern', rule, flatten(rule), flatten(rule)));
 		nodes.set('mutable_specifier', new AssembledKeyword('mutable_specifier', { type: STRING, value: 'mut' }));
 		nodes.set('pattern', new AssembledPattern('pattern', { type: PATTERN, value: '[a-z]+' }));
 		return makeNodeMapWith(nodes);

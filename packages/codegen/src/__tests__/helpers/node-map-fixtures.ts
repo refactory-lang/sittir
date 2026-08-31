@@ -14,7 +14,7 @@ import {
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, RenderRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 export function makeNodeMapWith(
 	nodes: Map<string, AssembledNode>,
@@ -74,7 +74,7 @@ export function makeMinimalNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	const callRuleSimplified = deleteWrapper(callRule) as RenderRule & typeof callRule;
+	const callRuleSimplified = flatten(callRule) as RenderRule & typeof callRule;
 	nodes.set(
 		'call_expression',
 		new AssembledBranch('call_expression', callRule, callRuleSimplified, callRuleSimplified)

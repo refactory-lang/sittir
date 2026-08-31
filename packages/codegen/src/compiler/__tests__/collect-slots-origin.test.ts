@@ -11,7 +11,7 @@
 import { describe, it, expect } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { AssembledBranch } from '../model/node-map.ts';
-import { deleteWrapper } from '../wrapper-deletion.ts';
+import { flatten } from '../flatten.ts';
 import type { Rule } from '../../types/rule.ts';
 
 // Suppress unnamed-choice warnings in tests
@@ -84,7 +84,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 	it('AssembledBranch.slots exposes the unnamed content slot as unnamed', () => {
 		// Simulates argument_list's assembled node shape.
 		// The simplifiedRule is a wrapper-free choice{array, nonterminal:true}
-		// as produced by the list-fusion + deleteWrapper pipeline.
+		// as produced by the list-fusion + flatten pipeline.
 		const simplifiedRule = makeContentChoice('array');
 		// The inlinedRule (used for modelType classification) is a seq/choice —
 		// for this test, use the simplifiedRule directly as both.
@@ -92,7 +92,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 			type: 'CHOICE',
 			members: simplifiedRule.members
 		} as unknown as Rule;
-		const renderRule = simplifiedRule as ReturnType<typeof deleteWrapper>;
+		const renderRule = simplifiedRule as ReturnType<typeof flatten>;
 
 		const branch = new AssembledBranch('argument_list', inlinedRule as any, simplifiedRule, renderRule, {});
 

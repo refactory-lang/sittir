@@ -13,7 +13,7 @@ import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '.
 import { describe, it, expect } from 'vitest';
 import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { applyWrapperDeletion } from '../wrapper-deletion.ts';
+import { flattenRules } from '../flatten.ts';
 import type { AnyRule, Rule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ function findWrappersInMap(rules: Record<string, AnyRule>): Array<{ kind: string
 // Unit-level: wrapper shapes that hoist transformations are known to produce.
 //
 // These test computeSimplifiedRules (the public API) since that is the function
-// that applies deleteWrapper as a final pass to guarantee wrapper-free output.
+// that applies flatten as a final pass to guarantee wrapper-free output.
 // simplifyRules is an internal helper that may produce intermediate wrappers;
 // the invariant is enforced at the computeSimplifiedRules boundary.
 // ---------------------------------------------------------------------------
@@ -75,7 +75,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				]
 			}
 		};
-		const normalizedRules = applyWrapperDeletion(input);
+		const normalizedRules = flattenRules(input);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -86,7 +86,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 	it('repeat/optional of a field does not produce field/repeat nodes in output', () => {
 		// A seq containing repeat(field('items', symbol('x'))) — after wrapper
 		// deletion the repeat and field are gone; simplify should not re-introduce them.
-		// After applyWrapperDeletion: { type: 'SYMBOL', name: 'x', fieldName: 'items', multiplicity: 'array' }
+		// After flattenRules: { type: 'SYMBOL', name: 'x', fieldName: 'items', multiplicity: 'array' }
 		// computeSimplifiedRules must preserve these leaf-level attributes, not re-wrap.
 		const input: Record<string, Rule<'link'>> = {
 			r1: {
@@ -104,7 +104,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				]
 			}
 		};
-		const normalizedRules = applyWrapperDeletion(input);
+		const normalizedRules = flattenRules(input);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -131,7 +131,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				]
 			}
 		};
-		const normalizedRules = applyWrapperDeletion(input);
+		const normalizedRules = flattenRules(input);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -221,7 +221,7 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 			expr: { type: SYMBOL, name: 'identifier' }
 		};
 
-		const normalizedRules = applyWrapperDeletion(inputRules);
+		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);

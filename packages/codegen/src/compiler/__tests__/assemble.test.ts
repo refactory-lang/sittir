@@ -17,7 +17,7 @@ import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
 import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
+import { flattenRules, flatten } from '../flatten.ts';
 import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
 import {
@@ -33,18 +33,18 @@ import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
 // positional children, which are unnamed).
-// Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
+// Pre-process raw rules through flatten so deriveSlotsRaw receives
 // canonical (wrapper-free) input — mirrors how the production pipeline
-// applies applyWrapperDeletion before assembling.
+// applies flattenRules before assembling.
 function deriveFields(rule: Rule<'link'>) {
-	return deriveSlots(deleteWrapper(rule)).filter((s) => !s.isUnnamed);
+	return deriveSlots(flatten(rule)).filter((s) => !s.isUnnamed);
 }
 
 function makeNormalized(
 	rules: Record<string, Rule<'link'>>,
 	overrides?: Partial<SimplifiedGrammar>
 ): SimplifiedGrammar {
-	const normalizedRules = applyWrapperDeletion(rules);
+	const normalizedRules = flattenRules(rules);
 	const simplifiedRules = computeSimplifiedRules(
 		new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 	);
@@ -52,7 +52,7 @@ function makeNormalized(
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
-		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
+		const aliasBodiesRender = flattenRules(aliasBodiesRaw);
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() })
 		);
@@ -77,7 +77,7 @@ function makeNormalized(
 }
 
 describe('Assemble — simplifyRule', () => {
-	// simplifyRule's input must be field-node-free (applyWrapperDeletion must
+	// simplifyRule's input must be field-node-free (flattenRules must
 	// run first). These tests apply wrapper-deletion before calling simplifyRule.
 
 	it('strips non-alphanumeric string nodes and collapses single-member seq', () => {
@@ -94,7 +94,7 @@ describe('Assemble — simplifyRule', () => {
 			]
 		};
 		// wrapper-deletion: field('body', sym('block')) → sym('block', {fieldName:'body', nonterminal:true})
-		const rule = applyWrapperDeletion({ x: rawRule }).x!;
+		const rule = flattenRules({ x: rawRule }).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// After stripping { and }, only the symbol (with fieldName attr) remains
 		expect(simplified.type).toBe('SYMBOL');
@@ -108,7 +108,7 @@ describe('Assemble — simplifyRule', () => {
 			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
 		// wrapper-deletion: field('x', sym('y')) → sym('y', {fieldName:'x', nonterminal:true})
-		const rule = applyWrapperDeletion({ x: rawRule }).x!;
+		const rule = flattenRules({ x: rawRule }).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// seq of one symbol (with attr) collapses to that symbol
 		expect(simplified.type).toBe('SYMBOL');
@@ -142,7 +142,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('function_item', deleteWrapper(rule))).toBe('branch');
+		expect(classifyNode('function_item', flatten(rule))).toBe('branch');
 	});
 
 	it('classifies visible repeat as branch (container-shape)', () => {
@@ -154,7 +154,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items', deleteWrapper(rule))).toBe('branch');
+		expect(classifyNode('items', flatten(rule))).toBe('branch');
 	});
 
 	it('does NOT classify a bare repeat with no separator as separatedList', () => {
@@ -162,7 +162,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items_no_sep', deleteWrapper(rule))).toBe('branch');
+		expect(classifyNode('items_no_sep', flatten(rule))).toBe('branch');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
@@ -211,22 +211,22 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('binary_op', deleteWrapper(rule))).toBe('branch');
+		expect(classifyNode('binary_op', flatten(rule))).toBe('branch');
 	});
 
 	it('classifies visible pattern as pattern', () => {
 		const rule: Rule<'link'> = { type: PATTERN, value: '[a-z]+' };
-		expect(classifyNode('identifier', deleteWrapper(rule))).toBe('pattern');
+		expect(classifyNode('identifier', flatten(rule))).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
 		const rule: Rule<'link'> = { type: STRING, value: 'true' };
-		expect(classifyNode('true', deleteWrapper(rule))).toBe('keyword');
+		expect(classifyNode('true', flatten(rule))).toBe('keyword');
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {
 		const rule: Rule<'link'> = { type: STRING, value: '->' };
-		expect(classifyNode('arrow', deleteWrapper(rule))).toBe('token');
+		expect(classifyNode('arrow', flatten(rule))).toBe('token');
 	});
 
 	it('classifies enum as enum', () => {
@@ -237,7 +237,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: STRING, value: 'crate' }
 			]
 		};
-		expect(classifyNode('visibility', deleteWrapper(rule))).toBe('enum');
+		expect(classifyNode('visibility', flatten(rule))).toBe('enum');
 	});
 
 	it('classifies hidden choice as supertype when already SupertypeRule', () => {
@@ -249,7 +249,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: SYMBOL, name: 'identifier' }
 			]
 		};
-		expect(classifyNode('_expression', deleteWrapper(rule))).toBe('supertype');
+		expect(classifyNode('_expression', flatten(rule))).toBe('supertype');
 	});
 
 	it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
@@ -263,7 +263,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: SYMBOL, name: 'identifier' }
 			]
 		};
-		const renderRule = deleteWrapper(rule);
+		const renderRule = flatten(rule);
 		expect(classifyNode('expression', renderRule)).toBe('supertype');
 		expect(classifyNode('_expression', renderRule)).toBe('supertype');
 		expect(classifyNode('anything', renderRule)).toBe('supertype');
@@ -284,7 +284,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_sig', deleteWrapper(rule))).toBe('group');
+		expect(classifyNode('_sig', flatten(rule))).toBe('group');
 	});
 
 	it('classifies a group-wrapped lifted separated list as separatedList (fielded element)', () => {
@@ -310,7 +310,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_args', deleteWrapper(rule))).toBe('separatedList');
+		expect(classifyNode('_args', flatten(rule))).toBe('separatedList');
 	});
 
 	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
@@ -342,7 +342,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_enum_body_elements', deleteWrapper(rule))).toBe('separatedList');
+		expect(classifyNode('_enum_body_elements', flatten(rule))).toBe('separatedList');
 	});
 
 	it('assembles hidden alias sources from their captured leaf body', () => {
@@ -623,7 +623,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			}
 		};
-		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
+		expect(classifyNode('member_list', flatten(rule))).toBe('separatedList');
 	});
 
 	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
@@ -635,7 +635,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				trailing: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
+		expect(classifyNode('member_list', flatten(rule))).toBe('separatedList');
 	});
 
 	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
@@ -647,7 +647,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				leading: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
+		expect(classifyNode('member_list', flatten(rule))).toBe('separatedList');
 	});
 
 	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
@@ -658,7 +658,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				value: { type: STRING, value: ',' }
 			}
 		};
-		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('branch');
+		expect(classifyNode('member_list', flatten(rule))).toBe('branch');
 	});
 
 	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
@@ -684,7 +684,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			]
 		};
-		expect(classifyNode('some_branch', deleteWrapper(rule))).toBe('branch');
+		expect(classifyNode('some_branch', flatten(rule))).toBe('branch');
 	});
 });
 
@@ -796,7 +796,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		const modelType = classifyNode('braces', deleteWrapper(rule));
+		const modelType = classifyNode('braces', flatten(rule));
 		expect(modelType).toBe('pattern');
 	});
 });
@@ -887,7 +887,7 @@ describe('Rule — deriveFields', () => {
 			]
 		};
 
-		const slots = deriveSlots(deleteWrapper(rule));
+		const slots = deriveSlots(flatten(rule));
 		// Two slots — one per arm. The field arm yields a named `declaration`
 		// slot; the bare-symbol arm yields its kind-named (inferred) slot. Neither
 		// collapses into a single opaque `content` union.

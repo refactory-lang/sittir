@@ -9,14 +9,14 @@
  *  - seq → flatMap member slots (distribute; seq itself emits none).
  *  - non-nonterminal leaf → [].
  *
- * Witnesses are run through `deleteWrapper` first (production feeds
+ * Witnesses are run through `flatten` first (production feeds
  * `collectSlots` wrapper-free input).
  */
 
 import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, afterEach } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
-import { deleteWrapper } from '../wrapper-deletion.ts';
+import { flatten } from '../flatten.ts';
 import { isTerminalValue } from '../model/node-map.ts';
 import type { Rule } from '../../types/rule.ts';
 
@@ -24,7 +24,7 @@ const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
 const str = (value: string): Rule<'link'> => ({ type: STRING, value });
 
 function slots(rule: Rule<'link'>) {
-	return collectSlots(deleteWrapper(rule) as Rule);
+	return collectSlots(flatten(rule) as Rule);
 }
 
 describe('collectSlots — nonterminal-node enumeration', () => {
@@ -56,9 +56,9 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 
 	it('bare unnamed repeat(string) → one unnamed slot (nonterminal is the sole slot signal)', () => {
 		// Since wrapper-deletion's separator-sub-rule recursion (PR-S task 4),
-		// deleteWrapper stamps `nonterminal: true` on this STRING regardless of
+		// flatten stamps `nonterminal: true` on this STRING regardless of
 		// field-name presence — `nonterminal` is the sole authoritative slot
-		// signal (deleteWrapper is its sole deriver), not "has a name source".
+		// signal (flatten is its sole deriver), not "has a name source".
 		// This feeds separator-kind/flank detection for AssembledSeparatedList.
 		const out = slots({ type: REPEAT, content: str(',') });
 		expect(out).toHaveLength(1);
@@ -101,7 +101,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 				]
 			}
 		};
-		const out = collectSlots(deleteWrapper(inner) as Rule);
+		const out = collectSlots(flatten(inner) as Rule);
 		const names = out.map((s) => s.name);
 		// operators is its OWN slot — not merged into the symbol slot.
 		expect(names).toContain('operators');
@@ -117,7 +117,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
 		const rule: Rule<'link'> = { type: CHOICE, members: [sym('a'), sym('b')] };
-		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
+		const out = collectSlots(flatten(rule) as Rule, 'my_kind');
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('content');
 		expect(warned).toEqual(['my_kind']);
@@ -127,7 +127,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
 		const rule: Rule<'link'> = { type: FIELD, name: 'value', content: { type: CHOICE, members: [sym('a'), sym('b')] } };
-		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
+		const out = collectSlots(flatten(rule) as Rule, 'my_kind');
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('value');
 		expect(warned).toEqual([]);
@@ -141,7 +141,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 				{ type: FIELD, name: 'right', content: sym('b') }
 			]
 		};
-		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const out = collectSlots(flatten(rule) as Rule);
 		expect(out.map((s) => s.name)).toEqual(['left', 'right']);
 	});
 
@@ -161,7 +161,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 				}
 			]
 		};
-		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const out = collectSlots(flatten(rule) as Rule);
 		const identifierSlots = out.filter((s) => s.name === 'identifier');
 		expect(identifierSlots).toHaveLength(2);
 		expect(identifierSlots[0]!.values).toHaveLength(1);
@@ -185,7 +185,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 				}
 			]
 		};
-		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const out = collectSlots(flatten(rule) as Rule);
 		const labelSlots = out.filter((s) => s.name === 'label');
 		expect(labelSlots).toHaveLength(1);
 		expect(labelSlots[0]!.values).toHaveLength(2);
@@ -205,7 +205,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 				}
 			]
 		};
-		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const out = collectSlots(flatten(rule) as Rule);
 		const identifierSlots = out.filter((s) => s.name === 'identifier');
 		expect(identifierSlots.length).toBeGreaterThanOrEqual(2);
 	});
@@ -222,7 +222,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 				{ type: SEQ, members: [{ type: FIELD, name: 'op', content: str('fn') }, sym('other')] }
 			]
 		};
-		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const out = collectSlots(flatten(rule) as Rule);
 		const marker = out.find((s) => s.name === 'trait_form_marker');
 		expect(marker).toBeDefined();
 		expect(marker!.values[0]!.multiplicity).toBe('optional');

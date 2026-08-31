@@ -62,7 +62,6 @@ import type {
 	RefineForm
 } from './types.ts';
 import { hasAnyField } from '../dsl/rule-transforms.ts';
-import { structuralBuilder } from '../dsl/builders.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -75,6 +74,7 @@ import { rulesEqual, separatorOf } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
+import { withId } from '../dsl/builders.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 
@@ -282,7 +282,7 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			rules[ext] = structuralBuilder.token(structuralBuilder.pattern('')) as Rule<'link'>;
+			rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
 		}
 	}
 }
@@ -917,7 +917,6 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 			pushAmbientScaffoldIntoVariantChildren(rules, parentKind, children);
 			continue;
 		}
-
 	}
 }
 
@@ -2076,8 +2075,8 @@ function rewriteRuleForStamp(
 	switch (rule.type) {
 		case SYMBOL: {
 			const lit = symToLit[rule.name];
-			if (lit !== undefined) return structuralBuilder.string(lit, rule.id) as Rule<'link'>;
-			if (blankStamps.has(rule.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
+			if (lit !== undefined) return withId({ type: STRING, value: lit }, rule.id);
+			if (blankStamps.has(rule.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			return rule;
 		}
 
@@ -2085,8 +2084,8 @@ function rewriteRuleForStamp(
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const lit = symToLit[inner.name];
-				if (lit !== undefined) return structuralBuilder.string(lit, rule.id ?? inner.id) as Rule<'link'>;
-				if (blankStamps.has(inner.name)) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
+				if (lit !== undefined) return withId({ type: STRING, value: lit }, rule.id ?? inner.id);
+				if (blankStamps.has(inner.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 		}
@@ -2110,9 +2109,9 @@ function rewriteRuleForStamp(
 			const nonBlank = members.filter((m) => !isBlankRule(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
-			if (nonBlank.length === 0) return structuralBuilder.choice([], rule.id) as Rule<'link'>;
-			if (nonBlank.length === 1) return structuralBuilder.optional(nonBlank[0]!, rule.id) as Rule<'link'>;
-			return structuralBuilder.optional(structuralBuilder.choice(nonBlank), rule.id) as Rule<'link'>;
+			if (nonBlank.length === 0) return withId({ type: CHOICE, members: [] }, rule.id);
+			if (nonBlank.length === 1) return withId({ type: OPTIONAL, content: nonBlank[0]! }, rule.id);
+			return withId({ type: OPTIONAL, content: { type: CHOICE, members: nonBlank } }, rule.id);
 		}
 
 		default:

@@ -14,7 +14,7 @@
 import { describe, it, expect } from 'vitest';
 import { countSlots } from '../slot-grouping.ts';
 import { collectSlots, setUnnamedChoiceWarner } from '../../collect-slots.ts';
-import { deleteWrapper } from '../../wrapper-deletion.ts';
+import { flatten } from '../../flatten.ts';
 import type { Rule } from '../../../types/rule.ts';
 import { afterEach } from 'vitest';
 
@@ -53,7 +53,7 @@ describe('countSlots — Table 1 distribution', () => {
 function slotsLen(rule: Rule): number {
 	// Suppress unnamed-choice warnings in convergence tests.
 	setUnnamedChoiceWarner(() => {});
-	const result = collectSlots(deleteWrapper(rule) as Rule);
+	const result = collectSlots(flatten(rule) as Rule);
 	setUnnamedChoiceWarner((kind) => console.warn(`unnamed choice slot: ${kind ?? '(unknown)'}`));
 	return result.length;
 }
@@ -71,7 +71,7 @@ describe('countSlots ≡ collectSlots.length (convergence)', () => {
 
 	it('field-named choice: field(operator, choice(+, -)) → 1', () => {
 		// The field wrapper is a slot boundary; collectSlots receives it wrapper-free
-		// (deleteWrapper pushes field down to fieldName attr on the choice).
+		// (flatten pushes field down to fieldName attr on the choice).
 		const rule = field('operator', choice(str('+'), str('-')));
 		expect(countSlots(rule)).toBe(1);
 		expect(slotsLen(rule)).toBe(1);
@@ -79,7 +79,7 @@ describe('countSlots ≡ collectSlots.length (convergence)', () => {
 
 	it('symbol with array multiplicity (repeat-pushed-down) → 1', () => {
 		// repeat pushed down to a symbol leaf with multiplicity='array' by
-		// deleteWrapper. Both sides count it as 1 array slot.
+		// flatten. Both sides count it as 1 array slot.
 		const rule: Rule = {
 			type: 'SYMBOL',
 			name: '_type',

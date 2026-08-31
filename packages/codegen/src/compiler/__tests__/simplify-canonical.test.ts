@@ -30,10 +30,10 @@ import {
 import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
-import { simplifyRule, makeDefaultCtx } from '../simplify.ts';
+import { simplifyRule } from '../simplify.ts';
 import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../simplify.ts';
 import { attributeBuilder } from '../../dsl/builders.ts';
-import { applyWrapperDeletion } from '../wrapper-deletion.ts';
+import { flattenRules } from '../flatten.ts';
 
 const str = (value: string): Rule<'link'> => ({ type: STRING, value });
 const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
@@ -58,7 +58,7 @@ const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
 
 /**
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,
- * exactly as `applyWrapperDeletion(field(name, content))` produces.
+ * exactly as `flattenRules(field(name, content))` produces.
  */
 const fieldAttrs = (name: string, content: AnyRule): Rule =>
 	({
@@ -67,83 +67,36 @@ const fieldAttrs = (name: string, content: AnyRule): Rule =>
 		nonterminal: true
 	}) as Rule;
 
-describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesForChoice)', () => {
-	// These tests call mergeBranchesForChoice directly because simplifyRule's
-	// input must be field-node-free (fields must be wrapper-deleted first).
-	// mergeBranchesForChoice itself still accepts field-containing input so
-	// the production path (simplifyChoiceRule → mergeBranchesForChoice) can
-	// handle pre-wrapper-deleted rules in tests. The output uses the
-	// attribute-push pattern: `fieldName`+`nonterminal` on the content
-	// node rather than a FieldRule wrapper — exercised by passing
-	// `attributeBuilder` (the production builder) to mergeBranchesForChoice.
+describe('mergeBranchesForChoice — same-shape branches (wrapper-free input)', () => {
+	// simplify only ever sees wrapper-free rules: a field arrives as
+	// `fieldName`+`nonterminal` on its content, never as a FieldRule.
 
-	it("merges same-shape branches that differ only in one field's literal", () => {
-		// Pattern: binary_expression. Each arm same seq shape with
-		// different literal for operator.
+	it('merges branches whose positions are pairwise identical', () => {
 		const input = choice(
-			seq(field('left', sym('expr')), field('op', str('&&')), field('right', sym('expr'))),
-			seq(field('left', sym('expr')), field('op', str('||')), field('right', sym('expr'))),
-			seq(field('left', sym('expr')), field('op', str('+')), field('right', sym('expr')))
+			seq(sym('expr'), fieldAttrs('op', str('+')), sym('expr')),
+			seq(sym('expr'), fieldAttrs('op', str('+')), sym('expr'))
 		) as ChoiceRule;
-		const result = mergeBranchesForChoice(input, makeDefaultCtx());
-		expect(result.type).toBe('SEQ');
-		const members = (result as { members: Rule[] }).members;
-		expect(members).toHaveLength(3);
-		// Position 0: left field — attrs pushed onto sym('expr')
-		expect(members[0]).toEqual(fieldAttrs('left', sym('expr')));
-		// Position 1: op field — attrs pushed onto choice of literals
-		expect(members[1]).toEqual(fieldAttrs('op', choice(str('&&'), str('||'), str('+'))));
-		// Position 2: right field — attrs pushed onto sym('expr')
-		expect(members[2]).toEqual(fieldAttrs('right', sym('expr')));
-	});
-
-	it('merges two-branch choice with identical shape + differing field content', () => {
-		const input = choice(
-			seq(field('kind', str('var'))),
-			seq(field('kind', str('let'))),
-			seq(field('kind', str('const')))
-		) as ChoiceRule;
-		const result = mergeBranchesForChoice(input, makeDefaultCtx());
-		// seq of one position — mergeBranchesForChoice returns the single merged member
-		// (a choice node with fieldName+nonterminal attrs pushed by attributeBuilder).
-		expect((result as any).fieldName).toBe('kind');
-		expect((result as any).nonterminal).toBe(true);
-		// The merged content is a choice of the three literals
-		const members = (result as any).members;
-		expect(members).toHaveLength(3);
-	});
-
-	it('preserves non-field positions as-is when identical across branches', () => {
-		const input = choice(
-			seq(sym('expr'), field('op', str('+')), sym('expr')),
-			seq(sym('expr'), field('op', str('-')), sym('expr'))
-		) as ChoiceRule;
-		const result = mergeBranchesForChoice(input, makeDefaultCtx());
+		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('SEQ');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(3);
 		expect(members[0]).toEqual(sym('expr'));
-		expect((members[1] as any).fieldName).toBe('op');
+		expect(members[1]).toEqual(fieldAttrs('op', str('+')));
 		expect(members[2]).toEqual(sym('expr'));
 	});
 
-	it('does NOT merge when branches differ in FIELD NAME at a position', () => {
-		// function_modifiers-style: each branch has a DIFFERENT field
-		// name. Not mergeable.
+	it('does NOT merge when a slot-promoted literal differs at a position', () => {
 		const input = choice(
-			field('async', sym('_kw_async')),
-			field('const', sym('_kw_const')),
-			field('unsafe', sym('_kw_unsafe'))
+			seq(sym('expr'), fieldAttrs('op', str('+')), sym('expr')),
+			seq(sym('expr'), fieldAttrs('op', str('-')), sym('expr'))
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
-		// liftSharedArmAttrs fires but branches stay as-is (no seq structure to merge).
 		expect(result.type).toBe('CHOICE');
-		expect((result as { members: Rule[] }).members.length).toBe(3);
+		expect((result as { members: Rule[] }).members).toHaveLength(2);
 	});
 
 	it('does NOT merge when branches differ in MEMBER KIND at a position', () => {
-		// One branch has field, another has symbol at same position.
-		const input = choice(seq(field('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
+		const input = choice(seq(fieldAttrs('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('CHOICE');
 	});
@@ -154,8 +107,8 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 		// doing so drops the variant names and turns a polymorph into
 		// a bare seq.
 		const input = choice(
-			variant('a', seq(field('op', str('+')), field('r', sym('expr')))),
-			variant('b', seq(field('op', str('-')), field('r', sym('expr'))))
+			variant('a', seq(fieldAttrs('op', str('+')), fieldAttrs('r', sym('expr')))),
+			variant('b', seq(fieldAttrs('op', str('-')), fieldAttrs('r', sym('expr'))))
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('CHOICE');
@@ -163,26 +116,6 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 		expect(members).toHaveLength(2);
 		expect(members[0]!.type).toBe('VARIANT');
 		expect(members[1]!.type).toBe('VARIANT');
-	});
-
-	it('dedupes identical contents across branches', () => {
-		// Two branches have the same literal. Merged content shouldn't
-		// have duplicates.
-		const input = choice(
-			seq(field('op', str('+')), field('r', sym('expr'))),
-			seq(field('op', str('+')), field('r', sym('expr'))),
-			seq(field('op', str('-')), field('r', sym('expr')))
-		) as ChoiceRule;
-		const result = mergeBranchesForChoice(input, makeDefaultCtx());
-		expect(result.type).toBe('SEQ');
-		const members = (result as { members: Rule[] }).members;
-		// op: deduplicated choice of '+' and '-' (not '+', '+', '-')
-		// attributeBuilder pushes fieldName+nonterminal onto the choice node.
-		const opMember = members[0]!;
-		expect((opMember as any).fieldName).toBe('op');
-		const choiceMembers = (opMember as any).members;
-		// dedupe: choice('+', '-') not choice('+', '+', '-')
-		expect(choiceMembers).toHaveLength(2);
 	});
 
 	it('leaves homogeneous-collapsed choices alone (choice of bare symbols)', () => {
@@ -197,7 +130,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 
 describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 	// simplifyRule's input must be field-node-free. These tests use
-	// applyWrapperDeletion to convert field wrappers to attributes first,
+	// flattenRules to convert field wrappers to attributes first,
 	// then call simplifyRule.
 
 	it('is idempotent on field-free choice-of-seqs', () => {
@@ -205,7 +138,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 			seq(field('op', str('+')), field('r', sym('expr'))),
 			seq(field('op', str('-')), field('r', sym('expr')))
 		);
-		const fieldFree = applyWrapperDeletion({ x: raw }).x!;
+		const fieldFree = flattenRules({ x: raw }).x!;
 		const once = simplifyRule(fieldFree as Rule);
 		const twice = simplifyRule(once);
 		expect(twice).toEqual(once);
@@ -213,14 +146,14 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 
 	it('collapses a single-member choice to its member', () => {
 		const raw = choice(sym('a'));
-		const fieldFree = applyWrapperDeletion({ x: raw }).x!;
+		const fieldFree = flattenRules({ x: raw }).x!;
 		const result = simplifyRule(fieldFree as Rule);
 		expect(result.type).toBe('SYMBOL');
 	});
 
 	it('simplifyRule throws on a raw OPTIONAL node (deleted handler — use attributeBuilder instead)', () => {
 		// simplifyOptionalRule was deleted: OPTIONAL nodes must be converted to
-		// multiplicity attrs by applyWrapperDeletion before reaching simplify, or
+		// multiplicity attrs by flattenRules before reaching simplify, or
 		// built via ctx.builder (attributeBuilder) at construction sites within
 		// simplify (e.g. the empty-match fold in simplifyChoiceRule). A raw OPTIONAL
 		// hitting simplifyRule is a bug and now throws immediately.
@@ -231,8 +164,8 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 	it('attributeBuilder.optional strips bare anonymous string delimiters (replaces simplifyOptionalRule)', () => {
 		// The behavior previously in simplifyOptionalRule is now in attributeBuilder.optional.
 		// optional(',') without nonterminal → bare delimiter → collapses to empty-seq attrs.
-		const result = attributeBuilder.optional(str(','));
-		// deleteWrapper({type:OPTIONAL, content: str(',')}) on a non-slot-promoted string
+		const result = attributeBuilder.optional({ type: STRING, value: ',' });
+		// flatten({type:OPTIONAL, content: str(',')}) on a non-slot-promoted string
 		// produces empty-seq (no leaves carry multiplicity when the content is stripped).
 		// The STRING is bare (no nonterminal), so the content is treated as a delimiter.
 		// Result: {type:SEQ, members:[]} sentinel.
@@ -246,7 +179,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		// a field wrapper: field('kw', str('static')) → wrapper-deleted →
 		// str('static', {fieldName:'kw', nonterminal:true}).
 		const wrapped = { x: optional(field('kw', str('static'))) };
-		const fieldFree = applyWrapperDeletion(wrapped).x!;
+		const fieldFree = flattenRules(wrapped).x!;
 		const result = simplifyRule(fieldFree as Rule);
 		// The optional wraps a nonterminal string → stays as optional (not stripped)
 		expect(result.type).not.toBe('SEQ');

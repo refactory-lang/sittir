@@ -10,11 +10,11 @@ import { computeSlotClasses } from '../shared.ts';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { Rule, SeqRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 import { namespacedConstructors } from '../namespaced-constructors.ts';
 
 function branch(kind: string, rule: SeqRule<'link'>): AssembledBranch {
-	return new AssembledBranch(kind, rule, deleteWrapper(rule), deleteWrapper(rule));
+	return new AssembledBranch(kind, rule, flatten(rule), flatten(rule));
 }
 
 function field(name: string, content: Rule<'link'>): Rule<'link'> {
@@ -188,9 +188,7 @@ describe('namespacedConstructors — factory emission', () => {
 		// literal is determined), so it takes the single-slot positional
 		// surface rather than a config object — the same rule every other
 		// one-slot kind follows.
-		expect(emitted).toContain(
-			'a: (text: string) => buildWrapper$impl((buildWrapperA(text)) as T.WrapperA),'
-		);
+		expect(emitted).toContain('a: (text: string) => buildWrapper$impl((buildWrapperA(text)) as T.WrapperA),');
 		expect(emitted).toContain(
 			'let: (...args: Parameters<typeof buildWrapperB.let>) => buildWrapper$impl((buildWrapperB.let(...args)) as T.WrapperB),'
 		);

@@ -31,7 +31,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, PhaseName, Rule } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, PhaseName, Rule, SeqRule } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 
 export function classifyByType(
@@ -109,9 +109,9 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 	}
 }
 
-export function isEnumChoiceRule<R extends AnyRule>(
-	rule: R
-): rule is Extract<R, { type: typeof CHOICE }> & { readonly __enumShaped?: never } {
+export function isEnumChoiceRule<P extends PhaseName>(
+	rule: Rule<P>
+): rule is ChoiceRule<P> & { readonly __enumShaped?: never } {
 	return (
 		rule.type === CHOICE &&
 		rule.members.length >= 2 &&
@@ -119,12 +119,7 @@ export function isEnumChoiceRule<R extends AnyRule>(
 	);
 }
 
-export function isSpliceableBareSeq(rule: {
-	readonly type: string;
-	readonly fieldName?: unknown;
-	readonly separator?: unknown;
-	readonly multiplicity?: unknown;
-}): boolean {
+export function isSpliceableBareSeq(rule: Rule<'normalize'>): rule is SeqRule<'normalize'> {
 	return (
 		rule.type === SEQ && rule.fieldName === undefined && rule.separator === undefined && rule.multiplicity === undefined
 	);
@@ -552,15 +547,18 @@ export function selfReferentialFoldOf(
 	return { extensionFieldName, separator };
 }
 
-export function exclusiveFieldChoiceBranches(member: Rule, rulesBag: Record<string, Rule>): readonly Rule[] | undefined {
-	let target: Rule | undefined = member;
+export function exclusiveFieldChoiceBranches<P extends PhaseName>(
+	member: Rule<P>,
+	rulesBag: Record<string, Rule<P>>
+): readonly Rule<P>[] | undefined {
+	let target: Rule<P> | undefined = member;
 	if (isSymbolType((member as { type?: string }).type)) {
 		const name = (member as { name?: string }).name;
 		if (typeof name !== 'string' || !name.startsWith('_')) return undefined;
 		target = rulesBag[name];
 	}
 	if (!target || !isChoiceType((target as { type?: string }).type)) return undefined;
-	const branches = (target as unknown as { members?: Rule[] }).members;
+	const branches = (target as unknown as { members?: Rule<P>[] }).members;
 	if (!Array.isArray(branches) || branches.length < 2) return undefined;
 	const names = new Set<string>();
 	for (const branch of branches) {
@@ -584,10 +582,10 @@ export function normalizeMember(m: unknown): {
 	return (m as { type: string }) ?? { type: 'UNKNOWN' };
 }
 
-export function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
+export function peelOptional<P extends PhaseName>(rule: Rule<P>): { inner: Rule<P>; isOptional: boolean } {
 	if (isOptionalType(rule.type)) {
 		return {
-			inner: (rule as unknown as { content: Rule }).content,
+			inner: (rule as unknown as { content: Rule<P> }).content,
 			isOptional: true
 		};
 	}
@@ -596,7 +594,7 @@ export function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 		if (members.length === 2) {
 			const blankIdx = members.findIndex((m) => m.type === 'BLANK');
 			if (blankIdx !== -1) {
-				const inner = members[1 - blankIdx] as unknown as Rule;
+				const inner = members[1 - blankIdx] as unknown as Rule<P>;
 				return { inner, isOptional: true };
 			}
 		}
@@ -604,20 +602,22 @@ export function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 	return { inner: rule, isOptional: false };
 }
 
-export function peelOptionalSeq(rule: Rule): {
-	seqBody: Rule;
+export function peelOptionalSeq<P extends PhaseName>(
+	rule: Rule<P>
+): {
+	seqBody: Rule<P>;
 	form: 'optional' | 'choice';
 	seqIdx: number;
 } | null {
 	if (isOptionalType(rule.type)) {
-		const content = (rule as unknown as { content?: Rule }).content;
+		const content = (rule as unknown as { content?: Rule<P> }).content;
 		if (content && isSeqType((content as { type?: string }).type)) {
 			return { seqBody: content, form: 'optional', seqIdx: -1 };
 		}
 		return null;
 	}
 	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
+		const members = (rule as unknown as { members?: Rule<P>[] }).members;
 		if (!Array.isArray(members) || members.length !== 2) return null;
 		const blankIdx = members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
 		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
@@ -627,10 +627,10 @@ export function peelOptionalSeq(rule: Rule): {
 	return null;
 }
 
-export function listSeparatorOfOptionalSeq(rule: Rule): string | null {
+export function listSeparatorOfOptionalSeq<P extends PhaseName>(rule: Rule<P>): string | null {
 	const peeled = peelOptionalSeq(rule);
 	if (peeled === null) return null;
-	const seqMembers = (peeled.seqBody as unknown as { members?: Rule[] }).members;
+	const seqMembers = (peeled.seqBody as unknown as { members?: Rule<P>[] }).members;
 	if (!Array.isArray(seqMembers)) return null;
 	for (const m of seqMembers) {
 		if (!isRepeatType((m as { type?: string }).type)) continue;
@@ -652,7 +652,7 @@ export function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 	return null;
 }
 
-export function optionalStringLiteral(rule: Rule): string | null {
+export function optionalStringLiteral<P extends PhaseName>(rule: Rule<P>): string | null {
 	const peeled = peelOptional(rule);
 	if (!peeled.isOptional) return null;
 	const innerN = normalizeMember(peeled.inner);
@@ -660,7 +660,7 @@ export function optionalStringLiteral(rule: Rule): string | null {
 	return null;
 }
 
-export function separatedListElementName(rule: Rule): string | null {
+export function separatedListElementName<P extends PhaseName>(rule: Rule<P>): string | null {
 	const t = (rule as { type?: string }).type;
 	if (typeof t !== 'string') return null;
 	if (isFieldType(t)) {
@@ -672,37 +672,37 @@ export function separatedListElementName(rule: Rule): string | null {
 		return typeof name === 'string' ? name.replace(/^_+/, '') : null;
 	}
 	if (isChoiceType(t)) {
-		const members = (rule as { members?: Rule[] }).members;
+		const members = (rule as { members?: Rule<P>[] }).members;
 		if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]!);
 		return null;
 	}
 	if (isPrecWrapper(rule as { type: string }) || typeEq(t, 'ALIAS')) {
-		const content = (rule as { content?: Rule }).content;
+		const content = (rule as { content?: Rule<P> }).content;
 		return content ? separatedListElementName(content) : null;
 	}
 	return null;
 }
 
-export function peelOptionalEitherSpelling(rule: Rule): Rule | null {
+export function peelOptionalEitherSpelling<P extends PhaseName>(rule: Rule<P>): Rule<P> | null {
 	const peeled = peelOptional(rule);
 	return peeled.isOptional ? peeled.inner : null;
 }
 
-export interface SeparatedListBodyInfo {
+export interface SeparatedListBodyInfo<P extends PhaseName = 'normalize'> {
 	elementName: string | null;
 	flankCarrying: boolean;
 	form: 'head' | 'leading' | 'tail';
-	element: Rule;
-	separatorRule: Rule;
-	flatMembers: Rule[];
+	element: Rule<P>;
+	separatorRule: Rule<P>;
+	flatMembers: Rule<P>[];
 }
 
-export function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
+export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>): SeparatedListBodyInfo<P> | null {
 	if (!isSeqType((body as { type?: string }).type)) return null;
-	const members = (body as unknown as { members?: Rule[] }).members;
+	const members = (body as unknown as { members?: Rule<P>[] }).members;
 	if (!Array.isArray(members) || members.length === 0) return null;
 
-	const separatorRepeatOf = (m: Rule) => {
+	const separatorRepeatOf = (m: Rule<P>) => {
 		if (!isRepeatType((m as { type?: string }).type)) return null;
 		const content = (m as { content?: RuntimeRule }).content;
 		return content ? separatorOf(content) : null;
@@ -711,15 +711,15 @@ export function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null 
 	if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
 		const nestedIdx = members.findIndex((m) => {
 			if (!isSeqType((m as { type?: string }).type)) return false;
-			const inner = (m as unknown as { members?: Rule[] }).members;
+			const inner = (m as unknown as { members?: Rule<P>[] }).members;
 			return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
 		});
 		if (nestedIdx !== -1) {
-			const headMembers = (members[nestedIdx] as unknown as { members: Rule[] }).members;
+			const headMembers = (members[nestedIdx] as unknown as { members: Rule<P>[] }).members;
 			return separatedListBodyInfo({
 				...body,
 				members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
-			} as Rule);
+			} as Rule<P>);
 		}
 	}
 
@@ -730,7 +730,7 @@ export function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null 
 	const separatorLiteral = typeEq(detected.separator.type, 'STRING')
 		? ((detected.separator as { value?: unknown }).value as string)
 		: null;
-	const elementName = separatedListElementName(detected.content as Rule);
+	const elementName = separatedListElementName(detected.content as Rule<P>);
 
 	if (detected.trailing !== true) {
 		if (repeatIdx === 0) {
@@ -744,8 +744,8 @@ export function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null 
 				elementName,
 				flankCarrying: true,
 				form: 'leading' as const,
-				element: detected.content as Rule,
-				separatorRule: detected.separator as Rule,
+				element: detected.content as Rule<P>,
+				separatorRule: detected.separator as Rule<P>,
 				flatMembers: members
 			};
 		}
@@ -777,8 +777,8 @@ export function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null 
 			elementName,
 			flankCarrying,
 			form: 'head' as const,
-			element: detected.content as Rule,
-			separatorRule: detected.separator as Rule,
+			element: detected.content as Rule<P>,
+			separatorRule: detected.separator as Rule<P>,
 			flatMembers: members
 		};
 	}
@@ -792,16 +792,16 @@ export function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null 
 		elementName,
 		flankCarrying: true,
 		form: 'tail' as const,
-		element: detected.content as Rule,
-		separatorRule: detected.separator as Rule,
+		element: detected.content as Rule<P>,
+		separatorRule: detected.separator as Rule<P>,
 		flatMembers: members
 	};
 }
 
-export function armLeadingSymbolName(
-	rule: Rule,
-	rulesBag: Record<string, Rule>,
-	seen: Set<Rule> = new Set()
+export function armLeadingSymbolName<P extends PhaseName>(
+	rule: Rule<P>,
+	rulesBag: Record<string, Rule<P>>,
+	seen: Set<Rule<P>> = new Set()
 ): string | undefined {
 	if (seen.has(rule)) return undefined;
 	seen.add(rule);
@@ -816,45 +816,45 @@ export function armLeadingSymbolName(
 		return body ? (armLeadingSymbolName(body, rulesBag, seen) ?? name) : name;
 	}
 	if (isSeqType(t)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
+		const members = (rule as unknown as { members?: Rule<P>[] }).members;
 		const first = Array.isArray(members) ? members[0] : undefined;
 		return first ? armLeadingSymbolName(first, rulesBag, seen) : undefined;
 	}
 	if (isChoiceType(t)) {
 		return undefined;
 	}
-	const content = (rule as { content?: Rule }).content;
+	const content = (rule as { content?: Rule<P> }).content;
 	return content ? armLeadingSymbolName(content, rulesBag, seen) : undefined;
 }
 
-export function armStartsWithSymbol(
-	rule: Rule,
+export function armStartsWithSymbol<P extends PhaseName>(
+	rule: Rule<P>,
 	collidingLeadingNames: ReadonlySet<string>,
-	rulesBag: Record<string, Rule>
+	rulesBag: Record<string, Rule<P>>
 ): boolean {
 	if (collidingLeadingNames.size === 0) return false;
 	const name = armLeadingSymbolName(rule, rulesBag);
 	return name !== undefined && collidingLeadingNames.has(name);
 }
 
-export function isLiteralChoiceContent(rule: Rule): boolean {
+export function isLiteralChoiceContent<P extends PhaseName>(rule: Rule<P>): boolean {
 	if (isStringType((rule as { type?: string }).type as string)) return true;
 	if (isChoiceType((rule as { type?: string }).type as string)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
+		const members = (rule as unknown as { members?: Rule<P>[] }).members;
 		return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
 	}
 	return false;
 }
 
-export function armsDifferOnlyByLiteralChoice(a: Rule, b: Rule): boolean {
+export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
 	let literalDeltas = 0;
-	const peel = (r: Rule): Rule => {
-		while (isPrecWrapper(r as { type: string }) && (r as { content?: Rule }).content) {
-			r = (r as { content: Rule }).content;
+	const peel = (r: Rule<P>): Rule<P> => {
+		while (isPrecWrapper(r as { type: string }) && (r as { content?: Rule<P> }).content) {
+			r = (r as { content: Rule<P> }).content;
 		}
 		return r;
 	};
-	const same = (x: Rule, y: Rule): boolean => {
+	const same = (x: Rule<P>, y: Rule<P>): boolean => {
 		x = peel(x);
 		y = peel(y);
 		if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
@@ -868,17 +868,17 @@ export function armsDifferOnlyByLiteralChoice(a: Rule, b: Rule): boolean {
 		if (isFieldType(tx)) {
 			return (
 				(x as { name?: string }).name === (y as { name?: string }).name &&
-				same((x as unknown as { content: Rule }).content, (y as unknown as { content: Rule }).content)
+				same((x as unknown as { content: Rule<P> }).content, (y as unknown as { content: Rule<P> }).content)
 			);
 		}
-		const mx = (x as unknown as { members?: Rule[] }).members;
-		const my = (y as unknown as { members?: Rule[] }).members;
+		const mx = (x as unknown as { members?: Rule<P>[] }).members;
+		const my = (y as unknown as { members?: Rule<P>[] }).members;
 		if (Array.isArray(mx) || Array.isArray(my)) {
 			if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
 			return mx.every((m, i) => same(m, my[i]!));
 		}
-		const cx = (x as { content?: Rule }).content;
-		const cy = (y as { content?: Rule }).content;
+		const cx = (x as { content?: Rule<P> }).content;
+		const cy = (y as { content?: Rule<P> }).content;
 		if (cx !== undefined || cy !== undefined) {
 			return cx !== undefined && cy !== undefined && same(cx, cy);
 		}

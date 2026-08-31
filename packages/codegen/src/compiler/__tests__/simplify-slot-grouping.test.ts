@@ -5,7 +5,7 @@
  * Production signal: auto-group helpers (kinds in `inlineKinds`) have their
  * top-level body treated as a slot-position seq. Normal rule bodies are silent.
  *
- * Note: `computeSimplifiedRules` runs `deleteWrapper` which pushes repeat/
+ * Note: `computeSimplifiedRules` runs `flatten` which pushes repeat/
  * optional wrappers down to leaf attributes. There are no `repeat` nodes in
  * the final simplified output — so shape ① fires only via:
  *   a. A kind in `inlineKinds` whose top-level body seq has ≥2 slots, OR

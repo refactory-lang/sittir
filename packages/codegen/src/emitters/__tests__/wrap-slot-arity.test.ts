@@ -10,7 +10,7 @@ import {
 import type { ChoiceRule, EnumRule, SeqRule } from '../../types/rule.ts';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 
 function makeRequiredSingleChildNodeMap() {
 	const parentRule: SeqRule<'link'> = {
@@ -20,7 +20,7 @@ function makeRequiredSingleChildNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'single_parent',
-		new AssembledBranch('single_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+		new AssembledBranch('single_parent', parentRule, flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -34,7 +34,7 @@ function makeRequiredSingleFieldNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'single_field_parent',
-		new AssembledBranch('single_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+		new AssembledBranch('single_field_parent', parentRule, flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -57,7 +57,7 @@ function makeRepeatFieldNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'repeat_field_parent',
-		new AssembledBranch('repeat_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+		new AssembledBranch('repeat_field_parent', parentRule, flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -85,10 +85,7 @@ function makeHiddenSupertypeChildrenNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'tuple_type',
-		new AssembledBranch('tuple_type', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
-	);
+	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, flatten(parentRule), flatten(parentRule)));
 	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: '_primitive_type' }]));
 	nodes.set(
 		'_primitive_type',
@@ -114,10 +111,7 @@ function makeVisibleSupertypeChildrenNodeMap() {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'typed_value',
-		new AssembledBranch('typed_value', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
-	);
+	nodes.set('typed_value', new AssembledBranch('typed_value', parentRule, flatten(parentRule), flatten(parentRule)));
 	nodes.set('expression', new AssembledSupertype('expression', expressionRule, [{ name: 'identifier' }]));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);

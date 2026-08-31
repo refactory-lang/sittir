@@ -7,7 +7,7 @@ import {
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 
@@ -44,7 +44,7 @@ function makeFieldPatternNodeMap(withMarkers: boolean) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'field_pattern',
-		new AssembledBranch('field_pattern', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+		new AssembledBranch('field_pattern', parentRule, flatten(parentRule), flatten(parentRule))
 	);
 	nodes.set('_mutable_specifier', new AssembledKeyword('_mutable_specifier', { type: STRING, value: 'mut' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
