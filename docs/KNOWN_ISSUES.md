@@ -8,7 +8,6 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; NOT a one-line deletion (brace escaping and style spacing are tangled — see the entry)
 5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
 8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
@@ -38,34 +37,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 **Found during:** closing the `rest_pattern` reparse rows — their wrapper (`let [${r}] = [];`) never reparsed because of this, not because of wrapper selection.
 
 The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the EXPRESSION fork: `let [c] = [];` parses as `expression_statement > assignment_expression > subscript_expression(object: reserved_identifier, ERROR, …)` — even the simplest array-destructuring `let` fails, while `const [c] = [];` (unambiguous keyword) parses correctly, and upstream tree-sitter-typescript parses the `let` form as a `lexical_declaration`. A GLR tie-break in the override grammar diverges from upstream's here (`let` doubles as a reserved identifier, so `let [` genuinely forks). No corpus entry currently exercises statement-level `let`-destructuring, so no validator row pins this — but it corrupts any real-world source using the construct. Fix belongs at the grammar level (a dynamic-precedence tie-break restoring upstream's resolution, the `primary_expression`/`list_splat_pattern` treatment in python's grammar being the in-repo precedent), not in consumers.
-
-## `ki-interp-brace-padding` — interpolation braces render with template-authored padding (`f"{ x }"`, `` `${ x }` ``)
-
-**Found during:** the string-fragment visibility work (python) and the template-substitution immediacy fix (typescript). The walker-authored templates for interpolation kinds carry style spaces around the substitution body, so a source `f"{x}"` renders `f"{ x }"` and `` `pre${x}` `` renders `` `pre${ x }` `` — valid in both languages and reparse-identical (the padding is code-context whitespace inside the substitution), but byte-divergent from typical source. Distinct from the (fixed) seam-injection class: these spaces are template TEXT, not writer insertions, so the seam machinery never sees them.
-
-**Fix, if/when prioritized — NOT simply deleting the padding.** The spaces
-come from `escapeLiteral` (`packages/codegen/src/emitters/templates.ts`),
-which rewrites every literal `{` to `{ ` and `}` to ` }` unconditionally.
-That is jinja escaping, not style: a literal `{` emitted adjacent to a
-slot's `{{ ... }}` would produce `{{{ ...` and misparse. Deleting the
-padding breaks template compilation.
-
-Two things are tangled and must be separated first:
-1. Where the brace abuts a jinja delimiter, the separation is required —
-   but it should be emitted as a jinja literal (`{{ "{" }}`, the pattern
-   this file already uses for newlines and whitespace-only text) so the
-   rendered bytes carry no space.
-2. Where the brace abuts ordinary text, the injected space is currently
-   doing double duty as a STYLE space that some grammars genuinely want
-   (rust's `struct A { a: u8 }` gets its canonical spacing from this
-   artifact). Removing it there would degrade rust output while fixing
-   python's `f"{ x }"`.
-
-So the real fix is to make brace escaping context-precise and hand the
-style spaces back to whoever owns them (template literals, per the
-spacing spec's "style spaces stay in template literals"). That is a
-per-grammar style question, not a one-line deletion — size it as its own
-slice, and gate on rendered bytes per grammar, not just reparse.
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 
