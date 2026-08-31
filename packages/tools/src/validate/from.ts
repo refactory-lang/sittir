@@ -12,6 +12,7 @@
 import type { AnyNodeData } from '@sittir/types';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
+	loadStorageKindNameFromId,
 	separatedListFactoryOptions,
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -207,6 +208,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			}
 		: rawKindIdFromName;
 	const kindNameFromId = await loadKindNameFromId(grammar);
+	const storageKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const kindLiteralText = await loadKindLiteralText(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
@@ -385,8 +387,16 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				continue;
 			}
 
+			// The read node's $type is the storage stamp; in an alias context the
+			// CST face name (`kind`) differs from it (a decorator's member chain
+			// wears the member_expression face over the decorator_member_expression
+			// storage kind). Storage identity picks the from/factory pair — the
+			// face is only how the corpus walk found the node.
+			const readTypeName =
+				typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
+			const readKind = readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
 			try {
-				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
+				const fromResult = fromMap[readKind]!(readData) as AnyNodeData;
 				let factoryResult: AnyNodeData;
 				try {
 					// Route by the shape declared at codegen time — same
@@ -395,8 +405,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// containers (python `()` has promoted `(`/`)` fields
 					// but `children === undefined`, yet is a children-shape
 					// factory that must dispatch as `factory()` with no args).
-					const shape = factoryShapes[kind] ?? 'config';
-					const factory = factoryMap[kind]!;
+					const shape = factoryShapes[readKind] ?? 'config';
+					const factory = factoryMap[readKind]!;
 					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
 						// ADR-0018: readNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
@@ -414,10 +424,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						if (shape === 'direct' || shape === 'forwarded') {
 							// Direct-call shape: use the sole field when metadata
 							// names one, otherwise treat it as a single child call.
-							const fieldNames = factoryFields[kind];
+							const fieldNames = factoryFields[readKind];
 							const rawName = fieldNames?.[0];
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-							const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
+							const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
@@ -451,7 +461,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							kindNameFromId,
 							kindLiteralText
 						});
-						const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
+						const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 						const options = separatedListFactoryOptions(readData, kindLiteralText);
 						const listFactory = factory as (...args: unknown[]) => AnyNodeData;
 						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
@@ -466,7 +476,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							kindNameFromId,
 							kindLiteralText
 						});
-						const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
+						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 					}
 				} catch (e) {
@@ -498,7 +508,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					errors.push({
 						kind,
 						severity: 'warning',
-						message: `from() diverges: ${diffs.slice(0, 3).join('; ')}`
+						message: `from() diverges (face=${kind}, storage=${readKind}, read $type=${String(readData.$type)}): ${diffs.slice(0, 3).join('; ')}`
 					});
 					continue;
 				}
