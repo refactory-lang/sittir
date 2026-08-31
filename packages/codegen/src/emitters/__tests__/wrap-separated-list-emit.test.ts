@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import {
 	AssembledPattern,
-	AssembledSeparatedList,
+	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
@@ -22,7 +22,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledSeparatedList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
@@ -42,7 +42,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 describe('wrap emitter — separatedList', () => {
 	it('emits _member/_separator/_delimiter for a nonterminal separator with both flanks optional', () => {
 		// Storage/accessor key is the model's OWN derived slot name (`_member`,
-		// from the element kind — see AssembledSeparatedList.fields / Bug B fix),
+		// from the element kind — see AssembledList.fields / Bug B fix),
 		// NOT a hardcoded `_content`/`content()`. `_content` remains only as an
 		// internal local var feeding `_hasSeparatorFlank`/`_separatorKindOf`.
 		const sepChoice: RenderRule = {

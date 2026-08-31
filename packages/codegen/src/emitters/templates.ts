@@ -11,12 +11,12 @@ import {
 	SYMBOL,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
+import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
 import {
-	AssembledGroup,
+	AssembledKeyword,
 	allSlotsOf,
 	isMultiple,
 	isRequired,
@@ -26,13 +26,15 @@ import {
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
 	storageKindOfValue,
-	determinedSlotText
+	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
+	AssembledEnvelope,
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledSeparatedList,
+	AssembledPolymorph,
+	AssembledList,
 	NodeOrTerminal,
 	SeamEdgeClass
 } from '../compiler/model/node-map.ts';
@@ -91,19 +93,26 @@ interface SlotLookupMiss {
 	readonly name: string | undefined;
 	readonly fieldName: string | undefined;
 	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'alias-source' | 'none';
+	readonly structural: boolean;
 }
 const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
 const SLOT_MISS_LOG: SlotLookupMiss[] = [];
 function dumpSlotMissLog(grammar: string): void {
 	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
 	const tally = { fieldName: 0, 'symbol-name': 0, 'alias-source': 0, none: 0 } as Record<string, number>;
-	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
+	let structural = 0;
+	for (const m of SLOT_MISS_LOG) {
+		if (m.structural) structural++;
+		else tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
+	}
+	const unexpected = SLOT_MISS_LOG.length - structural;
 	process.stderr.write(
-		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
+		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total: ` +
+			`${structural} structural (choice with seq arms, no single slot to resolve), ${unexpected} unexpected ` +
 			`(recovered fieldName=${tally.fieldName} symbol-name=${tally['symbol-name']} UNRESOLVED=${tally.none}) ===\n`
 	);
 	for (const m of SLOT_MISS_LOG) {
-		const tag = m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
+		const tag = m.structural ? 'structural ' : m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
 		const label = m.name ? `${m.ruleType}(${m.name})` : m.ruleType;
 		process.stderr.write(
 			`  ${tag} kind=${m.kind ?? '?'} ${label}${m.fieldName ? ` field=${m.fieldName}` : ''} id=${m.ruleId ?? '<none>'}\n`
@@ -284,32 +293,24 @@ function renderRuleEdge(
 
 function ownerSlotsFor(node: {
 	slots?: Readonly<Record<string, AssembledNonterminal>>;
-	determinedSlots?: readonly AssembledNonterminal[];
 }): Readonly<Record<string, AssembledNonterminal>> | undefined {
-	if (!node.slots) return undefined;
-	const determined = node.determinedSlots ?? [];
-	if (determined.length === 0) return node.slots;
-	return { ...node.slots, ...Object.fromEntries(determined.map((s) => [s.name, s])) };
+	return node.slots;
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	const ctxK: EmitCtx = { ...ctx, currentKind: node.kind };
 	switch (node.modelType) {
 		case 'branch':
+		case 'envelope':
 			return emitBranchTemplate(node, ctxK);
-		case 'group':
-			return emitGroupTemplate(node, ctxK);
+		case 'polymorph':
+			return emitBranchTemplate(node, ctxK);
 		case 'supertype':
 		case 'pattern':
-		case 'keyword':
 		case 'token':
 		case 'enum':
 			return undefined;
-		case 'multi':
-			throw new Error(
-				`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`
-			);
-		case 'separatedList':
+		case 'list':
 			return emitBranchTemplate(node, ctxK);
 		default: {
 			const _exhaustive: never = node;
@@ -318,12 +319,10 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	}
 }
 
-export function emitBranchTemplate(node: AssembledBranch | AssembledSeparatedList, ctx: EmitCtx): string {
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
-	return emitRule(node.renderRule, ctxWithSlots);
-}
-
-export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
+export function emitBranchTemplate(
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList,
+	ctx: EmitCtx
+): string {
 	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
 	return emitRule(node.renderRule, ctxWithSlots);
 }
@@ -332,7 +331,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case STRING:
 			const stringFieldName = (rule as { fieldName?: string }).fieldName;
-			if (stringFieldName !== undefined) {
+			if (rule.nonterminal === true && stringFieldName !== undefined) {
 				return emitScalarSlot(stringFieldName.toLowerCase());
 			}
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
@@ -498,7 +497,8 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			ruleId: rule.id,
 			name: (rule as { name?: string }).name,
 			fieldName: (rule as { fieldName?: string }).fieldName,
-			recoveredBy
+			recoveredBy,
+			structural: rule.type === CHOICE && rule.members.some((m) => m.type === SEQ)
 		});
 	}
 	return recovered;
@@ -640,11 +640,11 @@ function emitScalarSlot(slotName: string): string {
 	return `{{ ${slotName} }}`;
 }
 
+function emitFixedText(text: string): string {
+	return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
+}
+
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): string {
-	if (slot.determined) {
-		const text = determinedSlotText(slot, { nodes: ctx.nodeMap.nodes })!;
-		return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
-	}
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	if (ctx.emittedSlotNames.has(slotName)) return '';
 	ctx.emittedSlotNames.add(slotName);
@@ -675,6 +675,11 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
 		return escapeLiteral(rule.literal);
+	}
+	if (rule.nonterminal === false) {
+		const text = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
+		if (text === undefined) throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
+		return emitFixedText(text);
 	}
 
 	const isInlineableHiddenHelper =
@@ -1150,21 +1155,24 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 
 		switch (node.modelType) {
 			case 'pattern':
-			case 'keyword':
 			case 'enum':
 				te.emitLeaf(node);
 				break;
-			case 'branch':
-				te.emitBranch(node);
+			case 'token':
+				if (node instanceof AssembledKeyword) te.emitLeaf(node);
 				break;
-			case 'group':
-				te.emitGroup(node);
+			case 'branch':
+			case 'envelope':
+				if (node.hoisted) te.emitGroup(node);
+				else te.emitBranch(node);
+				break;
+			case 'polymorph':
+				if (node.hoisted) te.emitGroup(node);
+				else te.emitBranch(node);
 				break;
 			case 'supertype':
-			case 'token':
-			case 'multi':
 				break;
-			case 'separatedList':
+			case 'list':
 				te.emitBranch(node);
 				break;
 			default: {

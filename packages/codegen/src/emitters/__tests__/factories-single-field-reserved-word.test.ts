@@ -17,7 +17,6 @@
 import { FIELD, SEQ, SYMBOL, PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
-import { computeSlotClasses } from '../shared.ts';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
@@ -36,10 +35,6 @@ function makeReservedWordSingleFieldNodeMap() {
 	nodes.set('call', new AssembledBranch('call', parentRender, parentRender));
 	nodes.set('expr', new AssembledPattern('expr', { type: PATTERN, value: '[a-z]+' }));
 	const nodeMap = makeNodeMapWith(nodes);
-	// Gap 5's single-field-factory path reads the pre-computed `slotClass`
-	// (set post-assembly by `computeSlotClasses`, not inline) — run it here
-	// to mirror the real pipeline's `generate.ts` call.
-	computeSlotClasses(nodeMap);
 	return nodeMap;
 }
 

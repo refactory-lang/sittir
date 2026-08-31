@@ -1,7 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledSupertype } from '../compiler/model/node-map.ts';
-import { snakeToCamel } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, snakeToCamel } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectKindEntries, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
@@ -92,37 +91,45 @@ export function emitIs(config: EmitIsConfig): string {
 	const usedCamelKeys = new Set<string>();
 
 	for (const [kind, node] of nodeMap.nodes) {
+		let structural: boolean;
 		switch (node.modelType) {
 			case 'branch':
-			case 'separatedList': {
-				const numericId = kindIdByKind.get(kind);
-				if (kindEntries && numericId === undefined) {
-					break;
-				}
-				const camel = toCamelCase(kind);
-				const guardKey = safeGuardKey(camel);
-				if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(camel)) {
-					throw new Error(
-						`is emitter: camelCase kind '${camel}' collides with reserved guard key ` +
-							`or another kind. Rename '${kind}' before proceeding (spec 008 FR-017).`
-					);
-				}
-				usedCamelKeys.add(guardKey);
-				const member = kindEntries ? kindIdMemberName(nodeMap, kind) : undefined;
-				structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
+			case 'envelope':
+				structural = !node.hoisted;
 				break;
-			}
-			case 'pattern':
-			case 'keyword':
-			case 'enum':
-			case 'token':
-			case 'group':
-			case 'multi':
+			case 'polymorph':
+				structural = !node.hoisted;
+				break;
 			case 'supertype':
+				structural = false;
+				break;
+			case 'list':
+				structural = true;
+				break;
+			case 'pattern':
+			case 'token':
+			case 'enum':
+				structural = false;
 				break;
 			default:
 				assertNever(node);
 		}
+		if (!structural) continue;
+		const numericId = kindIdByKind.get(kind);
+		if (kindEntries && numericId === undefined) {
+			continue;
+		}
+		const camel = toCamelCase(kind);
+		const guardKey = safeGuardKey(camel);
+		if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(camel)) {
+			throw new Error(
+				`is emitter: camelCase kind '${camel}' collides with reserved guard key ` +
+					`or another kind. Rename '${kind}' before proceeding (spec 008 FR-017).`
+			);
+		}
+		usedCamelKeys.add(guardKey);
+		const member = kindEntries ? kindIdMemberName(nodeMap, kind) : undefined;
+		structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
 	}
 
 	const supertypes: Array<{
@@ -133,8 +140,8 @@ export function emitIs(config: EmitIsConfig): string {
 		memberIds: number[];
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
-		const st = node as AssembledSupertype;
+		if (!(node instanceof AssembledSupertype)) continue;
+		const st = node;
 		const cleanName = kind.replace(/^_/, '');
 		const typeName = node.typeName;
 		const camel = toCamelCase(cleanName);

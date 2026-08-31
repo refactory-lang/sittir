@@ -6,7 +6,7 @@
  * longer exists at assemble.
  */
 
-import { FIELD, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
+import { FIELD, REPEAT, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveSlots, isTerminalValue, AssembledToken } from '../model/node-map.ts';
 import { flatten } from '../flatten.ts';
@@ -48,11 +48,11 @@ describe('token wrapper lexical facts', () => {
 	});
 
 	it('leaves bare string terminals untagged', () => {
-		// Grammar shape: field('x', 'foo') — no token wrapper at all.
+		// Grammar shape: field('x', repeat('foo')) — no token wrapper at all.
 		const rule: Rule<'link'> = {
 			type: FIELD,
 			name: 'x',
-			content: { type: STRING, value: 'foo' }
+			content: { type: REPEAT, content: { type: STRING, value: 'foo' } }
 		};
 		const slots = deriveSlots(flatten(rule));
 		const terminal = slots.find((s) => s.name === 'x')!.values.find(isTerminalValue);

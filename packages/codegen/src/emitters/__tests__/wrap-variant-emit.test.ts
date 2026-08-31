@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import {
-	AssembledGroup,
+	AssembledBranch,
+	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledSupertype,
 	type AssembledNode
@@ -43,7 +44,7 @@ function makeHiddenGroupNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRender, helperRender));
+	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: {} }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -51,7 +52,8 @@ function makeHiddenGroupNodeMap() {
 function makeNoFactoryHiddenGroupNodeMap() {
 	const nodeMap = makeHiddenGroupNodeMap();
 	const helper = nodeMap.nodes.get('_assignment_eq');
-	if (!helper || helper.modelType !== 'group') throw new Error('Missing hidden helper group');
+	if (!helper || !(helper instanceof AbstractAssembledCompound) || !helper.hoisted)
+		throw new Error('Missing hidden helper group');
 	Object.defineProperty(helper, 'rawFactoryName', { value: undefined });
 	return nodeMap;
 }
@@ -63,7 +65,10 @@ function makeTransparentHiddenGroupNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRender, helperRender));
+	nodes.set(
+		'_export_statement_default',
+		new AssembledBranch('_export_statement_default', helperRender, helperRender, { hoisted: {} })
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }

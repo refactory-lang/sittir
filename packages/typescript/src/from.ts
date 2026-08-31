@@ -4,37 +4,29 @@ import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId, KIND_LITERAL_TEXT, Delimiter } from './types.js';
 import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';
+import { coerceKindEnumStorage, isNodeData } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
 
-/** A function's parameters, including the readonly-rest signatures
- *  `Parameters` cannot reflect. */
-type _Args<F> = F extends (...args: infer P) => unknown
-	? P
-	: F extends (...args: readonly (infer E)[]) => unknown
-		? E[]
-		: never;
-
 export const _fromMap = {
 	program: coerceToProgram,
 	hash_bang_line: coerceToHashBangLine,
-	export_statement: coerceToExportStatement$impl,
-	namespace_export: coerceToNamespaceExport$impl,
+	export_statement: coerceToExportStatement,
+	namespace_export: coerceToNamespaceExport,
 	export_clause: coerceToExportClause,
-	export_specifier: coerceToExportSpecifier$impl,
+	export_specifier: coerceToExportSpecifier,
 	import: coerceToImport,
-	import_statement: coerceToImportStatement$impl,
-	import_clause: coerceToImportClause$impl,
+	import_statement: coerceToImportStatement,
+	import_clause: coerceToImportClause,
 	namespace_import: coerceToNamespaceImport,
 	named_imports: coerceToNamedImports,
-	import_specifier: coerceToImportSpecifier$impl,
-	import_attribute: coerceToImportAttribute$impl,
-	expression_statement: coerceToExpressionStatement$impl,
+	import_specifier: coerceToImportSpecifier,
+	import_attribute: coerceToImportAttribute,
+	expression_statement: coerceToExpressionStatement,
 	variable_declaration: coerceToVariableDeclaration,
 	lexical_declaration: coerceToLexicalDeclaration,
-	variable_declarator: coerceToVariableDeclarator$impl,
+	variable_declarator: coerceToVariableDeclarator,
 	statement_block: coerceToStatementBlock,
 	else_clause: coerceToElseClause,
 	if_statement: coerceToIfStatement,
@@ -48,15 +40,16 @@ export const _fromMap = {
 	break_statement: coerceToBreakStatement,
 	continue_statement: coerceToContinueStatement,
 	debugger_statement: coerceToDebuggerStatement,
-	return_statement: coerceToReturnStatement$impl,
-	throw_statement: coerceToThrowStatement$impl,
+	return_statement: coerceToReturnStatement,
+	throw_statement: coerceToThrowStatement,
+	empty_statement: coerceToEmptyStatement,
 	labeled_statement: coerceToLabeledStatement,
 	switch_body: coerceToSwitchBody,
 	switch_case: coerceToSwitchCase,
 	switch_default: coerceToSwitchDefault,
 	catch_clause: coerceToCatchClause,
 	finally_clause: coerceToFinallyClause,
-	parenthesized_expression: coerceToParenthesizedExpression$impl,
+	parenthesized_expression: coerceToParenthesizedExpression,
 	yield_expression: coerceToYieldExpression,
 	object: coerceToObject,
 	object_pattern: coerceToObjectPattern,
@@ -65,15 +58,16 @@ export const _fromMap = {
 	array: coerceToArray,
 	array_pattern: coerceToArrayPattern,
 	nested_identifier: coerceToNestedIdentifier,
-	class: coerceToClass$impl,
+	class: coerceToClass,
 	class_declaration: coerceToClassDeclaration,
-	class_heritage: coerceToClassHeritage$impl,
+	class_heritage: coerceToClassHeritage,
 	function_expression: coerceToFunctionExpression,
 	function_declaration: coerceToFunctionDeclaration,
 	generator_function: coerceToGeneratorFunction,
 	generator_function_declaration: coerceToGeneratorFunctionDeclaration,
 	arrow_function: coerceToArrowFunction,
-	call_expression: coerceToCallExpression$impl,
+	optional_chain: coerceToOptionalChain,
+	call_expression: coerceToCallExpression,
 	new_expression: coerceToNewExpression,
 	await_expression: coerceToAwaitExpression,
 	member_expression: coerceToMemberExpression,
@@ -82,24 +76,24 @@ export const _fromMap = {
 	augmented_assignment_expression: coerceToAugmentedAssignmentExpression,
 	spread_element: coerceToSpreadElement,
 	ternary_expression: coerceToTernaryExpression,
-	binary_expression: coerceToBinaryExpression$impl,
+	binary_expression: coerceToBinaryExpression,
 	unary_expression: coerceToUnaryExpression,
-	update_expression: coerceToUpdateExpression$impl,
+	update_expression: coerceToUpdateExpression,
 	sequence_expression: coerceToSequenceExpression,
-	string: coerceToString$impl,
+	string: coerceToString,
 	unescaped_double_string_fragment: coerceToUnescapedDoubleStringFragment,
 	unescaped_single_string_fragment: coerceToUnescapedSingleStringFragment,
 	escape_sequence: coerceToEscapeSequence,
 	comment: coerceToComment,
 	template_string: coerceToTemplateString,
-	template_substitution: coerceToTemplateSubstitution$impl,
-	regex: coerceToRegex$impl,
+	template_substitution: coerceToTemplateSubstitution,
+	regex: coerceToRegex,
 	regex_pattern: coerceToRegexPattern,
 	regex_flags: coerceToRegexFlags,
 	number: coerceToNumber,
 	identifier: coerceToIdentifier,
 	private_property_identifier: coerceToPrivatePropertyIdentifier,
-	meta_property: coerceToMetaProperty$impl,
+	meta_property: coerceToMetaProperty,
 	this: coerceToThis,
 	super: coerceToSuper,
 	true: coerceToTrue,
@@ -107,23 +101,23 @@ export const _fromMap = {
 	null: coerceToNull,
 	undefined: coerceToUndefined,
 	arguments: coerceToArguments,
-	decorator: coerceToDecorator$impl,
+	decorator: coerceToDecorator,
 	decorator_member_expression: coerceToDecoratorMemberExpression,
 	decorator_call_expression: coerceToDecoratorCallExpression,
 	class_body: coerceToClassBody,
 	formal_parameters: coerceToFormalParameters,
 	class_static_block: coerceToClassStaticBlock,
-	rest_pattern: coerceToRestPattern$impl,
-	method_definition: coerceToMethodDefinition$impl,
+	rest_pattern: coerceToRestPattern,
+	method_definition: coerceToMethodDefinition,
 	pair: coerceToPair,
 	pair_pattern: coerceToPairPattern,
 	computed_property_name: coerceToComputedPropertyName,
-	public_field_definition: coerceToPublicFieldDefinition$impl,
+	public_field_definition: coerceToPublicFieldDefinition,
 	non_null_expression: coerceToNonNullExpression,
-	method_signature: coerceToMethodSignature$impl,
-	abstract_method_signature: coerceToAbstractMethodSignature$impl,
+	method_signature: coerceToMethodSignature,
+	abstract_method_signature: coerceToAbstractMethodSignature,
 	function_signature: coerceToFunctionSignature,
-	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression$impl,
+	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression,
 	type_assertion: coerceToTypeAssertion,
 	as_expression: coerceToAsExpression,
 	satisfies_expression: coerceToSatisfiesExpression,
@@ -131,7 +125,7 @@ export const _fromMap = {
 	import_require_clause: coerceToImportRequireClause,
 	extends_clause: coerceToExtendsClause,
 	implements_clause: coerceToImplementsClause,
-	ambient_declaration: coerceToAmbientDeclaration$impl,
+	ambient_declaration: coerceToAmbientDeclaration,
 	abstract_class_declaration: coerceToAbstractClassDeclaration,
 	module: coerceToModule,
 	internal_module: coerceToInternalModule,
@@ -151,25 +145,26 @@ export const _fromMap = {
 	adding_type_annotation: coerceToAddingTypeAnnotation,
 	opting_type_annotation: coerceToOptingTypeAnnotation,
 	type_annotation: coerceToTypeAnnotation,
-	asserts: coerceToAsserts$impl,
-	asserts_annotation: coerceToAssertsAnnotation$impl,
+	asserts: coerceToAsserts,
+	asserts_annotation: coerceToAssertsAnnotation,
 	tuple_parameter: coerceToTupleParameter,
 	optional_tuple_parameter: coerceToOptionalTupleParameter,
 	optional_type: coerceToOptionalType,
 	rest_type: coerceToRestType,
 	constructor_type: coerceToConstructorType,
-	template_type: coerceToTemplateType$impl,
+	template_type: coerceToTemplateType,
 	template_literal_type: coerceToTemplateLiteralType,
 	infer_type: coerceToInferType,
 	conditional_type: coerceToConditionalType,
 	generic_type: coerceToGenericType,
 	type_predicate: coerceToTypePredicate,
 	type_predicate_annotation: coerceToTypePredicateAnnotation,
-	type_query: coerceToTypeQuery$impl,
+	type_query: coerceToTypeQuery,
 	index_type_query: coerceToIndexTypeQuery,
 	lookup_type: coerceToLookupType,
 	mapped_type_clause: coerceToMappedTypeClause,
-	literal_type: coerceToLiteralType$impl,
+	literal_type: coerceToLiteralType,
+	existential_type: coerceToExistentialType,
 	flow_maybe_type: coerceToFlowMaybeType,
 	parenthesized_type: coerceToParenthesizedType,
 	predefined_type: coerceToPredefinedType,
@@ -180,9 +175,9 @@ export const _fromMap = {
 	type_parameters: coerceToTypeParameters,
 	type_parameter: coerceToTypeParameter,
 	default_type: coerceToDefaultType,
-	constraint: coerceToConstraint$impl,
+	constraint: coerceToConstraint,
 	construct_signature: coerceToConstructSignature,
-	index_signature: coerceToIndexSignature$impl,
+	index_signature: coerceToIndexSignature,
 	array_type: coerceToArrayType,
 	tuple_type: coerceToTupleType,
 	readonly_type: coerceToReadonlyType,
@@ -205,6 +200,8 @@ interface _LeafEntry {
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	hash_bang_line: { factory: F.buildHashBangLine },
 	import: { values: ['import'], factory: () => F.buildImport() },
+	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement() },
+	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain() },
 	unescaped_double_string_fragment: { factory: F.buildUnescapedDoubleStringFragment },
 	unescaped_single_string_fragment: { factory: F.buildUnescapedSingleStringFragment },
 	escape_sequence: { factory: F.buildEscapeSequence },
@@ -225,6 +222,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (text: string) => F.buildAccessibilityModifier(text as Parameters<typeof F.buildAccessibilityModifier>[0])
 	},
 	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier() },
+	existential_type: { values: ['*'], factory: () => F.buildExistentialType() },
 	predefined_type: {
 		values: ['any', 'number', 'boolean', 'string', 'symbol', 'unique symbol', 'void', 'unknown', 'never', 'object'],
 		factory: (text: string) => F.buildPredefinedType(text as Parameters<typeof F.buildPredefinedType>[0])
@@ -359,6 +357,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	named_imports: TSKindId.NamedImports,
 	variable_declarator: TSKindId.VariableDeclarator,
 	else_clause: TSKindId.ElseClause,
+	debugger_statement: TSKindId.DebuggerStatement,
 	switch_body: TSKindId.SwitchBody,
 	switch_default: TSKindId.SwitchDefault,
 	finally_clause: TSKindId.FinallyClause,
@@ -445,6 +444,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildVariableDeclarator(children[0] as Parameters<typeof F.buildVariableDeclarator>[0]);
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
+		case 'debugger_statement':
+			return F.buildDebuggerStatement(children[0] as Parameters<typeof F.buildDebuggerStatement>[0]);
 		case 'switch_body':
 			return F.buildSwitchBody(...(children as Parameters<typeof F.buildSwitchBody>));
 		case 'switch_default':
@@ -679,7 +680,7 @@ function _requireField<T>(kind: string, slot: string, v: T | undefined | null): 
 
 // Interned resolver kind lists (dedup)
 const _super_statement_identifier: readonly string[] = ['identifier', '_reserved_identifier'];
-const _K0: readonly string[] = [];
+const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
 	'export_statement',
 	'import_statement',
@@ -714,18 +715,19 @@ const _K1: readonly string[] = [
 	'throw_statement',
 	'labeled_statement'
 ];
-const _K2: readonly string[] = [
+const _K2: readonly string[] = [];
+const _K3: readonly string[] = [
 	'_export_statement_default',
 	'_export_statement_type_export',
 	'_export_statement_equals_export',
 	'_export_statement_namespace_export'
 ];
-const _K3: readonly string[] = ['identifier'];
-const _K4: readonly string[] = ['string'];
-const _K5: readonly string[] = ['_import_statement_arm', 'import_require_clause', 'string'];
-const _K6: readonly string[] = ['namespace_import', 'named_imports', '_import_clause_default_import'];
-const _K7: readonly string[] = ['_import_specifier_as'];
-const _K8: readonly string[] = [
+const _K4: readonly string[] = ['identifier'];
+const _K5: readonly string[] = ['string'];
+const _K6: readonly string[] = ['_import_statement_arm', 'import_require_clause', 'string'];
+const _K7: readonly string[] = ['namespace_import', 'named_imports', '_import_clause_default_import'];
+const _K8: readonly string[] = ['_import_specifier_as'];
+const _K9: readonly string[] = [
 	'undefined',
 	'identifier',
 	'_reserved_identifier',
@@ -736,7 +738,7 @@ const _K8: readonly string[] = [
 	'false',
 	'null'
 ];
-const _K9: readonly string[] = [
+const _K10: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -768,8 +770,20 @@ const _K9: readonly string[] = [
 	'yield_expression',
 	'sequence_expression'
 ];
-const _K10: readonly string[] = ['_variable_declarator_arm1', '_variable_declarator_arm2'];
-const _K11: readonly string[] = [
+const _K11: readonly string[] = ['_variable_declarator_arm1', '_variable_declarator_arm2'];
+const _K12: readonly string[] = [
+	'undefined',
+	'identifier',
+	'_reserved_identifier',
+	'this',
+	'super',
+	'number',
+	'true',
+	'false',
+	'null',
+	'empty_statement'
+];
+const _K13: readonly string[] = [
 	'lexical_declaration',
 	'variable_declaration',
 	'as_expression',
@@ -803,14 +817,15 @@ const _K11: readonly string[] = [
 	'yield_expression',
 	'sequence_expression'
 ];
-const _K12: readonly string[] = ['switch_case', 'switch_default'];
-const _K13: readonly string[] = [
+const _K14: readonly string[] = ['_for_header_lhs', '_for_header_var_kind', '_for_header_let_const_kind'];
+const _K15: readonly string[] = ['switch_case', 'switch_default'];
+const _K16: readonly string[] = [
 	'_parenthesized_expression_typed',
 	'sequence_expression',
 	'decorator_member_expression',
 	'decorator_call_expression'
 ];
-const _K14: readonly string[] = [
+const _K17: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -841,10 +856,10 @@ const _K14: readonly string[] = [
 	'new_expression',
 	'yield_expression'
 ];
-const _K15: readonly string[] = ['pair', 'spread_element', 'method_definition'];
-const _K16: readonly string[] = ['pair_pattern', 'rest_pattern', 'object_assignment_pattern'];
-const _K17: readonly string[] = ['undefined', 'identifier', '_reserved_identifier'];
-const _K18: readonly string[] = [
+const _K18: readonly string[] = ['pair', 'spread_element', 'method_definition'];
+const _K19: readonly string[] = ['pair_pattern', 'rest_pattern', 'object_assignment_pattern'];
+const _K20: readonly string[] = ['undefined', 'identifier', '_reserved_identifier'];
+const _K21: readonly string[] = [
 	'member_expression',
 	'subscript_expression',
 	'object_pattern',
@@ -852,8 +867,8 @@ const _K18: readonly string[] = [
 	'non_null_expression',
 	'rest_pattern'
 ];
-const _K19: readonly string[] = ['object_pattern', 'array_pattern'];
-const _K20: readonly string[] = [
+const _K22: readonly string[] = ['object_pattern', 'array_pattern'];
+const _K23: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -885,7 +900,7 @@ const _K20: readonly string[] = [
 	'yield_expression',
 	'spread_element'
 ];
-const _K21: readonly string[] = [
+const _K24: readonly string[] = [
 	'member_expression',
 	'subscript_expression',
 	'object_pattern',
@@ -894,11 +909,11 @@ const _K21: readonly string[] = [
 	'rest_pattern',
 	'assignment_pattern'
 ];
-const _K22: readonly string[] = ['nested_identifier'];
-const _K23: readonly string[] = ['_class_heritage_extends_clause', 'implements_clause'];
-const _K24: readonly string[] = ['type_annotation', 'asserts_annotation', 'type_predicate_annotation'];
-const _K25: readonly string[] = ['_arrow_function_parameter', '_arrow_function__call_signature'];
-const _K26: readonly string[] = [
+const _K25: readonly string[] = ['nested_identifier'];
+const _K26: readonly string[] = ['_class_heritage_extends_clause', 'implements_clause'];
+const _K27: readonly string[] = ['type_annotation', 'asserts_annotation', 'type_predicate_annotation'];
+const _K28: readonly string[] = ['_arrow_function_parameter', '_arrow_function__call_signature'];
+const _K29: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -930,8 +945,8 @@ const _K26: readonly string[] = [
 	'yield_expression',
 	'statement_block'
 ];
-const _K27: readonly string[] = ['_call_expression_call', '_call_expression_template_call', '_call_expression_member'];
-const _K28: readonly string[] = [
+const _K30: readonly string[] = ['_call_expression_call', '_call_expression_template_call', '_call_expression_member'];
+const _K31: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
@@ -948,7 +963,7 @@ const _K28: readonly string[] = [
 	'call_expression',
 	'non_null_expression'
 ];
-const _K29: readonly string[] = [
+const _K32: readonly string[] = [
 	'undefined',
 	'identifier',
 	'_reserved_identifier',
@@ -960,8 +975,8 @@ const _K29: readonly string[] = [
 	'null',
 	'import'
 ];
-const _K30: readonly string[] = ['private_property_identifier', 'identifier'];
-const _K31: readonly string[] = [
+const _K33: readonly string[] = ['private_property_identifier', 'identifier'];
+const _K34: readonly string[] = [
 	'parenthesized_expression',
 	'member_expression',
 	'subscript_expression',
@@ -969,35 +984,34 @@ const _K31: readonly string[] = [
 	'array_pattern',
 	'non_null_expression'
 ];
-const _K32: readonly string[] = [
+const _K35: readonly string[] = [
 	'member_expression',
 	'subscript_expression',
 	'parenthesized_expression',
 	'non_null_expression'
 ];
-const _K33: readonly string[] = ['_update_expression_postfix', '_update_expression_prefix'];
-const _K34: readonly string[] = ['_string_double', '_string_single'];
-const _K35: readonly string[] = ['_template_chars', 'escape_sequence'];
-const _K36: readonly string[] = ['template_substitution'];
-const _K37: readonly string[] = ['_meta_property_arm1', '_meta_property_arm2'];
-const _K38: readonly string[] = [
+const _K36: readonly string[] = ['_update_expression_postfix', '_update_expression_prefix'];
+const _K37: readonly string[] = ['_string_double', '_string_single'];
+const _K38: readonly string[] = ['_template_chars', 'escape_sequence'];
+const _K39: readonly string[] = ['template_substitution'];
+const _K40: readonly string[] = [
 	'decorator_member_expression',
 	'decorator_call_expression',
 	'decorator_parenthesized_expression'
 ];
-const _K39: readonly string[] = ['decorator_member_expression'];
-const _K40: readonly string[] = [
+const _K41: readonly string[] = ['decorator_member_expression'];
+const _K42: readonly string[] = [
 	'member_expression',
 	'subscript_expression',
 	'object_pattern',
 	'array_pattern',
 	'non_null_expression'
 ];
-const _K41: readonly string[] = ['identifier', '_reserved_identifier', 'private_property_identifier', 'number'];
-const _K42: readonly string[] = ['string', 'computed_property_name'];
-const _K43: readonly string[] = ['decorator_member_expression', 'decorator_call_expression'];
-const _K44: readonly string[] = ['predefined_type', 'identifier', 'this'];
-const _K45: readonly string[] = [
+const _K43: readonly string[] = ['identifier', '_reserved_identifier', 'private_property_identifier', 'number'];
+const _K44: readonly string[] = ['string', 'computed_property_name'];
+const _K45: readonly string[] = ['decorator_member_expression', 'decorator_call_expression'];
+const _K46: readonly string[] = ['predefined_type', 'identifier', 'this', 'existential_type'];
+const _K47: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
 	'generic_type',
@@ -1020,7 +1034,7 @@ const _K45: readonly string[] = [
 	'_type_query_member_expression_in_type_annotation',
 	'_type_query_call_expression_in_type_annotation'
 ];
-const _K46: readonly string[] = [
+const _K48: readonly string[] = [
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -1038,13 +1052,13 @@ const _K46: readonly string[] = [
 	'_ambient_declaration_global',
 	'_ambient_declaration_module'
 ];
-const _K47: readonly string[] = ['string', 'nested_identifier'];
-const _K48: readonly string[] = ['nested_type_identifier', 'generic_type'];
-const _K49: readonly string[] = ['undefined', 'identifier', '_reserved_identifier', 'this'];
-const _K50: readonly string[] = ['identifier', 'this'];
-const _K51: readonly string[] = ['type_predicate'];
-const _K52: readonly string[] = ['rest_pattern'];
-const _K53: readonly string[] = [
+const _K49: readonly string[] = ['string', 'nested_identifier'];
+const _K50: readonly string[] = ['nested_type_identifier', 'generic_type'];
+const _K51: readonly string[] = ['undefined', 'identifier', '_reserved_identifier', 'this'];
+const _K52: readonly string[] = ['identifier', 'this'];
+const _K53: readonly string[] = ['type_predicate'];
+const _K54: readonly string[] = ['rest_pattern'];
+const _K55: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
 	'generic_type',
@@ -1062,17 +1076,17 @@ const _K53: readonly string[] = [
 	'union_type',
 	'infer_type'
 ];
-const _K54: readonly string[] = ['_template_chars'];
-const _K55: readonly string[] = ['template_type'];
-const _K56: readonly string[] = ['nested_type_identifier'];
-const _K57: readonly string[] = ['identifier', 'this', 'predefined_type'];
-const _K58: readonly string[] = [
+const _K56: readonly string[] = ['_template_chars'];
+const _K57: readonly string[] = ['template_type'];
+const _K58: readonly string[] = ['nested_type_identifier'];
+const _K59: readonly string[] = ['identifier', 'this', 'predefined_type'];
+const _K60: readonly string[] = [
 	'_type_query_subscript_expression',
 	'_type_query_member_expression',
 	'_type_query_call_expression',
 	'_type_query_instantiation_expression'
 ];
-const _K59: readonly string[] = [
+const _K61: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
 	'generic_type',
@@ -1089,16 +1103,16 @@ const _K59: readonly string[] = [
 	'intersection_type',
 	'union_type'
 ];
-const _K60: readonly string[] = ['number', 'true', 'false', 'null', 'undefined'];
-const _K61: readonly string[] = ['_number', 'string'];
-const _K62: readonly string[] = ['_index_signature_colon', 'mapped_type_clause'];
-const _K63: readonly string[] = [
+const _K62: readonly string[] = ['number', 'true', 'false', 'null', 'undefined'];
+const _K63: readonly string[] = ['_number', 'string'];
+const _K64: readonly string[] = ['_index_signature_colon', 'mapped_type_clause'];
+const _K65: readonly string[] = [
 	'type_annotation',
 	'omitting_type_annotation',
 	'adding_type_annotation',
 	'opting_type_annotation'
 ];
-const _K64: readonly string[] = [
+const _K66: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
 	'generic_type',
@@ -1123,665 +1137,6 @@ const _K64: readonly string[] = [
 	'asserts',
 	'type_predicate'
 ];
-const _K65: readonly string[] = ['_export_statement_default_from_arm', '_export_statement_default_decl_arm'];
-const _K66: readonly string[] = [
-	'subscript_expression',
-	'member_expression',
-	'parenthesized_expression',
-	'string',
-	'template_string',
-	'regex',
-	'object',
-	'array',
-	'function_expression',
-	'arrow_function',
-	'generator_function',
-	'class',
-	'meta_property',
-	'call_expression',
-	'non_null_expression',
-	'new_expression'
-];
-const _K67: readonly string[] = [
-	'undefined',
-	'identifier',
-	'_reserved_identifier',
-	'this',
-	'super',
-	'number',
-	'true',
-	'false',
-	'null',
-	'private_property_identifier'
-];
-const _K68: readonly string[] = ['unescaped_double_string_fragment', 'escape_sequence'];
-const _K69: readonly string[] = ['unescaped_single_string_fragment', 'escape_sequence'];
-const _K70: readonly string[] = [
-	'_type_query_subscript_expression',
-	'_type_query_member_expression',
-	'_type_query_call_expression'
-];
-const _K71: readonly string[] = ['predefined_type', 'number'];
-const _K72: readonly string[] = ['import', 'identifier'];
-const _K73: readonly string[] = ['_type_query_member_expression', '_type_query_subscript_expression'];
-
-function resolveExportStatementDefault_content(
-	value: T.ExportStatementDefault.LooseConfig['content']
-): T.ExportStatementDefault['_content'] {
-	return _resolveOne<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(value, _K0, _K65);
-}
-
-function coerceToExportStatementDefault(
-	input: (T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) | T.ExportStatementDefault.Loose
-): ReturnType<typeof F.buildExportStatementDefault> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefault)
-		return input as unknown as ReturnType<typeof F.buildExportStatementDefault>;
-	return F.buildExportStatementDefault(
-		_requireField(
-			'_export_statement_default',
-			'content',
-			_resolveOne<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K65
-			)
-		)
-	);
-}
-
-function resolveExportStatementTypeExport_exportClause(
-	value: T.ExportStatementTypeExport.LooseConfig['exportClause']
-): T.ExportStatementTypeExport['_export_clause'] {
-	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
-}
-
-function resolveExportStatementTypeExport_source(
-	value: T.ExportStatementTypeExport.LooseConfig['source']
-): T.ExportStatementTypeExport['_source'] {
-	return _resolveOneBranch<T.String>(value, 'string');
-}
-
-function coerceToExportStatementTypeExport(
-	input: T.ExportStatementTypeExport.Loose
-): ReturnType<typeof F.buildExportStatementTypeExport> {
-	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementTypeExport>;
-	return F.buildExportStatementTypeExport({
-		exportClause: resolveExportStatementTypeExport_exportClause(input.exportClause) ?? F.buildExportClause(),
-		source: resolveExportStatementTypeExport_source(input.source),
-		semicolon: _requireField(
-			'_export_statement_type_export',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
-	});
-}
-
-function resolveExportStatementEqualsExport_expression(
-	value: T.ExportStatementEqualsExport.LooseConfig['expression']
-): T.ExportStatementEqualsExport['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
-}
-
-function coerceToExportStatementEqualsExport(
-	input: T.ExportStatementEqualsExport.Loose
-): ReturnType<typeof F.buildExportStatementEqualsExport> {
-	if (!_isLooseConfig<T.ExportStatementEqualsExport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementEqualsExport>;
-	return F.buildExportStatementEqualsExport({
-		expression: _requireField(
-			'_export_statement_equals_export',
-			'expression',
-			resolveExportStatementEqualsExport_expression(input.expression)
-		),
-		semicolon: _requireField(
-			'_export_statement_equals_export',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
-	});
-}
-
-function resolveExportStatementNamespaceExport_identifier(
-	value: T.ExportStatementNamespaceExport.LooseConfig['identifier']
-): T.ExportStatementNamespaceExport['_identifier'] {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
-}
-
-function coerceToExportStatementNamespaceExport(
-	input: T.ExportStatementNamespaceExport.Loose
-): ReturnType<typeof F.buildExportStatementNamespaceExport> {
-	if (!_isLooseConfig<T.ExportStatementNamespaceExport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementNamespaceExport>;
-	return F.buildExportStatementNamespaceExport({
-		identifier: _requireField(
-			'_export_statement_namespace_export',
-			'identifier',
-			resolveExportStatementNamespaceExport_identifier(input.identifier)
-		),
-		semicolon: _requireField(
-			'_export_statement_namespace_export',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
-	});
-}
-
-function resolveImportClauseDefaultImport_identifier(
-	value: T.ImportClauseDefaultImport.LooseConfig['identifier']
-): T.ImportClauseDefaultImport['_identifier'] {
-	return _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier');
-}
-
-function resolveImportClauseDefaultImport_importClauseGroup(
-	value: T.ImportClauseDefaultImport.LooseConfig['importClauseGroup']
-): T.ImportClauseDefaultImport['_import_clause_group'] {
-	return _resolveOneBranch<T.ImportClauseGroup>(value, '_import_clause_group');
-}
-
-function coerceToImportClauseDefaultImport(
-	input: T.ImportClauseDefaultImport.Loose
-): ReturnType<typeof F.buildImportClauseDefaultImport> {
-	if (!_isLooseConfig<T.ImportClauseDefaultImport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildImportClauseDefaultImport>;
-	return F.buildImportClauseDefaultImport({
-		identifier: _requireField(
-			'_import_clause_default_import',
-			'identifier',
-			resolveImportClauseDefaultImport_identifier(input.identifier)
-		),
-		importClauseGroup: resolveImportClauseDefaultImport_importClauseGroup(input.importClauseGroup)
-	});
-}
-
-function resolveVariableDeclaratorArm1_name(
-	value: T.VariableDeclaratorArm1.LooseConfig['name']
-): T.VariableDeclaratorArm1['_name'] {
-	return _resolveOne<T.Identifier | T.ObjectPattern | T.ArrayPattern>(value, _K3, _K19);
-}
-
-function resolveVariableDeclaratorArm1_type(
-	value: T.VariableDeclaratorArm1.LooseConfig['type']
-): T.VariableDeclaratorArm1['_type'] {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
-}
-
-function resolveVariableDeclaratorArm1_value(
-	value: T.VariableDeclaratorArm1.LooseConfig['value']
-): T.VariableDeclaratorArm1['_value'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
-}
-
-function coerceToVariableDeclaratorArm1(
-	input: T.VariableDeclaratorArm1.Loose
-): ReturnType<typeof F.buildVariableDeclaratorArm1> {
-	if (!_isLooseConfig<T.VariableDeclaratorArm1.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildVariableDeclaratorArm1>;
-	return F.buildVariableDeclaratorArm1({
-		name: _requireField('_variable_declarator_arm1', 'name', resolveVariableDeclaratorArm1_name(input.name)),
-		type: resolveVariableDeclaratorArm1_type(input.type),
-		value: resolveVariableDeclaratorArm1_value(input.value)
-	});
-}
-
-function resolveVariableDeclaratorArm2_name(
-	value: T.VariableDeclaratorArm2.LooseConfig['name']
-): T.VariableDeclaratorArm2['_name'] {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
-}
-
-function resolveVariableDeclaratorArm2_type(
-	value: T.VariableDeclaratorArm2.LooseConfig['type']
-): T.VariableDeclaratorArm2['_type'] {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
-}
-
-function coerceToVariableDeclaratorArm2(
-	input: T.VariableDeclaratorArm2.Loose
-): ReturnType<typeof F.buildVariableDeclaratorArm2> {
-	if (!_isLooseConfig<T.VariableDeclaratorArm2.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildVariableDeclaratorArm2>;
-	return F.buildVariableDeclaratorArm2({
-		name: _requireField('_variable_declarator_arm2', 'name', resolveVariableDeclaratorArm2_name(input.name)),
-		type: _requireField('_variable_declarator_arm2', 'type', resolveVariableDeclaratorArm2_type(input.type))
-	});
-}
-
-function resolveParenthesizedExpressionTyped_expression(
-	value: T.ParenthesizedExpressionTyped.LooseConfig['expression']
-): T.ParenthesizedExpressionTyped['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
-}
-
-function resolveParenthesizedExpressionTyped_type(
-	value: T.ParenthesizedExpressionTyped.LooseConfig['type']
-): T.ParenthesizedExpressionTyped['_type'] {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
-}
-
-function coerceToParenthesizedExpressionTyped(
-	input: T.ParenthesizedExpressionTyped.Loose
-): ReturnType<typeof F.buildParenthesizedExpressionTyped> {
-	if (!_isLooseConfig<T.ParenthesizedExpressionTyped.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-	return F.buildParenthesizedExpressionTyped({
-		expression: _requireField(
-			'_parenthesized_expression_typed',
-			'expression',
-			resolveParenthesizedExpressionTyped_expression(input.expression)
-		),
-		type: resolveParenthesizedExpressionTyped_type(input.type)
-	});
-}
-
-function resolveClassHeritageExtendsClause_extendsClause(
-	value: T.ClassHeritageExtendsClause.LooseConfig['extendsClause']
-): T.ClassHeritageExtendsClause['_extends_clause'] {
-	return _resolveOneBranch<T.ExtendsClause>(value, 'extends_clause');
-}
-
-function resolveClassHeritageExtendsClause_implementsClause(
-	value: T.ClassHeritageExtendsClause.LooseConfig['implementsClause']
-): T.ClassHeritageExtendsClause['_implements_clause'] {
-	return _resolveOneBranch<T.ImplementsClause>(value, 'implements_clause');
-}
-
-function coerceToClassHeritageExtendsClause(
-	input: T.ClassHeritageExtendsClause.Loose
-): ReturnType<typeof F.buildClassHeritageExtendsClause> {
-	if (!_isLooseConfig<T.ClassHeritageExtendsClause.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildClassHeritageExtendsClause>;
-	return F.buildClassHeritageExtendsClause({
-		extendsClause: resolveClassHeritageExtendsClause_extendsClause(input.extendsClause) ?? F.buildExtendsClause(),
-		implementsClause: resolveClassHeritageExtendsClause_implementsClause(input.implementsClause)
-	});
-}
-
-function resolveCallExpressionCall_function(
-	value: T.CallExpressionCall.LooseConfig['function']
-): T.CallExpressionCall['_function'] {
-	return _resolveOne<T.Expression | T.Import>(value, _K29, _K14);
-}
-
-function resolveCallExpressionCall_typeArguments(
-	value: T.CallExpressionCall.LooseConfig['typeArguments']
-): T.CallExpressionCall['_type_arguments'] {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
-}
-
-function resolveCallExpressionCall_arguments(
-	value: T.CallExpressionCall.LooseConfig['arguments']
-): T.CallExpressionCall['_arguments'] {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
-}
-
-function coerceToCallExpressionCall(input: T.CallExpressionCall.Loose): ReturnType<typeof F.buildCallExpressionCall> {
-	if (!_isLooseConfig<T.CallExpressionCall.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildCallExpressionCall>;
-	return F.buildCallExpressionCall({
-		function: _requireField('_call_expression_call', 'function', resolveCallExpressionCall_function(input.function)),
-		typeArguments: resolveCallExpressionCall_typeArguments(input.typeArguments),
-		arguments: resolveCallExpressionCall_arguments(input.arguments) ?? F.buildArguments()
-	});
-}
-
-function resolveCallExpressionTemplateCall_function(
-	value: T.CallExpressionTemplateCall.LooseConfig['function']
-): T.CallExpressionTemplateCall['_function'] {
-	return _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K8, _K66);
-}
-
-function resolveCallExpressionTemplateCall_arguments(
-	value: T.CallExpressionTemplateCall.LooseConfig['arguments']
-): T.CallExpressionTemplateCall['_arguments'] {
-	return _resolveOneBranch<T.TemplateString>(value, 'template_string');
-}
-
-function coerceToCallExpressionTemplateCall(
-	input: T.CallExpressionTemplateCall.Loose
-): ReturnType<typeof F.buildCallExpressionTemplateCall> {
-	if (!_isLooseConfig<T.CallExpressionTemplateCall.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildCallExpressionTemplateCall>;
-	return F.buildCallExpressionTemplateCall({
-		function: _requireField(
-			'_call_expression_template_call',
-			'function',
-			resolveCallExpressionTemplateCall_function(input.function)
-		),
-		arguments: resolveCallExpressionTemplateCall_arguments(input.arguments) ?? F.buildTemplateString()
-	});
-}
-
-function resolveCallExpressionMember_function(
-	value: T.CallExpressionMember.LooseConfig['function']
-): T.CallExpressionMember['_function'] {
-	return _resolveOne<T.PrimaryExpression>(value, _K8, _K28);
-}
-
-function resolveCallExpressionMember_typeArguments(
-	value: T.CallExpressionMember.LooseConfig['typeArguments']
-): T.CallExpressionMember['_type_arguments'] {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
-}
-
-function resolveCallExpressionMember_arguments(
-	value: T.CallExpressionMember.LooseConfig['arguments']
-): T.CallExpressionMember['_arguments'] {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
-}
-
-function coerceToCallExpressionMember(
-	input: T.CallExpressionMember.Loose
-): ReturnType<typeof F.buildCallExpressionMember> {
-	if (!_isLooseConfig<T.CallExpressionMember.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildCallExpressionMember>;
-	return F.buildCallExpressionMember({
-		function: _requireField(
-			'_call_expression_member',
-			'function',
-			resolveCallExpressionMember_function(input.function)
-		),
-		typeArguments: resolveCallExpressionMember_typeArguments(input.typeArguments),
-		arguments: resolveCallExpressionMember_arguments(input.arguments) ?? F.buildArguments()
-	});
-}
-
-function resolveBinaryExpressionArm_left(
-	value: T.BinaryExpressionArm.LooseConfig['left']
-): T.BinaryExpressionArm['_left'] {
-	return _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K67, _K14);
-}
-
-function resolveBinaryExpressionArm_right(
-	value: T.BinaryExpressionArm.LooseConfig['right']
-): T.BinaryExpressionArm['_right'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
-}
-
-function coerceToBinaryExpressionArm(
-	input: T.BinaryExpressionArm.Loose
-): ReturnType<typeof F.buildBinaryExpressionArm> {
-	if (!_isLooseConfig<T.BinaryExpressionArm.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildBinaryExpressionArm>;
-	return F.buildBinaryExpressionArm({
-		left: _requireField('_binary_expression_arm', 'left', resolveBinaryExpressionArm_left(input.left)),
-		right: _requireField('_binary_expression_arm', 'right', resolveBinaryExpressionArm_right(input.right))
-	});
-}
-
-function resolveUpdateExpressionPostfix_argument(
-	value: T.UpdateExpressionPostfix.LooseConfig['argument']
-): T.UpdateExpressionPostfix['_argument'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
-}
-
-function resolveUpdateExpressionPostfix_operator(
-	value: T.UpdateExpressionPostfix.LooseConfig['operator']
-): T.UpdateExpressionPostfix['_operator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.Operator>(value, '_operator')),
-		[['++', TSKindId.PlusPlus] as const, ['--', TSKindId.DashDash] as const]
-	);
-}
-
-function coerceToUpdateExpressionPostfix(
-	input: T.UpdateExpressionPostfix.Loose
-): ReturnType<typeof F.buildUpdateExpressionPostfix> {
-	if (!_isLooseConfig<T.UpdateExpressionPostfix.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildUpdateExpressionPostfix>;
-	return F.buildUpdateExpressionPostfix({
-		argument: _requireField(
-			'_update_expression_postfix',
-			'argument',
-			resolveUpdateExpressionPostfix_argument(input.argument)
-		),
-		operator: _requireField(
-			'_update_expression_postfix',
-			'operator',
-			resolveUpdateExpressionPostfix_operator(input.operator)
-		)
-	});
-}
-
-function resolveUpdateExpressionPrefix_operator(
-	value: T.UpdateExpressionPrefix.LooseConfig['operator']
-): T.UpdateExpressionPrefix['_operator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.Operator>(value, '_operator')),
-		[['++', TSKindId.PlusPlus] as const, ['--', TSKindId.DashDash] as const]
-	);
-}
-
-function resolveUpdateExpressionPrefix_argument(
-	value: T.UpdateExpressionPrefix.LooseConfig['argument']
-): T.UpdateExpressionPrefix['_argument'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
-}
-
-function coerceToUpdateExpressionPrefix(
-	input: T.UpdateExpressionPrefix.Loose
-): ReturnType<typeof F.buildUpdateExpressionPrefix> {
-	if (!_isLooseConfig<T.UpdateExpressionPrefix.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildUpdateExpressionPrefix>;
-	return F.buildUpdateExpressionPrefix({
-		operator: _requireField(
-			'_update_expression_prefix',
-			'operator',
-			resolveUpdateExpressionPrefix_operator(input.operator)
-		),
-		argument: _requireField(
-			'_update_expression_prefix',
-			'argument',
-			resolveUpdateExpressionPrefix_argument(input.argument)
-		)
-	});
-}
-
-function resolveStringDouble_elements(value: T.StringDouble.LooseConfig['elements']): T.StringDouble['_elements'] {
-	return _resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(value, _K68, _K0);
-}
-
-function coerceToStringDouble(input?: T.StringDouble.Loose): ReturnType<typeof F.buildStringDouble> {
-	if (!_isLooseConfig<T.StringDouble.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildStringDouble>;
-	return F.buildStringDouble({
-		elements: resolveStringDouble_elements(input?.elements)
-	});
-}
-
-function resolveStringSingle_elements2s(value: T.StringSingle.LooseConfig['elements2']): T.StringSingle['_elements_2'] {
-	return _resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(value, _K69, _K0);
-}
-
-function coerceToStringSingle(input?: T.StringSingle.Loose): ReturnType<typeof F.buildStringSingle> {
-	if (!_isLooseConfig<T.StringSingle.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildStringSingle>;
-	return F.buildStringSingle({
-		elements2: resolveStringSingle_elements2s(input?.elements2)
-	});
-}
-
-function resolveAmbientDeclarationModule_name(
-	value: T.AmbientDeclarationModule.LooseConfig['name']
-): T.AmbientDeclarationModule['_name'] {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
-}
-
-function resolveAmbientDeclarationModule_type(
-	value: T.AmbientDeclarationModule.LooseConfig['type']
-): T.AmbientDeclarationModule['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
-}
-
-function coerceToAmbientDeclarationModule(
-	input: T.AmbientDeclarationModule.Loose
-): ReturnType<typeof F.buildAmbientDeclarationModule> {
-	if (!_isLooseConfig<T.AmbientDeclarationModule.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationModule>;
-	return F.buildAmbientDeclarationModule({
-		name: _requireField('_ambient_declaration_module', 'name', resolveAmbientDeclarationModule_name(input.name)),
-		type: _requireField('_ambient_declaration_module', 'type', resolveAmbientDeclarationModule_type(input.type)),
-		semicolon: coerceKindEnumStorage(
-			_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-			[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-		)
-	});
-}
-
-function resolveTypeQuerySubscriptExpression_object(
-	value: T.TypeQuerySubscriptExpression.LooseConfig['object']
-): T.TypeQuerySubscriptExpression['_object'] {
-	return _resolveOne<
-		T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression
-	>(value, _K50, _K70);
-}
-
-function resolveTypeQuerySubscriptExpression_index(
-	value: T.TypeQuerySubscriptExpression.LooseConfig['index']
-): T.TypeQuerySubscriptExpression['_index'] {
-	return _resolveOne<T.PredefinedType | T.String | T.Number>(value, _K71, _K4);
-}
-
-function coerceToTypeQuerySubscriptExpression(
-	input: T.TypeQuerySubscriptExpression.Loose
-): ReturnType<typeof F.buildTypeQuerySubscriptExpression> {
-	if (!_isLooseConfig<T.TypeQuerySubscriptExpression.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
-	return F.buildTypeQuerySubscriptExpression({
-		object: _requireField(
-			'_type_query_subscript_expression',
-			'object',
-			resolveTypeQuerySubscriptExpression_object(input.object)
-		),
-		index: _requireField(
-			'_type_query_subscript_expression',
-			'index',
-			resolveTypeQuerySubscriptExpression_index(input.index)
-		)
-	});
-}
-
-function resolveTypeQueryMemberExpression_object(
-	value: T.TypeQueryMemberExpression.LooseConfig['object']
-): T.TypeQueryMemberExpression['_object'] {
-	return _resolveOne<
-		T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression
-	>(value, _K50, _K70);
-}
-
-function resolveTypeQueryMemberExpression_content(
-	value: T.TypeQueryMemberExpression.LooseConfig['content']
-): T.TypeQueryMemberExpression['_content'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'.' | '?.'>(value, _K0, _K0)),
-		[['.', TSKindId.Dot] as const, ['?.', TSKindId.QmarkDot] as const]
-	);
-}
-
-function resolveTypeQueryMemberExpression_property(
-	value: T.TypeQueryMemberExpression.LooseConfig['property']
-): T.TypeQueryMemberExpression['_property'] {
-	return _resolveOne<T.PrivatePropertyIdentifier | T.Identifier>(value, _K30, _K0);
-}
-
-function coerceToTypeQueryMemberExpression(
-	input: T.TypeQueryMemberExpression.Loose
-): ReturnType<typeof F.buildTypeQueryMemberExpression> {
-	if (!_isLooseConfig<T.TypeQueryMemberExpression.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildTypeQueryMemberExpression>;
-	return F.buildTypeQueryMemberExpression({
-		object: _requireField(
-			'_type_query_member_expression',
-			'object',
-			resolveTypeQueryMemberExpression_object(input.object)
-		),
-		content: _requireField(
-			'_type_query_member_expression',
-			'content',
-			resolveTypeQueryMemberExpression_content(input.content)
-		),
-		property: _requireField(
-			'_type_query_member_expression',
-			'property',
-			resolveTypeQueryMemberExpression_property(input.property)
-		)
-	});
-}
-
-function resolveTypeQueryCallExpression_function(
-	value: T.TypeQueryCallExpression.LooseConfig['function']
-): T.TypeQueryCallExpression['_function'] {
-	return _resolveOne<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
-		value,
-		_K72,
-		_K73
-	);
-}
-
-function resolveTypeQueryCallExpression_arguments(
-	value: T.TypeQueryCallExpression.LooseConfig['arguments']
-): T.TypeQueryCallExpression['_arguments'] {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
-}
-
-function coerceToTypeQueryCallExpression(
-	input: T.TypeQueryCallExpression.Loose
-): ReturnType<typeof F.buildTypeQueryCallExpression> {
-	if (!_isLooseConfig<T.TypeQueryCallExpression.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildTypeQueryCallExpression>;
-	return F.buildTypeQueryCallExpression({
-		function: _requireField(
-			'_type_query_call_expression',
-			'function',
-			resolveTypeQueryCallExpression_function(input.function)
-		),
-		arguments: resolveTypeQueryCallExpression_arguments(input.arguments) ?? F.buildArguments()
-	});
-}
-
-function resolveTypeQueryInstantiationExpression_function(
-	value: T.TypeQueryInstantiationExpression.LooseConfig['function']
-): T.TypeQueryInstantiationExpression['_function'] {
-	return _resolveOne<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
-		value,
-		_K72,
-		_K73
-	);
-}
-
-function resolveTypeQueryInstantiationExpression_typeArguments(
-	value: T.TypeQueryInstantiationExpression.LooseConfig['typeArguments']
-): T.TypeQueryInstantiationExpression['_type_arguments'] {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
-}
-
-function coerceToTypeQueryInstantiationExpression(
-	input: T.TypeQueryInstantiationExpression.Loose
-): ReturnType<typeof F.buildTypeQueryInstantiationExpression> {
-	if (!_isLooseConfig<T.TypeQueryInstantiationExpression.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
-	return F.buildTypeQueryInstantiationExpression({
-		function: _requireField(
-			'_type_query_instantiation_expression',
-			'function',
-			resolveTypeQueryInstantiationExpression_function(input.function)
-		),
-		typeArguments: _requireField(
-			'_type_query_instantiation_expression',
-			'typeArguments',
-			resolveTypeQueryInstantiationExpression_typeArguments(input.typeArguments)
-		)
-	});
-}
 
 export function resolveProgram_hashBangLine(
 	value: T.Program.LooseConfig['hashBangLine']
@@ -1815,10 +1170,10 @@ export function resolveExportStatement_content(
 		| T.ExportStatementTypeExport
 		| T.ExportStatementEqualsExport
 		| T.ExportStatementNamespaceExport
-	>(value, _K0, _K2);
+	>(value, _K2, _K3);
 }
 
-function coerceToExportStatement$impl(
+export function coerceToExportStatement(
 	input:
 		| (
 				| T.ExportStatementDefault
@@ -1841,72 +1196,20 @@ function coerceToExportStatement$impl(
 				| T.ExportStatementNamespaceExport
 			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K2
+				_K2,
+				_K3
 			)
 		)
 	);
 }
 
-export const coerceToExportStatement: typeof coerceToExportStatement$impl & {
-	default: ((
-		...args: _Args<typeof coerceToExportStatementDefault>
-	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.default };
-	defaultFromArm: typeof F.buildExportStatement.defaultFromArm;
-	defaultStarFrom: typeof F.buildExportStatement.defaultStarFrom;
-	stringDouble: typeof F.buildExportStatement.stringDouble;
-	stringSingle: typeof F.buildExportStatement.stringSingle;
-	defaultNsFrom: typeof F.buildExportStatement.defaultNsFrom;
-	defaultClauseFrom: typeof F.buildExportStatement.defaultClauseFrom;
-	exportClause: typeof F.buildExportStatement.exportClause;
-	defaultDeclArm: typeof F.buildExportStatement.defaultDeclArm;
-	typeExport: ((
-		...args: _Args<typeof coerceToExportStatementTypeExport>
-	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.typeExport };
-	equalsExport: ((
-		...args: _Args<typeof coerceToExportStatementEqualsExport>
-	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.equalsExport };
-	namespaceExport: ((
-		...args: _Args<typeof coerceToExportStatementNamespaceExport>
-	) => ReturnType<typeof coerceToExportStatement$impl>) & { strict: typeof F.buildExportStatement.namespaceExport };
-} = attachProps(coerceToExportStatement$impl, {
-	default: attachProps(
-		(...args: _Args<typeof coerceToExportStatementDefault>) =>
-			coerceToExportStatement$impl(coerceToExportStatementDefault(...args) as T.ExportStatementDefault),
-		{ strict: F.buildExportStatement.default }
-	),
-	defaultFromArm: F.buildExportStatement.defaultFromArm,
-	defaultStarFrom: F.buildExportStatement.defaultStarFrom,
-	stringDouble: F.buildExportStatement.stringDouble,
-	stringSingle: F.buildExportStatement.stringSingle,
-	defaultNsFrom: F.buildExportStatement.defaultNsFrom,
-	defaultClauseFrom: F.buildExportStatement.defaultClauseFrom,
-	exportClause: F.buildExportStatement.exportClause,
-	defaultDeclArm: F.buildExportStatement.defaultDeclArm,
-	typeExport: attachProps(
-		(...args: _Args<typeof coerceToExportStatementTypeExport>) =>
-			coerceToExportStatement$impl(coerceToExportStatementTypeExport(...args) as T.ExportStatementTypeExport),
-		{ strict: F.buildExportStatement.typeExport }
-	),
-	equalsExport: attachProps(
-		(...args: _Args<typeof coerceToExportStatementEqualsExport>) =>
-			coerceToExportStatement$impl(coerceToExportStatementEqualsExport(...args) as T.ExportStatementEqualsExport),
-		{ strict: F.buildExportStatement.equalsExport }
-	),
-	namespaceExport: attachProps(
-		(...args: _Args<typeof coerceToExportStatementNamespaceExport>) =>
-			coerceToExportStatement$impl(coerceToExportStatementNamespaceExport(...args) as T.ExportStatementNamespaceExport),
-		{ strict: F.buildExportStatement.namespaceExport }
-	)
-});
-
 export function resolveNamespaceExport_moduleExportName(
 	value: T.NamespaceExport.LooseConfig['moduleExportName']
 ): T.NamespaceExport['_module_export_name'] {
-	return _resolveOne<T.Identifier | T.String>(value, _K3, _K4);
+	return _resolveOne<T.Identifier | T.String>(value, _K4, _K5);
 }
 
-function coerceToNamespaceExport$impl(
+export function coerceToNamespaceExport(
 	input: (T.Identifier | T.String) | T.NamespaceExport.Loose
 ): ReturnType<typeof F.buildNamespaceExport> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NamespaceExport)
@@ -1919,29 +1222,12 @@ function coerceToNamespaceExport$impl(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'moduleExportName' in input
 					? input.moduleExportName
 					: input,
-				_K3,
-				_K4
+				_K4,
+				_K5
 			)
 		)
 	);
 }
-
-export const coerceToNamespaceExport: typeof coerceToNamespaceExport$impl & {
-	identifier: typeof F.buildNamespaceExport.identifier;
-	string: ((...args: _Args<typeof coerceToString>) => ReturnType<typeof coerceToNamespaceExport$impl>) & {
-		strict: typeof F.buildNamespaceExport.string;
-	};
-	stringDouble: typeof F.buildNamespaceExport.stringDouble;
-	stringSingle: typeof F.buildNamespaceExport.stringSingle;
-} = attachProps(coerceToNamespaceExport$impl, {
-	identifier: F.buildNamespaceExport.identifier,
-	string: attachProps(
-		(...args: _Args<typeof coerceToString>) => coerceToNamespaceExport$impl(coerceToString(...args) as T.String),
-		{ strict: F.buildNamespaceExport.string }
-	),
-	stringDouble: F.buildNamespaceExport.stringDouble,
-	stringSingle: F.buildNamespaceExport.stringSingle
-});
 
 export function resolveExportClause_exportSpecifiers(
 	value: T.ExportClause.LooseConfig['exportSpecifiers']
@@ -1968,22 +1254,22 @@ export function resolveExportSpecifier_exportKind(
 	value: T.ExportSpecifier.LooseConfig['exportKind']
 ): T.ExportSpecifier['_export_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 	);
 }
 
 export function resolveExportSpecifier_name(value: T.ExportSpecifier.LooseConfig['name']): T.ExportSpecifier['_name'] {
-	return _resolveOne<T.Identifier | T.String>(value, _K3, _K4);
+	return _resolveOne<T.Identifier | T.String>(value, _K4, _K5);
 }
 
 export function resolveExportSpecifier_alias(
 	value: T.ExportSpecifier.LooseConfig['alias']
 ): T.ExportSpecifier['_alias'] {
-	return _resolveOne<T.Identifier | T.String>(value, _K3, _K4);
+	return _resolveOne<T.Identifier | T.String>(value, _K4, _K5);
 }
 
-function coerceToExportSpecifier$impl(input: T.ExportSpecifier.Loose): ReturnType<typeof F.buildExportSpecifier> {
+export function coerceToExportSpecifier(input: T.ExportSpecifier.Loose): ReturnType<typeof F.buildExportSpecifier> {
 	if (!_isLooseConfig<T.ExportSpecifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExportSpecifier>;
 	return F.buildExportSpecifier({
@@ -1992,14 +1278,6 @@ function coerceToExportSpecifier$impl(input: T.ExportSpecifier.Loose): ReturnTyp
 		alias: resolveExportSpecifier_alias(input.alias)
 	});
 }
-
-export const coerceToExportSpecifier: typeof coerceToExportSpecifier$impl & {
-	type: typeof F.buildExportSpecifier.type;
-	typeof: typeof F.buildExportSpecifier.typeof;
-} = attachProps(coerceToExportSpecifier$impl, {
-	type: F.buildExportSpecifier.type,
-	typeof: F.buildExportSpecifier.typeof
-});
 
 export function coerceToImport(input?: T.Import): ReturnType<typeof F.buildImport> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImport>;
@@ -2010,7 +1288,7 @@ export function resolveImportStatement_importClause(
 	value: T.ImportStatement.LooseConfig['importClause']
 ): T.ImportStatement['_import_clause'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 	);
 }
@@ -2018,7 +1296,7 @@ export function resolveImportStatement_importClause(
 export function resolveImportStatement_fromClause(
 	value: T.ImportStatement.LooseConfig['fromClause']
 ): T.ImportStatement['_from_clause'] {
-	return _resolveOne<T.ImportStatementArm | T.ImportRequireClause | T.String>(value, _K0, _K5);
+	return _resolveOne<T.ImportStatementArm | T.ImportRequireClause | T.String>(value, _K2, _K6);
 }
 
 export function resolveImportStatement_importAttribute(
@@ -2027,37 +1305,31 @@ export function resolveImportStatement_importAttribute(
 	return _resolveOneBranch<T.ImportAttribute>(value, 'import_attribute');
 }
 
-function coerceToImportStatement$impl(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
+export function resolveImportStatement_semicolon(
+	value: T.ImportStatement.LooseConfig['semicolon']
+): T.ImportStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
 	if (!_isLooseConfig<T.ImportStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImportStatement>;
 	return F.buildImportStatement({
 		importClause: resolveImportStatement_importClause(input.importClause),
 		fromClause: _requireField('import_statement', 'fromClause', resolveImportStatement_fromClause(input.fromClause)),
 		importAttribute: resolveImportStatement_importAttribute(input.importAttribute),
-		semicolon: _requireField(
-			'import_statement',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		semicolon: _requireField('import_statement', 'semicolon', resolveImportStatement_semicolon(input.semicolon))
 	});
 }
 
-export const coerceToImportStatement: typeof coerceToImportStatement$impl & {
-	type: typeof F.buildImportStatement.type;
-	typeof: typeof F.buildImportStatement.typeof;
-} = attachProps(coerceToImportStatement$impl, {
-	type: F.buildImportStatement.type,
-	typeof: F.buildImportStatement.typeof
-});
-
 export function resolveImportClause_content(value: T.ImportClause.LooseConfig['content']): T.ImportClause['_content'] {
-	return _resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(value, _K0, _K6);
+	return _resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(value, _K2, _K7);
 }
 
-function coerceToImportClause$impl(
+export function coerceToImportClause(
 	input: (T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport) | T.ImportClause.Loose
 ): ReturnType<typeof F.buildImportClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImportClause)
@@ -2068,28 +1340,12 @@ function coerceToImportClause$impl(
 			'content',
 			_resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K6
+				_K2,
+				_K7
 			)
 		)
 	);
 }
-
-export const coerceToImportClause: typeof coerceToImportClause$impl & {
-	namespaceImport: typeof F.buildImportClause.namespaceImport;
-	namedImports: typeof F.buildImportClause.namedImports;
-	defaultImport: ((
-		...args: _Args<typeof coerceToImportClauseDefaultImport>
-	) => ReturnType<typeof coerceToImportClause$impl>) & { strict: typeof F.buildImportClause.defaultImport };
-} = attachProps(coerceToImportClause$impl, {
-	namespaceImport: F.buildImportClause.namespaceImport,
-	namedImports: F.buildImportClause.namedImports,
-	defaultImport: attachProps(
-		(...args: _Args<typeof coerceToImportClauseDefaultImport>) =>
-			coerceToImportClause$impl(coerceToImportClauseDefaultImport(...args) as T.ImportClauseDefaultImport),
-		{ strict: F.buildImportClause.defaultImport }
-	)
-});
 
 export function resolveNamespaceImport_identifier(
 	value: T.NamespaceImport.LooseConfig['identifier']
@@ -2141,7 +1397,7 @@ export function resolveImportSpecifier_importKind(
 	value: T.ImportSpecifier.LooseConfig['importKind']
 ): T.ImportSpecifier['_import_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 	);
 }
@@ -2149,10 +1405,10 @@ export function resolveImportSpecifier_importKind(
 export function resolveImportSpecifier_content(
 	value: T.ImportSpecifier.LooseConfig['content']
 ): T.ImportSpecifier['_content'] {
-	return _resolveOne<T.Identifier | 'type' | T.ImportSpecifierAs>(value, _K3, _K7);
+	return _resolveOne<T.Identifier | 'type' | T.ImportSpecifierAs>(value, _K4, _K8);
 }
 
-function coerceToImportSpecifier$impl(input: T.ImportSpecifier.Loose): ReturnType<typeof F.buildImportSpecifier> {
+export function coerceToImportSpecifier(input: T.ImportSpecifier.Loose): ReturnType<typeof F.buildImportSpecifier> {
 	if (!_isLooseConfig<T.ImportSpecifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImportSpecifier>;
 	return F.buildImportSpecifier({
@@ -2161,19 +1417,11 @@ function coerceToImportSpecifier$impl(input: T.ImportSpecifier.Loose): ReturnTyp
 	});
 }
 
-export const coerceToImportSpecifier: typeof coerceToImportSpecifier$impl & {
-	type: typeof F.buildImportSpecifier.type;
-	typeof: typeof F.buildImportSpecifier.typeof;
-} = attachProps(coerceToImportSpecifier$impl, {
-	type: F.buildImportSpecifier.type,
-	typeof: F.buildImportSpecifier.typeof
-});
-
 export function resolveImportAttribute_attributeKind(
 	value: T.ImportAttribute.LooseConfig['attributeKind']
 ): T.ImportAttribute['_attribute_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'with' | 'assert'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'with' | 'assert'>(value, _K2, _K2)),
 		[['with', TSKindId.With] as const, ['assert', TSKindId.Assert] as const]
 	);
 }
@@ -2184,7 +1432,7 @@ export function resolveImportAttribute_object(
 	return _resolveOneBranch<T.Object>(value, 'object');
 }
 
-function coerceToImportAttribute$impl(input: T.ImportAttribute.Loose): ReturnType<typeof F.buildImportAttribute> {
+export function coerceToImportAttribute(input: T.ImportAttribute.Loose): ReturnType<typeof F.buildImportAttribute> {
 	if (!_isLooseConfig<T.ImportAttribute.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImportAttribute>;
 	return F.buildImportAttribute({
@@ -2197,21 +1445,22 @@ function coerceToImportAttribute$impl(input: T.ImportAttribute.Loose): ReturnTyp
 	});
 }
 
-export const coerceToImportAttribute: typeof coerceToImportAttribute$impl & {
-	with: typeof F.buildImportAttribute.with;
-	assert: typeof F.buildImportAttribute.assert;
-} = attachProps(coerceToImportAttribute$impl, {
-	with: F.buildImportAttribute.with,
-	assert: F.buildImportAttribute.assert
-});
-
 export function resolveExpressionStatement_expressions(
 	value: T.ExpressionStatement.LooseConfig['expressions']
 ): T.ExpressionStatement['_expressions'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-function coerceToExpressionStatement$impl(
+export function resolveExpressionStatement_semicolon(
+	value: T.ExpressionStatement.LooseConfig['semicolon']
+): T.ExpressionStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToExpressionStatement(
 	input: T.ExpressionStatement.Loose
 ): ReturnType<typeof F.buildExpressionStatement> {
 	if (!_isLooseConfig<T.ExpressionStatement.LooseConfig>(input))
@@ -2222,30 +1471,9 @@ function coerceToExpressionStatement$impl(
 			'expressions',
 			resolveExpressionStatement_expressions(input.expressions)
 		),
-		semicolon: _requireField(
-			'expression_statement',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		semicolon: _requireField('expression_statement', 'semicolon', resolveExpressionStatement_semicolon(input.semicolon))
 	});
 }
-
-export const coerceToExpressionStatement: typeof coerceToExpressionStatement$impl & {
-	sequenceExpression: ((
-		...args: _Args<typeof coerceToSequenceExpression>
-	) => ReturnType<typeof coerceToExpressionStatement$impl>) & {
-		strict: typeof F.buildExpressionStatement.sequenceExpression;
-	};
-} = attachProps(coerceToExpressionStatement$impl, {
-	sequenceExpression: attachProps(
-		(...args: _Args<typeof coerceToSequenceExpression>) =>
-			coerceToExpressionStatement$impl({ expressions: coerceToSequenceExpression(...args) as T.SequenceExpression }),
-		{ strict: F.buildExpressionStatement.sequenceExpression }
-	)
-});
 
 export function resolveVariableDeclaration_declarators(
 	value: T.VariableDeclaration.LooseConfig['declarators']
@@ -2253,6 +1481,15 @@ export function resolveVariableDeclaration_declarators(
 	const resolved = _resolveManyBranch<T.VariableDeclarator>(value, 'variable_declarator');
 	_assertNonEmpty(resolved, 'variable_declaration.declarators');
 	return resolved;
+}
+
+export function resolveVariableDeclaration_semicolon(
+	value: T.VariableDeclaration.LooseConfig['semicolon']
+): T.VariableDeclaration['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToVariableDeclaration(
@@ -2266,14 +1503,7 @@ export function coerceToVariableDeclaration(
 			'declarators',
 			resolveVariableDeclaration_declarators(input.declarators)
 		),
-		semicolon: _requireField(
-			'variable_declaration',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		semicolon: _requireField('variable_declaration', 'semicolon', resolveVariableDeclaration_semicolon(input.semicolon))
 	});
 }
 
@@ -2294,6 +1524,15 @@ export function resolveLexicalDeclaration_declarators(
 	return resolved;
 }
 
+export function resolveLexicalDeclaration_semicolon(
+	value: T.LexicalDeclaration.LooseConfig['semicolon']
+): T.LexicalDeclaration['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
 export function coerceToLexicalDeclaration(
 	input: T.LexicalDeclaration.Loose
 ): ReturnType<typeof F.buildLexicalDeclaration> {
@@ -2306,24 +1545,17 @@ export function coerceToLexicalDeclaration(
 			'declarators',
 			resolveLexicalDeclaration_declarators(input.declarators)
 		),
-		semicolon: _requireField(
-			'lexical_declaration',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		semicolon: _requireField('lexical_declaration', 'semicolon', resolveLexicalDeclaration_semicolon(input.semicolon))
 	});
 }
 
 export function resolveVariableDeclarator_content(
 	value: T.VariableDeclarator.LooseConfig['content']
 ): T.VariableDeclarator['_content'] {
-	return _resolveOne<T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2>(value, _K0, _K10);
+	return _resolveOne<T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2>(value, _K2, _K11);
 }
 
-function coerceToVariableDeclarator$impl(
+export function coerceToVariableDeclarator(
 	input: (T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2) | T.VariableDeclarator.Loose
 ): ReturnType<typeof F.buildVariableDeclarator> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VariableDeclarator)
@@ -2334,32 +1566,12 @@ function coerceToVariableDeclarator$impl(
 			'content',
 			_resolveOne<T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K10
+				_K2,
+				_K11
 			)
 		)
 	);
 }
-
-export const coerceToVariableDeclarator: typeof coerceToVariableDeclarator$impl & {
-	arm1: ((
-		...args: _Args<typeof coerceToVariableDeclaratorArm1>
-	) => ReturnType<typeof coerceToVariableDeclarator$impl>) & { strict: typeof F.buildVariableDeclarator.arm1 };
-	arm2: ((
-		...args: _Args<typeof coerceToVariableDeclaratorArm2>
-	) => ReturnType<typeof coerceToVariableDeclarator$impl>) & { strict: typeof F.buildVariableDeclarator.arm2 };
-} = attachProps(coerceToVariableDeclarator$impl, {
-	arm1: attachProps(
-		(...args: _Args<typeof coerceToVariableDeclaratorArm1>) =>
-			coerceToVariableDeclarator$impl(coerceToVariableDeclaratorArm1(...args) as T.VariableDeclaratorArm1),
-		{ strict: F.buildVariableDeclarator.arm1 }
-	),
-	arm2: attachProps(
-		(...args: _Args<typeof coerceToVariableDeclaratorArm2>) =>
-			coerceToVariableDeclarator$impl(coerceToVariableDeclaratorArm2(...args) as T.VariableDeclaratorArm2),
-		{ strict: F.buildVariableDeclarator.arm2 }
-	)
-});
 
 export function resolveStatementBlock_statements(
 	value: T.StatementBlock.LooseConfig['statements']
@@ -2367,12 +1579,18 @@ export function resolveStatementBlock_statements(
 	return _resolveMany<T.Statement>(value, _K0, _K1);
 }
 
+export function resolveStatementBlock_automaticSemicolon(
+	value: T.StatementBlock.LooseConfig['automaticSemicolon']
+): T.StatementBlock['_automatic_semicolon'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock> {
 	if (!_isLooseConfig<T.StatementBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildStatementBlock>;
 	return F.buildStatementBlock({
 		statements: resolveStatementBlock_statements(input?.statements),
-		automaticSemicolon: _resolveBooleanKeyword(input?.automaticSemicolon)
+		automaticSemicolon: resolveStatementBlock_automaticSemicolon(input?.automaticSemicolon)
 	});
 }
 
@@ -2450,19 +1668,19 @@ export function resolveForStatement_initializer(
 ): T.ForStatement['_initializer'] {
 	return _resolveOne<
 		T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | T.EmptyStatement
-	>(value, _K8, _K11);
+	>(value, _K12, _K13);
 }
 
 export function resolveForStatement_condition(
 	value: T.ForStatement.LooseConfig['condition']
 ): T.ForStatement['_condition'] {
-	return _resolveOne<T.Expression | T.SequenceExpression | T.EmptyStatement>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression | T.EmptyStatement>(value, _K12, _K10);
 }
 
 export function resolveForStatement_increment(
 	value: T.ForStatement.LooseConfig['increment']
 ): T.ForStatement['_increment'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
 export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): T.ForStatement['_body'] {
@@ -2480,6 +1698,18 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 	});
 }
 
+export function resolveForInStatement_awaitMarker(
+	value: T.ForInStatement.LooseConfig['awaitMarker']
+): T.ForInStatement['_await_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveForInStatement_content(
+	value: T.ForInStatement.LooseConfig['content']
+): T.ForInStatement['_content'] {
+	return _resolveOne<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(value, _K2, _K14);
+}
+
 export function resolveForInStatement_operator(
 	value: T.ForInStatement.LooseConfig['operator']
 ): T.ForInStatement['_operator'] {
@@ -2490,25 +1720,7 @@ export function resolveForInStatement_operator(
 }
 
 export function resolveForInStatement_right(value: T.ForInStatement.LooseConfig['right']): T.ForInStatement['_right'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
-}
-
-export function resolveForInStatement_forHeaderLhs(
-	value: T.ForInStatement.LooseConfig['forHeaderLhs']
-): T.ForInStatement['_for_header_lhs'] {
-	return _resolveOneBranch<T.ForHeaderLhs>(value, '_for_header_lhs');
-}
-
-export function resolveForInStatement_forHeaderVarKind(
-	value: T.ForInStatement.LooseConfig['forHeaderVarKind']
-): T.ForInStatement['_for_header_var_kind'] {
-	return _resolveOneBranch<T.ForHeaderVarKind>(value, '_for_header_var_kind');
-}
-
-export function resolveForInStatement_forHeaderLetConstKind(
-	value: T.ForInStatement.LooseConfig['forHeaderLetConstKind']
-): T.ForInStatement['_for_header_let_const_kind'] {
-	return _resolveOneBranch<T.ForHeaderLetConstKind>(value, '_for_header_let_const_kind');
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
 export function resolveForInStatement_body(value: T.ForInStatement.LooseConfig['body']): T.ForInStatement['_body'] {
@@ -2519,12 +1731,10 @@ export function coerceToForInStatement(input: T.ForInStatement.Loose): ReturnTyp
 	if (!_isLooseConfig<T.ForInStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForInStatement>;
 	return F.buildForInStatement({
-		awaitMarker: _resolveBooleanKeyword(input.awaitMarker),
+		awaitMarker: resolveForInStatement_awaitMarker(input.awaitMarker),
+		content: _requireField('for_in_statement', 'content', resolveForInStatement_content(input.content)),
 		operator: _requireField('for_in_statement', 'operator', resolveForInStatement_operator(input.operator)),
 		right: _requireField('for_in_statement', 'right', resolveForInStatement_right(input.right)),
-		forHeaderLhs: resolveForInStatement_forHeaderLhs(input.forHeaderLhs),
-		forHeaderVarKind: resolveForInStatement_forHeaderVarKind(input.forHeaderVarKind),
-		forHeaderLetConstKind: resolveForInStatement_forHeaderLetConstKind(input.forHeaderLetConstKind),
 		body: _requireField('for_in_statement', 'body', resolveForInStatement_body(input.body))
 	});
 }
@@ -2558,16 +1768,22 @@ export function resolveDoStatement_condition(
 	return _resolveOneBranch<T.ParenthesizedExpression>(value, 'parenthesized_expression');
 }
 
+export function resolveDoStatement_semicolon(
+	value: T.DoStatement.LooseConfig['semicolon']
+): T.DoStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
 export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<typeof F.buildDoStatement> {
 	if (!_isLooseConfig<T.DoStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildDoStatement>;
 	return F.buildDoStatement({
 		body: _requireField('do_statement', 'body', resolveDoStatement_body(input.body)),
 		condition: _requireField('do_statement', 'condition', resolveDoStatement_condition(input.condition)),
-		semicolon: coerceKindEnumStorage(
-			_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-			[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-		)
+		semicolon: resolveDoStatement_semicolon(input.semicolon)
 	});
 }
 
@@ -2616,19 +1832,21 @@ export function resolveBreakStatement_label(value: T.BreakStatement.LooseConfig[
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function coerceToBreakStatement(input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
-	if (!_isLooseConfig<T.BreakStatement.LooseConfig | undefined>(input))
+export function resolveBreakStatement_semicolon(
+	value: T.BreakStatement.LooseConfig['semicolon']
+): T.BreakStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToBreakStatement(input: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
+	if (!_isLooseConfig<T.BreakStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildBreakStatement>;
 	return F.buildBreakStatement({
-		label: resolveBreakStatement_label(input?.label),
-		semicolon: _requireField(
-			'break_statement',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input?.semicolon, () => _resolveOne<'\n' | ';'>(input?.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		label: resolveBreakStatement_label(input.label),
+		semicolon: _requireField('break_statement', 'semicolon', resolveBreakStatement_semicolon(input.semicolon))
 	});
 }
 
@@ -2638,113 +1856,121 @@ export function resolveContinueStatement_label(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
+export function resolveContinueStatement_semicolon(
+	value: T.ContinueStatement.LooseConfig['semicolon']
+): T.ContinueStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
 export function coerceToContinueStatement(
-	input?: T.ContinueStatement.Loose
+	input: T.ContinueStatement.Loose
 ): ReturnType<typeof F.buildContinueStatement> {
-	if (!_isLooseConfig<T.ContinueStatement.LooseConfig | undefined>(input))
+	if (!_isLooseConfig<T.ContinueStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildContinueStatement>;
 	return F.buildContinueStatement({
-		label: resolveContinueStatement_label(input?.label),
-		semicolon: _requireField(
-			'continue_statement',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input?.semicolon, () => _resolveOne<'\n' | ';'>(input?.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		label: resolveContinueStatement_label(input.label),
+		semicolon: _requireField('continue_statement', 'semicolon', resolveContinueStatement_semicolon(input.semicolon))
 	});
 }
 
+export function resolveDebuggerStatement_semicolon(
+	value: T.DebuggerStatement.LooseConfig['semicolon']
+): T.DebuggerStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
 export function coerceToDebuggerStatement(
-	input?: T.DebuggerStatement.Loose
+	input: ('\n' | ';') | T.DebuggerStatement.Loose
 ): ReturnType<typeof F.buildDebuggerStatement> {
-	if (!_isLooseConfig<T.DebuggerStatement.LooseConfig | undefined>(input))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DebuggerStatement)
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
-	return F.buildDebuggerStatement({
-		semicolon: _requireField(
+	return F.buildDebuggerStatement(
+		_requireField(
 			'debugger_statement',
 			'semicolon',
 			coerceKindEnumStorage(
-				_resolveKindEnum(input?.semicolon, () => _resolveOne<'\n' | ';'>(input?.semicolon, _K0, _K0)),
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
+						? input.semicolon
+						: input,
+					() =>
+						_resolveOne<'\n' | ';'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
+								? input.semicolon
+								: input,
+							_K2,
+							_K2
+						)
+				),
 				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 			)
 		)
-	});
+	);
 }
 
 export function resolveReturnStatement_expressions(
 	value: T.ReturnStatement.LooseConfig['expressions']
 ): T.ReturnStatement['_expressions'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-function coerceToReturnStatement$impl(input?: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
-	if (!_isLooseConfig<T.ReturnStatement.LooseConfig | undefined>(input))
+export function resolveReturnStatement_semicolon(
+	value: T.ReturnStatement.LooseConfig['semicolon']
+): T.ReturnStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToReturnStatement(input: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
+	if (!_isLooseConfig<T.ReturnStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement({
-		expressions: resolveReturnStatement_expressions(input?.expressions),
-		semicolon: _requireField(
-			'return_statement',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input?.semicolon, () => _resolveOne<'\n' | ';'>(input?.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		expressions: resolveReturnStatement_expressions(input.expressions),
+		semicolon: _requireField('return_statement', 'semicolon', resolveReturnStatement_semicolon(input.semicolon))
 	});
 }
-
-export const coerceToReturnStatement: typeof coerceToReturnStatement$impl & {
-	sequenceExpression: ((
-		...args: _Args<typeof coerceToSequenceExpression>
-	) => ReturnType<typeof coerceToReturnStatement$impl>) & { strict: typeof F.buildReturnStatement.sequenceExpression };
-} = attachProps(coerceToReturnStatement$impl, {
-	sequenceExpression: attachProps(
-		(...args: _Args<typeof coerceToSequenceExpression>) =>
-			coerceToReturnStatement$impl({ expressions: coerceToSequenceExpression(...args) as T.SequenceExpression }),
-		{ strict: F.buildReturnStatement.sequenceExpression }
-	)
-});
 
 export function resolveThrowStatement_expressions(
 	value: T.ThrowStatement.LooseConfig['expressions']
 ): T.ThrowStatement['_expressions'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-function coerceToThrowStatement$impl(input: T.ThrowStatement.Loose): ReturnType<typeof F.buildThrowStatement> {
+export function resolveThrowStatement_semicolon(
+	value: T.ThrowStatement.LooseConfig['semicolon']
+): T.ThrowStatement['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToThrowStatement(input: T.ThrowStatement.Loose): ReturnType<typeof F.buildThrowStatement> {
 	if (!_isLooseConfig<T.ThrowStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildThrowStatement>;
 	return F.buildThrowStatement({
 		expressions: _requireField('throw_statement', 'expressions', resolveThrowStatement_expressions(input.expressions)),
-		semicolon: _requireField(
-			'throw_statement',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		semicolon: _requireField('throw_statement', 'semicolon', resolveThrowStatement_semicolon(input.semicolon))
 	});
 }
 
-export const coerceToThrowStatement: typeof coerceToThrowStatement$impl & {
-	sequenceExpression: ((
-		...args: _Args<typeof coerceToSequenceExpression>
-	) => ReturnType<typeof coerceToThrowStatement$impl>) & { strict: typeof F.buildThrowStatement.sequenceExpression };
-} = attachProps(coerceToThrowStatement$impl, {
-	sequenceExpression: attachProps(
-		(...args: _Args<typeof coerceToSequenceExpression>) =>
-			coerceToThrowStatement$impl({ expressions: coerceToSequenceExpression(...args) as T.SequenceExpression }),
-		{ strict: F.buildThrowStatement.sequenceExpression }
-	)
-});
+export function coerceToEmptyStatement(input?: T.EmptyStatement): ReturnType<typeof F.buildEmptyStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildEmptyStatement>;
+	return F.buildEmptyStatement();
+}
 
 export function resolveLabeledStatement_label(
 	value: T.LabeledStatement.LooseConfig['label']
 ): T.LabeledStatement['_label'] {
-	return _resolveOne<T.StatementIdentifier>(value, _super_statement_identifier, _K0);
+	return _resolveOne<T.StatementIdentifier>(value, _super_statement_identifier, _K2);
 }
 
 export function resolveLabeledStatement_body(
@@ -2774,7 +2000,7 @@ export function coerceToSwitchBody(
 		const stored = (data as unknown as { _cases?: unknown })._cases;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSwitchBody(
-			...(_resolveMany<T.SwitchCase | T.SwitchDefault>(children, _K0, _K12) as unknown as Parameters<
+			...(_resolveMany<T.SwitchCase | T.SwitchDefault>(children, _K2, _K15) as unknown as Parameters<
 				typeof F.buildSwitchBody
 			>)
 		);
@@ -2787,14 +2013,14 @@ export function coerceToSwitchBody(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSwitchBody(
-		...(_resolveMany<T.SwitchCase | T.SwitchDefault>(_elems, _K0, _K12) as unknown as Parameters<
+		...(_resolveMany<T.SwitchCase | T.SwitchDefault>(_elems, _K2, _K15) as unknown as Parameters<
 			typeof F.buildSwitchBody
 		>)
 	);
 }
 
 export function resolveSwitchCase_value(value: T.SwitchCase.LooseConfig['value']): T.SwitchCase['_value'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
 export function resolveSwitchCase_bodies(value: T.SwitchCase.LooseConfig['body']): T.SwitchCase['_body'] {
@@ -2881,10 +2107,10 @@ export function resolveParenthesizedExpression_content(
 		| T.Identifier
 		| T.DecoratorMemberExpression
 		| T.DecoratorCallExpression
-	>(value, _K3, _K13);
+	>(value, _K4, _K16);
 }
 
-function coerceToParenthesizedExpression$impl(
+export function coerceToParenthesizedExpression(
 	input:
 		| (
 				| T.ParenthesizedExpressionTyped
@@ -2909,65 +2135,17 @@ function coerceToParenthesizedExpression$impl(
 				| T.DecoratorCallExpression
 			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K3,
-				_K13
+				_K4,
+				_K16
 			)
 		)
 	);
 }
 
-export const coerceToParenthesizedExpression: typeof coerceToParenthesizedExpression$impl & {
-	typed: ((
-		...args: _Args<typeof coerceToParenthesizedExpressionTyped>
-	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
-		strict: typeof F.buildParenthesizedExpression.typed;
-	};
-	sequenceExpression: ((
-		...args: _Args<typeof coerceToSequenceExpression>
-	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
-		strict: typeof F.buildParenthesizedExpression.sequenceExpression;
-	};
-	identifier: typeof F.buildParenthesizedExpression.identifier;
-	decoratorMemberExpression: ((
-		...args: _Args<typeof coerceToDecoratorMemberExpression>
-	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
-		strict: typeof F.buildParenthesizedExpression.decoratorMemberExpression;
-	};
-	decoratorCallExpression: ((
-		...args: _Args<typeof coerceToDecoratorCallExpression>
-	) => ReturnType<typeof coerceToParenthesizedExpression$impl>) & {
-		strict: typeof F.buildParenthesizedExpression.decoratorCallExpression;
-	};
-} = attachProps(coerceToParenthesizedExpression$impl, {
-	typed: attachProps(
-		(...args: _Args<typeof coerceToParenthesizedExpressionTyped>) =>
-			coerceToParenthesizedExpression$impl(
-				coerceToParenthesizedExpressionTyped(...args) as T.ParenthesizedExpressionTyped
-			),
-		{ strict: F.buildParenthesizedExpression.typed }
-	),
-	sequenceExpression: attachProps(
-		(...args: _Args<typeof coerceToSequenceExpression>) =>
-			coerceToParenthesizedExpression$impl(coerceToSequenceExpression(...args) as T.SequenceExpression),
-		{ strict: F.buildParenthesizedExpression.sequenceExpression }
-	),
-	identifier: F.buildParenthesizedExpression.identifier,
-	decoratorMemberExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorMemberExpression>) =>
-			coerceToParenthesizedExpression$impl(coerceToDecoratorMemberExpression(...args) as T.DecoratorMemberExpression),
-		{ strict: F.buildParenthesizedExpression.decoratorMemberExpression }
-	),
-	decoratorCallExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorCallExpression>) =>
-			coerceToParenthesizedExpression$impl(coerceToDecoratorCallExpression(...args) as T.DecoratorCallExpression),
-		{ strict: F.buildParenthesizedExpression.decoratorCallExpression }
-	)
-});
-
 export function resolveYieldExpression_expression(
 	value: T.YieldExpression.LooseConfig['expression']
 ): T.YieldExpression['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToYieldExpression(
@@ -2980,8 +2158,8 @@ export function coerceToYieldExpression(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 				? input.expression
 				: input,
-			_K8,
-			_K14
+			_K9,
+			_K17
 		)
 	);
 }
@@ -3005,7 +2183,7 @@ export function coerceToObject(
 			...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
 				children,
 				_super_statement_identifier,
-				_K15
+				_K18
 			) as unknown as Parameters<typeof F.buildObject>)
 		);
 	}
@@ -3020,7 +2198,7 @@ export function coerceToObject(
 		...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
 			_elems,
 			_super_statement_identifier,
-			_K15
+			_K18
 		) as unknown as Parameters<typeof F.buildObject>)
 	);
 }
@@ -3048,7 +2226,7 @@ export function coerceToObjectPattern(
 		return F.buildObjectPattern(
 			...(_resolveMany<
 				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
-			>(children, _super_statement_identifier, _K16) as unknown as Parameters<typeof F.buildObjectPattern>)
+			>(children, _super_statement_identifier, _K19) as unknown as Parameters<typeof F.buildObjectPattern>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -3062,7 +2240,7 @@ export function coerceToObjectPattern(
 		...(_resolveMany<T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern>(
 			_elems,
 			_super_statement_identifier,
-			_K16
+			_K19
 		) as unknown as Parameters<typeof F.buildObjectPattern>)
 	);
 }
@@ -3070,13 +2248,13 @@ export function coerceToObjectPattern(
 export function resolveAssignmentPattern_left(
 	value: T.AssignmentPattern.LooseConfig['left']
 ): T.AssignmentPattern['_left'] {
-	return _resolveOne<T.Pattern>(value, _K17, _K18);
+	return _resolveOne<T.Pattern>(value, _K20, _K21);
 }
 
 export function resolveAssignmentPattern_right(
 	value: T.AssignmentPattern.LooseConfig['right']
 ): T.AssignmentPattern['_right'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToAssignmentPattern(
@@ -3096,14 +2274,14 @@ export function resolveObjectAssignmentPattern_left(
 	return _resolveOne<T.ShorthandPropertyIdentifierPattern | T.ObjectPattern | T.ArrayPattern>(
 		value,
 		_super_statement_identifier,
-		_K19
+		_K22
 	);
 }
 
 export function resolveObjectAssignmentPattern_right(
 	value: T.ObjectAssignmentPattern.LooseConfig['right']
 ): T.ObjectAssignmentPattern['_right'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToObjectAssignmentPattern(
@@ -3129,7 +2307,7 @@ export function coerceToArray(
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArray(
-			...(_resolveMany<T.Expression | T.SpreadElement>(children, _K8, _K20) as unknown as Parameters<
+			...(_resolveMany<T.Expression | T.SpreadElement>(children, _K9, _K23) as unknown as Parameters<
 				typeof F.buildArray
 			>)
 		);
@@ -3142,7 +2320,7 @@ export function coerceToArray(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildArray(
-		...(_resolveMany<T.Expression | T.SpreadElement>(_elems, _K8, _K20) as unknown as Parameters<typeof F.buildArray>)
+		...(_resolveMany<T.Expression | T.SpreadElement>(_elems, _K9, _K23) as unknown as Parameters<typeof F.buildArray>)
 	);
 }
 
@@ -3158,7 +2336,7 @@ export function coerceToArrayPattern(
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArrayPattern(
-			...(_resolveMany<T.Pattern | T.AssignmentPattern>(children, _K17, _K21) as unknown as Parameters<
+			...(_resolveMany<T.Pattern | T.AssignmentPattern>(children, _K20, _K24) as unknown as Parameters<
 				typeof F.buildArrayPattern
 			>)
 		);
@@ -3171,7 +2349,7 @@ export function coerceToArrayPattern(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildArrayPattern(
-		...(_resolveMany<T.Pattern | T.AssignmentPattern>(_elems, _K17, _K21) as unknown as Parameters<
+		...(_resolveMany<T.Pattern | T.AssignmentPattern>(_elems, _K20, _K24) as unknown as Parameters<
 			typeof F.buildArrayPattern
 		>)
 	);
@@ -3180,7 +2358,7 @@ export function coerceToArrayPattern(
 export function resolveNestedIdentifier_object(
 	value: T.NestedIdentifier.LooseConfig['object']
 ): T.NestedIdentifier['_object'] {
-	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K3, _K22);
+	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K4, _K25);
 }
 
 export function resolveNestedIdentifier_property(
@@ -3218,7 +2396,7 @@ export function resolveClass_body(value: T.Class.LooseConfig['body']): T.Class['
 	return _resolveOneBranch<T.ClassBody>(value, 'class_body');
 }
 
-function coerceToClass$impl(input: T.Class.Loose): ReturnType<typeof F.buildClass> {
+export function coerceToClass(input: T.Class.Loose): ReturnType<typeof F.buildClass> {
 	if (!_isLooseConfig<T.Class.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildClass>;
 	return F.buildClass({
 		decorator: resolveClass_decorators(input.decorator),
@@ -3228,18 +2406,6 @@ function coerceToClass$impl(input: T.Class.Loose): ReturnType<typeof F.buildClas
 		body: resolveClass_body(input.body) ?? F.buildClassBody()
 	});
 }
-
-export const coerceToClass: typeof coerceToClass$impl & {
-	body: ((...args: _Args<typeof coerceToClassBody>) => ReturnType<typeof coerceToClass$impl>) & {
-		strict: typeof F.buildClass.body;
-	};
-} = attachProps(coerceToClass$impl, {
-	body: attachProps(
-		(...args: _Args<typeof coerceToClassBody>) =>
-			coerceToClass$impl({ body: coerceToClassBody(...args) as T.ClassBody }),
-		{ strict: F.buildClass.body }
-	)
-});
 
 export function resolveClassDeclaration_decorators(
 	value: T.ClassDeclaration.LooseConfig['decorator']
@@ -3271,6 +2437,12 @@ export function resolveClassDeclaration_body(
 	return _resolveOneBranch<T.ClassBody>(value, 'class_body');
 }
 
+export function resolveClassDeclaration_automaticSemicolon(
+	value: T.ClassDeclaration.LooseConfig['automaticSemicolon']
+): T.ClassDeclaration['_automatic_semicolon'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToClassDeclaration(input: T.ClassDeclaration.Loose): ReturnType<typeof F.buildClassDeclaration> {
 	if (!_isLooseConfig<T.ClassDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassDeclaration>;
@@ -3280,17 +2452,17 @@ export function coerceToClassDeclaration(input: T.ClassDeclaration.Loose): Retur
 		typeParameters: resolveClassDeclaration_typeParameters(input.typeParameters),
 		classHeritage: resolveClassDeclaration_classHeritage(input.classHeritage),
 		body: resolveClassDeclaration_body(input.body) ?? F.buildClassBody(),
-		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon)
+		automaticSemicolon: resolveClassDeclaration_automaticSemicolon(input.automaticSemicolon)
 	});
 }
 
 export function resolveClassHeritage_content(
 	value: T.ClassHeritage.LooseConfig['content']
 ): T.ClassHeritage['_content'] {
-	return _resolveOne<T.ClassHeritageExtendsClause | T.ImplementsClause>(value, _K0, _K23);
+	return _resolveOne<T.ClassHeritageExtendsClause | T.ImplementsClause>(value, _K2, _K26);
 }
 
-function coerceToClassHeritage$impl(
+export function coerceToClassHeritage(
 	input: (T.ClassHeritageExtendsClause | T.ImplementsClause) | T.ClassHeritage.Loose
 ): ReturnType<typeof F.buildClassHeritage> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ClassHeritage)
@@ -3301,32 +2473,18 @@ function coerceToClassHeritage$impl(
 			'content',
 			_resolveOne<T.ClassHeritageExtendsClause | T.ImplementsClause>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K23
+				_K2,
+				_K26
 			)
 		)
 	);
 }
 
-export const coerceToClassHeritage: typeof coerceToClassHeritage$impl & {
-	extendsClause: ((
-		...args: _Args<typeof coerceToClassHeritageExtendsClause>
-	) => ReturnType<typeof coerceToClassHeritage$impl>) & { strict: typeof F.buildClassHeritage.extendsClause };
-	implementsClause: ((
-		...args: _Args<typeof coerceToImplementsClause>
-	) => ReturnType<typeof coerceToClassHeritage$impl>) & { strict: typeof F.buildClassHeritage.implementsClause };
-} = attachProps(coerceToClassHeritage$impl, {
-	extendsClause: attachProps(
-		(...args: _Args<typeof coerceToClassHeritageExtendsClause>) =>
-			coerceToClassHeritage$impl(coerceToClassHeritageExtendsClause(...args) as T.ClassHeritageExtendsClause),
-		{ strict: F.buildClassHeritage.extendsClause }
-	),
-	implementsClause: attachProps(
-		(...args: _Args<typeof coerceToImplementsClause>) =>
-			coerceToClassHeritage$impl(coerceToImplementsClause(...args) as T.ImplementsClause),
-		{ strict: F.buildClassHeritage.implementsClause }
-	)
-});
+export function resolveFunctionExpression_asyncMarker(
+	value: T.FunctionExpression.LooseConfig['asyncMarker']
+): T.FunctionExpression['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
 
 export function resolveFunctionExpression_name(
 	value: T.FunctionExpression.LooseConfig['name']
@@ -3349,7 +2507,7 @@ export function resolveFunctionExpression_parameters(
 export function resolveFunctionExpression_returnType(
 	value: T.FunctionExpression.LooseConfig['returnType']
 ): T.FunctionExpression['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
 export function resolveFunctionExpression_body(
@@ -3364,13 +2522,19 @@ export function coerceToFunctionExpression(
 	if (!_isLooseConfig<T.FunctionExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionExpression>;
 	return F.buildFunctionExpression({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveFunctionExpression_asyncMarker(input.asyncMarker),
 		name: resolveFunctionExpression_name(input.name),
 		typeParameters: resolveFunctionExpression_typeParameters(input.typeParameters),
 		parameters: resolveFunctionExpression_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveFunctionExpression_returnType(input.returnType),
 		body: resolveFunctionExpression_body(input.body) ?? F.buildStatementBlock()
 	});
+}
+
+export function resolveFunctionDeclaration_asyncMarker(
+	value: T.FunctionDeclaration.LooseConfig['asyncMarker']
+): T.FunctionDeclaration['_async_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveFunctionDeclaration_name(
@@ -3394,7 +2558,7 @@ export function resolveFunctionDeclaration_parameters(
 export function resolveFunctionDeclaration_returnType(
 	value: T.FunctionDeclaration.LooseConfig['returnType']
 ): T.FunctionDeclaration['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
 export function resolveFunctionDeclaration_body(
@@ -3403,20 +2567,32 @@ export function resolveFunctionDeclaration_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
+export function resolveFunctionDeclaration_automaticSemicolon(
+	value: T.FunctionDeclaration.LooseConfig['automaticSemicolon']
+): T.FunctionDeclaration['_automatic_semicolon'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToFunctionDeclaration(
 	input: T.FunctionDeclaration.Loose
 ): ReturnType<typeof F.buildFunctionDeclaration> {
 	if (!_isLooseConfig<T.FunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionDeclaration>;
 	return F.buildFunctionDeclaration({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveFunctionDeclaration_asyncMarker(input.asyncMarker),
 		name: _requireField('function_declaration', 'name', resolveFunctionDeclaration_name(input.name)),
 		typeParameters: resolveFunctionDeclaration_typeParameters(input.typeParameters),
 		parameters: resolveFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveFunctionDeclaration_returnType(input.returnType),
 		body: resolveFunctionDeclaration_body(input.body) ?? F.buildStatementBlock(),
-		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon)
+		automaticSemicolon: resolveFunctionDeclaration_automaticSemicolon(input.automaticSemicolon)
 	});
+}
+
+export function resolveGeneratorFunction_asyncMarker(
+	value: T.GeneratorFunction.LooseConfig['asyncMarker']
+): T.GeneratorFunction['_async_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveGeneratorFunction_name(
@@ -3440,7 +2616,7 @@ export function resolveGeneratorFunction_parameters(
 export function resolveGeneratorFunction_returnType(
 	value: T.GeneratorFunction.LooseConfig['returnType']
 ): T.GeneratorFunction['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
 export function resolveGeneratorFunction_body(
@@ -3455,13 +2631,19 @@ export function coerceToGeneratorFunction(
 	if (!_isLooseConfig<T.GeneratorFunction.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGeneratorFunction>;
 	return F.buildGeneratorFunction({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveGeneratorFunction_asyncMarker(input.asyncMarker),
 		name: resolveGeneratorFunction_name(input.name),
 		typeParameters: resolveGeneratorFunction_typeParameters(input.typeParameters),
 		parameters: resolveGeneratorFunction_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveGeneratorFunction_returnType(input.returnType),
 		body: resolveGeneratorFunction_body(input.body) ?? F.buildStatementBlock()
 	});
+}
+
+export function resolveGeneratorFunctionDeclaration_asyncMarker(
+	value: T.GeneratorFunctionDeclaration.LooseConfig['asyncMarker']
+): T.GeneratorFunctionDeclaration['_async_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveGeneratorFunctionDeclaration_name(
@@ -3485,7 +2667,7 @@ export function resolveGeneratorFunctionDeclaration_parameters(
 export function resolveGeneratorFunctionDeclaration_returnType(
 	value: T.GeneratorFunctionDeclaration.LooseConfig['returnType']
 ): T.GeneratorFunctionDeclaration['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
 export function resolveGeneratorFunctionDeclaration_body(
@@ -3494,49 +2676,66 @@ export function resolveGeneratorFunctionDeclaration_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
+export function resolveGeneratorFunctionDeclaration_automaticSemicolon(
+	value: T.GeneratorFunctionDeclaration.LooseConfig['automaticSemicolon']
+): T.GeneratorFunctionDeclaration['_automatic_semicolon'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToGeneratorFunctionDeclaration(
 	input: T.GeneratorFunctionDeclaration.Loose
 ): ReturnType<typeof F.buildGeneratorFunctionDeclaration> {
 	if (!_isLooseConfig<T.GeneratorFunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
 	return F.buildGeneratorFunctionDeclaration({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveGeneratorFunctionDeclaration_asyncMarker(input.asyncMarker),
 		name: _requireField('generator_function_declaration', 'name', resolveGeneratorFunctionDeclaration_name(input.name)),
 		typeParameters: resolveGeneratorFunctionDeclaration_typeParameters(input.typeParameters),
 		parameters: resolveGeneratorFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveGeneratorFunctionDeclaration_returnType(input.returnType),
 		body: resolveGeneratorFunctionDeclaration_body(input.body) ?? F.buildStatementBlock(),
-		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon)
+		automaticSemicolon: resolveGeneratorFunctionDeclaration_automaticSemicolon(input.automaticSemicolon)
 	});
+}
+
+export function resolveArrowFunction_asyncMarker(
+	value: T.ArrowFunction.LooseConfig['asyncMarker']
+): T.ArrowFunction['_async_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveArrowFunction_content(
 	value: T.ArrowFunction.LooseConfig['content']
 ): T.ArrowFunction['_content'] {
-	return _resolveOne<T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature>(value, _K0, _K25);
+	return _resolveOne<T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature>(value, _K2, _K28);
 }
 
 export function resolveArrowFunction_body(value: T.ArrowFunction.LooseConfig['body']): T.ArrowFunction['_body'] {
-	return _resolveOne<T.Expression | T.StatementBlock>(value, _K8, _K26);
+	return _resolveOne<T.Expression | T.StatementBlock>(value, _K9, _K29);
 }
 
 export function coerceToArrowFunction(input: T.ArrowFunction.Loose): ReturnType<typeof F.buildArrowFunction> {
 	if (!_isLooseConfig<T.ArrowFunction.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildArrowFunction>;
 	return F.buildArrowFunction({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveArrowFunction_asyncMarker(input.asyncMarker),
 		content: _requireField('arrow_function', 'content', resolveArrowFunction_content(input.content)),
 		body: _requireField('arrow_function', 'body', resolveArrowFunction_body(input.body))
 	});
 }
 
+export function coerceToOptionalChain(input?: T.OptionalChain): ReturnType<typeof F.buildOptionalChain> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildOptionalChain>;
+	return F.buildOptionalChain();
+}
+
 export function resolveCallExpression_content(
 	value: T.CallExpression.LooseConfig['content']
 ): T.CallExpression['_content'] {
-	return _resolveOne<T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember>(value, _K0, _K27);
+	return _resolveOne<T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember>(value, _K2, _K30);
 }
 
-function coerceToCallExpression$impl(
+export function coerceToCallExpression(
 	input: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember) | T.CallExpression.Loose
 ): ReturnType<typeof F.buildCallExpression> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.CallExpression)
@@ -3547,45 +2746,17 @@ function coerceToCallExpression$impl(
 			'content',
 			_resolveOne<T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K27
+				_K2,
+				_K30
 			)
 		)
 	);
 }
 
-export const coerceToCallExpression: typeof coerceToCallExpression$impl & {
-	call: ((...args: _Args<typeof coerceToCallExpressionCall>) => ReturnType<typeof coerceToCallExpression$impl>) & {
-		strict: typeof F.buildCallExpression.call;
-	};
-	templateCall: ((
-		...args: _Args<typeof coerceToCallExpressionTemplateCall>
-	) => ReturnType<typeof coerceToCallExpression$impl>) & { strict: typeof F.buildCallExpression.templateCall };
-	member: ((...args: _Args<typeof coerceToCallExpressionMember>) => ReturnType<typeof coerceToCallExpression$impl>) & {
-		strict: typeof F.buildCallExpression.member;
-	};
-} = attachProps(coerceToCallExpression$impl, {
-	call: attachProps(
-		(...args: _Args<typeof coerceToCallExpressionCall>) =>
-			coerceToCallExpression$impl(coerceToCallExpressionCall(...args) as T.CallExpressionCall),
-		{ strict: F.buildCallExpression.call }
-	),
-	templateCall: attachProps(
-		(...args: _Args<typeof coerceToCallExpressionTemplateCall>) =>
-			coerceToCallExpression$impl(coerceToCallExpressionTemplateCall(...args) as T.CallExpressionTemplateCall),
-		{ strict: F.buildCallExpression.templateCall }
-	),
-	member: attachProps(
-		(...args: _Args<typeof coerceToCallExpressionMember>) =>
-			coerceToCallExpression$impl(coerceToCallExpressionMember(...args) as T.CallExpressionMember),
-		{ strict: F.buildCallExpression.member }
-	)
-});
-
 export function resolveNewExpression_constructor_(
 	value: T.NewExpression.LooseConfig['constructor_']
 ): T.NewExpression['_constructor'] {
-	return _resolveOne<T.PrimaryExpression>(value, _K8, _K28);
+	return _resolveOne<T.PrimaryExpression>(value, _K9, _K31);
 }
 
 export function resolveNewExpression_typeArguments(
@@ -3617,7 +2788,7 @@ export function coerceToNewExpression(input: T.NewExpression.Loose): ReturnType<
 export function resolveAwaitExpression_expression(
 	value: T.AwaitExpression.LooseConfig['expression']
 ): T.AwaitExpression['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToAwaitExpression(
@@ -3633,8 +2804,8 @@ export function coerceToAwaitExpression(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 					? input.expression
 					: input,
-				_K8,
-				_K14
+				_K9,
+				_K17
 			)
 		)
 	);
@@ -3643,14 +2814,14 @@ export function coerceToAwaitExpression(
 export function resolveMemberExpression_object(
 	value: T.MemberExpression.LooseConfig['object']
 ): T.MemberExpression['_object'] {
-	return _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(value, _K29, _K14);
+	return _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(value, _K32, _K17);
 }
 
 export function resolveMemberExpression_separator(
 	value: T.MemberExpression.LooseConfig['separator']
 ): T.MemberExpression['_separator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'.' | T.OptionalChain>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOneLeaf<'.' | T.OptionalChain>(value, 'optional_chain')),
 		[['.', TSKindId.Dot] as const, ['?.', TSKindId.OptionalChain] as const]
 	);
 }
@@ -3658,7 +2829,7 @@ export function resolveMemberExpression_separator(
 export function resolveMemberExpression_property(
 	value: T.MemberExpression.LooseConfig['property']
 ): T.MemberExpression['_property'] {
-	return _resolveOne<T.PrivatePropertyIdentifier | T.Identifier>(value, _K30, _K0);
+	return _resolveOne<T.PrivatePropertyIdentifier | T.Identifier>(value, _K33, _K2);
 }
 
 export function coerceToMemberExpression(input: T.MemberExpression.Loose): ReturnType<typeof F.buildMemberExpression> {
@@ -3674,13 +2845,19 @@ export function coerceToMemberExpression(input: T.MemberExpression.Loose): Retur
 export function resolveSubscriptExpression_object(
 	value: T.SubscriptExpression.LooseConfig['object']
 ): T.SubscriptExpression['_object'] {
-	return _resolveOne<T.Expression | T.PrimaryExpression>(value, _K8, _K14);
+	return _resolveOne<T.Expression | T.PrimaryExpression>(value, _K9, _K17);
+}
+
+export function resolveSubscriptExpression_optionalChain(
+	value: T.SubscriptExpression.LooseConfig['optionalChain']
+): T.SubscriptExpression['_optional_chain'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveSubscriptExpression_index(
 	value: T.SubscriptExpression.LooseConfig['index']
 ): T.SubscriptExpression['_index'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
 export function coerceToSubscriptExpression(
@@ -3690,21 +2867,27 @@ export function coerceToSubscriptExpression(
 		return input as unknown as ReturnType<typeof F.buildSubscriptExpression>;
 	return F.buildSubscriptExpression({
 		object: _requireField('subscript_expression', 'object', resolveSubscriptExpression_object(input.object)),
-		optionalChain: _resolveBooleanKeyword(input.optionalChain),
+		optionalChain: resolveSubscriptExpression_optionalChain(input.optionalChain),
 		index: _requireField('subscript_expression', 'index', resolveSubscriptExpression_index(input.index))
 	});
+}
+
+export function resolveAssignmentExpression_usingMarker(
+	value: T.AssignmentExpression.LooseConfig['usingMarker']
+): T.AssignmentExpression['_using_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveAssignmentExpression_left(
 	value: T.AssignmentExpression.LooseConfig['left']
 ): T.AssignmentExpression['_left'] {
-	return _resolveOne<T.ParenthesizedExpression | T._LhsExpression>(value, _K17, _K31);
+	return _resolveOne<T.ParenthesizedExpression | T._LhsExpression>(value, _K20, _K34);
 }
 
 export function resolveAssignmentExpression_right(
 	value: T.AssignmentExpression.LooseConfig['right']
 ): T.AssignmentExpression['_right'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToAssignmentExpression(
@@ -3713,7 +2896,7 @@ export function coerceToAssignmentExpression(
 	if (!_isLooseConfig<T.AssignmentExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAssignmentExpression>;
 	return F.buildAssignmentExpression({
-		usingMarker: _resolveBooleanKeyword(input.usingMarker),
+		usingMarker: resolveAssignmentExpression_usingMarker(input.usingMarker),
 		left: _requireField('assignment_expression', 'left', resolveAssignmentExpression_left(input.left)),
 		right: _requireField('assignment_expression', 'right', resolveAssignmentExpression_right(input.right))
 	});
@@ -3729,7 +2912,7 @@ export function resolveAugmentedAssignmentExpression_left(
 		| T.Identifier
 		| T.ParenthesizedExpression
 		| T.NonNullExpression
-	>(value, _super_statement_identifier, _K32);
+	>(value, _super_statement_identifier, _K35);
 }
 
 export function resolveAugmentedAssignmentExpression_operator(
@@ -3762,7 +2945,7 @@ export function resolveAugmentedAssignmentExpression_operator(
 export function resolveAugmentedAssignmentExpression_right(
 	value: T.AugmentedAssignmentExpression.LooseConfig['right']
 ): T.AugmentedAssignmentExpression['_right'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToAugmentedAssignmentExpression(
@@ -3792,7 +2975,7 @@ export function coerceToAugmentedAssignmentExpression(
 export function resolveSpreadElement_expression(
 	value: T.SpreadElement.LooseConfig['expression']
 ): T.SpreadElement['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToSpreadElement(
@@ -3808,8 +2991,8 @@ export function coerceToSpreadElement(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 					? input.expression
 					: input,
-				_K8,
-				_K14
+				_K9,
+				_K17
 			)
 		)
 	);
@@ -3818,19 +3001,19 @@ export function coerceToSpreadElement(
 export function resolveTernaryExpression_condition(
 	value: T.TernaryExpression.LooseConfig['condition']
 ): T.TernaryExpression['_condition'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveTernaryExpression_consequence(
 	value: T.TernaryExpression.LooseConfig['consequence']
 ): T.TernaryExpression['_consequence'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveTernaryExpression_alternative(
 	value: T.TernaryExpression.LooseConfig['alternative']
 ): T.TernaryExpression['_alternative'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToTernaryExpression(
@@ -3856,7 +3039,7 @@ export function coerceToTernaryExpression(
 export function resolveBinaryExpression_left(
 	value: T.BinaryExpression.LooseConfig['left']
 ): T.BinaryExpression['_left'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveBinaryExpression_operator(
@@ -3889,7 +3072,7 @@ export function resolveBinaryExpression_operator(
 				| '>'
 				| '??'
 				| 'instanceof'
-			>(value, _K0, _K0)
+			>(value, _K2, _K2)
 		),
 		[
 			['&&', TSKindId.AmpAmp] as const,
@@ -3923,7 +3106,7 @@ export function resolveBinaryExpression_operator(
 export function resolveBinaryExpression_right(
 	value: T.BinaryExpression.LooseConfig['right']
 ): T.BinaryExpression['_right'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveBinaryExpression_binaryExpressionArm(
@@ -3932,7 +3115,7 @@ export function resolveBinaryExpression_binaryExpressionArm(
 	return _resolveOneBranch<T.BinaryExpressionArm>(value, '_binary_expression_arm');
 }
 
-function coerceToBinaryExpression$impl(input?: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
+export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
 	if (!_isLooseConfig<T.BinaryExpression.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildBinaryExpression>;
 	return F.buildBinaryExpression({
@@ -3942,68 +3125,6 @@ function coerceToBinaryExpression$impl(input?: T.BinaryExpression.Loose): Return
 		binaryExpressionArm: resolveBinaryExpression_binaryExpressionArm(input?.binaryExpressionArm)
 	});
 }
-
-export const coerceToBinaryExpression: typeof coerceToBinaryExpression$impl & {
-	arm: ((...args: _Args<typeof coerceToBinaryExpressionArm>) => ReturnType<typeof coerceToBinaryExpression$impl>) & {
-		strict: typeof F.buildBinaryExpression.arm;
-	};
-	ampAmp: typeof F.buildBinaryExpression.ampAmp;
-	pipePipe: typeof F.buildBinaryExpression.pipePipe;
-	gtGt: typeof F.buildBinaryExpression.gtGt;
-	gtGtGt: typeof F.buildBinaryExpression.gtGtGt;
-	ltLt: typeof F.buildBinaryExpression.ltLt;
-	amp: typeof F.buildBinaryExpression.amp;
-	caret: typeof F.buildBinaryExpression.caret;
-	pipe: typeof F.buildBinaryExpression.pipe;
-	plus: typeof F.buildBinaryExpression.plus;
-	dash: typeof F.buildBinaryExpression.dash;
-	star: typeof F.buildBinaryExpression.star;
-	slash: typeof F.buildBinaryExpression.slash;
-	percent: typeof F.buildBinaryExpression.percent;
-	starStar: typeof F.buildBinaryExpression.starStar;
-	lt: typeof F.buildBinaryExpression.lt;
-	ltEq: typeof F.buildBinaryExpression.ltEq;
-	eqEq: typeof F.buildBinaryExpression.eqEq;
-	eqEqEq: typeof F.buildBinaryExpression.eqEqEq;
-	bangEq: typeof F.buildBinaryExpression.bangEq;
-	bangEqEq: typeof F.buildBinaryExpression.bangEqEq;
-	gtEq: typeof F.buildBinaryExpression.gtEq;
-	gt: typeof F.buildBinaryExpression.gt;
-	qmarkQmark: typeof F.buildBinaryExpression.qmarkQmark;
-	instanceof: typeof F.buildBinaryExpression.instanceof;
-} = attachProps(coerceToBinaryExpression$impl, {
-	arm: attachProps(
-		(...args: _Args<typeof coerceToBinaryExpressionArm>) =>
-			coerceToBinaryExpression$impl({
-				binaryExpressionArm: coerceToBinaryExpressionArm(...args) as T.BinaryExpressionArm
-			}),
-		{ strict: F.buildBinaryExpression.arm }
-	),
-	ampAmp: F.buildBinaryExpression.ampAmp,
-	pipePipe: F.buildBinaryExpression.pipePipe,
-	gtGt: F.buildBinaryExpression.gtGt,
-	gtGtGt: F.buildBinaryExpression.gtGtGt,
-	ltLt: F.buildBinaryExpression.ltLt,
-	amp: F.buildBinaryExpression.amp,
-	caret: F.buildBinaryExpression.caret,
-	pipe: F.buildBinaryExpression.pipe,
-	plus: F.buildBinaryExpression.plus,
-	dash: F.buildBinaryExpression.dash,
-	star: F.buildBinaryExpression.star,
-	slash: F.buildBinaryExpression.slash,
-	percent: F.buildBinaryExpression.percent,
-	starStar: F.buildBinaryExpression.starStar,
-	lt: F.buildBinaryExpression.lt,
-	ltEq: F.buildBinaryExpression.ltEq,
-	eqEq: F.buildBinaryExpression.eqEq,
-	eqEqEq: F.buildBinaryExpression.eqEqEq,
-	bangEq: F.buildBinaryExpression.bangEq,
-	bangEqEq: F.buildBinaryExpression.bangEqEq,
-	gtEq: F.buildBinaryExpression.gtEq,
-	gt: F.buildBinaryExpression.gt,
-	qmarkQmark: F.buildBinaryExpression.qmarkQmark,
-	instanceof: F.buildBinaryExpression.instanceof
-});
 
 export function resolveUnaryExpression_operator(
 	value: T.UnaryExpression.LooseConfig['operator']
@@ -4025,7 +3146,7 @@ export function resolveUnaryExpression_operator(
 export function resolveUnaryExpression_argument(
 	value: T.UnaryExpression.LooseConfig['argument']
 ): T.UnaryExpression['_argument'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
@@ -4040,10 +3161,10 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 export function resolveUpdateExpression_content(
 	value: T.UpdateExpression.LooseConfig['content']
 ): T.UpdateExpression['_content'] {
-	return _resolveOne<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(value, _K0, _K33);
+	return _resolveOne<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(value, _K2, _K36);
 }
 
-function coerceToUpdateExpression$impl(
+export function coerceToUpdateExpression(
 	input: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix) | T.UpdateExpression.Loose
 ): ReturnType<typeof F.buildUpdateExpression> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.UpdateExpression)
@@ -4054,32 +3175,12 @@ function coerceToUpdateExpression$impl(
 			'content',
 			_resolveOne<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K33
+				_K2,
+				_K36
 			)
 		)
 	);
 }
-
-export const coerceToUpdateExpression: typeof coerceToUpdateExpression$impl & {
-	postfix: ((
-		...args: _Args<typeof coerceToUpdateExpressionPostfix>
-	) => ReturnType<typeof coerceToUpdateExpression$impl>) & { strict: typeof F.buildUpdateExpression.postfix };
-	prefix: ((
-		...args: _Args<typeof coerceToUpdateExpressionPrefix>
-	) => ReturnType<typeof coerceToUpdateExpression$impl>) & { strict: typeof F.buildUpdateExpression.prefix };
-} = attachProps(coerceToUpdateExpression$impl, {
-	postfix: attachProps(
-		(...args: _Args<typeof coerceToUpdateExpressionPostfix>) =>
-			coerceToUpdateExpression$impl(coerceToUpdateExpressionPostfix(...args) as T.UpdateExpressionPostfix),
-		{ strict: F.buildUpdateExpression.postfix }
-	),
-	prefix: attachProps(
-		(...args: _Args<typeof coerceToUpdateExpressionPrefix>) =>
-			coerceToUpdateExpression$impl(coerceToUpdateExpressionPrefix(...args) as T.UpdateExpressionPrefix),
-		{ strict: F.buildUpdateExpression.prefix }
-	)
-});
 
 export function coerceToSequenceExpression(
 	...input: readonly (T.Expression | T.SequenceExpression | { expression: T.Expression | readonly T.Expression[] })[]
@@ -4089,7 +3190,7 @@ export function coerceToSequenceExpression(
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSequenceExpression(
-			...(_resolveMany<T.Expression>(children, _K8, _K14) as unknown as Parameters<typeof F.buildSequenceExpression>)
+			...(_resolveMany<T.Expression>(children, _K9, _K17) as unknown as Parameters<typeof F.buildSequenceExpression>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -4100,15 +3201,15 @@ export function coerceToSequenceExpression(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSequenceExpression(
-		...(_resolveMany<T.Expression>(_elems, _K8, _K14) as unknown as Parameters<typeof F.buildSequenceExpression>)
+		...(_resolveMany<T.Expression>(_elems, _K9, _K17) as unknown as Parameters<typeof F.buildSequenceExpression>)
 	);
 }
 
 export function resolveString_content(value: T.String.LooseConfig['content']): T.String['_content'] {
-	return _resolveOne<T.StringDouble | T.StringSingle>(value, _K0, _K34);
+	return _resolveOne<T.StringDouble | T.StringSingle>(value, _K2, _K37);
 }
 
-function coerceToString$impl(
+export function coerceToString(
 	input: (T.StringDouble | T.StringSingle) | T.String.Loose
 ): ReturnType<typeof F.buildString> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.String)
@@ -4119,32 +3220,12 @@ function coerceToString$impl(
 			'content',
 			_resolveOne<T.StringDouble | T.StringSingle>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K34
+				_K2,
+				_K37
 			)
 		)
 	);
 }
-
-export const coerceToString: typeof coerceToString$impl & {
-	double: ((...args: _Args<typeof coerceToStringDouble>) => ReturnType<typeof coerceToString$impl>) & {
-		strict: typeof F.buildString.double;
-	};
-	single: ((...args: _Args<typeof coerceToStringSingle>) => ReturnType<typeof coerceToString$impl>) & {
-		strict: typeof F.buildString.single;
-	};
-} = attachProps(coerceToString$impl, {
-	double: attachProps(
-		(...args: _Args<typeof coerceToStringDouble>) =>
-			coerceToString$impl(coerceToStringDouble(...args) as T.StringDouble),
-		{ strict: F.buildString.double }
-	),
-	single: attachProps(
-		(...args: _Args<typeof coerceToStringSingle>) =>
-			coerceToString$impl(coerceToStringSingle(...args) as T.StringSingle),
-		{ strict: F.buildString.single }
-	)
-});
 
 export function coerceToUnescapedDoubleStringFragment(
 	input: string | T.UnescapedDoubleStringFragment
@@ -4188,8 +3269,8 @@ export function coerceToTemplateString(
 		return F.buildTemplateString(
 			...(_resolveMany<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(
 				children,
-				_K35,
-				_K36
+				_K38,
+				_K39
 			) as unknown as Parameters<typeof F.buildTemplateString>)
 		);
 	}
@@ -4203,8 +3284,8 @@ export function coerceToTemplateString(
 	return F.buildTemplateString(
 		...(_resolveMany<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(
 			_elems,
-			_K35,
-			_K36
+			_K38,
+			_K39
 		) as unknown as Parameters<typeof F.buildTemplateString>)
 	);
 }
@@ -4212,10 +3293,10 @@ export function coerceToTemplateString(
 export function resolveTemplateSubstitution_expressions(
 	value: T.TemplateSubstitution.LooseConfig['expressions']
 ): T.TemplateSubstitution['_expressions'] {
-	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K8, _K9);
+	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-function coerceToTemplateSubstitution$impl(
+export function coerceToTemplateSubstitution(
 	input: (T.Expression | T.SequenceExpression) | T.TemplateSubstitution.Loose
 ): ReturnType<typeof F.buildTemplateSubstitution> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TemplateSubstitution)
@@ -4228,26 +3309,12 @@ function coerceToTemplateSubstitution$impl(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'expressions' in input
 					? input.expressions
 					: input,
-				_K8,
-				_K9
+				_K9,
+				_K10
 			)
 		)
 	);
 }
-
-export const coerceToTemplateSubstitution: typeof coerceToTemplateSubstitution$impl & {
-	sequenceExpression: ((
-		...args: _Args<typeof coerceToSequenceExpression>
-	) => ReturnType<typeof coerceToTemplateSubstitution$impl>) & {
-		strict: typeof F.buildTemplateSubstitution.sequenceExpression;
-	};
-} = attachProps(coerceToTemplateSubstitution$impl, {
-	sequenceExpression: attachProps(
-		(...args: _Args<typeof coerceToSequenceExpression>) =>
-			coerceToTemplateSubstitution$impl(coerceToSequenceExpression(...args) as T.SequenceExpression),
-		{ strict: F.buildTemplateSubstitution.sequenceExpression }
-	)
-});
 
 export function resolveRegex_pattern(value: T.Regex.LooseConfig['pattern']): T.Regex['_pattern'] {
 	return _resolveOneLeaf<T.RegexPattern>(value, 'regex_pattern');
@@ -4257,19 +3324,13 @@ export function resolveRegex_flags(value: T.Regex.LooseConfig['flags']): T.Regex
 	return _resolveOneLeaf<T.RegexFlags>(value, 'regex_flags');
 }
 
-function coerceToRegex$impl(input: T.Regex.Loose): ReturnType<typeof F.buildRegex> {
+export function coerceToRegex(input: T.Regex.Loose): ReturnType<typeof F.buildRegex> {
 	if (!_isLooseConfig<T.Regex.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildRegex>;
 	return F.buildRegex({
 		pattern: _requireField('regex', 'pattern', resolveRegex_pattern(input.pattern)),
 		flags: resolveRegex_flags(input.flags)
 	});
 }
-
-export const coerceToRegex: typeof coerceToRegex$impl & {
-	pattern: typeof F.buildRegex.pattern;
-} = attachProps(coerceToRegex$impl, {
-	pattern: F.buildRegex.pattern
-});
 
 export function coerceToRegexPattern(input: string | T.RegexPattern): ReturnType<typeof F.buildRegexPattern> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRegexPattern>;
@@ -4299,11 +3360,14 @@ export function coerceToPrivatePropertyIdentifier(
 }
 
 export function resolveMetaProperty_content(value: T.MetaProperty.LooseConfig['content']): T.MetaProperty['_content'] {
-	return _resolveOne<T.MetaPropertyArm1 | T.MetaPropertyArm2>(value, _K37, _K0);
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'new . target' | 'import . meta'>(value, _K2, _K2)),
+		[['new . target', TSKindId.MetaPropertyArm1] as const, ['import . meta', TSKindId.MetaPropertyArm2] as const]
+	);
 }
 
-function coerceToMetaProperty$impl(
-	input: (T.MetaPropertyArm1 | T.MetaPropertyArm2) | T.MetaProperty.Loose
+export function coerceToMetaProperty(
+	input: ('new . target' | 'import . meta') | T.MetaProperty.Loose
 ): ReturnType<typeof F.buildMetaProperty> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MetaProperty)
 		return input as unknown as ReturnType<typeof F.buildMetaProperty>;
@@ -4311,22 +3375,25 @@ function coerceToMetaProperty$impl(
 		_requireField(
 			'meta_property',
 			'content',
-			_resolveOne<T.MetaPropertyArm1 | T.MetaPropertyArm2>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K37,
-				_K0
+			coerceKindEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<'new . target' | 'import . meta'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K2,
+							_K2
+						)
+				),
+				[['new . target', TSKindId.MetaPropertyArm1] as const, ['import . meta', TSKindId.MetaPropertyArm2] as const]
 			)
 		)
 	);
 }
-
-export const coerceToMetaProperty: typeof coerceToMetaProperty$impl & {
-	arm1: typeof F.buildMetaProperty.arm1;
-	arm2: typeof F.buildMetaProperty.arm2;
-} = attachProps(coerceToMetaProperty$impl, {
-	arm1: F.buildMetaProperty.arm1,
-	arm2: F.buildMetaProperty.arm2
-});
 
 export function coerceToThis(input?: T.This): ReturnType<typeof F.buildThis> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildThis>;
@@ -4370,7 +3437,7 @@ export function coerceToArguments(
 		const stored = (data as unknown as { _arguments?: unknown })._arguments;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArguments(
-			...(_resolveMany<T.Expression | T.SpreadElement>(children, _K8, _K20) as unknown as Parameters<
+			...(_resolveMany<T.Expression | T.SpreadElement>(children, _K9, _K23) as unknown as Parameters<
 				typeof F.buildArguments
 			>)
 		);
@@ -4383,7 +3450,7 @@ export function coerceToArguments(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildArguments(
-		...(_resolveMany<T.Expression | T.SpreadElement>(_elems, _K8, _K20) as unknown as Parameters<
+		...(_resolveMany<T.Expression | T.SpreadElement>(_elems, _K9, _K23) as unknown as Parameters<
 			typeof F.buildArguments
 		>)
 	);
@@ -4392,10 +3459,10 @@ export function coerceToArguments(
 export function resolveDecorator_content(value: T.Decorator.LooseConfig['content']): T.Decorator['_content'] {
 	return _resolveOne<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
-	>(value, _K3, _K38);
+	>(value, _K4, _K40);
 }
 
-function coerceToDecorator$impl(
+export function coerceToDecorator(
 	input:
 		| (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)
 		| T.Decorator.Loose
@@ -4410,47 +3477,17 @@ function coerceToDecorator$impl(
 				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K3,
-				_K38
+				_K4,
+				_K40
 			)
 		)
 	);
 }
 
-export const coerceToDecorator: typeof coerceToDecorator$impl & {
-	identifier: typeof F.buildDecorator.identifier;
-	memberExpression: ((
-		...args: _Args<typeof coerceToDecoratorMemberExpression>
-	) => ReturnType<typeof coerceToDecorator$impl>) & { strict: typeof F.buildDecorator.memberExpression };
-	callExpression: ((
-		...args: _Args<typeof coerceToDecoratorCallExpression>
-	) => ReturnType<typeof coerceToDecorator$impl>) & { strict: typeof F.buildDecorator.callExpression };
-	parenthesizedExpression: ((
-		...args: _Args<typeof coerceToDecoratorParenthesizedExpression>
-	) => ReturnType<typeof coerceToDecorator$impl>) & { strict: typeof F.buildDecorator.parenthesizedExpression };
-} = attachProps(coerceToDecorator$impl, {
-	identifier: F.buildDecorator.identifier,
-	memberExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorMemberExpression>) =>
-			coerceToDecorator$impl(coerceToDecoratorMemberExpression(...args) as T.DecoratorMemberExpression),
-		{ strict: F.buildDecorator.memberExpression }
-	),
-	callExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorCallExpression>) =>
-			coerceToDecorator$impl(coerceToDecoratorCallExpression(...args) as T.DecoratorCallExpression),
-		{ strict: F.buildDecorator.callExpression }
-	),
-	parenthesizedExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorParenthesizedExpression>) =>
-			coerceToDecorator$impl(coerceToDecoratorParenthesizedExpression(...args) as T.DecoratorParenthesizedExpression),
-		{ strict: F.buildDecorator.parenthesizedExpression }
-	)
-});
-
 export function resolveDecoratorMemberExpression_object(
 	value: T.DecoratorMemberExpression.LooseConfig['object']
 ): T.DecoratorMemberExpression['_object'] {
-	return _resolveOne<T.Identifier | T.DecoratorMemberExpression>(value, _K3, _K39);
+	return _resolveOne<T.Identifier | T.DecoratorMemberExpression>(value, _K4, _K41);
 }
 
 export function resolveDecoratorMemberExpression_property(
@@ -4481,7 +3518,7 @@ export function coerceToDecoratorMemberExpression(
 export function resolveDecoratorCallExpression_function(
 	value: T.DecoratorCallExpression.LooseConfig['function']
 ): T.DecoratorCallExpression['_function'] {
-	return _resolveOne<T.Identifier | T.DecoratorMemberExpression>(value, _K3, _K39);
+	return _resolveOne<T.Identifier | T.DecoratorMemberExpression>(value, _K4, _K41);
 }
 
 export function resolveDecoratorCallExpression_typeArguments(
@@ -4560,6 +3597,12 @@ export function coerceToFormalParameters(
 	);
 }
 
+export function resolveClassStaticBlock_automaticSemicolon(
+	value: T.ClassStaticBlock.LooseConfig['automaticSemicolon']
+): T.ClassStaticBlock['_automatic_semicolon'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveClassStaticBlock_body(
 	value: T.ClassStaticBlock.LooseConfig['body']
 ): T.ClassStaticBlock['_body'] {
@@ -4570,7 +3613,7 @@ export function coerceToClassStaticBlock(input: T.ClassStaticBlock.Loose): Retur
 	if (!_isLooseConfig<T.ClassStaticBlock.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassStaticBlock>;
 	return F.buildClassStaticBlock({
-		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon),
+		automaticSemicolon: resolveClassStaticBlock_automaticSemicolon(input.automaticSemicolon),
 		body: resolveClassStaticBlock_body(input.body) ?? F.buildStatementBlock()
 	});
 }
@@ -4587,10 +3630,10 @@ export function resolveRestPattern_lhsExpression(
 		| T.ObjectPattern
 		| T.ArrayPattern
 		| T.NonNullExpression
-	>(value, _K17, _K40);
+	>(value, _K20, _K42);
 }
 
-function coerceToRestPattern$impl(
+export function coerceToRestPattern(
 	input:
 		| (
 				| T.MemberExpression
@@ -4623,62 +3666,12 @@ function coerceToRestPattern$impl(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'lhsExpression' in input
 					? input.lhsExpression
 					: input,
-				_K17,
-				_K40
+				_K20,
+				_K42
 			)
 		)
 	);
 }
-
-export const coerceToRestPattern: typeof coerceToRestPattern$impl & {
-	memberExpression: ((
-		...args: _Args<typeof coerceToMemberExpression>
-	) => ReturnType<typeof coerceToRestPattern$impl>) & { strict: typeof F.buildRestPattern.memberExpression };
-	subscriptExpression: ((
-		...args: _Args<typeof coerceToSubscriptExpression>
-	) => ReturnType<typeof coerceToRestPattern$impl>) & { strict: typeof F.buildRestPattern.subscriptExpression };
-	undefined: typeof F.buildRestPattern.undefined;
-	identifier: typeof F.buildRestPattern.identifier;
-	reservedIdentifier: typeof F.buildRestPattern.reservedIdentifier;
-	objectPattern: ((...args: _Args<typeof coerceToObjectPattern>) => ReturnType<typeof coerceToRestPattern$impl>) & {
-		strict: typeof F.buildRestPattern.objectPattern;
-	};
-	arrayPattern: ((...args: _Args<typeof coerceToArrayPattern>) => ReturnType<typeof coerceToRestPattern$impl>) & {
-		strict: typeof F.buildRestPattern.arrayPattern;
-	};
-	nonNullExpression: ((
-		...args: _Args<typeof coerceToNonNullExpression>
-	) => ReturnType<typeof coerceToRestPattern$impl>) & { strict: typeof F.buildRestPattern.nonNullExpression };
-} = attachProps(coerceToRestPattern$impl, {
-	memberExpression: attachProps(
-		(...args: _Args<typeof coerceToMemberExpression>) =>
-			coerceToRestPattern$impl(coerceToMemberExpression(...args) as T.MemberExpression),
-		{ strict: F.buildRestPattern.memberExpression }
-	),
-	subscriptExpression: attachProps(
-		(...args: _Args<typeof coerceToSubscriptExpression>) =>
-			coerceToRestPattern$impl(coerceToSubscriptExpression(...args) as T.SubscriptExpression),
-		{ strict: F.buildRestPattern.subscriptExpression }
-	),
-	undefined: F.buildRestPattern.undefined,
-	identifier: F.buildRestPattern.identifier,
-	reservedIdentifier: F.buildRestPattern.reservedIdentifier,
-	objectPattern: attachProps(
-		(...args: _Args<typeof coerceToObjectPattern>) =>
-			coerceToRestPattern$impl(coerceToObjectPattern(...args) as T.ObjectPattern),
-		{ strict: F.buildRestPattern.objectPattern }
-	),
-	arrayPattern: attachProps(
-		(...args: _Args<typeof coerceToArrayPattern>) =>
-			coerceToRestPattern$impl(coerceToArrayPattern(...args) as T.ArrayPattern),
-		{ strict: F.buildRestPattern.arrayPattern }
-	),
-	nonNullExpression: attachProps(
-		(...args: _Args<typeof coerceToNonNullExpression>) =>
-			coerceToRestPattern$impl(coerceToNonNullExpression(...args) as T.NonNullExpression),
-		{ strict: F.buildRestPattern.nonNullExpression }
-	)
-});
 
 export function resolveMethodDefinition_accessibilityModifier(
 	value: T.MethodDefinition.LooseConfig['accessibilityModifier']
@@ -4693,11 +3686,35 @@ export function resolveMethodDefinition_accessibilityModifier(
 	);
 }
 
+export function resolveMethodDefinition_staticMarker(
+	value: T.MethodDefinition.LooseConfig['staticMarker']
+): T.MethodDefinition['_static_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinition_overrideModifier(
+	value: T.MethodDefinition.LooseConfig['overrideModifier']
+): T.MethodDefinition['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinition_readonlyMarker(
+	value: T.MethodDefinition.LooseConfig['readonlyMarker']
+): T.MethodDefinition['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinition_asyncMarker(
+	value: T.MethodDefinition.LooseConfig['asyncMarker']
+): T.MethodDefinition['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveMethodDefinition_accessorKind(
 	value: T.MethodDefinition.LooseConfig['accessorKind']
 ): T.MethodDefinition['_accessor_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
 		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
 	);
 }
@@ -4707,9 +3724,15 @@ export function resolveMethodDefinition_name(
 ): T.MethodDefinition['_name'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
+}
+
+export function resolveMethodDefinition_optionalMarker(
+	value: T.MethodDefinition.LooseConfig['optionalMarker']
+): T.MethodDefinition['_optional_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveMethodDefinition_typeParameters(
@@ -4727,7 +3750,7 @@ export function resolveMethodDefinition_parameters(
 export function resolveMethodDefinition_returnType(
 	value: T.MethodDefinition.LooseConfig['returnType']
 ): T.MethodDefinition['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
 export function resolveMethodDefinition_body(
@@ -4736,18 +3759,18 @@ export function resolveMethodDefinition_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-function coerceToMethodDefinition$impl(input: T.MethodDefinition.Loose): ReturnType<typeof F.buildMethodDefinition> {
+export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): ReturnType<typeof F.buildMethodDefinition> {
 	if (!_isLooseConfig<T.MethodDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMethodDefinition>;
 	return F.buildMethodDefinition({
 		accessibilityModifier: resolveMethodDefinition_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: _resolveBooleanKeyword(input.staticMarker),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		staticMarker: resolveMethodDefinition_staticMarker(input.staticMarker),
+		overrideModifier: resolveMethodDefinition_overrideModifier(input.overrideModifier),
+		readonlyMarker: resolveMethodDefinition_readonlyMarker(input.readonlyMarker),
+		asyncMarker: resolveMethodDefinition_asyncMarker(input.asyncMarker),
 		accessorKind: resolveMethodDefinition_accessorKind(input.accessorKind),
 		name: _requireField('method_definition', 'name', resolveMethodDefinition_name(input.name)),
-		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
+		optionalMarker: resolveMethodDefinition_optionalMarker(input.optionalMarker),
 		typeParameters: resolveMethodDefinition_typeParameters(input.typeParameters),
 		parameters: resolveMethodDefinition_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveMethodDefinition_returnType(input.returnType),
@@ -4755,26 +3778,16 @@ function coerceToMethodDefinition$impl(input: T.MethodDefinition.Loose): ReturnT
 	});
 }
 
-export const coerceToMethodDefinition: typeof coerceToMethodDefinition$impl & {
-	get: typeof F.buildMethodDefinition.get;
-	set: typeof F.buildMethodDefinition.set;
-	star: typeof F.buildMethodDefinition.star;
-} = attachProps(coerceToMethodDefinition$impl, {
-	get: F.buildMethodDefinition.get,
-	set: F.buildMethodDefinition.set,
-	star: F.buildMethodDefinition.star
-});
-
 export function resolvePair_key(value: T.Pair.LooseConfig['key']): T.Pair['_key'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
 }
 
 export function resolvePair_value(value: T.Pair.LooseConfig['value']): T.Pair['_value'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToPair(input: T.Pair.Loose): ReturnType<typeof F.buildPair> {
@@ -4788,13 +3801,13 @@ export function coerceToPair(input: T.Pair.Loose): ReturnType<typeof F.buildPair
 export function resolvePairPattern_key(value: T.PairPattern.LooseConfig['key']): T.PairPattern['_key'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
 }
 
 export function resolvePairPattern_value(value: T.PairPattern.LooseConfig['value']): T.PairPattern['_value'] {
-	return _resolveOne<T.Pattern | T.AssignmentPattern>(value, _K17, _K21);
+	return _resolveOne<T.Pattern | T.AssignmentPattern>(value, _K20, _K24);
 }
 
 export function coerceToPairPattern(input: T.PairPattern.Loose): ReturnType<typeof F.buildPairPattern> {
@@ -4809,7 +3822,7 @@ export function coerceToPairPattern(input: T.PairPattern.Loose): ReturnType<type
 export function resolveComputedPropertyName_expression(
 	value: T.ComputedPropertyName.LooseConfig['expression']
 ): T.ComputedPropertyName['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToComputedPropertyName(
@@ -4825,8 +3838,8 @@ export function coerceToComputedPropertyName(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 					? input.expression
 					: input,
-				_K8,
-				_K14
+				_K9,
+				_K17
 			)
 		)
 	);
@@ -4836,6 +3849,12 @@ export function resolvePublicFieldDefinition_decorators(
 	value: T.PublicFieldDefinition.LooseConfig['decorator']
 ): T.PublicFieldDefinition['_decorator'] {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+}
+
+export function resolvePublicFieldDefinition_declareMarker(
+	value: T.PublicFieldDefinition.LooseConfig['declareMarker']
+): T.PublicFieldDefinition['_declare_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolvePublicFieldDefinition_accessibilityModifier(
@@ -4851,13 +3870,43 @@ export function resolvePublicFieldDefinition_accessibilityModifier(
 	);
 }
 
+export function resolvePublicFieldDefinition_staticMarker(
+	value: T.PublicFieldDefinition.LooseConfig['staticMarker']
+): T.PublicFieldDefinition['_static_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinition_readonlyMarker(
+	value: T.PublicFieldDefinition.LooseConfig['readonlyMarker']
+): T.PublicFieldDefinition['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinition_abstractMarker(
+	value: T.PublicFieldDefinition.LooseConfig['abstractMarker']
+): T.PublicFieldDefinition['_abstract_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinition_accessorMarker(
+	value: T.PublicFieldDefinition.LooseConfig['accessorMarker']
+): T.PublicFieldDefinition['_accessor_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinition_overrideModifier(
+	value: T.PublicFieldDefinition.LooseConfig['overrideModifier']
+): T.PublicFieldDefinition['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolvePublicFieldDefinition_name(
 	value: T.PublicFieldDefinition.LooseConfig['name']
 ): T.PublicFieldDefinition['_name'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
 }
 
@@ -4865,7 +3914,7 @@ export function resolvePublicFieldDefinition_optionalityMarker(
 	value: T.PublicFieldDefinition.LooseConfig['optionalityMarker']
 ): T.PublicFieldDefinition['_optionality_marker'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'?' | '!'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'?' | '!'>(value, _K2, _K2)),
 		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
 	);
 }
@@ -4879,23 +3928,23 @@ export function resolvePublicFieldDefinition_type(
 export function resolvePublicFieldDefinition_value(
 	value: T.PublicFieldDefinition.LooseConfig['value']
 ): T.PublicFieldDefinition['_value'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
-function coerceToPublicFieldDefinition$impl(
+export function coerceToPublicFieldDefinition(
 	input: T.PublicFieldDefinition.Loose
 ): ReturnType<typeof F.buildPublicFieldDefinition> {
 	if (!_isLooseConfig<T.PublicFieldDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildPublicFieldDefinition>;
 	return F.buildPublicFieldDefinition({
 		decorator: resolvePublicFieldDefinition_decorators(input.decorator),
-		declareMarker: _resolveBooleanKeyword(input.declareMarker),
+		declareMarker: resolvePublicFieldDefinition_declareMarker(input.declareMarker),
 		accessibilityModifier: resolvePublicFieldDefinition_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: _resolveBooleanKeyword(input.staticMarker),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-		abstractMarker: _resolveBooleanKeyword(input.abstractMarker),
-		accessorMarker: _resolveBooleanKeyword(input.accessorMarker),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
+		staticMarker: resolvePublicFieldDefinition_staticMarker(input.staticMarker),
+		readonlyMarker: resolvePublicFieldDefinition_readonlyMarker(input.readonlyMarker),
+		abstractMarker: resolvePublicFieldDefinition_abstractMarker(input.abstractMarker),
+		accessorMarker: resolvePublicFieldDefinition_accessorMarker(input.accessorMarker),
+		overrideModifier: resolvePublicFieldDefinition_overrideModifier(input.overrideModifier),
 		name: _requireField('public_field_definition', 'name', resolvePublicFieldDefinition_name(input.name)),
 		optionalityMarker: resolvePublicFieldDefinition_optionalityMarker(input.optionalityMarker),
 		type: resolvePublicFieldDefinition_type(input.type),
@@ -4903,18 +3952,10 @@ function coerceToPublicFieldDefinition$impl(
 	});
 }
 
-export const coerceToPublicFieldDefinition: typeof coerceToPublicFieldDefinition$impl & {
-	qmark: typeof F.buildPublicFieldDefinition.qmark;
-	bang: typeof F.buildPublicFieldDefinition.bang;
-} = attachProps(coerceToPublicFieldDefinition$impl, {
-	qmark: F.buildPublicFieldDefinition.qmark,
-	bang: F.buildPublicFieldDefinition.bang
-});
-
 export function resolveNonNullExpression_expression(
 	value: T.NonNullExpression.LooseConfig['expression']
 ): T.NonNullExpression['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToNonNullExpression(
@@ -4930,8 +3971,8 @@ export function coerceToNonNullExpression(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 					? input.expression
 					: input,
-				_K8,
-				_K14
+				_K9,
+				_K17
 			)
 		)
 	);
@@ -4950,11 +3991,35 @@ export function resolveMethodSignature_accessibilityModifier(
 	);
 }
 
+export function resolveMethodSignature_staticMarker(
+	value: T.MethodSignature.LooseConfig['staticMarker']
+): T.MethodSignature['_static_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignature_overrideModifier(
+	value: T.MethodSignature.LooseConfig['overrideModifier']
+): T.MethodSignature['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignature_readonlyMarker(
+	value: T.MethodSignature.LooseConfig['readonlyMarker']
+): T.MethodSignature['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignature_asyncMarker(
+	value: T.MethodSignature.LooseConfig['asyncMarker']
+): T.MethodSignature['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveMethodSignature_accessorKind(
 	value: T.MethodSignature.LooseConfig['accessorKind']
 ): T.MethodSignature['_accessor_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
 		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
 	);
 }
@@ -4962,9 +4027,15 @@ export function resolveMethodSignature_accessorKind(
 export function resolveMethodSignature_name(value: T.MethodSignature.LooseConfig['name']): T.MethodSignature['_name'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
+}
+
+export function resolveMethodSignature_optionalMarker(
+	value: T.MethodSignature.LooseConfig['optionalMarker']
+): T.MethodSignature['_optional_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveMethodSignature_typeParameters(
@@ -4982,36 +4053,26 @@ export function resolveMethodSignature_parameters(
 export function resolveMethodSignature_returnType(
 	value: T.MethodSignature.LooseConfig['returnType']
 ): T.MethodSignature['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
-function coerceToMethodSignature$impl(input: T.MethodSignature.Loose): ReturnType<typeof F.buildMethodSignature> {
+export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnType<typeof F.buildMethodSignature> {
 	if (!_isLooseConfig<T.MethodSignature.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMethodSignature>;
 	return F.buildMethodSignature({
 		accessibilityModifier: resolveMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: _resolveBooleanKeyword(input.staticMarker),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		staticMarker: resolveMethodSignature_staticMarker(input.staticMarker),
+		overrideModifier: resolveMethodSignature_overrideModifier(input.overrideModifier),
+		readonlyMarker: resolveMethodSignature_readonlyMarker(input.readonlyMarker),
+		asyncMarker: resolveMethodSignature_asyncMarker(input.asyncMarker),
 		accessorKind: resolveMethodSignature_accessorKind(input.accessorKind),
 		name: _requireField('method_signature', 'name', resolveMethodSignature_name(input.name)),
-		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
+		optionalMarker: resolveMethodSignature_optionalMarker(input.optionalMarker),
 		typeParameters: resolveMethodSignature_typeParameters(input.typeParameters),
 		parameters: resolveMethodSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveMethodSignature_returnType(input.returnType)
 	});
 }
-
-export const coerceToMethodSignature: typeof coerceToMethodSignature$impl & {
-	get: typeof F.buildMethodSignature.get;
-	set: typeof F.buildMethodSignature.set;
-	star: typeof F.buildMethodSignature.star;
-} = attachProps(coerceToMethodSignature$impl, {
-	get: F.buildMethodSignature.get,
-	set: F.buildMethodSignature.set,
-	star: F.buildMethodSignature.star
-});
 
 export function resolveAbstractMethodSignature_accessibilityModifier(
 	value: T.AbstractMethodSignature.LooseConfig['accessibilityModifier']
@@ -5026,11 +4087,17 @@ export function resolveAbstractMethodSignature_accessibilityModifier(
 	);
 }
 
+export function resolveAbstractMethodSignature_overrideModifier(
+	value: T.AbstractMethodSignature.LooseConfig['overrideModifier']
+): T.AbstractMethodSignature['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveAbstractMethodSignature_accessorKind(
 	value: T.AbstractMethodSignature.LooseConfig['accessorKind']
 ): T.AbstractMethodSignature['_accessor_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
 		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
 	);
 }
@@ -5040,9 +4107,15 @@ export function resolveAbstractMethodSignature_name(
 ): T.AbstractMethodSignature['_name'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
+}
+
+export function resolveAbstractMethodSignature_optionalMarker(
+	value: T.AbstractMethodSignature.LooseConfig['optionalMarker']
+): T.AbstractMethodSignature['_optional_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveAbstractMethodSignature_typeParameters(
@@ -5060,35 +4133,31 @@ export function resolveAbstractMethodSignature_parameters(
 export function resolveAbstractMethodSignature_returnType(
 	value: T.AbstractMethodSignature.LooseConfig['returnType']
 ): T.AbstractMethodSignature['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
-function coerceToAbstractMethodSignature$impl(
+export function coerceToAbstractMethodSignature(
 	input: T.AbstractMethodSignature.Loose
 ): ReturnType<typeof F.buildAbstractMethodSignature> {
 	if (!_isLooseConfig<T.AbstractMethodSignature.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignature>;
 	return F.buildAbstractMethodSignature({
 		accessibilityModifier: resolveAbstractMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
+		overrideModifier: resolveAbstractMethodSignature_overrideModifier(input.overrideModifier),
 		accessorKind: resolveAbstractMethodSignature_accessorKind(input.accessorKind),
 		name: _requireField('abstract_method_signature', 'name', resolveAbstractMethodSignature_name(input.name)),
-		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
+		optionalMarker: resolveAbstractMethodSignature_optionalMarker(input.optionalMarker),
 		typeParameters: resolveAbstractMethodSignature_typeParameters(input.typeParameters),
 		parameters: resolveAbstractMethodSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveAbstractMethodSignature_returnType(input.returnType)
 	});
 }
 
-export const coerceToAbstractMethodSignature: typeof coerceToAbstractMethodSignature$impl & {
-	get: typeof F.buildAbstractMethodSignature.get;
-	set: typeof F.buildAbstractMethodSignature.set;
-	star: typeof F.buildAbstractMethodSignature.star;
-} = attachProps(coerceToAbstractMethodSignature$impl, {
-	get: F.buildAbstractMethodSignature.get,
-	set: F.buildAbstractMethodSignature.set,
-	star: F.buildAbstractMethodSignature.star
-});
+export function resolveFunctionSignature_asyncMarker(
+	value: T.FunctionSignature.LooseConfig['asyncMarker']
+): T.FunctionSignature['_async_marker'] {
+	return _resolveBooleanKeyword(value);
+}
 
 export function resolveFunctionSignature_name(
 	value: T.FunctionSignature.LooseConfig['name']
@@ -5111,7 +4180,20 @@ export function resolveFunctionSignature_parameters(
 export function resolveFunctionSignature_returnType(
 	value: T.FunctionSignature.LooseConfig['returnType']
 ): T.FunctionSignature['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
+}
+
+export function resolveFunctionSignature_semicolon(
+	value: T.FunctionSignature.LooseConfig['semicolon']
+): T.FunctionSignature['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[
+			['\n', TSKindId.AutomaticSemicolon] as const,
+			[';', TSKindId.Semi] as const,
+			['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
+		]
+	);
 }
 
 export function coerceToFunctionSignature(
@@ -5120,33 +4202,22 @@ export function coerceToFunctionSignature(
 	if (!_isLooseConfig<T.FunctionSignature.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionSignature>;
 	return F.buildFunctionSignature({
-		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+		asyncMarker: resolveFunctionSignature_asyncMarker(input.asyncMarker),
 		name: _requireField('function_signature', 'name', resolveFunctionSignature_name(input.name)),
 		typeParameters: resolveFunctionSignature_typeParameters(input.typeParameters),
 		parameters: resolveFunctionSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveFunctionSignature_returnType(input.returnType),
-		semicolon: _requireField(
-			'function_signature',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[
-					['\n', TSKindId.AutomaticSemicolon] as const,
-					[';', TSKindId.Semi] as const,
-					['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
-				]
-			)
-		)
+		semicolon: _requireField('function_signature', 'semicolon', resolveFunctionSignature_semicolon(input.semicolon))
 	});
 }
 
 export function resolveDecoratorParenthesizedExpression_content(
 	value: T.DecoratorParenthesizedExpression.LooseConfig['content']
 ): T.DecoratorParenthesizedExpression['_content'] {
-	return _resolveOne<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(value, _K3, _K43);
+	return _resolveOne<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(value, _K4, _K45);
 }
 
-function coerceToDecoratorParenthesizedExpression$impl(
+export function coerceToDecoratorParenthesizedExpression(
 	input:
 		| (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)
 		| T.DecoratorParenthesizedExpression.Loose
@@ -5159,42 +4230,12 @@ function coerceToDecoratorParenthesizedExpression$impl(
 			'content',
 			_resolveOne<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K3,
-				_K43
+				_K4,
+				_K45
 			)
 		)
 	);
 }
-
-export const coerceToDecoratorParenthesizedExpression: typeof coerceToDecoratorParenthesizedExpression$impl & {
-	identifier: typeof F.buildDecoratorParenthesizedExpression.identifier;
-	decoratorMemberExpression: ((
-		...args: _Args<typeof coerceToDecoratorMemberExpression>
-	) => ReturnType<typeof coerceToDecoratorParenthesizedExpression$impl>) & {
-		strict: typeof F.buildDecoratorParenthesizedExpression.decoratorMemberExpression;
-	};
-	decoratorCallExpression: ((
-		...args: _Args<typeof coerceToDecoratorCallExpression>
-	) => ReturnType<typeof coerceToDecoratorParenthesizedExpression$impl>) & {
-		strict: typeof F.buildDecoratorParenthesizedExpression.decoratorCallExpression;
-	};
-} = attachProps(coerceToDecoratorParenthesizedExpression$impl, {
-	identifier: F.buildDecoratorParenthesizedExpression.identifier,
-	decoratorMemberExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorMemberExpression>) =>
-			coerceToDecoratorParenthesizedExpression$impl(
-				coerceToDecoratorMemberExpression(...args) as T.DecoratorMemberExpression
-			),
-		{ strict: F.buildDecoratorParenthesizedExpression.decoratorMemberExpression }
-	),
-	decoratorCallExpression: attachProps(
-		(...args: _Args<typeof coerceToDecoratorCallExpression>) =>
-			coerceToDecoratorParenthesizedExpression$impl(
-				coerceToDecoratorCallExpression(...args) as T.DecoratorCallExpression
-			),
-		{ strict: F.buildDecoratorParenthesizedExpression.decoratorCallExpression }
-	)
-});
 
 export function resolveTypeAssertion_typeArguments(
 	value: T.TypeAssertion.LooseConfig['typeArguments']
@@ -5205,7 +4246,7 @@ export function resolveTypeAssertion_typeArguments(
 export function resolveTypeAssertion_expression(
 	value: T.TypeAssertion.LooseConfig['expression']
 ): T.TypeAssertion['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToTypeAssertion(input: T.TypeAssertion.Loose): ReturnType<typeof F.buildTypeAssertion> {
@@ -5224,13 +4265,13 @@ export function coerceToTypeAssertion(input: T.TypeAssertion.Loose): ReturnType<
 export function resolveAsExpression_expression(
 	value: T.AsExpression.LooseConfig['expression']
 ): T.AsExpression['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveAsExpression_typeAnnotation(
 	value: T.AsExpression.LooseConfig['typeAnnotation']
 ): T.AsExpression['_type_annotation'] {
-	return _resolveOne<'const' | T.Type>(value, _K44, _K45);
+	return _resolveOne<'const' | T.Type>(value, _K46, _K47);
 }
 
 export function coerceToAsExpression(input: T.AsExpression.Loose): ReturnType<typeof F.buildAsExpression> {
@@ -5249,13 +4290,13 @@ export function coerceToAsExpression(input: T.AsExpression.Loose): ReturnType<ty
 export function resolveSatisfiesExpression_expression(
 	value: T.SatisfiesExpression.LooseConfig['expression']
 ): T.SatisfiesExpression['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveSatisfiesExpression_typeAnnotation(
 	value: T.SatisfiesExpression.LooseConfig['typeAnnotation']
 ): T.SatisfiesExpression['_type_annotation'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToSatisfiesExpression(
@@ -5280,7 +4321,7 @@ export function coerceToSatisfiesExpression(
 export function resolveInstantiationExpression_expression(
 	value: T.InstantiationExpression.LooseConfig['expression']
 ): T.InstantiationExpression['_expression'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function resolveInstantiationExpression_typeArguments(
@@ -5374,7 +4415,7 @@ export function coerceToImplementsClause(
 		const stored = (data as unknown as { _type?: unknown })._type;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildImplementsClause(
-			...(_resolveMany<T.Type>(children, _K44, _K45) as unknown as Parameters<typeof F.buildImplementsClause>)
+			...(_resolveMany<T.Type>(children, _K46, _K47) as unknown as Parameters<typeof F.buildImplementsClause>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -5385,17 +4426,17 @@ export function coerceToImplementsClause(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildImplementsClause(
-		...(_resolveMany<T.Type>(_elems, _K44, _K45) as unknown as Parameters<typeof F.buildImplementsClause>)
+		...(_resolveMany<T.Type>(_elems, _K46, _K47) as unknown as Parameters<typeof F.buildImplementsClause>)
 	);
 }
 
 export function resolveAmbientDeclaration_content(
 	value: T.AmbientDeclaration.LooseConfig['content']
 ): T.AmbientDeclaration['_content'] {
-	return _resolveOne<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(value, _K0, _K46);
+	return _resolveOne<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(value, _K2, _K48);
 }
 
-function coerceToAmbientDeclaration$impl(
+export function coerceToAmbientDeclaration(
 	input: (T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule) | T.AmbientDeclaration.Loose
 ): ReturnType<typeof F.buildAmbientDeclaration> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AmbientDeclaration)
@@ -5406,26 +4447,12 @@ function coerceToAmbientDeclaration$impl(
 			'content',
 			_resolveOne<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K46
+				_K2,
+				_K48
 			)
 		)
 	);
 }
-
-export const coerceToAmbientDeclaration: typeof coerceToAmbientDeclaration$impl & {
-	global: typeof F.buildAmbientDeclaration.global;
-	module: ((
-		...args: _Args<typeof coerceToAmbientDeclarationModule>
-	) => ReturnType<typeof coerceToAmbientDeclaration$impl>) & { strict: typeof F.buildAmbientDeclaration.module };
-} = attachProps(coerceToAmbientDeclaration$impl, {
-	global: F.buildAmbientDeclaration.global,
-	module: attachProps(
-		(...args: _Args<typeof coerceToAmbientDeclarationModule>) =>
-			coerceToAmbientDeclaration$impl(coerceToAmbientDeclarationModule(...args) as T.AmbientDeclarationModule),
-		{ strict: F.buildAmbientDeclaration.module }
-	)
-});
 
 export function resolveAbstractClassDeclaration_decorators(
 	value: T.AbstractClassDeclaration.LooseConfig['decorator']
@@ -5472,7 +4499,7 @@ export function coerceToAbstractClassDeclaration(
 }
 
 export function resolveModule_name(value: T.Module.LooseConfig['name']): T.Module['_name'] {
-	return _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(value, _K3, _K47);
+	return _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(value, _K4, _K49);
 }
 
 export function resolveModule_body(value: T.Module.LooseConfig['body']): T.Module['_body'] {
@@ -5488,7 +4515,7 @@ export function coerceToModule(input: T.Module.Loose): ReturnType<typeof F.build
 }
 
 export function resolveInternalModule_name(value: T.InternalModule.LooseConfig['name']): T.InternalModule['_name'] {
-	return _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(value, _K3, _K47);
+	return _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(value, _K4, _K49);
 }
 
 export function resolveInternalModule_body(value: T.InternalModule.LooseConfig['body']): T.InternalModule['_body'] {
@@ -5509,7 +4536,16 @@ export function resolveImportAlias_name(value: T.ImportAlias.LooseConfig['name']
 }
 
 export function resolveImportAlias_value(value: T.ImportAlias.LooseConfig['value']): T.ImportAlias['_value'] {
-	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K3, _K22);
+	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K4, _K25);
+}
+
+export function resolveImportAlias_semicolon(
+	value: T.ImportAlias.LooseConfig['semicolon']
+): T.ImportAlias['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<typeof F.buildImportAlias> {
@@ -5518,21 +4554,14 @@ export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<type
 	return F.buildImportAlias({
 		name: _requireField('import_alias', 'name', resolveImportAlias_name(input.name)),
 		value: _requireField('import_alias', 'value', resolveImportAlias_value(input.value)),
-		semicolon: _requireField(
-			'import_alias',
-			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
-		)
+		semicolon: _requireField('import_alias', 'semicolon', resolveImportAlias_semicolon(input.semicolon))
 	});
 }
 
 export function resolveNestedTypeIdentifier_module(
 	value: T.NestedTypeIdentifier.LooseConfig['module']
 ): T.NestedTypeIdentifier['_module'] {
-	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K3, _K22);
+	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K4, _K25);
 }
 
 export function resolveNestedTypeIdentifier_name(
@@ -5607,8 +4636,8 @@ export function coerceToExtendsTypeClause(
 		return F.buildExtendsTypeClause(
 			...(_resolveMany<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(
 				children,
-				_K3,
-				_K48
+				_K4,
+				_K50
 			) as unknown as Parameters<typeof F.buildExtendsTypeClause>)
 		);
 	}
@@ -5620,10 +4649,16 @@ export function coerceToExtendsTypeClause(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildExtendsTypeClause(
-		...(_resolveMany<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(_elems, _K3, _K48) as unknown as Parameters<
+		...(_resolveMany<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(_elems, _K4, _K50) as unknown as Parameters<
 			typeof F.buildExtendsTypeClause
 		>)
 	);
+}
+
+export function resolveEnumDeclaration_constMarker(
+	value: T.EnumDeclaration.LooseConfig['constMarker']
+): T.EnumDeclaration['_const_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveEnumDeclaration_name(value: T.EnumDeclaration.LooseConfig['name']): T.EnumDeclaration['_name'] {
@@ -5638,7 +4673,7 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	if (!_isLooseConfig<T.EnumDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildEnumDeclaration>;
 	return F.buildEnumDeclaration({
-		constMarker: _resolveBooleanKeyword(input.constMarker),
+		constMarker: resolveEnumDeclaration_constMarker(input.constMarker),
 		name: _requireField('enum_declaration', 'name', resolveEnumDeclaration_name(input.name)),
 		body: resolveEnumDeclaration_body(input.body) ?? F.buildEnumBody()
 	});
@@ -5676,13 +4711,13 @@ export function coerceToEnumBody(
 export function resolveEnumAssignment_name(value: T.EnumAssignment.LooseConfig['name']): T.EnumAssignment['_name'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
 }
 
 export function resolveEnumAssignment_value(value: T.EnumAssignment.LooseConfig['value']): T.EnumAssignment['_value'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToEnumAssignment(input: T.EnumAssignment.Loose): ReturnType<typeof F.buildEnumAssignment> {
@@ -5709,7 +4744,16 @@ export function resolveTypeAliasDeclaration_typeParameters(
 export function resolveTypeAliasDeclaration_value(
 	value: T.TypeAliasDeclaration.LooseConfig['value']
 ): T.TypeAliasDeclaration['_value'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
+}
+
+export function resolveTypeAliasDeclaration_semicolon(
+	value: T.TypeAliasDeclaration.LooseConfig['semicolon']
+): T.TypeAliasDeclaration['_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 }
 
 export function coerceToTypeAliasDeclaration(
@@ -5724,10 +4768,7 @@ export function coerceToTypeAliasDeclaration(
 		semicolon: _requireField(
 			'type_alias_declaration',
 			'semicolon',
-			coerceKindEnumStorage(
-				_resolveKindEnum(input.semicolon, () => _resolveOne<'\n' | ';'>(input.semicolon, _K0, _K0)),
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			)
+			resolveTypeAliasDeclaration_semicolon(input.semicolon)
 		)
 	});
 }
@@ -5763,10 +4804,22 @@ export function resolveRequiredParameter_accessibilityModifier(
 	);
 }
 
+export function resolveRequiredParameter_overrideModifier(
+	value: T.RequiredParameter.LooseConfig['overrideModifier']
+): T.RequiredParameter['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveRequiredParameter_readonlyMarker(
+	value: T.RequiredParameter.LooseConfig['readonlyMarker']
+): T.RequiredParameter['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveRequiredParameter_pattern(
 	value: T.RequiredParameter.LooseConfig['pattern']
 ): T.RequiredParameter['_pattern'] {
-	return _resolveOne<T.Pattern | T.This>(value, _K49, _K18);
+	return _resolveOne<T.Pattern | T.This>(value, _K51, _K21);
 }
 
 export function resolveRequiredParameter_type(
@@ -5778,7 +4831,7 @@ export function resolveRequiredParameter_type(
 export function resolveRequiredParameter_value(
 	value: T.RequiredParameter.LooseConfig['value']
 ): T.RequiredParameter['_value'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToRequiredParameter(
@@ -5789,8 +4842,8 @@ export function coerceToRequiredParameter(
 	return F.buildRequiredParameter({
 		decorator: resolveRequiredParameter_decorators(input.decorator),
 		accessibilityModifier: resolveRequiredParameter_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
+		overrideModifier: resolveRequiredParameter_overrideModifier(input.overrideModifier),
+		readonlyMarker: resolveRequiredParameter_readonlyMarker(input.readonlyMarker),
 		pattern: _requireField('required_parameter', 'pattern', resolveRequiredParameter_pattern(input.pattern)),
 		type: resolveRequiredParameter_type(input.type),
 		value: resolveRequiredParameter_value(input.value)
@@ -5816,10 +4869,22 @@ export function resolveOptionalParameter_accessibilityModifier(
 	);
 }
 
+export function resolveOptionalParameter_overrideModifier(
+	value: T.OptionalParameter.LooseConfig['overrideModifier']
+): T.OptionalParameter['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveOptionalParameter_readonlyMarker(
+	value: T.OptionalParameter.LooseConfig['readonlyMarker']
+): T.OptionalParameter['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveOptionalParameter_pattern(
 	value: T.OptionalParameter.LooseConfig['pattern']
 ): T.OptionalParameter['_pattern'] {
-	return _resolveOne<T.Pattern | T.This>(value, _K49, _K18);
+	return _resolveOne<T.Pattern | T.This>(value, _K51, _K21);
 }
 
 export function resolveOptionalParameter_type(
@@ -5831,7 +4896,7 @@ export function resolveOptionalParameter_type(
 export function resolveOptionalParameter_value(
 	value: T.OptionalParameter.LooseConfig['value']
 ): T.OptionalParameter['_value'] {
-	return _resolveOne<T.Expression>(value, _K8, _K14);
+	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
 export function coerceToOptionalParameter(
@@ -5842,8 +4907,8 @@ export function coerceToOptionalParameter(
 	return F.buildOptionalParameter({
 		decorator: resolveOptionalParameter_decorators(input.decorator),
 		accessibilityModifier: resolveOptionalParameter_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
+		overrideModifier: resolveOptionalParameter_overrideModifier(input.overrideModifier),
+		readonlyMarker: resolveOptionalParameter_readonlyMarker(input.readonlyMarker),
 		pattern: _requireField('optional_parameter', 'pattern', resolveOptionalParameter_pattern(input.pattern)),
 		type: resolveOptionalParameter_type(input.type),
 		value: resolveOptionalParameter_value(input.value)
@@ -5853,7 +4918,7 @@ export function coerceToOptionalParameter(
 export function resolveOmittingTypeAnnotation_type(
 	value: T.OmittingTypeAnnotation.LooseConfig['type']
 ): T.OmittingTypeAnnotation['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToOmittingTypeAnnotation(
@@ -5867,8 +4932,8 @@ export function coerceToOmittingTypeAnnotation(
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
@@ -5877,7 +4942,7 @@ export function coerceToOmittingTypeAnnotation(
 export function resolveAddingTypeAnnotation_type(
 	value: T.AddingTypeAnnotation.LooseConfig['type']
 ): T.AddingTypeAnnotation['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToAddingTypeAnnotation(
@@ -5891,8 +4956,8 @@ export function coerceToAddingTypeAnnotation(
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
@@ -5901,7 +4966,7 @@ export function coerceToAddingTypeAnnotation(
 export function resolveOptingTypeAnnotation_type(
 	value: T.OptingTypeAnnotation.LooseConfig['type']
 ): T.OptingTypeAnnotation['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToOptingTypeAnnotation(
@@ -5915,15 +4980,15 @@ export function coerceToOptingTypeAnnotation(
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
 }
 
 export function resolveTypeAnnotation_type(value: T.TypeAnnotation.LooseConfig['type']): T.TypeAnnotation['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToTypeAnnotation(
@@ -5937,18 +5002,18 @@ export function coerceToTypeAnnotation(
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
 }
 
 export function resolveAsserts_content(value: T.Asserts.LooseConfig['content']): T.Asserts['_content'] {
-	return _resolveOne<T.TypePredicate | T.Identifier | T.This>(value, _K50, _K51);
+	return _resolveOne<T.TypePredicate | T.Identifier | T.This>(value, _K52, _K53);
 }
 
-function coerceToAsserts$impl(
+export function coerceToAsserts(
 	input: (T.TypePredicate | T.Identifier | T.This) | T.Asserts.Loose
 ): ReturnType<typeof F.buildAsserts> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Asserts)
@@ -5959,28 +5024,12 @@ function coerceToAsserts$impl(
 			'content',
 			_resolveOne<T.TypePredicate | T.Identifier | T.This>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K50,
-				_K51
+				_K52,
+				_K53
 			)
 		)
 	);
 }
-
-export const coerceToAsserts: typeof coerceToAsserts$impl & {
-	typePredicate: ((...args: _Args<typeof coerceToTypePredicate>) => ReturnType<typeof coerceToAsserts$impl>) & {
-		strict: typeof F.buildAsserts.typePredicate;
-	};
-	identifier: typeof F.buildAsserts.identifier;
-	this: typeof F.buildAsserts.this;
-} = attachProps(coerceToAsserts$impl, {
-	typePredicate: attachProps(
-		(...args: _Args<typeof coerceToTypePredicate>) =>
-			coerceToAsserts$impl(coerceToTypePredicate(...args) as T.TypePredicate),
-		{ strict: F.buildAsserts.typePredicate }
-	),
-	identifier: F.buildAsserts.identifier,
-	this: F.buildAsserts.this
-});
 
 export function resolveAssertsAnnotation_asserts(
 	value: T.AssertsAnnotation.LooseConfig['asserts']
@@ -5988,7 +5037,7 @@ export function resolveAssertsAnnotation_asserts(
 	return _resolveOneBranch<T.Asserts>(value, 'asserts');
 }
 
-function coerceToAssertsAnnotation$impl(
+export function coerceToAssertsAnnotation(
 	input: T.Asserts | T.AssertsAnnotation.Loose
 ): ReturnType<typeof F.buildAssertsAnnotation> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AssertsAnnotation)
@@ -6005,18 +5054,8 @@ function coerceToAssertsAnnotation$impl(
 	);
 }
 
-export const coerceToAssertsAnnotation: typeof coerceToAssertsAnnotation$impl & {
-	typePredicate: typeof F.buildAssertsAnnotation.typePredicate;
-	identifier: typeof F.buildAssertsAnnotation.identifier;
-	this: typeof F.buildAssertsAnnotation.this;
-} = attachProps(coerceToAssertsAnnotation$impl, {
-	typePredicate: F.buildAssertsAnnotation.typePredicate,
-	identifier: F.buildAssertsAnnotation.identifier,
-	this: F.buildAssertsAnnotation.this
-});
-
 export function resolveTupleParameter_name(value: T.TupleParameter.LooseConfig['name']): T.TupleParameter['_name'] {
-	return _resolveOne<T.Identifier | T.RestPattern>(value, _K3, _K52);
+	return _resolveOne<T.Identifier | T.RestPattern>(value, _K4, _K54);
 }
 
 export function resolveTupleParameter_type(value: T.TupleParameter.LooseConfig['type']): T.TupleParameter['_type'] {
@@ -6056,7 +5095,7 @@ export function coerceToOptionalTupleParameter(
 }
 
 export function resolveOptionalType_type(value: T.OptionalType.LooseConfig['type']): T.OptionalType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToOptionalType(input: T.Type | T.OptionalType.Loose): ReturnType<typeof F.buildOptionalType> {
@@ -6068,15 +5107,15 @@ export function coerceToOptionalType(input: T.Type | T.OptionalType.Loose): Retu
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
 }
 
 export function resolveRestType_type(value: T.RestType.LooseConfig['type']): T.RestType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToRestType(input: T.Type | T.RestType.Loose): ReturnType<typeof F.buildRestType> {
@@ -6088,11 +5127,17 @@ export function coerceToRestType(input: T.Type | T.RestType.Loose): ReturnType<t
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
+}
+
+export function resolveConstructorType_abstractMarker(
+	value: T.ConstructorType.LooseConfig['abstractMarker']
+): T.ConstructorType['_abstract_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveConstructorType_typeParameters(
@@ -6108,14 +5153,14 @@ export function resolveConstructorType_parameters(
 }
 
 export function resolveConstructorType_type(value: T.ConstructorType.LooseConfig['type']): T.ConstructorType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnType<typeof F.buildConstructorType> {
 	if (!_isLooseConfig<T.ConstructorType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildConstructorType>;
 	return F.buildConstructorType({
-		abstractMarker: _resolveBooleanKeyword(input.abstractMarker),
+		abstractMarker: resolveConstructorType_abstractMarker(input.abstractMarker),
 		typeParameters: resolveConstructorType_typeParameters(input.typeParameters),
 		parameters: resolveConstructorType_parameters(input.parameters) ?? F.buildFormalParameters(),
 		type: _requireField('constructor_type', 'type', resolveConstructorType_type(input.type))
@@ -6123,10 +5168,10 @@ export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnT
 }
 
 export function resolveTemplateType_content(value: T.TemplateType.LooseConfig['content']): T.TemplateType['_content'] {
-	return _resolveOne<T.PrimaryType | T.InferType>(value, _K44, _K53);
+	return _resolveOne<T.PrimaryType | T.InferType>(value, _K46, _K55);
 }
 
-function coerceToTemplateType$impl(
+export function coerceToTemplateType(
 	input: (T.PrimaryType | T.InferType) | T.TemplateType.Loose
 ): ReturnType<typeof F.buildTemplateType> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TemplateType)
@@ -6137,23 +5182,12 @@ function coerceToTemplateType$impl(
 			'content',
 			_resolveOne<T.PrimaryType | T.InferType>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K44,
-				_K53
+				_K46,
+				_K55
 			)
 		)
 	);
 }
-
-export const coerceToTemplateType: typeof coerceToTemplateType$impl & {
-	inferType: ((...args: _Args<typeof coerceToInferType>) => ReturnType<typeof coerceToTemplateType$impl>) & {
-		strict: typeof F.buildTemplateType.inferType;
-	};
-} = attachProps(coerceToTemplateType$impl, {
-	inferType: attachProps(
-		(...args: _Args<typeof coerceToInferType>) => coerceToTemplateType$impl(coerceToInferType(...args) as T.InferType),
-		{ strict: F.buildTemplateType.inferType }
-	)
-});
 
 export function coerceToTemplateLiteralType(
 	...input: readonly (
@@ -6167,7 +5201,7 @@ export function coerceToTemplateLiteralType(
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTemplateLiteralType(
-			...(_resolveMany<T.TemplateChars | T.TemplateType>(children, _K54, _K55) as unknown as Parameters<
+			...(_resolveMany<T.TemplateChars | T.TemplateType>(children, _K56, _K57) as unknown as Parameters<
 				typeof F.buildTemplateLiteralType
 			>)
 		);
@@ -6180,7 +5214,7 @@ export function coerceToTemplateLiteralType(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildTemplateLiteralType(
-		...(_resolveMany<T.TemplateChars | T.TemplateType>(_elems, _K54, _K55) as unknown as Parameters<
+		...(_resolveMany<T.TemplateChars | T.TemplateType>(_elems, _K56, _K57) as unknown as Parameters<
 			typeof F.buildTemplateLiteralType
 		>)
 	);
@@ -6193,7 +5227,7 @@ export function resolveInferType_typeIdentifier(
 }
 
 export function resolveInferType_type(value: T.InferType.LooseConfig['type']): T.InferType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToInferType(input: T.InferType.Loose): ReturnType<typeof F.buildInferType> {
@@ -6209,25 +5243,25 @@ export function coerceToInferType(input: T.InferType.Loose): ReturnType<typeof F
 }
 
 export function resolveConditionalType_left(value: T.ConditionalType.LooseConfig['left']): T.ConditionalType['_left'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function resolveConditionalType_right(
 	value: T.ConditionalType.LooseConfig['right']
 ): T.ConditionalType['_right'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function resolveConditionalType_consequence(
 	value: T.ConditionalType.LooseConfig['consequence']
 ): T.ConditionalType['_consequence'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function resolveConditionalType_alternative(
 	value: T.ConditionalType.LooseConfig['alternative']
 ): T.ConditionalType['_alternative'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToConditionalType(input: T.ConditionalType.Loose): ReturnType<typeof F.buildConditionalType> {
@@ -6246,7 +5280,7 @@ export function coerceToConditionalType(input: T.ConditionalType.Loose): ReturnT
 }
 
 export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): T.GenericType['_name'] {
-	return _resolveOne<T.Identifier | T.NestedTypeIdentifier>(value, _K3, _K56);
+	return _resolveOne<T.Identifier | T.NestedTypeIdentifier>(value, _K4, _K58);
 }
 
 export function resolveGenericType_typeArguments(
@@ -6265,11 +5299,11 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 }
 
 export function resolveTypePredicate_name(value: T.TypePredicate.LooseConfig['name']): T.TypePredicate['_name'] {
-	return _resolveOne<T.Identifier | T.This | T.PredefinedType>(value, _K57, _K0);
+	return _resolveOne<T.Identifier | T.This | T.PredefinedType>(value, _K59, _K2);
 }
 
 export function resolveTypePredicate_type(value: T.TypePredicate.LooseConfig['type']): T.TypePredicate['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToTypePredicate(input: T.TypePredicate.Loose): ReturnType<typeof F.buildTypePredicate> {
@@ -6314,10 +5348,10 @@ export function resolveTypeQuery_content(value: T.TypeQuery.LooseConfig['content
 		| T.TypeQueryInstantiationExpression
 		| T.Identifier
 		| T.This
-	>(value, _K50, _K58);
+	>(value, _K52, _K60);
 }
 
-function coerceToTypeQuery$impl(
+export function coerceToTypeQuery(
 	input:
 		| (
 				| T.TypeQuerySubscriptExpression
@@ -6344,61 +5378,17 @@ function coerceToTypeQuery$impl(
 				| T.This
 			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K50,
-				_K58
+				_K52,
+				_K60
 			)
 		)
 	);
 }
 
-export const coerceToTypeQuery: typeof coerceToTypeQuery$impl & {
-	subscriptExpression: ((
-		...args: _Args<typeof coerceToTypeQuerySubscriptExpression>
-	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.subscriptExpression };
-	memberExpression: ((
-		...args: _Args<typeof coerceToTypeQueryMemberExpression>
-	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.memberExpression };
-	dot: typeof F.buildTypeQuery.dot;
-	qmarkDot: typeof F.buildTypeQuery.qmarkDot;
-	callExpression: ((
-		...args: _Args<typeof coerceToTypeQueryCallExpression>
-	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.callExpression };
-	instantiationExpression: ((
-		...args: _Args<typeof coerceToTypeQueryInstantiationExpression>
-	) => ReturnType<typeof coerceToTypeQuery$impl>) & { strict: typeof F.buildTypeQuery.instantiationExpression };
-	identifier: typeof F.buildTypeQuery.identifier;
-	this: typeof F.buildTypeQuery.this;
-} = attachProps(coerceToTypeQuery$impl, {
-	subscriptExpression: attachProps(
-		(...args: _Args<typeof coerceToTypeQuerySubscriptExpression>) =>
-			coerceToTypeQuery$impl(coerceToTypeQuerySubscriptExpression(...args) as T.TypeQuerySubscriptExpression),
-		{ strict: F.buildTypeQuery.subscriptExpression }
-	),
-	memberExpression: attachProps(
-		(...args: _Args<typeof coerceToTypeQueryMemberExpression>) =>
-			coerceToTypeQuery$impl(coerceToTypeQueryMemberExpression(...args) as T.TypeQueryMemberExpression),
-		{ strict: F.buildTypeQuery.memberExpression }
-	),
-	dot: F.buildTypeQuery.dot,
-	qmarkDot: F.buildTypeQuery.qmarkDot,
-	callExpression: attachProps(
-		(...args: _Args<typeof coerceToTypeQueryCallExpression>) =>
-			coerceToTypeQuery$impl(coerceToTypeQueryCallExpression(...args) as T.TypeQueryCallExpression),
-		{ strict: F.buildTypeQuery.callExpression }
-	),
-	instantiationExpression: attachProps(
-		(...args: _Args<typeof coerceToTypeQueryInstantiationExpression>) =>
-			coerceToTypeQuery$impl(coerceToTypeQueryInstantiationExpression(...args) as T.TypeQueryInstantiationExpression),
-		{ strict: F.buildTypeQuery.instantiationExpression }
-	),
-	identifier: F.buildTypeQuery.identifier,
-	this: F.buildTypeQuery.this
-});
-
 export function resolveIndexTypeQuery_primaryType(
 	value: T.IndexTypeQuery.LooseConfig['primaryType']
 ): T.IndexTypeQuery['_primary_type'] {
-	return _resolveOne<T.PrimaryType>(value, _K44, _K59);
+	return _resolveOne<T.PrimaryType>(value, _K46, _K61);
 }
 
 export function coerceToIndexTypeQuery(
@@ -6414,8 +5404,8 @@ export function coerceToIndexTypeQuery(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'primaryType' in input
 					? input.primaryType
 					: input,
-				_K44,
-				_K59
+				_K46,
+				_K61
 			)
 		)
 	);
@@ -6424,11 +5414,11 @@ export function coerceToIndexTypeQuery(
 export function resolveLookupType_primaryType(
 	value: T.LookupType.LooseConfig['primaryType']
 ): T.LookupType['_primary_type'] {
-	return _resolveOne<T.PrimaryType>(value, _K44, _K59);
+	return _resolveOne<T.PrimaryType>(value, _K46, _K61);
 }
 
 export function resolveLookupType_indexType(value: T.LookupType.LooseConfig['indexType']): T.LookupType['_index_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToLookupType(input: T.LookupType.Loose): ReturnType<typeof F.buildLookupType> {
@@ -6448,13 +5438,13 @@ export function resolveMappedTypeClause_name(
 export function resolveMappedTypeClause_type(
 	value: T.MappedTypeClause.LooseConfig['type']
 ): T.MappedTypeClause['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function resolveMappedTypeClause_alias(
 	value: T.MappedTypeClause.LooseConfig['alias']
 ): T.MappedTypeClause['_alias'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToMappedTypeClause(input: T.MappedTypeClause.Loose): ReturnType<typeof F.buildMappedTypeClause> {
@@ -6468,10 +5458,10 @@ export function coerceToMappedTypeClause(input: T.MappedTypeClause.Loose): Retur
 }
 
 export function resolveLiteralType_content(value: T.LiteralType.LooseConfig['content']): T.LiteralType['_content'] {
-	return _resolveOne<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(value, _K60, _K61);
+	return _resolveOne<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(value, _K62, _K63);
 }
 
-function coerceToLiteralType$impl(
+export function coerceToLiteralType(
 	input: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined) | T.LiteralType.Loose
 ): ReturnType<typeof F.buildLiteralType> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.LiteralType)
@@ -6482,40 +5472,22 @@ function coerceToLiteralType$impl(
 			'content',
 			_resolveOne<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K60,
-				_K61
+				_K62,
+				_K63
 			)
 		)
 	);
 }
 
-export const coerceToLiteralType: typeof coerceToLiteralType$impl & {
-	string: ((...args: _Args<typeof coerceToString>) => ReturnType<typeof coerceToLiteralType$impl>) & {
-		strict: typeof F.buildLiteralType.string;
-	};
-	stringDouble: typeof F.buildLiteralType.stringDouble;
-	stringSingle: typeof F.buildLiteralType.stringSingle;
-	true: typeof F.buildLiteralType.true;
-	false: typeof F.buildLiteralType.false;
-	null: typeof F.buildLiteralType.null;
-	undefined: typeof F.buildLiteralType.undefined;
-} = attachProps(coerceToLiteralType$impl, {
-	string: attachProps(
-		(...args: _Args<typeof coerceToString>) => coerceToLiteralType$impl(coerceToString(...args) as T.String),
-		{ strict: F.buildLiteralType.string }
-	),
-	stringDouble: F.buildLiteralType.stringDouble,
-	stringSingle: F.buildLiteralType.stringSingle,
-	true: F.buildLiteralType.true,
-	false: F.buildLiteralType.false,
-	null: F.buildLiteralType.null,
-	undefined: F.buildLiteralType.undefined
-});
+export function coerceToExistentialType(input?: T.ExistentialType): ReturnType<typeof F.buildExistentialType> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExistentialType>;
+	return F.buildExistentialType();
+}
 
 export function resolveFlowMaybeType_primaryType(
 	value: T.FlowMaybeType.LooseConfig['primaryType']
 ): T.FlowMaybeType['_primary_type'] {
-	return _resolveOne<T.PrimaryType>(value, _K44, _K59);
+	return _resolveOne<T.PrimaryType>(value, _K46, _K61);
 }
 
 export function coerceToFlowMaybeType(
@@ -6531,8 +5503,8 @@ export function coerceToFlowMaybeType(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'primaryType' in input
 					? input.primaryType
 					: input,
-				_K44,
-				_K59
+				_K46,
+				_K61
 			)
 		)
 	);
@@ -6541,7 +5513,7 @@ export function coerceToFlowMaybeType(
 export function resolveParenthesizedType_type(
 	value: T.ParenthesizedType.LooseConfig['type']
 ): T.ParenthesizedType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToParenthesizedType(
@@ -6555,8 +5527,8 @@ export function coerceToParenthesizedType(
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
@@ -6590,7 +5562,7 @@ export function coerceToTypeArguments(
 
 export function resolveObjectType_opening(value: T.ObjectType.LooseConfig['opening']): T.ObjectType['_opening'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'{' | '{|'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'{' | '{|'>(value, _K2, _K2)),
 		[['{', TSKindId.Lbrace] as const, ['{|', TSKindId.LbracePipe] as const]
 	);
 }
@@ -6601,7 +5573,7 @@ export function resolveObjectType_members(value: T.ObjectType.LooseConfig['membe
 
 export function resolveObjectType_closing(value: T.ObjectType.LooseConfig['closing']): T.ObjectType['_closing'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'}' | '|}'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'}' | '|}'>(value, _K2, _K2)),
 		[['}', TSKindId.Rbrace] as const, ['|}', TSKindId.PipeRbrace] as const]
 	);
 }
@@ -6630,7 +5602,7 @@ export function resolveCallSignature_parameters(
 export function resolveCallSignature_returnType(
 	value: T.CallSignature.LooseConfig['returnType']
 ): T.CallSignature['_return_type'] {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K0, _K24);
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K27);
 }
 
 export function coerceToCallSignature(input: T.CallSignature.Loose): ReturnType<typeof F.buildCallSignature> {
@@ -6656,14 +5628,38 @@ export function resolvePropertySignature_accessibilityModifier(
 	);
 }
 
+export function resolvePropertySignature_staticMarker(
+	value: T.PropertySignature.LooseConfig['staticMarker']
+): T.PropertySignature['_static_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePropertySignature_overrideModifier(
+	value: T.PropertySignature.LooseConfig['overrideModifier']
+): T.PropertySignature['_override_modifier'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePropertySignature_readonlyMarker(
+	value: T.PropertySignature.LooseConfig['readonlyMarker']
+): T.PropertySignature['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolvePropertySignature_name(
 	value: T.PropertySignature.LooseConfig['name']
 ): T.PropertySignature['_name'] {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		_K41,
-		_K42
+		_K43,
+		_K44
 	);
+}
+
+export function resolvePropertySignature_optionalMarker(
+	value: T.PropertySignature.LooseConfig['optionalMarker']
+): T.PropertySignature['_optional_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolvePropertySignature_type(
@@ -6679,11 +5675,11 @@ export function coerceToPropertySignature(
 		return input as unknown as ReturnType<typeof F.buildPropertySignature>;
 	return F.buildPropertySignature({
 		accessibilityModifier: resolvePropertySignature_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: _resolveBooleanKeyword(input.staticMarker),
-		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
+		staticMarker: resolvePropertySignature_staticMarker(input.staticMarker),
+		overrideModifier: resolvePropertySignature_overrideModifier(input.overrideModifier),
+		readonlyMarker: resolvePropertySignature_readonlyMarker(input.readonlyMarker),
 		name: _requireField('property_signature', 'name', resolvePropertySignature_name(input.name)),
-		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
+		optionalMarker: resolvePropertySignature_optionalMarker(input.optionalMarker),
 		type: resolvePropertySignature_type(input.type)
 	});
 }
@@ -6713,6 +5709,12 @@ export function coerceToTypeParameters(
 	);
 }
 
+export function resolveTypeParameter_constMarker(
+	value: T.TypeParameter.LooseConfig['constMarker']
+): T.TypeParameter['_const_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveTypeParameter_name(value: T.TypeParameter.LooseConfig['name']): T.TypeParameter['_name'] {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
@@ -6731,7 +5733,7 @@ export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<
 	if (!_isLooseConfig<T.TypeParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeParameter>;
 	return F.buildTypeParameter({
-		constMarker: _resolveBooleanKeyword(input.constMarker),
+		constMarker: resolveTypeParameter_constMarker(input.constMarker),
 		name: _requireField('type_parameter', 'name', resolveTypeParameter_name(input.name)),
 		constraint: resolveTypeParameter_constraint(input.constraint),
 		value: resolveTypeParameter_value(input.value)
@@ -6739,7 +5741,7 @@ export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<
 }
 
 export function resolveDefaultType_type(value: T.DefaultType.LooseConfig['type']): T.DefaultType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToDefaultType(input: T.Type | T.DefaultType.Loose): ReturnType<typeof F.buildDefaultType> {
@@ -6751,8 +5753,8 @@ export function coerceToDefaultType(input: T.Type | T.DefaultType.Loose): Return
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
@@ -6760,16 +5762,16 @@ export function coerceToDefaultType(input: T.Type | T.DefaultType.Loose): Return
 
 export function resolveConstraint_content(value: T.Constraint.LooseConfig['content']): T.Constraint['_content'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'extends' | ':'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'extends' | ':'>(value, _K2, _K2)),
 		[['extends', TSKindId.Extends] as const, [':', TSKindId.Colon] as const]
 	);
 }
 
 export function resolveConstraint_type(value: T.Constraint.LooseConfig['type']): T.Constraint['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
-function coerceToConstraint$impl(input: T.Constraint.Loose): ReturnType<typeof F.buildConstraint> {
+export function coerceToConstraint(input: T.Constraint.Loose): ReturnType<typeof F.buildConstraint> {
 	if (!_isLooseConfig<T.Constraint.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildConstraint>;
 	return F.buildConstraint({
 		content: _requireField('constraint', 'content', resolveConstraint_content(input.content)),
@@ -6777,13 +5779,11 @@ function coerceToConstraint$impl(input: T.Constraint.Loose): ReturnType<typeof F
 	});
 }
 
-export const coerceToConstraint: typeof coerceToConstraint$impl & {
-	extends: typeof F.buildConstraint.extends;
-	colon: typeof F.buildConstraint.colon;
-} = attachProps(coerceToConstraint$impl, {
-	extends: F.buildConstraint.extends,
-	colon: F.buildConstraint.colon
-});
+export function resolveConstructSignature_abstractMarker(
+	value: T.ConstructSignature.LooseConfig['abstractMarker']
+): T.ConstructSignature['_abstract_marker'] {
+	return _resolveBooleanKeyword(value);
+}
 
 export function resolveConstructSignature_typeParameters(
 	value: T.ConstructSignature.LooseConfig['typeParameters']
@@ -6809,7 +5809,7 @@ export function coerceToConstructSignature(
 	if (!_isLooseConfig<T.ConstructSignature.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildConstructSignature>;
 	return F.buildConstructSignature({
-		abstractMarker: _resolveBooleanKeyword(input.abstractMarker),
+		abstractMarker: resolveConstructSignature_abstractMarker(input.abstractMarker),
 		typeParameters: resolveConstructSignature_typeParameters(input.typeParameters),
 		parameters: resolveConstructSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		type: resolveConstructSignature_type(input.type)
@@ -6818,48 +5818,46 @@ export function coerceToConstructSignature(
 
 export function resolveIndexSignature_sign(value: T.IndexSignature.LooseConfig['sign']): T.IndexSignature['_sign'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'-' | '+'>(value, _K0, _K0)),
+		_resolveKindEnum(value, () => _resolveOne<'-' | '+'>(value, _K2, _K2)),
 		[['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]
 	);
+}
+
+export function resolveIndexSignature_readonlyMarker(
+	value: T.IndexSignature.LooseConfig['readonlyMarker']
+): T.IndexSignature['_readonly_marker'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveIndexSignature_content(
 	value: T.IndexSignature.LooseConfig['content']
 ): T.IndexSignature['_content'] {
-	return _resolveOne<T.IndexSignatureColon | T.MappedTypeClause>(value, _K0, _K62);
+	return _resolveOne<T.IndexSignatureColon | T.MappedTypeClause>(value, _K2, _K64);
 }
 
 export function resolveIndexSignature_type(value: T.IndexSignature.LooseConfig['type']): T.IndexSignature['_type'] {
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
-		_K0,
-		_K63
+		_K2,
+		_K65
 	);
 }
 
-function coerceToIndexSignature$impl(input: T.IndexSignature.Loose): ReturnType<typeof F.buildIndexSignature> {
+export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnType<typeof F.buildIndexSignature> {
 	if (!_isLooseConfig<T.IndexSignature.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildIndexSignature>;
 	return F.buildIndexSignature({
 		sign: resolveIndexSignature_sign(input.sign),
-		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
+		readonlyMarker: resolveIndexSignature_readonlyMarker(input.readonlyMarker),
 		content: _requireField('index_signature', 'content', resolveIndexSignature_content(input.content)),
 		type: _requireField('index_signature', 'type', resolveIndexSignature_type(input.type))
 	});
 }
 
-export const coerceToIndexSignature: typeof coerceToIndexSignature$impl & {
-	dash: typeof F.buildIndexSignature.dash;
-	plus: typeof F.buildIndexSignature.plus;
-} = attachProps(coerceToIndexSignature$impl, {
-	dash: F.buildIndexSignature.dash,
-	plus: F.buildIndexSignature.plus
-});
-
 export function resolveArrayType_primaryType(
 	value: T.ArrayType.LooseConfig['primaryType']
 ): T.ArrayType['_primary_type'] {
-	return _resolveOne<T.PrimaryType>(value, _K44, _K59);
+	return _resolveOne<T.PrimaryType>(value, _K46, _K61);
 }
 
 export function coerceToArrayType(input: T.PrimaryType | T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
@@ -6873,8 +5871,8 @@ export function coerceToArrayType(input: T.PrimaryType | T.ArrayType.Loose): Ret
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'primaryType' in input
 					? input.primaryType
 					: input,
-				_K44,
-				_K59
+				_K46,
+				_K61
 			)
 		)
 	);
@@ -6909,7 +5907,7 @@ export function coerceToTupleType(
 }
 
 export function resolveReadonlyType_type(value: T.ReadonlyType.LooseConfig['type']): T.ReadonlyType['_type'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToReadonlyType(input: T.Type | T.ReadonlyType.Loose): ReturnType<typeof F.buildReadonlyType> {
@@ -6921,19 +5919,19 @@ export function coerceToReadonlyType(input: T.Type | T.ReadonlyType.Loose): Retu
 			'type',
 			_resolveOne<T.Type>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-				_K44,
-				_K45
+				_K46,
+				_K47
 			)
 		)
 	);
 }
 
 export function resolveUnionType_left(value: T.UnionType.LooseConfig['left']): T.UnionType['_left'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function resolveUnionType_right(value: T.UnionType.LooseConfig['right']): T.UnionType['_right'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToUnionType(input: T.UnionType.Loose): ReturnType<typeof F.buildUnionType> {
@@ -6947,13 +5945,13 @@ export function coerceToUnionType(input: T.UnionType.Loose): ReturnType<typeof F
 export function resolveIntersectionType_left(
 	value: T.IntersectionType.LooseConfig['left']
 ): T.IntersectionType['_left'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function resolveIntersectionType_right(
 	value: T.IntersectionType.LooseConfig['right']
 ): T.IntersectionType['_right'] {
-	return _resolveOne<T.Type>(value, _K44, _K45);
+	return _resolveOne<T.Type>(value, _K46, _K47);
 }
 
 export function coerceToIntersectionType(input: T.IntersectionType.Loose): ReturnType<typeof F.buildIntersectionType> {
@@ -6980,7 +5978,7 @@ export function resolveFunctionType_parameters(
 export function resolveFunctionType_returnType(
 	value: T.FunctionType.LooseConfig['returnType']
 ): T.FunctionType['_return_type'] {
-	return _resolveOne<T.Type | T.Asserts | T.TypePredicate>(value, _K44, _K64);
+	return _resolveOne<T.Type | T.Asserts | T.TypePredicate>(value, _K46, _K66);
 }
 
 export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<typeof F.buildFunctionType> {

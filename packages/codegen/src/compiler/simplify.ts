@@ -17,11 +17,11 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
-import { isSpliceableBareSeq } from '../dsl/rule-patterns.ts';
+import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
-import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
+import { withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { attributeBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -53,7 +53,6 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 	return {
 		name: '',
 		rules,
-		linkRules: {},
 		supertypes: new Set(),
 		word: null,
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
@@ -133,15 +132,15 @@ function positionsAreMergeable(position: readonly RenderRule[]): boolean {
 	if (first.type === STRING) {
 		return position.every((p) => p.type === STRING && p.value === first.value);
 	}
-	const firstJson = JSON.stringify(first);
-	return position.every((p) => JSON.stringify(p) === firstJson);
+	const firstKey = structuralKey(first);
+	return position.every((p) => structuralKey(p) === firstKey);
 }
 
 function dedupeByJson(rules: readonly RenderRule[]): RenderRule[] {
 	const seen = new Set<string>();
 	const out: RenderRule[] = [];
 	for (const r of rules) {
-		const key = JSON.stringify(r);
+		const key = structuralKey(r);
 		if (seen.has(key)) continue;
 		seen.add(key);
 		out.push(r);
@@ -150,7 +149,7 @@ function dedupeByJson(rules: readonly RenderRule[]): RenderRule[] {
 }
 
 export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
-	return JSON.stringify(a) === JSON.stringify(b);
+	return structuralKey(a) === structuralKey(b);
 }
 
 export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
@@ -174,7 +173,8 @@ export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
 	}
 	const mergedMembers: RenderRule[] = [];
 	for (let i = 0; i < len; i++) {
-		mergedMembers.push(unwrapped[0]!.members[i]!);
+		const position = unwrapped.map((br) => br.members[i]!);
+		mergedMembers.push(absorbIds(position[0]!, ...position.slice(1)));
 	}
 	if (mergedMembers.length === 0) return { type: SEQ, members: [] };
 	if (mergedMembers.length === 1) return mergedMembers[0]!;
@@ -182,7 +182,7 @@ export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
 }
 
 export function assertUniversalShape(node: AssembledNode): void {
-	if (node.modelType !== 'branch' && node.modelType !== 'group') return;
+	if (!('simplifiedRule' in node) || node.transparent) return;
 	const body = node.simplifiedRule;
 	if (!body) return;
 	if (body.type !== SEQ) {
@@ -280,15 +280,18 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
 	const b = ctx.builder;
+	const nested = rule.members.filter((m) => m.type === CHOICE);
+	const host: ChoiceRule = nested.length > 0 ? absorbIds(rule, ...nested) : rule;
 	const members = rule.members.flatMap((m) => (m.type === CHOICE ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]));
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);
-		const inner: RenderRule = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, ...b.choice(...nonEmpty) };
-		return withAttrsFrom(rule, b.optional(inner));
+		const inner: RenderRule =
+			nonEmpty.length === 1 ? absorbIds(nonEmpty[0]!, host) : { ...host, ...b.choice(...nonEmpty) };
+		return withAttrsFrom(host, b.optional(inner));
 	}
-	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-	return { ...rule, ...mergeBranchesForChoice(b.choice(...members)) };
+	if (members.length === 1) return withAttrsFrom(host, absorbIds(members[0]!, host));
+	return { ...host, ...mergeBranchesForChoice(b.choice(...members)) };
 }
 
 export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {
@@ -349,10 +352,31 @@ function simplifyToFixpoint(
 	return current;
 }
 
+function isAllTextRender(rule: RenderRule): boolean {
+	if (isSlotPromotedLiteral(rule)) return false;
+	switch (rule.type) {
+		case STRING:
+		case PATTERN:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.length > 0 && rule.members.every(isAllTextRender);
+		case VARIANT:
+		case GROUP:
+			return isAllTextRender(rule.content);
+		default:
+			return false;
+	}
+}
+
 function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
+	if (rule.members.length > 0 && isAllTextRender(rule)) {
+		const text = collectFixedLiteral(rule);
+		return text === undefined ? rule : withAttrsFrom(rule, { type: STRING, value: text });
+	}
 	const filtered = rule.members.filter((m) => {
-		if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;
-		if (m.type === SEQ && m.members.length === 0) return false;
+		if (m.nonterminal === false) return false;
+		if (m.type === SEQ && (m.members.length === 0 || isAllTextRender(m))) return false;
 		return true;
 	});
 	const members = filtered.flatMap((m) => (isSpliceableBareSeq(m) ? m.members : [m]));

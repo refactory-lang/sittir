@@ -177,5 +177,6 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	// and `AssembleCtx` from the module, matching the pattern in
 	// tools/src/probe/variant-derivation.ts.
 	const { assemble, AssembleCtx } = await load('assemble');
-	return assemble(AssembleCtx.from(normalized));
+	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
+	return assemble(AssembleCtx.from(normalized, generatedIdTables));
 }

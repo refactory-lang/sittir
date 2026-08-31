@@ -188,7 +188,6 @@ export interface IncludeFilter {
 export interface NormalizedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, RenderRule>;
-	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
@@ -206,7 +205,6 @@ export interface NormalizedGrammar {
 
 export interface SimplifiedGrammar {
 	readonly name: string;
-	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
@@ -252,7 +250,6 @@ export interface NodeMap {
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;
 	readonly derivations: DerivationLog;
-	readonly linkRules?: Record<string, Rule<'link'>>;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;

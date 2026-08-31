@@ -4,7 +4,6 @@ import type { NodeMap } from '../../compiler/types.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import {
 	AssembledBranch,
-	AssembledGroup,
 	AssembledPattern,
 	AssembledSupertype,
 	type AssembledNode
@@ -42,7 +41,7 @@ function makeHiddenHelperNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRender, helperRender));
+	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: {} }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {
 		...makeNodeMap(),

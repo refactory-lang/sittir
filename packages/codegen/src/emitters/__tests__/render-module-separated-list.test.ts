@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
 	AssembledPattern,
-	AssembledSeparatedList,
+	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
@@ -36,7 +36,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledSeparatedList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
@@ -48,8 +48,8 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 
 /**
  * Plain 'branch' node with a repeated NAMED field ('items', a list-shaped
- * slot just like AssembledSeparatedList's content) — used to prove the
- * `node instanceof AssembledSeparatedList` guard in buildTypedTemplateBody
+ * slot just like AssembledList's content) — used to prove the
+ * `node instanceof AssembledList` guard in buildTypedTemplateBody
  * actually scopes the real leading/trailing/separator wiring to
  * 'separatedList' kinds only, and doesn't leak onto ordinary list-shaped
  * fields on other modelTypes (the exact mis-scoping class PR-T's original,

@@ -1248,9 +1248,8 @@ function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) 
   if (isSymbolType(t)) {
     const name = rule.name;
     if (typeof name !== "string") return void 0;
-    const hidden = rule.hidden;
-    if (!hidden) return name;
     const body = rulesBag[name];
+    if (body?.hidden !== true) return name;
     return body ? armLeadingSymbolName(body, rulesBag, seen) ?? name : name;
   }
   if (isSeqType(t)) {

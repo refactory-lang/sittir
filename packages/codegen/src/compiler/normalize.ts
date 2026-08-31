@@ -199,12 +199,13 @@ function materializeInlinedBody(
 	if (r.separator !== undefined) carry.separator = r.separator;
 	if (r.fieldName !== undefined) carry.fieldName = r.fieldName;
 
-	if (body.type === SEQ) {
-		return { ...body, ...carry, inlinedFrom, splicedBody: true } as Rule<'link'>;
+	const { hidden: _sourceKindHidden, ...spliced } = body;
+	if (spliced.type === SEQ) {
+		return { ...spliced, ...carry, inlinedFrom, splicedBody: true } as Rule<'link'>;
 	}
 	return {
 		type: SEQ,
-		members: [body],
+		members: [spliced as Rule<'link'>],
 		...carry,
 		inlinedFrom,
 		splicedBody: true
@@ -268,7 +269,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	const normalizedGrammarView: NormalizedGrammar = {
 		name: linked.name,
 		rules: normalizedRules,
-		linkRules: rules,
 		supertypes: linked.supertypes,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
@@ -304,8 +304,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		const aliasBodiesRender = flattenRules(aliasBodiesNormalized);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
-			rules: aliasBodiesRender,
-			linkRules: aliasBodiesNormalized
+			rules: aliasBodiesRender
 		};
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({
@@ -328,7 +327,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	return {
 		name: linked.name,
-		linkRules: rules,
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
@@ -649,7 +647,10 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
-			if (rule.name === targetName && rule.inline === true) return rebaseRuleIds(targetRule, rule.id ?? targetRule.id);
+			if (rule.name === targetName && rule.inline === true) {
+				const { hidden: _sourceKindHidden, ...spliced } = targetRule;
+				return rebaseRuleIds(spliced as Rule<'link'>, rule.id ?? targetRule.id);
+			}
 			return rule;
 		case SEQ: {
 			let changed = false;

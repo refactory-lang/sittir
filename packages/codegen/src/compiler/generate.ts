@@ -3,7 +3,6 @@ import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
-import { pruneDeterminedSlots } from './model/node-map.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -16,7 +15,7 @@ import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
+import { computeFieldStorageInfo } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
@@ -134,13 +133,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 	computeFieldStorageInfo(nodeMap);
 
-	pruneDeterminedSlots(nodeMap);
-
 	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
 
 	hydrateSlotRefs(nodeMap);
-
-	computeSlotClasses(nodeMap);
 
 	nodeMap.scc = computeTransportSCC(nodeMap);
 

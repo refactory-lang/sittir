@@ -8,10 +8,10 @@ import type {
 	NamespaceMap,
 	DeclarationStatement,
 	Expression,
-	Literal,
 	LiteralPattern,
 	NonSpecialToken,
 	Pattern,
+	_Literal,
 	_Type
 } from './types.js';
 
@@ -313,7 +313,7 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number }): v is _Type;
 	expression(v: { readonly $type: string | number }): v is Expression;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
-	literal(v: { readonly $type: string | number }): v is Literal;
+	literal(v: { readonly $type: string | number }): v is _Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
 }
 
@@ -543,7 +543,7 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number }): asserts v is _Type;
 	expression(v: { readonly $type: string | number }): asserts v is Expression;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-	literal(v: { readonly $type: string | number }): asserts v is Literal;
+	literal(v: { readonly $type: string | number }): asserts v is _Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
 }
 
@@ -556,16 +556,18 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_declarationStatement_ids = new Set<number>([
-	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
+	186, 240, 161, 159, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347]);
-const _supertype_type_ids = new Set<number>([236, 233, 135, 234, 227, 246, 224, 225, 221, 223, 1, 240, 237, 229, 199]);
+const _supertype_type_ids = new Set<number>([
+	236, 233, 135, 234, 227, 246, 224, 225, 221, 223, 1, 240, 235, 237, 229, 199
+]);
 const _supertype_expression_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 122, 314, 120, 151, 1, 132, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 135, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 122, 314, 120, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 349
+	312, 313, 122, 314, 120, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 302, 303, 304, 308, 281, 240, 349
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 122, 314, 120, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 122, 314, 120, 151, 311]);

@@ -20,8 +20,22 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	if (immediate !== undefined && !Object.prototype.hasOwnProperty.call(result, 'immediate'))
 		patch['immediate'] = immediate;
 	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
-	if (Object.keys(patch).length === 0) return result;
-	return { ...result, ...patch };
+	const withPatch = Object.keys(patch).length === 0 ? result : { ...result, ...patch };
+	return absorbIds(withPatch, { ...original, id: original.id === withPatch.id ? undefined : original.id });
+}
+
+export function absorbIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
+	const ids = new Set<RuleId>(host.absorbedIds ?? []);
+	for (const r of absorbed) {
+		if (r.id !== undefined && r.id !== host.id) ids.add(r.id);
+		for (const id of r.absorbedIds ?? []) if (id !== host.id) ids.add(id);
+	}
+	if (ids.size === (host.absorbedIds?.length ?? 0)) return host;
+	return { ...host, absorbedIds: [...ids] };
+}
+
+export function structuralKey(rule: AnyRule): string {
+	return JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'absorbedIds' ? undefined : value));
 }
 
 export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {
@@ -74,7 +88,7 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 	return {
 		fieldName: unanimous((r) => r.fieldName),
 		multiplicity: unanimous((r) => r.multiplicity),
-		nonterminal: unanimous((r) => r.nonterminal),
+		nonterminal: unanimous((r) => r.nonterminal) === true ? true : undefined,
 		separator,
 		strongestMultiplicity
 	};
