@@ -550,32 +550,32 @@ export const enum TSKindId {
 	ImportStatementArm = 373,
 	ImportClauseGroup = 374,
 	CatchClauseGroup = 375,
-	BinaryExpressionArm = 376,
-	Kind = 377,
-	ForHeaderOperator = 378,
-	AmbientDeclarationGlobal = 379,
-	AmbientDeclarationModule = 380,
-	ObjectTypeContent = 381,
-	ExportStatementDefault = 382,
-	ArrowFunctionParameter = 383,
-	ArrowFunctionUCallSignature = 384,
-	ClassHeritageExtendsClause = 385,
-	ImportClauseDefaultImport = 386,
-	ImportSpecifierAs = 387,
-	IndexSignatureColon = 388,
-	ExportStatementDefaultFromArm = 389,
-	ExportStatementDefaultDeclArm = 390,
-	ExportStatementDefaultStarFrom = 391,
-	ExportStatementDefaultNsFrom = 392,
-	ExportStatementDefaultClauseFrom = 393,
-	ExportStatementDefaultDefaultKw = 394,
-	ExportStatementDefaultValue = 395,
-	ClassBodyMethod = 396,
-	ClassBodyMethodSig = 397,
-	ClassBodyMember = 398,
-	ForHeaderLhs = 399,
-	ForHeaderVarKind = 400,
-	ForHeaderLetConstKind = 401,
+	Kind = 376,
+	ForHeaderOperator = 377,
+	AmbientDeclarationGlobal = 378,
+	AmbientDeclarationModule = 379,
+	ObjectTypeContent = 380,
+	ExportStatementDefault = 381,
+	ArrowFunctionParameter = 382,
+	ArrowFunctionUCallSignature = 383,
+	ClassHeritageExtendsClause = 384,
+	ImportClauseDefaultImport = 385,
+	ImportSpecifierAs = 386,
+	IndexSignatureColon = 387,
+	ExportStatementDefaultFromArm = 388,
+	ExportStatementDefaultDeclArm = 389,
+	ExportStatementDefaultStarFrom = 390,
+	ExportStatementDefaultNsFrom = 391,
+	ExportStatementDefaultClauseFrom = 392,
+	ExportStatementDefaultDefaultKw = 393,
+	ExportStatementDefaultValue = 394,
+	ClassBodyMethod = 395,
+	ClassBodyMethodSig = 396,
+	ClassBodyMember = 397,
+	ForHeaderLhs = 398,
+	ForHeaderVarKind = 399,
+	ForHeaderLetConstKind = 400,
+	BinaryExpressionIn = 401,
 	ParenthesizedExpressionTyped = 402,
 	ExportStatementTypeExport = 403,
 	ExportStatementEqualsExport = 404,
@@ -999,32 +999,32 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[373, '_import_statement_arm'],
 	[374, '_import_clause_group'],
 	[375, '_catch_clause_group'],
-	[376, '_binary_expression_arm'],
-	[377, '_kind'],
-	[378, '__for_header_operator'],
-	[379, '_ambient_declaration_global'],
-	[380, '_ambient_declaration_module'],
-	[381, 'object_type_content'],
-	[382, '_export_statement_default'],
-	[383, '_arrow_function_parameter'],
-	[384, '_arrow_function__call_signature'],
-	[385, '_class_heritage_extends_clause'],
-	[386, '_import_clause_default_import'],
-	[387, '_import_specifier_as'],
-	[388, '_index_signature_colon'],
-	[389, '_export_statement_default_from_arm'],
-	[390, '_export_statement_default_decl_arm'],
-	[391, '_export_statement_default_star_from'],
-	[392, '_export_statement_default_ns_from'],
-	[393, '_export_statement_default_clause_from'],
-	[394, '_export_statement_default_default_kw'],
-	[395, '_export_statement_default_value'],
-	[396, '_class_body_method'],
-	[397, '_class_body_method_sig'],
-	[398, '_class_body_member'],
-	[399, '_for_header_lhs'],
-	[400, '_for_header_var_kind'],
-	[401, '_for_header_let_const_kind'],
+	[376, '_kind'],
+	[377, '__for_header_operator'],
+	[378, '_ambient_declaration_global'],
+	[379, '_ambient_declaration_module'],
+	[380, 'object_type_content'],
+	[381, '_export_statement_default'],
+	[382, '_arrow_function_parameter'],
+	[383, '_arrow_function__call_signature'],
+	[384, '_class_heritage_extends_clause'],
+	[385, '_import_clause_default_import'],
+	[386, '_import_specifier_as'],
+	[387, '_index_signature_colon'],
+	[388, '_export_statement_default_from_arm'],
+	[389, '_export_statement_default_decl_arm'],
+	[390, '_export_statement_default_star_from'],
+	[391, '_export_statement_default_ns_from'],
+	[392, '_export_statement_default_clause_from'],
+	[393, '_export_statement_default_default_kw'],
+	[394, '_export_statement_default_value'],
+	[395, '_class_body_method'],
+	[396, '_class_body_method_sig'],
+	[397, '_class_body_member'],
+	[398, '_for_header_lhs'],
+	[399, '_for_header_var_kind'],
+	[400, '_for_header_let_const_kind'],
+	[401, '_binary_expression_in'],
 	[402, '_parenthesized_expression_typed'],
 	[403, '_export_statement_type_export'],
 	[404, '_export_statement_equals_export'],
@@ -1449,32 +1449,32 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[373, 'import_statement_arm'],
 	[374, 'import_clause_group'],
 	[375, 'catch_clause_group'],
-	[376, 'binary_expression_arm'],
-	[377, '_kind'],
-	[378, '__for_header_operator'],
-	[379, 'ambient_declaration_global'],
-	[380, 'ambient_declaration_module'],
-	[381, 'object_type_content'],
-	[382, 'export_statement_default'],
-	[383, 'arrow_function_parameter'],
-	[384, 'arrow_function__call_signature'],
-	[385, 'class_heritage_extends_clause'],
-	[386, 'import_clause_default_import'],
-	[387, 'import_specifier_as'],
-	[388, 'index_signature_colon'],
-	[389, 'export_statement_default_from_arm'],
-	[390, 'export_statement_default_decl_arm'],
-	[391, 'export_statement_default_star_from'],
-	[392, 'export_statement_default_ns_from'],
-	[393, 'export_statement_default_clause_from'],
-	[394, 'export_statement_default_default_kw'],
-	[395, 'export_statement_default_value'],
-	[396, 'class_body_method'],
-	[397, 'class_body_method_sig'],
-	[398, 'class_body_member'],
-	[399, 'for_header_lhs'],
-	[400, 'for_header_var_kind'],
-	[401, 'for_header_let_const_kind'],
+	[376, '_kind'],
+	[377, '__for_header_operator'],
+	[378, 'ambient_declaration_global'],
+	[379, 'ambient_declaration_module'],
+	[380, 'object_type_content'],
+	[381, 'export_statement_default'],
+	[382, 'arrow_function_parameter'],
+	[383, 'arrow_function__call_signature'],
+	[384, 'class_heritage_extends_clause'],
+	[385, 'import_clause_default_import'],
+	[386, 'import_specifier_as'],
+	[387, 'index_signature_colon'],
+	[388, 'export_statement_default_from_arm'],
+	[389, 'export_statement_default_decl_arm'],
+	[390, 'export_statement_default_star_from'],
+	[391, 'export_statement_default_ns_from'],
+	[392, 'export_statement_default_clause_from'],
+	[393, 'export_statement_default_default_kw'],
+	[394, 'export_statement_default_value'],
+	[395, 'class_body_method'],
+	[396, 'class_body_method_sig'],
+	[397, 'class_body_member'],
+	[398, 'for_header_lhs'],
+	[399, 'for_header_var_kind'],
+	[400, 'for_header_let_const_kind'],
+	[401, 'binary_expression_in'],
 	[402, 'parenthesized_expression_typed'],
 	[403, 'export_statement_type_export'],
 	[404, 'export_statement_equals_export'],
@@ -2279,8 +2279,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportClauseGroup;
 		case '_catch_clause_group':
 			return TSKindId.CatchClauseGroup;
-		case '_binary_expression_arm':
-			return TSKindId.BinaryExpressionArm;
 		case '_kind':
 			return TSKindId.Kind;
 		case '__for_header_operator':
@@ -2331,6 +2329,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ForHeaderVarKind;
 		case '_for_header_let_const_kind':
 			return TSKindId.ForHeaderLetConstKind;
+		case '_binary_expression_in':
+			return TSKindId.BinaryExpressionIn;
 		case '_parenthesized_expression_typed':
 			return TSKindId.ParenthesizedExpressionTyped;
 		case '_export_statement_type_export':
@@ -2593,8 +2593,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportClauseGroup;
 		case 'catch_clause_group':
 			return TSKindId.CatchClauseGroup;
-		case 'binary_expression_arm':
-			return TSKindId.BinaryExpressionArm;
 		case 'ambient_declaration_global':
 			return TSKindId.AmbientDeclarationGlobal;
 		case 'ambient_declaration_module':
@@ -2639,6 +2637,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ForHeaderVarKind;
 		case 'for_header_let_const_kind':
 			return TSKindId.ForHeaderLetConstKind;
+		case 'binary_expression_in':
+			return TSKindId.BinaryExpressionIn;
 		case 'parenthesized_expression_typed':
 			return TSKindId.ParenthesizedExpressionTyped;
 		case 'export_statement_type_export':
@@ -3705,7 +3705,7 @@ export interface BinaryExpression {
 	readonly _left?: Expression;
 	readonly _operator?: number;
 	readonly _right?: Expression;
-	readonly _binary_expression_arm?: BinaryExpressionArm;
+	readonly _binary_expression_in?: BinaryExpressionIn;
 	readonly __inputHints__?: {
 		readonly operator?: KindEnum<
 			| '&&'
@@ -3761,7 +3761,7 @@ export interface BinaryExpression {
 	left(): Expression | undefined;
 	operator(): number | undefined;
 	right(): Expression | undefined;
-	binaryExpressionArm(): BinaryExpressionArm | undefined;
+	binaryExpressionIn(): BinaryExpressionIn | undefined;
 }
 
 export interface UnaryExpression {
@@ -5045,14 +5045,6 @@ export interface CatchClauseGroup {
 	type(): TypeAnnotation | undefined;
 }
 
-export interface BinaryExpressionArm {
-	readonly $type: TSKindId.BinaryExpressionArm;
-	readonly _left: Expression | PrivatePropertyIdentifier;
-	readonly _right: Expression;
-	left(): Expression | PrivatePropertyIdentifier;
-	right(): Expression;
-}
-
 export interface AmbientDeclarationGlobal {
 	readonly $type: TSKindId.AmbientDeclarationGlobal;
 	readonly _body: StatementBlock;
@@ -5295,6 +5287,14 @@ export interface ForHeaderLetConstKind {
 	kind(): number;
 	left(): Identifier | ObjectPattern | ArrayPattern;
 	automaticSemicolon(): boolean | undefined;
+}
+
+export interface BinaryExpressionIn {
+	readonly $type: TSKindId.BinaryExpressionIn;
+	readonly _left: Expression | PrivatePropertyIdentifier;
+	readonly _right: Expression;
+	left(): Expression | PrivatePropertyIdentifier;
+	right(): Expression;
 }
 
 export interface ParenthesizedExpressionTyped {
@@ -5762,9 +5762,6 @@ export interface ImportClauseGroupTree extends AnyTreeNode {
 export interface CatchClauseGroupTree extends AnyTreeNode {
 	readonly type: '_catch_clause_group';
 }
-export interface BinaryExpressionArmTree extends AnyTreeNode {
-	readonly type: '_binary_expression_arm';
-}
 export interface AmbientDeclarationGlobalTree extends AnyTreeNode {
 	readonly type: '_ambient_declaration_global';
 }
@@ -5831,6 +5828,9 @@ export interface ForHeaderVarKindTree extends AnyTreeNode {
 }
 export interface ForHeaderLetConstKindTree extends AnyTreeNode {
 	readonly type: '_for_header_let_const_kind';
+}
+export interface BinaryExpressionInTree extends AnyTreeNode {
+	readonly type: '_binary_expression_in';
 }
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode {
 	readonly type: '_parenthesized_expression_typed';
@@ -6680,7 +6680,6 @@ export type TypescriptNode =
 	| ImportStatementArm
 	| ImportClauseGroup
 	| CatchClauseGroup
-	| BinaryExpressionArm
 	| AmbientDeclarationGlobal
 	| AmbientDeclarationModule
 	| ObjectTypeContent
@@ -6704,6 +6703,7 @@ export type TypescriptNode =
 	| ForHeaderLhs
 	| ForHeaderVarKind
 	| ForHeaderLetConstKind
+	| BinaryExpressionIn
 	| ParenthesizedExpressionTyped
 	| ExportStatementTypeExport
 	| ExportStatementEqualsExport
@@ -6888,7 +6888,6 @@ export interface KindMap {
 	_import_statement_arm: ImportStatementArm;
 	_import_clause_group: ImportClauseGroup;
 	_catch_clause_group: CatchClauseGroup;
-	_binary_expression_arm: BinaryExpressionArm;
 	_ambient_declaration_global: AmbientDeclarationGlobal;
 	_ambient_declaration_module: AmbientDeclarationModule;
 	object_type_content: ObjectTypeContent;
@@ -6912,6 +6911,7 @@ export interface KindMap {
 	_for_header_lhs: ForHeaderLhs;
 	_for_header_var_kind: ForHeaderVarKind;
 	_for_header_let_const_kind: ForHeaderLetConstKind;
+	_binary_expression_in: BinaryExpressionIn;
 	_parenthesized_expression_typed: ParenthesizedExpressionTyped;
 	_export_statement_type_export: ExportStatementTypeExport;
 	_export_statement_equals_export: ExportStatementEqualsExport;
@@ -8503,15 +8503,6 @@ export interface CatchClauseGroupNs extends NodeNs<
 	F$.CatchClauseGroupBuildArgs,
 	F$.CatchClauseGroupLooseArgs
 > {}
-export interface BinaryExpressionArmNs extends NodeNs<
-	BinaryExpressionArm,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	F$.BinaryExpressionArmBuilt,
-	F$.BinaryExpressionArmBuildArgs,
-	F$.BinaryExpressionArmLooseArgs
-> {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal,
 	LeafScalarMap,
@@ -8718,6 +8709,15 @@ export interface ForHeaderLetConstKindNs extends NodeNs<
 	F$.ForHeaderLetConstKindBuilt,
 	F$.ForHeaderLetConstKindBuildArgs,
 	F$.ForHeaderLetConstKindLooseArgs
+> {}
+export interface BinaryExpressionInNs extends NodeNs<
+	BinaryExpressionIn,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	F$.BinaryExpressionInBuilt,
+	F$.BinaryExpressionInBuildArgs,
+	F$.BinaryExpressionInLooseArgs
 > {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	ParenthesizedExpressionTyped,
@@ -8991,7 +8991,6 @@ export interface NamespaceMap {
 	[TSKindId.ImportStatementArm]: ImportStatementArmNs;
 	[TSKindId.ImportClauseGroup]: ImportClauseGroupNs;
 	[TSKindId.CatchClauseGroup]: CatchClauseGroupNs;
-	[TSKindId.BinaryExpressionArm]: BinaryExpressionArmNs;
 	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobalNs;
 	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModuleNs;
 	[TSKindId.ObjectTypeContent]: ObjectTypeContentNs;
@@ -9015,6 +9014,7 @@ export interface NamespaceMap {
 	[TSKindId.ForHeaderLhs]: ForHeaderLhsNs;
 	[TSKindId.ForHeaderVarKind]: ForHeaderVarKindNs;
 	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKindNs;
+	[TSKindId.BinaryExpressionIn]: BinaryExpressionInNs;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTypedNs;
 	[TSKindId.ExportStatementTypeExport]: ExportStatementTypeExportNs;
 	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
@@ -10757,16 +10757,6 @@ export namespace CatchClauseGroup {
 	export type Tree = TreeFor<TSKindId.CatchClauseGroup>;
 	export type Kind = '_catch_clause_group';
 }
-export namespace BinaryExpressionArm {
-	export type Config = ConfigFor<TSKindId.BinaryExpressionArm>;
-	export type Fluent = FluentFor<TSKindId.BinaryExpressionArm>;
-	export type Loose = LooseFor<TSKindId.BinaryExpressionArm>;
-	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpressionArm>;
-	export type BuildArgs = BuildArgsFor<TSKindId.BinaryExpressionArm>;
-	export type LooseArgs = LooseArgsFor<TSKindId.BinaryExpressionArm>;
-	export type Tree = TreeFor<TSKindId.BinaryExpressionArm>;
-	export type Kind = '_binary_expression_arm';
-}
 export namespace AmbientDeclarationGlobal {
 	export type Config = ConfigFor<TSKindId.AmbientDeclarationGlobal>;
 	export type Fluent = FluentFor<TSKindId.AmbientDeclarationGlobal>;
@@ -10996,6 +10986,16 @@ export namespace ForHeaderLetConstKind {
 	export type LooseArgs = LooseArgsFor<TSKindId.ForHeaderLetConstKind>;
 	export type Tree = TreeFor<TSKindId.ForHeaderLetConstKind>;
 	export type Kind = '_for_header_let_const_kind';
+}
+export namespace BinaryExpressionIn {
+	export type Config = ConfigFor<TSKindId.BinaryExpressionIn>;
+	export type Fluent = FluentFor<TSKindId.BinaryExpressionIn>;
+	export type Loose = LooseFor<TSKindId.BinaryExpressionIn>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpressionIn>;
+	export type BuildArgs = BuildArgsFor<TSKindId.BinaryExpressionIn>;
+	export type LooseArgs = LooseArgsFor<TSKindId.BinaryExpressionIn>;
+	export type Tree = TreeFor<TSKindId.BinaryExpressionIn>;
+	export type Kind = '_binary_expression_in';
 }
 export namespace ParenthesizedExpressionTyped {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpressionTyped>;

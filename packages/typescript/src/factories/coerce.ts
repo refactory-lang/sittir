@@ -3109,10 +3109,10 @@ export function resolveBinaryExpression_right(
 	return _resolveOne<T.Expression>(value, _K9, _K17);
 }
 
-export function resolveBinaryExpression_binaryExpressionArm(
-	value: T.BinaryExpression.LooseConfig['binaryExpressionArm']
-): T.BinaryExpression['_binary_expression_arm'] {
-	return _resolveOneBranch<T.BinaryExpressionArm>(value, '_binary_expression_arm');
+export function resolveBinaryExpression_binaryExpressionIn(
+	value: T.BinaryExpression.LooseConfig['binaryExpressionIn']
+): T.BinaryExpression['_binary_expression_in'] {
+	return _resolveOneBranch<T.BinaryExpressionIn>(value, '_binary_expression_in');
 }
 
 export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
@@ -3122,7 +3122,7 @@ export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): Retu
 		left: resolveBinaryExpression_left(input?.left),
 		operator: resolveBinaryExpression_operator(input?.operator),
 		right: resolveBinaryExpression_right(input?.right),
-		binaryExpressionArm: resolveBinaryExpression_binaryExpressionArm(input?.binaryExpressionArm)
+		binaryExpressionIn: resolveBinaryExpression_binaryExpressionIn(input?.binaryExpressionIn)
 	});
 }
 

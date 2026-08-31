@@ -1313,14 +1313,14 @@
       "required": false,
       "types": [
         {
-          "type": "binary_expression_arm",
+          "type": "binary_expression_in",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "binary_expression_arm",
+    "type": "binary_expression_in",
     "named": true,
     "fields": {
       "left": {

@@ -253,6 +253,35 @@ describe('import_statement', () => {
 	});
 });
 
+describe('import_statement sub-factories', () => {
+	it('arm builds the _import_statement_arm form', () => {
+		const node = ir.importStatement.arm({
+			importClause: {
+				$type: TSKindId.ImportClause,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.NamespaceImport,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			} as any,
+			source: {
+				$type: TSKindId.String,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.ImportStatementArm);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('import_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importClause({
@@ -337,6 +366,17 @@ describe('import_specifier', () => {
 		const node = ir.importSpecifier({
 			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('import_specifier sub-factories', () => {
+	it('as builds the _import_specifier_as form', () => {
+		const node = ir.importSpecifier.as({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ImportSpecifierAs);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1609,6 +1649,26 @@ describe('arrow_function', () => {
 	});
 });
 
+describe('arrow_function sub-factories', () => {
+	it('parameter builds the _arrow_function_parameter form', () => {
+		const node = ir.arrowFunction.parameter({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ArrowFunctionParameter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('callSignature builds the _arrow_function__call_signature form', () => {
+		const node = ir.arrowFunction.callSignature({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ArrowFunctionUCallSignature);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('optional_chain', () => {
 	it('factory produces keyword', () => {
 		const node = ir.optionalChain();
@@ -2155,6 +2215,14 @@ describe('binary_expression sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.Instanceof);
 		expect(() => node.$render!()).not.toThrow();
 	});
+	it('in builds the _binary_expression_in form', () => {
+		const node = ir.binaryExpression.in({
+			left: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.BinaryExpressionIn);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('unary_expression', () => {
@@ -2571,6 +2639,54 @@ describe('class_body', () => {
 		const node = ir.classBody();
 		expect(node.$type).toBe(TSKindId.ClassBody);
 		expect(node.$source).toBe(2);
+	});
+});
+
+describe('class_body sub-factories', () => {
+	it('method builds the _class_body_method form', () => {
+		const node = ir.classBody.method({
+			methodDefinition: {
+				$type: TSKindId.MethodDefinition,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
+				_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+				_body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMethod);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('methodSig builds the _class_body_method_sig form', () => {
+		const node = ir.classBody.methodSig({
+			methodSignature: {
+				$type: TSKindId.MethodSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
+				_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			terminator: '\n'
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMethodSig);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('member builds the _class_body_member form', () => {
+		const node = ir.classBody.member({
+			content: {
+				$type: TSKindId.AbstractMethodSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
+				_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			terminator: '\n'
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMember);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -4677,6 +4793,17 @@ describe('index_signature', () => {
 				_type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
 			} as any
 		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('index_signature sub-factories', () => {
+	it('colon builds the _index_signature_colon form', () => {
+		const node = ir.indexSignature.colon({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			indexType: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.IndexSignatureColon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

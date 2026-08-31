@@ -17,6 +17,7 @@ import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import {
+	wireRegisterSymbolRename,
 	wireRegisterSyntheticRule,
 	wireRegisterConflict,
 	wireGetCurrentRuleKind,
@@ -381,6 +382,7 @@ function resolvePatch(
 				if (body !== undefined) {
 					const depositName = polymorphHiddenName(parentKind, patch.name);
 					wireRegisterSyntheticRule(depositName, body);
+					wireRegisterSymbolRename(content.name, depositName);
 					return {
 						...(originalMember as object),
 						content: { ...content, name: depositName },
@@ -397,6 +399,10 @@ function resolvePatch(
 			} as unknown as RuntimeRule;
 		}
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);
+		const original = originalMember as { type?: string; name?: string };
+		if (original.type === 'SYMBOL' && typeof original.name === 'string') {
+			wireRegisterSymbolRename(original.name, hiddenName);
+		}
 		return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
 	}
 	if (isAliasPlaceholder(patch)) {

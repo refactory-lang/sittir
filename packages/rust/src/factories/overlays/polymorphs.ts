@@ -1583,6 +1583,17 @@ export const wherePredicate: typeof B.wherePredicate & {
 	}
 };
 
+export const implItem: typeof B.implItem & {
+	positiveClause: { strict: typeof F.buildImplItemPositiveClause };
+	negativeClause: { strict: typeof F.buildImplItemNegativeClause };
+	body: { strict: typeof F.buildImplItemBody };
+} = {
+	...B.implItem,
+	positiveClause: { strict: F.buildImplItemPositiveClause },
+	negativeClause: { strict: F.buildImplItemNegativeClause },
+	body: { strict: F.buildImplItemBody }
+};
+
 const negativeLiteral$integerLiteral =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>

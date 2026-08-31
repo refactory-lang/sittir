@@ -5234,7 +5234,7 @@ export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandl
 }
 
 export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_left', '_operator', '_right', '_binary_expression_arm']);
+	data = _keepModelledSlots(data, ['_left', '_operator', '_right', '_binary_expression_in']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.BinaryExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -5314,12 +5314,12 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				slotName: 'right',
 				span: (data as _NodeData).$span
 			}),
-			_binary_expression_arm: normalizeSingularWrapSlot(
-				data._binary_expression_arm,
-				'binary_expression_arm',
+			_binary_expression_in: normalizeSingularWrapSlot(
+				data._binary_expression_in,
+				'binary_expression_in',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'binary_expression_arm', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'binary_expression_in', span: (data as _NodeData).$span }
 			),
 
 			left() {
@@ -5331,8 +5331,8 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 			right() {
 				return drillIn<T.Expression | undefined>(this._right, tree);
 			},
-			binaryExpressionArm() {
-				return drillIn<T.BinaryExpressionArm | undefined>(this._binary_expression_arm, tree);
+			binaryExpressionIn() {
+				return drillIn<T.BinaryExpressionIn | undefined>(this._binary_expression_in, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.BinaryExpression['_left']>) =>
@@ -5341,8 +5341,8 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					wrapBinaryExpression({ ...$edited(data), _operator: v }, tree),
 				right: (v: NonNullable<T.BinaryExpression['_right']>) =>
 					wrapBinaryExpression({ ...$edited(data), _right: v }, tree),
-				binaryExpressionArm: (v: NonNullable<T.BinaryExpression['_binary_expression_arm']>) =>
-					wrapBinaryExpression({ ...$edited(data), _binary_expression_arm: v }, tree)
+				binaryExpressionIn: (v: NonNullable<T.BinaryExpression['_binary_expression_in']>) =>
+					wrapBinaryExpression({ ...$edited(data), _binary_expression_in: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -11299,43 +11299,6 @@ export function wrapCatchClauseGroup(data: T.CatchClauseGroup, tree: TreeHandle)
 	return _node;
 }
 
-export function wrapBinaryExpressionArm(data: T.BinaryExpressionArm, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.BinaryExpressionArm as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
-			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'right',
-				span: (data as _NodeData).$span
-			}),
-
-			left() {
-				return drillIn<T.Expression | T.PrivatePropertyIdentifier>(this._left, tree);
-			},
-			right() {
-				return drillIn<T.Expression>(this._right, tree);
-			},
-			$with: {
-				left: (v: NonNullable<T.BinaryExpressionArm['_left']>) =>
-					wrapBinaryExpressionArm({ ...$edited(data), _left: v }, tree),
-				right: (v: NonNullable<T.BinaryExpressionArm['_right']>) =>
-					wrapBinaryExpressionArm({ ...$edited(data), _right: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapAmbientDeclarationGlobal(data: T.AmbientDeclarationGlobal, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_body']);
 	const _node = withMethods(
@@ -12426,6 +12389,43 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 	return _node;
 }
 
+export function wrapBinaryExpressionIn(data: T.BinaryExpressionIn, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_right']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.BinaryExpressionIn as const,
+			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'left',
+				span: (data as _NodeData).$span
+			}),
+			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'right',
+				span: (data as _NodeData).$span
+			}),
+
+			left() {
+				return drillIn<T.Expression | T.PrivatePropertyIdentifier>(this._left, tree);
+			},
+			right() {
+				return drillIn<T.Expression>(this._right, tree);
+			},
+			$with: {
+				left: (v: NonNullable<T.BinaryExpressionIn['_left']>) =>
+					wrapBinaryExpressionIn({ ...$edited(data), _left: v }, tree),
+				right: (v: NonNullable<T.BinaryExpressionIn['_right']>) =>
+					wrapBinaryExpressionIn({ ...$edited(data), _right: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapParenthesizedExpressionTyped(
 	data: T.ParenthesizedExpressionTyped & {
 		readonly _as_expression?: T.Expression;
@@ -13359,7 +13359,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ImportStatementArm]: (d, t) => wrapImportStatementArm(d as unknown as T.ImportStatementArm, t),
 	[TSKindId.ImportClauseGroup]: (d, t) => wrapImportClauseGroup(d as unknown as T.ImportClauseGroup, t),
 	[TSKindId.CatchClauseGroup]: (d, t) => wrapCatchClauseGroup(d as unknown as T.CatchClauseGroup, t),
-	[TSKindId.BinaryExpressionArm]: (d, t) => wrapBinaryExpressionArm(d as unknown as T.BinaryExpressionArm, t),
 	[TSKindId.Kind]: (d) => ({ ...d, $type: TSKindId.Kind as const }),
 	[TSKindId.ForHeaderOperator]: (d) => ({ ...d, $type: TSKindId.ForHeaderOperator as const }),
 	[TSKindId.AmbientDeclarationGlobal]: (d, t) =>
@@ -13397,6 +13396,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
+	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
 	[TSKindId.ParenthesizedExpressionTyped]: (d, t) =>
 		wrapParenthesizedExpressionTyped(d as unknown as T.ParenthesizedExpressionTyped, t),
 	[TSKindId.ExportStatementTypeExport]: (d, t) =>
@@ -13648,7 +13648,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.ImportStatementArm]: ReturnType<typeof wrapImportStatementArm>;
 	[TSKindId.ImportClauseGroup]: ReturnType<typeof wrapImportClauseGroup>;
 	[TSKindId.CatchClauseGroup]: ReturnType<typeof wrapCatchClauseGroup>;
-	[TSKindId.BinaryExpressionArm]: ReturnType<typeof wrapBinaryExpressionArm>;
 	[TSKindId.Kind]: _NodeData & { readonly $type: TSKindId.Kind };
 	[TSKindId.ForHeaderOperator]: _NodeData & { readonly $type: TSKindId.ForHeaderOperator };
 	[TSKindId.AmbientDeclarationGlobal]: ReturnType<typeof wrapAmbientDeclarationGlobal>;
@@ -13674,6 +13673,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ForHeaderLhs]: ReturnType<typeof wrapForHeaderLhs>;
 	[TSKindId.ForHeaderVarKind]: ReturnType<typeof wrapForHeaderVarKind>;
 	[TSKindId.ForHeaderLetConstKind]: ReturnType<typeof wrapForHeaderLetConstKind>;
+	[TSKindId.BinaryExpressionIn]: ReturnType<typeof wrapBinaryExpressionIn>;
 	[TSKindId.ParenthesizedExpressionTyped]: ReturnType<typeof wrapParenthesizedExpressionTyped>;
 	[TSKindId.ExportStatementTypeExport]: ReturnType<typeof wrapExportStatementTypeExport>;
 	[TSKindId.ExportStatementEqualsExport]: ReturnType<typeof wrapExportStatementEqualsExport>;

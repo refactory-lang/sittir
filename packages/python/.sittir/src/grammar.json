@@ -7490,6 +7490,13 @@
     ],
     [
       "with_clause",
+      "_with_clause_bare"
+    ],
+    [
+      "_with_clause_bare"
+    ],
+    [
+      "with_clause",
       "_with_clause_with_items"
     ],
     [
@@ -7595,6 +7602,20 @@
     ],
     [
       "_except_clause_arm"
+    ],
+    [
+      "with_clause",
+      "_with_clause_paren"
+    ],
+    [
+      "_with_clause_paren"
+    ],
+    [
+      "assignment",
+      "_assignment_typed"
+    ],
+    [
+      "_assignment_typed"
     ],
     [
       "slice",

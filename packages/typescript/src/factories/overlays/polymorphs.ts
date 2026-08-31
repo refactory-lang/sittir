@@ -167,6 +167,13 @@ export const namespaceExport: typeof B.namespaceExport & {
 	}
 };
 
+export const importStatement: typeof B.importStatement & {
+	arm: { strict: typeof F.buildImportStatementArm };
+} = {
+	...B.importStatement,
+	arm: { strict: F.buildImportStatementArm }
+};
+
 const importClause$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -212,6 +219,13 @@ export const importClause: typeof B.importClause & {
 		strict: importClause$defaultImport(F.buildImportClause, F.buildImportClauseDefaultImport),
 		coerce: importClause$defaultImport(C.coerceToImportClause, F.buildImportClauseDefaultImport)
 	}
+};
+
+export const importSpecifier: typeof B.importSpecifier & {
+	as: { strict: typeof F.buildImportSpecifierAs };
+} = {
+	...B.importSpecifier,
+	as: { strict: F.buildImportSpecifierAs }
 };
 
 const importAttribute$with =
@@ -991,6 +1005,15 @@ export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration
 			C.coerceToTypePredicateAnnotation
 		)
 	}
+};
+
+export const arrowFunction: typeof B.arrowFunction & {
+	parameter: { strict: typeof F.buildArrowFunctionParameter };
+	callSignature: { strict: typeof F.buildArrowFunctionUCallSignature };
+} = {
+	...B.arrowFunction,
+	parameter: { strict: F.buildArrowFunctionParameter },
+	callSignature: { strict: F.buildArrowFunctionUCallSignature }
 };
 
 const callExpression$call =
@@ -1826,6 +1849,7 @@ export const binaryExpression: typeof B.binaryExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
+	in: { strict: typeof F.buildBinaryExpressionIn };
 } = {
 	...B.binaryExpression,
 	ampAmp: {
@@ -1923,7 +1947,8 @@ export const binaryExpression: typeof B.binaryExpression & {
 	instanceof: {
 		strict: binaryExpression$instanceof(F.buildBinaryExpression, TSKindId.Instanceof),
 		coerce: binaryExpression$instanceof(C.coerceToBinaryExpression, TSKindId.Instanceof)
-	}
+	},
+	in: { strict: F.buildBinaryExpressionIn }
 };
 
 const updateExpression$postfix =
@@ -2133,6 +2158,17 @@ export const decoratorCallExpression: typeof B.decoratorCallExpression & {
 			C.coerceToDecoratorMemberExpression
 		)
 	}
+};
+
+export const classBody: typeof B.classBody & {
+	method: { strict: typeof F.buildClassBodyMethod };
+	methodSig: { strict: typeof F.buildClassBodyMethodSig };
+	member: { strict: typeof F.buildClassBodyMember };
+} = {
+	...B.classBody,
+	method: { strict: F.buildClassBodyMethod },
+	methodSig: { strict: F.buildClassBodyMethodSig },
+	member: { strict: F.buildClassBodyMember }
 };
 
 const restPattern$memberExpression =
@@ -3934,6 +3970,13 @@ export const constraint: typeof B.constraint & {
 		strict: constraint$colon(F.buildConstraint, TSKindId.Colon),
 		coerce: constraint$colon(C.coerceToConstraint, TSKindId.Colon)
 	}
+};
+
+export const indexSignature: typeof B.indexSignature & {
+	colon: { strict: typeof F.buildIndexSignatureColon };
+} = {
+	...B.indexSignature,
+	colon: { strict: F.buildIndexSignatureColon }
 };
 
 const functionType$asserts =

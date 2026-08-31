@@ -2639,6 +2639,39 @@ describe('assignment', () => {
 	});
 });
 
+describe('assignment sub-factories', () => {
+	it('eq builds the _assignment_eq form', () => {
+		const node = ir.assignment.eq({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.AssignmentEq);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('type builds the _assignment_type form', () => {
+		const node = ir.assignment.type({
+			$type: TSKindId.Type,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		} as any);
+		expect(node.$type).toBe(TSKindId.AssignmentType);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typed builds the _assignment_typed form', () => {
+		const node = ir.assignment.typed({
+			type: {
+				$type: TSKindId.Type,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentTyped);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('augmented_assignment', () => {
 	it('factory produces correct type', () => {
 		const node = ir.augmentedAssignment({

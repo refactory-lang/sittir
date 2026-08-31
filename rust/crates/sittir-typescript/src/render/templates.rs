@@ -119,8 +119,8 @@ pub struct ArrowFunctionParameterTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_binary_expression_arm.jinja", escape = "none")]
-pub struct BinaryExpressionArmTemplate<'a> {
+#[template(path = "_binary_expression_in.jinja", escape = "none")]
+pub struct BinaryExpressionInTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
 }
@@ -579,7 +579,7 @@ pub struct AwaitExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "binary_expression.jinja", escape = "none")]
 pub struct BinaryExpressionTemplate<'a> {
-    pub binary_expression_arm: OptionalNonterminalView<'a>,
+    pub binary_expression_in: OptionalNonterminalView<'a>,
     pub left: OptionalNonterminalView<'a>,
     pub operator: OptionalNonterminalView<'a>,
     pub right: OptionalNonterminalView<'a>,

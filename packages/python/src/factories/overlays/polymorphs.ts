@@ -2240,6 +2240,17 @@ export const binaryOperator: typeof B.binaryOperator & {
 	}
 };
 
+export const assignment: typeof B.assignment & {
+	eq: { strict: typeof F.buildAssignmentEq };
+	type: { strict: typeof F.buildAssignmentType };
+	typed: { strict: typeof F.buildAssignmentTyped };
+} = {
+	...B.assignment,
+	eq: { strict: F.buildAssignmentEq },
+	type: { strict: F.buildAssignmentType },
+	typed: { strict: F.buildAssignmentTyped }
+};
+
 const patternList$comma =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'tail'>): ReturnType<PF> =>

@@ -1244,6 +1244,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Variant placeholder — variant('suffix'): auto-prefix with current
 // rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
+// When the renamed member was itself a SYMBOL (or a group-lift deposit
+// replaces an alias's content symbol), the old→new name pair is
+// registered via wireRegisterSymbolRename so conflict entries citing
+// the old rule follow the rename.
 ```
 
 #### body

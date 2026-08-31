@@ -102,6 +102,13 @@ name the arms. Two arm shapes, one rule:
 - a **kind arm** (a node reference in the choice slot) yields a form
   constructor named by the arm's variant name, or by the arm kind's name
   with the parent prefix stripped when no variant renamed it;
+- a **whole-rule alternative arm** (a variant child that is a complete
+  alternative of the parent's rule, in no slot at all —
+  `binary_expression = choice(seq(left, op, right), _binary_expression_in)`)
+  wires the arm's own factory pair under the same name, with no seating:
+  the form is its own node kind in the CST, so the child factory already
+  builds the complete node. Arms that sit in a real choice slot take the
+  seated path; the alias path fires only for the unclaimed ones.
 - a **literal arm** (a member of a kind-enum slot) yields a member
   constructor named by the token kind's camelCase name (`plus`, `ampAmp`)
   — the vocabulary the kind ids and consts already use. An authored

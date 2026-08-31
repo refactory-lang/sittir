@@ -105,7 +105,7 @@
     "binary_expression": {
       "definedBy": "override",
       "childKind": {
-        "binary_expression_arm": "arm"
+        "binary_expression_in": "in"
       }
     },
     "update_expression": {
@@ -1626,7 +1626,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "binary_expression_arm": {
+      "binary_expression_in": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3579,22 +3579,6 @@
         "nonEmpty": false
       }
     },
-    "_binary_expression_arm": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_ambient_declaration_global": {
       "body": {
         "unnamed": false,
@@ -3938,6 +3922,22 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_binary_expression_in": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4501,11 +4501,11 @@
       "text": "\n"
     },
     {
-      "kind": "_binary_expression_arm",
+      "kind": "_binary_expression_in",
       "modelType": "branch",
-      "typeName": "BinaryExpressionArm",
-      "factoryName": "_binaryExpressionArm",
-      "irKey": "binaryExpressionArm",
+      "typeName": "BinaryExpressionIn",
+      "factoryName": "_binaryExpressionIn",
+      "irKey": "binaryExpressionIn",
       "hidden": false,
       "hoisted": true,
       "fields": [
@@ -4565,7 +4565,7 @@
         }
       ],
       "children": [],
-      "name": "_binary_expression_arm",
+      "name": "_binary_expression_in",
       "factoryShape": "config",
       "factoryFields": [
         "left",
@@ -10006,9 +10006,9 @@
           }
         },
         {
-          "name": "binary_expression_arm",
-          "propertyName": "binaryExpressionArm",
-          "paramName": "binaryExpressionArm",
+          "name": "binary_expression_in",
+          "propertyName": "binaryExpressionIn",
+          "paramName": "binaryExpressionIn",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10016,15 +10016,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_binary_expression_arm",
-              "parseKind": "binary_expression_arm",
+              "name": "_binary_expression_in",
+              "parseKind": "binary_expression_in",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_binary_expression_arm"
+              "_binary_expression_in"
             ]
           }
         }
@@ -10035,7 +10035,7 @@
         "left",
         "operator",
         "right",
-        "binary_expression_arm"
+        "binary_expression_in"
       ]
     },
     {

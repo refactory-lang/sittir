@@ -2911,7 +2911,7 @@ export type BinaryExpressionBuilt = T.BinaryExpression & {
 		left(value?: T.Expression): BinaryExpressionBuilt;
 		operator(value?: NonNullable<Parameters<typeof buildBinaryExpression>[0]>['operator']): BinaryExpressionBuilt;
 		right(value?: T.Expression): BinaryExpressionBuilt;
-		binaryExpressionArm(value?: T.BinaryExpressionArm): BinaryExpressionBuilt;
+		binaryExpressionIn(value?: T.BinaryExpressionIn): BinaryExpressionBuilt;
 	};
 } & _NodeMethods;
 
@@ -2944,7 +2944,7 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		['instanceof', TSKindId.Instanceof] as const
 	]);
 	const _right = config.right;
-	const _binary_expression_arm = config.binaryExpressionArm;
+	const _binary_expression_in = config.binaryExpressionIn;
 	return withMethods(
 		withAccessors(
 			{
@@ -2954,21 +2954,21 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 				_left,
 				_operator,
 				_right,
-				_binary_expression_arm,
+				_binary_expression_in,
 				$with: {
 					left: (value?: T.Expression) => buildBinaryExpression({ ...config, left: value }),
 					operator: (value?: NonNullable<Parameters<typeof buildBinaryExpression>[0]>['operator']) =>
 						buildBinaryExpression({ ...config, operator: value }),
 					right: (value?: T.Expression) => buildBinaryExpression({ ...config, right: value }),
-					binaryExpressionArm: (value?: T.BinaryExpressionArm) =>
-						buildBinaryExpression({ ...config, binaryExpressionArm: value })
+					binaryExpressionIn: (value?: T.BinaryExpressionIn) =>
+						buildBinaryExpression({ ...config, binaryExpressionIn: value })
 				}
 			},
 			{
 				left: () => _left,
 				operator: () => _operator,
 				right: () => _right,
-				binaryExpressionArm: () => _binary_expression_arm
+				binaryExpressionIn: () => _binary_expression_in
 			}
 		),
 		methodsEngine
@@ -8712,44 +8712,6 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): CatchC
 	);
 }
 
-export type BinaryExpressionArmBuildArgs = [config: T.BinaryExpressionArm.Config];
-export type BinaryExpressionArmLooseArgs = [config: T.BinaryExpressionArm.Loose];
-
-export type BinaryExpressionArmBuilt = T.BinaryExpressionArm & {
-	readonly $source: 2;
-	readonly $named: true;
-	readonly $with: {
-		left(value: T.Expression | T.PrivatePropertyIdentifier): BinaryExpressionArmBuilt;
-		right(value: T.Expression): BinaryExpressionArmBuilt;
-	};
-} & _NodeMethods;
-
-export function buildBinaryExpressionArm(config: T.BinaryExpressionArm.Config): BinaryExpressionArmBuilt {
-	const _left = config.left;
-	const _right = config.right;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BinaryExpressionArm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_right,
-				$with: {
-					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
-						buildBinaryExpressionArm({ ...config, left: value }),
-					right: (value: T.Expression) => buildBinaryExpressionArm({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				right: () => _right
-			}
-		),
-		methodsEngine
-	);
-}
-
 export type KindBuildArgs = [text: 'let' | 'const'];
 export type KindLooseArgs = [text: 'let' | 'const'];
 
@@ -9891,6 +9853,44 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 	);
 }
 
+export type BinaryExpressionInBuildArgs = [config: T.BinaryExpressionIn.Config];
+export type BinaryExpressionInLooseArgs = [config: T.BinaryExpressionIn.Loose];
+
+export type BinaryExpressionInBuilt = T.BinaryExpressionIn & {
+	readonly $source: 2;
+	readonly $named: true;
+	readonly $with: {
+		left(value: T.Expression | T.PrivatePropertyIdentifier): BinaryExpressionInBuilt;
+		right(value: T.Expression): BinaryExpressionInBuilt;
+	};
+} & _NodeMethods;
+
+export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): BinaryExpressionInBuilt {
+	const _left = config.left;
+	const _right = config.right;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BinaryExpressionIn as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_right,
+				$with: {
+					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
+						buildBinaryExpressionIn({ ...config, left: value }),
+					right: (value: T.Expression) => buildBinaryExpressionIn({ ...config, right: value })
+				}
+			},
+			{
+				left: () => _left,
+				right: () => _right
+			}
+		),
+		methodsEngine
+	);
+}
+
 export type ParenthesizedExpressionTypedBuildArgs = [config: T.ParenthesizedExpressionTyped.Config];
 export type ParenthesizedExpressionTypedLooseArgs = [config: T.ParenthesizedExpressionTyped.Loose];
 
@@ -10645,7 +10645,6 @@ export type FluentKindMap = {
 	_import_statement_arm: ImportStatementArmBuilt;
 	_import_clause_group: ImportClauseGroupBuilt;
 	_catch_clause_group: CatchClauseGroupBuilt;
-	_binary_expression_arm: BinaryExpressionArmBuilt;
 	_kind: T.Kind;
 	__for_header_operator: T.ForHeaderOperator;
 	_ambient_declaration_global: AmbientDeclarationGlobalBuilt;
@@ -10671,6 +10670,7 @@ export type FluentKindMap = {
 	_for_header_lhs: ForHeaderLhsBuilt;
 	_for_header_var_kind: ForHeaderVarKindBuilt;
 	_for_header_let_const_kind: ForHeaderLetConstKindBuilt;
+	_binary_expression_in: BinaryExpressionInBuilt;
 	_parenthesized_expression_typed: ParenthesizedExpressionTypedBuilt;
 	_export_statement_type_export: ExportStatementTypeExportBuilt;
 	_export_statement_equals_export: ExportStatementEqualsExportBuilt;
@@ -10887,7 +10887,6 @@ export const _factoryMap = {
 	_import_statement_arm: buildImportStatementArm,
 	_import_clause_group: buildImportClauseGroup,
 	_catch_clause_group: buildCatchClauseGroup,
-	_binary_expression_arm: buildBinaryExpressionArm,
 	_kind: buildKind,
 	__for_header_operator: buildForHeaderOperator,
 	_ambient_declaration_global: buildAmbientDeclarationGlobal,
@@ -10913,6 +10912,7 @@ export const _factoryMap = {
 	_for_header_lhs: buildForHeaderLhs,
 	_for_header_var_kind: buildForHeaderVarKind,
 	_for_header_let_const_kind: buildForHeaderLetConstKind,
+	_binary_expression_in: buildBinaryExpressionIn,
 	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	_export_statement_type_export: buildExportStatementTypeExport,
 	_export_statement_equals_export: buildExportStatementEqualsExport,

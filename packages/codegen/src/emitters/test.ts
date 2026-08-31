@@ -349,8 +349,10 @@ function emitSubFactoryTests(
 ): void {
 	const { isEmitted } = polymorphWires;
 	const bundledKinds = new Set(polymorphWires.keyByKind.keys());
-	const entries = polymorphWires.byKind.get(kind)?.subs ?? [];
-	if (entries.length === 0) return;
+	const wireSet = polymorphWires.byKind.get(kind);
+	const entries = wireSet?.subs ?? [];
+	const aliases = wireSet?.aliases ?? [];
+	if (entries.length === 0 && aliases.length === 0) return;
 
 	const cases: string[] = [];
 	for (const sub of entries) {
@@ -380,6 +382,23 @@ function emitSubFactoryTests(
 			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		} else {
 			cases.push(`    expect(() => node.$render!()).not.toThrow();`);
+		}
+		cases.push('  });');
+	}
+	for (const alias of aliases) {
+		const child = alias.child;
+		const args = childBareCallArgs(child, nodeMap, kindEntries);
+		if (args === undefined) continue;
+		const knownFailure = expectTestFailures?.[`${kind}.${alias.name}`];
+		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
+		cases.push(`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(alias.name)} builds the ${escForSource(child.kind)} form', () => {`);
+		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${alias.name}` : `ir.${key}.${alias.name}`;
+		cases.push(`    const node = ${callTarget}(${args});`);
+		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
+		if (args === '' || args === '{}') {
+			cases.push(`    expect(() => node.$render!()).not.toThrow();`);
+		} else {
+			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		}
 		cases.push('  });');
 	}

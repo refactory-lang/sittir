@@ -1,11 +1,13 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
-import { type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, type AssembledNode } from '../../compiler/model/node-map.ts';
 import { classifyFactoryEmission, classifyFromEmission, resolveDirectFactorySlot, resolveFieldStorageInfo } from '../shared.ts';
 import { kindEnumConfigValue } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import { armConfigKeys, armIsConfigShaped, subFactoriesOf, type SubFactory } from './sub-factories.ts';
 import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
+import { camelCase } from '../refine-emit.ts';
+import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
 
 interface FlavorRefs {
 	readonly strict: string;
@@ -54,10 +56,37 @@ function childRefs(
 	return { strict, coerce: coerceEmitted(child) ? `C.${child.fromFunctionName}` : strict };
 }
 
+export interface AliasWire {
+	readonly name: string;
+	readonly child: AssembledNode;
+}
+
+function variantAliasWires(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	isEmitted: (kind: string) => boolean,
+	subs: readonly SubFactory[]
+): readonly AliasWire[] {
+	if (!(node instanceof AbstractAssembledCompound)) return [];
+	const claimedNames = new Set(subs.map((s) => s.name));
+	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'kind' ? [s.arm.child.kind] : [])));
+	const aliases: AliasWire[] = [];
+	for (const visible of node.variantChildKinds) {
+		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
+		if (child === undefined || child.rawFactoryName === undefined) continue;
+		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
+		const name = camelCase(prefixNamedSuffix(node.kind, visible) ?? visible);
+		if (claimedNames.has(name)) continue;
+		aliases.push({ name, child });
+	}
+	return aliases;
+}
+
 export interface PolymorphWireSet {
 	readonly parentKey: string;
 	readonly node: AssembledNode;
 	readonly subs: readonly SubFactory[];
+	readonly aliases: readonly AliasWire[];
 }
 
 export interface PolymorphWires {
@@ -94,11 +123,11 @@ export function collectPolymorphWires(
 	function visit(node: AssembledNode): void {
 		if (seen.has(node.kind) || visiting.has(node.kind)) return;
 		const parentKey = keyByKind.get(node.kind);
-		const set = parentKey === undefined ? undefined : subFactoriesOf(node, nodeMap, { isEmitted });
-		if (set === undefined || (set.entries.length === 0 && set.diagnostics.length === 0)) {
+		if (parentKey === undefined) {
 			seen.add(node.kind);
 			return;
 		}
+		const set = subFactoriesOf(node, nodeMap, { isEmitted });
 		visiting.add(node.kind);
 		for (const sub of set.entries) {
 			if (sub.arm.via === 'kind' && sub.arm.path.length > 0) visit(sub.arm.child);
@@ -117,9 +146,10 @@ export function collectPolymorphWires(
 			}
 			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
 		});
-		if (subs.length > 0) {
+		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
+		if (subs.length > 0 || aliases.length > 0) {
 			order.push(node.kind);
-			byKind.set(node.kind, { parentKey: parentKey!, node, subs });
+			byKind.set(node.kind, { parentKey, node, subs, aliases });
 		}
 		seen.add(node.kind);
 	}
@@ -281,6 +311,17 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			} else {
 				wireLines.push(`	${sub.name}: { strict: ${emission.strictApply}, coerce: ${emission.coerceApply} },`);
 				wireTypes.push(`	${sub.name}: { strict: ${emission.strictType}; coerce: ${emission.coerceType} };`);
+			}
+		}
+		for (const alias of wireSet.aliases) {
+			const strictRef = `F.${alias.child.rawFactoryName}`;
+			const coerceRef = wires.coerceEmitted(alias.child) ? `C.${alias.child.fromFunctionName}` : undefined;
+			if (coerceRef === undefined) {
+				wireLines.push(`	${alias.name}: { strict: ${strictRef} },`);
+				wireTypes.push(`	${alias.name}: { strict: typeof ${strictRef} };`);
+			} else {
+				wireLines.push(`	${alias.name}: { strict: ${strictRef}, coerce: ${coerceRef} },`);
+				wireTypes.push(`	${alias.name}: { strict: typeof ${strictRef}; coerce: typeof ${coerceRef} };`);
 			}
 		}
 		if (wireLines.length > 0) {

@@ -327,7 +327,7 @@ export interface AwaitExpressionTransport {
   _expression: SlotValue<Box<ExpressionTransport>>
 }
 
-export interface BinaryExpressionArmTransport {
+export interface BinaryExpressionInTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -335,7 +335,7 @@ export interface BinaryExpressionArmTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: SlotValue<Box<BinaryExpressionArmLeftTransportSlot>>
+  _left: SlotValue<Box<BinaryExpressionInLeftTransportSlot>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -350,7 +350,7 @@ export interface BinaryExpressionTransport {
   _left?: SlotValue<Box<ExpressionTransport>>
   _operator?: SlotValue<Box<AnyTransport>>
   _right?: SlotValue<Box<ExpressionTransport>>
-  _binary_expression_arm?: SlotValue<Box<BinaryExpressionArmTransport>>
+  _binary_expression_in?: SlotValue<Box<BinaryExpressionInTransport>>
 }
 
 export interface BreakStatementTransport {

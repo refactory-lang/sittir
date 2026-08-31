@@ -1397,6 +1397,34 @@ describe('impl_item', () => {
 	});
 });
 
+describe('impl_item sub-factories', () => {
+	it('positiveClause builds the _impl_item_positive_clause form', () => {
+		const node = ir.implItem.positiveClause({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ImplItemPositiveClause);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeClause builds the _impl_item_negative_clause form', () => {
+		const node = ir.implItem.negativeClause({
+			$type: TSKindId.Identifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.ImplItemNegativeClause);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('body builds the _impl_item_body form', () => {
+		const node = ir.implItem.body({ $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.ImplItemBody);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('trait_item', () => {
 	it('factory produces correct type', () => {
 		const node = ir.traitItem({
