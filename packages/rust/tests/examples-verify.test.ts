@@ -211,10 +211,7 @@ describe('namespaced constructors reach the arm kinds', () => {
 	// The arm is minted under `visibility_modifier` and reaches it through two
 	// intermediate hops, but the name a caller types is the one the grammar
 	// authored for the form — never the arm's full kind name.
-	// Unreachable while `_visibility_modifier_pub_parens` has no parser
-	// symbol: the pub(...) chain cannot be flattened onto visibility_modifier,
-	// so the `inPath`/`self` wires do not exist yet.
-	it.skip('reaches an in-path visibility modifier under its authored name', () => {
+	it('reaches an in-path visibility modifier under its authored name', () => {
 		const vm = ir.visibilityModifier as unknown as Record<string, (...args: unknown[]) => { $render(): string }>;
 		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
 		expect(vm.inPath!(path).$render()).toBe('pub(in crate::x)');
@@ -234,8 +231,8 @@ describe('ir entry ratchet', () => {
 	it('exposes no more top-level builders than the recorded ceiling', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
-		// (Total keys moved 247 → 250 when the hidden dispatch-union
-		// supertypes returned as grouped namespaces; builders did not grow.)
+		// (287 total keys today; 270 are callable builders — the ceiling is
+		// the exact current count, so any new top-level builder trips it.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(270);
 	});

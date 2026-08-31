@@ -252,6 +252,10 @@ function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' ? (v as T) : resolve();
 }
 
+function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
+	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
+}
+
 function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
 	if (typeof v === 'boolean') {
 		const e = _leafRegistry['boolean_literal'];
@@ -1428,7 +1432,7 @@ export function resolveTokenBindingPattern_type(
 	value: T.TokenBindingPattern.LooseConfig['type']
 ): T.TokenBindingPattern['_type'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.FragmentSpecifier>(value, 'fragment_specifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.FragmentSpecifier>(value, 'fragment_specifier')),
 		[
 			['block', TSKindId.AnonBlock] as const,
 			['expr', TSKindId.Expr] as const,
@@ -1478,7 +1482,7 @@ export function resolveTokenRepetitionPattern_operator(
 	value: T.TokenRepetitionPattern.LooseConfig['operator']
 ): T.TokenRepetitionPattern['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'+' | '*' | '?'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '*' | '?'>(value, _K2, _K2)),
 		[['+', TSKindId.Plus] as const, ['*', TSKindId.Star] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -1567,7 +1571,7 @@ export function resolveTokenRepetition_operator(
 	value: T.TokenRepetition.LooseConfig['operator']
 ): T.TokenRepetition['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'+' | '*' | '?'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '*' | '?'>(value, _K2, _K2)),
 		[['+', TSKindId.Plus] as const, ['*', TSKindId.Star] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -3323,7 +3327,7 @@ export function coerceToReferenceType(input: T.ReferenceType.Loose): ReturnType<
 
 export function resolvePointerType_content(value: T.PointerType.LooseConfig['content']): T.PointerType['_content'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'const' | T.MutableSpecifier>(value, _K38, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'const' | T.MutableSpecifier>(value, _K38, _K2)),
 		[['const', TSKindId.PointerTypeConst] as const, ['mut', TSKindId.MutableSpecifier] as const]
 	);
 }
@@ -3587,7 +3591,7 @@ export function resolveUnaryExpression_operator(
 	value: T.UnaryExpression.LooseConfig['operator']
 ): T.UnaryExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'-' | '*' | '!'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'-' | '*' | '!'>(value, _K2, _K2)),
 		[['-', TSKindId.Dash] as const, ['*', TSKindId.Star] as const, ['!', TSKindId.Bang] as const]
 	);
 }
@@ -3662,7 +3666,7 @@ export function resolveBinaryExpression_operator(
 	value: T.BinaryExpression.LooseConfig['operator']
 ): T.BinaryExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumScalar(value, () =>
 			_resolveOne<
 				| '&&'
 				| '||'
@@ -3756,7 +3760,7 @@ export function resolveCompoundAssignmentExpr_operator(
 	value: T.CompoundAssignmentExpr.LooseConfig['operator']
 ): T.CompoundAssignmentExpr['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumScalar(value, () =>
 			_resolveOneLeaf<T.CompoundAssignmentExprOperator>(value, '_compound_assignment_expr_operator')
 		),
 		[

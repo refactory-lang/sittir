@@ -25,7 +25,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
-import { coerceToObjectTypeContent } from '../../../typescript/src/from.ts';
+import { coerceToObjectTypeContent } from '../../../typescript/src/factories/coerce.ts';
 
 describe('separatedList wrap capture — real typescript grammar integration', () => {
 	it('captures a present trailing comma with no leading comma', async () => {

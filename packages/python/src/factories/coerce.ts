@@ -208,6 +208,10 @@ function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' ? (v as T) : resolve();
 }
 
+function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
+	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
+}
+
 function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
 	if (typeof v === 'number') {
 		if (Number.isInteger(v)) {
@@ -2495,7 +2499,7 @@ export function resolveSplatPattern_operator(
 	value: T.SplatPattern.LooseConfig['operator']
 ): T.SplatPattern['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
 		[['*', TSKindId.Star] as const, ['**', TSKindId.StarStar] as const]
 	);
 }
@@ -2550,7 +2554,7 @@ export function resolveComplexPattern_operator(
 	value: T.ComplexPattern.LooseConfig['operator']
 ): T.ComplexPattern['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'+' | '-'>(value, _K0, _K0)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '-'>(value, _K0, _K0)),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const]
 	);
 }
@@ -2791,7 +2795,7 @@ export function resolveBooleanOperator_operator(
 	value: T.BooleanOperator.LooseConfig['operator']
 ): T.BooleanOperator['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'and' | 'or'>(value, _K0, _K0)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'and' | 'or'>(value, _K0, _K0)),
 		[['and', TSKindId.And] as const, ['or', TSKindId.Or] as const]
 	);
 }
@@ -2820,7 +2824,7 @@ export function resolveBinaryOperator_operator(
 	value: T.BinaryOperator.LooseConfig['operator']
 ): T.BinaryOperator['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumScalar(value, () =>
 			_resolveOne<'+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>'>(value, _K0, _K0)
 		),
 		[
@@ -2859,7 +2863,7 @@ export function resolveUnaryOperator_operator(
 	value: T.UnaryOperator.LooseConfig['operator']
 ): T.UnaryOperator['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.UnaryOperatorOperator>(value, '_unary_operator_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.UnaryOperatorOperator>(value, '_unary_operator_operator')),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const, ['~', TSKindId.Tilde] as const]
 	);
 }
@@ -2973,7 +2977,7 @@ export function resolveAugmentedAssignment_operator(
 	value: T.AugmentedAssignment.LooseConfig['operator']
 ): T.AugmentedAssignment['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumScalar(value, () =>
 			_resolveOneLeaf<T.AugmentedAssignmentOperator>(value, '_augmented_assignment_operator')
 		),
 		[
@@ -3180,7 +3184,7 @@ export function coerceToType(
 
 export function resolveSplatType_operator(value: T.SplatType.LooseConfig['operator']): T.SplatType['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
 		[['*', TSKindId.Star] as const, ['**', TSKindId.StarStar] as const]
 	);
 }

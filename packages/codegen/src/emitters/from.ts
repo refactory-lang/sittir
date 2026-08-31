@@ -873,7 +873,7 @@ function resolveFieldCall(
 			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
 	if (storageInfo?.kind === 'kindEnum') {
 		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
-		return `coerceKindEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
+		return `coerceKindEnumStorage(_resolveKindEnumScalar(${prop}, () => ${baseCall}), ${table})`;
 	}
 	if (storageInfo?.kind === 'mixedEnum') {
 		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
@@ -1116,6 +1116,10 @@ function emitResolverHelpers(
 	lines.push(' *  stored discriminant; every other shape resolves as a leaf. */');
 	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {');
 	lines.push('  return typeof v === "number" ? (v as T) : resolve();');
+	lines.push('}');
+	lines.push('');
+	lines.push('function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {');
+	lines.push('  return typeof v === "number" || typeof v === "string" ? (v as T) : resolve();');
 	lines.push('}');
 	lines.push('');
 

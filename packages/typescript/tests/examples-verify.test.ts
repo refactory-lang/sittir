@@ -19,10 +19,7 @@ describe('examples/18 dogfood typescript (format.ts)', () => {
 	it('builds and renders the fragments that cross the boundary', () => {
 		expect(rebuildFormat().$render()).toContain('function applyFormat');
 	});
-	// Coerce-side defect: the loose path maps a `.` separator onto the
-	// optional-chain member, so the render shows `?.`; the strict spelling
-	// stores and renders `.` correctly.
-	it.fails('composes a member expression once its separator is supplied', () => {
+	it('composes a member expression once its separator is supplied', () => {
 		expect(formatBoundary().$render()).toBe('format.boundary');
 	});
 	it('renders a return statement with its expression', () => {

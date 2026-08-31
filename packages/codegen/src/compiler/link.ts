@@ -33,6 +33,7 @@ import type {
 	RepeatRule,
 	RuleId
 } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import {
 	isSeq,
 	isChoice,
@@ -2162,8 +2163,21 @@ function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 		}
 		case ALIAS:
 			return target.named === true ? target.value : undefined;
-		default:
+		case SEQ:
+		case FIELD:
+		case VARIANT:
+		case SUPERTYPE:
+		case GROUP:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+		case SYMBOL:
+		case TOKEN:
 			return undefined;
+		default:
+			return assertNever(target);
 	}
 }
 

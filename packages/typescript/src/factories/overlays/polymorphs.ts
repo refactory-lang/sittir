@@ -6,18 +6,21 @@ import type { ArgsOf, OmitEach } from '../../utils.js';
 import { TSKindId } from '../../types.js';
 export * from './refines.js';
 
+// Erased applications, centralized: TS cannot infer a Cfg type parameter
+// constrained by another inference variable in a contravariant position,
+// so the pair below carries the one sanctioned dsl-bridging double cast;
+// every wire method routes through these two sites.
+const _p = <R>(f: unknown) => f as (arg: unknown) => R;
+const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+
 const exportStatementDefault$fromArm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatementDefault$declArm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const exportStatementDefault: typeof B.exportStatementDefault & {
 	fromArm: {
 		strict: (
@@ -50,39 +53,27 @@ export const exportStatementDefault: typeof B.exportStatementDefault & {
 const exportStatement$default =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatement$defaultFromArm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatement$defaultDeclArm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatement$typeExport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatement$equalsExport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatement$namespaceExport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const exportStatement: typeof B.exportStatement & {
 	default: {
 		strict: (...args: ArgsOf<typeof F.buildExportStatementDefault>) => ReturnType<typeof F.buildExportStatement>;
@@ -153,15 +144,11 @@ export const exportStatement: typeof B.exportStatement & {
 const string$double =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const string$single =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const string: typeof B.string & {
 	double: {
 		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildString>;
@@ -186,27 +173,19 @@ export const string: typeof B.string & {
 const namespaceExport$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const namespaceExport$string =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const namespaceExport$stringDouble =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const namespaceExport$stringSingle =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const namespaceExport: typeof B.namespaceExport & {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNamespaceExport>;
@@ -255,15 +234,12 @@ const importClauseDefaultImport$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'identifier'> & { identifier: ArgsOf<CF> }): ReturnType<PF> => {
 		const { identifier: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			identifier: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, identifier: _c(child)(...(seated as readonly unknown[])) });
 	};
 const importClauseDefaultImport$type =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'identifier'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, identifier: value });
+		_p<ReturnType<PF>>(parent)({ ...config, identifier: value });
 export const importClauseDefaultImport: typeof B.importClauseDefaultImport & {
 	identifier: {
 		strict: (
@@ -300,33 +276,23 @@ export const importClauseDefaultImport: typeof B.importClauseDefaultImport & {
 const importClause$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const importClause$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const importClause$defaultImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const importClause$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const importClause$type =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const importClause: typeof B.importClause & {
 	namespaceImport: {
 		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
@@ -388,11 +354,11 @@ export const importSpecifier: typeof B.importSpecifier & {
 const importAttribute$with =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'attributeKind'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, attributeKind: value });
+		_p<ReturnType<PF>>(parent)({ ...config, attributeKind: value });
 const importAttribute$assert =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'attributeKind'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, attributeKind: value });
+		_p<ReturnType<PF>>(parent)({ ...config, attributeKind: value });
 export const importAttribute: typeof B.importAttribute & {
 	with: {
 		strict: (
@@ -425,7 +391,7 @@ export const importAttribute: typeof B.importAttribute & {
 const variableDeclaration$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, semicolon: value });
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const variableDeclaration: typeof B.variableDeclaration & {
 	semi: {
 		strict: (
@@ -446,7 +412,7 @@ export const variableDeclaration: typeof B.variableDeclaration & {
 const lexicalDeclaration$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, semicolon: value });
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const lexicalDeclaration: typeof B.lexicalDeclaration & {
 	semi: {
 		strict: (
@@ -467,15 +433,11 @@ export const lexicalDeclaration: typeof B.lexicalDeclaration & {
 const variableDeclarator$arm1 =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const variableDeclarator$arm2 =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const variableDeclarator: typeof B.variableDeclarator & {
 	arm1: {
 		strict: (...args: ArgsOf<typeof F.buildVariableDeclaratorArm1>) => ReturnType<typeof F.buildVariableDeclarator>;
@@ -500,7 +462,7 @@ export const variableDeclarator: typeof B.variableDeclarator & {
 const doStatement$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, semicolon: value });
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const doStatement: typeof B.doStatement & {
 	semi: {
 		strict: (
@@ -521,7 +483,7 @@ export const doStatement: typeof B.doStatement & {
 const breakStatement$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, semicolon: value });
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const breakStatement: typeof B.breakStatement & {
 	semi: {
 		strict: (
@@ -542,7 +504,7 @@ export const breakStatement: typeof B.breakStatement & {
 const continueStatement$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, semicolon: value });
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const continueStatement: typeof B.continueStatement & {
 	semi: {
 		strict: (
@@ -563,7 +525,7 @@ export const continueStatement: typeof B.continueStatement & {
 const debuggerStatement$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(value);
+		_p<ReturnType<PF>>(parent)(value);
 export const debuggerStatement: typeof B.debuggerStatement & {
 	semi: {
 		strict: () => ReturnType<typeof F.buildDebuggerStatement>;
@@ -581,10 +543,7 @@ const switchCase$sequenceExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			value: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const switchCase: typeof B.switchCase & {
 	sequenceExpression: {
@@ -610,33 +569,23 @@ export const switchCase: typeof B.switchCase & {
 const parenthesizedExpression$typed =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const parenthesizedExpression$sequenceExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const parenthesizedExpression$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const parenthesizedExpression$decoratorMemberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const parenthesizedExpression$decoratorCallExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 	typed: {
 		strict: (
@@ -712,19 +661,13 @@ const objectAssignmentPattern$objectPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const objectAssignmentPattern$arrayPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const objectAssignmentPattern: typeof B.objectAssignmentPattern & {
 	objectPattern: {
@@ -767,10 +710,7 @@ const nestedIdentifier$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'object'> & { object: ArgsOf<CF> }): ReturnType<PF> => {
 		const { object: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			object: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, object: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const nestedIdentifier: typeof B.nestedIdentifier & {
 	identifier: {
@@ -796,15 +736,11 @@ export const nestedIdentifier: typeof B.nestedIdentifier & {
 const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const classHeritage$implementsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const classHeritage: typeof B.classHeritage & {
 	extendsClause: {
 		strict: (...args: ArgsOf<typeof F.buildClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
@@ -830,28 +766,19 @@ const typePredicate$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const typePredicate$this =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const typePredicate$predefinedType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const typePredicate: typeof B.typePredicate & {
 	identifier: {
@@ -901,27 +828,19 @@ export const typePredicate: typeof B.typePredicate & {
 const asserts$typePredicate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const asserts$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const asserts$this =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const asserts$predefinedType =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const asserts: typeof B.asserts & {
 	typePredicate: {
 		strict: (...args: ArgsOf<typeof F.buildTypePredicate>) => ReturnType<typeof F.buildAsserts>;
@@ -959,27 +878,19 @@ export const asserts: typeof B.asserts & {
 const assertsAnnotation$typePredicate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const assertsAnnotation$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const assertsAnnotation$this =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const assertsAnnotation$predefinedType =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const assertsAnnotation: typeof B.assertsAnnotation & {
 	typePredicate: {
 		strict: (...args: ArgsOf<typeof asserts.typePredicate.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
@@ -1021,37 +932,25 @@ const functionExpression$typeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionExpression$assertsAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionExpression$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionExpression$typePredicateAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const functionExpression: typeof B.functionExpression & {
 	typeAnnotation: {
@@ -1126,37 +1025,25 @@ const functionDeclaration$typeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionDeclaration$assertsAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionDeclaration$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionDeclaration$typePredicateAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const functionDeclaration: typeof B.functionDeclaration & {
 	typeAnnotation: {
@@ -1234,37 +1121,25 @@ const generatorFunction$typeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const generatorFunction$assertsAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const generatorFunction$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const generatorFunction$typePredicateAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const generatorFunction: typeof B.generatorFunction & {
 	typeAnnotation: {
@@ -1339,37 +1214,25 @@ const generatorFunctionDeclaration$typeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const generatorFunctionDeclaration$assertsAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const generatorFunctionDeclaration$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const generatorFunctionDeclaration$typePredicateAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration & {
 	typeAnnotation: {
@@ -1473,21 +1336,15 @@ export const arrowFunction: typeof B.arrowFunction & {
 const callExpression$call =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const callExpression$templateCall =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const callExpression$member =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const callExpression: typeof B.callExpression & {
 	call: {
 		strict: (...args: ArgsOf<typeof F.buildCallExpressionCall>) => ReturnType<typeof F.buildCallExpression>;
@@ -1521,55 +1378,37 @@ const assignmentExpression$parenthesizedExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const assignmentExpression$parenthesizedExpressionTyped =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const assignmentExpression$sequenceExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const assignmentExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const assignmentExpression$decoratorMemberExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const assignmentExpression$decoratorCallExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const assignmentExpression: typeof B.assignmentExpression & {
 	parenthesizedExpression: {
@@ -1708,10 +1547,7 @@ const augmentedAssignmentExpression$memberExpression =
 			if (key === 'object' || key === 'separator' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 const augmentedAssignmentExpression$subscriptExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1722,82 +1558,55 @@ const augmentedAssignmentExpression$subscriptExpression =
 			if (key === 'object' || key === 'optionalChain' || key === 'index') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 const augmentedAssignmentExpression$reservedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$parenthesizedExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$parenthesizedExpressionTyped =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$sequenceExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$decoratorMemberExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$decoratorCallExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const augmentedAssignmentExpression$nonNullExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			left: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpression & {
 	memberExpression: {
@@ -2017,99 +1826,99 @@ export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpressi
 const binaryExpression$ampAmp =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$pipePipe =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$gtGt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$gtGtGt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$ltLt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$amp =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$caret =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$pipe =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$plus =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$dash =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$slash =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$percent =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$starStar =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$lt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$ltEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$eqEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$eqEqEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$bangEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$bangEqEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$gtEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$gt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$qmarkQmark =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$instanceof =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, operator: value });
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 export const binaryExpression: typeof B.binaryExpression & {
 	ampAmp: {
 		strict: (
@@ -2408,15 +2217,11 @@ export const binaryExpression: typeof B.binaryExpression & {
 const updateExpression$postfix =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const updateExpression$prefix =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const updateExpression: typeof B.updateExpression & {
 	postfix: {
 		strict: (...args: ArgsOf<typeof F.buildUpdateExpressionPostfix>) => ReturnType<typeof F.buildUpdateExpression>;
@@ -2441,9 +2246,7 @@ export const updateExpression: typeof B.updateExpression & {
 const templateSubstitution$sequenceExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const templateSubstitution: typeof B.templateSubstitution & {
 	sequenceExpression: {
 		strict: (...args: ArgsOf<typeof F.buildSequenceExpression>) => ReturnType<typeof F.buildTemplateSubstitution>;
@@ -2460,27 +2263,19 @@ export const templateSubstitution: typeof B.templateSubstitution & {
 const decorator$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const decorator$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const decorator$callExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const decorator$parenthesizedExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const decorator: typeof B.decorator & {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildDecorator>;
@@ -2524,10 +2319,7 @@ const decoratorMemberExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'object'> & { object: ArgsOf<CF> }): ReturnType<PF> => {
 		const { object: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			object: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, object: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const decoratorMemberExpression: typeof B.decoratorMemberExpression & {
 	identifier: {
@@ -2554,10 +2346,7 @@ const decoratorCallExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			function: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
 	};
 const decoratorCallExpression$decoratorMemberExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2568,10 +2357,7 @@ const decoratorCallExpression$decoratorMemberExpression =
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			function: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 export const decoratorCallExpression: typeof B.decoratorCallExpression & {
 	identifier: {
@@ -2628,51 +2414,35 @@ export const classBody: typeof B.classBody & {
 const restPattern$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$undefined =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$reservedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$objectPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$arrayPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$nonNullExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const restPattern: typeof B.restPattern & {
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
@@ -2746,55 +2516,37 @@ const pair$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			key: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
 const pair$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			key: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
 const pair$stringDouble =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			key: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
 const pair$stringSingle =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			key: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
 const pair$number =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			key: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
 const pair$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			key: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const pair: typeof B.pair & {
 	privatePropertyIdentifier: {
@@ -2872,21 +2624,15 @@ export const pair: typeof B.pair & {
 const decoratorParenthesizedExpression$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const decoratorParenthesizedExpression$decoratorMemberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const decoratorParenthesizedExpression$decoratorCallExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedExpression & {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
@@ -2944,7 +2690,7 @@ export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedEx
 const asExpression$const =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'typeAnnotation'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, typeAnnotation: value });
+		_p<ReturnType<PF>>(parent)({ ...config, typeAnnotation: value });
 export const asExpression: typeof B.asExpression & {
 	const: {
 		strict: (
@@ -2965,15 +2711,11 @@ export const asExpression: typeof B.asExpression & {
 const ambientDeclaration$global =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const ambientDeclaration$module =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const ambientDeclaration: typeof B.ambientDeclaration & {
 	global: {
 		strict: (...args: ArgsOf<typeof F.buildAmbientDeclarationGlobal>) => ReturnType<typeof F.buildAmbientDeclaration>;
@@ -3003,37 +2745,25 @@ const module$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const module$stringDouble =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const module$stringSingle =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const module$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const module$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3044,10 +2774,7 @@ const module$nestedIdentifier =
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 export const module: typeof B.module & {
 	string: {
@@ -3118,37 +2845,25 @@ const internalModule$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const internalModule$stringDouble =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const internalModule$stringSingle =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const internalModule$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const internalModule$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3159,10 +2874,7 @@ const internalModule$nestedIdentifier =
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 export const internalModule: typeof B.internalModule & {
 	string: {
@@ -3240,10 +2952,7 @@ const nestedTypeIdentifier$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'module'> & { module: ArgsOf<CF> }): ReturnType<PF> => {
 		const { module: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			module: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, module: _c(child)(...(seated as readonly unknown[])) });
 	};
 const nestedTypeIdentifier$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3254,10 +2963,7 @@ const nestedTypeIdentifier$nestedIdentifier =
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			module: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, module: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 export const nestedTypeIdentifier: typeof B.nestedTypeIdentifier & {
 	identifier: {
@@ -3298,55 +3004,37 @@ const enumAssignment$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const enumAssignment$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const enumAssignment$stringDouble =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const enumAssignment$stringSingle =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const enumAssignment$number =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const enumAssignment$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const enumAssignment: typeof B.enumAssignment & {
 	privatePropertyIdentifier: {
@@ -3440,7 +3128,7 @@ export const enumAssignment: typeof B.enumAssignment & {
 const typeAliasDeclaration$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, semicolon: value });
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const typeAliasDeclaration: typeof B.typeAliasDeclaration & {
 	semi: {
 		strict: (
@@ -3462,10 +3150,7 @@ const requiredParameter$this =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }): ReturnType<PF> => {
 		const { pattern: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			pattern: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const requiredParameter: typeof B.requiredParameter & {
 	this: {
@@ -3490,10 +3175,7 @@ const optionalParameter$this =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }): ReturnType<PF> => {
 		const { pattern: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			pattern: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const optionalParameter: typeof B.optionalParameter & {
 	this: {
@@ -3518,82 +3200,55 @@ const tupleParameter$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$restPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$memberExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$subscriptExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$undefined =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$reservedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$objectPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$arrayPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const tupleParameter$nonNullExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const tupleParameter: typeof B.tupleParameter & {
 	identifier: {
@@ -3743,9 +3398,7 @@ export const tupleParameter: typeof B.tupleParameter & {
 const templateType$inferType =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const templateType: typeof B.templateType & {
 	inferType: {
 		strict: (...args: ArgsOf<typeof F.buildInferType>) => ReturnType<typeof F.buildTemplateType>;
@@ -3763,10 +3416,7 @@ const genericType$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const genericType$nestedTypeIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3777,19 +3427,13 @@ const genericType$nestedTypeIdentifier =
 			if (key === 'module' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 const genericType$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const genericType: typeof B.genericType & {
 	identifier: {
@@ -3840,21 +3484,15 @@ export const genericType: typeof B.genericType & {
 const typePredicateAnnotation$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typePredicateAnnotation$this =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typePredicateAnnotation$predefinedType =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const typePredicateAnnotation: typeof B.typePredicateAnnotation & {
 	identifier: {
 		strict: (
@@ -3898,39 +3536,27 @@ export const typePredicateAnnotation: typeof B.typePredicateAnnotation & {
 const typeQuery$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typeQuery$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typeQuery$callExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typeQuery$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typeQuery$instantiationExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typeQuery$this =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const typeQuery: typeof B.typeQuery & {
 	subscriptExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
@@ -3987,45 +3613,31 @@ export const typeQuery: typeof B.typeQuery & {
 const literalType$string =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$stringDouble =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$stringSingle =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$true =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$false =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$null =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$undefined =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const literalType: typeof B.literalType & {
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
@@ -4091,37 +3703,25 @@ const callSignature$typeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const callSignature$assertsAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const callSignature$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const callSignature$typePredicateAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const callSignature: typeof B.callSignature & {
 	typeAnnotation: {
@@ -4196,55 +3796,37 @@ const propertySignature$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const propertySignature$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const propertySignature$stringDouble =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const propertySignature$stringSingle =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const propertySignature$number =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 const propertySignature$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const propertySignature: typeof B.propertySignature & {
 	privatePropertyIdentifier: {
@@ -4349,11 +3931,11 @@ export const propertySignature: typeof B.propertySignature & {
 const constraint$extends =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, content: value });
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
 const constraint$colon =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)({ ...config, content: value });
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
 export const constraint: typeof B.constraint & {
 	extends: {
 		strict: (config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>) => ReturnType<typeof F.buildConstraint>;
@@ -4390,10 +3972,7 @@ const functionType$asserts =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(...(seated as readonly unknown[])) });
 	};
 const functionType$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4404,10 +3983,7 @@ const functionType$typePredicate =
 			if (key === 'name' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: (child as unknown as (arg: unknown) => unknown)(inner) });
 	};
 export const functionType: typeof B.functionType & {
 	asserts: {
@@ -4446,15 +4022,11 @@ export const functionType: typeof B.functionType & {
 const importClauseGroup$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const importClauseGroup$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const importClauseGroup: typeof B.importClauseGroup & {
 	namespaceImport: {
 		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
@@ -4479,15 +4051,11 @@ export const importClauseGroup: typeof B.importClauseGroup & {
 const arrowFunctionParameter$reservedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const arrowFunctionParameter$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const arrowFunctionParameter: typeof B.arrowFunctionParameter & {
 	reservedIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildReservedIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
@@ -4514,39 +4082,27 @@ export const arrowFunctionParameter: typeof B.arrowFunctionParameter & {
 const forHeaderLhs$parenthesizedExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const forHeaderLhs$parenthesizedExpressionTyped =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const forHeaderLhs$sequenceExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const forHeaderLhs$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const forHeaderLhs$decoratorMemberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const forHeaderLhs$decoratorCallExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const forHeaderLhs: typeof B.forHeaderLhs & {
 	parenthesizedExpression: {
 		strict: (...args: ArgsOf<typeof F.buildParenthesizedExpression>) => ReturnType<typeof F.buildForHeaderLhs>;

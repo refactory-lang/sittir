@@ -161,8 +161,17 @@ function methodName(parentKey: string, subName: string): string {
 const PF = 'PF extends (config: never) => unknown';
 const PFV = 'PF extends (value: never) => unknown';
 const CF = 'CF extends (...args: never[]) => unknown';
-const CALL_P = '(parent as unknown as (arg: unknown) => ReturnType<PF>)';
-const CALL_C = '(child as unknown as (...args: readonly unknown[]) => unknown)';
+const CALL_P = '_p<ReturnType<PF>>(parent)';
+const CALL_C = '_c(child)';
+const ERASED_HELPERS = [
+	'// Erased applications, centralized: TS cannot infer a Cfg type parameter',
+	'// constrained by another inference variable in a contravariant position,',
+	'// so the pair below carries the one sanctioned dsl-bridging double cast;',
+	'// every wire method routes through these two sites.',
+	'const _p = <R,>(f: unknown) => f as (arg: unknown) => R;',
+	'const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;',
+	''
+];
 
 interface WireShape {
 	readonly method: readonly string[];
@@ -297,6 +306,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 
 	const blocks: string[] = [];
 	let usesKindId = false;
+	let emittedHelpers = false;
 
 	for (const kind of wires.order) {
 		const wireSet = wires.byKind.get(kind)!;
@@ -328,6 +338,10 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			}
 		}
 		if (wireLines.length > 0) {
+			if (!emittedHelpers && methods.length > 0) {
+				blocks.push(...ERASED_HELPERS);
+				emittedHelpers = true;
+			}
 			blocks.push(...methods);
 			blocks.push(`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`);
 			blocks.push(...wireTypes);

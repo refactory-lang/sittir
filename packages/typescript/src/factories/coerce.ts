@@ -261,6 +261,10 @@ function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' ? (v as T) : resolve();
 }
 
+function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
+	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
+}
+
 function _resolveScalar(_v: boolean | number): AnyNodeData | undefined {
 	return undefined;
 }
@@ -1270,7 +1274,7 @@ export function resolveExportSpecifier_exportKind(
 	value: T.ExportSpecifier.LooseConfig['exportKind']
 ): T.ExportSpecifier['_export_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 	);
 }
@@ -1304,7 +1308,7 @@ export function resolveImportStatement_importClause(
 	value: T.ImportStatement.LooseConfig['importClause']
 ): T.ImportStatement['_import_clause'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 	);
 }
@@ -1325,7 +1329,7 @@ export function resolveImportStatement_semicolon(
 	value: T.ImportStatement.LooseConfig['semicolon']
 ): T.ImportStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1413,7 +1417,7 @@ export function resolveImportSpecifier_importKind(
 	value: T.ImportSpecifier.LooseConfig['importKind']
 ): T.ImportSpecifier['_import_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 	);
 }
@@ -1437,7 +1441,7 @@ export function resolveImportAttribute_attributeKind(
 	value: T.ImportAttribute.LooseConfig['attributeKind']
 ): T.ImportAttribute['_attribute_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'with' | 'assert'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'with' | 'assert'>(value, _K2, _K2)),
 		[['with', TSKindId.With] as const, ['assert', TSKindId.Assert] as const]
 	);
 }
@@ -1471,7 +1475,7 @@ export function resolveExpressionStatement_semicolon(
 	value: T.ExpressionStatement.LooseConfig['semicolon']
 ): T.ExpressionStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1503,7 +1507,7 @@ export function resolveVariableDeclaration_semicolon(
 	value: T.VariableDeclaration.LooseConfig['semicolon']
 ): T.VariableDeclaration['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1527,7 +1531,7 @@ export function resolveLexicalDeclaration_kind(
 	value: T.LexicalDeclaration.LooseConfig['kind']
 ): T.LexicalDeclaration['_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.Kind>(value, '_kind')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.Kind>(value, '_kind')),
 		[['let', TSKindId.Let] as const, ['const', TSKindId.Const] as const]
 	);
 }
@@ -1544,7 +1548,7 @@ export function resolveLexicalDeclaration_semicolon(
 	value: T.LexicalDeclaration.LooseConfig['semicolon']
 ): T.LexicalDeclaration['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1730,7 +1734,7 @@ export function resolveForInStatement_operator(
 	value: T.ForInStatement.LooseConfig['operator']
 ): T.ForInStatement['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.ForHeaderOperator>(value, '__for_header_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.ForHeaderOperator>(value, '__for_header_operator')),
 		[['in', TSKindId.In] as const, ['of', TSKindId.Of] as const]
 	);
 }
@@ -1788,7 +1792,7 @@ export function resolveDoStatement_semicolon(
 	value: T.DoStatement.LooseConfig['semicolon']
 ): T.DoStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1852,7 +1856,7 @@ export function resolveBreakStatement_semicolon(
 	value: T.BreakStatement.LooseConfig['semicolon']
 ): T.BreakStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1876,7 +1880,7 @@ export function resolveContinueStatement_semicolon(
 	value: T.ContinueStatement.LooseConfig['semicolon']
 ): T.ContinueStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1896,7 +1900,7 @@ export function resolveDebuggerStatement_semicolon(
 	value: T.DebuggerStatement.LooseConfig['semicolon']
 ): T.DebuggerStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1911,7 +1915,7 @@ export function coerceToDebuggerStatement(
 			'debugger_statement',
 			'semicolon',
 			coerceKindEnumStorage(
-				_resolveKindEnum(
+				_resolveKindEnumScalar(
 					input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
 						? input.semicolon
 						: input,
@@ -1940,7 +1944,7 @@ export function resolveReturnStatement_semicolon(
 	value: T.ReturnStatement.LooseConfig['semicolon']
 ): T.ReturnStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -1964,7 +1968,7 @@ export function resolveThrowStatement_semicolon(
 	value: T.ThrowStatement.LooseConfig['semicolon']
 ): T.ThrowStatement['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -2837,7 +2841,7 @@ export function resolveMemberExpression_separator(
 	value: T.MemberExpression.LooseConfig['separator']
 ): T.MemberExpression['_separator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<'.' | T.OptionalChain>(value, 'optional_chain')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'.' | T.OptionalChain>(value, 'optional_chain')),
 		[['.', TSKindId.Dot] as const, ['?.', TSKindId.OptionalChain] as const]
 	);
 }
@@ -2963,7 +2967,7 @@ export function resolveAugmentedAssignmentExpression_operator(
 	value: T.AugmentedAssignmentExpression.LooseConfig['operator']
 ): T.AugmentedAssignmentExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumScalar(value, () =>
 			_resolveOneLeaf<T.AugmentedAssignmentExpressionOperator>(value, '_augmented_assignment_expression_operator')
 		),
 		[
@@ -3090,7 +3094,7 @@ export function resolveBinaryExpression_operator(
 	value: T.BinaryExpression.LooseConfig['operator']
 ): T.BinaryExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumScalar(value, () =>
 			_resolveOne<
 				| '&&'
 				| '||'
@@ -3174,7 +3178,9 @@ export function resolveUnaryExpression_operator(
 	value: T.UnaryExpression.LooseConfig['operator']
 ): T.UnaryExpression['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.UnaryExpressionOperator>(value, '_unary_expression_operator')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<T.UnaryExpressionOperator>(value, '_unary_expression_operator')
+		),
 		[
 			['!', TSKindId.Bang] as const,
 			['~', TSKindId.Tilde] as const,
@@ -3405,7 +3411,7 @@ export function coerceToPrivatePropertyIdentifier(
 
 export function resolveMetaProperty_content(value: T.MetaProperty.LooseConfig['content']): T.MetaProperty['_content'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'new . target' | 'import . meta'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'new . target' | 'import . meta'>(value, _K2, _K2)),
 		[['new . target', TSKindId.MetaPropertyArm1] as const, ['import . meta', TSKindId.MetaPropertyArm2] as const]
 	);
 }
@@ -3420,7 +3426,7 @@ export function coerceToMetaProperty(
 			'meta_property',
 			'content',
 			coerceKindEnumStorage(
-				_resolveKindEnum(
+				_resolveKindEnumScalar(
 					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 						? input.content
 						: input,
@@ -3721,7 +3727,7 @@ export function resolveMethodDefinition_accessibilityModifier(
 	value: T.MethodDefinition.LooseConfig['accessibilityModifier']
 ): T.MethodDefinition['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -3758,7 +3764,7 @@ export function resolveMethodDefinition_accessorKind(
 	value: T.MethodDefinition.LooseConfig['accessorKind']
 ): T.MethodDefinition['_accessor_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
 		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
 	);
 }
@@ -3906,7 +3912,7 @@ export function resolvePublicFieldDefinition_accessibilityModifier(
 	value: T.PublicFieldDefinition.LooseConfig['accessibilityModifier']
 ): T.PublicFieldDefinition['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -3957,7 +3963,7 @@ export function resolvePublicFieldDefinition_optionalityMarker(
 	value: T.PublicFieldDefinition.LooseConfig['optionalityMarker']
 ): T.PublicFieldDefinition['_optionality_marker'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'?' | '!'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'?' | '!'>(value, _K2, _K2)),
 		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
 	);
 }
@@ -4025,7 +4031,7 @@ export function resolveMethodSignature_accessibilityModifier(
 	value: T.MethodSignature.LooseConfig['accessibilityModifier']
 ): T.MethodSignature['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -4062,7 +4068,7 @@ export function resolveMethodSignature_accessorKind(
 	value: T.MethodSignature.LooseConfig['accessorKind']
 ): T.MethodSignature['_accessor_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
 		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
 	);
 }
@@ -4119,7 +4125,7 @@ export function resolveAbstractMethodSignature_accessibilityModifier(
 	value: T.AbstractMethodSignature.LooseConfig['accessibilityModifier']
 ): T.AbstractMethodSignature['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -4138,7 +4144,7 @@ export function resolveAbstractMethodSignature_accessorKind(
 	value: T.AbstractMethodSignature.LooseConfig['accessorKind']
 ): T.AbstractMethodSignature['_accessor_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
 		[['get', TSKindId.Get] as const, ['set', TSKindId.Set] as const, ['*', TSKindId.Star] as const]
 	);
 }
@@ -4226,7 +4232,7 @@ export function resolveFunctionSignature_semicolon(
 	value: T.FunctionSignature.LooseConfig['semicolon']
 ): T.FunctionSignature['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[
 			['\n', TSKindId.AutomaticSemicolon] as const,
 			[';', TSKindId.Semi] as const,
@@ -4582,7 +4588,7 @@ export function resolveImportAlias_semicolon(
 	value: T.ImportAlias.LooseConfig['semicolon']
 ): T.ImportAlias['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -4788,7 +4794,7 @@ export function resolveTypeAliasDeclaration_semicolon(
 	value: T.TypeAliasDeclaration.LooseConfig['semicolon']
 ): T.TypeAliasDeclaration['_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -4832,7 +4838,7 @@ export function resolveRequiredParameter_accessibilityModifier(
 	value: T.RequiredParameter.LooseConfig['accessibilityModifier']
 ): T.RequiredParameter['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -4897,7 +4903,7 @@ export function resolveOptionalParameter_accessibilityModifier(
 	value: T.OptionalParameter.LooseConfig['accessibilityModifier']
 ): T.OptionalParameter['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -5599,7 +5605,7 @@ export function coerceToTypeArguments(
 
 export function resolveObjectType_opening(value: T.ObjectType.LooseConfig['opening']): T.ObjectType['_opening'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'{' | '{|'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'{' | '{|'>(value, _K2, _K2)),
 		[['{', TSKindId.Lbrace] as const, ['{|', TSKindId.LbracePipe] as const]
 	);
 }
@@ -5610,7 +5616,7 @@ export function resolveObjectType_members(value: T.ObjectType.LooseConfig['membe
 
 export function resolveObjectType_closing(value: T.ObjectType.LooseConfig['closing']): T.ObjectType['_closing'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'}' | '|}'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'}' | '|}'>(value, _K2, _K2)),
 		[['}', TSKindId.Rbrace] as const, ['|}', TSKindId.PipeRbrace] as const]
 	);
 }
@@ -5656,7 +5662,7 @@ export function resolvePropertySignature_accessibilityModifier(
 	value: T.PropertySignature.LooseConfig['accessibilityModifier']
 ): T.PropertySignature['_accessibility_modifier'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.AccessibilityModifier>(value, 'accessibility_modifier')),
 		[
 			['public', TSKindId.Public] as const,
 			['private', TSKindId.Private] as const,
@@ -5797,7 +5803,7 @@ export function coerceToDefaultType(input: T.Type | T.DefaultType.Loose): Return
 
 export function resolveConstraint_content(value: T.Constraint.LooseConfig['content']): T.Constraint['_content'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'extends' | ':'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'extends' | ':'>(value, _K2, _K2)),
 		[['extends', TSKindId.Extends] as const, [':', TSKindId.Colon] as const]
 	);
 }
@@ -5853,7 +5859,7 @@ export function coerceToConstructSignature(
 
 export function resolveIndexSignature_sign(value: T.IndexSignature.LooseConfig['sign']): T.IndexSignature['_sign'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'-' | '+'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'-' | '+'>(value, _K2, _K2)),
 		[['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]
 	);
 }
@@ -6442,7 +6448,7 @@ export function resolveExportStatementDefaultFromArm_automaticSemicolon(
 	value: T.ExportStatementDefaultFromArm.LooseConfig['automaticSemicolon']
 ): T.ExportStatementDefaultFromArm['_automatic_semicolon'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
