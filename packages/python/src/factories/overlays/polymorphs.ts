@@ -301,6 +301,12 @@ const expressionStatement$yieldFromClause =
 		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
 			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
 		);
+const expressionStatement$expressionListExpressions =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
 export const expressionStatement: typeof B.expressionStatement & {
 	tuple: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionStatementTuple>) => ReturnType<typeof F.buildExpressionStatement>;
@@ -324,6 +330,14 @@ export const expressionStatement: typeof B.expressionStatement & {
 		strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
 	};
+	expressionListExpressions: {
+		strict: (
+			...args: ArgsOf<typeof yield_.expressionListExpressions.strict>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: (
+			...args: ArgsOf<typeof yield_.expressionListExpressions.coerce>
+		) => ReturnType<typeof C.coerceToExpressionStatement>;
+	};
 } = {
 	...B.expressionStatement,
 	tuple: {
@@ -345,6 +359,16 @@ export const expressionStatement: typeof B.expressionStatement & {
 	yieldFromClause: {
 		strict: expressionStatement$yieldFromClause(F.buildExpressionStatement, yield_.fromClause.strict),
 		coerce: expressionStatement$yieldFromClause(C.coerceToExpressionStatement, yield_.fromClause.coerce)
+	},
+	expressionListExpressions: {
+		strict: expressionStatement$expressionListExpressions(
+			F.buildExpressionStatement,
+			yield_.expressionListExpressions.strict
+		),
+		coerce: expressionStatement$expressionListExpressions(
+			C.coerceToExpressionStatement,
+			yield_.expressionListExpressions.coerce
+		)
 	}
 };
 
@@ -2667,6 +2691,12 @@ const parenthesizedExpression$yieldFromClause =
 		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
 			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
 		);
+const parenthesizedExpression$expressionListExpressions =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
 const parenthesizedExpression$listSplat =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -2682,6 +2712,14 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToParenthesizedExpression>;
 	};
+	expressionListExpressions: {
+		strict: (
+			...args: ArgsOf<typeof yield_.expressionListExpressions.strict>
+		) => ReturnType<typeof F.buildParenthesizedExpression>;
+		coerce: (
+			...args: ArgsOf<typeof yield_.expressionListExpressions.coerce>
+		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+	};
 	listSplat: {
 		strict: (...args: ArgsOf<typeof F.buildListSplat>) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (...args: ArgsOf<typeof C.coerceToListSplat>) => ReturnType<typeof C.coerceToParenthesizedExpression>;
@@ -2695,6 +2733,16 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 	yieldFromClause: {
 		strict: parenthesizedExpression$yieldFromClause(F.buildParenthesizedExpression, yield_.fromClause.strict),
 		coerce: parenthesizedExpression$yieldFromClause(C.coerceToParenthesizedExpression, yield_.fromClause.coerce)
+	},
+	expressionListExpressions: {
+		strict: parenthesizedExpression$expressionListExpressions(
+			F.buildParenthesizedExpression,
+			yield_.expressionListExpressions.strict
+		),
+		coerce: parenthesizedExpression$expressionListExpressions(
+			C.coerceToParenthesizedExpression,
+			yield_.expressionListExpressions.coerce
+		)
 	},
 	listSplat: {
 		strict: parenthesizedExpression$listSplat(F.buildParenthesizedExpression, F.buildListSplat),
@@ -2795,15 +2843,6 @@ const interpolation$expressionList =
 			expression: (child as unknown as (arg: unknown) => unknown)(inner)
 		});
 	};
-const interpolation$expressionListExpressions =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			expression: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
-	};
 const interpolation$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -2853,18 +2892,6 @@ export const interpolation: typeof B.interpolation & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> &
 				ArgsOf<typeof C.coerceToExpressionList>[0]
-		) => ReturnType<typeof C.coerceToInterpolation>;
-	};
-	expressionListExpressions: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof expressionList.expressions.strict>;
-			}
-		) => ReturnType<typeof F.buildInterpolation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof expressionList.expressions.coerce>;
-			}
 		) => ReturnType<typeof C.coerceToInterpolation>;
 	};
 	patternList: {
@@ -2917,10 +2944,6 @@ export const interpolation: typeof B.interpolation & {
 	expressionList: {
 		strict: interpolation$expressionList(F.buildInterpolation, F.buildExpressionList),
 		coerce: interpolation$expressionList(C.coerceToInterpolation, C.coerceToExpressionList)
-	},
-	expressionListExpressions: {
-		strict: interpolation$expressionListExpressions(F.buildInterpolation, expressionList.expressions.strict),
-		coerce: interpolation$expressionListExpressions(C.coerceToInterpolation, expressionList.expressions.coerce)
 	},
 	patternList: {
 		strict: interpolation$patternList(F.buildInterpolation, F.buildPatternList),

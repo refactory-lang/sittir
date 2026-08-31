@@ -322,6 +322,15 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.Yield);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('expressionListExpressions builds the parent', () => {
+		const node = ir.expressionStatement.expressionListExpressions({
+			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			tail: [{}, { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.Yield);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('named_expression', () => {
@@ -3648,6 +3657,15 @@ describe('parenthesized_expression sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.Yield);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('expressionListExpressions builds the parent', () => {
+		const node = ir.parenthesizedExpression.expressionListExpressions({
+			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			tail: [{}, { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).content()?.$type).toBe(TSKindId.Yield);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('listSplat builds the parent', () => {
 		const node = ir.parenthesizedExpression.listSplat({
 			$type: TSKindId.Identifier,
@@ -3817,19 +3835,6 @@ describe('interpolation sub-factories', () => {
 				$named: true,
 				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
-		});
-		expect(node.$type).toBe(TSKindId.Interpolation);
-		expect((node as any).expression()?.$type).toBe(TSKindId.ExpressionList);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('expressionListExpressions builds the parent', () => {
-		const node = ir.interpolation.expressionListExpressions({
-			expression: [
-				{
-					expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					tail: [{}, { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-				}
-			]
 		});
 		expect(node.$type).toBe(TSKindId.Interpolation);
 		expect((node as any).expression()?.$type).toBe(TSKindId.ExpressionList);

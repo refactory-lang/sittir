@@ -59,6 +59,12 @@ const exportStatement$defaultFromArm =
 		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
 			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
 		);
+const exportStatement$defaultDeclArm =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
 const exportStatement$typeExport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -90,6 +96,14 @@ export const exportStatement: typeof B.exportStatement & {
 			...args: ArgsOf<typeof exportStatementDefault.fromArm.coerce>
 		) => ReturnType<typeof C.coerceToExportStatement>;
 	};
+	defaultDeclArm: {
+		strict: (
+			...args: ArgsOf<typeof exportStatementDefault.declArm.strict>
+		) => ReturnType<typeof F.buildExportStatement>;
+		coerce: (
+			...args: ArgsOf<typeof exportStatementDefault.declArm.coerce>
+		) => ReturnType<typeof C.coerceToExportStatement>;
+	};
 	typeExport: {
 		strict: (...args: ArgsOf<typeof F.buildExportStatementTypeExport>) => ReturnType<typeof F.buildExportStatement>;
 		coerce: (...args: ArgsOf<typeof F.buildExportStatementTypeExport>) => ReturnType<typeof C.coerceToExportStatement>;
@@ -117,6 +131,10 @@ export const exportStatement: typeof B.exportStatement & {
 	defaultFromArm: {
 		strict: exportStatement$defaultFromArm(F.buildExportStatement, exportStatementDefault.fromArm.strict),
 		coerce: exportStatement$defaultFromArm(C.coerceToExportStatement, exportStatementDefault.fromArm.coerce)
+	},
+	defaultDeclArm: {
+		strict: exportStatement$defaultDeclArm(F.buildExportStatement, exportStatementDefault.declArm.strict),
+		coerce: exportStatement$defaultDeclArm(C.coerceToExportStatement, exportStatementDefault.declArm.coerce)
 	},
 	typeExport: {
 		strict: exportStatement$typeExport(F.buildExportStatement, F.buildExportStatementTypeExport),
@@ -808,6 +826,197 @@ export const classHeritage: typeof B.classHeritage & {
 	}
 };
 
+const typePredicate$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+const typePredicate$this =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+const typePredicate$predefinedType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+export const typePredicate: typeof B.typePredicate & {
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> }
+		) => ReturnType<typeof F.buildTypePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToTypePredicate>;
+	};
+	this: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildThis> }
+		) => ReturnType<typeof F.buildTypePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & { name: ArgsOf<typeof C.coerceToThis> }
+		) => ReturnType<typeof C.coerceToTypePredicate>;
+	};
+	predefinedType: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildPredefinedType> }
+		) => ReturnType<typeof F.buildTypePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToPredefinedType>;
+			}
+		) => ReturnType<typeof C.coerceToTypePredicate>;
+	};
+} = {
+	...B.typePredicate,
+	identifier: {
+		strict: typePredicate$identifier(F.buildTypePredicate, F.buildIdentifier),
+		coerce: typePredicate$identifier(C.coerceToTypePredicate, C.coerceToIdentifier)
+	},
+	this: {
+		strict: typePredicate$this(F.buildTypePredicate, F.buildThis),
+		coerce: typePredicate$this(C.coerceToTypePredicate, C.coerceToThis)
+	},
+	predefinedType: {
+		strict: typePredicate$predefinedType(F.buildTypePredicate, F.buildPredefinedType),
+		coerce: typePredicate$predefinedType(C.coerceToTypePredicate, C.coerceToPredefinedType)
+	}
+};
+
+const asserts$typePredicate =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const asserts$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const asserts$this =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const asserts$predefinedType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+export const asserts: typeof B.asserts & {
+	typePredicate: {
+		strict: (...args: ArgsOf<typeof F.buildTypePredicate>) => ReturnType<typeof F.buildAsserts>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypePredicate>) => ReturnType<typeof C.coerceToAsserts>;
+	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildAsserts>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToAsserts>;
+	};
+	this: {
+		strict: (...args: ArgsOf<typeof F.buildThis>) => ReturnType<typeof F.buildAsserts>;
+		coerce: (...args: ArgsOf<typeof C.coerceToThis>) => ReturnType<typeof C.coerceToAsserts>;
+	};
+	predefinedType: {
+		strict: (...args: ArgsOf<typeof typePredicate.predefinedType.strict>) => ReturnType<typeof F.buildAsserts>;
+		coerce: (...args: ArgsOf<typeof typePredicate.predefinedType.coerce>) => ReturnType<typeof C.coerceToAsserts>;
+	};
+} = {
+	...B.asserts,
+	typePredicate: {
+		strict: asserts$typePredicate(F.buildAsserts, F.buildTypePredicate),
+		coerce: asserts$typePredicate(C.coerceToAsserts, C.coerceToTypePredicate)
+	},
+	identifier: {
+		strict: asserts$identifier(F.buildAsserts, F.buildIdentifier),
+		coerce: asserts$identifier(C.coerceToAsserts, C.coerceToIdentifier)
+	},
+	this: { strict: asserts$this(F.buildAsserts, F.buildThis), coerce: asserts$this(C.coerceToAsserts, C.coerceToThis) },
+	predefinedType: {
+		strict: asserts$predefinedType(F.buildAsserts, typePredicate.predefinedType.strict),
+		coerce: asserts$predefinedType(C.coerceToAsserts, typePredicate.predefinedType.coerce)
+	}
+};
+
+const assertsAnnotation$typePredicate =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const assertsAnnotation$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const assertsAnnotation$this =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const assertsAnnotation$predefinedType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+export const assertsAnnotation: typeof B.assertsAnnotation & {
+	typePredicate: {
+		strict: (...args: ArgsOf<typeof asserts.typePredicate.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.typePredicate.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof asserts.identifier.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.identifier.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+	};
+	this: {
+		strict: (...args: ArgsOf<typeof asserts.this.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.this.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+	};
+	predefinedType: {
+		strict: (...args: ArgsOf<typeof asserts.predefinedType.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.predefinedType.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+	};
+} = {
+	...B.assertsAnnotation,
+	typePredicate: {
+		strict: assertsAnnotation$typePredicate(F.buildAssertsAnnotation, asserts.typePredicate.strict),
+		coerce: assertsAnnotation$typePredicate(C.coerceToAssertsAnnotation, asserts.typePredicate.coerce)
+	},
+	identifier: {
+		strict: assertsAnnotation$identifier(F.buildAssertsAnnotation, asserts.identifier.strict),
+		coerce: assertsAnnotation$identifier(C.coerceToAssertsAnnotation, asserts.identifier.coerce)
+	},
+	this: {
+		strict: assertsAnnotation$this(F.buildAssertsAnnotation, asserts.this.strict),
+		coerce: assertsAnnotation$this(C.coerceToAssertsAnnotation, asserts.this.coerce)
+	},
+	predefinedType: {
+		strict: assertsAnnotation$predefinedType(F.buildAssertsAnnotation, asserts.predefinedType.strict),
+		coerce: assertsAnnotation$predefinedType(C.coerceToAssertsAnnotation, asserts.predefinedType.coerce)
+	}
+};
+
 const functionExpression$typeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
@@ -818,6 +1027,15 @@ const functionExpression$typeAnnotation =
 		});
 	};
 const functionExpression$assertsAnnotation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
+		const { returnType: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+const functionExpression$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
@@ -860,6 +1078,18 @@ export const functionExpression: typeof B.functionExpression & {
 			}
 		) => ReturnType<typeof C.coerceToFunctionExpression>;
 	};
+	typePredicate: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFunctionExpression>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.strict>;
+			}
+		) => ReturnType<typeof F.buildFunctionExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFunctionExpression>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToFunctionExpression>;
+	};
 	typePredicateAnnotation: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildFunctionExpression>[0], 'returnType'> & {
@@ -882,6 +1112,10 @@ export const functionExpression: typeof B.functionExpression & {
 		strict: functionExpression$assertsAnnotation(F.buildFunctionExpression, F.buildAssertsAnnotation),
 		coerce: functionExpression$assertsAnnotation(C.coerceToFunctionExpression, C.coerceToAssertsAnnotation)
 	},
+	typePredicate: {
+		strict: functionExpression$typePredicate(F.buildFunctionExpression, assertsAnnotation.typePredicate.strict),
+		coerce: functionExpression$typePredicate(C.coerceToFunctionExpression, assertsAnnotation.typePredicate.coerce)
+	},
 	typePredicateAnnotation: {
 		strict: functionExpression$typePredicateAnnotation(F.buildFunctionExpression, F.buildTypePredicateAnnotation),
 		coerce: functionExpression$typePredicateAnnotation(C.coerceToFunctionExpression, C.coerceToTypePredicateAnnotation)
@@ -898,6 +1132,15 @@ const functionDeclaration$typeAnnotation =
 		});
 	};
 const functionDeclaration$assertsAnnotation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
+		const { returnType: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+const functionDeclaration$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
@@ -940,6 +1183,18 @@ export const functionDeclaration: typeof B.functionDeclaration & {
 			}
 		) => ReturnType<typeof C.coerceToFunctionDeclaration>;
 	};
+	typePredicate: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.strict>;
+			}
+		) => ReturnType<typeof F.buildFunctionDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFunctionDeclaration>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToFunctionDeclaration>;
+	};
 	typePredicateAnnotation: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildFunctionDeclaration>[0], 'returnType'> & {
@@ -962,6 +1217,10 @@ export const functionDeclaration: typeof B.functionDeclaration & {
 		strict: functionDeclaration$assertsAnnotation(F.buildFunctionDeclaration, F.buildAssertsAnnotation),
 		coerce: functionDeclaration$assertsAnnotation(C.coerceToFunctionDeclaration, C.coerceToAssertsAnnotation)
 	},
+	typePredicate: {
+		strict: functionDeclaration$typePredicate(F.buildFunctionDeclaration, assertsAnnotation.typePredicate.strict),
+		coerce: functionDeclaration$typePredicate(C.coerceToFunctionDeclaration, assertsAnnotation.typePredicate.coerce)
+	},
 	typePredicateAnnotation: {
 		strict: functionDeclaration$typePredicateAnnotation(F.buildFunctionDeclaration, F.buildTypePredicateAnnotation),
 		coerce: functionDeclaration$typePredicateAnnotation(
@@ -981,6 +1240,15 @@ const generatorFunction$typeAnnotation =
 		});
 	};
 const generatorFunction$assertsAnnotation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
+		const { returnType: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+const generatorFunction$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
@@ -1023,6 +1291,18 @@ export const generatorFunction: typeof B.generatorFunction & {
 			}
 		) => ReturnType<typeof C.coerceToGeneratorFunction>;
 	};
+	typePredicate: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.strict>;
+			}
+		) => ReturnType<typeof F.buildGeneratorFunction>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToGeneratorFunction>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToGeneratorFunction>;
+	};
 	typePredicateAnnotation: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildGeneratorFunction>[0], 'returnType'> & {
@@ -1045,6 +1325,10 @@ export const generatorFunction: typeof B.generatorFunction & {
 		strict: generatorFunction$assertsAnnotation(F.buildGeneratorFunction, F.buildAssertsAnnotation),
 		coerce: generatorFunction$assertsAnnotation(C.coerceToGeneratorFunction, C.coerceToAssertsAnnotation)
 	},
+	typePredicate: {
+		strict: generatorFunction$typePredicate(F.buildGeneratorFunction, assertsAnnotation.typePredicate.strict),
+		coerce: generatorFunction$typePredicate(C.coerceToGeneratorFunction, assertsAnnotation.typePredicate.coerce)
+	},
 	typePredicateAnnotation: {
 		strict: generatorFunction$typePredicateAnnotation(F.buildGeneratorFunction, F.buildTypePredicateAnnotation),
 		coerce: generatorFunction$typePredicateAnnotation(C.coerceToGeneratorFunction, C.coerceToTypePredicateAnnotation)
@@ -1061,6 +1345,15 @@ const generatorFunctionDeclaration$typeAnnotation =
 		});
 	};
 const generatorFunctionDeclaration$assertsAnnotation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
+		const { returnType: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
+const generatorFunctionDeclaration$typePredicate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
 		const { returnType: seated, ...rest } = config;
@@ -1103,6 +1396,18 @@ export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration
 			}
 		) => ReturnType<typeof C.coerceToGeneratorFunctionDeclaration>;
 	};
+	typePredicate: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.strict>;
+			}
+		) => ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToGeneratorFunctionDeclaration>;
+	};
 	typePredicateAnnotation: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0], 'returnType'> & {
@@ -1132,6 +1437,16 @@ export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration
 		coerce: generatorFunctionDeclaration$assertsAnnotation(
 			C.coerceToGeneratorFunctionDeclaration,
 			C.coerceToAssertsAnnotation
+		)
+	},
+	typePredicate: {
+		strict: generatorFunctionDeclaration$typePredicate(
+			F.buildGeneratorFunctionDeclaration,
+			assertsAnnotation.typePredicate.strict
+		),
+		coerce: generatorFunctionDeclaration$typePredicate(
+			C.coerceToGeneratorFunctionDeclaration,
+			assertsAnnotation.typePredicate.coerce
 		)
 	},
 	typePredicateAnnotation: {
@@ -3199,136 +3514,6 @@ export const optionalParameter: typeof B.optionalParameter & {
 	}
 };
 
-const typePredicate$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
-	};
-const typePredicate$this =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
-	};
-const typePredicate$predefinedType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			name: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
-	};
-export const typePredicate: typeof B.typePredicate & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> }
-		) => ReturnType<typeof F.buildTypePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			}
-		) => ReturnType<typeof C.coerceToTypePredicate>;
-	};
-	this: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildThis> }
-		) => ReturnType<typeof F.buildTypePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & { name: ArgsOf<typeof C.coerceToThis> }
-		) => ReturnType<typeof C.coerceToTypePredicate>;
-	};
-	predefinedType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildPredefinedType> }
-		) => ReturnType<typeof F.buildTypePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToPredefinedType>;
-			}
-		) => ReturnType<typeof C.coerceToTypePredicate>;
-	};
-} = {
-	...B.typePredicate,
-	identifier: {
-		strict: typePredicate$identifier(F.buildTypePredicate, F.buildIdentifier),
-		coerce: typePredicate$identifier(C.coerceToTypePredicate, C.coerceToIdentifier)
-	},
-	this: {
-		strict: typePredicate$this(F.buildTypePredicate, F.buildThis),
-		coerce: typePredicate$this(C.coerceToTypePredicate, C.coerceToThis)
-	},
-	predefinedType: {
-		strict: typePredicate$predefinedType(F.buildTypePredicate, F.buildPredefinedType),
-		coerce: typePredicate$predefinedType(C.coerceToTypePredicate, C.coerceToPredefinedType)
-	}
-};
-
-const asserts$typePredicate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
-const asserts$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
-const asserts$this =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
-const asserts$predefinedType =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
-			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
-		);
-export const asserts: typeof B.asserts & {
-	typePredicate: {
-		strict: (...args: ArgsOf<typeof F.buildTypePredicate>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypePredicate>) => ReturnType<typeof C.coerceToAsserts>;
-	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToAsserts>;
-	};
-	this: {
-		strict: (...args: ArgsOf<typeof F.buildThis>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof C.coerceToThis>) => ReturnType<typeof C.coerceToAsserts>;
-	};
-	predefinedType: {
-		strict: (...args: ArgsOf<typeof typePredicate.predefinedType.strict>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof typePredicate.predefinedType.coerce>) => ReturnType<typeof C.coerceToAsserts>;
-	};
-} = {
-	...B.asserts,
-	typePredicate: {
-		strict: asserts$typePredicate(F.buildAsserts, F.buildTypePredicate),
-		coerce: asserts$typePredicate(C.coerceToAsserts, C.coerceToTypePredicate)
-	},
-	identifier: {
-		strict: asserts$identifier(F.buildAsserts, F.buildIdentifier),
-		coerce: asserts$identifier(C.coerceToAsserts, C.coerceToIdentifier)
-	},
-	this: { strict: asserts$this(F.buildAsserts, F.buildThis), coerce: asserts$this(C.coerceToAsserts, C.coerceToThis) },
-	predefinedType: {
-		strict: asserts$predefinedType(F.buildAsserts, typePredicate.predefinedType.strict),
-		coerce: asserts$predefinedType(C.coerceToAsserts, typePredicate.predefinedType.coerce)
-	}
-};
-
 const tupleParameter$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
@@ -3652,6 +3837,64 @@ export const genericType: typeof B.genericType & {
 	}
 };
 
+const typePredicateAnnotation$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const typePredicateAnnotation$this =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const typePredicateAnnotation$predefinedType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+export const typePredicateAnnotation: typeof B.typePredicateAnnotation & {
+	identifier: {
+		strict: (
+			...args: ArgsOf<typeof typePredicate.identifier.strict>
+		) => ReturnType<typeof F.buildTypePredicateAnnotation>;
+		coerce: (
+			...args: ArgsOf<typeof typePredicate.identifier.coerce>
+		) => ReturnType<typeof C.coerceToTypePredicateAnnotation>;
+	};
+	this: {
+		strict: (...args: ArgsOf<typeof typePredicate.this.strict>) => ReturnType<typeof F.buildTypePredicateAnnotation>;
+		coerce: (...args: ArgsOf<typeof typePredicate.this.coerce>) => ReturnType<typeof C.coerceToTypePredicateAnnotation>;
+	};
+	predefinedType: {
+		strict: (
+			...args: ArgsOf<typeof typePredicate.predefinedType.strict>
+		) => ReturnType<typeof F.buildTypePredicateAnnotation>;
+		coerce: (
+			...args: ArgsOf<typeof typePredicate.predefinedType.coerce>
+		) => ReturnType<typeof C.coerceToTypePredicateAnnotation>;
+	};
+} = {
+	...B.typePredicateAnnotation,
+	identifier: {
+		strict: typePredicateAnnotation$identifier(F.buildTypePredicateAnnotation, typePredicate.identifier.strict),
+		coerce: typePredicateAnnotation$identifier(C.coerceToTypePredicateAnnotation, typePredicate.identifier.coerce)
+	},
+	this: {
+		strict: typePredicateAnnotation$this(F.buildTypePredicateAnnotation, typePredicate.this.strict),
+		coerce: typePredicateAnnotation$this(C.coerceToTypePredicateAnnotation, typePredicate.this.coerce)
+	},
+	predefinedType: {
+		strict: typePredicateAnnotation$predefinedType(F.buildTypePredicateAnnotation, typePredicate.predefinedType.strict),
+		coerce: typePredicateAnnotation$predefinedType(
+			C.coerceToTypePredicateAnnotation,
+			typePredicate.predefinedType.coerce
+		)
+	}
+};
+
 const typeQuery$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -3862,6 +4105,15 @@ const callSignature$assertsAnnotation =
 			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
 		});
 	};
+const callSignature$typePredicate =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
+		const { returnType: seated, ...rest } = config;
+		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
+			...rest,
+			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
+		});
+	};
 const callSignature$typePredicateAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
@@ -3896,6 +4148,18 @@ export const callSignature: typeof B.callSignature & {
 			}
 		) => ReturnType<typeof C.coerceToCallSignature>;
 	};
+	typePredicate: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallSignature>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.strict>;
+			}
+		) => ReturnType<typeof F.buildCallSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallSignature>[0], 'returnType'> & {
+				returnType: ArgsOf<typeof assertsAnnotation.typePredicate.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToCallSignature>;
+	};
 	typePredicateAnnotation: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildCallSignature>[0], 'returnType'> & {
@@ -3917,6 +4181,10 @@ export const callSignature: typeof B.callSignature & {
 	assertsAnnotation: {
 		strict: callSignature$assertsAnnotation(F.buildCallSignature, F.buildAssertsAnnotation),
 		coerce: callSignature$assertsAnnotation(C.coerceToCallSignature, C.coerceToAssertsAnnotation)
+	},
+	typePredicate: {
+		strict: callSignature$typePredicate(F.buildCallSignature, assertsAnnotation.typePredicate.strict),
+		coerce: callSignature$typePredicate(C.coerceToCallSignature, assertsAnnotation.typePredicate.coerce)
 	},
 	typePredicateAnnotation: {
 		strict: callSignature$typePredicateAnnotation(F.buildCallSignature, F.buildTypePredicateAnnotation),
@@ -4141,15 +4409,6 @@ const functionType$typePredicate =
 			returnType: (child as unknown as (arg: unknown) => unknown)(inner)
 		});
 	};
-const functionType$predefinedType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & { returnType: ArgsOf<CF> }): ReturnType<PF> => {
-		const { returnType: seated, ...rest } = config;
-		return (parent as unknown as (arg: unknown) => ReturnType<PF>)({
-			...rest,
-			returnType: (child as unknown as (...args: readonly unknown[]) => unknown)(...(seated as readonly unknown[]))
-		});
-	};
 export const functionType: typeof B.functionType & {
 	asserts: {
 		strict: (
@@ -4172,18 +4431,6 @@ export const functionType: typeof B.functionType & {
 				ArgsOf<typeof C.coerceToTypePredicate>[0]
 		) => ReturnType<typeof C.coerceToFunctionType>;
 	};
-	predefinedType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'returnType'> & {
-				returnType: ArgsOf<typeof typePredicate.predefinedType.strict>;
-			}
-		) => ReturnType<typeof F.buildFunctionType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'returnType'> & {
-				returnType: ArgsOf<typeof typePredicate.predefinedType.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToFunctionType>;
-	};
 } = {
 	...B.functionType,
 	asserts: {
@@ -4193,10 +4440,6 @@ export const functionType: typeof B.functionType & {
 	typePredicate: {
 		strict: functionType$typePredicate(F.buildFunctionType, F.buildTypePredicate),
 		coerce: functionType$typePredicate(C.coerceToFunctionType, C.coerceToTypePredicate)
-	},
-	predefinedType: {
-		strict: functionType$predefinedType(F.buildFunctionType, typePredicate.predefinedType.strict),
-		coerce: functionType$predefinedType(C.coerceToFunctionType, typePredicate.predefinedType.coerce)
 	}
 };
 

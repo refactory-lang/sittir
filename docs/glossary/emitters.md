@@ -14572,7 +14572,7 @@ Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::collectPolymorphWires`
 
-The single derivation of which sub-factories the polymorph overlay actually wires — traversal order (children before flattened parents), per-parent filtered entry lists (ambiguity and slot-collision resolved in `subFactoriesOf`; context-mismatch and unreferenceable children filtered here), the emission predicates, and the bundle key map. Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. Alias wires from `variantAliasWires` ride the same sets: a parent enters the map when it has seated subs or alias forms. Any consumer deriving the wire set independently will drift — this map is the fact.
+The single derivation of which sub-factories the polymorph overlay actually wires — traversal order (children before flattened parents), per-parent filtered entry lists (ambiguity and slot-collision resolved in `subFactoriesOf`; unreferenceable children filtered here, and a flattened arm survives only when the child's ALREADY-EMITTED wire set — children visit first, DFS post-order — carries the referenced property, because the child's context-sensitive derivation under this parent can name entries the child's own top-level set resolved away), the emission predicates, and the bundle key map. Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. Alias wires from `variantAliasWires` ride the same sets: a parent enters the map when it has seated subs or alias forms. Any consumer deriving the wire set independently will drift — this map is the fact.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
@@ -14593,10 +14593,15 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
 
 ```text
 /** A sub-factory arm backed by a child kind reachable through the parent's
- *  choice slot. `child` is always the *direct* child under that slot, even
- *  for a flattened entry reached through the child's own sub-factories;
- *  `path` is empty for a direct arm and holds the chain of sub-factory
- *  names to call on `child` to reach the flattened target otherwise. */
+ *  seat slot (a choice slot, or a forwarding hop's sole slot). `child` is
+ *  always the *direct* child under that slot, even for a flattened entry
+ *  reached through the child's own sub-factories; `path` is empty for a
+ *  direct arm and otherwise holds exactly one name — the property on the
+ *  child's own wire const that already encapsulates every deeper hop.
+ *  `leaf` is the deepest kind the entry ultimately builds (undefined when
+ *  `child` is the leaf); outer levels name their flattened entries from
+ *  it, so `visibility_modifier` calls the in-path form `inPath` even
+ *  though the arm's direct child is the pub hop. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactory`
@@ -14663,7 +14668,7 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
 
-Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard.
+Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard. A kind with no choice slot but a forwarding hop (`forwardedTargetKind`: sole slot seating exactly one emitted child kind) passes the child's sub-factories through — each entry re-seated in the hop's own slot under a leaf-relative name, its wire referencing the child const's matching property. Both the choice-slot and forwarding branches feed one shared resolution tail (`resolveCandidates`: name-ambiguity and slot-collision filtering), so the two seat modes cannot diverge in how claims are settled.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
 

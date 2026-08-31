@@ -23,22 +23,6 @@ function parentRefs(node: AssembledNode, coerceEmitted: CoerceEmitted): FlavorRe
 	};
 }
 
-function pathResolvesTopLevel(
-	sub: SubFactory,
-	nodeMap: NodeMap,
-	isEmitted: (kind: string) => boolean
-): boolean {
-	if (sub.arm.via !== 'kind' || sub.arm.path.length === 0) return true;
-	let node = sub.arm.child;
-	for (const step of sub.arm.path) {
-		const entry = subFactoriesOf(node, nodeMap, { isEmitted }).entries.find((e) => e.name === step);
-		if (entry === undefined) return false;
-		if (entry.arm.via === 'literal') return true;
-		node = entry.arm.child;
-	}
-	return true;
-}
-
 function childRefs(
 	sub: SubFactory,
 	keyByKind: ReadonlyMap<string, string>,
@@ -138,11 +122,18 @@ export function collectPolymorphWires(
 		}
 		const subs = set.entries.filter((sub) => {
 			if (sub.arm.via === 'literal') return true;
-			if (!pathResolvesTopLevel(sub, nodeMap, isEmitted)) {
-				warn(
-					`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`
-				);
-				return false;
+			if (sub.arm.path.length > 0) {
+				const emitted = byKind.get(sub.arm.child.kind);
+				const step = sub.arm.path[0]!;
+				const present =
+					emitted !== undefined &&
+					(emitted.subs.some((e) => e.name === step) || emitted.aliases.some((a) => a.name === step));
+				if (!present) {
+					warn(
+						`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`
+					);
+					return false;
+				}
 			}
 			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
 		});

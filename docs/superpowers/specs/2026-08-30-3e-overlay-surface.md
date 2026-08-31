@@ -111,6 +111,12 @@ name the arms. Two arm shapes, one rule:
 - a **kind arm** (a node reference in the choice slot) yields a form
   constructor named by the arm's variant name, or by the arm kind's name
   with the parent prefix stripped when no variant renamed it;
+- a **forwarding hop** (a kind whose sole slot seats exactly one child
+  kind — no choice of its own) passes its child's sub-factories through:
+  the hop's surface re-exposes each of the child's forms seated in its
+  own slot, and names them relative to the outer kind via the arm's
+  deepest leaf (`visibility_modifier.pub` forwards through the group so
+  `visibilityModifier.self`, `.super`, and `.inPath` exist at the top);
 - a **whole-rule alternative arm** (a variant child that is a complete
   alternative of the parent's rule, in no slot at all —
   `binary_expression = choice(seq(left, op, right), _binary_expression_in)`)
