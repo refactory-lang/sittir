@@ -17,8 +17,11 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 
 - `grammar.ts` — grammar type literal for type projections
 - `types.ts` — concrete interfaces, `TSKindId`, config/tree/from projections, unions
-- `factories.ts` — unified factories
-- `from.ts` — `.from()` resolution layer
+- `factories/raw.ts` — plain strict builders
+- `factories/coerce.ts` — `.from()` coercers and per-field resolvers
+- `factories/bundle.ts` — `{ strict, coerce }` pair per kind (`bundle()`)
+- `factories/overlays/{refines,polymorphs,supertypes}.ts` — static wiring: refine forms, sub-factories (one method per builder, applied to both flavors), grouped namespaces
+- `factories/index.ts` — `hoist()`: the callable consumer surface (bare call = coerce, `.strict` reachable, recursive)
 - `wrap.ts` — tree node → typed node hydration
 - `is.ts` — type guards (`is.*`, `isNode`, `isTree`, `assert.*`)
 - `utils.ts` — per-grammar client helpers

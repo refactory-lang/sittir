@@ -9727,16 +9727,7 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/config.ts::emitConfig`
 
-#### body
-
-```text
-// Force the native (Rust napi) render backend. Production consumers run
-// `--backend native`; the JS dispatch engine is deprecated (see
-// CLAUDE.md). `SITTIR_BACKEND=native` also disables the silent
-// native->JS fallback (backend.ts computeBackend), so a missing/stale
-// native binary fails the suite loudly instead of quietly exercising
-// the deprecated engine.
-```
+Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block mapping every `@sittir/*` entry to its sibling `src/` — package-scoped test runs (and the examples they import) resolve to source, never to a stale `dist/` build, mirroring the root config and the workspace `paths`.
 
 ### `packages/codegen/src/emitters/is.ts::module`
 
