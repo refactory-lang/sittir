@@ -62,6 +62,54 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
+export const statement: {
+	readonly expression: typeof F.expressionStatement;
+	readonly const: typeof F.constItem;
+	readonly macroInvocation: typeof F.macroInvocation;
+	readonly macro: typeof F.macroDefinition;
+	readonly empty: typeof F.buildEmptyStatement;
+	readonly attribute: typeof F.attributeItem;
+	readonly innerAttribute: typeof F.innerAttributeItem;
+	readonly mod: typeof F.modItem;
+	readonly foreignMod: typeof F.foreignModItem;
+	readonly struct: typeof F.structItem;
+	readonly union: typeof F.unionItem;
+	readonly enum: typeof F.enumItem;
+	readonly type: typeof F.typeItem;
+	readonly function: typeof F.functionItem;
+	readonly functionSignature: typeof F.functionSignatureItem;
+	readonly impl: typeof F.implItem;
+	readonly trait: typeof F.traitItem;
+	readonly associated: typeof F.associatedType;
+	readonly let: typeof F.letDeclaration;
+	readonly use: typeof F.useDeclaration;
+	readonly externCrate: typeof F.externCrateDeclaration;
+	readonly static: typeof F.staticItem;
+} = {
+	expression: F.expressionStatement,
+	const: F.constItem,
+	macroInvocation: F.macroInvocation,
+	macro: F.macroDefinition,
+	empty: F.buildEmptyStatement,
+	attribute: F.attributeItem,
+	innerAttribute: F.innerAttributeItem,
+	mod: F.modItem,
+	foreignMod: F.foreignModItem,
+	struct: F.structItem,
+	union: F.unionItem,
+	enum: F.enumItem,
+	type: F.typeItem,
+	function: F.functionItem,
+	functionSignature: F.functionSignatureItem,
+	impl: F.implItem,
+	trait: F.traitItem,
+	associated: F.associatedType,
+	let: F.letDeclaration,
+	use: F.useDeclaration,
+	externCrate: F.externCrateDeclaration,
+	static: F.staticItem
+};
+
 export const declarationStatement: {
 	readonly const: typeof F.constItem;
 	readonly macroInvocation: typeof F.macroInvocation;
@@ -108,6 +156,28 @@ export const declarationStatement: {
 	static: F.staticItem
 };
 
+export const tokenPattern: {
+	readonly tree: typeof F.tokenTreePattern;
+	readonly repetition: typeof F.tokenRepetitionPattern;
+	readonly binding: typeof F.tokenBindingPattern;
+	readonly metavariable: typeof F.buildMetavariable;
+} = {
+	tree: F.tokenTreePattern,
+	repetition: F.tokenRepetitionPattern,
+	binding: F.tokenBindingPattern,
+	metavariable: F.buildMetavariable
+};
+
+export const tokens: {
+	readonly tokenTree: typeof F.tokenTree;
+	readonly tokenRepetition: typeof F.tokenRepetition;
+	readonly metavariable: typeof F.buildMetavariable;
+} = {
+	tokenTree: F.tokenTree,
+	tokenRepetition: F.tokenRepetition,
+	metavariable: F.buildMetavariable
+};
+
 export const nonSpecialToken: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
@@ -132,6 +202,30 @@ export const nonSpecialToken: {
 	self: F.buildSelf,
 	super: F.buildSuper,
 	crate: F.buildCrate
+};
+
+export const useClause: {
+	readonly self: typeof F.buildSelf;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly metavariable: typeof F.buildMetavariable;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+	readonly as: typeof F.useAsClause;
+	readonly list: typeof F.useList;
+	readonly scopedList: typeof F.scopedUseList;
+	readonly wildcard: typeof F.useWildcard;
+} = {
+	self: F.buildSelf,
+	identifier: F.buildIdentifier,
+	metavariable: F.buildMetavariable,
+	super: F.buildSuper,
+	crate: F.buildCrate,
+	scopedIdentifier: F.scopedIdentifier,
+	as: F.useAsClause,
+	list: F.useList,
+	scopedList: F.scopedUseList,
+	wildcard: F.useWildcard
 };
 
 export const type: {
@@ -168,6 +262,98 @@ export const type: {
 	dynamic: F.dynamicType,
 	bounded: F.boundedType,
 	removedTraitBound: F.removedTraitBound
+};
+
+export const expressionExceptRange: {
+	readonly unary: typeof F.unaryExpression;
+	readonly reference: typeof F.referenceExpression;
+	readonly try: typeof F.tryExpression;
+	readonly binary: typeof F.binaryExpression;
+	readonly assignment: typeof F.assignmentExpression;
+	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
+	readonly typeCast: typeof F.typeCastExpression;
+	readonly call: typeof F.callExpression;
+	readonly return: typeof F.returnExpression;
+	readonly yield: typeof F.yieldExpression;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.buildCharLiteral;
+	readonly boolean: typeof F.buildBooleanLiteral;
+	readonly integer: typeof F.buildIntegerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly self: typeof F.buildSelf;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+	readonly genericFunction: typeof F.genericFunction;
+	readonly await: typeof F.awaitExpression;
+	readonly field: typeof F.fieldExpression;
+	readonly array: typeof F.arrayExpression;
+	readonly tuple: typeof F.tupleExpression;
+	readonly macroInvocation: typeof F.macroInvocation;
+	readonly unit: typeof F.buildUnitExpression;
+	readonly break: typeof F.breakExpression;
+	readonly continue: typeof F.continueExpression;
+	readonly index: typeof F.indexExpression;
+	readonly metavariable: typeof F.buildMetavariable;
+	readonly closure: typeof F.closureExpression;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly struct: typeof F.structExpression;
+	readonly unsafeBlock: typeof F.unsafeBlock;
+	readonly asyncBlock: typeof F.asyncBlock;
+	readonly genBlock: typeof F.genBlock;
+	readonly tryBlock: typeof F.tryBlock;
+	readonly block: typeof F.block;
+	readonly if: typeof F.ifExpression;
+	readonly match: typeof F.matchExpression;
+	readonly while: typeof F.whileExpression;
+	readonly loop: typeof F.loopExpression;
+	readonly for: typeof F.forExpression;
+	readonly constBlock: typeof F.constBlock;
+} = {
+	unary: F.unaryExpression,
+	reference: F.referenceExpression,
+	try: F.tryExpression,
+	binary: F.binaryExpression,
+	assignment: F.assignmentExpression,
+	compoundAssignment: F.compoundAssignmentExpr,
+	typeCast: F.typeCastExpression,
+	call: F.callExpression,
+	return: F.returnExpression,
+	yield: F.yieldExpression,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	self: F.buildSelf,
+	scopedIdentifier: F.scopedIdentifier,
+	genericFunction: F.genericFunction,
+	await: F.awaitExpression,
+	field: F.fieldExpression,
+	array: F.arrayExpression,
+	tuple: F.tupleExpression,
+	macroInvocation: F.macroInvocation,
+	unit: F.buildUnitExpression,
+	break: F.breakExpression,
+	continue: F.continueExpression,
+	index: F.indexExpression,
+	metavariable: F.buildMetavariable,
+	closure: F.closureExpression,
+	parenthesized: F.parenthesizedExpression,
+	struct: F.structExpression,
+	unsafeBlock: F.unsafeBlock,
+	asyncBlock: F.asyncBlock,
+	genBlock: F.genBlock,
+	tryBlock: F.tryBlock,
+	block: F.block,
+	if: F.ifExpression,
+	match: F.matchExpression,
+	while: F.whileExpression,
+	loop: F.loopExpression,
+	for: F.forExpression,
+	constBlock: F.constBlock
 };
 
 export const expression: {
@@ -264,6 +450,134 @@ export const expression: {
 	range: F.rangeExpression
 };
 
+export const expressionEndingWithBlock: {
+	readonly unsafe: typeof F.unsafeBlock;
+	readonly async: typeof F.asyncBlock;
+	readonly gen: typeof F.genBlock;
+	readonly try: typeof F.tryBlock;
+	readonly block: typeof F.block;
+	readonly if: typeof F.ifExpression;
+	readonly match: typeof F.matchExpression;
+	readonly while: typeof F.whileExpression;
+	readonly loop: typeof F.loopExpression;
+	readonly for: typeof F.forExpression;
+	readonly const: typeof F.constBlock;
+} = {
+	unsafe: F.unsafeBlock,
+	async: F.asyncBlock,
+	gen: F.genBlock,
+	try: F.tryBlock,
+	block: F.block,
+	if: F.ifExpression,
+	match: F.matchExpression,
+	while: F.whileExpression,
+	loop: F.loopExpression,
+	for: F.forExpression,
+	const: F.constBlock
+};
+
+export const delimTokens: {
+	readonly tokenTree: typeof F.delimTokenTree;
+} = {
+	tokenTree: F.delimTokenTree
+};
+
+export const condition: {
+	readonly unary: typeof F.unaryExpression;
+	readonly reference: typeof F.referenceExpression;
+	readonly try: typeof F.tryExpression;
+	readonly binary: typeof F.binaryExpression;
+	readonly assignment: typeof F.assignmentExpression;
+	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
+	readonly typeCast: typeof F.typeCastExpression;
+	readonly call: typeof F.callExpression;
+	readonly return: typeof F.returnExpression;
+	readonly yield: typeof F.yieldExpression;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.buildCharLiteral;
+	readonly boolean: typeof F.buildBooleanLiteral;
+	readonly integer: typeof F.buildIntegerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly self: typeof F.buildSelf;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+	readonly genericFunction: typeof F.genericFunction;
+	readonly await: typeof F.awaitExpression;
+	readonly field: typeof F.fieldExpression;
+	readonly array: typeof F.arrayExpression;
+	readonly tuple: typeof F.tupleExpression;
+	readonly macroInvocation: typeof F.macroInvocation;
+	readonly unit: typeof F.buildUnitExpression;
+	readonly break: typeof F.breakExpression;
+	readonly continue: typeof F.continueExpression;
+	readonly index: typeof F.indexExpression;
+	readonly metavariable: typeof F.buildMetavariable;
+	readonly closure: typeof F.closureExpression;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly struct: typeof F.structExpression;
+	readonly unsafeBlock: typeof F.unsafeBlock;
+	readonly asyncBlock: typeof F.asyncBlock;
+	readonly genBlock: typeof F.genBlock;
+	readonly tryBlock: typeof F.tryBlock;
+	readonly block: typeof F.block;
+	readonly if: typeof F.ifExpression;
+	readonly match: typeof F.matchExpression;
+	readonly while: typeof F.whileExpression;
+	readonly loop: typeof F.loopExpression;
+	readonly for: typeof F.forExpression;
+	readonly constBlock: typeof F.constBlock;
+	readonly range: typeof F.rangeExpression;
+	readonly let: typeof F.letCondition;
+} = {
+	unary: F.unaryExpression,
+	reference: F.referenceExpression,
+	try: F.tryExpression,
+	binary: F.binaryExpression,
+	assignment: F.assignmentExpression,
+	compoundAssignment: F.compoundAssignmentExpr,
+	typeCast: F.typeCastExpression,
+	call: F.callExpression,
+	return: F.returnExpression,
+	yield: F.yieldExpression,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	self: F.buildSelf,
+	scopedIdentifier: F.scopedIdentifier,
+	genericFunction: F.genericFunction,
+	await: F.awaitExpression,
+	field: F.fieldExpression,
+	array: F.arrayExpression,
+	tuple: F.tupleExpression,
+	macroInvocation: F.macroInvocation,
+	unit: F.buildUnitExpression,
+	break: F.breakExpression,
+	continue: F.continueExpression,
+	index: F.indexExpression,
+	metavariable: F.buildMetavariable,
+	closure: F.closureExpression,
+	parenthesized: F.parenthesizedExpression,
+	struct: F.structExpression,
+	unsafeBlock: F.unsafeBlock,
+	asyncBlock: F.asyncBlock,
+	genBlock: F.genBlock,
+	tryBlock: F.tryBlock,
+	block: F.block,
+	if: F.ifExpression,
+	match: F.matchExpression,
+	while: F.whileExpression,
+	loop: F.loopExpression,
+	for: F.forExpression,
+	constBlock: F.constBlock,
+	range: F.rangeExpression,
+	let: F.letCondition
+};
+
 export const pattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
@@ -346,6 +660,22 @@ export const literalPattern: {
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral
+};
+
+export const path: {
+	readonly self: typeof F.buildSelf;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly metavariable: typeof F.buildMetavariable;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+} = {
+	self: F.buildSelf,
+	identifier: F.buildIdentifier,
+	metavariable: F.buildMetavariable,
+	super: F.buildSuper,
+	crate: F.buildCrate,
+	scopedIdentifier: F.scopedIdentifier
 };
 
 export const ir: {
@@ -510,10 +840,13 @@ export const ir: {
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly abstract: typeof F.abstractType;
 	readonly array: typeof F.arrayType;
+	readonly as: typeof F.useAsClause;
 	readonly assignment: typeof F.assignmentExpression;
 	readonly associated: typeof F.associatedType;
+	readonly async: typeof F.asyncBlock;
 	readonly await: typeof F.awaitExpression;
 	readonly binary: typeof F.binaryExpression;
+	readonly binding: typeof F.tokenBindingPattern;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly bounded: typeof F.boundedType;
 	readonly break: typeof F.breakExpression;
@@ -534,6 +867,7 @@ export const ir: {
 	readonly foreignMod: typeof F.foreignModItem;
 	readonly function: typeof F.functionItem;
 	readonly functionSignature: typeof F.functionSignatureItem;
+	readonly gen: typeof F.genBlock;
 	readonly generic: typeof F.genericType;
 	readonly if: typeof F.ifExpression;
 	readonly impl: typeof F.implItem;
@@ -541,6 +875,7 @@ export const ir: {
 	readonly innerAttribute: typeof F.innerAttributeItem;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly let: typeof F.letDeclaration;
+	readonly list: typeof F.useList;
 	readonly loop: typeof F.loopExpression;
 	readonly macro: typeof F.macroDefinition;
 	readonly match: typeof F.matchExpression;
@@ -556,12 +891,15 @@ export const ir: {
 	readonly ref: typeof F.refPattern;
 	readonly reference: typeof F.referenceType;
 	readonly remainingField: typeof F.buildRemainingFieldPattern;
+	readonly repetition: typeof F.tokenRepetitionPattern;
 	readonly return: typeof F.returnExpression;
+	readonly scopedList: typeof F.scopedUseList;
 	readonly slice: typeof F.slicePattern;
 	readonly static: typeof F.staticItem;
 	readonly string: typeof F.stringLiteral;
 	readonly struct: typeof F.structItem;
 	readonly trait: typeof F.traitItem;
+	readonly tree: typeof F.tokenTreePattern;
 	readonly try: typeof F.tryExpression;
 	readonly tuple: typeof F.tupleType;
 	readonly tupleStruct: typeof F.tupleStructPattern;
@@ -569,16 +907,27 @@ export const ir: {
 	readonly unary: typeof F.unaryExpression;
 	readonly union: typeof F.unionItem;
 	readonly unit: typeof F.buildUnitType;
+	readonly unsafe: typeof F.unsafeBlock;
 	readonly use: typeof F.useDeclaration;
 	readonly while: typeof F.whileExpression;
+	readonly wildcard: typeof F.useWildcard;
 	readonly yield: typeof F.yieldExpression;
+	readonly statement: typeof statement;
 	readonly declarationStatement: typeof declarationStatement;
+	readonly tokenPattern: typeof tokenPattern;
+	readonly tokens: typeof tokens;
 	readonly nonSpecialToken: typeof nonSpecialToken;
+	readonly useClause: typeof useClause;
 	readonly type: typeof type;
+	readonly expressionExceptRange: typeof expressionExceptRange;
 	readonly expression: typeof expression;
+	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
+	readonly delimTokens: typeof delimTokens;
+	readonly condition: typeof condition;
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
+	readonly path: typeof path;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -749,10 +1098,13 @@ export const ir: {
 	// Supertype-stripped short aliases
 	abstract: F.abstractType,
 	array: F.arrayType,
+	as: F.useAsClause,
 	assignment: F.assignmentExpression,
 	associated: F.associatedType,
+	async: F.asyncBlock,
 	await: F.awaitExpression,
 	binary: F.binaryExpression,
+	binding: F.tokenBindingPattern,
 	boolean: F.buildBooleanLiteral,
 	bounded: F.boundedType,
 	break: F.breakExpression,
@@ -773,6 +1125,7 @@ export const ir: {
 	foreignMod: F.foreignModItem,
 	function: F.functionItem,
 	functionSignature: F.functionSignatureItem,
+	gen: F.genBlock,
 	generic: F.genericType,
 	if: F.ifExpression,
 	impl: F.implItem,
@@ -780,6 +1133,7 @@ export const ir: {
 	innerAttribute: F.innerAttributeItem,
 	integer: F.buildIntegerLiteral,
 	let: F.letDeclaration,
+	list: F.useList,
 	loop: F.loopExpression,
 	macro: F.macroDefinition,
 	match: F.matchExpression,
@@ -795,12 +1149,15 @@ export const ir: {
 	ref: F.refPattern,
 	reference: F.referenceType,
 	remainingField: F.buildRemainingFieldPattern,
+	repetition: F.tokenRepetitionPattern,
 	return: F.returnExpression,
+	scopedList: F.scopedUseList,
 	slice: F.slicePattern,
 	static: F.staticItem,
 	string: F.stringLiteral,
 	struct: F.structItem,
 	trait: F.traitItem,
+	tree: F.tokenTreePattern,
 	try: F.tryExpression,
 	tuple: F.tupleType,
 	tupleStruct: F.tupleStructPattern,
@@ -808,17 +1165,28 @@ export const ir: {
 	unary: F.unaryExpression,
 	union: F.unionItem,
 	unit: F.buildUnitType,
+	unsafe: F.unsafeBlock,
 	use: F.useDeclaration,
 	while: F.whileExpression,
+	wildcard: F.useWildcard,
 	yield: F.yieldExpression,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
+	statement,
 	declarationStatement,
+	tokenPattern,
+	tokens,
 	nonSpecialToken,
+	useClause,
 	type,
+	expressionExceptRange,
 	expression,
+	expressionEndingWithBlock,
+	delimTokens,
+	condition,
 	pattern,
 	literal,
 	literalPattern,
+	path,
 	synonym
 };

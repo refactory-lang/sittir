@@ -73,6 +73,7 @@ import {
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
 	isHiddenKind,
+	isKindChoice,
 	rulesEqual,
 	separatorOf
 } from '../dsl/rule-patterns.ts';
@@ -753,6 +754,7 @@ function pruneInlinedAliasBodies(rules: Record<string, Rule<'link'>>, ctx: Stamp
 	}
 	for (const [name, rule] of Object.entries(rules)) {
 		if (rule.hidden !== true || ctx.topLevelAliasBodies?.has(name) || referenced.has(name)) continue;
+		if (rule.type === SUPERTYPE || isKindChoice(rule)) continue;
 		delete rules[name];
 	}
 }

@@ -3642,18 +3642,7 @@ parents.
 
 ### `packages/codegen/src/compiler/link.ts::pruneInlinedAliasBodies`
 
-```text
-/** Deletes an alias-bodied hidden rule (one `ctx.aliasBodies` tracked)
- *  once nothing references it any more. Collects its own referenced-name
- *  set with one walk over every rule (every SYMBOL name, every SUPERTYPE
- *  subtype name) rather than re-walking per candidate, then drops any
- *  `aliasBodies` entry not in that set and not re-added by
- *  `ctx.topLevelAliasBodies` (some later pass still needs the standalone
- *  body) — the common case is a rule whose every reference was already
- *  substituted for its content by `canonicalizeRuleLiterals`'s
- *  SYMBOL/SUPERTYPE inlining. Runs once, after the literal-canonicalize
- *  pass that does the inlining. */
-```
+Deletes hidden rules that nothing references after inlining, except alias bodies and dispatch unions: a rule already promoted to SUPERTYPE, or still shaped as a choice of kinds (`isKindChoice`), survives unreferenced — hidden dispatch unions like a grammar's `_statement` are namespaces the factory surface groups by, and inlining a union's references does not retire the union itself.
 
 ### `packages/codegen/src/compiler/link.ts::pruneUnreachableRules`
 

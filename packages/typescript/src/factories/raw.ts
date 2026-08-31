@@ -3953,7 +3953,7 @@ export type MethodDefinitionBuilt = T.MethodDefinition & {
 			value?: NonNullable<Parameters<typeof buildMethodDefinition>[0]>['accessorKind']
 		): MethodDefinitionBuilt;
 		name(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): MethodDefinitionBuilt;
 		optionalMarker(
 			value?: NonNullable<Parameters<typeof buildMethodDefinition>[0]>['optionalMarker']
@@ -4019,7 +4019,7 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): Method
 					accessorKind: (value?: NonNullable<Parameters<typeof buildMethodDefinition>[0]>['accessorKind']) =>
 						buildMethodDefinition({ ...config, accessorKind: value }),
 					name: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildMethodDefinition({ ...config, name: value }),
 					optionalMarker: (value?: NonNullable<Parameters<typeof buildMethodDefinition>[0]>['optionalMarker']) =>
 						buildMethodDefinition({ ...config, optionalMarker: value }),
@@ -4057,7 +4057,7 @@ export type PairBuilt = T.Pair & {
 	readonly $named: true;
 	readonly $with: {
 		key(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): PairBuilt;
 		value(value: T.Expression): PairBuilt;
 	};
@@ -4076,7 +4076,7 @@ export function buildPair(config: T.Pair.Config): PairBuilt {
 				_value,
 				$with: {
 					key: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildPair({ ...config, key: value }),
 					value: (value: T.Expression) => buildPair({ ...config, value: value })
 				}
@@ -4098,7 +4098,7 @@ export type PairPatternBuilt = T.PairPattern & {
 	readonly $named: true;
 	readonly $with: {
 		key(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): PairPatternBuilt;
 		value(value: T.Pattern | T.AssignmentPattern): PairPatternBuilt;
 	};
@@ -4117,7 +4117,7 @@ export function buildPairPattern(config: T.PairPattern.Config): PairPatternBuilt
 				_value,
 				$with: {
 					key: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildPairPattern({ ...config, key: value }),
 					value: (value: T.Pattern | T.AssignmentPattern) => buildPairPattern({ ...config, value: value })
 				}
@@ -4282,7 +4282,7 @@ export type PublicFieldDefinitionBuilt = T.PublicFieldDefinition & {
 			value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['overrideModifier']
 		): PublicFieldDefinitionBuilt;
 		name(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): PublicFieldDefinitionBuilt;
 		optionalityMarker(
 			value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['optionalityMarker']
@@ -4349,7 +4349,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['overrideModifier']
 					) => buildPublicFieldDefinition({ ...config, overrideModifier: value }),
 					name: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildPublicFieldDefinition({ ...config, name: value }),
 					optionalityMarker: (
 						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['optionalityMarker']
@@ -4431,7 +4431,7 @@ export type MethodSignatureBuilt = T.MethodSignature & {
 		asyncMarker(value?: NonNullable<Parameters<typeof buildMethodSignature>[0]>['asyncMarker']): MethodSignatureBuilt;
 		accessorKind(value?: NonNullable<Parameters<typeof buildMethodSignature>[0]>['accessorKind']): MethodSignatureBuilt;
 		name(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): MethodSignatureBuilt;
 		optionalMarker(
 			value?: NonNullable<Parameters<typeof buildMethodSignature>[0]>['optionalMarker']
@@ -4494,7 +4494,7 @@ export function buildMethodSignature(config: T.MethodSignature.Config): MethodSi
 					accessorKind: (value?: NonNullable<Parameters<typeof buildMethodSignature>[0]>['accessorKind']) =>
 						buildMethodSignature({ ...config, accessorKind: value }),
 					name: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildMethodSignature({ ...config, name: value }),
 					optionalMarker: (value?: NonNullable<Parameters<typeof buildMethodSignature>[0]>['optionalMarker']) =>
 						buildMethodSignature({ ...config, optionalMarker: value }),
@@ -4539,7 +4539,7 @@ export type AbstractMethodSignatureBuilt = T.AbstractMethodSignature & {
 			value?: NonNullable<Parameters<typeof buildAbstractMethodSignature>[0]>['accessorKind']
 		): AbstractMethodSignatureBuilt;
 		name(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): AbstractMethodSignatureBuilt;
 		optionalMarker(
 			value?: NonNullable<Parameters<typeof buildAbstractMethodSignature>[0]>['optionalMarker']
@@ -4593,7 +4593,7 @@ export function buildAbstractMethodSignature(config: T.AbstractMethodSignature.C
 					accessorKind: (value?: NonNullable<Parameters<typeof buildAbstractMethodSignature>[0]>['accessorKind']) =>
 						buildAbstractMethodSignature({ ...config, accessorKind: value }),
 					name: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildAbstractMethodSignature({ ...config, name: value }),
 					optionalMarker: (value?: NonNullable<Parameters<typeof buildAbstractMethodSignature>[0]>['optionalMarker']) =>
 						buildAbstractMethodSignature({ ...config, optionalMarker: value }),
@@ -5428,7 +5428,7 @@ export function buildEnumBody(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
 		| (
-				| T.PropertyIdentifier
+				| T._PropertyIdentifier
 				| T.PrivatePropertyIdentifier
 				| T.String
 				| T.Number
@@ -5479,7 +5479,7 @@ export type EnumAssignmentBuilt = T.EnumAssignment & {
 	readonly $named: true;
 	readonly $with: {
 		name(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): EnumAssignmentBuilt;
 		value(value: T.Expression): EnumAssignmentBuilt;
 	};
@@ -5498,7 +5498,7 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): EnumAssign
 				_value,
 				$with: {
 					name: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildEnumAssignment({ ...config, name: value }),
 					value: (value: T.Expression) => buildEnumAssignment({ ...config, value: value })
 				}
@@ -7344,7 +7344,7 @@ export type PropertySignatureBuilt = T.PropertySignature & {
 			value?: NonNullable<Parameters<typeof buildPropertySignature>[0]>['readonlyMarker']
 		): PropertySignatureBuilt;
 		name(
-			value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+			value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 		): PropertySignatureBuilt;
 		optionalMarker(
 			value?: NonNullable<Parameters<typeof buildPropertySignature>[0]>['optionalMarker']
@@ -7389,7 +7389,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): Prop
 					readonlyMarker: (value?: NonNullable<Parameters<typeof buildPropertySignature>[0]>['readonlyMarker']) =>
 						buildPropertySignature({ ...config, readonlyMarker: value }),
 					name: (
-						value: T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+						value: T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 					) => buildPropertySignature({ ...config, name: value }),
 					optionalMarker: (value?: NonNullable<Parameters<typeof buildPropertySignature>[0]>['optionalMarker']) =>
 						buildPropertySignature({ ...config, optionalMarker: value }),
@@ -8255,13 +8255,18 @@ function _buildFormalParametersElements(
 
 export type EnumBodyElementsBuildArgs = [
 	...elements: NonEmptyArray<
-		T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName | T.EnumAssignment
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
 	>
 ];
 export type EnumBodyElementsLooseArgs = [
 	...elements: NonEmptyArray<
 		LooseValue<
-			| T.PropertyIdentifier
+			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
@@ -8281,7 +8286,7 @@ export type EnumBodyElementsBuilt = T.EnumBodyElements & {
 	readonly $with: {
 		contents(
 			...vs: NonEmptyArray<
-				| T.PropertyIdentifier
+				| T._PropertyIdentifier
 				| T.PrivatePropertyIdentifier
 				| T.String
 				| T.Number
@@ -8295,20 +8300,30 @@ export type EnumBodyElementsBuilt = T.EnumBodyElements & {
 
 export function buildEnumBodyElements(
 	...elements: NonEmptyArray<
-		T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName | T.EnumAssignment
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
 	>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	options: { delimiter?: Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName | T.EnumAssignment
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
 	>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
 		| (
-				| T.PropertyIdentifier
+				| T._PropertyIdentifier
 				| T.PrivatePropertyIdentifier
 				| T.String
 				| T.Number
@@ -8325,13 +8340,23 @@ export function buildEnumBodyElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName | T.EnumAssignment
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
 	>;
 	return _buildEnumBodyElements(elements, options);
 }
 function _buildEnumBodyElements(
 	elements: NonEmptyArray<
-		T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName | T.EnumAssignment
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
 	>,
 	options: { delimiter?: Delimiter.Trailing }
 ): EnumBodyElementsBuilt {
@@ -8349,7 +8374,7 @@ function _buildEnumBodyElements(
 				$with: {
 					contents: (
 						...vs: NonEmptyArray<
-							| T.PropertyIdentifier
+							| T._PropertyIdentifier
 							| T.PrivatePropertyIdentifier
 							| T.String
 							| T.Number

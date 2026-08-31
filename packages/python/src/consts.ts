@@ -25,6 +25,7 @@ const NODE_KINDS = [
 	'_slice_group',
 	'_subjects',
 	'_subscripts',
+	'_suite',
 	'_suite_block_with_indent',
 	'_types',
 	'_with_clause_bare',

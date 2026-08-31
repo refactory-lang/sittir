@@ -1332,7 +1332,7 @@ export function resolveTokenRepetitionPattern_tokenPatterns(
 	value: T.TokenRepetitionPattern.LooseConfig['tokenPatterns']
 ): T.TokenRepetitionPattern['_token_patterns'] {
 	return _resolveMany<
-		T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+		T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
 	>(value, _K6, _K7);
 }
 
@@ -1422,7 +1422,7 @@ export function coerceToTokenTree(
 export function resolveTokenRepetition_tokens(
 	value: T.TokenRepetition.LooseConfig['tokens']
 ): T.TokenRepetition['_tokens'] {
-	return _resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(value, _K6, _K9);
+	return _resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K6, _K9);
 }
 
 export function resolveTokenRepetition_separator(

@@ -53,6 +53,28 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
+export const statement: {
+	readonly if: typeof F.ifStatement;
+	readonly for: typeof F.forStatement;
+	readonly while: typeof F.whileStatement;
+	readonly try: typeof F.tryStatement;
+	readonly with: typeof F.withStatement;
+	readonly function: typeof F.functionDefinition;
+	readonly class: typeof F.classDefinition;
+	readonly decorated: typeof F.decoratedDefinition;
+	readonly match: typeof F.matchStatement;
+} = {
+	if: F.ifStatement,
+	for: F.forStatement,
+	while: F.whileStatement,
+	try: F.tryStatement,
+	with: F.withStatement,
+	function: F.functionDefinition,
+	class: F.classDefinition,
+	decorated: F.decoratedDefinition,
+	match: F.matchStatement
+};
+
 export const simpleStatement: {
 	readonly futureImport: typeof F.futureImportStatement;
 	readonly import: typeof F.importStatement;
@@ -89,6 +111,18 @@ export const simpleStatement: {
 	typeAlias: F.typeAliasStatement
 };
 
+export const namedExpressionLhs: {
+	readonly identifier: typeof F.buildIdentifier;
+} = {
+	identifier: F.buildIdentifier
+};
+
+export const expressions: {
+	readonly expressionList: typeof F.expressionList;
+} = {
+	expressionList: F.expressionList
+};
+
 export const compoundStatement: {
 	readonly if: typeof F.ifStatement;
 	readonly for: typeof F.forStatement;
@@ -109,6 +143,36 @@ export const compoundStatement: {
 	class: F.classDefinition,
 	decorated: F.decoratedDefinition,
 	match: F.matchStatement
+};
+
+export const simplePattern: {
+	readonly class: typeof F.classPattern;
+	readonly splat: typeof F.splatPattern;
+	readonly union: typeof F.unionPattern;
+	readonly caseList: typeof F.caseListPattern;
+	readonly caseTuple: typeof F.caseTuplePattern;
+	readonly dict: typeof F.dictPattern;
+	readonly string: typeof F.string;
+	readonly concatenatedString: typeof F.concatenatedString;
+	readonly true: typeof F.buildTrue;
+	readonly false: typeof F.buildFalse;
+	readonly none: typeof F.buildNone;
+	readonly complex: typeof F.complexPattern;
+	readonly dottedName: typeof F.dottedName;
+} = {
+	class: F.classPattern,
+	splat: F.splatPattern,
+	union: F.unionPattern,
+	caseList: F.caseListPattern,
+	caseTuple: F.caseTuplePattern,
+	dict: F.dictPattern,
+	string: F.string,
+	concatenatedString: F.concatenatedString,
+	true: F.buildTrue,
+	false: F.buildFalse,
+	none: F.buildNone,
+	complex: F.complexPattern,
+	dottedName: F.dottedName
 };
 
 export const parameter: {
@@ -147,6 +211,12 @@ export const pattern: {
 	listSplat: F.listSplatPattern,
 	tuple: F.tuplePattern,
 	list: F.listPattern
+};
+
+export const expressionWithinForInClause: {
+	readonly lambda: typeof F.lambdaWithinForInClause;
+} = {
+	lambda: F.lambdaWithinForInClause
 };
 
 export const expression: {
@@ -219,6 +289,36 @@ export const primaryExpression: {
 	generator: F.generatorExpression,
 	ellipsis: F.buildEllipsis,
 	listSplat: F.listSplatPattern
+};
+
+export const leftHandSide: {
+	readonly patternList: typeof F.patternList;
+} = {
+	patternList: F.patternList
+};
+
+export const rightHandSide: {
+	readonly expressionList: typeof F.expressionList;
+	readonly assignment: typeof F.assignment;
+	readonly augmentedAssignment: typeof F.augmentedAssignment;
+	readonly patternList: typeof F.patternList;
+	readonly yield: typeof F.yield_;
+} = {
+	expressionList: F.expressionList,
+	assignment: F.assignment,
+	augmentedAssignment: F.augmentedAssignment,
+	patternList: F.patternList,
+	yield: F.yield_
+};
+
+export const fExpression: {
+	readonly list: typeof F.expressionList;
+	readonly patternList: typeof F.patternList;
+	readonly yield: typeof F.yield_;
+} = {
+	list: F.expressionList,
+	patternList: F.patternList,
+	yield: F.yield_
 };
 
 export const keywordIdentifier: {
@@ -362,13 +462,17 @@ export const ir: {
 	readonly binary: typeof F.binaryOperator;
 	readonly boolean: typeof F.booleanOperator;
 	readonly break: typeof F.buildBreakStatement;
+	readonly caseList: typeof F.caseListPattern;
+	readonly caseTuple: typeof F.caseTuplePattern;
 	readonly class: typeof F.classDefinition;
 	readonly comparison: typeof F.comparisonOperator;
+	readonly complex: typeof F.complexPattern;
 	readonly conditional: typeof F.conditionalExpression;
 	readonly continue: typeof F.buildContinueStatement;
 	readonly decorated: typeof F.decoratedDefinition;
 	readonly default: typeof F.defaultParameter;
 	readonly delete: typeof F.deleteStatement;
+	readonly dict: typeof F.dictPattern;
 	readonly exec: typeof F.execStatement;
 	readonly for: typeof F.forStatement;
 	readonly function: typeof F.functionDefinition;
@@ -387,19 +491,29 @@ export const ir: {
 	readonly print: typeof F.printStatement;
 	readonly raise: typeof F.raiseStatement;
 	readonly return: typeof F.returnStatement;
+	readonly splat: typeof F.splatPattern;
 	readonly try: typeof F.tryStatement;
 	readonly typeAlias: typeof F.typeAliasStatement;
 	readonly typed: typeof F.typedParameter;
 	readonly typedDefault: typeof F.typedDefaultParameter;
 	readonly unary: typeof F.unaryOperator;
+	readonly union: typeof F.unionPattern;
 	readonly while: typeof F.whileStatement;
 	readonly with: typeof F.withStatement;
+	readonly statement: typeof statement;
 	readonly simpleStatement: typeof simpleStatement;
+	readonly namedExpressionLhs: typeof namedExpressionLhs;
+	readonly expressions: typeof expressions;
 	readonly compoundStatement: typeof compoundStatement;
+	readonly simplePattern: typeof simplePattern;
 	readonly parameter: typeof parameter;
 	readonly pattern: typeof pattern;
+	readonly expressionWithinForInClause: typeof expressionWithinForInClause;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
+	readonly leftHandSide: typeof leftHandSide;
+	readonly rightHandSide: typeof rightHandSide;
+	readonly fExpression: typeof fExpression;
 	readonly keywordIdentifier: typeof keywordIdentifier;
 	readonly synonym: typeof synonym;
 } = {
@@ -544,13 +658,17 @@ export const ir: {
 	binary: F.binaryOperator,
 	boolean: F.booleanOperator,
 	break: F.buildBreakStatement,
+	caseList: F.caseListPattern,
+	caseTuple: F.caseTuplePattern,
 	class: F.classDefinition,
 	comparison: F.comparisonOperator,
+	complex: F.complexPattern,
 	conditional: F.conditionalExpression,
 	continue: F.buildContinueStatement,
 	decorated: F.decoratedDefinition,
 	default: F.defaultParameter,
 	delete: F.deleteStatement,
+	dict: F.dictPattern,
 	exec: F.execStatement,
 	for: F.forStatement,
 	function: F.functionDefinition,
@@ -569,21 +687,31 @@ export const ir: {
 	print: F.printStatement,
 	raise: F.raiseStatement,
 	return: F.returnStatement,
+	splat: F.splatPattern,
 	try: F.tryStatement,
 	typeAlias: F.typeAliasStatement,
 	typed: F.typedParameter,
 	typedDefault: F.typedDefaultParameter,
 	unary: F.unaryOperator,
+	union: F.unionPattern,
 	while: F.whileStatement,
 	with: F.withStatement,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
+	statement,
 	simpleStatement,
+	namedExpressionLhs,
+	expressions,
 	compoundStatement,
+	simplePattern,
 	parameter,
 	pattern,
+	expressionWithinForInClause,
 	expression,
 	primaryExpression,
+	leftHandSide,
+	rightHandSide,
+	fExpression,
 	keywordIdentifier,
 	synonym
 };

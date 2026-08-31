@@ -405,6 +405,21 @@ function _hasSeparatorFlank(
 	return otherCount > between;
 }
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
+	_statement: new Set([
+		'_simple_statements',
+		'simple_statements',
+		'_compound_statement',
+		'compound_statement',
+		'if_statement',
+		'for_statement',
+		'while_statement',
+		'try_statement',
+		'with_statement',
+		'function_definition',
+		'class_definition',
+		'decorated_definition',
+		'match_statement'
+	]),
 	_simple_statement: new Set([
 		'future_import_statement',
 		'import_statement',
@@ -423,6 +438,44 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'exec_statement',
 		'type_alias_statement'
 	]),
+	_named_expression_lhs: new Set(['identifier']),
+	_expressions: new Set([
+		'expression',
+		'comparison_operator',
+		'not_operator',
+		'boolean_operator',
+		'lambda',
+		'primary_expression',
+		'await',
+		'binary_operator',
+		'identifier',
+		'string',
+		'concatenated_string',
+		'integer',
+		'float',
+		'true',
+		'false',
+		'none',
+		'unary_operator',
+		'attribute',
+		'subscript',
+		'call',
+		'list',
+		'list_comprehension',
+		'dictionary',
+		'dictionary_comprehension',
+		'set',
+		'set_comprehension',
+		'tuple',
+		'parenthesized_expression',
+		'generator_expression',
+		'ellipsis',
+		'list_splat_pattern',
+		'conditional_expression',
+		'named_expression',
+		'as_pattern',
+		'expression_list'
+	]),
 	_compound_statement: new Set([
 		'if_statement',
 		'for_statement',
@@ -433,6 +486,25 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'class_definition',
 		'decorated_definition',
 		'match_statement'
+	]),
+	_simple_pattern: new Set([
+		'class_pattern',
+		'splat_pattern',
+		'union_pattern',
+		'case_list_pattern',
+		'case_tuple_pattern',
+		'dict_pattern',
+		'string',
+		'concatenated_string',
+		'true',
+		'false',
+		'none',
+		'_simple_pattern_negative',
+		'simple_pattern_negative',
+		'complex_pattern',
+		'dotted_name',
+		'_wildcard_pattern',
+		'wildcard_pattern'
 	]),
 	parameter: new Set([
 		'identifier',
@@ -446,6 +518,43 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'dictionary_splat_pattern'
 	]),
 	pattern: new Set(['identifier', 'subscript', 'attribute', 'list_splat_pattern', 'tuple_pattern', 'list_pattern']),
+	_expression_within_for_in_clause: new Set([
+		'expression',
+		'comparison_operator',
+		'not_operator',
+		'boolean_operator',
+		'lambda',
+		'primary_expression',
+		'await',
+		'binary_operator',
+		'identifier',
+		'string',
+		'concatenated_string',
+		'integer',
+		'float',
+		'true',
+		'false',
+		'none',
+		'unary_operator',
+		'attribute',
+		'subscript',
+		'call',
+		'list',
+		'list_comprehension',
+		'dictionary',
+		'dictionary_comprehension',
+		'set',
+		'set_comprehension',
+		'tuple',
+		'parenthesized_expression',
+		'generator_expression',
+		'ellipsis',
+		'list_splat_pattern',
+		'conditional_expression',
+		'named_expression',
+		'as_pattern',
+		'lambda_within_for_in_clause'
+	]),
 	expression: new Set([
 		'comparison_operator',
 		'not_operator',
@@ -507,6 +616,96 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'generator_expression',
 		'ellipsis',
 		'list_splat_pattern'
+	]),
+	_left_hand_side: new Set([
+		'pattern',
+		'identifier',
+		'subscript',
+		'attribute',
+		'list_splat_pattern',
+		'tuple_pattern',
+		'list_pattern',
+		'pattern_list'
+	]),
+	_right_hand_side: new Set([
+		'expression',
+		'comparison_operator',
+		'not_operator',
+		'boolean_operator',
+		'lambda',
+		'primary_expression',
+		'await',
+		'binary_operator',
+		'identifier',
+		'string',
+		'concatenated_string',
+		'integer',
+		'float',
+		'true',
+		'false',
+		'none',
+		'unary_operator',
+		'attribute',
+		'subscript',
+		'call',
+		'list',
+		'list_comprehension',
+		'dictionary',
+		'dictionary_comprehension',
+		'set',
+		'set_comprehension',
+		'tuple',
+		'parenthesized_expression',
+		'generator_expression',
+		'ellipsis',
+		'list_splat_pattern',
+		'conditional_expression',
+		'named_expression',
+		'as_pattern',
+		'expression_list',
+		'assignment',
+		'augmented_assignment',
+		'pattern_list',
+		'yield'
+	]),
+	_f_expression: new Set([
+		'expression',
+		'comparison_operator',
+		'not_operator',
+		'boolean_operator',
+		'lambda',
+		'primary_expression',
+		'await',
+		'binary_operator',
+		'identifier',
+		'string',
+		'concatenated_string',
+		'integer',
+		'float',
+		'true',
+		'false',
+		'none',
+		'unary_operator',
+		'attribute',
+		'subscript',
+		'call',
+		'list',
+		'list_comprehension',
+		'dictionary',
+		'dictionary_comprehension',
+		'set',
+		'set_comprehension',
+		'tuple',
+		'parenthesized_expression',
+		'generator_expression',
+		'ellipsis',
+		'list_splat_pattern',
+		'conditional_expression',
+		'named_expression',
+		'as_pattern',
+		'expression_list',
+		'pattern_list',
+		'yield'
 	]),
 	keyword_identifier: new Set(['identifier'])
 };
@@ -619,6 +818,71 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapStatement(
+	data: T.Statement & { readonly $other?: T.Statement | readonly T.Statement[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'__simple_statements',
+		'_simple_statements',
+		'__compound_statement',
+		'_compound_statement',
+		'_if_statement',
+		'_for_statement',
+		'_while_statement',
+		'_try_statement',
+		'_with_statement',
+		'_function_definition',
+		'_class_definition',
+		'_decorated_definition',
+		'_match_statement'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'_simple_statements',
+		'simple_statements',
+		'_compound_statement',
+		'compound_statement',
+		'if_statement',
+		'for_statement',
+		'while_statement',
+		'try_statement',
+		'with_statement',
+		'function_definition',
+		'class_definition',
+		'decorated_definition',
+		'match_statement'
+	]) as T.Statement | readonly T.Statement[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_simple_statements',
+			'simple_statements',
+			'_compound_statement',
+			'compound_statement',
+			'if_statement',
+			'for_statement',
+			'while_statement',
+			'try_statement',
+			'with_statement',
+			'function_definition',
+			'class_definition',
+			'decorated_definition',
+			'match_statement'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.Statement>(data as T.Statement, tree);
+	}
+	return drillIn<T.Statement>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle) {
@@ -1272,6 +1536,30 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapNamedExpressionLhs(
+	data: T.NamedExpressionLhs & { readonly $other?: T.NamedExpressionLhs | readonly T.NamedExpressionLhs[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, ['_identifier']);
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['identifier']) as
+		| T.NamedExpressionLhs
+		| readonly T.NamedExpressionLhs[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier']);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.NamedExpressionLhs>(data as T.NamedExpressionLhs, tree);
+	}
+	return drillIn<T.NamedExpressionLhs>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapReturnStatement(
@@ -3601,6 +3889,83 @@ export function wrapCasePattern(
 	return _node;
 }
 
+export function wrapSimplePattern(
+	data: T.SimplePattern & { readonly $other?: T.SimplePattern | readonly T.SimplePattern[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_class_pattern',
+		'_splat_pattern',
+		'_union_pattern',
+		'_case_list_pattern',
+		'_case_tuple_pattern',
+		'_dict_pattern',
+		'_string',
+		'_concatenated_string',
+		'_true',
+		'_false',
+		'_none',
+		'__simple_pattern_negative',
+		'_simple_pattern_negative',
+		'_complex_pattern',
+		'_dotted_name',
+		'__wildcard_pattern',
+		'_wildcard_pattern'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'class_pattern',
+		'splat_pattern',
+		'union_pattern',
+		'case_list_pattern',
+		'case_tuple_pattern',
+		'dict_pattern',
+		'string',
+		'concatenated_string',
+		'true',
+		'false',
+		'none',
+		'_simple_pattern_negative',
+		'simple_pattern_negative',
+		'complex_pattern',
+		'dotted_name',
+		'_wildcard_pattern',
+		'wildcard_pattern'
+	]) as T.SimplePattern | readonly T.SimplePattern[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'class_pattern',
+			'splat_pattern',
+			'union_pattern',
+			'case_list_pattern',
+			'case_tuple_pattern',
+			'dict_pattern',
+			'string',
+			'concatenated_string',
+			'true',
+			'false',
+			'none',
+			'_simple_pattern_negative',
+			'simple_pattern_negative',
+			'complex_pattern',
+			'dotted_name',
+			'_wildcard_pattern',
+			'wildcard_pattern'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.SimplePattern>(data as T.SimplePattern, tree);
+	}
+	return drillIn<T.SimplePattern>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_simple_pattern']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UnionPattern as const }, _treeEngine(tree));
@@ -4363,6 +4728,32 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapExpressionWithinForInClause(
+	data: T.ExpressionWithinForInClause & {
+		readonly $other?: T.ExpressionWithinForInClause | readonly T.ExpressionWithinForInClause[];
+	},
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, ['_expression', '_lambda_within_for_in_clause']);
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['expression', 'lambda_within_for_in_clause']) as
+		| T.ExpressionWithinForInClause
+		| readonly T.ExpressionWithinForInClause[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['expression', 'lambda_within_for_in_clause']);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.ExpressionWithinForInClause>(data as T.ExpressionWithinForInClause, tree);
+	}
+	return drillIn<T.ExpressionWithinForInClause>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 export function wrapExpression(
 	data: T.Expression & { readonly $other?: T.Expression | readonly T.Expression[] },
 	tree: TreeHandle
@@ -5021,6 +5412,50 @@ export function wrapPatternList(
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapRightHandSide(
+	data: T.RightHandSide & { readonly $other?: T.RightHandSide | readonly T.RightHandSide[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_expression',
+		'_expression_list',
+		'_assignment',
+		'_augmented_assignment',
+		'_pattern_list',
+		'_yield'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'expression',
+		'expression_list',
+		'assignment',
+		'augmented_assignment',
+		'pattern_list',
+		'yield'
+	]) as T.RightHandSide | readonly T.RightHandSide[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'expression',
+			'expression_list',
+			'assignment',
+			'augmented_assignment',
+			'pattern_list',
+			'yield'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.RightHandSide>(data as T.RightHandSide, tree);
+	}
+	return drillIn<T.RightHandSide>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapYield(
@@ -6778,6 +7213,31 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapFExpression(
+	data: T.FExpression & { readonly $other?: T.FExpression | readonly T.FExpression[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, ['_expression', '_expression_list', '_pattern_list', '_yield']);
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['expression', 'expression_list', 'pattern_list', 'yield']) as
+		| T.FExpression
+		| readonly T.FExpression[]
+		| undefined;
+	const filtered =
+		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['expression', 'expression_list', 'pattern_list', 'yield']);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.FExpression>(data as T.FExpression, tree);
+	}
+	return drillIn<T.FExpression>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapFormatSpecifier(
@@ -8582,6 +9042,7 @@ export function wrapYieldFromClause(
 
 const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	[TSKindId.Module]: (d, t) => wrapModule(d as unknown as T.Module, t),
+	[TSKindId.Statement]: (d, t) => wrapStatement(d as unknown as T.Statement, t),
 	[TSKindId.SimpleStatements]: (d, t) => wrapSimpleStatements(d as unknown as T.SimpleStatements, t),
 	[TSKindId.ImportStatement]: (d, t) => wrapImportStatement(d as unknown as T.ImportStatement, t),
 	[TSKindId.ImportPrefix]: (d) => ({ ...d, $type: TSKindId.ImportPrefix as const }),
@@ -8596,6 +9057,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.AssertStatement]: (d, t) => wrapAssertStatement(d as unknown as T.AssertStatement, t),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.NamedExpression]: (d, t) => wrapNamedExpression(d as unknown as T.NamedExpression, t),
+	[TSKindId.NamedExpressionLhs]: (d, t) => wrapNamedExpressionLhs(d as unknown as T.NamedExpressionLhs, t),
 	[TSKindId.ReturnStatement]: (d, t) => wrapReturnStatement(d as unknown as T.ReturnStatement, t),
 	[TSKindId.DeleteStatement]: (d, t) => wrapDeleteStatement(d as unknown as T.DeleteStatement, t),
 	[TSKindId.RaiseStatement]: (d, t) => wrapRaiseStatement(d as unknown as T.RaiseStatement, t),
@@ -8635,6 +9097,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ExpressionList]: (d, t) => wrapExpressionList(d as unknown as T.ExpressionList, t),
 	[TSKindId.DottedName]: (d, t) => wrapDottedName(d as unknown as T.DottedName, t),
 	[TSKindId.CasePattern]: (d, t) => wrapCasePattern(d as unknown as T.CasePattern, t),
+	[TSKindId.SimplePattern]: (d, t) => wrapSimplePattern(d as unknown as T.SimplePattern, t),
 	[TSKindId.UnionPattern]: (d, t) => wrapUnionPattern(d as unknown as T.UnionPattern, t),
 	[TSKindId.DictPattern]: (d, t) => wrapDictPattern(d as unknown as T.DictPattern, t),
 	[TSKindId.KeyValuePattern]: (d, t) => wrapKeyValuePattern(d as unknown as T.KeyValuePattern, t),
@@ -8653,6 +9116,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ListSplatPattern]: (d, t) => wrapListSplatPattern(d as unknown as T.ListSplatPattern, t),
 	[TSKindId.DictionarySplatPattern]: (d, t) => wrapDictionarySplatPattern(d as unknown as T.DictionarySplatPattern, t),
 	[TSKindId.AsPattern]: (d, t) => wrapAsPattern(d as unknown as T.AsPattern, t),
+	[TSKindId.ExpressionWithinForInClause]: (d, t) =>
+		wrapExpressionWithinForInClause(d as unknown as T.ExpressionWithinForInClause, t),
 	[TSKindId.Expression]: (d, t) => wrapExpression(d as unknown as T.Expression, t),
 	[TSKindId.PrimaryExpression]: (d, t) => wrapPrimaryExpression(d as unknown as T.PrimaryExpression, t),
 	[TSKindId.NotOperator]: (d, t) => wrapNotOperator(d as unknown as T.NotOperator, t),
@@ -8666,6 +9131,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Assignment]: (d, t) => wrapAssignment(d as unknown as T.Assignment, t),
 	[TSKindId.AugmentedAssignment]: (d, t) => wrapAugmentedAssignment(d as unknown as T.AugmentedAssignment, t),
 	[TSKindId.PatternList]: (d, t) => wrapPatternList(d as unknown as T.PatternList, t),
+	[TSKindId.RightHandSide]: (d, t) => wrapRightHandSide(d as unknown as T.RightHandSide, t),
 	[TSKindId.Yield]: (d, t) => wrapYield(d as unknown as T.Yield, t),
 	[TSKindId.Attribute]: (d, t) => wrapAttribute(d as unknown as T.Attribute, t),
 	[TSKindId.Subscript]: (d, t) => wrapSubscript(d as unknown as T.Subscript, t),
@@ -8700,6 +9166,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.String]: (d, t) => wrapString(d as unknown as T.String, t),
 	[TSKindId.StringContent]: (d, t) => wrapStringContent(d as unknown as T.StringContent, t),
 	[TSKindId.Interpolation]: (d, t) => wrapInterpolation(d as unknown as T.Interpolation, t),
+	[TSKindId.FExpression]: (d, t) => wrapFExpression(d as unknown as T.FExpression, t),
 	[TSKindId.EscapeSequence]: (d) => ({ ...d, $type: TSKindId.EscapeSequence as const }),
 	[TSKindId.FormatSpecifier]: (d, t) => wrapFormatSpecifier(d as unknown as T.FormatSpecifier, t),
 	[TSKindId.TypeConversion]: (d) => ({ ...d, $type: TSKindId.TypeConversion as const }),
@@ -8773,6 +9240,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 
 interface _WrapReturnByKindId {
 	[TSKindId.Module]: ReturnType<typeof wrapModule>;
+	[TSKindId.Statement]: ReturnType<typeof wrapStatement>;
 	[TSKindId.SimpleStatements]: ReturnType<typeof wrapSimpleStatements>;
 	[TSKindId.ImportStatement]: ReturnType<typeof wrapImportStatement>;
 	[TSKindId.ImportPrefix]: _NodeData & { readonly $type: TSKindId.ImportPrefix };
@@ -8787,6 +9255,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.AssertStatement]: ReturnType<typeof wrapAssertStatement>;
 	[TSKindId.ExpressionStatement]: ReturnType<typeof wrapExpressionStatement>;
 	[TSKindId.NamedExpression]: ReturnType<typeof wrapNamedExpression>;
+	[TSKindId.NamedExpressionLhs]: ReturnType<typeof wrapNamedExpressionLhs>;
 	[TSKindId.ReturnStatement]: ReturnType<typeof wrapReturnStatement>;
 	[TSKindId.DeleteStatement]: ReturnType<typeof wrapDeleteStatement>;
 	[TSKindId.RaiseStatement]: ReturnType<typeof wrapRaiseStatement>;
@@ -8826,6 +9295,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ExpressionList]: ReturnType<typeof wrapExpressionList>;
 	[TSKindId.DottedName]: ReturnType<typeof wrapDottedName>;
 	[TSKindId.CasePattern]: ReturnType<typeof wrapCasePattern>;
+	[TSKindId.SimplePattern]: ReturnType<typeof wrapSimplePattern>;
 	[TSKindId.UnionPattern]: ReturnType<typeof wrapUnionPattern>;
 	[TSKindId.DictPattern]: ReturnType<typeof wrapDictPattern>;
 	[TSKindId.KeyValuePattern]: ReturnType<typeof wrapKeyValuePattern>;
@@ -8844,6 +9314,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ListSplatPattern]: ReturnType<typeof wrapListSplatPattern>;
 	[TSKindId.DictionarySplatPattern]: ReturnType<typeof wrapDictionarySplatPattern>;
 	[TSKindId.AsPattern]: ReturnType<typeof wrapAsPattern>;
+	[TSKindId.ExpressionWithinForInClause]: ReturnType<typeof wrapExpressionWithinForInClause>;
 	[TSKindId.Expression]: ReturnType<typeof wrapExpression>;
 	[TSKindId.PrimaryExpression]: ReturnType<typeof wrapPrimaryExpression>;
 	[TSKindId.NotOperator]: ReturnType<typeof wrapNotOperator>;
@@ -8856,6 +9327,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.Assignment]: ReturnType<typeof wrapAssignment>;
 	[TSKindId.AugmentedAssignment]: ReturnType<typeof wrapAugmentedAssignment>;
 	[TSKindId.PatternList]: ReturnType<typeof wrapPatternList>;
+	[TSKindId.RightHandSide]: ReturnType<typeof wrapRightHandSide>;
 	[TSKindId.Yield]: ReturnType<typeof wrapYield>;
 	[TSKindId.Attribute]: ReturnType<typeof wrapAttribute>;
 	[TSKindId.Subscript]: ReturnType<typeof wrapSubscript>;
@@ -8888,6 +9360,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.String]: ReturnType<typeof wrapString>;
 	[TSKindId.StringContent]: ReturnType<typeof wrapStringContent>;
 	[TSKindId.Interpolation]: ReturnType<typeof wrapInterpolation>;
+	[TSKindId.FExpression]: ReturnType<typeof wrapFExpression>;
 	[TSKindId.EscapeSequence]: _NodeData & { readonly $type: TSKindId.EscapeSequence };
 	[TSKindId.FormatSpecifier]: ReturnType<typeof wrapFormatSpecifier>;
 	[TSKindId.TypeConversion]: _NodeData & { readonly $type: TSKindId.TypeConversion };

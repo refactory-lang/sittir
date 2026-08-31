@@ -55,6 +55,14 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
+export const moduleExportName: {
+	readonly identifier: typeof F.buildIdentifier;
+	readonly string: typeof F.string;
+} = {
+	identifier: F.buildIdentifier,
+	string: F.string
+};
+
 export const declaration: {
 	readonly function: typeof F.functionDeclaration;
 	readonly generatorFunction: typeof F.generatorFunctionDeclaration;
@@ -127,6 +135,12 @@ export const statement: {
 	throw: F.throwStatement,
 	empty: F.buildEmptyStatement,
 	labeled: F.labeledStatement
+};
+
+export const expressions: {
+	readonly sequence: typeof F.sequenceExpression;
+} = {
+	sequence: F.sequenceExpression
 };
 
 export const expression: {
@@ -211,6 +225,14 @@ export const primaryExpression: {
 	nonNull: F.nonNullExpression
 };
 
+export const formalParameter: {
+	readonly required: typeof F.requiredParameter;
+	readonly optional: typeof F.optionalParameter;
+} = {
+	required: F.requiredParameter,
+	optional: F.optionalParameter
+};
+
 export const lhsExpression: {
 	readonly member: typeof F.memberExpression;
 	readonly subscript: typeof F.subscriptExpression;
@@ -229,10 +251,52 @@ export const lhsExpression: {
 	nonNull: F.nonNullExpression
 };
 
+export const augmentedAssignmentLhs: {
+	readonly member: typeof F.memberExpression;
+	readonly subscript: typeof F.subscriptExpression;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly nonNull: typeof F.nonNullExpression;
+} = {
+	member: F.memberExpression,
+	subscript: F.subscriptExpression,
+	identifier: F.buildIdentifier,
+	parenthesized: F.parenthesizedExpression,
+	nonNull: F.nonNullExpression
+};
+
+export const destructuringPattern: {
+	readonly object: typeof F.objectPattern;
+	readonly array: typeof F.arrayPattern;
+} = {
+	object: F.objectPattern,
+	array: F.arrayPattern
+};
+
+export const identifier: {
+	readonly undefined: typeof F.buildUndefined;
+	readonly identifier: typeof F.buildIdentifier;
+} = {
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier
+};
+
 export const pattern: {
 	readonly rest: typeof F.restPattern;
 } = {
 	rest: F.restPattern
+};
+
+export const propertyName: {
+	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly string: typeof F.string;
+	readonly number: typeof F.buildNumber;
+	readonly computed: typeof F.computedPropertyName;
+} = {
+	privateIdentifier: F.buildPrivatePropertyIdentifier,
+	string: F.string,
+	number: F.buildNumber,
+	computed: F.computedPropertyName
 };
 
 export const statementIdentifier: {
@@ -259,6 +323,12 @@ export const propertyIdentifier: {
 	identifier: F.buildIdentifier
 };
 
+export const importIdentifier: {
+	readonly identifier: typeof F.buildIdentifier;
+} = {
+	identifier: F.buildIdentifier
+};
+
 export const type: {
 	readonly function: typeof F.functionType;
 	readonly readonly: typeof F.readonlyType;
@@ -269,6 +339,18 @@ export const type: {
 	readonly: F.readonlyType,
 	constructor: F.constructorType,
 	infer: F.inferType
+};
+
+export const tupleTypeMember: {
+	readonly parameter: typeof F.tupleParameter;
+	readonly optionalParameter: typeof F.optionalTupleParameter;
+	readonly optional: typeof F.optionalType;
+	readonly rest: typeof F.restType;
+} = {
+	parameter: F.tupleParameter,
+	optionalParameter: F.optionalTupleParameter,
+	optional: F.optionalType,
+	rest: F.restType
 };
 
 export const primaryType: {
@@ -485,7 +567,7 @@ export const ir: {
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
-	readonly identifier: typeof F.buildIdentifier;
+	readonly identifier2: typeof F.buildIdentifier;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly accessibilityModifier: typeof F.buildAccessibilityModifier;
 	readonly predefinedType: typeof F.buildPredefinedType;
@@ -501,6 +583,7 @@ export const ir: {
 	readonly block: typeof F.statementBlock;
 	readonly break: typeof F.breakStatement;
 	readonly call: typeof F.callExpression;
+	readonly computed: typeof F.computedPropertyName;
 	readonly conditional: typeof F.conditionalType;
 	readonly constructor: typeof F.constructorType;
 	readonly continue: typeof F.continueStatement;
@@ -528,13 +611,18 @@ export const ir: {
 	readonly member: typeof F.memberExpression;
 	readonly new: typeof F.newExpression;
 	readonly nonNull: typeof F.nonNullExpression;
+	readonly optional: typeof F.optionalParameter;
+	readonly parameter: typeof F.tupleParameter;
 	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly predefined: typeof F.buildPredefinedType;
+	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly query: typeof F.typeQuery;
 	readonly readonly: typeof F.readonlyType;
+	readonly required: typeof F.requiredParameter;
 	readonly rest: typeof F.restPattern;
 	readonly return: typeof F.returnStatement;
 	readonly satisfies: typeof F.satisfiesExpression;
+	readonly sequence: typeof F.sequenceExpression;
 	readonly subscript: typeof F.subscriptExpression;
 	readonly switch: typeof F.switchStatement;
 	readonly templateLiteral: typeof F.templateLiteralType;
@@ -550,17 +638,26 @@ export const ir: {
 	readonly while: typeof F.whileStatement;
 	readonly with: typeof F.withStatement;
 	readonly yield: typeof F.yieldExpression;
+	readonly moduleExportName: typeof moduleExportName;
 	readonly declaration: typeof declaration;
 	readonly statement: typeof statement;
+	readonly expressions: typeof expressions;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
+	readonly formalParameter: typeof formalParameter;
 	readonly lhsExpression: typeof lhsExpression;
+	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
+	readonly destructuringPattern: typeof destructuringPattern;
+	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
+	readonly propertyName: typeof propertyName;
 	readonly statementIdentifier: typeof statementIdentifier;
 	readonly shorthandPropertyIdentifier: typeof shorthandPropertyIdentifier;
 	readonly shorthandPropertyIdentifierPattern: typeof shorthandPropertyIdentifierPattern;
 	readonly propertyIdentifier: typeof propertyIdentifier;
+	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
+	readonly tupleTypeMember: typeof tupleTypeMember;
 	readonly primaryType: typeof primaryType;
 	readonly synonym: typeof synonym;
 } = {
@@ -740,7 +837,7 @@ export const ir: {
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
-	identifier: F.buildIdentifier,
+	identifier2: F.buildIdentifier,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
 	accessibilityModifier: F.buildAccessibilityModifier,
 	predefinedType: F.buildPredefinedType,
@@ -758,6 +855,7 @@ export const ir: {
 	block: F.statementBlock,
 	break: F.breakStatement,
 	call: F.callExpression,
+	computed: F.computedPropertyName,
 	conditional: F.conditionalType,
 	constructor: F.constructorType,
 	continue: F.continueStatement,
@@ -785,13 +883,18 @@ export const ir: {
 	member: F.memberExpression,
 	new: F.newExpression,
 	nonNull: F.nonNullExpression,
+	optional: F.optionalParameter,
+	parameter: F.tupleParameter,
 	parenthesized: F.parenthesizedExpression,
 	predefined: F.buildPredefinedType,
+	privateIdentifier: F.buildPrivatePropertyIdentifier,
 	query: F.typeQuery,
 	readonly: F.readonlyType,
+	required: F.requiredParameter,
 	rest: F.restPattern,
 	return: F.returnStatement,
 	satisfies: F.satisfiesExpression,
+	sequence: F.sequenceExpression,
 	subscript: F.subscriptExpression,
 	switch: F.switchStatement,
 	templateLiteral: F.templateLiteralType,
@@ -809,17 +912,26 @@ export const ir: {
 	yield: F.yieldExpression,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
+	moduleExportName,
 	declaration,
 	statement,
+	expressions,
 	expression,
 	primaryExpression,
+	formalParameter,
 	lhsExpression,
+	augmentedAssignmentLhs,
+	destructuringPattern,
+	identifier,
 	pattern,
+	propertyName,
 	statementIdentifier,
 	shorthandPropertyIdentifier,
 	shorthandPropertyIdentifierPattern,
 	propertyIdentifier,
+	importIdentifier,
 	type,
+	tupleTypeMember,
 	primaryType,
 	synonym
 };

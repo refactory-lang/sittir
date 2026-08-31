@@ -1,10 +1,18 @@
 {
   "name": "python",
-  "nodeCount": 270,
+  "nodeCount": 279,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
+    "_expression_within_for_in_clause",
+    "_expressions",
+    "_f_expression",
+    "_left_hand_side",
+    "_named_expression_lhs",
+    "_right_hand_side",
+    "_simple_pattern",
     "_simple_statement",
+    "_statement",
     "expression",
     "keyword_identifier",
     "parameter",
@@ -2772,6 +2780,44 @@
       ]
     },
     {
+      "kind": "_expression_within_for_in_clause",
+      "modelType": "supertype",
+      "typeName": "ExpressionWithinForInClause",
+      "irKey": "expressionWithinForInClause",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "expression",
+        "lambda_within_for_in_clause"
+      ]
+    },
+    {
+      "kind": "_expressions",
+      "modelType": "supertype",
+      "typeName": "Expressions",
+      "irKey": "expressions",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "expression",
+        "expression_list"
+      ]
+    },
+    {
+      "kind": "_f_expression",
+      "modelType": "supertype",
+      "typeName": "FExpression",
+      "irKey": "fExpression",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "expression",
+        "expression_list",
+        "pattern_list",
+        "yield"
+      ]
+    },
+    {
       "kind": "_future_import_statement_arm",
       "modelType": "envelope",
       "typeName": "FutureImportStatementArm",
@@ -3029,6 +3075,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_left_hand_side",
+      "modelType": "supertype",
+      "typeName": "LeftHandSide",
+      "irKey": "leftHandSide",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "pattern",
+        "pattern_list"
+      ]
+    },
+    {
       "kind": "_list_pattern_case_patterns",
       "modelType": "list",
       "typeName": "ListPatternCasePatterns",
@@ -3132,6 +3190,17 @@
       "factoryShape": "config",
       "factoryFields": [
         "alternative"
+      ]
+    },
+    {
+      "kind": "_named_expression_lhs",
+      "modelType": "supertype",
+      "typeName": "NamedExpressionLhs",
+      "irKey": "namedExpressionLhs",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "identifier"
       ]
     },
     {
@@ -3249,6 +3318,47 @@
       "factoryShape": "elements",
       "factoryFields": [
         "argument"
+      ]
+    },
+    {
+      "kind": "_right_hand_side",
+      "modelType": "supertype",
+      "typeName": "RightHandSide",
+      "irKey": "rightHandSide",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "assignment",
+        "augmented_assignment",
+        "expression",
+        "expression_list",
+        "pattern_list",
+        "yield"
+      ]
+    },
+    {
+      "kind": "_simple_pattern",
+      "modelType": "supertype",
+      "typeName": "SimplePattern",
+      "irKey": "simplePattern",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_simple_pattern_negative",
+        "_wildcard_pattern",
+        "case_list_pattern",
+        "case_tuple_pattern",
+        "class_pattern",
+        "complex_pattern",
+        "concatenated_string",
+        "dict_pattern",
+        "dotted_name",
+        "false",
+        "none",
+        "splat_pattern",
+        "string",
+        "true",
+        "union_pattern"
       ]
     },
     {
@@ -3445,6 +3555,27 @@
       ]
     },
     {
+      "kind": "_statement",
+      "modelType": "supertype",
+      "typeName": "Statement",
+      "irKey": "statement",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_compound_statement",
+        "_simple_statements",
+        "class_definition",
+        "decorated_definition",
+        "for_statement",
+        "function_definition",
+        "if_statement",
+        "match_statement",
+        "try_statement",
+        "while_statement",
+        "with_statement"
+      ]
+    },
+    {
       "kind": "_string_content",
       "modelType": "pattern",
       "typeName": "_StringContent",
@@ -3492,6 +3623,57 @@
       "factoryFields": [
         "subscript"
       ]
+    },
+    {
+      "kind": "_suite",
+      "modelType": "polymorph",
+      "typeName": "Suite",
+      "factoryName": "suite",
+      "irKey": "suite",
+      "hidden": false,
+      "hoisted": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_simple_statements",
+              "parseKind": "simple_statements",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_statements",
+              "_suite_block_with_indent",
+              "_newline"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_suite_block_with_indent",

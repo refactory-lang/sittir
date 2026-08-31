@@ -401,7 +401,7 @@ export type TokenRepetitionPatternBuilt = T.TokenRepetitionPattern & {
 				| T.TokenRepetitionPattern
 				| T.TokenBindingPattern
 				| T.Metavariable
-				| T.NonSpecialToken
+				| T._NonSpecialToken
 			)[]
 		): TokenRepetitionPatternBuilt;
 		separator(
@@ -437,7 +437,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T.NonSpecialToken
+							| T._NonSpecialToken
 						)[]
 					) => buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
 					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['separator']) =>
@@ -605,7 +605,7 @@ export type TokenRepetitionBuilt = T.TokenRepetition & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): TokenRepetitionBuilt;
+		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): TokenRepetitionBuilt;
 		separator(value?: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['separator']): TokenRepetitionBuilt;
 		operator(value: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['operator']): TokenRepetitionBuilt;
 	};
@@ -629,7 +629,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): TokenRep
 				_separator,
 				_operator,
 				$with: {
-					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
 						buildTokenRepetition({ ...config, tokens: values }),
 					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['separator']) =>
 						buildTokenRepetition({ ...config, separator: value }),
@@ -10070,7 +10070,7 @@ export type TokenTreePatternParenBuilt = T.TokenTreePatternParen & {
 				| T.TokenRepetitionPattern
 				| T.TokenBindingPattern
 				| T.Metavariable
-				| T.NonSpecialToken
+				| T._NonSpecialToken
 			)[]
 		): TokenTreePatternParenBuilt;
 	};
@@ -10094,7 +10094,7 @@ export function buildTokenTreePatternParen(
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T.NonSpecialToken
+							| T._NonSpecialToken
 						)[]
 					) => buildTokenTreePatternParen({ ...config, tokenPatterns: values })
 				}
@@ -10120,7 +10120,7 @@ export type TokenTreePatternBracketBuilt = T.TokenTreePatternBracket & {
 				| T.TokenRepetitionPattern
 				| T.TokenBindingPattern
 				| T.Metavariable
-				| T.NonSpecialToken
+				| T._NonSpecialToken
 			)[]
 		): TokenTreePatternBracketBuilt;
 	};
@@ -10144,7 +10144,7 @@ export function buildTokenTreePatternBracket(
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T.NonSpecialToken
+							| T._NonSpecialToken
 						)[]
 					) => buildTokenTreePatternBracket({ ...config, tokenPatterns: values })
 				}
@@ -10170,7 +10170,7 @@ export type TokenTreePatternBraceBuilt = T.TokenTreePatternBrace & {
 				| T.TokenRepetitionPattern
 				| T.TokenBindingPattern
 				| T.Metavariable
-				| T.NonSpecialToken
+				| T._NonSpecialToken
 			)[]
 		): TokenTreePatternBraceBuilt;
 	};
@@ -10194,7 +10194,7 @@ export function buildTokenTreePatternBrace(
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T.NonSpecialToken
+							| T._NonSpecialToken
 						)[]
 					) => buildTokenTreePatternBrace({ ...config, tokenPatterns: values })
 				}
@@ -10214,7 +10214,7 @@ export type TokenTreeParenBuilt = T.TokenTreeParen & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): TokenTreeParenBuilt;
+		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): TokenTreeParenBuilt;
 	};
 } & _NodeMethods;
 
@@ -10228,7 +10228,7 @@ export function buildTokenTreeParen(config: Partial<T.TokenTreeParen.Config> = {
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
 						buildTokenTreeParen({ ...config, tokens: values })
 				}
 			},
@@ -10247,7 +10247,7 @@ export type TokenTreeBracketBuilt = T.TokenTreeBracket & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): TokenTreeBracketBuilt;
+		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): TokenTreeBracketBuilt;
 	};
 } & _NodeMethods;
 
@@ -10261,7 +10261,7 @@ export function buildTokenTreeBracket(config: Partial<T.TokenTreeBracket.Config>
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
 						buildTokenTreeBracket({ ...config, tokens: values })
 				}
 			},
@@ -10280,7 +10280,7 @@ export type TokenTreeBraceBuilt = T.TokenTreeBrace & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): TokenTreeBraceBuilt;
+		tokens(...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): TokenTreeBraceBuilt;
 	};
 } & _NodeMethods;
 
@@ -10294,7 +10294,7 @@ export function buildTokenTreeBrace(config: Partial<T.TokenTreeBrace.Config> = {
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
 						buildTokenTreeBrace({ ...config, tokens: values })
 				}
 			},
@@ -10313,7 +10313,7 @@ export type DelimTokenTreeParenBuilt = T.DelimTokenTreeParen & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		delimTokens(...values: (T.NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeParenBuilt;
+		delimTokens(...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeParenBuilt;
 	};
 } & _NodeMethods;
 
@@ -10327,7 +10327,7 @@ export function buildDelimTokenTreeParen(config: Partial<T.DelimTokenTreeParen.C
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...values: (T.NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
+					delimTokens: (...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
 						buildDelimTokenTreeParen({ ...config, delimTokens: values })
 				}
 			},
@@ -10346,7 +10346,7 @@ export type DelimTokenTreeBracketBuilt = T.DelimTokenTreeBracket & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		delimTokens(...values: (T.NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeBracketBuilt;
+		delimTokens(...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeBracketBuilt;
 	};
 } & _NodeMethods;
 
@@ -10362,7 +10362,7 @@ export function buildDelimTokenTreeBracket(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...values: (T.NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
+					delimTokens: (...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
 						buildDelimTokenTreeBracket({ ...config, delimTokens: values })
 				}
 			},
@@ -10381,7 +10381,7 @@ export type DelimTokenTreeBraceBuilt = T.DelimTokenTreeBrace & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		delimTokens(...values: (T.NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeBraceBuilt;
+		delimTokens(...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeBraceBuilt;
 	};
 } & _NodeMethods;
 
@@ -10395,7 +10395,7 @@ export function buildDelimTokenTreeBrace(config: Partial<T.DelimTokenTreeBrace.C
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...values: (T.NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
+					delimTokens: (...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
 						buildDelimTokenTreeBrace({ ...config, delimTokens: values })
 				}
 			},

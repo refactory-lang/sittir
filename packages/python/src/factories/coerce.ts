@@ -642,7 +642,7 @@ function _requireField<T>(kind: string, slot: string, v: T | undefined | null): 
 }
 
 // Interned resolver kind lists (dedup)
-const _super_keyword_identifier: readonly string[] = ['identifier'];
+const _super_named_expression_lhs: readonly string[] = ['identifier'];
 const _K0: readonly string[] = [];
 const _K1: readonly string[] = [
 	'_simple_statements',
@@ -1479,7 +1479,7 @@ export function resolveForStatement_asyncMarker(
 }
 
 export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): T.ForStatement['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
 }
 
 export function resolveForStatement_right(value: T.ForStatement.LooseConfig['right']): T.ForStatement['_right'] {
@@ -1889,7 +1889,7 @@ export function coerceToNonlocalStatement(
 }
 
 export function resolveExecStatement_code(value: T.ExecStatement.LooseConfig['code']): T.ExecStatement['_code'] {
-	return _resolveOne<T.String | T.Identifier>(value, _super_keyword_identifier, _K14);
+	return _resolveOne<T.String | T.Identifier>(value, _super_named_expression_lhs, _K14);
 }
 
 export function resolveExecStatement_inClauses(
@@ -2538,7 +2538,7 @@ export function coerceToListPattern(
 export function resolveDefaultParameter_name(
 	value: T.DefaultParameter.LooseConfig['name']
 ): T.DefaultParameter['_name'] {
-	return _resolveOne<T.Identifier | T.TuplePattern>(value, _super_keyword_identifier, _K21);
+	return _resolveOne<T.Identifier | T.TuplePattern>(value, _super_named_expression_lhs, _K21);
 }
 
 export function resolveDefaultParameter_value(
@@ -2589,7 +2589,7 @@ export function coerceToTypedDefaultParameter(
 export function resolveListSplatPattern_content(
 	value: T.ListSplatPattern.LooseConfig['content']
 ): T.ListSplatPattern['_content'] {
-	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_keyword_identifier, _K22);
+	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_named_expression_lhs, _K22);
 }
 
 export function coerceToListSplatPattern(
@@ -2603,7 +2603,7 @@ export function coerceToListSplatPattern(
 			'content',
 			_resolveOne<T.Identifier | T.Subscript | T.Attribute>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_super_keyword_identifier,
+				_super_named_expression_lhs,
 				_K22
 			)
 		)
@@ -2613,7 +2613,7 @@ export function coerceToListSplatPattern(
 export function resolveDictionarySplatPattern_content(
 	value: T.DictionarySplatPattern.LooseConfig['content']
 ): T.DictionarySplatPattern['_content'] {
-	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_keyword_identifier, _K22);
+	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_named_expression_lhs, _K22);
 }
 
 export function coerceToDictionarySplatPattern(
@@ -2627,7 +2627,7 @@ export function coerceToDictionarySplatPattern(
 			'content',
 			_resolveOne<T.Identifier | T.Subscript | T.Attribute>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_super_keyword_identifier,
+				_super_named_expression_lhs,
 				_K22
 			)
 		)
@@ -2837,7 +2837,7 @@ export function coerceToLambdaWithinForInClause(
 }
 
 export function resolveAssignment_left(value: T.Assignment.LooseConfig['left']): T.Assignment['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
 }
 
 export function resolveAssignment_content(value: T.Assignment.LooseConfig['content']): T.Assignment['_content'] {
@@ -2855,7 +2855,7 @@ export function coerceToAssignment(input: T.Assignment.Loose): ReturnType<typeof
 export function resolveAugmentedAssignment_left(
 	value: T.AugmentedAssignment.LooseConfig['left']
 ): T.AugmentedAssignment['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
 }
 
 export function resolveAugmentedAssignment_operator(
@@ -2906,7 +2906,7 @@ export function coerceToAugmentedAssignment(
 }
 
 export function resolvePatternList_pattern(value: T.PatternList.LooseConfig['pattern']): T.PatternList['_pattern'] {
-	return _resolveOne<T.Pattern>(value, _super_keyword_identifier, _K27);
+	return _resolveOne<T.Pattern>(value, _super_named_expression_lhs, _K27);
 }
 
 export function resolvePatternList_tail(value: T.PatternList.LooseConfig['tail']): T.PatternList['_tail'] {
@@ -3020,7 +3020,7 @@ export function resolveTypedParameter_content(
 ): T.TypedParameter['_content'] {
 	return _resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(
 		value,
-		_super_keyword_identifier,
+		_super_named_expression_lhs,
 		_K30
 	);
 }
@@ -3403,7 +3403,7 @@ export function resolveForInClause_asyncMarker(
 }
 
 export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): T.ForInClause['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_keyword_identifier, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
 }
 
 export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): T.ForInClause['_right'] {

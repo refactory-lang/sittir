@@ -6,18 +6,27 @@ import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
+	AugmentedAssignmentLhs,
 	Declaration,
+	DestructuringPattern,
 	Expression,
+	Expressions,
+	FormalParameter,
+	ImportIdentifier,
+	ModuleExportName,
 	Pattern,
 	PrimaryExpression,
 	PrimaryType,
-	PropertyIdentifier,
+	PropertyName,
 	ShorthandPropertyIdentifier,
 	ShorthandPropertyIdentifierPattern,
 	Statement,
 	StatementIdentifier,
+	TupleTypeMember,
 	Type,
-	_LhsExpression
+	_Identifier,
+	_LhsExpression,
+	_PropertyIdentifier
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -300,17 +309,26 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
 	ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
+	moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): v is Declaration;
 	statement(v: { readonly $type: string | number }): v is Statement;
+	expressions(v: { readonly $type: string | number }): v is Expressions;
 	expression(v: { readonly $type: string | number }): v is Expression;
 	primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
+	formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
 	lhsExpression(v: { readonly $type: string | number }): v is _LhsExpression;
+	augmentedAssignmentLhs(v: { readonly $type: string | number }): v is AugmentedAssignmentLhs;
+	destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
+	identifier(v: { readonly $type: string | number }): v is _Identifier;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
+	propertyName(v: { readonly $type: string | number }): v is PropertyName;
 	statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
 	shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
 	shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
+	propertyIdentifier(v: { readonly $type: string | number }): v is _PropertyIdentifier;
+	importIdentifier(v: { readonly $type: string | number }): v is ImportIdentifier;
 	type(v: { readonly $type: string | number }): v is Type;
+	tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): v is PrimaryType;
 }
 
@@ -520,19 +538,28 @@ export interface AssertGuards {
 	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
 	ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
+	moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): asserts v is Declaration;
 	statement(v: { readonly $type: string | number }): asserts v is Statement;
+	expressions(v: { readonly $type: string | number }): asserts v is Expressions;
 	expression(v: { readonly $type: string | number }): asserts v is Expression;
 	primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
+	formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
 	lhsExpression(v: { readonly $type: string | number }): asserts v is _LhsExpression;
+	augmentedAssignmentLhs(v: { readonly $type: string | number }): asserts v is AugmentedAssignmentLhs;
+	destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
+	identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
+	propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
 	statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
 	shorthandPropertyIdentifier(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifier;
 	shorthandPropertyIdentifierPattern(v: {
 		readonly $type: string | number;
 	}): asserts v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
+	propertyIdentifier(v: { readonly $type: string | number }): asserts v is _PropertyIdentifier;
+	importIdentifier(v: { readonly $type: string | number }): asserts v is ImportIdentifier;
 	type(v: { readonly $type: string | number }): asserts v is Type;
+	tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
 }
 
@@ -544,25 +571,34 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 	return (v) => ids.has(v.$type);
 }
 
+const _supertype_moduleExportName_ids = new Set<number>([1, 249]);
 const _supertype_declaration_ids = new Set<number>([
 	225, 227, 222, 185, 184, 273, 284, 285, 286, 295, 292, 290, 288, 283
 ]);
 const _supertype_statement_ids = new Set<number>([
 	168, 175, 200, 183, 187, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204
 ]);
+const _supertype_expressions_ids = new Set<number>([248]);
 const _supertype_expression_ids = new Set<number>([
 	276, 277, 278, 286, 275, 238, 240, 234, 246, 245, 244, 247, 233, 213
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
 	236, 235, 210, 105, 1, 440, 100, 101, 98, 249, 250, 252, 102, 103, 104, 214, 218, 224, 228, 226, 221, 253, 232, 270
 ]);
+const _supertype_formalParameter_ids = new Set<number>([298, 299]);
 const _supertype_lhsExpression_ids = new Set<number>([235, 236, 105, 1, 440, 215, 219, 270]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([235, 236, 440, 1, 210, 270]);
+const _supertype_destructuringPattern_ids = new Set<number>([215, 219]);
+const _supertype_identifier_ids = new Set<number>([105, 1]);
 const _supertype_pattern_ids = new Set<number>([262]);
+const _supertype_propertyName_ids = new Set<number>([99, 249, 98, 267]);
 const _supertype_statementIdentifier_ids = new Set<number>([1, 440]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 440]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 440]);
 const _supertype_propertyIdentifier_ids = new Set<number>([1, 440]);
+const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([353, 350, 315, 319, 305, 306]);
+const _supertype_tupleTypeMember_ids = new Set<number>([310, 311, 312, 313]);
 const _supertype_primaryType_ids = new Set<number>([
 	336, 337, 1, 289, 321, 339, 348, 349, 335, 328, 329, 100, 334, 332, 330, 320, 318, 352, 351
 ]);
@@ -734,17 +770,26 @@ export const is = {
 	ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
+	moduleExportName: _sg(_supertype_moduleExportName_ids),
 	declaration: _sg(_supertype_declaration_ids),
 	statement: _sg(_supertype_statement_ids),
+	expressions: _sg(_supertype_expressions_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
+	formalParameter: _sg(_supertype_formalParameter_ids),
 	lhsExpression: _sg(_supertype_lhsExpression_ids),
+	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
+	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
+	identifier: _sg(_supertype_identifier_ids),
 	pattern: _sg(_supertype_pattern_ids),
+	propertyName: _sg(_supertype_propertyName_ids),
 	statementIdentifier: _sg(_supertype_statementIdentifier_ids),
 	shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
 	shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
 	propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
+	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
+	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
 	primaryType: _sg(_supertype_primaryType_ids)
 } as unknown as IsGuards;
 
@@ -949,12 +994,19 @@ export const assert = {
 	),
 	ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
+	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
 	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
+	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
 	expression: _makeAssert('expression', is.expression as _AnyGuard),
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
+	formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
 	lhsExpression: _makeAssert('lhsExpression', is.lhsExpression as _AnyGuard),
+	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
+	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
+	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
+	propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
 	statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
 	shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
 	shorthandPropertyIdentifierPattern: _makeAssert(
@@ -962,7 +1014,9 @@ export const assert = {
 		is.shorthandPropertyIdentifierPattern as _AnyGuard
 	),
 	propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
+	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
+	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
 	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard)
 } as unknown as AssertGuards;
 
