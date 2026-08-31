@@ -67,16 +67,20 @@ import { loadGrammarJsonInlineList } from './inline-sets.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
-import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
-import { rulesEqual, separatorOf } from '../dsl/rule-patterns.ts';
+import {
+	deriveComplexAliasTargetHidden,
+	isEnumChoiceRule,
+	isHiddenKind,
+	rulesEqual,
+	separatorOf
+} from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId } from '../dsl/builders.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
 
 export interface LinkOptions {
 	readonly include?: IncludeFilter;

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { alias, buildRuleCatalog, choice } from '../evaluate.ts';
+import { structuralBuilder } from '../../dsl/builders.ts';
+import { buildRuleCatalog } from '../rule-catalog.ts';
 import {
 	collectGrammarDiagnostics,
 	collectGrammarDiagnosticsForGrammar,
@@ -32,10 +33,10 @@ describe('grammar diagnostics preflight', () => {
 	it('emits parsekind-noninjective records from compiler-produced collisions', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
-				host: choice(
-					alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+				host: structuralBuilder.choice(
+					structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 					{ type: 'SYMBOL', name: 'shared' },
-					alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+					structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 				),
 				left: { type: 'PATTERN', value: '[a-z]+' },
 				shared: {
@@ -75,10 +76,10 @@ describe('grammar diagnostics preflight', () => {
 	it('keeps identical-structure collisions auto-merged without diagnostics', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
-				host: choice(
-					alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+				host: structuralBuilder.choice(
+					structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 					{ type: 'SYMBOL', name: 'shared' },
-					alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+					structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 				),
 				left: { type: 'PATTERN', value: '[a-z]+' },
 				shared: { type: 'PATTERN', value: '[a-z]+' },
@@ -147,10 +148,10 @@ describe('grammar diagnostics preflight', () => {
 	it('parsekind-noninjective now blocks (canProceed: false)', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
-				host: choice(
-					alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+				host: structuralBuilder.choice(
+					structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 					{ type: 'SYMBOL', name: 'shared' },
-					alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+					structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 				),
 				left: { type: 'PATTERN', value: '[a-z]+' },
 				shared: {
@@ -179,8 +180,8 @@ describe('grammar diagnostics preflight', () => {
 				host: {
 					type: 'SEQ',
 					members: [
-						choice({ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }),
-						choice({ type: 'SYMBOL', name: 'c' }, { type: 'SYMBOL', name: 'd' })
+						structuralBuilder.choice({ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }),
+						structuralBuilder.choice({ type: 'SYMBOL', name: 'c' }, { type: 'SYMBOL', name: 'd' })
 					]
 				},
 				a: { type: 'PATTERN', value: 'a' },

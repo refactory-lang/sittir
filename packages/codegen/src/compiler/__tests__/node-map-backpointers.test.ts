@@ -1,6 +1,7 @@
 import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { buildRuleCatalog, choice, field, seq } from '../evaluate.ts';
+import { structuralBuilder } from '../../dsl/builders.ts';
+import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -25,9 +26,9 @@ describe('NodeMap back-pointer maps', () => {
 		// the field rule's identity addressable via `rules.call_expression`
 		// for the third assertion.
 		const { rules, ruleCatalog } = buildRuleCatalog({
-			call_expression: seq(
-				field('function', { type: 'SYMBOL', name: 'identifier' }),
-				field('args', { type: 'SYMBOL', name: 'identifier' })
+			call_expression: structuralBuilder.seq(
+				structuralBuilder.field('function', { type: 'SYMBOL', name: 'identifier' }),
+				structuralBuilder.field('args', { type: 'SYMBOL', name: 'identifier' })
 			),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
@@ -116,9 +117,9 @@ describe('NodeMap back-pointer maps', () => {
 
 	it('slot.sourceRuleIds accumulates merged simplified-rule contributors and maps each id back to the slot', () => {
 		const { rules: simplifiedRules, nodeMap } = buildNodeMap({
-			test: seq(
-				field('parameter', { type: 'SYMBOL', name: 'identifier' }),
-				field('parameter', { type: 'SYMBOL', name: 'number' })
+			test: structuralBuilder.seq(
+				structuralBuilder.field('parameter', { type: 'SYMBOL', name: 'identifier' }),
+				structuralBuilder.field('parameter', { type: 'SYMBOL', name: 'number' })
 			),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' },
 			number: { type: PATTERN, value: '[0-9]+' }
@@ -143,11 +144,17 @@ describe('NodeMap back-pointer maps', () => {
 			normalizedRules,
 			nodeMap
 		} = buildNodeMap({
-			test: seq(
-				field('lhs', { type: 'SYMBOL', name: 'identifier' }),
-				choice(
-					seq({ type: 'STRING', value: '+' }, field('rhs', { type: 'SYMBOL', name: 'identifier' })),
-					seq({ type: 'STRING', value: '-' }, field('rhs', { type: 'SYMBOL', name: 'number' }))
+			test: structuralBuilder.seq(
+				structuralBuilder.field('lhs', { type: 'SYMBOL', name: 'identifier' }),
+				structuralBuilder.choice(
+					structuralBuilder.seq(
+						{ type: 'STRING', value: '+' },
+						structuralBuilder.field('rhs', { type: 'SYMBOL', name: 'identifier' })
+					),
+					structuralBuilder.seq(
+						{ type: 'STRING', value: '-' },
+						structuralBuilder.field('rhs', { type: 'SYMBOL', name: 'number' })
+					)
 				)
 			),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' },

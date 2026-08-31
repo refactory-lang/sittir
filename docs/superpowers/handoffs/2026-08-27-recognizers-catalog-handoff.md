@@ -5,8 +5,8 @@ Paste this as the opening prompt of the next session.
 ---
 
 Continue the rule-builder / recognizers work on `phase-typed-builders`
-(branch off `master` at `5c4ef590f`; ruling 1 landed as `0932eb641`, PR
-open against `master`). Everything before it is merged: the
+(branch off `master` at `5c4ef590f`; ruling 1 landed as `0932eb641`, PR #241
+against `master`; `evaluate-through-builder` is stacked on it). Everything before it is merged: the
 engine/dogfood/tree-identity stack, the rule-builders series, the comment
 relocation (`packages/codegen/src` carries no explanatory comments; a
 declaration's rationale is its `### \`<file>::<qualified name>\`` entry in
@@ -90,8 +90,17 @@ they carry every ruling. Session memory: call `get_latest_session`.
 6. Then step 3 of the recognizers spec: separator possession into `seq`
    (the lift functions relocate into recognizers, `fuseHeadRepeatLists`
    goes with them; `withSeparator` in flatten disappears with it).
-7. Route evaluate's DSL constructors through `structuralBuilder` — the
-   reason the builder's shape is the DSL's.
+7. DONE (`28b3174a4`, branch `evaluate-through-builder` stacked on
+   `phase-typed-builders`): evaluate's DSL constructors ARE
+   `structuralBuilder` (the one-level recognitions live there; `token.immediate`
+   builds `IMMEDIATE_TOKEN` on the evaluate view because enrich must see
+   tree-sitter's tag in both pipelines); `evaluate.ts` exports only
+   `evaluate`; `compiler/rule-catalog.ts` holds `buildRuleCatalog` /
+   `attachReferenceRuleIds`; `isHiddenKind` / `deriveComplexAliasTargetHidden`
+   live in `dsl/rule-patterns.ts`. `StructuralBuilder` / `AttributeBuilder`
+   narrow each strategy's exact return types (`RuleBuilder<P>.choice` is
+   `Rule<P>`). Enrich keeps calling the globals — under tree-sitter's bundle
+   they are tree-sitter's DSL.
 
 ## Tooling that works here
 

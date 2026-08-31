@@ -1,46 +1,40 @@
 import {
 	ALIAS,
 	CHOICE,
-	DEDENT,
 	FIELD,
 	GROUP,
-	INDENT,
-	NEWLINE,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
 	REPEAT1,
 	SEQ,
 	STRING,
-	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
-	Rule,
-	RuleId,
-	SeqRule,
-	ChoiceRule,
-	OptionalRule,
-	RepeatRule,
-	Repeat1Rule,
-	FieldRule,
-	TokenRule,
-	StringRule,
-	PatternRule,
-	SymbolRule,
 	AliasRule,
-	SymbolRef
+	ChoiceRule,
+	FieldRule,
+	OptionalRule,
+	PatternRule,
+	Repeat1Rule,
+	RepeatRule,
+	Rule,
+	SeqRule,
+	StringRule,
+	SymbolRef,
+	SymbolRule,
+	TokenRule
 } from '../types/rule.ts';
-import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
-import type { AnyRule } from '../types/rule.ts';
-import type { RawGrammar, DesugarDivergenceEvent } from './types.ts';
-import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
-import { classifyByType } from '../dsl/rule-patterns.ts';
+import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
+import { structuralBuilder } from '../dsl/builders.ts';
+import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
+import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
+import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
-import { assertNever } from '../polymorph-variant.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { ENRICH_UNALIAS_DIAGNOSTICS_KEY, getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
@@ -52,7 +46,7 @@ interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
 	readonly _ref?: SymbolRef;
 }
 
-export function coerceToRule(input: Input): Rule<'evaluate'> {
+function coerceToRule(input: Input): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
 		throw new Error('Undefined symbol');
 	}
@@ -72,15 +66,15 @@ export function coerceToRule(input: Input): Rule<'evaluate'> {
 	throw new TypeError(`Invalid rule: ${input}`);
 }
 
-export function seq(...members: Input[]): Rule<'evaluate'> {
+function seq(...members: Input[]): Rule<'evaluate'> {
 	const normalized = members.map(coerceToRule);
 
 	if (normalized.length === 1) return normalized[0]!;
 
-	return { type: SEQ, members: normalized };
+	return structuralBuilder.seq(...normalized);
 }
 
-export function choice(...members: Input[]): Rule<'evaluate'> {
+function choice(...members: Input[]): Rule<'evaluate'> {
 	const normalized = members.map(coerceToRule);
 
 	if (normalized.length === 1) return normalized[0]!;
@@ -97,77 +91,34 @@ export function choice(...members: Input[]): Rule<'evaluate'> {
 		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], { author: 'grammar' });
 	}
 
-	if (normalized.length >= 2 && normalized.every((m) => m.type === FIELD)) {
-		return collapseAllFieldChoiceMembers(normalized as FieldRule<'evaluate'>[]);
-	}
-
-	return { type: CHOICE, members: normalized };
+	return structuralBuilder.choice(...normalized);
 }
 
-function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): Rule<'evaluate'> {
-	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
-	if (anyAlias) {
-		return { type: CHOICE, members: fieldMembers };
-	}
-	const names = fieldMembers.map((f) => f.name);
-	const allSameName = names.every((n) => n === names[0]);
-	if (allSameName) {
-		const inner = choice(...fieldMembers.map((f) => f.content));
-		return {
-			type: FIELD,
-			name: names[0]!,
-			content: inner,
-			metadata: makeRuleMetadata({ fieldSource: 'grammar' })
-		};
-	}
-	return { type: CHOICE, members: fieldMembers };
-}
-
-export function optional(content: Input): Rule<'evaluate'> {
+function optional(content: Input): Rule<'evaluate'> {
 	const resolved = coerceToRule(content);
 	walkRefs(resolved, (ref) => {
 		ref.optional = true;
 	});
-	if (resolved.type === OPTIONAL) return resolved;
-	if (resolved.type === REPEAT) return resolved;
-	if (resolved.type === REPEAT1) {
-		return {
-			type: REPEAT,
-			content: resolved.content,
-			separator: resolved.separator,
-			trailing: resolved.trailing,
-			leading: resolved.leading
-		};
-	}
-	return { type: OPTIONAL, content: resolved };
+	return structuralBuilder.optional(resolved);
 }
 
-export function repeat(content: Input): Rule<'evaluate'> {
+function repeat(content: Input): Rule<'evaluate'> {
 	const resolved = coerceToRule(content);
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
 	});
-	if (resolved.type === REPEAT && !resolved.separator) return resolved;
-	if (resolved.type === OPTIONAL) {
-		const inner = resolved.content;
-		walkRefs(inner, (ref) => {
-			ref.repeated = true;
-		});
-		return { type: REPEAT, content: inner };
-	}
-	return { type: REPEAT, content: resolved };
+	return structuralBuilder.repeat(resolved);
 }
 
-export function repeat1(content: Input): Rule<'evaluate'> {
+function repeat1(content: Input): Rule<'evaluate'> {
 	const resolved = coerceToRule(content);
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
 	});
-	if (resolved.type === REPEAT1 && !resolved.separator) return resolved;
-	return { type: REPEAT1, content: resolved };
+	return structuralBuilder.repeat1(resolved);
 }
 
-export function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, SymbolRuleWithRef> {
+function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, SymbolRuleWithRef> {
 	return new Proxy({} as Record<string, SymbolRuleWithRef>, {
 		get(_target, name: string): SymbolRuleWithRef {
 			const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name };
@@ -181,12 +132,6 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
 			};
 		}
 	});
-}
-
-export function isHiddenKind(name: string, inlineList?: readonly string[]): boolean {
-	if (name.startsWith('_')) return true;
-	if (inlineList && inlineList.includes(name)) return true;
-	return false;
 }
 
 function getRef(rule: Rule<'evaluate'>): SymbolRef | undefined {
@@ -215,7 +160,7 @@ function walkRefs(rule: Rule<'evaluate'>, visit: (ref: SymbolRef) => void): void
 	}
 }
 
-export function field(name: string, content?: Input): FieldRule<'evaluate'> {
+function field(name: string, content?: Input): FieldRule<'evaluate'> {
 	if (content === undefined) {
 		return {
 			type: FIELD,
@@ -224,30 +169,12 @@ export function field(name: string, content?: Input): FieldRule<'evaluate'> {
 			_needsContent: true
 		};
 	}
-	let resolved = coerceToRule(content);
-	resolved = collapseOptionalRepeatInField(resolved);
-	walkRefs(resolved, (ref) => {
+	const resolved = coerceToRule(content);
+	const built = structuralBuilder.field(name, resolved);
+	walkRefs(built.content, (ref) => {
 		if (ref.fieldName === undefined) ref.fieldName = name;
 	});
-	return { type: FIELD, name, content: resolved };
-}
-
-function collapseOptionalRepeatInField(resolved: Rule<'evaluate'>): Rule<'evaluate'> {
-	if (resolved.type !== OPTIONAL) return resolved;
-	const inner = resolved.content;
-	if (inner.type === REPEAT) {
-		return inner;
-	}
-	if (inner.type === REPEAT1) {
-		return {
-			type: REPEAT,
-			content: inner.content,
-			separator: inner.separator,
-			trailing: inner.trailing,
-			leading: inner.leading
-		};
-	}
-	return resolved;
+	return built;
 }
 
 interface TokenFn {
@@ -255,13 +182,13 @@ interface TokenFn {
 	immediate: (content: Input) => Rule<'evaluate'>;
 }
 
-export const token: TokenFn = Object.assign(
+const token: TokenFn = Object.assign(
 	function token(content: Input): TokenRule<'evaluate'> {
-		return { type: TOKEN, content: coerceToRule(content), immediate: false };
+		return structuralBuilder.token(coerceToRule(content));
 	},
 	{
 		immediate(content: Input): Rule<'evaluate'> {
-			return { type: 'IMMEDIATE_TOKEN', content: coerceToRule(content) } as Rule<'evaluate'>;
+			return structuralBuilder.token.immediate(coerceToRule(content));
 		}
 	}
 );
@@ -273,31 +200,23 @@ interface PrecFn {
 	dynamic: (precedence: number, content: Input) => Rule<'evaluate'>;
 }
 
-function makePrecRule(
-	type: 'PREC' | 'PREC_LEFT' | 'PREC_RIGHT' | 'PREC_DYNAMIC',
-	value: number,
-	content: Input
-): Rule<'evaluate'> {
-	return { type, content: coerceToRule(content), value } as Rule<'evaluate'>;
-}
-
-export const prec: PrecFn = Object.assign(
+const prec: PrecFn = Object.assign(
 	function prec(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 		if (content === undefined) return coerceToRule(precedenceOrContent as Input);
-		return makePrecRule('PREC', precedenceOrContent as number, content);
+		return structuralBuilder.prec(precedenceOrContent as number, coerceToRule(content));
 	},
 	{
 		left(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return coerceToRule(precedenceOrContent as Input);
-			return makePrecRule('PREC_LEFT', precedenceOrContent as number, content);
+			return structuralBuilder.prec.left(precedenceOrContent as number, coerceToRule(content));
 		},
 		right(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return coerceToRule(precedenceOrContent as Input);
-			return makePrecRule('PREC_RIGHT', precedenceOrContent as number, content);
+			return structuralBuilder.prec.right(precedenceOrContent as number, coerceToRule(content));
 		},
 		dynamic(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return coerceToRule(precedenceOrContent as Input);
-			return makePrecRule('PREC_DYNAMIC', precedenceOrContent as number, content);
+			return structuralBuilder.prec.dynamic(precedenceOrContent as number, coerceToRule(content));
 		}
 	}
 );
@@ -341,33 +260,20 @@ function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void
 	}
 }
 
-export function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
+function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
 	const content = coerceToRule(rule);
-	if (typeof value === 'string') {
-		return { type: ALIAS, content, named: false, value };
-	}
-	if (
-		typeof value === 'object' &&
-		'type' in value &&
-		typeof (value as { type: unknown }).type === 'string' &&
-		(value as { type: string }).type === SYMBOL
-	) {
-		return {
-			type: ALIAS,
-			content,
-			named: true,
-			value: (value as SymbolRule<'evaluate'>).name
-		};
+	if (typeof value === 'string' || value.type === SYMBOL) {
+		return structuralBuilder.alias(content, value);
 	}
 	throw new Error(`Invalid alias value: ${value}`);
 }
 
-export function blank(): Rule<'evaluate'> {
+function blank(): Rule<'evaluate'> {
 	return { type: CHOICE, members: [] };
 }
 
-export function string(value: string): StringRule<'evaluate'> {
-	return { type: STRING, value };
+function string(value: string): StringRule<'evaluate'> {
+	return structuralBuilder.string(value);
 }
 
 interface GrammarOptions {
@@ -392,7 +298,7 @@ interface MetadataSinks {
 	conflicts: string[][];
 }
 
-export interface EvaluateCtx {
+interface EvaluateCtx {
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly provenanceByKind: Map<string, RuleProvenance>;
 	readonly refs: SymbolRef[];
@@ -714,8 +620,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
 						ctx.desugarDivergences.push({ site: 'body-pattern-group', name: hiddenName });
 					}
-				} catch {
-				}
+				} catch {}
 			}
 		}
 		applyPatternReplacement(rules, ctx, wireCtx);
@@ -814,45 +719,6 @@ function applyPatternReplacement(
 			provenanceByKind.set(c.name, 'override-authored-or-replaced');
 		}
 	}
-}
-
-export function isComplexBody(rule: Rule<'evaluate'>): boolean {
-	switch (rule.type) {
-		case SEQ:
-			return (rule as SeqRule<'evaluate'>).members.length >= 2;
-		case CHOICE:
-			return (rule as ChoiceRule<'evaluate'>).members.length >= 2;
-		case REPEAT:
-		case REPEAT1: {
-			const content = (rule as RepeatRule<'evaluate'>).content;
-			return content.type !== STRING && content.type !== SYMBOL && content.type !== PATTERN;
-		}
-		default:
-			return false;
-	}
-}
-
-export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): ReadonlySet<string> {
-	const walker = new RuleWalker<AnyRule>();
-	const candidates = new Set<string>();
-	for (const rule of Object.values(rules)) {
-		walker.fold(rule, candidates, (acc, r) => {
-			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
-				acc.add(r.content.name);
-			}
-			if (r.type === SYMBOL && (r as { aliasedFrom?: string }).aliasedFrom?.startsWith('_')) {
-				acc.add((r as { aliasedFrom?: string }).aliasedFrom!);
-			}
-			return acc;
-		});
-	}
-
-	const out = new Set<string>();
-	for (const name of candidates) {
-		const body = rules[name];
-		if (body && isComplexBody(body as Rule<'evaluate'>)) out.add(name);
-	}
-	return out;
 }
 
 function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[]): Rule<'evaluate'> {
@@ -1239,274 +1105,5 @@ function restoreSavedGlobals(g: Record<string, unknown>, savedGlobals: Record<st
 		} else {
 			g[name] = original;
 		}
-	}
-}
-
-interface BuildResult {
-	readonly rule: Rule<'evaluate'>;
-	readonly id: RuleId;
-	readonly classification: RuleClassification;
-}
-
-interface ClassificationForce {
-	readonly forcedBy?: RuleClassification['forcedBy'];
-	readonly edgeName?: string;
-	readonly cstSurface?: RuleClassification['cstSurface'];
-}
-
-export interface RuleCatalogBuildResult {
-	readonly rules: Record<string, Rule<'evaluate'>>;
-	readonly ruleCatalog: RuleCatalog;
-}
-
-export interface BuildRuleCatalogCtx {
-	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
-}
-
-function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set<string> {
-	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
-	const reachable = new Set<string>();
-	for (const name of Object.keys(rules)) {
-		if (!name.startsWith('_')) reachable.add(name);
-	}
-	if (reachable.size === 0) return new Set(Object.keys(rules));
-	for (const name of Object.keys(rules)) {
-		if (name.startsWith('_')) continue;
-		const rule = rules[name];
-		if (!rule) continue;
-		walker.foldDeep<null>(rule, null, (acc, r) => {
-			if (r.type === SYMBOL) reachable.add(r.name);
-			return acc;
-		});
-	}
-	return reachable;
-}
-
-export function buildRuleCatalog(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: BuildRuleCatalogCtx = {}
-): RuleCatalogBuildResult {
-	const provenanceByKind = ctx.provenanceByKind ?? new Map<string, RuleProvenance>();
-	const byId = new Map<RuleId, RuleCatalogEntry>();
-	const rootsByKind = new Map<string, RuleId>();
-	const classificationById = new Map<RuleId, RuleClassification>();
-	const identifiedRules: Record<string, Rule<'evaluate'>> = {};
-	const reachable = computeReachableRuleNames(rules);
-
-	for (const ownerKind of Object.keys(rules)) {
-		const rule = rules[ownerKind];
-		if (!rule) continue;
-		if (ownerKind.startsWith('_') && !reachable.has(ownerKind)) continue;
-		const provenance = provenanceByKind.get(ownerKind) ?? 'grammar-authored';
-		const result = identifyRule({
-			rule,
-			ownerKind,
-			parentId: undefined,
-			path: [],
-			provenance,
-			force: {},
-			byId,
-			classificationById
-		});
-		identifiedRules[ownerKind] = result.rule;
-		rootsByKind.set(ownerKind, result.id);
-	}
-
-	return {
-		rules: identifiedRules,
-		ruleCatalog: { byId, rootsByKind, classificationById }
-	};
-}
-
-export interface AttachReferenceRuleIdsCtx {
-	readonly ruleCatalog: RuleCatalog;
-}
-
-export function attachReferenceRuleIds(references: readonly SymbolRef[], ctx: AttachReferenceRuleIdsCtx): SymbolRef[] {
-	return references.map((ref) => {
-		const fromRuleId = ctx.ruleCatalog.rootsByKind.get(ref.from);
-		return fromRuleId ? { ...ref, fromRuleId } : { ...ref };
-	});
-}
-
-interface IdentifyParams {
-	readonly rule: Rule<'evaluate'>;
-	readonly ownerKind: string;
-	readonly parentId: RuleId | undefined;
-	readonly path: readonly RulePathSegment[];
-	readonly provenance: RuleProvenance;
-	readonly force: ClassificationForce;
-	readonly byId: Map<RuleId, RuleCatalogEntry>;
-	readonly classificationById: Map<RuleId, RuleClassification>;
-}
-
-function identifyRule(params: IdentifyParams): BuildResult {
-	const id = createRuleId(params.ownerKind, { path: params.path });
-	const children = identifyChildren({ ...params, selfId: id });
-	const childIds = children.map((child) => child.id);
-	const rule = withIdentifiedChildren({ rule: params.rule, id, children });
-	const classification = classifyRule(rule, { id, children, force: params.force });
-
-	params.byId.set(id, {
-		id,
-		ownerKind: params.ownerKind,
-		ruleType: params.rule.type,
-		parentId: params.parentId,
-		path: params.path,
-		childIds,
-		provenance: params.provenance
-	});
-	params.classificationById.set(id, classification);
-
-	return { rule, id, classification };
-}
-
-function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): BuildResult[] {
-	const { selfId, ...params } = args;
-
-	const childParams = (childArgs: { rule: Rule<'evaluate'>; segment: RulePathSegment; force?: ClassificationForce }) =>
-		identifyRule({
-			rule: childArgs.rule,
-			ownerKind: params.ownerKind,
-			parentId: selfId,
-			path: [...params.path, childArgs.segment],
-			provenance: params.provenance,
-			force: childArgs.force ?? {},
-			byId: params.byId,
-			classificationById: params.classificationById
-		});
-
-	switch (params.rule.type) {
-		case SEQ:
-		case CHOICE:
-			return params.rule.members.map((member, index) =>
-				childParams({ rule: member, segment: { edge: 'members', index } })
-			);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case 'PREC':
-		case 'PREC_LEFT':
-		case 'PREC_RIGHT':
-		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
-			return [childParams({ rule: params.rule.content, segment: { edge: 'content' } })];
-		case FIELD:
-			return [
-				childParams({
-					rule: params.rule.content,
-					segment: { edge: 'content' },
-					force: {
-						forcedBy: 'field',
-						edgeName: params.rule.name
-					}
-				})
-			];
-		case ALIAS:
-			return [
-				childParams({
-					rule: params.rule.content,
-					segment: { edge: 'content' },
-					force: {
-						forcedBy: params.rule.named ? 'named-alias' : undefined,
-						cstSurface: params.rule.named ? 'named' : 'anonymous'
-					}
-				})
-			];
-		case SUPERTYPE:
-		case STRING:
-		case PATTERN:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-		case SYMBOL:
-			return [];
-		default:
-			return assertNever(params.rule);
-	}
-}
-
-function withIdentifiedChildren(args: {
-	rule: Rule<'evaluate'>;
-	id: RuleId;
-	children: readonly BuildResult[];
-}): Rule<'evaluate'> {
-	const { rule, id, children } = args;
-	switch (rule.type) {
-		case SEQ:
-		case CHOICE:
-			return { ...rule, id, members: children.map((child) => child.rule) };
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-		case FIELD:
-		case ALIAS:
-		case TOKEN:
-		case 'PREC':
-		case 'PREC_LEFT':
-		case 'PREC_RIGHT':
-		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
-			return { ...rule, id, content: children[0]!.rule };
-		case SUPERTYPE:
-		case STRING:
-		case PATTERN:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-		case SYMBOL:
-			return { ...rule, id };
-		default:
-			return assertNever(rule);
-	}
-}
-
-function classifyRule(
-	rule: Rule<'evaluate'>,
-	ctx: {
-		readonly id: RuleId;
-		readonly children: readonly BuildResult[];
-		readonly force: ClassificationForce;
-	}
-): RuleClassification {
-	const intrinsicKind = classifyIntrinsic(rule, { children: ctx.children });
-	const forcedKind =
-		ctx.force.forcedBy === 'field' || ctx.force.forcedBy === 'named-alias' ? 'nonterminal' : intrinsicKind;
-	return {
-		ruleId: ctx.id,
-		kind: forcedKind,
-		...(ctx.force.forcedBy ? { forcedBy: ctx.force.forcedBy } : {}),
-		...(ctx.force.edgeName ? { edgeName: ctx.force.edgeName } : {}),
-		...(ctx.force.cstSurface ? { cstSurface: ctx.force.cstSurface } : {})
-	};
-}
-
-function classifyIntrinsic(
-	rule: Rule<'evaluate'>,
-	ctx: { readonly children: readonly BuildResult[] }
-): RuleClassification['kind'] {
-	const anyChildNonterminal = ctx.children.some((child) => child.classification.kind === 'nonterminal');
-	return classifyByType(rule.type, anyChildNonterminal);
-}
-
-function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
-	if (ctx.path.length === 0) return `rule:${encodeURIComponent(ownerKind)}:root`;
-	return `rule:${encodeURIComponent(ownerKind)}:${ctx.path.map(formatPathSegment).join('/')}`;
-}
-
-function formatPathSegment(segment: RulePathSegment): string {
-	switch (segment.edge) {
-		case 'content':
-			return 'content';
-		case 'members':
-		case 'forms':
-			return `${segment.edge}.${segment.index}`;
-		default:
-			return assertNever(segment);
 	}
 }

@@ -1,16 +1,3 @@
-# `packages/codegen/src/compiler` — Function Glossary
-
-Per-function reference for `packages/codegen/src/compiler/`, mechanically relocated from source
-comments by `scripts/relocate-comments-to-glossary.mts` (mechanical pass —
-unedited, unverified). A later pass reformats/verifies these entries and decides
-what merges into docs/compiler-phase-glossary.md's phase narrative.
-
-See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
-
----
-
-
-
 ### `packages/codegen/src/compiler/supertype-closure.ts::stampSupertypeClosures`
 
 Flattens each supertype's membership through nested supertypes, at the end of
@@ -1795,7 +1782,9 @@ parents.
 
 ```text
 /**
- * Choice combinator — matches exactly one of the members.
+ * Choice combinator — evaluate's own sugar over
+ * `structuralBuilder.choice` (dsl/builders.ts, which owns the
+ * all-same-name-FIELD collapse):
  *
  * @remarks
  * A single-member choice collapses to its member — the wrapper has no
@@ -1827,86 +1816,15 @@ parents.
 // Detect all-string choice → EnumRule<'evaluate'>
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::collapseAllFieldChoiceMembers`
-
-```text
-/**
- * Collapse an all-field choice into a factored field, or leave it as a
- * plain choice of (heterogeneously-named) fields.
- *
- * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
- * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
- *   name, otherwise a raw `choice` of the original `field()` members.
- * @remarks
- * All branches wrap the SAME field name — factor the field outward to
- * `field('x', choice(A, B))`. The choice content may itself simplify to an
- * enum when all inners are strings.
- *
- * Otherwise (different field names, or any branch wraps an alias — see
- * below), the choice passes through as-is: `choice(field('body', seq(...)),
- * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
- * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
- * / `VariantRule` share the same `name`+`content` shape, so the retype was a
- * pure discriminator change) — that existed only for Link's now-deleted
- * `promotePolymorph` pass to recognize the shape and wrap the rule in a
- * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
- * the pipeline, so the fields now stay FIELD-typed and route into named
- * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
- * any other heterogeneous fielded choice.
- *
- * @remarks
- * Any branch wrapping an alias directly takes this same passthrough (checked
- * first, before the same-name factoring). Aliases are structural rename
- * markers; downstream passes (Link, assemble) depend on the alias appearing
- * inside a plain choice to route the synthetic kind into the NodeMap —
- * factoring or retyping shifts classification and leaves the alias target
- * unregistered (observed on rust `_line_doc_comment_marker` /
- * `_block_doc_comment_marker`).
- */
-```
-
-#### body
-
-```text
-// Factor: choice(field(x, A), field(x, B)) → field(x, choice(A, B))
-```
-
-#### body
-
-```text
-// Heterogeneous names — PR 2 (2026-07-21 union-slot design): no longer
-// retype to VARIANT. The VARIANT retype existed solely so Link's
-// (now-deleted) promotePolymorph pass could recognize a top-level
-// choice-of-differently-named-fields as a polymorph-form marker —
-// PolymorphRule/AssembledPolymorph are fully gone from the pipeline
-// (assemble.ts: "no 'polymorph' classification exists in assemble's
-// dispatch anymore"), so that reclassification is dead. The fields stay
-// FIELD-typed; PR 1's per-arm union-slot routing (carriesNamedField)
-// naturally distributes them into named slots, same as any other
-// heterogeneous fielded choice.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::optional`
 
 ```text
 /**
- * Optional combinator — matches zero or one occurrence of the content.
- *
- * @remarks
- * `optional(optional(x))` collapses to `optional(x)` — two layers of
- * "zero or one" is the same as one layer.
- *
- * @remarks
- * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
- * already optional in the config surface (`items?: T[]`, null-coalesced
- * to `[]` in the factory), so the wrapper adds no information.
- *
- * @remarks
- * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
- * parse-identical: tree-sitter surfaces "optional didn't fire" and
- * "repeat1 fired with zero items" identically (an empty children list).
- * The non-empty guarantee a bare `repeat1` carries only holds when there
- * is no `optional` wrapper to swallow the empty case.
+ * Optional combinator — coerces `content`, stamps every direct symbol
+ * ref's `optional` flag (see `walkRefs`), then delegates the one-level
+ * shape recognitions (`optional(optional(x))`, `optional(repeat(x))`,
+ * `optional(repeat1(x))`) to `structuralBuilder.optional`
+ * (dsl/builders.ts) — see that entry for the collapse rationale.
  */
 ```
 
@@ -1914,65 +1832,21 @@ parents.
 
 ```text
 /**
- * Zero-or-more repetition combinator.
- *
- * @remarks
- * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
- * a distinct separator — the outer loop is redundant.
- *
- * @remarks
- * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
- * zero occurrences, so the optional wrapper is redundant.
+ * Zero-or-more repetition combinator — coerces `content`, stamps every
+ * direct symbol ref's `repeated` flag, then delegates the one-level shape
+ * recognitions to `structuralBuilder.repeat` (dsl/builders.ts) — see that
+ * entry for the collapse rationale.
  */
-```
-
-#### body
-
-```text
-// The separator LIFT (repeat(seq(sep, x)) → repeat{separator}) runs in the
-// link pass, not here — see seq() and compiler/lift-separators.ts.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::repeat1`
 
 ```text
 /**
- * One-or-more repetition combinator.
- *
- * @remarks
- * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
- * more" of "one or more" accepts the same strings as the inner.
- *
- * @remarks
- * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
- * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
- * zero-or-more `x` (one outer iteration of zero inner matches), which
- * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
- * left alone to preserve grammar author intent.
- */
-```
-
-#### body
-
-```text
-// The separator LIFT runs in the link pass — see seq() and
-// compiler/lift-separators.ts.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::isHiddenKind`
-
-```text
-/**
- * Authoritative "is this kind hidden?" check shared by Link and
- * downstream passes. Tree-sitter treats a rule as hidden when:
- *
- *   (a) its name begins with `_` (convention), OR
- *   (b) its name appears in the grammar's `inline:` array (explicit).
- *
- * Grammars that don't follow the leading-underscore convention can
- * still mark rules hidden via `inline`. Passing `undefined` for
- * `inlineList` falls back to convention-only, which is the safe
- * default when Link doesn't have grammar metadata at hand.
+ * One-or-more repetition combinator — coerces `content`, stamps every
+ * direct symbol ref's `repeated` flag, then delegates the one-level shape
+ * recognition to `structuralBuilder.repeat1` (dsl/builders.ts) — see that
+ * entry for the collapse rationale.
  */
 ```
 
@@ -2019,13 +1893,9 @@ parents.
  * `_needsContent: true`, which `resolvePatch` swaps out with the
  * original member when applying transform() patches.
  * @remarks
- * Mirrors the bare `optional()` helper's canonical collapse:
- * `field('x', optional(repeat(...)))` → `field('x', repeat(...))` and
- * `field('x', optional(repeat1(...)))` → `field('x', repeat(...))`.
- * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any
- * empty case as an empty children list. Collapsing both here keeps
- * evaluate output canonical across all the equivalent list encodings
- * grammar authors write.
+ * The `optional(repeat(...))`/`optional(repeat1(...))` collapse inside the
+ * field's content is `structuralBuilder.field`'s own one-level shape
+ * recognition (dsl/builders.ts) — see that entry for the rationale.
  * @remarks
  * Propagates the field name to every nested symbol ref. Stops at inner
  * field/alias boundaries — those own their own field name. Does not
@@ -2037,25 +1907,6 @@ parents.
 // ---------------------------------------------------------------------------
 // Named patterns
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::collapseOptionalRepeatInField`
-
-```text
-/**
- * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
- * `repeat(...)` inside a field's content.
- *
- * @param resolved - The already-normalized field content rule.
- * @returns The canonicalized rule with the optional wrapper removed when
- *   the inner content is a repeat variant.
- * @remarks
- * Both `optional(repeat(x))` and `optional(repeat1(x))` are
- * parse-identical to `repeat(x)` — tree-sitter surfaces any empty case
- * as an empty children list. Collapsing here keeps evaluate output
- * canonical across all the equivalent list encodings grammar authors
- * write.
- */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::string`
@@ -2922,73 +2773,6 @@ parents.
 // Ensure pattern candidates themselves have provenance recorded.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::isComplexBody`
-
-```text
-/**
- * Returns true when `rule` is complex enough to be a meaningful structural
- * pattern. Excludes trivial single-terminal bodies that would match too
- * broadly (every bare string, every symbol reference, every pattern).
- *
- * Exported for use by `deriveComplexAliasTargetHidden`.
- */
-```
-
-#### body
-
-```text
-// A REPEAT is complex only when its content is itself non-trivial
-// (not a bare string or symbol).
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::deriveComplexAliasTargetHidden`
-
-```text
-/**
- * Derive the set of hidden (`_`-prefixed) kinds that:
- *   1. Appear as the source of a NAMED ALIAS — either in pre-link form
- *      (`alias(symbol(_X), $visible)`) or post-link form
- *      (`symbol(visible, aliasedFrom='_X')`).
- *   2. Whose own rule body in `rules` satisfies {@link isComplexBody}.
- *
- * This is the on-demand structural replacement for `patternReplacementKinds`.
- * Both consumers receive different rule-map shapes:
- *   - `link.ts` calls this on `raw.rules` (pre-link; alias nodes present).
- *   - `normalize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
- *
- * The predicate is intentionally conservative (the derived set may be a
- * strict superset of the old `patternReplacementKinds` cache). Probe-verified
- * byte-identical for rust/typescript/python across normalize's rules,
- * normalizedRules, and simplifiedRules outputs.
- *
- * @remarks
- * The walk covers seq/choice members, content, polymorph forms, and
- * separator rule lists so aliases nested in any position are captured.
- */
-```
-
-#### body
-
-```text
-// Pre-link form: alias(symbol(_X), $visible)
-```
-
-#### body
-
-```text
-// Post-link form: symbol(visible, aliasedFrom='_X')
-```
-
-#### body
-
-```text
-// `rules` is deliberately AnyRule (both pre-link and post-link callers,
-// see doc comment above); isComplexBody only checks SEQ/CHOICE members +
-// BLANK-arm shape, phase-agnostic in practice — widen the phase view
-// (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape,
-// so AnyRule no longer coincidentally structurally matches Rule<'evaluate'>).
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::replacePatterns`
 
 ```text
@@ -3241,7 +3025,7 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::computeReachableRuleNames`
+### `packages/codegen/src/compiler/rule-catalog.ts::computeReachableRuleNames`
 
 ```text
 /**
@@ -3278,7 +3062,7 @@ parents.
 // (classification happens at Assemble). Keep every top-level rule.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::classifyIntrinsic`
+### `packages/codegen/src/compiler/rule-catalog.ts::classifyIntrinsic`
 
 ```text
 /**
@@ -6640,13 +6424,13 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::BuildRuleCatalogCtx`
+### `packages/codegen/src/compiler/rule-catalog.ts::BuildRuleCatalogCtx`
 
 ```text
 /** Ctx for {@link buildRuleCatalog} — just the provenance map it needs. */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::AttachReferenceRuleIdsCtx`
+### `packages/codegen/src/compiler/rule-catalog.ts::AttachReferenceRuleIdsCtx`
 
 ```text
 /** Ctx for {@link attachReferenceRuleIds}. */
@@ -8859,11 +8643,11 @@ source, one derivation.
 ### `packages/codegen/src/compiler/evaluate.ts::token.immediate`
 
 ```text
-// Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
-// `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule doc
-// comment in types/rule.ts. `grammarFn`'s `normalizeImmediateTokens`
-// folds this into TOKEN+immediate once enrich's minting decisions
-// (which must see the same arm shape under both runtimes) are locked in.
+/**
+ * Coerces `content` and delegates to `structuralBuilder.token.immediate`
+ * (dsl/builders.ts), which owns the real IMMEDIATE_TOKEN construction —
+ * see that entry for the tree-sitter dsl.js shape rationale.
+ */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::PrecFn`
@@ -9087,7 +8871,7 @@ source, one derivation.
 // `n.type === SYMBOL` is always false for them).
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::BuildResult`
+### `packages/codegen/src/compiler/rule-catalog.ts::BuildResult`
 
 ```text
 // ---------------------------------------------------------------------------
@@ -9100,7 +8884,7 @@ source, one derivation.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::buildRuleCatalog`
+### `packages/codegen/src/compiler/rule-catalog.ts::buildRuleCatalog`
 
 #### body
 
@@ -9132,7 +8916,7 @@ source, one derivation.
 // view.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::identifyChildren`
+### `packages/codegen/src/compiler/rule-catalog.ts::identifyChildren`
 
 #### body
 
@@ -9156,7 +8940,7 @@ source, one derivation.
 		   unreachable at runtime, transparent single-child wrapper. */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::withIdentifiedChildren`
+### `packages/codegen/src/compiler/rule-catalog.ts::withIdentifiedChildren`
 
 #### body
 

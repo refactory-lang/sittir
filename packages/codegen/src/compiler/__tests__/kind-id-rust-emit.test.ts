@@ -1,6 +1,7 @@
 import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { buildRuleCatalog, field, seq } from '../evaluate.ts';
+import { structuralBuilder } from '../../dsl/builders.ts';
+import { buildRuleCatalog } from '../rule-catalog.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -14,7 +15,7 @@ function makeMinimalFixture(): {
 	generatedIdTables: GeneratedIdTables;
 } {
 	const { rules, ruleCatalog } = buildRuleCatalog({
-		call_expression: seq(field('function', { type: 'SYMBOL', name: 'identifier' })),
+		call_expression: structuralBuilder.field('function', { type: 'SYMBOL', name: 'identifier' }),
 		identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 	});
 
@@ -139,7 +140,7 @@ describe('emitKindIdRust', () => {
 		// kind with a leading `_` in the generatedIdTables). This validates the
 		// constant-name mapping path for a kind whose `rawKind` starts with `_`.
 		const { rules, ruleCatalog } = buildRuleCatalog({
-			call_expression: seq(field('function', { type: 'SYMBOL', name: 'identifier' })),
+			call_expression: structuralBuilder.field('function', { type: 'SYMBOL', name: 'identifier' }),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
 
