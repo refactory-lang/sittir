@@ -25,6 +25,7 @@ import {
 	edgeClassesOfKind,
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
+	patternTrailingEdgeClass,
 	storageKindOfValue,
 	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
@@ -97,6 +98,22 @@ interface SlotLookupMiss {
 }
 const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
 const SLOT_MISS_LOG: SlotLookupMiss[] = [];
+
+const DBG_SEAM_VARIES = process.env.DBG_SEAM_VARIES === '1';
+const SEAM_VARIES_TALLY = new Map<string, number>();
+function tallySeamVariesReason(reason: string): void {
+	if (!DBG_SEAM_VARIES) return;
+	SEAM_VARIES_TALLY.set(reason, (SEAM_VARIES_TALLY.get(reason) ?? 0) + 1);
+}
+function dumpSeamVariesTally(grammar: string): void {
+	if (!DBG_SEAM_VARIES || SEAM_VARIES_TALLY.size === 0) return;
+	const total = [...SEAM_VARIES_TALLY.values()].reduce((a, b) => a + b, 0);
+	process.stderr.write(`\n=== seam runtime-varying reasons [${grammar}] — ${total} total ===\n`);
+	for (const [reason, count] of [...SEAM_VARIES_TALLY.entries()].sort((a, b) => b[1] - a[1])) {
+		process.stderr.write(`  ${count.toString().padStart(4)}  ${reason}\n`);
+	}
+	SEAM_VARIES_TALLY.clear();
+}
 function dumpSlotMissLog(grammar: string): void {
 	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
 	const tally = { fieldName: 0, 'symbol-name': 0, 'alias-source': 0, none: 0 } as Record<string, number>;
@@ -205,6 +222,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 
 	finalize(): EmittedTemplates {
 		dumpSlotMissLog(this.#config.grammar);
+		dumpSeamVariesTally(this.#config.grammar);
 		const boundaries = [...this.#seamBoundaries];
 		return {
 			bodies: new Map(this.#bodies),
@@ -255,7 +273,9 @@ function renderRuleEdge(
 	if (mult !== undefined && mult !== 'single') return 'varies';
 	switch (rule.type) {
 		case PATTERN:
-			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : 'varies';
+			return side === 'starts'
+				? patternLeadingEdgeClass(rule.value, ctx)
+				: patternTrailingEdgeClass(rule.value, ctx);
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
@@ -288,6 +308,43 @@ function renderRuleEdge(
 		}
 		default:
 			return 'varies';
+	}
+}
+
+function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: EmitCtx, visiting: Set<string>): string {
+	const mult = (rule as { multiplicity?: Multiplicity }).multiplicity;
+	if (mult !== undefined && mult !== 'single') return `multiplicity:${mult}`;
+	switch (rule.type) {
+		case PATTERN:
+			return side === 'ends' ? 'pattern-end-ambiguous' : 'pattern-start-varies';
+		case SEQ: {
+			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
+			for (const m of members) {
+				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
+				if (e !== 'empty') return describeVariesReason(m, side, ctx, new Set(visiting));
+			}
+			return 'seq-all-empty';
+		}
+		case CHOICE: {
+			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, new Set(visiting)));
+			return `choice-mismatch:${[...new Set(edges)].sort().join(',')}`;
+		}
+		case VARIANT:
+		case GROUP:
+			return describeVariesReason(rule.content, side, ctx, visiting);
+		case SYMBOL: {
+			if (visiting.has(rule.name)) return 'symbol-cycle';
+			visiting.add(rule.name);
+			const node = ctx.nodeMap.nodes.get(rule.name);
+			if (node !== undefined) {
+				if (node.modelType === 'pattern') return side === 'ends' ? 'pattern-end-ambiguous' : 'pattern-start-varies';
+				return `kind-edge-varies:${node.modelType}`;
+			}
+			const helper = ctx.rules[rule.name];
+			return helper !== undefined ? describeVariesReason(helper, side, ctx, visiting) : 'no-helper';
+		}
+		default:
+			return `unhandled-type:${rule.type}`;
 	}
 }
 
@@ -326,6 +383,62 @@ export function emitBranchTemplate(
 	return emitRule(node.renderRule, ctxWithSlots);
 }
 
+interface SeqBoundaryClassification {
+	readonly resolution: 'static-glued' | 'static-spaced' | 'runtime-varying';
+	readonly leftVaries: boolean;
+	readonly rightVaries: boolean;
+	readonly mergePairAmbiguous: boolean;
+}
+
+const STATIC_GLUED: SeqBoundaryClassification = {
+	resolution: 'static-glued',
+	leftVaries: false,
+	rightVaries: false,
+	mergePairAmbiguous: false
+};
+const STATIC_SPACED: SeqBoundaryClassification = {
+	resolution: 'static-spaced',
+	leftVaries: false,
+	rightVaries: false,
+	mergePairAmbiguous: false
+};
+
+function classifySeqBoundary(
+	l: string,
+	r: string,
+	leftRule: RenderRule,
+	rightRule: RenderRule,
+	ctx: EmitCtx
+): SeqBoundaryClassification {
+	const partEdge = (rule: RenderRule, side: 'starts' | 'ends', c: string): SeamEdgeClass => {
+		if (side === 'starts' ? c !== '{' : c !== '}') return ctx.isWordChar(c) ? 'word' : 'not-word';
+		const e = renderRuleEdge(rule, side, ctx, new Set());
+		return e === 'empty' ? 'varies' : e;
+	};
+	if (l === '}' || r === '{') {
+		const leftE = partEdge(leftRule, 'ends', l);
+		const rightE = partEdge(rightRule, 'starts', r);
+		if (leftE === 'varies' || rightE === 'varies') {
+			return { resolution: 'runtime-varying', leftVaries: leftE === 'varies', rightVaries: rightE === 'varies', mergePairAmbiguous: false };
+		}
+		if (seamNeedsSpace(leftE, rightE)) return STATIC_SPACED;
+		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) {
+			return { resolution: 'runtime-varying', leftVaries: false, rightVaries: false, mergePairAmbiguous: true };
+		}
+		return STATIC_GLUED;
+	}
+	const charClass = (c: string): SeamEdgeClass => (ctx.isWordChar(c) ? 'word' : 'not-word');
+	const spaced = seamNeedsSpace(charClass(l), charClass(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
+	return spaced ? STATIC_SPACED : STATIC_GLUED;
+}
+
+const MARK_SEAM_EXPR = /^\{\{\s*([\s\S]+?)\s*\}\}$/;
+
+function wrapMarkSeam(text: string): string {
+	const m = MARK_SEAM_EXPR.exec(text);
+	return m === null ? text : `{{ ${m[1]} | markSeam }}`;
+}
+
 export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case STRING:
@@ -360,50 +473,57 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			const parts: string[] = [];
 			let indentPartIdx = -1;
 			const partRules: RenderRule[] = [];
+			const partIndices: number[] = [];
 			rule.members.forEach((m, i) => {
 				const text = emitRule(m, ctx);
 				if (text === '') return;
 				if (i === indentMemberIdx) indentPartIdx = parts.length;
 				parts.push(text);
 				partRules.push(m);
+				partIndices.push(i);
 			});
 			if (parts.length === 0) return '';
 			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution']): void => {
 				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution });
 			};
-			const classifyTagSeam = (leftE: SeamEdgeClass, rightE: SeamEdgeClass): 'derivable' | 'runtime-varying' => {
-				if (leftE === 'varies' || rightE === 'varies') return 'runtime-varying';
-				if (seamNeedsSpace(leftE, rightE)) return 'derivable';
-				return ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`) ? 'runtime-varying' : 'derivable';
-			};
-			const charClass = (c: string): SeamEdgeClass => (ctx.isWordChar(c) ? 'word' : 'not-word');
-			const partEdge = (idx: number, side: 'starts' | 'ends', text: string): SeamEdgeClass => {
-				const c = side === 'starts' ? text[0]! : text[text.length - 1]!;
-				if (side === 'starts' ? c !== '{' : c !== '}') return charClass(c);
-				const e = renderRuleEdge(partRules[idx]!, side, ctx, new Set());
-				return e === 'empty' ? 'varies' : e;
+			const stampSeam = (rightPartIdx: number, resolution: 'glued' | 'spaced'): void => {
+				const memberIdx = partIndices[rightPartIdx]!;
+				rule.members[memberIdx] = { ...rule.members[memberIdx]!, staticSeamBefore: resolution };
 			};
 			const joinParts = (segments: string[], firstIdx: number): string => {
 				let body = segments[0]!;
 				for (let i = 1; i < segments.length; i++) {
+					const rightPartIdx = firstIdx + i;
+					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
-					let spaced: boolean;
-					if (l === '}' || r === '{') {
-						const leftE = partEdge(firstIdx + i - 1, 'ends', segments[i - 1]!);
-						const rightE = partEdge(firstIdx + i, 'starts', segments[i]!);
-						if (classifyTagSeam(leftE, rightE) === 'runtime-varying') {
-							recordSeam(l, r, 'runtime-varying');
-							body += segments[i]!;
-							continue;
-						}
-						spaced = seamNeedsSpace(leftE, rightE);
-					} else {
-						spaced = seamNeedsSpace(charClass(l), charClass(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
+					if (stamped !== undefined) {
+						const spaced = stamped === 'spaced';
+						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
+						if (spaced) body += ' ';
+						body += wrapMarkSeam(segments[i]!);
+						continue;
 					}
-					recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
-					if (spaced) body += ' ';
-					body += segments[i]!;
+					const leftRule = partRules[rightPartIdx - 1]!;
+					const rightRule = partRules[rightPartIdx]!;
+					const classification = classifySeqBoundary(l, r, leftRule, rightRule, ctx);
+					if (classification.resolution === 'runtime-varying') {
+						recordSeam(l, r, 'runtime-varying');
+						if (DBG_SEAM_VARIES) {
+							if (classification.leftVaries)
+								tallySeamVariesReason(`left:${describeVariesReason(leftRule, 'ends', ctx, new Set())}`);
+							if (classification.rightVaries)
+								tallySeamVariesReason(`right:${describeVariesReason(rightRule, 'starts', ctx, new Set())}`);
+							if (classification.mergePairAmbiguous) tallySeamVariesReason('merge-pair-ambiguous');
+						}
+						body += segments[i]!;
+						continue;
+					}
+					recordSeam(l, r, classification.resolution);
+					const isGlued = classification.resolution !== 'static-spaced';
+					stampSeam(rightPartIdx, isGlued ? 'glued' : 'spaced');
+					if (!isGlued) body += ' ';
+					body += wrapMarkSeam(segments[i]!);
 				}
 				return body;
 			};
@@ -412,6 +532,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 				const before = joinParts(parts.slice(0, indentPartIdx + 1), 0);
 				const after = joinParts(parts.slice(indentPartIdx + 1), indentPartIdx + 1);
 				recordSeam(before[before.length - 1] ?? '', after[0] ?? '', 'runtime-varying');
+				tallySeamVariesReason('seq-indent-adjacent');
 				seqBody = `${before}{% filter indent(2, true) %}${after}{% endfilter %}`;
 			} else {
 				seqBody = joinParts(parts, 0);
@@ -1186,6 +1307,10 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 		}
 	}
 	return te.finalize();
+}
+
+export function stampStaticSpacing(nodeMap: NodeMap, grammar: string): void {
+	runTemplateEmitter({ grammar, nodeMap });
 }
 
 export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {

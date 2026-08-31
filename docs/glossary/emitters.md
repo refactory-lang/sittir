@@ -10,6 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -11053,6 +11054,16 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // reference; defer to per-modelType emit by returning empty.
 ```
 
+#### body
+
+```text
+// The boundary immediately before a SEQ member is a fact of the grammar
+// shape, invariant across every occurrence of this rule subtree — once
+// decided statically it is stamped onto that member so a repeat visit
+// (shared helper rules inlined at multiple call sites) and any other
+// consumer of the assembled tree read the fact instead of re-deriving it.
+```
+
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
 ```text
@@ -14707,4 +14718,3 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
-

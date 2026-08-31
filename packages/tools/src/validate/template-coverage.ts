@@ -80,13 +80,16 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  * sittir-registered join-variant filters (`join`, `joinWithTrailing`,
  * `joinWithLeading`, `joinWithFlanks`, `join_with_trailing`,
  * `join_with_leading`, `join_with_flanks`) signals a multi-valued slot
- * (maps to `$$$`); the bare form is single-valued (`$`). See
+ * (maps to `$$$`); the bare form is single-valued (`$`). A trailing
+ * `| markSeam` (the pass-through seam-check-skip filter, applied at
+ * `staticSeamBefore`-stamped boundaries) never changes multiplicity —
+ * matched independently of whichever join/value filter precedes it. See
  * `packages/legacy-core/src/templates/nunjucks-env.ts:registerSittirFilters`
  * for the filter inventory the walker picks from.
  */
 function jinjaInterpolationsToLegacy(body: string): string {
 	return body.replace(
-		/\{\{\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?\s*\}\}/g,
+		/\{\{\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?(?:\s*\|\s*markSeam)?\s*\}\}/g,
 		(_m, name: string, joinFilter: string | undefined) => {
 			// Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
 			// Single-valued slot: bare `{{ name }}` OR the `| value`

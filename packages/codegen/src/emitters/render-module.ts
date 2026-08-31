@@ -1513,6 +1513,7 @@ function filtersModule(): string {
 		'    pub use ::sittir_core::filters::{',
 		'        upper, lower,',
 		'        isBlank, isPresent,',
+		'        markSeam,',
 		'    };',
 		'}'
 	].join('\n');

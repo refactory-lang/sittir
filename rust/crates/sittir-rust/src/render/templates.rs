@@ -87,6 +87,7 @@ pub mod filters {
     pub use ::sittir_core::filters::{
         upper, lower,
         isBlank, isPresent,
+        markSeam,
     };
 }
 

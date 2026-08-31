@@ -589,7 +589,7 @@ describe('emitRule — tag-boundary seams', () => {
 
 	it('bakes the space when both edge classes are statically word-class', () => {
 		const ctx = makeCtx({ nodeMap, rules: { identifier: { type: PATTERN, value: '[a-z]+' } } });
-		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left }}');
+		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left | markSeam }}');
 	});
 
 	it('leaves the boundary glued when the slot edge varies', () => {
