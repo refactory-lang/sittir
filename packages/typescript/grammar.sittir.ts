@@ -557,7 +557,23 @@ export default grammar(
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
-				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
+				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
+				'export_statement.defaultFromArm':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'import_clause.identifier':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'import_clause.type':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'variable_declarator.identifier':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'variable_declarator.objectPattern':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'variable_declarator.arrayPattern':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'call_expression.import':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name',
+				'ambient_declaration.semi':
+					'sub-factory derivation is visiting-context-sensitive: this flattened name resolves unambiguously only under some cyclic candidate reachability contexts and not others, so whichever context the overlay emitter caches first determines whether the wire exists — the wired overlay never gets this name'
 			},
 			rules: {
 				// `template_substitution` sits only in string-interior contexts

@@ -4773,6 +4773,12 @@ var grammar_sittir_default = grammar(
   wire(
     {
       name: "rust",
+      expectTestFailures: {
+        "generic_type.self": "sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous \u2014 the wired overlay never gets these names",
+        "generic_type.metavariable": "sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous \u2014 the wired overlay never gets these names",
+        "generic_type.super": "sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous \u2014 the wired overlay never gets these names",
+        "generic_type.crate": "sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous \u2014 the wired overlay never gets these names"
+      },
       conflicts: ($, previous) => [
         ...previous ?? [],
         [$._expression_except_range, $._match_arm_block_ending],

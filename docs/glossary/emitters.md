@@ -6419,6 +6419,62 @@ Surface`
 //   output is the correct behavior.
 ```
 
+### `packages/codegen/src/emitters/test.ts::emitSubFactoryTests`
+
+One generated test per sub-factory (`subFactoriesOf`, `overlays/sub-factories.ts`)
+of a branch/envelope/polymorph kind, called from `emitTests` right after
+`emitBranchTest`. Each case calls the sub-factory through the hoisted bundle
+(`ir.<key>.<name>(<args>)`, coerce flavor — the bare call `subFactoriesOf`
+entries resolve to at runtime) and asserts `$type` and — content-dependent —
+`$render()`.
+
+Args derivation (`subFactoryCallArgs`) mirrors `overlays/polymorphs.ts`'s own
+`shape()`/`emitSub` wiring logic exactly, since the two must agree on the
+call shape the wired function actually accepts:
+
+- literal arm, empty residual → `()`.
+- literal arm, non-empty residual → a config object of the residual's
+  required-field dummies (`requiredFieldParts`).
+- kind arm, empty residual → the child's own bare-call args
+  (`childBareCallArgs`: container convention when
+  `classifyChildFactorySurface` recognizes one, else `factoryCallArgs`'s
+  render-config branch; a list's sole content-slot dummy; a pattern sample;
+  `''` for a keyword; the first enum value otherwise) — or, for a flattened
+  (nested, `path.length > 0`) entry, the same computed recursively for the
+  child's own named sub-factory.
+- kind arm, non-empty residual, direct config-shaped child
+  (`armIsConfigShaped`) → the residual dummies merged flat with the child's
+  own config fields (matches the wire's `Omit<...> & Parameters<CF>[0]`
+  merge shape).
+- kind arm, non-empty residual, otherwise → the residual dummies plus the
+  slot's own key holding the child's args as a one-element tuple (matches
+  the wire's `Omit<...> & { <slotKey>: Parameters<CF> }` shape) — a nested
+  entry only ever takes this tuple shape (the wire's `mergeKeys` is never
+  computed for `path.length > 0`), and only if the flattened-through child
+  itself carries a top-level bundle key (`bundleEntries` — otherwise the
+  reference `<childKey>.<path>` the wire would emit doesn't resolve, so the
+  entry is skipped, mirroring how `emitSub` silently drops it).
+
+An entry is skipped (no test emitted) when any of the above can't produce
+text — an unmatched pattern sample, an unresolved nested sub-factory lookup,
+or an unbundled flattened child.
+
+Mirrors `emitBranchTest`'s own two-tier render assertion: when the computed
+args carry no content (`''` or `'{}'`), the constructed node's fields are
+all-default, and the stronger non-empty assertion doesn't hold in general —
+asserts `$render()` doesn't throw instead of asserting its length.
+
+`expectTestFailures['<kind>.<name>']` (same map `emitTests` already reads,
+keyed by the sub-factory's own name rather than the kind) pins a case as
+`it.skip` with a `// known-failing: <reason>` line, for entries `subFactoriesOf`
+derives that the overlay wiring never actually reaches — sub-factory
+derivation is visiting-context-sensitive (`derive` in `sub-factories.ts`
+threads a `visiting` set for cycle safety, but its cache keys only on
+`(nodeMap, isEmitted, kind)` — a cached top-level result computed under one
+visiting context can get reused by a nested lookup under a different one),
+so a name that resolves unambiguously here can still be one `emitSub` drops
+as ambiguous when wiring the actual overlay.
+
 ### `packages/codegen/src/emitters/test.ts::emitSeparatedListTest`
 
 ```text
