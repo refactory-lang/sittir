@@ -93,10 +93,10 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 
 	const { assemble, AssembleCtx, hydrateSlotRefs } = await load('assemble');
 	const { loadGeneratedIdTables } = await load('generatedMetadata');
-	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(opts.grammar)));
+	const generatedIdTables = await loadGeneratedIdTables(opts.grammar);
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 	const node = nodeMap.nodes.get(kind) ?? null;
 	stages.assemble = node ? summarizeAssembled(node) : null;
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	if (!opts.skipEmit) {
 		hydrateSlotRefs(nodeMap);

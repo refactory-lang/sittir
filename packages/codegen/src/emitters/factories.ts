@@ -49,7 +49,9 @@ import {
 	canonicalSeparatedListField,
 	escForSource,
 	emitsPlainBuiltAlias,
-	transparentWrapperContentSlot, isAuthoredCompound } from './shared.ts';
+	transparentWrapperContentSlot,
+	isAuthoredCompound
+} from './shared.ts';
 import {
 	collectRefineKindInfos,
 	refineFormTypeName,
@@ -237,7 +239,6 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 	return lines;
 }
 
-
 export namespace factory {
 	export function leaf(
 		output: string[],
@@ -277,9 +278,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(
-			emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries)
-		);
+		output.push(emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries));
 	}
 
 	export function group(
@@ -288,9 +287,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(
-			emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries)
-		);
+		output.push(emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries));
 	}
 
 	export function separatedList(
@@ -504,10 +501,12 @@ export function fieldElementType(
 	for (const comp of components) {
 		if (comp.kind === 'literal') {
 			const discriminant = storesLiteralIds
-				? (comp.resolvedKindId !== undefined ? kindDiscriminantExprForId(comp.resolvedKindId, kindEntries) : undefined) ??
+				? ((comp.resolvedKindId !== undefined
+						? kindDiscriminantExprForId(comp.resolvedKindId, kindEntries)
+						: undefined) ??
 					(findKindEntryForLiteral(kindEntries, comp.value) !== undefined
 						? kindDiscriminantExprForLiteral(comp.value, kindEntries)
-						: undefined)
+						: undefined))
 				: undefined;
 			parts.push(discriminant ?? JSON.stringify(comp.value));
 		} else if (comp.kind === 'nodeKind') {
@@ -585,7 +584,9 @@ function looseValueOf(elementType: string): string {
 	return `LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 }
 
-function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap,
+function resolveFactorySurface(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): FactorySurface {
 	const spreadFacts =
@@ -602,8 +603,9 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap,
 				rawFactoryName: node.rawFactoryName,
 				fields: [spreadFacts.slot]
 			},
-			nodeMap
-		, kindEntries);
+			nodeMap,
+			kindEntries
+		);
 		if (spreadFacts.multiple) {
 			const param: FactoryParam = {
 				label: 'children',
@@ -687,9 +689,7 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap,
 	};
 }
 
-export function constructorTargetKind(kind: string, nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
+export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || !isSlotBearingCompound(node) || node instanceof AssembledList) return kind;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
@@ -697,9 +697,7 @@ export function constructorTargetKind(kind: string, nodeMap: NodeMap,
 	return target === null ? kind : constructorTargetKind(target, nodeMap, kindEntries);
 }
 
-function chainParamOptional(kind: string, nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
-): boolean {
+function chainParamOptional(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || !isSlotBearingCompound(node) || node instanceof AssembledList) return false;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
@@ -1034,7 +1032,8 @@ function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): st
 	return `T.${node.typeName}.Config`;
 }
 
-function resolvePolymorphFormVariantName(node: FieldCarryingNode,
+function resolvePolymorphFormVariantName(
+	node: FieldCarryingNode,
 	kindEntries?: readonly KindEnumEntry[]
 ): string | undefined {
 	return node.parentKind ? node.name : undefined;
@@ -1048,7 +1047,9 @@ interface SoleSlotNode {
 	readonly fields: readonly AssembledNonterminal[];
 }
 
-function resolveSoleSlotElementType(node: SoleSlotNode, nodeMap: NodeMap,
+function resolveSoleSlotElementType(
+	node: SoleSlotNode,
+	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	return childElementType({ children: node.fields }, nodeMap, kindEntries);
@@ -1399,7 +1400,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			'// An INTERFACE, not a type alias: `$trivia` rebuilds the node and',
 			'// hands back the same kind, which the polymorphic `this` states —',
 			'// and `this` is only available in an interface. Declaring',
-			"// `AnyNodeData` instead threw the kind away and made `$render`",
+			'// `AnyNodeData` instead threw the kind away and made `$render`',
 			'// optional on everything downstream of a `$trivia` call.',
 			'interface _NodeMethods {',
 			'  $render(): string;',

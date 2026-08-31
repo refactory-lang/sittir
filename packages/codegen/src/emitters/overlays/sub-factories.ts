@@ -10,7 +10,13 @@ import {
 	type AssembledNonterminal,
 	type NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
-import { forwardedTargetKind, isSlotBearingCompound, isTextLeaf, isValidIdent, classifyFactoryShape } from '../shared.ts';
+import {
+	forwardedTargetKind,
+	isSlotBearingCompound,
+	isTextLeaf,
+	isValidIdent,
+	classifyFactoryShape
+} from '../shared.ts';
 import { camelCase } from '../refine-emit.ts';
 import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
 
@@ -203,7 +209,12 @@ function resolveCandidates(
 		const keys = armConfigKeys(entry, nodeMap, { isEmitted }, nextVisiting);
 		const collides = keys.some((k) => residualKeys.has(k));
 		if (collides) {
-			diagnostics.push({ parent: node.kind, name: entry.name, reason: 'slot-collision', claimants: [claimantOf(entry)] });
+			diagnostics.push({
+				parent: node.kind,
+				name: entry.name,
+				reason: 'slot-collision',
+				claimants: [claimantOf(entry)]
+			});
 			continue;
 		}
 		entries.push(entry);

@@ -665,9 +665,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // Bounded-lifetime nodes — each collapses to `never` outside its phase
-// window (see the per-type conditionals): alias/token are consumed by
-// Link (surviving into the 'link' view only defensively);
-// optional/field/repeat/repeat1 are consumed by Normalize's
+// window (see the per-type conditionals): alias is consumed by Link
+// (surviving into the 'link' view only defensively);
+// token/optional/field/repeat/repeat1 are consumed by Normalize's
 // flattenRules. None appear in the wrapper-free views.
 ```
 
@@ -1286,7 +1286,8 @@ narrowing guard.
 	 * survives link as a TokenRule (immediacy on the wrapper's own
 	 * `immediate` field); `flatten` consumes it through
 	 * `attributeBuilder.token` / `token.immediate`, which stamp these on the
-	 * leaf that replaces it. A wrapper-phase rule never carries them.
+	 * content node that replaces it (which may be composite — `token(seq(...))`
+	 * stamps the rebuilt SEQ). A wrapper-phase rule never carries them.
 	 * `tokenized` — this subtree lexes as ONE token. `immediate` — the
 	 * grammar forbids whitespace before this token (`token.immediate`, or
 	 * a declared-immediate external): its rendered text must never receive

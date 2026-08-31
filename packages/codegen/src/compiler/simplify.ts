@@ -282,7 +282,9 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 	const b = ctx.builder;
 	const nested = rule.members.filter((m) => m.type === CHOICE);
 	const host: ChoiceRule = nested.length > 0 ? absorbIds(rule, ...nested) : rule;
-	const members = rule.members.flatMap((m) => (m.type === CHOICE ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]));
+	const members = rule.members.flatMap((m) =>
+		m.type === CHOICE ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]
+	);
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);

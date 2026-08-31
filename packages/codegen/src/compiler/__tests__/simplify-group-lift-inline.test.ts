@@ -20,6 +20,7 @@
  */
 
 import { DiagnosticSink } from '../../types/diagnostics.ts';
+import { inlineRefs, type InlineRefsCtx } from '../../dsl/rule-transforms.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it, afterEach } from 'vitest';
 import {
@@ -292,5 +293,28 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		// The content kind must be present.
 		const contentRefs = collectSymbolNames(letDeclSimplified as Rule);
 		expect(contentRefs).toContain('_type');
+	});
+});
+
+describe('inlineRefs — reference id wins over the inlined target id', () => {
+	const ctxOf = (rules: Record<string, Rule>, inlineKinds: string[]): InlineRefsCtx =>
+		({ rules, inlineKinds: new Set(inlineKinds) }) as unknown as InlineRefsCtx;
+
+	it('an inline-listed ref keeps ITS id when the target body carries a different one', () => {
+		const rules: Record<string, Rule> = {
+			_h: { type: 'STRING', value: 'x', id: 'rule:_h:root' } as unknown as Rule
+		};
+		const ref = { type: 'SYMBOL', name: '_h', id: 'rule:parent:members.1' } as unknown as Rule;
+		const out = inlineRefs(ref, ctxOf(rules, ['_h']));
+		expect((out as { id?: string }).id).toBe('rule:parent:members.1');
+	});
+
+	it('an id-less ref falls back to the inlined target id', () => {
+		const rules: Record<string, Rule> = {
+			_h: { type: 'STRING', value: 'x', id: 'rule:_h:root' } as unknown as Rule
+		};
+		const ref = { type: 'SYMBOL', name: '_h' } as unknown as Rule;
+		const out = inlineRefs(ref, ctxOf(rules, ['_h']));
+		expect((out as { id?: string }).id).toBe('rule:_h:root');
 	});
 });

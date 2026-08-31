@@ -314,8 +314,7 @@ function buildGrammarKeySet(grammar: string): Set<string> {
 			const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
 			grammarKeys.add(key);
 		}
-	} catch {
-	}
+	} catch {}
 	return grammarKeys;
 }
 
@@ -864,7 +863,8 @@ function fieldInputHintTypeExpr(
 	if (storageInfo.kind === 'mixedEnum') {
 		const nodeParts: string[] = [];
 		for (const comp of fieldTypeComponents(f, nodeMap)) {
-			if (comp.kind === 'nodeKind') nodeParts.push(isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind));
+			if (comp.kind === 'nodeKind')
+				nodeParts.push(isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind));
 		}
 		const mixedHint = `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
 		return nodeParts.length > 0 ? `${mixedHint} | ${[...new Set(nodeParts)].join(' | ')}` : mixedHint;

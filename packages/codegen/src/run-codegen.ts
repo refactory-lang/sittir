@@ -62,8 +62,7 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	if (existsSync(path)) {
 		try {
 			if (readFileSync(path, 'utf8') === finalContent) return;
-		} catch {
-		}
+		} catch {}
 	}
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, finalContent, 'utf8');

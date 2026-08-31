@@ -19,7 +19,12 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
-import { deriveComplexAliasTargetHidden, isEnumChoiceRule, isHiddenRule, separatorFactsEqual } from '../dsl/rule-patterns.ts';
+import {
+	deriveComplexAliasTargetHidden,
+	isEnumChoiceRule,
+	isHiddenRule,
+	separatorFactsEqual
+} from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
 import { attributeBuilder } from '../dsl/builders.ts';

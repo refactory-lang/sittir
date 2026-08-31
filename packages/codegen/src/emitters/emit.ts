@@ -24,7 +24,13 @@ import {
 	classifyWrapEmission,
 	warnSkippedParserSymbol
 } from './shared.ts';
-import { emitBundleModule, emitFactoriesIndex, overlayFrame, overlayImportPath, OVERLAY_CHAIN } from './overlays/module.ts';
+import {
+	emitBundleModule,
+	emitFactoriesIndex,
+	overlayFrame,
+	overlayImportPath,
+	OVERLAY_CHAIN
+} from './overlays/module.ts';
 import { emitRefinesOverlay } from './overlays/refines.ts';
 import { emitPolymorphsOverlay } from './overlays/polymorphs.ts';
 import type { OverlayName } from './overlays/module.ts';

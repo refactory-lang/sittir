@@ -249,8 +249,8 @@ hand-edit generated output to work around a problem:
   authoring workflow.
 - `packages/{rust,python,typescript}/.sittir/grammar.js` — transpiled
   overrides bridge.
-- `packages/{rust,python,typescript}/src/node-model.json5` +
-  `overrides.suggested.ts` — codegen outputs.
+- `packages/{rust,python,typescript}/src/node-model.json5` — codegen
+  output.
 
 If one of these files is wrong, the fix lives in `packages/codegen/src/`
 (walker, emitter, link, assemble, evaluate — per the pipeline above) or

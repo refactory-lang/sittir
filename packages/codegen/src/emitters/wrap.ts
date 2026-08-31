@@ -32,7 +32,7 @@ import {
 	kindEnumTextIdPairs,
 	fieldTypeComponents,
 	emitsFieldResolvers,
-	fieldResolverName,
+	fieldResolverName
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -305,8 +305,7 @@ interface UnnamedChildrenSlotConfig {
 
 function resolveUnnamedSlotConfig(
 	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-,
+	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): UnnamedChildrenSlotConfig {
 	const cardinality = deriveUnnamedChildrenCardinality(children);
@@ -356,8 +355,9 @@ function computeConsumedCandidateKeys(fields: readonly AssembledNonterminal[], n
 
 function collectWrapWireKeyTypes(
 	fields: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-, kindEntries?: readonly KindEnumEntry[]): ReadonlyMap<string, string> {
+	nodeMap: NodeMap,
+	kindEntries?: readonly KindEnumEntry[]
+): ReadonlyMap<string, string> {
 	const canonicalKeys = new Set(fields.map((f) => f.storageKey));
 	const keyTypes = new Map<string, string>();
 	for (const f of fields) {
@@ -506,8 +506,9 @@ function collectSeparatedListWireKeyTypes(
 	canonicalKeys: ReadonlySet<string>,
 	fallbackStorageKey: string,
 	nodeMap: NodeMap,
-	fieldBacked: boolean
-, kindEntries?: readonly KindEnumEntry[]): ReadonlyMap<string, string> {
+	fieldBacked: boolean,
+	kindEntries?: readonly KindEnumEntry[]
+): ReadonlyMap<string, string> {
 	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
 	const elemType = fieldElementType(canonicalField, nodeMap, kindEntries);
 	const keyTypes = new Map<string, string>();
@@ -552,7 +553,9 @@ function emitSeparatedListWrap(
 	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
-	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...canonicalKeys, ...wireKeyTypes.keys()])])});`);
+	lines.push(
+		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...canonicalKeys, ...wireKeyTypes.keys()])])});`
+	);
 	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
@@ -700,7 +703,10 @@ function emitFieldStorageLines(
 			allowedKinds,
 			candidateStorageKeys,
 			reclaimKindIdsExpr,
-			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined,
+			kindEnumTextIdPairs:
+				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
+					? kindEnumTextIdPairs(f, nodeMap, kindEntries)
+					: undefined,
 			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);

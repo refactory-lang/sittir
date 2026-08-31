@@ -5,11 +5,7 @@ import { isStructuralChoice } from '../collect-slots.ts';
 import { isNonterminalRuleType } from '../../dsl/rule-patterns.ts';
 import type { Diagnostic } from '../../types/diagnostics.ts';
 
-export type SlotGroupingShape =
-	| 'multi-slot-nested-seq'
-	| 'supertype-list'
-	| 'repeat-choice-with-literal'
-	| 'content-collision';
+export type SlotGroupingShape = 'multi-slot-nested-seq' | 'content-collision';
 
 export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly code: SlotGroupingShape;
@@ -51,7 +47,7 @@ export function diagnoseSlotGrouping(
 		if (polymorphSkip.has(ownerKind)) continue;
 
 		const topLevelInSlot = inlineKinds.has(ownerKind);
-		walkRule(rule, ownerKind, records, topLevelInSlot,  false);
+		walkRule(rule, ownerKind, records, topLevelInSlot, false);
 	}
 	return records;
 }
@@ -131,9 +127,7 @@ export function countSlots(rule: SimplifiedRule): number {
 export function countContentSlots(rule: SimplifiedRule): number {
 	switch (rule.type) {
 		case SEQ:
-			return rule.fieldName !== undefined
-				? 0
-				: rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
+			return rule.fieldName !== undefined ? 0 : rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
 		case VARIANT:
 		case GROUP:
 			return countContentSlots(rule.content);

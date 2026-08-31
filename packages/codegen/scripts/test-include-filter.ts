@@ -22,8 +22,3 @@ console.log('  inferred entries:', perm.nodeMap.derivations.inferredFields.lengt
 console.log('  applied inferred:', perm.nodeMap.derivations.inferredFields.filter((e) => e.applied).length);
 console.log('  promoted entries:', perm.nodeMap.derivations.promotedRules.length);
 console.log('  applied promoted:', perm.nodeMap.derivations.promotedRules.filter((e) => e.applied).length);
-
-// Also write suggested.ts under strict-fields so we can see [held] tags
-import { writeFileSync } from 'node:fs';
-writeFileSync('/tmp/suggested-strict.ts', strict.suggested);
-console.log('\nstrict suggested.ts written to /tmp/suggested-strict.ts');

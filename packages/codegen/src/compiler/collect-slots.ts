@@ -343,11 +343,7 @@ function buildSlot(
 		}
 	}
 
-	const rawValues = deriveValuesForRule(
-		rule,
-		{ kindEntries, stampArmFieldNamesAsParseName: sanctionedUnion },
-		mult
-	);
+	const rawValues = deriveValuesForRule(rule, { kindEntries, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
 	let dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
@@ -526,14 +522,7 @@ function resolveMember(
 								...rule,
 								members: [...partition.unionArms, ...partition.degenerateNamedArms]
 							};
-							const unionSlot = buildSlot(
-								restricted,
-								kindForName,
-								kindEntries,
-								inherited,
-								inheritedSeparator,
-								 true
-							);
+							const unionSlot = buildSlot(restricted, kindForName, kindEntries, inherited, inheritedSeparator, true);
 							if (unionSlot === null) return mergeChoiceArms(namedArmSlots);
 							if (ruleId !== undefined) _synthesizedUnionChoiceIds.add(ruleId);
 							return mergeChoiceArms([...namedArmSlots, [unionSlot]]);

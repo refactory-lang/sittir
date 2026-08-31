@@ -7536,8 +7536,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * product field is named `rules` like every other family member now):
  * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` for ALL `P`.
  * `SimplifiedGrammar` additionally carries `normalizedRules` as an extra
- * (non-`rules`) view alongside its `rules` product. See
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
+ * (non-`rules`) view alongside its `rules` product — the render view the
+ * emitters consume travels with the derivation view rather than being
+ * re-derived downstream.
  */
 ```
 

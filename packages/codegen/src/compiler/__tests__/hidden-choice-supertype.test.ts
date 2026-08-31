@@ -47,11 +47,17 @@ describe('hidden choice-of-kinds rules are supertypes', () => {
 			},
 			a_stmt: {
 				type: SEQ,
-				members: [{ type: STRING, value: 'a' }, { type: FIELD, name: 'x', content: { type: SYMBOL, name: 'ident' } }]
+				members: [
+					{ type: STRING, value: 'a' },
+					{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'ident' } }
+				]
 			},
 			b_stmt: {
 				type: SEQ,
-				members: [{ type: STRING, value: 'b' }, { type: FIELD, name: 'x', content: { type: SYMBOL, name: 'ident' } }]
+				members: [
+					{ type: STRING, value: 'b' },
+					{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'ident' } }
+				]
 			},
 			ident: { type: PATTERN, value: '[a-z]+' }
 		});

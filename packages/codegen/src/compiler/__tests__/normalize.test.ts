@@ -29,7 +29,10 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 	return {
 		name: 'test',
 		rules: Object.fromEntries(
-			Object.entries(rules).map(([name, rule]) => [name, rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule])
+			Object.entries(rules).map(([name, rule]) => [
+				name,
+				rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule
+			])
 		),
 		supertypes: new Set(),
 		factoryInline: new Set(),
@@ -130,10 +133,9 @@ describe('Normalize — normalizeGrammar()', () => {
 		expect(normalized.normalizedRules['item']).toBeDefined();
 		// Field metadata must be preserved
 		const item = normalized.normalizedRules['item'] as any;
-		const fieldMember = item.members?.find((m: any) => m.type === FIELD) ?? (item.type === FIELD ? item : null);
-		if (fieldMember) {
-			expect(fieldMember.name).toBe('body');
-		}
+		const fieldMember =
+			item.members?.find((m: any) => m.fieldName === 'body') ?? (item.fieldName === 'body' ? item : null);
+		expect(fieldMember).toBeTruthy();
 	});
 
 	// Note: the test that asserted "normalize wraps visible choice members

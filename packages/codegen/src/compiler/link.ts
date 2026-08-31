@@ -60,7 +60,10 @@ import type {
 	IncludeFilter,
 	DerivationLog,
 	RepeatedShapeEntry,
-	RefineForm, LinkedRefineForm, NarrowedField } from './types.ts';
+	RefineForm,
+	LinkedRefineForm,
+	NarrowedField
+} from './types.ts';
 import { hasAnyField } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
@@ -408,14 +411,7 @@ export function canonicalizeRuleLiterals(
 		case TOKEN:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(
-					rule.content,
-					kindEntries,
-					allowLiteralRewrite,
-					misses,
-					false,
-					aliasBodies
-				)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, false, aliasBodies)
 			};
 		case FIELD:
 			return {
@@ -423,7 +419,14 @@ export function canonicalizeRuleLiterals(
 				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable, aliasBodies)
 			};
 		case ALIAS: {
-			const content = canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, stampable, aliasBodies);
+			const content = canonicalizeRuleLiterals(
+				rule.content,
+				kindEntries,
+				allowLiteralRewrite,
+				misses,
+				stampable,
+				aliasBodies
+			);
 			if (!stampable || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
 				return { ...rule, content };
 			}
@@ -995,7 +998,6 @@ function dereferenceTopLevelAliasBody(
 	seen.add(refName);
 	return { ...dereferenceTopLevelAliasBody(target, ctx, resolvedRules, seen), inlinedFrom: refName };
 }
-
 
 function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'link'>>): boolean {
 	const target = rules[kindName];

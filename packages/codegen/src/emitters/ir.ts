@@ -129,8 +129,10 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
-		const isStructuralFactory = (node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList;
-		const isLeafFactoryNode = node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
+		const isStructuralFactory =
+			(node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList;
+		const isLeafFactoryNode =
+			node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
 		if (!isStructuralFactory && !isLeafFactoryNode) {
 			continue;
 		}
@@ -462,7 +464,6 @@ function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 		fns.push('  },');
 		return;
 	}
-
 }
 
 function emitSynonymType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {

@@ -18,10 +18,7 @@ function makeRequiredSingleChildNodeMap() {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'single_parent',
-		new AssembledBranch('single_parent', flatten(parentRule), flatten(parentRule))
-	);
+	nodes.set('single_parent', new AssembledBranch('single_parent', flatten(parentRule), flatten(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }

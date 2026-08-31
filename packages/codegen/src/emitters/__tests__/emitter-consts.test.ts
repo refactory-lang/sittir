@@ -27,7 +27,10 @@ function makeNodeMap(nodes: [string, AssembledNode][]): NodeMap {
 // A field's structural role for consts.ts comes entirely from its
 // fieldName + values (bitflag/keyword collapsing reads terminal values
 // directly) — no owning node or rule is needed to back it.
-function field(fieldName: string, values: readonly { value: string; multiplicity: 'array' | 'nonEmptyArray' }[] = []): AssembledNonterminal {
+function field(
+	fieldName: string,
+	values: readonly { value: string; multiplicity: 'array' | 'nonEmptyArray' }[] = []
+): AssembledNonterminal {
 	return new AssembledNonterminal({
 		values,
 		fieldName,

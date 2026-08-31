@@ -126,8 +126,7 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
-	?
-		Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+	? Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
 	: Base extends { readonly rules: infer R }
 		? {
 				readonly [K in keyof R]?: R[K] extends GrammarRule

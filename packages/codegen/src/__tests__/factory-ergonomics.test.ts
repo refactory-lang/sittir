@@ -107,10 +107,7 @@ describe('factory ergonomics', () => {
 				resolve(import.meta.dirname, '../../../rust/src/factories/bundle.ts'),
 				'utf-8'
 			);
-			const indexContent = readFileSync(
-				resolve(import.meta.dirname, '../../../rust/src/factories/index.ts'),
-				'utf-8'
-			);
+			const indexContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/index.ts'), 'utf-8');
 
 			expect(bundleContent).toContain('bundle(F.buildSourceFile, C.coerceToSourceFile)');
 			expect(indexContent).toContain('export const sourceFile: Hoisted<typeof O.sourceFile> = hoist(O.sourceFile);');

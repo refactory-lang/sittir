@@ -1,10 +1,4 @@
-import {
-	CHOICE,
-	PATTERN,
-	SEQ,
-	STRING,
-	SYMBOL
-} from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -55,10 +49,7 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 	const parentSimplifiedRule: SimplifiedRule = { type: SEQ, members: [{ type: SYMBOL, name: 'identifier' }] };
 	const parentRenderRule: RenderRule = { type: SEQ, members: [{ type: SYMBOL, name: 'identifier' }] };
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		[
-			'required_child_parent',
-			new AssembledBranch('required_child_parent', parentSimplifiedRule, parentRenderRule)
-		],
+		['required_child_parent', new AssembledBranch('required_child_parent', parentSimplifiedRule, parentRenderRule)],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -83,10 +74,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'optional' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		[
-			'optional_child_parent',
-			new AssembledBranch('optional_child_parent', parentSimplifiedRule, parentRenderRule)
-		],
+		['optional_child_parent', new AssembledBranch('optional_child_parent', parentSimplifiedRule, parentRenderRule)],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -111,10 +99,7 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'nonEmptyArray' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		[
-			'repeated_child_parent',
-			new AssembledBranch('repeated_child_parent', parentSimplifiedRule, parentRenderRule)
-		],
+		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentSimplifiedRule, parentRenderRule)],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -159,10 +144,7 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 	const parentSimplifiedRule: SimplifiedRule = { type: SEQ, members: [{ type: SYMBOL, name: 'kw_j' }] };
 	const parentRenderRule: RenderRule = { type: SEQ, members: [{ type: SYMBOL, name: 'kw_j' }] };
 	const nodes = new Map<string, AssembledBranch | AssembledKeyword>([
-		[
-			'token_child_parent',
-			new AssembledBranch('token_child_parent', parentSimplifiedRule, parentRenderRule)
-		],
+		['token_child_parent', new AssembledBranch('token_child_parent', parentSimplifiedRule, parentRenderRule)],
 		['kw_j', new AssembledKeyword('kw_j', { type: STRING, value: 'jjjj' })]
 	]);
 	return {

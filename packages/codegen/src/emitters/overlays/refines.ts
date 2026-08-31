@@ -19,7 +19,9 @@ export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
 			const keys = [camelCase(form.name)];
 			if (keys[0] !== form.name) keys.push(form.name);
 			for (const formKey of keys) {
-				lines.push(`	${JSON.stringify(formKey) === `"${formKey}"` ? formKey : JSON.stringify(formKey)}: { strict: ${fn} },`);
+				lines.push(
+					`	${JSON.stringify(formKey) === `"${formKey}"` ? formKey : JSON.stringify(formKey)}: { strict: ${fn} },`
+				);
 			}
 		}
 		lines.push('};', '');

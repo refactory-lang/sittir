@@ -269,7 +269,9 @@ function childBareCallArgs(
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
 		case 'token':
-			return child instanceof AssembledKeyword ? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set()) : undefined;
+			return child instanceof AssembledKeyword
+				? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set())
+				: undefined;
 		case 'enum': {
 			const first = child.values[0];
 			return first === undefined ? undefined : `'${escForSource(first)}'`;
@@ -360,7 +362,9 @@ function emitSubFactoryTests(
 		if (args === undefined) continue;
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
-		cases.push(`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(sub.name)} builds the parent', () => {`);
+		cases.push(
+			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(sub.name)} builds the parent', () => {`
+		);
 		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${sub.name}` : `ir.${key}.${sub.name}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
@@ -392,7 +396,9 @@ function emitSubFactoryTests(
 		if (args === undefined) continue;
 		const knownFailure = expectTestFailures?.[`${kind}.${alias.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
-		cases.push(`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(alias.name)} builds the ${escForSource(child.kind)} form', () => {`);
+		cases.push(
+			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(alias.name)} builds the ${escForSource(child.kind)} form', () => {`
+		);
 		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${alias.name}` : `ir.${key}.${alias.name}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);

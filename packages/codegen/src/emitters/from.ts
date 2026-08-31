@@ -9,7 +9,12 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import type { AssembledNode, AssembledNonterminal, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
+import type {
+	AssembledNode,
+	AssembledNonterminal,
+	AssembledEnvelope,
+	AssembledPolymorph
+} from '../compiler/model/node-map.ts';
 
 type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
@@ -32,7 +37,9 @@ import {
 	type SoleSlotFacts,
 	canonicalSeparatedListField,
 	stringConstructibleTexts,
-	wordConstructibleText, isAuthoredCompound } from './shared.ts';
+	wordConstructibleText,
+	isAuthoredCompound
+} from './shared.ts';
 import {
 	fieldElementType,
 	childElementType,
@@ -218,9 +225,7 @@ export namespace from {
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(
-			emitBranchFrom(node, nodeMap, intern, kindEntries)
-		);
+		output.push(emitBranchFrom(node, nodeMap, intern, kindEntries));
 	}
 
 	export function separatedList(
@@ -335,9 +340,7 @@ function emitBranchFrom(
 		if (!canDirectFactoryCall || isMultiple(soleField)) return undefined;
 		const kinds = slotKindNames(soleField);
 		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
-		return inner instanceof AssembledList
-			? separatedListSurface(inner, nodeMap, kindEntries).elemType
-			: undefined;
+		return inner instanceof AssembledList ? separatedListSurface(inner, nodeMap, kindEntries).elemType : undefined;
 	})();
 	const inputType = canDirectFactoryCall
 		? [childElementType({ children: [soleField] }, nodeMap), soleListElements, looseInputType]

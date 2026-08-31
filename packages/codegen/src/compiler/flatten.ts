@@ -120,7 +120,12 @@ function stampTerminality(rules: Record<string, RenderRule>): Record<string, Ren
 		return target !== undefined && collectFixedLiteral(target) !== undefined;
 	};
 	const stamp = (rule: RenderRule): RenderRule => {
-		if (rule.type === SYMBOL && rule.nonterminal === true && isSingle(rule) && (rule.literal !== undefined || isLiteralRule(rule.name)))
+		if (
+			rule.type === SYMBOL &&
+			rule.nonterminal === true &&
+			isSingle(rule) &&
+			(rule.literal !== undefined || isLiteralRule(rule.name))
+		)
 			return { ...rule, nonterminal: false };
 		if (rule.type === SEQ) {
 			const nonterminal = rule.members.some((m) => m.nonterminal === true);

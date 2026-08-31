@@ -1,7 +1,12 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { AbstractAssembledCompound, type AssembledNode } from '../../compiler/model/node-map.ts';
-import { classifyFactoryEmission, classifyFromEmission, resolveDirectFactorySlot, resolveFieldStorageInfo } from '../shared.ts';
+import {
+	classifyFactoryEmission,
+	classifyFromEmission,
+	resolveDirectFactorySlot,
+	resolveFieldStorageInfo
+} from '../shared.ts';
 import { kindEnumConfigValue } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import { armConfigKeys, armIsConfigShaped, subFactoriesOf, type SubFactory } from './sub-factories.ts';
@@ -164,15 +169,19 @@ interface WireShape {
 	readonly paramFor: (parentRef: string, childRef: string | undefined) => string;
 }
 
-function shape(sub: SubFactory, k: string, positional: boolean, mergeKeys: readonly string[] | undefined, m: string): WireShape {
+function shape(
+	sub: SubFactory,
+	k: string,
+	positional: boolean,
+	mergeKeys: readonly string[] | undefined,
+	m: string
+): WireShape {
 	if (sub.arm.via === 'literal') {
 		if (sub.residual.length === 0) {
 			return {
 				method: positional
 					? [`const ${m} = <${PFV}>(parent: PF, value: ArgsOf<PF>[0]) => (): ReturnType<PF> => ${CALL_P}(value);`]
-					: [
-							`const ${m} = <${PF}>(parent: PF, value: unknown) => (): ReturnType<PF> => ${CALL_P}({ ${k}: value });`
-						],
+					: [`const ${m} = <${PF}>(parent: PF, value: unknown) => (): ReturnType<PF> => ${CALL_P}({ ${k}: value });`],
 				paramFor: () => '()'
 			};
 		}
@@ -266,7 +275,9 @@ function emitSub(
 	const c = childRefs(sub, wires.keyByKind, wires.coerceEmitted);
 	if (c === undefined) return undefined;
 	const mergeKeys =
-		sub.arm.path.length === 0 && sub.residual.length > 0 && armIsConfigShaped(sub, nodeMap, { isEmitted: wires.isEmitted })
+		sub.arm.path.length === 0 &&
+		sub.residual.length > 0 &&
+		armIsConfigShaped(sub, nodeMap, { isEmitted: wires.isEmitted })
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
 	const s = shape(sub, k, positional, mergeKeys, m);

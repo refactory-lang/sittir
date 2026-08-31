@@ -168,7 +168,9 @@ describe('emitPolymorphsOverlay', () => {
 		);
 
 		expect(text).toContain('const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
-		expect(text).toContain("	and: { strict: logic$and(F.buildLogic, 'and'), coerce: logic$and(C.coerceToLogic, 'and') },");
+		expect(text).toContain(
+			"	and: { strict: logic$and(F.buildLogic, 'and'), coerce: logic$and(C.coerceToLogic, 'and') },"
+		);
 		expect(text).toContain("	or: { strict: logic$or(F.buildLogic, 'or'), coerce: logic$or(C.coerceToLogic, 'or') },");
 
 		expect(text).toContain(

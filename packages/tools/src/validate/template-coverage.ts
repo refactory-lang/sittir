@@ -145,8 +145,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 	// structural literal flanking `X`) AND `inner` as top-level fields
 	// of the parent kind. simplify's hoist drops the OUTER `field`
 	// wrapper so the inner field surfaces directly in the rule passed
-	// to the template-walker (see `hoistInnerFieldsForTemplate` in
-	// `compiler/simplify.ts`); the inner field then gets its placeholder
+	// to the template-walker; the inner field then gets its placeholder
 	// and renders correctly. The outer field stays in `node-types.json`
 	// (tree-sitter still produces it at parse time), but its content is
 	// now emitted via the template's structural-literal text — there is
@@ -319,8 +318,8 @@ export function checkRule(
 		// preserved verbatim in the template (`extends`, `,`, …) and
 		// the inner field that triggered the hoist gets its own
 		// placeholder — `fname` is transitively covered by the
-		// surrounding template text. See `hoistInnerFieldsForTemplate`
-		// in `compiler/simplify.ts`.
+		// surrounding template text (the pipeline's outer-field wrapper
+		// drop; mirrored below by `computeHoistedOuterFields`).
 		if (hoistedOuterFields.has(fname)) continue;
 		// Union-slot routing (collect-slots.ts): `fname`'s arm was folded
 		// into a shared union slot alongside unnamed-nonterminal arms —
@@ -511,8 +510,8 @@ function isFieldReferenced(
 }
 
 // ---------------------------------------------------------------------------
-// Hoisted-outer-field detection — the validator's complement to
-// simplify's `hoistInnerFieldsForTemplate` pass.
+// Hoisted-outer-field detection — the validator's complement to the
+// pipeline's outer-field wrapper drop.
 // ---------------------------------------------------------------------------
 
 /**
@@ -524,8 +523,7 @@ function isFieldReferenced(
  * structural-literal text + the inner field's placeholder — there is no
  * `$OUTER` placeholder to require.
  *
- * Mirrors the predicate inside `compiler/simplify.ts`'s
- * `hoistInnerFieldFromWrapperForField`. Walks the source `grammar.json`
+ * Mirrors the pipeline's hoist predicate. Walks the source `grammar.json`
  * (the SAME structural source the simplify pipeline reads via Evaluate)
  * so the two derivations stay in lock-step.
  *

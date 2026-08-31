@@ -69,7 +69,7 @@ describe('emitTests sub-factories', () => {
 		expect(text).toContain('ir.comment.doc(');
 		expect(text).toContain('ir.comment.plain(');
 		expect(text).toContain("it('doc builds the parent'");
-		expect(text).toContain("expect(node.$render!().length).toBeGreaterThan(0);");
+		expect(text).toContain('expect(node.$render!().length).toBeGreaterThan(0);');
 	});
 
 	it('pins a known-failing sub-factory case with it.skip and a reason comment', () => {

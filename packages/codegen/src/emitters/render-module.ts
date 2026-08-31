@@ -1,11 +1,7 @@
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
-import type {
-	AssembledNode,
-	RenderTemplateSurface,
-	AssembledNonterminal
-} from '../compiler/model/node-map.ts';
+import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AbstractAssembledCompound,
@@ -54,7 +50,9 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents, isAuthoredCompound } from './shared.ts';
+	fieldTypeComponents,
+	isAuthoredCompound
+} from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -257,7 +255,9 @@ const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 const RESERVED_TRANSPORT_STRUCT_NAMES = new Set(['AnyTransport', 'ProtectedTransport', 'LiteralTransport']);
 
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
-	return node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`);
+	return (
+		node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
+	);
 }
 
 interface EffectiveSupertypeTransportSubtype {
@@ -1373,13 +1373,7 @@ function renderTransportSupport(
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 		supertypeEnumLines.push(
-			...emitSupertypeTransportEnum(
-				node,
-				kidByKind,
-				nodeMap,
-				kindEntries,
-				selfAliasIdsBySupertype.get(node.kind)
-			)
+			...emitSupertypeTransportEnum(node, kidByKind, nodeMap, kindEntries, selfAliasIdsBySupertype.get(node.kind))
 		);
 	}
 
@@ -3116,8 +3110,7 @@ function renderTransportField(
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
 	const primitiveType =
 		primitive?.kind === 'boolean'
-			?
-				'Option<bool>'
+			? 'Option<bool>'
 			: primitive?.kind === 'verbatim'
 				? required
 					? 'String'

@@ -39,7 +39,9 @@ export function isSlotBearingCompound(
 	return node instanceof AbstractAssembledCompound;
 }
 
-export function isAuthoredCompound(node: AssembledNode): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph {
+export function isAuthoredCompound(
+	node: AssembledNode
+): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph {
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.hoisted;
 }
 
@@ -495,7 +497,10 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
-export function resolveSingleFieldFactorySlot(node: AssembledNode, _nodeMap: NodeMap): AssembledNonterminal | undefined {
+export function resolveSingleFieldFactorySlot(
+	node: AssembledNode,
+	_nodeMap: NodeMap
+): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
 	if (node.kind.startsWith('_') && !node.userFacing) return undefined;
 	const slot = node.soleSlot;
@@ -555,7 +560,8 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	if (node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword) return 'text';
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword)
+		return 'text';
 	if (node instanceof AssembledToken) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
@@ -672,7 +678,8 @@ export type FromEmission =
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
 	if (kind.startsWith('_') && !node.userFacing) return 'skip-hidden-kind';
 	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
-	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.hoisted) return 'skip-hoisted-form';
+	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.hoisted)
+		return 'skip-hoisted-form';
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;

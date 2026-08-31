@@ -5670,8 +5670,8 @@ Surface`
  * with NO separator character at all, since `''` short-circuits the `??`
  * fallback chain in `emitListSlot` just as effectively as a real value).
  * `isNonterminalRuleType` is typed over `Rule<'evaluate'>` but classifies
- * purely by `.type` + child shape — phase-agnostic in practice, same cast
- * pattern used throughout PR-S (e.g. flatten.ts's OPTIONAL case).
+ * purely by `.type` + child shape — phase-agnostic in practice, the same
+ * cast pattern the wrapper-deletion emitters use.
  */
 ```
 

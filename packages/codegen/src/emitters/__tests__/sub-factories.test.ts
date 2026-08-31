@@ -6,7 +6,13 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { armConfigKeys, choiceSlotOf, subFactoriesOf, type KindArm, type SubFactory } from '../overlays/sub-factories.ts';
+import {
+	armConfigKeys,
+	choiceSlotOf,
+	subFactoriesOf,
+	type KindArm,
+	type SubFactory
+} from '../overlays/sub-factories.ts';
 
 function kindArmOf(entries: readonly SubFactory[], name: string): KindArm {
 	const entry = entries.find((e) => e.name === name);

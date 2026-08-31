@@ -142,11 +142,7 @@ describe('factory field metadata', () => {
 		// buildBinaryExpression takes config.operator via
 		// coerceKindEnumStorage), so it belongs in the metadata. Matches the
 		// committed node-model.json5 factoryFields.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('binary_expression')!)).toEqual([
-			'left',
-			'operator',
-			'right'
-		]);
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('binary_expression')!)).toEqual(['left', 'operator', 'right']);
 	});
 
 	it('propagates the shared field metadata into factory-map output', () => {
