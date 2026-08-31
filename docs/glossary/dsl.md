@@ -3405,6 +3405,170 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.choice`
+
+```text
+/**
+ * Choice combinator's one-level shape recognition: an all-same-name FIELD
+ * choice factors to a single FIELD wrapping a CHOICE of the arms' contents
+ * (delegates to {@link collapseAllFieldChoiceMembers}); any other member
+ * shape passes through as a plain CHOICE. The single-member collapse,
+ * `choice(x, blank())` → `optional(x)`, and all-string → EnumRule
+ * detection are evaluate's own sugar (compiler/evaluate.ts's `choice()`
+ * wrapper) — they run before this is ever reached, not builder work.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::collapseAllFieldChoiceMembers`
+
+```text
+/**
+ * Collapse an all-field choice into a factored field, or leave it as a
+ * plain choice of (heterogeneously-named) fields.
+ *
+ * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
+ * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
+ *   name, otherwise a raw `choice` of the original `field()` members.
+ * @remarks
+ * All branches wrap the SAME field name — factor the field outward to
+ * `field('x', choice(A, B))`. The choice content may itself simplify to an
+ * enum when all inners are strings.
+ *
+ * Otherwise (different field names, or any branch wraps an alias — see
+ * below), the choice passes through as-is: `choice(field('body', seq(...)),
+ * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
+ * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
+ * / `VariantRule` share the same `name`+`content` shape, so the retype was a
+ * pure discriminator change) — that existed only for Link's now-deleted
+ * `promotePolymorph` pass to recognize the shape and wrap the rule in a
+ * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
+ * the pipeline, so the fields now stay FIELD-typed and route into named
+ * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
+ * any other heterogeneous fielded choice.
+ *
+ * @remarks
+ * Any branch wrapping an alias directly takes this same passthrough (checked
+ * first, before the same-name factoring). Aliases are structural rename
+ * markers; downstream passes (Link, assemble) depend on the alias appearing
+ * inside a plain choice to route the synthetic kind into the NodeMap —
+ * factoring or retyping shifts classification and leaves the alias target
+ * unregistered (observed on rust `_line_doc_comment_marker` /
+ * `_block_doc_comment_marker`).
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.optional`
+
+```text
+/**
+ * Optional combinator's one-level shape recognition.
+ *
+ * @remarks
+ * `optional(optional(x))` collapses to `optional(x)` — two layers of
+ * "zero or one" is the same as one layer.
+ *
+ * @remarks
+ * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
+ * already optional in the config surface (`items?: T[]`, null-coalesced
+ * to `[]` in the factory), so the wrapper adds no information.
+ *
+ * @remarks
+ * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
+ * parse-identical: tree-sitter surfaces "optional didn't fire" and
+ * "repeat1 fired with zero items" identically (an empty children list).
+ * The non-empty guarantee a bare `repeat1` carries only holds when there
+ * is no `optional` wrapper to swallow the empty case.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat`
+
+```text
+/**
+ * Zero-or-more repetition combinator's one-level shape recognition.
+ *
+ * @remarks
+ * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
+ * a distinct separator — the outer loop is redundant.
+ *
+ * @remarks
+ * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
+ * zero occurrences, so the optional wrapper is redundant.
+ *
+ * @remarks
+ * The separator LIFT (`repeat(seq(sep, x))` → `repeat{separator}`) runs in
+ * the link pass, not here — see compiler/lift-separators.ts.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat1`
+
+```text
+/**
+ * One-or-more repetition combinator's one-level shape recognition.
+ *
+ * @remarks
+ * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
+ * more" of "one or more" accepts the same strings as the inner.
+ *
+ * @remarks
+ * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
+ * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
+ * zero-or-more `x` (one outer iteration of zero inner matches), which
+ * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
+ * left alone to preserve grammar author intent.
+ *
+ * @remarks
+ * The separator LIFT runs in the link pass, not here — see
+ * compiler/lift-separators.ts.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.field`
+
+```text
+/**
+ * Field combinator's one-level shape recognition: collapses
+ * `optional(repeat(...))` and `optional(repeat1(...))` field content to
+ * `repeat(...)` (delegates to {@link collapseOptionalRepeatInFieldContent}).
+ * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any empty
+ * case as an empty children list. Collapsing here keeps evaluate output
+ * canonical across all the equivalent list encodings grammar authors write.
+ *
+ * @remarks
+ * Ref-name propagation, the `content === undefined` placeholder sugar for
+ * `resolvePatch`, and stopping at inner field/alias boundaries are
+ * evaluate's own wrapper concern (compiler/evaluate.ts's `field()`), not
+ * builder work — this only shapes the content.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::collapseOptionalRepeatInFieldContent`
+
+```text
+/**
+ * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
+ * `repeat(...)` inside a field's content.
+ *
+ * @param content - The field's already-resolved content rule.
+ * @returns The canonicalized rule with the optional wrapper removed when
+ *   the inner content is a repeat variant.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.token.immediate`
+
+```text
+/**
+ * Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
+ * `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule doc
+ * comment in types/rule.ts. `grammarFn`'s `normalizeImmediateTokens`
+ * (compiler/evaluate.ts) folds this into TOKEN+immediate once enrich's
+ * minting decisions (which must see the same arm shape under both
+ * runtimes) are locked in.
+ */
+```
+
 ### `packages/codegen/src/dsl/builders.ts::structuralBuilder.prec`
 
 ```text
