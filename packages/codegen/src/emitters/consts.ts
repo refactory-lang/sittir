@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,

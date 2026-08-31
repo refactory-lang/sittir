@@ -273,9 +273,7 @@ function renderRuleEdge(
 	if (mult !== undefined && mult !== 'single') return 'varies';
 	switch (rule.type) {
 		case PATTERN:
-			return side === 'starts'
-				? patternLeadingEdgeClass(rule.value, ctx)
-				: patternTrailingEdgeClass(rule.value, ctx);
+			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : patternTrailingEdgeClass(rule.value, ctx);
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
@@ -419,7 +417,12 @@ function classifySeqBoundary(
 		const leftE = partEdge(leftRule, 'ends', l);
 		const rightE = partEdge(rightRule, 'starts', r);
 		if (leftE === 'varies' || rightE === 'varies') {
-			return { resolution: 'runtime-varying', leftVaries: leftE === 'varies', rightVaries: rightE === 'varies', mergePairAmbiguous: false };
+			return {
+				resolution: 'runtime-varying',
+				leftVaries: leftE === 'varies',
+				rightVaries: rightE === 'varies',
+				mergePairAmbiguous: false
+			};
 		}
 		if (seamNeedsSpace(leftE, rightE)) return STATIC_SPACED;
 		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) {

@@ -23,7 +23,7 @@ import {
 	isNonEmpty,
 	isRequired,
 	resolveFieldStorageInfo,
-	classifyChildFactorySurface,
+	wrapExposesChildren,
 	classifyWrapEmission,
 	isSlotBearingCompound,
 	warnSkippedParserSymbol,
@@ -110,7 +110,7 @@ export namespace wrap {
 				kind: node.kind,
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
-				childSurface: classifyChildFactorySurface(node, nodeMap)
+				exposesChildren: wrapExposesChildren(node, nodeMap)
 			},
 			node.slots,
 			[],
@@ -131,7 +131,7 @@ export namespace wrap {
 				kind: node.kind,
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
-				childSurface: classifyChildFactorySurface(node, nodeMap)
+				exposesChildren: wrapExposesChildren(node, nodeMap)
 			},
 			node.slots,
 			[],
@@ -164,7 +164,7 @@ interface WrapNode {
 	readonly kind: string;
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
-	readonly childSurface?: 'direct' | 'spread' | null;
+	readonly exposesChildren?: boolean;
 }
 
 function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
@@ -857,7 +857,7 @@ function emitInlineWithProperty(
 
 	const spreadData = '...$edited(data)';
 
-	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
+	if (node.exposesChildren === true && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;

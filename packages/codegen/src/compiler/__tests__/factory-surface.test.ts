@@ -7,8 +7,10 @@ import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { existsSync } from 'node:fs';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import type { NodeMap } from '../types.ts';
+import type { AssembledNode } from '../model/node-map.ts';
 import {
-	classifyChildFactorySurface,
+	factoryTakesSpreadChildren,
+	wrapExposesChildren,
 	classifyFactoryShape,
 	resolveFactoryFieldNames,
 	soleSlotFacts
@@ -52,6 +54,13 @@ beforeAll(async () => {
 	pythonNodeMap = await assembleGrammar('python');
 });
 
+// A 'direct' child surface is the one that exposes children without taking
+// them as spread arguments — the two exported questions pin it jointly.
+function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
+	expect(wrapExposesChildren(node, nodeMap)).toBe(true);
+	expect(factoryTakesSpreadChildren(node, nodeMap)).toBe(false);
+}
+
 describe('child factory surface classification', () => {
 	it('detects spread child factories from inferred-only branches', () => {
 		// array_expression is a committed direct container (single unnamed
@@ -64,9 +73,9 @@ describe('child factory surface classification', () => {
 		// declaration_list's sole slot is a NAMED list (declaration_statements):
 		// a sole slot's arity decides the surface regardless of field-name
 		// presence, so it is a spread child surface.
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('array_expression')!, nodeMap)).toBe('direct');
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBeNull();
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBe('spread');
+		expectDirect(nodeMap.nodes.get('array_expression')!, nodeMap);
+		expect(wrapExposesChildren(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBe(false);
+		expect(factoryTakesSpreadChildren(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBe(true);
 	});
 
 	it('detects direct unnamed-child factories from inferred single-slot branches', () => {
@@ -75,12 +84,12 @@ describe('child factory surface classification', () => {
 		// node-model.json5 factoryFields), so it takes a config object, not
 		// a direct unnamed child. expression_statement is a current
 		// inferred single-unnamed-slot branch.
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('expression_statement')!, nodeMap)).toBe('direct');
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('attribute')!, nodeMap)).toBeNull();
+		expectDirect(nodeMap.nodes.get('expression_statement')!, nodeMap);
+		expect(wrapExposesChildren(nodeMap.nodes.get('attribute')!, nodeMap)).toBe(false);
 	});
 
 	it('excludes field-backed direct factories from the child surface', () => {
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('reference_expression')!, nodeMap)).toBeNull();
+		expect(wrapExposesChildren(nodeMap.nodes.get('reference_expression')!, nodeMap)).toBe(false);
 	});
 
 	it('keeps the config surface when markers accompany a sole named user slot', () => {
