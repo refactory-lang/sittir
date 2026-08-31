@@ -287,7 +287,6 @@ pub enum AnyTransport {
     BlockCommentContent(BlockCommentContentTransport),
     LineDocContent(LineDocContentTransport),
     ErrorSentinel(ErrorSentinelTransport),
-    VisibilityModifierPubParens(VisibilityModifierPubParensTransport),
     Semi(SemiTransport),
     MacroRulesBang(MacroRulesBangTransport),
     EqGt(EqGtTransport),
@@ -54029,56 +54028,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ErrorSentinelTransport> {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct VisibilityModifierPubParensTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_group"))]
-    pub visibility_modifier_group: ::sittir_core::SlotValue<VisibilityModifierGroupTransport>,
-}
-
-impl RenderableTransport for VisibilityModifierPubParensTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_visibility_modifier_pub_parens(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierPubParensTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        VisibilityModifierPubParensTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubParensTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        VisibilityModifierPubParensTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct SemiTransport {
     pub transport_source: Option<Source>,
@@ -70576,11 +70525,6 @@ fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_visibility_modifier_pub_parens(node: &VisibilityModifierPubParensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(v) = node.visibility_modifier_group.node_or_write(dest)? { render_visibility_modifier_group(v, dest)?; }
-    Ok(())
-}
-
 fn render_semi(t: &SemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -71537,7 +71481,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::BlockCommentContent(t) => t.render_into(dest),
             AnyTransport::LineDocContent(t) => t.render_into(dest),
             AnyTransport::ErrorSentinel(t) => t.render_into(dest),
-            AnyTransport::VisibilityModifierPubParens(t) => t.render_into(dest),
             AnyTransport::Semi(t) => t.render_into(dest),
             AnyTransport::MacroRulesBang(t) => t.render_into(dest),
             AnyTransport::EqGt(t) => t.render_into(dest),

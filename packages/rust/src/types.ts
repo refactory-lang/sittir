@@ -5484,20 +5484,6 @@ export interface MatchBlockArms {
 	lastArm(): LastMatchArm;
 }
 
-export interface VisibilityModifierPubParens {
-	readonly $type: '_visibility_modifier_pub_parens';
-	readonly _visibility_modifier_group: VisibilityModifierGroup;
-	readonly __looseHints__?: {
-		readonly visibility_modifier_group:
-			| VisibilityModifierGroup
-			| 'self'
-			| 'super'
-			| 'crate'
-			| readonly (Self | Super | Crate | VisibilityModifierInPath)[];
-	};
-	visibilityModifierGroup(): VisibilityModifierGroup;
-}
-
 // Leaf node types
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement, ';'>;
 export type FragmentSpecifier = Terminal<
@@ -6122,9 +6108,6 @@ export interface TypeArgumentTree extends AnyTreeNode {
 }
 export interface MatchBlockArmsTree extends AnyTreeNode {
 	readonly type: '_match_block_arms';
-}
-export interface VisibilityModifierPubParensTree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_pub_parens';
 }
 export interface EmptyStatementTree extends AnyTreeNode {
 	readonly type: 'empty_statement';
@@ -7285,8 +7268,7 @@ export type RustNode =
 	| AttributedArgument
 	| AttributedOrderedField
 	| TypeArgument
-	| MatchBlockArms
-	| VisibilityModifierPubParens;
+	| MatchBlockArms;
 
 export interface KindMap {
 	source_file: SourceFile;
@@ -7499,7 +7481,6 @@ export interface KindMap {
 	_attributed_ordered_field: AttributedOrderedField;
 	_type_argument: TypeArgument;
 	_match_block_arms: MatchBlockArms;
-	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
 	empty_statement: EmptyStatement;
 	fragment_specifier: FragmentSpecifier;
 	unit_type: UnitType;

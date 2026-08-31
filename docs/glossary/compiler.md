@@ -3640,6 +3640,10 @@ parents.
  *  carries a `hidden` stamp (from `unhideAliasedTargets`), is left alone. */
 ```
 
+### `packages/codegen/src/compiler/link.ts::namedAliasFaceOf`
+
+The parser-visible face of a group-lift target: unwraps OPTIONAL/REPEAT wrappers and single-non-blank choices down to a named ALIAS and returns its value. When a lift target has such a face, `applyGroupOverrides` mints nothing — group overrides run only on the sittir side of the dual execution, so a hidden mint there is a phantom kind by construction, and it would bury an arm that already owns a parser-issued identity one level deeper. The variant discriminator then rides the existing alias.
+
 ### `packages/codegen/src/compiler/link.ts::pruneInlinedAliasBodies`
 
 Deletes hidden rules that nothing references after inlining, except alias bodies and dispatch unions: a rule already promoted to SUPERTYPE, or still shaped as a choice of kinds (`isKindChoice`), survives unreferenced — hidden dispatch unions like a grammar's `_statement` are namespaces the factory surface groups by, and inlining a union's references does not retire the union itself.

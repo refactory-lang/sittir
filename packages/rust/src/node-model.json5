@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 411,
+  "nodeCount": 410,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -8173,42 +8173,6 @@
       "factoryFields": [
         "visibility_modifier_group"
       ]
-    },
-    {
-      "kind": "_visibility_modifier_pub_parens",
-      "modelType": "envelope",
-      "typeName": "VisibilityModifierPubParens",
-      "factoryName": "_visibilityModifierPubParens",
-      "irKey": "visibilityModifierPubParens",
-      "hidden": false,
-      "hoisted": true,
-      "fields": [
-        {
-          "name": "visibility_modifier_group",
-          "propertyName": "visibilityModifierGroup",
-          "paramName": "visibilityModifierGroup",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_visibility_modifier_group",
-              "parseKind": "visibility_modifier_group",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_visibility_modifier_group"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "name": "_visibility_modifier_pub_parens"
     },
     {
       "kind": "_where_predicates",

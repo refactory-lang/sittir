@@ -2129,6 +2129,13 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 				polymorphs: args.polymorphs
 			});
 			const target = resolveGroupPath(parentBody, path);
+			const aliasFace = namedAliasFaceOf(target);
+			if (aliasFace !== undefined) {
+				console.warn(
+					`[codegen] group-lift ${kind}/${path} (${discriminator}) rides the visible alias '${aliasFace}' — no hidden kind minted`
+				);
+				continue;
+			}
 			const { liftedBody, replacement } = liftRule(target, synName, discriminator);
 
 			parentBody = replaceAtPath(parentBody, path, replacement);
@@ -2141,6 +2148,23 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 	return { rules: newRules, synthesizedKinds };
 }
+function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
+	switch (target.type) {
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return namedAliasFaceOf(target.content);
+		case CHOICE: {
+			const arms = target.members.filter((m) => !isBlankRule(m));
+			return arms.length === 1 ? namedAliasFaceOf(arms[0]!) : undefined;
+		}
+		case ALIAS:
+			return target.named === true ? target.value : undefined;
+		default:
+			return undefined;
+	}
+}
+
 function liftRule(
 	target: Rule<'link'>,
 	synName: string,
