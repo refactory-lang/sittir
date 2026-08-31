@@ -1119,10 +1119,6 @@ const NODE_MODEL_PATHS: Record<string, string> = {
 export interface LoadedNodeModel {
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
-	/** Per-kind storage keys of determined (grammar-fixed) slots — present
-	 *  on the read wire via tree-sitter field labels, absent from factory
-	 *  storage; comparisons skip them. */
-	readonly determinedStorageKeys: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly polymorphVariants: PolymorphVariantMap;
@@ -1136,7 +1132,6 @@ interface ParsedNodeModel {
 		kind: string;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
-		determinedSlots?: ReadonlyArray<{ name: string; storageKey: string; text: string }>;
 	}>;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
@@ -1145,7 +1140,6 @@ interface ParsedNodeModel {
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	factoryShapes: {},
-	determinedStorageKeys: {},
 	factoryFields: {},
 	factorySlots: {},
 	fieldAliasMap: {},
@@ -1173,18 +1167,13 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
-	const determinedStorageKeys: Record<string, readonly string[]> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
-		if (node.determinedSlots !== undefined && node.determinedSlots.length > 0) {
-			determinedStorageKeys[node.kind] = node.determinedSlots.map((slot) => slot.storageKey);
-		}
 	}
 	return {
 		factoryShapes,
 		factoryFields,
-		determinedStorageKeys,
 		factorySlots: model.factorySlots ?? {},
 		fieldAliasMap: model.fieldAliasMap ?? {},
 		polymorphVariants: model.polymorphVariants ?? {}
@@ -1728,17 +1717,32 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return elementsOptions !== undefined ? listFactory(elementsOptions, ...childArgs) : listFactory(...childArgs);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
-	// object. Field-backed direct calls use factoryFields metadata; child-
-	// backed direct calls take the first `children` element.
+	// object — the kind's sole slot (factorySlots, the model's structural
+	// slot record); child-backed direct calls take the first `children`
+	// element.
 	if (shape === 'direct' || shape === 'forwarded') {
-		const { factoryFields } = opts;
-		const fieldNames = factoryFields?.[kind];
-		const rawName = fieldNames?.[0];
-		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-		const value = camelName ? (childConfig as Record<string, unknown>)[camelName] : childArgs[0];
-		return factory(value);
+		return factory(directFactoryValue(kind, childConfig, opts.factorySlots, opts.factoryFields));
 	}
 	return factory(childConfig);
+}
+
+/**
+ * The one positional value a `direct` / `forwarded` factory takes: the
+ * kind's sole slot (the model's structural slot record, `factorySlots`),
+ * else the first declared factory field, else the first child.
+ */
+function directFactoryValue(
+	kind: string,
+	config: unknown,
+	factorySlots: NodeToConfigOpts['factorySlots'],
+	factoryFields: NodeToConfigOpts['factoryFields']
+): unknown {
+	const slotNames = Object.keys(factorySlots?.[kind] ?? {});
+	const rawName = slotNames.length === 1 ? slotNames[0] : factoryFields?.[kind]?.[0];
+	const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+	const record = config as Record<string, unknown>;
+	if (camelName !== undefined) return record[camelName];
+	return getChildFactoryArgs(kind, record, factorySlots, factoryFields)[0];
 }
 
 /**
@@ -2883,13 +2887,7 @@ export function buildFactoryNodeFromReference(
 	}
 	const config = nodeToConfig(referenceData, configOpts);
 	if (shape === 'direct' || shape === 'forwarded') {
-		// Direct-call shape: extract the sole field value when metadata names
-		// one, otherwise treat it as a single child call.
-		const rawName = factoryFields[kind]?.[0];
-		const camelName = rawName?.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
-		const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-		return factory(value);
+		return factory(directFactoryValue(kind, config, factorySlots, factoryFields));
 	}
 	if (shape === 'elements') {
 		// separatedList factory: spread with a LEADING optional options bag —

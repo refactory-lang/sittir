@@ -7,7 +7,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { AssembledBranch } from '../model/node-map.ts';
 import type { RawGrammar } from '../types.ts';
-import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../../types/rule.ts';
+import type { ChoiceRule, RenderRule, Rule } from '../../types/rule.ts';
 
 /**
  * PR0 Task 1.3 — NodeMap back-pointer maps.
@@ -52,7 +52,7 @@ describe('NodeMap back-pointer maps', () => {
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
 		// off. The raw input rules may have stale ids after link/normalize
 		// shape rewrites.
-		return { rules: normalized.linkRules, nodeMap };
+		return { rules: normalized.normalizedRules, nodeMap };
 	}
 
 	function buildNodeMap(
@@ -101,18 +101,18 @@ describe('NodeMap back-pointer maps', () => {
 
 	it('slotByRuleId.get(fieldRule.id) returns the slot whose name matches fieldRule.name', () => {
 		const { rules, nodeMap } = buildFixture();
-		// Reach into the call_expression rule to find the inner field rule
-		// (the seq has one member: field('function', symbol('identifier'))).
+		// Reach into the call_expression render rule to find the fielded member
+		// (the seq has one member: symbol('identifier'){fieldName: 'function'}).
 		const callRule = rules.call_expression;
 		expect(callRule?.type).toBe('SEQ');
-		const seqMembers = (callRule as { members: readonly { type: string }[] }).members;
-		const fieldRule = seqMembers.find((m) => m.type === 'FIELD') as FieldRule | undefined;
+		const seqMembers = (callRule as { members: readonly { fieldName?: string; id?: string }[] }).members;
+		const fieldRule = seqMembers.find((m) => m.fieldName !== undefined);
 		expect(fieldRule).toBeDefined();
 		expect(fieldRule!.id).toBeTruthy();
 
 		const slot = nodeMap.slotByRuleId.get(fieldRule!.id!);
 		expect(slot).toBeDefined();
-		expect(slot!.name).toBe(fieldRule!.name);
+		expect(slot!.name).toBe(fieldRule!.fieldName);
 	});
 
 	it('slot.sourceRuleIds accumulates merged simplified-rule contributors and maps each id back to the slot', () => {

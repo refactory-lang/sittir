@@ -1,19 +1,15 @@
-import {
-	CHOICE,
-	FIELD,
-	GROUP,
-	OPTIONAL,
-	REPEAT,
-	REPEAT1,
-	SEQ,
-	SUPERTYPE,
-	SYMBOL,
-	VARIANT
-} from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import type { AnyRule, DelimiterMode } from '../types/rule.ts';
-import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
+import type {
+	AssembledBranch,
+	AssembledEnvelope,
+	AssembledNode,
+	AssembledNonterminal,
+	AssembledPolymorph,
+	NodeOrTerminal
+} from '../compiler/model/node-map.ts';
 import {
+	AbstractAssembledCompound,
+	AssembledSupertype,
 	isNodeRef,
 	isUnresolvedRef,
 	isRequired,
@@ -24,8 +20,6 @@ import {
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
-import { namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
-import { determinedSlotText } from '../compiler/model/node-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -57,16 +51,6 @@ interface SerializedField extends SerializedSlot {
 	projection: { typeName: string; kinds: string[] };
 }
 
-interface SerializedNamespacedConstructor {
-	name: string;
-	via: 'form' | 'member';
-	slot: string;
-	childKind?: string;
-	path?: string[];
-	literal?: string;
-	params?: string[];
-}
-
 interface SerializedNodeBase {
 	kind: string;
 	modelType: string;
@@ -79,24 +63,17 @@ interface SerializedNodeBase {
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	factoryFields?: string[];
-	determinedSlots?: { name: string; storageKey: string; text: string }[];
-	namespacedConstructors?: SerializedNamespacedConstructor[];
 }
 
-interface SerializedBranch extends SerializedNodeBase {
-	modelType: 'branch';
-	fields: SerializedField[];
-	children: SerializedSlot[];
-	separator?: string;
-}
-
-interface SerializedGroupNode extends SerializedNodeBase {
-	modelType: 'group';
-	name: string;
+interface SerializedCompoundNode extends SerializedNodeBase {
+	modelType: 'branch' | 'envelope' | 'polymorph';
+	hoisted: boolean;
+	name?: string;
 	detectToken?: string;
 	parentKind?: string;
 	fields: SerializedField[];
 	children: SerializedSlot[];
+	separator?: string;
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
@@ -105,14 +82,10 @@ interface SerializedLeaf extends SerializedNodeBase {
 	text?: string;
 }
 
-interface SerializedKeyword extends SerializedNodeBase {
-	modelType: 'keyword';
-	text: string;
-}
-
 interface SerializedToken extends SerializedNodeBase {
 	modelType: 'token';
-	text?: string;
+	word: boolean;
+	text: string;
 }
 
 interface SerializedEnum extends SerializedNodeBase {
@@ -122,20 +95,12 @@ interface SerializedEnum extends SerializedNodeBase {
 
 interface SerializedSupertype extends SerializedNodeBase {
 	modelType: 'supertype';
+	transparent: true;
 	subtypes: string[];
 }
 
-interface SerializedMulti extends SerializedNodeBase {
-	modelType: 'multi';
-	nonEmpty: boolean;
-	separator?: string;
-	trailing?: DelimiterMode;
-	leading?: DelimiterMode;
-	elementKinds: string[];
-}
-
-interface SerializedSeparatedList extends SerializedNodeBase {
-	modelType: 'separatedList';
+interface SerializedList extends SerializedNodeBase {
+	modelType: 'list';
 	nonEmpty: boolean;
 	hasNonterminalSeparator: boolean;
 	leadingDelimiter: 'mandatory' | 'optional' | 'none';
@@ -144,15 +109,12 @@ interface SerializedSeparatedList extends SerializedNodeBase {
 }
 
 type SerializedNode =
-	| SerializedBranch
-	| SerializedGroupNode
+	| SerializedCompoundNode
 	| SerializedLeaf
-	| SerializedKeyword
 	| SerializedToken
 	| SerializedEnum
 	| SerializedSupertype
-	| SerializedMulti
-	| SerializedSeparatedList;
+	| SerializedList;
 
 interface SerializedNodeModel {
 	name: string;
@@ -188,21 +150,12 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
-		if ((node.modelType === 'branch' || node.modelType === 'group') && node.determinedSlots.length > 0) {
-			serialized.determinedSlots = node.determinedSlots.map((slot) => ({
-				name: slot.name,
-				storageKey: slot.storageKey,
-				text: determinedSlotText(slot, { nodes: nodeMap.nodes })!
-			}));
-		}
-		const namespace = namespacedConstructors(node, nodeMap).entries;
-		if (namespace.length > 0) serialized.namespacedConstructors = namespace.map(serializeNamespacedConstructor);
 		nodes.push(serialized);
 	}
 
 	const supertypes: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType === 'supertype') supertypes.push(node.kind);
+		if (node instanceof AssembledSupertype) supertypes.push(node.kind);
 	}
 	supertypes.sort();
 
@@ -220,18 +173,6 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 	};
 }
 
-function serializeNamespacedConstructor(entry: NamespacedConstructor): SerializedNamespacedConstructor {
-	return entry.via === 'form'
-		? { name: entry.name, via: 'form', slot: entry.slot.name, childKind: entry.childKind, path: [...entry.path] }
-		: {
-				name: entry.name,
-				via: 'member',
-				slot: entry.slot.name,
-				literal: entry.literal,
-				params: entry.params.map((p) => p.name)
-			};
-}
-
 function serializeNode(node: AssembledNode): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
@@ -244,26 +185,13 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
 	switch (node.modelType) {
-		case 'branch': {
-			const out: SerializedBranch = {
-				...base,
-				modelType: 'branch',
-				fields: node.fields.map(serializeField),
-				children: []
-			};
-			if (node.separator !== undefined) out.separator = node.separator;
-			return out;
-		}
-		case 'group':
-			return {
-				...base,
-				modelType: 'group',
-				name: node.name,
-				detectToken: node.detectToken,
-				parentKind: node.parentKind,
-				fields: node.fields.map(serializeField),
-				children: []
-			};
+		case 'branch':
+		case 'envelope':
+			return serializeCompoundNode(node, base);
+		case 'polymorph':
+			return serializeCompoundNode(node, base);
+		case 'supertype':
+			return { ...base, modelType: 'supertype', transparent: true, subtypes: [...node.subtypeNames].sort() };
 		case 'pattern':
 			return {
 				...base,
@@ -271,16 +199,11 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				pattern: node.pattern,
 				text: node.fixedLiteralText
 			};
-		case 'keyword':
-			return {
-				...base,
-				modelType: 'keyword',
-				text: node.text
-			};
 		case 'token':
 			return {
 				...base,
 				modelType: 'token',
+				word: node.word,
 				text: node.text
 			};
 		case 'enum':
@@ -289,26 +212,10 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				modelType: 'enum',
 				values: [...node.values]
 			};
-		case 'supertype':
+		case 'list':
 			return {
 				...base,
-				modelType: 'supertype',
-				subtypes: [...node.subtypeNames].sort()
-			};
-		case 'multi':
-			return {
-				...base,
-				modelType: 'multi',
-				nonEmpty: node.nonEmpty,
-				separator: node.separator,
-				trailing: node.trailing,
-				leading: node.leading,
-				elementKinds: extractElementKinds(node.elementRule)
-			};
-		case 'separatedList':
-			return {
-				...base,
-				modelType: 'separatedList',
+				modelType: 'list',
 				nonEmpty: node.nonEmpty,
 				hasNonterminalSeparator: node.separatorRule !== undefined,
 				leadingDelimiter: node.leadingDelimiter,
@@ -316,6 +223,26 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				elementKinds: [...valueParseKindsOf({ values: node.elements })]
 			};
 	}
+}
+
+function serializeCompoundNode(
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	base: SerializedNodeBase
+): SerializedCompoundNode {
+	const out: SerializedCompoundNode = {
+		...base,
+		modelType: node.modelType,
+		hoisted: node.hoisted,
+		fields: node.fields.map(serializeField),
+		children: []
+	};
+	if (node.hoisted) {
+		out.name = node.name;
+		out.detectToken = node.detectToken;
+		out.parentKind = node.parentKind;
+	}
+	if (node.separator !== undefined) out.separator = node.separator;
+	return out;
 }
 
 function serializeField(field: AssembledNonterminal): SerializedField {
@@ -354,34 +281,4 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 	};
 	if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 	return out;
-}
-
-function extractElementKinds(rule: AnyRule): string[] {
-	const out = new Set<string>();
-	const walk = (r: AnyRule): void => {
-		switch (r.type) {
-			case SYMBOL:
-				out.add(r.name);
-				return;
-			case SUPERTYPE:
-				for (const s of r.subtypes) out.add(s.aliasedFrom ?? s.name);
-				return;
-			case CHOICE:
-			case SEQ:
-				for (const m of r.members) walk(m);
-				return;
-			case OPTIONAL:
-			case REPEAT:
-			case REPEAT1:
-			case VARIANT:
-			case GROUP:
-			case FIELD:
-				walk(r.content);
-				return;
-			default:
-				return;
-		}
-	};
-	walk(rule);
-	return [...out].sort();
 }

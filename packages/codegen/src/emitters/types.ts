@@ -33,10 +33,17 @@ function kindDiscriminantOrLiteral(
 	if (!hasEntry) return JSON.stringify(kind);
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
-import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from '../compiler/model/node-map.ts';
-import {
+import type {
+	AssembledNode,
+	AssembledNonterminal,
 	AssembledBranch,
-	AssembledGroup,
+	AssembledEnvelope,
+	AssembledPolymorph
+} from '../compiler/model/node-map.ts';
+import {
+	AssembledList,
+	AssembledKeyword,
+	AssembledToken,
 	AssembledEnum,
 	snakeToCamel,
 	structuralFieldsOf
@@ -53,6 +60,7 @@ import {
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
+	isSlotBearingCompound,
 	resolveFieldStorageInfo,
 	emitsBuildArgsAlias,
 	emitsPlainBuiltAlias,
@@ -65,7 +73,7 @@ import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 
-type StructuralNode = AssembledBranch | AssembledGroup | AssembledSeparatedList;
+type StructuralNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -328,31 +336,39 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
+			case 'envelope':
 			case 'branch':
-			case 'separatedList':
-				structNodes.push(node);
-				break;
-			case 'group':
-				if (!nodeMap.polymorphFormKinds.has(kind)) {
+				if (node.hoisted) {
+					if (!nodeMap.polymorphFormKinds.has(kind)) structNodes.push(node);
+				} else {
 					structNodes.push(node);
 				}
 				break;
-			case 'pattern':
-				leafKinds.push(kind);
-				break;
-			case 'keyword':
-				leafKinds.push(kind);
-				keywordKinds.set(kind, node.text);
-				break;
-			case 'enum':
-				leafKinds.push(kind);
-				leafValueMap.set(kind, node.values);
+			case 'polymorph':
+				if (node.hoisted) {
+					if (!nodeMap.polymorphFormKinds.has(kind)) structNodes.push(node);
+				} else {
+					structNodes.push(node);
+				}
 				break;
 			case 'supertype':
 				supertypes.push({ kind, subtypes: [...node.subtypeNames] });
 				break;
+			case 'list':
+				structNodes.push(node);
+				break;
+			case 'pattern':
+				leafKinds.push(kind);
+				break;
 			case 'token':
-			case 'multi':
+				if (node instanceof AssembledKeyword) {
+					leafKinds.push(kind);
+					keywordKinds.set(kind, node.text);
+				}
+				break;
+			case 'enum':
+				leafKinds.push(kind);
+				leafValueMap.set(kind, node.values);
 				break;
 			default:
 				assertNever(node);
@@ -415,7 +431,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([');
 	const literalTextById = new Map<number, string>();
 	for (const node of nodeMap.nodes.values()) {
-		if (node.modelType !== 'separatedList' || node.separatorRule === undefined) continue;
+		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
 		for (const candidate of collectSeparatorCandidateKindNames(node.separatorRule)) {
 			const entry = findKindEntry(entries, candidate);
 			if (entry === undefined) continue;
@@ -484,7 +500,7 @@ function emitLeafTerminalAliases(
 		generatedTypes.add(node.typeName);
 
 		let textType: string;
-		if (node.modelType === 'keyword') {
+		if (node instanceof AssembledKeyword) {
 			textType = JSON.stringify(node.text);
 		} else if (node.modelType === 'enum') {
 			textType = node.values.map((v) => JSON.stringify(v)).join(' | ');
@@ -514,7 +530,7 @@ function emitTreeInterfaceDeclarations(
 		if (treeEmitted.has(node.typeName)) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		treeEmitted.add(node.typeName);
-		const isAnon = node.modelType === 'keyword' || node.modelType === 'token';
+		const isAnon = node.modelType === 'token';
 		const candidate = isAnon ? `_anonymous_${kind}` : kind;
 		const grammarKey = grammarKeys.has(candidate) ? candidate : null;
 		if (grammarKey && !isAnon) {
@@ -596,12 +612,12 @@ function collectAndEmitTokenTypeAliases(
 	const referencedTokenTypeNames = new Set<string>();
 	for (const t of referenced) {
 		const ref = nodeMap.nodes.get(t);
-		if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName);
+		if (ref instanceof AssembledToken) referencedTokenTypeNames.add(ref.typeName);
 	}
 
 	lines.push('// Token type aliases (only tokens referenced in field/child unions)');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'token') continue;
+		if (!(node instanceof AssembledToken)) continue;
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
 		if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue;
 		if (generatedTypes.has(node.typeName)) continue;
@@ -840,7 +856,7 @@ function wrapChildrenListHint(
 	if (node === undefined || !isWrapChildrenKind(kind, node, nodeMap, kindEntries)) return undefined;
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap));
 	if (target === undefined) return undefined;
-	if (target.modelType !== 'branch' && target.modelType !== 'group' && target.modelType !== 'separatedList') {
+	if (!isSlotBearingCompound(target)) {
 		return undefined;
 	}
 	const elementSlot = target.fields.find((slot) => isMultiple(slot)) ?? target.fields[0];

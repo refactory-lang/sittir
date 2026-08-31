@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { isNonInlinableLeafShape } from './assemble.ts';
+import { isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar } from './types.ts';
 
 interface GrammarJsonFile {

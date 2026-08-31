@@ -86,15 +86,9 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		// The simplifiedRule is a wrapper-free choice{array, nonterminal:true}
 		// as produced by the list-fusion + flatten pipeline.
 		const simplifiedRule = makeContentChoice('array');
-		// The inlinedRule (used for modelType classification) is a seq/choice —
-		// for this test, use the simplifiedRule directly as both.
-		const inlinedRule: Rule = {
-			type: 'CHOICE',
-			members: simplifiedRule.members
-		} as unknown as Rule;
 		const renderRule = simplifiedRule as ReturnType<typeof flatten>;
 
-		const branch = new AssembledBranch('argument_list', inlinedRule as any, simplifiedRule, renderRule, {});
+		const branch = new AssembledBranch('argument_list', simplifiedRule, renderRule, {});
 
 		const contentSlot = branch.slots['content'];
 		expect(contentSlot).toBeDefined();

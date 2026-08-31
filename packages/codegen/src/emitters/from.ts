@@ -9,10 +9,10 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 
-type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }>;
-type FormChildForFrom = Extract<AssembledNode, { modelType: 'branch' | 'group' }>;
+type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
+type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 import {
 	isRequired,
 	isMultiple,
@@ -22,10 +22,8 @@ import {
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
 	isHiddenInfraSlot,
-	configurableFactoryFields,
 	fieldResolverName,
 	needsNonEmptyHoist,
-	type BranchSlotClass,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
@@ -34,19 +32,28 @@ import {
 	type SoleSlotFacts,
 	canonicalSeparatedListField,
 	stringConstructibleTexts,
-	wordConstructibleText
-} from './shared.ts';
+	wordConstructibleText, isAuthoredCompound } from './shared.ts';
 import {
 	fieldElementType,
 	childElementType,
 	kindEnumTextMapExpr,
-	namespaceOf,
-	formLooseChildKind,
 	delimiterMembersFor,
 	separatedListSurface
 } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
-import { AssembledBranch, isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import {
+	AssembledBranch,
+	AbstractAssembledCompound,
+	AssembledList,
+	AssembledSupertype,
+	AssembledPattern,
+	AssembledEnum,
+	AssembledKeyword,
+	AssembledToken,
+	isNodeRef,
+	storageKindIdByNameOf,
+	storageKindOfRef
+} from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -62,7 +69,7 @@ export interface EmitFromConfig {
 function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
 	const supertypeByKey = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		if (node.subtypeNames.length === 0) continue;
 		const key = [...node.subtypeNames].sort().join('\n');
 		if (!supertypeByKey.has(key)) {
@@ -152,14 +159,15 @@ function emitFromMapDeclaration(
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (!node.factoryName) continue;
-		if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue;
+		if (
+			node instanceof AssembledToken ||
+			node instanceof AssembledSupertype ||
+			(node instanceof AbstractAssembledCompound && node.hoisted)
+		)
+			continue;
 		if (!node.fromFunctionName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		const ref =
-			namespaceOf(node, nodeMap, kindEntries).entries.length > 0
-				? `${node.fromFunctionName}$impl`
-				: node.fromFunctionName;
-		lines.push(`  ${JSON.stringify(kind)}: ${ref},`);
+		lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName},`);
 	}
 	lines.push('} as const;');
 	lines.push('export type _FromMap = typeof _fromMap;');
@@ -179,58 +187,6 @@ function emitInternedKindTable(lines: string[], namedEntries: Map<string, string
 	}
 }
 
-function withNamespaceProps(
-	emitted: string,
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
-	const fn = node.fromFunctionName;
-	const factory = node.rawFactoryName;
-	if (!fn || !factory) return emitted;
-	const entries = namespaceOf(node, nodeMap, kindEntries).entries;
-	if (entries.length === 0) return emitted;
-	const impl = `${fn}$impl`;
-	const renamed = emitted
-		.replace(new RegExp(`export function ${fn}\\(`, 'g'), `function ${fn}(`)
-		.replace(new RegExp(`\\b${fn}\\b`, 'g'), impl);
-	const IDENT = /^[A-Za-z_$][\w$]*$/;
-	const props = entries.map((e) => {
-		const key = IDENT.test(e.name) ? e.name : JSON.stringify(e.name);
-		const access = IDENT.test(e.name) ? `F.${factory}.${e.name}` : `F.${factory}[${JSON.stringify(e.name)}]`;
-		const childKind = formLooseChildKind(e, nodeMap, kindEntries);
-		const child = childKind === undefined ? undefined : nodeMap.nodes.get(childKind);
-		if (!child?.fromFunctionName) return { key, type: `typeof ${access}`, value: access };
-		const forward = `...args: _Args<typeof ${child.fromFunctionName}>`;
-		const coerced = `${child.fromFunctionName}(...args) as T.${child.typeName}`;
-		const positional = node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null;
-		const filled = positional ? coerced : `{ ${e.slot.configKey}: ${coerced} }`;
-		return {
-			key,
-			type: `((${forward}) => ReturnType<typeof ${impl}>) & { strict: typeof ${access} }`,
-			value: `attachProps((${forward}) => ${impl}(${filled}), { strict: ${access} })`
-		};
-	});
-	return [
-		renamed,
-		'',
-		`export const ${fn}: typeof ${impl} & {`,
-		...props.map((p) => `  ${p.key}: ${p.type};`),
-		`} = attachProps(${impl}, {`,
-		...props.map((p) => `  ${p.key}: ${p.value},`),
-		'});'
-	].join('\n');
-}
-
-export function fromUsesAttachProps(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	for (const [, node] of nodeMap.nodes) {
-		if (!node.fromFunctionName || !node.rawFactoryName) continue;
-		if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue;
-		if (namespaceOf(node, nodeMap, kindEntries).entries.length > 0) return true;
-	}
-	return false;
-}
-
 export namespace from {
 	export function leaf(
 		output: string[],
@@ -240,25 +196,19 @@ export namespace from {
 	): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
-		switch (node.modelType) {
-			case 'pattern':
-				result = emitStringLikeFrom(node);
-				break;
-			case 'enum':
-				result = emitStringLikeFrom({
-					typeName: node.typeName,
-					rawFactoryName: node.rawFactoryName,
-					fromFunctionName: node.fromFunctionName,
-					enumValues: node.values
-				});
-				break;
-			case 'keyword':
-				result = emitKeywordFrom(node);
-				break;
-			default:
-				break;
+		if (node instanceof AssembledPattern) {
+			result = emitStringLikeFrom(node);
+		} else if (node instanceof AssembledEnum) {
+			result = emitStringLikeFrom({
+				typeName: node.typeName,
+				rawFactoryName: node.rawFactoryName,
+				fromFunctionName: node.fromFunctionName,
+				enumValues: node.values
+			});
+		} else if (node instanceof AssembledKeyword) {
+			result = emitKeywordFrom(node);
 		}
-		if (result) output.push(withNamespaceProps(result, node, nodeMap, kindEntries));
+		if (result) output.push(result);
 	}
 
 	export function branch(
@@ -269,35 +219,28 @@ export namespace from {
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		output.push(
-			withNamespaceProps(
-				emitBranchFrom(node, nodeMap, intern, kindEntries),
-				node as AssembledNode,
-				nodeMap,
-				kindEntries
-			)
+			emitBranchFrom(node, nodeMap, intern, kindEntries)
 		);
 	}
 
 	export function separatedList(
 		output: string[],
-		node: AssembledSeparatedList,
+		node: AssembledList,
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		const result = emitSeparatedListFrom(node, kindEntries, nodeMap);
-		if (result) output.push(withNamespaceProps(result, node, nodeMap, kindEntries));
+		if (result) output.push(result);
 	}
 }
 
 interface BranchLikeNode {
 	readonly kind: string;
-	readonly modelType: 'branch' | 'group' | 'separatedList';
 	readonly typeName: string;
 	readonly fromInputTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
-	readonly slotClass?: BranchSlotClass;
 }
 
 function buildBranchSignatureParts(
@@ -334,7 +277,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	const branchTarget = targetNode.modelType === 'branch' ? targetNode : null;
+	const branchTarget = targetNode instanceof AbstractAssembledCompound && !targetNode.hoisted ? targetNode : null;
 	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	if (childSurface === 'direct' || childSurface === 'spread') {
 		if (branchTarget === null) return null;
@@ -344,7 +287,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 		return null;
 	}
 
-	if (targetNode.modelType !== 'branch' && targetNode.modelType !== 'group') {
+	if (!(targetNode instanceof AbstractAssembledCompound)) {
 		return null;
 	}
 	const targetFields = targetNode.fields;
@@ -378,7 +321,7 @@ function emitBranchFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
-	const opt = configurableFactoryFields(fields, nodeMap).some((f) => isRequired(f)) ? '' : '?';
+	const opt = fields.some((f) => isRequired(f)) ? '' : '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const returnType = factoryReturnTypeExpr(factory);
@@ -392,7 +335,7 @@ function emitBranchFrom(
 		if (!canDirectFactoryCall || isMultiple(soleField)) return undefined;
 		const kinds = slotKindNames(soleField);
 		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
-		return inner?.modelType === 'separatedList'
+		return inner instanceof AssembledList
 			? separatedListSurface(inner, nodeMap, kindEntries).elemType
 			: undefined;
 	})();
@@ -401,7 +344,7 @@ function emitBranchFrom(
 				.filter((part) => part !== undefined)
 				.join(' | ')
 		: looseInputType;
-	const resolverFields = configurableFactoryFields(fields, nodeMap);
+	const resolverFields = fields;
 	for (const f of resolverFields) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 		const key = JSON.stringify(f.configKey);
@@ -652,7 +595,7 @@ function emitContainerFrom(
 	if (facts && !facts.multiple) {
 		const kinds = slotKindNames(facts.slot);
 		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
-		if (inner !== undefined && inner.modelType === 'separatedList') {
+		if (inner instanceof AssembledList) {
 			inputWiden = separatedListSurface(inner, nodeMap, kindEntries).elemType;
 		}
 	}
@@ -694,7 +637,7 @@ function emitContainerFrom(
 }
 
 function emitSeparatedListFrom(
-	node: AssembledSeparatedList,
+	node: AssembledList,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): string | undefined {
@@ -795,7 +738,7 @@ function expandAndDedupeContentTypes(
 	const expanded: string[] = [];
 	const visit = (kind: string): void => {
 		const node = nodeMap.nodes.get(kind);
-		if (node?.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			for (const subtype of node.subtypeNames) visit(subtype);
 			return;
 		}
@@ -822,21 +765,12 @@ function classifyKindsForResolver(
 			branchKinds.push(t);
 			continue;
 		}
-		switch (n.modelType) {
-			case 'pattern':
-			case 'enum':
-			case 'keyword':
-				leafKinds.push(t);
-				break;
-			case 'token':
-				tokenKinds.push(t);
-				break;
-			case 'supertype':
-			case 'branch':
-			case 'group':
-			case 'separatedList':
-				branchKinds.push(t);
-				break;
+		if (n instanceof AssembledPattern || n instanceof AssembledEnum || n instanceof AssembledKeyword) {
+			leafKinds.push(t);
+		} else if (n instanceof AssembledToken) {
+			tokenKinds.push(t);
+		} else {
+			branchKinds.push(t);
 		}
 	}
 	return { leafKinds, branchKinds, tokenKinds };
@@ -959,16 +893,16 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 		if (!node.rawFactoryName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const factory = `F.${node.rawFactoryName}`;
-		if (node.modelType === 'enum') {
+		if (node instanceof AssembledEnum) {
 			const values = node.values.map((v) => JSON.stringify(v)).join(', ');
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text as Parameters<typeof ${factory}>[0]) },`
 			);
-		} else if (node.modelType === 'keyword') {
+		} else if (node instanceof AssembledKeyword) {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
-		} else if (node.modelType === 'pattern') {
+		} else if (node instanceof AssembledPattern) {
 			registryEntries.push(`  ${JSON.stringify(kind)}: { factory: ${factory} },`);
 		}
 	}
@@ -1087,7 +1021,7 @@ function collectWrapChildrenEntries(
 		const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind);
 		if (factoryName === undefined || entry === undefined) continue;
 		const childSurface: 'direct' | 'spread' | 'array' =
-			node.modelType === 'separatedList' ? 'array' : soleSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
+			node instanceof AssembledList ? 'array' : soleSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
 		entries.push({
 			kind,
 			factoryName,
@@ -1213,7 +1147,7 @@ function emitResolverHelpers(
 	const buildByKind: [string, string][] = [];
 	const stringCapable: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledBranch)) continue;
+		if (!isAuthoredCompound(node)) continue;
 		const own = wordConstructibleText(node, nodeMap);
 		if (own !== undefined && node.rawFactoryName !== undefined) {
 			byText.push([own, kind]);
@@ -1390,10 +1324,10 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const internKinds = buildKindInterner(supertypeByKey, kindTableIndex, kindTableLiterals, namedEntries);
 
 		const usesKindLiteralText = [...nodeMap.nodes.values()].some(
-			(node) => node.modelType === 'separatedList' && node.separatorRule !== undefined
+			(node) => node instanceof AssembledList && node.separatorRule !== undefined
 		);
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-		emitNamespaceImports(lines, kindEntries, usesKindLiteralText, fromUsesAttachProps(nodeMap, kindEntries));
+		emitNamespaceImports(lines, kindEntries, usesKindLiteralText, false);
 		emitFromFieldInputType(lines);
 
 		this.#nodeMap = nodeMap;
@@ -1404,7 +1338,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		this.#preambleLines = lines;
 	}
 
-	emitLeaf(node: Extract<AssembledNode, { modelType: 'pattern' | 'enum' | 'keyword' }>): void {
+	emitLeaf(node: AssembledPattern | AssembledEnum | AssembledKeyword): void {
 		from.leaf(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
@@ -1412,7 +1346,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		from.branch(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
 	}
 
-	emitSeparatedList(node: AssembledSeparatedList): void {
+	emitSeparatedList(node: AssembledList): void {
 		from.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
@@ -1425,20 +1359,17 @@ export class FromEmitter implements CodegenEmitter<string> {
 		) {
 			return;
 		}
-		switch (node.modelType) {
-			case 'branch':
-				this.emitBranch(node);
-				break;
-			case 'pattern':
-			case 'enum':
-			case 'keyword':
-				this.emitLeaf(node);
-				break;
-			case 'separatedList':
-				this.emitSeparatedList(node);
-				break;
-			default:
-				break;
+		if (node instanceof AssembledList) {
+			this.emitSeparatedList(node);
+			return;
+		}
+		if (node instanceof AbstractAssembledCompound) {
+			if (node.hoisted) return;
+			this.emitBranch(node);
+			return;
+		}
+		if (node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword) {
+			this.emitLeaf(node);
 		}
 	}
 
@@ -1447,15 +1378,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const needed = new Set<string>();
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (classifyFromEmission(kind, node, context) !== 'emit') continue;
-			for (const entry of namespaceOf(node, this.#nodeMap, this.#kindEntries).entries) {
-				const childKind = formLooseChildKind(entry, this.#nodeMap, this.#kindEntries);
-				if (childKind === undefined) continue;
-				const child = this.#nodeMap.nodes.get(childKind);
-				if (child === undefined || !child.rawFactoryName || !child.fromFunctionName) continue;
-				if (classifyFromEmission(childKind, child, context) === 'emit') continue;
-				if (child.modelType !== 'branch' && child.modelType !== 'group') continue;
-				needed.add(childKind);
-			}
 		}
 		return [...needed].map((kind) =>
 			unexported(

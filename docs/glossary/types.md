@@ -110,9 +110,24 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Symbol reference constructor — baseline DSL shadow used by metadata
- * helpers that need a real runtime symbol without fabricating the object.
+ * The one symbol reference constructor: `{ type: SYMBOL, name, inline:
+ * name.startsWith('_') }`. A reference never carries `hidden` — that fact
+ * is rule-level only, stamped on top-level rules by evaluate's
+ * `canonicalizeRawGrammar`, never on a SYMBOL. `inline` here is the
+ * name's leading-underscore convention alone; `canonicalizeRawGrammar`
+ * later corrects it for inline-array entries and supertype names, and
+ * forces `inline:false` on a symbol wrapped by an alias. Used wherever a
+ * rule needs a plain reference built from a name rather than through the
+ * DSL proxy: `createProxy`, `structuralBuilder.symbol`, pattern/external-ref
+ * rewriting.
  */
+```
+
+### `packages/codegen/src/types/rule.ts::isIdentifierLike`
+
+```text
+/** Whether a string matches `/^[A-Za-z_]\w*$/` — a bare identifier, as
+ *  opposed to arbitrary literal text. */
 ```
 
 ### `packages/codegen/src/types/runtime-shapes.ts::extractSymbolName`
@@ -355,7 +370,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   'normalize' — wrapper-free (flattenRules ran): optional/field/
  *                 repeat/repeat1/alias/token GONE; their meaning lives in the
  *                 stamped leaf attributes (fieldName/multiplicity/separator/
- *                 aliasedFrom). This is the RenderRule shape.
+ *                 aliasedTo). This is the RenderRule shape.
  *   'simplify'  — same structure as 'normalize' plus the universal
  *                 seq-of-leaves invariant (see SimplifiedRule brand).
  */
@@ -414,16 +429,92 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
-	 * Per-ref inline decision: `inline = hidden && !aliased`. Default
-	 * `hidden` (`name.startsWith('_')`) stamped at construction
-	 * (`evaluate.ts symbol`/`createProxy`); flipped `false` by the `alias`
-	 * wrapper during push-down (`flatten.ts` ALIAS case) because an
-	 * alias confers a real visible CST kind that must materialize, not
-	 * flatten. Read directly off the rule (with an `isHiddenKind` fallback
-	 * for link-synthesized symbols) — see `compiler/link.ts:539-540`,
-	 * `dsl/rule-transforms.ts:334`. Replaces the scattered re-derivations of
-	 * the inline decision (`name.startsWith('_')` combined with ad hoc alias checks).
+	 * Per-ref inline decision. Stamped once, at evaluate, by
+	 * `canonicalizeRawGrammar` (compiler/evaluate.ts):
+	 * `inline = !supertype && (hidden || name in the grammar's inline array)`,
+	 * with one override — a symbol wrapped by `structuralAlias`
+	 * (`dsl/builders.ts`) or found under an ALIAS by `canonicalizeRawGrammar` is
+	 * forced `inline:false`, because an alias confers a real visible CST kind
+	 * that must materialize, not flatten. Link only ever CONSUMES this stamp
+	 * (`resolveSymbolRoleOrPass`, `canonicalizeRuleLiterals`'s SYMBOL/SUPERTYPE
+	 * cases, `rewriteRuleForStamp`) — it never re-derives inline-ness from the
+	 * name. Normalize's `replaceSymbolRef` and `dsl/rule-transforms.ts`'s
+	 * `inlineRefs` splice a reference only when `inline === true`, so an
+	 * aliased reference always survives as its own node.
 	 */
+```
+
+### `packages/codegen/src/types/rule.ts::hidden`
+
+```text
+/** Grammar-hidden fact: `name.startsWith('_')` for every top-level rule,
+ *  stamped once at evaluate (`canonicalizeRawGrammar`) and never
+ *  re-derived from the name downstream — `dsl/rule-patterns.ts`'s
+ *  `isHiddenRule(name, rules)` reads this stamp. A rule-level fact only:
+ *  never stamped on a SYMBOL reference (`sym`'s constructed reference
+ *  carries `inline` alone), and it does not survive a splice — every
+ *  inlining site (link's `inlineReferences`, normalize's
+ *  `replaceSymbolRef`/`materializeInlinedBody`) drops the spliced-in
+ *  body's own `hidden` before installing it at the occurrence site, since
+ *  the stamp describes the SOURCE kind, not the host; flatten's
+ *  `withKindFacts` re-carries the PRE-flatten rule's own `hidden` onto its
+ *  flattened root, so a rule's OWN fact survives flattening even though a
+ *  spliced-in body's does not. Link's `unhideAliasedTargets` flips a
+ *  rule's `hidden` to `false` when some named alias wraps it (the parser
+ *  now emits it as its own node, not folded into the alias); link's
+ *  `stampLinkMintedVisibility` back-fills `hidden` (from the name) on any
+ *  rule link minted that has no raw-grammar counterpart. */
+```
+
+### `packages/codegen/src/types/rule.ts::inlinedFrom`
+
+```text
+/** The occurrence-site name of a reference whose target rule's body was
+ *  spliced into that position — the ref's own name, not the target's.
+ *  Two producers stamp it: link's `inlineReferences` (every
+ *  `inline === true` ref, fixed-point) and normalize's
+ *  `spliceFoldableRefs`/`materializeInlinedBody` (a narrower single-pass
+ *  fold of GROUP/multi-inline targets, guarded against array multiplicity
+ *  and an already-assigned `fieldName`). Storage source of a slot's
+ *  fallback name: `node-map.ts`'s `projectSlotNaming` falls back to
+ *  `inlinedFrom` (leading underscores stripped) before falling back to
+ *  `'content'`, and `collect-slots.ts`'s `inlinedFromSlotName` /
+ *  `diagnostics/slot-grouping.ts`'s `isContentSlot` read the same stamp
+ *  to exclude an inlined-body slot from content-slot grouping.
+ *  `withKindFacts` (`dsl/rule-attrs.ts`) carries it forward whenever a
+ *  later phase rebuilds the stamped rule's shape, so a splice survives
+ *  flatten/normalize/simplify without re-deriving it.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::absorbedIds`
+
+```text
+/** Ids of nodes this rule absorbed when simplify reduced them into it:
+ *  a nested CHOICE spliced into its parent choice, a wrapper choice
+ *  collapsed onto its single surviving member, or the other branches'
+ *  members at a position `mergeBranchesForChoice` folds into one. Stamped
+ *  by `dsl/rule-attrs.ts::absorbIds` and carried forward by ordinary
+ *  spread like every other attribute. `collect-slots.ts::buildSlot` reads
+ *  it to resolve a slot's `sourceRuleIds` against ids the simplified tree
+ *  no longer holds a node for — the simplified tree carries every
+ *  absorbed id itself, so no second derivation over another rule view is
+ *  needed to find them.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::kind`
+
+```text
+/** Reference-splice provenance: the name of the SYMBOL/subtype reference
+ *  whose target content now occupies this position, stamped by link where it
+ *  substitutes a reference for its target (`canonicalizeRuleLiterals`'s
+ *  SYMBOL/SUPERTYPE cases inlining an `inline===true` reference to an
+ *  alias-bodied hidden rule; `resolveSymbolRoleOrPass`'s external-role
+ *  substitution; `dereferenceTopLevelAliasBody`). Flatten/normalize carry it
+ *  from the pre-flatten rule onto the flattened root
+ *  (`dsl/rule-attrs.ts::withKindFacts`). Absent when the rule was never the
+ *  product of such a substitution. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::metadata`
@@ -786,8 +877,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * stamped by `classifyHiddenChoiceRule` (compiler/link.ts) at the moment
 	 * the flatten erases them — the same declared-fact pattern as
 	 * `RuleBase.variantArms`. Keys are `subtypes` entries (the STORAGE kind —
-	 * `SymbolRule.aliasedFrom`, the rule whose body/slots/template model the
-	 * arm); values are the PARSE names (the visible label tree-sitter emits at
+	 * `SymbolRule.name`, the rule whose body/slots/template model the
+	 * arm); values are the PARSE names (`SymbolRule.aliasedTo`, the visible label tree-sitter emits at
 	 * that arm's position, carrying its own `alias_sym_*` runtime symbol id).
 	 * Consumed by node-map's supertype value derivation (`parseKindId` stamps)
 	 * and the supertype transport-enum emitter (accepted dispatch ids) so
@@ -895,15 +986,17 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 /** Original literal text when Link synthesized this ref from a string token. */
 ```
 
-### `packages/codegen/src/types/rule.ts::aliasedFrom`
+### `packages/codegen/src/types/rule.ts::aliasedTo`
 
 ```text
 /**
-	 * Alias provenance: when this symbol was produced by resolving
-	 * `alias($.aliasedFrom, $.name)`, `aliasedFrom` is the source kind
-	 * whose shape the parse tree body follows (while tree-sitter's display
-	 * tree labels the node `name`, the alias target, the wire `$type` is
-	 * the grammar symbol stamped by the native read). Preserved to feed
+	 * Alias provenance: `name`/`kindId` are the SOURCE (storage) kind — the
+	 * rule whose shape the parse tree body follows; `aliasedTo` is the alias
+	 * NAME, the parse kind tree-sitter's display tree labels the node with
+	 * (the wire `$type`). Stamped by `dsl/builders.ts::attributeAlias` at
+	 * wrapper-deletion for any content the `alias()` wrapper wraps, and by
+	 * link's `collectSubtypeRefs`/`classifyHiddenChoiceRule` when a supertype
+	 * or enum arm folds an ALIAS member into a `SymbolRule`. Preserved to feed
 	 * the display-name -> storage-kind pairs (`subtypeRestampPairsOf`,
 	 * `resolveSlotAliasPairs` -> node model `fieldAliasMap`) that the
 	 * corpus validators use to normalize display names.
@@ -991,13 +1084,27 @@ narrowing guard.
  *  (phantom / inline / vaporized). */
 ```
 
-### `packages/codegen/src/types/rule.ts::aliasedFromId`
+### `packages/codegen/src/types/rule.ts::aliasedToId`
 
 ```text
-/** Parser-issued kindId of `aliasedFrom`'s own occurrence, present ONLY
- *  when `aliasedFrom` is set — no fallback to `kindId` (that fallback is a
- *  consumer's job: `aliasedFromId ?? kindId` for whoever needs the
- *  effective storage identity). Stamped at link alongside `kindId`. */
+/** Parser-issued kindId of `aliasedTo`'s own occurrence, present ONLY when
+ *  `aliasedTo` is set. Stamped at wrapper-deletion by `attributeAlias`
+ *  (from the alias target's `kindId`), and by link's `stampAliasTargetId`
+ *  for a subtype symbol whose `aliasedTo` was set without a matching id —
+ *  a catalog lookup by `aliasedTo` name, never a fallback onto `kindId`
+ *  (that fallback is a consumer's job: `aliasedToId ?? kindId` for whoever
+ *  needs the effective parse identity). */
+```
+
+### `packages/codegen/src/types/rule.ts::AliasRule.kindId`
+
+```text
+/** Parser-issued kindId of the ALIAS node's own occurrence (the alias
+ *  NAME's mint), stamped by link's `canonicalizeRuleLiterals` ALIAS case —
+ *  resolved by `rule.value` (the alias name), never by the wrapped
+ *  content's identity. A missing entry (or an anonymous one) is reported
+ *  as the `alias-target-unminted` diagnostic via
+ *  `KindIdStampMisses.aliasTargets`. */
 ```
 
 ### `packages/codegen/src/types/runtime-shapes.ts::module`
@@ -1192,12 +1299,12 @@ narrowing guard.
 ```text
 // All stamped attributes below are populated by
 // `flattenRules` (Normalize) — the structured `separator`
-// object included: wrapper-deletion carries the repeat node's own
-// link-lifted `separator` object across unchanged as it deletes
-// the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>
-// share this identical nested shape). None of them exist on
-// evaluate/link views' RuleBase (they exist on the repeat/repeat1
-// wrapper nodes themselves pre-deletion).
+// object included: `flatten` rebuilds the separator's own `value`
+// bottom-up (`withSeparator`) and keeps the placement flags
+// (`trailing` / `leading` / `terminated`) as the repeat wrapper
+// carried them. None of them exist on evaluate/link views'
+// RuleBase (they exist on the repeat/repeat1 wrapper nodes
+// themselves pre-flatten).
 ```
 
 ### `packages/codegen/src/types/rule.ts::RuleBase.separator.terminated`
@@ -1254,9 +1361,9 @@ narrowing guard.
 // choice arm with no natural symbol, one synthesized from its catalog
 // entry) — never a name string. This is the same convention every other
 // rule-tree reference to another kind uses (SeqRule/ChoiceRule members),
-// so subtype kindId/aliasedFromId stamp inline on the ref itself
-// (`kindId`, `aliasedFrom`, `aliasedFromId`) instead of a parallel
-// name-keyed table — `aliasedFrom ?? name` recovers the storage name.
+// so subtype kindId/aliasedToId stamp inline on the ref itself
+// (`kindId`, `aliasedTo`, `aliasedToId`) instead of a parallel
+// name-keyed table — `name` is the storage kind, `aliasedTo` the parse kind.
 ```
 
 ### `packages/codegen/src/types/rule.ts::subtypeParseNamesOf`

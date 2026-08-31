@@ -1,30 +1,28 @@
 [
   {
     "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
+    "code": "unclassifiable-shape",
     "severity": "warning",
     "grammar": "rust",
-    "ownerKind": "mut",
-    "message": "[assemble] anonymous literal \"mut\" resolved no parser kindId — keyed by raw text 'mut'",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
     "canProceed": true,
     "details": {
-      "literalText": "mut"
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
     }
   },
   {
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
     "grammar": "rust",
-    "ownerKind": "_non_special_token",
-    "message": "[assemble] typeName collision: kind '_non_special_token' renamed 'NonSpecialToken' → '_NonSpecialToken' (visible sibling(s): 'non_special_token')",
+    "ownerKind": "mut",
+    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "typeName": "NonSpecialToken",
-      "newType": "_NonSpecialToken",
-      "visibleKinds": [
-        "non_special_token"
-      ]
+      "literalText": "mut"
     }
   },
   {
@@ -44,36 +42,31 @@
     }
   },
   {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_literal",
+    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Literal",
+      "newType": "_Literal",
+      "visibleKinds": [
+        "literal"
+      ]
+    }
+  },
+  {
     "code": "kindid-unstamped-symbols",
-    "message": "25 referenced kind(s) resolved no parser kindId",
+    "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "_abstract_type_optional1",
-        "_array_type_optional1",
-        "_closure_parameters_optional1",
         "_compound_assignment_expr_operator",
-        "_const_parameter_optional1",
         "_declaration_statement",
-        "_enum_variant_optional1",
-        "_expression_ending_with_block",
-        "_extern_crate_declaration_optional1",
-        "_function_item_optional1",
-        "_kw_comma",
-        "_kw_operator",
-        "_kw_reference",
-        "_let_declaration_optional1",
-        "_let_declaration_optional2",
-        "_match_block_optional1",
-        "_match_pattern_optional1",
-        "_path",
         "_primitive_type",
-        "_reserved_identifier",
-        "_tokens",
-        "_type_parameter_optional1",
-        "_variadic_parameter_optional1",
-        "_visibility_modifier_pub_parens",
-        "_while_expression_optional1"
+        "_visibility_modifier_pub_parens"
       ]
     },
     "severity": "warning",
@@ -95,33 +88,12 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "22 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
-        "_abstract_type_optional1",
-        "_array_type_optional1",
-        "_closure_parameters_optional1",
-        "_const_parameter_optional1",
-        "_declaration_statement",
-        "_enum_variant_optional1",
-        "_expression_ending_with_block",
-        "_extern_crate_declaration_optional1",
-        "_function_item_optional1",
-        "_kw_comma",
-        "_kw_operator",
-        "_kw_reference",
-        "_let_declaration_optional1",
-        "_let_declaration_optional2",
-        "_match_block_optional1",
-        "_match_pattern_optional1",
-        "_path",
-        "_reserved_identifier",
-        "_tokens",
-        "_type_parameter_optional1",
-        "_variadic_parameter_optional1",
-        "_while_expression_optional1"
+        "_declaration_statement"
       ]
     },
     "scope": "grammar",
@@ -154,41 +126,5 @@
     },
     "scope": "grammar",
     "grammar": "rust"
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "scoped_type_identifier",
-    "slotName": "path",
-    "message": "Slot 'path' of kind 'scoped_type_identifier' collapses [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "generic_type",
-      "storageKinds": [
-        "generic_type_with_turbofish",
-        "generic_type"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_match_block_optional1",
-    "slotName": "match_arm",
-    "message": "Slot 'match_arm' of kind '_match_block_optional1' collapses [match_arm, last_match_arm] onto parse kind 'match_arm'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "match_arm",
-      "storageKinds": [
-        "match_arm",
-        "last_match_arm"
-      ]
-    }
   }
 ]

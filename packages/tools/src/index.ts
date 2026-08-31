@@ -5,6 +5,12 @@ export {
 	type SeparatedListsOptions,
 	type SeparatedListsCensus
 } from './discover/separated-lists.ts';
+export {
+	run as assembleShapeCensus,
+	computeAssembleShapeCensus,
+	type AssembleShapeCensusOptions,
+	type AssembleShapeCensus
+} from './discover/assemble-shape-census.ts';
 export { run as probeKind, type ProbeKindOptions } from './probe/kind.ts';
 export { run as probeStages, type ProbeStagesOptions } from './probe/stages.ts';
 export { run as variantDerivationProbe, type VariantDerivationProbeOptions } from './probe/variant-derivation.ts';
@@ -32,7 +38,6 @@ export { run as phantomKinds, type PhantomKindsOptions } from './discover/phanto
 export { run as fieldProvenance, type FieldProvenanceOptions } from './discover/provenance.ts';
 export { run as inspectType, DEFAULT_NAMESPACES, type InspectTypeOptions } from './inspect/type.ts';
 export { run as inspectRefs, type InspectRefsOptions } from './inspect/refs.ts';
-export { run as compareOverrides, type CompareOverridesOptions } from './inspect/overrides.ts';
 export { run as grammarDiagnostics, type GrammarDiagnosticsOptions } from './inspect/grammar-diagnostics.ts';
 export { run as walk, type WalkOptions } from './exercise/walk.ts';
 export { run as exercise, type ExerciseOptions } from './exercise/roundtrip.ts';

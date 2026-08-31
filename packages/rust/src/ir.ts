@@ -15,14 +15,6 @@ import * as F from './factories.js';
 import * as FR from './from.js';
 import { attachProps } from './utils.js';
 
-const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
-	strict: typeof F.buildExpressionStatement;
-	withSemi: typeof FR.coerceToExpressionStatement.withSemi;
-} = attachProps(FR.coerceToExpressionStatement, {
-	strict: F.buildExpressionStatement,
-	withSemi: FR.coerceToExpressionStatement.withSemi
-});
-
 const _b$constItem: typeof FR.coerceToConstItem & {
 	strict: typeof F.buildConstItem;
 } = attachProps(FR.coerceToConstItem, {
@@ -143,108 +135,16 @@ const _b$staticItem: typeof FR.coerceToStaticItem & {
 	strict: F.buildStaticItem
 });
 
-const _b$tokenTreePattern: typeof FR.coerceToTokenTreePattern & {
-	strict: typeof F.buildTokenTreePattern;
-	paren: typeof FR.coerceToTokenTreePattern.paren;
-	bracket: typeof FR.coerceToTokenTreePattern.bracket;
-	brace: typeof FR.coerceToTokenTreePattern.brace;
-} = attachProps(FR.coerceToTokenTreePattern, {
-	strict: F.buildTokenTreePattern,
-	paren: FR.coerceToTokenTreePattern.paren,
-	bracket: FR.coerceToTokenTreePattern.bracket,
-	brace: FR.coerceToTokenTreePattern.brace
-});
-
-const _b$tokenRepetitionPattern: typeof FR.coerceToTokenRepetitionPattern & {
-	strict: typeof F.buildTokenRepetitionPattern;
-	plus: typeof FR.coerceToTokenRepetitionPattern.plus;
-	star: typeof FR.coerceToTokenRepetitionPattern.star;
-	qmark: typeof FR.coerceToTokenRepetitionPattern.qmark;
-} = attachProps(FR.coerceToTokenRepetitionPattern, {
-	strict: F.buildTokenRepetitionPattern,
-	plus: FR.coerceToTokenRepetitionPattern.plus,
-	star: FR.coerceToTokenRepetitionPattern.star,
-	qmark: FR.coerceToTokenRepetitionPattern.qmark
-});
-
-const _b$tokenBindingPattern: typeof FR.coerceToTokenBindingPattern & {
-	strict: typeof F.buildTokenBindingPattern;
-} = attachProps(FR.coerceToTokenBindingPattern, {
-	strict: F.buildTokenBindingPattern
-});
-
 const _b$stringLiteral: typeof FR.coerceToStringLiteral & {
 	strict: typeof F.buildStringLiteral;
-	open: typeof FR.coerceToStringLiteral.open;
 } = attachProps(FR.coerceToStringLiteral, {
-	strict: F.buildStringLiteral,
-	open: FR.coerceToStringLiteral.open
+	strict: F.buildStringLiteral
 });
 
 const _b$rawStringLiteral: typeof FR.coerceToRawStringLiteral & {
 	strict: typeof F.buildRawStringLiteral;
 } = attachProps(FR.coerceToRawStringLiteral, {
 	strict: F.buildRawStringLiteral
-});
-
-const _b$tokenTree: typeof FR.coerceToTokenTree & {
-	strict: typeof F.buildTokenTree;
-	paren: typeof FR.coerceToTokenTree.paren;
-	bracket: typeof FR.coerceToTokenTree.bracket;
-	brace: typeof FR.coerceToTokenTree.brace;
-	delimTokenTreeParen: typeof FR.coerceToTokenTree.delimTokenTreeParen;
-	delimTokenTreeBracket: typeof FR.coerceToTokenTree.delimTokenTreeBracket;
-	delimTokenTreeBrace: typeof FR.coerceToTokenTree.delimTokenTreeBrace;
-} = attachProps(FR.coerceToTokenTree, {
-	strict: F.buildTokenTree,
-	paren: FR.coerceToTokenTree.paren,
-	bracket: FR.coerceToTokenTree.bracket,
-	brace: FR.coerceToTokenTree.brace,
-	delimTokenTreeParen: FR.coerceToTokenTree.delimTokenTreeParen,
-	delimTokenTreeBracket: FR.coerceToTokenTree.delimTokenTreeBracket,
-	delimTokenTreeBrace: FR.coerceToTokenTree.delimTokenTreeBrace
-});
-
-const _b$tokenRepetition: typeof FR.coerceToTokenRepetition & {
-	strict: typeof F.buildTokenRepetition;
-	plus: typeof FR.coerceToTokenRepetition.plus;
-	star: typeof FR.coerceToTokenRepetition.star;
-	qmark: typeof FR.coerceToTokenRepetition.qmark;
-} = attachProps(FR.coerceToTokenRepetition, {
-	strict: F.buildTokenRepetition,
-	plus: FR.coerceToTokenRepetition.plus,
-	star: FR.coerceToTokenRepetition.star,
-	qmark: FR.coerceToTokenRepetition.qmark
-});
-
-const _b$scopedIdentifier: typeof FR.coerceToScopedIdentifier & {
-	strict: typeof F.buildScopedIdentifier;
-} = attachProps(FR.coerceToScopedIdentifier, {
-	strict: F.buildScopedIdentifier
-});
-
-const _b$useAsClause: typeof FR.coerceToUseAsClause & {
-	strict: typeof F.buildUseAsClause;
-} = attachProps(FR.coerceToUseAsClause, {
-	strict: F.buildUseAsClause
-});
-
-const _b$useList: typeof FR.coerceToUseList & {
-	strict: typeof F.buildUseList;
-} = attachProps(FR.coerceToUseList, {
-	strict: F.buildUseList
-});
-
-const _b$scopedUseList: typeof FR.coerceToScopedUseList & {
-	strict: typeof F.buildScopedUseList;
-} = attachProps(FR.coerceToScopedUseList, {
-	strict: F.buildScopedUseList
-});
-
-const _b$useWildcard: typeof FR.coerceToUseWildcard & {
-	strict: typeof F.buildUseWildcard;
-} = attachProps(FR.coerceToUseWildcard, {
-	strict: F.buildUseWildcard
 });
 
 const _b$abstractType: typeof FR.coerceToAbstractType & {
@@ -297,20 +197,8 @@ const _b$functionType: typeof FR.coerceToFunctionType & {
 
 const _b$dynamicType: typeof FR.coerceToDynamicType & {
 	strict: typeof F.buildDynamicType;
-	higherRankedTraitBound: typeof FR.coerceToDynamicType.higherRankedTraitBound;
-	identifier: typeof FR.coerceToDynamicType.identifier;
-	scopedTypeIdentifier: typeof FR.coerceToDynamicType.scopedTypeIdentifier;
-	genericType: typeof FR.coerceToDynamicType.genericType;
-	functionType: typeof FR.coerceToDynamicType.functionType;
-	tupleType: typeof FR.coerceToDynamicType.tupleType;
 } = attachProps(FR.coerceToDynamicType, {
-	strict: F.buildDynamicType,
-	higherRankedTraitBound: FR.coerceToDynamicType.higherRankedTraitBound,
-	identifier: FR.coerceToDynamicType.identifier,
-	scopedTypeIdentifier: FR.coerceToDynamicType.scopedTypeIdentifier,
-	genericType: FR.coerceToDynamicType.genericType,
-	functionType: FR.coerceToDynamicType.functionType,
-	tupleType: FR.coerceToDynamicType.tupleType
+	strict: F.buildDynamicType
 });
 
 const _b$boundedType: typeof FR.coerceToBoundedType & {
@@ -327,14 +215,8 @@ const _b$removedTraitBound: typeof FR.coerceToRemovedTraitBound & {
 
 const _b$unaryExpression: typeof FR.coerceToUnaryExpression & {
 	strict: typeof F.buildUnaryExpression;
-	dash: typeof FR.coerceToUnaryExpression.dash;
-	star: typeof FR.coerceToUnaryExpression.star;
-	bang: typeof FR.coerceToUnaryExpression.bang;
 } = attachProps(FR.coerceToUnaryExpression, {
-	strict: F.buildUnaryExpression,
-	dash: FR.coerceToUnaryExpression.dash,
-	star: FR.coerceToUnaryExpression.star,
-	bang: FR.coerceToUnaryExpression.bang
+	strict: F.buildUnaryExpression
 });
 
 const _b$referenceExpression: typeof FR.coerceToReferenceExpression & {
@@ -351,44 +233,8 @@ const _b$tryExpression: typeof FR.coerceToTryExpression & {
 
 const _b$binaryExpression: typeof FR.coerceToBinaryExpression & {
 	strict: typeof F.buildBinaryExpression;
-	ampAmp: typeof FR.coerceToBinaryExpression.ampAmp;
-	pipePipe: typeof FR.coerceToBinaryExpression.pipePipe;
-	amp: typeof FR.coerceToBinaryExpression.amp;
-	pipe: typeof FR.coerceToBinaryExpression.pipe;
-	caret: typeof FR.coerceToBinaryExpression.caret;
-	eqEq: typeof FR.coerceToBinaryExpression.eqEq;
-	bangEq: typeof FR.coerceToBinaryExpression.bangEq;
-	lt: typeof FR.coerceToBinaryExpression.lt;
-	ltEq: typeof FR.coerceToBinaryExpression.ltEq;
-	gt: typeof FR.coerceToBinaryExpression.gt;
-	gtEq: typeof FR.coerceToBinaryExpression.gtEq;
-	ltLt: typeof FR.coerceToBinaryExpression.ltLt;
-	gtGt: typeof FR.coerceToBinaryExpression.gtGt;
-	plus: typeof FR.coerceToBinaryExpression.plus;
-	dash: typeof FR.coerceToBinaryExpression.dash;
-	star: typeof FR.coerceToBinaryExpression.star;
-	slash: typeof FR.coerceToBinaryExpression.slash;
-	percent: typeof FR.coerceToBinaryExpression.percent;
 } = attachProps(FR.coerceToBinaryExpression, {
-	strict: F.buildBinaryExpression,
-	ampAmp: FR.coerceToBinaryExpression.ampAmp,
-	pipePipe: FR.coerceToBinaryExpression.pipePipe,
-	amp: FR.coerceToBinaryExpression.amp,
-	pipe: FR.coerceToBinaryExpression.pipe,
-	caret: FR.coerceToBinaryExpression.caret,
-	eqEq: FR.coerceToBinaryExpression.eqEq,
-	bangEq: FR.coerceToBinaryExpression.bangEq,
-	lt: FR.coerceToBinaryExpression.lt,
-	ltEq: FR.coerceToBinaryExpression.ltEq,
-	gt: FR.coerceToBinaryExpression.gt,
-	gtEq: FR.coerceToBinaryExpression.gtEq,
-	ltLt: FR.coerceToBinaryExpression.ltLt,
-	gtGt: FR.coerceToBinaryExpression.gtGt,
-	plus: FR.coerceToBinaryExpression.plus,
-	dash: FR.coerceToBinaryExpression.dash,
-	star: FR.coerceToBinaryExpression.star,
-	slash: FR.coerceToBinaryExpression.slash,
-	percent: FR.coerceToBinaryExpression.percent
+	strict: F.buildBinaryExpression
 });
 
 const _b$assignmentExpression: typeof FR.coerceToAssignmentExpression & {
@@ -427,6 +273,12 @@ const _b$yieldExpression: typeof FR.coerceToYieldExpression & {
 	strict: F.buildYieldExpression
 });
 
+const _b$scopedIdentifier: typeof FR.coerceToScopedIdentifier & {
+	strict: typeof F.buildScopedIdentifier;
+} = attachProps(FR.coerceToScopedIdentifier, {
+	strict: F.buildScopedIdentifier
+});
+
 const _b$genericFunction: typeof FR.coerceToGenericFunction & {
 	strict: typeof F.buildGenericFunction;
 } = attachProps(FR.coerceToGenericFunction, {
@@ -447,20 +299,14 @@ const _b$fieldExpression: typeof FR.coerceToFieldExpression & {
 
 const _b$arrayExpression: typeof FR.coerceToArrayExpression & {
 	strict: typeof F.buildArrayExpression;
-	semi: typeof FR.coerceToArrayExpression.semi;
-	list: typeof FR.coerceToArrayExpression.list;
 } = attachProps(FR.coerceToArrayExpression, {
-	strict: F.buildArrayExpression,
-	semi: FR.coerceToArrayExpression.semi,
-	list: FR.coerceToArrayExpression.list
+	strict: F.buildArrayExpression
 });
 
 const _b$tupleExpression: typeof FR.coerceToTupleExpression & {
 	strict: typeof F.buildTupleExpression;
-	elements: typeof FR.coerceToTupleExpression.elements;
 } = attachProps(FR.coerceToTupleExpression, {
-	strict: F.buildTupleExpression,
-	elements: FR.coerceToTupleExpression.elements
+	strict: F.buildTupleExpression
 });
 
 const _b$breakExpression: typeof FR.coerceToBreakExpression & {
@@ -567,48 +413,14 @@ const _b$constBlock: typeof FR.coerceToConstBlock & {
 
 const _b$rangeExpression: typeof FR.coerceToRangeExpression & {
 	strict: typeof F.buildRangeExpression;
-	binary: typeof FR.coerceToRangeExpression.binary;
-	dotDot: typeof FR.coerceToRangeExpression.dotDot;
-	dotDotDot: typeof FR.coerceToRangeExpression.dotDotDot;
-	dotDotEq: typeof FR.coerceToRangeExpression.dotDotEq;
-	postfix: typeof FR.coerceToRangeExpression.postfix;
-	prefix: typeof FR.coerceToRangeExpression.prefix;
 } = attachProps(FR.coerceToRangeExpression, {
-	strict: F.buildRangeExpression,
-	binary: FR.coerceToRangeExpression.binary,
-	dotDot: FR.coerceToRangeExpression.dotDot,
-	dotDotDot: FR.coerceToRangeExpression.dotDotDot,
-	dotDotEq: FR.coerceToRangeExpression.dotDotEq,
-	postfix: FR.coerceToRangeExpression.postfix,
-	prefix: FR.coerceToRangeExpression.prefix
-});
-
-const _b$delimTokenTree: typeof FR.coerceToDelimTokenTree & {
-	strict: typeof F.buildDelimTokenTree;
-	paren: typeof FR.coerceToDelimTokenTree.paren;
-	bracket: typeof FR.coerceToDelimTokenTree.bracket;
-	brace: typeof FR.coerceToDelimTokenTree.brace;
-} = attachProps(FR.coerceToDelimTokenTree, {
-	strict: F.buildDelimTokenTree,
-	paren: FR.coerceToDelimTokenTree.paren,
-	bracket: FR.coerceToDelimTokenTree.bracket,
-	brace: FR.coerceToDelimTokenTree.brace
-});
-
-const _b$letCondition: typeof FR.coerceToLetCondition & {
-	strict: typeof F.buildLetCondition;
-} = attachProps(FR.coerceToLetCondition, {
-	strict: F.buildLetCondition
+	strict: F.buildRangeExpression
 });
 
 const _b$negativeLiteral: typeof FR.coerceToNegativeLiteral & {
 	strict: typeof F.buildNegativeLiteral;
-	integerLiteral: typeof FR.coerceToNegativeLiteral.integerLiteral;
-	floatLiteral: typeof FR.coerceToNegativeLiteral.floatLiteral;
 } = attachProps(FR.coerceToNegativeLiteral, {
-	strict: F.buildNegativeLiteral,
-	integerLiteral: FR.coerceToNegativeLiteral.integerLiteral,
-	floatLiteral: FR.coerceToNegativeLiteral.floatLiteral
+	strict: F.buildNegativeLiteral
 });
 
 const _b$genericPattern: typeof FR.coerceToGenericPattern & {
@@ -667,26 +479,14 @@ const _b$mutPattern: typeof FR.coerceToMutPattern & {
 
 const _b$rangePattern: typeof FR.coerceToRangePattern & {
 	strict: typeof F.buildRangePattern;
-	arm2: typeof FR.coerceToRangePattern.arm2;
-	prefix: typeof FR.coerceToRangePattern.prefix;
-	dotDotEq: typeof FR.coerceToRangePattern.dotDotEq;
-	dotDot: typeof FR.coerceToRangePattern.dotDot;
 } = attachProps(FR.coerceToRangePattern, {
-	strict: F.buildRangePattern,
-	arm2: FR.coerceToRangePattern.arm2,
-	prefix: FR.coerceToRangePattern.prefix,
-	dotDotEq: FR.coerceToRangePattern.dotDotEq,
-	dotDot: FR.coerceToRangePattern.dotDot
+	strict: F.buildRangePattern
 });
 
 const _b$orPattern: typeof FR.coerceToOrPattern & {
 	strict: typeof F.buildOrPattern;
-	binary: typeof FR.coerceToOrPattern.binary;
-	prefix: typeof FR.coerceToOrPattern.prefix;
 } = attachProps(FR.coerceToOrPattern, {
-	strict: F.buildOrPattern,
-	binary: FR.coerceToOrPattern.binary,
-	prefix: FR.coerceToOrPattern.prefix
+	strict: F.buildOrPattern
 });
 
 const _b$sourceFile: typeof FR.coerceToSourceFile & {
@@ -695,10 +495,46 @@ const _b$sourceFile: typeof FR.coerceToSourceFile & {
 	strict: F.buildSourceFile
 });
 
+const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
+	strict: typeof F.buildExpressionStatement;
+} = attachProps(FR.coerceToExpressionStatement, {
+	strict: F.buildExpressionStatement
+});
+
 const _b$macroRule: typeof FR.coerceToMacroRule & {
 	strict: typeof F.buildMacroRule;
 } = attachProps(FR.coerceToMacroRule, {
 	strict: F.buildMacroRule
+});
+
+const _b$tokenTreePattern: typeof FR.coerceToTokenTreePattern & {
+	strict: typeof F.buildTokenTreePattern;
+} = attachProps(FR.coerceToTokenTreePattern, {
+	strict: F.buildTokenTreePattern
+});
+
+const _b$tokenBindingPattern: typeof FR.coerceToTokenBindingPattern & {
+	strict: typeof F.buildTokenBindingPattern;
+} = attachProps(FR.coerceToTokenBindingPattern, {
+	strict: F.buildTokenBindingPattern
+});
+
+const _b$tokenRepetitionPattern: typeof FR.coerceToTokenRepetitionPattern & {
+	strict: typeof F.buildTokenRepetitionPattern;
+} = attachProps(FR.coerceToTokenRepetitionPattern, {
+	strict: F.buildTokenRepetitionPattern
+});
+
+const _b$tokenTree: typeof FR.coerceToTokenTree & {
+	strict: typeof F.buildTokenTree;
+} = attachProps(FR.coerceToTokenTree, {
+	strict: F.buildTokenTree
+});
+
+const _b$tokenRepetition: typeof FR.coerceToTokenRepetition & {
+	strict: typeof F.buildTokenRepetition;
+} = attachProps(FR.coerceToTokenRepetition, {
+	strict: F.buildTokenRepetition
 });
 
 const _b$attribute: typeof FR.coerceToAttribute & {
@@ -797,6 +633,30 @@ const _b$lifetimeParameter: typeof FR.coerceToLifetimeParameter & {
 	strict: F.buildLifetimeParameter
 });
 
+const _b$scopedUseList: typeof FR.coerceToScopedUseList & {
+	strict: typeof F.buildScopedUseList;
+} = attachProps(FR.coerceToScopedUseList, {
+	strict: F.buildScopedUseList
+});
+
+const _b$useList: typeof FR.coerceToUseList & {
+	strict: typeof F.buildUseList;
+} = attachProps(FR.coerceToUseList, {
+	strict: F.buildUseList
+});
+
+const _b$useAsClause: typeof FR.coerceToUseAsClause & {
+	strict: typeof F.buildUseAsClause;
+} = attachProps(FR.coerceToUseAsClause, {
+	strict: F.buildUseAsClause
+});
+
+const _b$useWildcard: typeof FR.coerceToUseWildcard & {
+	strict: typeof F.buildUseWildcard;
+} = attachProps(FR.coerceToUseWildcard, {
+	strict: F.buildUseWildcard
+});
+
 const _b$parameters: typeof FR.coerceToParameters & {
 	strict: typeof F.buildParameters;
 } = attachProps(FR.coerceToParameters, {
@@ -823,34 +683,20 @@ const _b$parameter: typeof FR.coerceToParameter & {
 
 const _b$externModifier: typeof FR.coerceToExternModifier & {
 	strict: typeof F.buildExternModifier;
-	stringLiteralOpen: typeof FR.coerceToExternModifier.stringLiteralOpen;
 } = attachProps(FR.coerceToExternModifier, {
-	strict: F.buildExternModifier,
-	stringLiteralOpen: FR.coerceToExternModifier.stringLiteralOpen
+	strict: F.buildExternModifier
 });
 
 const _b$visibilityModifier: typeof FR.coerceToVisibilityModifier & {
 	strict: typeof F.buildVisibilityModifier;
-	crate: typeof FR.coerceToVisibilityModifier.crate;
-	pub: typeof FR.coerceToVisibilityModifier.pub;
-	self: typeof FR.coerceToVisibilityModifier.self;
-	super: typeof FR.coerceToVisibilityModifier.super;
-	inPath: typeof FR.coerceToVisibilityModifier.inPath;
 } = attachProps(FR.coerceToVisibilityModifier, {
-	strict: F.buildVisibilityModifier,
-	crate: FR.coerceToVisibilityModifier.crate,
-	pub: FR.coerceToVisibilityModifier.pub,
-	self: FR.coerceToVisibilityModifier.self,
-	super: FR.coerceToVisibilityModifier.super,
-	inPath: FR.coerceToVisibilityModifier.inPath
+	strict: F.buildVisibilityModifier
 });
 
 const _b$bracketedType: typeof FR.coerceToBracketedType & {
 	strict: typeof F.buildBracketedType;
-	qualifiedType: typeof FR.coerceToBracketedType.qualifiedType;
 } = attachProps(FR.coerceToBracketedType, {
-	strict: F.buildBracketedType,
-	qualifiedType: FR.coerceToBracketedType.qualifiedType
+	strict: F.buildBracketedType
 });
 
 const _b$qualifiedType: typeof FR.coerceToQualifiedType & {
@@ -895,6 +741,12 @@ const _b$typeBinding: typeof FR.coerceToTypeBinding & {
 	strict: F.buildTypeBinding
 });
 
+const _b$delimTokenTree: typeof FR.coerceToDelimTokenTree & {
+	strict: typeof F.buildDelimTokenTree;
+} = attachProps(FR.coerceToDelimTokenTree, {
+	strict: F.buildDelimTokenTree
+});
+
 const _b$scopedTypeIdentifierInExpressionPosition: typeof FR.coerceToScopedTypeIdentifierInExpressionPosition & {
 	strict: typeof F.buildScopedTypeIdentifierInExpressionPosition;
 } = attachProps(FR.coerceToScopedTypeIdentifierInExpressionPosition, {
@@ -931,14 +783,16 @@ const _b$baseFieldInitializer: typeof FR.coerceToBaseFieldInitializer & {
 	strict: F.buildBaseFieldInitializer
 });
 
+const _b$letCondition: typeof FR.coerceToLetCondition & {
+	strict: typeof F.buildLetCondition;
+} = attachProps(FR.coerceToLetCondition, {
+	strict: F.buildLetCondition
+});
+
 const _b$elseClause: typeof FR.coerceToElseClause & {
 	strict: typeof F.buildElseClause;
-	block: typeof FR.coerceToElseClause.block;
-	ifExpression: typeof FR.coerceToElseClause.ifExpression;
 } = attachProps(FR.coerceToElseClause, {
-	strict: F.buildElseClause,
-	block: FR.coerceToElseClause.block,
-	ifExpression: FR.coerceToElseClause.ifExpression
+	strict: F.buildElseClause
 });
 
 const _b$matchBlock: typeof FR.coerceToMatchBlock & {
@@ -979,38 +833,20 @@ const _b$label: typeof FR.coerceToLabel & {
 
 const _b$fieldPattern: typeof FR.coerceToFieldPattern & {
 	strict: typeof F.buildFieldPattern;
-	identifier: typeof FR.coerceToFieldPattern.identifier;
-	named: typeof FR.coerceToFieldPattern.named;
 } = attachProps(FR.coerceToFieldPattern, {
-	strict: F.buildFieldPattern,
-	identifier: FR.coerceToFieldPattern.identifier,
-	named: FR.coerceToFieldPattern.named
+	strict: F.buildFieldPattern
 });
 
 const _b$lineComment: typeof FR.coerceToLineComment & {
 	strict: typeof F.buildLineComment;
-	regularDslash: typeof FR.coerceToLineComment.regularDslash;
-	docOuter: typeof FR.coerceToLineComment.docOuter;
-	docInner: typeof FR.coerceToLineComment.docInner;
-	content: typeof FR.coerceToLineComment.content;
 } = attachProps(FR.coerceToLineComment, {
-	strict: F.buildLineComment,
-	regularDslash: FR.coerceToLineComment.regularDslash,
-	docOuter: FR.coerceToLineComment.docOuter,
-	docInner: FR.coerceToLineComment.docInner,
-	content: FR.coerceToLineComment.content
+	strict: F.buildLineComment
 });
 
 const _b$blockComment: typeof FR.coerceToBlockComment & {
 	strict: typeof F.buildBlockComment;
-	docOuter: typeof FR.coerceToBlockComment.docOuter;
-	docInner: typeof FR.coerceToBlockComment.docInner;
-	content: typeof FR.coerceToBlockComment.content;
 } = attachProps(FR.coerceToBlockComment, {
-	strict: F.buildBlockComment,
-	docOuter: FR.coerceToBlockComment.docOuter,
-	docInner: FR.coerceToBlockComment.docInner,
-	content: FR.coerceToBlockComment.content
+	strict: F.buildBlockComment
 });
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
@@ -1062,56 +898,11 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const statement: {
-	readonly expression: typeof _b$expressionStatement;
-	readonly const: typeof _b$constItem;
-	readonly macroInvocation: typeof _b$macroInvocation;
-	readonly macro: typeof _b$macroDefinition;
-	readonly attribute: typeof _b$attributeItem;
-	readonly innerAttribute: typeof _b$innerAttributeItem;
-	readonly mod: typeof _b$modItem;
-	readonly foreignMod: typeof _b$foreignModItem;
-	readonly struct: typeof _b$structItem;
-	readonly union: typeof _b$unionItem;
-	readonly enum: typeof _b$enumItem;
-	readonly type: typeof _b$typeItem;
-	readonly function: typeof _b$functionItem;
-	readonly functionSignature: typeof _b$functionSignatureItem;
-	readonly impl: typeof _b$implItem;
-	readonly trait: typeof _b$traitItem;
-	readonly associated: typeof _b$associatedType;
-	readonly let: typeof _b$letDeclaration;
-	readonly use: typeof _b$useDeclaration;
-	readonly externCrate: typeof _b$externCrateDeclaration;
-	readonly static: typeof _b$staticItem;
-} = {
-	expression: _b$expressionStatement,
-	const: _b$constItem,
-	macroInvocation: _b$macroInvocation,
-	macro: _b$macroDefinition,
-	attribute: _b$attributeItem,
-	innerAttribute: _b$innerAttributeItem,
-	mod: _b$modItem,
-	foreignMod: _b$foreignModItem,
-	struct: _b$structItem,
-	union: _b$unionItem,
-	enum: _b$enumItem,
-	type: _b$typeItem,
-	function: _b$functionItem,
-	functionSignature: _b$functionSignatureItem,
-	impl: _b$implItem,
-	trait: _b$traitItem,
-	associated: _b$associatedType,
-	let: _b$letDeclaration,
-	use: _b$useDeclaration,
-	externCrate: _b$externCrateDeclaration,
-	static: _b$staticItem
-};
-
 export const declarationStatement: {
 	readonly const: typeof _b$constItem;
 	readonly macroInvocation: typeof _b$macroInvocation;
 	readonly macro: typeof _b$macroDefinition;
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly attribute: typeof _b$attributeItem;
 	readonly innerAttribute: typeof _b$innerAttributeItem;
 	readonly mod: typeof _b$modItem;
@@ -1133,6 +924,7 @@ export const declarationStatement: {
 	const: _b$constItem,
 	macroInvocation: _b$macroInvocation,
 	macro: _b$macroDefinition,
+	empty: F.buildEmptyStatement,
 	attribute: _b$attributeItem,
 	innerAttribute: _b$innerAttributeItem,
 	mod: _b$modItem,
@@ -1150,72 +942,6 @@ export const declarationStatement: {
 	use: _b$useDeclaration,
 	externCrate: _b$externCrateDeclaration,
 	static: _b$staticItem
-};
-
-export const tokenPattern: {
-	readonly tree: typeof _b$tokenTreePattern;
-	readonly repetition: typeof _b$tokenRepetitionPattern;
-	readonly binding: typeof _b$tokenBindingPattern;
-	readonly metavariable: typeof F.buildMetavariable;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
-	readonly self: typeof F.buildSelf;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-} = {
-	tree: _b$tokenTreePattern,
-	repetition: _b$tokenRepetitionPattern,
-	binding: _b$tokenBindingPattern,
-	metavariable: F.buildMetavariable,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutableSpecifier: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
-};
-
-export const tokens: {
-	readonly tokenTree: typeof _b$tokenTree;
-	readonly tokenRepetition: typeof _b$tokenRepetition;
-	readonly metavariable: typeof F.buildMetavariable;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
-	readonly self: typeof F.buildSelf;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-} = {
-	tokenTree: _b$tokenTree,
-	tokenRepetition: _b$tokenRepetition,
-	metavariable: F.buildMetavariable,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutableSpecifier: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
 };
 
 export const nonSpecialToken: {
@@ -1244,30 +970,6 @@ export const nonSpecialToken: {
 	crate: F.buildCrate
 };
 
-export const useClause: {
-	readonly self: typeof F.buildSelf;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly metavariable: typeof F.buildMetavariable;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-	readonly as: typeof _b$useAsClause;
-	readonly list: typeof _b$useList;
-	readonly scopedList: typeof _b$scopedUseList;
-	readonly wildcard: typeof _b$useWildcard;
-} = {
-	self: F.buildSelf,
-	identifier: F.buildIdentifier,
-	metavariable: F.buildMetavariable,
-	super: F.buildSuper,
-	crate: F.buildCrate,
-	scopedIdentifier: _b$scopedIdentifier,
-	as: _b$useAsClause,
-	list: _b$useList,
-	scopedList: _b$scopedUseList,
-	wildcard: _b$useWildcard
-};
-
 export const type: {
 	readonly abstract: typeof _b$abstractType;
 	readonly reference: typeof _b$referenceType;
@@ -1281,6 +983,7 @@ export const type: {
 	readonly function: typeof _b$functionType;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly macroInvocation: typeof _b$macroInvocation;
+	readonly never: typeof F.buildNeverType;
 	readonly dynamic: typeof _b$dynamicType;
 	readonly bounded: typeof _b$boundedType;
 	readonly removedTraitBound: typeof _b$removedTraitBound;
@@ -1297,101 +1000,10 @@ export const type: {
 	function: _b$functionType,
 	identifier: F.buildIdentifier,
 	macroInvocation: _b$macroInvocation,
+	never: F.buildNeverType,
 	dynamic: _b$dynamicType,
 	bounded: _b$boundedType,
 	removedTraitBound: _b$removedTraitBound
-};
-
-export const expressionExceptRange: {
-	readonly unary: typeof _b$unaryExpression;
-	readonly reference: typeof _b$referenceExpression;
-	readonly try: typeof _b$tryExpression;
-	readonly binary: typeof _b$binaryExpression;
-	readonly assignment: typeof _b$assignmentExpression;
-	readonly compoundAssignment: typeof _b$compoundAssignmentExpr;
-	readonly typeCast: typeof _b$typeCastExpression;
-	readonly call: typeof _b$callExpression;
-	readonly return: typeof _b$returnExpression;
-	readonly yield: typeof _b$yieldExpression;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly self: typeof F.buildSelf;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-	readonly genericFunction: typeof _b$genericFunction;
-	readonly await: typeof _b$awaitExpression;
-	readonly field: typeof _b$fieldExpression;
-	readonly array: typeof _b$arrayExpression;
-	readonly tuple: typeof _b$tupleExpression;
-	readonly macroInvocation: typeof _b$macroInvocation;
-	readonly unit: typeof F.buildUnitExpression;
-	readonly break: typeof _b$breakExpression;
-	readonly continue: typeof _b$continueExpression;
-	readonly index: typeof _b$indexExpression;
-	readonly metavariable: typeof F.buildMetavariable;
-	readonly closure: typeof _b$closureExpression;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
-	readonly struct: typeof _b$structExpression;
-	readonly unsafeBlock: typeof _b$unsafeBlock;
-	readonly asyncBlock: typeof _b$asyncBlock;
-	readonly genBlock: typeof _b$genBlock;
-	readonly tryBlock: typeof _b$tryBlock;
-	readonly block: typeof _b$block;
-	readonly if: typeof _b$ifExpression;
-	readonly match: typeof _b$matchExpression;
-	readonly while: typeof _b$whileExpression;
-	readonly loop: typeof _b$loopExpression;
-	readonly for: typeof _b$forExpression;
-	readonly constBlock: typeof _b$constBlock;
-} = {
-	unary: _b$unaryExpression,
-	reference: _b$referenceExpression,
-	try: _b$tryExpression,
-	binary: _b$binaryExpression,
-	assignment: _b$assignmentExpression,
-	compoundAssignment: _b$compoundAssignmentExpr,
-	typeCast: _b$typeCastExpression,
-	call: _b$callExpression,
-	return: _b$returnExpression,
-	yield: _b$yieldExpression,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	self: F.buildSelf,
-	scopedIdentifier: _b$scopedIdentifier,
-	genericFunction: _b$genericFunction,
-	await: _b$awaitExpression,
-	field: _b$fieldExpression,
-	array: _b$arrayExpression,
-	tuple: _b$tupleExpression,
-	macroInvocation: _b$macroInvocation,
-	unit: F.buildUnitExpression,
-	break: _b$breakExpression,
-	continue: _b$continueExpression,
-	index: _b$indexExpression,
-	metavariable: F.buildMetavariable,
-	closure: _b$closureExpression,
-	parenthesized: _b$parenthesizedExpression,
-	struct: _b$structExpression,
-	unsafeBlock: _b$unsafeBlock,
-	asyncBlock: _b$asyncBlock,
-	genBlock: _b$genBlock,
-	tryBlock: _b$tryBlock,
-	block: _b$block,
-	if: _b$ifExpression,
-	match: _b$matchExpression,
-	while: _b$whileExpression,
-	loop: _b$loopExpression,
-	for: _b$forExpression,
-	constBlock: _b$constBlock
 };
 
 export const expression: {
@@ -1488,160 +1100,6 @@ export const expression: {
 	range: _b$rangeExpression
 };
 
-export const expressionEndingWithBlock: {
-	readonly unsafe: typeof _b$unsafeBlock;
-	readonly async: typeof _b$asyncBlock;
-	readonly gen: typeof _b$genBlock;
-	readonly try: typeof _b$tryBlock;
-	readonly block: typeof _b$block;
-	readonly if: typeof _b$ifExpression;
-	readonly match: typeof _b$matchExpression;
-	readonly while: typeof _b$whileExpression;
-	readonly loop: typeof _b$loopExpression;
-	readonly for: typeof _b$forExpression;
-	readonly const: typeof _b$constBlock;
-} = {
-	unsafe: _b$unsafeBlock,
-	async: _b$asyncBlock,
-	gen: _b$genBlock,
-	try: _b$tryBlock,
-	block: _b$block,
-	if: _b$ifExpression,
-	match: _b$matchExpression,
-	while: _b$whileExpression,
-	loop: _b$loopExpression,
-	for: _b$forExpression,
-	const: _b$constBlock
-};
-
-export const delimTokens: {
-	readonly tokenTree: typeof _b$delimTokenTree;
-} = {
-	tokenTree: _b$delimTokenTree
-};
-
-export const nonDelimToken: {
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
-	readonly self: typeof F.buildSelf;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-} = {
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutableSpecifier: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
-};
-
-export const condition: {
-	readonly unary: typeof _b$unaryExpression;
-	readonly reference: typeof _b$referenceExpression;
-	readonly try: typeof _b$tryExpression;
-	readonly binary: typeof _b$binaryExpression;
-	readonly assignment: typeof _b$assignmentExpression;
-	readonly compoundAssignment: typeof _b$compoundAssignmentExpr;
-	readonly typeCast: typeof _b$typeCastExpression;
-	readonly call: typeof _b$callExpression;
-	readonly return: typeof _b$returnExpression;
-	readonly yield: typeof _b$yieldExpression;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
-	readonly float: typeof F.buildFloatLiteral;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly self: typeof F.buildSelf;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-	readonly genericFunction: typeof _b$genericFunction;
-	readonly await: typeof _b$awaitExpression;
-	readonly field: typeof _b$fieldExpression;
-	readonly array: typeof _b$arrayExpression;
-	readonly tuple: typeof _b$tupleExpression;
-	readonly macroInvocation: typeof _b$macroInvocation;
-	readonly unit: typeof F.buildUnitExpression;
-	readonly break: typeof _b$breakExpression;
-	readonly continue: typeof _b$continueExpression;
-	readonly index: typeof _b$indexExpression;
-	readonly metavariable: typeof F.buildMetavariable;
-	readonly closure: typeof _b$closureExpression;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
-	readonly struct: typeof _b$structExpression;
-	readonly unsafeBlock: typeof _b$unsafeBlock;
-	readonly asyncBlock: typeof _b$asyncBlock;
-	readonly genBlock: typeof _b$genBlock;
-	readonly tryBlock: typeof _b$tryBlock;
-	readonly block: typeof _b$block;
-	readonly if: typeof _b$ifExpression;
-	readonly match: typeof _b$matchExpression;
-	readonly while: typeof _b$whileExpression;
-	readonly loop: typeof _b$loopExpression;
-	readonly for: typeof _b$forExpression;
-	readonly constBlock: typeof _b$constBlock;
-	readonly range: typeof _b$rangeExpression;
-	readonly let: typeof _b$letCondition;
-} = {
-	unary: _b$unaryExpression,
-	reference: _b$referenceExpression,
-	try: _b$tryExpression,
-	binary: _b$binaryExpression,
-	assignment: _b$assignmentExpression,
-	compoundAssignment: _b$compoundAssignmentExpr,
-	typeCast: _b$typeCastExpression,
-	call: _b$callExpression,
-	return: _b$returnExpression,
-	yield: _b$yieldExpression,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	self: F.buildSelf,
-	scopedIdentifier: _b$scopedIdentifier,
-	genericFunction: _b$genericFunction,
-	await: _b$awaitExpression,
-	field: _b$fieldExpression,
-	array: _b$arrayExpression,
-	tuple: _b$tupleExpression,
-	macroInvocation: _b$macroInvocation,
-	unit: F.buildUnitExpression,
-	break: _b$breakExpression,
-	continue: _b$continueExpression,
-	index: _b$indexExpression,
-	metavariable: F.buildMetavariable,
-	closure: _b$closureExpression,
-	parenthesized: _b$parenthesizedExpression,
-	struct: _b$structExpression,
-	unsafeBlock: _b$unsafeBlock,
-	asyncBlock: _b$asyncBlock,
-	genBlock: _b$genBlock,
-	tryBlock: _b$tryBlock,
-	block: _b$block,
-	if: _b$ifExpression,
-	match: _b$matchExpression,
-	while: _b$whileExpression,
-	loop: _b$loopExpression,
-	for: _b$forExpression,
-	constBlock: _b$constBlock,
-	range: _b$rangeExpression,
-	let: _b$letCondition
-};
-
 export const pattern: {
 	readonly string: typeof _b$stringLiteral;
 	readonly rawString: typeof _b$rawStringLiteral;
@@ -1660,6 +1118,7 @@ export const pattern: {
 	readonly slice: typeof _b$slicePattern;
 	readonly captured: typeof _b$capturedPattern;
 	readonly reference: typeof _b$referencePattern;
+	readonly remainingField: typeof F.buildRemainingFieldPattern;
 	readonly mut: typeof _b$mutPattern;
 	readonly range: typeof _b$rangePattern;
 	readonly or: typeof _b$orPattern;
@@ -1683,6 +1142,7 @@ export const pattern: {
 	slice: _b$slicePattern,
 	captured: _b$capturedPattern,
 	reference: _b$referencePattern,
+	remainingField: F.buildRemainingFieldPattern,
 	mut: _b$mutPattern,
 	range: _b$rangePattern,
 	or: _b$orPattern,
@@ -1722,22 +1182,6 @@ export const literalPattern: {
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	negative: _b$negativeLiteral
-};
-
-export const path: {
-	readonly self: typeof F.buildSelf;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly metavariable: typeof F.buildMetavariable;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-} = {
-	self: F.buildSelf,
-	identifier: F.buildIdentifier,
-	metavariable: F.buildMetavariable,
-	super: F.buildSuper,
-	crate: F.buildCrate,
-	scopedIdentifier: _b$scopedIdentifier
 };
 
 export const ir: {
@@ -1880,13 +1324,16 @@ export const ir: {
 	readonly rawStringLiteral: typeof _b$rawStringLiteral;
 	readonly lineComment: typeof _b$lineComment;
 	readonly blockComment: typeof _b$blockComment;
+	readonly emptyStatement: typeof F.buildEmptyStatement;
+	readonly unitType: typeof F.buildUnitType;
+	readonly neverType: typeof F.buildNeverType;
 	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly unitExpression: typeof F.buildUnitExpression;
+	readonly remainingFieldPattern: typeof F.buildRemainingFieldPattern;
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
 	readonly fragmentSpecifier: typeof F.buildFragmentSpecifier;
-	readonly unitType: typeof F.buildUnitType;
-	readonly unitExpression: typeof F.buildUnitExpression;
 	readonly integerLiteral: typeof F.buildIntegerLiteral;
 	readonly charLiteral: typeof F.buildCharLiteral;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
@@ -1899,13 +1346,10 @@ export const ir: {
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly abstract: typeof _b$abstractType;
 	readonly array: typeof _b$arrayType;
-	readonly as: typeof _b$useAsClause;
 	readonly assignment: typeof _b$assignmentExpression;
 	readonly associated: typeof _b$associatedType;
-	readonly async: typeof _b$asyncBlock;
 	readonly await: typeof _b$awaitExpression;
 	readonly binary: typeof _b$binaryExpression;
-	readonly binding: typeof _b$tokenBindingPattern;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly bounded: typeof _b$boundedType;
 	readonly break: typeof _b$breakExpression;
@@ -1917,6 +1361,7 @@ export const ir: {
 	readonly const: typeof _b$constItem;
 	readonly continue: typeof _b$continueExpression;
 	readonly dynamic: typeof _b$dynamicType;
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly enum: typeof _b$enumItem;
 	readonly externCrate: typeof _b$externCrateDeclaration;
 	readonly field: typeof _b$fieldExpression;
@@ -1925,7 +1370,6 @@ export const ir: {
 	readonly foreignMod: typeof _b$foreignModItem;
 	readonly function: typeof _b$functionItem;
 	readonly functionSignature: typeof _b$functionSignatureItem;
-	readonly gen: typeof _b$genBlock;
 	readonly generic: typeof _b$genericType;
 	readonly if: typeof _b$ifExpression;
 	readonly impl: typeof _b$implItem;
@@ -1933,13 +1377,13 @@ export const ir: {
 	readonly innerAttribute: typeof _b$innerAttributeItem;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly let: typeof _b$letDeclaration;
-	readonly list: typeof _b$useList;
 	readonly loop: typeof _b$loopExpression;
 	readonly macro: typeof _b$macroDefinition;
 	readonly match: typeof _b$matchExpression;
 	readonly mod: typeof _b$modItem;
 	readonly mut: typeof _b$mutPattern;
 	readonly negative: typeof _b$negativeLiteral;
+	readonly never: typeof F.buildNeverType;
 	readonly or: typeof _b$orPattern;
 	readonly parenthesized: typeof _b$parenthesizedExpression;
 	readonly pointer: typeof _b$pointerType;
@@ -1947,15 +1391,13 @@ export const ir: {
 	readonly rawString: typeof _b$rawStringLiteral;
 	readonly ref: typeof _b$refPattern;
 	readonly reference: typeof _b$referenceType;
-	readonly repetition: typeof _b$tokenRepetitionPattern;
+	readonly remainingField: typeof F.buildRemainingFieldPattern;
 	readonly return: typeof _b$returnExpression;
-	readonly scopedList: typeof _b$scopedUseList;
 	readonly slice: typeof _b$slicePattern;
 	readonly static: typeof _b$staticItem;
 	readonly string: typeof _b$stringLiteral;
 	readonly struct: typeof _b$structItem;
 	readonly trait: typeof _b$traitItem;
-	readonly tree: typeof _b$tokenTreePattern;
 	readonly try: typeof _b$tryExpression;
 	readonly tuple: typeof _b$tupleType;
 	readonly tupleStruct: typeof _b$tupleStructPattern;
@@ -1963,28 +1405,16 @@ export const ir: {
 	readonly unary: typeof _b$unaryExpression;
 	readonly union: typeof _b$unionItem;
 	readonly unit: typeof F.buildUnitType;
-	readonly unsafe: typeof _b$unsafeBlock;
 	readonly use: typeof _b$useDeclaration;
 	readonly while: typeof _b$whileExpression;
-	readonly wildcard: typeof _b$useWildcard;
 	readonly yield: typeof _b$yieldExpression;
-	readonly statement: typeof statement;
 	readonly declarationStatement: typeof declarationStatement;
-	readonly tokenPattern: typeof tokenPattern;
-	readonly tokens: typeof tokens;
 	readonly nonSpecialToken: typeof nonSpecialToken;
-	readonly useClause: typeof useClause;
 	readonly type: typeof type;
-	readonly expressionExceptRange: typeof expressionExceptRange;
 	readonly expression: typeof expression;
-	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
-	readonly delimTokens: typeof delimTokens;
-	readonly nonDelimToken: typeof nonDelimToken;
-	readonly condition: typeof condition;
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
-	readonly path: typeof path;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -2129,15 +1559,18 @@ export const ir: {
 	blockComment: _b$blockComment,
 
 	// Keyword factories
+	emptyStatement: F.buildEmptyStatement,
+	unitType: F.buildUnitType,
+	neverType: F.buildNeverType,
 	mutableSpecifier: F.buildMutableSpecifier,
+	unitExpression: F.buildUnitExpression,
+	remainingFieldPattern: F.buildRemainingFieldPattern,
 	self: F.buildSelf,
 	super: F.buildSuper,
 	crate: F.buildCrate,
 
 	// Leaf node factories
 	fragmentSpecifier: F.buildFragmentSpecifier,
-	unitType: F.buildUnitType,
-	unitExpression: F.buildUnitExpression,
 	integerLiteral: F.buildIntegerLiteral,
 	charLiteral: F.buildCharLiteral,
 	escapeSequence: F.buildEscapeSequence,
@@ -2152,13 +1585,10 @@ export const ir: {
 	// Supertype-stripped short aliases
 	abstract: _b$abstractType,
 	array: _b$arrayType,
-	as: _b$useAsClause,
 	assignment: _b$assignmentExpression,
 	associated: _b$associatedType,
-	async: _b$asyncBlock,
 	await: _b$awaitExpression,
 	binary: _b$binaryExpression,
-	binding: _b$tokenBindingPattern,
 	boolean: F.buildBooleanLiteral,
 	bounded: _b$boundedType,
 	break: _b$breakExpression,
@@ -2170,6 +1600,7 @@ export const ir: {
 	const: _b$constItem,
 	continue: _b$continueExpression,
 	dynamic: _b$dynamicType,
+	empty: F.buildEmptyStatement,
 	enum: _b$enumItem,
 	externCrate: _b$externCrateDeclaration,
 	field: _b$fieldExpression,
@@ -2178,7 +1609,6 @@ export const ir: {
 	foreignMod: _b$foreignModItem,
 	function: _b$functionItem,
 	functionSignature: _b$functionSignatureItem,
-	gen: _b$genBlock,
 	generic: _b$genericType,
 	if: _b$ifExpression,
 	impl: _b$implItem,
@@ -2186,13 +1616,13 @@ export const ir: {
 	innerAttribute: _b$innerAttributeItem,
 	integer: F.buildIntegerLiteral,
 	let: _b$letDeclaration,
-	list: _b$useList,
 	loop: _b$loopExpression,
 	macro: _b$macroDefinition,
 	match: _b$matchExpression,
 	mod: _b$modItem,
 	mut: _b$mutPattern,
 	negative: _b$negativeLiteral,
+	never: F.buildNeverType,
 	or: _b$orPattern,
 	parenthesized: _b$parenthesizedExpression,
 	pointer: _b$pointerType,
@@ -2200,15 +1630,13 @@ export const ir: {
 	rawString: _b$rawStringLiteral,
 	ref: _b$refPattern,
 	reference: _b$referenceType,
-	repetition: _b$tokenRepetitionPattern,
+	remainingField: F.buildRemainingFieldPattern,
 	return: _b$returnExpression,
-	scopedList: _b$scopedUseList,
 	slice: _b$slicePattern,
 	static: _b$staticItem,
 	string: _b$stringLiteral,
 	struct: _b$structItem,
 	trait: _b$traitItem,
-	tree: _b$tokenTreePattern,
 	try: _b$tryExpression,
 	tuple: _b$tupleType,
 	tupleStruct: _b$tupleStructPattern,
@@ -2216,29 +1644,17 @@ export const ir: {
 	unary: _b$unaryExpression,
 	union: _b$unionItem,
 	unit: F.buildUnitType,
-	unsafe: _b$unsafeBlock,
 	use: _b$useDeclaration,
 	while: _b$whileExpression,
-	wildcard: _b$useWildcard,
 	yield: _b$yieldExpression,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	statement,
 	declarationStatement,
-	tokenPattern,
-	tokens,
 	nonSpecialToken,
-	useClause,
 	type,
-	expressionExceptRange,
 	expression,
-	expressionEndingWithBlock,
-	delimTokens,
-	nonDelimToken,
-	condition,
 	pattern,
 	literal,
 	literalPattern,
-	path,
 	synonym
 };

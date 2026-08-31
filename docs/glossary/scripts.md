@@ -119,11 +119,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * Intentional exclusions vs cleanup-rules.md §A1:
  *   - `grammar.sittir.ts` (hand-edited adjuster) — never generated.
- *   - `overrides.suggested.ts` — written by the codegen CLI AFTER its
- *     internal validation runs (it embeds validator diagnostics). Including
- *     it would force the manifest to be written twice per codegen invocation,
- *     for no real safety gain (it is human-review output, not consumed at
- *     runtime). Hand-edits to it are overwritten on the next codegen run.
  */
 ```
 

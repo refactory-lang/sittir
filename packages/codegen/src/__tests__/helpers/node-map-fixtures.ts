@@ -12,7 +12,7 @@ import {
 	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
-import type { ChoiceRule, RenderRule, SeqRule } from '../../types/rule.ts';
+import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
@@ -32,7 +32,6 @@ export function makeNodeMapWith(
 			promotedRules: [],
 			repeatedShapes: []
 		},
-		linkRules: {},
 		externals: new Set(),
 		word: undefined,
 		polymorphFormKinds,
@@ -74,11 +73,8 @@ export function makeMinimalNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	const callRuleSimplified = flatten(callRule) as RenderRule & typeof callRule;
-	nodes.set(
-		'call_expression',
-		new AssembledBranch('call_expression', callRule, callRuleSimplified, callRuleSimplified)
-	);
+	const callRuleRender = flatten(callRule);
+	nodes.set('call_expression', new AssembledBranch('call_expression', callRuleRender, callRuleRender));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }));
 	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }));

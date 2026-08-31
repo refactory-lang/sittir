@@ -41,7 +41,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 
 	it('an aliased symbol stamps storage (source) and parse (target) ids separately', () => {
 		// `_suite`-shaped case: node = hidden source, parseKind = alias target.
-		const rule: Rule = { type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements' };
+		const rule: Rule = { type: SYMBOL, name: '_simple_statements', aliasedTo: 'block' };
 		const [v] = deriveValuesForRule(rule, ctx, 'single');
 		expect(v).toMatchObject({
 			node: { kind: 'unresolved-ref', name: '_simple_statements' },
@@ -104,10 +104,10 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 				// if deriveValuesForRule fell back to a catalog lookup by name,
 				// 'identifier' would resolve to id 1 (see kindEntries above), not 99.
 				{ type: SYMBOL, name: 'identifier', kindId: 99 },
-				// Aliased + stamped: aliasedFromId is the effective storage id,
-				// kindId is the parse (alias-target) id — same pairing as the
+				// Aliased + stamped: kindId is the storage (source) id,
+				// aliasedToId is the parse (alias-target) id — same pairing as the
 				// aliased-symbol case above, just carried on the ref itself.
-				{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+				{ type: SYMBOL, name: '_simple_statements', aliasedTo: 'block', kindId: 77, aliasedToId: 42 }
 			]
 		};
 		const out = deriveValuesForRule(rule, ctx, 'single');

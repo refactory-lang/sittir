@@ -47,7 +47,6 @@ const MODULES = {
 	engineLoader: '../../codegen/src/engine-loader.ts',
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
-	suggested: '../../codegen/src/emitters/suggested.ts',
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 	generate: '../../codegen/src/compiler/generate.ts',
 	generatedMetadata: '../../codegen/src/compiler/generated-metadata.ts',
@@ -75,7 +74,6 @@ export interface CodegenSurface {
 	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
-	suggested: typeof import('../../codegen/src/emitters/suggested.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 	generate: typeof import('../../codegen/src/compiler/generate.ts');
 	generatedMetadata: typeof import('../../codegen/src/compiler/generated-metadata.ts');
@@ -150,7 +148,6 @@ export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').F
 export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
 export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
 export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
-export type RoundTripDiagnostic = import('../../codegen/src/emitters/suggested.ts').RoundTripDiagnostic;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.
@@ -180,5 +177,6 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	// and `AssembleCtx` from the module, matching the pattern in
 	// tools/src/probe/variant-derivation.ts.
 	const { assemble, AssembleCtx } = await load('assemble');
-	return assemble(AssembleCtx.from(normalized));
+	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
+	return assemble(AssembleCtx.from(normalized, generatedIdTables));
 }
