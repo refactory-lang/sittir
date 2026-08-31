@@ -8,10 +8,9 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
+4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; NOT a one-line deletion (brace escaping and style spacing are tangled — see the entry)
 5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
 8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
-9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
@@ -44,7 +43,29 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 **Found during:** the string-fragment visibility work (python) and the template-substitution immediacy fix (typescript). The walker-authored templates for interpolation kinds carry style spaces around the substitution body, so a source `f"{x}"` renders `f"{ x }"` and `` `pre${x}` `` renders `` `pre${ x }` `` — valid in both languages and reparse-identical (the padding is code-context whitespace inside the substitution), but byte-divergent from typical source. Distinct from the (fixed) seam-injection class: these spaces are template TEXT, not writer insertions, so the seam machinery never sees them.
 
-**Fix, if/when prioritized:** drop the padding from the walker-emitted templates for interpolation-family kinds (template text is the sole owner of these spaces — deleting them there is the whole fix); the corpus rows for mixed strings pin that nothing else regresses.
+**Fix, if/when prioritized — NOT simply deleting the padding.** The spaces
+come from `escapeLiteral` (`packages/codegen/src/emitters/templates.ts`),
+which rewrites every literal `{` to `{ ` and `}` to ` }` unconditionally.
+That is jinja escaping, not style: a literal `{` emitted adjacent to a
+slot's `{{ ... }}` would produce `{{{ ...` and misparse. Deleting the
+padding breaks template compilation.
+
+Two things are tangled and must be separated first:
+1. Where the brace abuts a jinja delimiter, the separation is required —
+   but it should be emitted as a jinja literal (`{{ "{" }}`, the pattern
+   this file already uses for newlines and whitespace-only text) so the
+   rendered bytes carry no space.
+2. Where the brace abuts ordinary text, the injected space is currently
+   doing double duty as a STYLE space that some grammars genuinely want
+   (rust's `struct A { a: u8 }` gets its canonical spacing from this
+   artifact). Removing it there would degrade rust output while fixing
+   python's `f"{ x }"`.
+
+So the real fix is to make brace escaping context-precise and hand the
+style spaces back to whoever owns them (template literals, per the
+spacing spec's "style spaces stay in template literals"). That is a
+per-grammar style question, not a one-line deletion — size it as its own
+slice, and gate on rendered bytes per grammar, not just reparse.
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 
@@ -67,8 +88,3 @@ The dominant class: the native transport deserializer demands a complete `$span`
 
 **Fix, if/when prioritized:** re-probe under the current separator-as-slot model (`probe-kind -g python -k dict_pattern --reparse`); the fix likely belongs with the kind's separated-list flank capture, not the template.
 
-## `ki-from-default-empty-delimiter` — generated `from.ts` `?? F.xElements({ delimiter: 2 })` defaults fail the list Config type
-
-**Found during:** the container-from coercion review fixes — the dominant remaining type-error cluster (TS2739, ~20-40 sites per grammar pre-review-fix, still the bulk of what's left). `canDefaultToEmpty` emits `?? F.<list>({ delimiter: 2 })` as the empty-list default, but the options bag alone is not assignable to the list factory's element-bearing Config — runtime is fine (the factory dispatches on the bag shape), types are not. Cosmetic per the type-debt policy (gates run on `validate:native`, not tsgo), but it is the single biggest cluster and one emitter site.
-
-**Fix, if/when prioritized:** emit the empty call in the list factory's real signature — `F.<list>({ delimiter: 2 })` → the options-first overload requires at least the options bag to typecheck against the overload set; passing it through the factory's declared options overload (or emitting `F.<list>()` when no options vary) closes the whole cluster at `canDefaultToEmpty`.
