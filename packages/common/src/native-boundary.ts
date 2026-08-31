@@ -1,4 +1,4 @@
-import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
+import type { AnyNodeData, NodeChildValue, NodeMemberValue } from '@sittir/types';
 
 const ASSERT_ENABLED = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
 
@@ -70,7 +70,7 @@ function assertNativeChildren(value: unknown, path: string): void {
 	}
 }
 
-function assertNativeChildValue(value: unknown, path: string): asserts value is NodeMemberValue {
+function assertNativeChildValue(value: unknown, path: string): asserts value is NodeChildValue {
 	if (typeof value === 'string') return;
 	if (typeof value === 'number') {
 		assertFiniteNumber(value, path);

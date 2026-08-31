@@ -36,7 +36,13 @@ export interface NodeTrivia {
  * on generated interfaces carry those modifiers directly (optional `?`
  * for absent, `readonly T[]` for repeated).
  */
-export type NodeMemberValue = AnyNodeData | string | number;
+export type NodeMemberValue = AnyNodeData | string | number | boolean;
+
+/**
+ * Anonymous-child value type — like {@link NodeMemberValue} but without
+ * `boolean`: children carry nodes and scalar text/number leaves only.
+ */
+export type NodeChildValue = AnyNodeData | string | number;
 
 /**
  * Anonymous-child storage shape.
@@ -44,7 +50,7 @@ export type NodeMemberValue = AnyNodeData | string | number;
  * Unnamed slots may remain scalar when the grammar slot is singular, or array-
  * shaped when the grammar slot is repeated.
  */
-export type NodeChildren = NodeMemberValue | readonly NodeMemberValue[];
+export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
 
 /**
  * Runtime node shape — grammar-agnostic. Used by @sittir/legacy-core functions

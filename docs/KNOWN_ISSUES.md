@@ -8,13 +8,10 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
 4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
 5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
-6. `ki-raw-read-root-render` — hydrate read stubs before transport; `it.fails` pin in examples-verify
 8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
 9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
-10. `ki-mapentry-forwarded` — one-line type-union gap in the factory-map emitter
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
@@ -49,24 +46,12 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 **Fix, if/when prioritized:** drop the padding from the walker-emitted templates for interpolation-family kinds (template text is the sole owner of these spaces — deleting them there is the whole fix); the corpus rows for mixed strings pin that nothing else regresses.
 
-## `ki-nodemembervalue-boolean` — TS `NodeMemberValue` union lacks `boolean`, lagging the sanctioned wire contract
-
-**Found during:** the parity-fixture serde fix — the generic Rust `FieldValue` union gained `Bool` (and `Option`-element `Multiple`) to match what the generated transports and `assertNativeFieldValue` already accept, but the TS-side `NodeMemberValue` (`AnyNodeData | string | number`) was left unwidened: a naive widening would falsely widen `NodeChildren` too, since children disallow booleans. Type-level only — runtime paths already handle boolean slots.
-
-**Fix, if/when prioritized:** split the member-value and child-value unions so `boolean` lands only on the member side; deferred with the rest of the type-debt class (gates run on `validate:native`, not tsgo).
-
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 
 **Found during:** re-pinning `packages/codegen/src/scm/__tests__/scm-roles.test.ts`. Rust's `string_literal` factory takes a config with an explicit `stringOpen` slot (the open-quote token variant: `"`, `b"`, …) plus an `elements` array, so `emitFromString` has no single-positional-child surface to compose and deliberately skips rather than inventing a default quote style (`line_comment`'s content-node shape skips `from.comment` the same way). The test now pins the absence.
 
 **Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
 
-
-## `ki-raw-read-root-render` — rendering a RAW parsed root fails: reader stubs reach the native transport unhydrated
-
-**Found during:** the examples verification pass — `wrapNode(root, tree).$render()` on a freshly parsed root (the use-case guide's round-trip example) throws ``Missing field `_name` on SourceFileTransport._statements``. The native reader materializes one level and leaves children as `$nodeHandle` stubs the wrap layer drills lazily; the boundary render hands the raw NodeData straight to the transport deserializer, which demands the full struct. Sibling class to `ki-exercise-span-transport` (there the inputs are factory-built span-less nodes; here they are READ stubs). Pinned by an `it.fails` in `packages/rust/tests/examples-verify.test.ts` — flips green when fixed.
-
-**Fix, if/when prioritized:** hydrate before transport — either the wrap surface's `$render` drills the tree fully first, or the boundary render resolves `$nodeHandle` stubs via `readNode` while projecting the transport. The validators' render paths (`loadBoundaryRender`) read fully-materialized nodes, which is why no validator row pins this.
 
 ## `ki-exercise-span-transport` — exercise factory round-trips fail on `Missing field start on …Transport.$span`
 
