@@ -10,7 +10,9 @@ import {
 	classifyFactoryShape,
 	collectAliasSourceKinds,
 	forwardedTargetKind,
-	resolveFactoryFieldNames, isAuthoredCompound } from './shared.ts';
+	resolveFactoryFieldNames,
+	isAuthoredCompound
+} from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';

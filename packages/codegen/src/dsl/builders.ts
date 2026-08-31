@@ -156,8 +156,16 @@ const structuralToken: StructuralToken = Object.assign(
 const structuralPrec: StructuralPrec = Object.assign(
 	(value: number | string, content: Structural): PrecRule<'evaluate'> => ({ type: 'PREC', content, value }),
 	{
-		left: (value: number | string, content: Structural): PrecLeftRule<'evaluate'> => ({ type: 'PREC_LEFT', content, value }),
-		right: (value: number | string, content: Structural): PrecRightRule<'evaluate'> => ({ type: 'PREC_RIGHT', content, value }),
+		left: (value: number | string, content: Structural): PrecLeftRule<'evaluate'> => ({
+			type: 'PREC_LEFT',
+			content,
+			value
+		}),
+		right: (value: number | string, content: Structural): PrecRightRule<'evaluate'> => ({
+			type: 'PREC_RIGHT',
+			content,
+			value
+		}),
 		dynamic: (value: number, content: Structural): PrecDynamicRule<'evaluate'> => ({
 			type: 'PREC_DYNAMIC',
 			content,
@@ -256,7 +264,12 @@ export const structuralBuilder: StructuralBuilder = {
 
 function structuralAlias(content: Structural, target: string | SymbolRule<'evaluate'>): AliasRule<'evaluate'> {
 	const inner = content.type === SYMBOL ? { ...content, inline: false } : content;
-	return { type: ALIAS, content: inner, named: typeof target !== 'string', value: typeof target === 'string' ? target : target.name };
+	return {
+		type: ALIAS,
+		content: inner,
+		named: typeof target !== 'string',
+		value: typeof target === 'string' ? target : target.name
+	};
 }
 
 function collapseSingletonSeq(seq: BuiltSeq): Built {

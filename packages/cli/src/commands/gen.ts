@@ -89,8 +89,8 @@ export const gen: CommandModule = {
 				if (!opts.output) throw new Error('Missing required option: --output');
 				if (!opts.all && !opts.nodes) throw new Error('Must provide --nodes or --all');
 
-				// Generate (codegen) → returns the assembled NodeMap.
-				const nodeMap = opts.all ? await runFullRegen(codegenOpts) : await runCodegen(codegenOpts);
+				// Generate (codegen).
+				await (opts.all ? runFullRegen(codegenOpts) : runCodegen(codegenOpts));
 
 				// Post-generate validation (tools). Codegen now only generates +
 				// builds; the cli orchestrates the validation passes that used to run

@@ -142,7 +142,7 @@ export interface UnresolvedRef {
 	readonly name: string;
 }
 
-export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum';
+export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum' | 'mixedEnum';
 
 export interface FieldStorageInfo {
 	readonly kind: FieldStorageKind;
@@ -733,7 +733,8 @@ export function deriveValuesForRule(
 			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			const parseEntry =
 				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
-			if (entry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
+			if (entry !== undefined || parseEntry !== undefined)
+				noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
@@ -864,7 +865,7 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	return result;
 }
 
-const FACTORY_NAME_RESERVED = new Set([
+export const FACTORY_NAME_RESERVED = new Set([
 	'arguments',
 	'eval',
 	'yield',
@@ -1265,7 +1266,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		slot.fieldName ??
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
-			: (slot.inlinedFrom?.replace(/^_+/, '') || 'content'));
+			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
 	const configKey = snakeToCamel(storageName);
 	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 	const propertyName = isMulti ? pluralize(configKey) : configKey;
@@ -1592,7 +1593,8 @@ export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
 export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
 	const body = unwrapStructuralPassthroughs(simplifiedRule);
 	if (body.type === SYMBOL || (body.type === SEQ && body.members.length === 0)) return 'envelope';
-	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray')) return 'envelope';
+	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
+		return 'envelope';
 	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
 	return 'branch';
 }
@@ -1887,26 +1889,22 @@ export type AssembledNode =
 	| AssembledList;
 
 export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound)
-		return node.fields;
+	if (node instanceof AbstractAssembledCompound) return node.fields;
 	return [];
 }
 
 export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound)
-		return node.fields;
+	if (node instanceof AbstractAssembledCompound) return node.fields;
 	return [];
 }
 
 export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound)
-		return Object.values(node.slots);
+	if (node instanceof AbstractAssembledCompound) return Object.values(node.slots);
 	return [];
 }
 
 export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound)
-		return Object.values(node.slots);
+	if (node instanceof AbstractAssembledCompound) return Object.values(node.slots);
 	return [];
 }
 

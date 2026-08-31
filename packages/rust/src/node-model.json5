@@ -1,15 +1,26 @@
 {
   "name": "rust",
-  "nodeCount": 400,
+  "nodeCount": 410,
   "word": "identifier",
   "supertypes": [
+    "_condition",
     "_declaration_statement",
+    "_delim_tokens",
     "_expression",
+    "_expression_ending_with_block",
+    "_expression_except_range",
     "_literal",
     "_literal_pattern",
+    "_non_delim_token",
     "_non_special_token",
+    "_path",
     "_pattern",
-    "_type"
+    "_statement",
+    "_token_pattern",
+    "_tokens",
+    "_type",
+    "_use_clause",
+    "non_special_token"
   ],
   "externals": [
     "_block_comment_content",
@@ -185,6 +196,12 @@
     }
   },
   "fieldAliasMap": {
+    "token_repetition_pattern.token_patterns": {
+      "primitive_type": "_primitive_type"
+    },
+    "token_repetition.tokens": {
+      "primitive_type": "_primitive_type"
+    },
     "struct_item.name": {
       "type_identifier": "identifier"
     },
@@ -406,14 +423,35 @@
     "_block_comment_doc_inner.doc": {
       "doc_comment": "_block_comment_content"
     },
+    "_token_tree_pattern_paren.token_patterns": {
+      "primitive_type": "_primitive_type"
+    },
+    "_token_tree_pattern_bracket.token_patterns": {
+      "primitive_type": "_primitive_type"
+    },
+    "_token_tree_pattern_brace.token_patterns": {
+      "primitive_type": "_primitive_type"
+    },
+    "_token_tree_paren.tokens": {
+      "primitive_type": "_primitive_type"
+    },
+    "_token_tree_bracket.tokens": {
+      "primitive_type": "_primitive_type"
+    },
+    "_token_tree_brace.tokens": {
+      "primitive_type": "_primitive_type"
+    },
     "_delim_token_tree_paren.delim_tokens": {
-      "token_tree": "delim_token_tree"
+      "token_tree": "delim_token_tree",
+      "primitive_type": "_primitive_type"
     },
     "_delim_token_tree_bracket.delim_tokens": {
-      "token_tree": "delim_token_tree"
+      "token_tree": "delim_token_tree",
+      "primitive_type": "_primitive_type"
     },
     "_delim_token_tree_brace.delim_tokens": {
-      "token_tree": "delim_token_tree"
+      "token_tree": "delim_token_tree",
+      "primitive_type": "_primitive_type"
     },
     "_attributed_parameter.content": {
       "type_identifier": "identifier",
@@ -4564,6 +4602,65 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_condition",
+      "modelType": "supertype",
+      "typeName": "Condition",
+      "irKey": "condition",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_expression",
+        "_let_chain",
+        "_literal",
+        "array_expression",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "let_condition",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "raw_string_literal",
+        "reference_expression",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
+      ]
+    },
+    {
       "kind": "_declaration_statement",
       "modelType": "supertype",
       "typeName": "DeclarationStatement",
@@ -4757,6 +4854,19 @@
       ]
     },
     {
+      "kind": "_delim_tokens",
+      "modelType": "supertype",
+      "typeName": "DelimTokens",
+      "irKey": "delimTokens",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_non_special_token",
+        "delim_token_tree",
+        "dollar"
+      ]
+    },
+    {
       "kind": "_enum_variant_list_elements",
       "modelType": "list",
       "typeName": "EnumVariantListElements",
@@ -4821,6 +4931,82 @@
         "metavariable",
         "parenthesized_expression",
         "range_expression",
+        "raw_string_literal",
+        "reference_expression",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
+      ]
+    },
+    {
+      "kind": "_expression_ending_with_block",
+      "modelType": "supertype",
+      "typeName": "ExpressionEndingWithBlock",
+      "irKey": "expressionEndingWithBlock",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "async_block",
+        "block",
+        "const_block",
+        "for_expression",
+        "gen_block",
+        "if_expression",
+        "loop_expression",
+        "match_expression",
+        "try_block",
+        "unsafe_block",
+        "while_expression"
+      ]
+    },
+    {
+      "kind": "_expression_except_range",
+      "modelType": "supertype",
+      "typeName": "ExpressionExceptRange",
+      "irKey": "expressionExceptRange",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_literal",
+        "array_expression",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
         "raw_string_literal",
         "reference_expression",
         "return_expression",
@@ -5857,9 +6043,21 @@
       "text": ";"
     },
     {
+      "kind": "_non_delim_token",
+      "modelType": "supertype",
+      "typeName": "NonDelimToken",
+      "irKey": "nonDelimToken",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_non_special_token",
+        "dollar"
+      ]
+    },
+    {
       "kind": "_non_special_token",
       "modelType": "supertype",
-      "typeName": "NonSpecialToken",
+      "typeName": "_NonSpecialToken",
       "irKey": "nonSpecialToken",
       "hidden": true,
       "transparent": true,
@@ -6043,6 +6241,22 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ]
+    },
+    {
+      "kind": "_path",
+      "modelType": "supertype",
+      "typeName": "_Path",
+      "irKey": "path",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super"
       ]
     },
     {
@@ -6751,6 +6965,39 @@
       ]
     },
     {
+      "kind": "_statement",
+      "modelType": "supertype",
+      "typeName": "Statement",
+      "irKey": "statement",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_declaration_statement",
+        "associated_type",
+        "attribute_item",
+        "const_item",
+        "empty_statement",
+        "enum_item",
+        "expression_statement",
+        "extern_crate_declaration",
+        "foreign_mod_item",
+        "function_item",
+        "function_signature_item",
+        "impl_item",
+        "inner_attribute_item",
+        "let_declaration",
+        "macro_definition",
+        "macro_invocation",
+        "mod_item",
+        "static_item",
+        "struct_item",
+        "trait_item",
+        "type_item",
+        "union_item",
+        "use_declaration"
+      ]
+    },
+    {
       "kind": "_string_literal_open",
       "modelType": "pattern",
       "typeName": "StringLiteralOpen",
@@ -6956,6 +7203,21 @@
         "use",
         "where",
         "while"
+      ]
+    },
+    {
+      "kind": "_token_pattern",
+      "modelType": "supertype",
+      "typeName": "TokenPattern",
+      "irKey": "tokenPattern",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_non_special_token",
+        "metavariable",
+        "token_binding_pattern",
+        "token_repetition_pattern",
+        "token_tree_pattern"
       ]
     },
     {
@@ -7422,6 +7684,20 @@
       ]
     },
     {
+      "kind": "_tokens",
+      "modelType": "supertype",
+      "typeName": "Tokens",
+      "irKey": "tokens",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_non_special_token",
+        "metavariable",
+        "token_repetition",
+        "token_tree"
+      ]
+    },
+    {
       "kind": "_tuple_expression_elements",
       "modelType": "list",
       "typeName": "TupleExpressionElements",
@@ -7669,6 +7945,26 @@
       ]
     },
     {
+      "kind": "_use_clause",
+      "modelType": "supertype",
+      "typeName": "UseClause",
+      "irKey": "useClause",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "scoped_use_list",
+        "self",
+        "super",
+        "use_as_clause",
+        "use_list",
+        "use_wildcard"
+      ]
+    },
+    {
       "kind": "_use_clauses",
       "modelType": "list",
       "typeName": "UseClauses",
@@ -7877,42 +8173,6 @@
       "factoryFields": [
         "visibility_modifier_group"
       ]
-    },
-    {
-      "kind": "_visibility_modifier_pub_parens",
-      "modelType": "envelope",
-      "typeName": "VisibilityModifierPubParens",
-      "factoryName": "_visibilityModifierPubParens",
-      "irKey": "visibilityModifierPubParens",
-      "hidden": false,
-      "hoisted": true,
-      "fields": [
-        {
-          "name": "visibility_modifier_group",
-          "propertyName": "visibilityModifierGroup",
-          "paramName": "visibilityModifierGroup",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_visibility_modifier_group",
-              "parseKind": "visibility_modifier_group",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_visibility_modifier_group"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "name": "_visibility_modifier_pub_parens"
     },
     {
       "kind": "_where_predicates",
@@ -15415,6 +15675,31 @@
       "word": false,
       "text": "!",
       "factoryShape": "text"
+    },
+    {
+      "kind": "non_special_token",
+      "modelType": "supertype",
+      "typeName": "NonSpecialToken",
+      "irKey": "nonSpecialToken",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_literal",
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
+      ]
     },
     {
       "kind": "or_pattern",

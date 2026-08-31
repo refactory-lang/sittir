@@ -6,12 +6,22 @@ import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
+	Condition,
 	DeclarationStatement,
+	DelimTokens,
 	Expression,
+	ExpressionEndingWithBlock,
+	ExpressionExceptRange,
 	LiteralPattern,
-	NonSpecialToken,
+	NonDelimToken,
 	Pattern,
+	Statement,
+	TokenPattern,
+	Tokens,
+	UseClause,
 	_Literal,
+	_NonSpecialToken,
+	_Path,
 	_Type
 } from './types.js';
 
@@ -308,13 +318,23 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.AttributedArgument };
 	TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
+	statement(v: { readonly $type: string | number }): v is Statement;
 	declarationStatement(v: { readonly $type: string | number }): v is DeclarationStatement;
-	nonSpecialToken(v: { readonly $type: string | number }): v is NonSpecialToken;
+	tokenPattern(v: { readonly $type: string | number }): v is TokenPattern;
+	tokens(v: { readonly $type: string | number }): v is Tokens;
+	nonSpecialToken(v: { readonly $type: string | number }): v is _NonSpecialToken;
+	useClause(v: { readonly $type: string | number }): v is UseClause;
 	type(v: { readonly $type: string | number }): v is _Type;
+	expressionExceptRange(v: { readonly $type: string | number }): v is ExpressionExceptRange;
 	expression(v: { readonly $type: string | number }): v is Expression;
+	expressionEndingWithBlock(v: { readonly $type: string | number }): v is ExpressionEndingWithBlock;
+	delimTokens(v: { readonly $type: string | number }): v is DelimTokens;
+	nonDelimToken(v: { readonly $type: string | number }): v is NonDelimToken;
+	condition(v: { readonly $type: string | number }): v is Condition;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
 	literal(v: { readonly $type: string | number }): v is _Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
+	path(v: { readonly $type: string | number }): v is _Path;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -538,13 +558,23 @@ export interface AssertGuards {
 	AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
 	TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
+	statement(v: { readonly $type: string | number }): asserts v is Statement;
 	declarationStatement(v: { readonly $type: string | number }): asserts v is DeclarationStatement;
-	nonSpecialToken(v: { readonly $type: string | number }): asserts v is NonSpecialToken;
+	tokenPattern(v: { readonly $type: string | number }): asserts v is TokenPattern;
+	tokens(v: { readonly $type: string | number }): asserts v is Tokens;
+	nonSpecialToken(v: { readonly $type: string | number }): asserts v is _NonSpecialToken;
+	useClause(v: { readonly $type: string | number }): asserts v is UseClause;
 	type(v: { readonly $type: string | number }): asserts v is _Type;
+	expressionExceptRange(v: { readonly $type: string | number }): asserts v is ExpressionExceptRange;
 	expression(v: { readonly $type: string | number }): asserts v is Expression;
+	expressionEndingWithBlock(v: { readonly $type: string | number }): asserts v is ExpressionEndingWithBlock;
+	delimTokens(v: { readonly $type: string | number }): asserts v is DelimTokens;
+	nonDelimToken(v: { readonly $type: string | number }): asserts v is NonDelimToken;
+	condition(v: { readonly $type: string | number }): asserts v is Condition;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
 	literal(v: { readonly $type: string | number }): asserts v is _Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
+	path(v: { readonly $type: string | number }): asserts v is _Path;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -555,22 +585,41 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 	return (v) => ids.has(v.$type);
 }
 
+const _supertype_statement_ids = new Set<number>([
+	160, 186, 240, 161, 159, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
+]);
 const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 159, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
+const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 135]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 135]);
 const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347]);
+const _supertype_useClause_ids = new Set<number>([132, 1, 135, 133, 134, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
 	236, 233, 135, 234, 227, 246, 224, 225, 221, 223, 1, 240, 235, 237, 229, 199
+]);
+const _supertype_expressionExceptRange_ids = new Set<number>([
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 122, 314, 120, 151, 1, 132, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 135, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_expression_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 122, 314, 120, 151, 1, 132, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 135, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247
+]);
+const _supertype_expressionEndingWithBlock_ids = new Set<number>([
+	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
+]);
+const _supertype_delimTokens_ids = new Set<number>([241]);
+const _supertype_condition_ids = new Set<number>([
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 122, 314, 120, 151, 1, 132, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 135, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
 	312, 313, 122, 314, 120, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 302, 303, 304, 308, 281, 240, 349
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 122, 314, 120, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 122, 314, 120, 151, 311]);
+const _supertype_path_ids = new Set<number>([132, 1, 135, 133, 134, 244]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -750,13 +799,23 @@ export const is = {
 	AttributedArgument: _g(TSKindId.AttributedArgument),
 	TypeArgument: _g(TSKindId.TypeArgument),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
+	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
+	tokenPattern: _sg(_supertype_tokenPattern_ids),
+	tokens: _sg(_supertype_tokens_ids),
 	nonSpecialToken: _sg(_supertype_nonSpecialToken_ids),
+	useClause: _sg(_supertype_useClause_ids),
 	type: _sg(_supertype_type_ids),
+	expressionExceptRange: _sg(_supertype_expressionExceptRange_ids),
 	expression: _sg(_supertype_expression_ids),
+	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
+	delimTokens: _sg(_supertype_delimTokens_ids),
+	nonDelimToken: _sg(new Set<number>()),
+	condition: _sg(_supertype_condition_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),
-	literalPattern: _sg(_supertype_literalPattern_ids)
+	literalPattern: _sg(_supertype_literalPattern_ids),
+	path: _sg(_supertype_path_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -971,13 +1030,23 @@ export const assert = {
 	AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
 	TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
+	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),
+	tokenPattern: _makeAssert('tokenPattern', is.tokenPattern as _AnyGuard),
+	tokens: _makeAssert('tokens', is.tokens as _AnyGuard),
 	nonSpecialToken: _makeAssert('nonSpecialToken', is.nonSpecialToken as _AnyGuard),
+	useClause: _makeAssert('useClause', is.useClause as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
+	expressionExceptRange: _makeAssert('expressionExceptRange', is.expressionExceptRange as _AnyGuard),
 	expression: _makeAssert('expression', is.expression as _AnyGuard),
+	expressionEndingWithBlock: _makeAssert('expressionEndingWithBlock', is.expressionEndingWithBlock as _AnyGuard),
+	delimTokens: _makeAssert('delimTokens', is.delimTokens as _AnyGuard),
+	nonDelimToken: _makeAssert('nonDelimToken', is.nonDelimToken as _AnyGuard),
+	condition: _makeAssert('condition', is.condition as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
-	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard)
+	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
+	path: _makeAssert('path', is.path as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

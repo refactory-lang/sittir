@@ -47,7 +47,10 @@ function makeNormalized(
 	overrides?: Partial<SimplifiedGrammar>
 ): SimplifiedGrammar {
 	const stamped = Object.fromEntries(
-		Object.entries(rules).map(([name, rule]) => [name, rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule])
+		Object.entries(rules).map(([name, rule]) => [
+			name,
+			rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule
+		])
 	);
 	const normalizedRules = flattenRules(stamped);
 	const simplifiedRules = computeSimplifiedRules(
@@ -369,7 +372,8 @@ describe('Assemble — classifyNode', () => {
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_type_identifier: {
 					type: SYMBOL,
-					name: 'identifier', aliasedTo: 'type_identifier'
+					name: 'identifier',
+					aliasedTo: 'type_identifier'
 				}
 			},
 			{
@@ -386,7 +390,8 @@ describe('Assemble — classifyNode', () => {
 				expr: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_pair_alias: {
 					type: SYMBOL,
-					name: '_pair_source', aliasedTo: 'pair'
+					name: '_pair_source',
+					aliasedTo: 'pair'
 				}
 			},
 			{
@@ -1006,6 +1011,31 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			}
 		};
 	}
+
+	it('mints enum CHOICE members catalog-first (member literals are reachable anon nodes)', () => {
+		const normalized = makeNormalized({
+			op: {
+				type: CHOICE,
+				members: [
+					{ type: STRING, value: 'in' },
+					{ type: STRING, value: 'of' }
+				]
+			} as unknown as Rule<'link'>,
+			root: {
+				type: SEQ,
+				members: [
+					{ type: SYMBOL, name: 'op' },
+					{ type: SYMBOL, name: 'identifier' }
+				]
+			},
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		});
+		const generatedIdTables = makeIdTables({ kw_in: anonEntry(7, 'in'), kw_of: anonEntry(8, 'of') });
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		expect(nodeMap.nodes.has('kw_in')).toBe(true);
+		expect(nodeMap.nodes.has('kw_of')).toBe(true);
+		expect(nodeMap.nodes.has('in')).toBe(false);
+	});
 
 	it('keys an anonymous literal by its catalog kind name, not by raw text', () => {
 		const normalized = makeNormalized({

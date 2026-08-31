@@ -465,10 +465,10 @@ export type TypescriptGrammar = {
 			};
 			right: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
-		children: { multiple: false; required: false; types: [{ type: 'binary_expression_arm'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'binary_expression_in'; named: true }] };
 	};
-	readonly binary_expression_arm: {
-		type: 'binary_expression_arm';
+	readonly binary_expression_in: {
+		type: 'binary_expression_in';
 		named: true;
 		fields: {
 			left: {

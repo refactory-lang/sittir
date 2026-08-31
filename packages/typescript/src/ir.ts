@@ -11,925 +11,7 @@
 // straight to an entry, use the typed wrapper (`readTreeNode`) so the
 // entry sees a wrapped node and takes the identity quick-return path.
 
-import * as F from './factories.js';
-import * as FR from './from.js';
-import { attachProps } from './utils.js';
-
-const _b$functionDeclaration: typeof FR.coerceToFunctionDeclaration & {
-	strict: typeof F.buildFunctionDeclaration;
-} = attachProps(FR.coerceToFunctionDeclaration, {
-	strict: F.buildFunctionDeclaration
-});
-
-const _b$generatorFunctionDeclaration: typeof FR.coerceToGeneratorFunctionDeclaration & {
-	strict: typeof F.buildGeneratorFunctionDeclaration;
-} = attachProps(FR.coerceToGeneratorFunctionDeclaration, {
-	strict: F.buildGeneratorFunctionDeclaration
-});
-
-const _b$classDeclaration: typeof FR.coerceToClassDeclaration & {
-	strict: typeof F.buildClassDeclaration;
-} = attachProps(FR.coerceToClassDeclaration, {
-	strict: F.buildClassDeclaration
-});
-
-const _b$lexicalDeclaration: typeof FR.coerceToLexicalDeclaration & {
-	strict: typeof F.buildLexicalDeclaration;
-} = attachProps(FR.coerceToLexicalDeclaration, {
-	strict: F.buildLexicalDeclaration
-});
-
-const _b$variableDeclaration: typeof FR.coerceToVariableDeclaration & {
-	strict: typeof F.buildVariableDeclaration;
-} = attachProps(FR.coerceToVariableDeclaration, {
-	strict: F.buildVariableDeclaration
-});
-
-const _b$functionSignature: typeof FR.coerceToFunctionSignature & {
-	strict: typeof F.buildFunctionSignature;
-} = attachProps(FR.coerceToFunctionSignature, {
-	strict: F.buildFunctionSignature
-});
-
-const _b$abstractClassDeclaration: typeof FR.coerceToAbstractClassDeclaration & {
-	strict: typeof F.buildAbstractClassDeclaration;
-} = attachProps(FR.coerceToAbstractClassDeclaration, {
-	strict: F.buildAbstractClassDeclaration
-});
-
-const _b$module: typeof FR.coerceToModule & {
-	strict: typeof F.buildModule;
-} = attachProps(FR.coerceToModule, {
-	strict: F.buildModule
-});
-
-const _b$internalModule: typeof FR.coerceToInternalModule & {
-	strict: typeof F.buildInternalModule;
-} = attachProps(FR.coerceToInternalModule, {
-	strict: F.buildInternalModule
-});
-
-const _b$typeAliasDeclaration: typeof FR.coerceToTypeAliasDeclaration & {
-	strict: typeof F.buildTypeAliasDeclaration;
-} = attachProps(FR.coerceToTypeAliasDeclaration, {
-	strict: F.buildTypeAliasDeclaration
-});
-
-const _b$enumDeclaration: typeof FR.coerceToEnumDeclaration & {
-	strict: typeof F.buildEnumDeclaration;
-} = attachProps(FR.coerceToEnumDeclaration, {
-	strict: F.buildEnumDeclaration
-});
-
-const _b$interfaceDeclaration: typeof FR.coerceToInterfaceDeclaration & {
-	strict: typeof F.buildInterfaceDeclaration;
-} = attachProps(FR.coerceToInterfaceDeclaration, {
-	strict: F.buildInterfaceDeclaration
-});
-
-const _b$importAlias: typeof FR.coerceToImportAlias & {
-	strict: typeof F.buildImportAlias;
-} = attachProps(FR.coerceToImportAlias, {
-	strict: F.buildImportAlias
-});
-
-const _b$ambientDeclaration: typeof FR.coerceToAmbientDeclaration & {
-	strict: typeof F.buildAmbientDeclaration;
-} = attachProps(FR.coerceToAmbientDeclaration, {
-	strict: F.buildAmbientDeclaration
-});
-
-const _b$exportStatement: typeof FR.coerceToExportStatement & {
-	strict: typeof F.buildExportStatement;
-} = attachProps(FR.coerceToExportStatement, {
-	strict: F.buildExportStatement
-});
-
-const _b$importStatement: typeof FR.coerceToImportStatement & {
-	strict: typeof F.buildImportStatement;
-} = attachProps(FR.coerceToImportStatement, {
-	strict: F.buildImportStatement
-});
-
-const _b$debuggerStatement: typeof FR.coerceToDebuggerStatement & {
-	strict: typeof F.buildDebuggerStatement;
-} = attachProps(FR.coerceToDebuggerStatement, {
-	strict: F.buildDebuggerStatement
-});
-
-const _b$expressionStatement: typeof FR.coerceToExpressionStatement & {
-	strict: typeof F.buildExpressionStatement;
-} = attachProps(FR.coerceToExpressionStatement, {
-	strict: F.buildExpressionStatement
-});
-
-const _b$statementBlock: typeof FR.coerceToStatementBlock & {
-	strict: typeof F.buildStatementBlock;
-} = attachProps(FR.coerceToStatementBlock, {
-	strict: F.buildStatementBlock
-});
-
-const _b$ifStatement: typeof FR.coerceToIfStatement & {
-	strict: typeof F.buildIfStatement;
-} = attachProps(FR.coerceToIfStatement, {
-	strict: F.buildIfStatement
-});
-
-const _b$switchStatement: typeof FR.coerceToSwitchStatement & {
-	strict: typeof F.buildSwitchStatement;
-} = attachProps(FR.coerceToSwitchStatement, {
-	strict: F.buildSwitchStatement
-});
-
-const _b$forStatement: typeof FR.coerceToForStatement & {
-	strict: typeof F.buildForStatement;
-} = attachProps(FR.coerceToForStatement, {
-	strict: F.buildForStatement
-});
-
-const _b$forInStatement: typeof FR.coerceToForInStatement & {
-	strict: typeof F.buildForInStatement;
-} = attachProps(FR.coerceToForInStatement, {
-	strict: F.buildForInStatement
-});
-
-const _b$whileStatement: typeof FR.coerceToWhileStatement & {
-	strict: typeof F.buildWhileStatement;
-} = attachProps(FR.coerceToWhileStatement, {
-	strict: F.buildWhileStatement
-});
-
-const _b$doStatement: typeof FR.coerceToDoStatement & {
-	strict: typeof F.buildDoStatement;
-} = attachProps(FR.coerceToDoStatement, {
-	strict: F.buildDoStatement
-});
-
-const _b$tryStatement: typeof FR.coerceToTryStatement & {
-	strict: typeof F.buildTryStatement;
-} = attachProps(FR.coerceToTryStatement, {
-	strict: F.buildTryStatement
-});
-
-const _b$withStatement: typeof FR.coerceToWithStatement & {
-	strict: typeof F.buildWithStatement;
-} = attachProps(FR.coerceToWithStatement, {
-	strict: F.buildWithStatement
-});
-
-const _b$breakStatement: typeof FR.coerceToBreakStatement & {
-	strict: typeof F.buildBreakStatement;
-} = attachProps(FR.coerceToBreakStatement, {
-	strict: F.buildBreakStatement
-});
-
-const _b$continueStatement: typeof FR.coerceToContinueStatement & {
-	strict: typeof F.buildContinueStatement;
-} = attachProps(FR.coerceToContinueStatement, {
-	strict: F.buildContinueStatement
-});
-
-const _b$returnStatement: typeof FR.coerceToReturnStatement & {
-	strict: typeof F.buildReturnStatement;
-} = attachProps(FR.coerceToReturnStatement, {
-	strict: F.buildReturnStatement
-});
-
-const _b$throwStatement: typeof FR.coerceToThrowStatement & {
-	strict: typeof F.buildThrowStatement;
-} = attachProps(FR.coerceToThrowStatement, {
-	strict: F.buildThrowStatement
-});
-
-const _b$labeledStatement: typeof FR.coerceToLabeledStatement & {
-	strict: typeof F.buildLabeledStatement;
-} = attachProps(FR.coerceToLabeledStatement, {
-	strict: F.buildLabeledStatement
-});
-
-const _b$asExpression: typeof FR.coerceToAsExpression & {
-	strict: typeof F.buildAsExpression;
-} = attachProps(FR.coerceToAsExpression, {
-	strict: F.buildAsExpression
-});
-
-const _b$satisfiesExpression: typeof FR.coerceToSatisfiesExpression & {
-	strict: typeof F.buildSatisfiesExpression;
-} = attachProps(FR.coerceToSatisfiesExpression, {
-	strict: F.buildSatisfiesExpression
-});
-
-const _b$instantiationExpression: typeof FR.coerceToInstantiationExpression & {
-	strict: typeof F.buildInstantiationExpression;
-} = attachProps(FR.coerceToInstantiationExpression, {
-	strict: F.buildInstantiationExpression
-});
-
-const _b$typeAssertion: typeof FR.coerceToTypeAssertion & {
-	strict: typeof F.buildTypeAssertion;
-} = attachProps(FR.coerceToTypeAssertion, {
-	strict: F.buildTypeAssertion
-});
-
-const _b$assignmentExpression: typeof FR.coerceToAssignmentExpression & {
-	strict: typeof F.buildAssignmentExpression;
-} = attachProps(FR.coerceToAssignmentExpression, {
-	strict: F.buildAssignmentExpression
-});
-
-const _b$augmentedAssignmentExpression: typeof FR.coerceToAugmentedAssignmentExpression & {
-	strict: typeof F.buildAugmentedAssignmentExpression;
-} = attachProps(FR.coerceToAugmentedAssignmentExpression, {
-	strict: F.buildAugmentedAssignmentExpression
-});
-
-const _b$awaitExpression: typeof FR.coerceToAwaitExpression & {
-	strict: typeof F.buildAwaitExpression;
-} = attachProps(FR.coerceToAwaitExpression, {
-	strict: F.buildAwaitExpression
-});
-
-const _b$unaryExpression: typeof FR.coerceToUnaryExpression & {
-	strict: typeof F.buildUnaryExpression;
-} = attachProps(FR.coerceToUnaryExpression, {
-	strict: F.buildUnaryExpression
-});
-
-const _b$binaryExpression: typeof FR.coerceToBinaryExpression & {
-	strict: typeof F.buildBinaryExpression;
-} = attachProps(FR.coerceToBinaryExpression, {
-	strict: F.buildBinaryExpression
-});
-
-const _b$ternaryExpression: typeof FR.coerceToTernaryExpression & {
-	strict: typeof F.buildTernaryExpression;
-} = attachProps(FR.coerceToTernaryExpression, {
-	strict: F.buildTernaryExpression
-});
-
-const _b$updateExpression: typeof FR.coerceToUpdateExpression & {
-	strict: typeof F.buildUpdateExpression;
-} = attachProps(FR.coerceToUpdateExpression, {
-	strict: F.buildUpdateExpression
-});
-
-const _b$newExpression: typeof FR.coerceToNewExpression & {
-	strict: typeof F.buildNewExpression;
-} = attachProps(FR.coerceToNewExpression, {
-	strict: F.buildNewExpression
-});
-
-const _b$yieldExpression: typeof FR.coerceToYieldExpression & {
-	strict: typeof F.buildYieldExpression;
-} = attachProps(FR.coerceToYieldExpression, {
-	strict: F.buildYieldExpression
-});
-
-const _b$subscriptExpression: typeof FR.coerceToSubscriptExpression & {
-	strict: typeof F.buildSubscriptExpression;
-} = attachProps(FR.coerceToSubscriptExpression, {
-	strict: F.buildSubscriptExpression
-});
-
-const _b$memberExpression: typeof FR.coerceToMemberExpression & {
-	strict: typeof F.buildMemberExpression;
-} = attachProps(FR.coerceToMemberExpression, {
-	strict: F.buildMemberExpression
-});
-
-const _b$parenthesizedExpression: typeof FR.coerceToParenthesizedExpression & {
-	strict: typeof F.buildParenthesizedExpression;
-} = attachProps(FR.coerceToParenthesizedExpression, {
-	strict: F.buildParenthesizedExpression
-});
-
-const _b$string: typeof FR.coerceToString & {
-	strict: typeof F.buildString;
-} = attachProps(FR.coerceToString, {
-	strict: F.buildString
-});
-
-const _b$templateString: typeof FR.coerceToTemplateString & {
-	strict: typeof F.buildTemplateString;
-} = attachProps(FR.coerceToTemplateString, {
-	strict: F.buildTemplateString
-});
-
-const _b$regex: typeof FR.coerceToRegex & {
-	strict: typeof F.buildRegex;
-} = attachProps(FR.coerceToRegex, {
-	strict: F.buildRegex
-});
-
-const _b$object: typeof FR.coerceToObject & {
-	strict: typeof F.buildObject;
-} = attachProps(FR.coerceToObject, {
-	strict: F.buildObject
-});
-
-const _b$array: typeof FR.coerceToArray & {
-	strict: typeof F.buildArray;
-} = attachProps(FR.coerceToArray, {
-	strict: F.buildArray
-});
-
-const _b$functionExpression: typeof FR.coerceToFunctionExpression & {
-	strict: typeof F.buildFunctionExpression;
-} = attachProps(FR.coerceToFunctionExpression, {
-	strict: F.buildFunctionExpression
-});
-
-const _b$arrowFunction: typeof FR.coerceToArrowFunction & {
-	strict: typeof F.buildArrowFunction;
-} = attachProps(FR.coerceToArrowFunction, {
-	strict: F.buildArrowFunction
-});
-
-const _b$generatorFunction: typeof FR.coerceToGeneratorFunction & {
-	strict: typeof F.buildGeneratorFunction;
-} = attachProps(FR.coerceToGeneratorFunction, {
-	strict: F.buildGeneratorFunction
-});
-
-const _b$class: typeof FR.coerceToClass & {
-	strict: typeof F.buildClass;
-} = attachProps(FR.coerceToClass, {
-	strict: F.buildClass
-});
-
-const _b$metaProperty: typeof FR.coerceToMetaProperty & {
-	strict: typeof F.buildMetaProperty;
-} = attachProps(FR.coerceToMetaProperty, {
-	strict: F.buildMetaProperty
-});
-
-const _b$callExpression: typeof FR.coerceToCallExpression & {
-	strict: typeof F.buildCallExpression;
-} = attachProps(FR.coerceToCallExpression, {
-	strict: F.buildCallExpression
-});
-
-const _b$nonNullExpression: typeof FR.coerceToNonNullExpression & {
-	strict: typeof F.buildNonNullExpression;
-} = attachProps(FR.coerceToNonNullExpression, {
-	strict: F.buildNonNullExpression
-});
-
-const _b$objectPattern: typeof FR.coerceToObjectPattern & {
-	strict: typeof F.buildObjectPattern;
-} = attachProps(FR.coerceToObjectPattern, {
-	strict: F.buildObjectPattern
-});
-
-const _b$arrayPattern: typeof FR.coerceToArrayPattern & {
-	strict: typeof F.buildArrayPattern;
-} = attachProps(FR.coerceToArrayPattern, {
-	strict: F.buildArrayPattern
-});
-
-const _b$restPattern: typeof FR.coerceToRestPattern & {
-	strict: typeof F.buildRestPattern;
-} = attachProps(FR.coerceToRestPattern, {
-	strict: F.buildRestPattern
-});
-
-const _b$functionType: typeof FR.coerceToFunctionType & {
-	strict: typeof F.buildFunctionType;
-} = attachProps(FR.coerceToFunctionType, {
-	strict: F.buildFunctionType
-});
-
-const _b$readonlyType: typeof FR.coerceToReadonlyType & {
-	strict: typeof F.buildReadonlyType;
-} = attachProps(FR.coerceToReadonlyType, {
-	strict: F.buildReadonlyType
-});
-
-const _b$constructorType: typeof FR.coerceToConstructorType & {
-	strict: typeof F.buildConstructorType;
-} = attachProps(FR.coerceToConstructorType, {
-	strict: F.buildConstructorType
-});
-
-const _b$inferType: typeof FR.coerceToInferType & {
-	strict: typeof F.buildInferType;
-} = attachProps(FR.coerceToInferType, {
-	strict: F.buildInferType
-});
-
-const _b$parenthesizedType: typeof FR.coerceToParenthesizedType & {
-	strict: typeof F.buildParenthesizedType;
-} = attachProps(FR.coerceToParenthesizedType, {
-	strict: F.buildParenthesizedType
-});
-
-const _b$nestedTypeIdentifier: typeof FR.coerceToNestedTypeIdentifier & {
-	strict: typeof F.buildNestedTypeIdentifier;
-} = attachProps(FR.coerceToNestedTypeIdentifier, {
-	strict: F.buildNestedTypeIdentifier
-});
-
-const _b$genericType: typeof FR.coerceToGenericType & {
-	strict: typeof F.buildGenericType;
-} = attachProps(FR.coerceToGenericType, {
-	strict: F.buildGenericType
-});
-
-const _b$objectType: typeof FR.coerceToObjectType & {
-	strict: typeof F.buildObjectType;
-	curly: typeof F.buildObjectTypeCurly;
-	flow: typeof F.buildObjectTypeFlow;
-} = attachProps(FR.coerceToObjectType, {
-	strict: F.buildObjectType,
-	curly: F.buildObjectTypeCurly,
-	flow: F.buildObjectTypeFlow
-});
-
-const _b$arrayType: typeof FR.coerceToArrayType & {
-	strict: typeof F.buildArrayType;
-} = attachProps(FR.coerceToArrayType, {
-	strict: F.buildArrayType
-});
-
-const _b$tupleType: typeof FR.coerceToTupleType & {
-	strict: typeof F.buildTupleType;
-} = attachProps(FR.coerceToTupleType, {
-	strict: F.buildTupleType
-});
-
-const _b$flowMaybeType: typeof FR.coerceToFlowMaybeType & {
-	strict: typeof F.buildFlowMaybeType;
-} = attachProps(FR.coerceToFlowMaybeType, {
-	strict: F.buildFlowMaybeType
-});
-
-const _b$typeQuery: typeof FR.coerceToTypeQuery & {
-	strict: typeof F.buildTypeQuery;
-} = attachProps(FR.coerceToTypeQuery, {
-	strict: F.buildTypeQuery
-});
-
-const _b$indexTypeQuery: typeof FR.coerceToIndexTypeQuery & {
-	strict: typeof F.buildIndexTypeQuery;
-} = attachProps(FR.coerceToIndexTypeQuery, {
-	strict: F.buildIndexTypeQuery
-});
-
-const _b$literalType: typeof FR.coerceToLiteralType & {
-	strict: typeof F.buildLiteralType;
-} = attachProps(FR.coerceToLiteralType, {
-	strict: F.buildLiteralType
-});
-
-const _b$lookupType: typeof FR.coerceToLookupType & {
-	strict: typeof F.buildLookupType;
-} = attachProps(FR.coerceToLookupType, {
-	strict: F.buildLookupType
-});
-
-const _b$conditionalType: typeof FR.coerceToConditionalType & {
-	strict: typeof F.buildConditionalType;
-} = attachProps(FR.coerceToConditionalType, {
-	strict: F.buildConditionalType
-});
-
-const _b$templateLiteralType: typeof FR.coerceToTemplateLiteralType & {
-	strict: typeof F.buildTemplateLiteralType;
-} = attachProps(FR.coerceToTemplateLiteralType, {
-	strict: F.buildTemplateLiteralType
-});
-
-const _b$intersectionType: typeof FR.coerceToIntersectionType & {
-	strict: typeof F.buildIntersectionType;
-} = attachProps(FR.coerceToIntersectionType, {
-	strict: F.buildIntersectionType
-});
-
-const _b$unionType: typeof FR.coerceToUnionType & {
-	strict: typeof F.buildUnionType;
-} = attachProps(FR.coerceToUnionType, {
-	strict: F.buildUnionType
-});
-
-const _b$program: typeof FR.coerceToProgram & {
-	strict: typeof F.buildProgram;
-} = attachProps(FR.coerceToProgram, {
-	strict: F.buildProgram
-});
-
-const _b$namespaceExport: typeof FR.coerceToNamespaceExport & {
-	strict: typeof F.buildNamespaceExport;
-} = attachProps(FR.coerceToNamespaceExport, {
-	strict: F.buildNamespaceExport
-});
-
-const _b$exportClause: typeof FR.coerceToExportClause & {
-	strict: typeof F.buildExportClause;
-} = attachProps(FR.coerceToExportClause, {
-	strict: F.buildExportClause
-});
-
-const _b$exportSpecifier: typeof FR.coerceToExportSpecifier & {
-	strict: typeof F.buildExportSpecifier;
-} = attachProps(FR.coerceToExportSpecifier, {
-	strict: F.buildExportSpecifier
-});
-
-const _b$importClause: typeof FR.coerceToImportClause & {
-	strict: typeof F.buildImportClause;
-} = attachProps(FR.coerceToImportClause, {
-	strict: F.buildImportClause
-});
-
-const _b$namespaceImport: typeof FR.coerceToNamespaceImport & {
-	strict: typeof F.buildNamespaceImport;
-} = attachProps(FR.coerceToNamespaceImport, {
-	strict: F.buildNamespaceImport
-});
-
-const _b$namedImports: typeof FR.coerceToNamedImports & {
-	strict: typeof F.buildNamedImports;
-} = attachProps(FR.coerceToNamedImports, {
-	strict: F.buildNamedImports
-});
-
-const _b$importSpecifier: typeof FR.coerceToImportSpecifier & {
-	strict: typeof F.buildImportSpecifier;
-} = attachProps(FR.coerceToImportSpecifier, {
-	strict: F.buildImportSpecifier
-});
-
-const _b$importAttribute: typeof FR.coerceToImportAttribute & {
-	strict: typeof F.buildImportAttribute;
-} = attachProps(FR.coerceToImportAttribute, {
-	strict: F.buildImportAttribute
-});
-
-const _b$variableDeclarator: typeof FR.coerceToVariableDeclarator & {
-	strict: typeof F.buildVariableDeclarator;
-} = attachProps(FR.coerceToVariableDeclarator, {
-	strict: F.buildVariableDeclarator
-});
-
-const _b$elseClause: typeof FR.coerceToElseClause & {
-	strict: typeof F.buildElseClause;
-} = attachProps(FR.coerceToElseClause, {
-	strict: F.buildElseClause
-});
-
-const _b$switchBody: typeof FR.coerceToSwitchBody & {
-	strict: typeof F.buildSwitchBody;
-} = attachProps(FR.coerceToSwitchBody, {
-	strict: F.buildSwitchBody
-});
-
-const _b$switchCase: typeof FR.coerceToSwitchCase & {
-	strict: typeof F.buildSwitchCase;
-} = attachProps(FR.coerceToSwitchCase, {
-	strict: F.buildSwitchCase
-});
-
-const _b$switchDefault: typeof FR.coerceToSwitchDefault & {
-	strict: typeof F.buildSwitchDefault;
-} = attachProps(FR.coerceToSwitchDefault, {
-	strict: F.buildSwitchDefault
-});
-
-const _b$catchClause: typeof FR.coerceToCatchClause & {
-	strict: typeof F.buildCatchClause;
-} = attachProps(FR.coerceToCatchClause, {
-	strict: F.buildCatchClause
-});
-
-const _b$finallyClause: typeof FR.coerceToFinallyClause & {
-	strict: typeof F.buildFinallyClause;
-} = attachProps(FR.coerceToFinallyClause, {
-	strict: F.buildFinallyClause
-});
-
-const _b$assignmentPattern: typeof FR.coerceToAssignmentPattern & {
-	strict: typeof F.buildAssignmentPattern;
-} = attachProps(FR.coerceToAssignmentPattern, {
-	strict: F.buildAssignmentPattern
-});
-
-const _b$objectAssignmentPattern: typeof FR.coerceToObjectAssignmentPattern & {
-	strict: typeof F.buildObjectAssignmentPattern;
-} = attachProps(FR.coerceToObjectAssignmentPattern, {
-	strict: F.buildObjectAssignmentPattern
-});
-
-const _b$nestedIdentifier: typeof FR.coerceToNestedIdentifier & {
-	strict: typeof F.buildNestedIdentifier;
-} = attachProps(FR.coerceToNestedIdentifier, {
-	strict: F.buildNestedIdentifier
-});
-
-const _b$classHeritage: typeof FR.coerceToClassHeritage & {
-	strict: typeof F.buildClassHeritage;
-} = attachProps(FR.coerceToClassHeritage, {
-	strict: F.buildClassHeritage
-});
-
-const _b$spreadElement: typeof FR.coerceToSpreadElement & {
-	strict: typeof F.buildSpreadElement;
-} = attachProps(FR.coerceToSpreadElement, {
-	strict: F.buildSpreadElement
-});
-
-const _b$sequenceExpression: typeof FR.coerceToSequenceExpression & {
-	strict: typeof F.buildSequenceExpression;
-} = attachProps(FR.coerceToSequenceExpression, {
-	strict: F.buildSequenceExpression
-});
-
-const _b$templateSubstitution: typeof FR.coerceToTemplateSubstitution & {
-	strict: typeof F.buildTemplateSubstitution;
-} = attachProps(FR.coerceToTemplateSubstitution, {
-	strict: F.buildTemplateSubstitution
-});
-
-const _b$arguments: typeof FR.coerceToArguments & {
-	strict: typeof F.buildArguments;
-} = attachProps(FR.coerceToArguments, {
-	strict: F.buildArguments
-});
-
-const _b$decorator: typeof FR.coerceToDecorator & {
-	strict: typeof F.buildDecorator;
-} = attachProps(FR.coerceToDecorator, {
-	strict: F.buildDecorator
-});
-
-const _b$decoratorMemberExpression: typeof FR.coerceToDecoratorMemberExpression & {
-	strict: typeof F.buildDecoratorMemberExpression;
-} = attachProps(FR.coerceToDecoratorMemberExpression, {
-	strict: F.buildDecoratorMemberExpression
-});
-
-const _b$decoratorCallExpression: typeof FR.coerceToDecoratorCallExpression & {
-	strict: typeof F.buildDecoratorCallExpression;
-} = attachProps(FR.coerceToDecoratorCallExpression, {
-	strict: F.buildDecoratorCallExpression
-});
-
-const _b$classBody: typeof FR.coerceToClassBody & {
-	strict: typeof F.buildClassBody;
-} = attachProps(FR.coerceToClassBody, {
-	strict: F.buildClassBody
-});
-
-const _b$formalParameters: typeof FR.coerceToFormalParameters & {
-	strict: typeof F.buildFormalParameters;
-} = attachProps(FR.coerceToFormalParameters, {
-	strict: F.buildFormalParameters
-});
-
-const _b$classStaticBlock: typeof FR.coerceToClassStaticBlock & {
-	strict: typeof F.buildClassStaticBlock;
-} = attachProps(FR.coerceToClassStaticBlock, {
-	strict: F.buildClassStaticBlock
-});
-
-const _b$methodDefinition: typeof FR.coerceToMethodDefinition & {
-	strict: typeof F.buildMethodDefinition;
-} = attachProps(FR.coerceToMethodDefinition, {
-	strict: F.buildMethodDefinition
-});
-
-const _b$pair: typeof FR.coerceToPair & {
-	strict: typeof F.buildPair;
-} = attachProps(FR.coerceToPair, {
-	strict: F.buildPair
-});
-
-const _b$pairPattern: typeof FR.coerceToPairPattern & {
-	strict: typeof F.buildPairPattern;
-} = attachProps(FR.coerceToPairPattern, {
-	strict: F.buildPairPattern
-});
-
-const _b$computedPropertyName: typeof FR.coerceToComputedPropertyName & {
-	strict: typeof F.buildComputedPropertyName;
-} = attachProps(FR.coerceToComputedPropertyName, {
-	strict: F.buildComputedPropertyName
-});
-
-const _b$publicFieldDefinition: typeof FR.coerceToPublicFieldDefinition & {
-	strict: typeof F.buildPublicFieldDefinition;
-} = attachProps(FR.coerceToPublicFieldDefinition, {
-	strict: F.buildPublicFieldDefinition
-});
-
-const _b$methodSignature: typeof FR.coerceToMethodSignature & {
-	strict: typeof F.buildMethodSignature;
-} = attachProps(FR.coerceToMethodSignature, {
-	strict: F.buildMethodSignature
-});
-
-const _b$abstractMethodSignature: typeof FR.coerceToAbstractMethodSignature & {
-	strict: typeof F.buildAbstractMethodSignature;
-} = attachProps(FR.coerceToAbstractMethodSignature, {
-	strict: F.buildAbstractMethodSignature
-});
-
-const _b$decoratorParenthesizedExpression: typeof FR.coerceToDecoratorParenthesizedExpression & {
-	strict: typeof F.buildDecoratorParenthesizedExpression;
-} = attachProps(FR.coerceToDecoratorParenthesizedExpression, {
-	strict: F.buildDecoratorParenthesizedExpression
-});
-
-const _b$importRequireClause: typeof FR.coerceToImportRequireClause & {
-	strict: typeof F.buildImportRequireClause;
-} = attachProps(FR.coerceToImportRequireClause, {
-	strict: F.buildImportRequireClause
-});
-
-const _b$extendsClause: typeof FR.coerceToExtendsClause & {
-	strict: typeof F.buildExtendsClause;
-} = attachProps(FR.coerceToExtendsClause, {
-	strict: F.buildExtendsClause
-});
-
-const _b$implementsClause: typeof FR.coerceToImplementsClause & {
-	strict: typeof F.buildImplementsClause;
-} = attachProps(FR.coerceToImplementsClause, {
-	strict: F.buildImplementsClause
-});
-
-const _b$extendsTypeClause: typeof FR.coerceToExtendsTypeClause & {
-	strict: typeof F.buildExtendsTypeClause;
-} = attachProps(FR.coerceToExtendsTypeClause, {
-	strict: F.buildExtendsTypeClause
-});
-
-const _b$enumBody: typeof FR.coerceToEnumBody & {
-	strict: typeof F.buildEnumBody;
-} = attachProps(FR.coerceToEnumBody, {
-	strict: F.buildEnumBody
-});
-
-const _b$enumAssignment: typeof FR.coerceToEnumAssignment & {
-	strict: typeof F.buildEnumAssignment;
-} = attachProps(FR.coerceToEnumAssignment, {
-	strict: F.buildEnumAssignment
-});
-
-const _b$requiredParameter: typeof FR.coerceToRequiredParameter & {
-	strict: typeof F.buildRequiredParameter;
-} = attachProps(FR.coerceToRequiredParameter, {
-	strict: F.buildRequiredParameter
-});
-
-const _b$optionalParameter: typeof FR.coerceToOptionalParameter & {
-	strict: typeof F.buildOptionalParameter;
-} = attachProps(FR.coerceToOptionalParameter, {
-	strict: F.buildOptionalParameter
-});
-
-const _b$omittingTypeAnnotation: typeof FR.coerceToOmittingTypeAnnotation & {
-	strict: typeof F.buildOmittingTypeAnnotation;
-} = attachProps(FR.coerceToOmittingTypeAnnotation, {
-	strict: F.buildOmittingTypeAnnotation
-});
-
-const _b$addingTypeAnnotation: typeof FR.coerceToAddingTypeAnnotation & {
-	strict: typeof F.buildAddingTypeAnnotation;
-} = attachProps(FR.coerceToAddingTypeAnnotation, {
-	strict: F.buildAddingTypeAnnotation
-});
-
-const _b$optingTypeAnnotation: typeof FR.coerceToOptingTypeAnnotation & {
-	strict: typeof F.buildOptingTypeAnnotation;
-} = attachProps(FR.coerceToOptingTypeAnnotation, {
-	strict: F.buildOptingTypeAnnotation
-});
-
-const _b$typeAnnotation: typeof FR.coerceToTypeAnnotation & {
-	strict: typeof F.buildTypeAnnotation;
-} = attachProps(FR.coerceToTypeAnnotation, {
-	strict: F.buildTypeAnnotation
-});
-
-const _b$asserts: typeof FR.coerceToAsserts & {
-	strict: typeof F.buildAsserts;
-} = attachProps(FR.coerceToAsserts, {
-	strict: F.buildAsserts
-});
-
-const _b$assertsAnnotation: typeof FR.coerceToAssertsAnnotation & {
-	strict: typeof F.buildAssertsAnnotation;
-} = attachProps(FR.coerceToAssertsAnnotation, {
-	strict: F.buildAssertsAnnotation
-});
-
-const _b$tupleParameter: typeof FR.coerceToTupleParameter & {
-	strict: typeof F.buildTupleParameter;
-} = attachProps(FR.coerceToTupleParameter, {
-	strict: F.buildTupleParameter
-});
-
-const _b$optionalTupleParameter: typeof FR.coerceToOptionalTupleParameter & {
-	strict: typeof F.buildOptionalTupleParameter;
-} = attachProps(FR.coerceToOptionalTupleParameter, {
-	strict: F.buildOptionalTupleParameter
-});
-
-const _b$optionalType: typeof FR.coerceToOptionalType & {
-	strict: typeof F.buildOptionalType;
-} = attachProps(FR.coerceToOptionalType, {
-	strict: F.buildOptionalType
-});
-
-const _b$restType: typeof FR.coerceToRestType & {
-	strict: typeof F.buildRestType;
-} = attachProps(FR.coerceToRestType, {
-	strict: F.buildRestType
-});
-
-const _b$templateType: typeof FR.coerceToTemplateType & {
-	strict: typeof F.buildTemplateType;
-} = attachProps(FR.coerceToTemplateType, {
-	strict: F.buildTemplateType
-});
-
-const _b$typePredicate: typeof FR.coerceToTypePredicate & {
-	strict: typeof F.buildTypePredicate;
-} = attachProps(FR.coerceToTypePredicate, {
-	strict: F.buildTypePredicate
-});
-
-const _b$typePredicateAnnotation: typeof FR.coerceToTypePredicateAnnotation & {
-	strict: typeof F.buildTypePredicateAnnotation;
-} = attachProps(FR.coerceToTypePredicateAnnotation, {
-	strict: F.buildTypePredicateAnnotation
-});
-
-const _b$mappedTypeClause: typeof FR.coerceToMappedTypeClause & {
-	strict: typeof F.buildMappedTypeClause;
-} = attachProps(FR.coerceToMappedTypeClause, {
-	strict: F.buildMappedTypeClause
-});
-
-const _b$typeArguments: typeof FR.coerceToTypeArguments & {
-	strict: typeof F.buildTypeArguments;
-} = attachProps(FR.coerceToTypeArguments, {
-	strict: F.buildTypeArguments
-});
-
-const _b$callSignature: typeof FR.coerceToCallSignature & {
-	strict: typeof F.buildCallSignature;
-} = attachProps(FR.coerceToCallSignature, {
-	strict: F.buildCallSignature
-});
-
-const _b$propertySignature: typeof FR.coerceToPropertySignature & {
-	strict: typeof F.buildPropertySignature;
-} = attachProps(FR.coerceToPropertySignature, {
-	strict: F.buildPropertySignature
-});
-
-const _b$typeParameters: typeof FR.coerceToTypeParameters & {
-	strict: typeof F.buildTypeParameters;
-} = attachProps(FR.coerceToTypeParameters, {
-	strict: F.buildTypeParameters
-});
-
-const _b$typeParameter: typeof FR.coerceToTypeParameter & {
-	strict: typeof F.buildTypeParameter;
-} = attachProps(FR.coerceToTypeParameter, {
-	strict: F.buildTypeParameter
-});
-
-const _b$defaultType: typeof FR.coerceToDefaultType & {
-	strict: typeof F.buildDefaultType;
-} = attachProps(FR.coerceToDefaultType, {
-	strict: F.buildDefaultType
-});
-
-const _b$constraint: typeof FR.coerceToConstraint & {
-	strict: typeof F.buildConstraint;
-} = attachProps(FR.coerceToConstraint, {
-	strict: F.buildConstraint
-});
-
-const _b$constructSignature: typeof FR.coerceToConstructSignature & {
-	strict: typeof F.buildConstructSignature;
-} = attachProps(FR.coerceToConstructSignature, {
-	strict: F.buildConstructSignature
-});
-
-const _b$indexSignature: typeof FR.coerceToIndexSignature & {
-	strict: typeof F.buildIndexSignature;
-} = attachProps(FR.coerceToIndexSignature, {
-	strict: F.buildIndexSignature
-});
-
-const _b$objectTypeContent: typeof FR.coerceToObjectTypeContent & {
-	strict: typeof F.buildObjectTypeContent;
-} = attachProps(FR.coerceToObjectTypeContent, {
-	strict: F.buildObjectTypeContent
-});
+import * as F from './factories/index.js';
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
@@ -973,184 +55,248 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const declaration: {
-	readonly function: typeof _b$functionDeclaration;
-	readonly generatorFunction: typeof _b$generatorFunctionDeclaration;
-	readonly class: typeof _b$classDeclaration;
-	readonly lexical: typeof _b$lexicalDeclaration;
-	readonly variable: typeof _b$variableDeclaration;
-	readonly functionSignature: typeof _b$functionSignature;
-	readonly abstractClass: typeof _b$abstractClassDeclaration;
-	readonly module: typeof _b$module;
-	readonly internalModule: typeof _b$internalModule;
-	readonly typeAlias: typeof _b$typeAliasDeclaration;
-	readonly enum: typeof _b$enumDeclaration;
-	readonly interface: typeof _b$interfaceDeclaration;
-	readonly importAlias: typeof _b$importAlias;
-	readonly ambient: typeof _b$ambientDeclaration;
+export const moduleExportName: {
+	readonly identifier: typeof F.buildIdentifier;
+	readonly string: typeof F.string;
 } = {
-	function: _b$functionDeclaration,
-	generatorFunction: _b$generatorFunctionDeclaration,
-	class: _b$classDeclaration,
-	lexical: _b$lexicalDeclaration,
-	variable: _b$variableDeclaration,
-	functionSignature: _b$functionSignature,
-	abstractClass: _b$abstractClassDeclaration,
-	module: _b$module,
-	internalModule: _b$internalModule,
-	typeAlias: _b$typeAliasDeclaration,
-	enum: _b$enumDeclaration,
-	interface: _b$interfaceDeclaration,
-	importAlias: _b$importAlias,
-	ambient: _b$ambientDeclaration
+	identifier: F.buildIdentifier,
+	string: F.string
+};
+
+export const declaration: {
+	readonly function: typeof F.functionDeclaration;
+	readonly generatorFunction: typeof F.generatorFunctionDeclaration;
+	readonly class: typeof F.classDeclaration;
+	readonly lexical: typeof F.lexicalDeclaration;
+	readonly variable: typeof F.variableDeclaration;
+	readonly functionSignature: typeof F.functionSignature;
+	readonly abstractClass: typeof F.abstractClassDeclaration;
+	readonly module: typeof F.module;
+	readonly internalModule: typeof F.internalModule;
+	readonly typeAlias: typeof F.typeAliasDeclaration;
+	readonly enum: typeof F.enumDeclaration;
+	readonly interface: typeof F.interfaceDeclaration;
+	readonly importAlias: typeof F.importAlias;
+	readonly ambient: typeof F.ambientDeclaration;
+} = {
+	function: F.functionDeclaration,
+	generatorFunction: F.generatorFunctionDeclaration,
+	class: F.classDeclaration,
+	lexical: F.lexicalDeclaration,
+	variable: F.variableDeclaration,
+	functionSignature: F.functionSignature,
+	abstractClass: F.abstractClassDeclaration,
+	module: F.module,
+	internalModule: F.internalModule,
+	typeAlias: F.typeAliasDeclaration,
+	enum: F.enumDeclaration,
+	interface: F.interfaceDeclaration,
+	importAlias: F.importAlias,
+	ambient: F.ambientDeclaration
 };
 
 export const statement: {
-	readonly export: typeof _b$exportStatement;
-	readonly import: typeof _b$importStatement;
-	readonly debugger: typeof _b$debuggerStatement;
-	readonly expression: typeof _b$expressionStatement;
-	readonly block: typeof _b$statementBlock;
-	readonly if: typeof _b$ifStatement;
-	readonly switch: typeof _b$switchStatement;
-	readonly for: typeof _b$forStatement;
-	readonly forIn: typeof _b$forInStatement;
-	readonly while: typeof _b$whileStatement;
-	readonly do: typeof _b$doStatement;
-	readonly try: typeof _b$tryStatement;
-	readonly with: typeof _b$withStatement;
-	readonly break: typeof _b$breakStatement;
-	readonly continue: typeof _b$continueStatement;
-	readonly return: typeof _b$returnStatement;
-	readonly throw: typeof _b$throwStatement;
+	readonly export: typeof F.exportStatement;
+	readonly import: typeof F.importStatement;
+	readonly debugger: typeof F.debuggerStatement;
+	readonly expression: typeof F.expressionStatement;
+	readonly block: typeof F.statementBlock;
+	readonly if: typeof F.ifStatement;
+	readonly switch: typeof F.switchStatement;
+	readonly for: typeof F.forStatement;
+	readonly forIn: typeof F.forInStatement;
+	readonly while: typeof F.whileStatement;
+	readonly do: typeof F.doStatement;
+	readonly try: typeof F.tryStatement;
+	readonly with: typeof F.withStatement;
+	readonly break: typeof F.breakStatement;
+	readonly continue: typeof F.continueStatement;
+	readonly return: typeof F.returnStatement;
+	readonly throw: typeof F.throwStatement;
 	readonly empty: typeof F.buildEmptyStatement;
-	readonly labeled: typeof _b$labeledStatement;
+	readonly labeled: typeof F.labeledStatement;
 } = {
-	export: _b$exportStatement,
-	import: _b$importStatement,
-	debugger: _b$debuggerStatement,
-	expression: _b$expressionStatement,
-	block: _b$statementBlock,
-	if: _b$ifStatement,
-	switch: _b$switchStatement,
-	for: _b$forStatement,
-	forIn: _b$forInStatement,
-	while: _b$whileStatement,
-	do: _b$doStatement,
-	try: _b$tryStatement,
-	with: _b$withStatement,
-	break: _b$breakStatement,
-	continue: _b$continueStatement,
-	return: _b$returnStatement,
-	throw: _b$throwStatement,
+	export: F.exportStatement,
+	import: F.importStatement,
+	debugger: F.debuggerStatement,
+	expression: F.expressionStatement,
+	block: F.statementBlock,
+	if: F.ifStatement,
+	switch: F.switchStatement,
+	for: F.forStatement,
+	forIn: F.forInStatement,
+	while: F.whileStatement,
+	do: F.doStatement,
+	try: F.tryStatement,
+	with: F.withStatement,
+	break: F.breakStatement,
+	continue: F.continueStatement,
+	return: F.returnStatement,
+	throw: F.throwStatement,
 	empty: F.buildEmptyStatement,
-	labeled: _b$labeledStatement
+	labeled: F.labeledStatement
+};
+
+export const expressions: {
+	readonly sequence: typeof F.sequenceExpression;
+} = {
+	sequence: F.sequenceExpression
 };
 
 export const expression: {
-	readonly as: typeof _b$asExpression;
-	readonly satisfies: typeof _b$satisfiesExpression;
-	readonly instantiation: typeof _b$instantiationExpression;
-	readonly internalModule: typeof _b$internalModule;
-	readonly typeAssertion: typeof _b$typeAssertion;
-	readonly assignment: typeof _b$assignmentExpression;
-	readonly augmentedAssignment: typeof _b$augmentedAssignmentExpression;
-	readonly await: typeof _b$awaitExpression;
-	readonly unary: typeof _b$unaryExpression;
-	readonly binary: typeof _b$binaryExpression;
-	readonly ternary: typeof _b$ternaryExpression;
-	readonly update: typeof _b$updateExpression;
-	readonly new: typeof _b$newExpression;
-	readonly yield: typeof _b$yieldExpression;
+	readonly as: typeof F.asExpression;
+	readonly satisfies: typeof F.satisfiesExpression;
+	readonly instantiation: typeof F.instantiationExpression;
+	readonly internalModule: typeof F.internalModule;
+	readonly typeAssertion: typeof F.typeAssertion;
+	readonly assignment: typeof F.assignmentExpression;
+	readonly augmentedAssignment: typeof F.augmentedAssignmentExpression;
+	readonly await: typeof F.awaitExpression;
+	readonly unary: typeof F.unaryExpression;
+	readonly binary: typeof F.binaryExpression;
+	readonly ternary: typeof F.ternaryExpression;
+	readonly update: typeof F.updateExpression;
+	readonly new: typeof F.newExpression;
+	readonly yield: typeof F.yieldExpression;
 } = {
-	as: _b$asExpression,
-	satisfies: _b$satisfiesExpression,
-	instantiation: _b$instantiationExpression,
-	internalModule: _b$internalModule,
-	typeAssertion: _b$typeAssertion,
-	assignment: _b$assignmentExpression,
-	augmentedAssignment: _b$augmentedAssignmentExpression,
-	await: _b$awaitExpression,
-	unary: _b$unaryExpression,
-	binary: _b$binaryExpression,
-	ternary: _b$ternaryExpression,
-	update: _b$updateExpression,
-	new: _b$newExpression,
-	yield: _b$yieldExpression
+	as: F.asExpression,
+	satisfies: F.satisfiesExpression,
+	instantiation: F.instantiationExpression,
+	internalModule: F.internalModule,
+	typeAssertion: F.typeAssertion,
+	assignment: F.assignmentExpression,
+	augmentedAssignment: F.augmentedAssignmentExpression,
+	await: F.awaitExpression,
+	unary: F.unaryExpression,
+	binary: F.binaryExpression,
+	ternary: F.ternaryExpression,
+	update: F.updateExpression,
+	new: F.newExpression,
+	yield: F.yieldExpression
 };
 
 export const primaryExpression: {
-	readonly subscript: typeof _b$subscriptExpression;
-	readonly member: typeof _b$memberExpression;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
+	readonly subscript: typeof F.subscriptExpression;
+	readonly member: typeof F.memberExpression;
+	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly undefined: typeof F.buildUndefined;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
 	readonly number: typeof F.buildNumber;
-	readonly string: typeof _b$string;
-	readonly templateString: typeof _b$templateString;
-	readonly regex: typeof _b$regex;
+	readonly string: typeof F.string;
+	readonly templateString: typeof F.templateString;
+	readonly regex: typeof F.regex;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly null: typeof F.buildNull;
-	readonly object: typeof _b$object;
-	readonly array: typeof _b$array;
-	readonly function: typeof _b$functionExpression;
-	readonly arrowFunction: typeof _b$arrowFunction;
-	readonly generatorFunction: typeof _b$generatorFunction;
-	readonly class: typeof _b$class;
-	readonly metaProperty: typeof _b$metaProperty;
-	readonly call: typeof _b$callExpression;
-	readonly nonNull: typeof _b$nonNullExpression;
+	readonly object: typeof F.object;
+	readonly array: typeof F.array;
+	readonly function: typeof F.functionExpression;
+	readonly arrowFunction: typeof F.arrowFunction;
+	readonly generatorFunction: typeof F.generatorFunction;
+	readonly class: typeof F.class_;
+	readonly metaProperty: typeof F.metaProperty;
+	readonly call: typeof F.callExpression;
+	readonly nonNull: typeof F.nonNullExpression;
 } = {
-	subscript: _b$subscriptExpression,
-	member: _b$memberExpression,
-	parenthesized: _b$parenthesizedExpression,
+	subscript: F.subscriptExpression,
+	member: F.memberExpression,
+	parenthesized: F.parenthesizedExpression,
 	undefined: F.buildUndefined,
 	identifier: F.buildIdentifier,
 	this: F.buildThis,
 	super: F.buildSuper,
 	number: F.buildNumber,
-	string: _b$string,
-	templateString: _b$templateString,
-	regex: _b$regex,
+	string: F.string,
+	templateString: F.templateString,
+	regex: F.regex,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	null: F.buildNull,
-	object: _b$object,
-	array: _b$array,
-	function: _b$functionExpression,
-	arrowFunction: _b$arrowFunction,
-	generatorFunction: _b$generatorFunction,
-	class: _b$class,
-	metaProperty: _b$metaProperty,
-	call: _b$callExpression,
-	nonNull: _b$nonNullExpression
+	object: F.object,
+	array: F.array,
+	function: F.functionExpression,
+	arrowFunction: F.arrowFunction,
+	generatorFunction: F.generatorFunction,
+	class: F.class_,
+	metaProperty: F.metaProperty,
+	call: F.callExpression,
+	nonNull: F.nonNullExpression
+};
+
+export const formalParameter: {
+	readonly required: typeof F.requiredParameter;
+	readonly optional: typeof F.optionalParameter;
+} = {
+	required: F.requiredParameter,
+	optional: F.optionalParameter
 };
 
 export const lhsExpression: {
-	readonly member: typeof _b$memberExpression;
-	readonly subscript: typeof _b$subscriptExpression;
+	readonly member: typeof F.memberExpression;
+	readonly subscript: typeof F.subscriptExpression;
 	readonly undefined: typeof F.buildUndefined;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly object: typeof _b$objectPattern;
-	readonly array: typeof _b$arrayPattern;
-	readonly nonNull: typeof _b$nonNullExpression;
+	readonly object: typeof F.objectPattern;
+	readonly array: typeof F.arrayPattern;
+	readonly nonNull: typeof F.nonNullExpression;
 } = {
-	member: _b$memberExpression,
-	subscript: _b$subscriptExpression,
+	member: F.memberExpression,
+	subscript: F.subscriptExpression,
 	undefined: F.buildUndefined,
 	identifier: F.buildIdentifier,
-	object: _b$objectPattern,
-	array: _b$arrayPattern,
-	nonNull: _b$nonNullExpression
+	object: F.objectPattern,
+	array: F.arrayPattern,
+	nonNull: F.nonNullExpression
+};
+
+export const augmentedAssignmentLhs: {
+	readonly member: typeof F.memberExpression;
+	readonly subscript: typeof F.subscriptExpression;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly nonNull: typeof F.nonNullExpression;
+} = {
+	member: F.memberExpression,
+	subscript: F.subscriptExpression,
+	identifier: F.buildIdentifier,
+	parenthesized: F.parenthesizedExpression,
+	nonNull: F.nonNullExpression
+};
+
+export const destructuringPattern: {
+	readonly object: typeof F.objectPattern;
+	readonly array: typeof F.arrayPattern;
+} = {
+	object: F.objectPattern,
+	array: F.arrayPattern
+};
+
+export const identifier: {
+	readonly undefined: typeof F.buildUndefined;
+	readonly identifier: typeof F.buildIdentifier;
+} = {
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier
 };
 
 export const pattern: {
-	readonly rest: typeof _b$restPattern;
+	readonly rest: typeof F.restPattern;
 } = {
-	rest: _b$restPattern
+	rest: F.restPattern
+};
+
+export const propertyName: {
+	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly string: typeof F.string;
+	readonly number: typeof F.buildNumber;
+	readonly computed: typeof F.computedPropertyName;
+} = {
+	privateIdentifier: F.buildPrivatePropertyIdentifier,
+	string: F.string,
+	number: F.buildNumber,
+	computed: F.computedPropertyName
 };
 
 export const statementIdentifier: {
@@ -1177,213 +323,244 @@ export const propertyIdentifier: {
 	identifier: F.buildIdentifier
 };
 
-export const type: {
-	readonly function: typeof _b$functionType;
-	readonly readonly: typeof _b$readonlyType;
-	readonly constructor: typeof _b$constructorType;
-	readonly infer: typeof _b$inferType;
+export const importIdentifier: {
+	readonly identifier: typeof F.buildIdentifier;
 } = {
-	function: _b$functionType,
-	readonly: _b$readonlyType,
-	constructor: _b$constructorType,
-	infer: _b$inferType
+	identifier: F.buildIdentifier
+};
+
+export const type: {
+	readonly function: typeof F.functionType;
+	readonly readonly: typeof F.readonlyType;
+	readonly constructor: typeof F.constructorType;
+	readonly infer: typeof F.inferType;
+} = {
+	function: F.functionType,
+	readonly: F.readonlyType,
+	constructor: F.constructorType,
+	infer: F.inferType
+};
+
+export const tupleTypeMember: {
+	readonly parameter: typeof F.tupleParameter;
+	readonly optionalParameter: typeof F.optionalTupleParameter;
+	readonly optional: typeof F.optionalType;
+	readonly rest: typeof F.restType;
+} = {
+	parameter: F.tupleParameter,
+	optionalParameter: F.optionalTupleParameter,
+	optional: F.optionalType,
+	rest: F.restType
 };
 
 export const primaryType: {
-	readonly parenthesized: typeof _b$parenthesizedType;
+	readonly parenthesized: typeof F.parenthesizedType;
 	readonly predefined: typeof F.buildPredefinedType;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly nestedIdentifier: typeof _b$nestedTypeIdentifier;
-	readonly generic: typeof _b$genericType;
-	readonly object: typeof _b$objectType;
-	readonly array: typeof _b$arrayType;
-	readonly tuple: typeof _b$tupleType;
-	readonly flowMaybe: typeof _b$flowMaybeType;
-	readonly query: typeof _b$typeQuery;
-	readonly indexQuery: typeof _b$indexTypeQuery;
+	readonly nestedIdentifier: typeof F.nestedTypeIdentifier;
+	readonly generic: typeof F.genericType;
+	readonly object: typeof F.objectType;
+	readonly array: typeof F.arrayType;
+	readonly tuple: typeof F.tupleType;
+	readonly flowMaybe: typeof F.flowMaybeType;
+	readonly query: typeof F.typeQuery;
+	readonly indexQuery: typeof F.indexTypeQuery;
 	readonly this: typeof F.buildThis;
 	readonly existential: typeof F.buildExistentialType;
-	readonly literal: typeof _b$literalType;
-	readonly lookup: typeof _b$lookupType;
-	readonly conditional: typeof _b$conditionalType;
-	readonly templateLiteral: typeof _b$templateLiteralType;
-	readonly intersection: typeof _b$intersectionType;
-	readonly union: typeof _b$unionType;
+	readonly literal: typeof F.literalType;
+	readonly lookup: typeof F.lookupType;
+	readonly conditional: typeof F.conditionalType;
+	readonly templateLiteral: typeof F.templateLiteralType;
+	readonly intersection: typeof F.intersectionType;
+	readonly union: typeof F.unionType;
 } = {
-	parenthesized: _b$parenthesizedType,
+	parenthesized: F.parenthesizedType,
 	predefined: F.buildPredefinedType,
 	identifier: F.buildIdentifier,
-	nestedIdentifier: _b$nestedTypeIdentifier,
-	generic: _b$genericType,
-	object: _b$objectType,
-	array: _b$arrayType,
-	tuple: _b$tupleType,
-	flowMaybe: _b$flowMaybeType,
-	query: _b$typeQuery,
-	indexQuery: _b$indexTypeQuery,
+	nestedIdentifier: F.nestedTypeIdentifier,
+	generic: F.genericType,
+	object: F.objectType,
+	array: F.arrayType,
+	tuple: F.tupleType,
+	flowMaybe: F.flowMaybeType,
+	query: F.typeQuery,
+	indexQuery: F.indexTypeQuery,
 	this: F.buildThis,
 	existential: F.buildExistentialType,
-	literal: _b$literalType,
-	lookup: _b$lookupType,
-	conditional: _b$conditionalType,
-	templateLiteral: _b$templateLiteralType,
-	intersection: _b$intersectionType,
-	union: _b$unionType
+	literal: F.literalType,
+	lookup: F.lookupType,
+	conditional: F.conditionalType,
+	templateLiteral: F.templateLiteralType,
+	intersection: F.intersectionType,
+	union: F.unionType
 };
 
 export const ir: {
-	readonly program: typeof _b$program;
-	readonly exportStatement: typeof _b$exportStatement;
-	readonly namespaceExport: typeof _b$namespaceExport;
-	readonly exportClause: typeof _b$exportClause;
-	readonly exportSpecifier: typeof _b$exportSpecifier;
-	readonly importStatement: typeof _b$importStatement;
-	readonly importClause: typeof _b$importClause;
-	readonly namespaceImport: typeof _b$namespaceImport;
-	readonly namedImports: typeof _b$namedImports;
-	readonly importSpecifier: typeof _b$importSpecifier;
-	readonly importAttribute: typeof _b$importAttribute;
-	readonly expressionStatement: typeof _b$expressionStatement;
-	readonly variableDeclaration: typeof _b$variableDeclaration;
-	readonly lexicalDeclaration: typeof _b$lexicalDeclaration;
-	readonly variableDeclarator: typeof _b$variableDeclarator;
-	readonly statementBlock: typeof _b$statementBlock;
-	readonly elseClause: typeof _b$elseClause;
-	readonly ifStatement: typeof _b$ifStatement;
-	readonly switchStatement: typeof _b$switchStatement;
-	readonly forStatement: typeof _b$forStatement;
-	readonly forInStatement: typeof _b$forInStatement;
-	readonly whileStatement: typeof _b$whileStatement;
-	readonly doStatement: typeof _b$doStatement;
-	readonly tryStatement: typeof _b$tryStatement;
-	readonly withStatement: typeof _b$withStatement;
-	readonly breakStatement: typeof _b$breakStatement;
-	readonly continueStatement: typeof _b$continueStatement;
-	readonly debuggerStatement: typeof _b$debuggerStatement;
-	readonly returnStatement: typeof _b$returnStatement;
-	readonly throwStatement: typeof _b$throwStatement;
-	readonly labeledStatement: typeof _b$labeledStatement;
-	readonly switchBody: typeof _b$switchBody;
-	readonly switchCase: typeof _b$switchCase;
-	readonly switchDefault: typeof _b$switchDefault;
-	readonly catchClause: typeof _b$catchClause;
-	readonly finallyClause: typeof _b$finallyClause;
-	readonly parenthesizedExpression: typeof _b$parenthesizedExpression;
-	readonly yieldExpression: typeof _b$yieldExpression;
-	readonly object: typeof _b$object;
-	readonly objectPattern: typeof _b$objectPattern;
-	readonly assignmentPattern: typeof _b$assignmentPattern;
-	readonly objectAssignmentPattern: typeof _b$objectAssignmentPattern;
-	readonly array: typeof _b$array;
-	readonly arrayPattern: typeof _b$arrayPattern;
-	readonly nestedIdentifier: typeof _b$nestedIdentifier;
-	readonly class: typeof _b$class;
-	readonly classDeclaration: typeof _b$classDeclaration;
-	readonly classHeritage: typeof _b$classHeritage;
-	readonly functionExpression: typeof _b$functionExpression;
-	readonly functionDeclaration: typeof _b$functionDeclaration;
-	readonly generatorFunction: typeof _b$generatorFunction;
-	readonly generatorFunctionDeclaration: typeof _b$generatorFunctionDeclaration;
-	readonly arrowFunction: typeof _b$arrowFunction;
-	readonly callExpression: typeof _b$callExpression;
-	readonly newExpression: typeof _b$newExpression;
-	readonly awaitExpression: typeof _b$awaitExpression;
-	readonly memberExpression: typeof _b$memberExpression;
-	readonly subscriptExpression: typeof _b$subscriptExpression;
-	readonly assignmentExpression: typeof _b$assignmentExpression;
-	readonly augmentedAssignmentExpression: typeof _b$augmentedAssignmentExpression;
-	readonly spreadElement: typeof _b$spreadElement;
-	readonly ternaryExpression: typeof _b$ternaryExpression;
-	readonly binaryExpression: typeof _b$binaryExpression;
-	readonly unaryExpression: typeof _b$unaryExpression;
-	readonly updateExpression: typeof _b$updateExpression;
-	readonly sequenceExpression: typeof _b$sequenceExpression;
-	readonly string: typeof _b$string;
-	readonly templateString: typeof _b$templateString;
-	readonly templateSubstitution: typeof _b$templateSubstitution;
-	readonly regex: typeof _b$regex;
-	readonly metaProperty: typeof _b$metaProperty;
-	readonly arguments: typeof _b$arguments;
-	readonly decorator: typeof _b$decorator;
-	readonly decoratorMemberExpression: typeof _b$decoratorMemberExpression;
-	readonly decoratorCallExpression: typeof _b$decoratorCallExpression;
-	readonly classBody: typeof _b$classBody;
-	readonly formalParameters: typeof _b$formalParameters;
-	readonly classStaticBlock: typeof _b$classStaticBlock;
-	readonly restPattern: typeof _b$restPattern;
-	readonly methodDefinition: typeof _b$methodDefinition;
-	readonly pair: typeof _b$pair;
-	readonly pairPattern: typeof _b$pairPattern;
-	readonly computedPropertyName: typeof _b$computedPropertyName;
-	readonly publicFieldDefinition: typeof _b$publicFieldDefinition;
-	readonly nonNullExpression: typeof _b$nonNullExpression;
-	readonly methodSignature: typeof _b$methodSignature;
-	readonly abstractMethodSignature: typeof _b$abstractMethodSignature;
-	readonly functionSignature: typeof _b$functionSignature;
-	readonly decoratorParenthesizedExpression: typeof _b$decoratorParenthesizedExpression;
-	readonly typeAssertion: typeof _b$typeAssertion;
-	readonly asExpression: typeof _b$asExpression;
-	readonly satisfiesExpression: typeof _b$satisfiesExpression;
-	readonly instantiationExpression: typeof _b$instantiationExpression;
-	readonly importRequireClause: typeof _b$importRequireClause;
-	readonly extendsClause: typeof _b$extendsClause;
-	readonly implementsClause: typeof _b$implementsClause;
-	readonly ambientDeclaration: typeof _b$ambientDeclaration;
-	readonly abstractClassDeclaration: typeof _b$abstractClassDeclaration;
-	readonly module: typeof _b$module;
-	readonly internalModule: typeof _b$internalModule;
-	readonly importAlias: typeof _b$importAlias;
-	readonly nestedTypeIdentifier: typeof _b$nestedTypeIdentifier;
-	readonly interfaceDeclaration: typeof _b$interfaceDeclaration;
-	readonly extendsTypeClause: typeof _b$extendsTypeClause;
-	readonly enumDeclaration: typeof _b$enumDeclaration;
-	readonly enumBody: typeof _b$enumBody;
-	readonly enumAssignment: typeof _b$enumAssignment;
-	readonly typeAliasDeclaration: typeof _b$typeAliasDeclaration;
-	readonly requiredParameter: typeof _b$requiredParameter;
-	readonly optionalParameter: typeof _b$optionalParameter;
-	readonly omittingTypeAnnotation: typeof _b$omittingTypeAnnotation;
-	readonly addingTypeAnnotation: typeof _b$addingTypeAnnotation;
-	readonly optingTypeAnnotation: typeof _b$optingTypeAnnotation;
-	readonly typeAnnotation: typeof _b$typeAnnotation;
-	readonly asserts: typeof _b$asserts;
-	readonly assertsAnnotation: typeof _b$assertsAnnotation;
-	readonly tupleParameter: typeof _b$tupleParameter;
-	readonly optionalTupleParameter: typeof _b$optionalTupleParameter;
-	readonly optionalType: typeof _b$optionalType;
-	readonly restType: typeof _b$restType;
-	readonly constructorType: typeof _b$constructorType;
-	readonly templateType: typeof _b$templateType;
-	readonly templateLiteralType: typeof _b$templateLiteralType;
-	readonly inferType: typeof _b$inferType;
-	readonly conditionalType: typeof _b$conditionalType;
-	readonly genericType: typeof _b$genericType;
-	readonly typePredicate: typeof _b$typePredicate;
-	readonly typePredicateAnnotation: typeof _b$typePredicateAnnotation;
-	readonly typeQuery: typeof _b$typeQuery;
-	readonly indexTypeQuery: typeof _b$indexTypeQuery;
-	readonly lookupType: typeof _b$lookupType;
-	readonly mappedTypeClause: typeof _b$mappedTypeClause;
-	readonly literalType: typeof _b$literalType;
-	readonly flowMaybeType: typeof _b$flowMaybeType;
-	readonly parenthesizedType: typeof _b$parenthesizedType;
-	readonly typeArguments: typeof _b$typeArguments;
-	readonly objectType: typeof _b$objectType;
-	readonly callSignature: typeof _b$callSignature;
-	readonly propertySignature: typeof _b$propertySignature;
-	readonly typeParameters: typeof _b$typeParameters;
-	readonly typeParameter: typeof _b$typeParameter;
-	readonly defaultType: typeof _b$defaultType;
-	readonly constraint: typeof _b$constraint;
-	readonly constructSignature: typeof _b$constructSignature;
-	readonly indexSignature: typeof _b$indexSignature;
-	readonly arrayType: typeof _b$arrayType;
-	readonly tupleType: typeof _b$tupleType;
-	readonly readonlyType: typeof _b$readonlyType;
-	readonly unionType: typeof _b$unionType;
-	readonly intersectionType: typeof _b$intersectionType;
-	readonly functionType: typeof _b$functionType;
-	readonly objectTypeContent: typeof _b$objectTypeContent;
+	readonly program: typeof F.program;
+	readonly exportStatement: typeof F.exportStatement;
+	readonly namespaceExport: typeof F.namespaceExport;
+	readonly exportClause: typeof F.exportClause;
+	readonly exportSpecifier: typeof F.exportSpecifier;
+	readonly importStatement: typeof F.importStatement;
+	readonly importClause: typeof F.importClause;
+	readonly namespaceImport: typeof F.namespaceImport;
+	readonly namedImports: typeof F.namedImports;
+	readonly importSpecifier: typeof F.importSpecifier;
+	readonly importAttribute: typeof F.importAttribute;
+	readonly expressionStatement: typeof F.expressionStatement;
+	readonly variableDeclaration: typeof F.variableDeclaration;
+	readonly lexicalDeclaration: typeof F.lexicalDeclaration;
+	readonly variableDeclarator: typeof F.variableDeclarator;
+	readonly statementBlock: typeof F.statementBlock;
+	readonly elseClause: typeof F.elseClause;
+	readonly ifStatement: typeof F.ifStatement;
+	readonly switchStatement: typeof F.switchStatement;
+	readonly forStatement: typeof F.forStatement;
+	readonly forInStatement: typeof F.forInStatement;
+	readonly whileStatement: typeof F.whileStatement;
+	readonly doStatement: typeof F.doStatement;
+	readonly tryStatement: typeof F.tryStatement;
+	readonly withStatement: typeof F.withStatement;
+	readonly breakStatement: typeof F.breakStatement;
+	readonly continueStatement: typeof F.continueStatement;
+	readonly debuggerStatement: typeof F.debuggerStatement;
+	readonly returnStatement: typeof F.returnStatement;
+	readonly throwStatement: typeof F.throwStatement;
+	readonly labeledStatement: typeof F.labeledStatement;
+	readonly switchBody: typeof F.switchBody;
+	readonly switchCase: typeof F.switchCase;
+	readonly switchDefault: typeof F.switchDefault;
+	readonly catchClause: typeof F.catchClause;
+	readonly finallyClause: typeof F.finallyClause;
+	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
+	readonly yieldExpression: typeof F.yieldExpression;
+	readonly object: typeof F.object;
+	readonly objectPattern: typeof F.objectPattern;
+	readonly assignmentPattern: typeof F.assignmentPattern;
+	readonly objectAssignmentPattern: typeof F.objectAssignmentPattern;
+	readonly array: typeof F.array;
+	readonly arrayPattern: typeof F.arrayPattern;
+	readonly nestedIdentifier: typeof F.nestedIdentifier;
+	readonly class: typeof F.class_;
+	readonly classDeclaration: typeof F.classDeclaration;
+	readonly classHeritage: typeof F.classHeritage;
+	readonly functionExpression: typeof F.functionExpression;
+	readonly functionDeclaration: typeof F.functionDeclaration;
+	readonly generatorFunction: typeof F.generatorFunction;
+	readonly generatorFunctionDeclaration: typeof F.generatorFunctionDeclaration;
+	readonly arrowFunction: typeof F.arrowFunction;
+	readonly callExpression: typeof F.callExpression;
+	readonly newExpression: typeof F.newExpression;
+	readonly awaitExpression: typeof F.awaitExpression;
+	readonly memberExpression: typeof F.memberExpression;
+	readonly subscriptExpression: typeof F.subscriptExpression;
+	readonly assignmentExpression: typeof F.assignmentExpression;
+	readonly augmentedAssignmentExpression: typeof F.augmentedAssignmentExpression;
+	readonly spreadElement: typeof F.spreadElement;
+	readonly ternaryExpression: typeof F.ternaryExpression;
+	readonly binaryExpression: typeof F.binaryExpression;
+	readonly unaryExpression: typeof F.unaryExpression;
+	readonly updateExpression: typeof F.updateExpression;
+	readonly sequenceExpression: typeof F.sequenceExpression;
+	readonly string: typeof F.string;
+	readonly templateString: typeof F.templateString;
+	readonly templateSubstitution: typeof F.templateSubstitution;
+	readonly regex: typeof F.regex;
+	readonly metaProperty: typeof F.metaProperty;
+	readonly arguments: typeof F.arguments_;
+	readonly decorator: typeof F.decorator;
+	readonly decoratorMemberExpression: typeof F.decoratorMemberExpression;
+	readonly decoratorCallExpression: typeof F.decoratorCallExpression;
+	readonly classBody: typeof F.classBody;
+	readonly formalParameters: typeof F.formalParameters;
+	readonly classStaticBlock: typeof F.classStaticBlock;
+	readonly restPattern: typeof F.restPattern;
+	readonly methodDefinition: typeof F.methodDefinition;
+	readonly pair: typeof F.pair;
+	readonly pairPattern: typeof F.pairPattern;
+	readonly computedPropertyName: typeof F.computedPropertyName;
+	readonly publicFieldDefinition: typeof F.publicFieldDefinition;
+	readonly nonNullExpression: typeof F.nonNullExpression;
+	readonly methodSignature: typeof F.methodSignature;
+	readonly abstractMethodSignature: typeof F.abstractMethodSignature;
+	readonly functionSignature: typeof F.functionSignature;
+	readonly decoratorParenthesizedExpression: typeof F.decoratorParenthesizedExpression;
+	readonly typeAssertion: typeof F.typeAssertion;
+	readonly asExpression: typeof F.asExpression;
+	readonly satisfiesExpression: typeof F.satisfiesExpression;
+	readonly instantiationExpression: typeof F.instantiationExpression;
+	readonly importRequireClause: typeof F.importRequireClause;
+	readonly extendsClause: typeof F.extendsClause;
+	readonly implementsClause: typeof F.implementsClause;
+	readonly ambientDeclaration: typeof F.ambientDeclaration;
+	readonly abstractClassDeclaration: typeof F.abstractClassDeclaration;
+	readonly module: typeof F.module;
+	readonly internalModule: typeof F.internalModule;
+	readonly importAlias: typeof F.importAlias;
+	readonly nestedTypeIdentifier: typeof F.nestedTypeIdentifier;
+	readonly interfaceDeclaration: typeof F.interfaceDeclaration;
+	readonly extendsTypeClause: typeof F.extendsTypeClause;
+	readonly enumDeclaration: typeof F.enumDeclaration;
+	readonly enumBody: typeof F.enumBody;
+	readonly enumAssignment: typeof F.enumAssignment;
+	readonly typeAliasDeclaration: typeof F.typeAliasDeclaration;
+	readonly requiredParameter: typeof F.requiredParameter;
+	readonly optionalParameter: typeof F.optionalParameter;
+	readonly omittingTypeAnnotation: typeof F.omittingTypeAnnotation;
+	readonly addingTypeAnnotation: typeof F.addingTypeAnnotation;
+	readonly optingTypeAnnotation: typeof F.optingTypeAnnotation;
+	readonly typeAnnotation: typeof F.typeAnnotation;
+	readonly asserts: typeof F.asserts;
+	readonly assertsAnnotation: typeof F.assertsAnnotation;
+	readonly tupleParameter: typeof F.tupleParameter;
+	readonly optionalTupleParameter: typeof F.optionalTupleParameter;
+	readonly optionalType: typeof F.optionalType;
+	readonly restType: typeof F.restType;
+	readonly constructorType: typeof F.constructorType;
+	readonly templateType: typeof F.templateType;
+	readonly templateLiteralType: typeof F.templateLiteralType;
+	readonly inferType: typeof F.inferType;
+	readonly conditionalType: typeof F.conditionalType;
+	readonly genericType: typeof F.genericType;
+	readonly typePredicate: typeof F.typePredicate;
+	readonly typePredicateAnnotation: typeof F.typePredicateAnnotation;
+	readonly typeQuery: typeof F.typeQuery;
+	readonly indexTypeQuery: typeof F.indexTypeQuery;
+	readonly lookupType: typeof F.lookupType;
+	readonly mappedTypeClause: typeof F.mappedTypeClause;
+	readonly literalType: typeof F.literalType;
+	readonly flowMaybeType: typeof F.flowMaybeType;
+	readonly parenthesizedType: typeof F.parenthesizedType;
+	readonly typeArguments: typeof F.typeArguments;
+	readonly objectType: typeof F.objectType;
+	readonly callSignature: typeof F.callSignature;
+	readonly propertySignature: typeof F.propertySignature;
+	readonly typeParameters: typeof F.typeParameters;
+	readonly typeParameter: typeof F.typeParameter;
+	readonly defaultType: typeof F.defaultType;
+	readonly constraint: typeof F.constraint;
+	readonly constructSignature: typeof F.constructSignature;
+	readonly indexSignature: typeof F.indexSignature;
+	readonly arrayType: typeof F.arrayType;
+	readonly tupleType: typeof F.tupleType;
+	readonly readonlyType: typeof F.readonlyType;
+	readonly unionType: typeof F.unionType;
+	readonly intersectionType: typeof F.intersectionType;
+	readonly functionType: typeof F.functionType;
+	readonly exportSpecifiers: typeof F.exportSpecifiers;
+	readonly importSpecifiers: typeof F.importSpecifiers;
+	readonly formalParametersElements: typeof F.formalParametersElements;
+	readonly enumBodyElements: typeof F.enumBodyElements;
+	readonly types: typeof F.types;
+	readonly typeParametersElements: typeof F.typeParametersElements;
+	readonly tupleTypeMembers: typeof F.tupleTypeMembers;
+	readonly importClauseGroup: typeof F.importClauseGroup;
+	readonly objectTypeContent: typeof F.objectTypeContent;
+	readonly exportStatementDefault: typeof F.exportStatementDefault;
+	readonly arrowFunctionParameter: typeof F.arrowFunctionParameter;
+	readonly importClauseDefaultImport: typeof F.importClauseDefaultImport;
+	readonly exportStatementDefaultFromArm: typeof F.exportStatementDefaultFromArm;
+	readonly forHeaderLhs: typeof F.forHeaderLhs;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly optionalChain: typeof F.buildOptionalChain;
@@ -1403,238 +580,266 @@ export const ir: {
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
-	readonly identifier: typeof F.buildIdentifier;
+	readonly identifier2: typeof F.buildIdentifier;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly accessibilityModifier: typeof F.buildAccessibilityModifier;
 	readonly predefinedType: typeof F.buildPredefinedType;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
-	readonly abstractClass: typeof _b$abstractClassDeclaration;
-	readonly ambient: typeof _b$ambientDeclaration;
-	readonly as: typeof _b$asExpression;
-	readonly assignment: typeof _b$assignmentExpression;
-	readonly augmentedAssignment: typeof _b$augmentedAssignmentExpression;
-	readonly await: typeof _b$awaitExpression;
-	readonly binary: typeof _b$binaryExpression;
-	readonly block: typeof _b$statementBlock;
-	readonly break: typeof _b$breakStatement;
-	readonly call: typeof _b$callExpression;
-	readonly conditional: typeof _b$conditionalType;
-	readonly constructor: typeof _b$constructorType;
-	readonly continue: typeof _b$continueStatement;
-	readonly debugger: typeof _b$debuggerStatement;
-	readonly do: typeof _b$doStatement;
+	readonly abstractClass: typeof F.abstractClassDeclaration;
+	readonly ambient: typeof F.ambientDeclaration;
+	readonly as: typeof F.asExpression;
+	readonly assignment: typeof F.assignmentExpression;
+	readonly augmentedAssignment: typeof F.augmentedAssignmentExpression;
+	readonly await: typeof F.awaitExpression;
+	readonly binary: typeof F.binaryExpression;
+	readonly block: typeof F.statementBlock;
+	readonly break: typeof F.breakStatement;
+	readonly call: typeof F.callExpression;
+	readonly computed: typeof F.computedPropertyName;
+	readonly conditional: typeof F.conditionalType;
+	readonly constructor: typeof F.constructorType;
+	readonly continue: typeof F.continueStatement;
+	readonly debugger: typeof F.debuggerStatement;
+	readonly do: typeof F.doStatement;
 	readonly empty: typeof F.buildEmptyStatement;
-	readonly enum: typeof _b$enumDeclaration;
+	readonly enum: typeof F.enumDeclaration;
 	readonly existential: typeof F.buildExistentialType;
-	readonly export: typeof _b$exportStatement;
-	readonly flowMaybe: typeof _b$flowMaybeType;
-	readonly for: typeof _b$forStatement;
-	readonly forIn: typeof _b$forInStatement;
-	readonly function: typeof _b$functionDeclaration;
-	readonly generic: typeof _b$genericType;
-	readonly if: typeof _b$ifStatement;
-	readonly indexQuery: typeof _b$indexTypeQuery;
-	readonly infer: typeof _b$inferType;
-	readonly instantiation: typeof _b$instantiationExpression;
-	readonly interface: typeof _b$interfaceDeclaration;
-	readonly intersection: typeof _b$intersectionType;
-	readonly labeled: typeof _b$labeledStatement;
-	readonly lexical: typeof _b$lexicalDeclaration;
-	readonly literal: typeof _b$literalType;
-	readonly lookup: typeof _b$lookupType;
-	readonly member: typeof _b$memberExpression;
-	readonly new: typeof _b$newExpression;
-	readonly nonNull: typeof _b$nonNullExpression;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
+	readonly export: typeof F.exportStatement;
+	readonly flowMaybe: typeof F.flowMaybeType;
+	readonly for: typeof F.forStatement;
+	readonly forIn: typeof F.forInStatement;
+	readonly function: typeof F.functionDeclaration;
+	readonly generic: typeof F.genericType;
+	readonly if: typeof F.ifStatement;
+	readonly indexQuery: typeof F.indexTypeQuery;
+	readonly infer: typeof F.inferType;
+	readonly instantiation: typeof F.instantiationExpression;
+	readonly interface: typeof F.interfaceDeclaration;
+	readonly intersection: typeof F.intersectionType;
+	readonly labeled: typeof F.labeledStatement;
+	readonly lexical: typeof F.lexicalDeclaration;
+	readonly literal: typeof F.literalType;
+	readonly lookup: typeof F.lookupType;
+	readonly member: typeof F.memberExpression;
+	readonly new: typeof F.newExpression;
+	readonly nonNull: typeof F.nonNullExpression;
+	readonly optional: typeof F.optionalParameter;
+	readonly parameter: typeof F.tupleParameter;
+	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly predefined: typeof F.buildPredefinedType;
-	readonly query: typeof _b$typeQuery;
-	readonly readonly: typeof _b$readonlyType;
-	readonly rest: typeof _b$restPattern;
-	readonly return: typeof _b$returnStatement;
-	readonly satisfies: typeof _b$satisfiesExpression;
-	readonly subscript: typeof _b$subscriptExpression;
-	readonly switch: typeof _b$switchStatement;
-	readonly templateLiteral: typeof _b$templateLiteralType;
-	readonly ternary: typeof _b$ternaryExpression;
-	readonly throw: typeof _b$throwStatement;
-	readonly try: typeof _b$tryStatement;
-	readonly tuple: typeof _b$tupleType;
-	readonly typeAlias: typeof _b$typeAliasDeclaration;
-	readonly unary: typeof _b$unaryExpression;
-	readonly union: typeof _b$unionType;
-	readonly update: typeof _b$updateExpression;
-	readonly variable: typeof _b$variableDeclaration;
-	readonly while: typeof _b$whileStatement;
-	readonly with: typeof _b$withStatement;
-	readonly yield: typeof _b$yieldExpression;
+	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly query: typeof F.typeQuery;
+	readonly readonly: typeof F.readonlyType;
+	readonly required: typeof F.requiredParameter;
+	readonly rest: typeof F.restPattern;
+	readonly return: typeof F.returnStatement;
+	readonly satisfies: typeof F.satisfiesExpression;
+	readonly sequence: typeof F.sequenceExpression;
+	readonly subscript: typeof F.subscriptExpression;
+	readonly switch: typeof F.switchStatement;
+	readonly templateLiteral: typeof F.templateLiteralType;
+	readonly ternary: typeof F.ternaryExpression;
+	readonly throw: typeof F.throwStatement;
+	readonly try: typeof F.tryStatement;
+	readonly tuple: typeof F.tupleType;
+	readonly typeAlias: typeof F.typeAliasDeclaration;
+	readonly unary: typeof F.unaryExpression;
+	readonly union: typeof F.unionType;
+	readonly update: typeof F.updateExpression;
+	readonly variable: typeof F.variableDeclaration;
+	readonly while: typeof F.whileStatement;
+	readonly with: typeof F.withStatement;
+	readonly yield: typeof F.yieldExpression;
+	readonly moduleExportName: typeof moduleExportName;
 	readonly declaration: typeof declaration;
 	readonly statement: typeof statement;
+	readonly expressions: typeof expressions;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
+	readonly formalParameter: typeof formalParameter;
 	readonly lhsExpression: typeof lhsExpression;
+	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
+	readonly destructuringPattern: typeof destructuringPattern;
+	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
+	readonly propertyName: typeof propertyName;
 	readonly statementIdentifier: typeof statementIdentifier;
 	readonly shorthandPropertyIdentifier: typeof shorthandPropertyIdentifier;
 	readonly shorthandPropertyIdentifierPattern: typeof shorthandPropertyIdentifierPattern;
 	readonly propertyIdentifier: typeof propertyIdentifier;
+	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
+	readonly tupleTypeMember: typeof tupleTypeMember;
 	readonly primaryType: typeof primaryType;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
-	program: _b$program,
-	exportStatement: _b$exportStatement,
-	namespaceExport: _b$namespaceExport,
-	exportClause: _b$exportClause,
-	exportSpecifier: _b$exportSpecifier,
-	importStatement: _b$importStatement,
-	importClause: _b$importClause,
-	namespaceImport: _b$namespaceImport,
-	namedImports: _b$namedImports,
-	importSpecifier: _b$importSpecifier,
-	importAttribute: _b$importAttribute,
-	expressionStatement: _b$expressionStatement,
-	variableDeclaration: _b$variableDeclaration,
-	lexicalDeclaration: _b$lexicalDeclaration,
-	variableDeclarator: _b$variableDeclarator,
-	statementBlock: _b$statementBlock,
-	elseClause: _b$elseClause,
-	ifStatement: _b$ifStatement,
-	switchStatement: _b$switchStatement,
-	forStatement: _b$forStatement,
-	forInStatement: _b$forInStatement,
-	whileStatement: _b$whileStatement,
-	doStatement: _b$doStatement,
-	tryStatement: _b$tryStatement,
-	withStatement: _b$withStatement,
-	breakStatement: _b$breakStatement,
-	continueStatement: _b$continueStatement,
-	debuggerStatement: _b$debuggerStatement,
-	returnStatement: _b$returnStatement,
-	throwStatement: _b$throwStatement,
-	labeledStatement: _b$labeledStatement,
-	switchBody: _b$switchBody,
-	switchCase: _b$switchCase,
-	switchDefault: _b$switchDefault,
-	catchClause: _b$catchClause,
-	finallyClause: _b$finallyClause,
-	parenthesizedExpression: _b$parenthesizedExpression,
-	yieldExpression: _b$yieldExpression,
-	object: _b$object,
-	objectPattern: _b$objectPattern,
-	assignmentPattern: _b$assignmentPattern,
-	objectAssignmentPattern: _b$objectAssignmentPattern,
-	array: _b$array,
-	arrayPattern: _b$arrayPattern,
-	nestedIdentifier: _b$nestedIdentifier,
-	class: _b$class,
-	classDeclaration: _b$classDeclaration,
-	classHeritage: _b$classHeritage,
-	functionExpression: _b$functionExpression,
-	functionDeclaration: _b$functionDeclaration,
-	generatorFunction: _b$generatorFunction,
-	generatorFunctionDeclaration: _b$generatorFunctionDeclaration,
-	arrowFunction: _b$arrowFunction,
-	callExpression: _b$callExpression,
-	newExpression: _b$newExpression,
-	awaitExpression: _b$awaitExpression,
-	memberExpression: _b$memberExpression,
-	subscriptExpression: _b$subscriptExpression,
-	assignmentExpression: _b$assignmentExpression,
-	augmentedAssignmentExpression: _b$augmentedAssignmentExpression,
-	spreadElement: _b$spreadElement,
-	ternaryExpression: _b$ternaryExpression,
-	binaryExpression: _b$binaryExpression,
-	unaryExpression: _b$unaryExpression,
-	updateExpression: _b$updateExpression,
-	sequenceExpression: _b$sequenceExpression,
-	string: _b$string,
-	templateString: _b$templateString,
-	templateSubstitution: _b$templateSubstitution,
-	regex: _b$regex,
-	metaProperty: _b$metaProperty,
-	arguments: _b$arguments,
-	decorator: _b$decorator,
-	decoratorMemberExpression: _b$decoratorMemberExpression,
-	decoratorCallExpression: _b$decoratorCallExpression,
-	classBody: _b$classBody,
-	formalParameters: _b$formalParameters,
-	classStaticBlock: _b$classStaticBlock,
-	restPattern: _b$restPattern,
-	methodDefinition: _b$methodDefinition,
-	pair: _b$pair,
-	pairPattern: _b$pairPattern,
-	computedPropertyName: _b$computedPropertyName,
-	publicFieldDefinition: _b$publicFieldDefinition,
-	nonNullExpression: _b$nonNullExpression,
-	methodSignature: _b$methodSignature,
-	abstractMethodSignature: _b$abstractMethodSignature,
-	functionSignature: _b$functionSignature,
-	decoratorParenthesizedExpression: _b$decoratorParenthesizedExpression,
-	typeAssertion: _b$typeAssertion,
-	asExpression: _b$asExpression,
-	satisfiesExpression: _b$satisfiesExpression,
-	instantiationExpression: _b$instantiationExpression,
-	importRequireClause: _b$importRequireClause,
-	extendsClause: _b$extendsClause,
-	implementsClause: _b$implementsClause,
-	ambientDeclaration: _b$ambientDeclaration,
-	abstractClassDeclaration: _b$abstractClassDeclaration,
-	module: _b$module,
-	internalModule: _b$internalModule,
-	importAlias: _b$importAlias,
-	nestedTypeIdentifier: _b$nestedTypeIdentifier,
-	interfaceDeclaration: _b$interfaceDeclaration,
-	extendsTypeClause: _b$extendsTypeClause,
-	enumDeclaration: _b$enumDeclaration,
-	enumBody: _b$enumBody,
-	enumAssignment: _b$enumAssignment,
-	typeAliasDeclaration: _b$typeAliasDeclaration,
-	requiredParameter: _b$requiredParameter,
-	optionalParameter: _b$optionalParameter,
-	omittingTypeAnnotation: _b$omittingTypeAnnotation,
-	addingTypeAnnotation: _b$addingTypeAnnotation,
-	optingTypeAnnotation: _b$optingTypeAnnotation,
-	typeAnnotation: _b$typeAnnotation,
-	asserts: _b$asserts,
-	assertsAnnotation: _b$assertsAnnotation,
-	tupleParameter: _b$tupleParameter,
-	optionalTupleParameter: _b$optionalTupleParameter,
-	optionalType: _b$optionalType,
-	restType: _b$restType,
-	constructorType: _b$constructorType,
-	templateType: _b$templateType,
-	templateLiteralType: _b$templateLiteralType,
-	inferType: _b$inferType,
-	conditionalType: _b$conditionalType,
-	genericType: _b$genericType,
-	typePredicate: _b$typePredicate,
-	typePredicateAnnotation: _b$typePredicateAnnotation,
-	typeQuery: _b$typeQuery,
-	indexTypeQuery: _b$indexTypeQuery,
-	lookupType: _b$lookupType,
-	mappedTypeClause: _b$mappedTypeClause,
-	literalType: _b$literalType,
-	flowMaybeType: _b$flowMaybeType,
-	parenthesizedType: _b$parenthesizedType,
-	typeArguments: _b$typeArguments,
-	objectType: _b$objectType,
-	callSignature: _b$callSignature,
-	propertySignature: _b$propertySignature,
-	typeParameters: _b$typeParameters,
-	typeParameter: _b$typeParameter,
-	defaultType: _b$defaultType,
-	constraint: _b$constraint,
-	constructSignature: _b$constructSignature,
-	indexSignature: _b$indexSignature,
-	arrayType: _b$arrayType,
-	tupleType: _b$tupleType,
-	readonlyType: _b$readonlyType,
-	unionType: _b$unionType,
-	intersectionType: _b$intersectionType,
-	functionType: _b$functionType,
-	objectTypeContent: _b$objectTypeContent,
+	program: F.program,
+	exportStatement: F.exportStatement,
+	namespaceExport: F.namespaceExport,
+	exportClause: F.exportClause,
+	exportSpecifier: F.exportSpecifier,
+	importStatement: F.importStatement,
+	importClause: F.importClause,
+	namespaceImport: F.namespaceImport,
+	namedImports: F.namedImports,
+	importSpecifier: F.importSpecifier,
+	importAttribute: F.importAttribute,
+	expressionStatement: F.expressionStatement,
+	variableDeclaration: F.variableDeclaration,
+	lexicalDeclaration: F.lexicalDeclaration,
+	variableDeclarator: F.variableDeclarator,
+	statementBlock: F.statementBlock,
+	elseClause: F.elseClause,
+	ifStatement: F.ifStatement,
+	switchStatement: F.switchStatement,
+	forStatement: F.forStatement,
+	forInStatement: F.forInStatement,
+	whileStatement: F.whileStatement,
+	doStatement: F.doStatement,
+	tryStatement: F.tryStatement,
+	withStatement: F.withStatement,
+	breakStatement: F.breakStatement,
+	continueStatement: F.continueStatement,
+	debuggerStatement: F.debuggerStatement,
+	returnStatement: F.returnStatement,
+	throwStatement: F.throwStatement,
+	labeledStatement: F.labeledStatement,
+	switchBody: F.switchBody,
+	switchCase: F.switchCase,
+	switchDefault: F.switchDefault,
+	catchClause: F.catchClause,
+	finallyClause: F.finallyClause,
+	parenthesizedExpression: F.parenthesizedExpression,
+	yieldExpression: F.yieldExpression,
+	object: F.object,
+	objectPattern: F.objectPattern,
+	assignmentPattern: F.assignmentPattern,
+	objectAssignmentPattern: F.objectAssignmentPattern,
+	array: F.array,
+	arrayPattern: F.arrayPattern,
+	nestedIdentifier: F.nestedIdentifier,
+	class: F.class_,
+	classDeclaration: F.classDeclaration,
+	classHeritage: F.classHeritage,
+	functionExpression: F.functionExpression,
+	functionDeclaration: F.functionDeclaration,
+	generatorFunction: F.generatorFunction,
+	generatorFunctionDeclaration: F.generatorFunctionDeclaration,
+	arrowFunction: F.arrowFunction,
+	callExpression: F.callExpression,
+	newExpression: F.newExpression,
+	awaitExpression: F.awaitExpression,
+	memberExpression: F.memberExpression,
+	subscriptExpression: F.subscriptExpression,
+	assignmentExpression: F.assignmentExpression,
+	augmentedAssignmentExpression: F.augmentedAssignmentExpression,
+	spreadElement: F.spreadElement,
+	ternaryExpression: F.ternaryExpression,
+	binaryExpression: F.binaryExpression,
+	unaryExpression: F.unaryExpression,
+	updateExpression: F.updateExpression,
+	sequenceExpression: F.sequenceExpression,
+	string: F.string,
+	templateString: F.templateString,
+	templateSubstitution: F.templateSubstitution,
+	regex: F.regex,
+	metaProperty: F.metaProperty,
+	arguments: F.arguments_,
+	decorator: F.decorator,
+	decoratorMemberExpression: F.decoratorMemberExpression,
+	decoratorCallExpression: F.decoratorCallExpression,
+	classBody: F.classBody,
+	formalParameters: F.formalParameters,
+	classStaticBlock: F.classStaticBlock,
+	restPattern: F.restPattern,
+	methodDefinition: F.methodDefinition,
+	pair: F.pair,
+	pairPattern: F.pairPattern,
+	computedPropertyName: F.computedPropertyName,
+	publicFieldDefinition: F.publicFieldDefinition,
+	nonNullExpression: F.nonNullExpression,
+	methodSignature: F.methodSignature,
+	abstractMethodSignature: F.abstractMethodSignature,
+	functionSignature: F.functionSignature,
+	decoratorParenthesizedExpression: F.decoratorParenthesizedExpression,
+	typeAssertion: F.typeAssertion,
+	asExpression: F.asExpression,
+	satisfiesExpression: F.satisfiesExpression,
+	instantiationExpression: F.instantiationExpression,
+	importRequireClause: F.importRequireClause,
+	extendsClause: F.extendsClause,
+	implementsClause: F.implementsClause,
+	ambientDeclaration: F.ambientDeclaration,
+	abstractClassDeclaration: F.abstractClassDeclaration,
+	module: F.module,
+	internalModule: F.internalModule,
+	importAlias: F.importAlias,
+	nestedTypeIdentifier: F.nestedTypeIdentifier,
+	interfaceDeclaration: F.interfaceDeclaration,
+	extendsTypeClause: F.extendsTypeClause,
+	enumDeclaration: F.enumDeclaration,
+	enumBody: F.enumBody,
+	enumAssignment: F.enumAssignment,
+	typeAliasDeclaration: F.typeAliasDeclaration,
+	requiredParameter: F.requiredParameter,
+	optionalParameter: F.optionalParameter,
+	omittingTypeAnnotation: F.omittingTypeAnnotation,
+	addingTypeAnnotation: F.addingTypeAnnotation,
+	optingTypeAnnotation: F.optingTypeAnnotation,
+	typeAnnotation: F.typeAnnotation,
+	asserts: F.asserts,
+	assertsAnnotation: F.assertsAnnotation,
+	tupleParameter: F.tupleParameter,
+	optionalTupleParameter: F.optionalTupleParameter,
+	optionalType: F.optionalType,
+	restType: F.restType,
+	constructorType: F.constructorType,
+	templateType: F.templateType,
+	templateLiteralType: F.templateLiteralType,
+	inferType: F.inferType,
+	conditionalType: F.conditionalType,
+	genericType: F.genericType,
+	typePredicate: F.typePredicate,
+	typePredicateAnnotation: F.typePredicateAnnotation,
+	typeQuery: F.typeQuery,
+	indexTypeQuery: F.indexTypeQuery,
+	lookupType: F.lookupType,
+	mappedTypeClause: F.mappedTypeClause,
+	literalType: F.literalType,
+	flowMaybeType: F.flowMaybeType,
+	parenthesizedType: F.parenthesizedType,
+	typeArguments: F.typeArguments,
+	objectType: F.objectType,
+	callSignature: F.callSignature,
+	propertySignature: F.propertySignature,
+	typeParameters: F.typeParameters,
+	typeParameter: F.typeParameter,
+	defaultType: F.defaultType,
+	constraint: F.constraint,
+	constructSignature: F.constructSignature,
+	indexSignature: F.indexSignature,
+	arrayType: F.arrayType,
+	tupleType: F.tupleType,
+	readonlyType: F.readonlyType,
+	unionType: F.unionType,
+	intersectionType: F.intersectionType,
+	functionType: F.functionType,
+	exportSpecifiers: F.exportSpecifiers,
+	importSpecifiers: F.importSpecifiers,
+	formalParametersElements: F.formalParametersElements,
+	enumBodyElements: F.enumBodyElements,
+	types: F.types,
+	typeParametersElements: F.typeParametersElements,
+	tupleTypeMembers: F.tupleTypeMembers,
+	importClauseGroup: F.importClauseGroup,
+	objectTypeContent: F.objectTypeContent,
+	exportStatementDefault: F.exportStatementDefault,
+	arrowFunctionParameter: F.arrowFunctionParameter,
+	importClauseDefaultImport: F.importClauseDefaultImport,
+	exportStatementDefaultFromArm: F.exportStatementDefaultFromArm,
+	forHeaderLhs: F.forHeaderLhs,
 
 	// Keyword factories
 	import: F.buildImport,
@@ -1658,7 +863,7 @@ export const ir: {
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
-	identifier: F.buildIdentifier,
+	identifier2: F.buildIdentifier,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
 	accessibilityModifier: F.buildAccessibilityModifier,
 	predefinedType: F.buildPredefinedType,
@@ -1666,78 +871,93 @@ export const ir: {
 	jsxText: F.buildJsxText,
 
 	// Supertype-stripped short aliases
-	abstractClass: _b$abstractClassDeclaration,
-	ambient: _b$ambientDeclaration,
-	as: _b$asExpression,
-	assignment: _b$assignmentExpression,
-	augmentedAssignment: _b$augmentedAssignmentExpression,
-	await: _b$awaitExpression,
-	binary: _b$binaryExpression,
-	block: _b$statementBlock,
-	break: _b$breakStatement,
-	call: _b$callExpression,
-	conditional: _b$conditionalType,
-	constructor: _b$constructorType,
-	continue: _b$continueStatement,
-	debugger: _b$debuggerStatement,
-	do: _b$doStatement,
+	abstractClass: F.abstractClassDeclaration,
+	ambient: F.ambientDeclaration,
+	as: F.asExpression,
+	assignment: F.assignmentExpression,
+	augmentedAssignment: F.augmentedAssignmentExpression,
+	await: F.awaitExpression,
+	binary: F.binaryExpression,
+	block: F.statementBlock,
+	break: F.breakStatement,
+	call: F.callExpression,
+	computed: F.computedPropertyName,
+	conditional: F.conditionalType,
+	constructor: F.constructorType,
+	continue: F.continueStatement,
+	debugger: F.debuggerStatement,
+	do: F.doStatement,
 	empty: F.buildEmptyStatement,
-	enum: _b$enumDeclaration,
+	enum: F.enumDeclaration,
 	existential: F.buildExistentialType,
-	export: _b$exportStatement,
-	flowMaybe: _b$flowMaybeType,
-	for: _b$forStatement,
-	forIn: _b$forInStatement,
-	function: _b$functionDeclaration,
-	generic: _b$genericType,
-	if: _b$ifStatement,
-	indexQuery: _b$indexTypeQuery,
-	infer: _b$inferType,
-	instantiation: _b$instantiationExpression,
-	interface: _b$interfaceDeclaration,
-	intersection: _b$intersectionType,
-	labeled: _b$labeledStatement,
-	lexical: _b$lexicalDeclaration,
-	literal: _b$literalType,
-	lookup: _b$lookupType,
-	member: _b$memberExpression,
-	new: _b$newExpression,
-	nonNull: _b$nonNullExpression,
-	parenthesized: _b$parenthesizedExpression,
+	export: F.exportStatement,
+	flowMaybe: F.flowMaybeType,
+	for: F.forStatement,
+	forIn: F.forInStatement,
+	function: F.functionDeclaration,
+	generic: F.genericType,
+	if: F.ifStatement,
+	indexQuery: F.indexTypeQuery,
+	infer: F.inferType,
+	instantiation: F.instantiationExpression,
+	interface: F.interfaceDeclaration,
+	intersection: F.intersectionType,
+	labeled: F.labeledStatement,
+	lexical: F.lexicalDeclaration,
+	literal: F.literalType,
+	lookup: F.lookupType,
+	member: F.memberExpression,
+	new: F.newExpression,
+	nonNull: F.nonNullExpression,
+	optional: F.optionalParameter,
+	parameter: F.tupleParameter,
+	parenthesized: F.parenthesizedExpression,
 	predefined: F.buildPredefinedType,
-	query: _b$typeQuery,
-	readonly: _b$readonlyType,
-	rest: _b$restPattern,
-	return: _b$returnStatement,
-	satisfies: _b$satisfiesExpression,
-	subscript: _b$subscriptExpression,
-	switch: _b$switchStatement,
-	templateLiteral: _b$templateLiteralType,
-	ternary: _b$ternaryExpression,
-	throw: _b$throwStatement,
-	try: _b$tryStatement,
-	tuple: _b$tupleType,
-	typeAlias: _b$typeAliasDeclaration,
-	unary: _b$unaryExpression,
-	union: _b$unionType,
-	update: _b$updateExpression,
-	variable: _b$variableDeclaration,
-	while: _b$whileStatement,
-	with: _b$withStatement,
-	yield: _b$yieldExpression,
+	privateIdentifier: F.buildPrivatePropertyIdentifier,
+	query: F.typeQuery,
+	readonly: F.readonlyType,
+	required: F.requiredParameter,
+	rest: F.restPattern,
+	return: F.returnStatement,
+	satisfies: F.satisfiesExpression,
+	sequence: F.sequenceExpression,
+	subscript: F.subscriptExpression,
+	switch: F.switchStatement,
+	templateLiteral: F.templateLiteralType,
+	ternary: F.ternaryExpression,
+	throw: F.throwStatement,
+	try: F.tryStatement,
+	tuple: F.tupleType,
+	typeAlias: F.typeAliasDeclaration,
+	unary: F.unaryExpression,
+	union: F.unionType,
+	update: F.updateExpression,
+	variable: F.variableDeclaration,
+	while: F.whileStatement,
+	with: F.withStatement,
+	yield: F.yieldExpression,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
+	moduleExportName,
 	declaration,
 	statement,
+	expressions,
 	expression,
 	primaryExpression,
+	formalParameter,
 	lhsExpression,
+	augmentedAssignmentLhs,
+	destructuringPattern,
+	identifier,
 	pattern,
+	propertyName,
 	statementIdentifier,
 	shorthandPropertyIdentifier,
 	shorthandPropertyIdentifierPattern,
 	propertyIdentifier,
+	importIdentifier,
 	type,
+	tupleTypeMember,
 	primaryType,
 	synonym
 };

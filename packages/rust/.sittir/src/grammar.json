@@ -12075,6 +12075,10 @@
       "_path"
     ],
     [
+      "_expression_except_range",
+      "_closure_expression_block"
+    ],
+    [
       "async_block",
       "_kw_async_marker"
     ],
@@ -12096,11 +12100,46 @@
       "_macro_rules"
     ],
     [
+      "macro_definition",
+      "_macro_definition_paren"
+    ],
+    [
+      "_macro_definition_paren"
+    ],
+    [
+      "macro_definition",
+      "_macro_definition_bracket"
+    ],
+    [
+      "_macro_definition_bracket"
+    ],
+    [
+      "macro_definition",
+      "_macro_definition_brace"
+    ],
+    [
+      "_macro_definition_brace"
+    ],
+    [
       "_token_pattern",
       "_non_special_token"
     ],
     [
       "_non_special_token"
+    ],
+    [
+      "struct_item",
+      "_struct_item_brace"
+    ],
+    [
+      "_struct_item_brace"
+    ],
+    [
+      "struct_item",
+      "_struct_item_tuple"
+    ],
+    [
+      "_struct_item_tuple"
     ],
     [
       "enum_variant_list",
@@ -12209,10 +12248,59 @@
     ],
     [
       "range_pattern",
+      "_range_pattern_left_with_right"
+    ],
+    [
+      "_range_pattern_left_with_right"
+    ],
+    [
+      "range_pattern",
       "_range_pattern_arm2"
     ],
     [
       "_range_pattern_arm2"
+    ],
+    [
+      "range_pattern",
+      "_range_pattern_prefix"
+    ],
+    [
+      "_range_pattern_prefix"
+    ],
+    [
+      "line_comment",
+      "_line_comment_regular_dslash"
+    ],
+    [
+      "_line_comment_regular_dslash"
+    ],
+    [
+      "line_comment",
+      "_line_comment_doc_outer"
+    ],
+    [
+      "_line_comment_doc_outer"
+    ],
+    [
+      "line_comment",
+      "_line_comment_doc_inner"
+    ],
+    [
+      "_line_comment_doc_inner"
+    ],
+    [
+      "block_comment",
+      "_block_comment_doc_outer"
+    ],
+    [
+      "_block_comment_doc_outer"
+    ],
+    [
+      "block_comment",
+      "_block_comment_doc_inner"
+    ],
+    [
+      "_block_comment_doc_inner"
     ],
     [
       "attribute",
@@ -12229,11 +12317,46 @@
       "_visibility_modifier_group"
     ],
     [
+      "visibility_modifier",
+      "_visibility_modifier_pub"
+    ],
+    [
+      "_visibility_modifier_pub"
+    ],
+    [
+      "function_type",
+      "_function_type_fn_form"
+    ],
+    [
+      "_function_type_fn_form"
+    ],
+    [
       "array_expression",
       "_array_expression_arm"
     ],
     [
       "_array_expression_arm"
+    ],
+    [
+      "closure_expression",
+      "_closure_expression_block"
+    ],
+    [
+      "_closure_expression_block"
+    ],
+    [
+      "field_pattern",
+      "_field_pattern_named"
+    ],
+    [
+      "_field_pattern_named"
+    ],
+    [
+      "or_pattern",
+      "_or_pattern_binary"
+    ],
+    [
+      "_or_pattern_binary"
     ],
     [
       "_array_expression_semi",

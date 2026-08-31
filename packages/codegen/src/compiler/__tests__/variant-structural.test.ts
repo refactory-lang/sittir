@@ -25,8 +25,15 @@ import type { Rule } from '../../types/rule.ts';
 const sym = (name: string, extra?: Record<string, unknown>): Rule<'link'> =>
 	({ type: 'SYMBOL', name, ...extra }) as unknown as Rule<'link'>;
 
-/** A SYMBOL ref carrying `aliasedFrom` — the post-link form of a resolved `alias()` call. */
-const aliasedSym = (name: string, aliasedFrom: string): Rule<'link'> => sym(name, { aliasedFrom });
+/** A named-ALIAS arm — the post-link form of a resolved `alias()` call:
+ *  the visible face on `value`, the hidden source symbol as content. */
+const mintedAlias = (visible: string, hiddenSource: string): Rule<'link'> =>
+	({
+		type: 'ALIAS',
+		named: true,
+		value: visible,
+		content: { type: 'SYMBOL', name: hiddenSource }
+	}) as unknown as Rule<'link'>;
 
 const str = (value: string): Rule<'link'> => ({ type: 'STRING', value }) as unknown as Rule<'link'>;
 const seq = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: 'SEQ', members }) as unknown as Rule<'link'>;
@@ -67,8 +74,8 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 			array_expression: seq(
 				str('['),
 				choice(
-					aliasedSym('array_expression_semi', '_array_expression_semi'),
-					aliasedSym('array_expression_list', '_array_expression_list')
+					mintedAlias('array_expression_semi', '_array_expression_semi'),
+					mintedAlias('array_expression_list', '_array_expression_list')
 				),
 				str(']')
 			)
@@ -84,7 +91,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		const rules: Record<string, Rule<'link'>> = {
 			// `dictionary`'s naked-entries choice: `pair` and `dictionary_splat`
 			// are both ordinary, independently-authored sibling rules (plain
-			// SYMBOL refs, no `aliasedFrom`) — `dictionary_splat` merely shares
+			// SYMBOL refs, no alias wrapper) — `dictionary_splat` merely shares
 			// dictionary's name prefix by coincidence.
 			dictionary: seq(str('{'), field('entries', choice(sym('pair'), sym('dictionary_splat'))), str('}')),
 			pair: seq(sym('key'), str(':'), sym('value')),
@@ -94,8 +101,8 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		expect(found).toHaveLength(0);
 	});
 
-	it('excludes a prefix-named, alias-like SYMBOL when the SAME name also has an independent body (mint condition is body-presence, not aliasedFrom-presence)', () => {
-		// A SYMBOL with no `aliasedFrom` at all, prefix-named, but its target
+	it('excludes a prefix-named, alias-like SYMBOL when the SAME name also has an independent body (mint condition is body-presence, not alias-presence)', () => {
+		// A plain SYMBOL with no alias wrapper, prefix-named, but its target
 		// has its own rule entry (ts's object_type_content_comma/_semi shape —
 		// plain named refs to real sibling rules, not alias() calls).
 		const rules: Record<string, Rule<'link'>> = {
@@ -134,7 +141,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		// visibility_modifier shape: `crate` (unrelated keyword symbol) beside
 		// `visibility_modifier_pub` (alias-minted, prefix-named).
 		const rules: Record<string, Rule<'link'>> = {
-			visibility_modifier: choice(sym('crate'), aliasedSym('visibility_modifier_pub', '_visibility_modifier_pub')),
+			visibility_modifier: choice(sym('crate'), mintedAlias('visibility_modifier_pub', '_visibility_modifier_pub')),
 			crate: str('crate')
 		};
 		const found = findStructuralVariantChoices('visibility_modifier', rules.visibility_modifier!, rules);
@@ -153,12 +160,12 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 					field(
 						'left',
 						choice(
-							aliasedSym('range_pattern_left_with_right', '_range_pattern_left_with_right'),
-							aliasedSym('range_pattern_left_bare', '_range_pattern_left_bare')
+							mintedAlias('range_pattern_left_with_right', '_range_pattern_left_with_right'),
+							mintedAlias('range_pattern_left_bare', '_range_pattern_left_bare')
 						)
 					)
 				),
-				aliasedSym('range_pattern_prefix', '_range_pattern_prefix')
+				mintedAlias('range_pattern_prefix', '_range_pattern_prefix')
 			)
 		};
 		const found = findStructuralVariantChoices('range_pattern', rules.range_pattern!, rules);
@@ -173,10 +180,10 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		const rules: Record<string, Rule<'link'>> = {
 			function_type: choice(
 				seq(
-					aliasedSym('function_type_trait_form', '_function_type_trait_form'),
+					mintedAlias('function_type_trait_form', '_function_type_trait_form'),
 					field('parameters', sym('parameters'))
 				),
-				seq(aliasedSym('function_type_fn_form', '_function_type_fn_form'), field('parameters', sym('parameters')))
+				seq(mintedAlias('function_type_fn_form', '_function_type_fn_form'), field('parameters', sym('parameters')))
 			),
 			parameters: str('()')
 		};
@@ -190,7 +197,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		const rules: Record<string, Rule<'link'>> = {
 			_simple_pattern_helper: choice(
 				sym('class_pattern'),
-				aliasedSym('_simple_pattern_helper_negative', '__simple_pattern_helper_negative')
+				mintedAlias('_simple_pattern_helper_negative', '__simple_pattern_helper_negative')
 			),
 			class_pattern: str('class')
 		};
@@ -201,7 +208,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 
 	it('unwraps an OPTIONAL wrapper around an alias-minted arm (optionality does not change what the arm names)', () => {
 		const rules: Record<string, Rule<'link'>> = {
-			mod_item: choice(optional(aliasedSym('mod_item_external', '_mod_item_external')), sym('declaration_list'))
+			mod_item: choice(optional(mintedAlias('mod_item_external', '_mod_item_external')), sym('declaration_list'))
 		};
 		const found = findStructuralVariantChoices('mod_item', rules.mod_item!, rules);
 		expect(found).toHaveLength(1);
@@ -213,8 +220,8 @@ describe('deriveStructuralVariantChildren — grammar-wide map, full target name
 	it('returns FULL target names (not bare suffixes) — required for a hidden parent with a visible target', () => {
 		const rules: Record<string, Rule<'link'>> = {
 			_export_statement_default: choice(
-				aliasedSym('export_statement_default_from_arm', '_export_statement_default_from_arm_hidden'),
-				aliasedSym('export_statement_default_decl_arm', '_export_statement_default_decl_arm_hidden')
+				mintedAlias('export_statement_default_from_arm', '_export_statement_default_from_arm_hidden'),
+				mintedAlias('export_statement_default_decl_arm', '_export_statement_default_decl_arm_hidden')
 			)
 		};
 		const map = deriveStructuralVariantChildren(rules);
@@ -231,14 +238,14 @@ describe('deriveStructuralVariantChildren — grammar-wide map, full target name
 					str('"'),
 					field(
 						'contents',
-						choice(aliasedSym('string_fragment', 'unescaped_double_string_fragment'), sym('escape_sequence'))
+						choice(mintedAlias('string_fragment', 'unescaped_double_string_fragment'), sym('escape_sequence'))
 					)
 				),
 				seq(
 					str("'"),
 					field(
 						'contents',
-						choice(aliasedSym('string_fragment', 'unescaped_single_string_fragment'), sym('escape_sequence'))
+						choice(mintedAlias('string_fragment', 'unescaped_single_string_fragment'), sym('escape_sequence'))
 					)
 				)
 			),

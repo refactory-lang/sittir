@@ -15,10 +15,8 @@
  * `tools → codegen` declaration edge.
  */
 
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-
-import { invoke, type NodeMap } from './codegen-surface.ts';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 /**
  * Content-aware write: skip the write when the file already holds identical

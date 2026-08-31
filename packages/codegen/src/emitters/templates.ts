@@ -562,7 +562,11 @@ function staticListInterior(
 		verdict = blocked ? 'runtime-derivable' : 'runtime-varying';
 		detail = `sep=${JSON.stringify(sep)}`;
 	} else {
-		const edgeCtx = { nodes: ctx.nodeMap.nodes, normalizedRules: ctx.nodeMap.normalizedRules, isWordChar: ctx.isWordChar };
+		const edgeCtx = {
+			nodes: ctx.nodeMap.nodes,
+			normalizedRules: ctx.nodeMap.normalizedRules,
+			isWordChar: ctx.isWordChar
+		};
 		const ends = new Set<string>();
 		const starts = new Set<string>();
 		let known = true;
@@ -678,7 +682,8 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	}
 	if (rule.nonterminal === false) {
 		const text = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
-		if (text === undefined) throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
+		if (text === undefined)
+			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
 		return emitFixedText(text);
 	}
 

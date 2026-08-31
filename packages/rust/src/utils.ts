@@ -77,6 +77,25 @@ export function hasKindOf<K extends keyof NamespaceMap>(
 	return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
+export function coerceMixedEnumStorage<T = unknown>(
+	value: unknown,
+	byText: readonly (readonly [string, number])[] = []
+): T {
+	if (value === undefined || value === null) return undefined as T;
+	if (typeof value === 'number') return value as T;
+	if (Array.isArray(value)) {
+		return value.map((item) => coerceMixedEnumStorage(item, byText)).filter((item) => item !== undefined) as T;
+	}
+	if (typeof value === 'string') {
+		const mapped = byText.find(([candidate]) => candidate === value);
+		return (mapped ? mapped[1] : value) as T;
+	}
+	if (isRecord(value) && typeof value.$type === 'number' && byText.some(([, id]) => id === value.$type)) {
+		return value.$type as T;
+	}
+	return value as T;
+}
+
 export function coerceKindEnumStorage<T = unknown>(
 	value: unknown,
 	byText: readonly (readonly [string, number])[] = []
@@ -127,4 +146,51 @@ export function attachProps<T extends (...args: never[]) => unknown, P extends R
 		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
 	}
 	return fn as T & P;
+}
+
+export interface FlavorPair<S, C> {
+	readonly strict: S;
+	readonly coerce: C;
+}
+
+export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
+	return { strict, coerce };
+}
+
+type AnyFlavorFn = (...args: never[]) => unknown;
+
+export type ArgsOf<F> = F extends (...args: infer P) => unknown
+	? P
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E[]
+		: never;
+
+export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+export type Hoisted<B> = B extends { coerce: infer C }
+	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+	: B extends { strict: infer S }
+		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+		: B extends Record<string, unknown>
+			? { [K in keyof B]: Hoisted<B[K]> }
+			: B;
+
+function isFlavorPair(value: unknown): value is { strict: unknown; coerce?: unknown } {
+	if (typeof value !== 'object' || value === null) return false;
+	const v = value as { strict?: unknown; coerce?: unknown };
+	return typeof v.strict === 'function' || typeof v.coerce === 'function';
+}
+
+export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Hoisted<B> {
+	const target = (typeof b.coerce === 'function' ? b.coerce : b.strict) as AnyFlavorFn;
+	const callable = (...args: never[]) => target(...args);
+	for (const [key, value] of Object.entries(b)) {
+		Object.defineProperty(callable, key, {
+			value: isFlavorPair(value) ? hoist(value) : value,
+			writable: true,
+			configurable: true,
+			enumerable: true
+		});
+	}
+	return callable as Hoisted<B>;
 }

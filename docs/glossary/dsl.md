@@ -3279,7 +3279,7 @@ registered but later unused still counts as a sibling.
  * `promotePolymorph` pass to recognize the shape and wrap the rule in a
  * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
  * the pipeline, so the fields now stay FIELD-typed and route into named
- * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
+ * slots via the per-arm union-slot routing (`carriesNamedField`), same as
  * any other heterogeneous fielded choice.
  *
  * @remarks
@@ -3397,8 +3397,8 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
- * `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule doc
- * comment in types/rule.ts. `grammarFn`'s `normalizeImmediateTokens`
+ * `{type: TOKEN, immediate: true}` — see the `ImmediateTokenRule` entry
+ * in `docs/glossary/types.md`. `grammarFn`'s `normalizeImmediateTokens`
  * (compiler/evaluate.ts) folds this into TOKEN+immediate once enrich's
  * minting decisions (which must see the same arm shape under both
  * runtimes) are locked in.

@@ -5670,8 +5670,8 @@ Surface`
  * with NO separator character at all, since `''` short-circuits the `??`
  * fallback chain in `emitListSlot` just as effectively as a real value).
  * `isNonterminalRuleType` is typed over `Rule<'evaluate'>` but classifies
- * purely by `.type` + child shape — phase-agnostic in practice, same cast
- * pattern used throughout PR-S (e.g. flatten.ts's OPTIONAL case).
+ * purely by `.type` + child shape — phase-agnostic in practice, the same
+ * cast pattern the wrapper-deletion emitters use.
  */
 ```
 
@@ -6418,6 +6418,10 @@ Surface`
 //   template-walker crashes, but don't assert non-empty — the empty
 //   output is the correct behavior.
 ```
+
+### `packages/codegen/src/emitters/test.ts::emitSubFactoryTests`
+
+One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child.
 
 ### `packages/codegen/src/emitters/test.ts::emitSeparatedListTest`
 
@@ -9723,16 +9727,7 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/config.ts::emitConfig`
 
-#### body
-
-```text
-// Force the native (Rust napi) render backend. Production consumers run
-// `--backend native`; the JS dispatch engine is deprecated (see
-// CLAUDE.md). `SITTIR_BACKEND=native` also disables the silent
-// native->JS fallback (backend.ts computeBackend), so a missing/stale
-// native binary fails the suite loudly instead of quietly exercising
-// the deprecated engine.
-```
+Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block mapping every `@sittir/*` entry to its sibling `src/` — package-scoped test runs (and the examples they import) resolve to source, never to a stale `dist/` build, mirroring the root config and the workspace `paths`.
 
 ### `packages/codegen/src/emitters/is.ts::module`
 
@@ -9822,6 +9817,8 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
+A slot whose values are all literal/keyword/enum arms classifies `kindEnum` (whole-slot id storage). A slot mixing those with compound node arms classifies `mixedEnum`: the literal arms store their stamped `resolvedKindId` — single-value-enum semantics, never raw text and never a whole keyword node — while node arms stay whole nodes; `enumKinds`/`texts`/`enumKindsById` describe only the literal arms. Three arm classes disqualify a mixed slot back to `verbatim`, because their parse identities are real nodes rather than fixed tokens: a LAYOUT literal (whitespace-only text — python's `_newline` in suite slots), a keyword REFERENCE to a visible named kind, and a terminal whose resolved kind is owned by a named node in the map (rust's `u8`..`char`, soft keywords like `type` — an identifier spelled the same must never collapse). A literal arm without a stamped id also forces `verbatim`. The native transport already routes ids for the surviving shape (heterogeneous per-slot enums), so `mixedEnum` is otherwise the TS-side storage contract.
+
 #### body
 
 ```text
@@ -9876,6 +9873,10 @@ pipeline — which falls back to string equality.
 /** Cardinality facts of a compound's structural sole slot, or `null` when
  *  the kind has zero or two-plus slots. */
 ```
+
+### `packages/codegen/src/emitters/shared.ts::classifyFromEmission`
+
+The single gate for the coerce surface: which kinds get a `coerceTo*` and, through it, a bundle entry, an `ir` key, and coerce flavors on overlay wires. The from-surface is a strict subset of the factory-surface — a coercer wraps a raw builder, so `classifyFactoryEmission !== 'emit'` is `skip-no-raw-factory` (this is what keeps a name-only `rawFactoryName` getter from minting references to builders that were never emitted). A hidden kind passes only when `userFacing` (the stamped model attribute — alias-faced, variant-adopted, or slot-reachable), which is how aliased-hidden kinds join the surface under their visible identity. A hoisted non-list compound is `skip-hoisted-form` — hoisted forms coerce locally inside their parent, never publicly; lists are exempt because a GROUP-wrapped separated list carries the hoisted stamp yet owns a public coerce surface. Every consumer (from.ts dispatch, `bundleEntries`, the overlay's `coerceEmitted`, the test emitter through the wire SSOT) reads this one classification; none re-derives it.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsBuildArgsAlias`
 
@@ -11437,13 +11438,7 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitAttachProps`
 
-#### body
-
-```text
-// defineProperty rather than Object.assign: a function's reserved
-// read-only properties (name, length, arguments, caller) make [[Set]]
-// throw, and a namespaced constructor may legitimately be called `name`.
-```
+Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (a function's argument tuple, covering the readonly-rest signatures `Parameters` degrades to `never` on — the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
 
@@ -12572,11 +12567,13 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
+The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
+
 #### body
 
 ```text
-// One hoisted, typeof-annotated const per bundle kind — the group/`ir`
-// namespace consts reference these by NAME (see hoistedBundleLines).
+// One hoisted const per bundle kind — the group/`ir` namespace consts
+// reference these by NAME (see bundleLine).
 ```
 
 #### body
@@ -12623,51 +12620,6 @@ pipeline — which falls back to string equality.
 ```text
 // Explicit typeof-composed surface — same TS7056 rationale as the
 // hoisted bundle consts above.
-```
-
-### `packages/codegen/src/emitters/ir.ts::BundleParts`
-
-```text
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/ir.ts::bundleParts`
-
-#### body
-
-```text
-// 'list' participates in this scan uniformly alongside 'branch' — see
-// isSlotBearingCompound's doc comment (shared.ts).
-```
-
-#### body
-
-```text
-// The namespaced constructors ride along on the bundle
-// (`ir.forHeader.var(...)`); the bundle's own keys win a clash. Taken
-// from the FROM surface, not the factory: `ir.<kind>` coerces and
-// `.strict` is the factory, and a form under it keeps that same
-// pairing — `coerceTo<Kind>` already carries whichever of the two
-// each form resolved to.
-```
-
-#### body
-
-```text
-// One convention across the whole surface: the entry coerces, `.strict` is
-// the strict factory. No `from` prop — it was the entry itself under a
-// second name.
-```
-
-### `packages/codegen/src/emitters/ir.ts::hoistedBundleLines`
-
-```text
-/** Hoisted, explicitly-annotated bundle const. The typeof-composed
- *  annotation keeps declaration emit finite: the mega-namespace consts
- *  below reference these by NAME, so no node's inferred type ever expands
- *  the whole surface structurally (TS7056). */
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::GROUP_TOKEN_SYNONYMS`
@@ -13141,9 +13093,10 @@ pipeline — which falls back to string equality.
 /**
 	 * Coercers for the form children a loose mirror routes through that no
 	 * kind's own dispatch emits. Those children are hidden polymorph-form
-	 * groups: their factory exists, but `classifyFromEmission`'s `_`-prefix
-	 * gate suppresses the matching coercer, so the parent's namespace bundle
-	 * has nothing but the strict form to re-expose.
+	 * groups: their factory exists, but `classifyFromEmission`'s
+	 * hoisted-form skip suppresses the matching public coercer, so the
+	 * parent's namespace bundle has nothing but the strict form to
+	 * re-expose.
 	 *
 	 * MODULE-LOCAL, coercer and per-field resolvers alike: the child kind is
 	 * hidden, so exporting either would widen the public surface for an
@@ -14561,3 +14514,214 @@ pipeline — which falls back to string equality.
 // detection in rustTransportSlotType to map a supertype-classified slot
 // to the supertype kind that the SCC graph carries as a relay node.
 ```
+
+### `packages/codegen/src/emitters/overlays/module.ts::OVERLAY_CHAIN`
+
+```text
+/** Fixed decoration order for the factories overlay stack: `refines` wraps
+ *  `raw`, `polymorphs` wraps `refines`, `supertypes` wraps `polymorphs`.
+ *  The order is fixed rather than derived because each layer's
+ *  decorations depend on facts only available once the layer before it
+ *  has resolved — a supertype attachment reads the polymorph layer's
+ *  resolved variant surface, which reads the refine layer's resolved
+ *  refinement forms, which reads the raw builders — so reordering the
+ *  chain would reorder which facts are visible to which layer. */
+```
+
+### `packages/codegen/src/emitters/overlays/module.ts::overlayImportPath`
+
+Import path each chain layer loads its predecessor from: index 0 (refines) imports `../bundle.js`; later layers import the previous overlay. The chain is raw → coerce → bundle → refines → polymorphs → supertypes → index.
+
+### `packages/codegen/src/emitters/overlays/module.ts::emitFactoriesIndex`
+
+Emits `factories/index.ts`, the dynamic final chain step: re-exports the top overlay and, for every bundle entry, `export const <exportName> = hoist(O.<exportName>);` — the consumer surface where a bare call is the coerce flavor and `.strict` stays reachable (recursively, sub-factory pairs included).
+
+### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
+
+Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
+
+### `packages/codegen/src/emitters/overlays/module.ts::BundleEntry`
+
+One bundled kind: `key` is the ir property key (irKey, falling back to camelCase(kind)); `exportName` is the module-level export identifier — `key` suffixed with `_` when the key is a reserved identifier (e.g. `arguments`), since a reserved word is legal as an object property but not as a top-level export.
+
+### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
+
+The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry.
+
+### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
+
+Emits `factories/bundle.ts`: re-exports raw and coerce, then one line per entry — `export const <exportName> = bundle(F.<build>, C.<coerceTo>);`. The pairing is the one dynamic stage below the index.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::parentRefs`
+
+The strict/coerce expression pair for a parent builder; `coerce` is absent when the kind has no coercer.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::childRefs`
+
+The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::AliasWire`
+
+A form wire with no seat: the child kind is a complete alternative of the parent's rule, so the wire is the child's own factory pair exposed under the parent, not a transformation method.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::variantAliasWires`
+
+Whole-rule alternative arms. A parent's `variantChildKinds` (visible names) can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `choiceSlotOf` never sees those, because they are not in a slot. Each resolves to its node (visible key, else `_`-prefixed), is named by `prefixNamedSuffix` over the visible name, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::methodName`
+
+Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with non-identifier characters in the name replaced by `_`.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::collectPolymorphWires`
+
+The single derivation of which sub-factories the polymorph overlay actually wires — traversal order (children before flattened parents), per-parent filtered entry lists (ambiguity and slot-collision resolved in `subFactoriesOf`; unreferenceable children filtered here, and a flattened arm survives only when the child's ALREADY-EMITTED wire set — children visit first, DFS post-order — carries the referenced property, because the child's context-sensitive derivation under this parent can name entries the child's own top-level set resolved away), the emission predicates, and the bundle key map. Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. Alias wires from `variantAliasWires` ride the same sets: a parent enters the map when it has seated subs or alias forms. Any consumer deriving the wire set independently will drift — this map is the fact.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
+
+Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
+
+### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
+
+Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::LiteralArm`
+
+```text
+/** A sub-factory arm backed by one literal branch of the parent's choice
+ *  slot (`op: choice('and', 'or')` yields a `LiteralArm` per string). */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::KindArm`
+
+```text
+/** A sub-factory arm backed by a child kind reachable through the parent's
+ *  seat slot (a choice slot, or a forwarding hop's sole slot). `child` is
+ *  always the *direct* child under that slot, even for a flattened entry
+ *  reached through the child's own sub-factories; `path` is empty for a
+ *  direct arm and otherwise holds exactly one name — the property on the
+ *  child's own wire const that already encapsulates every deeper hop.
+ *  `leaf` is the deepest kind the entry ultimately builds (undefined when
+ *  `child` is the leaf); outer levels name their flattened entries from
+ *  it, so `visibility_modifier` calls the in-path form `inPath` even
+ *  though the arm's direct child is the pub hop. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactory`
+
+```text
+/** One named narrowing of a parent's factory: `subfactory = parent slots −
+ *  choice slot ∪ arm slots` — `residual` is every parent field except the
+ *  chosen `slot`, and the arm (`literal` or `kind`) supplies whatever the
+ *  narrowing itself fixes. `slot` is the parent's own choice slot, kept on
+ *  every entry (direct and flattened alike) so a caller can tell which
+ *  field the sub-factory narrows without re-deriving it via `choiceSlotOf`. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactoryDiagnostic`
+
+```text
+/** Recorded instead of a `SubFactory` entry when a name can't be resolved
+ *  to one canonical claimant: `ambiguous` when two or more claimants (direct
+ *  or flattened) land on the same name with no single direct winner among
+ *  them, `slot-collision` when a would-be entry's own config keys overlap
+ *  the parent's residual field keys. `claimants` lists what collided —
+ *  `'<literal>'` for a literal arm, `<kind>` for a direct kind arm,
+ *  `<child>.<path>` for a flattened one. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactorySet`
+
+```text
+/** The complete result of deriving sub-factories for one node: the
+ *  survivors in `entries`, everything dropped (and why) in `diagnostics`. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::choiceSlotOf`
+
+```text
+/** The parent's eligible choice slot, or `undefined` when there isn't
+ *  exactly one. A slot qualifies when it holds two or more values
+ *  (`values.length >= 2`) and isn't a multi/array slot (`!isMultiple`) —
+ *  a single value has nothing to choose between, and an array slot picks
+ *  a set of children rather than one arm. A node with zero or more than
+ *  one such slot has no unambiguous narrowing target, so it isn't
+ *  eligible for sub-factories at all. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armName`
+
+```text
+/** The sub-factory name a choice-slot value contributes, or `undefined`
+ *  when the value can't be named (the arm is then skipped, not defaulted).
+ *  A kind-backed value always names successfully: a hoisted compound whose
+ *  `parentKind` matches `parent.kind` contributes its own `name` (the
+ *  variant name enrich minted it under); every other kind-backed value
+ *  contributes the suffix `prefixNamedSuffix(parent.kind, child.kind)`
+ *  strips off the parent's kind prefix, or — when the child's kind doesn't
+ *  carry that prefix — the child's own kind with any leading `_`
+ *  stripped. A literal value names itself when it's already a valid
+ *  identifier; otherwise it falls back to the literal's resolved token
+ *  kind (`resolvedKind`, never re-derived from the literal text), and
+ *  skips entirely when neither is available. An authored `variant()` on a
+ *  literal arm never needs literal-specific handling here: enrich hoists
+ *  that arm into a `<parent>_<variant>` kind with the literal fixed
+ *  inside it, so it already takes the kind-arm branch above. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
+
+Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard. A kind with no choice slot but a forwarding hop (`forwardedTargetKind`: sole slot seating exactly one emitted child kind) passes the child's sub-factories through — each entry re-seated in the hop's own slot under a leaf-relative name, its wire referencing the child const's matching property. Both the choice-slot and forwarding branches feed one shared resolution tail (`resolveCandidates`: name-ambiguity and slot-collision filtering), so the two seat modes cannot diverge in how claims are settled.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
+
+```text
+/** The config keys a sub-factory's arm accepts as a config object; empty
+ *  when the arm's call takes its residual fields positionally instead —
+ *  callers ask `classifyFactoryShape(child)` themselves to tell the two
+ *  apart, this function never re-derives or reports the calling
+ *  convention. A literal arm always returns `[]` — a literal has no child
+ *  to read config keys from. A direct kind arm (empty `path`) returns
+ *  `[]` when the child's own factory shape (`classifyFactoryShape`) isn't
+ *  `config`; otherwise it returns the child's own field config keys. A
+ *  flattened arm (non-empty `path`) looks up the child's sub-factory named
+ *  `path[0]` (threading `opts` through the lookup so it agrees with
+ *  whatever `isEmitted` the caller resolved the arm under — a mismatched
+ *  default here would let the nested lookup diverge from the entry the
+ *  caller actually built) and returns that sub-factory's residual keys
+ *  unioned with what the nested step itself contributes: when the nested
+ *  arm's own child is `config`-shaped, that's `armConfigKeys` recursed
+ *  one level deeper (the nested sub-factory destructures its child's
+ *  fields individually, so the merged config needs each of those fields
+ *  by name); otherwise — a literal nested arm, or a kind arm whose child
+ *  is `text`/`direct`/`forwarded`/`spread`/`elements`-shaped — the nested
+ *  sub-factory calls its own child wholesale (`C(k)` / `C(...k)`, never
+ *  destructured), so the merged config needs the nested arm's own slot
+ *  key as one explicit prop instead (empty contribution for a literal arm,
+ *  which needs nothing beyond its residual). `visiting` guards this
+ *  recursion against the mutual cycle `derive → armConfigKeys →
+ *  subFactoriesOf → derive → …` can otherwise walk into: a flattened
+ *  step's own `subFactoriesOf` call always starts a fresh (empty)
+ *  `visiting` set, so without a caller-supplied one a cycle spanning
+ *  several distinct kinds is invisible to any single call's local
+ *  tracking — `derive`'s call site seeds it with its own ancestor chain
+ *  for exactly this reason. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::claimantOf`
+
+```text
+/** Renders one `SubFactory` as the diagnostic-facing string that names it
+ *  in `SubFactoryDiagnostic.claimants` — the single formatter both the
+ *  `ambiguous` candidate list and the `slot-collision` diagnostic build
+ *  from, so the two diagnostics never disagree on how a claimant reads. A
+ *  literal arm renders as `'<literal>'`; a kind arm renders as
+ *  `<child.kind>` joined by `.` with every name in `path` — `<child>` for
+ *  a direct arm (empty `path`), `<child>.<path…>` for a flattened one, so
+ *  a claimant several levels deep still names the full chain instead of
+ *  just its first hop. */
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
+
+Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
+

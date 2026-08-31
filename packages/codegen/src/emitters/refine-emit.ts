@@ -21,7 +21,11 @@ export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | und
 	for (const [kind, kindForms] of forms) {
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
-		const infos: RefineFormInfo[] = kindForms.map((form) => ({ name: form.name, form, narrowedFields: form.narrowedFields }));
+		const infos: RefineFormInfo[] = kindForms.map((form) => ({
+			name: form.name,
+			form,
+			narrowedFields: form.narrowedFields
+		}));
 		out.push({ kind, typeName: node.typeName, node, forms: infos });
 	}
 	return out;

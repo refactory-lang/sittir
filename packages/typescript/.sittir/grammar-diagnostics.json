@@ -19,7 +19,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [_binary_expression_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [_binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -114,6 +114,38 @@
       "newType": "_Number",
       "visibleKinds": [
         "number"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_identifier",
+    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Identifier",
+      "newType": "_Identifier",
+      "visibleKinds": [
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_property_identifier",
+    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "PropertyIdentifier",
+      "newType": "_PropertyIdentifier",
+      "visibleKinds": [
+        "property_identifier"
       ]
     }
   },

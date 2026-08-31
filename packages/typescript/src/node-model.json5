@@ -1,19 +1,29 @@
 {
   "name": "typescript",
-  "nodeCount": 409,
+  "nodeCount": 419,
   "word": "identifier",
   "supertypes": [
+    "_augmented_assignment_lhs",
+    "_destructuring_pattern",
+    "_expressions",
+    "_formal_parameter",
+    "_identifier",
+    "_import_identifier",
     "_lhs_expression",
+    "_module_export_name",
     "_property_identifier",
+    "_property_name",
     "_shorthand_property_identifier",
     "_shorthand_property_identifier_pattern",
     "_statement_identifier",
+    "_tuple_type_member",
     "declaration",
     "expression",
     "lhs_expression",
     "pattern",
     "primary_expression",
     "primary_type",
+    "property_identifier",
     "statement",
     "type"
   ],
@@ -95,7 +105,7 @@
     "binary_expression": {
       "definedBy": "override",
       "childKind": {
-        "binary_expression_arm": "arm"
+        "binary_expression_in": "in"
       }
     },
     "update_expression": {
@@ -1616,7 +1626,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "binary_expression_arm": {
+      "binary_expression_in": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3569,22 +3579,6 @@
         "nonEmpty": false
       }
     },
-    "_binary_expression_arm": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_ambient_declaration_global": {
       "body": {
         "unnamed": false,
@@ -3928,6 +3922,22 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_binary_expression_in": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4464,6 +4474,22 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_augmented_assignment_lhs",
+      "modelType": "supertype",
+      "typeName": "AugmentedAssignmentLhs",
+      "irKey": "augmentedAssignmentLhs",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_reserved_identifier",
+        "identifier",
+        "member_expression",
+        "non_null_expression",
+        "parenthesized_expression",
+        "subscript_expression"
+      ]
+    },
+    {
       "kind": "_automatic_semicolon",
       "modelType": "token",
       "typeName": "AutomaticSemicolon",
@@ -4475,11 +4501,11 @@
       "text": "\n"
     },
     {
-      "kind": "_binary_expression_arm",
+      "kind": "_binary_expression_in",
       "modelType": "branch",
-      "typeName": "BinaryExpressionArm",
-      "factoryName": "_binaryExpressionArm",
-      "irKey": "binaryExpressionArm",
+      "typeName": "BinaryExpressionIn",
+      "factoryName": "_binaryExpressionIn",
+      "irKey": "binaryExpressionIn",
       "hidden": false,
       "hoisted": true,
       "fields": [
@@ -4539,7 +4565,7 @@
         }
       ],
       "children": [],
-      "name": "_binary_expression_arm",
+      "name": "_binary_expression_in",
       "factoryShape": "config",
       "factoryFields": [
         "left",
@@ -5208,6 +5234,18 @@
       "factoryFields": [
         "extends_clause",
         "implements_clause"
+      ]
+    },
+    {
+      "kind": "_destructuring_pattern",
+      "modelType": "supertype",
+      "typeName": "DestructuringPattern",
+      "irKey": "destructuringPattern",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "array_pattern",
+        "object_pattern"
       ]
     },
     {
@@ -5987,6 +6025,18 @@
       ]
     },
     {
+      "kind": "_expressions",
+      "modelType": "supertype",
+      "typeName": "Expressions",
+      "irKey": "expressions",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "expression",
+        "sequence_expression"
+      ]
+    },
+    {
       "kind": "_extends_clause_single",
       "modelType": "branch",
       "typeName": "ExtendsClauseSingle",
@@ -6282,6 +6332,18 @@
       ]
     },
     {
+      "kind": "_formal_parameter",
+      "modelType": "supertype",
+      "typeName": "FormalParameter",
+      "irKey": "formalParameter",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "optional_parameter",
+        "required_parameter"
+      ]
+    },
+    {
       "kind": "_formal_parameters_elements",
       "modelType": "list",
       "typeName": "FormalParametersElements",
@@ -6311,6 +6373,18 @@
       "stampExpression": "\"\\n\" as const",
       "word": false,
       "text": "\n"
+    },
+    {
+      "kind": "_identifier",
+      "modelType": "supertype",
+      "typeName": "_Identifier",
+      "irKey": "identifier",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "identifier",
+        "undefined"
+      ]
     },
     {
       "kind": "_import_clause_default_import",
@@ -6426,6 +6500,18 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ]
+    },
+    {
+      "kind": "_import_identifier",
+      "modelType": "supertype",
+      "typeName": "ImportIdentifier",
+      "irKey": "importIdentifier",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "anon_type",
+        "identifier"
       ]
     },
     {
@@ -6825,6 +6911,18 @@
       "text": "import . meta"
     },
     {
+      "kind": "_module_export_name",
+      "modelType": "supertype",
+      "typeName": "ModuleExportName",
+      "irKey": "moduleExportName",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "identifier",
+        "string"
+      ]
+    },
+    {
       "kind": "_number",
       "modelType": "branch",
       "typeName": "_Number",
@@ -6968,13 +7066,28 @@
     {
       "kind": "_property_identifier",
       "modelType": "supertype",
-      "typeName": "PropertyIdentifier",
+      "typeName": "_PropertyIdentifier",
       "irKey": "propertyIdentifier",
       "hidden": true,
       "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "identifier"
+      ]
+    },
+    {
+      "kind": "_property_name",
+      "modelType": "supertype",
+      "typeName": "PropertyName",
+      "irKey": "propertyName",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_property_identifier",
+        "computed_property_name",
+        "number",
+        "private_property_identifier",
+        "string"
       ]
     },
     {
@@ -7158,6 +7271,21 @@
       "factoryName": "ternaryQmark",
       "irKey": "ternaryQmark",
       "hidden": false
+    },
+    {
+      "kind": "_tuple_type_member",
+      "modelType": "supertype",
+      "typeName": "TupleTypeMember",
+      "irKey": "tupleTypeMember",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "optional_tuple_parameter",
+        "optional_type",
+        "rest_type",
+        "tuple_parameter",
+        "type"
+      ]
     },
     {
       "kind": "_tuple_type_members",
@@ -9878,9 +10006,9 @@
           }
         },
         {
-          "name": "binary_expression_arm",
-          "propertyName": "binaryExpressionArm",
-          "paramName": "binaryExpressionArm",
+          "name": "binary_expression_in",
+          "propertyName": "binaryExpressionIn",
+          "paramName": "binaryExpressionIn",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9888,15 +10016,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_binary_expression_arm",
-              "parseKind": "binary_expression_arm",
+              "name": "_binary_expression_in",
+              "parseKind": "binary_expression_in",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_binary_expression_arm"
+              "_binary_expression_in"
             ]
           }
         }
@@ -9907,7 +10035,7 @@
         "left",
         "operator",
         "right",
-        "binary_expression_arm"
+        "binary_expression_in"
       ]
     },
     {
@@ -14473,7 +14601,7 @@
       "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
-      "irKey": "identifier",
+      "irKey": "identifier2",
       "hidden": false,
       "factoryShape": "text"
     },
@@ -19033,6 +19161,18 @@
       "factoryFields": [
         "hash_bang_line",
         "statements"
+      ]
+    },
+    {
+      "kind": "property_identifier",
+      "modelType": "supertype",
+      "typeName": "PropertyIdentifier",
+      "irKey": "propertyIdentifier",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_reserved_identifier",
+        "identifier"
       ]
     },
     {

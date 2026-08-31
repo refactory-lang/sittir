@@ -14,10 +14,6 @@ import { transform } from '../../dsl/transform/transform.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from '../../__tests__/helpers/rule-catalog.ts';
 import { readRuleMetadata } from '../../dsl/rule-metadata.ts';
 
-// transform()'s native-dsl delegation path (the one-arg field() form) reaches
-// through globalThis.field when this test imports transform directly,
-// bypassing evaluate.ts's runtime injection — install the shared DSL fakes
-// for that.
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 

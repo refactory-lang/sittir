@@ -33,6 +33,7 @@ import type {
 	RepeatRule,
 	RuleId
 } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import {
 	isSeq,
 	isChoice,
@@ -60,7 +61,10 @@ import type {
 	IncludeFilter,
 	DerivationLog,
 	RepeatedShapeEntry,
-	RefineForm, LinkedRefineForm, NarrowedField } from './types.ts';
+	RefineForm,
+	LinkedRefineForm,
+	NarrowedField
+} from './types.ts';
 import { hasAnyField } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
@@ -73,6 +77,7 @@ import {
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
 	isHiddenKind,
+	isKindChoice,
 	rulesEqual,
 	separatorOf
 } from '../dsl/rule-patterns.ts';
@@ -407,14 +412,7 @@ export function canonicalizeRuleLiterals(
 		case TOKEN:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(
-					rule.content,
-					kindEntries,
-					allowLiteralRewrite,
-					misses,
-					false,
-					aliasBodies
-				)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, false, aliasBodies)
 			};
 		case FIELD:
 			return {
@@ -422,7 +420,14 @@ export function canonicalizeRuleLiterals(
 				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable, aliasBodies)
 			};
 		case ALIAS: {
-			const content = canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, stampable, aliasBodies);
+			const content = canonicalizeRuleLiterals(
+				rule.content,
+				kindEntries,
+				allowLiteralRewrite,
+				misses,
+				stampable,
+				aliasBodies
+			);
 			if (!stampable || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
 				return { ...rule, content };
 			}
@@ -753,6 +758,7 @@ function pruneInlinedAliasBodies(rules: Record<string, Rule<'link'>>, ctx: Stamp
 	}
 	for (const [name, rule] of Object.entries(rules)) {
 		if (rule.hidden !== true || ctx.topLevelAliasBodies?.has(name) || referenced.has(name)) continue;
+		if (rule.type === SUPERTYPE || isKindChoice(rule)) continue;
 		delete rules[name];
 	}
 }
@@ -993,7 +999,6 @@ function dereferenceTopLevelAliasBody(
 	seen.add(refName);
 	return { ...dereferenceTopLevelAliasBody(target, ctx, resolvedRules, seen), inlinedFrom: refName };
 }
-
 
 function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'link'>>): boolean {
 	const target = rules[kindName];
@@ -2127,6 +2132,13 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 				polymorphs: args.polymorphs
 			});
 			const target = resolveGroupPath(parentBody, path);
+			const aliasFace = namedAliasFaceOf(target);
+			if (aliasFace !== undefined) {
+				console.warn(
+					`[codegen] group-lift ${kind}/${path} (${discriminator}) rides the visible alias '${aliasFace}' — no hidden kind minted`
+				);
+				continue;
+			}
 			const { liftedBody, replacement } = liftRule(target, synName, discriminator);
 
 			parentBody = replaceAtPath(parentBody, path, replacement);
@@ -2139,6 +2151,36 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 	return { rules: newRules, synthesizedKinds };
 }
+function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
+	switch (target.type) {
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return namedAliasFaceOf(target.content);
+		case CHOICE: {
+			const arms = target.members.filter((m) => !isBlankRule(m));
+			return arms.length === 1 ? namedAliasFaceOf(arms[0]!) : undefined;
+		}
+		case ALIAS:
+			return target.named === true ? target.value : undefined;
+		case SEQ:
+		case FIELD:
+		case VARIANT:
+		case SUPERTYPE:
+		case GROUP:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+		case SYMBOL:
+		case TOKEN:
+			return undefined;
+		default:
+			return assertNever(target);
+	}
+}
+
 function liftRule(
 	target: Rule<'link'>,
 	synName: string,

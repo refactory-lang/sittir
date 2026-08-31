@@ -247,6 +247,9 @@ export default grammar(
 					)
 			},
 			transforms: {
+				binary_expression: {
+					24: variant('in')
+				},
 				arguments: {
 					1: field('arguments')
 				},

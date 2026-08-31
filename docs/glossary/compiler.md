@@ -3640,20 +3640,13 @@ parents.
  *  carries a `hidden` stamp (from `unhideAliasedTargets`), is left alone. */
 ```
 
+### `packages/codegen/src/compiler/link.ts::namedAliasFaceOf`
+
+The parser-visible face of a group-lift target: unwraps OPTIONAL/REPEAT wrappers and single-non-blank choices down to a named ALIAS and returns its value. When a lift target has such a face, `applyGroupOverrides` mints nothing — group overrides run only on the sittir side of the dual execution, so a hidden mint there is a phantom kind by construction, and it would bury an arm that already owns a parser-issued identity one level deeper. The variant discriminator then rides the existing alias.
+
 ### `packages/codegen/src/compiler/link.ts::pruneInlinedAliasBodies`
 
-```text
-/** Deletes an alias-bodied hidden rule (one `ctx.aliasBodies` tracked)
- *  once nothing references it any more. Collects its own referenced-name
- *  set with one walk over every rule (every SYMBOL name, every SUPERTYPE
- *  subtype name) rather than re-walking per candidate, then drops any
- *  `aliasBodies` entry not in that set and not re-added by
- *  `ctx.topLevelAliasBodies` (some later pass still needs the standalone
- *  body) — the common case is a rule whose every reference was already
- *  substituted for its content by `canonicalizeRuleLiterals`'s
- *  SYMBOL/SUPERTYPE inlining. Runs once, after the literal-canonicalize
- *  pass that does the inlining. */
-```
+Deletes hidden rules that nothing references after inlining, except alias bodies and dispatch unions: a rule already promoted to SUPERTYPE, or still shaped as a choice of kinds (`isKindChoice`), survives unreferenced — hidden dispatch unions like a grammar's `_statement` are namespaces the factory surface groups by, and inlining a union's references does not retire the union itself.
 
 ### `packages/codegen/src/compiler/link.ts::pruneUnreachableRules`
 
@@ -7543,8 +7536,9 @@ parents.
  * product field is named `rules` like every other family member now):
  * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` for ALL `P`.
  * `SimplifiedGrammar` additionally carries `normalizedRules` as an extra
- * (non-`rules`) view alongside its `rules` product. See
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
+ * (non-`rules`) view alongside its `rules` product — the render view the
+ * emitters consume travels with the derivation view rather than being
+ * re-derived downstream.
  */
 ```
 

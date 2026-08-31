@@ -5,7 +5,7 @@ describe('factory ergonomics', () => {
 		it('emits ?? F.block() fallback for required single-kind container fields', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
 			// functionItemFrom should default body to F.buildBlock()
 			expect(content).toMatch(/body:.*\?\? F\.buildBlock\(\)/);
 			// functionItemFrom should default parameters to F.buildParameters()
@@ -17,7 +17,7 @@ describe('factory ergonomics', () => {
 		it('emits _wrapWithChildren dispatch table', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
 			expect(content).toContain('function _wrapWithChildren');
 			// Container kind: dispatches with rest-params spread
 			expect(content).toMatch(/case ['"]parameters['"]:[\s\S]*?F\.buildParameters\(/);
@@ -26,7 +26,7 @@ describe('factory ergonomics', () => {
 		it('_resolveOneBranch handles arrays by wrapping with children', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
 			expect(content).toMatch(/Array\.isArray\(v\).*_wrapWithChildren/s);
 		});
 	});
@@ -35,7 +35,7 @@ describe('factory ergonomics', () => {
 		it('_resolveOneBranch wraps non-matching NodeData as single child', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
 			expect(content).toMatch(/isNodeData\(v\).*\$type.*_wrapWithChildren/s);
 		});
 	});
@@ -44,7 +44,7 @@ describe('factory ergonomics', () => {
 		it('emits direct-value signature for single-field-no-children factories', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// label's sole slot holds a single concrete kind, so the factory is
 			// the FORWARDED refinement of the direct form: a public wrapper
 			// accepting the child or the child's constructor args, over a
@@ -68,7 +68,7 @@ describe('factory ergonomics', () => {
 		it('keeps config form for single-field-with-children factories', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// block has label (1 field) + children — must keep config form
 			expect(content).toMatch(/export function buildBlock\(config/);
 		});
@@ -76,7 +76,7 @@ describe('factory ergonomics', () => {
 		it('emits $with setter that calls factory with direct value', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
 			// Find the label factory implementation and check its $with block
 			const labelMatch = content.match(/function _buildLabel\(value[\s\S]*?\n\}/);
@@ -91,7 +91,7 @@ describe('factory ergonomics', () => {
 		it('adapts from() to use direct-value call for single-field factories', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
 			// coerceToLabel should call F.buildLabel(resolvedIdentifier) not F.buildLabel({ identifier: ... })
 			// It should NOT have the config-object form for label
 			expect(content).not.toMatch(/F\.buildLabel\(\{/);
@@ -102,13 +102,19 @@ describe('factory ergonomics', () => {
 		it('keeps branch and polymorph ir bundles exposing strict explicitly', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/ir.ts'), 'utf-8');
+			const irContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/ir.ts'), 'utf-8');
+			const bundleContent = readFileSync(
+				resolve(import.meta.dirname, '../../../rust/src/factories/bundle.ts'),
+				'utf-8'
+			);
+			const indexContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/index.ts'), 'utf-8');
 
-			expect(content).toContain('.strict');
-			// The bundle's call position IS the coercer, so a `from` prop would
+			expect(bundleContent).toContain('bundle(F.buildSourceFile, C.coerceToSourceFile)');
+			expect(indexContent).toContain('export const sourceFile: Hoisted<typeof O.sourceFile> = hoist(O.sourceFile);');
+			expect(irContent).toContain('sourceFile: F.sourceFile,');
+			// The hoisted call position IS the coercer, so a `from` prop would
 			// be the same function under a second name.
-			expect(content).toContain('const _b$');
-			expect(content).not.toContain('from: FR.');
+			expect(irContent).not.toContain('from: FR.');
 		});
 	});
 });

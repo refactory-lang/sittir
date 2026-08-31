@@ -3857,6 +3857,7 @@ function resolvePatch(patch, originalMember, precStack) {
         if (body !== void 0) {
           const depositName = polymorphHiddenName(parentKind, patch.name);
           wireRegisterSyntheticRule(depositName, body);
+          wireRegisterSymbolRename(content.name, depositName);
           return {
             ...originalMember,
             content: { ...content, name: depositName },
@@ -3873,6 +3874,10 @@ function resolvePatch(patch, originalMember, precStack) {
       };
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
+    const original = originalMember;
+    if (original.type === "SYMBOL" && typeof original.name === "string") {
+      wireRegisterSymbolRename(original.name, hiddenName);
+    }
     return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
   }
   if (isAliasPlaceholder(patch)) {
@@ -4179,6 +4184,11 @@ function wireRegisterConflict(names) {
   }
   return true;
 }
+function wireRegisterSymbolRename(oldName, newName) {
+  if (!currentContext) return false;
+  currentContext.symbolRenames.set(oldName, newName);
+  return true;
+}
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
@@ -4191,6 +4201,7 @@ function wire(config, base2) {
     inlineRemovals: /* @__PURE__ */ new Set(),
     orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
     conflictGroups: [],
+    symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
@@ -4379,9 +4390,18 @@ function wrapInlineCallback(userInline, context) {
 function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
-    if (context.conflictGroups.length === 0) return base2;
-    const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
-    return [...base2, ...symbolized];
+    const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
+      (group) => group.map((entry) => {
+        const symbol = entry;
+        const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
+        return next === void 0 ? entry : symbolizeRef($, next);
+      })
+    );
+    if (context.conflictGroups.length === 0) return renamed;
+    const symbolized = context.conflictGroups.map(
+      (group) => group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
+    );
+    return [...renamed, ...symbolized];
   };
 }
 function buildWiredInlineFn(userInline, context) {

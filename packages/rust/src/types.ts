@@ -13,7 +13,7 @@ import type {
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
-import type * as F$ from './factories.js';
+import type * as F$ from './factories/raw.js';
 
 export type { RustGrammar };
 
@@ -386,19 +386,19 @@ export const enum TSKindId {
 	LineDocContent = 155,
 	ErrorSentinel = 156,
 	SourceFile = 157,
-	_Statement = 158,
+	Statement = 158,
 	EmptyStatement = 159,
 	ExpressionStatement = 160,
 	MacroDefinition = 161,
 	MacroRule = 162,
-	_TokenPattern = 163,
+	TokenPattern = 163,
 	TokenTreePattern = 164,
 	TokenBindingPattern = 165,
 	TokenRepetitionPattern = 166,
 	FragmentSpecifier = 167,
 	TokenTree = 168,
 	TokenRepetition = 169,
-	NonSpecialToken = 170,
+	_NonSpecialToken = 170,
 	AttributeItem = 171,
 	InnerAttributeItem = 172,
 	Attribute = 173,
@@ -434,7 +434,7 @@ export const enum TSKindId {
 	LifetimeParameter = 203,
 	LetDeclaration = 204,
 	UseDeclaration = 205,
-	_UseClause = 206,
+	UseClause = 206,
 	ScopedUseList = 207,
 	UseList = 208,
 	UseAsClause = 209,
@@ -466,12 +466,12 @@ export const enum TSKindId {
 	NeverType = 235,
 	AbstractType = 236,
 	DynamicType = 237,
-	_ExpressionExceptRange = 238,
+	ExpressionExceptRange = 238,
 	Expression = 239,
 	MacroInvocation = 240,
 	DelimTokenTree = 241,
-	_DelimTokens = 242,
-	_NonDelimToken = 243,
+	DelimTokens = 242,
+	NonDelimToken = 243,
 	ScopedIdentifier = 244,
 	ScopedTypeIdentifierInExpressionPosition = 245,
 	ScopedTypeIdentifier = 246,
@@ -499,7 +499,7 @@ export const enum TSKindId {
 	IfExpression = 268,
 	LetCondition = 269,
 	LetChain = 270,
-	_Condition = 271,
+	Condition = 271,
 	ElseClause = 272,
 	MatchExpression = 273,
 	MatchBlock = 274,
@@ -1880,7 +1880,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'source_file':
 			return TSKindId.SourceFile;
 		case '_statement':
-			return TSKindId._Statement;
+			return TSKindId.Statement;
 		case 'empty_statement':
 			return TSKindId.EmptyStatement;
 		case 'expression_statement':
@@ -1890,7 +1890,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'macro_rule':
 			return TSKindId.MacroRule;
 		case '_token_pattern':
-			return TSKindId._TokenPattern;
+			return TSKindId.TokenPattern;
 		case 'token_tree_pattern':
 			return TSKindId.TokenTreePattern;
 		case 'token_binding_pattern':
@@ -1904,7 +1904,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'token_repetition':
 			return TSKindId.TokenRepetition;
 		case '_non_special_token':
-			return TSKindId.NonSpecialToken;
+			return TSKindId._NonSpecialToken;
 		case 'attribute_item':
 			return TSKindId.AttributeItem;
 		case 'inner_attribute_item':
@@ -1976,7 +1976,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'use_declaration':
 			return TSKindId.UseDeclaration;
 		case '_use_clause':
-			return TSKindId._UseClause;
+			return TSKindId.UseClause;
 		case 'scoped_use_list':
 			return TSKindId.ScopedUseList;
 		case 'use_list':
@@ -2040,7 +2040,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'dynamic_type':
 			return TSKindId.DynamicType;
 		case '_expression_except_range':
-			return TSKindId._ExpressionExceptRange;
+			return TSKindId.ExpressionExceptRange;
 		case '_expression':
 			return TSKindId.Expression;
 		case 'macro_invocation':
@@ -2048,9 +2048,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'delim_token_tree':
 			return TSKindId.DelimTokenTree;
 		case '_delim_tokens':
-			return TSKindId._DelimTokens;
+			return TSKindId.DelimTokens;
 		case '_non_delim_token':
-			return TSKindId._NonDelimToken;
+			return TSKindId.NonDelimToken;
 		case 'scoped_identifier':
 			return TSKindId.ScopedIdentifier;
 		case 'scoped_type_identifier_in_expression_position':
@@ -2106,7 +2106,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_let_chain':
 			return TSKindId.LetChain;
 		case '_condition':
-			return TSKindId._Condition;
+			return TSKindId.Condition;
 		case 'else_clause':
 			return TSKindId.ElseClause;
 		case 'match_expression':
@@ -2574,7 +2574,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'doc_comment':
 			return TSKindId.LineDocContent;
 		case 'non_special_token':
-			return TSKindId.NonSpecialToken;
+			return TSKindId._NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
 		case 'macro_rules':
@@ -2760,6 +2760,32 @@ export const enum Delimiter {
 }
 
 // Scoped enums per supertype
+export const enum StatementKind {
+	ExpressionStatement = 'expression_statement',
+	DeclarationStatement = '_declaration_statement',
+	ConstItem = 'const_item',
+	MacroInvocation = 'macro_invocation',
+	MacroDefinition = 'macro_definition',
+	EmptyStatement = 'empty_statement',
+	AttributeItem = 'attribute_item',
+	InnerAttributeItem = 'inner_attribute_item',
+	ModItem = 'mod_item',
+	ForeignModItem = 'foreign_mod_item',
+	StructItem = 'struct_item',
+	UnionItem = 'union_item',
+	EnumItem = 'enum_item',
+	TypeItem = 'type_item',
+	FunctionItem = 'function_item',
+	FunctionSignatureItem = 'function_signature_item',
+	ImplItem = 'impl_item',
+	TraitItem = 'trait_item',
+	AssociatedType = 'associated_type',
+	LetDeclaration = 'let_declaration',
+	UseDeclaration = 'use_declaration',
+	ExternCrateDeclaration = 'extern_crate_declaration',
+	StaticItem = 'static_item'
+}
+
 export const enum DeclarationStatementKind {
 	ConstItem = 'const_item',
 	MacroInvocation = 'macro_invocation',
@@ -2784,7 +2810,22 @@ export const enum DeclarationStatementKind {
 	StaticItem = 'static_item'
 }
 
-export const enum NonSpecialTokenKind {
+export const enum TokenPatternKind {
+	TokenTreePattern = 'token_tree_pattern',
+	TokenRepetitionPattern = 'token_repetition_pattern',
+	TokenBindingPattern = 'token_binding_pattern',
+	Metavariable = 'metavariable',
+	_NonSpecialToken = '_non_special_token'
+}
+
+export const enum TokensKind {
+	TokenTree = 'token_tree',
+	TokenRepetition = 'token_repetition',
+	Metavariable = 'metavariable',
+	_NonSpecialToken = '_non_special_token'
+}
+
+export const enum _NonSpecialTokenKind {
 	_Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -2800,6 +2841,19 @@ export const enum NonSpecialTokenKind {
 	PrimitiveType = '_primitive_type',
 	TokenTreePunctuation = '_token_tree_punctuation',
 	TokenKeywords = '_token_keywords'
+}
+
+export const enum UseClauseKind {
+	Self = 'self',
+	Identifier = 'identifier',
+	Metavariable = 'metavariable',
+	Super = 'super',
+	Crate = 'crate',
+	ScopedIdentifier = 'scoped_identifier',
+	UseAsClause = 'use_as_clause',
+	UseList = 'use_list',
+	ScopedUseList = 'scoped_use_list',
+	UseWildcard = 'use_wildcard'
 }
 
 export const enum _TypeKind {
@@ -2820,6 +2874,54 @@ export const enum _TypeKind {
 	BoundedType = 'bounded_type',
 	RemovedTraitBound = 'removed_trait_bound',
 	PrimitiveType = '_primitive_type'
+}
+
+export const enum ExpressionExceptRangeKind {
+	UnaryExpression = 'unary_expression',
+	ReferenceExpression = 'reference_expression',
+	TryExpression = 'try_expression',
+	BinaryExpression = 'binary_expression',
+	AssignmentExpression = 'assignment_expression',
+	CompoundAssignmentExpr = 'compound_assignment_expr',
+	TypeCastExpression = 'type_cast_expression',
+	CallExpression = 'call_expression',
+	ReturnExpression = 'return_expression',
+	YieldExpression = 'yield_expression',
+	_Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	Self = 'self',
+	ScopedIdentifier = 'scoped_identifier',
+	GenericFunction = 'generic_function',
+	AwaitExpression = 'await_expression',
+	FieldExpression = 'field_expression',
+	ArrayExpression = 'array_expression',
+	TupleExpression = 'tuple_expression',
+	MacroInvocation = 'macro_invocation',
+	UnitExpression = 'unit_expression',
+	BreakExpression = 'break_expression',
+	ContinueExpression = 'continue_expression',
+	IndexExpression = 'index_expression',
+	Metavariable = 'metavariable',
+	ClosureExpression = 'closure_expression',
+	ParenthesizedExpression = 'parenthesized_expression',
+	StructExpression = 'struct_expression',
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	IfExpression = 'if_expression',
+	MatchExpression = 'match_expression',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block'
 }
 
 export const enum ExpressionKind {
@@ -2871,6 +2973,83 @@ export const enum ExpressionKind {
 	RangeExpression = 'range_expression'
 }
 
+export const enum ExpressionEndingWithBlockKind {
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	IfExpression = 'if_expression',
+	MatchExpression = 'match_expression',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block'
+}
+
+export const enum DelimTokensKind {
+	_NonSpecialToken = '_non_special_token',
+	Dollar = 'dollar',
+	DelimTokenTree = 'delim_token_tree'
+}
+
+export const enum NonDelimTokenKind {
+	_NonSpecialToken = '_non_special_token',
+	Dollar = 'dollar'
+}
+
+export const enum ConditionKind {
+	Expression = '_expression',
+	UnaryExpression = 'unary_expression',
+	ReferenceExpression = 'reference_expression',
+	TryExpression = 'try_expression',
+	BinaryExpression = 'binary_expression',
+	AssignmentExpression = 'assignment_expression',
+	CompoundAssignmentExpr = 'compound_assignment_expr',
+	TypeCastExpression = 'type_cast_expression',
+	CallExpression = 'call_expression',
+	ReturnExpression = 'return_expression',
+	YieldExpression = 'yield_expression',
+	_Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	Self = 'self',
+	ScopedIdentifier = 'scoped_identifier',
+	GenericFunction = 'generic_function',
+	AwaitExpression = 'await_expression',
+	FieldExpression = 'field_expression',
+	ArrayExpression = 'array_expression',
+	TupleExpression = 'tuple_expression',
+	MacroInvocation = 'macro_invocation',
+	UnitExpression = 'unit_expression',
+	BreakExpression = 'break_expression',
+	ContinueExpression = 'continue_expression',
+	IndexExpression = 'index_expression',
+	Metavariable = 'metavariable',
+	ClosureExpression = 'closure_expression',
+	ParenthesizedExpression = 'parenthesized_expression',
+	StructExpression = 'struct_expression',
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	IfExpression = 'if_expression',
+	MatchExpression = 'match_expression',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block',
+	RangeExpression = 'range_expression',
+	LetCondition = 'let_condition',
+	LetChain = '_let_chain'
+}
+
 export const enum PatternKind {
 	LiteralPattern = '_literal_pattern',
 	StringLiteral = 'string_literal',
@@ -2916,6 +3095,33 @@ export const enum LiteralPatternKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	NegativeLiteral = 'negative_literal'
+}
+
+export const enum _PathKind {
+	Self = 'self',
+	Identifier = 'identifier',
+	Metavariable = 'metavariable',
+	Super = 'super',
+	Crate = 'crate',
+	ScopedIdentifier = 'scoped_identifier'
+}
+
+export const enum NonSpecialTokenKind {
+	_Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
 }
 
 // Node types — concrete interfaces
@@ -3039,7 +3245,7 @@ export interface TokenRepetitionPattern {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 	readonly _separator?: boolean;
 	readonly _operator: number;
@@ -3052,7 +3258,7 @@ export interface TokenRepetitionPattern {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 	separator(): boolean | undefined;
 	operator(): number;
@@ -3078,14 +3284,14 @@ export interface TokenTree {
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
 	readonly _separator?: boolean;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly separator?: BooleanKeyword<'[^+*?]+'>;
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
 	separator(): boolean | undefined;
 	operator(): number;
 }
@@ -3114,27 +3320,33 @@ export interface ModItem {
 	readonly $type: TSKindId.ModItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
-	readonly _content: ';' | DeclarationList;
+	readonly _content: TSKindId.ModItemExternal | DeclarationList;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<';', TSKindId.ModItemExternal | TSKindId.Semi> | DeclarationList;
+	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
-	content(): ';' | DeclarationList;
+	content(): TSKindId.ModItemExternal | DeclarationList;
 }
 
 export interface ForeignModItem {
 	readonly $type: TSKindId.ForeignModItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _extern_modifier: ExternModifier;
-	readonly _content: ';' | DeclarationList;
+	readonly _content: TSKindId.ForeignModItemSemi | DeclarationList;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<';', TSKindId.ForeignModItemSemi | TSKindId.Semi> | DeclarationList;
+	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly extern_modifier: ExternModifier | 'extern' | readonly (EscapeSequence | StringContent)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	externModifier(): ExternModifier;
-	content(): ';' | DeclarationList;
+	content(): TSKindId.ForeignModItemSemi | DeclarationList;
 }
 
 export interface DeclarationList {
@@ -3148,7 +3360,10 @@ export interface StructItem {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
-	readonly _content: StructItemBrace | StructItemTuple | ';';
+	readonly _content: StructItemBrace | StructItemTuple | TSKindId.StructItemUnit;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<';', TSKindId.StructItemUnit | TSKindId.Semi> | StructItemBrace | StructItemTuple;
+	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
@@ -3156,7 +3371,7 @@ export interface StructItem {
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
-	content(): StructItemBrace | StructItemTuple | ';';
+	content(): StructItemBrace | StructItemTuple | TSKindId.StructItemUnit;
 }
 
 export interface UnionItem {
@@ -3410,6 +3625,55 @@ export interface WherePredicate {
 		| HigherRankedTraitBound
 		| PrimitiveType;
 	readonly _bounds: TraitBounds;
+	readonly __inputHints__?: {
+		readonly left:
+			| KindEnum<
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char',
+					| TSKindId.U8
+					| TSKindId.I8
+					| TSKindId.U16
+					| TSKindId.I16
+					| TSKindId.U32
+					| TSKindId.I32
+					| TSKindId.U64
+					| TSKindId.I64
+					| TSKindId.U128
+					| TSKindId.I128
+					| TSKindId.Isize
+					| TSKindId.Usize
+					| TSKindId.F32
+					| TSKindId.F64
+					| TSKindId.Bool
+					| TSKindId.Str
+					| TSKindId.Char
+			  >
+			| Lifetime
+			| Identifier
+			| ScopedTypeIdentifier
+			| GenericType
+			| ReferenceType
+			| PointerType
+			| TupleType
+			| ArrayType
+			| HigherRankedTraitBound
+			| PrimitiveType;
+	};
 	readonly __looseHints__?: {
 		readonly bounds: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
 	};
@@ -3434,9 +3698,10 @@ export interface ImplItem {
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: _Type;
 	readonly _where_clause?: WhereClause;
-	readonly _content: ImplItemBody | ';';
+	readonly _content: ImplItemBody | TSKindId.ImplItemSemi;
 	readonly __inputHints__?: {
 		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly content: KindEnum<';', TSKindId.ImplItemSemi | TSKindId.Semi> | ImplItemBody;
 	};
 	readonly __looseHints__?: {
 		readonly unsafe_marker?: 'unsafe' | 'unsafe';
@@ -3448,7 +3713,7 @@ export interface ImplItem {
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	type(): _Type;
 	whereClause(): WhereClause | undefined;
-	content(): ImplItemBody | ';';
+	content(): ImplItemBody | TSKindId.ImplItemSemi;
 }
 
 export interface TraitItem {
@@ -4002,8 +4267,19 @@ export interface ScopedTypeIdentifier {
 
 export interface RangeExpression {
 	readonly $type: TSKindId.RangeExpression;
-	readonly _content: RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
-	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
+	readonly _content:
+		| RangeExpressionBinary
+		| RangeExpressionPostfix
+		| RangeExpressionPrefix
+		| TSKindId.RangeExpressionBare;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<'..', TSKindId.RangeExpressionBare | TSKindId.DotDot>
+			| RangeExpressionBinary
+			| RangeExpressionPostfix
+			| RangeExpressionPrefix;
+	};
+	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | TSKindId.RangeExpressionBare;
 }
 
 export interface UnaryExpression {
@@ -4822,9 +5098,12 @@ export interface StructPatternElements {
 export interface RangePatternArm2 {
 	readonly $type: TSKindId.RangePatternArm2;
 	readonly _left: LiteralPattern | Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
-	readonly _content: RangePatternLeftWithRight | '..';
+	readonly _content: RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'..', TSKindId.RangePatternLeftBare | TSKindId.DotDot> | RangePatternLeftWithRight;
+	};
 	left(): LiteralPattern | Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
-	content(): RangePatternLeftWithRight | '..';
+	content(): RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
 }
 
 export interface AttributeArm {
@@ -5120,14 +5399,14 @@ export interface TokenTreePatternParen {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 	tokenPatterns(): readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 }
 
@@ -5138,14 +5417,14 @@ export interface TokenTreePatternBracket {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 	tokenPatterns(): readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 }
 
@@ -5156,51 +5435,60 @@ export interface TokenTreePatternBrace {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 	tokenPatterns(): readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| NonSpecialToken
+		| _NonSpecialToken
 	)[];
 }
 
 export interface TokenTreeParen {
 	readonly $type: TSKindId.TokenTreeParen;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
 }
 
 export interface TokenTreeBracket {
 	readonly $type: TSKindId.TokenTreeBracket;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
 }
 
 export interface TokenTreeBrace {
 	readonly $type: TSKindId.TokenTreeBrace;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
 }
 
 export interface DelimTokenTreeParen {
 	readonly $type: TSKindId.DelimTokenTreeParen;
-	readonly _delim_tokens?: readonly (NonSpecialToken | '$' | DelimTokenTree)[];
-	delimTokens(): readonly (NonSpecialToken | '$' | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly __inputHints__?: {
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | _NonSpecialToken | DelimTokenTree)[];
+	};
+	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBracket {
 	readonly $type: TSKindId.DelimTokenTreeBracket;
-	readonly _delim_tokens?: readonly (NonSpecialToken | '$' | DelimTokenTree)[];
-	delimTokens(): readonly (NonSpecialToken | '$' | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly __inputHints__?: {
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | _NonSpecialToken | DelimTokenTree)[];
+	};
+	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBrace {
 	readonly $type: TSKindId.DelimTokenTreeBrace;
-	readonly _delim_tokens?: readonly (NonSpecialToken | '$' | DelimTokenTree)[];
-	delimTokens(): readonly (NonSpecialToken | '$' | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly __inputHints__?: {
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | _NonSpecialToken | DelimTokenTree)[];
+	};
+	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface AttributedFieldDeclaration {
@@ -5276,20 +5564,6 @@ export interface MatchBlockArms {
 	readonly _last_arm: LastMatchArm;
 	matchArms(): readonly MatchArm[];
 	lastArm(): LastMatchArm;
-}
-
-export interface VisibilityModifierPubParens {
-	readonly $type: '_visibility_modifier_pub_parens';
-	readonly _visibility_modifier_group: VisibilityModifierGroup;
-	readonly __looseHints__?: {
-		readonly visibility_modifier_group:
-			| VisibilityModifierGroup
-			| 'self'
-			| 'super'
-			| 'crate'
-			| readonly (Self | Super | Crate | VisibilityModifierInPath)[];
-	};
-	visibilityModifierGroup(): VisibilityModifierGroup;
 }
 
 // Leaf node types
@@ -5917,9 +6191,6 @@ export interface TypeArgumentTree extends AnyTreeNode {
 export interface MatchBlockArmsTree extends AnyTreeNode {
 	readonly type: '_match_block_arms';
 }
-export interface VisibilityModifierPubParensTree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_pub_parens';
-}
 export interface EmptyStatementTree extends AnyTreeNode {
 	readonly type: 'empty_statement';
 }
@@ -6220,6 +6491,55 @@ export interface RawTree extends AnyTreeNode {
 }
 
 // Supertype unions
+export type Statement =
+	| ExpressionStatement
+	| DeclarationStatement
+	| ConstItem
+	| MacroInvocation
+	| MacroDefinition
+	| EmptyStatement
+	| AttributeItem
+	| InnerAttributeItem
+	| ModItem
+	| ForeignModItem
+	| StructItem
+	| UnionItem
+	| EnumItem
+	| TypeItem
+	| FunctionItem
+	| FunctionSignatureItem
+	| ImplItem
+	| TraitItem
+	| AssociatedType
+	| LetDeclaration
+	| UseDeclaration
+	| ExternCrateDeclaration
+	| StaticItem;
+
+export type StatementTree =
+	| ExpressionStatementTree
+	| ConstItemTree
+	| MacroInvocationTree
+	| MacroDefinitionTree
+	| EmptyStatementTree
+	| AttributeItemTree
+	| InnerAttributeItemTree
+	| ModItemTree
+	| ForeignModItemTree
+	| StructItemTree
+	| UnionItemTree
+	| EnumItemTree
+	| TypeItemTree
+	| FunctionItemTree
+	| FunctionSignatureItemTree
+	| ImplItemTree
+	| TraitItemTree
+	| AssociatedTypeTree
+	| LetDeclarationTree
+	| UseDeclarationTree
+	| ExternCrateDeclarationTree
+	| StaticItemTree;
+
 export type DeclarationStatement =
 	| ConstItem
 	| MacroInvocation
@@ -6266,7 +6586,24 @@ export type DeclarationStatementTree =
 	| ExternCrateDeclarationTree
 	| StaticItemTree;
 
-export type NonSpecialToken =
+export type TokenPattern =
+	| TokenTreePattern
+	| TokenRepetitionPattern
+	| TokenBindingPattern
+	| Metavariable
+	| _NonSpecialToken;
+
+export type TokenPatternTree =
+	| TokenTreePatternTree
+	| TokenRepetitionPatternTree
+	| TokenBindingPatternTree
+	| MetavariableTree;
+
+export type Tokens = TokenTree | TokenRepetition | Metavariable | _NonSpecialToken;
+
+export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree;
+
+export type _NonSpecialToken =
 	| _Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -6283,7 +6620,7 @@ export type NonSpecialToken =
 	| TokenTreePunctuation
 	| TokenKeywords;
 
-export type NonSpecialTokenTree =
+export type _NonSpecialTokenTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
@@ -6298,6 +6635,30 @@ export type NonSpecialTokenTree =
 	| PrimitiveTypeTree
 	| TokenTreePunctuationTree
 	| TokenKeywordsTree;
+
+export type UseClause =
+	| Self
+	| Identifier
+	| Metavariable
+	| Super
+	| Crate
+	| ScopedIdentifier
+	| UseAsClause
+	| UseList
+	| ScopedUseList
+	| UseWildcard;
+
+export type UseClauseTree =
+	| SelfTree
+	| IdentifierTree
+	| MetavariableTree
+	| SuperTree
+	| CrateTree
+	| ScopedIdentifierTree
+	| UseAsClauseTree
+	| UseListTree
+	| ScopedUseListTree
+	| UseWildcardTree;
 
 export type _Type =
 	| AbstractType
@@ -6336,6 +6697,99 @@ export type _TypeTree =
 	| BoundedTypeTree
 	| RemovedTraitBoundTree
 	| PrimitiveTypeTree;
+
+export type ExpressionExceptRange =
+	| UnaryExpression
+	| ReferenceExpression
+	| TryExpression
+	| BinaryExpression
+	| AssignmentExpression
+	| CompoundAssignmentExpr
+	| TypeCastExpression
+	| CallExpression
+	| ReturnExpression
+	| YieldExpression
+	| _Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| Self
+	| ScopedIdentifier
+	| GenericFunction
+	| AwaitExpression
+	| FieldExpression
+	| ArrayExpression
+	| TupleExpression
+	| MacroInvocation
+	| UnitExpression
+	| BreakExpression
+	| ContinueExpression
+	| IndexExpression
+	| Metavariable
+	| ClosureExpression
+	| ParenthesizedExpression
+	| StructExpression
+	| UnsafeBlock
+	| AsyncBlock
+	| GenBlock
+	| TryBlock
+	| Block
+	| IfExpression
+	| MatchExpression
+	| WhileExpression
+	| LoopExpression
+	| ForExpression
+	| ConstBlock;
+
+export type ExpressionExceptRangeTree =
+	| UnaryExpressionTree
+	| ReferenceExpressionTree
+	| TryExpressionTree
+	| BinaryExpressionTree
+	| AssignmentExpressionTree
+	| CompoundAssignmentExprTree
+	| TypeCastExpressionTree
+	| CallExpressionTree
+	| ReturnExpressionTree
+	| YieldExpressionTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| SelfTree
+	| ScopedIdentifierTree
+	| GenericFunctionTree
+	| AwaitExpressionTree
+	| FieldExpressionTree
+	| ArrayExpressionTree
+	| TupleExpressionTree
+	| MacroInvocationTree
+	| UnitExpressionTree
+	| BreakExpressionTree
+	| ContinueExpressionTree
+	| IndexExpressionTree
+	| MetavariableTree
+	| ClosureExpressionTree
+	| ParenthesizedExpressionTree
+	| StructExpressionTree
+	| UnsafeBlockTree
+	| AsyncBlockTree
+	| GenBlockTree
+	| TryBlockTree
+	| BlockTree
+	| IfExpressionTree
+	| MatchExpressionTree
+	| WhileExpressionTree
+	| LoopExpressionTree
+	| ForExpressionTree
+	| ConstBlockTree;
 
 export type Expression =
 	| UnaryExpression
@@ -6432,6 +6886,138 @@ export type ExpressionTree =
 	| ConstBlockTree
 	| RangeExpressionTree;
 
+export type ExpressionEndingWithBlock =
+	| UnsafeBlock
+	| AsyncBlock
+	| GenBlock
+	| TryBlock
+	| Block
+	| IfExpression
+	| MatchExpression
+	| WhileExpression
+	| LoopExpression
+	| ForExpression
+	| ConstBlock;
+
+export type ExpressionEndingWithBlockTree =
+	| UnsafeBlockTree
+	| AsyncBlockTree
+	| GenBlockTree
+	| TryBlockTree
+	| BlockTree
+	| IfExpressionTree
+	| MatchExpressionTree
+	| WhileExpressionTree
+	| LoopExpressionTree
+	| ForExpressionTree
+	| ConstBlockTree;
+
+export type DelimTokens = _NonSpecialToken | DelimTokenTree;
+
+export type DelimTokensTree = DelimTokenTreeTree;
+
+export type NonDelimToken = _NonSpecialToken;
+
+export type Condition =
+	| Expression
+	| UnaryExpression
+	| ReferenceExpression
+	| TryExpression
+	| BinaryExpression
+	| AssignmentExpression
+	| CompoundAssignmentExpr
+	| TypeCastExpression
+	| CallExpression
+	| ReturnExpression
+	| YieldExpression
+	| _Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| Self
+	| ScopedIdentifier
+	| GenericFunction
+	| AwaitExpression
+	| FieldExpression
+	| ArrayExpression
+	| TupleExpression
+	| MacroInvocation
+	| UnitExpression
+	| BreakExpression
+	| ContinueExpression
+	| IndexExpression
+	| Metavariable
+	| ClosureExpression
+	| ParenthesizedExpression
+	| StructExpression
+	| UnsafeBlock
+	| AsyncBlock
+	| GenBlock
+	| TryBlock
+	| Block
+	| IfExpression
+	| MatchExpression
+	| WhileExpression
+	| LoopExpression
+	| ForExpression
+	| ConstBlock
+	| RangeExpression
+	| LetCondition
+	| LetChain;
+
+export type ConditionTree =
+	| UnaryExpressionTree
+	| ReferenceExpressionTree
+	| TryExpressionTree
+	| BinaryExpressionTree
+	| AssignmentExpressionTree
+	| CompoundAssignmentExprTree
+	| TypeCastExpressionTree
+	| CallExpressionTree
+	| ReturnExpressionTree
+	| YieldExpressionTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| SelfTree
+	| ScopedIdentifierTree
+	| GenericFunctionTree
+	| AwaitExpressionTree
+	| FieldExpressionTree
+	| ArrayExpressionTree
+	| TupleExpressionTree
+	| MacroInvocationTree
+	| UnitExpressionTree
+	| BreakExpressionTree
+	| ContinueExpressionTree
+	| IndexExpressionTree
+	| MetavariableTree
+	| ClosureExpressionTree
+	| ParenthesizedExpressionTree
+	| StructExpressionTree
+	| UnsafeBlockTree
+	| AsyncBlockTree
+	| GenBlockTree
+	| TryBlockTree
+	| BlockTree
+	| IfExpressionTree
+	| MatchExpressionTree
+	| WhileExpressionTree
+	| LoopExpressionTree
+	| ForExpressionTree
+	| ConstBlockTree
+	| RangeExpressionTree
+	| LetConditionTree
+	| LetChainTree;
+
 export type Pattern =
 	| LiteralPattern
 	| StringLiteral
@@ -6511,7 +7097,48 @@ export type LiteralPatternTree =
 	| FloatLiteralTree
 	| NegativeLiteralTree;
 
+export type _Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
+
+export type _PathTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree | CrateTree | ScopedIdentifierTree;
+
+export type NonSpecialToken =
+	| _Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
+
+export type NonSpecialTokenTree =
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
+
 // Token type aliases (only tokens referenced in field/child unions)
+export type Dollar = Terminal<TSKindId.Dollar>;
+export interface DollarTree extends AnyTreeNode {
+	readonly type: 'dollar';
+}
 
 export type RustNode =
 	| SourceFile
@@ -6723,8 +7350,7 @@ export type RustNode =
 	| AttributedArgument
 	| AttributedOrderedField
 	| TypeArgument
-	| MatchBlockArms
-	| VisibilityModifierPubParens;
+	| MatchBlockArms;
 
 export interface KindMap {
 	source_file: SourceFile;
@@ -6937,7 +7563,6 @@ export interface KindMap {
 	_attributed_ordered_field: AttributedOrderedField;
 	_type_argument: TypeArgument;
 	_match_block_arms: MatchBlockArms;
-	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
 	empty_statement: EmptyStatement;
 	fragment_specifier: FragmentSpecifier;
 	unit_type: UnitType;

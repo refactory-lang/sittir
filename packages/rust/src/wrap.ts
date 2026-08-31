@@ -266,6 +266,19 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	}
 	return typeof entry.$type === 'number' ? (entry.$type as T) : value;
 }
+function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {
+	if (!value) return value;
+	if (Array.isArray(value)) return value.map((entry) => projectMixedEnumStorage(entry, textIds)) as unknown as T;
+	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
+	if (typeof entry.$type === 'number' && textIds && Object.values(textIds).includes(entry.$type)) {
+		return entry.$type as unknown as T;
+	}
+	return value;
+}
 // readTerminalFromOther — reclaim a model-designated terminal (operator /
 // keyword discriminant) that read_node forwarded to `$other` because it is
 // an anonymous, unfielded token. The model knows the slot accepts these
@@ -341,6 +354,32 @@ function _hasSeparatorFlank(
 	return otherCount > between;
 }
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
+	_statement: new Set([
+		'expression_statement',
+		'_declaration_statement',
+		'declaration_statement',
+		'const_item',
+		'macro_invocation',
+		'macro_definition',
+		'empty_statement',
+		'attribute_item',
+		'inner_attribute_item',
+		'mod_item',
+		'foreign_mod_item',
+		'struct_item',
+		'union_item',
+		'enum_item',
+		'type_item',
+		'function_item',
+		'function_signature_item',
+		'impl_item',
+		'trait_item',
+		'associated_type',
+		'let_declaration',
+		'use_declaration',
+		'extern_crate_declaration',
+		'static_item'
+	]),
 	_declaration_statement: new Set([
 		'const_item',
 		'macro_invocation',
@@ -363,6 +402,247 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use_declaration',
 		'extern_crate_declaration',
 		'static_item'
+	]),
+	_token_pattern: new Set([
+		'token_tree_pattern',
+		'token_repetition_pattern',
+		'token_binding_pattern',
+		'metavariable',
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
+		'dollar',
+		'_token_keywords',
+		'token_keywords',
+		'squote',
+		'as',
+		'async',
+		'await',
+		'break',
+		'const',
+		'continue',
+		'default',
+		'enum',
+		'fn',
+		'for',
+		'gen',
+		'if',
+		'impl',
+		'let',
+		'loop',
+		'match',
+		'mod',
+		'pub',
+		'return',
+		'static',
+		'struct',
+		'trait',
+		'type',
+		'union',
+		'unsafe',
+		'use',
+		'where',
+		'while'
+	]),
+	_tokens: new Set([
+		'token_tree',
+		'token_repetition',
+		'metavariable',
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
+		'dollar',
+		'_token_keywords',
+		'token_keywords',
+		'squote',
+		'as',
+		'async',
+		'await',
+		'break',
+		'const',
+		'continue',
+		'default',
+		'enum',
+		'fn',
+		'for',
+		'gen',
+		'if',
+		'impl',
+		'let',
+		'loop',
+		'match',
+		'mod',
+		'pub',
+		'return',
+		'static',
+		'struct',
+		'trait',
+		'type',
+		'union',
+		'unsafe',
+		'use',
+		'where',
+		'while'
 	]),
 	_non_special_token: new Set([
 		'_literal',
@@ -479,6 +759,18 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'where',
 		'while'
 	]),
+	_use_clause: new Set([
+		'self',
+		'identifier',
+		'metavariable',
+		'super',
+		'crate',
+		'scoped_identifier',
+		'use_as_clause',
+		'use_list',
+		'scoped_use_list',
+		'use_wildcard'
+	]),
 	_type: new Set([
 		'abstract_type',
 		'reference_type',
@@ -515,6 +807,56 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'bool',
 		'str',
 		'char'
+	]),
+	_expression_except_range: new Set([
+		'unary_expression',
+		'reference_expression',
+		'try_expression',
+		'binary_expression',
+		'assignment_expression',
+		'compound_assignment_expr',
+		'type_cast_expression',
+		'call_expression',
+		'return_expression',
+		'yield_expression',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'self',
+		'scoped_identifier',
+		'generic_function',
+		'await_expression',
+		'field_expression',
+		'array_expression',
+		'tuple_expression',
+		'macro_invocation',
+		'unit_expression',
+		'break_expression',
+		'continue_expression',
+		'index_expression',
+		'metavariable',
+		'closure_expression',
+		'parenthesized_expression',
+		'struct_expression',
+		'unsafe_block',
+		'async_block',
+		'gen_block',
+		'try_block',
+		'block',
+		'if_expression',
+		'match_expression',
+		'while_expression',
+		'loop_expression',
+		'for_expression',
+		'const_block'
 	]),
 	_expression: new Set([
 		'unary_expression',
@@ -567,6 +909,310 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'const_block',
 		'range_expression'
 	]),
+	_expression_ending_with_block: new Set([
+		'unsafe_block',
+		'async_block',
+		'gen_block',
+		'try_block',
+		'block',
+		'if_expression',
+		'match_expression',
+		'while_expression',
+		'loop_expression',
+		'for_expression',
+		'const_block'
+	]),
+	_delim_tokens: new Set([
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
+		'dollar',
+		'_token_keywords',
+		'token_keywords',
+		'squote',
+		'as',
+		'async',
+		'await',
+		'break',
+		'const',
+		'continue',
+		'default',
+		'enum',
+		'fn',
+		'for',
+		'gen',
+		'if',
+		'impl',
+		'let',
+		'loop',
+		'match',
+		'mod',
+		'pub',
+		'return',
+		'static',
+		'struct',
+		'trait',
+		'type',
+		'union',
+		'unsafe',
+		'use',
+		'where',
+		'while',
+		'delim_token_tree'
+	]),
+	_non_delim_token: new Set([
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
+		'dollar',
+		'_token_keywords',
+		'token_keywords',
+		'squote',
+		'as',
+		'async',
+		'await',
+		'break',
+		'const',
+		'continue',
+		'default',
+		'enum',
+		'fn',
+		'for',
+		'gen',
+		'if',
+		'impl',
+		'let',
+		'loop',
+		'match',
+		'mod',
+		'pub',
+		'return',
+		'static',
+		'struct',
+		'trait',
+		'type',
+		'union',
+		'unsafe',
+		'use',
+		'where',
+		'while'
+	]),
+	_condition: new Set([
+		'_expression',
+		'expression',
+		'unary_expression',
+		'reference_expression',
+		'try_expression',
+		'binary_expression',
+		'assignment_expression',
+		'compound_assignment_expr',
+		'type_cast_expression',
+		'call_expression',
+		'return_expression',
+		'yield_expression',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'self',
+		'scoped_identifier',
+		'generic_function',
+		'await_expression',
+		'field_expression',
+		'array_expression',
+		'tuple_expression',
+		'macro_invocation',
+		'unit_expression',
+		'break_expression',
+		'continue_expression',
+		'index_expression',
+		'metavariable',
+		'closure_expression',
+		'parenthesized_expression',
+		'struct_expression',
+		'unsafe_block',
+		'async_block',
+		'gen_block',
+		'try_block',
+		'block',
+		'if_expression',
+		'match_expression',
+		'while_expression',
+		'loop_expression',
+		'for_expression',
+		'const_block',
+		'range_expression',
+		'let_condition',
+		'_let_chain',
+		'let_chain'
+	]),
 	_pattern: new Set([
 		'_literal_pattern',
 		'literal_pattern',
@@ -618,6 +1264,122 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_literal',
 		'float_literal',
 		'negative_literal'
+	]),
+	_path: new Set(['self', 'identifier', 'metavariable', 'super', 'crate', 'scoped_identifier']),
+	non_special_token: new Set([
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
+		'dollar',
+		'_token_keywords',
+		'token_keywords',
+		'squote',
+		'as',
+		'async',
+		'await',
+		'break',
+		'const',
+		'continue',
+		'default',
+		'enum',
+		'fn',
+		'for',
+		'gen',
+		'if',
+		'impl',
+		'let',
+		'loop',
+		'match',
+		'mod',
+		'pub',
+		'return',
+		'static',
+		'struct',
+		'trait',
+		'type',
+		'union',
+		'unsafe',
+		'use',
+		'where',
+		'while'
 	])
 };
 
@@ -739,6 +1501,104 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle) {
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapStatement(
+	data: T.Statement & { readonly $other?: T.Statement | readonly T.Statement[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_expression_statement',
+		'__declaration_statement',
+		'_declaration_statement',
+		'_const_item',
+		'_macro_invocation',
+		'_macro_definition',
+		'_empty_statement',
+		'_attribute_item',
+		'_inner_attribute_item',
+		'_mod_item',
+		'_foreign_mod_item',
+		'_struct_item',
+		'_union_item',
+		'_enum_item',
+		'_type_item',
+		'_function_item',
+		'_function_signature_item',
+		'_impl_item',
+		'_trait_item',
+		'_associated_type',
+		'_let_declaration',
+		'_use_declaration',
+		'_extern_crate_declaration',
+		'_static_item'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'expression_statement',
+		'_declaration_statement',
+		'declaration_statement',
+		'const_item',
+		'macro_invocation',
+		'macro_definition',
+		'empty_statement',
+		'attribute_item',
+		'inner_attribute_item',
+		'mod_item',
+		'foreign_mod_item',
+		'struct_item',
+		'union_item',
+		'enum_item',
+		'type_item',
+		'function_item',
+		'function_signature_item',
+		'impl_item',
+		'trait_item',
+		'associated_type',
+		'let_declaration',
+		'use_declaration',
+		'extern_crate_declaration',
+		'static_item'
+	]) as T.Statement | readonly T.Statement[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'expression_statement',
+			'_declaration_statement',
+			'declaration_statement',
+			'const_item',
+			'macro_invocation',
+			'macro_definition',
+			'empty_statement',
+			'attribute_item',
+			'inner_attribute_item',
+			'mod_item',
+			'foreign_mod_item',
+			'struct_item',
+			'union_item',
+			'enum_item',
+			'type_item',
+			'function_item',
+			'function_signature_item',
+			'impl_item',
+			'trait_item',
+			'associated_type',
+			'let_declaration',
+			'use_declaration',
+			'extern_crate_declaration',
+			'static_item'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.Statement>(data as T.Statement, tree);
+	}
+	return drillIn<T.Statement>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapExpressionStatement(
@@ -1065,6 +1925,50 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapTokenPattern(
+	data: T.TokenPattern & { readonly $other?: T.TokenPattern | readonly T.TokenPattern[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_token_tree_pattern',
+		'_token_repetition_pattern',
+		'_token_binding_pattern',
+		'_metavariable',
+		'__non_special_token',
+		'_non_special_token'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'token_tree_pattern',
+		'token_repetition_pattern',
+		'token_binding_pattern',
+		'metavariable',
+		'_non_special_token',
+		'non_special_token'
+	]) as T.TokenPattern | readonly T.TokenPattern[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'token_tree_pattern',
+			'token_repetition_pattern',
+			'token_binding_pattern',
+			'metavariable',
+			'_non_special_token',
+			'non_special_token'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.TokenPattern>(data as T.TokenPattern, tree);
+	}
+	return drillIn<T.TokenPattern>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 export function wrapTokenTreePattern(
 	data: T.TokenTreePattern & {
 		readonly _token_tree_pattern_paren?: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace;
@@ -1222,7 +2126,7 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 
 			tokenPatterns() {
 				return drillInAll<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
 				>(
 					this._token_patterns as
 						| readonly (
@@ -1230,7 +2134,7 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 								| T.TokenRepetitionPattern
 								| T.TokenBindingPattern
 								| T.Metavariable
-								| T.NonSpecialToken
+								| T._NonSpecialToken
 						  )[]
 						| undefined,
 					tree
@@ -1390,8 +2294,10 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 			),
 
 			tokens() {
-				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-					this._tokens as readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[] | undefined,
+				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(
+					this._tokens as
+						| readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+						| undefined,
 					tree
 				);
 			},
@@ -1415,8 +2321,8 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNonSpecialToken(
-	data: T.NonSpecialToken & { readonly $other?: T.NonSpecialToken | readonly T.NonSpecialToken[] },
+export function wrap_NonSpecialToken(
+	data: T._NonSpecialToken & { readonly $other?: T._NonSpecialToken | readonly T._NonSpecialToken[] },
 	tree: TreeHandle
 ) {
 	data = _keepModelledSlots(data, [
@@ -1460,7 +2366,7 @@ export function wrapNonSpecialToken(
 		'token_tree_punctuation',
 		'_token_keywords',
 		'token_keywords'
-	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
+	]) as T._NonSpecialToken | readonly T._NonSpecialToken[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, [
@@ -1485,9 +2391,9 @@ export function wrapNonSpecialToken(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillInSelf<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
+		return drillInSelf<T._NonSpecialToken>(data as T._NonSpecialToken, tree);
 	}
-	return drillIn<T.NonSpecialToken>(
+	return drillIn<T._NonSpecialToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -1591,8 +2497,8 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 
 export function wrapModItem(
 	data: T.ModItem & {
-		readonly _mod_item_external?: ';' | T.DeclarationList;
-		readonly _declaration_list?: ';' | T.DeclarationList;
+		readonly _mod_item_external?: TSKindId.ModItemExternal | T.DeclarationList;
+		readonly _declaration_list?: TSKindId.ModItemExternal | T.DeclarationList;
 	},
 	tree: TreeHandle
 ) {
@@ -1621,12 +2527,15 @@ export function wrapModItem(
 				slotName: 'name',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._mod_item_external ?? data._declaration_list,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._mod_item_external ?? data._declaration_list,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 368 }
 			),
 
 			visibilityModifier() {
@@ -1636,7 +2545,7 @@ export function wrapModItem(
 				return drillIn<T.Identifier>(this._name, tree);
 			},
 			content() {
-				return drillIn<';' | T.DeclarationList>(this._content, tree);
+				return drillIn<TSKindId.ModItemExternal | T.DeclarationList>(this._content, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.ModItem['_visibility_modifier']>) =>
@@ -1652,8 +2561,8 @@ export function wrapModItem(
 
 export function wrapForeignModItem(
 	data: T.ForeignModItem & {
-		readonly _foreign_mod_item_semi?: ';' | T.DeclarationList;
-		readonly _declaration_list?: ';' | T.DeclarationList;
+		readonly _foreign_mod_item_semi?: TSKindId.ForeignModItemSemi | T.DeclarationList;
+		readonly _declaration_list?: TSKindId.ForeignModItemSemi | T.DeclarationList;
 	},
 	tree: TreeHandle
 ) {
@@ -1683,12 +2592,15 @@ export function wrapForeignModItem(
 				slotName: 'extern_modifier',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._foreign_mod_item_semi ?? data._declaration_list,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._foreign_mod_item_semi ?? data._declaration_list,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 384 }
 			),
 
 			visibilityModifier() {
@@ -1698,7 +2610,7 @@ export function wrapForeignModItem(
 				return drillIn<T.ExternModifier>(this._extern_modifier, tree);
 			},
 			content() {
-				return drillIn<';' | T.DeclarationList>(this._content, tree);
+				return drillIn<TSKindId.ForeignModItemSemi | T.DeclarationList>(this._content, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.ForeignModItem['_visibility_modifier']>) =>
@@ -1745,9 +2657,9 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle) {
 
 export function wrapStructItem(
 	data: T.StructItem & {
-		readonly _struct_item_brace?: T.StructItemBrace | T.StructItemTuple | ';';
-		readonly _struct_item_tuple?: T.StructItemBrace | T.StructItemTuple | ';';
-		readonly _struct_item_unit?: T.StructItemBrace | T.StructItemTuple | ';';
+		readonly _struct_item_brace?: T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit;
+		readonly _struct_item_tuple?: T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit;
+		readonly _struct_item_unit?: T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit;
 	},
 	tree: TreeHandle
 ) {
@@ -1784,12 +2696,15 @@ export function wrapStructItem(
 				slotName: 'type_parameters',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._struct_item_brace ?? data._struct_item_tuple ?? data._struct_item_unit,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._struct_item_brace ?? data._struct_item_tuple ?? data._struct_item_unit,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 379 }
 			),
 
 			visibilityModifier() {
@@ -1802,7 +2717,7 @@ export function wrapStructItem(
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
 			},
 			content() {
-				return drillIn<T.StructItemBrace | T.StructItemTuple | ';'>(this._content, tree);
+				return drillIn<T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit>(this._content, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.StructItem['_visibility_modifier']>) =>
@@ -2704,12 +3619,33 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.WherePredicate as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
+			_left: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'left',
+					span: (data as _NodeData).$span
+				}),
+				{
+					u8: 28,
+					i8: 29,
+					u16: 30,
+					i16: 31,
+					u32: 32,
+					i32: 33,
+					u64: 34,
+					i64: 35,
+					u128: 36,
+					i128: 37,
+					isize: 38,
+					usize: 39,
+					f32: 40,
+					f64: 41,
+					bool: 42,
+					str: 43,
+					char: 44
+				}
+			),
 			_bounds: normalizeSingularWrapSlot(data._bounds, 'bounds', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -2747,8 +3683,8 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
 
 export function wrapImplItem(
 	data: T.ImplItem & {
-		readonly _impl_item_body?: T.ImplItemBody | ';';
-		readonly _impl_item_semi?: T.ImplItemBody | ';';
+		readonly _impl_item_body?: T.ImplItemBody | TSKindId.ImplItemSemi;
+		readonly _impl_item_semi?: T.ImplItemBody | TSKindId.ImplItemSemi;
 	},
 	tree: TreeHandle
 ) {
@@ -2799,12 +3735,15 @@ export function wrapImplItem(
 				slotName: 'where_clause',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._impl_item_body ?? data._impl_item_semi,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._impl_item_body ?? data._impl_item_semi,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 355 }
 			),
 
 			unsafeMarker() {
@@ -2823,7 +3762,7 @@ export function wrapImplItem(
 				return drillIn<T.WhereClause | undefined>(this._where_clause, tree);
 			},
 			content() {
-				return drillIn<T.ImplItemBody | ';'>(this._content, tree);
+				return drillIn<T.ImplItemBody | TSKindId.ImplItemSemi>(this._content, tree);
 			},
 			$with: {
 				unsafeMarker: (v: NonNullable<T.ImplItem['_unsafe_marker']>) =>
@@ -3389,6 +4328,62 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle) {
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapUseClause(
+	data: T.UseClause & { readonly $other?: T.UseClause | readonly T.UseClause[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_self',
+		'_identifier',
+		'_metavariable',
+		'_super',
+		'_crate',
+		'_scoped_identifier',
+		'_use_as_clause',
+		'_use_list',
+		'_scoped_use_list',
+		'_use_wildcard'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'self',
+		'identifier',
+		'metavariable',
+		'super',
+		'crate',
+		'scoped_identifier',
+		'use_as_clause',
+		'use_list',
+		'scoped_use_list',
+		'use_wildcard'
+	]) as T.UseClause | readonly T.UseClause[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'self',
+			'identifier',
+			'metavariable',
+			'super',
+			'crate',
+			'scoped_identifier',
+			'use_as_clause',
+			'use_list',
+			'scoped_use_list',
+			'use_wildcard'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.UseClause>(data as T.UseClause, tree);
+	}
+	return drillIn<T.UseClause>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle) {
@@ -4574,6 +5569,170 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapExpressionExceptRange(
+	data: T.ExpressionExceptRange & { readonly $other?: T.ExpressionExceptRange | readonly T.ExpressionExceptRange[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_unary_expression',
+		'_reference_expression',
+		'_try_expression',
+		'_binary_expression',
+		'_assignment_expression',
+		'_compound_assignment_expr',
+		'_type_cast_expression',
+		'_call_expression',
+		'_return_expression',
+		'_yield_expression',
+		'__literal',
+		'_literal',
+		'_string_literal',
+		'_raw_string_literal',
+		'_char_literal',
+		'_boolean_literal',
+		'_integer_literal',
+		'_float_literal',
+		'_identifier',
+		'_self',
+		'_scoped_identifier',
+		'_generic_function',
+		'_await_expression',
+		'_field_expression',
+		'_array_expression',
+		'_tuple_expression',
+		'_macro_invocation',
+		'_unit_expression',
+		'_break_expression',
+		'_continue_expression',
+		'_index_expression',
+		'_metavariable',
+		'_closure_expression',
+		'_parenthesized_expression',
+		'_struct_expression',
+		'_unsafe_block',
+		'_async_block',
+		'_gen_block',
+		'_try_block',
+		'_block',
+		'_if_expression',
+		'_match_expression',
+		'_while_expression',
+		'_loop_expression',
+		'_for_expression',
+		'_const_block'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'unary_expression',
+		'reference_expression',
+		'try_expression',
+		'binary_expression',
+		'assignment_expression',
+		'compound_assignment_expr',
+		'type_cast_expression',
+		'call_expression',
+		'return_expression',
+		'yield_expression',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'self',
+		'scoped_identifier',
+		'generic_function',
+		'await_expression',
+		'field_expression',
+		'array_expression',
+		'tuple_expression',
+		'macro_invocation',
+		'unit_expression',
+		'break_expression',
+		'continue_expression',
+		'index_expression',
+		'metavariable',
+		'closure_expression',
+		'parenthesized_expression',
+		'struct_expression',
+		'unsafe_block',
+		'async_block',
+		'gen_block',
+		'try_block',
+		'block',
+		'if_expression',
+		'match_expression',
+		'while_expression',
+		'loop_expression',
+		'for_expression',
+		'const_block'
+	]) as T.ExpressionExceptRange | readonly T.ExpressionExceptRange[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'unary_expression',
+			'reference_expression',
+			'try_expression',
+			'binary_expression',
+			'assignment_expression',
+			'compound_assignment_expr',
+			'type_cast_expression',
+			'call_expression',
+			'return_expression',
+			'yield_expression',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'self',
+			'scoped_identifier',
+			'generic_function',
+			'await_expression',
+			'field_expression',
+			'array_expression',
+			'tuple_expression',
+			'macro_invocation',
+			'unit_expression',
+			'break_expression',
+			'continue_expression',
+			'index_expression',
+			'metavariable',
+			'closure_expression',
+			'parenthesized_expression',
+			'struct_expression',
+			'unsafe_block',
+			'async_block',
+			'gen_block',
+			'try_block',
+			'block',
+			'if_expression',
+			'match_expression',
+			'while_expression',
+			'loop_expression',
+			'for_expression',
+			'const_block'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.ExpressionExceptRange>(data as T.ExpressionExceptRange, tree);
+	}
+	return drillIn<T.ExpressionExceptRange>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 export function wrapExpression(
 	data: T.Expression & { readonly $other?: T.Expression | readonly T.Expression[] },
 	tree: TreeHandle
@@ -4817,6 +5976,59 @@ export function wrapDelimTokenTree(
 	return _node;
 }
 
+export function wrapDelimTokens(
+	data: T.DelimTokens & { readonly $other?: T.DelimTokens | readonly T.DelimTokens[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, ['__non_special_token', '_non_special_token', '_dollar', '_delim_token_tree']);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'_non_special_token',
+		'non_special_token',
+		'dollar',
+		'delim_token_tree'
+	]) as T.DelimTokens | readonly T.DelimTokens[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, ['_non_special_token', 'non_special_token', 'dollar', 'delim_token_tree']);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.DelimTokens>(data as T.DelimTokens, tree);
+	}
+	return drillIn<T.DelimTokens>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
+export function wrapNonDelimToken(
+	data: T.NonDelimToken & { readonly $other?: T.NonDelimToken | readonly T.NonDelimToken[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, ['__non_special_token', '_non_special_token', '_dollar']);
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['_non_special_token', 'non_special_token', 'dollar']) as
+		| T.NonDelimToken
+		| readonly T.NonDelimToken[]
+		| undefined;
+	const filtered =
+		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_non_special_token', 'non_special_token', 'dollar']);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.NonDelimToken>(data as T.NonDelimToken, tree);
+	}
+	return drillIn<T.NonDelimToken>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_path', '_name']);
 	const _node = withMethods(
@@ -4967,22 +6179,22 @@ export function wrapRangeExpression(
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 		readonly _range_expression_postfix?:
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 		readonly _range_expression_prefix?:
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 		readonly _range_expression_bare?:
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 	},
 	tree: TreeHandle
 ) {
@@ -5004,23 +6216,25 @@ export function wrapRangeExpression(
 				'_range_expression_prefix'
 			]),
 			$type: TSKindId.RangeExpression as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._range_expression_binary ??
-					data._range_expression_postfix ??
-					data._range_expression_prefix ??
-					data._range_expression_bare,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						data._range_expression_binary ??
+						data._range_expression_postfix ??
+						data._range_expression_prefix ??
+						data._range_expression_bare,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '..': 350 }
 			),
 
 			content() {
-				return drillIn<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(
-					this._content,
-					tree
-				);
+				return drillIn<
+					T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
+				>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.RangeExpression['_content']>) =>
@@ -5991,6 +7205,188 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 		_treeEngine(tree)
 	);
 	return _node;
+}
+
+export function wrapCondition(
+	data: T.Condition & { readonly $other?: T.Condition | readonly T.Condition[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'__expression',
+		'_expression',
+		'_unary_expression',
+		'_reference_expression',
+		'_try_expression',
+		'_binary_expression',
+		'_assignment_expression',
+		'_compound_assignment_expr',
+		'_type_cast_expression',
+		'_call_expression',
+		'_return_expression',
+		'_yield_expression',
+		'__literal',
+		'_literal',
+		'_string_literal',
+		'_raw_string_literal',
+		'_char_literal',
+		'_boolean_literal',
+		'_integer_literal',
+		'_float_literal',
+		'_identifier',
+		'_self',
+		'_scoped_identifier',
+		'_generic_function',
+		'_await_expression',
+		'_field_expression',
+		'_array_expression',
+		'_tuple_expression',
+		'_macro_invocation',
+		'_unit_expression',
+		'_break_expression',
+		'_continue_expression',
+		'_index_expression',
+		'_metavariable',
+		'_closure_expression',
+		'_parenthesized_expression',
+		'_struct_expression',
+		'_unsafe_block',
+		'_async_block',
+		'_gen_block',
+		'_try_block',
+		'_block',
+		'_if_expression',
+		'_match_expression',
+		'_while_expression',
+		'_loop_expression',
+		'_for_expression',
+		'_const_block',
+		'_range_expression',
+		'_let_condition',
+		'__let_chain',
+		'_let_chain'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'_expression',
+		'expression',
+		'unary_expression',
+		'reference_expression',
+		'try_expression',
+		'binary_expression',
+		'assignment_expression',
+		'compound_assignment_expr',
+		'type_cast_expression',
+		'call_expression',
+		'return_expression',
+		'yield_expression',
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'self',
+		'scoped_identifier',
+		'generic_function',
+		'await_expression',
+		'field_expression',
+		'array_expression',
+		'tuple_expression',
+		'macro_invocation',
+		'unit_expression',
+		'break_expression',
+		'continue_expression',
+		'index_expression',
+		'metavariable',
+		'closure_expression',
+		'parenthesized_expression',
+		'struct_expression',
+		'unsafe_block',
+		'async_block',
+		'gen_block',
+		'try_block',
+		'block',
+		'if_expression',
+		'match_expression',
+		'while_expression',
+		'loop_expression',
+		'for_expression',
+		'const_block',
+		'range_expression',
+		'let_condition',
+		'_let_chain',
+		'let_chain'
+	]) as T.Condition | readonly T.Condition[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_expression',
+			'expression',
+			'unary_expression',
+			'reference_expression',
+			'try_expression',
+			'binary_expression',
+			'assignment_expression',
+			'compound_assignment_expr',
+			'type_cast_expression',
+			'call_expression',
+			'return_expression',
+			'yield_expression',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'self',
+			'scoped_identifier',
+			'generic_function',
+			'await_expression',
+			'field_expression',
+			'array_expression',
+			'tuple_expression',
+			'macro_invocation',
+			'unit_expression',
+			'break_expression',
+			'continue_expression',
+			'index_expression',
+			'metavariable',
+			'closure_expression',
+			'parenthesized_expression',
+			'struct_expression',
+			'unsafe_block',
+			'async_block',
+			'gen_block',
+			'try_block',
+			'block',
+			'if_expression',
+			'match_expression',
+			'while_expression',
+			'loop_expression',
+			'for_expression',
+			'const_block',
+			'range_expression',
+			'let_condition',
+			'_let_chain',
+			'let_chain'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.Condition>(data as T.Condition, tree);
+	}
+	return drillIn<T.Condition>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapElseClause(
@@ -8722,8 +10118,8 @@ export function wrapStructPatternElements(
 
 export function wrapRangePatternArm2(
 	data: T.RangePatternArm2 & {
-		readonly _range_pattern_left_with_right?: T.RangePatternLeftWithRight | '..';
-		readonly _range_pattern_left_bare?: T.RangePatternLeftWithRight | '..';
+		readonly _range_pattern_left_with_right?: T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
+		readonly _range_pattern_left_bare?: T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
 	},
 	tree: TreeHandle
 ) {
@@ -8740,12 +10136,15 @@ export function wrapRangePatternArm2(
 				slotName: 'left',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._range_pattern_left_with_right ?? data._range_pattern_left_bare,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._range_pattern_left_with_right ?? data._range_pattern_left_bare,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '..': 376 }
 			),
 
 			left() {
@@ -8754,7 +10153,7 @@ export function wrapRangePatternArm2(
 				>(this._left, tree);
 			},
 			content() {
-				return drillIn<T.RangePatternLeftWithRight | '..'>(this._content, tree);
+				return drillIn<T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare>(this._content, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.RangePatternArm2['_left']>) =>
@@ -10128,7 +11527,7 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 
 			tokenPatterns() {
 				return drillInAll<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
 				>(
 					this._token_patterns as
 						| readonly (
@@ -10136,7 +11535,7 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 								| T.TokenRepetitionPattern
 								| T.TokenBindingPattern
 								| T.Metavariable
-								| T.NonSpecialToken
+								| T._NonSpecialToken
 						  )[]
 						| undefined,
 					tree
@@ -10167,7 +11566,7 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 
 			tokenPatterns() {
 				return drillInAll<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
 				>(
 					this._token_patterns as
 						| readonly (
@@ -10175,7 +11574,7 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 								| T.TokenRepetitionPattern
 								| T.TokenBindingPattern
 								| T.Metavariable
-								| T.NonSpecialToken
+								| T._NonSpecialToken
 						  )[]
 						| undefined,
 					tree
@@ -10206,7 +11605,7 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 
 			tokenPatterns() {
 				return drillInAll<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
 				>(
 					this._token_patterns as
 						| readonly (
@@ -10214,7 +11613,7 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 								| T.TokenRepetitionPattern
 								| T.TokenBindingPattern
 								| T.Metavariable
-								| T.NonSpecialToken
+								| T._NonSpecialToken
 						  )[]
 						| undefined,
 					tree
@@ -10244,8 +11643,10 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 			}),
 
 			tokens() {
-				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-					this._tokens as readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[] | undefined,
+				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(
+					this._tokens as
+						| readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+						| undefined,
 					tree
 				);
 			},
@@ -10273,8 +11674,10 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 			}),
 
 			tokens() {
-				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-					this._tokens as readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[] | undefined,
+				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(
+					this._tokens as
+						| readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+						| undefined,
 					tree
 				);
 			},
@@ -10302,8 +11705,10 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 			}),
 
 			tokens() {
-				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-					this._tokens as readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[] | undefined,
+				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(
+					this._tokens as
+						| readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+						| undefined,
 					tree
 				);
 			},
@@ -10325,16 +11730,19 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 		{
 			...data,
 			$type: TSKindId.DelimTokenTreeParen as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'delim_tokens',
-				span: (data as _NodeData).$span
-			}),
+			_delim_tokens: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'delim_tokens',
+					span: (data as _NodeData).$span
+				}),
+				{ $: 6 }
+			),
 
 			delimTokens() {
-				return drillInAll<T.NonSpecialToken | '$' | T.DelimTokenTree>(
-					this._delim_tokens as readonly (T.NonSpecialToken | '$' | T.DelimTokenTree)[] | undefined,
+				return drillInAll<T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(
+					this._delim_tokens as readonly (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[] | undefined,
 					tree
 				);
 			},
@@ -10356,16 +11764,19 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 		{
 			...data,
 			$type: TSKindId.DelimTokenTreeBracket as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'delim_tokens',
-				span: (data as _NodeData).$span
-			}),
+			_delim_tokens: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'delim_tokens',
+					span: (data as _NodeData).$span
+				}),
+				{ $: 6 }
+			),
 
 			delimTokens() {
-				return drillInAll<T.NonSpecialToken | '$' | T.DelimTokenTree>(
-					this._delim_tokens as readonly (T.NonSpecialToken | '$' | T.DelimTokenTree)[] | undefined,
+				return drillInAll<T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(
+					this._delim_tokens as readonly (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[] | undefined,
 					tree
 				);
 			},
@@ -10387,16 +11798,19 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 		{
 			...data,
 			$type: TSKindId.DelimTokenTreeBrace as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'delim_tokens',
-				span: (data as _NodeData).$span
-			}),
+			_delim_tokens: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'delim_tokens',
+					span: (data as _NodeData).$span
+				}),
+				{ $: 6 }
+			),
 
 			delimTokens() {
-				return drillInAll<T.NonSpecialToken | '$' | T.DelimTokenTree>(
-					this._delim_tokens as readonly (T.NonSpecialToken | '$' | T.DelimTokenTree)[] | undefined,
+				return drillInAll<T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(
+					this._delim_tokens as readonly (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[] | undefined,
 					tree
 				);
 			},
@@ -11143,19 +12557,104 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapNonSpecialToken(
+	data: T.NonSpecialToken & { readonly $other?: T.NonSpecialToken | readonly T.NonSpecialToken[] },
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'__literal',
+		'_literal',
+		'_string_literal',
+		'_raw_string_literal',
+		'_char_literal',
+		'_boolean_literal',
+		'_integer_literal',
+		'_float_literal',
+		'_identifier',
+		'_mutable_specifier',
+		'_self',
+		'_super',
+		'_crate',
+		'__primitive_type',
+		'_primitive_type',
+		'__token_tree_punctuation',
+		'_token_tree_punctuation',
+		'__token_keywords',
+		'_token_keywords'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'_token_keywords',
+		'token_keywords'
+	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'mutable_specifier',
+			'self',
+			'super',
+			'crate',
+			'_primitive_type',
+			'primitive_type',
+			'_token_tree_punctuation',
+			'token_tree_punctuation',
+			'_token_keywords',
+			'token_keywords'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillInSelf<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
+	}
+	return drillIn<T.NonSpecialToken>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	[TSKindId.SourceFile]: (d, t) => wrapSourceFile(d as unknown as T.SourceFile, t),
+	[TSKindId.Statement]: (d, t) => wrapStatement(d as unknown as T.Statement, t),
 	[TSKindId.EmptyStatement]: (d) => ({ ...d, $type: TSKindId.EmptyStatement as const }),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.MacroDefinition]: (d, t) => wrapMacroDefinition(d as unknown as T.MacroDefinition, t),
 	[TSKindId.MacroRule]: (d, t) => wrapMacroRule(d as unknown as T.MacroRule, t),
+	[TSKindId.TokenPattern]: (d, t) => wrapTokenPattern(d as unknown as T.TokenPattern, t),
 	[TSKindId.TokenTreePattern]: (d, t) => wrapTokenTreePattern(d as unknown as T.TokenTreePattern, t),
 	[TSKindId.TokenBindingPattern]: (d, t) => wrapTokenBindingPattern(d as unknown as T.TokenBindingPattern, t),
 	[TSKindId.TokenRepetitionPattern]: (d, t) => wrapTokenRepetitionPattern(d as unknown as T.TokenRepetitionPattern, t),
 	[TSKindId.FragmentSpecifier]: (d) => ({ ...d, $type: TSKindId.FragmentSpecifier as const }),
 	[TSKindId.TokenTree]: (d, t) => wrapTokenTree(d as unknown as T.TokenTree, t),
 	[TSKindId.TokenRepetition]: (d, t) => wrapTokenRepetition(d as unknown as T.TokenRepetition, t),
-	[TSKindId.NonSpecialToken]: (d, t) => wrapNonSpecialToken(d as unknown as T.NonSpecialToken, t),
+	[TSKindId._NonSpecialToken]: (d, t) => wrap_NonSpecialToken(d as unknown as T._NonSpecialToken, t),
 	[TSKindId.AttributeItem]: (d, t) => wrapAttributeItem(d as unknown as T.AttributeItem, t),
 	[TSKindId.InnerAttributeItem]: (d, t) => wrapInnerAttributeItem(d as unknown as T.InnerAttributeItem, t),
 	[TSKindId.Attribute]: (d, t) => wrapAttribute(d as unknown as T.Attribute, t),
@@ -11192,6 +12691,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.LifetimeParameter]: (d, t) => wrapLifetimeParameter(d as unknown as T.LifetimeParameter, t),
 	[TSKindId.LetDeclaration]: (d, t) => wrapLetDeclaration(d as unknown as T.LetDeclaration, t),
 	[TSKindId.UseDeclaration]: (d, t) => wrapUseDeclaration(d as unknown as T.UseDeclaration, t),
+	[TSKindId.UseClause]: (d, t) => wrapUseClause(d as unknown as T.UseClause, t),
 	[TSKindId.ScopedUseList]: (d, t) => wrapScopedUseList(d as unknown as T.ScopedUseList, t),
 	[TSKindId.UseList]: (d, t) => wrapUseList(d as unknown as T.UseList, t),
 	[TSKindId.UseAsClause]: (d, t) => wrapUseAsClause(d as unknown as T.UseAsClause, t),
@@ -11225,9 +12725,12 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.AbstractType]: (d, t) => wrapAbstractType(d as unknown as T.AbstractType, t),
 	[TSKindId.DynamicType]: (d, t) => wrapDynamicType(d as unknown as T.DynamicType, t),
 	[TSKindId.MutableSpecifier]: (d) => ({ ...d, $type: TSKindId.MutableSpecifier as const }),
+	[TSKindId.ExpressionExceptRange]: (d, t) => wrapExpressionExceptRange(d as unknown as T.ExpressionExceptRange, t),
 	[TSKindId.Expression]: (d, t) => wrapExpression(d as unknown as T.Expression, t),
 	[TSKindId.MacroInvocation]: (d, t) => wrapMacroInvocation(d as unknown as T.MacroInvocation, t),
 	[TSKindId.DelimTokenTree]: (d, t) => wrapDelimTokenTree(d as unknown as T.DelimTokenTree, t),
+	[TSKindId.DelimTokens]: (d, t) => wrapDelimTokens(d as unknown as T.DelimTokens, t),
+	[TSKindId.NonDelimToken]: (d, t) => wrapNonDelimToken(d as unknown as T.NonDelimToken, t),
 	[TSKindId.ScopedIdentifier]: (d, t) => wrapScopedIdentifier(d as unknown as T.ScopedIdentifier, t),
 	[TSKindId.ScopedTypeIdentifierInExpressionPosition]: (d, t) =>
 		wrapScopedTypeIdentifierInExpressionPosition(d as unknown as T.ScopedTypeIdentifierInExpressionPosition, t),
@@ -11258,6 +12761,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.IfExpression]: (d, t) => wrapIfExpression(d as unknown as T.IfExpression, t),
 	[TSKindId.LetCondition]: (d, t) => wrapLetCondition(d as unknown as T.LetCondition, t),
 	[TSKindId.LetChain]: (d, t) => wrapLetChain(d as unknown as T.LetChain, t),
+	[TSKindId.Condition]: (d, t) => wrapCondition(d as unknown as T.Condition, t),
 	[TSKindId.ElseClause]: (d, t) => wrapElseClause(d as unknown as T.ElseClause, t),
 	[TSKindId.MatchExpression]: (d, t) => wrapMatchExpression(d as unknown as T.MatchExpression, t),
 	[TSKindId.MatchBlock]: (d, t) => wrapMatchBlock(d as unknown as T.MatchBlock, t),
@@ -11422,17 +12926,19 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 
 interface _WrapReturnByKindId {
 	[TSKindId.SourceFile]: ReturnType<typeof wrapSourceFile>;
+	[TSKindId.Statement]: ReturnType<typeof wrapStatement>;
 	[TSKindId.EmptyStatement]: _NodeData & { readonly $type: TSKindId.EmptyStatement };
 	[TSKindId.ExpressionStatement]: ReturnType<typeof wrapExpressionStatement>;
 	[TSKindId.MacroDefinition]: ReturnType<typeof wrapMacroDefinition>;
 	[TSKindId.MacroRule]: ReturnType<typeof wrapMacroRule>;
+	[TSKindId.TokenPattern]: ReturnType<typeof wrapTokenPattern>;
 	[TSKindId.TokenTreePattern]: ReturnType<typeof wrapTokenTreePattern>;
 	[TSKindId.TokenBindingPattern]: ReturnType<typeof wrapTokenBindingPattern>;
 	[TSKindId.TokenRepetitionPattern]: ReturnType<typeof wrapTokenRepetitionPattern>;
 	[TSKindId.FragmentSpecifier]: _NodeData & { readonly $type: TSKindId.FragmentSpecifier };
 	[TSKindId.TokenTree]: ReturnType<typeof wrapTokenTree>;
 	[TSKindId.TokenRepetition]: ReturnType<typeof wrapTokenRepetition>;
-	[TSKindId.NonSpecialToken]: ReturnType<typeof wrapNonSpecialToken>;
+	[TSKindId._NonSpecialToken]: ReturnType<typeof wrap_NonSpecialToken>;
 	[TSKindId.AttributeItem]: ReturnType<typeof wrapAttributeItem>;
 	[TSKindId.InnerAttributeItem]: ReturnType<typeof wrapInnerAttributeItem>;
 	[TSKindId.Attribute]: ReturnType<typeof wrapAttribute>;
@@ -11468,6 +12974,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.LifetimeParameter]: ReturnType<typeof wrapLifetimeParameter>;
 	[TSKindId.LetDeclaration]: ReturnType<typeof wrapLetDeclaration>;
 	[TSKindId.UseDeclaration]: ReturnType<typeof wrapUseDeclaration>;
+	[TSKindId.UseClause]: ReturnType<typeof wrapUseClause>;
 	[TSKindId.ScopedUseList]: ReturnType<typeof wrapScopedUseList>;
 	[TSKindId.UseList]: ReturnType<typeof wrapUseList>;
 	[TSKindId.UseAsClause]: ReturnType<typeof wrapUseAsClause>;
@@ -11500,9 +13007,12 @@ interface _WrapReturnByKindId {
 	[TSKindId.AbstractType]: ReturnType<typeof wrapAbstractType>;
 	[TSKindId.DynamicType]: ReturnType<typeof wrapDynamicType>;
 	[TSKindId.MutableSpecifier]: _NodeData & { readonly $type: TSKindId.MutableSpecifier };
+	[TSKindId.ExpressionExceptRange]: ReturnType<typeof wrapExpressionExceptRange>;
 	[TSKindId.Expression]: ReturnType<typeof wrapExpression>;
 	[TSKindId.MacroInvocation]: ReturnType<typeof wrapMacroInvocation>;
 	[TSKindId.DelimTokenTree]: ReturnType<typeof wrapDelimTokenTree>;
+	[TSKindId.DelimTokens]: ReturnType<typeof wrapDelimTokens>;
+	[TSKindId.NonDelimToken]: ReturnType<typeof wrapNonDelimToken>;
 	[TSKindId.ScopedIdentifier]: ReturnType<typeof wrapScopedIdentifier>;
 	[TSKindId.ScopedTypeIdentifierInExpressionPosition]: ReturnType<typeof wrapScopedTypeIdentifierInExpressionPosition>;
 	[TSKindId.ScopedTypeIdentifier]: ReturnType<typeof wrapScopedTypeIdentifier>;
@@ -11530,6 +13040,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.IfExpression]: ReturnType<typeof wrapIfExpression>;
 	[TSKindId.LetCondition]: ReturnType<typeof wrapLetCondition>;
 	[TSKindId.LetChain]: ReturnType<typeof wrapLetChain>;
+	[TSKindId.Condition]: ReturnType<typeof wrapCondition>;
 	[TSKindId.ElseClause]: ReturnType<typeof wrapElseClause>;
 	[TSKindId.MatchExpression]: ReturnType<typeof wrapMatchExpression>;
 	[TSKindId.MatchBlock]: ReturnType<typeof wrapMatchBlock>;

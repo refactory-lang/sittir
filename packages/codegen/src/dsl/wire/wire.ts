@@ -19,6 +19,7 @@ export interface WireContext {
 	readonly inlineRemovals: Set<string>;
 	readonly orphanedSyntheticGroups: Set<string>;
 	readonly conflictGroups: string[][];
+	readonly symbolRenames: Map<string, string>;
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
 	readonly polymorphsConfig?: PolymorphsConfig;
@@ -65,6 +66,12 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 	return true;
 }
 
+export function wireRegisterSymbolRename(oldName: string, newName: string): boolean {
+	if (!currentContext) return false;
+	currentContext.symbolRenames.set(oldName, newName);
+	return true;
+}
+
 export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
@@ -85,6 +92,7 @@ export function withWireContext<T>(
 		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
+		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: undefined,
 		polymorphsConfig: undefined,
@@ -118,8 +126,7 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
-	?
-		Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+	? Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
 	: Base extends { readonly rules: infer R }
 		? {
 				readonly [K in keyof R]?: R[K] extends GrammarRule
@@ -194,6 +201,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
+		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
 		polymorphsConfig: cfg.polymorphs,
@@ -424,9 +432,24 @@ function wrapInlineCallback(userInline: DollarFn<unknown[]> | undefined, context
 function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn {
 	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
 		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
-		if (context.conflictGroups.length === 0) return base as unknown[][];
-		const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
-		return [...(base as unknown[][]), ...symbolized];
+		const renamed =
+			context.symbolRenames.size === 0
+				? (base as unknown[][])
+				: (base as unknown[][]).map((group) =>
+						group.map((entry) => {
+							const symbol = entry as { type?: string; name?: string } | null;
+							const next =
+								symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string'
+									? context.symbolRenames.get(symbol.name)
+									: undefined;
+							return next === undefined ? entry : symbolizeRef($, next);
+						})
+					);
+		if (context.conflictGroups.length === 0) return renamed;
+		const symbolized = context.conflictGroups.map((group) =>
+			group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
+		);
+		return [...renamed, ...symbolized];
 	};
 }
 

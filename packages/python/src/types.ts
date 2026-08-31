@@ -13,7 +13,7 @@ import type {
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
-import type * as F$ from './factories.js';
+import type * as F$ from './factories/raw.js';
 
 export type { PythonGrammar };
 
@@ -200,7 +200,7 @@ export const enum TSKindId {
 	EscapeInterpolation = 106,
 	StringEnd = 107,
 	Module = 108,
-	_Statement = 109,
+	Statement = 109,
 	SimpleStatements = 110,
 	ImportStatement = 111,
 	ImportPrefix = 112,
@@ -215,7 +215,7 @@ export const enum TSKindId {
 	AssertStatement = 121,
 	ExpressionStatement = 122,
 	NamedExpression = 123,
-	_NamedExpressionLhs = 124,
+	NamedExpressionLhs = 124,
 	ReturnStatement = 125,
 	DeleteStatement = 126,
 	RaiseStatement = 127,
@@ -255,7 +255,7 @@ export const enum TSKindId {
 	ExpressionList = 161,
 	DottedName = 162,
 	CasePattern = 163,
-	_SimplePattern = 164,
+	SimplePattern = 164,
 	UnionPattern = 165,
 	DictPattern = 166,
 	KeyValuePattern = 167,
@@ -274,7 +274,7 @@ export const enum TSKindId {
 	ListSplatPattern = 180,
 	DictionarySplatPattern = 181,
 	AsPattern = 182,
-	_ExpressionWithinForInClause = 183,
+	ExpressionWithinForInClause = 183,
 	Expression = 184,
 	PrimaryExpression = 185,
 	NotOperator = 186,
@@ -289,7 +289,7 @@ export const enum TSKindId {
 	Assignment = 195,
 	AugmentedAssignment = 196,
 	PatternList = 197,
-	_RightHandSide = 198,
+	RightHandSide = 198,
 	Yield = 199,
 	Attribute = 200,
 	Subscript = 201,
@@ -321,7 +321,7 @@ export const enum TSKindId {
 	String = 227,
 	StringContent = 228,
 	Interpolation = 229,
-	_FExpression = 230,
+	FExpression = 230,
 	NotEscapeSequence = 231,
 	FormatSpecifier = 232,
 	Await = 233,
@@ -1259,7 +1259,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'module':
 			return TSKindId.Module;
 		case '_statement':
-			return TSKindId._Statement;
+			return TSKindId.Statement;
 		case '_simple_statements':
 			return TSKindId.SimpleStatements;
 		case 'import_statement':
@@ -1289,7 +1289,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'named_expression':
 			return TSKindId.NamedExpression;
 		case '_named_expression_lhs':
-			return TSKindId._NamedExpressionLhs;
+			return TSKindId.NamedExpressionLhs;
 		case 'return_statement':
 			return TSKindId.ReturnStatement;
 		case 'delete_statement':
@@ -1369,7 +1369,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'case_pattern':
 			return TSKindId.CasePattern;
 		case '_simple_pattern':
-			return TSKindId._SimplePattern;
+			return TSKindId.SimplePattern;
 		case 'union_pattern':
 			return TSKindId.UnionPattern;
 		case 'dict_pattern':
@@ -1407,7 +1407,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'as_pattern':
 			return TSKindId.AsPattern;
 		case '_expression_within_for_in_clause':
-			return TSKindId._ExpressionWithinForInClause;
+			return TSKindId.ExpressionWithinForInClause;
 		case 'expression':
 			return TSKindId.Expression;
 		case 'primary_expression':
@@ -1437,7 +1437,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'pattern_list':
 			return TSKindId.PatternList;
 		case '_right_hand_side':
-			return TSKindId._RightHandSide;
+			return TSKindId.RightHandSide;
 		case 'yield':
 			return TSKindId.Yield;
 		case 'attribute':
@@ -1501,7 +1501,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'interpolation':
 			return TSKindId.Interpolation;
 		case '_f_expression':
-			return TSKindId._FExpression;
+			return TSKindId.FExpression;
 		case '_not_escape_sequence':
 			return TSKindId.NotEscapeSequence;
 		case 'format_specifier':
@@ -1867,6 +1867,20 @@ export const enum Delimiter {
 }
 
 // Scoped enums per supertype
+export const enum StatementKind {
+	SimpleStatements = '_simple_statements',
+	CompoundStatement = '_compound_statement',
+	IfStatement = 'if_statement',
+	ForStatement = 'for_statement',
+	WhileStatement = 'while_statement',
+	TryStatement = 'try_statement',
+	WithStatement = 'with_statement',
+	FunctionDefinition = 'function_definition',
+	ClassDefinition = 'class_definition',
+	DecoratedDefinition = 'decorated_definition',
+	MatchStatement = 'match_statement'
+}
+
 export const enum SimpleStatementKind {
 	FutureImportStatement = 'future_import_statement',
 	ImportStatement = 'import_statement',
@@ -1886,6 +1900,15 @@ export const enum SimpleStatementKind {
 	TypeAliasStatement = 'type_alias_statement'
 }
 
+export const enum NamedExpressionLhsKind {
+	Identifier = 'identifier'
+}
+
+export const enum ExpressionsKind {
+	Expression = 'expression',
+	ExpressionList = 'expression_list'
+}
+
 export const enum CompoundStatementKind {
 	IfStatement = 'if_statement',
 	ForStatement = 'for_statement',
@@ -1896,6 +1919,24 @@ export const enum CompoundStatementKind {
 	ClassDefinition = 'class_definition',
 	DecoratedDefinition = 'decorated_definition',
 	MatchStatement = 'match_statement'
+}
+
+export const enum SimplePatternKind {
+	ClassPattern = 'class_pattern',
+	SplatPattern = 'splat_pattern',
+	UnionPattern = 'union_pattern',
+	CaseListPattern = 'case_list_pattern',
+	CaseTuplePattern = 'case_tuple_pattern',
+	DictPattern = 'dict_pattern',
+	String = 'string',
+	ConcatenatedString = 'concatenated_string',
+	True = 'true',
+	False = 'false',
+	None = 'none',
+	SimplePatternNegative = '_simple_pattern_negative',
+	ComplexPattern = 'complex_pattern',
+	DottedName = 'dotted_name',
+	WildcardPattern = '_wildcard_pattern'
 }
 
 export const enum ParameterKind {
@@ -1917,6 +1958,11 @@ export const enum PatternKind {
 	ListSplatPattern = 'list_splat_pattern',
 	TuplePattern = 'tuple_pattern',
 	ListPattern = 'list_pattern'
+}
+
+export const enum ExpressionWithinForInClauseKind {
+	Expression = 'expression',
+	LambdaWithinForInClause = 'lambda_within_for_in_clause'
 }
 
 export const enum ExpressionKind {
@@ -1956,6 +2002,27 @@ export const enum PrimaryExpressionKind {
 	GeneratorExpression = 'generator_expression',
 	Ellipsis = 'ellipsis',
 	ListSplatPattern = 'list_splat_pattern'
+}
+
+export const enum LeftHandSideKind {
+	Pattern = 'pattern',
+	PatternList = 'pattern_list'
+}
+
+export const enum RightHandSideKind {
+	Expression = 'expression',
+	ExpressionList = 'expression_list',
+	Assignment = 'assignment',
+	AugmentedAssignment = 'augmented_assignment',
+	PatternList = 'pattern_list',
+	Yield = 'yield'
+}
+
+export const enum FExpressionKind {
+	Expression = 'expression',
+	ExpressionList = 'expression_list',
+	PatternList = 'pattern_list',
+	Yield = 'yield'
 }
 
 export const enum KeywordIdentifierKind {
@@ -2391,6 +2458,12 @@ export interface Decorator {
 	expression(): Expression;
 }
 
+export interface Suite {
+	readonly $type: '_suite';
+	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
+	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
+}
+
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _statements?: readonly (SimpleStatements | CompoundStatement)[];
@@ -2400,12 +2473,15 @@ export interface Block {
 export interface ExpressionList {
 	readonly $type: TSKindId.ExpressionList;
 	readonly _expression: Expression;
-	readonly _tail: ',' | ExpressionListExpressions;
+	readonly _tail: TSKindId.Comma | ExpressionListExpressions;
+	readonly __inputHints__?: {
+		readonly tail: KindEnum<',', TSKindId.Comma> | ExpressionListExpressions;
+	};
 	readonly __looseHints__?: {
 		readonly tail: readonly Expression[];
 	};
 	expression(): Expression;
-	tail(): ',' | ExpressionListExpressions;
+	tail(): TSKindId.Comma | ExpressionListExpressions;
 }
 
 export interface DottedName {
@@ -2841,12 +2917,15 @@ export interface AugmentedAssignment {
 export interface PatternList {
 	readonly $type: TSKindId.PatternList;
 	readonly _pattern: Pattern;
-	readonly _tail: ',' | PatternListPatterns;
+	readonly _tail: TSKindId.Comma | PatternListPatterns;
+	readonly __inputHints__?: {
+		readonly tail: KindEnum<',', TSKindId.Comma> | PatternListPatterns;
+	};
 	readonly __looseHints__?: {
 		readonly tail: readonly Pattern[];
 	};
 	pattern(): Pattern;
-	tail(): ',' | PatternListPatterns;
+	tail(): TSKindId.Comma | PatternListPatterns;
 }
 
 export interface Yield {
@@ -3130,8 +3209,16 @@ export interface String {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content?: readonly (EscapeInterpolation | EscapeSequence | '\\' | _StringContent)[];
-	contents(): readonly (EscapeInterpolation | EscapeSequence | '\\' | _StringContent)[];
+	readonly _content?: readonly (EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | _StringContent)[];
+	readonly __inputHints__?: {
+		readonly content?: readonly (
+			| KindEnum<'\\', TSKindId.NotEscapeSequence | TSKindId.Bslash>
+			| EscapeInterpolation
+			| EscapeSequence
+			| _StringContent
+		)[];
+	};
+	contents(): readonly (EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | _StringContent)[];
 }
 
 export interface Interpolation {
@@ -3345,13 +3432,16 @@ export interface PrintChevronArguments {
 export interface PrintStatementArm1 {
 	readonly $type: TSKindId.PrintStatementArm1;
 	readonly _chevron: Chevron;
-	readonly _print_chevron_arguments?: PrintChevronArguments | ',';
+	readonly _print_chevron_arguments?: PrintChevronArguments | TSKindId.Comma;
+	readonly __inputHints__?: {
+		readonly print_chevron_arguments?: KindEnum<',', TSKindId.Comma> | PrintChevronArguments;
+	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
 		readonly print_chevron_arguments?: readonly Expression[];
 	};
 	chevron(): Chevron;
-	printChevronArguments(): PrintChevronArguments | ',' | undefined;
+	printChevronArguments(): PrintChevronArguments | TSKindId.Comma | undefined;
 }
 
 export interface PrintStatementArm2 {
@@ -3571,6 +3661,9 @@ export interface ParenthesizedListSplatTree extends TreeNode<'parenthesized_list
 export interface ArgumentListTree extends TreeNode<'argument_list'> {}
 export interface DecoratedDefinitionTree extends TreeNode<'decorated_definition'> {}
 export interface DecoratorTree extends TreeNode<'decorator'> {}
+export interface SuiteTree extends AnyTreeNode {
+	readonly type: '_suite';
+}
 export interface BlockTree extends TreeNode<'block'> {}
 export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface DottedNameTree extends TreeNode<'dotted_name'> {}
@@ -3916,6 +4009,31 @@ export interface IsTree extends AnyTreeNode {
 }
 
 // Supertype unions
+export type Statement =
+	| SimpleStatements
+	| CompoundStatement
+	| IfStatement
+	| ForStatement
+	| WhileStatement
+	| TryStatement
+	| WithStatement
+	| FunctionDefinition
+	| ClassDefinition
+	| DecoratedDefinition
+	| MatchStatement;
+
+export type StatementTree =
+	| SimpleStatementsTree
+	| IfStatementTree
+	| ForStatementTree
+	| WhileStatementTree
+	| TryStatementTree
+	| WithStatementTree
+	| FunctionDefinitionTree
+	| ClassDefinitionTree
+	| DecoratedDefinitionTree
+	| MatchStatementTree;
+
 export type SimpleStatement =
 	| FutureImportStatement
 	| ImportStatement
@@ -3952,6 +4070,14 @@ export type SimpleStatementTree =
 	| ExecStatementTree
 	| TypeAliasStatementTree;
 
+export type NamedExpressionLhs = Identifier;
+
+export type NamedExpressionLhsTree = IdentifierTree;
+
+export type Expressions = Expression | ExpressionList;
+
+export type ExpressionsTree = ExpressionListTree;
+
 export type CompoundStatement =
 	| IfStatement
 	| ForStatement
@@ -3973,6 +4099,38 @@ export type CompoundStatementTree =
 	| ClassDefinitionTree
 	| DecoratedDefinitionTree
 	| MatchStatementTree;
+
+export type SimplePattern =
+	| ClassPattern
+	| SplatPattern
+	| UnionPattern
+	| CaseListPattern
+	| CaseTuplePattern
+	| DictPattern
+	| String
+	| ConcatenatedString
+	| True
+	| False
+	| None
+	| SimplePatternNegative
+	| ComplexPattern
+	| DottedName;
+
+export type SimplePatternTree =
+	| ClassPatternTree
+	| SplatPatternTree
+	| UnionPatternTree
+	| CaseListPatternTree
+	| CaseTuplePatternTree
+	| DictPatternTree
+	| StringTree
+	| ConcatenatedStringTree
+	| TrueTree
+	| FalseTree
+	| NoneTree
+	| SimplePatternNegativeTree
+	| ComplexPatternTree
+	| DottedNameTree;
 
 export type Parameter =
 	| Identifier
@@ -4005,6 +4163,10 @@ export type PatternTree =
 	| ListSplatPatternTree
 	| TuplePatternTree
 	| ListPatternTree;
+
+export type ExpressionWithinForInClause = Expression | LambdaWithinForInClause;
+
+export type ExpressionWithinForInClauseTree = LambdaWithinForInClauseTree;
 
 export type Expression =
 	| ComparisonOperator
@@ -4079,6 +4241,23 @@ export type PrimaryExpressionTree =
 	| EllipsisTree
 	| ListSplatPatternTree;
 
+export type LeftHandSide = Pattern | PatternList;
+
+export type LeftHandSideTree = PatternListTree;
+
+export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+
+export type RightHandSideTree =
+	| ExpressionListTree
+	| AssignmentTree
+	| AugmentedAssignmentTree
+	| PatternListTree
+	| YieldTree;
+
+export type FExpression = Expression | ExpressionList | PatternList | Yield;
+
+export type FExpressionTree = ExpressionListTree | PatternListTree | YieldTree;
+
 export type KeywordIdentifier = Identifier;
 
 export type KeywordIdentifierTree = IdentifierTree;
@@ -4131,6 +4310,7 @@ export type PythonNode =
 	| ArgumentList
 	| DecoratedDefinition
 	| Decorator
+	| Suite
 	| Block
 	| ExpressionList
 	| DottedName
@@ -4277,6 +4457,7 @@ export interface KindMap {
 	argument_list: ArgumentList;
 	decorated_definition: DecoratedDefinition;
 	decorator: Decorator;
+	_suite: Suite;
 	block: Block;
 	expression_list: ExpressionList;
 	dotted_name: DottedName;

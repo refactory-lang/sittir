@@ -9,7 +9,12 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import type { AssembledNode, AssembledNonterminal, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
+import type {
+	AssembledNode,
+	AssembledNonterminal,
+	AssembledEnvelope,
+	AssembledPolymorph
+} from '../compiler/model/node-map.ts';
 
 type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
@@ -32,7 +37,9 @@ import {
 	type SoleSlotFacts,
 	canonicalSeparatedListField,
 	stringConstructibleTexts,
-	wordConstructibleText, isAuthoredCompound } from './shared.ts';
+	wordConstructibleText,
+	isAuthoredCompound
+} from './shared.ts';
 import {
 	fieldElementType,
 	childElementType,
@@ -112,19 +119,19 @@ function emitNamespaceImports(
 	usesKindLiteralText: boolean,
 	usesAttachProps: boolean
 ): void {
-	lines.push(`import * as F from './factories.js';`);
-	lines.push(`import type * as T from './types.js';`);
+	lines.push(`import * as F from './raw.js';`);
+	lines.push(`import type * as T from '../types.js';`);
 	if (kindEntries) {
 		const valueImports = ['TSKindId', ...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []), 'Delimiter'];
-		lines.push(`import { ${valueImports.join(', ')} } from './types.js';`);
+		lines.push(`import { ${valueImports.join(', ')} } from '../types.js';`);
 	} else {
-		lines.push(`import { Delimiter } from './types.js';`);
+		lines.push(`import { Delimiter } from '../types.js';`);
 	}
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push(
 		usesAttachProps
-			? "import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';"
-			: "import { coerceKindEnumStorage, isNodeData } from './utils.js';"
+			? "import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData, attachProps } from '../utils.js';"
+			: "import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';"
 	);
 	lines.push('');
 }
@@ -218,9 +225,7 @@ export namespace from {
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(
-			emitBranchFrom(node, nodeMap, intern, kindEntries)
-		);
+		output.push(emitBranchFrom(node, nodeMap, intern, kindEntries));
 	}
 
 	export function separatedList(
@@ -335,9 +340,7 @@ function emitBranchFrom(
 		if (!canDirectFactoryCall || isMultiple(soleField)) return undefined;
 		const kinds = slotKindNames(soleField);
 		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
-		return inner instanceof AssembledList
-			? separatedListSurface(inner, nodeMap, kindEntries).elemType
-			: undefined;
+		return inner instanceof AssembledList ? separatedListSurface(inner, nodeMap, kindEntries).elemType : undefined;
 	})();
 	const inputType = canDirectFactoryCall
 		? [childElementType({ children: [soleField] }, nodeMap), soleListElements, looseInputType]
@@ -870,7 +873,11 @@ function resolveFieldCall(
 			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
 	if (storageInfo?.kind === 'kindEnum') {
 		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
-		return `coerceKindEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
+		return `coerceKindEnumStorage(_resolveKindEnumScalar(${prop}, () => ${baseCall}), ${table})`;
+	}
+	if (storageInfo?.kind === 'mixedEnum') {
+		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
+		return `coerceMixedEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
 	}
 	return baseCall;
 }
@@ -1109,6 +1116,10 @@ function emitResolverHelpers(
 	lines.push(' *  stored discriminant; every other shape resolves as a leaf. */');
 	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {');
 	lines.push('  return typeof v === "number" ? (v as T) : resolve();');
+	lines.push('}');
+	lines.push('');
+	lines.push('function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {');
+	lines.push('  return typeof v === "number" || typeof v === "string" ? (v as T) : resolve();');
 	lines.push('}');
 	lines.push('');
 
@@ -1364,7 +1375,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			return;
 		}
 		if (node instanceof AbstractAssembledCompound) {
-			if (node.hoisted) return;
 			this.emitBranch(node);
 			return;
 		}

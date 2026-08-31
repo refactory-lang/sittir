@@ -50,6 +50,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSymbolRename`
+
+```text
+/**
+ * Record that a rule symbol was renamed during transform resolution
+ * (a variant() rename of an existing SYMBOL member, or a group-lift
+ * deposit replacing an alias's content symbol). Conflict entries and
+ * registered conflict groups that cite the old name are rewritten to
+ * the new one by `buildWiredConflictsFn` — a rename-only variant
+ * changes no structure, so the grammar's LR resolutions must follow
+ * the symbol.
+ */
+```
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterRefineForms`
 
 ```text
@@ -328,6 +342,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * rule fns run), so we install the drainer unconditionally. The drainer
  * short-circuits at call-time when `conflictGroups` is still empty,
  * keeping the overhead minimal when no variants are declared.
+ *
+ * The drainer also applies `symbolRenames` to the base conflict list
+ * (the author's entries plus tree-sitter's own) and to registered
+ * groups: a SYMBOL entry whose name was renamed re-symbolizes under
+ * the new name, so conflicts keep citing rules that still exist.
  *
  * @param userConflicts - The author's original conflicts callback, if any.
  * @param context - The active wire context whose `conflictGroups` are drained.
@@ -770,6 +789,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Hidden-rule name → captured content body. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::symbolRenames`
+
+```text
+/** Old rule-symbol name → the name transform resolution renamed it to;
+ *  consumed by the conflicts drainer to rewrite stale conflict entries. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`

@@ -111,17 +111,18 @@ Reference: [glossary/dsl.md](glossary/dsl.md),
 One discriminated union (`Rule`, `packages/codegen/src/types/rule.ts`) flows
 through the pipeline; which variants are present depends on the phase. Every
 variant extends `RuleBase`, whose pushed-down modifier attributes
-(`fieldName`, `multiplicity`, `nonterminal`, `separator`, `aliasedFrom`,
-`aliasNamed`) deliberately mirror the slot vocabulary so values flow
+(`fieldName`, `multiplicity`, `nonterminal`, `separator`, `aliasedTo`)
+deliberately mirror the slot vocabulary so values flow
 rule → slot under identical names. `nonterminal === true` is the
 authoritative slot-presence signal.
 
-Three rule views coexist after Normalize (fields on `SimplifiedGrammar`,
-re-exposed on `NodeMap` and attached per node in Assemble):
+Three rule views coexist after Normalize (two carried as `SimplifiedGrammar`
+fields — `rules` and `normalizedRules` — the post-link view attached only
+per node in Assemble):
 
 | View | Type | Produced by | Attached as | Consumed by |
 | --- | --- | --- | --- | --- |
-| Post-link wrapped view | `Rule<'link'>` | `applyNormalizationPasses` | `linkRules` / `node.rule` | the few justified wrapper-shape-dependent consumers (enumerated on `NodeMap.linkRules`'s doc comment) |
+| Post-link wrapped view | `Rule<'link'>` | `applyNormalizationPasses` | `node.rule` (per node only) | the few justified wrapper-shape-dependent consumers (enumerated on `NodeMap.linkRules`'s doc comment) |
 | Wrapper-free render view | `RenderRule` | `applyWrapperDeletion` | `normalizedRules` / `node.renderRule` | the `TemplateEmitter` |
 | Derivation view | `SimplifiedRule` | `computeSimplifiedRules` | `rules` / `node.simplifiedRule` | slot derivation (`collectSlots`) → factories / wrap / from |
 

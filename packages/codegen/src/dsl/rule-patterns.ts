@@ -397,6 +397,24 @@ export function isSupertypeLike(body: unknown): boolean {
 	});
 }
 
+export function isKindChoice(body: unknown): boolean {
+	const b = unwrapPrec(body);
+	if (!b || typeof b !== 'object') return false;
+	const t = (b as Record<string, unknown>).type;
+	if (typeof t !== 'string' || !isChoiceType(t)) return false;
+	const members = (b as Record<string, unknown>).members;
+	if (!Array.isArray(members) || members.length === 0) return false;
+	return members.every((m) => {
+		const core = unwrapPrec(m);
+		if (!core || typeof core !== 'object') return false;
+		const c = core as Record<string, unknown>;
+		const coreType = c.type;
+		if (typeof coreType !== 'string') return false;
+		if (isSymbolType(coreType)) return true;
+		return typeEq(coreType, 'ALIAS') && c.named === true;
+	});
+}
+
 export function isPermutationChoice(
 	body: unknown,
 	rulesBag?: Record<string, unknown>,

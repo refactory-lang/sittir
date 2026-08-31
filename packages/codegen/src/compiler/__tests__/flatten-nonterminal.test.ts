@@ -7,7 +7,19 @@
  *    references to a literal rule
  */
 
-import { ALIAS, DEDENT, FIELD, INDENT, NEWLINE, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	DEDENT,
+	FIELD,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SYMBOL
+} from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { flatten, flattenRules } from '../flatten.ts';
 import type { Rule } from '../../types/rule.ts';
@@ -58,7 +70,10 @@ describe('wrapper nonterminal push-down', () => {
 	});
 
 	it('alias keeps the content terminality', () => {
-		expect(flatten({ type: ALIAS, named: true, value: 't', content: sym('y') })).toMatchObject({ aliasedTo: 't', nonterminal: true });
+		expect(flatten({ type: ALIAS, named: true, value: 't', content: sym('y') })).toMatchObject({
+			aliasedTo: 't',
+			nonterminal: true
+		});
 		expect(flatten({ type: ALIAS, named: true, value: 't', content: str(',') }).nonterminal).toBe(false);
 	});
 });
@@ -71,7 +86,15 @@ describe('flattenRules terminality stamps', () => {
 			ident: { type: 'PATTERN', value: '[a-z]+' } as Rule,
 			owner: {
 				type: SEQ,
-				members: [str('&'), sym('kw'), sym('lit_seq'), sym('ident'), { type: INDENT }, { type: DEDENT }, { type: NEWLINE }]
+				members: [
+					str('&'),
+					sym('kw'),
+					sym('lit_seq'),
+					sym('ident'),
+					{ type: INDENT },
+					{ type: DEDENT },
+					{ type: NEWLINE }
+				]
 			}
 		});
 		const owner = out['owner']!;
@@ -84,7 +107,13 @@ describe('flattenRules terminality stamps', () => {
 		const out = flattenRules({
 			kw: str('mut'),
 			kw2: str('ref'),
-			owner: { type: SEQ, members: [{ type: OPTIONAL, content: sym('kw') }, { type: REPEAT, content: sym('kw2') }] }
+			owner: {
+				type: SEQ,
+				members: [
+					{ type: OPTIONAL, content: sym('kw') },
+					{ type: REPEAT, content: sym('kw2') }
+				]
+			}
 		});
 		const members = (out['owner'] as { members: Rule[] }).members;
 		expect(members.map((m) => m.nonterminal)).toEqual([true, true]);
@@ -108,10 +137,13 @@ describe('flattenRules terminality stamps', () => {
 		expect(op.type).toBe('CHOICE');
 		expect(op.fieldName).toBe('operator');
 		expect((op as { nonterminal?: boolean }).nonterminal).toBe(true);
-		expect(op.members.map((m) => [(m as { name: string }).name, m.nonterminal])).toEqual([['amp', false], ['pipe', false]]);
+		expect(op.members.map((m) => [(m as { name: string }).name, m.nonterminal])).toEqual([
+			['amp', false],
+			['pipe', false]
+		]);
 	});
 
-	it('a permutation choice folds to one seq of optional members in the first arm\'s order', () => {
+	it("a permutation choice folds to one seq of optional members in the first arm's order", () => {
 		const out = flattenRules({
 			declare: str('declare'),
 			owner: {

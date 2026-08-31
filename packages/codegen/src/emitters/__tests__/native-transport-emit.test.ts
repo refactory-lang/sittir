@@ -95,10 +95,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'optional_parent',
-		new AssembledBranch('optional_parent', flatten(parentRule), flatten(parentRule))
-	);
+	nodes.set('optional_parent', new AssembledBranch('optional_parent', flatten(parentRule), flatten(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -114,10 +111,7 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'repeated_parent',
-		new AssembledBranch('repeated_parent', flatten(parentRule), flatten(parentRule))
-	);
+	nodes.set('repeated_parent', new AssembledBranch('repeated_parent', flatten(parentRule), flatten(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -191,10 +185,7 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'parent_expression',
-		new AssembledBranch('parent_expression', flatten(parentRule), flatten(parentRule))
-	);
+	nodes.set('parent_expression', new AssembledBranch('parent_expression', flatten(parentRule), flatten(parentRule)));
 	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, [{ name: 'string_literal' }]));
@@ -255,10 +246,7 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 		'hidden_wrapper_parent',
 		new AssembledBranch('hidden_wrapper_parent', flatten(parentRule), flatten(parentRule))
 	);
-	nodes.set(
-		'_wrapped_item',
-		new AssembledBranch('_wrapped_item', flatten(wrapperRule), flatten(wrapperRule))
-	);
+	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', flatten(wrapperRule), flatten(wrapperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	// `_wrapped_item` is the hidden CONTENT of a named alias to the
@@ -346,10 +334,7 @@ function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'field_expression',
-		new AssembledBranch('field_expression', flatten(parentRule), flatten(parentRule))
-	);
+	nodes.set('field_expression', new AssembledBranch('field_expression', flatten(parentRule), flatten(parentRule)));
 	nodes.set(
 		'field_identifier',
 		new AssembledPattern('field_identifier', { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' })

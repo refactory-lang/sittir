@@ -28,6 +28,7 @@ import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
+import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
 
 export interface CodegenOptions {
 	grammar: string;
@@ -61,8 +62,7 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	if (existsSync(path)) {
 		try {
 			if (readFileSync(path, 'utf8') === finalContent) return;
-		} catch {
-		}
+		} catch {}
 	}
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, finalContent, 'utf8');
@@ -220,10 +220,19 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'engine.ts'), result.engine);
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'types.ts'), result.types);
-	await writeFile(join(outDir, 'factories.ts'), result.factories);
+	const factoriesDir = join(outDir, 'factories');
+	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
+	rmSync(join(outDir, 'factories.ts'), { force: true });
+	rmSync(join(outDir, 'from.ts'), { force: true });
+	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'coerce.ts'), result.from);
+	await writeFile(join(factoriesDir, 'bundle.ts'), result.factoriesBundle);
+	for (const name of OVERLAY_CHAIN) {
+		await writeFile(join(factoriesDir, 'overlays', `${name}.ts`), result.overlays[name]);
+	}
+	await writeFile(join(factoriesDir, 'index.ts'), result.factoriesIndex);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
-	await writeFile(join(outDir, 'from.ts'), result.from);
 	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 	await writeFile(join(outDir, 'consts.ts'), result.consts);
 	await writeFile(join(outDir, 'is.ts'), result.is);
@@ -369,7 +378,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	console.log(`
 Done! Generated:
-  templates/*.jinja, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  templates/*.jinja, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
 	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);

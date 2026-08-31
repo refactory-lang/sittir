@@ -1095,7 +1095,11 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('reports an inline-array kind as unstamped (warning) and inline-excluded (info), not vaporized', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
-		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set(), aliasTargets: new Set() };
+		const misses: KindIdStampMisses = {
+			symbols: new Set(['_declaration_statement']),
+			literals: new Set(),
+			aliasTargets: new Set()
+		};
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set());
 		const all = sink.all();
@@ -1274,5 +1278,33 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		]) {
 			expect(vaporized).not.toContain(kind);
 		}
+	});
+});
+
+describe('link — variantChildren is stamped on the linked grammar', () => {
+	it('structural alias-minted arms surface as variantChildren (the stamp normalize/assemble consume)', () => {
+		const arm = (visible: string, hidden: string): Rule<'evaluate'> =>
+			({
+				type: ALIAS,
+				named: true,
+				value: visible,
+				content: { type: SYMBOL, name: hidden }
+			}) as unknown as Rule<'evaluate'>;
+		const raw = makeRaw({
+			array_expression: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '[' },
+					{
+						type: CHOICE,
+						members: [arm('array_expression_semi', '_semi_body'), arm('array_expression_list', '_list_body')]
+					},
+					{ type: STRING, value: ']' }
+				]
+			} as unknown as Rule<'evaluate'>
+		});
+		const linked = link(raw);
+		expect(linked.variantChildren).toBeDefined();
+		expect(linked.variantChildren?.get('array_expression')).toEqual(['array_expression_semi', 'array_expression_list']);
 	});
 });

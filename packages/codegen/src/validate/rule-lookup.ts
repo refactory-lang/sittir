@@ -1,11 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import {
-	AssembledKeyword,
-	allSlotsOf,
-	isNodeRef,
-	storageKindOfRef
-} from '../compiler/model/node-map.ts';
+import { AssembledKeyword, allSlotsOf, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none';
 

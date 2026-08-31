@@ -243,9 +243,9 @@ function compareNodeStorage(
 
 /** Relative path from codegen/src/validate to language package factories.ts */
 const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories.ts',
-	typescript: '../../../typescript/src/factories.ts',
-	python: '../../../python/src/factories.ts'
+	rust: '../../../rust/src/factories/raw.ts',
+	typescript: '../../../typescript/src/factories/raw.ts',
+	python: '../../../python/src/factories/raw.ts'
 };
 
 // ---------------------------------------------------------------------------
@@ -341,7 +341,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
 		polymorphVariants = mapData.polymorphVariants;
-		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories.ts', 'types.ts');
+		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories/raw.ts', 'types.ts');
 		if (typesModulePath) {
 			try {
 				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
@@ -371,7 +371,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				return {
 					factoryMap,
 					factoryShapes,
-							fieldAliasMap,
+					fieldAliasMap,
 					factoryFields,
 					factorySlots,
 					polymorphVariants,

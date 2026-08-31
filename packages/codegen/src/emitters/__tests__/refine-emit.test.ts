@@ -23,6 +23,7 @@ import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
+import { emitRefinesOverlay } from '../overlays/refines.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 
 // ---------------------------------------------------------------------------
@@ -479,20 +480,27 @@ describe('factories emitter — per-form factory emission', () => {
 	});
 });
 
-describe('ir emitter — per-form key attachment', () => {
-	it('attaches per-form factories under the parent ir key', () => {
+describe('ir emitter — bundle composition', () => {
+	it('bundles the ir key on the raw factory; per-form keys are an overlay concern', () => {
 		const { irSrc } = runPipeline([
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		// The bundle is hoisted to a typeof-annotated const (declaration-emit
-		// finiteness) that lists curly and flow entries alongside `from`;
-		// the ir key references it by name.
-		expect(irSrc).toContain('const _b$ifaceBody: typeof FR.coerceToIfaceBody & {');
-		expect(irSrc).toContain('"curly": typeof F.buildIfaceBodyCurly;');
-		expect(irSrc).toContain('= attachProps(FR.coerceToIfaceBody, {');
-		expect(irSrc).toContain('"curly": F.buildIfaceBodyCurly,');
-		expect(irSrc).toContain('"flow": F.buildIfaceBodyFlow,');
-		expect(irSrc).toContain('ifaceBody: _b$ifaceBody,');
+		expect(irSrc).toContain('ifaceBody: F.ifaceBody,');
+	});
+});
+
+describe('refines overlay — attaches per-form factories on the parent builder', () => {
+	it('refines overlay attaches each form factory on the parent builder', () => {
+		const { nodeMap } = runPipeline([
+			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
+			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
+		]);
+		const text = emitRefinesOverlay({ nodeMap });
+		expect(text).toContain("import * as B from '../bundle.js';");
+		expect(text).toContain("import * as F from '../raw.js';");
+		expect(text).toContain('export const ifaceBody = {');
+		expect(text).toContain('	...B.ifaceBody,');
+		expect(text).toContain('	curly: { strict: F.buildIfaceBodyCurly },');
 	});
 });

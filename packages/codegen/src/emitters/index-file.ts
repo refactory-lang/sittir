@@ -22,7 +22,7 @@ export function emitIndex(_config: EmitIndexConfig): string {
 		"export { readTreeNode, wrapNode } from './wrap.js';",
 		'',
 		'// .from() resolution (tree-shakeable, separate from factories)',
-		"export * from './from.js';",
+		"export * from './factories/coerce.js';",
 		'',
 		'// Constants (node kinds, keywords, operators)',
 		"export * from './consts.js';",

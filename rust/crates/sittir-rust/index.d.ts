@@ -2518,17 +2518,6 @@ export interface VisibilityModifierInPathTransport {
   _path: SlotValue<VisibilityModifierInPathPathTransportSlot>
 }
 
-export interface VisibilityModifierPubParensTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _visibility_modifier_group: SlotValue<VisibilityModifierGroupTransport>
-}
-
 export interface VisibilityModifierPubTransport {
   '$source'?: Source
   '$named'?: boolean

@@ -247,3 +247,38 @@ describe('flatten — rule identity', () => {
 		expect(out.id).toBe('seq');
 	});
 });
+
+describe('flatten — rule-id precedence', () => {
+	it('a SEQ keeps its own id; the id is never overwritten by a member id', () => {
+		const wrapped = {
+			type: SEQ,
+			id: 'rule:x:root',
+			members: [{ ...sym('a'), id: 'rule:x:members.0' }]
+		} as unknown as SeqRule;
+		const out = flatten(wrapped);
+		expect(out.id).toBe('rule:x:root');
+	});
+
+	it('an OPTIONAL wrapper id survives onto the flattened leaf', () => {
+		const wrapped = {
+			type: OPTIONAL,
+			id: 'rule:x:opt',
+			content: { ...sym('b'), id: 'rule:x:inner' }
+		} as unknown as OptionalRule;
+		const out = flatten(wrapped);
+		expect(out.id).toBe('rule:x:opt');
+		expect(out.multiplicity).toBe('optional');
+	});
+
+	it('a FIELD wrapper id survives onto the flattened leaf', () => {
+		const wrapped = {
+			type: FIELD,
+			id: 'rule:x:field',
+			name: 'v',
+			content: { ...sym('c'), id: 'rule:x:inner' }
+		} as unknown as FieldRule;
+		const out = flatten(wrapped);
+		expect(out.id).toBe('rule:x:field');
+		expect(out.fieldName).toBe('v');
+	});
+});

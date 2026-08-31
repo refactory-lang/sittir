@@ -70,7 +70,10 @@ import {
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	buildParseKindRuleSignatures,
-	type AssembleWarning, branchClassFor, compoundModelTypeFor } from './model/node-map.ts';
+	type AssembleWarning,
+	branchClassFor,
+	compoundModelTypeFor
+} from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
@@ -167,7 +170,9 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			switch (modelType) {
 				case 'supertype': {
 					if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
-						throw new Error(`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`);
+						throw new Error(
+							`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`
+						);
 					}
 					const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
 					nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));

@@ -56,6 +56,7 @@ function attrTag(r: RuleLike): string {
 	if (r.fieldName !== undefined) tags.push('field');
 	if (r.tokenized) tags.push('tok');
 	if (r.immediate) tags.push('imm');
+	if (r.nonterminal) tags.push('nt');
 	return tags.length > 0 ? `{${tags.join(',')}}` : '';
 }
 

@@ -1537,6 +1537,17 @@ export interface SuiteBlockWithIndentTransport {
   _block: SlotValue<BlockTransport>
 }
 
+export interface SuiteTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content: SlotValue<SuiteContentTransportSlot>
+}
+
 export interface TryStatementTransport {
   '$source'?: Source
   '$named'?: boolean

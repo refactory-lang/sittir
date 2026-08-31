@@ -1,11 +1,7 @@
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
-import type {
-	AssembledNode,
-	RenderTemplateSurface,
-	AssembledNonterminal
-} from '../compiler/model/node-map.ts';
+import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AbstractAssembledCompound,
@@ -54,7 +50,9 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents, isAuthoredCompound } from './shared.ts';
+	fieldTypeComponents,
+	isAuthoredCompound
+} from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -257,7 +255,9 @@ const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 const RESERVED_TRANSPORT_STRUCT_NAMES = new Set(['AnyTransport', 'ProtectedTransport', 'LiteralTransport']);
 
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
-	return node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`);
+	return (
+		node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
+	);
 }
 
 interface EffectiveSupertypeTransportSubtype {
@@ -1373,13 +1373,7 @@ function renderTransportSupport(
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 		supertypeEnumLines.push(
-			...emitSupertypeTransportEnum(
-				node,
-				kidByKind,
-				nodeMap,
-				kindEntries,
-				selfAliasIdsBySupertype.get(node.kind)
-			)
+			...emitSupertypeTransportEnum(node, kidByKind, nodeMap, kindEntries, selfAliasIdsBySupertype.get(node.kind))
 		);
 	}
 
@@ -2323,7 +2317,17 @@ function emitPerSlotChildEnum(
 	if (kindIdByKind !== undefined) {
 		const kindIdArms: string[] = [];
 		const emittedIds = new Set<number>();
-		for (const { kind, node, concreteName } of validKinds) {
+		for (const literal of entry.literals) {
+			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
+			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
+			emittedIds.add(id);
+			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
+		}
+		const enumArmsFirst = [...validKinds].sort(
+			(a, b) => Number(b.node instanceof AssembledEnum) - Number(a.node instanceof AssembledEnum)
+		);
+		for (const { kind, node, concreteName } of enumArmsFirst) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
 			const acceptedIds = resolveAcceptedTransportIds({
@@ -2357,13 +2361,6 @@ function emitPerSlotChildEnum(
 					kindIdArms.push(`                )),`);
 				}
 			}
-		}
-		for (const literal of entry.literals) {
-			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
-			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
-			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
-			emittedIds.add(id);
-			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
 		const kindsClosure = supertypeClosureOf(entry.kinds, nodeMap);
 		const validKindSet = new Map(validKinds.map((v) => [v.kind, v] as const));
@@ -3113,8 +3110,7 @@ function renderTransportField(
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
 	const primitiveType =
 		primitive?.kind === 'boolean'
-			?
-				'Option<bool>'
+			? 'Option<bool>'
 			: primitive?.kind === 'verbatim'
 				? required
 					? 'String'

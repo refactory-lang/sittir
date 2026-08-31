@@ -283,7 +283,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	if (/\bF\$\./.test(body)) {
-		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories.js';`);
+		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
@@ -314,8 +314,7 @@ function buildGrammarKeySet(grammar: string): Set<string> {
 			const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
 			grammarKeys.add(key);
 		}
-	} catch {
-	}
+	} catch {}
 	return grammarKeys;
 }
 
@@ -817,7 +816,33 @@ function storageFieldTypeExpr(
 	if (storageInfo.kind === 'kindEnum') {
 		return 'number';
 	}
+	if (storageInfo.kind === 'mixedEnum') {
+		return mixedEnumStorageTypeExpr(f, nodeMap, kindEntries) ?? typeExpr;
+	}
 	return typeExpr;
+}
+
+function mixedEnumStorageTypeExpr(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (!kindEntries) return undefined;
+	const parts: string[] = [];
+	for (const comp of fieldTypeComponents(f, nodeMap)) {
+		if (comp.kind === 'literal') {
+			const entry =
+				(comp.resolvedKindId !== undefined ? kindEntries.find((e) => e.id === comp.resolvedKindId) : undefined) ??
+				findKindEntryForLiteral(kindEntries, comp.value);
+			parts.push(entry ? `TSKindId.${entry.member}` : JSON.stringify(comp.value));
+		} else if (comp.kind === 'nodeKind') {
+			parts.push(isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind));
+		} else {
+			missingKindTypes.set(comp.rawKind, comp.value);
+			parts.push(comp.value);
+		}
+	}
+	return [...new Set(parts)].join(' | ');
 }
 
 function fieldInputHintTypeExpr(
@@ -834,6 +859,15 @@ function fieldInputHintTypeExpr(
 		const constName = resolveBitflagConstName(kind, f, nodeMap) ?? 'number';
 		if (constName !== 'number') referencedBitflagConsts.add(constName);
 		return `Bitflag<${constName}, number>`;
+	}
+	if (storageInfo.kind === 'mixedEnum') {
+		const nodeParts: string[] = [];
+		for (const comp of fieldTypeComponents(f, nodeMap)) {
+			if (comp.kind === 'nodeKind')
+				nodeParts.push(isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind));
+		}
+		const mixedHint = `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
+		return nodeParts.length > 0 ? `${mixedHint} | ${[...new Set(nodeParts)].join(' | ')}` : mixedHint;
 	}
 	if (storageInfo.kind === 'kindEnum') {
 		const kindEnumExpr = `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;

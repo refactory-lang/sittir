@@ -14,7 +14,7 @@ import { validateFrom } from '../src/validate/from.ts';
 describe('validateFrom — module load failure sentinel', () => {
 	it('surfaces a rejected from.ts import as a (from-module-load) sentinel error, not a false 0/0 pass', async () => {
 		const fromTsUrl = new URL('../src/validate/from.ts', import.meta.url);
-		const brokenFromModulePath = fileURLToPath(new URL('../../../rust/src/from.ts', fromTsUrl));
+		const brokenFromModulePath = fileURLToPath(new URL('../../../rust/src/factories/coerce.ts', fromTsUrl));
 
 		vi.doMock(brokenFromModulePath, () => {
 			throw new Error('synthetic from-module load failure (test)');
