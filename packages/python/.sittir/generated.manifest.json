@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "198030cd398a427c9b00063d5893b894d52024aa7d53aef0f14d178c09272c5c",
+  "source_hash": "9c0cd59f818746445ddf81e574af507d2ebb9edac46324ccb311af6d1acddbe0",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "31b958217aaedae45c2900a2ebb1aec937c7a6e39023bd6d1f4636b4564cc217",
-    "packages/python/.sittir/grammar.js": "514c9e407a8abeea6658370e86c4194611f8f63cbac536f892f1d15fd200c733",
+    "packages/python/.sittir/grammar.js": "24dc4d09d666de128c8ea0ab3267096fad16918dfdf8d7b40f62d857319bb627",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "895f645a5059b5de3ccccf8b7c88daa0ca3c8d77e2914e9433104872cf0762d2",
     "packages/python/.sittir/seam-census.json": "5f0ec143ecfef4ccfd3baf183c920223d32f301e7cd204b50200229072a4462b",
@@ -35,7 +35,7 @@
     "packages/python/src/node-model.json5": "cc292cc5eed3031e132c5b32da92f62773b3a55a12686f730c7329e464b3a8dd",
     "packages/python/src/render-engine.ts": "26a7ef9d8ee696e8105d661478e64388c0b681ca62c0708d5d69466d979110fe",
     "packages/python/src/types.ts": "b33f5a1ddcc600ecf4659b250efacbc2e78b419d398b121b60dd006423535806",
-    "packages/python/src/utils.ts": "64a5df5d079ac6e152c98c2c186a2973dd83a9c5052caf7286cd620da411566b",
+    "packages/python/src/utils.ts": "7e8e025c68e1f8ffc9a28b30e62b9fc33b195ca9e007a43a3f1987eb5c09ef3f",
     "packages/python/src/wrap.ts": "a52550c6cdcd6270719ffd4b7cb642cf743262146e622a7ce27a25310f43ef89",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_argument_list_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",

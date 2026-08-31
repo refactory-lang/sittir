@@ -35,7 +35,8 @@ describe('utils engine facade emission', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
 		expect(contents).toContain('export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {');
-		expect(contents).toContain('export function hoist<B extends FlavorPair<unknown, unknown>>(b: B): Hoisted<B> {');
+		expect(contents).toContain('export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Hoisted<B> {');
 		expect(contents).toContain('isFlavorPair(value) ? hoist(value) : value');
+		expect(contents).toContain('B extends { strict: infer S }');
 	});
 });

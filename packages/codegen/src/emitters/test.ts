@@ -30,10 +30,11 @@ import {
 	kindEnumTextIdPairs,
 	resolveFieldStorageInfo,
 	soleSlotFacts,
+	type SoleSlotFacts,
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { constructorSurface, constructorTargetKind, kindEnumConfigValue } from './factories.ts';
+import { constructorSurface, constructorTargetKind, kindEnumConfigValue, separatedListSurface } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { bundleEntries } from './overlays/module.ts';
 
@@ -204,27 +205,43 @@ function factoryCallArgs(
 	return { typeConfigArg, renderConfigArg };
 }
 
+function soleSlotDummyKind(
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): { facts: SoleSlotFacts; firstKindName: string | undefined } | null {
+	const facts = soleSlotFacts(node, nodeMap);
+	if (facts === null) return null;
+	const candidateKindNames = facts.slot.values
+		.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined))
+		.filter((n) => n !== undefined);
+	const firstKindName =
+		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
+	return { facts, firstKindName };
+}
+
 function containerCallArgs(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	const facts = soleSlotFacts(node, nodeMap);
-	const requiredSingular = facts && !facts.multiple && facts.required;
-	const anyNonEmpty = facts?.nonEmpty ?? false;
-	const candidateKindNames = facts
-		? facts.slot.values
-				.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined))
-				.filter((n) => n !== undefined)
-		: [];
-	const firstKindName =
-		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
-	const placeholder =
-		(requiredSingular || anyNonEmpty) && firstKindName
-			? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set())
-			: '';
+	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
+	if (resolved === null || resolved.firstKindName === undefined) return '';
+	const { facts, firstKindName } = resolved;
+	const requiredSingular = !facts.multiple && facts.required;
+	return requiredSingular || facts.nonEmpty ? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set()) : '';
+}
 
-	return placeholder;
+function subFactoryContainerArgs(
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
+	if (resolved === null || resolved.firstKindName === undefined) return '';
+	const { facts, firstKindName } = resolved;
+	if (facts.multiple && !facts.nonEmpty) return '';
+	return buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set());
 }
 
 function childBareCallArgs(
@@ -238,18 +255,21 @@ function childBareCallArgs(
 		case 'polymorph': {
 			if (!(child instanceof AbstractAssembledCompound) || child instanceof AssembledList) return undefined;
 			if (classifyChildFactorySurface(child, nodeMap) !== null) {
-				return containerCallArgs(child, nodeMap, kindEntries);
+				return subFactoryContainerArgs(child, nodeMap, kindEntries);
 			}
 			return factoryCallArgs(child, nodeMap, kindEntries).renderConfigArg;
 		}
-		case 'list':
-			return dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
+		case 'list': {
+			const elemDummy = dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
+			const surface = separatedListSurface(child, nodeMap, kindEntries);
+			return surface.optionsType === undefined ? elemDummy : `{}, ${elemDummy}`;
+		}
 		case 'pattern': {
 			const sample = pickSampleForPattern(child.pattern);
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
 		case 'token':
-			return child instanceof AssembledKeyword ? '' : undefined;
+			return child instanceof AssembledKeyword ? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set()) : undefined;
 		case 'enum': {
 			const first = child.values[0];
 			return first === undefined ? undefined : `'${escForSource(first)}'`;
@@ -341,7 +361,8 @@ function emitSubFactoryTests(
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
 		cases.push(`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(sub.name)} builds the parent', () => {`);
-		cases.push(`    const node = ir.${key}.${sub.name}(${args});`);
+		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${sub.name}` : `ir.${key}.${sub.name}`;
+		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const hasContent = args !== '' && args !== '{}';
 		if (hasContent) {

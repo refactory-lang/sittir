@@ -60,7 +60,11 @@ export default grammar(
 				'generic_type.super':
 					'sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names',
 				'generic_type.crate':
-					'sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names'
+					'sub-factory derivation is visiting-context-sensitive: generic_type reaches scoped_type_identifier both directly and through a cyclic candidate, and whichever context computes and caches generic_type first determines whether the scoped_type_identifier-flattened self/metavariable/super/crate names resolve unambiguously or get dropped as ambiguous — the wired overlay never gets these names',
+				'mod_item.declarationList':
+					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter",
+				'foreign_mod_item.declarationList':
+					"the wire's declared parameter type derives Parameters<CF> directly off the child's coerce/strict factory reference and Omits the choice-slot key off the parent's own Loose union config type — when the child factory's own parameter is itself loose-union-shaped or overloaded, this degrades the position to `never` regardless of the args this test builds; a pre-existing overlay-typing limitation in overlays/polymorphs.ts's wire generation, not the test emitter"
 			},
 			conflicts: ($, previous) => [
 				...(previous ?? []),

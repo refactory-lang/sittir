@@ -140,19 +140,23 @@ export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
 
 type AnyFlavorFn = (...args: never[]) => unknown;
 
-export type Hoisted<B> =
-	B extends FlavorPair<infer S, infer C>
-		? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+export type Hoisted<B> = B extends { coerce: infer C }
+	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+	: B extends { strict: infer S }
+		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
 		: B extends Record<string, unknown>
 			? { [K in keyof B]: Hoisted<B[K]> }
 			: B;
 
-function isFlavorPair(value: unknown): value is FlavorPair<unknown, unknown> {
-	return typeof value === 'object' && value !== null && 'strict' in value && 'coerce' in value;
+function isFlavorPair(value: unknown): value is { strict: unknown; coerce?: unknown } {
+	if (typeof value !== 'object' || value === null) return false;
+	const v = value as { strict?: unknown; coerce?: unknown };
+	return typeof v.strict === 'function' || typeof v.coerce === 'function';
 }
 
-export function hoist<B extends FlavorPair<unknown, unknown>>(b: B): Hoisted<B> {
-	const callable = (...args: never[]) => (b.coerce as AnyFlavorFn)(...args);
+export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Hoisted<B> {
+	const target = (typeof b.coerce === 'function' ? b.coerce : b.strict) as AnyFlavorFn;
+	const callable = (...args: never[]) => target(...args);
 	for (const [key, value] of Object.entries(b)) {
 		Object.defineProperty(callable, key, {
 			value: isFlavorPair(value) ? hoist(value) : value,
