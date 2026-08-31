@@ -2,25 +2,27 @@ import type { NodeMap } from '../../compiler/types.ts';
 import { AssembledList } from '../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../shared.ts';
 import { camelCase, collectRefineKindInfos, refineFormFactoryName } from '../refine-emit.ts';
-import { emitOverlayModule, overlayImportPath, type Attachment, type AttachedProp } from './module.ts';
+import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
 
-export function refineAttachments(nodeMap: NodeMap): Attachment[] {
-	const out: Attachment[] = [];
-	for (const info of collectRefineKindInfos(nodeMap) ?? []) {
+export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
+	const keyByKind = new Map(bundleEntries(config.nodeMap).map((e) => [e.node.kind, e.exportName]));
+	const lines = overlayFrame(overlayImportPath(0), ["import * as F from '../raw.js';"]);
+	for (const info of collectRefineKindInfos(config.nodeMap) ?? []) {
 		const node = info.node;
 		if (!isSlotBearingCompound(node) || node instanceof AssembledList || !node.rawFactoryName) continue;
-		const props: AttachedProp[] = [];
+		const key = keyByKind.get(node.kind);
+		if (key === undefined) continue;
+		lines.push(`export const ${key} = {`);
+		lines.push(`	...B.${key},`);
 		for (const form of info.forms) {
 			const fn = `F.${refineFormFactoryName(node.rawFactoryName, form.name)}`;
 			const keys = [camelCase(form.name)];
 			if (keys[0] !== form.name) keys.push(form.name);
-			for (const key of keys) props.push({ key, typeExpr: `typeof ${fn}`, valueExpr: fn });
+			for (const formKey of keys) {
+				lines.push(`	${JSON.stringify(formKey) === `"${formKey}"` ? formKey : JSON.stringify(formKey)}: { strict: ${fn} },`);
+			}
 		}
-		out.push({ builder: node.rawFactoryName, props });
+		lines.push('};', '');
 	}
-	return out;
-}
-
-export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
-	return emitOverlayModule({ importPath: overlayImportPath(0), attachments: refineAttachments(config.nodeMap) });
+	return lines.join('\n');
 }

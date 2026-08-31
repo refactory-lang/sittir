@@ -224,14 +224,16 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	const factoriesDir = join(outDir, 'factories');
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
 	rmSync(join(outDir, 'factories.ts'), { force: true });
+	rmSync(join(outDir, 'from.ts'), { force: true });
 	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'coerce.ts'), result.from);
+	await writeFile(join(factoriesDir, 'bundle.ts'), result.factoriesBundle);
 	for (const name of OVERLAY_CHAIN) {
 		await writeFile(join(factoriesDir, 'overlays', `${name}.ts`), result.overlays[name]);
 	}
 	await writeFile(join(factoriesDir, 'index.ts'), result.factoriesIndex);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
-	await writeFile(join(outDir, 'from.ts'), result.from);
 	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 	await writeFile(join(outDir, 'consts.ts'), result.consts);
 	await writeFile(join(outDir, 'is.ts'), result.is);

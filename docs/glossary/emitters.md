@@ -11437,17 +11437,7 @@ pipeline — which falls back to string equality.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitAttachProps`
 
-```text
-Emits attachProps, ownProps, and bundle. attachProps uses defineProperty
-rather than Object.assign: a function's reserved read-only properties
-(name, length, arguments, caller) make [[Set]] throw, and a namespaced
-constructor may legitimately be called `name`. ownProps copies a
-function's own enumerable keys — exactly what attachProps defines with
-enumerable: true — so `name`/`length` are never copied. bundle composes
-the two: a bundle carries `strict` plus every own enumerable property of
-the strict builder, so whatever an overlay attaches to a strict builder
-surfaces on the coercing bundle automatically.
-```
+Emits `attachProps` (property definition on a function — used by the coerce module's helpers), the `FlavorPair`/`bundle` pair constructor (`bundle(strict, coerce)` → plain `{ strict, coerce }` object; the only dynamic pairing stage), and `hoist` (wraps a pair as a callable whose bare call is the coerce flavor, copying every prop and recursively hoisting nested pairs — the `Hoisted<B>` mapped type carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
 
@@ -12627,24 +12617,6 @@ surfaces on the coercing bundle automatically.
 ```text
 // Explicit typeof-composed surface — same TS7056 rationale as the
 // hoisted bundle consts above.
-```
-
-### `packages/codegen/src/emitters/ir.ts::bundleLine`
-
-```text
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-```
-
-```text
-One `const _b$<kind> = bundle(FR.<coerce>, F.<rawFactoryName>);` line per
-hoisted bundle kind — the group/`ir` namespace consts reference these by
-NAME. A kind with no raw factory stays bare: `const _b$<kind> = FR.<coerce>;`.
-Whatever an overlay later attaches to the strict builder (`F.<rawFactoryName>`)
-surfaces on the bundle automatically through `bundle`'s own-prop spread —
-`ir.ts` composes bundles only, it no longer knows about refine forms or any
-other overlay-specific shape.
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::GROUP_TOKEN_SYNONYMS`
@@ -14554,74 +14526,47 @@ other overlay-specific shape.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayImportPath`
 
-```text
-/** The import specifier the overlay module at `OVERLAY_CHAIN[index]` uses
- *  to reach the layer beneath it: `../raw.js` for index 0 (the first
- *  overlay sits directly on the raw builders, one directory up from
- *  `overlays/`), `./<OVERLAY_CHAIN[index - 1]>.js` for every later index
- *  (each overlay after the first sits beside its predecessor inside
- *  `overlays/`). */
-```
-
-### `packages/codegen/src/emitters/overlays/module.ts::emitOverlayModule`
-
-```text
-/** Render one overlay module's source. `export * from <importPath>`
- *  re-exports everything from the layer beneath unchanged; for each
- *  attachment, a same-named `export const <builder> = attachProps(...)`
- *  then shadows the star-exported builder with a decorated one carrying
- *  the attached props on its type and value. `export *` plus a
- *  same-named local `export const` is legal ESM/TS — the local
- *  declaration wins over the star re-export — so an overlay only
- *  declares the builders it actually decorates; everything else passes
- *  through untouched. A builder whose `props` array is empty is skipped
- *  entirely, which is what keeps a pass-through layer trivial: no
- *  attachments in, no local exports out, just the re-export. Prop keys
- *  that aren't valid identifiers are JSON-quoted so they sit legally in
- *  the decorated type's member position and the `attachProps` call's
- *  object literal. */
-```
+Import path each chain layer loads its predecessor from: index 0 (refines) imports `../bundle.js`; later layers import the previous overlay. The chain is raw → coerce → bundle → refines → polymorphs → supertypes → index.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitFactoriesIndex`
 
-```text
-/** Render `factories/index.ts`: a single re-export pointing at the head
- *  of the overlay chain (`overlays/<head>.js`), or at `raw.js` directly
- *  when `head` is `undefined` (no overlay layer exists yet). Consumers
- *  wanting the fully decorated surface import from this index;
- *  consumers needing the raw, undecorated builders — or that must avoid
- *  a type cycle through the overlays — import `factories/raw.js`
- *  directly instead. */
-```
+Emits `factories/index.ts`, the dynamic final chain step: re-exports the top overlay and, for every bundle entry, `export const <exportName> = hoist(O.<exportName>);` — the consumer surface where a bare call is the coerce flavor and `.strict` stays reachable (recursively, sub-factory pairs included).
 
-### `packages/codegen/src/emitters/overlays/refines.ts::refineAttachments`
+### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
-```text
-/** One `Attachment` per refined kind: the parent's raw builder gets a
- *  property per declared form, keyed by `camelCase(form.name)` and, when
- *  that differs from the raw form name, by the raw name too — the same
- *  dual-key pair `ir.ts` used to attach before this overlay existed.
- *  Each key's value is the form's own raw factory
- *  (`F.<refineFormFactoryName(...)>`), so `ir.objectType.curly` and
- *  `ir.objectType.curly` (raw-cased) both resolve to the same function.
- *  Skips kinds whose node isn't slot-bearing, is an `AssembledList`, or
- *  has no `rawFactoryName` — none of those has a builder to attach a
- *  form onto. A grammar with no refine forms yields an empty array, and
- *  `emitOverlayModule` renders that as a pass-through module (header +
- *  `export *`, no local exports). */
-```
+Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
+
+### `packages/codegen/src/emitters/overlays/module.ts::BundleEntry`
+
+One bundled kind: `key` is the ir property key (irKey, falling back to camelCase(kind)); `exportName` is the module-level export identifier — `key` suffixed with `_` when the key is a reserved identifier (e.g. `arguments`), since a reserved word is legal as an object property but not as a top-level export.
+
+### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
+
+The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry.
+
+### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
+
+Emits `factories/bundle.ts`: re-exports raw and coerce, then one line per entry — `export const <exportName> = bundle(F.<build>, C.<coerceTo>);`. The pairing is the one dynamic stage below the index.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::parentRefs`
+
+The strict/coerce expression pair for a parent builder; `coerce` is absent when the kind has no coercer.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::childRefs`
+
+The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::methodName`
+
+Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with non-identifier characters in the name replaced by `_`.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
+
+Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
 
 ### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
 
-```text
-/** The refines layer of the overlay chain — sits directly on
- *  `factories/raw.ts` (`overlayImportPath(0)`), decorating each refined
- *  kind's raw builder with its per-form factories via
- *  `refineAttachments`. Composes `emitOverlayModule` with
- *  `refineAttachments` so the two are exercised together in one call;
- *  `emit.ts` calls `refineAttachments` directly to populate
- *  `overlayAttachments.refines` for the shared `OVERLAY_CHAIN` mapping. */
-```
+Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::LiteralArm`
 
@@ -14796,142 +14741,7 @@ other overlay-specific shape.
  *  just its first hop. */
 ```
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::childExpr`
-
-```text
-/** The kind arm's callee expression, `C` in `subFactoryProp`'s naming: a
- *  direct arm (`path: []`) calls the previous overlay layer's own raw
- *  builder, `F.<child.rawFactoryName>`; a flattened arm (`path` non-empty)
- *  calls the local decorated const this same module attached to the
- *  direct child earlier in the emission order, `<child.rawFactoryName>.
- *  <path.join('.')>`, never `F.`-prefixed — the props a flattened path
- *  walks through live only on the decorated version, not the raw import. */
-```
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::safeBinding`
-
-```text
-/** The local variable name to destructure a config key into: the key
- *  itself when it's safe to bind (not one of `FACTORY_NAME_RESERVED`'s
- *  words — `arguments`, `eval`, `class`, … — which strict-mode generated
- *  ESM can't declare as a binding identifier, only hold as a property
- *  name), otherwise the key with a trailing `_`. Reuses the same reserved
- *  list `nameNode` renames a colliding factory name against, rather than
- *  inventing a second reserved-word policy for binding positions. */
-```
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::renamedList`
-
-```text
-/** A comma-joined destructuring/reconstruction key list, each entry
- *  `key` when `safeBinding(key) === key` or `key: binding` otherwise —
- *  the same rename shorthand is correct in both the `const { … } =
- *  config` destructure position and the `C({ … })` reconstruction
- *  position a config-shaped kind arm builds back up from its bindings. */
-```
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::parentConfigTypeExpr`
-
-```text
-/** The parent's own config parameter type, `Cfg` in `subFactoryProp`'s
- *  naming — `Parameters<typeof F.<parent.rawFactoryName>>[0]`, wrapped in
- *  `NonNullable<…>` when the parent's own factory declares that parameter
- *  optional (`config?:`), which the emitted `Omit<Cfg, 'k'>` positions
- *  need stripped off to stay assignable. Optionality is read straight off
- *  the model rather than re-deriving the factory emitter's own `config?`
- *  decision: a parent's fields are exactly `[slot, ...residual]`, so
- *  `isRequired(slot) || residual.some(isRequired)` reproduces
- *  `resolveConfigOptional`'s answer without importing it. */
-```
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::subFactoryProp`
-
-```text
-/** One sub-factory's `AttachedProp` — the property `emitOverlayModule`
- *  attaches to the parent's decorated builder. `P` = `F.<parent.
- *  rawFactoryName>`, `C` = `childExpr(sub)`, `k` = `sub.slot.configKey`,
- *  `Cfg` = `parentConfigTypeExpr(parent, sub)`, `val` =
- *  `kindEnumConfigValue(literal, …)`. Seven shapes, chosen by residual
- *  emptiness, arm kind, and (when residual is non-empty) the arm's own
- *  child shape:
- *
- *  - literal arm, `residual: []`: `() => P(val)` when the parent takes
- *    its slot positionally (`resolveDirectFactorySlot(parent) !==
- *    undefined`), else `() => P({ k: val })`.
- *  - literal arm, `residual` non-empty: `(config: Omit<Cfg, 'k'>) =>
- *    P({ ...config, k: val })`.
- *  - kind arm, `residual: []`: `(...args: Parameters<typeof C>) =>
- *    P(C(...args))` positionally, or `(...args) => P({ k: C(...args) })`
- *    when the parent is config-shaped — the rest-spread form works
- *    unchanged for a parameterless `C` (`Parameters<typeof C>` is `[]`,
- *    spreading it degrades to a plain `C()` call).
- *  - kind arm, `residual` non-empty, child `config`-shaped: destructure
- *    `armConfigKeys(sub)`'s keys (via `renamedList`) plus `...rest` from
- *    `config`, call `C({ …the same keys… })`, and build `P({ ...rest, k:
- *    that })`. Zero keys destructures as `...rest` alone and reconstructs
- *    as `C({})`, never a bare `{ , ...rest }` (invalid syntax) or `C({  })`.
- *  - kind arm, `residual` non-empty, `spread`/`elements`-shaped child, or
- *    a *parameterless* child of any shape (`sub.arm.child.parameterless`
- *    — a fixed keyword/leaf or an empty compound, whose `Parameters<typeof
- *    C>` is `[]` and can't be indexed at `[0]`): destructure `{ k, ...rest
- *    }` (`k` renamed via `safeBinding` where needed) and call `C(...k)`.
- *  - kind arm, `residual` non-empty, `text`/`direct`/`forwarded`-shaped
- *    (non-parameterless) child: same destructure, but `C(k)` — one
- *    positional value, not spread.
- *
- *  A literal arm's `val` uses the branded `TSKindId` form only when the
- *  slot itself is `kindEnum`-shaped storage (`resolveFieldStorageInfo(sub.
- *  slot).kind === 'kindEnum'`) — a `KindEnum<Text, Id> = Id & {
- *  __kindEnum__?: Text }` branded number, not assignable from a plain
- *  string. A `verbatim`-shaped slot (a list separator, a leaf's sole
- *  literal alternative, …) stores the literal text itself, where only the
- *  quoted form type-checks; passing `kindEntries: undefined` in that case
- *  forces `kindEnumConfigValue`'s quoted-literal fallback. Both forms
- *  coerce to the same storage at runtime (`coerceKindEnumStorage`), so
- *  this is a type-position choice, not a behavior one — re-derived from
- *  the model fact the types emitter itself reads for the field's own type
- *  expression, never guessed from whether the literal happens to resolve
- *  a catalog kindId. */
-```
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::polymorphAttachments`
-
-```text
-/** One `Attachment` per kind with at least one sub-factory
- *  (`subFactoriesOf(node, nodeMap, opts).entries.length > 0`) or emit
- *  diagnostic, built via a DFS over `nodeMap.nodes` post-ordered on the
- *  flattened-arm dependency: before attaching a parent, first visit (and
- *  attach) the direct child of every flattened entry (`arm.path.length >
- *  0`) it references, so that child's decorated local const already
- *  exists in this module by the time the parent's own prop expression
- *  refers to it (`childExpr`'s flattened form). Direct kind arms need no
- *  such ordering — they reference the previous overlay layer's `F.`
- *  import, not a local const. `isEmitted` is `classifyFactoryEmission(kind,
- *  node, { nodeMap, kindEntries }) === 'emit'`, not the looser "has a
- *  catalog kindId" check `hasCatalogEntry` alone gives: a kind can carry a
- *  parser kindId and still mint no builder (a hidden-keyword-literal kind,
- *  a non-surface kind, a polymorph-form kind), and a kind arm naming one
- *  of those would reference a `F.build…` that was never emitted.
- *  Diagnostics from `subFactoriesOf` print through the same
- *  `console.warn('[codegen] <parent>: sub-factory <name> skipped
- *  (<reason>): <claimants>')` channel the removed js-dispatch emitter
- *  used, regardless of whether the parent ends up with any surviving
- *  entries to attach. */
-```
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
-```text
-/** The polymorph layer of the overlay chain — sits on `refines.js`
- *  (`overlayImportPath(1)`), decorating each eligible parent's refined
- *  builder with one form constructor per kind arm and one member
- *  constructor per literal arm via `polymorphAttachments`. Composes
- *  `emitOverlayModule` with `polymorphAttachments` the same way
- *  `emitRefinesOverlay` composes with `refineAttachments`; `emit.ts` calls
- *  `polymorphAttachments` directly to populate `overlayAttachments.
- *  polymorphs` for the shared `OVERLAY_CHAIN` mapping, and supplies the
- *  same `TSKindId` import as this function's own preamble whenever
- *  `generatedIdTables` is present — a literal arm's `kindEnum`-shaped
- *  value needs it in scope, `KindEnum`-branded fields being the one case
- *  `subFactoryProp` reaches for the numeric form. */
-```
+Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
+

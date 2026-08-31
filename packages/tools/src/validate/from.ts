@@ -32,9 +32,9 @@ import {
 } from './common.ts';
 
 const FROM_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/from.ts',
-	typescript: '../../../typescript/src/from.ts',
-	python: '../../../python/src/from.ts'
+	rust: '../../../rust/src/factories/coerce.ts',
+	typescript: '../../../typescript/src/factories/coerce.ts',
+	python: '../../../python/src/factories/coerce.ts'
 };
 
 const FACTORY_MODULE_PATHS: Record<string, string> = {

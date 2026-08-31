@@ -230,6 +230,15 @@ export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubF
 	return subFactoriesInternal(node, nodeMap, opts.isEmitted ?? DEFAULT_IS_EMITTED, new Set());
 }
 
+export function armIsConfigShaped(sub: SubFactory, nodeMap: NodeMap, opts: SubFactoryOptions = {}): boolean {
+	const arm = sub.arm;
+	if (arm.via === 'literal') return false;
+	if (arm.path.length === 0) return classifyFactoryShape(arm.child, nodeMap) === 'config';
+	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
+	if (nested === undefined || nested.arm.via === 'literal') return false;
+	return classifyFactoryShape(nested.arm.child, nodeMap) === 'config';
+}
+
 export function armConfigKeys(
 	sub: SubFactory,
 	nodeMap: NodeMap,
@@ -239,7 +248,7 @@ export function armConfigKeys(
 	const arm = sub.arm;
 	if (arm.via === 'literal') return [];
 	if (arm.path.length === 0) {
-		if (classifyFactoryShape(arm.child, nodeMap) !== 'config') return [];
+		if (!armIsConfigShaped(sub, nodeMap, opts)) return [];
 		return isSlotBearingCompound(arm.child) ? arm.child.fields.map((f) => f.configKey) : [];
 	}
 	if (visiting.has(arm.child.kind)) return [];
@@ -248,7 +257,7 @@ export function armConfigKeys(
 	const residualKeys = nested.residual.map((f) => f.configKey);
 	const nextVisiting = new Set([...visiting, arm.child.kind]);
 	if (nested.arm.via === 'literal') return residualKeys;
-	if (classifyFactoryShape(nested.arm.child, nodeMap) === 'config') {
+	if (armIsConfigShaped(sub, nodeMap, opts)) {
 		return [...residualKeys, ...armConfigKeys(nested, nodeMap, opts, nextVisiting)];
 	}
 	return [...residualKeys, nested.slot.configKey];

@@ -1034,7 +1034,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type * as T from './types.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
-			...(usesFieldResolvers ? ["import * as FR from './from.js';"] : []),
+			...(usesFieldResolvers ? ["import * as FR from './factories/coerce.js';"] : []),
 			'',
 			...(usesIsReadTextLeaf
 				? [

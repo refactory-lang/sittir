@@ -12,222 +12,6 @@
 // entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
-import * as FR from './from.js';
-import { bundle } from './utils.js';
-
-const _b$futureImportStatement = bundle(FR.coerceToFutureImportStatement, F.buildFutureImportStatement);
-
-const _b$importStatement = bundle(FR.coerceToImportStatement, F.buildImportStatement);
-
-const _b$importFromStatement = bundle(FR.coerceToImportFromStatement, F.buildImportFromStatement);
-
-const _b$printStatement = bundle(FR.coerceToPrintStatement, F.buildPrintStatement);
-
-const _b$assertStatement = bundle(FR.coerceToAssertStatement, F.buildAssertStatement);
-
-const _b$expressionStatement = bundle(FR.coerceToExpressionStatement, F.buildExpressionStatement);
-
-const _b$returnStatement = bundle(FR.coerceToReturnStatement, F.buildReturnStatement);
-
-const _b$deleteStatement = bundle(FR.coerceToDeleteStatement, F.buildDeleteStatement);
-
-const _b$raiseStatement = bundle(FR.coerceToRaiseStatement, F.buildRaiseStatement);
-
-const _b$globalStatement = bundle(FR.coerceToGlobalStatement, F.buildGlobalStatement);
-
-const _b$nonlocalStatement = bundle(FR.coerceToNonlocalStatement, F.buildNonlocalStatement);
-
-const _b$execStatement = bundle(FR.coerceToExecStatement, F.buildExecStatement);
-
-const _b$typeAliasStatement = bundle(FR.coerceToTypeAliasStatement, F.buildTypeAliasStatement);
-
-const _b$ifStatement = bundle(FR.coerceToIfStatement, F.buildIfStatement);
-
-const _b$forStatement = bundle(FR.coerceToForStatement, F.buildForStatement);
-
-const _b$whileStatement = bundle(FR.coerceToWhileStatement, F.buildWhileStatement);
-
-const _b$tryStatement = bundle(FR.coerceToTryStatement, F.buildTryStatement);
-
-const _b$withStatement = bundle(FR.coerceToWithStatement, F.buildWithStatement);
-
-const _b$functionDefinition = bundle(FR.coerceToFunctionDefinition, F.buildFunctionDefinition);
-
-const _b$classDefinition = bundle(FR.coerceToClassDefinition, F.buildClassDefinition);
-
-const _b$decoratedDefinition = bundle(FR.coerceToDecoratedDefinition, F.buildDecoratedDefinition);
-
-const _b$matchStatement = bundle(FR.coerceToMatchStatement, F.buildMatchStatement);
-
-const _b$typedParameter = bundle(FR.coerceToTypedParameter, F.buildTypedParameter);
-
-const _b$defaultParameter = bundle(FR.coerceToDefaultParameter, F.buildDefaultParameter);
-
-const _b$typedDefaultParameter = bundle(FR.coerceToTypedDefaultParameter, F.buildTypedDefaultParameter);
-
-const _b$listSplatPattern = bundle(FR.coerceToListSplatPattern, F.buildListSplatPattern);
-
-const _b$tuplePattern = bundle(FR.coerceToTuplePattern, F.buildTuplePattern);
-
-const _b$dictionarySplatPattern = bundle(FR.coerceToDictionarySplatPattern, F.buildDictionarySplatPattern);
-
-const _b$subscript = bundle(FR.coerceToSubscript, F.buildSubscript);
-
-const _b$attribute = bundle(FR.coerceToAttribute, F.buildAttribute);
-
-const _b$listPattern = bundle(FR.coerceToListPattern, F.buildListPattern);
-
-const _b$comparisonOperator = bundle(FR.coerceToComparisonOperator, F.buildComparisonOperator);
-
-const _b$notOperator = bundle(FR.coerceToNotOperator, F.buildNotOperator);
-
-const _b$booleanOperator = bundle(FR.coerceToBooleanOperator, F.buildBooleanOperator);
-
-const _b$lambda = bundle(FR.coerceToLambda, F.buildLambda);
-
-const _b$conditionalExpression = bundle(FR.coerceToConditionalExpression, F.buildConditionalExpression);
-
-const _b$namedExpression = bundle(FR.coerceToNamedExpression, F.buildNamedExpression);
-
-const _b$asPattern = bundle(FR.coerceToAsPattern, F.buildAsPattern);
-
-const _b$await = bundle(FR.coerceToAwait, F.buildAwait);
-
-const _b$binaryOperator = bundle(FR.coerceToBinaryOperator, F.buildBinaryOperator);
-
-const _b$string = bundle(FR.coerceToString, F.buildString);
-
-const _b$concatenatedString = bundle(FR.coerceToConcatenatedString, F.buildConcatenatedString);
-
-const _b$unaryOperator = bundle(FR.coerceToUnaryOperator, F.buildUnaryOperator);
-
-const _b$call = bundle(FR.coerceToCall, F.buildCall);
-
-const _b$list = bundle(FR.coerceToList, F.buildList);
-
-const _b$listComprehension = bundle(FR.coerceToListComprehension, F.buildListComprehension);
-
-const _b$dictionary = bundle(FR.coerceToDictionary, F.buildDictionary);
-
-const _b$dictionaryComprehension = bundle(FR.coerceToDictionaryComprehension, F.buildDictionaryComprehension);
-
-const _b$set = bundle(FR.coerceToSet, F.buildSet);
-
-const _b$setComprehension = bundle(FR.coerceToSetComprehension, F.buildSetComprehension);
-
-const _b$tuple = bundle(FR.coerceToTuple, F.buildTuple);
-
-const _b$parenthesizedExpression = bundle(FR.coerceToParenthesizedExpression, F.buildParenthesizedExpression);
-
-const _b$generatorExpression = bundle(FR.coerceToGeneratorExpression, F.buildGeneratorExpression);
-
-const _b$module = bundle(FR.coerceToModule, F.buildModule);
-
-const _b$relativeImport = bundle(FR.coerceToRelativeImport, F.buildRelativeImport);
-
-const _b$aliasedImport = bundle(FR.coerceToAliasedImport, F.buildAliasedImport);
-
-const _b$chevron = bundle(FR.coerceToChevron, F.buildChevron);
-
-const _b$elifClause = bundle(FR.coerceToElifClause, F.buildElifClause);
-
-const _b$elseClause = bundle(FR.coerceToElseClause, F.buildElseClause);
-
-const _b$caseClause = bundle(FR.coerceToCaseClause, F.buildCaseClause);
-
-const _b$exceptClause = bundle(FR.coerceToExceptClause, F.buildExceptClause);
-
-const _b$finallyClause = bundle(FR.coerceToFinallyClause, F.buildFinallyClause);
-
-const _b$withClause = bundle(FR.coerceToWithClause, F.buildWithClause);
-
-const _b$withItem = bundle(FR.coerceToWithItem, F.buildWithItem);
-
-const _b$parameters = bundle(FR.coerceToParameters, F.buildParameters);
-
-const _b$lambdaParameters = bundle(FR.coerceToLambdaParameters, F.buildLambdaParameters);
-
-const _b$listSplat = bundle(FR.coerceToListSplat, F.buildListSplat);
-
-const _b$dictionarySplat = bundle(FR.coerceToDictionarySplat, F.buildDictionarySplat);
-
-const _b$typeParameter = bundle(FR.coerceToTypeParameter, F.buildTypeParameter);
-
-const _b$parenthesizedListSplat = bundle(FR.coerceToParenthesizedListSplat, F.buildParenthesizedListSplat);
-
-const _b$argumentList = bundle(FR.coerceToArgumentList, F.buildArgumentList);
-
-const _b$decorator = bundle(FR.coerceToDecorator, F.buildDecorator);
-
-const _b$block = bundle(FR.coerceToBlock, F.buildBlock);
-
-const _b$expressionList = bundle(FR.coerceToExpressionList, F.buildExpressionList);
-
-const _b$dottedName = bundle(FR.coerceToDottedName, F.buildDottedName);
-
-const _b$casePattern = bundle(FR.coerceToCasePattern, F.buildCasePattern);
-
-const _b$unionPattern = bundle(FR.coerceToUnionPattern, F.buildUnionPattern);
-
-const _b$dictPattern = bundle(FR.coerceToDictPattern, F.buildDictPattern);
-
-const _b$keywordPattern = bundle(FR.coerceToKeywordPattern, F.buildKeywordPattern);
-
-const _b$splatPattern = bundle(FR.coerceToSplatPattern, F.buildSplatPattern);
-
-const _b$classPattern = bundle(FR.coerceToClassPattern, F.buildClassPattern);
-
-const _b$complexPattern = bundle(FR.coerceToComplexPattern, F.buildComplexPattern);
-
-const _b$lambdaWithinForInClause = bundle(FR.coerceToLambdaWithinForInClause, F.buildLambdaWithinForInClause);
-
-const _b$assignment = bundle(FR.coerceToAssignment, F.buildAssignment);
-
-const _b$augmentedAssignment = bundle(FR.coerceToAugmentedAssignment, F.buildAugmentedAssignment);
-
-const _b$patternList = bundle(FR.coerceToPatternList, F.buildPatternList);
-
-const _b$yield = bundle(FR.coerceToYield, F.buildYield);
-
-const _b$slice = bundle(FR.coerceToSlice, F.buildSlice);
-
-const _b$type = bundle(FR.coerceToType, F.buildType);
-
-const _b$splatType = bundle(FR.coerceToSplatType, F.buildSplatType);
-
-const _b$genericType = bundle(FR.coerceToGenericType, F.buildGenericType);
-
-const _b$unionType = bundle(FR.coerceToUnionType, F.buildUnionType);
-
-const _b$constrainedType = bundle(FR.coerceToConstrainedType, F.buildConstrainedType);
-
-const _b$memberType = bundle(FR.coerceToMemberType, F.buildMemberType);
-
-const _b$keywordArgument = bundle(FR.coerceToKeywordArgument, F.buildKeywordArgument);
-
-const _b$pair = bundle(FR.coerceToPair, F.buildPair);
-
-const _b$forInClause = bundle(FR.coerceToForInClause, F.buildForInClause);
-
-const _b$ifClause = bundle(FR.coerceToIfClause, F.buildIfClause);
-
-const _b$stringContent = bundle(FR.coerceToStringContent, F.buildStringContent);
-
-const _b$interpolation = bundle(FR.coerceToInterpolation, F.buildInterpolation);
-
-const _b$formatSpecifier = bundle(FR.coerceToFormatSpecifier, F.buildFormatSpecifier);
-
-const _b$caseTuplePattern = bundle(FR.coerceToCaseTuplePattern, F.buildCaseTuplePattern);
-
-const _b$caseListPattern = bundle(FR.coerceToCaseListPattern, F.buildCaseListPattern);
-
-const _b$caseAsPattern = bundle(FR.coerceToCaseAsPattern, F.buildCaseAsPattern);
-
-const _b$comprehensionClauses = bundle(FR.coerceToComprehensionClauses, F.buildComprehensionClauses);
-
-const _b$printStatementArm1 = bundle(FR.coerceToPrintStatementArm1, F.buildPrintStatementArm1);
-
-const _b$printStatementArm2 = bundle(FR.coerceToPrintStatementArm2, F.buildPrintStatementArm2);
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
@@ -270,171 +54,171 @@ export const synonym = {
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const simpleStatement: {
-	readonly futureImport: typeof _b$futureImportStatement;
-	readonly import: typeof _b$importStatement;
-	readonly importFrom: typeof _b$importFromStatement;
-	readonly print: typeof _b$printStatement;
-	readonly assert: typeof _b$assertStatement;
-	readonly expression: typeof _b$expressionStatement;
-	readonly return: typeof _b$returnStatement;
-	readonly delete: typeof _b$deleteStatement;
-	readonly raise: typeof _b$raiseStatement;
+	readonly futureImport: typeof F.futureImportStatement;
+	readonly import: typeof F.importStatement;
+	readonly importFrom: typeof F.importFromStatement;
+	readonly print: typeof F.printStatement;
+	readonly assert: typeof F.assertStatement;
+	readonly expression: typeof F.expressionStatement;
+	readonly return: typeof F.returnStatement;
+	readonly delete: typeof F.deleteStatement;
+	readonly raise: typeof F.raiseStatement;
 	readonly pass: typeof F.buildPassStatement;
 	readonly break: typeof F.buildBreakStatement;
 	readonly continue: typeof F.buildContinueStatement;
-	readonly global: typeof _b$globalStatement;
-	readonly nonlocal: typeof _b$nonlocalStatement;
-	readonly exec: typeof _b$execStatement;
-	readonly typeAlias: typeof _b$typeAliasStatement;
+	readonly global: typeof F.globalStatement;
+	readonly nonlocal: typeof F.nonlocalStatement;
+	readonly exec: typeof F.execStatement;
+	readonly typeAlias: typeof F.typeAliasStatement;
 } = {
-	futureImport: _b$futureImportStatement,
-	import: _b$importStatement,
-	importFrom: _b$importFromStatement,
-	print: _b$printStatement,
-	assert: _b$assertStatement,
-	expression: _b$expressionStatement,
-	return: _b$returnStatement,
-	delete: _b$deleteStatement,
-	raise: _b$raiseStatement,
+	futureImport: F.futureImportStatement,
+	import: F.importStatement,
+	importFrom: F.importFromStatement,
+	print: F.printStatement,
+	assert: F.assertStatement,
+	expression: F.expressionStatement,
+	return: F.returnStatement,
+	delete: F.deleteStatement,
+	raise: F.raiseStatement,
 	pass: F.buildPassStatement,
 	break: F.buildBreakStatement,
 	continue: F.buildContinueStatement,
-	global: _b$globalStatement,
-	nonlocal: _b$nonlocalStatement,
-	exec: _b$execStatement,
-	typeAlias: _b$typeAliasStatement
+	global: F.globalStatement,
+	nonlocal: F.nonlocalStatement,
+	exec: F.execStatement,
+	typeAlias: F.typeAliasStatement
 };
 
 export const compoundStatement: {
-	readonly if: typeof _b$ifStatement;
-	readonly for: typeof _b$forStatement;
-	readonly while: typeof _b$whileStatement;
-	readonly try: typeof _b$tryStatement;
-	readonly with: typeof _b$withStatement;
-	readonly function: typeof _b$functionDefinition;
-	readonly class: typeof _b$classDefinition;
-	readonly decorated: typeof _b$decoratedDefinition;
-	readonly match: typeof _b$matchStatement;
+	readonly if: typeof F.ifStatement;
+	readonly for: typeof F.forStatement;
+	readonly while: typeof F.whileStatement;
+	readonly try: typeof F.tryStatement;
+	readonly with: typeof F.withStatement;
+	readonly function: typeof F.functionDefinition;
+	readonly class: typeof F.classDefinition;
+	readonly decorated: typeof F.decoratedDefinition;
+	readonly match: typeof F.matchStatement;
 } = {
-	if: _b$ifStatement,
-	for: _b$forStatement,
-	while: _b$whileStatement,
-	try: _b$tryStatement,
-	with: _b$withStatement,
-	function: _b$functionDefinition,
-	class: _b$classDefinition,
-	decorated: _b$decoratedDefinition,
-	match: _b$matchStatement
+	if: F.ifStatement,
+	for: F.forStatement,
+	while: F.whileStatement,
+	try: F.tryStatement,
+	with: F.withStatement,
+	function: F.functionDefinition,
+	class: F.classDefinition,
+	decorated: F.decoratedDefinition,
+	match: F.matchStatement
 };
 
 export const parameter: {
 	readonly identifier: typeof F.buildIdentifier;
-	readonly typed: typeof _b$typedParameter;
-	readonly default: typeof _b$defaultParameter;
-	readonly typedDefault: typeof _b$typedDefaultParameter;
-	readonly listSplat: typeof _b$listSplatPattern;
-	readonly tuple: typeof _b$tuplePattern;
+	readonly typed: typeof F.typedParameter;
+	readonly default: typeof F.defaultParameter;
+	readonly typedDefault: typeof F.typedDefaultParameter;
+	readonly listSplat: typeof F.listSplatPattern;
+	readonly tuple: typeof F.tuplePattern;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
-	readonly dictionarySplat: typeof _b$dictionarySplatPattern;
+	readonly dictionarySplat: typeof F.dictionarySplatPattern;
 } = {
 	identifier: F.buildIdentifier,
-	typed: _b$typedParameter,
-	default: _b$defaultParameter,
-	typedDefault: _b$typedDefaultParameter,
-	listSplat: _b$listSplatPattern,
-	tuple: _b$tuplePattern,
+	typed: F.typedParameter,
+	default: F.defaultParameter,
+	typedDefault: F.typedDefaultParameter,
+	listSplat: F.listSplatPattern,
+	tuple: F.tuplePattern,
 	keywordSeparator: F.buildKeywordSeparator,
 	positionalSeparator: F.buildPositionalSeparator,
-	dictionarySplat: _b$dictionarySplatPattern
+	dictionarySplat: F.dictionarySplatPattern
 };
 
 export const pattern: {
 	readonly identifier: typeof F.buildIdentifier;
-	readonly subscript: typeof _b$subscript;
-	readonly attribute: typeof _b$attribute;
-	readonly listSplat: typeof _b$listSplatPattern;
-	readonly tuple: typeof _b$tuplePattern;
-	readonly list: typeof _b$listPattern;
+	readonly subscript: typeof F.subscript;
+	readonly attribute: typeof F.attribute;
+	readonly listSplat: typeof F.listSplatPattern;
+	readonly tuple: typeof F.tuplePattern;
+	readonly list: typeof F.listPattern;
 } = {
 	identifier: F.buildIdentifier,
-	subscript: _b$subscript,
-	attribute: _b$attribute,
-	listSplat: _b$listSplatPattern,
-	tuple: _b$tuplePattern,
-	list: _b$listPattern
+	subscript: F.subscript,
+	attribute: F.attribute,
+	listSplat: F.listSplatPattern,
+	tuple: F.tuplePattern,
+	list: F.listPattern
 };
 
 export const expression: {
-	readonly comparison: typeof _b$comparisonOperator;
-	readonly not: typeof _b$notOperator;
-	readonly boolean: typeof _b$booleanOperator;
-	readonly lambda: typeof _b$lambda;
-	readonly conditional: typeof _b$conditionalExpression;
-	readonly named: typeof _b$namedExpression;
-	readonly as: typeof _b$asPattern;
+	readonly comparison: typeof F.comparisonOperator;
+	readonly not: typeof F.notOperator;
+	readonly boolean: typeof F.booleanOperator;
+	readonly lambda: typeof F.lambda;
+	readonly conditional: typeof F.conditionalExpression;
+	readonly named: typeof F.namedExpression;
+	readonly as: typeof F.asPattern;
 } = {
-	comparison: _b$comparisonOperator,
-	not: _b$notOperator,
-	boolean: _b$booleanOperator,
-	lambda: _b$lambda,
-	conditional: _b$conditionalExpression,
-	named: _b$namedExpression,
-	as: _b$asPattern
+	comparison: F.comparisonOperator,
+	not: F.notOperator,
+	boolean: F.booleanOperator,
+	lambda: F.lambda,
+	conditional: F.conditionalExpression,
+	named: F.namedExpression,
+	as: F.asPattern
 };
 
 export const primaryExpression: {
-	readonly await: typeof _b$await;
-	readonly binary: typeof _b$binaryOperator;
+	readonly await: typeof F.await_;
+	readonly binary: typeof F.binaryOperator;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly string: typeof _b$string;
-	readonly concatenatedString: typeof _b$concatenatedString;
+	readonly string: typeof F.string;
+	readonly concatenatedString: typeof F.concatenatedString;
 	readonly integer: typeof F.buildInteger;
 	readonly float: typeof F.buildFloat;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
-	readonly unary: typeof _b$unaryOperator;
-	readonly attribute: typeof _b$attribute;
-	readonly subscript: typeof _b$subscript;
-	readonly call: typeof _b$call;
-	readonly list: typeof _b$list;
-	readonly listComprehension: typeof _b$listComprehension;
-	readonly dictionary: typeof _b$dictionary;
-	readonly dictionaryComprehension: typeof _b$dictionaryComprehension;
-	readonly set: typeof _b$set;
-	readonly setComprehension: typeof _b$setComprehension;
-	readonly tuple: typeof _b$tuple;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
-	readonly generator: typeof _b$generatorExpression;
+	readonly unary: typeof F.unaryOperator;
+	readonly attribute: typeof F.attribute;
+	readonly subscript: typeof F.subscript;
+	readonly call: typeof F.call;
+	readonly list: typeof F.list;
+	readonly listComprehension: typeof F.listComprehension;
+	readonly dictionary: typeof F.dictionary;
+	readonly dictionaryComprehension: typeof F.dictionaryComprehension;
+	readonly set: typeof F.set;
+	readonly setComprehension: typeof F.setComprehension;
+	readonly tuple: typeof F.tuple;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly generator: typeof F.generatorExpression;
 	readonly ellipsis: typeof F.buildEllipsis;
-	readonly listSplat: typeof _b$listSplatPattern;
+	readonly listSplat: typeof F.listSplatPattern;
 } = {
-	await: _b$await,
-	binary: _b$binaryOperator,
+	await: F.await_,
+	binary: F.binaryOperator,
 	identifier: F.buildIdentifier,
-	string: _b$string,
-	concatenatedString: _b$concatenatedString,
+	string: F.string,
+	concatenatedString: F.concatenatedString,
 	integer: F.buildInteger,
 	float: F.buildFloat,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
-	unary: _b$unaryOperator,
-	attribute: _b$attribute,
-	subscript: _b$subscript,
-	call: _b$call,
-	list: _b$list,
-	listComprehension: _b$listComprehension,
-	dictionary: _b$dictionary,
-	dictionaryComprehension: _b$dictionaryComprehension,
-	set: _b$set,
-	setComprehension: _b$setComprehension,
-	tuple: _b$tuple,
-	parenthesized: _b$parenthesizedExpression,
-	generator: _b$generatorExpression,
+	unary: F.unaryOperator,
+	attribute: F.attribute,
+	subscript: F.subscript,
+	call: F.call,
+	list: F.list,
+	listComprehension: F.listComprehension,
+	dictionary: F.dictionary,
+	dictionaryComprehension: F.dictionaryComprehension,
+	set: F.set,
+	setComprehension: F.setComprehension,
+	tuple: F.tuple,
+	parenthesized: F.parenthesizedExpression,
+	generator: F.generatorExpression,
 	ellipsis: F.buildEllipsis,
-	listSplat: _b$listSplatPattern
+	listSplat: F.listSplatPattern
 };
 
 export const keywordIdentifier: {
@@ -444,113 +228,113 @@ export const keywordIdentifier: {
 };
 
 export const ir: {
-	readonly module: typeof _b$module;
-	readonly importStatement: typeof _b$importStatement;
-	readonly relativeImport: typeof _b$relativeImport;
-	readonly futureImportStatement: typeof _b$futureImportStatement;
-	readonly importFromStatement: typeof _b$importFromStatement;
-	readonly aliasedImport: typeof _b$aliasedImport;
-	readonly printStatement: typeof _b$printStatement;
-	readonly chevron: typeof _b$chevron;
-	readonly assertStatement: typeof _b$assertStatement;
-	readonly expressionStatement: typeof _b$expressionStatement;
-	readonly namedExpression: typeof _b$namedExpression;
-	readonly returnStatement: typeof _b$returnStatement;
-	readonly deleteStatement: typeof _b$deleteStatement;
-	readonly raiseStatement: typeof _b$raiseStatement;
-	readonly ifStatement: typeof _b$ifStatement;
-	readonly elifClause: typeof _b$elifClause;
-	readonly elseClause: typeof _b$elseClause;
-	readonly matchStatement: typeof _b$matchStatement;
-	readonly caseClause: typeof _b$caseClause;
-	readonly forStatement: typeof _b$forStatement;
-	readonly whileStatement: typeof _b$whileStatement;
-	readonly tryStatement: typeof _b$tryStatement;
-	readonly exceptClause: typeof _b$exceptClause;
-	readonly finallyClause: typeof _b$finallyClause;
-	readonly withStatement: typeof _b$withStatement;
-	readonly withClause: typeof _b$withClause;
-	readonly withItem: typeof _b$withItem;
-	readonly functionDefinition: typeof _b$functionDefinition;
-	readonly parameters: typeof _b$parameters;
-	readonly lambdaParameters: typeof _b$lambdaParameters;
-	readonly listSplat: typeof _b$listSplat;
-	readonly dictionarySplat: typeof _b$dictionarySplat;
-	readonly globalStatement: typeof _b$globalStatement;
-	readonly nonlocalStatement: typeof _b$nonlocalStatement;
-	readonly execStatement: typeof _b$execStatement;
-	readonly typeAliasStatement: typeof _b$typeAliasStatement;
-	readonly classDefinition: typeof _b$classDefinition;
-	readonly typeParameter: typeof _b$typeParameter;
-	readonly parenthesizedListSplat: typeof _b$parenthesizedListSplat;
-	readonly argumentList: typeof _b$argumentList;
-	readonly decoratedDefinition: typeof _b$decoratedDefinition;
-	readonly decorator: typeof _b$decorator;
-	readonly block: typeof _b$block;
-	readonly expressionList: typeof _b$expressionList;
-	readonly dottedName: typeof _b$dottedName;
-	readonly casePattern: typeof _b$casePattern;
-	readonly unionPattern: typeof _b$unionPattern;
-	readonly dictPattern: typeof _b$dictPattern;
-	readonly keywordPattern: typeof _b$keywordPattern;
-	readonly splatPattern: typeof _b$splatPattern;
-	readonly classPattern: typeof _b$classPattern;
-	readonly complexPattern: typeof _b$complexPattern;
-	readonly tuplePattern: typeof _b$tuplePattern;
-	readonly listPattern: typeof _b$listPattern;
-	readonly defaultParameter: typeof _b$defaultParameter;
-	readonly typedDefaultParameter: typeof _b$typedDefaultParameter;
-	readonly listSplatPattern: typeof _b$listSplatPattern;
-	readonly dictionarySplatPattern: typeof _b$dictionarySplatPattern;
-	readonly asPattern: typeof _b$asPattern;
-	readonly notOperator: typeof _b$notOperator;
-	readonly booleanOperator: typeof _b$booleanOperator;
-	readonly binaryOperator: typeof _b$binaryOperator;
-	readonly unaryOperator: typeof _b$unaryOperator;
-	readonly comparisonOperator: typeof _b$comparisonOperator;
-	readonly lambda: typeof _b$lambda;
-	readonly lambdaWithinForInClause: typeof _b$lambdaWithinForInClause;
-	readonly assignment: typeof _b$assignment;
-	readonly augmentedAssignment: typeof _b$augmentedAssignment;
-	readonly patternList: typeof _b$patternList;
-	readonly yield: typeof _b$yield;
-	readonly attribute: typeof _b$attribute;
-	readonly subscript: typeof _b$subscript;
-	readonly slice: typeof _b$slice;
-	readonly call: typeof _b$call;
-	readonly typedParameter: typeof _b$typedParameter;
-	readonly type: typeof _b$type;
-	readonly splatType: typeof _b$splatType;
-	readonly genericType: typeof _b$genericType;
-	readonly unionType: typeof _b$unionType;
-	readonly constrainedType: typeof _b$constrainedType;
-	readonly memberType: typeof _b$memberType;
-	readonly keywordArgument: typeof _b$keywordArgument;
-	readonly list: typeof _b$list;
-	readonly set: typeof _b$set;
-	readonly tuple: typeof _b$tuple;
-	readonly dictionary: typeof _b$dictionary;
-	readonly pair: typeof _b$pair;
-	readonly listComprehension: typeof _b$listComprehension;
-	readonly dictionaryComprehension: typeof _b$dictionaryComprehension;
-	readonly setComprehension: typeof _b$setComprehension;
-	readonly generatorExpression: typeof _b$generatorExpression;
-	readonly parenthesizedExpression: typeof _b$parenthesizedExpression;
-	readonly forInClause: typeof _b$forInClause;
-	readonly ifClause: typeof _b$ifClause;
-	readonly conditionalExpression: typeof _b$conditionalExpression;
-	readonly concatenatedString: typeof _b$concatenatedString;
-	readonly string: typeof _b$string;
-	readonly stringContent: typeof _b$stringContent;
-	readonly interpolation: typeof _b$interpolation;
-	readonly formatSpecifier: typeof _b$formatSpecifier;
-	readonly await: typeof _b$await;
-	readonly caseTuplePattern: typeof _b$caseTuplePattern;
-	readonly caseListPattern: typeof _b$caseListPattern;
-	readonly caseAsPattern: typeof _b$caseAsPattern;
-	readonly comprehensionClauses: typeof _b$comprehensionClauses;
-	readonly printStatementArm1: typeof _b$printStatementArm1;
-	readonly printStatementArm2: typeof _b$printStatementArm2;
+	readonly module: typeof F.module;
+	readonly importStatement: typeof F.importStatement;
+	readonly relativeImport: typeof F.relativeImport;
+	readonly futureImportStatement: typeof F.futureImportStatement;
+	readonly importFromStatement: typeof F.importFromStatement;
+	readonly aliasedImport: typeof F.aliasedImport;
+	readonly printStatement: typeof F.printStatement;
+	readonly chevron: typeof F.chevron;
+	readonly assertStatement: typeof F.assertStatement;
+	readonly expressionStatement: typeof F.expressionStatement;
+	readonly namedExpression: typeof F.namedExpression;
+	readonly returnStatement: typeof F.returnStatement;
+	readonly deleteStatement: typeof F.deleteStatement;
+	readonly raiseStatement: typeof F.raiseStatement;
+	readonly ifStatement: typeof F.ifStatement;
+	readonly elifClause: typeof F.elifClause;
+	readonly elseClause: typeof F.elseClause;
+	readonly matchStatement: typeof F.matchStatement;
+	readonly caseClause: typeof F.caseClause;
+	readonly forStatement: typeof F.forStatement;
+	readonly whileStatement: typeof F.whileStatement;
+	readonly tryStatement: typeof F.tryStatement;
+	readonly exceptClause: typeof F.exceptClause;
+	readonly finallyClause: typeof F.finallyClause;
+	readonly withStatement: typeof F.withStatement;
+	readonly withClause: typeof F.withClause;
+	readonly withItem: typeof F.withItem;
+	readonly functionDefinition: typeof F.functionDefinition;
+	readonly parameters: typeof F.parameters;
+	readonly lambdaParameters: typeof F.lambdaParameters;
+	readonly listSplat: typeof F.listSplat;
+	readonly dictionarySplat: typeof F.dictionarySplat;
+	readonly globalStatement: typeof F.globalStatement;
+	readonly nonlocalStatement: typeof F.nonlocalStatement;
+	readonly execStatement: typeof F.execStatement;
+	readonly typeAliasStatement: typeof F.typeAliasStatement;
+	readonly classDefinition: typeof F.classDefinition;
+	readonly typeParameter: typeof F.typeParameter;
+	readonly parenthesizedListSplat: typeof F.parenthesizedListSplat;
+	readonly argumentList: typeof F.argumentList;
+	readonly decoratedDefinition: typeof F.decoratedDefinition;
+	readonly decorator: typeof F.decorator;
+	readonly block: typeof F.block;
+	readonly expressionList: typeof F.expressionList;
+	readonly dottedName: typeof F.dottedName;
+	readonly casePattern: typeof F.casePattern;
+	readonly unionPattern: typeof F.unionPattern;
+	readonly dictPattern: typeof F.dictPattern;
+	readonly keywordPattern: typeof F.keywordPattern;
+	readonly splatPattern: typeof F.splatPattern;
+	readonly classPattern: typeof F.classPattern;
+	readonly complexPattern: typeof F.complexPattern;
+	readonly tuplePattern: typeof F.tuplePattern;
+	readonly listPattern: typeof F.listPattern;
+	readonly defaultParameter: typeof F.defaultParameter;
+	readonly typedDefaultParameter: typeof F.typedDefaultParameter;
+	readonly listSplatPattern: typeof F.listSplatPattern;
+	readonly dictionarySplatPattern: typeof F.dictionarySplatPattern;
+	readonly asPattern: typeof F.asPattern;
+	readonly notOperator: typeof F.notOperator;
+	readonly booleanOperator: typeof F.booleanOperator;
+	readonly binaryOperator: typeof F.binaryOperator;
+	readonly unaryOperator: typeof F.unaryOperator;
+	readonly comparisonOperator: typeof F.comparisonOperator;
+	readonly lambda: typeof F.lambda;
+	readonly lambdaWithinForInClause: typeof F.lambdaWithinForInClause;
+	readonly assignment: typeof F.assignment;
+	readonly augmentedAssignment: typeof F.augmentedAssignment;
+	readonly patternList: typeof F.patternList;
+	readonly yield: typeof F.yield_;
+	readonly attribute: typeof F.attribute;
+	readonly subscript: typeof F.subscript;
+	readonly slice: typeof F.slice;
+	readonly call: typeof F.call;
+	readonly typedParameter: typeof F.typedParameter;
+	readonly type: typeof F.type;
+	readonly splatType: typeof F.splatType;
+	readonly genericType: typeof F.genericType;
+	readonly unionType: typeof F.unionType;
+	readonly constrainedType: typeof F.constrainedType;
+	readonly memberType: typeof F.memberType;
+	readonly keywordArgument: typeof F.keywordArgument;
+	readonly list: typeof F.list;
+	readonly set: typeof F.set;
+	readonly tuple: typeof F.tuple;
+	readonly dictionary: typeof F.dictionary;
+	readonly pair: typeof F.pair;
+	readonly listComprehension: typeof F.listComprehension;
+	readonly dictionaryComprehension: typeof F.dictionaryComprehension;
+	readonly setComprehension: typeof F.setComprehension;
+	readonly generatorExpression: typeof F.generatorExpression;
+	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
+	readonly forInClause: typeof F.forInClause;
+	readonly ifClause: typeof F.ifClause;
+	readonly conditionalExpression: typeof F.conditionalExpression;
+	readonly concatenatedString: typeof F.concatenatedString;
+	readonly string: typeof F.string;
+	readonly stringContent: typeof F.stringContent;
+	readonly interpolation: typeof F.interpolation;
+	readonly formatSpecifier: typeof F.formatSpecifier;
+	readonly await: typeof F.await_;
+	readonly caseTuplePattern: typeof F.caseTuplePattern;
+	readonly caseListPattern: typeof F.caseListPattern;
+	readonly caseAsPattern: typeof F.caseAsPattern;
+	readonly comprehensionClauses: typeof F.comprehensionClauses;
+	readonly printStatementArm1: typeof F.printStatementArm1;
+	readonly printStatementArm2: typeof F.printStatementArm2;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -573,43 +357,43 @@ export const ir: {
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly except: typeof F.buildExcept;
-	readonly as: typeof _b$asPattern;
-	readonly assert: typeof _b$assertStatement;
-	readonly binary: typeof _b$binaryOperator;
-	readonly boolean: typeof _b$booleanOperator;
+	readonly as: typeof F.asPattern;
+	readonly assert: typeof F.assertStatement;
+	readonly binary: typeof F.binaryOperator;
+	readonly boolean: typeof F.booleanOperator;
 	readonly break: typeof F.buildBreakStatement;
-	readonly class: typeof _b$classDefinition;
-	readonly comparison: typeof _b$comparisonOperator;
-	readonly conditional: typeof _b$conditionalExpression;
+	readonly class: typeof F.classDefinition;
+	readonly comparison: typeof F.comparisonOperator;
+	readonly conditional: typeof F.conditionalExpression;
 	readonly continue: typeof F.buildContinueStatement;
-	readonly decorated: typeof _b$decoratedDefinition;
-	readonly default: typeof _b$defaultParameter;
-	readonly delete: typeof _b$deleteStatement;
-	readonly exec: typeof _b$execStatement;
-	readonly for: typeof _b$forStatement;
-	readonly function: typeof _b$functionDefinition;
-	readonly futureImport: typeof _b$futureImportStatement;
-	readonly generator: typeof _b$generatorExpression;
-	readonly global: typeof _b$globalStatement;
-	readonly if: typeof _b$ifStatement;
-	readonly import: typeof _b$importStatement;
-	readonly importFrom: typeof _b$importFromStatement;
-	readonly match: typeof _b$matchStatement;
-	readonly named: typeof _b$namedExpression;
-	readonly nonlocal: typeof _b$nonlocalStatement;
-	readonly not: typeof _b$notOperator;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
+	readonly decorated: typeof F.decoratedDefinition;
+	readonly default: typeof F.defaultParameter;
+	readonly delete: typeof F.deleteStatement;
+	readonly exec: typeof F.execStatement;
+	readonly for: typeof F.forStatement;
+	readonly function: typeof F.functionDefinition;
+	readonly futureImport: typeof F.futureImportStatement;
+	readonly generator: typeof F.generatorExpression;
+	readonly global: typeof F.globalStatement;
+	readonly if: typeof F.ifStatement;
+	readonly import: typeof F.importStatement;
+	readonly importFrom: typeof F.importFromStatement;
+	readonly match: typeof F.matchStatement;
+	readonly named: typeof F.namedExpression;
+	readonly nonlocal: typeof F.nonlocalStatement;
+	readonly not: typeof F.notOperator;
+	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly pass: typeof F.buildPassStatement;
-	readonly print: typeof _b$printStatement;
-	readonly raise: typeof _b$raiseStatement;
-	readonly return: typeof _b$returnStatement;
-	readonly try: typeof _b$tryStatement;
-	readonly typeAlias: typeof _b$typeAliasStatement;
-	readonly typed: typeof _b$typedParameter;
-	readonly typedDefault: typeof _b$typedDefaultParameter;
-	readonly unary: typeof _b$unaryOperator;
-	readonly while: typeof _b$whileStatement;
-	readonly with: typeof _b$withStatement;
+	readonly print: typeof F.printStatement;
+	readonly raise: typeof F.raiseStatement;
+	readonly return: typeof F.returnStatement;
+	readonly try: typeof F.tryStatement;
+	readonly typeAlias: typeof F.typeAliasStatement;
+	readonly typed: typeof F.typedParameter;
+	readonly typedDefault: typeof F.typedDefaultParameter;
+	readonly unary: typeof F.unaryOperator;
+	readonly while: typeof F.whileStatement;
+	readonly with: typeof F.withStatement;
 	readonly simpleStatement: typeof simpleStatement;
 	readonly compoundStatement: typeof compoundStatement;
 	readonly parameter: typeof parameter;
@@ -620,113 +404,113 @@ export const ir: {
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
-	module: _b$module,
-	importStatement: _b$importStatement,
-	relativeImport: _b$relativeImport,
-	futureImportStatement: _b$futureImportStatement,
-	importFromStatement: _b$importFromStatement,
-	aliasedImport: _b$aliasedImport,
-	printStatement: _b$printStatement,
-	chevron: _b$chevron,
-	assertStatement: _b$assertStatement,
-	expressionStatement: _b$expressionStatement,
-	namedExpression: _b$namedExpression,
-	returnStatement: _b$returnStatement,
-	deleteStatement: _b$deleteStatement,
-	raiseStatement: _b$raiseStatement,
-	ifStatement: _b$ifStatement,
-	elifClause: _b$elifClause,
-	elseClause: _b$elseClause,
-	matchStatement: _b$matchStatement,
-	caseClause: _b$caseClause,
-	forStatement: _b$forStatement,
-	whileStatement: _b$whileStatement,
-	tryStatement: _b$tryStatement,
-	exceptClause: _b$exceptClause,
-	finallyClause: _b$finallyClause,
-	withStatement: _b$withStatement,
-	withClause: _b$withClause,
-	withItem: _b$withItem,
-	functionDefinition: _b$functionDefinition,
-	parameters: _b$parameters,
-	lambdaParameters: _b$lambdaParameters,
-	listSplat: _b$listSplat,
-	dictionarySplat: _b$dictionarySplat,
-	globalStatement: _b$globalStatement,
-	nonlocalStatement: _b$nonlocalStatement,
-	execStatement: _b$execStatement,
-	typeAliasStatement: _b$typeAliasStatement,
-	classDefinition: _b$classDefinition,
-	typeParameter: _b$typeParameter,
-	parenthesizedListSplat: _b$parenthesizedListSplat,
-	argumentList: _b$argumentList,
-	decoratedDefinition: _b$decoratedDefinition,
-	decorator: _b$decorator,
-	block: _b$block,
-	expressionList: _b$expressionList,
-	dottedName: _b$dottedName,
-	casePattern: _b$casePattern,
-	unionPattern: _b$unionPattern,
-	dictPattern: _b$dictPattern,
-	keywordPattern: _b$keywordPattern,
-	splatPattern: _b$splatPattern,
-	classPattern: _b$classPattern,
-	complexPattern: _b$complexPattern,
-	tuplePattern: _b$tuplePattern,
-	listPattern: _b$listPattern,
-	defaultParameter: _b$defaultParameter,
-	typedDefaultParameter: _b$typedDefaultParameter,
-	listSplatPattern: _b$listSplatPattern,
-	dictionarySplatPattern: _b$dictionarySplatPattern,
-	asPattern: _b$asPattern,
-	notOperator: _b$notOperator,
-	booleanOperator: _b$booleanOperator,
-	binaryOperator: _b$binaryOperator,
-	unaryOperator: _b$unaryOperator,
-	comparisonOperator: _b$comparisonOperator,
-	lambda: _b$lambda,
-	lambdaWithinForInClause: _b$lambdaWithinForInClause,
-	assignment: _b$assignment,
-	augmentedAssignment: _b$augmentedAssignment,
-	patternList: _b$patternList,
-	yield: _b$yield,
-	attribute: _b$attribute,
-	subscript: _b$subscript,
-	slice: _b$slice,
-	call: _b$call,
-	typedParameter: _b$typedParameter,
-	type: _b$type,
-	splatType: _b$splatType,
-	genericType: _b$genericType,
-	unionType: _b$unionType,
-	constrainedType: _b$constrainedType,
-	memberType: _b$memberType,
-	keywordArgument: _b$keywordArgument,
-	list: _b$list,
-	set: _b$set,
-	tuple: _b$tuple,
-	dictionary: _b$dictionary,
-	pair: _b$pair,
-	listComprehension: _b$listComprehension,
-	dictionaryComprehension: _b$dictionaryComprehension,
-	setComprehension: _b$setComprehension,
-	generatorExpression: _b$generatorExpression,
-	parenthesizedExpression: _b$parenthesizedExpression,
-	forInClause: _b$forInClause,
-	ifClause: _b$ifClause,
-	conditionalExpression: _b$conditionalExpression,
-	concatenatedString: _b$concatenatedString,
-	string: _b$string,
-	stringContent: _b$stringContent,
-	interpolation: _b$interpolation,
-	formatSpecifier: _b$formatSpecifier,
-	await: _b$await,
-	caseTuplePattern: _b$caseTuplePattern,
-	caseListPattern: _b$caseListPattern,
-	caseAsPattern: _b$caseAsPattern,
-	comprehensionClauses: _b$comprehensionClauses,
-	printStatementArm1: _b$printStatementArm1,
-	printStatementArm2: _b$printStatementArm2,
+	module: F.module,
+	importStatement: F.importStatement,
+	relativeImport: F.relativeImport,
+	futureImportStatement: F.futureImportStatement,
+	importFromStatement: F.importFromStatement,
+	aliasedImport: F.aliasedImport,
+	printStatement: F.printStatement,
+	chevron: F.chevron,
+	assertStatement: F.assertStatement,
+	expressionStatement: F.expressionStatement,
+	namedExpression: F.namedExpression,
+	returnStatement: F.returnStatement,
+	deleteStatement: F.deleteStatement,
+	raiseStatement: F.raiseStatement,
+	ifStatement: F.ifStatement,
+	elifClause: F.elifClause,
+	elseClause: F.elseClause,
+	matchStatement: F.matchStatement,
+	caseClause: F.caseClause,
+	forStatement: F.forStatement,
+	whileStatement: F.whileStatement,
+	tryStatement: F.tryStatement,
+	exceptClause: F.exceptClause,
+	finallyClause: F.finallyClause,
+	withStatement: F.withStatement,
+	withClause: F.withClause,
+	withItem: F.withItem,
+	functionDefinition: F.functionDefinition,
+	parameters: F.parameters,
+	lambdaParameters: F.lambdaParameters,
+	listSplat: F.listSplat,
+	dictionarySplat: F.dictionarySplat,
+	globalStatement: F.globalStatement,
+	nonlocalStatement: F.nonlocalStatement,
+	execStatement: F.execStatement,
+	typeAliasStatement: F.typeAliasStatement,
+	classDefinition: F.classDefinition,
+	typeParameter: F.typeParameter,
+	parenthesizedListSplat: F.parenthesizedListSplat,
+	argumentList: F.argumentList,
+	decoratedDefinition: F.decoratedDefinition,
+	decorator: F.decorator,
+	block: F.block,
+	expressionList: F.expressionList,
+	dottedName: F.dottedName,
+	casePattern: F.casePattern,
+	unionPattern: F.unionPattern,
+	dictPattern: F.dictPattern,
+	keywordPattern: F.keywordPattern,
+	splatPattern: F.splatPattern,
+	classPattern: F.classPattern,
+	complexPattern: F.complexPattern,
+	tuplePattern: F.tuplePattern,
+	listPattern: F.listPattern,
+	defaultParameter: F.defaultParameter,
+	typedDefaultParameter: F.typedDefaultParameter,
+	listSplatPattern: F.listSplatPattern,
+	dictionarySplatPattern: F.dictionarySplatPattern,
+	asPattern: F.asPattern,
+	notOperator: F.notOperator,
+	booleanOperator: F.booleanOperator,
+	binaryOperator: F.binaryOperator,
+	unaryOperator: F.unaryOperator,
+	comparisonOperator: F.comparisonOperator,
+	lambda: F.lambda,
+	lambdaWithinForInClause: F.lambdaWithinForInClause,
+	assignment: F.assignment,
+	augmentedAssignment: F.augmentedAssignment,
+	patternList: F.patternList,
+	yield: F.yield_,
+	attribute: F.attribute,
+	subscript: F.subscript,
+	slice: F.slice,
+	call: F.call,
+	typedParameter: F.typedParameter,
+	type: F.type,
+	splatType: F.splatType,
+	genericType: F.genericType,
+	unionType: F.unionType,
+	constrainedType: F.constrainedType,
+	memberType: F.memberType,
+	keywordArgument: F.keywordArgument,
+	list: F.list,
+	set: F.set,
+	tuple: F.tuple,
+	dictionary: F.dictionary,
+	pair: F.pair,
+	listComprehension: F.listComprehension,
+	dictionaryComprehension: F.dictionaryComprehension,
+	setComprehension: F.setComprehension,
+	generatorExpression: F.generatorExpression,
+	parenthesizedExpression: F.parenthesizedExpression,
+	forInClause: F.forInClause,
+	ifClause: F.ifClause,
+	conditionalExpression: F.conditionalExpression,
+	concatenatedString: F.concatenatedString,
+	string: F.string,
+	stringContent: F.stringContent,
+	interpolation: F.interpolation,
+	formatSpecifier: F.formatSpecifier,
+	await: F.await_,
+	caseTuplePattern: F.caseTuplePattern,
+	caseListPattern: F.caseListPattern,
+	caseAsPattern: F.caseAsPattern,
+	comprehensionClauses: F.comprehensionClauses,
+	printStatementArm1: F.printStatementArm1,
+	printStatementArm2: F.printStatementArm2,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -755,43 +539,43 @@ export const ir: {
 	except: F.buildExcept,
 
 	// Supertype-stripped short aliases
-	as: _b$asPattern,
-	assert: _b$assertStatement,
-	binary: _b$binaryOperator,
-	boolean: _b$booleanOperator,
+	as: F.asPattern,
+	assert: F.assertStatement,
+	binary: F.binaryOperator,
+	boolean: F.booleanOperator,
 	break: F.buildBreakStatement,
-	class: _b$classDefinition,
-	comparison: _b$comparisonOperator,
-	conditional: _b$conditionalExpression,
+	class: F.classDefinition,
+	comparison: F.comparisonOperator,
+	conditional: F.conditionalExpression,
 	continue: F.buildContinueStatement,
-	decorated: _b$decoratedDefinition,
-	default: _b$defaultParameter,
-	delete: _b$deleteStatement,
-	exec: _b$execStatement,
-	for: _b$forStatement,
-	function: _b$functionDefinition,
-	futureImport: _b$futureImportStatement,
-	generator: _b$generatorExpression,
-	global: _b$globalStatement,
-	if: _b$ifStatement,
-	import: _b$importStatement,
-	importFrom: _b$importFromStatement,
-	match: _b$matchStatement,
-	named: _b$namedExpression,
-	nonlocal: _b$nonlocalStatement,
-	not: _b$notOperator,
-	parenthesized: _b$parenthesizedExpression,
+	decorated: F.decoratedDefinition,
+	default: F.defaultParameter,
+	delete: F.deleteStatement,
+	exec: F.execStatement,
+	for: F.forStatement,
+	function: F.functionDefinition,
+	futureImport: F.futureImportStatement,
+	generator: F.generatorExpression,
+	global: F.globalStatement,
+	if: F.ifStatement,
+	import: F.importStatement,
+	importFrom: F.importFromStatement,
+	match: F.matchStatement,
+	named: F.namedExpression,
+	nonlocal: F.nonlocalStatement,
+	not: F.notOperator,
+	parenthesized: F.parenthesizedExpression,
 	pass: F.buildPassStatement,
-	print: _b$printStatement,
-	raise: _b$raiseStatement,
-	return: _b$returnStatement,
-	try: _b$tryStatement,
-	typeAlias: _b$typeAliasStatement,
-	typed: _b$typedParameter,
-	typedDefault: _b$typedDefaultParameter,
-	unary: _b$unaryOperator,
-	while: _b$whileStatement,
-	with: _b$withStatement,
+	print: F.printStatement,
+	raise: F.raiseStatement,
+	return: F.returnStatement,
+	try: F.tryStatement,
+	typeAlias: F.typeAliasStatement,
+	typed: F.typedParameter,
+	typedDefault: F.typedDefaultParameter,
+	unary: F.unaryOperator,
+	while: F.whileStatement,
+	with: F.withStatement,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	simpleStatement,

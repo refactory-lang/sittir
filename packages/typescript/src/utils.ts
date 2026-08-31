@@ -123,15 +123,37 @@ export function attachProps<T extends (...args: never[]) => unknown, P extends R
 	return fn as T & P;
 }
 
-function ownProps<S extends object>(fn: S): Pick<S, keyof S> {
-	const out: Record<string, unknown> = {};
-	for (const key of Object.keys(fn)) out[key] = (fn as Record<string, unknown>)[key];
-	return out as Pick<S, keyof S>;
+export interface FlavorPair<S, C> {
+	readonly strict: S;
+	readonly coerce: C;
 }
 
-export function bundle<C extends (...args: never[]) => unknown, S extends (...args: never[]) => unknown>(
-	coerce: C,
-	strict: S
-): C & { strict: S } & Pick<S, keyof S> {
-	return attachProps(coerce, { strict, ...ownProps(strict) }) as C & { strict: S } & Pick<S, keyof S>;
+export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
+	return { strict, coerce };
+}
+
+type AnyFlavorFn = (...args: never[]) => unknown;
+
+export type Hoisted<B> =
+	B extends FlavorPair<infer S, infer C>
+		? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+		: B extends Record<string, unknown>
+			? { [K in keyof B]: Hoisted<B[K]> }
+			: B;
+
+function isFlavorPair(value: unknown): value is FlavorPair<unknown, unknown> {
+	return typeof value === 'object' && value !== null && 'strict' in value && 'coerce' in value;
+}
+
+export function hoist<B extends FlavorPair<unknown, unknown>>(b: B): Hoisted<B> {
+	const callable = (...args: never[]) => (b.coerce as AnyFlavorFn)(...args);
+	for (const [key, value] of Object.entries(b)) {
+		Object.defineProperty(callable, key, {
+			value: isFlavorPair(value) ? hoist(value) : value,
+			writable: true,
+			configurable: true,
+			enumerable: true
+		});
+	}
+	return callable as Hoisted<B>;
 }

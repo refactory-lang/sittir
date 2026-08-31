@@ -486,8 +486,7 @@ describe('ir emitter — bundle composition', () => {
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		expect(irSrc).toContain('const _b$ifaceBody = bundle(FR.coerceToIfaceBody, F.buildIfaceBody);');
-		expect(irSrc).toContain('ifaceBody: _b$ifaceBody,');
+		expect(irSrc).toContain('ifaceBody: F.ifaceBody,');
 	});
 });
 
@@ -498,9 +497,10 @@ describe('refines overlay — attaches per-form factories on the parent builder'
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
 		const text = emitRefinesOverlay({ nodeMap });
+		expect(text).toContain("import * as B from '../bundle.js';");
 		expect(text).toContain("import * as F from '../raw.js';");
-		expect(text).toContain('export const buildIfaceBody: typeof F.buildIfaceBody & {');
-		expect(text).toContain('  curly: typeof F.buildIfaceBodyCurly;');
-		expect(text).toContain('  curly: F.buildIfaceBodyCurly,');
+		expect(text).toContain('export const ifaceBody = {');
+		expect(text).toContain('	...B.ifaceBody,');
+		expect(text).toContain('	curly: { strict: F.buildIfaceBodyCurly },');
 	});
 });

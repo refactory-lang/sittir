@@ -46,6 +46,7 @@ export interface GeneratedFiles {
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
 	overlays: Record<OverlayName, string>;
+	factoriesBundle: string;
 	factoriesIndex: string;
 	wrap: string;
 	utils: string;
@@ -176,6 +177,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		jinjaTemplates: emitted.jinjaTemplates,
 		factories: emitted.factories,
 		overlays: emitted.overlays,
+		factoriesBundle: emitted.factoriesBundle,
 		factoriesIndex: emitted.factoriesIndex,
 		wrap: emitted.wrap,
 		utils: emitted.utils,

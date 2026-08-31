@@ -12,292 +12,6 @@
 // entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
-import * as FR from './from.js';
-import { bundle } from './utils.js';
-
-const _b$constItem = bundle(FR.coerceToConstItem, F.buildConstItem);
-
-const _b$macroInvocation = bundle(FR.coerceToMacroInvocation, F.buildMacroInvocation);
-
-const _b$macroDefinition = bundle(FR.coerceToMacroDefinition, F.buildMacroDefinition);
-
-const _b$attributeItem = bundle(FR.coerceToAttributeItem, F.buildAttributeItem);
-
-const _b$innerAttributeItem = bundle(FR.coerceToInnerAttributeItem, F.buildInnerAttributeItem);
-
-const _b$modItem = bundle(FR.coerceToModItem, F.buildModItem);
-
-const _b$foreignModItem = bundle(FR.coerceToForeignModItem, F.buildForeignModItem);
-
-const _b$structItem = bundle(FR.coerceToStructItem, F.buildStructItem);
-
-const _b$unionItem = bundle(FR.coerceToUnionItem, F.buildUnionItem);
-
-const _b$enumItem = bundle(FR.coerceToEnumItem, F.buildEnumItem);
-
-const _b$typeItem = bundle(FR.coerceToTypeItem, F.buildTypeItem);
-
-const _b$functionItem = bundle(FR.coerceToFunctionItem, F.buildFunctionItem);
-
-const _b$functionSignatureItem = bundle(FR.coerceToFunctionSignatureItem, F.buildFunctionSignatureItem);
-
-const _b$implItem = bundle(FR.coerceToImplItem, F.buildImplItem);
-
-const _b$traitItem = bundle(FR.coerceToTraitItem, F.buildTraitItem);
-
-const _b$associatedType = bundle(FR.coerceToAssociatedType, F.buildAssociatedType);
-
-const _b$letDeclaration = bundle(FR.coerceToLetDeclaration, F.buildLetDeclaration);
-
-const _b$useDeclaration = bundle(FR.coerceToUseDeclaration, F.buildUseDeclaration);
-
-const _b$externCrateDeclaration = bundle(FR.coerceToExternCrateDeclaration, F.buildExternCrateDeclaration);
-
-const _b$staticItem = bundle(FR.coerceToStaticItem, F.buildStaticItem);
-
-const _b$stringLiteral = bundle(FR.coerceToStringLiteral, F.buildStringLiteral);
-
-const _b$rawStringLiteral = bundle(FR.coerceToRawStringLiteral, F.buildRawStringLiteral);
-
-const _b$abstractType = bundle(FR.coerceToAbstractType, F.buildAbstractType);
-
-const _b$referenceType = bundle(FR.coerceToReferenceType, F.buildReferenceType);
-
-const _b$pointerType = bundle(FR.coerceToPointerType, F.buildPointerType);
-
-const _b$genericType = bundle(FR.coerceToGenericType, F.buildGenericType);
-
-const _b$scopedTypeIdentifier = bundle(FR.coerceToScopedTypeIdentifier, F.buildScopedTypeIdentifier);
-
-const _b$tupleType = bundle(FR.coerceToTupleType, F.buildTupleType);
-
-const _b$arrayType = bundle(FR.coerceToArrayType, F.buildArrayType);
-
-const _b$functionType = bundle(FR.coerceToFunctionType, F.buildFunctionType);
-
-const _b$dynamicType = bundle(FR.coerceToDynamicType, F.buildDynamicType);
-
-const _b$boundedType = bundle(FR.coerceToBoundedType, F.buildBoundedType);
-
-const _b$removedTraitBound = bundle(FR.coerceToRemovedTraitBound, F.buildRemovedTraitBound);
-
-const _b$unaryExpression = bundle(FR.coerceToUnaryExpression, F.buildUnaryExpression);
-
-const _b$referenceExpression = bundle(FR.coerceToReferenceExpression, F.buildReferenceExpression);
-
-const _b$tryExpression = bundle(FR.coerceToTryExpression, F.buildTryExpression);
-
-const _b$binaryExpression = bundle(FR.coerceToBinaryExpression, F.buildBinaryExpression);
-
-const _b$assignmentExpression = bundle(FR.coerceToAssignmentExpression, F.buildAssignmentExpression);
-
-const _b$compoundAssignmentExpr = bundle(FR.coerceToCompoundAssignmentExpr, F.buildCompoundAssignmentExpr);
-
-const _b$typeCastExpression = bundle(FR.coerceToTypeCastExpression, F.buildTypeCastExpression);
-
-const _b$callExpression = bundle(FR.coerceToCallExpression, F.buildCallExpression);
-
-const _b$returnExpression = bundle(FR.coerceToReturnExpression, F.buildReturnExpression);
-
-const _b$yieldExpression = bundle(FR.coerceToYieldExpression, F.buildYieldExpression);
-
-const _b$scopedIdentifier = bundle(FR.coerceToScopedIdentifier, F.buildScopedIdentifier);
-
-const _b$genericFunction = bundle(FR.coerceToGenericFunction, F.buildGenericFunction);
-
-const _b$awaitExpression = bundle(FR.coerceToAwaitExpression, F.buildAwaitExpression);
-
-const _b$fieldExpression = bundle(FR.coerceToFieldExpression, F.buildFieldExpression);
-
-const _b$arrayExpression = bundle(FR.coerceToArrayExpression, F.buildArrayExpression);
-
-const _b$tupleExpression = bundle(FR.coerceToTupleExpression, F.buildTupleExpression);
-
-const _b$breakExpression = bundle(FR.coerceToBreakExpression, F.buildBreakExpression);
-
-const _b$continueExpression = bundle(FR.coerceToContinueExpression, F.buildContinueExpression);
-
-const _b$indexExpression = bundle(FR.coerceToIndexExpression, F.buildIndexExpression);
-
-const _b$closureExpression = bundle(FR.coerceToClosureExpression, F.buildClosureExpression);
-
-const _b$parenthesizedExpression = bundle(FR.coerceToParenthesizedExpression, F.buildParenthesizedExpression);
-
-const _b$structExpression = bundle(FR.coerceToStructExpression, F.buildStructExpression);
-
-const _b$unsafeBlock = bundle(FR.coerceToUnsafeBlock, F.buildUnsafeBlock);
-
-const _b$asyncBlock = bundle(FR.coerceToAsyncBlock, F.buildAsyncBlock);
-
-const _b$genBlock = bundle(FR.coerceToGenBlock, F.buildGenBlock);
-
-const _b$tryBlock = bundle(FR.coerceToTryBlock, F.buildTryBlock);
-
-const _b$block = bundle(FR.coerceToBlock, F.buildBlock);
-
-const _b$ifExpression = bundle(FR.coerceToIfExpression, F.buildIfExpression);
-
-const _b$matchExpression = bundle(FR.coerceToMatchExpression, F.buildMatchExpression);
-
-const _b$whileExpression = bundle(FR.coerceToWhileExpression, F.buildWhileExpression);
-
-const _b$loopExpression = bundle(FR.coerceToLoopExpression, F.buildLoopExpression);
-
-const _b$forExpression = bundle(FR.coerceToForExpression, F.buildForExpression);
-
-const _b$constBlock = bundle(FR.coerceToConstBlock, F.buildConstBlock);
-
-const _b$rangeExpression = bundle(FR.coerceToRangeExpression, F.buildRangeExpression);
-
-const _b$negativeLiteral = bundle(FR.coerceToNegativeLiteral, F.buildNegativeLiteral);
-
-const _b$genericPattern = bundle(FR.coerceToGenericPattern, F.buildGenericPattern);
-
-const _b$tuplePattern = bundle(FR.coerceToTuplePattern, F.buildTuplePattern);
-
-const _b$tupleStructPattern = bundle(FR.coerceToTupleStructPattern, F.buildTupleStructPattern);
-
-const _b$structPattern = bundle(FR.coerceToStructPattern, F.buildStructPattern);
-
-const _b$refPattern = bundle(FR.coerceToRefPattern, F.buildRefPattern);
-
-const _b$slicePattern = bundle(FR.coerceToSlicePattern, F.buildSlicePattern);
-
-const _b$capturedPattern = bundle(FR.coerceToCapturedPattern, F.buildCapturedPattern);
-
-const _b$referencePattern = bundle(FR.coerceToReferencePattern, F.buildReferencePattern);
-
-const _b$mutPattern = bundle(FR.coerceToMutPattern, F.buildMutPattern);
-
-const _b$rangePattern = bundle(FR.coerceToRangePattern, F.buildRangePattern);
-
-const _b$orPattern = bundle(FR.coerceToOrPattern, F.buildOrPattern);
-
-const _b$sourceFile = bundle(FR.coerceToSourceFile, F.buildSourceFile);
-
-const _b$expressionStatement = bundle(FR.coerceToExpressionStatement, F.buildExpressionStatement);
-
-const _b$macroRule = bundle(FR.coerceToMacroRule, F.buildMacroRule);
-
-const _b$tokenTreePattern = bundle(FR.coerceToTokenTreePattern, F.buildTokenTreePattern);
-
-const _b$tokenBindingPattern = bundle(FR.coerceToTokenBindingPattern, F.buildTokenBindingPattern);
-
-const _b$tokenRepetitionPattern = bundle(FR.coerceToTokenRepetitionPattern, F.buildTokenRepetitionPattern);
-
-const _b$tokenTree = bundle(FR.coerceToTokenTree, F.buildTokenTree);
-
-const _b$tokenRepetition = bundle(FR.coerceToTokenRepetition, F.buildTokenRepetition);
-
-const _b$attribute = bundle(FR.coerceToAttribute, F.buildAttribute);
-
-const _b$declarationList = bundle(FR.coerceToDeclarationList, F.buildDeclarationList);
-
-const _b$enumVariantList = bundle(FR.coerceToEnumVariantList, F.buildEnumVariantList);
-
-const _b$enumVariant = bundle(FR.coerceToEnumVariant, F.buildEnumVariant);
-
-const _b$fieldDeclarationList = bundle(FR.coerceToFieldDeclarationList, F.buildFieldDeclarationList);
-
-const _b$fieldDeclaration = bundle(FR.coerceToFieldDeclaration, F.buildFieldDeclaration);
-
-const _b$orderedFieldDeclarationList = bundle(
-	FR.coerceToOrderedFieldDeclarationList,
-	F.buildOrderedFieldDeclarationList
-);
-
-const _b$functionModifiers = bundle(FR.coerceToFunctionModifiers, F.buildFunctionModifiers);
-
-const _b$whereClause = bundle(FR.coerceToWhereClause, F.buildWhereClause);
-
-const _b$wherePredicate = bundle(FR.coerceToWherePredicate, F.buildWherePredicate);
-
-const _b$traitBounds = bundle(FR.coerceToTraitBounds, F.buildTraitBounds);
-
-const _b$higherRankedTraitBound = bundle(FR.coerceToHigherRankedTraitBound, F.buildHigherRankedTraitBound);
-
-const _b$typeParameters = bundle(FR.coerceToTypeParameters, F.buildTypeParameters);
-
-const _b$constParameter = bundle(FR.coerceToConstParameter, F.buildConstParameter);
-
-const _b$typeParameter = bundle(FR.coerceToTypeParameter, F.buildTypeParameter);
-
-const _b$lifetimeParameter = bundle(FR.coerceToLifetimeParameter, F.buildLifetimeParameter);
-
-const _b$scopedUseList = bundle(FR.coerceToScopedUseList, F.buildScopedUseList);
-
-const _b$useList = bundle(FR.coerceToUseList, F.buildUseList);
-
-const _b$useAsClause = bundle(FR.coerceToUseAsClause, F.buildUseAsClause);
-
-const _b$useWildcard = bundle(FR.coerceToUseWildcard, F.buildUseWildcard);
-
-const _b$parameters = bundle(FR.coerceToParameters, F.buildParameters);
-
-const _b$selfParameter = bundle(FR.coerceToSelfParameter, F.buildSelfParameter);
-
-const _b$variadicParameter = bundle(FR.coerceToVariadicParameter, F.buildVariadicParameter);
-
-const _b$parameter = bundle(FR.coerceToParameter, F.buildParameter);
-
-const _b$externModifier = bundle(FR.coerceToExternModifier, F.buildExternModifier);
-
-const _b$visibilityModifier = bundle(FR.coerceToVisibilityModifier, F.buildVisibilityModifier);
-
-const _b$bracketedType = bundle(FR.coerceToBracketedType, F.buildBracketedType);
-
-const _b$qualifiedType = bundle(FR.coerceToQualifiedType, F.buildQualifiedType);
-
-const _b$lifetime = bundle(FR.coerceToLifetime, F.buildLifetime);
-
-const _b$forLifetimes = bundle(FR.coerceToForLifetimes, F.buildForLifetimes);
-
-const _b$genericTypeWithTurbofish = bundle(FR.coerceToGenericTypeWithTurbofish, F.buildGenericTypeWithTurbofish);
-
-const _b$useBounds = bundle(FR.coerceToUseBounds, F.buildUseBounds);
-
-const _b$typeArguments = bundle(FR.coerceToTypeArguments, F.buildTypeArguments);
-
-const _b$typeBinding = bundle(FR.coerceToTypeBinding, F.buildTypeBinding);
-
-const _b$delimTokenTree = bundle(FR.coerceToDelimTokenTree, F.buildDelimTokenTree);
-
-const _b$scopedTypeIdentifierInExpressionPosition = bundle(
-	FR.coerceToScopedTypeIdentifierInExpressionPosition,
-	F.buildScopedTypeIdentifierInExpressionPosition
-);
-
-const _b$arguments = bundle(FR.coerceToArguments, F.buildArguments);
-
-const _b$fieldInitializerList = bundle(FR.coerceToFieldInitializerList, F.buildFieldInitializerList);
-
-const _b$shorthandFieldInitializer = bundle(FR.coerceToShorthandFieldInitializer, F.buildShorthandFieldInitializer);
-
-const _b$fieldInitializer = bundle(FR.coerceToFieldInitializer, F.buildFieldInitializer);
-
-const _b$baseFieldInitializer = bundle(FR.coerceToBaseFieldInitializer, F.buildBaseFieldInitializer);
-
-const _b$letCondition = bundle(FR.coerceToLetCondition, F.buildLetCondition);
-
-const _b$elseClause = bundle(FR.coerceToElseClause, F.buildElseClause);
-
-const _b$matchBlock = bundle(FR.coerceToMatchBlock, F.buildMatchBlock);
-
-const _b$matchArm = bundle(FR.coerceToMatchArm, F.buildMatchArm);
-
-const _b$lastMatchArm = bundle(FR.coerceToLastMatchArm, F.buildLastMatchArm);
-
-const _b$matchPattern = bundle(FR.coerceToMatchPattern, F.buildMatchPattern);
-
-const _b$closureParameters = bundle(FR.coerceToClosureParameters, F.buildClosureParameters);
-
-const _b$label = bundle(FR.coerceToLabel, F.buildLabel);
-
-const _b$fieldPattern = bundle(FR.coerceToFieldPattern, F.buildFieldPattern);
-
-const _b$lineComment = bundle(FR.coerceToLineComment, F.buildLineComment);
-
-const _b$blockComment = bundle(FR.coerceToBlockComment, F.buildBlockComment);
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
@@ -349,54 +63,54 @@ export const synonym = {
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const declarationStatement: {
-	readonly const: typeof _b$constItem;
-	readonly macroInvocation: typeof _b$macroInvocation;
-	readonly macro: typeof _b$macroDefinition;
+	readonly const: typeof F.constItem;
+	readonly macroInvocation: typeof F.macroInvocation;
+	readonly macro: typeof F.macroDefinition;
 	readonly empty: typeof F.buildEmptyStatement;
-	readonly attribute: typeof _b$attributeItem;
-	readonly innerAttribute: typeof _b$innerAttributeItem;
-	readonly mod: typeof _b$modItem;
-	readonly foreignMod: typeof _b$foreignModItem;
-	readonly struct: typeof _b$structItem;
-	readonly union: typeof _b$unionItem;
-	readonly enum: typeof _b$enumItem;
-	readonly type: typeof _b$typeItem;
-	readonly function: typeof _b$functionItem;
-	readonly functionSignature: typeof _b$functionSignatureItem;
-	readonly impl: typeof _b$implItem;
-	readonly trait: typeof _b$traitItem;
-	readonly associated: typeof _b$associatedType;
-	readonly let: typeof _b$letDeclaration;
-	readonly use: typeof _b$useDeclaration;
-	readonly externCrate: typeof _b$externCrateDeclaration;
-	readonly static: typeof _b$staticItem;
+	readonly attribute: typeof F.attributeItem;
+	readonly innerAttribute: typeof F.innerAttributeItem;
+	readonly mod: typeof F.modItem;
+	readonly foreignMod: typeof F.foreignModItem;
+	readonly struct: typeof F.structItem;
+	readonly union: typeof F.unionItem;
+	readonly enum: typeof F.enumItem;
+	readonly type: typeof F.typeItem;
+	readonly function: typeof F.functionItem;
+	readonly functionSignature: typeof F.functionSignatureItem;
+	readonly impl: typeof F.implItem;
+	readonly trait: typeof F.traitItem;
+	readonly associated: typeof F.associatedType;
+	readonly let: typeof F.letDeclaration;
+	readonly use: typeof F.useDeclaration;
+	readonly externCrate: typeof F.externCrateDeclaration;
+	readonly static: typeof F.staticItem;
 } = {
-	const: _b$constItem,
-	macroInvocation: _b$macroInvocation,
-	macro: _b$macroDefinition,
+	const: F.constItem,
+	macroInvocation: F.macroInvocation,
+	macro: F.macroDefinition,
 	empty: F.buildEmptyStatement,
-	attribute: _b$attributeItem,
-	innerAttribute: _b$innerAttributeItem,
-	mod: _b$modItem,
-	foreignMod: _b$foreignModItem,
-	struct: _b$structItem,
-	union: _b$unionItem,
-	enum: _b$enumItem,
-	type: _b$typeItem,
-	function: _b$functionItem,
-	functionSignature: _b$functionSignatureItem,
-	impl: _b$implItem,
-	trait: _b$traitItem,
-	associated: _b$associatedType,
-	let: _b$letDeclaration,
-	use: _b$useDeclaration,
-	externCrate: _b$externCrateDeclaration,
-	static: _b$staticItem
+	attribute: F.attributeItem,
+	innerAttribute: F.innerAttributeItem,
+	mod: F.modItem,
+	foreignMod: F.foreignModItem,
+	struct: F.structItem,
+	union: F.unionItem,
+	enum: F.enumItem,
+	type: F.typeItem,
+	function: F.functionItem,
+	functionSignature: F.functionSignatureItem,
+	impl: F.implItem,
+	trait: F.traitItem,
+	associated: F.associatedType,
+	let: F.letDeclaration,
+	use: F.useDeclaration,
+	externCrate: F.externCrateDeclaration,
+	static: F.staticItem
 };
 
 export const nonSpecialToken: {
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
@@ -407,8 +121,8 @@ export const nonSpecialToken: {
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
 } = {
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
 	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
@@ -421,195 +135,195 @@ export const nonSpecialToken: {
 };
 
 export const type: {
-	readonly abstract: typeof _b$abstractType;
-	readonly reference: typeof _b$referenceType;
+	readonly abstract: typeof F.abstractType;
+	readonly reference: typeof F.referenceType;
 	readonly metavariable: typeof F.buildMetavariable;
-	readonly pointer: typeof _b$pointerType;
-	readonly generic: typeof _b$genericType;
-	readonly scopedIdentifier: typeof _b$scopedTypeIdentifier;
-	readonly tuple: typeof _b$tupleType;
+	readonly pointer: typeof F.pointerType;
+	readonly generic: typeof F.genericType;
+	readonly scopedIdentifier: typeof F.scopedTypeIdentifier;
+	readonly tuple: typeof F.tupleType;
 	readonly unit: typeof F.buildUnitType;
-	readonly array: typeof _b$arrayType;
-	readonly function: typeof _b$functionType;
+	readonly array: typeof F.arrayType;
+	readonly function: typeof F.functionType;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly macroInvocation: typeof _b$macroInvocation;
+	readonly macroInvocation: typeof F.macroInvocation;
 	readonly never: typeof F.buildNeverType;
-	readonly dynamic: typeof _b$dynamicType;
-	readonly bounded: typeof _b$boundedType;
-	readonly removedTraitBound: typeof _b$removedTraitBound;
+	readonly dynamic: typeof F.dynamicType;
+	readonly bounded: typeof F.boundedType;
+	readonly removedTraitBound: typeof F.removedTraitBound;
 } = {
-	abstract: _b$abstractType,
-	reference: _b$referenceType,
+	abstract: F.abstractType,
+	reference: F.referenceType,
 	metavariable: F.buildMetavariable,
-	pointer: _b$pointerType,
-	generic: _b$genericType,
-	scopedIdentifier: _b$scopedTypeIdentifier,
-	tuple: _b$tupleType,
+	pointer: F.pointerType,
+	generic: F.genericType,
+	scopedIdentifier: F.scopedTypeIdentifier,
+	tuple: F.tupleType,
 	unit: F.buildUnitType,
-	array: _b$arrayType,
-	function: _b$functionType,
+	array: F.arrayType,
+	function: F.functionType,
 	identifier: F.buildIdentifier,
-	macroInvocation: _b$macroInvocation,
+	macroInvocation: F.macroInvocation,
 	never: F.buildNeverType,
-	dynamic: _b$dynamicType,
-	bounded: _b$boundedType,
-	removedTraitBound: _b$removedTraitBound
+	dynamic: F.dynamicType,
+	bounded: F.boundedType,
+	removedTraitBound: F.removedTraitBound
 };
 
 export const expression: {
-	readonly unary: typeof _b$unaryExpression;
-	readonly reference: typeof _b$referenceExpression;
-	readonly try: typeof _b$tryExpression;
-	readonly binary: typeof _b$binaryExpression;
-	readonly assignment: typeof _b$assignmentExpression;
-	readonly compoundAssignment: typeof _b$compoundAssignmentExpr;
-	readonly typeCast: typeof _b$typeCastExpression;
-	readonly call: typeof _b$callExpression;
-	readonly return: typeof _b$returnExpression;
-	readonly yield: typeof _b$yieldExpression;
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
+	readonly unary: typeof F.unaryExpression;
+	readonly reference: typeof F.referenceExpression;
+	readonly try: typeof F.tryExpression;
+	readonly binary: typeof F.binaryExpression;
+	readonly assignment: typeof F.assignmentExpression;
+	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
+	readonly typeCast: typeof F.typeCastExpression;
+	readonly call: typeof F.callExpression;
+	readonly return: typeof F.returnExpression;
+	readonly yield: typeof F.yieldExpression;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-	readonly genericFunction: typeof _b$genericFunction;
-	readonly await: typeof _b$awaitExpression;
-	readonly field: typeof _b$fieldExpression;
-	readonly array: typeof _b$arrayExpression;
-	readonly tuple: typeof _b$tupleExpression;
-	readonly macroInvocation: typeof _b$macroInvocation;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+	readonly genericFunction: typeof F.genericFunction;
+	readonly await: typeof F.awaitExpression;
+	readonly field: typeof F.fieldExpression;
+	readonly array: typeof F.arrayExpression;
+	readonly tuple: typeof F.tupleExpression;
+	readonly macroInvocation: typeof F.macroInvocation;
 	readonly unit: typeof F.buildUnitExpression;
-	readonly break: typeof _b$breakExpression;
-	readonly continue: typeof _b$continueExpression;
-	readonly index: typeof _b$indexExpression;
+	readonly break: typeof F.breakExpression;
+	readonly continue: typeof F.continueExpression;
+	readonly index: typeof F.indexExpression;
 	readonly metavariable: typeof F.buildMetavariable;
-	readonly closure: typeof _b$closureExpression;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
-	readonly struct: typeof _b$structExpression;
-	readonly unsafeBlock: typeof _b$unsafeBlock;
-	readonly asyncBlock: typeof _b$asyncBlock;
-	readonly genBlock: typeof _b$genBlock;
-	readonly tryBlock: typeof _b$tryBlock;
-	readonly block: typeof _b$block;
-	readonly if: typeof _b$ifExpression;
-	readonly match: typeof _b$matchExpression;
-	readonly while: typeof _b$whileExpression;
-	readonly loop: typeof _b$loopExpression;
-	readonly for: typeof _b$forExpression;
-	readonly constBlock: typeof _b$constBlock;
-	readonly range: typeof _b$rangeExpression;
+	readonly closure: typeof F.closureExpression;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly struct: typeof F.structExpression;
+	readonly unsafeBlock: typeof F.unsafeBlock;
+	readonly asyncBlock: typeof F.asyncBlock;
+	readonly genBlock: typeof F.genBlock;
+	readonly tryBlock: typeof F.tryBlock;
+	readonly block: typeof F.block;
+	readonly if: typeof F.ifExpression;
+	readonly match: typeof F.matchExpression;
+	readonly while: typeof F.whileExpression;
+	readonly loop: typeof F.loopExpression;
+	readonly for: typeof F.forExpression;
+	readonly constBlock: typeof F.constBlock;
+	readonly range: typeof F.rangeExpression;
 } = {
-	unary: _b$unaryExpression,
-	reference: _b$referenceExpression,
-	try: _b$tryExpression,
-	binary: _b$binaryExpression,
-	assignment: _b$assignmentExpression,
-	compoundAssignment: _b$compoundAssignmentExpr,
-	typeCast: _b$typeCastExpression,
-	call: _b$callExpression,
-	return: _b$returnExpression,
-	yield: _b$yieldExpression,
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
+	unary: F.unaryExpression,
+	reference: F.referenceExpression,
+	try: F.tryExpression,
+	binary: F.binaryExpression,
+	assignment: F.assignmentExpression,
+	compoundAssignment: F.compoundAssignmentExpr,
+	typeCast: F.typeCastExpression,
+	call: F.callExpression,
+	return: F.returnExpression,
+	yield: F.yieldExpression,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
 	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
-	scopedIdentifier: _b$scopedIdentifier,
-	genericFunction: _b$genericFunction,
-	await: _b$awaitExpression,
-	field: _b$fieldExpression,
-	array: _b$arrayExpression,
-	tuple: _b$tupleExpression,
-	macroInvocation: _b$macroInvocation,
+	scopedIdentifier: F.scopedIdentifier,
+	genericFunction: F.genericFunction,
+	await: F.awaitExpression,
+	field: F.fieldExpression,
+	array: F.arrayExpression,
+	tuple: F.tupleExpression,
+	macroInvocation: F.macroInvocation,
 	unit: F.buildUnitExpression,
-	break: _b$breakExpression,
-	continue: _b$continueExpression,
-	index: _b$indexExpression,
+	break: F.breakExpression,
+	continue: F.continueExpression,
+	index: F.indexExpression,
 	metavariable: F.buildMetavariable,
-	closure: _b$closureExpression,
-	parenthesized: _b$parenthesizedExpression,
-	struct: _b$structExpression,
-	unsafeBlock: _b$unsafeBlock,
-	asyncBlock: _b$asyncBlock,
-	genBlock: _b$genBlock,
-	tryBlock: _b$tryBlock,
-	block: _b$block,
-	if: _b$ifExpression,
-	match: _b$matchExpression,
-	while: _b$whileExpression,
-	loop: _b$loopExpression,
-	for: _b$forExpression,
-	constBlock: _b$constBlock,
-	range: _b$rangeExpression
+	closure: F.closureExpression,
+	parenthesized: F.parenthesizedExpression,
+	struct: F.structExpression,
+	unsafeBlock: F.unsafeBlock,
+	asyncBlock: F.asyncBlock,
+	genBlock: F.genBlock,
+	tryBlock: F.tryBlock,
+	block: F.block,
+	if: F.ifExpression,
+	match: F.matchExpression,
+	while: F.whileExpression,
+	loop: F.loopExpression,
+	for: F.forExpression,
+	constBlock: F.constBlock,
+	range: F.rangeExpression
 };
 
 export const pattern: {
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
-	readonly negative: typeof _b$negativeLiteral;
+	readonly negative: typeof F.negativeLiteral;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-	readonly generic: typeof _b$genericPattern;
-	readonly tuple: typeof _b$tuplePattern;
-	readonly tupleStruct: typeof _b$tupleStructPattern;
-	readonly struct: typeof _b$structPattern;
-	readonly ref: typeof _b$refPattern;
-	readonly slice: typeof _b$slicePattern;
-	readonly captured: typeof _b$capturedPattern;
-	readonly reference: typeof _b$referencePattern;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+	readonly generic: typeof F.genericPattern;
+	readonly tuple: typeof F.tuplePattern;
+	readonly tupleStruct: typeof F.tupleStructPattern;
+	readonly struct: typeof F.structPattern;
+	readonly ref: typeof F.refPattern;
+	readonly slice: typeof F.slicePattern;
+	readonly captured: typeof F.capturedPattern;
+	readonly reference: typeof F.referencePattern;
 	readonly remainingField: typeof F.buildRemainingFieldPattern;
-	readonly mut: typeof _b$mutPattern;
-	readonly range: typeof _b$rangePattern;
-	readonly or: typeof _b$orPattern;
-	readonly constBlock: typeof _b$constBlock;
-	readonly macroInvocation: typeof _b$macroInvocation;
+	readonly mut: typeof F.mutPattern;
+	readonly range: typeof F.rangePattern;
+	readonly or: typeof F.orPattern;
+	readonly constBlock: typeof F.constBlock;
+	readonly macroInvocation: typeof F.macroInvocation;
 } = {
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
 	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
-	negative: _b$negativeLiteral,
+	negative: F.negativeLiteral,
 	identifier: F.buildIdentifier,
-	scopedIdentifier: _b$scopedIdentifier,
-	generic: _b$genericPattern,
-	tuple: _b$tuplePattern,
-	tupleStruct: _b$tupleStructPattern,
-	struct: _b$structPattern,
-	ref: _b$refPattern,
-	slice: _b$slicePattern,
-	captured: _b$capturedPattern,
-	reference: _b$referencePattern,
+	scopedIdentifier: F.scopedIdentifier,
+	generic: F.genericPattern,
+	tuple: F.tuplePattern,
+	tupleStruct: F.tupleStructPattern,
+	struct: F.structPattern,
+	ref: F.refPattern,
+	slice: F.slicePattern,
+	captured: F.capturedPattern,
+	reference: F.referencePattern,
 	remainingField: F.buildRemainingFieldPattern,
-	mut: _b$mutPattern,
-	range: _b$rangePattern,
-	or: _b$orPattern,
-	constBlock: _b$constBlock,
-	macroInvocation: _b$macroInvocation
+	mut: F.mutPattern,
+	range: F.rangePattern,
+	or: F.orPattern,
+	constBlock: F.constBlock,
+	macroInvocation: F.macroInvocation
 };
 
 export const literal: {
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 } = {
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
 	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
@@ -617,163 +331,163 @@ export const literal: {
 };
 
 export const literalPattern: {
-	readonly string: typeof _b$stringLiteral;
-	readonly rawString: typeof _b$rawStringLiteral;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
 	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
-	readonly negative: typeof _b$negativeLiteral;
+	readonly negative: typeof F.negativeLiteral;
 } = {
-	string: _b$stringLiteral,
-	rawString: _b$rawStringLiteral,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
 	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
-	negative: _b$negativeLiteral
+	negative: F.negativeLiteral
 };
 
 export const ir: {
-	readonly sourceFile: typeof _b$sourceFile;
-	readonly expressionStatement: typeof _b$expressionStatement;
-	readonly macroDefinition: typeof _b$macroDefinition;
-	readonly macroRule: typeof _b$macroRule;
-	readonly tokenTreePattern: typeof _b$tokenTreePattern;
-	readonly tokenBindingPattern: typeof _b$tokenBindingPattern;
-	readonly tokenRepetitionPattern: typeof _b$tokenRepetitionPattern;
-	readonly tokenTree: typeof _b$tokenTree;
-	readonly tokenRepetition: typeof _b$tokenRepetition;
-	readonly attributeItem: typeof _b$attributeItem;
-	readonly innerAttributeItem: typeof _b$innerAttributeItem;
-	readonly attribute: typeof _b$attribute;
-	readonly modItem: typeof _b$modItem;
-	readonly foreignModItem: typeof _b$foreignModItem;
-	readonly declarationList: typeof _b$declarationList;
-	readonly structItem: typeof _b$structItem;
-	readonly unionItem: typeof _b$unionItem;
-	readonly enumItem: typeof _b$enumItem;
-	readonly enumVariantList: typeof _b$enumVariantList;
-	readonly enumVariant: typeof _b$enumVariant;
-	readonly fieldDeclarationList: typeof _b$fieldDeclarationList;
-	readonly fieldDeclaration: typeof _b$fieldDeclaration;
-	readonly orderedFieldDeclarationList: typeof _b$orderedFieldDeclarationList;
-	readonly externCrateDeclaration: typeof _b$externCrateDeclaration;
-	readonly constItem: typeof _b$constItem;
-	readonly staticItem: typeof _b$staticItem;
-	readonly typeItem: typeof _b$typeItem;
-	readonly functionItem: typeof _b$functionItem;
-	readonly functionSignatureItem: typeof _b$functionSignatureItem;
-	readonly functionModifiers: typeof _b$functionModifiers;
-	readonly whereClause: typeof _b$whereClause;
-	readonly wherePredicate: typeof _b$wherePredicate;
-	readonly implItem: typeof _b$implItem;
-	readonly traitItem: typeof _b$traitItem;
-	readonly associatedType: typeof _b$associatedType;
-	readonly traitBounds: typeof _b$traitBounds;
-	readonly higherRankedTraitBound: typeof _b$higherRankedTraitBound;
-	readonly removedTraitBound: typeof _b$removedTraitBound;
-	readonly typeParameters: typeof _b$typeParameters;
-	readonly constParameter: typeof _b$constParameter;
-	readonly typeParameter: typeof _b$typeParameter;
-	readonly lifetimeParameter: typeof _b$lifetimeParameter;
-	readonly letDeclaration: typeof _b$letDeclaration;
-	readonly useDeclaration: typeof _b$useDeclaration;
-	readonly scopedUseList: typeof _b$scopedUseList;
-	readonly useList: typeof _b$useList;
-	readonly useAsClause: typeof _b$useAsClause;
-	readonly useWildcard: typeof _b$useWildcard;
-	readonly parameters: typeof _b$parameters;
-	readonly selfParameter: typeof _b$selfParameter;
-	readonly variadicParameter: typeof _b$variadicParameter;
-	readonly parameter: typeof _b$parameter;
-	readonly externModifier: typeof _b$externModifier;
-	readonly visibilityModifier: typeof _b$visibilityModifier;
-	readonly bracketedType: typeof _b$bracketedType;
-	readonly qualifiedType: typeof _b$qualifiedType;
-	readonly lifetime: typeof _b$lifetime;
-	readonly arrayType: typeof _b$arrayType;
-	readonly forLifetimes: typeof _b$forLifetimes;
-	readonly functionType: typeof _b$functionType;
-	readonly tupleType: typeof _b$tupleType;
-	readonly genericFunction: typeof _b$genericFunction;
-	readonly genericType: typeof _b$genericType;
-	readonly genericTypeWithTurbofish: typeof _b$genericTypeWithTurbofish;
-	readonly boundedType: typeof _b$boundedType;
-	readonly useBounds: typeof _b$useBounds;
-	readonly typeArguments: typeof _b$typeArguments;
-	readonly typeBinding: typeof _b$typeBinding;
-	readonly referenceType: typeof _b$referenceType;
-	readonly pointerType: typeof _b$pointerType;
-	readonly abstractType: typeof _b$abstractType;
-	readonly dynamicType: typeof _b$dynamicType;
-	readonly macroInvocation: typeof _b$macroInvocation;
-	readonly delimTokenTree: typeof _b$delimTokenTree;
-	readonly scopedIdentifier: typeof _b$scopedIdentifier;
-	readonly scopedTypeIdentifierInExpressionPosition: typeof _b$scopedTypeIdentifierInExpressionPosition;
-	readonly scopedTypeIdentifier: typeof _b$scopedTypeIdentifier;
-	readonly rangeExpression: typeof _b$rangeExpression;
-	readonly unaryExpression: typeof _b$unaryExpression;
-	readonly tryExpression: typeof _b$tryExpression;
-	readonly referenceExpression: typeof _b$referenceExpression;
-	readonly binaryExpression: typeof _b$binaryExpression;
-	readonly assignmentExpression: typeof _b$assignmentExpression;
-	readonly compoundAssignmentExpr: typeof _b$compoundAssignmentExpr;
-	readonly typeCastExpression: typeof _b$typeCastExpression;
-	readonly returnExpression: typeof _b$returnExpression;
-	readonly yieldExpression: typeof _b$yieldExpression;
-	readonly callExpression: typeof _b$callExpression;
-	readonly arguments: typeof _b$arguments;
-	readonly arrayExpression: typeof _b$arrayExpression;
-	readonly parenthesizedExpression: typeof _b$parenthesizedExpression;
-	readonly tupleExpression: typeof _b$tupleExpression;
-	readonly structExpression: typeof _b$structExpression;
-	readonly fieldInitializerList: typeof _b$fieldInitializerList;
-	readonly shorthandFieldInitializer: typeof _b$shorthandFieldInitializer;
-	readonly fieldInitializer: typeof _b$fieldInitializer;
-	readonly baseFieldInitializer: typeof _b$baseFieldInitializer;
-	readonly ifExpression: typeof _b$ifExpression;
-	readonly letCondition: typeof _b$letCondition;
-	readonly elseClause: typeof _b$elseClause;
-	readonly matchExpression: typeof _b$matchExpression;
-	readonly matchBlock: typeof _b$matchBlock;
-	readonly matchArm: typeof _b$matchArm;
-	readonly lastMatchArm: typeof _b$lastMatchArm;
-	readonly matchPattern: typeof _b$matchPattern;
-	readonly whileExpression: typeof _b$whileExpression;
-	readonly loopExpression: typeof _b$loopExpression;
-	readonly forExpression: typeof _b$forExpression;
-	readonly constBlock: typeof _b$constBlock;
-	readonly closureExpression: typeof _b$closureExpression;
-	readonly closureParameters: typeof _b$closureParameters;
-	readonly label: typeof _b$label;
-	readonly breakExpression: typeof _b$breakExpression;
-	readonly continueExpression: typeof _b$continueExpression;
-	readonly indexExpression: typeof _b$indexExpression;
-	readonly awaitExpression: typeof _b$awaitExpression;
-	readonly fieldExpression: typeof _b$fieldExpression;
-	readonly unsafeBlock: typeof _b$unsafeBlock;
-	readonly asyncBlock: typeof _b$asyncBlock;
-	readonly genBlock: typeof _b$genBlock;
-	readonly tryBlock: typeof _b$tryBlock;
-	readonly block: typeof _b$block;
-	readonly genericPattern: typeof _b$genericPattern;
-	readonly tuplePattern: typeof _b$tuplePattern;
-	readonly slicePattern: typeof _b$slicePattern;
-	readonly tupleStructPattern: typeof _b$tupleStructPattern;
-	readonly structPattern: typeof _b$structPattern;
-	readonly fieldPattern: typeof _b$fieldPattern;
-	readonly mutPattern: typeof _b$mutPattern;
-	readonly rangePattern: typeof _b$rangePattern;
-	readonly refPattern: typeof _b$refPattern;
-	readonly capturedPattern: typeof _b$capturedPattern;
-	readonly referencePattern: typeof _b$referencePattern;
-	readonly orPattern: typeof _b$orPattern;
-	readonly negativeLiteral: typeof _b$negativeLiteral;
-	readonly stringLiteral: typeof _b$stringLiteral;
-	readonly rawStringLiteral: typeof _b$rawStringLiteral;
-	readonly lineComment: typeof _b$lineComment;
-	readonly blockComment: typeof _b$blockComment;
+	readonly sourceFile: typeof F.sourceFile;
+	readonly expressionStatement: typeof F.expressionStatement;
+	readonly macroDefinition: typeof F.macroDefinition;
+	readonly macroRule: typeof F.macroRule;
+	readonly tokenTreePattern: typeof F.tokenTreePattern;
+	readonly tokenBindingPattern: typeof F.tokenBindingPattern;
+	readonly tokenRepetitionPattern: typeof F.tokenRepetitionPattern;
+	readonly tokenTree: typeof F.tokenTree;
+	readonly tokenRepetition: typeof F.tokenRepetition;
+	readonly attributeItem: typeof F.attributeItem;
+	readonly innerAttributeItem: typeof F.innerAttributeItem;
+	readonly attribute: typeof F.attribute;
+	readonly modItem: typeof F.modItem;
+	readonly foreignModItem: typeof F.foreignModItem;
+	readonly declarationList: typeof F.declarationList;
+	readonly structItem: typeof F.structItem;
+	readonly unionItem: typeof F.unionItem;
+	readonly enumItem: typeof F.enumItem;
+	readonly enumVariantList: typeof F.enumVariantList;
+	readonly enumVariant: typeof F.enumVariant;
+	readonly fieldDeclarationList: typeof F.fieldDeclarationList;
+	readonly fieldDeclaration: typeof F.fieldDeclaration;
+	readonly orderedFieldDeclarationList: typeof F.orderedFieldDeclarationList;
+	readonly externCrateDeclaration: typeof F.externCrateDeclaration;
+	readonly constItem: typeof F.constItem;
+	readonly staticItem: typeof F.staticItem;
+	readonly typeItem: typeof F.typeItem;
+	readonly functionItem: typeof F.functionItem;
+	readonly functionSignatureItem: typeof F.functionSignatureItem;
+	readonly functionModifiers: typeof F.functionModifiers;
+	readonly whereClause: typeof F.whereClause;
+	readonly wherePredicate: typeof F.wherePredicate;
+	readonly implItem: typeof F.implItem;
+	readonly traitItem: typeof F.traitItem;
+	readonly associatedType: typeof F.associatedType;
+	readonly traitBounds: typeof F.traitBounds;
+	readonly higherRankedTraitBound: typeof F.higherRankedTraitBound;
+	readonly removedTraitBound: typeof F.removedTraitBound;
+	readonly typeParameters: typeof F.typeParameters;
+	readonly constParameter: typeof F.constParameter;
+	readonly typeParameter: typeof F.typeParameter;
+	readonly lifetimeParameter: typeof F.lifetimeParameter;
+	readonly letDeclaration: typeof F.letDeclaration;
+	readonly useDeclaration: typeof F.useDeclaration;
+	readonly scopedUseList: typeof F.scopedUseList;
+	readonly useList: typeof F.useList;
+	readonly useAsClause: typeof F.useAsClause;
+	readonly useWildcard: typeof F.useWildcard;
+	readonly parameters: typeof F.parameters;
+	readonly selfParameter: typeof F.selfParameter;
+	readonly variadicParameter: typeof F.variadicParameter;
+	readonly parameter: typeof F.parameter;
+	readonly externModifier: typeof F.externModifier;
+	readonly visibilityModifier: typeof F.visibilityModifier;
+	readonly bracketedType: typeof F.bracketedType;
+	readonly qualifiedType: typeof F.qualifiedType;
+	readonly lifetime: typeof F.lifetime;
+	readonly arrayType: typeof F.arrayType;
+	readonly forLifetimes: typeof F.forLifetimes;
+	readonly functionType: typeof F.functionType;
+	readonly tupleType: typeof F.tupleType;
+	readonly genericFunction: typeof F.genericFunction;
+	readonly genericType: typeof F.genericType;
+	readonly genericTypeWithTurbofish: typeof F.genericTypeWithTurbofish;
+	readonly boundedType: typeof F.boundedType;
+	readonly useBounds: typeof F.useBounds;
+	readonly typeArguments: typeof F.typeArguments;
+	readonly typeBinding: typeof F.typeBinding;
+	readonly referenceType: typeof F.referenceType;
+	readonly pointerType: typeof F.pointerType;
+	readonly abstractType: typeof F.abstractType;
+	readonly dynamicType: typeof F.dynamicType;
+	readonly macroInvocation: typeof F.macroInvocation;
+	readonly delimTokenTree: typeof F.delimTokenTree;
+	readonly scopedIdentifier: typeof F.scopedIdentifier;
+	readonly scopedTypeIdentifierInExpressionPosition: typeof F.scopedTypeIdentifierInExpressionPosition;
+	readonly scopedTypeIdentifier: typeof F.scopedTypeIdentifier;
+	readonly rangeExpression: typeof F.rangeExpression;
+	readonly unaryExpression: typeof F.unaryExpression;
+	readonly tryExpression: typeof F.tryExpression;
+	readonly referenceExpression: typeof F.referenceExpression;
+	readonly binaryExpression: typeof F.binaryExpression;
+	readonly assignmentExpression: typeof F.assignmentExpression;
+	readonly compoundAssignmentExpr: typeof F.compoundAssignmentExpr;
+	readonly typeCastExpression: typeof F.typeCastExpression;
+	readonly returnExpression: typeof F.returnExpression;
+	readonly yieldExpression: typeof F.yieldExpression;
+	readonly callExpression: typeof F.callExpression;
+	readonly arguments: typeof F.arguments_;
+	readonly arrayExpression: typeof F.arrayExpression;
+	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
+	readonly tupleExpression: typeof F.tupleExpression;
+	readonly structExpression: typeof F.structExpression;
+	readonly fieldInitializerList: typeof F.fieldInitializerList;
+	readonly shorthandFieldInitializer: typeof F.shorthandFieldInitializer;
+	readonly fieldInitializer: typeof F.fieldInitializer;
+	readonly baseFieldInitializer: typeof F.baseFieldInitializer;
+	readonly ifExpression: typeof F.ifExpression;
+	readonly letCondition: typeof F.letCondition;
+	readonly elseClause: typeof F.elseClause;
+	readonly matchExpression: typeof F.matchExpression;
+	readonly matchBlock: typeof F.matchBlock;
+	readonly matchArm: typeof F.matchArm;
+	readonly lastMatchArm: typeof F.lastMatchArm;
+	readonly matchPattern: typeof F.matchPattern;
+	readonly whileExpression: typeof F.whileExpression;
+	readonly loopExpression: typeof F.loopExpression;
+	readonly forExpression: typeof F.forExpression;
+	readonly constBlock: typeof F.constBlock;
+	readonly closureExpression: typeof F.closureExpression;
+	readonly closureParameters: typeof F.closureParameters;
+	readonly label: typeof F.label;
+	readonly breakExpression: typeof F.breakExpression;
+	readonly continueExpression: typeof F.continueExpression;
+	readonly indexExpression: typeof F.indexExpression;
+	readonly awaitExpression: typeof F.awaitExpression;
+	readonly fieldExpression: typeof F.fieldExpression;
+	readonly unsafeBlock: typeof F.unsafeBlock;
+	readonly asyncBlock: typeof F.asyncBlock;
+	readonly genBlock: typeof F.genBlock;
+	readonly tryBlock: typeof F.tryBlock;
+	readonly block: typeof F.block;
+	readonly genericPattern: typeof F.genericPattern;
+	readonly tuplePattern: typeof F.tuplePattern;
+	readonly slicePattern: typeof F.slicePattern;
+	readonly tupleStructPattern: typeof F.tupleStructPattern;
+	readonly structPattern: typeof F.structPattern;
+	readonly fieldPattern: typeof F.fieldPattern;
+	readonly mutPattern: typeof F.mutPattern;
+	readonly rangePattern: typeof F.rangePattern;
+	readonly refPattern: typeof F.refPattern;
+	readonly capturedPattern: typeof F.capturedPattern;
+	readonly referencePattern: typeof F.referencePattern;
+	readonly orPattern: typeof F.orPattern;
+	readonly negativeLiteral: typeof F.negativeLiteral;
+	readonly stringLiteral: typeof F.stringLiteral;
+	readonly rawStringLiteral: typeof F.rawStringLiteral;
+	readonly lineComment: typeof F.lineComment;
+	readonly blockComment: typeof F.blockComment;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -794,70 +508,70 @@ export const ir: {
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
-	readonly abstract: typeof _b$abstractType;
-	readonly array: typeof _b$arrayType;
-	readonly assignment: typeof _b$assignmentExpression;
-	readonly associated: typeof _b$associatedType;
-	readonly await: typeof _b$awaitExpression;
-	readonly binary: typeof _b$binaryExpression;
+	readonly abstract: typeof F.abstractType;
+	readonly array: typeof F.arrayType;
+	readonly assignment: typeof F.assignmentExpression;
+	readonly associated: typeof F.associatedType;
+	readonly await: typeof F.awaitExpression;
+	readonly binary: typeof F.binaryExpression;
 	readonly boolean: typeof F.buildBooleanLiteral;
-	readonly bounded: typeof _b$boundedType;
-	readonly break: typeof _b$breakExpression;
-	readonly call: typeof _b$callExpression;
-	readonly captured: typeof _b$capturedPattern;
+	readonly bounded: typeof F.boundedType;
+	readonly break: typeof F.breakExpression;
+	readonly call: typeof F.callExpression;
+	readonly captured: typeof F.capturedPattern;
 	readonly char: typeof F.buildCharLiteral;
-	readonly closure: typeof _b$closureExpression;
-	readonly compoundAssignment: typeof _b$compoundAssignmentExpr;
-	readonly const: typeof _b$constItem;
-	readonly continue: typeof _b$continueExpression;
-	readonly dynamic: typeof _b$dynamicType;
+	readonly closure: typeof F.closureExpression;
+	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
+	readonly const: typeof F.constItem;
+	readonly continue: typeof F.continueExpression;
+	readonly dynamic: typeof F.dynamicType;
 	readonly empty: typeof F.buildEmptyStatement;
-	readonly enum: typeof _b$enumItem;
-	readonly externCrate: typeof _b$externCrateDeclaration;
-	readonly field: typeof _b$fieldExpression;
+	readonly enum: typeof F.enumItem;
+	readonly externCrate: typeof F.externCrateDeclaration;
+	readonly field: typeof F.fieldExpression;
 	readonly float: typeof F.buildFloatLiteral;
-	readonly for: typeof _b$forExpression;
-	readonly foreignMod: typeof _b$foreignModItem;
-	readonly function: typeof _b$functionItem;
-	readonly functionSignature: typeof _b$functionSignatureItem;
-	readonly generic: typeof _b$genericType;
-	readonly if: typeof _b$ifExpression;
-	readonly impl: typeof _b$implItem;
-	readonly index: typeof _b$indexExpression;
-	readonly innerAttribute: typeof _b$innerAttributeItem;
+	readonly for: typeof F.forExpression;
+	readonly foreignMod: typeof F.foreignModItem;
+	readonly function: typeof F.functionItem;
+	readonly functionSignature: typeof F.functionSignatureItem;
+	readonly generic: typeof F.genericType;
+	readonly if: typeof F.ifExpression;
+	readonly impl: typeof F.implItem;
+	readonly index: typeof F.indexExpression;
+	readonly innerAttribute: typeof F.innerAttributeItem;
 	readonly integer: typeof F.buildIntegerLiteral;
-	readonly let: typeof _b$letDeclaration;
-	readonly loop: typeof _b$loopExpression;
-	readonly macro: typeof _b$macroDefinition;
-	readonly match: typeof _b$matchExpression;
-	readonly mod: typeof _b$modItem;
-	readonly mut: typeof _b$mutPattern;
-	readonly negative: typeof _b$negativeLiteral;
+	readonly let: typeof F.letDeclaration;
+	readonly loop: typeof F.loopExpression;
+	readonly macro: typeof F.macroDefinition;
+	readonly match: typeof F.matchExpression;
+	readonly mod: typeof F.modItem;
+	readonly mut: typeof F.mutPattern;
+	readonly negative: typeof F.negativeLiteral;
 	readonly never: typeof F.buildNeverType;
-	readonly or: typeof _b$orPattern;
-	readonly parenthesized: typeof _b$parenthesizedExpression;
-	readonly pointer: typeof _b$pointerType;
-	readonly range: typeof _b$rangeExpression;
-	readonly rawString: typeof _b$rawStringLiteral;
-	readonly ref: typeof _b$refPattern;
-	readonly reference: typeof _b$referenceType;
+	readonly or: typeof F.orPattern;
+	readonly parenthesized: typeof F.parenthesizedExpression;
+	readonly pointer: typeof F.pointerType;
+	readonly range: typeof F.rangeExpression;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly ref: typeof F.refPattern;
+	readonly reference: typeof F.referenceType;
 	readonly remainingField: typeof F.buildRemainingFieldPattern;
-	readonly return: typeof _b$returnExpression;
-	readonly slice: typeof _b$slicePattern;
-	readonly static: typeof _b$staticItem;
-	readonly string: typeof _b$stringLiteral;
-	readonly struct: typeof _b$structItem;
-	readonly trait: typeof _b$traitItem;
-	readonly try: typeof _b$tryExpression;
-	readonly tuple: typeof _b$tupleType;
-	readonly tupleStruct: typeof _b$tupleStructPattern;
-	readonly typeCast: typeof _b$typeCastExpression;
-	readonly unary: typeof _b$unaryExpression;
-	readonly union: typeof _b$unionItem;
+	readonly return: typeof F.returnExpression;
+	readonly slice: typeof F.slicePattern;
+	readonly static: typeof F.staticItem;
+	readonly string: typeof F.stringLiteral;
+	readonly struct: typeof F.structItem;
+	readonly trait: typeof F.traitItem;
+	readonly try: typeof F.tryExpression;
+	readonly tuple: typeof F.tupleType;
+	readonly tupleStruct: typeof F.tupleStructPattern;
+	readonly typeCast: typeof F.typeCastExpression;
+	readonly unary: typeof F.unaryExpression;
+	readonly union: typeof F.unionItem;
 	readonly unit: typeof F.buildUnitType;
-	readonly use: typeof _b$useDeclaration;
-	readonly while: typeof _b$whileExpression;
-	readonly yield: typeof _b$yieldExpression;
+	readonly use: typeof F.useDeclaration;
+	readonly while: typeof F.whileExpression;
+	readonly yield: typeof F.yieldExpression;
 	readonly declarationStatement: typeof declarationStatement;
 	readonly nonSpecialToken: typeof nonSpecialToken;
 	readonly type: typeof type;
@@ -868,145 +582,145 @@ export const ir: {
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
-	sourceFile: _b$sourceFile,
-	expressionStatement: _b$expressionStatement,
-	macroDefinition: _b$macroDefinition,
-	macroRule: _b$macroRule,
-	tokenTreePattern: _b$tokenTreePattern,
-	tokenBindingPattern: _b$tokenBindingPattern,
-	tokenRepetitionPattern: _b$tokenRepetitionPattern,
-	tokenTree: _b$tokenTree,
-	tokenRepetition: _b$tokenRepetition,
-	attributeItem: _b$attributeItem,
-	innerAttributeItem: _b$innerAttributeItem,
-	attribute: _b$attribute,
-	modItem: _b$modItem,
-	foreignModItem: _b$foreignModItem,
-	declarationList: _b$declarationList,
-	structItem: _b$structItem,
-	unionItem: _b$unionItem,
-	enumItem: _b$enumItem,
-	enumVariantList: _b$enumVariantList,
-	enumVariant: _b$enumVariant,
-	fieldDeclarationList: _b$fieldDeclarationList,
-	fieldDeclaration: _b$fieldDeclaration,
-	orderedFieldDeclarationList: _b$orderedFieldDeclarationList,
-	externCrateDeclaration: _b$externCrateDeclaration,
-	constItem: _b$constItem,
-	staticItem: _b$staticItem,
-	typeItem: _b$typeItem,
-	functionItem: _b$functionItem,
-	functionSignatureItem: _b$functionSignatureItem,
-	functionModifiers: _b$functionModifiers,
-	whereClause: _b$whereClause,
-	wherePredicate: _b$wherePredicate,
-	implItem: _b$implItem,
-	traitItem: _b$traitItem,
-	associatedType: _b$associatedType,
-	traitBounds: _b$traitBounds,
-	higherRankedTraitBound: _b$higherRankedTraitBound,
-	removedTraitBound: _b$removedTraitBound,
-	typeParameters: _b$typeParameters,
-	constParameter: _b$constParameter,
-	typeParameter: _b$typeParameter,
-	lifetimeParameter: _b$lifetimeParameter,
-	letDeclaration: _b$letDeclaration,
-	useDeclaration: _b$useDeclaration,
-	scopedUseList: _b$scopedUseList,
-	useList: _b$useList,
-	useAsClause: _b$useAsClause,
-	useWildcard: _b$useWildcard,
-	parameters: _b$parameters,
-	selfParameter: _b$selfParameter,
-	variadicParameter: _b$variadicParameter,
-	parameter: _b$parameter,
-	externModifier: _b$externModifier,
-	visibilityModifier: _b$visibilityModifier,
-	bracketedType: _b$bracketedType,
-	qualifiedType: _b$qualifiedType,
-	lifetime: _b$lifetime,
-	arrayType: _b$arrayType,
-	forLifetimes: _b$forLifetimes,
-	functionType: _b$functionType,
-	tupleType: _b$tupleType,
-	genericFunction: _b$genericFunction,
-	genericType: _b$genericType,
-	genericTypeWithTurbofish: _b$genericTypeWithTurbofish,
-	boundedType: _b$boundedType,
-	useBounds: _b$useBounds,
-	typeArguments: _b$typeArguments,
-	typeBinding: _b$typeBinding,
-	referenceType: _b$referenceType,
-	pointerType: _b$pointerType,
-	abstractType: _b$abstractType,
-	dynamicType: _b$dynamicType,
-	macroInvocation: _b$macroInvocation,
-	delimTokenTree: _b$delimTokenTree,
-	scopedIdentifier: _b$scopedIdentifier,
-	scopedTypeIdentifierInExpressionPosition: _b$scopedTypeIdentifierInExpressionPosition,
-	scopedTypeIdentifier: _b$scopedTypeIdentifier,
-	rangeExpression: _b$rangeExpression,
-	unaryExpression: _b$unaryExpression,
-	tryExpression: _b$tryExpression,
-	referenceExpression: _b$referenceExpression,
-	binaryExpression: _b$binaryExpression,
-	assignmentExpression: _b$assignmentExpression,
-	compoundAssignmentExpr: _b$compoundAssignmentExpr,
-	typeCastExpression: _b$typeCastExpression,
-	returnExpression: _b$returnExpression,
-	yieldExpression: _b$yieldExpression,
-	callExpression: _b$callExpression,
-	arguments: _b$arguments,
-	arrayExpression: _b$arrayExpression,
-	parenthesizedExpression: _b$parenthesizedExpression,
-	tupleExpression: _b$tupleExpression,
-	structExpression: _b$structExpression,
-	fieldInitializerList: _b$fieldInitializerList,
-	shorthandFieldInitializer: _b$shorthandFieldInitializer,
-	fieldInitializer: _b$fieldInitializer,
-	baseFieldInitializer: _b$baseFieldInitializer,
-	ifExpression: _b$ifExpression,
-	letCondition: _b$letCondition,
-	elseClause: _b$elseClause,
-	matchExpression: _b$matchExpression,
-	matchBlock: _b$matchBlock,
-	matchArm: _b$matchArm,
-	lastMatchArm: _b$lastMatchArm,
-	matchPattern: _b$matchPattern,
-	whileExpression: _b$whileExpression,
-	loopExpression: _b$loopExpression,
-	forExpression: _b$forExpression,
-	constBlock: _b$constBlock,
-	closureExpression: _b$closureExpression,
-	closureParameters: _b$closureParameters,
-	label: _b$label,
-	breakExpression: _b$breakExpression,
-	continueExpression: _b$continueExpression,
-	indexExpression: _b$indexExpression,
-	awaitExpression: _b$awaitExpression,
-	fieldExpression: _b$fieldExpression,
-	unsafeBlock: _b$unsafeBlock,
-	asyncBlock: _b$asyncBlock,
-	genBlock: _b$genBlock,
-	tryBlock: _b$tryBlock,
-	block: _b$block,
-	genericPattern: _b$genericPattern,
-	tuplePattern: _b$tuplePattern,
-	slicePattern: _b$slicePattern,
-	tupleStructPattern: _b$tupleStructPattern,
-	structPattern: _b$structPattern,
-	fieldPattern: _b$fieldPattern,
-	mutPattern: _b$mutPattern,
-	rangePattern: _b$rangePattern,
-	refPattern: _b$refPattern,
-	capturedPattern: _b$capturedPattern,
-	referencePattern: _b$referencePattern,
-	orPattern: _b$orPattern,
-	negativeLiteral: _b$negativeLiteral,
-	stringLiteral: _b$stringLiteral,
-	rawStringLiteral: _b$rawStringLiteral,
-	lineComment: _b$lineComment,
-	blockComment: _b$blockComment,
+	sourceFile: F.sourceFile,
+	expressionStatement: F.expressionStatement,
+	macroDefinition: F.macroDefinition,
+	macroRule: F.macroRule,
+	tokenTreePattern: F.tokenTreePattern,
+	tokenBindingPattern: F.tokenBindingPattern,
+	tokenRepetitionPattern: F.tokenRepetitionPattern,
+	tokenTree: F.tokenTree,
+	tokenRepetition: F.tokenRepetition,
+	attributeItem: F.attributeItem,
+	innerAttributeItem: F.innerAttributeItem,
+	attribute: F.attribute,
+	modItem: F.modItem,
+	foreignModItem: F.foreignModItem,
+	declarationList: F.declarationList,
+	structItem: F.structItem,
+	unionItem: F.unionItem,
+	enumItem: F.enumItem,
+	enumVariantList: F.enumVariantList,
+	enumVariant: F.enumVariant,
+	fieldDeclarationList: F.fieldDeclarationList,
+	fieldDeclaration: F.fieldDeclaration,
+	orderedFieldDeclarationList: F.orderedFieldDeclarationList,
+	externCrateDeclaration: F.externCrateDeclaration,
+	constItem: F.constItem,
+	staticItem: F.staticItem,
+	typeItem: F.typeItem,
+	functionItem: F.functionItem,
+	functionSignatureItem: F.functionSignatureItem,
+	functionModifiers: F.functionModifiers,
+	whereClause: F.whereClause,
+	wherePredicate: F.wherePredicate,
+	implItem: F.implItem,
+	traitItem: F.traitItem,
+	associatedType: F.associatedType,
+	traitBounds: F.traitBounds,
+	higherRankedTraitBound: F.higherRankedTraitBound,
+	removedTraitBound: F.removedTraitBound,
+	typeParameters: F.typeParameters,
+	constParameter: F.constParameter,
+	typeParameter: F.typeParameter,
+	lifetimeParameter: F.lifetimeParameter,
+	letDeclaration: F.letDeclaration,
+	useDeclaration: F.useDeclaration,
+	scopedUseList: F.scopedUseList,
+	useList: F.useList,
+	useAsClause: F.useAsClause,
+	useWildcard: F.useWildcard,
+	parameters: F.parameters,
+	selfParameter: F.selfParameter,
+	variadicParameter: F.variadicParameter,
+	parameter: F.parameter,
+	externModifier: F.externModifier,
+	visibilityModifier: F.visibilityModifier,
+	bracketedType: F.bracketedType,
+	qualifiedType: F.qualifiedType,
+	lifetime: F.lifetime,
+	arrayType: F.arrayType,
+	forLifetimes: F.forLifetimes,
+	functionType: F.functionType,
+	tupleType: F.tupleType,
+	genericFunction: F.genericFunction,
+	genericType: F.genericType,
+	genericTypeWithTurbofish: F.genericTypeWithTurbofish,
+	boundedType: F.boundedType,
+	useBounds: F.useBounds,
+	typeArguments: F.typeArguments,
+	typeBinding: F.typeBinding,
+	referenceType: F.referenceType,
+	pointerType: F.pointerType,
+	abstractType: F.abstractType,
+	dynamicType: F.dynamicType,
+	macroInvocation: F.macroInvocation,
+	delimTokenTree: F.delimTokenTree,
+	scopedIdentifier: F.scopedIdentifier,
+	scopedTypeIdentifierInExpressionPosition: F.scopedTypeIdentifierInExpressionPosition,
+	scopedTypeIdentifier: F.scopedTypeIdentifier,
+	rangeExpression: F.rangeExpression,
+	unaryExpression: F.unaryExpression,
+	tryExpression: F.tryExpression,
+	referenceExpression: F.referenceExpression,
+	binaryExpression: F.binaryExpression,
+	assignmentExpression: F.assignmentExpression,
+	compoundAssignmentExpr: F.compoundAssignmentExpr,
+	typeCastExpression: F.typeCastExpression,
+	returnExpression: F.returnExpression,
+	yieldExpression: F.yieldExpression,
+	callExpression: F.callExpression,
+	arguments: F.arguments_,
+	arrayExpression: F.arrayExpression,
+	parenthesizedExpression: F.parenthesizedExpression,
+	tupleExpression: F.tupleExpression,
+	structExpression: F.structExpression,
+	fieldInitializerList: F.fieldInitializerList,
+	shorthandFieldInitializer: F.shorthandFieldInitializer,
+	fieldInitializer: F.fieldInitializer,
+	baseFieldInitializer: F.baseFieldInitializer,
+	ifExpression: F.ifExpression,
+	letCondition: F.letCondition,
+	elseClause: F.elseClause,
+	matchExpression: F.matchExpression,
+	matchBlock: F.matchBlock,
+	matchArm: F.matchArm,
+	lastMatchArm: F.lastMatchArm,
+	matchPattern: F.matchPattern,
+	whileExpression: F.whileExpression,
+	loopExpression: F.loopExpression,
+	forExpression: F.forExpression,
+	constBlock: F.constBlock,
+	closureExpression: F.closureExpression,
+	closureParameters: F.closureParameters,
+	label: F.label,
+	breakExpression: F.breakExpression,
+	continueExpression: F.continueExpression,
+	indexExpression: F.indexExpression,
+	awaitExpression: F.awaitExpression,
+	fieldExpression: F.fieldExpression,
+	unsafeBlock: F.unsafeBlock,
+	asyncBlock: F.asyncBlock,
+	genBlock: F.genBlock,
+	tryBlock: F.tryBlock,
+	block: F.block,
+	genericPattern: F.genericPattern,
+	tuplePattern: F.tuplePattern,
+	slicePattern: F.slicePattern,
+	tupleStructPattern: F.tupleStructPattern,
+	structPattern: F.structPattern,
+	fieldPattern: F.fieldPattern,
+	mutPattern: F.mutPattern,
+	rangePattern: F.rangePattern,
+	refPattern: F.refPattern,
+	capturedPattern: F.capturedPattern,
+	referencePattern: F.referencePattern,
+	orPattern: F.orPattern,
+	negativeLiteral: F.negativeLiteral,
+	stringLiteral: F.stringLiteral,
+	rawStringLiteral: F.rawStringLiteral,
+	lineComment: F.lineComment,
+	blockComment: F.blockComment,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
@@ -1033,70 +747,70 @@ export const ir: {
 	floatLiteral: F.buildFloatLiteral,
 
 	// Supertype-stripped short aliases
-	abstract: _b$abstractType,
-	array: _b$arrayType,
-	assignment: _b$assignmentExpression,
-	associated: _b$associatedType,
-	await: _b$awaitExpression,
-	binary: _b$binaryExpression,
+	abstract: F.abstractType,
+	array: F.arrayType,
+	assignment: F.assignmentExpression,
+	associated: F.associatedType,
+	await: F.awaitExpression,
+	binary: F.binaryExpression,
 	boolean: F.buildBooleanLiteral,
-	bounded: _b$boundedType,
-	break: _b$breakExpression,
-	call: _b$callExpression,
-	captured: _b$capturedPattern,
+	bounded: F.boundedType,
+	break: F.breakExpression,
+	call: F.callExpression,
+	captured: F.capturedPattern,
 	char: F.buildCharLiteral,
-	closure: _b$closureExpression,
-	compoundAssignment: _b$compoundAssignmentExpr,
-	const: _b$constItem,
-	continue: _b$continueExpression,
-	dynamic: _b$dynamicType,
+	closure: F.closureExpression,
+	compoundAssignment: F.compoundAssignmentExpr,
+	const: F.constItem,
+	continue: F.continueExpression,
+	dynamic: F.dynamicType,
 	empty: F.buildEmptyStatement,
-	enum: _b$enumItem,
-	externCrate: _b$externCrateDeclaration,
-	field: _b$fieldExpression,
+	enum: F.enumItem,
+	externCrate: F.externCrateDeclaration,
+	field: F.fieldExpression,
 	float: F.buildFloatLiteral,
-	for: _b$forExpression,
-	foreignMod: _b$foreignModItem,
-	function: _b$functionItem,
-	functionSignature: _b$functionSignatureItem,
-	generic: _b$genericType,
-	if: _b$ifExpression,
-	impl: _b$implItem,
-	index: _b$indexExpression,
-	innerAttribute: _b$innerAttributeItem,
+	for: F.forExpression,
+	foreignMod: F.foreignModItem,
+	function: F.functionItem,
+	functionSignature: F.functionSignatureItem,
+	generic: F.genericType,
+	if: F.ifExpression,
+	impl: F.implItem,
+	index: F.indexExpression,
+	innerAttribute: F.innerAttributeItem,
 	integer: F.buildIntegerLiteral,
-	let: _b$letDeclaration,
-	loop: _b$loopExpression,
-	macro: _b$macroDefinition,
-	match: _b$matchExpression,
-	mod: _b$modItem,
-	mut: _b$mutPattern,
-	negative: _b$negativeLiteral,
+	let: F.letDeclaration,
+	loop: F.loopExpression,
+	macro: F.macroDefinition,
+	match: F.matchExpression,
+	mod: F.modItem,
+	mut: F.mutPattern,
+	negative: F.negativeLiteral,
 	never: F.buildNeverType,
-	or: _b$orPattern,
-	parenthesized: _b$parenthesizedExpression,
-	pointer: _b$pointerType,
-	range: _b$rangeExpression,
-	rawString: _b$rawStringLiteral,
-	ref: _b$refPattern,
-	reference: _b$referenceType,
+	or: F.orPattern,
+	parenthesized: F.parenthesizedExpression,
+	pointer: F.pointerType,
+	range: F.rangeExpression,
+	rawString: F.rawStringLiteral,
+	ref: F.refPattern,
+	reference: F.referenceType,
 	remainingField: F.buildRemainingFieldPattern,
-	return: _b$returnExpression,
-	slice: _b$slicePattern,
-	static: _b$staticItem,
-	string: _b$stringLiteral,
-	struct: _b$structItem,
-	trait: _b$traitItem,
-	try: _b$tryExpression,
-	tuple: _b$tupleType,
-	tupleStruct: _b$tupleStructPattern,
-	typeCast: _b$typeCastExpression,
-	unary: _b$unaryExpression,
-	union: _b$unionItem,
+	return: F.returnExpression,
+	slice: F.slicePattern,
+	static: F.staticItem,
+	string: F.stringLiteral,
+	struct: F.structItem,
+	trait: F.traitItem,
+	try: F.tryExpression,
+	tuple: F.tupleType,
+	tupleStruct: F.tupleStructPattern,
+	typeCast: F.typeCastExpression,
+	unary: F.unaryExpression,
+	union: F.unionItem,
 	unit: F.buildUnitType,
-	use: _b$useDeclaration,
-	while: _b$whileExpression,
-	yield: _b$yieldExpression,
+	use: F.useDeclaration,
+	while: F.whileExpression,
+	yield: F.yieldExpression,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	declarationStatement,

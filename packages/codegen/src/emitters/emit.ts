@@ -24,10 +24,10 @@ import {
 	classifyWrapEmission,
 	warnSkippedParserSymbol
 } from './shared.ts';
-import { emitOverlayModule, emitFactoriesIndex, overlayImportPath, OVERLAY_CHAIN } from './overlays/module.ts';
-import { refineAttachments } from './overlays/refines.ts';
-import { polymorphAttachments } from './overlays/polymorphs.ts';
-import type { Attachment, OverlayName } from './overlays/module.ts';
+import { emitBundleModule, emitFactoriesIndex, overlayFrame, overlayImportPath, OVERLAY_CHAIN } from './overlays/module.ts';
+import { emitRefinesOverlay } from './overlays/refines.ts';
+import { emitPolymorphsOverlay } from './overlays/polymorphs.ts';
+import type { OverlayName } from './overlays/module.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -45,6 +45,7 @@ export interface EmitAllConfig {
 export interface EmitAllResult {
 	factories: string;
 	overlays: Record<OverlayName, string>;
+	factoriesBundle: string;
 	factoriesIndex: string;
 	from: string;
 	wrap: string;
@@ -142,29 +143,18 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 
-	const overlayAttachments: Record<OverlayName, readonly Attachment[]> = {
-		refines: refineAttachments(nodeMap),
-		polymorphs: polymorphAttachments(nodeMap, generatedIdTables),
-		supertypes: []
+	const overlays: Record<OverlayName, string> = {
+		refines: emitRefinesOverlay({ nodeMap }),
+		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables }),
+		supertypes: overlayFrame(overlayImportPath(2)).join('\n')
 	};
-	const overlayPreambles: Partial<Record<OverlayName, readonly string[]>> = {
-		polymorphs: generatedIdTables ? ["import { TSKindId } from '../../types.js';"] : undefined
-	};
-	const overlays = Object.fromEntries(
-		OVERLAY_CHAIN.map((name, index) => [
-			name,
-			emitOverlayModule({
-				importPath: overlayImportPath(index),
-				attachments: overlayAttachments[name],
-				preamble: overlayPreambles[name]
-			})
-		])
-	) as Record<OverlayName, string>;
-	const factoriesIndex = emitFactoriesIndex(OVERLAY_CHAIN[OVERLAY_CHAIN.length - 1]);
+	const factoriesBundle = emitBundleModule({ nodeMap, generatedIdTables });
+	const factoriesIndex = emitFactoriesIndex(OVERLAY_CHAIN[2], { nodeMap, generatedIdTables });
 
 	return {
 		factories,
 		overlays,
+		factoriesBundle,
 		factoriesIndex,
 		from,
 		wrap,

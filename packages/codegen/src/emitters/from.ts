@@ -112,19 +112,19 @@ function emitNamespaceImports(
 	usesKindLiteralText: boolean,
 	usesAttachProps: boolean
 ): void {
-	lines.push(`import * as F from './factories/index.js';`);
-	lines.push(`import type * as T from './types.js';`);
+	lines.push(`import * as F from './raw.js';`);
+	lines.push(`import type * as T from '../types.js';`);
 	if (kindEntries) {
 		const valueImports = ['TSKindId', ...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []), 'Delimiter'];
-		lines.push(`import { ${valueImports.join(', ')} } from './types.js';`);
+		lines.push(`import { ${valueImports.join(', ')} } from '../types.js';`);
 	} else {
-		lines.push(`import { Delimiter } from './types.js';`);
+		lines.push(`import { Delimiter } from '../types.js';`);
 	}
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push(
 		usesAttachProps
-			? "import { coerceKindEnumStorage, isNodeData, attachProps } from './utils.js';"
-			: "import { coerceKindEnumStorage, isNodeData } from './utils.js';"
+			? "import { coerceKindEnumStorage, isNodeData, attachProps } from '../utils.js';"
+			: "import { coerceKindEnumStorage, isNodeData } from '../utils.js';"
 	);
 	lines.push('');
 }

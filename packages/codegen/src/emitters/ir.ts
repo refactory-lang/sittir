@@ -12,6 +12,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
+import { bundleEntries } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -28,15 +29,13 @@ export function emitIr(config: EmitIrConfig): string {
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
-	const hoisted = new Map<string, string>();
-	const hoistedLines: string[] = [];
+	const bundleKeyByKind = new Map(bundleEntries(nodeMap, generatedIdTables).map((e) => [e.node.kind, e.exportName]));
 	const bundleRef = (node: AssembledNode): string => {
-		const existing = hoisted.get(node.kind);
-		if (existing !== undefined) return existing;
-		const name = `_b$${toCamel(node.kind.replace(/^_+/, ''))}`;
-		hoisted.set(node.kind, name);
-		hoistedLines.push(bundleLine(name, node), '');
-		return name;
+		const key = bundleKeyByKind.get(node.kind);
+		if (key === undefined) {
+			throw new Error(`[ir] no bundle entry for kind '${node.kind}' — flat/group emission and bundleEntries disagree`);
+		}
+		return `F.${key}`;
 	};
 
 	const lines: string[] = [
@@ -54,8 +53,6 @@ export function emitIr(config: EmitIrConfig): string {
 		'// entry sees a wrapped node and takes the identity quick-return path.',
 		'',
 		"import * as F from './factories/index.js';",
-		"import * as FR from './from.js';",
-		"import { bundle } from './utils.js';",
 		''
 	];
 
@@ -232,14 +229,7 @@ export function emitIr(config: EmitIrConfig): string {
 	body.push(...irValueLines);
 	body.push('};');
 
-	return [...lines, ...hoistedLines, ...body].join('\n');
-}
-
-function bundleLine(name: string, node: AssembledNode): string {
-	const coerce = `FR.${node.fromFunctionName}`;
-	return node.rawFactoryName === undefined
-		? `const ${name} = ${coerce};`
-		: `const ${name} = bundle(${coerce}, F.${node.rawFactoryName});`;
+	return [...lines, ...body].join('\n');
 }
 
 function groupNameFor(supertypeKind: string): string {

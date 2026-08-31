@@ -31,10 +31,11 @@ describe('utils engine facade emission', () => {
 		expect(wrapSrc).toContain('}, _treeEngine(tree));');
 	});
 
-	it('emits bundle() beside attachProps()', () => {
+	it('emits bundle() and hoist() beside attachProps()', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
-		expect(contents).toContain('export function bundle<');
-		expect(contents).toContain("attachProps(coerce, { strict, ...ownProps(strict) })");
+		expect(contents).toContain('export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {');
+		expect(contents).toContain('export function hoist<B extends FlavorPair<unknown, unknown>>(b: B): Hoisted<B> {');
+		expect(contents).toContain('isFlavorPair(value) ? hoist(value) : value');
 	});
 });

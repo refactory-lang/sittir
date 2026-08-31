@@ -9,15 +9,12 @@ import type { NodeMap } from '../../compiler/types.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
 
 // ---------------------------------------------------------------------------
-// Synthetic grammar covering the three sub-factory shapes exercised here:
+// Synthetic grammar covering the sub-factory shapes exercised here:
 // `comment` — envelope, sole choice slot, two kind arms (residual ∅,
 // positional parent); `logic` — branch, literal arms with a required
-// residual (no NonNullable — buildLogic's own config param is required
-// because every field is required); `annotated` — branch, literal arms with
-// an all-optional residual (buildAnnotated's own config param is optional,
-// so the sub-factory's `Cfg` is wrapped in `NonNullable<...>`).
-// `root` keeps every rule reachable from the first-declared rule (`link`
-// only keeps rules reachable from it).
+// residual; `annotated` — branch, literal arms with an all-optional
+// residual. `root` keeps every rule reachable from the first-declared rule
+// (`link` only keeps rules reachable from it).
 // ---------------------------------------------------------------------------
 
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
@@ -149,34 +146,33 @@ describe('emitPolymorphsOverlay', () => {
 		vi.restoreAllMocks();
 	});
 
-	it('emits a form constructor per kind arm and a member constructor per literal', () => {
+	it('emits one method per sub-factory, applied to the strict and coerce pairs', () => {
 		const nodeMap = polymorphNodeMap();
 		const text = emitPolymorphsOverlay({ nodeMap });
 
-		expect(text).toContain("import * as F from './refines.js';");
+		expect(text).toContain("import * as B from './refines.js';");
+		expect(text).toContain("import * as F from '../raw.js';");
+		expect(text).toContain("import * as C from '../coerce.js';");
+		expect(text).toContain("export * from './refines.js';");
 
-		expect(text).toContain('export const buildComment: typeof F.buildComment & {');
 		expect(text).toContain(
-			'  doc: (...args: Parameters<typeof F.buildCommentDoc>) => F.buildComment(F.buildCommentDoc(...args)),'
+			'const comment$doc = <PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>'
+		);
+		expect(text).toContain('export const comment: typeof B.comment & {');
+		expect(text).toContain('	...B.comment,');
+		expect(text).toContain(
+			'	doc: { strict: comment$doc(F.buildComment, F.buildCommentDoc), coerce: comment$doc(C.coerceToComment, C.coerceToCommentDoc) },'
 		);
 		expect(text).toContain(
-			'  plain: (...args: Parameters<typeof F.buildCommentPlain>) => F.buildComment(F.buildCommentPlain(...args)),'
-		);
-
-		expect(text).toContain('export const buildLogic: typeof F.buildLogic & {');
-		expect(text).toContain(
-			"  and: (config: Omit<Parameters<typeof F.buildLogic>[0], 'op'>) => F.buildLogic({ ...config, op: 'and' }),"
-		);
-		expect(text).toContain(
-			"  or: (config: Omit<Parameters<typeof F.buildLogic>[0], 'op'>) => F.buildLogic({ ...config, op: 'or' }),"
+			'	plain: { strict: comment$plain(F.buildComment, F.buildCommentPlain), coerce: comment$plain(C.coerceToComment, C.coerceToCommentPlain) },'
 		);
 
-		expect(text).toContain('export const buildAnnotated: typeof F.buildAnnotated & {');
+		expect(text).toContain('const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
+		expect(text).toContain("	and: { strict: logic$and(F.buildLogic, 'and'), coerce: logic$and(C.coerceToLogic, 'and') },");
+		expect(text).toContain("	or: { strict: logic$or(F.buildLogic, 'or'), coerce: logic$or(C.coerceToLogic, 'or') },");
+
 		expect(text).toContain(
-			"  plus: (config: Omit<NonNullable<Parameters<typeof F.buildAnnotated>[0]>, 'mark'>) => F.buildAnnotated({ ...config, mark: 'plus' }),"
-		);
-		expect(text).toContain(
-			"  minus: (config: Omit<NonNullable<Parameters<typeof F.buildAnnotated>[0]>, 'mark'>) => F.buildAnnotated({ ...config, mark: 'minus' }),"
+			"	plus: { strict: annotated$plus(F.buildAnnotated, 'plus'), coerce: annotated$plus(C.coerceToAnnotated, 'plus') },"
 		);
 	});
 
