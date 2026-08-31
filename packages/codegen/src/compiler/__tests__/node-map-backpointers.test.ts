@@ -125,7 +125,9 @@ describe('NodeMap back-pointer maps', () => {
 			number: { type: PATTERN, value: '[0-9]+' }
 		});
 
-		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.parameter;
+		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.find(
+			(slot) => slot.name === 'parameter'
+		);
 		expect(slot).toBeDefined();
 
 		const simplifiedIds = (simplifiedRules.test as { members: readonly { id?: string }[] }).members
@@ -161,7 +163,7 @@ describe('NodeMap back-pointer maps', () => {
 			number: { type: PATTERN, value: '[0-9]+' }
 		});
 
-		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.rhs;
+		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.find((slot) => slot.name === 'rhs');
 		expect(slot).toBeDefined();
 
 		const simplifiedChoiceId = (simplifiedRules.test as { members: readonly { id?: string }[] }).members[1]?.id;

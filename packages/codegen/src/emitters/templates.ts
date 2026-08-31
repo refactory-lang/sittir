@@ -16,8 +16,8 @@ import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
 import {
+	AbstractAssembledCompound,
 	AssembledKeyword,
-	allSlotsOf,
 	isMultiple,
 	isRequired,
 	kindsOf,
@@ -291,10 +291,9 @@ function renderRuleEdge(
 	}
 }
 
-function ownerSlotsFor(node: {
-	slots?: Readonly<Record<string, AssembledNonterminal>>;
-}): Readonly<Record<string, AssembledNonterminal>> | undefined {
-	return node.slots;
+function ownerSlotsFor(node: AssembledNode): Readonly<Record<string, AssembledNonterminal>> | undefined {
+	if (!(node instanceof AbstractAssembledCompound)) return undefined;
+	return Object.fromEntries(node.slots.map((slot) => [slot.name, slot]));
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
@@ -724,7 +723,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				const helperRenderRule = (targetNode as { renderRule: RenderRule }).renderRule;
 				const helperCtx: EmitCtx = {
 					...ctx,
-					ownerSlots: ownerSlotsFor(targetNode as Parameters<typeof ownerSlotsFor>[0])
+					ownerSlots: ownerSlotsFor(targetNode)
 				};
 				const helperBody = emitRule(helperRenderRule, helperCtx);
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
@@ -1119,7 +1118,7 @@ function escapeRegex(s: string): string {
 }
 
 function assertSlotPreservation(node: AssembledNode, body: string): void {
-	const slots = allSlotsOf(node);
+	const slots = node.slots;
 	if (slots.length === 0) return;
 	const missing: string[] = [];
 	const seen = new Set<string>();

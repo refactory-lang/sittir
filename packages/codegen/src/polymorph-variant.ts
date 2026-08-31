@@ -7,7 +7,7 @@ export type PolymorphVariantDescriptor =
 	  }
 	| {
 			readonly definedBy: 'promoted';
-			readonly fields: Readonly<Record<string, readonly string[]>>;
+			readonly slots: Readonly<Record<string, readonly string[]>>;
 	  };
 
 export type PolymorphVariantMap = Readonly<Record<string, PolymorphVariantDescriptor>>;

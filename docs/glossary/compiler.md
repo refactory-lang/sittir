@@ -204,7 +204,7 @@ parents.
 // group-wrapped kinds, exactly as a branch/envelope/
 // polymorph would get) — AssembledList extends the same
 // AbstractAssembledCompound base and genuinely inherits
-// its buildSlotsRecord construction, so wrap/render/factory
+// its constructor slot derivation, so wrap/render/factory
 // emission stays byte-identical with the pre-taxonomy
 // 'branch' output for these kinds.
 ```
@@ -1195,7 +1195,7 @@ parents.
 // Positional/kind-derived name: never silently merge with anything else
 // sharing that name, even another unnamed slot — that IS a genuine
 // storageName collision (two structurally distinct positions), and
-// downstream diagnostics (buildSlotsRecord's storagename-collision
+// downstream diagnostics (the compound constructor's storagename-collision
 // check) must see both entries to catch it. Merging here would union
 // their values and erase the fact they were ever distinct.
 ```
@@ -7333,7 +7333,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 	 * any grammar rule body where BOTH source and target are visible (non-`_`-prefixed
 	 * named kinds), records `target → [source, ...]`.
 	 *
-	 * Used downstream (assemble → buildSlotsRecord) to augment a kind's slot values
+	 * Used downstream (assemble → the compound constructor's slot derivation) to augment a kind's slot values
 	 * with the concrete parse-surface children of any visible source aliased to it.
 	 * Example: `alias($.delim_token_tree, $.token_tree)` adds `delim_token_tree_paren/
 	 * bracket/brace` parseKinds to the `token_tree.content` slot so the wrap accept-set

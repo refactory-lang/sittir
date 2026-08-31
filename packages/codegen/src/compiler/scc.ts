@@ -2,7 +2,6 @@ import type { NodeMap } from './types.ts';
 import {
 	kindsOf,
 	isMultiple,
-	AbstractAssembledCompound,
 	AssembledSupertype,
 	type AssembledNode,
 	type AssembledNonterminal
@@ -100,10 +99,7 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 }
 
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) {
-		return Object.values(node.slots).filter((slot) => !isMultiple(slot));
-	}
-	return [];
+	return node.slots.filter((slot) => !isMultiple(slot));
 }
 
 function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {

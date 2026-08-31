@@ -46,7 +46,7 @@ describe('emitConsts', () => {
 			'function_item',
 			{ type: SYMBOL, name: 'identifier' },
 			{ type: SYMBOL, name: 'identifier' },
-			{ slotRecord: {} }
+			{ slots: [] }
 		);
 		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
@@ -111,7 +111,7 @@ describe('emitConsts', () => {
 			'function_item',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slotRecord: { modifiers } }
+			{ slots: [modifiers] }
 		);
 		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
@@ -132,7 +132,7 @@ describe('emitConsts', () => {
 			'function_item',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slotRecord: { modifiers } }
+			{ slots: [modifiers] }
 		);
 		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
@@ -145,12 +145,12 @@ describe('emitConsts', () => {
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
 			{
-				slotRecord: {
-					modifiers: field('modifiers', [
+				slots: [
+					field('modifiers', [
 						{ value: 'public', multiplicity: 'nonEmptyArray' },
 						{ value: 'abstract', multiplicity: 'nonEmptyArray' }
 					])
-				}
+				]
 			}
 		);
 		const methodNode = new AssembledBranch(
@@ -158,12 +158,12 @@ describe('emitConsts', () => {
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
 			{
-				slotRecord: {
-					modifiers: field('modifiers', [
+				slots: [
+					field('modifiers', [
 						{ value: 'async', multiplicity: 'nonEmptyArray' },
 						{ value: 'static', multiplicity: 'nonEmptyArray' }
 					])
-				}
+				]
 			}
 		);
 		const nodeMap = makeNodeMap([
@@ -186,7 +186,7 @@ describe('emitConsts', () => {
 			'visibility_modifier',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slotRecord: { visibility } }
+			{ slots: [visibility] }
 		);
 		const nodeMap = makeNodeMap([['visibility_modifier', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
@@ -199,7 +199,7 @@ describe('emitConsts', () => {
 			'source_file',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slotRecord: { item: field('item') } }
+			{ slots: [field('item')] }
 		);
 		const nodeMap = makeNodeMap([
 			['source_file', sourceFile],

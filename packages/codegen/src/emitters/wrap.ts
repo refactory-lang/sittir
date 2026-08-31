@@ -114,7 +114,7 @@ export namespace wrap {
 				rawFactoryName: node.rawFactoryName,
 				childSurface: classifyChildFactorySurface(node, nodeMap)
 			},
-			node.fields,
+			node.slots,
 			[],
 			kindEntries,
 			nodeMap
@@ -135,7 +135,7 @@ export namespace wrap {
 				rawFactoryName: node.rawFactoryName,
 				childSurface: classifyChildFactorySurface(node, nodeMap)
 			},
-			node.fields,
+			node.slots,
 			[],
 			kindEntries,
 			nodeMap
@@ -344,23 +344,23 @@ function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap
 	return storageKeys;
 }
 
-function computeConsumedCandidateKeys(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): readonly string[] {
-	const canonicalStorageKeys = new Set(fields.map((f) => f.storageKey));
+function computeConsumedCandidateKeys(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): readonly string[] {
+	const canonicalStorageKeys = new Set(slots.map((f) => f.storageKey));
 	return [
 		...new Set(
-			fields.flatMap((f) => (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => !canonicalStorageKeys.has(k)))
+			slots.flatMap((f) => (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => !canonicalStorageKeys.has(k)))
 		)
 	].sort();
 }
 
 function collectWrapWireKeyTypes(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): ReadonlyMap<string, string> {
-	const canonicalKeys = new Set(fields.map((f) => f.storageKey));
+	const canonicalKeys = new Set(slots.map((f) => f.storageKey));
 	const keyTypes = new Map<string, string>();
-	for (const f of fields) {
+	for (const f of slots) {
 		const candidates = collectConcreteStorageKeys(f, nodeMap);
 		if (!candidates) continue;
 		const elemType = fieldElementType(f, nodeMap, kindEntries);
@@ -540,7 +540,7 @@ function emitSeparatedListWrap(
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const canonical = canonicalSeparatedListField(node);
-	const canonicalKeys = new Set(node.fields.map((f) => f.storageKey));
+	const canonicalKeys = new Set(node.slots.map((f) => f.storageKey));
 	const fieldBacked = isFieldBackedSeparatedList(node);
 	const wireKeyTypes = collectSeparatedListWireKeyTypes(
 		contentSlot,
@@ -556,7 +556,7 @@ function emitSeparatedListWrap(
 	lines.push(
 		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...canonicalKeys, ...wireKeyTypes.keys()])])});`
 	);
-	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
+	if (wrapsAnonLiteralContent(node.slots, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
 		);
@@ -577,11 +577,11 @@ function emitSeparatedListWrap(
 		nonEmpty: node.nonEmpty,
 		storageInfo,
 		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined,
-		forceUnknownElement: node.fields.length > 1
+		forceUnknownElement: node.slots.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
 	lines.push('  return withMethods({');
-	const consumedCandidateKeys = computeConsumedCandidateKeys(node.fields, nodeMap);
+	const consumedCandidateKeys = computeConsumedCandidateKeys(node.slots, nodeMap);
 	if (consumedCandidateKeys.length > 0) {
 		lines.push(`    ..._omitWrapKeys(data, ${JSON.stringify(consumedCandidateKeys)}),`);
 	} else {
@@ -593,8 +593,8 @@ function emitSeparatedListWrap(
 			lines.push(`    $type: TSKindId.${entry.member} as const,`);
 		}
 	}
-	if (node.fields.length > 1) {
-		emitFieldStorageLines(node.fields, node.kind, 'data', lines, kindEntries, nodeMap);
+	if (node.slots.length > 1) {
+		emitFieldStorageLines(node.slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	} else {
 		lines.push(`    ${canonical.storageKey}: _content,`);
 	}
@@ -623,8 +623,8 @@ function emitSeparatedListWrap(
 		lines.push(`    _delimiter: ${delimiterParts.join(' | ')},`);
 	}
 	lines.push('');
-	if (node.fields.length > 1) {
-		emitFieldAccessorLines(node.fields, 'data', lines, kindEntries, nodeMap);
+	if (node.slots.length > 1) {
+		emitFieldAccessorLines(node.slots, 'data', lines, kindEntries, nodeMap);
 	} else {
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
@@ -635,13 +635,13 @@ function emitSeparatedListWrap(
 }
 
 function computeCollidedReclaimKinds(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	ownerKind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): ReadonlySet<string> {
 	const claimedBy = new Map<string, string[]>();
-	for (const f of fields) {
+	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (storageInfo.kind !== 'kindEnum') continue;
 		for (const k of storageInfo.enumKinds) {
@@ -665,15 +665,15 @@ function computeCollidedReclaimKinds(
 }
 
 function emitFieldStorageLines(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	ownerKind: string,
 	dataExpr: string,
 	lines: string[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	const collidedReclaimKinds = computeCollidedReclaimKinds(fields, ownerKind, nodeMap, kindEntries);
-	for (const f of fields) {
+	const collidedReclaimKinds = computeCollidedReclaimKinds(slots, ownerKind, nodeMap, kindEntries);
+	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
@@ -728,13 +728,13 @@ function elidedSeparatorIdsExprOf(
 }
 
 function emitFieldAccessorLines(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	dataExpr: string,
 	lines: string[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	for (const f of fields) {
+	for (const f of slots) {
 		const propName = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
@@ -755,8 +755,8 @@ function emitFieldAccessorLines(
 	}
 }
 
-function wrapsAnonLiteralContent(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
-	return fields.some((f) => fieldTypeComponents(f, nodeMap).some((c) => c.kind === 'literal'));
+function wrapsAnonLiteralContent(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
+	return slots.some((f) => fieldTypeComponents(f, nodeMap).some((c) => c.kind === 'literal'));
 }
 
 function wrapTextLeafTypeStamp(
@@ -769,34 +769,34 @@ function wrapTextLeafTypeStamp(
 
 function emitFieldCarryingWrap(
 	node: WrapNode,
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	children: readonly AssembledNonterminal[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	const wireKeyTypes = collectWrapWireKeyTypes(fields, nodeMap, kindEntries);
+	const wireKeyTypes = collectWrapWireKeyTypes(slots, nodeMap, kindEntries);
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	lines.push(
-		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...fields.map((f) => f.storageKey), ...wireKeyTypes.keys()])])});`
+		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...slots.map((f) => f.storageKey), ...wireKeyTypes.keys()])])});`
 	);
-	if (wrapsAnonLiteralContent(fields, nodeMap)) {
+	if (wrapsAnonLiteralContent(slots, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
 		);
 	}
 
-	const hasWithSetters = node.rawFactoryName && (fields.length > 0 || children.length > 0);
+	const hasWithSetters = node.rawFactoryName && (slots.length > 0 || children.length > 0);
 
 	if (hasWithSetters) {
 		lines.push('  const _node = withMethods({');
 	} else {
 		lines.push('  return withMethods({');
 	}
-	const consumedCandidateKeys = computeConsumedCandidateKeys(fields, nodeMap);
+	const consumedCandidateKeys = computeConsumedCandidateKeys(slots, nodeMap);
 	if (consumedCandidateKeys.length > 0) {
 		lines.push(`    ..._omitWrapKeys(data, ${JSON.stringify(consumedCandidateKeys)}),`);
 	} else {
@@ -808,7 +808,7 @@ function emitFieldCarryingWrap(
 			lines.push(`    $type: TSKindId.${entry.member} as const,`);
 		}
 	}
-	emitFieldStorageLines(fields, node.kind, 'data', lines, kindEntries, nodeMap);
+	emitFieldStorageLines(slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
@@ -822,7 +822,7 @@ function emitFieldCarryingWrap(
 	}
 	lines.push('');
 
-	emitFieldAccessorLines(fields, 'data', lines, kindEntries, nodeMap);
+	emitFieldAccessorLines(slots, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
@@ -835,7 +835,7 @@ function emitFieldCarryingWrap(
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
 
-	emitInlineWithProperty(lines, node, fields, children, nodeMap, kindEntries);
+	emitInlineWithProperty(lines, node, slots, children, nodeMap, kindEntries);
 
 	lines.push('  }, _treeEngine(tree));');
 	if (hasWithSetters) {
@@ -848,7 +848,7 @@ function emitFieldCarryingWrap(
 function emitInlineWithProperty(
 	lines: string[],
 	node: WrapNode,
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -873,13 +873,13 @@ function emitInlineWithProperty(
 		return;
 	}
 
-	if (fields.length === 0 && children.length === 0) {
+	if (slots.length === 0 && children.length === 0) {
 		lines.push('    $with: {},');
 		return;
 	}
 
 	lines.push('    $with: {');
-	for (const f of fields) {
+	for (const f of slots) {
 		const method = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {

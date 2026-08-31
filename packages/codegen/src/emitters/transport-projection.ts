@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
-import { allFormFieldsOf, AssembledSupertype } from '../compiler/model/node-map.ts';
+import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import { fieldTypeComponents, resolveHiddenKeywordLeaf } from './shared.ts';
 
 export interface TransportLiteral {
@@ -71,7 +71,7 @@ function collectTransportLiterals(
 	};
 
 	for (const node of nodes) {
-		for (const field of allFormFieldsOf(node)) {
+		for (const field of node.slots) {
 			for (const { literal, fromKind } of fieldTransportLiterals(field, nodeMap)) add(literal, fromKind);
 		}
 	}

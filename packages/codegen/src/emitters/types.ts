@@ -45,8 +45,7 @@ import {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
-	snakeToCamel,
-	structuralFieldsOf
+	snakeToCamel
 } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
@@ -677,12 +676,12 @@ function emitInterface(
 	kindDiscriminant = JSON.stringify(node.kind),
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
-	const fields = structuralFieldsOf(node);
+	const slots = node.slots;
 	lines.push(`export interface ${node.typeName} {`);
 	lines.push(`  readonly $type: ${kindDiscriminant};`);
 
-	if (fields.length > 0) {
-		for (const f of fields) {
+	if (slots.length > 0) {
+		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
@@ -694,8 +693,8 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
-		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries, lookupUnion);
-		for (const f of fields) {
+		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
+		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
@@ -893,7 +892,7 @@ function wrapChildrenListHint(
 	if (!isSlotBearingCompound(target)) {
 		return undefined;
 	}
-	const elementSlot = target.fields.find((slot) => isMultiple(slot)) ?? target.fields[0];
+	const elementSlot = target.slots.find((slot) => isMultiple(slot)) ?? target.slots[0];
 	if (elementSlot === undefined) return undefined;
 	return `readonly (${fieldTypeExpr(elementSlot, nodeMap, lookupUnion)})[]`;
 }
@@ -916,13 +915,13 @@ function fieldLooseHintTypeExpr(
 
 function emitFieldInputHints(
 	lines: string[],
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	lookupUnion?: LookupUnion
 ): void {
-	const hintLines = fields
+	const hintLines = slots
 		.map((field) => {
 			const hintType = fieldInputHintTypeExpr(field, kind, nodeMap, kindEntries);
 			if (!hintType) return undefined;
@@ -940,7 +939,7 @@ function emitFieldInputHints(
 		lines.push(...hintLines);
 		lines.push('  };');
 	}
-	const fromHintLines = fields
+	const fromHintLines = slots
 		.map((field) => {
 			const hintType = fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
 			if (!hintType) return undefined;

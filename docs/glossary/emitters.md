@@ -148,7 +148,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   imported but no emitted body references it — dropped.
  *
  *   Also checks `AssembledList.nonEmpty` directly (a REPEAT1
- *   source rule) rather than through `allSlotsOf`'s `.fields` — the
+ *   source rule) rather than through `.slots` — the
  *   generic slot surface can misderive a kind's real elements arity (see
  *   `emitSeparatedListFactory`'s doc comment), so it can't be trusted for
  *   this detection either.
@@ -445,7 +445,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * Emit a `'list'` factory — dedicated construct surface built
 	 * directly from `AssembledList`'s own real fields (`elements`/
 	 * `separatorRule`/`leadingMode`/`trailingMode`), bypassing the generic
-	 * `.slots`/`.fields` surface entirely (see `AssembledList`'s doc
+	 * `.slots` surface entirely (see `AssembledList`'s doc
 	 * comment, node-map.ts) rather than routing through `branch(...)`.
 	 */
 ```
@@ -625,7 +625,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // Which fields actually get storage + a getter. Container shape only
-// stamps its ONE real slot — `node.fields` can hold other entries
+// stamps its ONE real slot — `node.slots` can hold other entries
 // (e.g. keyword-presence markers) that `classifyBranchSlots`' userSlot
 // filtering already excluded from the single-slot classification, and
 // the original per-shape emitters never touched those for a container.
@@ -977,16 +977,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `renderTransportDataStruct`'s transport struct use, so the constructed
  * object's storage key matches the model's real slot name (e.g.
  * `_attributed_argument`, not `_content`) and satisfies both the wire
- * transport and the generic `.fields`/`.slots` surface's `T.<TypeName>`
+ * transport and the generic `.slots` surface's `T.<TypeName>`
  * interface in types.ts (which declares `_<name>`/`<name>()` from the
- * identical `node.fields` source). Multi-field kinds (`node.fields.length
+ * identical `node.slots` source). Multi-field kinds (`node.slots.length
  * > 1`, e.g. TypeScript's `enum_body_group1`) can't route a flat
  * `elements` array to more than one field without partitioning by kind —
  * they keep the generic `_content`/`content()` bucket, which remains WRONG
  * for those kinds (see `expectTestFailures`) pending a real per-field
  * partition.
  *
- * Bypasses `node.fields`/`.slots` entirely, reading
+ * Bypasses `node.slots`/`.slots` entirely, reading
  * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
  * directly — the generic slot surface can misderive a kind's real shape
  * for a rule that's an alias of a hidden rule (empirically found: python's
@@ -1004,7 +1004,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Single-field kinds (the common case) store/expose the elements under
 // the model's real slot name (Bug B fix — shared with wrap.ts/
 // render-module.ts via `canonicalSeparatedListField`), not a generic
-// `_content` bucket. Multi-field kinds (`node.fields.length > 1`) can't
+// `_content` bucket. Multi-field kinds (`node.slots.length > 1`) can't
 // be split from a flat `elements` array without a real per-field
 // partition (see doc comment) — they keep the old generic bucket.
 ```
@@ -1732,7 +1732,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Emit a `'list'` from() resolver — dedicated construct/
  * reconstruction surface built directly from `AssembledList`'s own
- * real fields, bypassing the generic `.slots`/`.fields` surface entirely (see
+ * real fields, bypassing the generic `.slots` surface entirely (see
  * `AssembledList`'s doc comment, node-map.ts, and
  * `emitSeparatedListFactory`'s doc comment, factories.ts).
  *
@@ -4868,7 +4868,7 @@ Surface`
  * `node instanceof AbstractAssembledCompound` — true for `AssembledBranch`,
  * `AssembledEnvelope`, `AssembledPolymorph`, AND `AssembledList` alike,
  * since all four extend that base directly and genuinely share its
- * `.slots`/`.fields` surface (not a widened special case: `AssembledList`
+ * `.slots` surface (not a widened special case: `AssembledList`
  * is a real subclass, not a byte-identity workaround pretending to be one).
  * `AssembledSupertype` is NOT included — despite also being
  * `modelType: 'polymorph'`, it has no slots of its own and does not extend
@@ -4882,7 +4882,7 @@ Surface`
 
 ```text
 /**
- * An `AssembledList`'s single-field-storage canonical slot — the `node.fields`
+ * An `AssembledList`'s single-field-storage canonical slot — the `node.slots`
  * entry whose storage key wrap.ts/render-module.ts's transport-struct
  * emission actually use for the "whole element union" bucket (Bug B fix,
  * wrap.ts's `emitSeparatedListWrap`). Prefers the `arity === 'many'` field
@@ -4893,7 +4893,7 @@ Surface`
  * emitters agree on the same canonical storage key a `'list'`-classified
  * kind's elements are read from / written to on the wire — see wrap.ts's
  * `emitSeparatedListWrap` doc comment ("Bug B fix") for the full rationale.
- * Multi-field kinds (`node.fields.length > 1`) must NOT use this helper for
+ * Multi-field kinds (`node.slots.length > 1`) must NOT use this helper for
  * storage — they route each field through `emitFieldStorageLines`/
  * `emitFieldAccessorLines` instead (see callers).
  */
@@ -6591,7 +6591,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * synthesized single-field wrapper kinds, e.g. `_match_arm_with_comma`) is
  * just an ordinary compound with `enrichment.hoisted` set — structurally a
  * one-field record like any other branch, its slots reachable via
- * `allSlotsOf` the same way. This function fills required fields
+ * `.slots` the same way. This function fills required fields
  * recursively for every compound shape, bounded by {@link MAX_DUMMY_DEPTH}
  * and a per-branch `visiting` set (cycle guard for self-referential
  * grammars).
@@ -7566,7 +7566,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * Consumed candidate keys: concrete kind-keyed wire keys any field's
  * `??`-chain reads (`collectConcreteStorageKeys`) that are NOT some field's
  * own canonical `storageKey`. Shared by `emitFieldCarryingWrap` (its
- * `fields` param) and `emitSeparatedListWrap` (its `node.fields` — same
+ * `fields` param) and `emitSeparatedListWrap` (its `node.slots` — same
  * Task-2 `_slots` source, single- or multi-field) so both spread bases omit
  * the SAME raw un-dispatched shadow stubs instead of drifting apart — see
  * `_omitWrapKeys`'s doc comment for the masking bug this prevents.
@@ -7754,7 +7754,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * different (optional, elemType-only) shape here would form an incoherent
  * intersection.
  *
- * The widened type is derived from `canonicalField` — `node.fields`'s own
+ * The widened type is derived from `canonicalField` — `node.slots`'s own
  * slot, the SAME `_slots`-derived source `types.ts` types `T.<TypeName>`'s
  * declared members from (see `emitSeparatedListWrap`'s Bug B fix comment) —
  * not from `contentSlot`. `contentSlot` (`buildSeparatedListContentSlot`)
@@ -7774,7 +7774,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // nominal key isn't already among the concrete candidates — see its doc
 // comment) — so `data[fallbackStorageKey]` is read regardless, even
 // though it is never a REAL wire key. `fallbackStorageKey` is the
-// model's OWN derived slot name (Bug B fix — `node.fields`'s real
+// model's OWN derived slot name (Bug B fix — `node.slots`'s real
 // storage key, e.g. `_pattern`, NOT a hardcoded `_content`; single-field
 // kinds pass their sole field's storage key here). Widen for it too
 // unless it already happens to be this kind's canonical key (the common
@@ -7805,11 +7805,11 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * Emit a wrap function for a `'list'`-classified kind — REAL per-instance
  * separator capture, reading `AssembledList`'s own `elements`/
  * `separatorRule`/`leadingDelimiter`/`trailingDelimiter` directly rather
- * than the generic `.slots`/`.fields` surface, for wrap.ts specifically.
+ * than the generic `.slots` surface, for wrap.ts specifically.
  * factories.ts (`emitSeparatedListFactory`) and from.ts
  * (`emitSeparatedListFrom`) have their own analogous dedicated emission,
  * reading the same real fields directly; render-module.ts's template
- * rendering still goes through the generic `.fields`/`.slots` surface
+ * rendering still goes through the generic `.slots` surface
  * (which `AssembledList` genuinely inherits from `AbstractAssembledCompound`,
  * not a stub) because template rendering is generically slot-based by
  * design, consulting `AssembledList`'s own separator facts only for
@@ -7854,12 +7854,12 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 // Bug B fix (separator-as-slot follow-up): a 'list' kind's elements do
-// NOT always all bucket under one generic "content" name — `node.fields`
+// NOT always all bucket under one generic "content" name — `node.slots`
 // (the SAME source `types.ts` derives `T.<TypeName>`'s
 // declared members from) is the model's OWN name for the real slot(s),
 // e.g. `_pattern`/`_parameters`/`_use_clause`/`_where_predicate` — NOT
 // always `_content`. Hardcoding `_content` here (independent of
-// `node.fields`) made anything whose real slot name differs throw a hard
+// `node.slots`) made anything whose real slot name differs throw a hard
 // "Missing field" at render time (or silently happen to coincide with
 // `_content` by luck, e.g. `tuple_pattern_group1`'s unnamed-CHOICE
 // element). `_content` (the local var below) remains an INTERNAL bucket
@@ -7879,7 +7879,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 #### body
 
 ```text
-// `node.fields` is the SAME source `types.ts`
+// `node.slots` is the SAME source `types.ts`
 // derives `T.<TypeName>`'s declared members from — the canonical-key
 // exclusion set for `collectSeparatedListWireKeyTypes` must match it
 // exactly, or a still-declared key gets redundantly (and incoherently)
@@ -7904,7 +7904,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // Same consumed-key omission as `emitFieldCarryingWrap` (shared via
 // `computeConsumedCandidateKeys`) — a raw kind-keyed wire stub any real
 // field's `??`-chain consumed (single-field: `canonical`/`_content`'s own
-// source keys; multi-field: each of `node.fields`) must not survive on
+// source keys; multi-field: each of `node.slots`) must not survive on
 // the spread base, or it wins the validator's deep-walk dedupe over the
 // canonical `_<name>` key it was folded into (see `_omitWrapKeys`).
 ```
@@ -8022,7 +8022,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * @param node - The assembled node descriptor.
  * @param fields - Named field slots.
  * @param children - Unnamed child slots (currently always `[]` from both
- *   call sites — `AssembledBranch/Group.fields` already unifies unnamed
+ *   call sites — `.slots` already unifies unnamed
  *   slots into `fields`).
  */
 ```
@@ -11530,8 +11530,8 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  *
  * Consumers (external tooling, fixture-based tests, downstream analyzers)
  * can parse this JSON5 file to get a structural view of each grammar
- * node's shape — kind, modelType, fields with per-value multiplicities,
- * children, supertype subtypes, polymorph forms, etc. — without re-running
+ * node's shape — kind, modelType, slots with per-value multiplicities,
+ * supertype subtypes, polymorph forms, etc. — without re-running
  * the codegen pipeline.
  *
  * The serializer deliberately mirrors the public shape of `NodeMap` /
@@ -11565,14 +11565,13 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 			   actually populated for a compound. */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::serializeField`
+### `packages/codegen/src/emitters/node-model.ts::serializeSlot`
 
 #### body
 
 ```text
-/* projection: derived from values via kindsOf(), not read from a
-		   stored cache. The serialized JSON shape is preserved (typeName: '',
-		   kinds: [...]) for byte-identity of node-model.json5 output. */
+/* kinds: derived from values via kindsOf(), not read from a stored
+		   cache. */
 ```
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::module`
@@ -12205,22 +12204,6 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 ```text
 /** The strict Config value for a kind-enum member: its kind discriminant
  *  when the catalog knows the literal, else the text. */
-```
-
-### `packages/codegen/src/emitters/factories.ts::SoleSlotNode`
-
-```text
-// ---------------------------------------------------------------------------
-// Container factory (children only, no fields)
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/factories.ts::resolveSoleSlotElementType`
-
-#### body
-
-```text
-// The sole slot lives in `node.fields`; derive the element type from it.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::elementsTypeOf`
@@ -12858,7 +12841,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 ```text
 // The container's classified sole user slot (soleSlotFacts) —
 // its `storageName` drives the `_<name>` data key we read here. Computed
-// by the caller from the full node; not derivable from `fields` alone.
+// by the caller from the full node; not derivable from `slots` alone.
 ```
 
 ### `packages/codegen/src/emitters/from.ts::looseElementType`

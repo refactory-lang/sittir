@@ -497,11 +497,11 @@ export function mergeDelimiterMode(
 	return a === b ? a : 'optional';
 }
 
-function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
-	if (fields.length <= 1) return fields;
+function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
+	if (slots.length <= 1) return slots;
 	const out: AssembledNonterminal[] = [];
 	const namedIndexByName = new Map<string, number>();
-	for (const f of fields) {
+	for (const f of slots) {
 		if (f.isUnnamed) {
 			out.push(f);
 			continue;
@@ -939,6 +939,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return false;
 	}
 
+	get slots(): readonly AssembledNonterminal[] {
+		return [];
+	}
+
 	get stampExpression(): string | undefined {
 		return undefined;
 	}
@@ -1369,58 +1373,6 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 	return closure;
 }
 
-function buildSlotsRecord(rule: SimplifiedRule, ctx: KindedDeriveCtx): Readonly<Record<string, AssembledNonterminal>> {
-	const kind = ctx.kindName;
-	const slots = [...deriveSlots(rule, ctx)];
-	let resolvedSlots = resolveParseKindCollisions(slots, ctx);
-
-	resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
-
-	if (ctx.visibleAliasTargets && ctx.simplifiedRules) {
-		resolvedSlots = resolvedSlots.map((slot) => expandSlotWithVisibleAliasSources(slot, ctx));
-	}
-
-	const out: Record<string, AssembledNonterminal> = {};
-	for (const slot of resolvedSlots) {
-		out[slot.name] = slot;
-	}
-
-	const byStorageName = new Map<string, AssembledNonterminal[]>();
-	for (const slot of resolvedSlots) {
-		const list = byStorageName.get(slot.storageName) ?? [];
-		list.push(slot);
-		byStorageName.set(slot.storageName, list);
-	}
-	for (const [storageName, slots] of byStorageName) {
-		if (slots.length > 1) {
-			const details = slots.map((s) => {
-				const kinds = s.values.map((v) =>
-					isTerminalValue(v)
-						? `"${v.value}"`
-						: isNodeRef(v) && isUnresolvedRef(v.node)
-							? v.node.name
-							: isNodeRef(v)
-								? (v.node as AssembledNode).kind
-								: '?'
-				);
-				const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
-				const named = s.isUnnamed ? 'positional' : 'named';
-				return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
-			});
-			recordAssembleWarning({
-				code: 'storagename-collision',
-				message:
-					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
-					`with storageName '${storageName}':\n${details.join('\n')}`,
-				ownerKind: kind,
-				details: { storageName, slotCount: slots.length }
-			});
-		}
-	}
-
-	return Object.freeze(out);
-}
-
 export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
 	if (node instanceof AssembledKeyword) return node.text;
 	if (node instanceof AssembledToken && node.parameterless) return node.text;
@@ -1446,7 +1398,7 @@ export interface CompoundOpts {
 	hoisted?: HoistedFacts;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
-	slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
+	slots?: readonly AssembledNonterminal[];
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	simplifiedRules?: Record<string, SimplifiedRule>;
 }
@@ -1476,7 +1428,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this.enrichment.hoisted?.overridePassthrough;
 	}
 
-	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
+	protected readonly _slots: readonly AssembledNonterminal[];
 
 	constructor(
 		kind: string,
@@ -1492,31 +1444,80 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this._slots =
-			opts?.slotRecord ??
-			buildSlotsRecord(simplifiedRule, {
+		if (opts?.slots !== undefined) {
+			this._slots = opts.slots;
+		} else {
+			const ctx: KindedDeriveCtx = {
 				kindName: kind,
 				kindEntries: opts?.kindEntries,
 				collision: opts?.parseKindCollisionContext,
 				visibleAliasTargets: opts?.visibleAliasTargets,
 				simplifiedRules: opts?.simplifiedRules
-			});
+			};
+			const slots = [...deriveSlots(simplifiedRule, ctx)];
+			let resolvedSlots = resolveParseKindCollisions(slots, ctx);
+
+			resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
+
+			if (ctx.visibleAliasTargets && ctx.simplifiedRules) {
+				resolvedSlots = resolvedSlots.map((slot) => expandSlotWithVisibleAliasSources(slot, ctx));
+			}
+
+			const byName = new Map<string, AssembledNonterminal>();
+			for (const slot of resolvedSlots) {
+				byName.set(slot.name, slot);
+			}
+
+			const byStorageName = new Map<string, AssembledNonterminal[]>();
+			for (const slot of resolvedSlots) {
+				const list = byStorageName.get(slot.storageName) ?? [];
+				list.push(slot);
+				byStorageName.set(slot.storageName, list);
+			}
+			for (const [storageName, slots] of byStorageName) {
+				if (slots.length > 1) {
+					const details = slots.map((s) => {
+						const kinds = s.values.map((v) =>
+							isTerminalValue(v)
+								? `"${v.value}"`
+								: isNodeRef(v) && isUnresolvedRef(v.node)
+									? v.node.name
+									: isNodeRef(v)
+										? (v.node as AssembledNode).kind
+										: '?'
+						);
+						const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
+						const named = s.isUnnamed ? 'positional' : 'named';
+						return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+					});
+					recordAssembleWarning({
+						code: 'storagename-collision',
+						message:
+							`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
+							`with storageName '${storageName}':\n${details.join('\n')}`,
+						ownerKind: kind,
+						details: { storageName, slotCount: slots.length }
+					});
+				}
+			}
+
+			this._slots = Object.freeze([...byName.values()]);
+		}
 	}
 
-	get slots(): Readonly<Record<string, AssembledNonterminal>> {
+	override get slots(): readonly AssembledNonterminal[] {
 		return this._slots;
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
-		const slots = Object.values(this._slots);
-		return slots.length === 1 ? slots[0] : undefined;
+		return this._slots.length === 1 ? this._slots[0] : undefined;
 	}
 
 	get keywordConstructibleText(): string | undefined {
 		const r = this.renderRule;
 		const lead = r.type === SEQ ? r.members[0] : r;
 		if (lead === undefined || lead.type !== STRING) return undefined;
-		if (!this.fields.every((f) => !isRequired(f))) return undefined;
+		if (!this._slots.every((f) => !isRequired(f))) return undefined;
 		return lead.value;
 	}
 
@@ -1543,11 +1544,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	#computeParameterless(): boolean {
-		return this.rawFactoryName !== undefined && Object.keys(this._slots).length === 0;
-	}
-
-	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots);
+		return this.rawFactoryName !== undefined && this._slots.length === 0;
 	}
 }
 
@@ -1887,26 +1884,6 @@ export type AssembledNode =
 	| AssembledEnum
 	| AssembledSupertype
 	| AssembledList;
-
-export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return node.fields;
-	return [];
-}
-
-export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return node.fields;
-	return [];
-}
-
-export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return Object.values(node.slots);
-	return [];
-}
-
-export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return Object.values(node.slots);
-	return [];
-}
 
 export interface LeftImmediateCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;

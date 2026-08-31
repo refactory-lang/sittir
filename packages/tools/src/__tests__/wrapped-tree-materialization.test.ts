@@ -93,8 +93,8 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 	nodes.set(
 		'alias_holder',
 		new AssembledBranch('alias_holder', rule, rule, {
-			slotRecord: Object.freeze({
-				identifier: new AssembledNonterminal({
+			slots: Object.freeze([
+				new AssembledNonterminal({
 					values: [
 						{
 							node: { kind: 'unresolved-ref', name: 'identifier' },
@@ -106,7 +106,7 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 					hasLeadingDelimiter: false,
 					sourceRuleIds: []
 				})
-			})
+			])
 		}) as AssembledNode
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));

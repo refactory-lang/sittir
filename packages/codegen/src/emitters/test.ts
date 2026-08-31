@@ -6,7 +6,6 @@ import {
 	AssembledKeyword,
 	AssembledList,
 	AssembledSupertype,
-	allSlotsOf,
 	isNodeRef,
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
@@ -180,7 +179,7 @@ function factoryCallArgs(
 	strict = false
 ): { typeConfigArg: string; renderConfigArg: string } {
 	const typeConfigParts: string[] = [];
-	for (const f of node.fields) {
+	for (const f of node.slots) {
 		if (isRequired(f)) {
 			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
 		}
@@ -282,11 +281,11 @@ function childBareCallArgs(
 }
 
 function requiredFieldParts(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
-	return fields.filter(isRequired).map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
+	return slots.filter(isRequired).map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
 }
 
 function objectLiteralInner(text: string): string | undefined {
@@ -648,7 +647,7 @@ function buildDummyStub(
 	const nextVisiting = new Set(visiting);
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
-	for (const f of allSlotsOf(node)) {
+	for (const f of node.slots) {
 		if (!isRequired(f)) continue;
 		const value = isMultiple(f)
 			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`

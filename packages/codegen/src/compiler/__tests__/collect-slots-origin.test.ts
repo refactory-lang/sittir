@@ -90,7 +90,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 
 		const branch = new AssembledBranch('argument_list', simplifiedRule, renderRule, {});
 
-		const contentSlot = branch.slots['content'];
+		const contentSlot = branch.slots.find((slot) => slot.name === 'content');
 		expect(contentSlot).toBeDefined();
 		expect(contentSlot?.isUnnamed).toBe(true);
 	});

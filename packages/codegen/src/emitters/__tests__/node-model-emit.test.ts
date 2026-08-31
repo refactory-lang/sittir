@@ -22,8 +22,8 @@ describe('node-model emitter', () => {
 		nodes.set(
 			'alias_host',
 			new AssembledBranch('alias_host', render, render, {
-				slotRecord: Object.freeze({
-					value: new AssembledNonterminal({
+				slots: Object.freeze([
+					new AssembledNonterminal({
 						fieldName: 'value',
 						values: [
 							{
@@ -42,7 +42,7 @@ describe('node-model emitter', () => {
 						hasLeadingDelimiter: false,
 						sourceRuleIds: []
 					})
-				})
+				])
 			})
 		);
 		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
@@ -51,7 +51,7 @@ describe('node-model emitter', () => {
 		const model = buildNodeModel(nodeMap);
 		const branch = model.nodes.find((node) => node.kind === 'alias_host');
 		if (!branch || branch.modelType !== 'branch') throw new Error('expected alias_host branch');
-		const field = branch.fields[0];
+		const field = branch.slots[0];
 		const value = field?.values[0];
 
 		expect(field).toBeDefined();

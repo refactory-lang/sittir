@@ -21,9 +21,7 @@ import {
 	hasOptionalElements,
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
-	allSlotsOf,
 	storageKindOfRef,
-	structuralFieldsOf,
 	AbstractAssembledCompound,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -50,7 +48,7 @@ export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | Asse
 }
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
-	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
+	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
@@ -60,7 +58,7 @@ export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCard
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
-		for (const slot of allSlotsOf(n)) {
+		for (const slot of n.slots) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = storageKindOfRef(v.node);
@@ -98,7 +96,7 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 	const referenced = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
 		if (node instanceof AbstractAssembledCompound) {
-			for (const s of Object.values(node.slots)) for (const t of slotKindNames(s)) referenced.add(t);
+			for (const s of node.slots) for (const t of slotKindNames(s)) referenced.add(t);
 		} else if (node instanceof AssembledSupertype) {
 			for (const t of node.subtypeNames) referenced.add(t);
 		}
@@ -393,7 +391,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 
 export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	for (const node of nodeMap.nodes.values()) {
-		for (const slot of allSlotsOf(node)) {
+		for (const slot of node.slots) {
 			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap);
 		}
 	}
@@ -491,8 +489,8 @@ export function wordConstructibleText(node: AssembledNode, nodeMap: NodeMap): st
 export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || !isSlotBearingCompound(node) || node.rawFactoryName === undefined) return undefined;
-	if (node.fields.length < 2) return undefined;
-	const required = node.fields.filter((f) => isRequired(f));
+	if (node.slots.length < 2) return undefined;
+	const required = node.slots.filter((f) => isRequired(f));
 	if (required.length !== 1 || isMultiple(required[0]!)) return undefined;
 	return required[0];
 }
@@ -519,7 +517,7 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 	if (slotLiteralValues(slot).length > 0) return null;
 	const kinds = slotKindNames(slot);
 	if (kinds.length !== 1) return null;
-	if (node.fields.some((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional')) return null;
+	if (node.slots.some((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional')) return null;
 	const target = nodeMap.nodes.get(kinds[0]!);
 	if (!target?.rawFactoryName) return null;
 	return kinds[0]!;
@@ -527,8 +525,8 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 
 export function resolveFactoryFieldNames(node: AssembledNode): readonly string[] | undefined {
 	if (node instanceof AbstractAssembledCompound) {
-		if (node.fields.length === 0) return undefined;
-		return node.fields.map((field) => field.name);
+		if (node.slots.length === 0) return undefined;
+		return node.slots.map((field) => field.name);
 	}
 	if (node instanceof AssembledList) return [canonicalSeparatedListField(node).name];
 	return undefined;

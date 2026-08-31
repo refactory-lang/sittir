@@ -245,7 +245,6 @@ interface BranchLikeNode {
 	readonly fromInputTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	readonly fields: readonly AssembledNonterminal[];
 }
 
 function buildBranchSignatureParts(
@@ -295,7 +294,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!(targetNode instanceof AbstractAssembledCompound)) {
 		return null;
 	}
-	const targetFields = targetNode.fields;
+	const targetFields = targetNode.slots;
 	const hasBlockingField = targetFields.some((f) => isRequired(f));
 	if (hasBlockingField) return null;
 	return targetNode.rawFactoryName;
@@ -314,7 +313,7 @@ function emitBranchFrom(
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
 				fromFunctionName: node.fromFunctionName,
-				fields: node.fields,
+				slots: node.slots,
 				childSlotFacts: soleSlotFacts(node, nodeMap)
 			},
 			kindEntries,
@@ -325,8 +324,8 @@ function emitBranchFrom(
 
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
-	const fields = node.fields;
-	const opt = fields.some((f) => isRequired(f)) ? '' : '?';
+	const slots = node.slots;
+	const opt = slots.some((f) => isRequired(f)) ? '' : '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const returnType = factoryReturnTypeExpr(factory);
@@ -347,8 +346,8 @@ function emitBranchFrom(
 				.filter((part) => part !== undefined)
 				.join(' | ')
 		: looseInputType;
-	const resolverFields = fields;
-	for (const f of resolverFields) {
+	const resolverSlots = slots;
+	for (const f of resolverSlots) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 		const key = JSON.stringify(f.configKey);
 		const signature = `export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`;
@@ -365,13 +364,13 @@ function emitBranchFrom(
 			lines.push(signature, `  return ${body};`, '}', '');
 		}
 	}
-	const resolverFor = new Set(resolverFields.map((f) => f.propertyName));
+	const resolverFor = new Set(resolverSlots.map((f) => f.propertyName));
 	const fieldValue = (f: AssembledNonterminal, valueExpr: string): string =>
 		resolverFor.has(f.propertyName)
 			? `${fieldResolverName(typeName, f)}(${valueExpr})`
 			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
-	if (fields.length > 0) {
+	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${containerTypeCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
@@ -380,7 +379,7 @@ function emitBranchFrom(
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
-		for (const f of fields) {
+		for (const f of slots) {
 			if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
 				const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
 				lines.push(`  const ${neName(f)} = ${call};`);
@@ -405,7 +404,7 @@ function emitBranchFrom(
 			lines.push(`  return ${factory}(${guardedCall});`);
 		} else {
 			lines.push(`  return ${factory}({`);
-			for (const f of fields) {
+			for (const f of slots) {
 				if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
@@ -437,7 +436,7 @@ interface ContainerFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	readonly fields?: readonly AssembledNonterminal[];
+	readonly slots?: readonly AssembledNonterminal[];
 	readonly childSlotFacts: SoleSlotFacts | null;
 }
 
@@ -592,7 +591,7 @@ function emitContainerFrom(
 	const tName = `T.${node.typeName}`;
 	const facts = node.childSlotFacts;
 	const elementType = facts
-		? childElementType({ children: node.fields ?? [] }, nodeMap)
+		? childElementType({ children: node.slots ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	let inputWiden: string | undefined;
 	if (facts && !facts.multiple) {
@@ -651,7 +650,7 @@ function emitSeparatedListFrom(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = separatedListSurface(node, nodeMap, kindEntries).elemType;
 	void contentSlot;
-	const contentStorageKey = node.fields.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
+	const contentStorageKey = node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 
 	const hasSeparatorKindOption = node.separatorRule !== undefined;
 	const candidateKindNames = hasSeparatorKindOption

@@ -2485,7 +2485,7 @@ function inferPolymorphVariant(
 				namedChildKindHints
 			);
 		case 'promoted':
-			return inferFromFieldPresence(desc.fields, derivedConfig, parentKind);
+			return inferFromFieldPresence(desc.slots, derivedConfig, parentKind);
 		default:
 			return assertNever(desc);
 	}

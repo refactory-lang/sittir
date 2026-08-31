@@ -45,7 +45,7 @@ describe('slot structural signals', () => {
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const slot = getCompound(nodeMap, 'box').fields[0];
+		const slot = getCompound(nodeMap, 'box').slots[0];
 		expect(slot?.fieldName).toBeUndefined();
 		expect(slot?.isUnnamed).toBe(true);
 	});
@@ -61,7 +61,7 @@ describe('slot structural signals', () => {
 			interface_body: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const slot = getCompound(nodeMap, 'box').fields[0];
+		const slot = getCompound(nodeMap, 'box').slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(slot?.values.map((value) => value.parseKind?.name)).toEqual(['object_type']);
 		expect(slot?.parseNames).toEqual(['object_type']);
@@ -79,7 +79,7 @@ describe('slot structural signals', () => {
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getCompound(nodeMap, 'box');
-		const slot = box.fields[0];
+		const slot = box.slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBe(slot);
 	});
@@ -90,7 +90,7 @@ describe('slot structural signals', () => {
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getCompound(nodeMap, 'box');
-		const slot = box.fields[0];
+		const slot = box.slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 		// The sole slot holds a single concrete kind, so the shape is the
 		// forwarding refinement of 'direct'; the child SURFACE stays 'direct'.
@@ -107,7 +107,7 @@ describe('slot structural signals', () => {
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getCompound(nodeMap, 'box');
-		const slot = box.fields[0];
+		const slot = box.slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
 		expect(classifyChildFactorySurface(box, nodeMap)).toBe('spread');
@@ -124,7 +124,7 @@ describe('slot structural signals', () => {
 			_helper: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
-		const slot = getCompound(nodeMap, 'box').fields[0];
+		const slot = getCompound(nodeMap, 'box').slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 
 		// The slot's storageName is the hidden alias source (`helper`), not the

@@ -6,8 +6,7 @@ import {
 	AssembledPattern,
 	AssembledEnum,
 	AssembledKeyword,
-	AssembledToken,
-	structuralFieldsOf
+	AssembledToken
 } from '../compiler/model/node-map.ts';
 import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, escForSource } from './shared.ts';
@@ -287,7 +286,7 @@ function toIdMap(ids: GeneratedIdTable | undefined): Map<string, GeneratedIdEntr
 function collectFieldNames(nodeMap: NodeMap): string[] {
 	const result = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
-		for (const field of structuralFieldsOf(node)) result.add(field.name);
+		for (const field of node.slots) result.add(field.name);
 	}
 	return [...result];
 }
@@ -355,7 +354,7 @@ function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
 		nonEmptyRepeat: boolean;
 	}[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		for (const f of structuralFieldsOf(node)) {
+		for (const f of node.slots) {
 			if (keywordPresenceKind(f, nodeMap) !== 'bitflag') continue;
 			const values = keywordPresenceValues(f, nodeMap);
 			if (values.length < 2) continue;
@@ -396,7 +395,7 @@ export function resolveBitflagConstName(
 	if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return undefined;
 	const bareCounts = new Map<string, number>();
 	for (const [k, n] of nodeMap.nodes) {
-		for (const f of structuralFieldsOf(n)) {
+		for (const f of n.slots) {
 			if (keywordPresenceKind(f, nodeMap) !== 'bitflag') continue;
 			const bare = bitflagBareConstName(f.propertyName);
 			bareCounts.set(bare, (bareCounts.get(bare) ?? 0) + 1);

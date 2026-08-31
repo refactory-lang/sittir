@@ -109,9 +109,7 @@ describe('diagnoseParseKindCollisions', () => {
 
 		const host = nodeMap.nodes.get('host');
 		expect(host?.modelType).toBe('polymorph');
-		const slot = Object.values(
-			(host as { slots: Record<string, { name: string; values: readonly unknown[] }> }).slots
-		)[0];
+		const slot = (host as { slots: readonly { name: string; values: readonly unknown[] }[] }).slots[0];
 		expect(slot?.name).toBe('shared');
 		expect(slot?.values).toHaveLength(1);
 	});
@@ -138,7 +136,7 @@ describe('diagnoseParseKindCollisions', () => {
 
 		const host = nodeMap.nodes.get('host');
 		expect(host?.modelType).toBe('polymorph');
-		const slot = Object.values((host as { slots: Record<string, { values: readonly unknown[] }> }).slots)[0];
+		const slot = (host as { slots: readonly { values: readonly unknown[] }[] }).slots[0];
 		expect(slot?.values).toHaveLength(3);
 	});
 
@@ -169,7 +167,7 @@ describe('diagnoseParseKindCollisions', () => {
 
 		const host = nodeMap.nodes.get('host');
 		expect(host?.modelType).toBe('polymorph');
-		const slot = Object.values((host as { slots: Record<string, { values: readonly unknown[] }> }).slots)[0];
+		const slot = (host as { slots: readonly { values: readonly unknown[] }[] }).slots[0];
 		expect(slot?.values).toHaveLength(3);
 	});
 });

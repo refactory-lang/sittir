@@ -1,11 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import {
-	allSlotsOf,
-	deriveSlotCardinality,
-	resolveSlotAliasPairs,
-	structuralFieldsOf
-} from '../compiler/model/node-map.ts';
+import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	collectAliasSourceKinds,
@@ -51,7 +46,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		for (const f of allSlotsOf(node)) {
+		for (const f of node.slots) {
 			const pairs = (resolveSlotAliasPairs(f, nodeMap) ?? []).filter(([t, s]) => t !== s);
 			if (pairs.length === 0) continue;
 			fieldAliasMap[`${kind}.${f.name}`] = Object.fromEntries(pairs);
@@ -70,7 +65,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
-		for (const field of structuralFieldsOf(node)) {
+		for (const field of node.slots) {
 			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field));
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;

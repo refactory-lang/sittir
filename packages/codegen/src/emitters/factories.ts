@@ -24,7 +24,7 @@ import {
 	AssembledKeyword,
 	AssembledToken
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, allSlotsOf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindOfRef } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -77,7 +77,7 @@ export interface EmitFactoriesConfig {
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	for (const n of nodeMap.nodes.values()) {
 		if (n instanceof AssembledList && n.nonEmpty) return true;
-		if (allSlotsOf(n).some((f) => isNonEmpty(f))) return true;
+		if (n.slots.some((f) => isNonEmpty(f))) return true;
 	}
 	return false;
 }
@@ -85,7 +85,7 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
 	const imports = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
-		for (const slot of allSlotsOf(node)) {
+		for (const slot of node.slots) {
 			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
 			switch (storageInfo.kind) {
 				case 'boolean':
@@ -111,7 +111,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
 	if (!kindEntries) return false;
 	for (const node of nodeMap.nodes.values()) {
-		for (const slot of allSlotsOf(node)) {
+		for (const slot of node.slots) {
 			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
 			if (storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') continue;
 			if (kindEnumTextMapExpr(slot, nodeMap, kindEntries).includes('kindIdFromName(')) return true;
@@ -278,7 +278,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries));
+		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
 	}
 
 	export function group(
@@ -287,7 +287,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries));
+		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
 	}
 
 	export function separatedList(
@@ -595,17 +595,7 @@ function resolveFactorySurface(
 			: null;
 	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 	if (spreadFacts) {
-		const elementType = resolveSoleSlotElementType(
-			{
-				kind: node.kind,
-				typeName: node.typeName,
-				treeTypeName: node.treeTypeName,
-				rawFactoryName: node.rawFactoryName,
-				fields: [spreadFacts.slot]
-			},
-			nodeMap,
-			kindEntries
-		);
+		const elementType = childElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
 			const param: FactoryParam = {
 				label: 'children',
@@ -664,10 +654,10 @@ function resolveFactorySurface(
 			opt: isRequired(singleField) ? '' : '?'
 		};
 	}
-	const fields = node.fields;
-	const opt = resolveConfigOptional(fields);
+	const slots = node.slots;
+	const opt = resolveConfigOptional(slots);
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
-	const hasConfigReads = fields.length > 0;
+	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
 	const param: FactoryParam = {
 		label: 'config',
@@ -778,20 +768,20 @@ function builtAliasLines(
 
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined = undefined
 ): string {
 	const exportName = node.rawFactoryName!;
 	const fn = exportName;
 	const exportKw = 'export ';
-	fields = fields ?? [];
+	slots = slots ?? [];
 	const typeKind = node.hoisted ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node, kindEntries) : undefined;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
 
-	const flankField = fields.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
+	const flankField = slots.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
 	if (flankField !== undefined) {
 		throw new Error(
 			`emitFieldCarryingFactory: '${typeKind}' field '${flankField.name}' carries an optional delimiter — ` +
@@ -804,10 +794,10 @@ function emitFieldCarryingFactory(
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
 	let withTypeMembers: string[];
-	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
+	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 
 	if (spreadFacts) {
-		fieldsToEmit = [spreadFacts.slot];
+		slotsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? 'children' : '');
@@ -825,7 +815,7 @@ function emitFieldCarryingFactory(
 		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries);
 		withLines = ['    $with: {'];
 		withTypeMembers = [];
-		for (const f of fields) {
+		for (const f of slots) {
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
@@ -850,7 +840,7 @@ function emitFieldCarryingFactory(
 	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
-	for (const f of fieldsToEmit) {
+	for (const f of slotsToEmit) {
 		lines.push(`  const ${f.storageKey} = ${valueSourceFor(f)};`);
 	}
 	lines.push('  return withMethods(withAccessors({');
@@ -858,12 +848,12 @@ function emitFieldCarryingFactory(
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
-	for (const f of fieldsToEmit) {
+	for (const f of slotsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
 	lines.push(...withLines);
 	lines.push('  }, {');
-	for (const f of fieldsToEmit) {
+	for (const f of slotsToEmit) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
@@ -957,15 +947,15 @@ function emitRefineFormFactory(
 	const formFn = refineFormFactoryName(baseFn, form.name);
 	const narrowed = new Map<string, string>();
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
-	const fields = node.fields;
-	const opt = resolveRefineFormConfigOptional(fields, nodeMap, narrowed);
+	const slots = node.slots;
+	const opt = resolveRefineFormConfigOptional(slots, nodeMap, narrowed);
 	const formTypeName = refineFormTypeName(info.typeName, form.name);
 	const formShortName = formTypeName.slice(info.typeName.length);
 	const lines: string[] = [];
 	const formBuiltName = `${info.typeName}${formShortName}Built`;
 	const formWithTypeMembers: string[] = [];
 	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config): ${formBuiltName} {`);
-	for (const f of fields) {
+	for (const f of slots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
 			lines.push(
@@ -979,11 +969,11 @@ function emitRefineFormFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	for (const f of fields) {
+	for (const f of slots) {
 		lines.push(`    ${f.storageKey},`);
 	}
 	lines.push('    $with: {');
-	for (const f of fields) {
+	for (const f of slots) {
 		if (narrowed.has(f.name)) continue;
 		const method = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
@@ -1002,7 +992,7 @@ function emitRefineFormFactory(
 	}
 	lines.push('    },');
 	lines.push('  }, {');
-	for (const f of fields) {
+	for (const f of slots) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
@@ -1013,17 +1003,17 @@ function emitRefineFormFactory(
 }
 
 function resolveRefineFormConfigOptional(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	narrowed: ReadonlyMap<string, string>
 ): '' | '?' {
-	const hasRequired = fields.some((f) => isRequired(f) && !narrowed.has(f.name));
+	const hasRequired = slots.some((f) => isRequired(f) && !narrowed.has(f.name));
 	return hasRequired ? '' : '?';
 }
 
-function resolveConfigOptional(fields: readonly AssembledNonterminal[]): '' | '?' {
-	fields = fields ?? [];
-	const hasRequired = fields.some((f) => isRequired(f));
+function resolveConfigOptional(slots: readonly AssembledNonterminal[]): '' | '?' {
+	slots = slots ?? [];
+	const hasRequired = slots.some((f) => isRequired(f));
 	return hasRequired ? '' : '?';
 }
 
@@ -1037,22 +1027,6 @@ function resolvePolymorphFormVariantName(
 	kindEntries?: readonly KindEnumEntry[]
 ): string | undefined {
 	return node.parentKind ? node.name : undefined;
-}
-
-interface SoleSlotNode {
-	readonly kind: string;
-	readonly typeName: string;
-	readonly treeTypeName: string;
-	readonly rawFactoryName?: string;
-	readonly fields: readonly AssembledNonterminal[];
-}
-
-function resolveSoleSlotElementType(
-	node: SoleSlotNode,
-	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	return childElementType({ children: node.fields }, nodeMap, kindEntries);
 }
 
 function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
@@ -1139,7 +1113,7 @@ function emitSeparatedListFactory(
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
 
-	const isMultiField = node.fields.length > 1;
+	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
 	const contentStorageKey = canonical?.storageKey ?? '_content';
 	const contentAccessorName = canonical?.propertyName ?? 'content';
