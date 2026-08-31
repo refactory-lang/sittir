@@ -21,7 +21,6 @@ import {
 	isValidIdent,
 	resolveDirectFactorySlot,
 	classifyChildFactorySurface,
-	classifyFactoryEmission,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -33,7 +32,7 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { constructorSurface, constructorTargetKind, kindEnumConfigValue, separatedListSurface } from './factories.ts';
+import { kindEnumConfigValue, separatedListSurface } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
 

@@ -6,7 +6,6 @@ import {
 	AssembledEnum,
 	AssembledSupertype,
 	AssembledList,
-	AbstractAssembledCompound,
 	AssembledKeyword,
 	AssembledNonterminal,
 	valueParseKindsOf,
@@ -31,7 +30,6 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	fieldTypeComponents,
-	emitsFieldResolvers,
 	fieldResolverName
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';

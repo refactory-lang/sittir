@@ -1,22 +1,17 @@
 import {
 	CHOICE,
 	DEDENT,
-	FIELD,
 	GROUP,
 	INDENT,
 	NEWLINE,
-	OPTIONAL,
 	PATTERN,
-	REPEAT,
-	REPEAT1,
 	SEQ,
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
 import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';

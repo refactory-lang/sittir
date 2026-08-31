@@ -13,10 +13,20 @@ import { tryLoadNativeEngine } from './helpers.ts';
  */
 const invalidInputs = [
 	{ label: 'NaN handle', handle: Number.NaN, childIndex: 0, expected: /handle must be a finite number/ },
-	{ label: 'infinite handle', handle: Number.POSITIVE_INFINITY, childIndex: 0, expected: /handle must be a finite number/ },
+	{
+		label: 'infinite handle',
+		handle: Number.POSITIVE_INFINITY,
+		childIndex: 0,
+		expected: /handle must be a finite number/
+	},
 	{ label: 'negative handle', handle: -1, childIndex: 0, expected: /handle must not be negative/ },
 	{ label: 'fractional handle', handle: 1.5, childIndex: 0, expected: /handle must be a whole number/ },
-	{ label: 'handle past exact-integer range', handle: 2 ** 53, childIndex: 0, expected: /beyond the exact-integer range/ },
+	{
+		label: 'handle past exact-integer range',
+		handle: 2 ** 53,
+		childIndex: 0,
+		expected: /beyond the exact-integer range/
+	},
 	{ label: 'NaN childIndex', handle: 0, childIndex: Number.NaN, expected: /childIndex must be a finite number/ },
 	{ label: 'negative childIndex', handle: 0, childIndex: -1, expected: /childIndex must not be negative/ },
 	{ label: 'fractional childIndex', handle: 0, childIndex: 2.5, expected: /childIndex must be a whole number/ }
