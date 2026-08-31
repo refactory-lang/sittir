@@ -49,7 +49,11 @@ hand-assembled type unions — types fall out of generic inference over the
 paired function types. Where a child has no emitted coercer, the coerce
 application seats the child's strict builder inside the parent's coercer.
 No layer changes storage, wrap, transport, render, or the validators — the
-overlays are surface only, and there is no wire change.
+overlays are surface only. The one non-surface effect in this design is
+additive: a hidden dispatch union that link now keeps (python's `_suite`)
+emits its supertype transport surface in the native crate (a transport
+struct, slot enum, and render helper) that was previously pruned away;
+validators stay exactly at floor.
 
 ### Generated layout (per grammar, under `packages/<lang>/src/`)
 
@@ -108,13 +112,15 @@ name the arms. Two arm shapes, one rule:
 kind, `variant('in')` renames it, the overlay attaches `binaryExpression.in`
 beside the enum members; the surface does not distinguish them.
 
-**Supertypes** (`supertypes.ts`): every `AssembledSupertype` and every
-hidden kind whose body is a choice of kinds (a namespace with no node of
-its own — `_statement` in rust and python is this shape). Members are
-re-keyed by their supertype-stripped short name; supertype closure applies,
-so `ir.statement.function` reaches `function_item` through
-`_declaration_statement`. Each group is a top-level `export const` and is
-also attached to `ir`. This emission moves out of `ir.ts`.
+**Supertypes**: every `AssembledSupertype` — including a hidden kind whose
+body is a choice of kinds (a dispatch union with no node of its own —
+`_statement` in rust and python is this shape), which link keeps even when
+inlining removed every reference to it. Members are re-keyed by their
+supertype-stripped short name. The grouped namespaces are emitted by
+`ir.ts` as coercing-bundle groups (each member must carry `.strict`, so
+the group is a projection over the hoisted bundles, not the strict
+builders); the `overlays/supertypes.ts` chain layer is a reserved
+pass-through seam.
 
 ### Sub-factory signature
 

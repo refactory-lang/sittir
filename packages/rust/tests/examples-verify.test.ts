@@ -234,6 +234,8 @@ describe('ir entry ratchet', () => {
 	it('exposes no more top-level builders than the recorded ceiling', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
+		// (Total keys moved 247 → 250 when the hidden dispatch-union
+		// supertypes returned as grouped namespaces; builders did not grow.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(233);
 	});

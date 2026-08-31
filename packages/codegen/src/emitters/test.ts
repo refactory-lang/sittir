@@ -36,7 +36,6 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { constructorSurface, constructorTargetKind, kindEnumConfigValue, separatedListSurface } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
-import { bundleEntries } from './overlays/module.ts';
 import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
 
 export interface EmitTestsConfig {
@@ -74,7 +73,6 @@ export function emitTests(config: EmitTestsConfig): string {
 	const kindEntries = config.generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, config.generatedIdTables)
 		: undefined;
-	const bundledKinds = new Set(bundleEntries(nodeMap, config.generatedIdTables).map((e) => e.node.kind));
 	const polymorphWires = collectPolymorphWires(nodeMap, config.generatedIdTables, { silent: true });
 
 	const lines: string[] = [
@@ -364,6 +362,19 @@ function emitSubFactoryTests(
 		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${sub.name}` : `ir.${key}.${sub.name}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
+		const slotProp = sub.slot.propertyName;
+		const slotIsKindEnum = resolveFieldStorageInfo(sub.slot, nodeMap).kind === 'kindEnum';
+		if (sub.arm.via === 'literal') {
+			const val = kindEnumConfigValue(sub.arm.literal, slotIsKindEnum ? kindEntries : undefined);
+			cases.push(`    const seated = (node as any).${slotProp}();`);
+			cases.push(`    expect(seated?.$text ?? seated).toBe(${val});`);
+		} else if (!slotIsKindEnum) {
+			cases.push(
+				`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
+			);
+		} else {
+			cases.push(`    expect((node as any).${slotProp}()).toBeDefined();`);
+		}
 		const hasContent = args !== '' && args !== '{}';
 		if (hasContent) {
 			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
