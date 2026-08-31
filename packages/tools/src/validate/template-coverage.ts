@@ -931,12 +931,12 @@ function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
 	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts> & {
-		nodes?: ReadonlyArray<{ kind: string; fields?: ReadonlyArray<{ name: string }> }>;
+		nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }>;
 	};
 	const modelFieldsByKind = new Map<string, Set<string>>();
 	for (const node of parsed.nodes ?? []) {
-		if (node.fields === undefined) continue;
-		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.fields.map((f) => f.name)));
+		if (node.slots === undefined) continue;
+		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.slots.map((f) => f.name)));
 	}
 	return {
 		factorySlots: parsed.factorySlots ?? {},
