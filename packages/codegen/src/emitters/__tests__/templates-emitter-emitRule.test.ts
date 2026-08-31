@@ -93,11 +93,7 @@ describe('emitRule — string', () => {
 	});
 
 	it('leaves brace pairs alone — they collide with nothing', () => {
-		// Askama lexes only `{{`, `{%` and `{#`. A brace followed by
-		// anything else, `}` included, is ordinary text, so escaping it
-		// would put a space in the rendered output for no reason.
-		// Separation is applied at emission, and only against a real
-		// tag opener — see separateBraceFromTag.
+		// Only a real tag opener needs separating — see separateBraceFromTag.
 		const rule: StringRule = { type: STRING, value: '{}' };
 		expect(emitRule(rule, makeCtx())).toBe('{}');
 	});

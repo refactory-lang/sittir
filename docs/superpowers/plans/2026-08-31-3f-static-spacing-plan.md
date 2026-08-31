@@ -1,6 +1,6 @@
 # 3f Static Spacing — Reconciliation Plan
 
-> **Status:** reconciliation complete; implementation NOT started pending
+> **Status:** SHIPPED. Reconciliation complete; the work below landed. Originally paused pending
 > dispatcher confirmation (two source documents give materially different
 > definitions of "3f" — see "The conflict" below).
 
@@ -200,12 +200,12 @@ touching the classifier itself. This is safe, additive, and gate-neutral
 
 ## Status
 
-Reporting BLOCKED on the (a)/(b) layering ruling and the (1)/(2) scope
-conflict above — implementing either without dispatcher confirmation risks
-building against the wrong mechanism (the project's explicit "follow the
-prescribed approach" rule, and the "foundational changes are not
-delegated" convention this session's own memory records). No source files
-under `packages/codegen/src` have been modified. The residue-diagnosis
-probe (unblocked, gate-neutral) is available to run immediately once
-direction is given, and is the recommended first concrete step under
-either (a) or (b).
+SHIPPED. The spec reading won: the classifier fix, the fallback-chain
+extension, and the byte-identical stamp relocation landed with
+`stampStaticSpacing` as a genuinely separate pass between assemble and
+`emitAll`, layering option (b). The follow-on runtime-check skip landed
+as the `markSeam` askama filter rather than a `RawWriter` type — the
+literal writer split needs a custom sink threaded through every
+render-fn signature, which the seam-resolution spec calls an optional
+end-state and prior work deferred pending profiling evidence that still
+does not exist.
