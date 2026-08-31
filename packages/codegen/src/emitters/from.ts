@@ -123,8 +123,8 @@ function emitNamespaceImports(
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push(
 		usesAttachProps
-			? "import { coerceKindEnumStorage, isNodeData, attachProps } from '../utils.js';"
-			: "import { coerceKindEnumStorage, isNodeData } from '../utils.js';"
+			? "import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData, attachProps } from '../utils.js';"
+			: "import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';"
 	);
 	lines.push('');
 }
@@ -871,6 +871,10 @@ function resolveFieldCall(
 	if (storageInfo?.kind === 'kindEnum') {
 		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
 		return `coerceKindEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
+	}
+	if (storageInfo?.kind === 'mixedEnum') {
+		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
+		return `coerceMixedEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
 	}
 	return baseCall;
 }

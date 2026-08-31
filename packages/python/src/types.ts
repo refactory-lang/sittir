@@ -2473,12 +2473,15 @@ export interface Block {
 export interface ExpressionList {
 	readonly $type: TSKindId.ExpressionList;
 	readonly _expression: Expression;
-	readonly _tail: ',' | ExpressionListExpressions;
+	readonly _tail: TSKindId.Comma | ExpressionListExpressions;
+	readonly __inputHints__?: {
+		readonly tail: KindEnum<',', TSKindId.Comma> | ExpressionListExpressions;
+	};
 	readonly __looseHints__?: {
 		readonly tail: readonly Expression[];
 	};
 	expression(): Expression;
-	tail(): ',' | ExpressionListExpressions;
+	tail(): TSKindId.Comma | ExpressionListExpressions;
 }
 
 export interface DottedName {
@@ -2914,12 +2917,15 @@ export interface AugmentedAssignment {
 export interface PatternList {
 	readonly $type: TSKindId.PatternList;
 	readonly _pattern: Pattern;
-	readonly _tail: ',' | PatternListPatterns;
+	readonly _tail: TSKindId.Comma | PatternListPatterns;
+	readonly __inputHints__?: {
+		readonly tail: KindEnum<',', TSKindId.Comma> | PatternListPatterns;
+	};
 	readonly __looseHints__?: {
 		readonly tail: readonly Pattern[];
 	};
 	pattern(): Pattern;
-	tail(): ',' | PatternListPatterns;
+	tail(): TSKindId.Comma | PatternListPatterns;
 }
 
 export interface Yield {
@@ -3203,8 +3209,16 @@ export interface String {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content?: readonly (EscapeInterpolation | EscapeSequence | '\\' | _StringContent)[];
-	contents(): readonly (EscapeInterpolation | EscapeSequence | '\\' | _StringContent)[];
+	readonly _content?: readonly (EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | _StringContent)[];
+	readonly __inputHints__?: {
+		readonly content?: readonly (
+			| KindEnum<'\\', TSKindId.NotEscapeSequence | TSKindId.Bslash>
+			| EscapeInterpolation
+			| EscapeSequence
+			| _StringContent
+		)[];
+	};
+	contents(): readonly (EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | _StringContent)[];
 }
 
 export interface Interpolation {
@@ -3418,13 +3432,16 @@ export interface PrintChevronArguments {
 export interface PrintStatementArm1 {
 	readonly $type: TSKindId.PrintStatementArm1;
 	readonly _chevron: Chevron;
-	readonly _print_chevron_arguments?: PrintChevronArguments | ',';
+	readonly _print_chevron_arguments?: PrintChevronArguments | TSKindId.Comma;
+	readonly __inputHints__?: {
+		readonly print_chevron_arguments?: KindEnum<',', TSKindId.Comma> | PrintChevronArguments;
+	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
 		readonly print_chevron_arguments?: readonly Expression[];
 	};
 	chevron(): Chevron;
-	printChevronArguments(): PrintChevronArguments | ',' | undefined;
+	printChevronArguments(): PrintChevronArguments | TSKindId.Comma | undefined;
 }
 
 export interface PrintStatementArm2 {

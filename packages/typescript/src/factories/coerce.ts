@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import type * as T from '../types.js';
 import { TSKindId, KIND_LITERAL_TEXT, Delimiter } from '../types.js';
 import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData } from '../utils.js';
+import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
@@ -2921,14 +2921,42 @@ export function coerceToAssignmentExpression(
 export function resolveAugmentedAssignmentExpression_left(
 	value: T.AugmentedAssignmentExpression.LooseConfig['left']
 ): T.AugmentedAssignmentExpression['_left'] {
-	return _resolveOne<
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| T.ReservedIdentifier
-		| T.Identifier
-		| T.ParenthesizedExpression
-		| T.NonNullExpression
-	>(value, _super_statement_identifier, _K34);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| T.ReservedIdentifier
+				| T.Identifier
+				| T.ParenthesizedExpression
+				| T.NonNullExpression
+			>(value, _super_statement_identifier, _K34)
+		),
+		[
+			['declare', TSKindId.Declare] as const,
+			['namespace', TSKindId.Namespace] as const,
+			['type', TSKindId.AnonType] as const,
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const,
+			['override', TSKindId.Override] as const,
+			['readonly', TSKindId.Readonly] as const,
+			['module', TSKindId.AnonModule] as const,
+			['any', TSKindId.Any] as const,
+			['number', TSKindId.AnonNumber] as const,
+			['boolean', TSKindId.Boolean] as const,
+			['string', TSKindId.AnonString] as const,
+			['symbol', TSKindId.Symbol] as const,
+			['export', TSKindId.Export] as const,
+			['object', TSKindId.AnonObject] as const,
+			['new', TSKindId.New] as const,
+			['get', TSKindId.Get] as const,
+			['set', TSKindId.Set] as const,
+			['async', TSKindId.Async] as const,
+			['static', TSKindId.Static] as const,
+			['let', TSKindId.Let] as const
+		]
+	);
 }
 
 export function resolveAugmentedAssignmentExpression_operator(
@@ -6289,7 +6317,35 @@ export function coerceToExportStatementDefault(
 export function resolveArrowFunctionParameter_parameter(
 	value: T.ArrowFunctionParameter.LooseConfig['parameter']
 ): T.ArrowFunctionParameter['_parameter'] {
-	return _resolveOne<T.ReservedIdentifier | T.Identifier>(value, _super_statement_identifier, _K2);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<T.ReservedIdentifier | T.Identifier>(value, _super_statement_identifier, _K2)
+		),
+		[
+			['declare', TSKindId.Declare] as const,
+			['namespace', TSKindId.Namespace] as const,
+			['type', TSKindId.AnonType] as const,
+			['public', TSKindId.Public] as const,
+			['private', TSKindId.Private] as const,
+			['protected', TSKindId.Protected] as const,
+			['override', TSKindId.Override] as const,
+			['readonly', TSKindId.Readonly] as const,
+			['module', TSKindId.AnonModule] as const,
+			['any', TSKindId.Any] as const,
+			['number', TSKindId.AnonNumber] as const,
+			['boolean', TSKindId.Boolean] as const,
+			['string', TSKindId.AnonString] as const,
+			['symbol', TSKindId.Symbol] as const,
+			['export', TSKindId.Export] as const,
+			['object', TSKindId.AnonObject] as const,
+			['new', TSKindId.New] as const,
+			['get', TSKindId.Get] as const,
+			['set', TSKindId.Set] as const,
+			['async', TSKindId.Async] as const,
+			['static', TSKindId.Static] as const,
+			['let', TSKindId.Let] as const
+		]
+	);
 }
 
 export function coerceToArrowFunctionParameter(
@@ -6301,12 +6357,44 @@ export function coerceToArrowFunctionParameter(
 		_requireField(
 			'_arrow_function_parameter',
 			'parameter',
-			_resolveOne<T.ReservedIdentifier | T.Identifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'parameter' in input
-					? input.parameter
-					: input,
-				_super_statement_identifier,
-				_K2
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'parameter' in input
+						? input.parameter
+						: input,
+					() =>
+						_resolveOne<T.ReservedIdentifier | T.Identifier>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'parameter' in input
+								? input.parameter
+								: input,
+							_super_statement_identifier,
+							_K2
+						)
+				),
+				[
+					['declare', TSKindId.Declare] as const,
+					['namespace', TSKindId.Namespace] as const,
+					['type', TSKindId.AnonType] as const,
+					['public', TSKindId.Public] as const,
+					['private', TSKindId.Private] as const,
+					['protected', TSKindId.Protected] as const,
+					['override', TSKindId.Override] as const,
+					['readonly', TSKindId.Readonly] as const,
+					['module', TSKindId.AnonModule] as const,
+					['any', TSKindId.Any] as const,
+					['number', TSKindId.AnonNumber] as const,
+					['boolean', TSKindId.Boolean] as const,
+					['string', TSKindId.AnonString] as const,
+					['symbol', TSKindId.Symbol] as const,
+					['export', TSKindId.Export] as const,
+					['object', TSKindId.AnonObject] as const,
+					['new', TSKindId.New] as const,
+					['get', TSKindId.Get] as const,
+					['set', TSKindId.Set] as const,
+					['async', TSKindId.Async] as const,
+					['static', TSKindId.Static] as const,
+					['let', TSKindId.Let] as const
+				]
 			)
 		)
 	);

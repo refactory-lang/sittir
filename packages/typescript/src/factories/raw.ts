@@ -10,6 +10,7 @@ import {
 	methodsEngine,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
+	coerceMixedEnumStorage,
 	isNodeData
 } from '../utils.js';
 
@@ -2754,13 +2755,7 @@ export type AugmentedAssignmentExpressionBuilt = T.AugmentedAssignmentExpression
 	readonly $named: true;
 	readonly $with: {
 		left(
-			value:
-				| T.MemberExpression
-				| T.SubscriptExpression
-				| T.ReservedIdentifier
-				| T.Identifier
-				| T.ParenthesizedExpression
-				| T.NonNullExpression
+			value: NonNullable<Parameters<typeof buildAugmentedAssignmentExpression>[0]>['left']
 		): AugmentedAssignmentExpressionBuilt;
 		operator(
 			value: NonNullable<Parameters<typeof buildAugmentedAssignmentExpression>[0]>['operator']
@@ -2772,7 +2767,37 @@ export type AugmentedAssignmentExpressionBuilt = T.AugmentedAssignmentExpression
 export function buildAugmentedAssignmentExpression(
 	config: T.AugmentedAssignmentExpression.Config
 ): AugmentedAssignmentExpressionBuilt {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<
+		| T.MemberExpression
+		| T.SubscriptExpression
+		| T.ReservedIdentifier
+		| T.Identifier
+		| T.ParenthesizedExpression
+		| T.NonNullExpression
+	>(config.left, [
+		['declare', TSKindId.Declare] as const,
+		['namespace', TSKindId.Namespace] as const,
+		['type', TSKindId.AnonType] as const,
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const,
+		['override', TSKindId.Override] as const,
+		['readonly', TSKindId.Readonly] as const,
+		['module', TSKindId.AnonModule] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['export', TSKindId.Export] as const,
+		['object', TSKindId.AnonObject] as const,
+		['new', TSKindId.New] as const,
+		['get', TSKindId.Get] as const,
+		['set', TSKindId.Set] as const,
+		['async', TSKindId.Async] as const,
+		['static', TSKindId.Static] as const,
+		['let', TSKindId.Let] as const
+	]);
 	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+=', TSKindId.PlusEq] as const,
 		['-=', TSKindId.DashEq] as const,
@@ -2801,15 +2826,8 @@ export function buildAugmentedAssignmentExpression(
 				_operator,
 				_right,
 				$with: {
-					left: (
-						value:
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| T.ReservedIdentifier
-							| T.Identifier
-							| T.ParenthesizedExpression
-							| T.NonNullExpression
-					) => buildAugmentedAssignmentExpression({ ...config, left: value }),
+					left: (value: NonNullable<Parameters<typeof buildAugmentedAssignmentExpression>[0]>['left']) =>
+						buildAugmentedAssignmentExpression({ ...config, left: value }),
 					operator: (value: NonNullable<Parameters<typeof buildAugmentedAssignmentExpression>[0]>['operator']) =>
 						buildAugmentedAssignmentExpression({ ...config, operator: value }),
 					right: (value: T.Expression) => buildAugmentedAssignmentExpression({ ...config, right: value })
@@ -3703,11 +3721,11 @@ export function buildDecoratorCallExpression(config: T.DecoratorCallExpression.C
 }
 
 export type ClassBodyBuildArgs = [
-	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
 ];
 export type ClassBodyLooseArgs = [
 	...children: LooseValue<
-		T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';',
+		T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -3719,13 +3737,13 @@ export type ClassBodyBuilt = T.ClassBody & {
 	readonly $named: true;
 	readonly $with: {
 		contents(
-			...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+			...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
 		): ClassBodyBuilt;
 	};
 } & _NodeMethods;
 
 export function buildClassBody(
-	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
 ): ClassBodyBuilt {
 	const _content = children;
 	return withMethods(
@@ -3737,7 +3755,7 @@ export function buildClassBody(
 				_content,
 				$with: {
 					contents: (
-						...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+						...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
 					) => buildClassBody(...vs)
 				}
 			},
@@ -6604,7 +6622,9 @@ export type TypeQuerySubscriptExpressionBuilt = T.TypeQuerySubscriptExpression &
 				| T.TypeQueryMemberExpression
 				| T.TypeQueryCallExpression
 		): TypeQuerySubscriptExpressionBuilt;
-		index(value: T.PredefinedType | T.String | T.Number): TypeQuerySubscriptExpressionBuilt;
+		index(
+			value: NonNullable<Parameters<typeof buildTypeQuerySubscriptExpression>[0]>['index']
+		): TypeQuerySubscriptExpressionBuilt;
 	};
 } & _NodeMethods;
 
@@ -6612,7 +6632,18 @@ export function buildTypeQuerySubscriptExpression(
 	config: T.TypeQuerySubscriptExpression.Config
 ): TypeQuerySubscriptExpressionBuilt {
 	const _object = config.object;
-	const _index = config.index;
+	const _index = coerceMixedEnumStorage<T.PredefinedType | T.String | T.Number>(config.index, [
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['unique symbol', TSKindId.Unique] as const,
+		['void', TSKindId.Void] as const,
+		['unknown', TSKindId.Unknown] as const,
+		['never', TSKindId.Never] as const,
+		['object', TSKindId.AnonObject] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6630,7 +6661,7 @@ export function buildTypeQuerySubscriptExpression(
 							| T.TypeQueryMemberExpression
 							| T.TypeQueryCallExpression
 					) => buildTypeQuerySubscriptExpression({ ...config, object: value }),
-					index: (value: T.PredefinedType | T.String | T.Number) =>
+					index: (value: NonNullable<Parameters<typeof buildTypeQuerySubscriptExpression>[0]>['index']) =>
 						buildTypeQuerySubscriptExpression({ ...config, index: value })
 				}
 			},
@@ -9052,12 +9083,35 @@ export type ArrowFunctionParameterBuilt = T.ArrowFunctionParameter & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		parameter(value: T.ReservedIdentifier | T.Identifier): ArrowFunctionParameterBuilt;
+		parameter(value: NonNullable<Parameters<typeof buildArrowFunctionParameter>[0]>): ArrowFunctionParameterBuilt;
 	};
 } & _NodeMethods;
 
 export function buildArrowFunctionParameter(value: T.ReservedIdentifier | T.Identifier): ArrowFunctionParameterBuilt {
-	const _parameter = value;
+	const _parameter = coerceMixedEnumStorage<T.ReservedIdentifier | T.Identifier>(value, [
+		['declare', TSKindId.Declare] as const,
+		['namespace', TSKindId.Namespace] as const,
+		['type', TSKindId.AnonType] as const,
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const,
+		['override', TSKindId.Override] as const,
+		['readonly', TSKindId.Readonly] as const,
+		['module', TSKindId.AnonModule] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['export', TSKindId.Export] as const,
+		['object', TSKindId.AnonObject] as const,
+		['new', TSKindId.New] as const,
+		['get', TSKindId.Get] as const,
+		['set', TSKindId.Set] as const,
+		['async', TSKindId.Async] as const,
+		['static', TSKindId.Static] as const,
+		['let', TSKindId.Let] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -9066,7 +9120,8 @@ export function buildArrowFunctionParameter(value: T.ReservedIdentifier | T.Iden
 				$named: true as const,
 				_parameter,
 				$with: {
-					parameter: (value: T.ReservedIdentifier | T.Identifier) => buildArrowFunctionParameter(value)
+					parameter: (value: NonNullable<Parameters<typeof buildArrowFunctionParameter>[0]>) =>
+						buildArrowFunctionParameter(value)
 				}
 			},
 			{
@@ -9251,13 +9306,36 @@ export type IndexSignatureColonBuilt = T.IndexSignatureColon & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		name(value: T.Identifier | T.ReservedIdentifier): IndexSignatureColonBuilt;
+		name(value: NonNullable<Parameters<typeof buildIndexSignatureColon>[0]>['name']): IndexSignatureColonBuilt;
 		indexType(value: T.Type): IndexSignatureColonBuilt;
 	};
 } & _NodeMethods;
 
 export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): IndexSignatureColonBuilt {
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<T.Identifier | T.ReservedIdentifier>(config.name, [
+		['declare', TSKindId.Declare] as const,
+		['namespace', TSKindId.Namespace] as const,
+		['type', TSKindId.AnonType] as const,
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const,
+		['override', TSKindId.Override] as const,
+		['readonly', TSKindId.Readonly] as const,
+		['module', TSKindId.AnonModule] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['export', TSKindId.Export] as const,
+		['object', TSKindId.AnonObject] as const,
+		['new', TSKindId.New] as const,
+		['get', TSKindId.Get] as const,
+		['set', TSKindId.Set] as const,
+		['async', TSKindId.Async] as const,
+		['static', TSKindId.Static] as const,
+		['let', TSKindId.Let] as const
+	]);
 	const _index_type = config.indexType;
 	return withMethods(
 		withAccessors(
@@ -9268,7 +9346,8 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 				_name,
 				_index_type,
 				$with: {
-					name: (value: T.Identifier | T.ReservedIdentifier) => buildIndexSignatureColon({ ...config, name: value }),
+					name: (value: NonNullable<Parameters<typeof buildIndexSignatureColon>[0]>['name']) =>
+						buildIndexSignatureColon({ ...config, name: value }),
 					indexType: (value: T.Type) => buildIndexSignatureColon({ ...config, indexType: value })
 				}
 			},

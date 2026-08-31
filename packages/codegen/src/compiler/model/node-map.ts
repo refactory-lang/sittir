@@ -142,7 +142,7 @@ export interface UnresolvedRef {
 	readonly name: string;
 }
 
-export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum';
+export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum' | 'mixedEnum';
 
 export interface FieldStorageInfo {
 	readonly kind: FieldStorageKind;

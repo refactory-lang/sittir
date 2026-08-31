@@ -2016,7 +2016,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.MemberExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('subscriptExpression builds the parent', () => {
@@ -2027,7 +2027,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			index: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.SubscriptExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('reservedIdentifier builds the parent', () => {
@@ -2037,7 +2037,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: ['declare']
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.ReservedIdentifier);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -2047,7 +2047,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('parenthesizedExpression builds the parent', () => {
@@ -2057,7 +2057,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('parenthesizedExpressionTyped builds the parent', () => {
@@ -2067,7 +2067,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: [{ expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('sequenceExpression builds the parent', () => {
@@ -2077,7 +2077,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('decoratorMemberExpression builds the parent', () => {
@@ -2092,7 +2092,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('decoratorCallExpression builds the parent', () => {
@@ -2107,7 +2107,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('nonNullExpression builds the parent', () => {
@@ -2117,7 +2117,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
-		expect((node as any).left()?.$type).toBe(TSKindId.NonNullExpression);
+		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

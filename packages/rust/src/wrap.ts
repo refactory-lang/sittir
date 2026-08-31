@@ -266,6 +266,19 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	}
 	return typeof entry.$type === 'number' ? (entry.$type as T) : value;
 }
+function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {
+	if (!value) return value;
+	if (Array.isArray(value)) return value.map((entry) => projectMixedEnumStorage(entry, textIds)) as unknown as T;
+	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
+	if (typeof entry.$type === 'number' && textIds && Object.values(textIds).includes(entry.$type)) {
+		return entry.$type as unknown as T;
+	}
+	return value;
+}
 // readTerminalFromOther — reclaim a model-designated terminal (operator /
 // keyword discriminant) that read_node forwarded to `$other` because it is
 // an anonymous, unfielded token. The model knows the slot accepts these
@@ -2484,8 +2497,8 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 
 export function wrapModItem(
 	data: T.ModItem & {
-		readonly _mod_item_external?: ';' | T.DeclarationList;
-		readonly _declaration_list?: ';' | T.DeclarationList;
+		readonly _mod_item_external?: TSKindId.ModItemExternal | T.DeclarationList;
+		readonly _declaration_list?: TSKindId.ModItemExternal | T.DeclarationList;
 	},
 	tree: TreeHandle
 ) {
@@ -2514,12 +2527,15 @@ export function wrapModItem(
 				slotName: 'name',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._mod_item_external ?? data._declaration_list,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._mod_item_external ?? data._declaration_list,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 368 }
 			),
 
 			visibilityModifier() {
@@ -2529,7 +2545,7 @@ export function wrapModItem(
 				return drillIn<T.Identifier>(this._name, tree);
 			},
 			content() {
-				return drillIn<';' | T.DeclarationList>(this._content, tree);
+				return drillIn<TSKindId.ModItemExternal | T.DeclarationList>(this._content, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.ModItem['_visibility_modifier']>) =>
@@ -2545,8 +2561,8 @@ export function wrapModItem(
 
 export function wrapForeignModItem(
 	data: T.ForeignModItem & {
-		readonly _foreign_mod_item_semi?: ';' | T.DeclarationList;
-		readonly _declaration_list?: ';' | T.DeclarationList;
+		readonly _foreign_mod_item_semi?: TSKindId.ForeignModItemSemi | T.DeclarationList;
+		readonly _declaration_list?: TSKindId.ForeignModItemSemi | T.DeclarationList;
 	},
 	tree: TreeHandle
 ) {
@@ -2576,12 +2592,15 @@ export function wrapForeignModItem(
 				slotName: 'extern_modifier',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._foreign_mod_item_semi ?? data._declaration_list,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._foreign_mod_item_semi ?? data._declaration_list,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 384 }
 			),
 
 			visibilityModifier() {
@@ -2591,7 +2610,7 @@ export function wrapForeignModItem(
 				return drillIn<T.ExternModifier>(this._extern_modifier, tree);
 			},
 			content() {
-				return drillIn<';' | T.DeclarationList>(this._content, tree);
+				return drillIn<TSKindId.ForeignModItemSemi | T.DeclarationList>(this._content, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.ForeignModItem['_visibility_modifier']>) =>
@@ -2638,9 +2657,9 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle) {
 
 export function wrapStructItem(
 	data: T.StructItem & {
-		readonly _struct_item_brace?: T.StructItemBrace | T.StructItemTuple | ';';
-		readonly _struct_item_tuple?: T.StructItemBrace | T.StructItemTuple | ';';
-		readonly _struct_item_unit?: T.StructItemBrace | T.StructItemTuple | ';';
+		readonly _struct_item_brace?: T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit;
+		readonly _struct_item_tuple?: T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit;
+		readonly _struct_item_unit?: T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit;
 	},
 	tree: TreeHandle
 ) {
@@ -2677,12 +2696,15 @@ export function wrapStructItem(
 				slotName: 'type_parameters',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._struct_item_brace ?? data._struct_item_tuple ?? data._struct_item_unit,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._struct_item_brace ?? data._struct_item_tuple ?? data._struct_item_unit,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 379 }
 			),
 
 			visibilityModifier() {
@@ -2695,7 +2717,7 @@ export function wrapStructItem(
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
 			},
 			content() {
-				return drillIn<T.StructItemBrace | T.StructItemTuple | ';'>(this._content, tree);
+				return drillIn<T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit>(this._content, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.StructItem['_visibility_modifier']>) =>
@@ -3597,12 +3619,33 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.WherePredicate as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
+			_left: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'left',
+					span: (data as _NodeData).$span
+				}),
+				{
+					u8: 28,
+					i8: 29,
+					u16: 30,
+					i16: 31,
+					u32: 32,
+					i32: 33,
+					u64: 34,
+					i64: 35,
+					u128: 36,
+					i128: 37,
+					isize: 38,
+					usize: 39,
+					f32: 40,
+					f64: 41,
+					bool: 42,
+					str: 43,
+					char: 44
+				}
+			),
 			_bounds: normalizeSingularWrapSlot(data._bounds, 'bounds', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -3640,8 +3683,8 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
 
 export function wrapImplItem(
 	data: T.ImplItem & {
-		readonly _impl_item_body?: T.ImplItemBody | ';';
-		readonly _impl_item_semi?: T.ImplItemBody | ';';
+		readonly _impl_item_body?: T.ImplItemBody | TSKindId.ImplItemSemi;
+		readonly _impl_item_semi?: T.ImplItemBody | TSKindId.ImplItemSemi;
 	},
 	tree: TreeHandle
 ) {
@@ -3692,12 +3735,15 @@ export function wrapImplItem(
 				slotName: 'where_clause',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._impl_item_body ?? data._impl_item_semi,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._impl_item_body ?? data._impl_item_semi,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ ';': 355 }
 			),
 
 			unsafeMarker() {
@@ -3716,7 +3762,7 @@ export function wrapImplItem(
 				return drillIn<T.WhereClause | undefined>(this._where_clause, tree);
 			},
 			content() {
-				return drillIn<T.ImplItemBody | ';'>(this._content, tree);
+				return drillIn<T.ImplItemBody | TSKindId.ImplItemSemi>(this._content, tree);
 			},
 			$with: {
 				unsafeMarker: (v: NonNullable<T.ImplItem['_unsafe_marker']>) =>
@@ -6133,22 +6179,22 @@ export function wrapRangeExpression(
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 		readonly _range_expression_postfix?:
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 		readonly _range_expression_prefix?:
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 		readonly _range_expression_bare?:
 			| T.RangeExpressionBinary
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
-			| '..';
+			| TSKindId.RangeExpressionBare;
 	},
 	tree: TreeHandle
 ) {
@@ -6170,23 +6216,25 @@ export function wrapRangeExpression(
 				'_range_expression_prefix'
 			]),
 			$type: TSKindId.RangeExpression as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._range_expression_binary ??
-					data._range_expression_postfix ??
-					data._range_expression_prefix ??
-					data._range_expression_bare,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						data._range_expression_binary ??
+						data._range_expression_postfix ??
+						data._range_expression_prefix ??
+						data._range_expression_bare,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '..': 350 }
 			),
 
 			content() {
-				return drillIn<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(
-					this._content,
-					tree
-				);
+				return drillIn<
+					T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
+				>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.RangeExpression['_content']>) =>
@@ -10070,8 +10118,8 @@ export function wrapStructPatternElements(
 
 export function wrapRangePatternArm2(
 	data: T.RangePatternArm2 & {
-		readonly _range_pattern_left_with_right?: T.RangePatternLeftWithRight | '..';
-		readonly _range_pattern_left_bare?: T.RangePatternLeftWithRight | '..';
+		readonly _range_pattern_left_with_right?: T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
+		readonly _range_pattern_left_bare?: T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
 	},
 	tree: TreeHandle
 ) {
@@ -10088,12 +10136,15 @@ export function wrapRangePatternArm2(
 				slotName: 'left',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._range_pattern_left_with_right ?? data._range_pattern_left_bare,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._range_pattern_left_with_right ?? data._range_pattern_left_bare,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '..': 376 }
 			),
 
 			left() {
@@ -10102,7 +10153,7 @@ export function wrapRangePatternArm2(
 				>(this._left, tree);
 			},
 			content() {
-				return drillIn<T.RangePatternLeftWithRight | '..'>(this._content, tree);
+				return drillIn<T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare>(this._content, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.RangePatternArm2['_left']>) =>
@@ -11679,16 +11730,19 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 		{
 			...data,
 			$type: TSKindId.DelimTokenTreeParen as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'delim_tokens',
-				span: (data as _NodeData).$span
-			}),
+			_delim_tokens: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'delim_tokens',
+					span: (data as _NodeData).$span
+				}),
+				{ $: 6 }
+			),
 
 			delimTokens() {
-				return drillInAll<T._NonSpecialToken | '$' | T.DelimTokenTree>(
-					this._delim_tokens as readonly (T._NonSpecialToken | '$' | T.DelimTokenTree)[] | undefined,
+				return drillInAll<T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(
+					this._delim_tokens as readonly (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[] | undefined,
 					tree
 				);
 			},
@@ -11710,16 +11764,19 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 		{
 			...data,
 			$type: TSKindId.DelimTokenTreeBracket as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'delim_tokens',
-				span: (data as _NodeData).$span
-			}),
+			_delim_tokens: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'delim_tokens',
+					span: (data as _NodeData).$span
+				}),
+				{ $: 6 }
+			),
 
 			delimTokens() {
-				return drillInAll<T._NonSpecialToken | '$' | T.DelimTokenTree>(
-					this._delim_tokens as readonly (T._NonSpecialToken | '$' | T.DelimTokenTree)[] | undefined,
+				return drillInAll<T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(
+					this._delim_tokens as readonly (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[] | undefined,
 					tree
 				);
 			},
@@ -11741,16 +11798,19 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 		{
 			...data,
 			$type: TSKindId.DelimTokenTreeBrace as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'delim_tokens',
-				span: (data as _NodeData).$span
-			}),
+			_delim_tokens: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'delim_tokens',
+					span: (data as _NodeData).$span
+				}),
+				{ $: 6 }
+			),
 
 			delimTokens() {
-				return drillInAll<T._NonSpecialToken | '$' | T.DelimTokenTree>(
-					this._delim_tokens as readonly (T._NonSpecialToken | '$' | T.DelimTokenTree)[] | undefined,
+				return drillInAll<T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(
+					this._delim_tokens as readonly (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[] | undefined,
 					tree
 				);
 			},

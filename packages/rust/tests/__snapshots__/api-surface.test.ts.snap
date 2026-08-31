@@ -51,6 +51,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "coerceBitflagStorage": "function",
   "coerceBooleanKeywordStorage": "function",
   "coerceKindEnumStorage": "function",
+  "coerceMixedEnumStorage": "function",
   "coerceToAbstractType": "function",
   "coerceToArguments": "function",
   "coerceToArgumentsElements": "function",

@@ -3320,27 +3320,33 @@ export interface ModItem {
 	readonly $type: TSKindId.ModItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
-	readonly _content: ';' | DeclarationList;
+	readonly _content: TSKindId.ModItemExternal | DeclarationList;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<';', TSKindId.ModItemExternal | TSKindId.Semi> | DeclarationList;
+	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
-	content(): ';' | DeclarationList;
+	content(): TSKindId.ModItemExternal | DeclarationList;
 }
 
 export interface ForeignModItem {
 	readonly $type: TSKindId.ForeignModItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _extern_modifier: ExternModifier;
-	readonly _content: ';' | DeclarationList;
+	readonly _content: TSKindId.ForeignModItemSemi | DeclarationList;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<';', TSKindId.ForeignModItemSemi | TSKindId.Semi> | DeclarationList;
+	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly extern_modifier: ExternModifier | 'extern' | readonly (EscapeSequence | StringContent)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	externModifier(): ExternModifier;
-	content(): ';' | DeclarationList;
+	content(): TSKindId.ForeignModItemSemi | DeclarationList;
 }
 
 export interface DeclarationList {
@@ -3354,7 +3360,10 @@ export interface StructItem {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
-	readonly _content: StructItemBrace | StructItemTuple | ';';
+	readonly _content: StructItemBrace | StructItemTuple | TSKindId.StructItemUnit;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<';', TSKindId.StructItemUnit | TSKindId.Semi> | StructItemBrace | StructItemTuple;
+	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly (Crate | VisibilityModifierPub)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
@@ -3362,7 +3371,7 @@ export interface StructItem {
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
-	content(): StructItemBrace | StructItemTuple | ';';
+	content(): StructItemBrace | StructItemTuple | TSKindId.StructItemUnit;
 }
 
 export interface UnionItem {
@@ -3616,6 +3625,55 @@ export interface WherePredicate {
 		| HigherRankedTraitBound
 		| PrimitiveType;
 	readonly _bounds: TraitBounds;
+	readonly __inputHints__?: {
+		readonly left:
+			| KindEnum<
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char',
+					| TSKindId.U8
+					| TSKindId.I8
+					| TSKindId.U16
+					| TSKindId.I16
+					| TSKindId.U32
+					| TSKindId.I32
+					| TSKindId.U64
+					| TSKindId.I64
+					| TSKindId.U128
+					| TSKindId.I128
+					| TSKindId.Isize
+					| TSKindId.Usize
+					| TSKindId.F32
+					| TSKindId.F64
+					| TSKindId.Bool
+					| TSKindId.Str
+					| TSKindId.Char
+			  >
+			| Lifetime
+			| Identifier
+			| ScopedTypeIdentifier
+			| GenericType
+			| ReferenceType
+			| PointerType
+			| TupleType
+			| ArrayType
+			| HigherRankedTraitBound
+			| PrimitiveType;
+	};
 	readonly __looseHints__?: {
 		readonly bounds: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
 	};
@@ -3640,9 +3698,10 @@ export interface ImplItem {
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: _Type;
 	readonly _where_clause?: WhereClause;
-	readonly _content: ImplItemBody | ';';
+	readonly _content: ImplItemBody | TSKindId.ImplItemSemi;
 	readonly __inputHints__?: {
 		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly content: KindEnum<';', TSKindId.ImplItemSemi | TSKindId.Semi> | ImplItemBody;
 	};
 	readonly __looseHints__?: {
 		readonly unsafe_marker?: 'unsafe' | 'unsafe';
@@ -3654,7 +3713,7 @@ export interface ImplItem {
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	type(): _Type;
 	whereClause(): WhereClause | undefined;
-	content(): ImplItemBody | ';';
+	content(): ImplItemBody | TSKindId.ImplItemSemi;
 }
 
 export interface TraitItem {
@@ -4208,8 +4267,19 @@ export interface ScopedTypeIdentifier {
 
 export interface RangeExpression {
 	readonly $type: TSKindId.RangeExpression;
-	readonly _content: RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
-	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
+	readonly _content:
+		| RangeExpressionBinary
+		| RangeExpressionPostfix
+		| RangeExpressionPrefix
+		| TSKindId.RangeExpressionBare;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<'..', TSKindId.RangeExpressionBare | TSKindId.DotDot>
+			| RangeExpressionBinary
+			| RangeExpressionPostfix
+			| RangeExpressionPrefix;
+	};
+	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | TSKindId.RangeExpressionBare;
 }
 
 export interface UnaryExpression {
@@ -5028,9 +5098,12 @@ export interface StructPatternElements {
 export interface RangePatternArm2 {
 	readonly $type: TSKindId.RangePatternArm2;
 	readonly _left: LiteralPattern | Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
-	readonly _content: RangePatternLeftWithRight | '..';
+	readonly _content: RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'..', TSKindId.RangePatternLeftBare | TSKindId.DotDot> | RangePatternLeftWithRight;
+	};
 	left(): LiteralPattern | Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
-	content(): RangePatternLeftWithRight | '..';
+	content(): RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
 }
 
 export interface AttributeArm {
@@ -5393,20 +5466,29 @@ export interface TokenTreeBrace {
 
 export interface DelimTokenTreeParen {
 	readonly $type: TSKindId.DelimTokenTreeParen;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | '$' | DelimTokenTree)[];
-	delimTokens(): readonly (_NonSpecialToken | '$' | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly __inputHints__?: {
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | _NonSpecialToken | DelimTokenTree)[];
+	};
+	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBracket {
 	readonly $type: TSKindId.DelimTokenTreeBracket;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | '$' | DelimTokenTree)[];
-	delimTokens(): readonly (_NonSpecialToken | '$' | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly __inputHints__?: {
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | _NonSpecialToken | DelimTokenTree)[];
+	};
+	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBrace {
 	readonly $type: TSKindId.DelimTokenTreeBrace;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | '$' | DelimTokenTree)[];
-	delimTokens(): readonly (_NonSpecialToken | '$' | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly __inputHints__?: {
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | _NonSpecialToken | DelimTokenTree)[];
+	};
+	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface AttributedFieldDeclaration {

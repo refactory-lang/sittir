@@ -71,6 +71,25 @@ export function hasKindOf<K extends keyof NamespaceMap>(
 	return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
+export function coerceMixedEnumStorage<T = unknown>(
+	value: unknown,
+	byText: readonly (readonly [string, number])[] = []
+): T {
+	if (value === undefined || value === null) return undefined as T;
+	if (typeof value === 'number') return value as T;
+	if (Array.isArray(value)) {
+		return value.map((item) => coerceMixedEnumStorage(item, byText)).filter((item) => item !== undefined) as T;
+	}
+	if (typeof value === 'string') {
+		const mapped = byText.find(([candidate]) => candidate === value);
+		return (mapped ? mapped[1] : value) as T;
+	}
+	if (isRecord(value) && typeof value.$type === 'number' && byText.some(([, id]) => id === value.$type)) {
+		return value.$type as T;
+	}
+	return value as T;
+}
+
 export function coerceKindEnumStorage<T = unknown>(
 	value: unknown,
 	byText: readonly (readonly [string, number])[] = []

@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import type * as T from '../types.js';
 import { TSKindId, Delimiter } from '../types.js';
 import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData } from '../utils.js';
+import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
@@ -1665,7 +1665,12 @@ export function resolveModItem_name(value: T.ModItem.LooseConfig['name']): T.Mod
 }
 
 export function resolveModItem_content(value: T.ModItem.LooseConfig['content']): T.ModItem['_content'] {
-	return _resolveOneBranch<';' | T.DeclarationList>(value, 'declaration_list', [TSKindId.ModItemExternal]);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneBranch<';' | T.DeclarationList>(value, 'declaration_list', [TSKindId.ModItemExternal])
+		),
+		[[';', TSKindId.ModItemExternal] as const]
+	);
 }
 
 export function coerceToModItem(input: T.ModItem.Loose): ReturnType<typeof F.buildModItem> {
@@ -1692,7 +1697,12 @@ export function resolveForeignModItem_externModifier(
 export function resolveForeignModItem_content(
 	value: T.ForeignModItem.LooseConfig['content']
 ): T.ForeignModItem['_content'] {
-	return _resolveOneBranch<';' | T.DeclarationList>(value, 'declaration_list', [TSKindId.ForeignModItemSemi]);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneBranch<';' | T.DeclarationList>(value, 'declaration_list', [TSKindId.ForeignModItemSemi])
+		),
+		[[';', TSKindId.ForeignModItemSemi] as const]
+	);
 }
 
 export function coerceToForeignModItem(input: T.ForeignModItem.Loose): ReturnType<typeof F.buildForeignModItem> {
@@ -1752,7 +1762,10 @@ export function resolveStructItem_typeParameters(
 }
 
 export function resolveStructItem_content(value: T.StructItem.LooseConfig['content']): T.StructItem['_content'] {
-	return _resolveOne<T.StructItemBrace | T.StructItemTuple | ';'>(value, _K2, _K13);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.StructItemBrace | T.StructItemTuple | ';'>(value, _K2, _K13)),
+		[[';', TSKindId.StructItemUnit] as const]
+	);
 }
 
 export function coerceToStructItem(input: T.StructItem.Loose): ReturnType<typeof F.buildStructItem> {
@@ -2275,18 +2288,41 @@ export function coerceToWhereClause(
 }
 
 export function resolveWherePredicate_left(value: T.WherePredicate.LooseConfig['left']): T.WherePredicate['_left'] {
-	return _resolveOne<
-		| T.Lifetime
-		| T.Identifier
-		| T.ScopedTypeIdentifier
-		| T.GenericType
-		| T.ReferenceType
-		| T.PointerType
-		| T.TupleType
-		| T.ArrayType
-		| T.HigherRankedTraitBound
-		| T.PrimitiveType
-	>(value, _K20, _K21);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<
+				| T.Lifetime
+				| T.Identifier
+				| T.ScopedTypeIdentifier
+				| T.GenericType
+				| T.ReferenceType
+				| T.PointerType
+				| T.TupleType
+				| T.ArrayType
+				| T.HigherRankedTraitBound
+				| T.PrimitiveType
+			>(value, _K20, _K21)
+		),
+		[
+			['u8', TSKindId.U8] as const,
+			['i8', TSKindId.I8] as const,
+			['u16', TSKindId.U16] as const,
+			['i16', TSKindId.I16] as const,
+			['u32', TSKindId.U32] as const,
+			['i32', TSKindId.I32] as const,
+			['u64', TSKindId.U64] as const,
+			['i64', TSKindId.I64] as const,
+			['u128', TSKindId.U128] as const,
+			['i128', TSKindId.I128] as const,
+			['isize', TSKindId.Isize] as const,
+			['usize', TSKindId.Usize] as const,
+			['f32', TSKindId.F32] as const,
+			['f64', TSKindId.F64] as const,
+			['bool', TSKindId.Bool] as const,
+			['str', TSKindId.Str] as const,
+			['char', TSKindId.Char] as const
+		]
+	);
 }
 
 export function resolveWherePredicate_bounds(
@@ -2329,7 +2365,12 @@ export function resolveImplItem_whereClause(value: T.ImplItem.LooseConfig['where
 }
 
 export function resolveImplItem_content(value: T.ImplItem.LooseConfig['content']): T.ImplItem['_content'] {
-	return _resolveOneBranch<T.ImplItemBody | ';'>(value, '_impl_item_body', [TSKindId.ImplItemSemi]);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneBranch<T.ImplItemBody | ';'>(value, '_impl_item_body', [TSKindId.ImplItemSemi])
+		),
+		[[';', TSKindId.ImplItemSemi] as const]
+	);
 }
 
 export function coerceToImplItem(input: T.ImplItem.Loose): ReturnType<typeof F.buildImplItem> {
@@ -3505,10 +3546,11 @@ export function coerceToScopedTypeIdentifier(
 export function resolveRangeExpression_content(
 	value: T.RangeExpression.LooseConfig['content']
 ): T.RangeExpression['_content'] {
-	return _resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(
-		value,
-		_K2,
-		_K46
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(value, _K2, _K46)
+		),
+		[['..', TSKindId.RangeExpressionBare] as const]
 	);
 }
 
@@ -3521,10 +3563,21 @@ export function coerceToRangeExpression(
 		_requireField(
 			'range_expression',
 			'content',
-			_resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K46
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K2,
+							_K46
+						)
+				),
+				[['..', TSKindId.RangeExpressionBare] as const]
 			)
 		)
 	);

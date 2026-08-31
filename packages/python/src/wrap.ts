@@ -330,6 +330,19 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	}
 	return typeof entry.$type === 'number' ? (entry.$type as T) : value;
 }
+function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {
+	if (!value) return value;
+	if (Array.isArray(value)) return value.map((entry) => projectMixedEnumStorage(entry, textIds)) as unknown as T;
+	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
+	if (typeof entry.$type === 'number' && textIds && Object.values(textIds).includes(entry.$type)) {
+		return entry.$type as unknown as T;
+	}
+	return value;
+}
 // readTerminalFromOther — reclaim a model-designated terminal (operator /
 // keyword discriminant) that read_node forwarded to `$other` because it is
 // an anonymous, unfielded token. The model knows the slot accepts these
@@ -3430,18 +3443,21 @@ export function wrapExpressionList(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 			),
-			_tail: normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'tail',
-				span: (data as _NodeData).$span
-			}),
+			_tail: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'tail',
+					span: (data as _NodeData).$span
+				}),
+				{ ',': 6 }
+			),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			tail() {
-				return drillIn<',' | T.ExpressionListExpressions>(this._tail, tree);
+				return drillIn<TSKindId.Comma | T.ExpressionListExpressions>(this._tail, tree);
 			},
 			$with: {
 				expression: (v: NonNullable<T.ExpressionList['_expression']>) =>
@@ -5390,18 +5406,21 @@ export function wrapPatternList(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'pattern', span: (data as _NodeData).$span }
 			),
-			_tail: normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'tail',
-				span: (data as _NodeData).$span
-			}),
+			_tail: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'tail',
+					span: (data as _NodeData).$span
+				}),
+				{ ',': 6 }
+			),
 
 			pattern() {
 				return drillIn<T.Pattern>(this._pattern, tree);
 			},
 			tail() {
-				return drillIn<',' | T.PatternListPatterns>(this._tail, tree);
+				return drillIn<TSKindId.Comma | T.PatternListPatterns>(this._tail, tree);
 			},
 			$with: {
 				pattern: (v: NonNullable<T.PatternList['_pattern']>) =>
@@ -7087,27 +7106,27 @@ export function wrapStringContent(
 		readonly _escape_interpolation?:
 			| T.EscapeInterpolation
 			| T.EscapeSequence
-			| '\\'
+			| TSKindId.NotEscapeSequence
 			| T._StringContent
-			| readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[];
+			| readonly (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[];
 		readonly _escape_sequence?:
 			| T.EscapeInterpolation
 			| T.EscapeSequence
-			| '\\'
+			| TSKindId.NotEscapeSequence
 			| T._StringContent
-			| readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[];
+			| readonly (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[];
 		readonly _not_escape_sequence?:
 			| T.EscapeInterpolation
 			| T.EscapeSequence
-			| '\\'
+			| TSKindId.NotEscapeSequence
 			| T._StringContent
-			| readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[];
+			| readonly (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[];
 		readonly _string_fragment?:
 			| T.EscapeInterpolation
 			| T.EscapeSequence
-			| '\\'
+			| TSKindId.NotEscapeSequence
 			| T._StringContent
-			| readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[];
+			| readonly (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[];
 	},
 	tree: TreeHandle
 ) {
@@ -7123,23 +7142,28 @@ export function wrapStringContent(
 		{
 			..._omitWrapKeys(data, ['_escape_interpolation', '_escape_sequence', '_not_escape_sequence', '_string_fragment']),
 			$type: TSKindId.StringContent as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _interleaveBySlotOrder(data as _NodeData, [
-							['escape_interpolation', data._escape_interpolation],
-							['escape_sequence', data._escape_sequence],
-							['not_escape_sequence', data._not_escape_sequence],
-							['string_fragment', data._string_fragment]
-						]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(
+					data._content !== undefined
+						? _toArr(data._content)
+						: _interleaveBySlotOrder(data as _NodeData, [
+								['escape_interpolation', data._escape_interpolation],
+								['escape_sequence', data._escape_sequence],
+								['not_escape_sequence', data._not_escape_sequence],
+								['string_fragment', data._string_fragment]
+							]),
+					false,
+					'content',
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '\\': 231 }
 			),
 
 			contents() {
-				return drillInAll<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(
-					this._content as readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[] | undefined,
+				return drillInAll<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent>(
+					this._content as
+						| readonly (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+						| undefined,
 					tree
 				);
 			},
@@ -8298,7 +8322,7 @@ export function wrapPrintChevronArguments(
 }
 
 export function wrapPrintStatementArm1(
-	data: T.PrintStatementArm1 & { readonly _comma?: T.PrintChevronArguments | ',' },
+	data: T.PrintStatementArm1 & { readonly _comma?: T.PrintChevronArguments | TSKindId.Comma },
 	tree: TreeHandle
 ) {
 	data = _keepModelledSlots(data, ['_chevron', '_print_chevron_arguments', '_comma']);
@@ -8314,19 +8338,22 @@ export function wrapPrintStatementArm1(
 				slotName: 'chevron',
 				span: (data as _NodeData).$span
 			}),
-			_print_chevron_arguments: normalizeSingularWrapSlot(
-				data._print_chevron_arguments ?? data._comma,
-				'print_chevron_arguments',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'print_chevron_arguments', span: (data as _NodeData).$span }
+			_print_chevron_arguments: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._print_chevron_arguments ?? data._comma,
+					'print_chevron_arguments',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'print_chevron_arguments', span: (data as _NodeData).$span }
+				),
+				{ ',': 6 }
 			),
 
 			chevron() {
 				return drillIn<T.Chevron>(this._chevron, tree);
 			},
 			printChevronArguments() {
-				return drillIn<T.PrintChevronArguments | ',' | undefined>(this._print_chevron_arguments, tree);
+				return drillIn<T.PrintChevronArguments | TSKindId.Comma | undefined>(this._print_chevron_arguments, tree);
 			},
 			$with: {
 				chevron: (v: NonNullable<T.PrintStatementArm1['_chevron']>) =>

@@ -2323,7 +2323,17 @@ function emitPerSlotChildEnum(
 	if (kindIdByKind !== undefined) {
 		const kindIdArms: string[] = [];
 		const emittedIds = new Set<number>();
-		for (const { kind, node, concreteName } of validKinds) {
+		for (const literal of entry.literals) {
+			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
+			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
+			emittedIds.add(id);
+			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
+		}
+		const enumArmsFirst = [...validKinds].sort(
+			(a, b) => Number(b.node instanceof AssembledEnum) - Number(a.node instanceof AssembledEnum)
+		);
+		for (const { kind, node, concreteName } of enumArmsFirst) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
 			const acceptedIds = resolveAcceptedTransportIds({
@@ -2357,13 +2367,6 @@ function emitPerSlotChildEnum(
 					kindIdArms.push(`                )),`);
 				}
 			}
-		}
-		for (const literal of entry.literals) {
-			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
-			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
-			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
-			emittedIds.add(id);
-			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
 		const kindsClosure = supertypeClosureOf(entry.kinds, nodeMap);
 		const validKindSet = new Map(validKinds.map((v) => [v.kind, v] as const));

@@ -330,6 +330,19 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	}
 	return typeof entry.$type === 'number' ? (entry.$type as T) : value;
 }
+function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {
+	if (!value) return value;
+	if (Array.isArray(value)) return value.map((entry) => projectMixedEnumStorage(entry, textIds)) as unknown as T;
+	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
+	if (typeof entry.$type === 'number' && textIds && Object.values(textIds).includes(entry.$type)) {
+		return entry.$type as unknown as T;
+	}
+	return value;
+}
 // readTerminalFromOther — reclaim a model-designated terminal (operator /
 // keyword discriminant) that read_node forwarded to `$other` because it is
 // an anonymous, unfielded token. The model knows the slot accepts these
@@ -5049,12 +5062,38 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 		{
 			...data,
 			$type: TSKindId.AugmentedAssignmentExpression as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
+			_left: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'left',
+					span: (data as _NodeData).$span
+				}),
+				{
+					declare: 110,
+					namespace: 111,
+					type: 7,
+					public: 112,
+					private: 113,
+					protected: 114,
+					override: 115,
+					readonly: 116,
+					module: 117,
+					any: 118,
+					number: 119,
+					boolean: 120,
+					string: 121,
+					symbol: 122,
+					export: 123,
+					object: 124,
+					new: 44,
+					get: 108,
+					set: 109,
+					async: 125,
+					static: 107,
+					let: 126
+				}
+			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._operator ??
@@ -6050,17 +6089,28 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ClassBody as const,
-			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
+			_content: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(data._content, false, 'content', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'content',
+					span: (data as _NodeData).$span
+				}),
+				{ ';': 20 }
+			),
 
 			contents() {
-				return drillInAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';'>(
+				return drillInAll<
+					T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi
+				>(
 					this._content as
-						| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+						| readonly (
+								| T.ClassBodyMethod
+								| T.ClassBodyMethodSig
+								| T.ClassStaticBlock
+								| T.ClassBodyMember
+								| TSKindId.Semi
+						  )[]
 						| undefined,
 					tree
 				);
@@ -9568,12 +9618,26 @@ export function wrapTypeQuerySubscriptExpression(data: T.TypeQuerySubscriptExpre
 				slotName: 'object',
 				span: (data as _NodeData).$span
 			}),
-			_index: normalizeSingularWrapSlot(data._index, 'index', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'index',
-				span: (data as _NodeData).$span
-			}),
+			_index: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._index, 'index', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'index',
+					span: (data as _NodeData).$span
+				}),
+				{
+					any: 118,
+					number: 119,
+					boolean: 120,
+					string: 121,
+					symbol: 122,
+					'unique symbol': 145,
+					void: 87,
+					unknown: 146,
+					never: 147,
+					object: 124
+				}
+			),
 
 			object() {
 				return drillIn<
@@ -11540,12 +11604,38 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 		{
 			...data,
 			$type: TSKindId.ArrowFunctionParameter as const,
-			_parameter: normalizeSingularWrapSlot(data._parameter, 'parameter', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameter',
-				span: (data as _NodeData).$span
-			}),
+			_parameter: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._parameter, 'parameter', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'parameter',
+					span: (data as _NodeData).$span
+				}),
+				{
+					declare: 110,
+					namespace: 111,
+					type: 7,
+					public: 112,
+					private: 113,
+					protected: 114,
+					override: 115,
+					readonly: 116,
+					module: 117,
+					any: 118,
+					number: 119,
+					boolean: 120,
+					string: 121,
+					symbol: 122,
+					export: 123,
+					object: 124,
+					new: 44,
+					get: 108,
+					set: 109,
+					async: 125,
+					static: 107,
+					let: 126
+				}
+			),
 
 			parameter() {
 				return drillIn<T.ReservedIdentifier | T.Identifier>(this._parameter, tree);
@@ -11736,12 +11826,38 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 		{
 			...data,
 			$type: TSKindId.IndexSignatureColon as const,
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
+			_name: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'name',
+					span: (data as _NodeData).$span
+				}),
+				{
+					declare: 110,
+					namespace: 111,
+					type: 7,
+					public: 112,
+					private: 113,
+					protected: 114,
+					override: 115,
+					readonly: 116,
+					module: 117,
+					any: 118,
+					number: 119,
+					boolean: 120,
+					string: 121,
+					symbol: 122,
+					export: 123,
+					object: 124,
+					new: 44,
+					get: 108,
+					set: 109,
+					async: 125,
+					static: 107,
+					let: 126
+				}
+			),
 			_index_type: normalizeSingularWrapSlot(data._index_type, 'index_type', true, data.$type, {
 				tree,
 				nodeType: data.$type,

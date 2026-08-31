@@ -3654,6 +3654,59 @@ export interface AugmentedAssignmentExpression {
 	readonly _operator: number;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
+		readonly left:
+			| KindEnum<
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					| TSKindId.Declare
+					| TSKindId.Namespace
+					| TSKindId.AnonType
+					| TSKindId.Public
+					| TSKindId.Private
+					| TSKindId.Protected
+					| TSKindId.Override
+					| TSKindId.Readonly
+					| TSKindId.AnonModule
+					| TSKindId.Any
+					| TSKindId.AnonNumber
+					| TSKindId.Boolean
+					| TSKindId.AnonString
+					| TSKindId.Symbol
+					| TSKindId.Export
+					| TSKindId.AnonObject
+					| TSKindId.New
+					| TSKindId.Get
+					| TSKindId.Set
+					| TSKindId.Async
+					| TSKindId.Static
+					| TSKindId.Let
+			  >
+			| MemberExpression
+			| SubscriptExpression
+			| ReservedIdentifier
+			| Identifier
+			| ParenthesizedExpression
+			| NonNullExpression;
 		readonly operator: KindEnum<
 			'+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??=',
 			| TSKindId.PlusEq
@@ -3865,8 +3918,23 @@ export interface DecoratorCallExpression {
 
 export interface ClassBody {
 	readonly $type: TSKindId.ClassBody;
-	readonly _content?: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
-	contents(): readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
+	readonly _content?: readonly (
+		| ClassBodyMethod
+		| ClassBodyMethodSig
+		| ClassStaticBlock
+		| ClassBodyMember
+		| TSKindId.Semi
+	)[];
+	readonly __inputHints__?: {
+		readonly content?: readonly (
+			| KindEnum<';', TSKindId.Semi>
+			| ClassBodyMethod
+			| ClassBodyMethodSig
+			| ClassStaticBlock
+			| ClassBodyMember
+		)[];
+	};
+	contents(): readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | TSKindId.Semi)[];
 }
 
 export interface FormalParameters {
@@ -4626,6 +4694,34 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
 	readonly _index: PredefinedType | String | Number;
+	readonly __inputHints__?: {
+		readonly index:
+			| KindEnum<
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'unique symbol'
+					| 'void'
+					| 'unknown'
+					| 'never'
+					| 'object',
+					| TSKindId.Any
+					| TSKindId.AnonNumber
+					| TSKindId.Boolean
+					| TSKindId.AnonString
+					| TSKindId.Symbol
+					| TSKindId.Unique
+					| TSKindId.Void
+					| TSKindId.Unknown
+					| TSKindId.Never
+					| TSKindId.AnonObject
+			  >
+			| PredefinedType
+			| String
+			| Number;
+	};
 	object(): Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
 	index(): PredefinedType | String | Number;
 }
@@ -5093,6 +5189,57 @@ export interface ExportStatementDefault {
 export interface ArrowFunctionParameter {
 	readonly $type: TSKindId.ArrowFunctionParameter;
 	readonly _parameter: ReservedIdentifier | Identifier;
+	readonly __inputHints__?: {
+		readonly parameter:
+			| KindEnum<
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					| TSKindId.Declare
+					| TSKindId.Namespace
+					| TSKindId.AnonType
+					| TSKindId.Public
+					| TSKindId.Private
+					| TSKindId.Protected
+					| TSKindId.Override
+					| TSKindId.Readonly
+					| TSKindId.AnonModule
+					| TSKindId.Any
+					| TSKindId.AnonNumber
+					| TSKindId.Boolean
+					| TSKindId.AnonString
+					| TSKindId.Symbol
+					| TSKindId.Export
+					| TSKindId.AnonObject
+					| TSKindId.New
+					| TSKindId.Get
+					| TSKindId.Set
+					| TSKindId.Async
+					| TSKindId.Static
+					| TSKindId.Let
+			  >
+			| ReservedIdentifier
+			| Identifier;
+	};
 	parameter(): ReservedIdentifier | Identifier;
 }
 
@@ -5145,6 +5292,57 @@ export interface IndexSignatureColon {
 	readonly $type: TSKindId.IndexSignatureColon;
 	readonly _name: Identifier | ReservedIdentifier;
 	readonly _index_type: Type;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					| TSKindId.Declare
+					| TSKindId.Namespace
+					| TSKindId.AnonType
+					| TSKindId.Public
+					| TSKindId.Private
+					| TSKindId.Protected
+					| TSKindId.Override
+					| TSKindId.Readonly
+					| TSKindId.AnonModule
+					| TSKindId.Any
+					| TSKindId.AnonNumber
+					| TSKindId.Boolean
+					| TSKindId.AnonString
+					| TSKindId.Symbol
+					| TSKindId.Export
+					| TSKindId.AnonObject
+					| TSKindId.New
+					| TSKindId.Get
+					| TSKindId.Set
+					| TSKindId.Async
+					| TSKindId.Static
+					| TSKindId.Let
+			  >
+			| Identifier
+			| ReservedIdentifier;
+	};
 	name(): Identifier | ReservedIdentifier;
 	indexType(): Type;
 }

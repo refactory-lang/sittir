@@ -249,7 +249,8 @@ function emitSub(
 	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 
 	if (sub.arm.via === 'literal') {
-		const slotIsKindEnum = resolveFieldStorageInfo(sub.slot, nodeMap).kind === 'kindEnum';
+		const slotStorageKindOf = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
+		const slotIsKindEnum = slotStorageKindOf === 'kindEnum' || slotStorageKindOf === 'mixedEnum';
 		const val = kindEnumConfigValue(sub.arm.literal, !positional && slotIsKindEnum ? wires.kindEntries : undefined);
 		const s = shape(sub, k, positional, undefined, m);
 		const typeFor = (ref: string): string => `${s.paramFor(ref, undefined)} => ReturnType<typeof ${ref}>`;

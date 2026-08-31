@@ -365,7 +365,8 @@ function emitSubFactoryTests(
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;
-		const slotIsKindEnum = resolveFieldStorageInfo(sub.slot, nodeMap).kind === 'kindEnum';
+		const slotStorageKind = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
+		const slotIsKindEnum = slotStorageKind === 'kindEnum' || slotStorageKind === 'mixedEnum';
 		if (sub.arm.via === 'literal') {
 			const val = kindEnumConfigValue(sub.arm.literal, slotIsKindEnum ? kindEntries : undefined);
 			cases.push(`    const seated = (node as any).${slotProp}();`);

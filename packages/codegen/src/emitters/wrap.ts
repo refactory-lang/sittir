@@ -271,6 +271,21 @@ function resolveSlotDrillExprs(
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
+	if (storageInfo?.kind === 'mixedEnum') {
+		const textIdMapExpr =
+			config.kindEnumTextIdPairs && config.kindEnumTextIdPairs.length > 0
+				? `{ ${config.kindEnumTextIdPairs.map(([text, id]) => `${JSON.stringify(text)}: ${id}`).join(', ')} }`
+				: undefined;
+		return {
+			storeExpr: textIdMapExpr
+				? `projectMixedEnumStorage(${normalizedStoreExpr}, ${textIdMapExpr})`
+				: normalizedStoreExpr,
+			accessorBody: resolveSlotAccessorBody(
+				slot,
+				slot.arity === 'many' ? config.elemType : config.required ? config.elemType : `${config.elemType} | undefined`
+			)
+		};
+	}
 	return {
 		storeExpr: normalizedStoreExpr,
 		accessorBody: resolveSlotAccessorBody(
@@ -291,6 +306,8 @@ interface UnnamedChildrenSlotConfig {
 function resolveUnnamedSlotConfig(
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
+,
+	kindEntries?: readonly KindEnumEntry[]
 ): UnnamedChildrenSlotConfig {
 	const cardinality = deriveUnnamedChildrenCardinality(children);
 	const arity = children.length === 1 && !cardinality.multiple ? 'one' : 'many';
@@ -302,7 +319,7 @@ function resolveUnnamedSlotConfig(
 			storageKey: '$other',
 			arity
 		} satisfies SlotModel,
-		elemType: childElementType({ children }, nodeMap),
+		elemType: childElementType({ children }, nodeMap, kindEntries),
 		required: cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
 		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))]
@@ -340,13 +357,13 @@ function computeConsumedCandidateKeys(fields: readonly AssembledNonterminal[], n
 function collectWrapWireKeyTypes(
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
-): ReadonlyMap<string, string> {
+, kindEntries?: readonly KindEnumEntry[]): ReadonlyMap<string, string> {
 	const canonicalKeys = new Set(fields.map((f) => f.storageKey));
 	const keyTypes = new Map<string, string>();
 	for (const f of fields) {
 		const candidates = collectConcreteStorageKeys(f, nodeMap);
 		if (!candidates) continue;
-		const elemType = fieldElementType(f, nodeMap);
+		const elemType = fieldElementType(f, nodeMap, kindEntries);
 		const candidateType =
 			f.arity === 'many'
 				? `${elemType} | readonly ${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
@@ -490,9 +507,9 @@ function collectSeparatedListWireKeyTypes(
 	fallbackStorageKey: string,
 	nodeMap: NodeMap,
 	fieldBacked: boolean
-): ReadonlyMap<string, string> {
+, kindEntries?: readonly KindEnumEntry[]): ReadonlyMap<string, string> {
 	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
-	const elemType = fieldElementType(canonicalField, nodeMap);
+	const elemType = fieldElementType(canonicalField, nodeMap, kindEntries);
 	const keyTypes = new Map<string, string>();
 	for (const k of candidates) {
 		if (canonicalKeys.has(k)) continue;
@@ -530,7 +547,8 @@ function emitSeparatedListWrap(
 		canonicalKeys,
 		canonical.storageKey,
 		nodeMap,
-		fieldBacked
+		fieldBacked,
+		kindEntries
 	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
@@ -551,7 +569,7 @@ function emitSeparatedListWrap(
 	};
 	const { storeExpr, accessorBody } = resolveSlotDrillExprs(contentModel, {
 		dataExpr: 'data',
-		elemType: fieldElementType(contentSlot, nodeMap),
+		elemType: fieldElementType(contentSlot, nodeMap, kindEntries),
 		required: node.nonEmpty,
 		nonEmpty: node.nonEmpty,
 		storageInfo,
@@ -675,14 +693,14 @@ function emitFieldStorageLines(
 				: undefined;
 		const { storeExpr } = resolveSlotDrillExprs(f, {
 			dataExpr,
-			elemType: fieldElementType(f, nodeMap),
+			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
 			allowedKinds,
 			candidateStorageKeys,
 			reclaimKindIdsExpr,
-			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined,
+			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined,
 			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
@@ -720,7 +738,7 @@ function emitFieldAccessorLines(
 				: undefined;
 		const { accessorBody } = resolveSlotDrillExprs(f, {
 			dataExpr,
-			elemType: fieldElementType(f, nodeMap),
+			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
@@ -752,7 +770,7 @@ function emitFieldCarryingWrap(
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	const wireKeyTypes = collectWrapWireKeyTypes(fields, nodeMap);
+	const wireKeyTypes = collectWrapWireKeyTypes(fields, nodeMap, kindEntries);
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
@@ -786,7 +804,7 @@ function emitFieldCarryingWrap(
 	}
 	emitFieldStorageLines(fields, node.kind, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
 			dataExpr: 'data',
 			elemType: childrenConfig.elemType,
@@ -800,7 +818,7 @@ function emitFieldCarryingWrap(
 
 	emitFieldAccessorLines(fields, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
 			dataExpr: 'data',
 			elemType: childrenConfig.elemType,
@@ -836,7 +854,7 @@ function emitInlineWithProperty(
 	const spreadData = '...$edited(data)';
 
 	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const setter = childrenConfig.slot.propertyName;
@@ -869,7 +887,7 @@ function emitInlineWithProperty(
 		}
 	}
 	if (children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
@@ -997,6 +1015,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesDrillIn = true;
 		const usesDrillInAll = true;
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
+		const usesProjectMixedEnum = /\bprojectMixedEnumStorage\b/.test(bodySource);
 		const usesSeparatorKindOf = /\b_separatorKindOf\b/.test(bodySource);
 		const usesReadTerminalFromOther = /\breadTerminalFromOther\b/.test(bodySource) || usesSeparatorKindOf;
 		const usesHasSeparatorFlank = /\b_hasSeparatorFlank\b/.test(bodySource);
@@ -1343,6 +1362,23 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    return entry.$text as unknown as T;',
 						'  }',
 						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
+						'}'
+					]
+				: []),
+			...(usesProjectMixedEnum
+				? [
+						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {',
+						'  if (!value) return value;',
+						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds)) as unknown as T;',
+						'  const entry = value as unknown as _NodeData;',
+						'  if (typeof value === "string") {',
+						'    const mappedId = textIds?.[value];',
+						'    return typeof mappedId === "number" ? (mappedId as unknown as T) : value;',
+						'  }',
+						'  if (typeof entry.$type === "number" && textIds && Object.values(textIds).includes(entry.$type)) {',
+						'    return entry.$type as unknown as T;',
+						'  }',
+						'  return value;',
 						'}'
 					]
 				: []),

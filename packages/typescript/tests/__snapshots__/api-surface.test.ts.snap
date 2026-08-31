@@ -59,6 +59,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "coerceBitflagStorage": "function",
   "coerceBooleanKeywordStorage": "function",
   "coerceKindEnumStorage": "function",
+  "coerceMixedEnumStorage": "function",
   "coerceToAbstractClassDeclaration": "function",
   "coerceToAbstractMethodSignature": "function",
   "coerceToAccessibilityModifier": "function",

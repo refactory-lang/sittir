@@ -314,6 +314,9 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	const texts: string[] = [];
 	const seenKinds = new Set<string>();
 	const seenTexts = new Set<string>();
+	let sawNodeArm = false;
+	let sawLayoutLiteral = false;
+	let sawNamedKeywordArm = false;
 	const verbatim = (): FieldStorageInfo => ({
 		kind: 'verbatim',
 		texts: [],
@@ -342,6 +345,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 				continue;
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+				if (!resolvedKind.startsWith('_') && node instanceof AssembledKeyword) sawNamedKeywordArm = true;
 				const text = node.text;
 				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				if (kindName === undefined || text === undefined) return verbatim();
@@ -354,11 +358,15 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 					seenTexts.add(text);
 					texts.push(text);
 				}
+				if (text.trim() === '') sawLayoutLiteral = true;
 				continue;
 			}
-			return verbatim();
+			sawNodeArm = true;
+			continue;
 		}
 		if (!isTerminalValue(value) || value.resolvedKind === undefined) return verbatim();
+		const terminalOwner = nodeMap.nodes.get(value.resolvedKind);
+		if (terminalOwner !== undefined && !(terminalOwner instanceof AssembledToken)) sawNamedKeywordArm = true;
 		if (!seenKinds.has(value.resolvedKind)) {
 			seenKinds.add(value.resolvedKind);
 			enumKinds.push(value.resolvedKind);
@@ -368,10 +376,12 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			seenTexts.add(value.value);
 			texts.push(value.value);
 		}
+		if (value.value.trim() === '') sawLayoutLiteral = true;
 	}
 	if (enumKinds.length === 0) return verbatim();
+	if (sawNodeArm && (sawLayoutLiteral || sawNamedKeywordArm)) return verbatim();
 	return {
-		kind: 'kindEnum',
+		kind: sawNodeArm ? 'mixedEnum' : 'kindEnum',
 		texts,
 		enumKinds,
 		enumKindsById,

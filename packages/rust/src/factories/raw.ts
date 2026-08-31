@@ -10,6 +10,7 @@ import {
 	methodsEngine,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
+	coerceMixedEnumStorage,
 	isNodeData
 } from '../utils.js';
 
@@ -790,14 +791,16 @@ export type ModItemBuilt = T.ModItem & {
 	readonly $with: {
 		visibilityModifier(value?: T.VisibilityModifier): ModItemBuilt;
 		name(value: T.Identifier): ModItemBuilt;
-		content(value: ';' | T.DeclarationList): ModItemBuilt;
+		content(value: NonNullable<Parameters<typeof buildModItem>[0]>['content']): ModItemBuilt;
 	};
 } & _NodeMethods;
 
 export function buildModItem(config: T.ModItem.Config): ModItemBuilt {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<TSKindId.ModItemExternal | T.DeclarationList>(config.content, [
+		[';', TSKindId.ModItemExternal] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -810,7 +813,8 @@ export function buildModItem(config: T.ModItem.Config): ModItemBuilt {
 				$with: {
 					visibilityModifier: (value?: T.VisibilityModifier) => buildModItem({ ...config, visibilityModifier: value }),
 					name: (value: T.Identifier) => buildModItem({ ...config, name: value }),
-					content: (value: ';' | T.DeclarationList) => buildModItem({ ...config, content: value })
+					content: (value: NonNullable<Parameters<typeof buildModItem>[0]>['content']) =>
+						buildModItem({ ...config, content: value })
 				}
 			},
 			{
@@ -832,14 +836,16 @@ export type ForeignModItemBuilt = T.ForeignModItem & {
 	readonly $with: {
 		visibilityModifier(value?: T.VisibilityModifier): ForeignModItemBuilt;
 		externModifier(value: T.ExternModifier): ForeignModItemBuilt;
-		content(value: ';' | T.DeclarationList): ForeignModItemBuilt;
+		content(value: NonNullable<Parameters<typeof buildForeignModItem>[0]>['content']): ForeignModItemBuilt;
 	};
 } & _NodeMethods;
 
 export function buildForeignModItem(config: T.ForeignModItem.Config): ForeignModItemBuilt {
 	const _visibility_modifier = config.visibilityModifier;
 	const _extern_modifier = config.externModifier;
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<TSKindId.ForeignModItemSemi | T.DeclarationList>(config.content, [
+		[';', TSKindId.ForeignModItemSemi] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -853,7 +859,8 @@ export function buildForeignModItem(config: T.ForeignModItem.Config): ForeignMod
 					visibilityModifier: (value?: T.VisibilityModifier) =>
 						buildForeignModItem({ ...config, visibilityModifier: value }),
 					externModifier: (value: T.ExternModifier) => buildForeignModItem({ ...config, externModifier: value }),
-					content: (value: ';' | T.DeclarationList) => buildForeignModItem({ ...config, content: value })
+					content: (value: NonNullable<Parameters<typeof buildForeignModItem>[0]>['content']) =>
+						buildForeignModItem({ ...config, content: value })
 				}
 			},
 			{
@@ -908,7 +915,7 @@ export type StructItemBuilt = T.StructItem & {
 		visibilityModifier(value?: T.VisibilityModifier): StructItemBuilt;
 		name(value: T.Identifier): StructItemBuilt;
 		typeParameters(value?: T.TypeParameters): StructItemBuilt;
-		content(value: T.StructItemBrace | T.StructItemTuple | ';'): StructItemBuilt;
+		content(value: NonNullable<Parameters<typeof buildStructItem>[0]>['content']): StructItemBuilt;
 	};
 } & _NodeMethods;
 
@@ -916,7 +923,10 @@ export function buildStructItem(config: T.StructItem.Config): StructItemBuilt {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<T.StructItemBrace | T.StructItemTuple | TSKindId.StructItemUnit>(
+		config.content,
+		[[';', TSKindId.StructItemUnit] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -932,7 +942,7 @@ export function buildStructItem(config: T.StructItem.Config): StructItemBuilt {
 						buildStructItem({ ...config, visibilityModifier: value }),
 					name: (value: T.Identifier) => buildStructItem({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameters) => buildStructItem({ ...config, typeParameters: value }),
-					content: (value: T.StructItemBrace | T.StructItemTuple | ';') =>
+					content: (value: NonNullable<Parameters<typeof buildStructItem>[0]>['content']) =>
 						buildStructItem({ ...config, content: value })
 				}
 			},
@@ -1754,25 +1764,42 @@ export type WherePredicateBuilt = T.WherePredicate & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		left(
-			value:
-				| T.Lifetime
-				| T.Identifier
-				| T.ScopedTypeIdentifier
-				| T.GenericType
-				| T.ReferenceType
-				| T.PointerType
-				| T.TupleType
-				| T.ArrayType
-				| T.HigherRankedTraitBound
-				| T.PrimitiveType
-		): WherePredicateBuilt;
+		left(value: NonNullable<Parameters<typeof buildWherePredicate>[0]>['left']): WherePredicateBuilt;
 		bounds(value: T.TraitBounds): WherePredicateBuilt;
 	};
 } & _NodeMethods;
 
 export function buildWherePredicate(config: T.WherePredicate.Config): WherePredicateBuilt {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<
+		| T.Lifetime
+		| T.Identifier
+		| T.ScopedTypeIdentifier
+		| T.GenericType
+		| T.ReferenceType
+		| T.PointerType
+		| T.TupleType
+		| T.ArrayType
+		| T.HigherRankedTraitBound
+		| T.PrimitiveType
+	>(config.left, [
+		['u8', TSKindId.U8] as const,
+		['i8', TSKindId.I8] as const,
+		['u16', TSKindId.U16] as const,
+		['i16', TSKindId.I16] as const,
+		['u32', TSKindId.U32] as const,
+		['i32', TSKindId.I32] as const,
+		['u64', TSKindId.U64] as const,
+		['i64', TSKindId.I64] as const,
+		['u128', TSKindId.U128] as const,
+		['i128', TSKindId.I128] as const,
+		['isize', TSKindId.Isize] as const,
+		['usize', TSKindId.Usize] as const,
+		['f32', TSKindId.F32] as const,
+		['f64', TSKindId.F64] as const,
+		['bool', TSKindId.Bool] as const,
+		['str', TSKindId.Str] as const,
+		['char', TSKindId.Char] as const
+	]);
 	const _bounds = config.bounds;
 	return withMethods(
 		withAccessors(
@@ -1783,19 +1810,8 @@ export function buildWherePredicate(config: T.WherePredicate.Config): WherePredi
 				_left,
 				_bounds,
 				$with: {
-					left: (
-						value:
-							| T.Lifetime
-							| T.Identifier
-							| T.ScopedTypeIdentifier
-							| T.GenericType
-							| T.ReferenceType
-							| T.PointerType
-							| T.TupleType
-							| T.ArrayType
-							| T.HigherRankedTraitBound
-							| T.PrimitiveType
-					) => buildWherePredicate({ ...config, left: value }),
+					left: (value: NonNullable<Parameters<typeof buildWherePredicate>[0]>['left']) =>
+						buildWherePredicate({ ...config, left: value }),
 					bounds: (value: T.TraitBounds) => buildWherePredicate({ ...config, bounds: value })
 				}
 			},
@@ -1820,7 +1836,7 @@ export type ImplItemBuilt = T.ImplItem & {
 		traitClause(value?: T.ImplItemPositiveClause | T.ImplItemNegativeClause): ImplItemBuilt;
 		type(value: T._Type): ImplItemBuilt;
 		whereClause(value?: T.WhereClause): ImplItemBuilt;
-		content(value: T.ImplItemBody | ';'): ImplItemBuilt;
+		content(value: NonNullable<Parameters<typeof buildImplItem>[0]>['content']): ImplItemBuilt;
 	};
 } & _NodeMethods;
 
@@ -1830,7 +1846,9 @@ export function buildImplItem(config: T.ImplItem.Config): ImplItemBuilt {
 	const _trait_clause = config.traitClause;
 	const _type = config.type;
 	const _where_clause = config.whereClause;
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<T.ImplItemBody | TSKindId.ImplItemSemi>(config.content, [
+		[';', TSKindId.ImplItemSemi] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1851,7 +1869,8 @@ export function buildImplItem(config: T.ImplItem.Config): ImplItemBuilt {
 						buildImplItem({ ...config, traitClause: value }),
 					type: (value: T._Type) => buildImplItem({ ...config, type: value }),
 					whereClause: (value?: T.WhereClause) => buildImplItem({ ...config, whereClause: value }),
-					content: (value: T.ImplItemBody | ';') => buildImplItem({ ...config, content: value })
+					content: (value: NonNullable<Parameters<typeof buildImplItem>[0]>['content']) =>
+						buildImplItem({ ...config, content: value })
 				}
 			},
 			{
@@ -3935,11 +3954,11 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 }
 
 export type RangeExpressionBuildArgs = [
-	value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
+	value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
 ];
 export type RangeExpressionLooseArgs = [
 	value: LooseValue<
-		T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..',
+		T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -3950,16 +3969,16 @@ export type RangeExpressionBuilt = T.RangeExpression & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(
-			value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
-		): RangeExpressionBuilt;
+		content(value: NonNullable<Parameters<typeof buildRangeExpression>[0]>): RangeExpressionBuilt;
 	};
 } & _NodeMethods;
 
 export function buildRangeExpression(
-	value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
+	value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
 ): RangeExpressionBuilt {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<
+		T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
+	>(value, [['..', TSKindId.RangeExpressionBare] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3968,8 +3987,7 @@ export function buildRangeExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') =>
-						buildRangeExpression(value)
+					content: (value: NonNullable<Parameters<typeof buildRangeExpression>[0]>) => buildRangeExpression(value)
 				}
 			},
 			{
@@ -8160,13 +8178,15 @@ export type RangePatternArm2Built = T.RangePatternArm2 & {
 		left(
 			value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
 		): RangePatternArm2Built;
-		content(value: T.RangePatternLeftWithRight | '..'): RangePatternArm2Built;
+		content(value: NonNullable<Parameters<typeof buildRangePatternArm2>[0]>['content']): RangePatternArm2Built;
 	};
 } & _NodeMethods;
 
 export function buildRangePatternArm2(config: T.RangePatternArm2.Config): RangePatternArm2Built {
 	const _left = config.left;
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare>(config.content, [
+		['..', TSKindId.RangePatternLeftBare] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -8179,7 +8199,8 @@ export function buildRangePatternArm2(config: T.RangePatternArm2.Config): RangeP
 					left: (
 						value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
 					) => buildRangePatternArm2({ ...config, left: value }),
-					content: (value: T.RangePatternLeftWithRight | '..') => buildRangePatternArm2({ ...config, content: value })
+					content: (value: NonNullable<Parameters<typeof buildRangePatternArm2>[0]>['content']) =>
+						buildRangePatternArm2({ ...config, content: value })
 				}
 			},
 			{
@@ -10313,12 +10334,17 @@ export type DelimTokenTreeParenBuilt = T.DelimTokenTreeParen & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		delimTokens(...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeParenBuilt;
+		delimTokens(
+			value?: NonNullable<Parameters<typeof buildDelimTokenTreeParen>[0]>['delimTokens']
+		): DelimTokenTreeParenBuilt;
 	};
 } & _NodeMethods;
 
 export function buildDelimTokenTreeParen(config: Partial<T.DelimTokenTreeParen.Config> = {}): DelimTokenTreeParenBuilt {
-	const _delim_tokens = config.delimTokens ?? [];
+	const _delim_tokens = coerceMixedEnumStorage<(T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>(
+		config.delimTokens ?? [],
+		[['$', TSKindId.Dollar] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -10327,8 +10353,8 @@ export function buildDelimTokenTreeParen(config: Partial<T.DelimTokenTreeParen.C
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeParen({ ...config, delimTokens: values })
+					delimTokens: (value?: NonNullable<Parameters<typeof buildDelimTokenTreeParen>[0]>['delimTokens']) =>
+						buildDelimTokenTreeParen({ ...config, delimTokens: value })
 				}
 			},
 			{
@@ -10346,14 +10372,19 @@ export type DelimTokenTreeBracketBuilt = T.DelimTokenTreeBracket & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		delimTokens(...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeBracketBuilt;
+		delimTokens(
+			value?: NonNullable<Parameters<typeof buildDelimTokenTreeBracket>[0]>['delimTokens']
+		): DelimTokenTreeBracketBuilt;
 	};
 } & _NodeMethods;
 
 export function buildDelimTokenTreeBracket(
 	config: Partial<T.DelimTokenTreeBracket.Config> = {}
 ): DelimTokenTreeBracketBuilt {
-	const _delim_tokens = config.delimTokens ?? [];
+	const _delim_tokens = coerceMixedEnumStorage<(T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>(
+		config.delimTokens ?? [],
+		[['$', TSKindId.Dollar] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -10362,8 +10393,8 @@ export function buildDelimTokenTreeBracket(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeBracket({ ...config, delimTokens: values })
+					delimTokens: (value?: NonNullable<Parameters<typeof buildDelimTokenTreeBracket>[0]>['delimTokens']) =>
+						buildDelimTokenTreeBracket({ ...config, delimTokens: value })
 				}
 			},
 			{
@@ -10381,12 +10412,17 @@ export type DelimTokenTreeBraceBuilt = T.DelimTokenTreeBrace & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		delimTokens(...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]): DelimTokenTreeBraceBuilt;
+		delimTokens(
+			value?: NonNullable<Parameters<typeof buildDelimTokenTreeBrace>[0]>['delimTokens']
+		): DelimTokenTreeBraceBuilt;
 	};
 } & _NodeMethods;
 
 export function buildDelimTokenTreeBrace(config: Partial<T.DelimTokenTreeBrace.Config> = {}): DelimTokenTreeBraceBuilt {
-	const _delim_tokens = config.delimTokens ?? [];
+	const _delim_tokens = coerceMixedEnumStorage<(T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>(
+		config.delimTokens ?? [],
+		[['$', TSKindId.Dollar] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -10395,8 +10431,8 @@ export function buildDelimTokenTreeBrace(config: Partial<T.DelimTokenTreeBrace.C
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...values: (T._NonSpecialToken | '$' | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeBrace({ ...config, delimTokens: values })
+					delimTokens: (value?: NonNullable<Parameters<typeof buildDelimTokenTreeBrace>[0]>['delimTokens']) =>
+						buildDelimTokenTreeBrace({ ...config, delimTokens: value })
 				}
 			},
 			{

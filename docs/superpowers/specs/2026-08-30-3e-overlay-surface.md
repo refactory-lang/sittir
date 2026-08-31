@@ -125,7 +125,13 @@ name the arms. Two arm shapes, one rule:
   builds the complete node. Arms that sit in a real choice slot take the
   seated path; the alias path fires only for the unclaimed ones.
 - a **literal arm** (a member of a kind-enum slot) yields a member
-  constructor named by the token kind's camelCase name (`plus`, `ampAmp`)
+  constructor named by the token kind's camelCase name (`plus`, `ampAmp`).
+  A fixed-token arm beside node arms stores and transports its kind id —
+  single-value-enum semantics (`as_expression`'s `const` stores
+  `TSKindId.Const`, never raw text and never a whole keyword node) —
+  while whitespace/layout tokens, named-kind keywords, and identities
+  owned by named nodes stay whole nodes, because their parse identities
+  are real tree nodes an id cannot faithfully replace
   — the vocabulary the kind ids and consts already use. An authored
   `variant()` on the enum arm renames it (`add`, `and`); the mechanism is
   this spec's, the per-grammar naming sweep is later authored data.

@@ -38148,7 +38148,7 @@
                   "start": 0,
                   "end": 8
                 },
-                "$nodeHandle": 150323855449,
+                "$nodeHandle": 150323855440,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38163,7 +38163,7 @@
                         "start": 1,
                         "end": 7
                       },
-                      "$nodeHandle": 150323855451,
+                      "$nodeHandle": 150323855442,
                       "_content": [
                         "I'm ok"
                       ]
@@ -38174,7 +38174,7 @@
                     "start": 0,
                     "end": 8
                   },
-                  "$nodeHandle": 150323855450,
+                  "$nodeHandle": 150323855441,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38187,14 +38187,14 @@
               "start": 0,
               "end": 8
             },
-            "$nodeHandle": 150323855448,
+            "$nodeHandle": 150323855439,
             "_delimiter": 0
           },
           "$span": {
             "start": 0,
             "end": 8
           },
-          "$nodeHandle": 150323855435,
+          "$nodeHandle": 150323855426,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38217,7 +38217,7 @@
                   "start": 9,
                   "end": 15
                 },
-                "$nodeHandle": 150323855453,
+                "$nodeHandle": 150323855444,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38232,7 +38232,7 @@
                         "start": 10,
                         "end": 14
                       },
-                      "$nodeHandle": 150323855455,
+                      "$nodeHandle": 150323855446,
                       "_content": [
                         "\"ok\""
                       ]
@@ -38243,7 +38243,7 @@
                     "start": 9,
                     "end": 15
                   },
-                  "$nodeHandle": 150323855454,
+                  "$nodeHandle": 150323855445,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38256,14 +38256,14 @@
               "start": 9,
               "end": 15
             },
-            "$nodeHandle": 150323855452,
+            "$nodeHandle": 150323855443,
             "_delimiter": 0
           },
           "$span": {
             "start": 9,
             "end": 15
           },
-          "$nodeHandle": 150323855436,
+          "$nodeHandle": 150323855427,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38286,7 +38286,7 @@
                   "start": 16,
                   "end": 23
                 },
-                "$nodeHandle": 150323855457,
+                "$nodeHandle": 150323855448,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38301,7 +38301,7 @@
                         "start": 19,
                         "end": 22
                       },
-                      "$nodeHandle": 150323855459,
+                      "$nodeHandle": 150323855450,
                       "_content": [
                         "bye"
                       ]
@@ -38312,7 +38312,7 @@
                     "start": 16,
                     "end": 23
                   },
-                  "$nodeHandle": 150323855458,
+                  "$nodeHandle": 150323855449,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38325,14 +38325,14 @@
               "start": 16,
               "end": 23
             },
-            "$nodeHandle": 150323855456,
+            "$nodeHandle": 150323855447,
             "_delimiter": 0
           },
           "$span": {
             "start": 16,
             "end": 23
           },
-          "$nodeHandle": 150323855437,
+          "$nodeHandle": 150323855428,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38355,7 +38355,7 @@
                   "start": 24,
                   "end": 30
                 },
-                "$nodeHandle": 150323855461,
+                "$nodeHandle": 150323855452,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38370,7 +38370,7 @@
                         "start": 26,
                         "end": 29
                       },
-                      "$nodeHandle": 150323855463,
+                      "$nodeHandle": 150323855454,
                       "_content": [
                         "sup"
                       ]
@@ -38381,7 +38381,7 @@
                     "start": 24,
                     "end": 30
                   },
-                  "$nodeHandle": 150323855462,
+                  "$nodeHandle": 150323855453,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38394,14 +38394,14 @@
               "start": 24,
               "end": 30
             },
-            "$nodeHandle": 150323855460,
+            "$nodeHandle": 150323855451,
             "_delimiter": 0
           },
           "$span": {
             "start": 24,
             "end": 30
           },
-          "$nodeHandle": 150323855438,
+          "$nodeHandle": 150323855429,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38424,7 +38424,7 @@
                   "start": 31,
                   "end": 37
                 },
-                "$nodeHandle": 150323855465,
+                "$nodeHandle": 150323855456,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38439,7 +38439,7 @@
                         "start": 33,
                         "end": 36
                       },
-                      "$nodeHandle": 150323855467,
+                      "$nodeHandle": 150323855458,
                       "_content": [
                         "sup"
                       ]
@@ -38450,7 +38450,7 @@
                     "start": 31,
                     "end": 37
                   },
-                  "$nodeHandle": 150323855466,
+                  "$nodeHandle": 150323855457,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38463,14 +38463,14 @@
               "start": 31,
               "end": 37
             },
-            "$nodeHandle": 150323855464,
+            "$nodeHandle": 150323855455,
             "_delimiter": 0
           },
           "$span": {
             "start": 31,
             "end": 37
           },
-          "$nodeHandle": 150323855439,
+          "$nodeHandle": 150323855430,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38493,7 +38493,7 @@
                   "start": 38,
                   "end": 41
                 },
-                "$nodeHandle": 150323855469,
+                "$nodeHandle": 150323855460,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38508,7 +38508,7 @@
                         "start": 39,
                         "end": 40
                       },
-                      "$nodeHandle": 150323855471,
+                      "$nodeHandle": 150323855462,
                       "_content": [
                         "1"
                       ]
@@ -38519,7 +38519,7 @@
                     "start": 38,
                     "end": 41
                   },
-                  "$nodeHandle": 150323855470,
+                  "$nodeHandle": 150323855461,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38532,14 +38532,14 @@
               "start": 38,
               "end": 41
             },
-            "$nodeHandle": 150323855468,
+            "$nodeHandle": 150323855459,
             "_delimiter": 0
           },
           "$span": {
             "start": 38,
             "end": 41
           },
-          "$nodeHandle": 150323855440,
+          "$nodeHandle": 150323855431,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38562,7 +38562,7 @@
                   "start": 42,
                   "end": 46
                 },
-                "$nodeHandle": 150323855473,
+                "$nodeHandle": 150323855464,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38577,7 +38577,7 @@
                         "start": 43,
                         "end": 45
                       },
-                      "$nodeHandle": 150323855475,
+                      "$nodeHandle": 150323855466,
                       "_content": [
                         "\\\\"
                       ]
@@ -38588,7 +38588,7 @@
                     "start": 42,
                     "end": 46
                   },
-                  "$nodeHandle": 150323855474,
+                  "$nodeHandle": 150323855465,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38601,14 +38601,14 @@
               "start": 42,
               "end": 46
             },
-            "$nodeHandle": 150323855472,
+            "$nodeHandle": 150323855463,
             "_delimiter": 0
           },
           "$span": {
             "start": 42,
             "end": 46
           },
-          "$nodeHandle": 150323855441,
+          "$nodeHandle": 150323855432,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38631,7 +38631,7 @@
                   "start": 47,
                   "end": 50
                 },
-                "$nodeHandle": 150323855477,
+                "$nodeHandle": 150323855468,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38646,7 +38646,7 @@
                         "start": 48,
                         "end": 49
                       },
-                      "$nodeHandle": 150323855479,
+                      "$nodeHandle": 150323855470,
                       "_content": [
                         "/"
                       ]
@@ -38657,7 +38657,7 @@
                     "start": 47,
                     "end": 50
                   },
-                  "$nodeHandle": 150323855478,
+                  "$nodeHandle": 150323855469,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38670,14 +38670,14 @@
               "start": 47,
               "end": 50
             },
-            "$nodeHandle": 150323855476,
+            "$nodeHandle": 150323855467,
             "_delimiter": 0
           },
           "$span": {
             "start": 47,
             "end": 50
           },
-          "$nodeHandle": 150323855442,
+          "$nodeHandle": 150323855433,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38700,7 +38700,7 @@
                   "start": 51,
                   "end": 71
                 },
-                "$nodeHandle": 150323855481,
+                "$nodeHandle": 150323855472,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38715,7 +38715,7 @@
                         "start": 52,
                         "end": 70
                       },
-                      "$nodeHandle": 150323855483,
+                      "$nodeHandle": 150323855474,
                       "$slotOrder": [
                         "string_fragment",
                         "escape_sequence",
@@ -38733,7 +38733,7 @@
                     "start": 51,
                     "end": 71
                   },
-                  "$nodeHandle": 150323855482,
+                  "$nodeHandle": 150323855473,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38746,14 +38746,14 @@
               "start": 51,
               "end": 71
             },
-            "$nodeHandle": 150323855480,
+            "$nodeHandle": 150323855471,
             "_delimiter": 0
           },
           "$span": {
             "start": 51,
             "end": 71
           },
-          "$nodeHandle": 150323855443,
+          "$nodeHandle": 150323855434,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38776,7 +38776,7 @@
                   "start": 72,
                   "end": 107
                 },
-                "$nodeHandle": 150323855485,
+                "$nodeHandle": 150323855476,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38791,7 +38791,7 @@
                         "start": 74,
                         "end": 106
                       },
-                      "$nodeHandle": 150323855487,
+                      "$nodeHandle": 150323855478,
                       "$slotOrder": [
                         "escape_sequence",
                         "string_fragment",
@@ -38811,7 +38811,7 @@
                     "start": 72,
                     "end": 107
                   },
-                  "$nodeHandle": 150323855486,
+                  "$nodeHandle": 150323855477,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38824,14 +38824,14 @@
               "start": 72,
               "end": 107
             },
-            "$nodeHandle": 150323855484,
+            "$nodeHandle": 150323855475,
             "_delimiter": 0
           },
           "$span": {
             "start": 72,
             "end": 107
           },
-          "$nodeHandle": 150323855444,
+          "$nodeHandle": 150323855435,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38854,7 +38854,7 @@
                   "start": 108,
                   "end": 143
                 },
-                "$nodeHandle": 150323855489,
+                "$nodeHandle": 150323855480,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38869,7 +38869,7 @@
                         "start": 109,
                         "end": 142
                       },
-                      "$nodeHandle": 150323855491,
+                      "$nodeHandle": 150323855482,
                       "_content": [
                         "\\xab",
                         "\\1",
@@ -38893,7 +38893,7 @@
                     "start": 108,
                     "end": 143
                   },
-                  "$nodeHandle": 150323855490,
+                  "$nodeHandle": 150323855481,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -38906,14 +38906,14 @@
               "start": 108,
               "end": 143
             },
-            "$nodeHandle": 150323855488,
+            "$nodeHandle": 150323855479,
             "_delimiter": 0
           },
           "$span": {
             "start": 108,
             "end": 143
           },
-          "$nodeHandle": 150323855445,
+          "$nodeHandle": 150323855436,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -38936,7 +38936,7 @@
                   "start": 144,
                   "end": 175
                 },
-                "$nodeHandle": 150323855493,
+                "$nodeHandle": 150323855484,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -38951,7 +38951,7 @@
                         "start": 145,
                         "end": 174
                       },
-                      "$nodeHandle": 150323855495,
+                      "$nodeHandle": 150323855486,
                       "$slotOrder": [
                         "not_escape_sequence",
                         "string_fragment",
@@ -38973,113 +38973,23 @@
                         "string_fragment"
                       ],
                       "_content": [
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 145,
-                            "end": 146
-                          },
-                          "$nodeHandle": 150323855496
-                        },
+                        231,
                         "xgh",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 149,
-                            "end": 150
-                          },
-                          "$nodeHandle": 150323855497
-                        },
+                        231,
                         "o123",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 154,
-                            "end": 155
-                          },
-                          "$nodeHandle": 150323855498
-                        },
+                        231,
                         "p",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 156,
-                            "end": 157
-                          },
-                          "$nodeHandle": 150323855499
-                        },
+                        231,
                         "q",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 158,
-                            "end": 159
-                          },
-                          "$nodeHandle": 150323855500
-                        },
+                        231,
                         "c",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 160,
-                            "end": 161
-                          },
-                          "$nodeHandle": 150323855501
-                        },
+                        231,
                         "d",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 162,
-                            "end": 163
-                          },
-                          "$nodeHandle": 150323855502
-                        },
+                        231,
                         "e",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 164,
-                            "end": 165
-                          },
-                          "$nodeHandle": 150323855503
-                        },
+                        231,
                         "u12",
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 168,
-                            "end": 169
-                          },
-                          "$nodeHandle": 150323855504
-                        },
+                        231,
                         "U1234"
                       ]
                     }
@@ -39089,7 +38999,7 @@
                     "start": 144,
                     "end": 175
                   },
-                  "$nodeHandle": 150323855494,
+                  "$nodeHandle": 150323855485,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -39102,14 +39012,14 @@
               "start": 144,
               "end": 175
             },
-            "$nodeHandle": 150323855492,
+            "$nodeHandle": 150323855483,
             "_delimiter": 0
           },
           "$span": {
             "start": 144,
             "end": 175
           },
-          "$nodeHandle": 150323855446,
+          "$nodeHandle": 150323855437,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -39132,7 +39042,7 @@
                   "start": 176,
                   "end": 209
                 },
-                "$nodeHandle": 150323855506,
+                "$nodeHandle": 150323855488,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -39147,7 +39057,7 @@
                         "start": 178,
                         "end": 208
                       },
-                      "$nodeHandle": 150323855508,
+                      "$nodeHandle": 150323855490,
                       "_content": [
                         "\\N{GREEK CAPITAL LETTER DELTA}"
                       ]
@@ -39158,7 +39068,7 @@
                     "start": 176,
                     "end": 209
                   },
-                  "$nodeHandle": 150323855507,
+                  "$nodeHandle": 150323855489,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -39171,14 +39081,14 @@
               "start": 176,
               "end": 209
             },
-            "$nodeHandle": 150323855505,
+            "$nodeHandle": 150323855487,
             "_delimiter": 0
           },
           "$span": {
             "start": 176,
             "end": 209
           },
-          "$nodeHandle": 150323855447,
+          "$nodeHandle": 150323855438,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -39230,7 +39140,7 @@
               "start": 1,
               "end": 7
             },
-            "$nodeHandle": 150323855619,
+            "$nodeHandle": 150323855583,
             "_content": [
               "I'm ok"
             ]
@@ -39241,7 +39151,7 @@
           "start": 0,
           "end": 8
         },
-        "$nodeHandle": 150323855618,
+        "$nodeHandle": 150323855582,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39288,7 +39198,7 @@
               "start": 10,
               "end": 14
             },
-            "$nodeHandle": 150323855621,
+            "$nodeHandle": 150323855585,
             "_content": [
               "\"ok\""
             ]
@@ -39299,7 +39209,7 @@
           "start": 9,
           "end": 15
         },
-        "$nodeHandle": 150323855620,
+        "$nodeHandle": 150323855584,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39346,7 +39256,7 @@
               "start": 19,
               "end": 22
             },
-            "$nodeHandle": 150323855623,
+            "$nodeHandle": 150323855587,
             "_content": [
               "bye"
             ]
@@ -39357,7 +39267,7 @@
           "start": 16,
           "end": 23
         },
-        "$nodeHandle": 150323855622,
+        "$nodeHandle": 150323855586,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39404,7 +39314,7 @@
               "start": 26,
               "end": 29
             },
-            "$nodeHandle": 150323855625,
+            "$nodeHandle": 150323855589,
             "_content": [
               "sup"
             ]
@@ -39415,7 +39325,7 @@
           "start": 24,
           "end": 30
         },
-        "$nodeHandle": 150323855624,
+        "$nodeHandle": 150323855588,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39462,7 +39372,7 @@
               "start": 33,
               "end": 36
             },
-            "$nodeHandle": 150323855627,
+            "$nodeHandle": 150323855591,
             "_content": [
               "sup"
             ]
@@ -39473,7 +39383,7 @@
           "start": 31,
           "end": 37
         },
-        "$nodeHandle": 150323855626,
+        "$nodeHandle": 150323855590,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39520,7 +39430,7 @@
               "start": 39,
               "end": 40
             },
-            "$nodeHandle": 150323855629,
+            "$nodeHandle": 150323855593,
             "_content": [
               "1"
             ]
@@ -39531,7 +39441,7 @@
           "start": 38,
           "end": 41
         },
-        "$nodeHandle": 150323855628,
+        "$nodeHandle": 150323855592,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39578,7 +39488,7 @@
               "start": 43,
               "end": 45
             },
-            "$nodeHandle": 150323855631,
+            "$nodeHandle": 150323855595,
             "_content": [
               "\\\\"
             ]
@@ -39589,7 +39499,7 @@
           "start": 42,
           "end": 46
         },
-        "$nodeHandle": 150323855630,
+        "$nodeHandle": 150323855594,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39636,7 +39546,7 @@
               "start": 48,
               "end": 49
             },
-            "$nodeHandle": 150323855633,
+            "$nodeHandle": 150323855597,
             "_content": [
               "/"
             ]
@@ -39647,7 +39557,7 @@
           "start": 47,
           "end": 50
         },
-        "$nodeHandle": 150323855632,
+        "$nodeHandle": 150323855596,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39694,7 +39604,7 @@
               "start": 52,
               "end": 70
             },
-            "$nodeHandle": 150323855635,
+            "$nodeHandle": 150323855599,
             "$slotOrder": [
               "string_fragment",
               "escape_sequence",
@@ -39712,7 +39622,7 @@
           "start": 51,
           "end": 71
         },
-        "$nodeHandle": 150323855634,
+        "$nodeHandle": 150323855598,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39759,7 +39669,7 @@
               "start": 74,
               "end": 106
             },
-            "$nodeHandle": 150323855637,
+            "$nodeHandle": 150323855601,
             "$slotOrder": [
               "escape_sequence",
               "string_fragment",
@@ -39779,7 +39689,7 @@
           "start": 72,
           "end": 107
         },
-        "$nodeHandle": 150323855636,
+        "$nodeHandle": 150323855600,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39826,7 +39736,7 @@
               "start": 109,
               "end": 142
             },
-            "$nodeHandle": 150323855639,
+            "$nodeHandle": 150323855603,
             "_content": [
               "\\xab",
               "\\1",
@@ -39850,7 +39760,7 @@
           "start": 108,
           "end": 143
         },
-        "$nodeHandle": 150323855638,
+        "$nodeHandle": 150323855602,
         "$slotOrder": [
           "string_start",
           "content",
@@ -39897,7 +39807,7 @@
               "start": 145,
               "end": 174
             },
-            "$nodeHandle": 150323855641,
+            "$nodeHandle": 150323855605,
             "$slotOrder": [
               "not_escape_sequence",
               "string_fragment",
@@ -39919,113 +39829,23 @@
               "string_fragment"
             ],
             "_content": [
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 145,
-                  "end": 146
-                },
-                "$nodeHandle": 150323855642
-              },
+              231,
               "xgh",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 149,
-                  "end": 150
-                },
-                "$nodeHandle": 150323855643
-              },
+              231,
               "o123",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 154,
-                  "end": 155
-                },
-                "$nodeHandle": 150323855644
-              },
+              231,
               "p",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 156,
-                  "end": 157
-                },
-                "$nodeHandle": 150323855645
-              },
+              231,
               "q",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 158,
-                  "end": 159
-                },
-                "$nodeHandle": 150323855646
-              },
+              231,
               "c",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 160,
-                  "end": 161
-                },
-                "$nodeHandle": 150323855647
-              },
+              231,
               "d",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 162,
-                  "end": 163
-                },
-                "$nodeHandle": 150323855648
-              },
+              231,
               "e",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 164,
-                  "end": 165
-                },
-                "$nodeHandle": 150323855649
-              },
+              231,
               "u12",
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 168,
-                  "end": 169
-                },
-                "$nodeHandle": 150323855650
-              },
+              231,
               "U1234"
             ]
           }
@@ -40035,7 +39855,7 @@
           "start": 144,
           "end": 175
         },
-        "$nodeHandle": 150323855640,
+        "$nodeHandle": 150323855604,
         "$slotOrder": [
           "string_start",
           "content",
@@ -40067,7 +39887,7 @@
         "start": 176,
         "end": 209
       },
-      "$nodeHandle": 150323855432,
+      "$nodeHandle": 150323855423,
       "_content": {
         "$type": 227,
         "$source": 0,
@@ -40082,7 +39902,7 @@
               "start": 178,
               "end": 208
             },
-            "$nodeHandle": 150323855652,
+            "$nodeHandle": 150323855607,
             "_content": [
               "\\N{GREEK CAPITAL LETTER DELTA}"
             ]
@@ -40093,7 +39913,7 @@
           "start": 176,
           "end": 209
         },
-        "$nodeHandle": 150323855651,
+        "$nodeHandle": 150323855606,
         "$slotOrder": [
           "string_start",
           "content",
@@ -40131,7 +39951,7 @@
             "start": 1,
             "end": 7
           },
-          "$nodeHandle": 150323855653,
+          "$nodeHandle": 150323855608,
           "_content": [
             "I'm ok"
           ]
@@ -40179,7 +39999,7 @@
             "start": 10,
             "end": 14
           },
-          "$nodeHandle": 150323855654,
+          "$nodeHandle": 150323855609,
           "_content": [
             "\"ok\""
           ]
@@ -40227,7 +40047,7 @@
             "start": 19,
             "end": 22
           },
-          "$nodeHandle": 150323855655,
+          "$nodeHandle": 150323855610,
           "_content": [
             "bye"
           ]
@@ -40275,7 +40095,7 @@
             "start": 26,
             "end": 29
           },
-          "$nodeHandle": 150323855656,
+          "$nodeHandle": 150323855611,
           "_content": [
             "sup"
           ]
@@ -40323,7 +40143,7 @@
             "start": 33,
             "end": 36
           },
-          "$nodeHandle": 150323855657,
+          "$nodeHandle": 150323855612,
           "_content": [
             "sup"
           ]
@@ -40371,7 +40191,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeHandle": 150323855658,
+          "$nodeHandle": 150323855613,
           "_content": [
             "1"
           ]
@@ -40419,7 +40239,7 @@
             "start": 43,
             "end": 45
           },
-          "$nodeHandle": 150323855659,
+          "$nodeHandle": 150323855614,
           "_content": [
             "\\\\"
           ]
@@ -40467,7 +40287,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeHandle": 150323855660,
+          "$nodeHandle": 150323855615,
           "_content": [
             "/"
           ]
@@ -40515,7 +40335,7 @@
             "start": 52,
             "end": 70
           },
-          "$nodeHandle": 150323855661,
+          "$nodeHandle": 150323855616,
           "$slotOrder": [
             "string_fragment",
             "escape_sequence",
@@ -40570,7 +40390,7 @@
             "start": 74,
             "end": 106
           },
-          "$nodeHandle": 150323855662,
+          "$nodeHandle": 150323855617,
           "$slotOrder": [
             "escape_sequence",
             "string_fragment",
@@ -40627,7 +40447,7 @@
             "start": 109,
             "end": 142
           },
-          "$nodeHandle": 150323855663,
+          "$nodeHandle": 150323855618,
           "_content": [
             "\\xab",
             "\\1",
@@ -40688,7 +40508,7 @@
             "start": 145,
             "end": 174
           },
-          "$nodeHandle": 150323855664,
+          "$nodeHandle": 150323855619,
           "$slotOrder": [
             "not_escape_sequence",
             "string_fragment",
@@ -40710,113 +40530,23 @@
             "string_fragment"
           ],
           "_content": [
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 145,
-                "end": 146
-              },
-              "$nodeHandle": 150323855665
-            },
+            231,
             "xgh",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 149,
-                "end": 150
-              },
-              "$nodeHandle": 150323855666
-            },
+            231,
             "o123",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 154,
-                "end": 155
-              },
-              "$nodeHandle": 150323855667
-            },
+            231,
             "p",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 156,
-                "end": 157
-              },
-              "$nodeHandle": 150323855668
-            },
+            231,
             "q",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 158,
-                "end": 159
-              },
-              "$nodeHandle": 150323855669
-            },
+            231,
             "c",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 160,
-                "end": 161
-              },
-              "$nodeHandle": 150323855670
-            },
+            231,
             "d",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 162,
-                "end": 163
-              },
-              "$nodeHandle": 150323855671
-            },
+            231,
             "e",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 164,
-                "end": 165
-              },
-              "$nodeHandle": 150323855672
-            },
+            231,
             "u12",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 168,
-                "end": 169
-              },
-              "$nodeHandle": 150323855673
-            },
+            231,
             "U1234"
           ]
         }
@@ -40863,7 +40593,7 @@
             "start": 178,
             "end": 208
           },
-          "$nodeHandle": 150323855674,
+          "$nodeHandle": 150323855620,
           "_content": [
             "\\N{GREEK CAPITAL LETTER DELTA}"
           ]
@@ -40874,7 +40604,7 @@
         "start": 176,
         "end": 209
       },
-      "$nodeHandle": 150323855433,
+      "$nodeHandle": 150323855424,
       "$slotOrder": [
         "string_start",
         "content",
@@ -40919,7 +40649,7 @@
                   "start": 0,
                   "end": 10
                 },
-                "$nodeHandle": 154618822701,
+                "$nodeHandle": 154618822700,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -40934,7 +40664,7 @@
                         "start": 1,
                         "end": 9
                       },
-                      "$nodeHandle": 154618822703,
+                      "$nodeHandle": 154618822702,
                       "$slotOrder": [
                         "string_fragment",
                         "escape_sequence",
@@ -40952,7 +40682,7 @@
                     "start": 0,
                     "end": 10
                   },
-                  "$nodeHandle": 154618822702,
+                  "$nodeHandle": 154618822701,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -40965,14 +40695,14 @@
               "start": 0,
               "end": 10
             },
-            "$nodeHandle": 154618822700,
+            "$nodeHandle": 154618822699,
             "_delimiter": 0
           },
           "$span": {
             "start": 0,
             "end": 10
           },
-          "$nodeHandle": 154618822693,
+          "$nodeHandle": 154618822692,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -40995,7 +40725,7 @@
                   "start": 11,
                   "end": 15
                 },
-                "$nodeHandle": 154618822705,
+                "$nodeHandle": 154618822704,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -41010,7 +40740,7 @@
                         "start": 12,
                         "end": 14
                       },
-                      "$nodeHandle": 154618822707,
+                      "$nodeHandle": 154618822706,
                       "_content": [
                         "\\n"
                       ]
@@ -41021,7 +40751,7 @@
                     "start": 11,
                     "end": 15
                   },
-                  "$nodeHandle": 154618822706,
+                  "$nodeHandle": 154618822705,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -41034,14 +40764,14 @@
               "start": 11,
               "end": 15
             },
-            "$nodeHandle": 154618822704,
+            "$nodeHandle": 154618822703,
             "_delimiter": 0
           },
           "$span": {
             "start": 11,
             "end": 15
           },
-          "$nodeHandle": 154618822694,
+          "$nodeHandle": 154618822693,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -41064,7 +40794,7 @@
                   "start": 48,
                   "end": 59
                 },
-                "$nodeHandle": 154618822709,
+                "$nodeHandle": 154618822708,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -41079,7 +40809,7 @@
                         "start": 50,
                         "end": 58
                       },
-                      "$nodeHandle": 154618822711,
+                      "$nodeHandle": 154618822710,
                       "_content": [
                         "ab\\x00cd"
                       ]
@@ -41090,7 +40820,7 @@
                     "start": 48,
                     "end": 59
                   },
-                  "$nodeHandle": 154618822710,
+                  "$nodeHandle": 154618822709,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -41103,14 +40833,14 @@
               "start": 48,
               "end": 59
             },
-            "$nodeHandle": 154618822708,
+            "$nodeHandle": 154618822707,
             "_delimiter": 0
           },
           "$span": {
             "start": 48,
             "end": 59
           },
-          "$nodeHandle": 154618822695,
+          "$nodeHandle": 154618822694,
           "$triviaData": {
             "leading": [
               {
@@ -41147,7 +40877,7 @@
                   "start": 60,
                   "end": 66
                 },
-                "$nodeHandle": 154618822713,
+                "$nodeHandle": 154618822712,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -41162,7 +40892,7 @@
                         "start": 63,
                         "end": 65
                       },
-                      "$nodeHandle": 154618822715,
+                      "$nodeHandle": 154618822714,
                       "_content": [
                         "\\n"
                       ]
@@ -41173,7 +40903,7 @@
                     "start": 60,
                     "end": 66
                   },
-                  "$nodeHandle": 154618822714,
+                  "$nodeHandle": 154618822713,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -41186,14 +40916,14 @@
               "start": 60,
               "end": 66
             },
-            "$nodeHandle": 154618822712,
+            "$nodeHandle": 154618822711,
             "_delimiter": 0
           },
           "$span": {
             "start": 60,
             "end": 66
           },
-          "$nodeHandle": 154618822696,
+          "$nodeHandle": 154618822695,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -41216,7 +40946,7 @@
                   "start": 83,
                   "end": 91
                 },
-                "$nodeHandle": 154618822717,
+                "$nodeHandle": 154618822716,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -41231,19 +40961,9 @@
                         "start": 86,
                         "end": 87
                       },
-                      "$nodeHandle": 154618822719,
+                      "$nodeHandle": 154618822718,
                       "_content": [
-                        {
-                          "$type": 231,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "\\",
-                          "$span": {
-                            "start": 86,
-                            "end": 87
-                          },
-                          "$nodeHandle": 154618822721
-                        }
+                        231
                       ]
                     },
                     {
@@ -41259,7 +40979,7 @@
                         "start": 87,
                         "end": 90
                       },
-                      "$nodeHandle": 154618822720
+                      "$nodeHandle": 154618822719
                     }
                   ],
                   "_string_end": "\"",
@@ -41267,7 +40987,7 @@
                     "start": 83,
                     "end": 91
                   },
-                  "$nodeHandle": 154618822718,
+                  "$nodeHandle": 154618822717,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -41281,14 +41001,14 @@
               "start": 83,
               "end": 91
             },
-            "$nodeHandle": 154618822716,
+            "$nodeHandle": 154618822715,
             "_delimiter": 0
           },
           "$span": {
             "start": 83,
             "end": 91
           },
-          "$nodeHandle": 154618822697,
+          "$nodeHandle": 154618822696,
           "$triviaData": {
             "leading": [
               {
@@ -41325,7 +41045,7 @@
                   "start": 93,
                   "end": 98
                 },
-                "$nodeHandle": 154618822723,
+                "$nodeHandle": 154618822721,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -41336,7 +41056,7 @@
                     "start": 93,
                     "end": 98
                   },
-                  "$nodeHandle": 154618822724,
+                  "$nodeHandle": 154618822722,
                   "$slotOrder": [
                     "string_start",
                     "string_end"
@@ -41349,14 +41069,14 @@
               "start": 93,
               "end": 98
             },
-            "$nodeHandle": 154618822722,
+            "$nodeHandle": 154618822720,
             "_delimiter": 0
           },
           "$span": {
             "start": 93,
             "end": 98
           },
-          "$nodeHandle": 154618822698,
+          "$nodeHandle": 154618822697,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -41379,7 +41099,7 @@
                   "start": 99,
                   "end": 113
                 },
-                "$nodeHandle": 154618822726,
+                "$nodeHandle": 154618822724,
                 "_content": {
                   "$type": 227,
                   "$source": 0,
@@ -41394,7 +41114,7 @@
                         "start": 101,
                         "end": 112
                       },
-                      "$nodeHandle": 154618822728,
+                      "$nodeHandle": 154618822726,
                       "_content": [
                         "\"a\\\nde\\\nfg\""
                       ]
@@ -41405,7 +41125,7 @@
                     "start": 99,
                     "end": 113
                   },
-                  "$nodeHandle": 154618822727,
+                  "$nodeHandle": 154618822725,
                   "$slotOrder": [
                     "string_start",
                     "content",
@@ -41418,14 +41138,14 @@
               "start": 99,
               "end": 113
             },
-            "$nodeHandle": 154618822725,
+            "$nodeHandle": 154618822723,
             "_delimiter": 0
           },
           "$span": {
             "start": 99,
             "end": 113
           },
-          "$nodeHandle": 154618822699,
+          "$nodeHandle": 154618822698,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -41477,7 +41197,7 @@
               "start": 1,
               "end": 9
             },
-            "$nodeHandle": 154618822781,
+            "$nodeHandle": 154618822777,
             "$slotOrder": [
               "string_fragment",
               "escape_sequence",
@@ -41495,7 +41215,7 @@
           "start": 0,
           "end": 10
         },
-        "$nodeHandle": 154618822780,
+        "$nodeHandle": 154618822776,
         "$slotOrder": [
           "string_start",
           "content",
@@ -41542,7 +41262,7 @@
               "start": 12,
               "end": 14
             },
-            "$nodeHandle": 154618822783,
+            "$nodeHandle": 154618822779,
             "_content": [
               "\\n"
             ]
@@ -41553,7 +41273,7 @@
           "start": 11,
           "end": 15
         },
-        "$nodeHandle": 154618822782,
+        "$nodeHandle": 154618822778,
         "$slotOrder": [
           "string_start",
           "content",
@@ -41600,7 +41320,7 @@
               "start": 50,
               "end": 58
             },
-            "$nodeHandle": 154618822785,
+            "$nodeHandle": 154618822781,
             "_content": [
               "ab\\x00cd"
             ]
@@ -41611,7 +41331,7 @@
           "start": 48,
           "end": 59
         },
-        "$nodeHandle": 154618822784,
+        "$nodeHandle": 154618822780,
         "$slotOrder": [
           "string_start",
           "content",
@@ -41658,7 +41378,7 @@
               "start": 63,
               "end": 65
             },
-            "$nodeHandle": 154618822787,
+            "$nodeHandle": 154618822783,
             "_content": [
               "\\n"
             ]
@@ -41669,7 +41389,7 @@
           "start": 60,
           "end": 66
         },
-        "$nodeHandle": 154618822786,
+        "$nodeHandle": 154618822782,
         "$slotOrder": [
           "string_start",
           "content",
@@ -41716,19 +41436,9 @@
               "start": 86,
               "end": 87
             },
-            "$nodeHandle": 154618822789,
+            "$nodeHandle": 154618822785,
             "_content": [
-              {
-                "$type": 231,
-                "$source": 0,
-                "$named": true,
-                "$text": "\\",
-                "$span": {
-                  "start": 86,
-                  "end": 87
-                },
-                "$nodeHandle": 154618822791
-              }
+              231
             ]
           },
           {
@@ -41744,7 +41454,7 @@
               "start": 87,
               "end": 90
             },
-            "$nodeHandle": 154618822790
+            "$nodeHandle": 154618822786
           }
         ],
         "_string_end": "\"",
@@ -41752,7 +41462,7 @@
           "start": 83,
           "end": 91
         },
-        "$nodeHandle": 154618822788,
+        "$nodeHandle": 154618822784,
         "$slotOrder": [
           "string_start",
           "content",
@@ -41785,7 +41495,7 @@
         "start": 93,
         "end": 98
       },
-      "$nodeHandle": 154618822687,
+      "$nodeHandle": 154618822686,
       "_content": {
         "$type": 227,
         "$source": 0,
@@ -41796,7 +41506,7 @@
           "start": 93,
           "end": 98
         },
-        "$nodeHandle": 154618822792,
+        "$nodeHandle": 154618822787,
         "$slotOrder": [
           "string_start",
           "string_end"
@@ -41828,7 +41538,7 @@
         "start": 99,
         "end": 113
       },
-      "$nodeHandle": 154618822690,
+      "$nodeHandle": 154618822689,
       "_content": {
         "$type": 227,
         "$source": 0,
@@ -41843,7 +41553,7 @@
               "start": 101,
               "end": 112
             },
-            "$nodeHandle": 154618822794,
+            "$nodeHandle": 154618822789,
             "_content": [
               "\"a\\\nde\\\nfg\""
             ]
@@ -41854,7 +41564,7 @@
           "start": 99,
           "end": 113
         },
-        "$nodeHandle": 154618822793,
+        "$nodeHandle": 154618822788,
         "$slotOrder": [
           "string_start",
           "content",
@@ -41892,7 +41602,7 @@
             "start": 1,
             "end": 9
           },
-          "$nodeHandle": 154618822795,
+          "$nodeHandle": 154618822790,
           "$slotOrder": [
             "string_fragment",
             "escape_sequence",
@@ -41947,7 +41657,7 @@
             "start": 12,
             "end": 14
           },
-          "$nodeHandle": 154618822796,
+          "$nodeHandle": 154618822791,
           "_content": [
             "\\n"
           ]
@@ -41995,7 +41705,7 @@
             "start": 50,
             "end": 58
           },
-          "$nodeHandle": 154618822797,
+          "$nodeHandle": 154618822792,
           "_content": [
             "ab\\x00cd"
           ]
@@ -42043,7 +41753,7 @@
             "start": 63,
             "end": 65
           },
-          "$nodeHandle": 154618822798,
+          "$nodeHandle": 154618822793,
           "_content": [
             "\\n"
           ]
@@ -42091,19 +41801,9 @@
             "start": 86,
             "end": 87
           },
-          "$nodeHandle": 154618822799,
+          "$nodeHandle": 154618822794,
           "_content": [
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 86,
-                "end": 87
-              },
-              "$nodeHandle": 154618822801
-            }
+            231
           ]
         },
         {
@@ -42119,7 +41819,7 @@
             "start": 87,
             "end": 90
           },
-          "$nodeHandle": 154618822800
+          "$nodeHandle": 154618822795
         }
       ],
       "_string_end": "\"",
@@ -42161,7 +41861,7 @@
         "start": 93,
         "end": 98
       },
-      "$nodeHandle": 154618822688,
+      "$nodeHandle": 154618822687,
       "$slotOrder": [
         "string_start",
         "string_end"
@@ -42198,7 +41898,7 @@
             "start": 101,
             "end": 112
           },
-          "$nodeHandle": 154618822802,
+          "$nodeHandle": 154618822796,
           "_content": [
             "\"a\\\nde\\\nfg\""
           ]
@@ -42209,7 +41909,7 @@
         "start": 99,
         "end": 113
       },
-      "$nodeHandle": 154618822691,
+      "$nodeHandle": 154618822690,
       "$slotOrder": [
         "string_start",
         "content",
@@ -66354,7 +66054,7 @@
                   "start": 0,
                   "end": 13
                 },
-                "$nodeHandle": 227633266735,
+                "$nodeHandle": 227633266734,
                 "_content": {
                   "$type": 195,
                   "$source": 0,
@@ -66364,7 +66064,7 @@
                     "start": 0,
                     "end": 13
                   },
-                  "$nodeHandle": 227633266736,
+                  "$nodeHandle": 227633266735,
                   "$slotOrder": [
                     "left",
                     "assignment_eq"
@@ -66387,7 +66087,7 @@
                             "start": 5,
                             "end": 12
                           },
-                          "$nodeHandle": 227633266739,
+                          "$nodeHandle": 227633266738,
                           "$slotOrder": [
                             "string_fragment",
                             "escape_sequence",
@@ -66409,7 +66109,7 @@
                         "start": 4,
                         "end": 13
                       },
-                      "$nodeHandle": 227633266738,
+                      "$nodeHandle": 227633266737,
                       "$slotOrder": [
                         "string_start",
                         "content",
@@ -66423,7 +66123,7 @@
                       "start": 2,
                       "end": 13
                     },
-                    "$nodeHandle": 227633266737
+                    "$nodeHandle": 227633266736
                   }
                 }
               }
@@ -66432,14 +66132,14 @@
               "start": 0,
               "end": 13
             },
-            "$nodeHandle": 227633266734,
+            "$nodeHandle": 227633266733,
             "_delimiter": 0
           },
           "$span": {
             "start": 0,
             "end": 13
           },
-          "$nodeHandle": 227633266729,
+          "$nodeHandle": 227633266728,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -66462,7 +66162,7 @@
                   "start": 14,
                   "end": 33
                 },
-                "$nodeHandle": 227633266741,
+                "$nodeHandle": 227633266740,
                 "_content": {
                   "$type": 195,
                   "$source": 0,
@@ -66472,7 +66172,7 @@
                     "start": 14,
                     "end": 33
                   },
-                  "$nodeHandle": 227633266742,
+                  "$nodeHandle": 227633266741,
                   "$slotOrder": [
                     "left",
                     "assignment_eq"
@@ -66495,7 +66195,7 @@
                             "start": 19,
                             "end": 32
                           },
-                          "$nodeHandle": 227633266745,
+                          "$nodeHandle": 227633266744,
                           "$slotOrder": [
                             "string_fragment",
                             "escape_sequence",
@@ -66517,7 +66217,7 @@
                         "start": 18,
                         "end": 33
                       },
-                      "$nodeHandle": 227633266744,
+                      "$nodeHandle": 227633266743,
                       "$slotOrder": [
                         "string_start",
                         "content",
@@ -66531,7 +66231,7 @@
                       "start": 16,
                       "end": 33
                     },
-                    "$nodeHandle": 227633266743
+                    "$nodeHandle": 227633266742
                   }
                 }
               }
@@ -66540,14 +66240,14 @@
               "start": 14,
               "end": 33
             },
-            "$nodeHandle": 227633266740,
+            "$nodeHandle": 227633266739,
             "_delimiter": 0
           },
           "$span": {
             "start": 14,
             "end": 33
           },
-          "$nodeHandle": 227633266730,
+          "$nodeHandle": 227633266729,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -66570,7 +66270,7 @@
                   "start": 34,
                   "end": 53
                 },
-                "$nodeHandle": 227633266747,
+                "$nodeHandle": 227633266746,
                 "_content": {
                   "$type": 195,
                   "$source": 0,
@@ -66580,7 +66280,7 @@
                     "start": 34,
                     "end": 53
                   },
-                  "$nodeHandle": 227633266748,
+                  "$nodeHandle": 227633266747,
                   "$slotOrder": [
                     "left",
                     "assignment_eq"
@@ -66603,7 +66303,7 @@
                             "start": 39,
                             "end": 52
                           },
-                          "$nodeHandle": 227633266751,
+                          "$nodeHandle": 227633266750,
                           "$slotOrder": [
                             "string_fragment",
                             "not_escape_sequence",
@@ -66611,17 +66311,7 @@
                           ],
                           "_content": [
                             "bad ",
-                            {
-                              "$type": 231,
-                              "$source": 0,
-                              "$named": true,
-                              "$text": "\\",
-                              "$span": {
-                                "start": 43,
-                                "end": 44
-                              },
-                              "$nodeHandle": 227633266752
-                            },
+                            231,
                             "q escape"
                           ]
                         }
@@ -66631,7 +66321,7 @@
                         "start": 38,
                         "end": 53
                       },
-                      "$nodeHandle": 227633266750,
+                      "$nodeHandle": 227633266749,
                       "$slotOrder": [
                         "string_start",
                         "content",
@@ -66645,7 +66335,7 @@
                       "start": 36,
                       "end": 53
                     },
-                    "$nodeHandle": 227633266749
+                    "$nodeHandle": 227633266748
                   }
                 }
               }
@@ -66654,14 +66344,14 @@
               "start": 34,
               "end": 53
             },
-            "$nodeHandle": 227633266746,
+            "$nodeHandle": 227633266745,
             "_delimiter": 0
           },
           "$span": {
             "start": 34,
             "end": 53
           },
-          "$nodeHandle": 227633266731,
+          "$nodeHandle": 227633266730,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -66684,7 +66374,7 @@
                   "start": 54,
                   "end": 68
                 },
-                "$nodeHandle": 227633266754,
+                "$nodeHandle": 227633266752,
                 "_content": {
                   "$type": 195,
                   "$source": 0,
@@ -66694,7 +66384,7 @@
                     "start": 54,
                     "end": 68
                   },
-                  "$nodeHandle": 227633266755,
+                  "$nodeHandle": 227633266753,
                   "$slotOrder": [
                     "left",
                     "assignment_eq"
@@ -66723,7 +66413,7 @@
                               "start": 62,
                               "end": 66
                             },
-                            "$nodeHandle": 227633266759
+                            "$nodeHandle": 227633266757
                           },
                           "$other": [
                             46,
@@ -66733,7 +66423,7 @@
                             "start": 60,
                             "end": 67
                           },
-                          "$nodeHandle": 227633266758,
+                          "$nodeHandle": 227633266756,
                           "$slotOrder": [
                             "expression",
                             "format_specifier"
@@ -66745,7 +66435,7 @@
                         "start": 58,
                         "end": 68
                       },
-                      "$nodeHandle": 227633266757,
+                      "$nodeHandle": 227633266755,
                       "$slotOrder": [
                         "string_start",
                         "content",
@@ -66759,7 +66449,7 @@
                       "start": 56,
                       "end": 68
                     },
-                    "$nodeHandle": 227633266756
+                    "$nodeHandle": 227633266754
                   }
                 }
               }
@@ -66768,14 +66458,14 @@
               "start": 54,
               "end": 68
             },
-            "$nodeHandle": 227633266753,
+            "$nodeHandle": 227633266751,
             "_delimiter": 0
           },
           "$span": {
             "start": 54,
             "end": 68
           },
-          "$nodeHandle": 227633266732,
+          "$nodeHandle": 227633266731,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -66798,7 +66488,7 @@
                   "start": 69,
                   "end": 92
                 },
-                "$nodeHandle": 227633266761,
+                "$nodeHandle": 227633266759,
                 "_content": {
                   "$type": 195,
                   "$source": 0,
@@ -66808,7 +66498,7 @@
                     "start": 69,
                     "end": 92
                   },
-                  "$nodeHandle": 227633266762,
+                  "$nodeHandle": 227633266760,
                   "$slotOrder": [
                     "left",
                     "assignment_eq"
@@ -66831,7 +66521,7 @@
                             "start": 75,
                             "end": 78
                           },
-                          "$nodeHandle": 227633266765,
+                          "$nodeHandle": 227633266763,
                           "_content": [
                             "pre"
                           ]
@@ -66850,7 +66540,7 @@
                               "start": 82,
                               "end": 86
                             },
-                            "$nodeHandle": 227633266768
+                            "$nodeHandle": 227633266766
                           },
                           "$other": [
                             46,
@@ -66860,7 +66550,7 @@
                             "start": 78,
                             "end": 87
                           },
-                          "$nodeHandle": 227633266766,
+                          "$nodeHandle": 227633266764,
                           "$slotOrder": [
                             "expression",
                             "format_specifier"
@@ -66874,7 +66564,7 @@
                             "start": 87,
                             "end": 91
                           },
-                          "$nodeHandle": 227633266767,
+                          "$nodeHandle": 227633266765,
                           "_content": [
                             "post"
                           ]
@@ -66885,7 +66575,7 @@
                         "start": 73,
                         "end": 92
                       },
-                      "$nodeHandle": 227633266764,
+                      "$nodeHandle": 227633266762,
                       "$slotOrder": [
                         "string_start",
                         "content",
@@ -66901,7 +66591,7 @@
                       "start": 71,
                       "end": 92
                     },
-                    "$nodeHandle": 227633266763
+                    "$nodeHandle": 227633266761
                   }
                 }
               }
@@ -66910,14 +66600,14 @@
               "start": 69,
               "end": 92
             },
-            "$nodeHandle": 227633266760,
+            "$nodeHandle": 227633266758,
             "_delimiter": 0
           },
           "$span": {
             "start": 69,
             "end": 92
           },
-          "$nodeHandle": 227633266733,
+          "$nodeHandle": 227633266732,
           "$slotOrder": [
             "simple_statements_elements",
             "newline"
@@ -66964,7 +66654,7 @@
           "start": 0,
           "end": 13
         },
-        "$nodeHandle": 227633266834,
+        "$nodeHandle": 227633266830,
         "$slotOrder": [
           "left",
           "assignment_eq"
@@ -66987,7 +66677,7 @@
                   "start": 5,
                   "end": 12
                 },
-                "$nodeHandle": 227633266837,
+                "$nodeHandle": 227633266833,
                 "$slotOrder": [
                   "string_fragment",
                   "escape_sequence",
@@ -67009,7 +66699,7 @@
               "start": 4,
               "end": 13
             },
-            "$nodeHandle": 227633266836,
+            "$nodeHandle": 227633266832,
             "$slotOrder": [
               "string_start",
               "content",
@@ -67023,7 +66713,7 @@
             "start": 2,
             "end": 13
           },
-          "$nodeHandle": 227633266835
+          "$nodeHandle": 227633266831
         }
       }
     },
@@ -67061,7 +66751,7 @@
           "start": 14,
           "end": 33
         },
-        "$nodeHandle": 227633266838,
+        "$nodeHandle": 227633266834,
         "$slotOrder": [
           "left",
           "assignment_eq"
@@ -67084,7 +66774,7 @@
                   "start": 19,
                   "end": 32
                 },
-                "$nodeHandle": 227633266841,
+                "$nodeHandle": 227633266837,
                 "$slotOrder": [
                   "string_fragment",
                   "escape_sequence",
@@ -67106,7 +66796,7 @@
               "start": 18,
               "end": 33
             },
-            "$nodeHandle": 227633266840,
+            "$nodeHandle": 227633266836,
             "$slotOrder": [
               "string_start",
               "content",
@@ -67120,7 +66810,7 @@
             "start": 16,
             "end": 33
           },
-          "$nodeHandle": 227633266839
+          "$nodeHandle": 227633266835
         }
       }
     },
@@ -67158,7 +66848,7 @@
           "start": 34,
           "end": 53
         },
-        "$nodeHandle": 227633266842,
+        "$nodeHandle": 227633266838,
         "$slotOrder": [
           "left",
           "assignment_eq"
@@ -67181,7 +66871,7 @@
                   "start": 39,
                   "end": 52
                 },
-                "$nodeHandle": 227633266845,
+                "$nodeHandle": 227633266841,
                 "$slotOrder": [
                   "string_fragment",
                   "not_escape_sequence",
@@ -67189,17 +66879,7 @@
                 ],
                 "_content": [
                   "bad ",
-                  {
-                    "$type": 231,
-                    "$source": 0,
-                    "$named": true,
-                    "$text": "\\",
-                    "$span": {
-                      "start": 43,
-                      "end": 44
-                    },
-                    "$nodeHandle": 227633266846
-                  },
+                  231,
                   "q escape"
                 ]
               }
@@ -67209,7 +66889,7 @@
               "start": 38,
               "end": 53
             },
-            "$nodeHandle": 227633266844,
+            "$nodeHandle": 227633266840,
             "$slotOrder": [
               "string_start",
               "content",
@@ -67223,7 +66903,7 @@
             "start": 36,
             "end": 53
           },
-          "$nodeHandle": 227633266843
+          "$nodeHandle": 227633266839
         }
       }
     },
@@ -67251,7 +66931,7 @@
         "start": 54,
         "end": 68
       },
-      "$nodeHandle": 227633266714,
+      "$nodeHandle": 227633266713,
       "_content": {
         "$type": 195,
         "$source": 0,
@@ -67261,7 +66941,7 @@
           "start": 54,
           "end": 68
         },
-        "$nodeHandle": 227633266847,
+        "$nodeHandle": 227633266842,
         "$slotOrder": [
           "left",
           "assignment_eq"
@@ -67290,7 +66970,7 @@
                     "start": 62,
                     "end": 66
                   },
-                  "$nodeHandle": 227633266851
+                  "$nodeHandle": 227633266846
                 },
                 "$other": [
                   46,
@@ -67300,7 +66980,7 @@
                   "start": 60,
                   "end": 67
                 },
-                "$nodeHandle": 227633266850,
+                "$nodeHandle": 227633266845,
                 "$slotOrder": [
                   "expression",
                   "format_specifier"
@@ -67312,7 +66992,7 @@
               "start": 58,
               "end": 68
             },
-            "$nodeHandle": 227633266849,
+            "$nodeHandle": 227633266844,
             "$slotOrder": [
               "string_start",
               "content",
@@ -67326,7 +67006,7 @@
             "start": 56,
             "end": 68
           },
-          "$nodeHandle": 227633266848
+          "$nodeHandle": 227633266843
         }
       }
     },
@@ -67354,7 +67034,7 @@
         "start": 69,
         "end": 92
       },
-      "$nodeHandle": 227633266721,
+      "$nodeHandle": 227633266720,
       "_content": {
         "$type": 195,
         "$source": 0,
@@ -67364,7 +67044,7 @@
           "start": 69,
           "end": 92
         },
-        "$nodeHandle": 227633266852,
+        "$nodeHandle": 227633266847,
         "$slotOrder": [
           "left",
           "assignment_eq"
@@ -67387,7 +67067,7 @@
                   "start": 75,
                   "end": 78
                 },
-                "$nodeHandle": 227633266855,
+                "$nodeHandle": 227633266850,
                 "_content": [
                   "pre"
                 ]
@@ -67406,7 +67086,7 @@
                     "start": 82,
                     "end": 86
                   },
-                  "$nodeHandle": 227633266858
+                  "$nodeHandle": 227633266853
                 },
                 "$other": [
                   46,
@@ -67416,7 +67096,7 @@
                   "start": 78,
                   "end": 87
                 },
-                "$nodeHandle": 227633266856,
+                "$nodeHandle": 227633266851,
                 "$slotOrder": [
                   "expression",
                   "format_specifier"
@@ -67430,7 +67110,7 @@
                   "start": 87,
                   "end": 91
                 },
-                "$nodeHandle": 227633266857,
+                "$nodeHandle": 227633266852,
                 "_content": [
                   "post"
                 ]
@@ -67441,7 +67121,7 @@
               "start": 73,
               "end": 92
             },
-            "$nodeHandle": 227633266854,
+            "$nodeHandle": 227633266849,
             "$slotOrder": [
               "string_start",
               "content",
@@ -67457,7 +67137,7 @@
             "start": 71,
             "end": 92
           },
-          "$nodeHandle": 227633266853
+          "$nodeHandle": 227633266848
         }
       }
     },
@@ -67509,7 +67189,7 @@
                 "start": 5,
                 "end": 12
               },
-              "$nodeHandle": 227633266861,
+              "$nodeHandle": 227633266856,
               "$slotOrder": [
                 "string_fragment",
                 "escape_sequence",
@@ -67531,7 +67211,7 @@
             "start": 4,
             "end": 13
           },
-          "$nodeHandle": 227633266860,
+          "$nodeHandle": 227633266855,
           "$slotOrder": [
             "string_start",
             "content",
@@ -67545,7 +67225,7 @@
           "start": 2,
           "end": 13
         },
-        "$nodeHandle": 227633266859
+        "$nodeHandle": 227633266854
       }
     },
     "expectedOutput": "x=\"a\\nb\\tc\""
@@ -67596,7 +67276,7 @@
                 "start": 19,
                 "end": 32
               },
-              "$nodeHandle": 227633266864,
+              "$nodeHandle": 227633266859,
               "$slotOrder": [
                 "string_fragment",
                 "escape_sequence",
@@ -67618,7 +67298,7 @@
             "start": 18,
             "end": 33
           },
-          "$nodeHandle": 227633266863,
+          "$nodeHandle": 227633266858,
           "$slotOrder": [
             "string_start",
             "content",
@@ -67632,7 +67312,7 @@
           "start": 16,
           "end": 33
         },
-        "$nodeHandle": 227633266862
+        "$nodeHandle": 227633266857
       }
     },
     "expectedOutput": "y='It\\'s\\ttabbed'"
@@ -67683,7 +67363,7 @@
                 "start": 39,
                 "end": 52
               },
-              "$nodeHandle": 227633266867,
+              "$nodeHandle": 227633266862,
               "$slotOrder": [
                 "string_fragment",
                 "not_escape_sequence",
@@ -67691,17 +67371,7 @@
               ],
               "_content": [
                 "bad ",
-                {
-                  "$type": 231,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "\\",
-                  "$span": {
-                    "start": 43,
-                    "end": 44
-                  },
-                  "$nodeHandle": 227633266868
-                },
+                231,
                 "q escape"
               ]
             }
@@ -67711,7 +67381,7 @@
             "start": 38,
             "end": 53
           },
-          "$nodeHandle": 227633266866,
+          "$nodeHandle": 227633266861,
           "$slotOrder": [
             "string_start",
             "content",
@@ -67725,7 +67395,7 @@
           "start": 36,
           "end": 53
         },
-        "$nodeHandle": 227633266865
+        "$nodeHandle": 227633266860
       }
     },
     "expectedOutput": "z=\"bad \\q escape\""
@@ -67753,7 +67423,7 @@
         "start": 54,
         "end": 68
       },
-      "$nodeHandle": 227633266715,
+      "$nodeHandle": 227633266714,
       "$slotOrder": [
         "left",
         "assignment_eq"
@@ -67782,7 +67452,7 @@
                   "start": 62,
                   "end": 66
                 },
-                "$nodeHandle": 227633266872
+                "$nodeHandle": 227633266866
               },
               "$other": [
                 46,
@@ -67792,7 +67462,7 @@
                 "start": 60,
                 "end": 67
               },
-              "$nodeHandle": 227633266871,
+              "$nodeHandle": 227633266865,
               "$slotOrder": [
                 "expression",
                 "format_specifier"
@@ -67804,7 +67474,7 @@
             "start": 58,
             "end": 68
           },
-          "$nodeHandle": 227633266870,
+          "$nodeHandle": 227633266864,
           "$slotOrder": [
             "string_start",
             "content",
@@ -67818,7 +67488,7 @@
           "start": 56,
           "end": 68
         },
-        "$nodeHandle": 227633266869
+        "$nodeHandle": 227633266863
       }
     },
     "expectedOutput": "a=f\"{ x:>10 }\""
@@ -67846,7 +67516,7 @@
         "start": 69,
         "end": 92
       },
-      "$nodeHandle": 227633266722,
+      "$nodeHandle": 227633266721,
       "$slotOrder": [
         "left",
         "assignment_eq"
@@ -67869,7 +67539,7 @@
                 "start": 75,
                 "end": 78
               },
-              "$nodeHandle": 227633266875,
+              "$nodeHandle": 227633266869,
               "_content": [
                 "pre"
               ]
@@ -67888,7 +67558,7 @@
                   "start": 82,
                   "end": 86
                 },
-                "$nodeHandle": 227633266878
+                "$nodeHandle": 227633266872
               },
               "$other": [
                 46,
@@ -67898,7 +67568,7 @@
                 "start": 78,
                 "end": 87
               },
-              "$nodeHandle": 227633266876,
+              "$nodeHandle": 227633266870,
               "$slotOrder": [
                 "expression",
                 "format_specifier"
@@ -67912,7 +67582,7 @@
                 "start": 87,
                 "end": 91
               },
-              "$nodeHandle": 227633266877,
+              "$nodeHandle": 227633266871,
               "_content": [
                 "post"
               ]
@@ -67923,7 +67593,7 @@
             "start": 73,
             "end": 92
           },
-          "$nodeHandle": 227633266874,
+          "$nodeHandle": 227633266868,
           "$slotOrder": [
             "string_start",
             "content",
@@ -67939,7 +67609,7 @@
           "start": 71,
           "end": 92
         },
-        "$nodeHandle": 227633266873
+        "$nodeHandle": 227633266867
       }
     },
     "expectedOutput": "b=f\"pre{ val:.2f }post\""
@@ -67972,7 +67642,7 @@
             "start": 5,
             "end": 12
           },
-          "$nodeHandle": 227633266894,
+          "$nodeHandle": 227633266887,
           "$slotOrder": [
             "string_fragment",
             "escape_sequence",
@@ -68031,7 +67701,7 @@
             "start": 19,
             "end": 32
           },
-          "$nodeHandle": 227633266895,
+          "$nodeHandle": 227633266888,
           "$slotOrder": [
             "string_fragment",
             "escape_sequence",
@@ -68090,7 +67760,7 @@
             "start": 39,
             "end": 52
           },
-          "$nodeHandle": 227633266896,
+          "$nodeHandle": 227633266889,
           "$slotOrder": [
             "string_fragment",
             "not_escape_sequence",
@@ -68098,17 +67768,7 @@
           ],
           "_content": [
             "bad ",
-            {
-              "$type": 231,
-              "$source": 0,
-              "$named": true,
-              "$text": "\\",
-              "$span": {
-                "start": 43,
-                "end": 44
-              },
-              "$nodeHandle": 227633266897
-            },
+            231,
             "q escape"
           ]
         }
@@ -68161,7 +67821,7 @@
               "start": 62,
               "end": 66
             },
-            "$nodeHandle": 227633266899
+            "$nodeHandle": 227633266891
           },
           "$other": [
             46,
@@ -68171,7 +67831,7 @@
             "start": 60,
             "end": 67
           },
-          "$nodeHandle": 227633266898,
+          "$nodeHandle": 227633266890,
           "$slotOrder": [
             "expression",
             "format_specifier"
@@ -68183,7 +67843,7 @@
         "start": 58,
         "end": 68
       },
-      "$nodeHandle": 227633266717,
+      "$nodeHandle": 227633266716,
       "$slotOrder": [
         "string_start",
         "content",
@@ -68220,7 +67880,7 @@
             "start": 75,
             "end": 78
           },
-          "$nodeHandle": 227633266900,
+          "$nodeHandle": 227633266892,
           "_content": [
             "pre"
           ]
@@ -68239,7 +67899,7 @@
               "start": 82,
               "end": 86
             },
-            "$nodeHandle": 227633266903
+            "$nodeHandle": 227633266895
           },
           "$other": [
             46,
@@ -68249,7 +67909,7 @@
             "start": 78,
             "end": 87
           },
-          "$nodeHandle": 227633266901,
+          "$nodeHandle": 227633266893,
           "$slotOrder": [
             "expression",
             "format_specifier"
@@ -68263,7 +67923,7 @@
             "start": 87,
             "end": 91
           },
-          "$nodeHandle": 227633266902,
+          "$nodeHandle": 227633266894,
           "_content": [
             "post"
           ]
@@ -68274,7 +67934,7 @@
         "start": 73,
         "end": 92
       },
-      "$nodeHandle": 227633266724,
+      "$nodeHandle": 227633266723,
       "$slotOrder": [
         "string_start",
         "content",

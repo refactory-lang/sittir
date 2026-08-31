@@ -10,6 +10,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageKind`
+
+How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text

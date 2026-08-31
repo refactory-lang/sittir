@@ -88,8 +88,8 @@ export const printStatementArm1: typeof B.printStatementArm1 & {
 		coerce: printStatementArm1$printChevronArguments(C.coerceToPrintStatementArm1, C.coerceToPrintChevronArguments)
 	},
 	comma: {
-		strict: printStatementArm1$comma(F.buildPrintStatementArm1, ','),
-		coerce: printStatementArm1$comma(C.coerceToPrintStatementArm1, ',')
+		strict: printStatementArm1$comma(F.buildPrintStatementArm1, TSKindId.Comma),
+		coerce: printStatementArm1$comma(C.coerceToPrintStatementArm1, TSKindId.Comma)
 	}
 };
 
@@ -201,8 +201,8 @@ export const expressionList: typeof B.expressionList & {
 } = {
 	...B.expressionList,
 	comma: {
-		strict: expressionList$comma(F.buildExpressionList, ','),
-		coerce: expressionList$comma(C.coerceToExpressionList, ',')
+		strict: expressionList$comma(F.buildExpressionList, TSKindId.Comma),
+		coerce: expressionList$comma(C.coerceToExpressionList, TSKindId.Comma)
 	},
 	expressions: {
 		strict: expressionList$expressions(F.buildExpressionList, F.buildExpressionListExpressions),
@@ -2328,7 +2328,10 @@ export const patternList: typeof B.patternList & {
 	};
 } = {
 	...B.patternList,
-	comma: { strict: patternList$comma(F.buildPatternList, ','), coerce: patternList$comma(C.coerceToPatternList, ',') },
+	comma: {
+		strict: patternList$comma(F.buildPatternList, TSKindId.Comma),
+		coerce: patternList$comma(C.coerceToPatternList, TSKindId.Comma)
+	},
 	patterns: {
 		strict: patternList$patterns(F.buildPatternList, F.buildPatternListPatterns),
 		coerce: patternList$patterns(C.coerceToPatternList, C.coerceToPatternListPatterns)

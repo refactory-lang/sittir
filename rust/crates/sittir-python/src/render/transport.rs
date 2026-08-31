@@ -5293,13 +5293,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IfStatementConsequenceTransportSlot",
                     ))),
@@ -5311,13 +5311,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportS
                     ::napi::Error::from_reason("$type property missing in IfStatementConsequenceTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IfStatementConsequenceTransportSlot",
                     ))),
@@ -5492,13 +5492,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElifClauseConsequenceTransportSlot",
                     ))),
@@ -5510,13 +5510,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSl
                     ::napi::Error::from_reason("$type property missing in ElifClauseConsequenceTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElifClauseConsequenceTransportSlot",
                     ))),
@@ -5594,13 +5594,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElseClauseBodyTransportSlot",
                     ))),
@@ -5612,13 +5612,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ElseClauseBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElseClauseBodyTransportSlot",
                     ))),
@@ -5695,10 +5695,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     269 => Ok(Self::MatchBlockBlock(
                         MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MatchBlockContentTransportSlot",
                     ))),
@@ -5710,10 +5710,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in MatchBlockContentTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     269 => Ok(Self::MatchBlockBlock(
                         MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MatchBlockContentTransportSlot",
                     ))),
@@ -5789,13 +5789,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CaseClauseConsequenceTransportSlot",
                     ))),
@@ -5807,13 +5807,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSl
                     ::napi::Error::from_reason("$type property missing in CaseClauseConsequenceTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CaseClauseConsequenceTransportSlot",
                     ))),
@@ -6565,13 +6565,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementBodyTransportSlot",
                     ))),
@@ -6583,13 +6583,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ForStatementBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementBodyTransportSlot",
                     ))),
@@ -6667,13 +6667,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WhileStatementBodyTransportSlot",
                     ))),
@@ -6685,13 +6685,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot 
                     ::napi::Error::from_reason("$type property missing in WhileStatementBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WhileStatementBodyTransportSlot",
                     ))),
@@ -6769,13 +6769,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TryStatementBodyTransportSlot",
                     ))),
@@ -6787,13 +6787,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in TryStatementBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TryStatementBodyTransportSlot",
                     ))),
@@ -6955,13 +6955,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseSuiteTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExceptClauseSuiteTransportSlot",
                     ))),
@@ -6973,13 +6973,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseSuiteTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ExceptClauseSuiteTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExceptClauseSuiteTransportSlot",
                     ))),
@@ -7057,13 +7057,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FinallyClauseBlockTransportSlot",
                     ))),
@@ -7075,13 +7075,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot 
                     ::napi::Error::from_reason("$type property missing in FinallyClauseBlockTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FinallyClauseBlockTransportSlot",
                     ))),
@@ -7243,13 +7243,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WithStatementBodyTransportSlot",
                     ))),
@@ -7261,13 +7261,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in WithStatementBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WithStatementBodyTransportSlot",
                     ))),
@@ -7526,13 +7526,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDefinitionBodyTransportSlot",
                     ))),
@@ -7544,13 +7544,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportS
                     ::napi::Error::from_reason("$type property missing in FunctionDefinitionBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDefinitionBodyTransportSlot",
                     ))),
@@ -7761,13 +7761,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassDefinitionBodyTransportSlot",
                     ))),
@@ -7779,13 +7779,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot
                     ::napi::Error::from_reason("$type property missing in ClassDefinitionBodyTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassDefinitionBodyTransportSlot",
                     ))),
@@ -8063,13 +8063,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SuiteContentTransportSlot",
                     ))),
@@ -8081,13 +8081,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SuiteContentTransportSlot")
                 )?;
                 match kind_id {
+                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     270 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SuiteContentTransportSlot",
                     ))),
@@ -8333,10 +8333,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    6 => Ok(Self::Literal3_2c),
                     243 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExpressionListTailTransportSlot",
                     ))),
@@ -8348,10 +8348,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ExpressionListTailTransportSlot")
                 )?;
                 match kind_id {
+                    6 => Ok(Self::Literal3_2c),
                     243 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExpressionListTailTransportSlot",
                     ))),
@@ -8441,6 +8441,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     256 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8489,7 +8490,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CasePatternContentTransportSlot",
                     ))),
@@ -8501,6 +8501,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in CasePatternContentTransportSlot")
                 )?;
                 match kind_id {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     256 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8549,7 +8550,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CasePatternContentTransportSlot",
                     ))),
@@ -8667,6 +8667,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternSimplePatternTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     170 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8709,7 +8710,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternSimplePatternTranspo
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in UnionPatternSimplePatternTransportSlot",
                     ))),
@@ -8721,6 +8721,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternSimplePatternTranspo
                     ::napi::Error::from_reason("$type property missing in UnionPatternSimplePatternTransportSlot")
                 )?;
                 match kind_id {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     170 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8763,7 +8764,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternSimplePatternTranspo
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in UnionPatternSimplePatternTransportSlot",
                     ))),
@@ -8877,6 +8877,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyValuePatternKeyTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     170 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8919,7 +8920,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyValuePatternKeyTransportSlot 
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in KeyValuePatternKeyTransportSlot",
                     ))),
@@ -8931,6 +8931,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyValuePatternKeyTransportSlot 
                     ::napi::Error::from_reason("$type property missing in KeyValuePatternKeyTransportSlot")
                 )?;
                 match kind_id {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     170 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8973,7 +8974,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyValuePatternKeyTransportSlot 
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in KeyValuePatternKeyTransportSlot",
                     ))),
@@ -9087,6 +9087,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternSimplePatternTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     170 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9129,7 +9130,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternSimplePatternTrans
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in KeywordPatternSimplePatternTransportSlot",
                     ))),
@@ -9141,6 +9141,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternSimplePatternTrans
                     ::napi::Error::from_reason("$type property missing in KeywordPatternSimplePatternTransportSlot")
                 )?;
                 match kind_id {
+                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     170 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9183,7 +9184,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternSimplePatternTrans
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::Literal4_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in KeywordPatternSimplePatternTransportSlot",
                     ))),
@@ -9373,6 +9373,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    48 => Ok(Self::Literal6_5f),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9394,7 +9395,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::Literal6_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SplatPatternIdentifierTransportSlot",
                     ))),
@@ -9406,6 +9406,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
                     ::napi::Error::from_reason("$type property missing in SplatPatternIdentifierTransportSlot")
                 )?;
                 match kind_id {
+                    48 => Ok(Self::Literal6_5f),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9427,7 +9428,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::Literal6_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SplatPatternIdentifierTransportSlot",
                     ))),
@@ -11841,10 +11841,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    6 => Ok(Self::Literal3_2c),
                     246 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PatternListTailTransportSlot",
                     ))),
@@ -11856,10 +11856,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PatternListTailTransportSlot")
                 )?;
                 match kind_id {
+                    6 => Ok(Self::Literal3_2c),
                     246 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PatternListTailTransportSlot",
                     ))),
@@ -13131,10 +13131,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeIdentifierTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    39 => Ok(Self::Literal20_74_79_70_65),
                     1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     71 => Ok(Self::Identifier(
@@ -13163,10 +13161,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeIdentifierTransportSl
                     ::napi::Error::from_reason("$type property missing in GenericTypeIdentifierTransportSlot")
                 )?;
                 match kind_id {
+                    39 => Ok(Self::Literal20_74_79_70_65),
                     1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     71 => Ok(Self::Identifier(
@@ -14966,6 +14962,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    231 => Ok(Self::Literal21_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
                     106 => Ok(Self::EscapeInterpolation(
                         EscapeInterpolationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14975,7 +14972,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
                     105 => Ok(Self::_StringContent(
                         _StringContentTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Literal21_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StringContentContentTransportSlot",
                     ))),
@@ -14987,6 +14983,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
                     ::napi::Error::from_reason("$type property missing in StringContentContentTransportSlot")
                 )?;
                 match kind_id {
+                    231 => Ok(Self::Literal21_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
                     106 => Ok(Self::EscapeInterpolation(
                         EscapeInterpolationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14996,7 +14993,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
                     105 => Ok(Self::_StringContent(
                         _StringContentTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Literal21_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StringContentContentTransportSlot",
                     ))),
@@ -16925,10 +16921,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementArm1PrintChevronAr
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    6 => Ok(Self::Literal3_2c),
                     259 => Ok(Self::PrintChevronArguments(
                         PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PrintStatementArm1PrintChevronArgumentsTransportSlot",
                     ))),
@@ -16940,10 +16936,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementArm1PrintChevronAr
                     ::napi::Error::from_reason("$type property missing in PrintStatementArm1PrintChevronArgumentsTransportSlot")
                 )?;
                 match kind_id {
+                    6 => Ok(Self::Literal3_2c),
                     259 => Ok(Self::PrintChevronArguments(
                         PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PrintStatementArm1PrintChevronArgumentsTransportSlot",
                     ))),

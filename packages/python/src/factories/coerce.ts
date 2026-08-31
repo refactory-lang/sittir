@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import type * as T from '../types.js';
 import { TSKindId, Delimiter } from '../types.js';
 import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { coerceKindEnumStorage, isNodeData } from '../utils.js';
+import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
@@ -2195,7 +2195,12 @@ export function resolveExpressionList_expression(
 }
 
 export function resolveExpressionList_tail(value: T.ExpressionList.LooseConfig['tail']): T.ExpressionList['_tail'] {
-	return _resolveOneBranch<',' | T.ExpressionListExpressions>(value, '_expression_list_expressions');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneBranch<',' | T.ExpressionListExpressions>(value, '_expression_list_expressions')
+		),
+		[[',', TSKindId.Comma] as const]
+	);
 }
 
 export function coerceToExpressionList(input: T.ExpressionList.Loose): ReturnType<typeof F.buildExpressionList> {
@@ -3016,7 +3021,10 @@ export function resolvePatternList_pattern(value: T.PatternList.LooseConfig['pat
 }
 
 export function resolvePatternList_tail(value: T.PatternList.LooseConfig['tail']): T.PatternList['_tail'] {
-	return _resolveOneBranch<',' | T.PatternListPatterns>(value, '_pattern_list_patterns');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneBranch<',' | T.PatternListPatterns>(value, '_pattern_list_patterns')),
+		[[',', TSKindId.Comma] as const]
+	);
 }
 
 export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<typeof F.buildPatternList> {
@@ -3677,10 +3685,11 @@ export function coerceToStringContent(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildStringContent(
-			...(_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(
-				children,
-				_K34,
-				_K0
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(children, _K34, _K0)
+				),
+				[['\\', TSKindId.NotEscapeSequence] as const]
 			) as unknown as Parameters<typeof F.buildStringContent>)
 		);
 	}
@@ -3692,10 +3701,11 @@ export function coerceToStringContent(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringContent(
-		...(_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(
-			_elems,
-			_K34,
-			_K0
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(_elems, _K34, _K0)
+			),
+			[['\\', TSKindId.NotEscapeSequence] as const]
 		) as unknown as Parameters<typeof F.buildStringContent>)
 	);
 }
@@ -4314,7 +4324,10 @@ export function resolvePrintStatementArm1_chevron(
 export function resolvePrintStatementArm1_printChevronArguments(
 	value: T.PrintStatementArm1.LooseConfig['printChevronArguments']
 ): T.PrintStatementArm1['_print_chevron_arguments'] {
-	return _resolveOneBranch<T.PrintChevronArguments | ','>(value, '_print_chevron_arguments');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneBranch<T.PrintChevronArguments | ','>(value, '_print_chevron_arguments')),
+		[[',', TSKindId.Comma] as const]
+	);
 }
 
 export function coerceToPrintStatementArm1(
