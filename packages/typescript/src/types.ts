@@ -25,6 +25,8 @@ export type LeafScalarMap = {};
 
 export type LeafStringMap = {
 	import: 'import';
+	empty_statement: ';';
+	optional_chain: '?.';
 	this: 'this';
 	super: 'super';
 	true: 'true';
@@ -56,6 +58,7 @@ export type LeafStringMap = {
 		| 'let';
 	accessibility_modifier: 'public' | 'private' | 'protected';
 	override_modifier: 'override';
+	existential_type: '*';
 	predefined_type:
 		| 'any'
 		| 'number'
@@ -3080,11 +3083,9 @@ export interface ForStatement {
 export interface ForInStatement {
 	readonly $type: TSKindId.ForInStatement;
 	readonly _await_marker?: boolean;
+	readonly _content: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
-	readonly _for_header_lhs?: ForHeaderLhs;
-	readonly _for_header_var_kind?: ForHeaderVarKind;
-	readonly _for_header_let_const_kind?: ForHeaderLetConstKind;
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly await_marker?: BooleanKeyword<'await'>;
@@ -3092,14 +3093,11 @@ export interface ForInStatement {
 	};
 	readonly __looseHints__?: {
 		readonly await_marker?: 'await' | 'await';
-		readonly for_header_lhs?: readonly (_LhsExpression | ParenthesizedExpression)[];
 	};
 	awaitMarker(): boolean | undefined;
+	content(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 	operator(): number;
 	right(): Expression | SequenceExpression;
-	forHeaderLhs(): ForHeaderLhs | undefined;
-	forHeaderVarKind(): ForHeaderVarKind | undefined;
-	forHeaderLetConstKind(): ForHeaderLetConstKind | undefined;
 	body(): Statement;
 }
 
@@ -3760,8 +3758,11 @@ export interface Regex {
 
 export interface MetaProperty {
 	readonly $type: TSKindId.MetaProperty;
-	readonly _content: MetaPropertyArm1 | MetaPropertyArm2;
-	content(): MetaPropertyArm1 | MetaPropertyArm2;
+	readonly _content: number;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'new . target' | 'import . meta', TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2>;
+	};
+	content(): number;
 }
 
 export interface Arguments {
@@ -5362,6 +5363,8 @@ export interface UpdateExpressionPrefix {
 // Leaf node types
 export type HashBangLine = Terminal<TSKindId.HashBangLine, string>;
 export type Import = Terminal<TSKindId.Import, 'import'>;
+export type EmptyStatement = Terminal<TSKindId.EmptyStatement, ';'>;
+export type OptionalChain = Terminal<TSKindId.OptionalChain, '?.'>;
 export type UnescapedDoubleStringFragment = Terminal<TSKindId.UnescapedDoubleStringFragment, string>;
 export type UnescapedSingleStringFragment = Terminal<TSKindId.UnescapedSingleStringFragment, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
@@ -5428,6 +5431,7 @@ export type AccessibilityModifier = Terminal<
 	'public' | 'private' | 'protected'
 >;
 export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
+export type ExistentialType = Terminal<TSKindId.ExistentialType, '*'>;
 export type PredefinedType = Terminal<
 	| TSKindId.Any
 	| TSKindId.AnonNumber
@@ -5442,8 +5446,6 @@ export type PredefinedType = Terminal<
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
-export type MetaPropertyArm1 = Terminal<TSKindId.MetaPropertyArm1, string>;
-export type MetaPropertyArm2 = Terminal<TSKindId.MetaPropertyArm2, string>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
 export type AugmentedAssignmentExpressionOperator = Terminal<
@@ -5806,6 +5808,12 @@ export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
 export interface ImportTree extends AnyTreeNode {
 	readonly type: 'import';
 }
+export interface EmptyStatementTree extends AnyTreeNode {
+	readonly type: 'empty_statement';
+}
+export interface OptionalChainTree extends AnyTreeNode {
+	readonly type: 'optional_chain';
+}
 export interface UnescapedDoubleStringFragmentTree extends TreeNode<'unescaped_double_string_fragment'> {}
 export interface UnescapedSingleStringFragmentTree extends TreeNode<'unescaped_single_string_fragment'> {}
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
@@ -5840,15 +5848,12 @@ export interface AccessibilityModifierTree extends TreeNode<'accessibility_modif
 export interface OverrideModifierTree extends AnyTreeNode {
 	readonly type: 'override_modifier';
 }
+export interface ExistentialTypeTree extends AnyTreeNode {
+	readonly type: 'existential_type';
+}
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface TypeIdentifierTree extends AnyTreeNode {
 	readonly type: '_type_identifier';
-}
-export interface MetaPropertyArm1Tree extends AnyTreeNode {
-	readonly type: '_meta_property_arm1';
-}
-export interface MetaPropertyArm2Tree extends AnyTreeNode {
-	readonly type: '_meta_property_arm2';
 }
 export interface KindTree extends AnyTreeNode {
 	readonly type: '_kind';
@@ -6160,6 +6165,7 @@ export type Statement =
 	| ContinueStatement
 	| ReturnStatement
 	| ThrowStatement
+	| EmptyStatement
 	| LabeledStatement;
 
 export type StatementTree =
@@ -6180,6 +6186,7 @@ export type StatementTree =
 	| ContinueStatementTree
 	| ReturnStatementTree
 	| ThrowStatementTree
+	| EmptyStatementTree
 	| LabeledStatementTree;
 
 export type Expression =
@@ -6337,6 +6344,7 @@ export type PrimaryType =
 	| TypeQuery
 	| IndexTypeQuery
 	| This
+	| ExistentialType
 	| LiteralType
 	| LookupType
 	| ConditionalType
@@ -6357,6 +6365,7 @@ export type PrimaryTypeTree =
 	| TypeQueryTree
 	| IndexTypeQueryTree
 	| ThisTree
+	| ExistentialTypeTree
 	| LiteralTypeTree
 	| LookupTypeTree
 	| ConditionalTypeTree
@@ -6385,18 +6394,6 @@ export type LhsExpressionTree =
 	| NonNullExpressionTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
-export interface EmptyStatementTree extends AnyTreeNode {
-	readonly type: 'empty_statement';
-}
-export type OptionalChain = Terminal<TSKindId.OptionalChain>;
-export interface OptionalChainTree extends AnyTreeNode {
-	readonly type: 'optional_chain';
-}
-export type ExistentialType = Terminal<TSKindId.ExistentialType>;
-export interface ExistentialTypeTree extends AnyTreeNode {
-	readonly type: 'existential_type';
-}
 
 export type TypescriptNode =
 	| Program
@@ -6815,6 +6812,8 @@ export interface KindMap {
 	_update_expression_prefix: UpdateExpressionPrefix;
 	hash_bang_line: HashBangLine;
 	import: Import;
+	empty_statement: EmptyStatement;
+	optional_chain: OptionalChain;
 	unescaped_double_string_fragment: UnescapedDoubleStringFragment;
 	unescaped_single_string_fragment: UnescapedSingleStringFragment;
 	escape_sequence: EscapeSequence;
@@ -6833,10 +6832,9 @@ export interface KindMap {
 	_reserved_identifier: ReservedIdentifier;
 	accessibility_modifier: AccessibilityModifier;
 	override_modifier: OverrideModifier;
+	existential_type: ExistentialType;
 	predefined_type: PredefinedType;
 	_type_identifier: TypeIdentifier;
-	_meta_property_arm1: MetaPropertyArm1;
-	_meta_property_arm2: MetaPropertyArm2;
 	_kind: Kind;
 	__for_header_operator: ForHeaderOperator;
 	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;

@@ -171,6 +171,7 @@ const LEAF_KINDS = [
 	'def',
 	'del',
 	'elif',
+	'ellipsis',
 	'else',
 	'escape_interpolation',
 	'escape_sequence',
@@ -189,6 +190,7 @@ const LEAF_KINDS = [
 	'in',
 	'integer',
 	'is',
+	'keyword_separator',
 	'line_continuation',
 	'match',
 	'none',
@@ -197,6 +199,7 @@ const LEAF_KINDS = [
 	'or',
 	'pass',
 	'pass_statement',
+	'positional_separator',
 	'print',
 	'raise',
 	'return',
@@ -206,6 +209,7 @@ const LEAF_KINDS = [
 	'try',
 	'type_conversion',
 	'while',
+	'wildcard_import',
 	'with',
 	'}'
 ] as const;
@@ -236,6 +240,7 @@ export const KEYWORDS = [
 	'def',
 	'del',
 	'elif',
+	'ellipsis',
 	'else',
 	'exec',
 	'false',
@@ -247,6 +252,7 @@ export const KEYWORDS = [
 	'import',
 	'in',
 	'is',
+	'keyword_separator',
 	'match',
 	'none',
 	'nonlocal',
@@ -254,12 +260,14 @@ export const KEYWORDS = [
 	'or',
 	'pass',
 	'pass_statement',
+	'positional_separator',
 	'print',
 	'raise',
 	'return',
 	'true',
 	'try',
 	'while',
+	'wildcard_import',
 	'with'
 ] as const;
 
@@ -282,14 +290,12 @@ export const OPERATORS = [
 	'dash_eq',
 	'dash_gt',
 	'dot',
-	'ellipsis',
 	'eq',
 	'eq_eq',
 	'gt',
 	'gt_eq',
 	'gt_gt',
 	'gt_gt_eq',
-	'keyword_separator',
 	'lbrace',
 	'lbrack',
 	'lparen',
@@ -304,7 +310,6 @@ export const OPERATORS = [
 	'pipe_eq',
 	'plus',
 	'plus_eq',
-	'positional_separator',
 	'rbrace',
 	'rbrack',
 	'rparen',
@@ -316,8 +321,7 @@ export const OPERATORS = [
 	'star_eq',
 	'star_star',
 	'star_star_eq',
-	'tilde',
-	'wildcard_import'
+	'tilde'
 ] as const;
 
 export type NodeKind = (typeof NODE_KINDS)[number];

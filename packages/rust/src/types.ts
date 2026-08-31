@@ -24,6 +24,7 @@ export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar
 export type LeafScalarMap = {};
 
 export type LeafStringMap = {
+	empty_statement: ';';
 	fragment_specifier:
 		| 'block'
 		| 'expr'
@@ -40,7 +41,11 @@ export type LeafStringMap = {
 		| 'tt'
 		| 'ty'
 		| 'vis';
+	unit_type: '( )';
+	never_type: '!';
 	mutable_specifier: 'mut';
+	unit_expression: '( )';
+	remaining_field_pattern: '..';
 	boolean_literal: 'true' | 'false';
 	_reserved_identifier: 'default' | 'union' | 'gen';
 	self: 'self';
@@ -3773,20 +3778,16 @@ export interface ForLifetimes {
 export interface FunctionType {
 	readonly $type: TSKindId.FunctionType;
 	readonly _for_lifetimes?: ForLifetimes;
+	readonly _content: FunctionTypeTraitForm | FunctionTypeFnForm;
 	readonly _parameters: Parameters;
-	readonly _function_type_trait_form?: FunctionTypeTraitForm;
-	readonly _function_type_fn_form?: FunctionTypeFnForm;
 	readonly _return_type?: _Type;
 	readonly __looseHints__?: {
 		readonly for_lifetimes?: readonly Lifetime[];
 		readonly parameters: readonly AttributedParameter[];
-		readonly function_type_trait_form?: readonly (Identifier | ScopedTypeIdentifier)[];
-		readonly function_type_fn_form?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 	};
 	forLifetimes(): ForLifetimes | undefined;
+	content(): FunctionTypeTraitForm | FunctionTypeFnForm;
 	parameters(): Parameters;
-	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
-	functionTypeFnForm(): FunctionTypeFnForm | undefined;
 	returnType(): _Type | undefined;
 }
 
@@ -4024,9 +4025,9 @@ export interface TryExpression {
 
 export interface ReferenceExpression {
 	readonly $type: TSKindId.ReferenceExpression;
-	readonly _content?: ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier;
+	readonly _content?: 'raw const' | ReferenceExpressionRawMut | MutableSpecifier;
 	readonly _value: Expression;
-	content(): ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier | undefined;
+	content(): 'raw const' | ReferenceExpressionRawMut | MutableSpecifier | undefined;
 	value(): Expression;
 }
 
@@ -5292,6 +5293,7 @@ export interface VisibilityModifierPubParens {
 }
 
 // Leaf node types
+export type EmptyStatement = Terminal<TSKindId.EmptyStatement, ';'>;
 export type FragmentSpecifier = Terminal<
 	| TSKindId.AnonBlock
 	| TSKindId.Expr
@@ -5324,9 +5326,11 @@ export type FragmentSpecifier = Terminal<
 	| 'ty'
 	| 'vis'
 >;
-export type UnitType = Terminal<TSKindId.UnitType, string>;
+export type UnitType = Terminal<TSKindId.UnitType, '( )'>;
+export type NeverType = Terminal<TSKindId.NeverType, '!'>;
 export type MutableSpecifier = Terminal<TSKindId.MutableSpecifier, 'mut'>;
-export type UnitExpression = Terminal<TSKindId.UnitExpression, string>;
+export type UnitExpression = Terminal<TSKindId.UnitExpression, '( )'>;
+export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern, '..'>;
 export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
 export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
@@ -5545,7 +5549,6 @@ export type TokenKeywords = Terminal<
 	| 'while'
 >;
 export type StringLiteralOpen = Terminal<TSKindId.StringLiteralOpen, string>;
-export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
@@ -5917,12 +5920,25 @@ export interface MatchBlockArmsTree extends AnyTreeNode {
 export interface VisibilityModifierPubParensTree extends AnyTreeNode {
 	readonly type: '_visibility_modifier_pub_parens';
 }
+export interface EmptyStatementTree extends AnyTreeNode {
+	readonly type: 'empty_statement';
+}
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
-export interface UnitTypeTree extends TreeNode<'unit_type'> {}
+export interface UnitTypeTree extends AnyTreeNode {
+	readonly type: 'unit_type';
+}
+export interface NeverTypeTree extends AnyTreeNode {
+	readonly type: 'never_type';
+}
 export interface MutableSpecifierTree extends AnyTreeNode {
 	readonly type: 'mutable_specifier';
 }
-export interface UnitExpressionTree extends TreeNode<'unit_expression'> {}
+export interface UnitExpressionTree extends AnyTreeNode {
+	readonly type: 'unit_expression';
+}
+export interface RemainingFieldPatternTree extends AnyTreeNode {
+	readonly type: 'remaining_field_pattern';
+}
 export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
 export interface CharLiteralTree extends TreeNode<'char_literal'> {}
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
@@ -5962,9 +5978,6 @@ export interface TokenKeywordsTree extends AnyTreeNode {
 }
 export interface StringLiteralOpenTree extends AnyTreeNode {
 	readonly type: '_string_literal_open';
-}
-export interface ReferenceExpressionRawConstTree extends AnyTreeNode {
-	readonly type: '_reference_expression_raw_const';
 }
 export interface LineCommentRegularDslashTree extends AnyTreeNode {
 	readonly type: '_line_comment_regular_dslash';
@@ -6211,6 +6224,7 @@ export type DeclarationStatement =
 	| ConstItem
 	| MacroInvocation
 	| MacroDefinition
+	| EmptyStatement
 	| AttributeItem
 	| InnerAttributeItem
 	| ModItem
@@ -6233,6 +6247,7 @@ export type DeclarationStatementTree =
 	| ConstItemTree
 	| MacroInvocationTree
 	| MacroDefinitionTree
+	| EmptyStatementTree
 	| AttributeItemTree
 	| InnerAttributeItemTree
 	| ModItemTree
@@ -6297,6 +6312,7 @@ export type _Type =
 	| FunctionType
 	| Identifier
 	| MacroInvocation
+	| NeverType
 	| DynamicType
 	| BoundedType
 	| RemovedTraitBound
@@ -6315,6 +6331,7 @@ export type _TypeTree =
 	| FunctionTypeTree
 	| IdentifierTree
 	| MacroInvocationTree
+	| NeverTypeTree
 	| DynamicTypeTree
 	| BoundedTypeTree
 	| RemovedTraitBoundTree
@@ -6434,6 +6451,7 @@ export type Pattern =
 	| SlicePattern
 	| CapturedPattern
 	| ReferencePattern
+	| RemainingFieldPattern
 	| MutPattern
 	| RangePattern
 	| OrPattern
@@ -6458,6 +6476,7 @@ export type PatternTree =
 	| SlicePatternTree
 	| CapturedPatternTree
 	| ReferencePatternTree
+	| RemainingFieldPatternTree
 	| MutPatternTree
 	| RangePatternTree
 	| OrPatternTree
@@ -6493,18 +6512,6 @@ export type LiteralPatternTree =
 	| NegativeLiteralTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
-export interface EmptyStatementTree extends AnyTreeNode {
-	readonly type: 'empty_statement';
-}
-export type NeverType = Terminal<TSKindId.NeverType>;
-export interface NeverTypeTree extends AnyTreeNode {
-	readonly type: 'never_type';
-}
-export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
-export interface RemainingFieldPatternTree extends AnyTreeNode {
-	readonly type: 'remaining_field_pattern';
-}
 
 export type RustNode =
 	| SourceFile
@@ -6931,10 +6938,13 @@ export interface KindMap {
 	_type_argument: TypeArgument;
 	_match_block_arms: MatchBlockArms;
 	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
+	empty_statement: EmptyStatement;
 	fragment_specifier: FragmentSpecifier;
 	unit_type: UnitType;
+	never_type: NeverType;
 	mutable_specifier: MutableSpecifier;
 	unit_expression: UnitExpression;
+	remaining_field_pattern: RemainingFieldPattern;
 	integer_literal: IntegerLiteral;
 	char_literal: CharLiteral;
 	escape_sequence: EscapeSequence;
@@ -6953,7 +6963,6 @@ export interface KindMap {
 	_token_tree_punctuation: TokenTreePunctuation;
 	_token_keywords: TokenKeywords;
 	_string_literal_open: StringLiteralOpen;
-	_reference_expression_raw_const: ReferenceExpressionRawConst;
 	_line_comment_regular_dslash: LineCommentRegularDslash;
 	_line_comment_content: LineCommentContent;
 	string_content: StringContent;

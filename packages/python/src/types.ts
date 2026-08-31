@@ -24,12 +24,16 @@ export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGra
 export type LeafScalarMap = {};
 
 export type LeafStringMap = {
+	wildcard_import: '*';
 	pass_statement: 'pass';
 	break_statement: 'break';
 	continue_statement: 'continue';
+	ellipsis: '...';
 	true: 'True';
 	false: 'False';
 	none: 'None';
+	positional_separator: '/';
+	keyword_separator: '*';
 	_kw_async_marker: 'async';
 	_unary_operator_operator: '+' | '-' | '~';
 	_augmented_assignment_operator:
@@ -3470,9 +3474,11 @@ export interface YieldFromClause {
 
 // Leaf node types
 export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
+export type WildcardImport = Terminal<TSKindId.WildcardImport, '*'>;
 export type PassStatement = Terminal<TSKindId.PassStatement, 'pass'>;
 export type BreakStatement = Terminal<TSKindId.BreakStatement, 'break'>;
 export type ContinueStatement = Terminal<TSKindId.ContinueStatement, 'continue'>;
+export type Ellipsis = Terminal<TSKindId.Ellipsis, '...'>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
 export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
 export type Integer = Terminal<TSKindId.Integer, string>;
@@ -3483,6 +3489,8 @@ export type False = Terminal<TSKindId.False, 'False'>;
 export type None = Terminal<TSKindId.None, 'None'>;
 export type Comment = Terminal<TSKindId.Comment, string>;
 export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
+export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator, '/'>;
+export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator, '*'>;
 export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, '+' | '-' | '~'>;
 export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PlusEq
@@ -3731,6 +3739,9 @@ export interface YieldFromClauseTree extends AnyTreeNode {
 	readonly type: '_yield_from_clause';
 }
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
+export interface WildcardImportTree extends AnyTreeNode {
+	readonly type: 'wildcard_import';
+}
 export interface PassStatementTree extends AnyTreeNode {
 	readonly type: 'pass_statement';
 }
@@ -3739,6 +3750,9 @@ export interface BreakStatementTree extends AnyTreeNode {
 }
 export interface ContinueStatementTree extends AnyTreeNode {
 	readonly type: 'continue_statement';
+}
+export interface EllipsisTree extends AnyTreeNode {
+	readonly type: 'ellipsis';
 }
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
@@ -3756,6 +3770,12 @@ export interface NoneTree extends AnyTreeNode {
 }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
+export interface PositionalSeparatorTree extends AnyTreeNode {
+	readonly type: 'positional_separator';
+}
+export interface KeywordSeparatorTree extends AnyTreeNode {
+	readonly type: 'keyword_separator';
+}
 export interface UnaryOperatorOperatorTree extends AnyTreeNode {
 	readonly type: '_unary_operator_operator';
 }
@@ -3961,6 +3981,8 @@ export type Parameter =
 	| TypedDefaultParameter
 	| ListSplatPattern
 	| TuplePattern
+	| KeywordSeparator
+	| PositionalSeparator
 	| DictionarySplatPattern;
 
 export type ParameterTree =
@@ -3970,6 +3992,8 @@ export type ParameterTree =
 	| TypedDefaultParameterTree
 	| ListSplatPatternTree
 	| TuplePatternTree
+	| KeywordSeparatorTree
+	| PositionalSeparatorTree
 	| DictionarySplatPatternTree;
 
 export type Pattern = Identifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
@@ -4025,6 +4049,7 @@ export type PrimaryExpression =
 	| Tuple
 	| ParenthesizedExpression
 	| GeneratorExpression
+	| Ellipsis
 	| ListSplatPattern;
 
 export type PrimaryExpressionTree =
@@ -4051,6 +4076,7 @@ export type PrimaryExpressionTree =
 	| TupleTree
 	| ParenthesizedExpressionTree
 	| GeneratorExpressionTree
+	| EllipsisTree
 	| ListSplatPatternTree;
 
 export type KeywordIdentifier = Identifier;
@@ -4058,22 +4084,6 @@ export type KeywordIdentifier = Identifier;
 export type KeywordIdentifierTree = IdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type WildcardImport = Terminal<TSKindId.WildcardImport>;
-export interface WildcardImportTree extends AnyTreeNode {
-	readonly type: 'wildcard_import';
-}
-export type Ellipsis = Terminal<TSKindId.Ellipsis>;
-export interface EllipsisTree extends AnyTreeNode {
-	readonly type: 'ellipsis';
-}
-export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator>;
-export interface PositionalSeparatorTree extends AnyTreeNode {
-	readonly type: 'positional_separator';
-}
-export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator>;
-export interface KeywordSeparatorTree extends AnyTreeNode {
-	readonly type: 'keyword_separator';
-}
 
 export type PythonNode =
 	| Module
@@ -4367,9 +4377,11 @@ export interface KindMap {
 	_comparison_operator_comparator: ComparisonOperatorComparator;
 	_yield_from_clause: YieldFromClause;
 	import_prefix: ImportPrefix;
+	wildcard_import: WildcardImport;
 	pass_statement: PassStatement;
 	break_statement: BreakStatement;
 	continue_statement: ContinueStatement;
+	ellipsis: Ellipsis;
 	escape_sequence: EscapeSequence;
 	type_conversion: TypeConversion;
 	integer: Integer;
@@ -4380,6 +4392,8 @@ export interface KindMap {
 	none: None;
 	comment: Comment;
 	line_continuation: LineContinuation;
+	positional_separator: PositionalSeparator;
+	keyword_separator: KeywordSeparator;
 	_unary_operator_operator: UnaryOperatorOperator;
 	_augmented_assignment_operator: AugmentedAssignmentOperator;
 	string_start: StringStart;

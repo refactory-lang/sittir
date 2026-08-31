@@ -1,12 +1,40 @@
 [
   {
     "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "binary_expression",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:binary_expression:root"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression amp_amp expression), seq[3](expression pipe_pipe expression), seq[3](expression gt_gt expression), seq[3](expression gt_gt_gt expression), seq[3](expression lt_lt expression), seq[3](expression amp expression), seq[3](expression caret expression), seq[3](expression pipe expression), seq[3](expression plus expression), seq[3](expression dash expression), seq[3](expression star expression), seq[3](expression slash expression), seq[3](expression percent expression), seq[3](expression star_star expression), seq[3](expression lt expression), seq[3](expression lt_eq expression), seq[3](expression eq_eq expression), seq[3](expression eq_eq_eq expression), seq[3](expression bang_eq expression), seq[3](expression bang_eq_eq expression), seq[3](expression gt_eq expression), seq[3](expression gt expression), seq[3](expression qmark_qmark expression), seq[3](expression instanceof expression)] alongside union arm(s) [_binary_expression_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [_binary_expression_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "public_field_definition",
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[4]",
+      "ruleId": "rule:public_field_definition:root"
+    }
   },
   {
     "scope": "grammar",
@@ -26,15 +54,6 @@
         "name"
       ]
     }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[5]] alongside union arm(s) [enum_assignment]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true
   },
   {
     "scope": "grammar",

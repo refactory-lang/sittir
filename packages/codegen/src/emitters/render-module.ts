@@ -4,15 +4,20 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type {
 	AssembledNode,
 	RenderTemplateSurface,
-	AssembledNonterminal,
-	AssembledSupertype
+	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
+	AbstractAssembledCompound,
+	AssembledEnvelope,
+	AssembledPolymorph,
 	AssembledEnum,
-	AssembledGroup,
+	AssembledKeyword,
+	AssembledPattern,
+	AssembledSupertype,
+	AssembledToken,
 	AssembledLeaf,
-	AssembledSeparatedList,
+	AssembledList,
 	deriveUnnamedChildrenCardinality,
 	hasOptionalElements,
 	isMultiple,
@@ -49,8 +54,7 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents
-} from './shared.ts';
+	fieldTypeComponents, isAuthoredCompound } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -125,11 +129,11 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#generatedIdTables = config.generatedIdTables;
 	}
 
-	emitLeaf(_node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {}
+	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
 
-	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList): void {}
+	emitBranch(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList): void {}
 
-	emitGroup(_node: Extract<AssembledNode, { modelType: 'group' }>): void {}
+	emitGroup(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph): void {}
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
 		return synthesizeRenderModuleBundle({
@@ -253,9 +257,7 @@ const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 const RESERVED_TRANSPORT_STRUCT_NAMES = new Set(['AnyTransport', 'ProtectedTransport', 'LiteralTransport']);
 
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
-	return (
-		node.modelType === 'supertype' && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
-	);
+	return node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`);
 }
 
 interface EffectiveSupertypeTransportSubtype {
@@ -435,7 +437,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 }
 
 function renderSlotAuditVariantsOf(
-	node: Extract<AssembledNode, { modelType: 'branch' | 'group' | 'separatedList' }>
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList
 ): readonly (readonly AssembledNonterminal[])[] {
 	return [Object.values(node.slots)];
 }
@@ -670,7 +672,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	const separators = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.userFacing) continue;
-		if (node instanceof AssembledBranch || node instanceof AssembledGroup || node instanceof AssembledSeparatedList) {
+		if (node instanceof AbstractAssembledCompound || node instanceof AssembledList) {
 			let sep: string | undefined;
 			const allSlots = node.fields;
 			outer: for (const slot of allSlots) {
@@ -681,7 +683,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			if (sep === undefined && (node instanceof AssembledBranch || node instanceof AssembledSeparatedList)) {
+			if (sep === undefined && node instanceof AbstractAssembledCompound && !node.hoisted) {
 				sep = node.separator ?? undefined;
 			}
 			if (sep !== undefined) separators.set(kind, sep);
@@ -696,10 +698,7 @@ function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotCl
 	if (cls.tag === 'concrete') {
 		const node = nodeMap.nodes.get(cls.kind);
 		if (node === undefined) return { tag: 'heterogeneous' };
-		if (node.modelType === 'multi') {
-			return { tag: 'heterogeneous' };
-		}
-		if (node.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 			if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
 			return { tag: 'supertype', supertypeName: node.typeName };
@@ -743,11 +742,11 @@ function renderTypedDispatch(
 	}
 
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		if (!usedSupertypeNames.has(node.typeName)) continue;
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
-		lines.push(...emitSupertypeRenderHelper(node as AssembledSupertype, nodeMap));
+		lines.push(...emitSupertypeRenderHelper(node, nodeMap));
 	}
 
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
@@ -793,7 +792,7 @@ function renderTypedDispatch(
 	lines.push(`        match self {`);
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
-		const isLeafLikeNode = node.modelType === 'pattern' || node.modelType === 'keyword' || node.modelType === 'token';
+		const isLeafLikeNode = node.modelType === 'pattern' || node.modelType === 'token';
 		if (isLeafLikeNode) {
 			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
 		} else if (node instanceof AssembledEnum) {
@@ -828,8 +827,16 @@ function renderTypedKindFn(
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group':
-		case 'separatedList': {
+		case 'envelope':
+		case 'list': {
+			const struct = structsByKind.get(node.kind);
+			if (struct === undefined) {
+				return renderTypedBranchFallbackFn(node, nodeMap);
+			}
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind);
+		}
+		case 'polymorph': {
+			if (node instanceof AssembledSupertype) return [];
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
@@ -837,7 +844,6 @@ function renderTypedKindFn(
 			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind);
 		}
 		case 'pattern':
-		case 'keyword':
 		case 'token':
 		case 'enum':
 			return renderTypedLeafFn(node);
@@ -1136,7 +1142,7 @@ function buildTypedTemplateBody(
 		if (f.view === 'list' || f.multiple) {
 			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
-			const separatedList = node instanceof AssembledSeparatedList ? node : undefined;
+			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
 				separatedList?.leadingDelimiter === 'optional'
 					? 'node.delimiter.map(|d| d & 1 != 0).unwrap_or(false)'
@@ -1348,9 +1354,9 @@ function renderTransportSupport(
 	const selfAliasIdsBySupertype = new Map<string, number[]>();
 	if (kindEntries !== undefined) {
 		for (const [, node] of nodeMap.nodes) {
-			if (node.modelType !== 'supertype') continue;
-			for (const [storage, parse] of Object.entries((node as AssembledSupertype).subtypeParseNames ?? {})) {
-				if (nodeMap.nodes.get(storage)?.modelType !== 'supertype') continue;
+			if (!(node instanceof AssembledSupertype)) continue;
+			for (const [storage, parse] of Object.entries(node.subtypeParseNames ?? {})) {
+				if (!(nodeMap.nodes.get(storage) instanceof AssembledSupertype)) continue;
 				const parseEntry = findKindEntry(kindEntries, parse);
 				const parseId = parseEntry?.parseId ?? parseEntry?.id;
 				if (parseId === undefined) continue;
@@ -1362,13 +1368,13 @@ function renderTransportSupport(
 	}
 	const supertypeEnumLines: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		if (!usedSupertypeNames.has(node.typeName)) continue;
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 		supertypeEnumLines.push(
 			...emitSupertypeTransportEnum(
-				node as AssembledSupertype,
+				node,
 				kidByKind,
 				nodeMap,
 				kindEntries,
@@ -1539,12 +1545,11 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 	while (changed) {
 		changed = false;
 		for (const [, node] of nodeMap.nodes) {
-			if (node.modelType !== 'supertype') continue;
+			if (!(node instanceof AssembledSupertype)) continue;
 			if (!used.has(node.typeName)) continue;
-			const supertypeNode = node as AssembledSupertype;
-			for (const subKind of supertypeNode.subtypeNames) {
+			for (const subKind of node.subtypeNames) {
 				const subNode = nodeMap.nodes.get(subKind);
-				if (subNode === undefined || subNode.modelType !== 'supertype') continue;
+				if (subNode === undefined || !(subNode instanceof AssembledSupertype)) continue;
 				const enumName = `${rustTypeIdent(subNode.typeName)}Transport`;
 				if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 				if (!used.has(subNode.typeName)) {
@@ -1594,19 +1599,14 @@ function renderAnyTransportWithStringTag(
 }
 
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
-	if (
-		node.modelType === 'pattern' ||
-		node.modelType === 'keyword' ||
-		node.modelType === 'token' ||
-		node.modelType === 'enum'
-	) {
+	if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
 		return true;
 	}
 	return allFormFieldsOf(node).some((slot) => isRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
-	return n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+	return n.modelType === 'pattern' || n.modelType === 'token' || n.modelType === 'enum';
 }
 
 function boxedInEnum(
@@ -1691,19 +1691,12 @@ function emitAliasUnwrapRecurseArm(
 	return arms;
 }
 
-function aliasLeafTrialOrder(modelType: string): number {
-	switch (modelType) {
-		case 'enum':
-			return 0;
-		case 'keyword':
-			return 1;
-		case 'token':
-			return 2;
-		case 'pattern':
-			return 3;
-		default:
-			return -1;
-	}
+function aliasLeafTrialOrder(node: AssembledNode): number {
+	if (node instanceof AssembledEnum) return 0;
+	if (node instanceof AssembledKeyword) return 1;
+	if (node instanceof AssembledToken) return 2;
+	if (node instanceof AssembledPattern) return 3;
+	return -1;
 }
 
 function supertypeClosureOf(kinds: readonly string[], nodeMap: NodeMap): Set<string> {
@@ -1714,7 +1707,7 @@ function supertypeClosureOf(kinds: readonly string[], nodeMap: NodeMap): Set<str
 		if (seen.has(kind)) continue;
 		seen.add(kind);
 		const node = nodeMap.nodes.get(kind);
-		if (node?.modelType === 'supertype') queue.push(...node.subtypeNames);
+		if (node instanceof AssembledSupertype) queue.push(...node.subtypeNames);
 	}
 	return seen;
 }
@@ -1804,7 +1797,7 @@ function emitSupertypeTransportEnum(
 				.map(({ subKind, subNode }) => ({
 					subKind,
 					subNode,
-					order: aliasLeafTrialOrder(subNode.modelType)
+					order: aliasLeafTrialOrder(subNode)
 				}))
 				.filter((t) => t.order >= 0)
 				.sort((a, b) => a.order - b.order)
@@ -1898,7 +1891,7 @@ function emitSupertypeTransportEnum(
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const boxed = isBoxed(subKind, subNode);
-		if (subNode.modelType === 'supertype') {
+		if (subNode instanceof AssembledSupertype) {
 			const subBridgeFn = `${rustSnakeIdent(subNode.typeName)}_transport_to_any`;
 			if (boxed) {
 				lines.push(`        ${enumName}::${variant}(inner) => ${subBridgeFn}(*inner),`);
@@ -1958,9 +1951,9 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 	seen.add(kind);
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) return [];
-	if (node.modelType !== 'supertype') return [kind];
+	if (!(node instanceof AssembledSupertype)) return [kind];
 	const concreteKinds = new Set<string>();
-	for (const subtype of (node as AssembledSupertype).subtypeNames) {
+	for (const subtype of node.subtypeNames) {
 		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
 			concreteKinds.add(concreteKind);
 		}
@@ -1972,9 +1965,9 @@ function collectConcreteTransportKindIds(kind: string, nodeMap: NodeMap, seen: S
 	if (seen.has(kind)) return [];
 	seen.add(kind);
 	const node = nodeMap.nodes.get(kind);
-	if (node === undefined || node.modelType !== 'supertype') return [];
+	if (node === undefined || !(node instanceof AssembledSupertype)) return [];
 	const ids = new Set<number>();
-	for (const subtype of (node as AssembledSupertype).subtypes) {
+	for (const subtype of node.subtypes) {
 		if (subtype.storageKindId !== undefined) {
 			ids.add(subtype.storageKindId);
 			continue;
@@ -2088,7 +2081,7 @@ function expandConcreteTransportKinds(
 			expanded.push({ kind, node, concreteName });
 			return;
 		}
-		if (node.modelType !== 'supertype') return;
+		if (!(node instanceof AssembledSupertype)) return;
 		for (const concreteKind of collectConcreteTransportKinds(kind, nodeMap)) {
 			includeKind(concreteKind);
 		}
@@ -2377,20 +2370,20 @@ function emitPerSlotChildEnum(
 		const aliasPairs: Record<string, string> = { ...entry.parseAliases };
 		for (const closureKind of kindsClosure) {
 			const closureNode = nodeMap.nodes.get(closureKind);
-			if (closureNode?.modelType !== 'supertype') continue;
+			if (!(closureNode instanceof AssembledSupertype)) continue;
 			for (const [storage, parse] of Object.entries(closureNode.subtypeParseNames ?? {})) {
 				aliasPairs[parse] ??= storage;
 			}
 		}
 		for (const [parseName, storageKind] of Object.entries(aliasPairs)) {
 			if (!kindsClosure.has(storageKind)) continue;
-			if (nodeMap.nodes.get(storageKind)?.modelType !== 'supertype') continue;
+			if (!(nodeMap.nodes.get(storageKind) instanceof AssembledSupertype)) continue;
 			const parseEntry = kindEntries !== undefined ? findKindEntry(kindEntries, parseName) : undefined;
 			const aliasId = parseEntry?.parseId ?? parseEntry?.id ?? kindIdByKind.get(parseName);
 			if (aliasId === undefined || emittedIds.has(aliasId)) continue;
 			emittedIds.add(aliasId);
 			const leafTrials = expandConcreteTransportKinds([storageKind], nodeMap)
-				.map((e) => ({ e, order: aliasLeafTrialOrder(e.node.modelType), own: validKindSet.get(e.kind) }))
+				.map((e) => ({ e, order: aliasLeafTrialOrder(e.node), own: validKindSet.get(e.kind) }))
 				.filter((t) => t.order >= 0 && t.own !== undefined)
 				.sort((a, b) => a.order - b.order)
 				.map((t) => ({ typeName: t.own!.concreteName, variant: rustTypeIdent(t.own!.node.typeName) }));
@@ -2773,7 +2766,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 }
 
 function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): string | undefined {
-	if (node.modelType !== 'keyword' && node.modelType !== 'token') return undefined;
+	if (node.modelType !== 'token') return undefined;
 	const literal = node.text;
 	if (!literal) return undefined;
 	for (const [, owner] of nodeMap.nodes) {
@@ -2806,65 +2799,62 @@ function renderTransportDataStruct(
 	slotModel: RenderSlotModel,
 	nodeMap: NodeMap
 ): string[] {
-	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'keyword' || node.modelType === 'token';
+	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'token';
 	const lines: string[] = [];
 	if (!isLeafNode) {
 		lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
 	}
 	lines.push('#[derive(Debug, Clone)]');
 	lines.push(`pub struct ${structName} {`);
-	switch (node.modelType) {
-		case 'branch':
-		case 'group':
-		case 'separatedList':
-			lines.push(...renderTransportMetadataFields(true));
-			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
+	const isCompoundNode =
+		node.modelType === 'branch' ||
+		node.modelType === 'envelope' ||
+		node.modelType === 'list' ||
+		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype));
+	if (isCompoundNode) {
+		lines.push(...renderTransportMetadataFields(true));
+		for (const field of [...slotModel.named, ...slotModel.unnamed]) {
+			lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
+		}
+		{
+			const emittedStorageNames = new Set([
+				...slotModel.named.map((f) => f.storageName),
+				...slotModel.unnamed.map((f) => f.storageName)
+			]);
+			for (const unnamedSlot of slotModel.unnamed) {
+				if (isMultiple(unnamedSlot)) continue;
+				const aliasVisible = unnamedSlot.values.some(
+					(v) => v.parseKind?.name !== undefined && !v.parseKind.name.startsWith('_')
+				);
+				if (aliasVisible) continue;
+				const helperNodeName = `_${unnamedSlot.name}`;
+				const helperNode = nodeMap.nodes.get(helperNodeName);
+				if (helperNode === undefined) continue;
+				const helperSlots = allSlotsOf(helperNode);
+				for (const innerSlot of helperSlots) {
+					if (innerSlot.isUnnamed) continue;
+					if (emittedStorageNames.has(innerSlot.storageName)) continue;
+					lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, true));
+					emittedStorageNames.add(innerSlot.storageName);
+				}
 			}
-			{
-				const emittedStorageNames = new Set([
-					...slotModel.named.map((f) => f.storageName),
-					...slotModel.unnamed.map((f) => f.storageName)
-				]);
-				for (const unnamedSlot of slotModel.unnamed) {
-					if (isMultiple(unnamedSlot)) continue;
-					const aliasVisible = unnamedSlot.values.some(
-						(v) => v.parseKind?.name !== undefined && !v.parseKind.name.startsWith('_')
+			if (node instanceof AssembledList) {
+				if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
+					lines.push(
+						'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]',
+						'    pub delimiter: Option<u8>,'
 					);
-					if (aliasVisible) continue;
-					const helperNodeName = `_${unnamedSlot.name}`;
-					const helperNode = nodeMap.nodes.get(helperNodeName);
-					if (helperNode === undefined) continue;
-					const helperSlots = allSlotsOf(helperNode);
-					for (const innerSlot of helperSlots) {
-						if (innerSlot.isUnnamed) continue;
-						if (emittedStorageNames.has(innerSlot.storageName)) continue;
-						lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, true));
-						emittedStorageNames.add(innerSlot.storageName);
-					}
 				}
-				if (node instanceof AssembledSeparatedList) {
-					if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
-						lines.push(
-							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]',
-							'    pub delimiter: Option<u8>,'
-						);
-					}
-					if (node.separatorRule !== undefined) {
-						lines.push(
-							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]',
-							'    pub separator_kind: Option<u16>,'
-						);
-					}
+				if (node.separatorRule !== undefined) {
+					lines.push(
+						'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]',
+						'    pub separator_kind: Option<u16>,'
+					);
 				}
 			}
-			break;
-		case 'pattern':
-		case 'keyword':
-		case 'token':
-		case 'enum':
-			lines.push(...renderLeafTransportPlainFields());
-			break;
+		}
+	} else if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
+		lines.push(...renderLeafTransportPlainFields());
 	}
 	lines.push('}');
 	lines.push('');
@@ -2883,7 +2873,7 @@ function renderTransportDataStruct(
 	lines.push(`}`);
 	lines.push('');
 	if (isLeafNode) {
-		const leafNamed = node.modelType !== 'token';
+		const leafNamed = !(node instanceof AssembledToken);
 		lines.push(
 			...renderLeafTransportNapiImpls(
 				structName,
@@ -3041,7 +3031,7 @@ function renderLeafTransportNapiImpls(
 }
 
 function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (node.modelType === 'keyword' || node.modelType === 'token') return node.text || undefined;
+	if (node.modelType === 'token') return node.text || undefined;
 	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
 	return undefined;
 }
@@ -3215,7 +3205,7 @@ function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): s
 	if (map === undefined) {
 		map = new Map<string, string>();
 		for (const [kind, node] of nodeMap.nodes) {
-			if (node.modelType === 'supertype') {
+			if (node instanceof AssembledSupertype) {
 				map.set(node.typeName, kind);
 			}
 		}
@@ -3252,7 +3242,7 @@ function renderBoxedEnumNapiImpls(enumName: string): string[] {
 function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | null {
 	const node = nodeMap.nodes.get(kind);
 	if (node !== undefined) {
-		if (node.modelType === 'supertype' || node.modelType === 'multi') {
+		if (node instanceof AssembledSupertype) {
 			return null;
 		}
 		if (node instanceof AssembledEnum) {

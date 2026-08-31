@@ -33,7 +33,7 @@ import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import { isComplexBody, isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
+import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../dsl/rule-patterns.ts';
 import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -188,14 +188,14 @@ const token: TokenFn = Object.assign(
 );
 
 interface PrecFn {
-	(precedence: number, content: Input): Rule<'evaluate'>;
-	left: (precedence: number, content: Input) => Rule<'evaluate'>;
-	right: (precedence: number, content: Input) => Rule<'evaluate'>;
+	(precedence: number | string, content: Input): Rule<'evaluate'>;
+	left: (precedence: number | string, content: Input) => Rule<'evaluate'>;
+	right: (precedence: number | string, content: Input) => Rule<'evaluate'>;
 	dynamic: (precedence: number, content: Input) => Rule<'evaluate'>;
 }
 
 const prec: PrecFn = Object.assign(
-	function prec(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
+	function prec(precedenceOrContent: number | string | Input, content?: Input): Rule<'evaluate'> {
 		if (content === undefined) return coerceToRule(precedenceOrContent as Input);
 		return structuralBuilder.prec(precedenceOrContent as number, coerceToRule(content));
 	},
@@ -256,7 +256,7 @@ function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void
 
 function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
 	const content = coerceToRule(rule);
-	if (typeof value === 'string' || value.type === SYMBOL) {
+	if (typeof value === 'string' || (value !== null && typeof value === 'object' && value.type === SYMBOL)) {
 		return structuralBuilder.alias(content, value);
 	}
 	throw new Error(`Invalid alias value: ${value}`);
@@ -422,17 +422,17 @@ function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
 				: rule;
 		}
 		if (rule.type !== SYMBOL) return rule;
-		const hidden = rule.name.startsWith('_');
+		const hidden = isParserHiddenName(rule.name);
 		const target = raw.rules[rule.name];
 		const boundary =
 			supertypes.has(rule.name) ||
 			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
 		const inline = !boundary && (hidden || inlineNames.has(rule.name));
-		return rule.inline === inline && rule.hidden === hidden ? rule : { ...rule, hidden, inline };
+		return rule.inline === inline ? rule : { ...rule, inline };
 	};
 	const rules: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: name.startsWith('_') };
+		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
 	}
 	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
 }

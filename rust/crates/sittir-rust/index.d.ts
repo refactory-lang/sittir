@@ -980,8 +980,7 @@ export interface FunctionTypeTransport {
   _for_lifetimes?: SlotValue<ForLifetimesTransport>
   _parameters: SlotValue<ParametersTransport>
   _return_type?: SlotValue<Box<_TypeTransport>>
-  _function_type_trait_form?: SlotValue<Box<FunctionTypeTraitFormTransport>>
-  _function_type_fn_form?: SlotValue<FunctionTypeFnFormTransport>
+  _content: SlotValue<Box<FunctionTypeContentTransportSlot>>
 }
 
 export interface GenBlockTransport {

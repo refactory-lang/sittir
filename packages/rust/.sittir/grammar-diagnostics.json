@@ -1,6 +1,20 @@
 [
   {
     "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "rust",

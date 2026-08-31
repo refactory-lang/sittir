@@ -25,8 +25,10 @@ import {
 	isRequired,
 	isMultiple,
 	allSlotsOf,
-	AssembledSeparatedList,
-	AssembledSupertype
+	AssembledList,
+	AssembledSupertype,
+	AssembledKeyword,
+	AbstractAssembledCompound
 } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
@@ -96,7 +98,6 @@ describe('Assemble — simplifyRule', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		// wrapper-deletion: field('body', sym('block')) → sym('block', {fieldName:'body', nonterminal:true})
 		const rule = flattenRules({ x: rawRule }).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// After stripping { and }, only the symbol (with fieldName attr) remains
@@ -148,16 +149,15 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('function_item', flatten(rule))).toBe('branch');
 	});
 
-	it('classifies visible repeat as branch (container-shape)', () => {
-		// Phase 1d.vii (spec 022): the prior `'container'` modelType was
-		// folded into `'branch'`. Container-shape kinds (no `field()` on
-		// the rule) are still `AssembledBranch` instances; the per-emitter
-		// discriminator is now `AssembledBranch.isContainerShape`.
+	it('classifies visible repeat as envelope (one-symbol body)', () => {
+		// A bare repeat with no field() wrapper and no separator collapses,
+		// through wrapper-deletion, to a stamped multiplicity on the bare
+		// SYMBOL body — a one-symbol body classifies as 'envelope'.
 		const rule: Rule<'link'> = {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items', flatten(rule))).toBe('branch');
+		expect(classifyNode('items', flatten(rule))).toBe('envelope');
 	});
 
 	it('does NOT classify a bare repeat with no separator as separatedList', () => {
@@ -165,7 +165,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items_no_sep', flatten(rule))).toBe('branch');
+		expect(classifyNode('items_no_sep', flatten(rule))).toBe('envelope');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
@@ -223,8 +223,14 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
-		const rule: Rule<'link'> = { type: STRING, value: 'true' };
-		expect(classifyNode('true', flatten(rule))).toBe('keyword');
+		// classifyNode itself only reports the shared 'token' modelType; the
+		// keyword/token split is decided downstream in assemble() by
+		// wordMatcher, and surfaces as the constructed node's own class.
+		const normalized = makeNormalized({ true: { type: STRING, value: 'true' } });
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('true');
+		expect(node?.modelType).toBe('token');
+		expect(node).toBeInstanceOf(AssembledKeyword);
+		expect((node as AssembledKeyword).word).toBe(true);
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {
@@ -272,22 +278,31 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('anything', renderRule)).toBe('supertype');
 	});
 
-	it('classifies hidden seq with fields as group', () => {
-		const rule: Rule<'link'> = {
-			type: GROUP,
-			name: '_sig',
-			content: {
-				type: SEQ,
-				members: [
-					{
-						type: FIELD,
-						name: 'params',
-						content: { type: SYMBOL, name: 'parameters' }
-					}
-				]
-			}
-		};
-		expect(classifyNode('_sig', flatten(rule))).toBe('group');
+	it('classifies a link-minted GROUP as a hoisted compound', () => {
+		// A GROUP-typed SimplifiedRule (link-minted, wrapper-collapsed
+		// content) classifies by its structural shape alone ('envelope'
+		// here, one symbol body); the link-minted fact lives on the
+		// constructed node as `hoisted`, not as a separate modelType label.
+		const normalized = makeNormalized({
+			_sig: {
+				type: GROUP,
+				name: '_sig',
+				content: {
+					type: SEQ,
+					members: [
+						{
+							type: FIELD,
+							name: 'params',
+							content: { type: SYMBOL, name: 'parameters' }
+						}
+					]
+				}
+			},
+			parameters: { type: PATTERN, value: '[a-z]+' }
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_sig');
+		expect(node?.modelType).toBe('envelope');
+		expect((node as AbstractAssembledCompound).hoisted).toBe(true);
 	});
 
 	it('classifies a group-wrapped lifted separated list as separatedList (fielded element)', () => {
@@ -313,7 +328,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_args', flatten(rule))).toBe('separatedList');
+		expect(classifyNode('_args', flatten(rule))).toBe('list');
 	});
 
 	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
@@ -345,7 +360,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_enum_body_elements', flatten(rule))).toBe('separatedList');
+		expect(classifyNode('_enum_body_elements', flatten(rule))).toBe('list');
 	});
 
 	it('assembles hidden alias sources from their captured leaf body', () => {
@@ -428,6 +443,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
+		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_property_identifier']);
 	});
 
@@ -483,6 +499,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
+		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
 	});
 
@@ -535,6 +552,7 @@ describe('Assemble — classifyNode', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_delim_tokens');
 		expect(node?.modelType).toBe('supertype');
+		expect(node).toBeInstanceOf(AssembledSupertype);
 		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('%');
 		expect(subtypes).not.toContain('+');
@@ -599,6 +617,7 @@ describe('Assemble — classifyNode', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_simple_pattern');
 		expect(node?.modelType).toBe('supertype');
+		expect(node).toBeInstanceOf(AssembledSupertype);
 		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('integer');
 		expect(subtypes).not.toContain('float');
@@ -624,7 +643,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('separatedList');
+		expect(classifyNode('member_list', flatten(rule))).toBe('list');
 	});
 
 	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
@@ -636,7 +655,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				trailing: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('separatedList');
+		expect(classifyNode('member_list', flatten(rule))).toBe('list');
 	});
 
 	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
@@ -648,10 +667,13 @@ describe('Assemble — classifyNode — separatedList', () => {
 				leading: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('separatedList');
+		expect(classifyNode('member_list', flatten(rule))).toBe('list');
 	});
 
 	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
+		// No flank and a literal separator: wrapper-deletion stamps
+		// multiplicity+separator directly on the bare SYMBOL body, which is
+		// a one-symbol body — 'envelope', not a list.
 		const rule: Rule<'link'> = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -659,7 +681,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				value: { type: STRING, value: ',' }
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('branch');
+		expect(classifyNode('member_list', flatten(rule))).toBe('envelope');
 	});
 
 	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
@@ -689,7 +711,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 	});
 });
 
-describe('AssembledSeparatedList — construction', () => {
+describe('AssembledList — construction', () => {
 	it('derives elements/separatorRule/leadingDelimiter/trailingDelimiter for a nonterminal separator', () => {
 		const sepChoice = flatten({
 			type: CHOICE,
@@ -704,7 +726,7 @@ describe('AssembledSeparatedList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice }
 		};
-		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+		const node = new AssembledList('member_list', rule, undefined, {
 			separatorRule: sepChoice,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
@@ -724,7 +746,7 @@ describe('AssembledSeparatedList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+		const node = new AssembledList('member_list', rule, undefined, {
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
@@ -742,7 +764,7 @@ describe('AssembledSeparatedList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
 		};
-		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+		const node = new AssembledList('member_list', rule, undefined, {
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
@@ -760,7 +782,7 @@ describe('AssembledSeparatedList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+		const node = new AssembledList('member_list', rule, undefined, {
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
@@ -778,7 +800,7 @@ describe('AssembledSeparatedList — construction', () => {
 			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+		const node = new AssembledList('member_list', rule, undefined, {
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
@@ -938,7 +960,9 @@ describe('Assemble — assemble()', () => {
 		});
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		expect(nodeMap.name).toBe('test');
-		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('branch');
+		// A single field ('name') is a one-symbol body once the fixed 'fn'
+		// literal is stripped by simplify — 'envelope', not 'branch'.
+		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('envelope');
 		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('pattern');
 	});
 
@@ -1096,6 +1120,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_outer') as AssembledSupertype;
 		expect(node.modelType).toBe('supertype');
+		expect(node).toBeInstanceOf(AssembledSupertype);
 		expect(node.subtypeNames).toEqual(['_inner', 'identifier', '_simple_statements']);
 		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([10, 99, 77]);
 	});

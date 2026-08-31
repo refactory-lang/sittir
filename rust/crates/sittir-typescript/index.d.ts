@@ -1080,9 +1080,7 @@ export interface ForInStatementTransport {
   _operator: SlotValue<ForHeaderOperatorEnum>
   _right: SlotValue<ForInStatementRightTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
-  _for_header_lhs?: SlotValue<ForHeaderLhsTransport>
-  _for_header_var_kind?: SlotValue<ForHeaderVarKindTransport>
-  _for_header_let_const_kind?: SlotValue<ForHeaderLetConstKindTransport>
+  _content: SlotValue<ForInStatementContentTransportSlot>
 }
 
 export interface FormalParametersElementsTransport {

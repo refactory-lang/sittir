@@ -110,13 +110,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * The one symbol reference constructor. `hidden`/`inline` come from the
- * name's leading-underscore convention alone (`name.startsWith('_')`);
- * evaluate's `canonicalizeRawGrammar` (compiler/evaluate.ts) later corrects
- * `inline` for inline-array entries and supertype names, and forces `inline:false` on
- * a symbol wrapped by an alias. Used wherever a rule needs a plain reference
- * built from a name rather than through the DSL proxy: `createProxy`,
- * `structuralBuilder.symbol`, pattern/external-ref rewriting.
+ * The one symbol reference constructor: `{ type: SYMBOL, name, inline:
+ * name.startsWith('_') }`. A reference never carries `hidden` — that fact
+ * is rule-level only, stamped on top-level rules by evaluate's
+ * `canonicalizeRawGrammar`, never on a SYMBOL. `inline` here is the
+ * name's leading-underscore convention alone; `canonicalizeRawGrammar`
+ * later corrects it for inline-array entries and supertype names, and
+ * forces `inline:false` on a symbol wrapped by an alias. Used wherever a
+ * rule needs a plain reference built from a name rather than through the
+ * DSL proxy: `createProxy`, `structuralBuilder.symbol`, pattern/external-ref
+ * rewriting.
  */
 ```
 
@@ -445,11 +448,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Grammar-hidden fact: `name.startsWith('_')` for every top-level rule,
- *  stamped once at evaluate (`canonicalizeRawGrammar`)
- *  and never re-derived from the name downstream — `dsl/rule-patterns.ts`'s
- *  `isHiddenRule(name, rules)` reads this stamp. Link's `unhideAliasedTargets`
- *  flips a rule's `hidden` to `false` when some named alias wraps it (the
- *  parser now emits it as its own node, not folded into the alias); link's
+ *  stamped once at evaluate (`canonicalizeRawGrammar`) and never
+ *  re-derived from the name downstream — `dsl/rule-patterns.ts`'s
+ *  `isHiddenRule(name, rules)` reads this stamp. A rule-level fact only:
+ *  never stamped on a SYMBOL reference (`sym`'s constructed reference
+ *  carries `inline` alone), and it does not survive a splice — every
+ *  inlining site (link's `inlineReferences`, normalize's
+ *  `replaceSymbolRef`/`materializeInlinedBody`) drops the spliced-in
+ *  body's own `hidden` before installing it at the occurrence site, since
+ *  the stamp describes the SOURCE kind, not the host; flatten's
+ *  `withKindFacts` re-carries the PRE-flatten rule's own `hidden` onto its
+ *  flattened root, so a rule's OWN fact survives flattening even though a
+ *  spliced-in body's does not. Link's `unhideAliasedTargets` flips a
+ *  rule's `hidden` to `false` when some named alias wraps it (the parser
+ *  now emits it as its own node, not folded into the alias); link's
  *  `stampLinkMintedVisibility` back-fills `hidden` (from the name) on any
  *  rule link minted that has no raw-grammar counterpart. */
 ```
@@ -472,6 +484,22 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  `withKindFacts` (`dsl/rule-attrs.ts`) carries it forward whenever a
  *  later phase rebuilds the stamped rule's shape, so a splice survives
  *  flatten/normalize/simplify without re-deriving it.
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::absorbedIds`
+
+```text
+/** Ids of nodes this rule absorbed when simplify reduced them into it:
+ *  a nested CHOICE spliced into its parent choice, a wrapper choice
+ *  collapsed onto its single surviving member, or the other branches'
+ *  members at a position `mergeBranchesForChoice` folds into one. Stamped
+ *  by `dsl/rule-attrs.ts::absorbIds` and carried forward by ordinary
+ *  spread like every other attribute. `collect-slots.ts::buildSlot` reads
+ *  it to resolve a slot's `sourceRuleIds` against ids the simplified tree
+ *  no longer holds a node for — the simplified tree carries every
+ *  absorbed id itself, so no second derivation over another rule view is
+ *  needed to find them.
  */
 ```
 
@@ -1271,12 +1299,12 @@ narrowing guard.
 ```text
 // All stamped attributes below are populated by
 // `flattenRules` (Normalize) — the structured `separator`
-// object included: wrapper-deletion carries the repeat node's own
-// link-lifted `separator` object across unchanged as it deletes
-// the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>
-// share this identical nested shape). None of them exist on
-// evaluate/link views' RuleBase (they exist on the repeat/repeat1
-// wrapper nodes themselves pre-deletion).
+// object included: `flatten` rebuilds the separator's own `value`
+// bottom-up (`withSeparator`) and keeps the placement flags
+// (`trailing` / `leading` / `terminated`) as the repeat wrapper
+// carried them. None of them exist on evaluate/link views'
+// RuleBase (they exist on the repeat/repeat1 wrapper nodes
+// themselves pre-flatten).
 ```
 
 ### `packages/codegen/src/types/rule.ts::RuleBase.separator.terminated`

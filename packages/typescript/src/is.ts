@@ -548,7 +548,7 @@ const _supertype_declaration_ids = new Set<number>([
 	225, 227, 222, 185, 184, 273, 284, 285, 286, 295, 292, 290, 288, 283
 ]);
 const _supertype_statement_ids = new Set<number>([
-	168, 175, 200, 183, 187, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 201, 202, 204
+	168, 175, 200, 183, 187, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204
 ]);
 const _supertype_expression_ids = new Set<number>([
 	276, 277, 278, 286, 275, 238, 240, 234, 246, 245, 244, 247, 233, 213
@@ -564,7 +564,7 @@ const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 44
 const _supertype_propertyIdentifier_ids = new Set<number>([1, 440]);
 const _supertype_type_ids = new Set<number>([353, 350, 315, 319, 305, 306]);
 const _supertype_primaryType_ids = new Set<number>([
-	336, 337, 1, 289, 321, 339, 348, 349, 335, 328, 329, 100, 332, 330, 320, 318, 352, 351
+	336, 337, 1, 289, 321, 339, 348, 349, 335, 328, 329, 100, 334, 332, 330, 320, 318, 352, 351
 ]);
 
 export const is = {

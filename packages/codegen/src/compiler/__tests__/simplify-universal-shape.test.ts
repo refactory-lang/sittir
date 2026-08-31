@@ -3,7 +3,7 @@
  * universal-shape canonicalization + post-condition check in simplify.ts.
  *
  * Per the spec's "Universal canonical shape" decision: every
- * AssembledBranch / AssembledGroup body, after simplification, should be a
+ * AssembledBranch body (plain or link-minted), after simplification, should be a
  * SeqRule whose members are leaves (literals + slot-refs). No nested
  * structural rules with slot content.
  *
@@ -21,7 +21,7 @@
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
-import { AssembledBranch, AssembledGroup, AssembledPattern } from '../model/node-map.ts';
+import { AssembledBranch, AssembledPattern } from '../model/node-map.ts';
 import type { RenderRule, SeqRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
@@ -106,7 +106,7 @@ describe('assertUniversalShape', () => {
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
-	it('passes for well-shaped AssembledGroup (seq of leaves)', () => {
+	it('passes for well-shaped link-minted AssembledBranch (seq of leaves)', () => {
 		const body: RenderRule = {
 			type: SEQ,
 			members: [
@@ -114,7 +114,7 @@ describe('assertUniversalShape', () => {
 				{ type: STRING, value: 'static' }
 			]
 		};
-		const node = new AssembledGroup('_modifiers', body, body);
+		const node = new AssembledBranch('_modifiers', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -122,7 +122,7 @@ describe('assertUniversalShape', () => {
 		// A branch body that is just a single leaf is valid — it would have
 		// been flattened by canonicalizeSeqOfLeaves from seq([X]) -> X.
 		const body: RenderRule = { type: SYMBOL, name: 'X' };
-		const node = new AssembledGroup('_passthrough', body, body);
+		const node = new AssembledBranch('_passthrough', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -139,7 +139,7 @@ describe('assertUniversalShape', () => {
 				}
 			]
 		};
-		const node = new AssembledGroup('_choice_wrap', body, body);
+		const node = new AssembledBranch('_choice_wrap', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
@@ -151,7 +151,7 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'b' }
 			]
 		};
-		const node = new AssembledGroup('_choice_kind', body, body);
+		const node = new AssembledBranch('_choice_kind', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation/);
 	});
 
