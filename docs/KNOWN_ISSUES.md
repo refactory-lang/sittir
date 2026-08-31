@@ -8,8 +8,7 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
-8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
+5. `ki-exercise-span-transport` — one class left: partial `$span` on factory-built nodes reaching the transport
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
@@ -47,15 +46,9 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 ## `ki-exercise-span-transport` — exercise factory round-trips fail on `Missing field start on …Transport.$span`
 
-**Found during:** porting the exercise tool's render step off `@sittir/legacy-core` onto the native boundary (`loadBoundaryRender`) — the port replaced the old seam-less-garbage renders with honest native-transport errors, exposing the real per-case failures the legacy renderer had been masking. Post-port inventory: rust 2 pass / 0 fail; python 1 pass / 9 fail (4× the `$span` class via `comparison_operator`/comprehension clauses, plus `set_comprehension` rendering `{ a for a in b }` with brace padding for input `{a for a in b}`); typescript 0 pass / 2 fail (both the `$span` class via `type_parameters` / `type_arguments`).
+**Found during:** porting the exercise tool's render step off `@sittir/legacy-core` onto the native boundary (`loadBoundaryRender`) — the port replaced the old seam-less-garbage renders with honest native-transport errors, exposing the real per-case failures the legacy renderer had been masking. Current inventory: rust 2 pass / 0 fail; python 2 pass / 8 fail (the `$span` class via `comparison_operator`/comprehension clauses); typescript 0 pass / 2 fail (both the `$span` class, via `formal_parameters` / `type_arguments`). The `set_comprehension` brace-padding row that used to sit alongside these is gone — that was the escaping artifact, since fixed; `{a for a in b}` now renders byte-exact.
 
 The dominant class: the native transport deserializer demands a complete `$span` on nested transport structs (e.g. `ComparisonOperatorComparatorTransport.$span`) that the exercise path's factory-built (span-less) nodes cannot supply — while the factory-render-parse validator renders factory output for the same grammars at 1385/1390+, so the gap is specific to how the exercise tool materializes its node inputs (wrapped/read stubs mixed into factory configs), not to factory rendering per se.
 
-**Fix, if/when prioritized:** root-cause why exercise-built nodes reach the transport with partial `$span`s (likely a read-stub surviving `nodeToConfig` into the rebuilt node) and either materialize the stub fully or strip `$span` so the transport takes the factory-shaped (span-less) path; the `set_comprehension` padding row is a separate template-spacing defect.
-
-## `ki-dict-pattern-comma` — python `dict_pattern` drops the inter-entry comma on render
-
-**Found during:** the flank-capture census (Task 3 of the separator work). `case {1: a, 2: b}:` renders without the comma between entries; shares a root with the (since-fixed) `print_statement` class — the mandatory-flank handling hardcoded where a headless-group shape needs a capture — but this kind was not closed by that fix and has not been re-root-caused since.
-
-**Fix, if/when prioritized:** re-probe under the current separator-as-slot model (`probe-kind -g python -k dict_pattern --reparse`); the fix likely belongs with the kind's separated-list flank capture, not the template.
+**Fix, if/when prioritized:** root-cause why exercise-built nodes reach the transport with partial `$span`s (likely a read-stub surviving `nodeToConfig` into the rebuilt node) and either materialize the stub fully or strip `$span` so the transport takes the factory-shaped (span-less) path; the remaining failures are all one class.
 
