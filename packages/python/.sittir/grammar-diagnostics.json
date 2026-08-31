@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -20,7 +20,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "...",
-    "message": "[assemble] anonymous literal \"...\" resolved no parser kindId — keyed by raw text '...'",
+    "message": "[assemble] literal \"...\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "..."
@@ -32,7 +32,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "True",
-    "message": "[assemble] anonymous literal \"True\" resolved no parser kindId — keyed by raw text 'True'",
+    "message": "[assemble] literal \"True\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "True"
@@ -44,7 +44,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "False",
-    "message": "[assemble] anonymous literal \"False\" resolved no parser kindId — keyed by raw text 'False'",
+    "message": "[assemble] literal \"False\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "False"
@@ -56,26 +56,10 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "None",
-    "message": "[assemble] anonymous literal \"None\" resolved no parser kindId — keyed by raw text 'None'",
+    "message": "[assemble] literal \"None\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "None"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "ellipsis",
-    "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Ellipsis",
-      "newType": "Ellipsis2",
-      "siblingKinds": [
-        "..."
-      ]
     }
   },
   {
@@ -95,74 +79,14 @@
     }
   },
   {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "True",
-    "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')",
-    "canProceed": true,
-    "details": {
-      "typeName": "True",
-      "newType": "True2",
-      "siblingKinds": [
-        "true"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "False",
-    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
-    "canProceed": true,
-    "details": {
-      "typeName": "False",
-      "newType": "False2",
-      "siblingKinds": [
-        "false"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "None",
-    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
-    "canProceed": true,
-    "details": {
-      "typeName": "None",
-      "newType": "None2",
-      "siblingKinds": [
-        "none"
-      ]
-    }
-  },
-  {
     "code": "kindid-unstamped-symbols",
-    "message": "15 referenced kind(s) resolved no parser kindId",
+    "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_statement",
-        "_except_clause_as_optional1",
-        "_exec_statement_optional1",
-        "_expressions",
-        "_function_definition_optional1",
-        "_kw_comma",
-        "_kw_eq_marker",
-        "_kw_real",
-        "_kw_sign",
-        "_left_hand_side",
-        "_raise_statement_optional1",
         "_simple_statement",
-        "_suite",
-        "_unary_operator_operator",
-        "keyword_identifier"
+        "_unary_operator_operator"
       ]
     },
     "severity": "warning",
@@ -188,25 +112,13 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "14 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
         "_compound_statement",
-        "_except_clause_as_optional1",
-        "_exec_statement_optional1",
-        "_expressions",
-        "_function_definition_optional1",
-        "_kw_comma",
-        "_kw_eq_marker",
-        "_kw_real",
-        "_kw_sign",
-        "_left_hand_side",
-        "_raise_statement_optional1",
-        "_simple_statement",
-        "_suite",
-        "keyword_identifier"
+        "_simple_statement"
       ]
     },
     "scope": "grammar",
@@ -241,60 +153,5 @@
     },
     "scope": "grammar",
     "grammar": "python"
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_suite",
-    "slotName": "block",
-    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "block",
-      "storageKinds": [
-        "_simple_statements",
-        "block",
-        "_newline"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_expression_within_for_in_clause",
-    "slotName": "lambda",
-    "message": "Slot 'lambda' of kind '_expression_within_for_in_clause' collapses [lambda, lambda_within_for_in_clause] onto parse kind 'lambda'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "lambda",
-      "storageKinds": [
-        "lambda",
-        "lambda_within_for_in_clause"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_argument_list_elements",
-    "slotName": "parenthesized_expression",
-    "message": "Slot 'parenthesized_expression' of kind '_argument_list_elements' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "parenthesized_expression",
-      "storageKinds": [
-        "parenthesized_expression",
-        "parenthesized_list_splat"
-      ]
-    }
   }
 ]

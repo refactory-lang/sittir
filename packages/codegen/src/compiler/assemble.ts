@@ -30,7 +30,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
-import { isEnumChoiceRule } from '../dsl/rule-patterns.ts';
+import { isEnumChoiceRule, isHiddenRule, isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -50,14 +50,13 @@ import type {
 } from './model/node-map.ts';
 import {
 	AssembledBranch,
+	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
 	AssembledSupertype,
-	AssembledGroup,
-	AssembledMulti,
-	AssembledSeparatedList,
+	AssembledList,
 	drainParseKindCollisionDiagnostics,
 	drainDeriveShapeDiagnostics,
 	drainAssembleWarnings,
@@ -71,10 +70,8 @@ import {
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	buildParseKindRuleSignatures,
-	type AssembleWarning
-} from './model/node-map.ts';
+	type AssembleWarning, branchClassFor, compoundModelTypeFor } from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
-import { deriveStructuralVariantChildren } from './variant-structural.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
@@ -149,7 +146,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
-	const variantChildrenByParent = deriveStructuralVariantChildren(normalized.linkRules);
+	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly string[]>();
 	const variantParents = new Set(variantChildrenByParent.keys());
 
 	const parseKindCollisionContext = {
@@ -159,7 +156,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	try {
 		for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 			const simplifiedRule = normalized.rules[kind]!;
-			const modelType = classifyNode(kind, renderRule, {
+			const modelType = classifyNode(kind, simplifiedRule, {
+				renderRule,
 				variantParents,
 				parentAliasedKinds: normalized.parentAliasedKinds,
 				wordMatcher: wordMatcherRegex
@@ -167,35 +165,47 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
 			switch (modelType) {
-				case 'branch': {
+				case 'supertype': {
+					if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
+						throw new Error(`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`);
+					}
+					const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
+					nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
+					break;
+				}
+				case 'branch':
+				case 'envelope':
+				case 'polymorph': {
+					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
+					const CompoundClass = branchClassFor(groupSimplified);
 					nodes.set(
 						kind,
-						new AssembledBranch(kind, simplifiedRule, renderRule, {
+						new CompoundClass(kind, groupSimplified, groupRenderRule, {
 							variantChildKinds,
 							kindEntries,
 							parseKindCollisionContext,
 							visibleAliasTargets: normalized.visibleAliasTargets,
-							simplifiedRules: normalized.rules
+							simplifiedRules: normalized.rules,
+							...(simplifiedRule.type === GROUP ? { hoisted: {} } : {})
 						})
 					);
 					break;
 				}
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, renderRule));
+					nodes.set(kind, new AssembledPattern(kind, simplifiedRule));
 					break;
 				}
-				case 'keyword':
 				case 'token': {
-					if (renderRule.type !== STRING) {
-						throw new Error(
-							`[assemble] ${modelType} kind '${kind}' must be a single literal; found ${renderRule.type}`
-						);
+					if (simplifiedRule.type !== STRING) {
+						throw new Error(`[assemble] token kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 					}
+					const word = matchesWordShape(simplifiedRule.value, wordMatcherRegex);
+					const named = !kind.startsWith('_') && findEntryForKindName(kindEntries, kind)?.anon !== true;
 					nodes.set(
 						kind,
-						modelType === 'keyword'
-							? new AssembledKeyword(kind, renderRule, { kindEntries })
-							: new AssembledToken(kind, renderRule, { kindEntries })
+						word || named
+							? new AssembledKeyword(kind, simplifiedRule, { kindEntries, word })
+							: new AssembledToken(kind, simplifiedRule, { kindEntries })
 					);
 					break;
 				}
@@ -206,42 +216,19 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					nodes.set(kind, new AssembledEnum(kind, renderRule, { kindEntries }));
 					break;
 				}
-				case 'supertype': {
-					if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
-						throw new Error(`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`);
-					}
-					const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
-					nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
-					break;
-				}
-				case 'group': {
+				case 'list': {
 					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
-					nodes.set(
-						kind,
-						new AssembledGroup(kind, groupSimplified, groupRenderRule, {
-							kindEntries,
-							parseKindCollisionContext
-						})
-					);
-					break;
-				}
-				case 'multi': {
-					nodes.set(kind, new AssembledMulti(kind, renderRule));
-					break;
-				}
-				case 'separatedList': {
-					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
-					const listRule = peelSeparatedListCore(groupRenderRule);
+					const listRule = peelSeparatedListCore(groupSimplified);
 					if (listRule.type !== SYMBOL && listRule.type !== CHOICE) {
 						throw new Error(
-							`[assemble] separatedList kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
+							`[assemble] list kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
 						);
 					}
 					const sep = listRule.separator;
 					const separatorRule = sep && isNonterminalRuleType(sep.value) ? sep.value : undefined;
 					nodes.set(
 						kind,
-						new AssembledSeparatedList(
+						new AssembledList(
 							kind,
 							listRule,
 							{ kindEntries },
@@ -269,7 +256,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 		}
 
-		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
+		collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
 		stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -297,7 +284,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 
 		for (const node of nodes.values()) {
-			if (node.modelType === 'branch' || node.modelType === 'group') {
+			if (node instanceof AbstractAssembledCompound) {
 				node.attachNodeMap(nodes);
 			}
 		}
@@ -324,7 +311,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			terminalAliasWireIds: normalized.terminalAliasWireIds,
 			signatures: computeSignatures(nodes),
 			derivations: normalized.derivations,
-			linkRules: normalized.linkRules,
 			normalizedRules: normalized.normalizedRules,
 			word: normalized.word,
 			wordMatcher: normalized.wordMatcher,
@@ -355,13 +341,13 @@ function resolveSupertypeSubtypes(
 	const subtypes: SubtypeRef[] =
 		rule.type === SUPERTYPE
 			? rule.subtypes.map((s) => ({
-					name: s.aliasedFrom ?? s.name,
-					storageKindId: s.aliasedFromId ?? s.kindId
+					name: s.name,
+					storageKindId: s.kindId
 				}))
 			: rule.members
 					.map((m) => (m.type === VARIANT ? m.content : m))
 					.filter((m): m is SymbolRule => m.type === SYMBOL)
-					.map((m) => ({ name: m.name, storageKindId: m.aliasedFromId ?? m.kindId }));
+					.map((m) => ({ name: m.name, storageKindId: m.kindId }));
 	return resolveHiddenSubtypes(
 		subtypes,
 		ctx,
@@ -471,15 +457,11 @@ function resolveHiddenSubtypes(
 		const name = ref.name;
 		if (seen.has(name)) return;
 		seen.add(name);
-		if (!name.startsWith('_')) {
+		if (!isHiddenRule(name, rules)) {
 			out.push(ref);
 			return;
 		}
-		const rule = rules[name];
-		if (!rule) {
-			out.push(ref);
-			return;
-		}
+		const rule = rules[name]!;
 		if (rule.type !== SUPERTYPE && subtypeParseNames && Object.prototype.hasOwnProperty.call(subtypeParseNames, name)) {
 			out.push(ref);
 			return;
@@ -488,10 +470,10 @@ function resolveHiddenSubtypes(
 			out.push(ref);
 			const nestedParseNames = subtypeParseNamesOf(rule);
 			for (const subRef of rule.subtypes) {
-				const sub = subRef.aliasedFrom ?? subRef.name;
-				const subStamp = subRef.aliasedFromId ?? subRef.kindId;
+				const sub = subRef.name;
+				const subStamp = subRef.kindId;
 				const parseName = nestedParseNames[sub];
-				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
+				const subRule = isHiddenRule(sub, rules) ? rules[sub] : undefined;
 				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
 					if (!seen.has(parseName)) {
 						seen.add(parseName);
@@ -499,7 +481,7 @@ function resolveHiddenSubtypes(
 					}
 					continue;
 				}
-				if (sub.startsWith('_')) {
+				if (isHiddenRule(sub, rules)) {
 					visit({ name: sub, storageKindId: subStamp });
 					continue;
 				}
@@ -517,7 +499,7 @@ function resolveHiddenSubtypes(
 			return;
 		}
 		for (const r of resolved) {
-			if (r.name.startsWith('_')) {
+			if (isHiddenRule(r.name, rules)) {
 				visit(r);
 				continue;
 			}
@@ -544,7 +526,7 @@ function includeAliasMemberKinds(
 	while (changed) {
 		changed = false;
 		for (const name of Object.keys(rules)) {
-			if (!name.startsWith('_')) continue;
+			if (!isHiddenRule(name, rules)) continue;
 			if (name === ownerName) continue;
 			if (subtypeSet.has(name)) continue;
 			if (!isAliasMemberKind(name, ctx, subtypeSet, kindEntries)) continue;
@@ -580,10 +562,9 @@ function isCompatibleSubtypeMember(
 ): boolean {
 	const { normalizedRules: rules } = ctx;
 	if (subtypeSet.has(name)) return true;
-	if (!name.startsWith('_')) return false;
+	if (!isHiddenRule(name, rules)) return false;
 	if (seen.has(name)) return false;
-	const rule = rules[name];
-	if (!rule) return false;
+	const rule = rules[name]!;
 	seen.add(name);
 	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx, kindEntries);
 	if (resolved.length === 0) return false;
@@ -608,25 +589,23 @@ function resolveHiddenRuleContent(
 	}
 	switch (rule.type) {
 		case SYMBOL: {
-			const refName = rule.aliasedFrom ?? rule.name;
-			const refStamp = rule.aliasedFromId ?? rule.kindId;
-			if (!refName.startsWith('_')) return [{ name: refName, storageKindId: refStamp }];
+			const refName = rule.name;
+			const refStamp = rule.kindId;
+			if (rule.literal !== undefined || !isHiddenRule(refName, rules)) {
+				return [{ name: refName, storageKindId: refStamp }];
+			}
 			if (seen.has(refName)) return [];
 			seen.add(refName);
-			const target = rules[refName];
-			return target
-				? resolveHiddenRuleContent(target, seen, ctx, kindEntries)
-				: [{ name: refName, storageKindId: refStamp }];
+			return resolveHiddenRuleContent(rules[refName]!, seen, ctx, kindEntries);
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((symbolRef) => {
-				const s = symbolRef.aliasedFrom ?? symbolRef.name;
-				const sStamp = symbolRef.aliasedFromId ?? symbolRef.kindId;
+				const s = symbolRef.name;
+				const sStamp = symbolRef.kindId;
 				if (seen.has(s)) return [];
 				seen.add(s);
-				if (!s.startsWith('_')) return [{ name: s, storageKindId: sStamp }];
-				const target = rules[s];
-				return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [{ name: s, storageKindId: sStamp }];
+				if (!isHiddenRule(s, rules)) return [{ name: s, storageKindId: sStamp }];
+				return resolveHiddenRuleContent(rules[s]!, seen, ctx, kindEntries);
 			});
 		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx, kindEntries));
@@ -649,10 +628,10 @@ function resolveHiddenRuleContent(
 export function hydrateSlotRefs(nodeMap: NodeMap): void {
 	const externals = nodeMap.externals ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType === 'branch' || node.modelType === 'group') {
+		if (node instanceof AbstractAssembledCompound) {
 			hydrateSlots(kind, node.slots, nodeMap.nodes, externals);
 		}
-		if (node.modelType === 'supertype') {
+		if (node instanceof AssembledSupertype) {
 			hydrateValues(node.subtypes, { parentKind: kind, siteLabel: 'subtypes', nodes: nodeMap.nodes, externals });
 		}
 	}
@@ -708,7 +687,7 @@ interface _UserFacingCtx {
 
 function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 	const { kind } = node;
-	if (node.modelType === 'token' || node.modelType === 'multi') {
+	if (node instanceof AssembledToken) {
 		node.userFacing = ctx.variantChildKinds.has(kind);
 		return;
 	}
@@ -741,7 +720,7 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
 }
 
 function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledNode[], typeName: string): void {
-	const hasNonTokenVisible = visible.some((n) => n.modelType !== 'token');
+	const hasNonTokenVisible = visible.some((n) => !(n instanceof AssembledToken));
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
@@ -802,7 +781,7 @@ function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: strin
 
 function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
 	for (const node of nodes.values()) {
-		if (node.modelType !== 'supertype') continue;
+		if (!(node instanceof AssembledSupertype)) continue;
 		claimed.add(shortenIrKey(node.kind));
 	}
 }
@@ -815,7 +794,7 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	const phase2: AssembledNode[] = [];
 	for (const node of nodes.values()) {
 		if (!node.factoryName) continue;
-		if (node.modelType === 'group') continue;
+		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) phase1.push(node);
 		else phase2.push(node);
@@ -856,73 +835,59 @@ function shortenIrKey(kind: string): string {
 }
 
 function collectAnonymousNodes(
-	rules: Record<string, Rule<'link'>>,
+	rules: Record<string, RenderRule>,
 	nodes: Map<string, AssembledNode>,
 	wordMatcher: RegExp | undefined,
 	kindEntries: readonly GeneratedKindEntry[]
 ): void {
-	const seen = new Map<string, string>();
-
+	const seen = new Set<string>();
 	for (const rule of Object.values(rules)) {
-		const body =
-			rule.type === TOKEN && (rule.content.type === STRING || rule.content.type === PATTERN) ? rule.content : rule;
-		if (body.type !== STRING && body.type !== PATTERN && isAllTextShape(body)) continue;
-		walkForStrings(body, seen);
+		if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN) continue;
+		walkForStrings(rule, seen);
 	}
 
-	for (const [kindName, literalText] of seen) {
+	for (const literalText of seen) {
 		if (literalText === '' || /^\s+$/.test(literalText)) continue;
-
 		const catalogEntry = findEntryForLiteralText(kindEntries, literalText);
-		const resolvedKind = catalogEntry?.kind ?? kindName;
-		if (nodes.has(resolvedKind)) continue;
-
-		if (catalogEntry === undefined) {
-			recordAssembleWarning({
-				code: 'kindid-unstamped-anon-literal',
-				message: `[assemble] anonymous literal ${JSON.stringify(literalText)} resolved no parser kindId — keyed by raw text '${kindName}'`,
-				ownerKind: kindName,
-				details: { literalText }
-			});
+		if (catalogEntry === undefined || catalogEntry.anon !== true) {
+			if (catalogEntry === undefined) {
+				recordAssembleWarning({
+					code: 'kindid-unstamped-anon-literal',
+					message: `[assemble] literal ${JSON.stringify(literalText)} has no anonymous parser symbol — not minted`,
+					ownerKind: literalText,
+					details: { literalText }
+				});
+			}
+			continue;
 		}
+		if (nodes.has(catalogEntry.kind)) continue;
 
-		const isWordShape = matchesWordShape(literalText, wordMatcher);
 		const syntheticStringRule: StringRule = { type: STRING, value: literalText };
-
-		if (isWordShape) {
-			nodes.set(resolvedKind, new AssembledKeyword(resolvedKind, syntheticStringRule, { hidden: true, kindEntries }));
+		if (matchesWordShape(literalText, wordMatcher)) {
+			nodes.set(
+				catalogEntry.kind,
+				new AssembledKeyword(catalogEntry.kind, syntheticStringRule, { hidden: true, kindEntries })
+			);
 		} else {
-			nodes.set(resolvedKind, new AssembledToken(resolvedKind, syntheticStringRule, { kindEntries }));
+			nodes.set(catalogEntry.kind, new AssembledToken(catalogEntry.kind, syntheticStringRule, { kindEntries }));
 		}
 	}
 }
 
-function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
+function walkForStrings(rule: RenderRule, out: Set<string>): void {
 	switch (rule.type) {
 		case STRING:
-			out.set(rule.value, rule.value);
+			out.add(rule.value);
 			break;
 		case SYMBOL:
-			if (isLinkSymbol(rule) && rule.literal !== undefined) {
-				out.set(rule.name, rule.literal);
-			}
+			if (rule.literal !== undefined) out.add(rule.literal);
 			break;
 		case SEQ:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
 		case CHOICE:
-			if (isEnumChoiceRule(rule)) break;
-			if (rule.members.length >= 2 && rule.members.every((m) => isLinkSymbol(m) && m.literal !== undefined)) break;
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case OPTIONAL:
-			walkForStrings(rule.content, out);
-			break;
-		case REPEAT:
-			walkForStrings(rule.content, out);
-			break;
-		case FIELD:
-		case TOKEN:
 		case VARIANT:
 		case GROUP:
 			walkForStrings(rule.content, out);
@@ -932,15 +897,15 @@ function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
 
 type ModelType = AssembledNode['modelType'];
 
-export function isNonInlinableLeafShape(rule: AnyRule): boolean {
-	if (isEnumChoiceRule(rule)) return true;
-	return rule.type === SUPERTYPE || rule.type === PATTERN || rule.type === STRING;
-}
-
 export function classifyNode(
 	kind: string,
-	rule: RenderRule,
-	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
+	rule: SimplifiedRule,
+	opts?: {
+		variantParents?: ReadonlySet<string>;
+		parentAliasedKinds?: ReadonlySet<string>;
+		wordMatcher?: RegExp;
+		renderRule?: RenderRule;
+	}
 ): ModelType {
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		if (isEnumChoiceRule(rule)) return 'enum';
@@ -948,29 +913,48 @@ export function classifyNode(
 			case SUPERTYPE:
 				return 'supertype';
 			case GROUP:
-				if (isSeparatedListShape(peelSeparatedListCore(rule) as RenderRule)) return 'separatedList';
-				return 'group';
+				if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
+				return compoundModelType(rule);
 			case PATTERN:
 				return 'pattern';
 			case STRING:
-				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'token';
+				return 'token';
 		}
 	}
 
-	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';
-	if (isSeparatedListShape(rule)) return 'separatedList';
-	const branchOrContainer = classifyBranchOrContainer(rule);
-	if (branchOrContainer !== null) return branchOrContainer;
+	if (isSeparatedListShape(rule)) return 'list';
+	if (hasSlotBearingContent(rule)) return compoundModelType(rule);
+	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelType(rule);
 	return classifyTerminalFallback(kind, rule);
 }
 
-function peelSeparatedListCore(rule: RenderRule): RenderRule {
-	let r: RenderRule = rule.type === GROUP ? rule.content : rule;
+function referencesKind(rule: RenderRule): boolean {
+	switch (rule.type) {
+		case SYMBOL:
+		case SUPERTYPE:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(referencesKind);
+		case VARIANT:
+		case GROUP:
+			return referencesKind(rule.content);
+		default:
+			return false;
+	}
+}
+
+function compoundModelType(rule: SimplifiedRule): 'envelope' | 'branch' | 'polymorph' {
+	return compoundModelTypeFor(rule);
+}
+
+function peelSeparatedListCore(rule: SimplifiedRule): SimplifiedRule {
+	let r: SimplifiedRule = rule.type === GROUP ? rule.content : rule;
 	if (r.type === SEQ && r.members.length === 1) r = r.members[0]!;
 	return r;
 }
 
-function isSeparatedListShape(rule: RenderRule): boolean {
+function isSeparatedListShape(rule: SimplifiedRule): boolean {
 	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
 	const sep = rule.separator;
 	if (sep === undefined) return false;
@@ -978,19 +962,7 @@ function isSeparatedListShape(rule: RenderRule): boolean {
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
-function isHiddenRepeatHelper(kind: string, rule: RenderRule, parentAliasedKinds?: ReadonlySet<string>): boolean {
-	if (!kind.startsWith('_')) return false;
-	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
-	if (parentAliasedKinds?.has(kind)) return false;
-	return true;
-}
-
-function classifyBranchOrContainer(rule: RenderRule): ModelType | null {
-	if (hasSlotBearingContent(rule)) return 'branch';
-	return null;
-}
-
-function hasSlotBearingContent(rule: RenderRule): boolean {
+function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 	if (rule.fieldName !== undefined) return true;
 	switch (rule.type) {
 		case SYMBOL:

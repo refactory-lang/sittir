@@ -288,7 +288,7 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 }
 
 function isSlotNode(rule: SimplifiedRule): boolean {
-	if (rule.nonterminal === true) return true;
+	if (rule.nonterminal !== undefined) return rule.nonterminal;
 	return isNonterminalRuleType(rule);
 }
 
@@ -334,11 +334,11 @@ function buildSlot(
 				if (rule.type === CHOICE && !sanctionedUnion) {
 					unnamedChoiceWarner(rule.id ?? kindForName);
 				}
-				baseName = 'content';
+				baseName = inlinedFromSlotName(rule) ?? 'content';
 				break;
 			}
 			default:
-				baseName = 'content';
+				baseName = inlinedFromSlotName(rule) ?? 'content';
 				break;
 		}
 	}
@@ -390,12 +390,13 @@ function buildSlot(
 	});
 
 	const memberIds =
-		sanctionedUnion && rule.type === CHOICE ? rule.members.map((m) => m.id).filter((id): id is string => !!id) : [];
-	const sourceRuleIds = [...(rule.id ? [rule.id] : []), ...memberIds];
+		rule.type === CHOICE ? rule.members.flatMap((m) => [...(m.id ? [m.id] : []), ...(m.absorbedIds ?? [])]) : [];
+	const sourceRuleIds = [...new Set([...(rule.id ? [rule.id] : []), ...(rule.absorbedIds ?? []), ...memberIds])];
 
 	return new AssembledNonterminal({
 		values,
 		fieldName: (rule as { fieldName?: string }).fieldName,
+		inlinedFrom: rule.inlinedFrom,
 		hasTrailingDelimiter,
 		hasLeadingDelimiter,
 		trailingDelimiter,
@@ -412,11 +413,39 @@ export function collectSlots(
 	inherited: Multiplicity = 'single',
 	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined
 ): AssembledNonterminal[] {
+	if (rule.type === SEQ) {
+		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
+		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
+		return rule.members.flatMap((m) => resolveMember(m, kindForName, kindEntries, seqMult, seqSep));
+	}
+	return resolveMember(rule, kindForName, kindEntries, inherited, inheritedSeparator);
+}
+
+function recordUnclassifiableShape(kindForName: string | undefined, member: SimplifiedRule, bucket: string): void {
+	recordAssembleWarning({
+		code: 'unclassifiable-shape',
+		ownerKind: kindForName,
+		message:
+			`[collect-slots] kind '${kindForName ?? '(unknown)'}': member ${member.id ?? '(no id)'} is not a leaf or a ` +
+			`choice of leaves (${bucket}: ${describeArmShape(member)}) — resolved by structural recursion`,
+		details: { bucket, shape: describeArmShape(member), ruleId: member.id }
+	});
+}
+
+function resolveMember(
+	rule: SimplifiedRule,
+	kindForName: string | undefined,
+	kindEntries: readonly GeneratedKindEntry[] | undefined,
+	inherited: Multiplicity,
+	inheritedSeparator: RuleBase<'normalize'>['separator']
+): AssembledNonterminal[] {
 	switch (rule.type) {
 		case SEQ: {
-			const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
-			const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, seqMult, seqSep));
+			const isList =
+				(rule as { multiplicity?: Multiplicity }).multiplicity !== undefined ||
+				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator !== undefined;
+			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq');
+			return collectSlots(rule, kindForName, kindEntries, inherited, inheritedSeparator);
 		}
 
 		case VARIANT:
@@ -434,6 +463,9 @@ export function collectSlots(
 				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 				const partition = partitionChoiceArms(rule);
+				if (partition.structuredArms.length > 0 || partition.structuredNamedArms.length > 0) {
+					recordUnclassifiableShape(kindForName, rule, 'choice-with-structured-arms');
+				}
 				if (partition.unionArms.length > 0) {
 					const ruleId = (rule as { id?: string }).id;
 					const site = `choice ${ruleId ?? '(no id)'}`;
@@ -539,4 +571,8 @@ export function collectSlots(
 			return slot ? [slot] : [];
 		}
 	}
+}
+
+function inlinedFromSlotName(rule: { readonly inlinedFrom?: string }): string | undefined {
+	return rule.inlinedFrom === undefined ? undefined : rule.inlinedFrom.replace(/^_+/, '') || undefined;
 }

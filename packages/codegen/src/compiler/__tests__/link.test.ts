@@ -214,7 +214,7 @@ describe('Link — hidden rule classification', () => {
 						type: CHOICE,
 						members: [
 							{ type: SYMBOL, name: 'identifier' },
-							{ type: SYMBOL, name: 'simple_pattern_negative', aliasedFrom: '_simple_pattern_negative' }
+							{ type: SYMBOL, name: '_simple_pattern_negative', aliasedTo: 'simple_pattern_negative' }
 						]
 					},
 					identifier: { type: PATTERN, value: '[a-z]+' }
@@ -235,7 +235,7 @@ describe('Link — hidden rule classification', () => {
 				// id for dispatch (see `SymbolRule.aliasedFrom`/`aliasedFromId`).
 				subtypes: [
 					{ type: 'SYMBOL', name: 'identifier' },
-					{ type: 'SYMBOL', name: 'simple_pattern_negative', aliasedFrom: '_simple_pattern_negative' }
+					{ type: 'SYMBOL', name: '_simple_pattern_negative', aliasedTo: 'simple_pattern_negative' }
 				],
 				variantArms: ['_simple_pattern_negative']
 			});
@@ -268,9 +268,9 @@ describe('Link — hidden rule classification', () => {
 						type: CHOICE,
 						members: [
 							{ type: SYMBOL, name: 'identifier' },
-							{ type: SYMBOL, name: 'wildcard_pattern', aliasedFrom: '_wildcard_pattern' },
+							{ type: SYMBOL, name: '_wildcard_pattern', aliasedTo: 'wildcard_pattern' },
 							{ type: SYMBOL, name: 'tuple_pattern' },
-							{ type: SYMBOL, name: 'rest_pattern', aliasedFrom: '_rest_pattern' }
+							{ type: SYMBOL, name: '_rest_pattern', aliasedTo: 'rest_pattern' }
 						]
 					},
 					identifier: { type: PATTERN, value: '[a-z]+' },
@@ -383,7 +383,8 @@ describe('Link — top-level alias bodies', () => {
 		const linked = link(raw);
 		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
 			type: 'PATTERN',
-			value: '[A-Za-z_]\\w*'
+			value: '[A-Za-z_]\\w*',
+			inlinedFrom: 'identifier'
 		});
 	});
 
@@ -428,11 +429,9 @@ describe('Link — top-level alias bodies', () => {
 		// original intent: the supertype's choice body is never
 		// dereferenced into the alias.
 		expect(linked.topLevelAliasBodies?.get('_as_pattern_target')).toBeUndefined();
-		expect(linked.rules['_as_pattern_target']).toMatchObject({
-			type: 'SYMBOL',
-			name: 'as_pattern_target',
-			aliasedFrom: '_expression'
-		});
+		// An alias-bodied hidden rule nothing references is dead once link has
+		// inlined its (zero) references, so it is pruned from the rule map.
+		expect(linked.rules['_as_pattern_target']).toBeUndefined();
 	});
 });
 
@@ -987,16 +986,16 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 
 describe('canonicalizeRuleLiterals — kindId stamping', () => {
 	function noMisses(): KindIdStampMisses {
-		return { symbols: new Set(), literals: new Set() };
+		return { symbols: new Set(), literals: new Set(), aliasTargets: new Set() };
 	}
 
-	it('stamps kindId on a plain SYMBOL ref that resolves by name; aliasedFromId stays unset with no aliasedFrom', () => {
+	it('stamps kindId on a plain SYMBOL ref that resolves by name; aliasedToId stays unset with no aliasedTo', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'identifier', id: 5 }];
 		const misses = noMisses();
 		const rule: Rule<'link'> = { type: SYMBOL, name: 'identifier', inline: false };
 		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
 		expect(result.kindId).toBe(5);
-		expect(result.aliasedFromId).toBeUndefined();
+		expect(result.aliasedToId).toBeUndefined();
 		expect(misses.symbols.size).toBe(0);
 	});
 
@@ -1012,34 +1011,31 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(misses.symbols.has('unknown_kind')).toBe(true);
 	});
 
-	it('records the aliasedFrom-identity miss independently when the name identity resolves (per-identity miss recording)', () => {
-		// kindId (this occurrence's own name) and aliasedFromId (the alias
-		// source, when present) resolve independently; a miss on one identity
-		// must not depend on whether the other also misses.
+	it('records an alias-target miss independently when the name identity resolves (per-identity miss recording)', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'occurrence_name', id: 9 }];
 		const misses = noMisses();
 		const rule: Rule<'link'> = {
 			type: SYMBOL,
 			name: 'occurrence_name',
-			aliasedFrom: 'missing_storage_target',
+			aliasedTo: 'missing_parse_target',
 			inline: false
 		};
 		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
 		expect(result.kindId).toBe(9);
-		expect(result.aliasedFromId).toBeUndefined();
-		expect(misses.symbols.has('missing_storage_target')).toBe(true);
+		expect(result.aliasedToId).toBeUndefined();
+		expect(misses.aliasTargets.has('missing_parse_target')).toBe(true);
 		expect(misses.symbols.has('occurrence_name')).toBe(false);
 	});
 
-	it('records the name-identity miss independently when only the aliasedFrom identity resolves', () => {
+	it('records the name-identity miss independently when only the alias target resolves', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'real_target', id: 7 }];
 		const misses = noMisses();
-		const rule: Rule<'link'> = { type: SYMBOL, name: 'occurrence_name', aliasedFrom: 'real_target', inline: false };
+		const rule: Rule<'link'> = { type: SYMBOL, name: 'occurrence_name', aliasedTo: 'real_target', inline: false };
 		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
 		expect(result.kindId).toBeUndefined();
-		expect(result.aliasedFromId).toBe(7);
+		expect(result.aliasedToId).toBe(7);
 		expect(misses.symbols.has('occurrence_name')).toBe(true);
-		expect(misses.symbols.has('real_target')).toBe(false);
+		expect(misses.aliasTargets.has('real_target')).toBe(false);
 	});
 
 	it('resolves a STRING->SYMBOL literal rewrite through the anon-token-first chain, not a same-spelled NAMED kind', () => {
@@ -1099,7 +1095,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('reports an inline-array kind as unstamped (warning) and inline-excluded (info), not vaporized', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
-		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set() };
+		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set());
 		const all = sink.all();
@@ -1118,7 +1114,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('reports a non-inline kind as unstamped (warning) and vaporized (info)', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
-		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set() };
+		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(), new Set());
 		const all = sink.all();
@@ -1136,7 +1132,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('reports an unstamped literal as warning severity too', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
-		const misses: KindIdStampMisses = { symbols: new Set(), literals: new Set(['r#"']) };
+		const misses: KindIdStampMisses = { symbols: new Set(), literals: new Set(['r#"']), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(), new Set());
 		const unstampedLiterals = sink.all().find((d) => d.code === 'kindid-unstamped-literals');
@@ -1148,7 +1144,8 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = {
 			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
-			literals: new Set(['r#"'])
+			literals: new Set(['r#"']),
+			aliasTargets: new Set()
 		};
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set());
@@ -1165,7 +1162,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('emits nothing vaporized when every miss is inline-excluded, but tags it kindid-inline-excluded-symbols instead', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
-		const misses: KindIdStampMisses = { symbols: new Set(['_suite']), literals: new Set() };
+		const misses: KindIdStampMisses = { symbols: new Set(['_suite']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_suite']), new Set());
 		const diagnostics = stampDiagnostics(sink);
@@ -1185,7 +1182,8 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		// 2-way split — see reportVaporizedKinds' doc comment).
 		const misses: KindIdStampMisses = {
 			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
-			literals: new Set(['r#"'])
+			literals: new Set(['r#"']),
+			aliasTargets: new Set()
 		};
 		const sink = new DiagnosticSink();
 		// `comment` is reachable from the grammar root (real evidence it's live,
@@ -1227,7 +1225,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('reports an unclassified symbol as warning severity', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
-		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set() };
+		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(), new Set(['comment']));
 		const unclassified = sink.all().find((d) => d.code === 'kindid-unclassified-symbols');

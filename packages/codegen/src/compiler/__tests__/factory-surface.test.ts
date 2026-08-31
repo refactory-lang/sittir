@@ -3,7 +3,6 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { pruneDeterminedSlots } from '../model/node-map.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { existsSync } from 'node:fs';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
@@ -44,7 +43,6 @@ async function assembleGrammar(grammar: string): Promise<NodeMap> {
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record
 	// before any classification runs.
-	pruneDeterminedSlots(nodeMap);
 	return nodeMap;
 }
 
@@ -104,14 +102,11 @@ describe('child factory surface classification', () => {
 		expect(classifyFactoryShape(nodeMap.nodes.get('mut_pattern')!, nodeMap)).toBe('direct');
 	});
 
-	it('derives the container child slot from the classified sole user slot', () => {
-		// field_pattern's fields are [ref_marker, mutable_specifier, content]
-		// — the container's stamped slot must be the classified payload
-		// (content), not positionally fields[0] (ref_marker, a marker):
-		// stamping the child into `_ref_marker` while the read stores
-		// `_content` breaks every factory round-trip of the kind.
-		const facts = soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap);
-		expect(facts?.slot.name).toBe('content');
+	it('has no sole slot when markers sit beside the payload', () => {
+		// field_pattern's slots are [ref_marker, mutable_specifier, content]:
+		// three slots, so the kind is a branch with a config surface, never a
+		// container that positions one child.
+		expect(soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap)).toBeNull();
 	});
 
 	it('classifies multi-user-slot branches as config', () => {
@@ -137,7 +132,7 @@ describe('factory field metadata', () => {
 		// distinct kinds — not a single keyword-presence toggle, so no
 		// filter removes it). Matches the committed node-model.json5
 		// factoryFields and the generated buildReferenceExpression config.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression')!, nodeMap)).toEqual(['content', 'value']);
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression')!)).toEqual(['content', 'value']);
 	});
 
 	it('keeps enum-valued operator fields in validator field metadata', () => {
@@ -147,7 +142,7 @@ describe('factory field metadata', () => {
 		// buildBinaryExpression takes config.operator via
 		// coerceKindEnumStorage), so it belongs in the metadata. Matches the
 		// committed node-model.json5 factoryFields.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('binary_expression')!, nodeMap)).toEqual([
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('binary_expression')!)).toEqual([
 			'left',
 			'operator',
 			'right'

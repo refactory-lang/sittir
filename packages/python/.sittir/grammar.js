@@ -1254,9 +1254,8 @@ function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) 
   if (isSymbolType(t)) {
     const name = rule.name;
     if (typeof name !== "string") return void 0;
-    const hidden = rule.hidden;
-    if (!hidden) return name;
     const body = rulesBag[name];
+    if (body?.hidden !== true) return name;
     return body ? armLeadingSymbolName(body, rulesBag, seen) ?? name : name;
   }
   if (isSeqType(t)) {
@@ -4809,7 +4808,7 @@ var grammar_sittir_default = grammar(
       // (these leaves render verbatim from wire text, never from the
       // pattern).
       renderAs: (_$) => ({
-        string_start: token.immediate(/[a-zA-Z]*["']+/),
+        string_start: /[a-zA-Z]*["']+/,
         _string_content: token.immediate(/[^"'\\{}\n]+/),
         escape_interpolation: token.immediate(/\{\{|\}\}/),
         string_end: token.immediate(/["']+/)

@@ -157,6 +157,7 @@ describe('post-evaluate invariant', () => {
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
 				'orphanedSyntheticGroups',
+				'visibleInlineNames',
 				// groups: body-pattern entries referenced nowhere after pattern
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.

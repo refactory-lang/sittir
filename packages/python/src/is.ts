@@ -8,19 +8,11 @@ import type {
 	NamespaceMap,
 	CompoundStatement,
 	Expression,
-	ExpressionWithinForInClause,
-	Expressions,
-	FExpression,
 	KeywordIdentifier,
-	LeftHandSide,
-	NamedExpressionLhs,
 	Parameter,
 	Pattern,
 	PrimaryExpression,
-	RightHandSide,
-	SimplePattern,
-	SimpleStatement,
-	Statement
+	SimpleStatement
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -232,20 +224,12 @@ export interface IsGuards {
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number }): v is Statement;
 	simpleStatement(v: { readonly $type: string | number }): v is SimpleStatement;
-	namedExpressionLhs(v: { readonly $type: string | number }): v is NamedExpressionLhs;
-	expressions(v: { readonly $type: string | number }): v is Expressions;
 	compoundStatement(v: { readonly $type: string | number }): v is CompoundStatement;
-	simplePattern(v: { readonly $type: string | number }): v is SimplePattern;
 	parameter(v: { readonly $type: string | number }): v is Parameter;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
-	expressionWithinForInClause(v: { readonly $type: string | number }): v is ExpressionWithinForInClause;
 	expression(v: { readonly $type: string | number }): v is Expression;
 	primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
-	leftHandSide(v: { readonly $type: string | number }): v is LeftHandSide;
-	rightHandSide(v: { readonly $type: string | number }): v is RightHandSide;
-	fExpression(v: { readonly $type: string | number }): v is FExpression;
 	keywordIdentifier(v: { readonly $type: string | number }): v is KeywordIdentifier;
 }
 
@@ -408,20 +392,12 @@ export interface AssertGuards {
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
-	statement(v: { readonly $type: string | number }): asserts v is Statement;
 	simpleStatement(v: { readonly $type: string | number }): asserts v is SimpleStatement;
-	namedExpressionLhs(v: { readonly $type: string | number }): asserts v is NamedExpressionLhs;
-	expressions(v: { readonly $type: string | number }): asserts v is Expressions;
 	compoundStatement(v: { readonly $type: string | number }): asserts v is CompoundStatement;
-	simplePattern(v: { readonly $type: string | number }): asserts v is SimplePattern;
 	parameter(v: { readonly $type: string | number }): asserts v is Parameter;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-	expressionWithinForInClause(v: { readonly $type: string | number }): asserts v is ExpressionWithinForInClause;
 	expression(v: { readonly $type: string | number }): asserts v is Expression;
 	primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
-	leftHandSide(v: { readonly $type: string | number }): asserts v is LeftHandSide;
-	rightHandSide(v: { readonly $type: string | number }): asserts v is RightHandSide;
-	fExpression(v: { readonly $type: string | number }): asserts v is FExpression;
 	keywordIdentifier(v: { readonly $type: string | number }): asserts v is KeywordIdentifier;
 }
 
@@ -433,26 +409,16 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 	return (v) => ids.has(v.$type);
 }
 
-const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simpleStatement_ids = new Set<number>([
 	114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153
 ]);
-const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
-const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
-const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 255, 254, 166, 227, 226, 74, 75, 76, 271, 171, 162, 262
-]);
-const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
+const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 235, 234, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([194]);
 const _supertype_expression_ids = new Set<number>([192, 186, 187, 193, 225, 123, 182]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	233, 188, 1, 227, 226, 69, 70, 74, 75, 76, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
+	233, 188, 1, 227, 226, 69, 70, 74, 75, 76, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 64, 180
 ]);
-const _supertype_leftHandSide_ids = new Set<number>([197]);
-const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
-const _supertype_fExpression_ids = new Set<number>([161, 197, 199]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 
 export const is = {
@@ -593,20 +559,12 @@ export const is = {
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
-	statement: _sg(_supertype_statement_ids),
 	simpleStatement: _sg(_supertype_simpleStatement_ids),
-	namedExpressionLhs: _sg(_supertype_namedExpressionLhs_ids),
-	expressions: _sg(_supertype_expressions_ids),
 	compoundStatement: _sg(_supertype_compoundStatement_ids),
-	simplePattern: _sg(_supertype_simplePattern_ids),
 	parameter: _sg(_supertype_parameter_ids),
 	pattern: _sg(_supertype_pattern_ids),
-	expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
-	leftHandSide: _sg(_supertype_leftHandSide_ids),
-	rightHandSide: _sg(_supertype_rightHandSide_ids),
-	fExpression: _sg(_supertype_fExpression_ids),
 	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids)
 } as unknown as IsGuards;
 
@@ -770,20 +728,12 @@ export const assert = {
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
-	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),
-	namedExpressionLhs: _makeAssert('namedExpressionLhs', is.namedExpressionLhs as _AnyGuard),
-	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
 	compoundStatement: _makeAssert('compoundStatement', is.compoundStatement as _AnyGuard),
-	simplePattern: _makeAssert('simplePattern', is.simplePattern as _AnyGuard),
 	parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
-	expressionWithinForInClause: _makeAssert('expressionWithinForInClause', is.expressionWithinForInClause as _AnyGuard),
 	expression: _makeAssert('expression', is.expression as _AnyGuard),
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
-	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
-	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
-	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
 	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard)
 } as unknown as AssertGuards;
 

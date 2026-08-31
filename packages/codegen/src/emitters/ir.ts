@@ -1,12 +1,19 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
+import type { AssembledNode } from '../compiler/model/node-map.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledList,
+	AssembledSupertype,
+	AssembledKeyword,
+	AssembledPattern,
+	AssembledEnum,
+	AssembledToken
+} from '../compiler/model/node-map.ts';
 import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import type { NamespacedConstructor } from './namespaced-constructors.ts';
-import { namespaceOf as factoryNamespaceOf } from './factories.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -26,7 +33,6 @@ export function emitIr(config: EmitIrConfig): string {
 	const refineInfos = collectRefineKindInfos(nodeMap);
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
-	const namespaceOf = (node: AssembledNode) => factoryNamespaceOf(node, nodeMap, kindEntries).entries;
 	const hoisted = new Map<string, string>();
 	const hoistedLines: string[] = [];
 	const bundleRef = (node: AssembledNode): string => {
@@ -35,7 +41,7 @@ export function emitIr(config: EmitIrConfig): string {
 		const name = `_b$${toCamel(node.kind.replace(/^_+/, ''))}`;
 		hoisted.set(node.kind, name);
 		hoistedLines.push(
-			...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind), namespaceOf(node))),
+			...hoistedBundleLines(name, bundleParts(node, refineByKind.get(node.kind))),
 			''
 		);
 		return name;
@@ -77,8 +83,8 @@ export function emitIr(config: EmitIrConfig): string {
 	}
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
-		const sup = node as AssembledSupertype;
+		if (!(node instanceof AssembledSupertype)) continue;
+		const sup = node;
 		const groupName = groupNameFor(kind);
 		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
 
@@ -91,18 +97,23 @@ export function emitIr(config: EmitIrConfig): string {
 			if (!sub) continue;
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
-			if (sub.modelType === 'supertype' || sub.modelType === 'group' || sub.modelType === 'token') continue;
+			if (
+				sub instanceof AssembledSupertype ||
+				(sub instanceof AbstractAssembledCompound && sub.hoisted) ||
+				sub instanceof AssembledToken
+			)
+				continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
 
-			if (sub.modelType === 'branch' || sub.modelType === 'separatedList') {
+			if (sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) {
 				if (!sub.fromFunctionName) continue;
 				const ref = bundleRef(sub);
 				memberEntries.push(`  ${memberKey}: ${ref},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof ${ref};`);
-			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
+			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern || sub instanceof AssembledEnum) {
 				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${sub.rawFactoryName};`);
 			}
@@ -129,23 +140,19 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
-		if (
-			node.modelType !== 'branch' &&
-			node.modelType !== 'separatedList' &&
-			node.modelType !== 'keyword' &&
-			node.modelType !== 'pattern' &&
-			node.modelType !== 'enum'
-		) {
+		const isStructuralFactory = (node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList;
+		const isLeafFactoryNode = node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
+		if (!isStructuralFactory && !isLeafFactoryNode) {
 			continue;
 		}
-		if ((node.modelType === 'branch' || node.modelType === 'separatedList') && !node.fromFunctionName) continue;
+		if (isStructuralFactory && !node.fromFunctionName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		flatKeys.add(node.irKey);
 	}
 	const shortAliasBundles = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
-		const sup = node as AssembledSupertype;
+		if (!(node instanceof AssembledSupertype)) continue;
+		const sup = node;
 		for (const subKind of sup.subtypeNames) {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
@@ -154,10 +161,10 @@ export function emitIr(config: EmitIrConfig): string {
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
 			let bundle: string | undefined;
-			if (sub.modelType === 'branch' || sub.modelType === 'separatedList') {
+			if ((sub instanceof AbstractAssembledCompound && !sub.hoisted) || sub instanceof AssembledList) {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleRef(sub);
-			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
+			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern || sub instanceof AssembledEnum) {
 				bundle = `F.${sub.rawFactoryName}`;
 			} else {
 				continue;
@@ -175,7 +182,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
-		if (node.modelType !== 'branch' && node.modelType !== 'separatedList') continue;
+		if (!((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList)) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const ref = bundleRef(node);
 		irValueLines.push(`  ${node.irKey}: ${ref},`);
@@ -186,7 +193,7 @@ export function emitIr(config: EmitIrConfig): string {
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') || node.factoryInline) continue;
-		if (node.modelType !== 'keyword') continue;
+		if (!(node instanceof AssembledKeyword)) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
@@ -199,7 +206,7 @@ export function emitIr(config: EmitIrConfig): string {
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') || node.factoryInline) continue;
-		if (node.modelType !== 'pattern' && node.modelType !== 'enum') continue;
+		if (!(node instanceof AssembledPattern) && !(node instanceof AssembledEnum)) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
@@ -243,10 +250,9 @@ interface BundleParts {
 
 function bundleParts(
 	node: AssembledNode,
-	refineInfo: RefineKindInfo | undefined,
-	namespace: readonly NamespacedConstructor[]
+	refineInfo: RefineKindInfo | undefined
 ): BundleParts {
-	if (node.modelType === 'branch' || node.modelType === 'separatedList') {
+	if ((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList) {
 		if (!node.rawFactoryName) {
 			return { base: `FR.${node.fromFunctionName}`, props: [] };
 		}
@@ -257,16 +263,6 @@ function bundleParts(
 			const keys = [camelCase(form.name)];
 			if (camelCase(form.name) !== form.name) keys.push(form.name);
 			for (const key of keys) props.push({ key: JSON.stringify(key), expr: `F.${factoryName}` });
-		}
-		const taken = new Set(props.map((p) => JSON.parse(p.key.startsWith('"') ? p.key : JSON.stringify(p.key))));
-		for (const entry of namespace) {
-			if (taken.has(entry.name)) {
-				console.warn(
-					`[codegen] '${node.kind}': namespaced constructor '${entry.name}' clashes with an ir bundle key — reachable only as F.${baseFactoryName}.${entry.name}`
-				);
-				continue;
-			}
-			props.push({ key: JSON.stringify(entry.name), expr: `FR.${node.fromFunctionName}.${entry.name}` });
 		}
 		return { base: `FR.${node.fromFunctionName}`, props };
 	}
@@ -359,7 +355,7 @@ function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeM
 }
 
 function isLeafFactory(node: AssembledNode): boolean {
-	return node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword';
+	return node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword;
 }
 
 function returnTypeExpr(node: AssembledNode): string {
@@ -392,7 +388,7 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
-	const leafNode = nodes.find((n) => isLeafFactory(n) && n.modelType !== 'keyword');
+	const leafNode = nodes.find((n) => isLeafFactory(n) && !(n instanceof AssembledKeyword));
 	if (leafNode) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
 		fns.push(`    return F.${leafNode.rawFactoryName}(value ? 'true' : 'false');`);

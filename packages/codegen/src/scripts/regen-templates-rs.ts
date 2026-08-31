@@ -40,9 +40,9 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(AssembleCtx.from(normalized));
-	hydrateSlotRefs(nodeMap);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	hydrateSlotRefs(nodeMap);
 
 	const renderModule = runRenderModuleEmitter({ grammar, nodeMap, generatedIdTables });
 	const emit = renderModule.emit;

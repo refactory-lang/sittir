@@ -149,7 +149,7 @@ export function countContentSlots(rule: SimplifiedRule): number {
 
 function isContentSlot(rule: SimplifiedRule): boolean {
 	if (!isNonterminalRuleType(rule)) return false;
-	if (rule.fieldName !== undefined) return false;
+	if (rule.fieldName !== undefined || rule.inlinedFrom !== undefined) return false;
 	const { named, hasUnnamed } = slotKindProfile(rule);
 	return !(named.size === 1 && !hasUnnamed);
 }

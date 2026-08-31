@@ -31,7 +31,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, ChoiceRule, PhaseName, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, PhaseName, RenderRule, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
@@ -512,6 +512,10 @@ function resolveRuleLiteral(body: unknown): string | null {
 	return null;
 }
 
+export function isParserHiddenName(name: string): boolean {
+	return name.startsWith('_');
+}
+
 export function selfReferentialFoldOf(
 	name: string,
 	rule: Rule<'link'>
@@ -524,8 +528,8 @@ export function selfReferentialFoldOf(
 	const isSelfRef = (content: Rule<'link'>): boolean =>
 		content.type === SYMBOL &&
 		content.name === name &&
-		(content as { hidden?: boolean }).hidden === true &&
-		(content as { aliasedFrom?: string }).aliasedFrom === undefined;
+		isParserHiddenName(content.name) &&
+		(content as { aliasedTo?: string }).aliasedTo === undefined;
 	for (const arm of rule.members) {
 		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
 		const m0 = arm.members[0];
@@ -811,9 +815,8 @@ export function armLeadingSymbolName<P extends PhaseName>(
 	if (isSymbolType(t)) {
 		const name = (rule as { name?: string }).name;
 		if (typeof name !== 'string') return undefined;
-		const hidden = (rule as { hidden?: boolean }).hidden;
-		if (!hidden) return name;
 		const body = rulesBag[name];
+		if (body?.hidden !== true) return name;
 		return body ? (armLeadingSymbolName(body, rulesBag, seen) ?? name) : name;
 	}
 	if (isSeqType(t)) {
@@ -853,6 +856,15 @@ export function isHiddenKind(name: string, inlineList?: readonly string[]): bool
 	return false;
 }
 
+export function isNonInlinableLeafShape(rule: AnyRule): boolean {
+	if (isEnumChoiceRule(rule)) return true;
+	return rule.type === SUPERTYPE || rule.type === PATTERN || rule.type === STRING;
+}
+
+export function isHiddenRule(name: string, rules: Readonly<Record<string, AnyRule>>): boolean {
+	return rules[name]?.hidden === true;
+}
+
 export function isComplexBody(rule: Rule<'evaluate'>): boolean {
 	switch (rule.type) {
 		case SEQ:
@@ -877,8 +889,8 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
 				acc.add(r.content.name);
 			}
-			if (r.type === SYMBOL && (r as { aliasedFrom?: string }).aliasedFrom?.startsWith('_')) {
-				acc.add((r as { aliasedFrom?: string }).aliasedFrom!);
+			if (r.type === SYMBOL && (r as { aliasedTo?: string }).aliasedTo !== undefined && r.name.startsWith('_')) {
+				acc.add(r.name);
 			}
 			return acc;
 		});
@@ -931,4 +943,55 @@ export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b
 		return JSON.stringify(x) === JSON.stringify(y);
 	};
 	return same(a, b) && literalDeltas === 1;
+}
+
+export interface FixedLiteralCtx {
+	joiner: string;
+	deterministic: boolean;
+}
+
+export function collectFixedLiteral(
+	rule: RenderRule,
+	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
+): string | undefined {
+	if (rule.nonterminal || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') return undefined;
+	if (rule.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
+	const ctx = rule.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
+	switch (rule.type) {
+		case STRING:
+			return rule.value || undefined;
+		case CHOICE: {
+			if (rule.members.length === 0) return undefined;
+			let found: string | undefined;
+			for (const m of rule.members) {
+				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
+				if (isBlank) {
+					if (ctx.deterministic) return undefined;
+					continue;
+				}
+				const v = collectFixedLiteral(m, ctx);
+				if (v === undefined) return undefined;
+				if (found === undefined) found = v;
+				else if (found !== v) return undefined;
+			}
+			return found;
+		}
+		case SEQ: {
+			if (rule.members.length === 0) return undefined;
+			const nonBlanks = rule.members.filter(
+				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
+			);
+			const [only] = nonBlanks;
+			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
+			const parts: string[] = [];
+			for (const m of nonBlanks) {
+				const v = collectFixedLiteral(m, { ...ctx, deterministic: true });
+				if (v === undefined) return undefined;
+				parts.push(v);
+			}
+			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
+		}
+		default:
+			return undefined;
+	}
 }

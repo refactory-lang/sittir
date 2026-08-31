@@ -158,7 +158,7 @@ export function inlineRefs<R extends AnyRule>(
 	const recurse = (r: AnyRule, v: ReadonlySet<string>): AnyRule => inlineRefs(r, ctx, v);
 	switch (rule.type) {
 		case SYMBOL: {
-			if (inlineKinds.has(rule.name)) {
+			if (inlineKinds.has(rule.name) && rule.aliasedTo === undefined) {
 				if (visited.has(rule.name)) return rule;
 				const target = rules[rule.name];
 				if (!target) return rule;
@@ -228,7 +228,7 @@ function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
 		case SYMBOL:
-			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
+			return a.name === (b as typeof a).name && a.aliasedTo === (b as typeof a).aliasedTo;
 		case STRING:
 		case PATTERN:
 			return a.value === (b as typeof a).value;

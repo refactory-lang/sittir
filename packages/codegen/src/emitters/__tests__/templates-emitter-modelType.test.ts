@@ -1,30 +1,19 @@
 /**
- * Per-modelType emit tests for the template emitter
- * (Task 2.4 of PR1 — rule-attributes-and-template-emitter refactor;
- *  updated Task 3.B3 of PR2 — authority flip + renderRule consumption).
+ * Per-modelType emit tests for the template emitter.
  *
- * Each emit function (branch / group) is exercised with a
- * minimal in-memory fixture:
- *
- * - Branch and Group: mocks carry `renderRule` (RenderRule, wrapper-free)
- *   since emitBranchTemplate / emitGroupTemplate now consume renderRule.
- *   Fixtures use leaf-attribute symbols (fieldName / multiplicity) instead
- *   of FieldRule / OptionalRule / RepeatRule wrappers.
- *
- * `multi` nodes never reach the emitter (classifyTemplateEmission always
- * skips them), so there is no emit function to exercise for that modelType.
+ * Each fixture is exercised through `emitBranchTemplate`, which consumes
+ * `renderRule` (RenderRule, wrapper-free) for both plain branches and
+ * link-minted compounds (the former "group" shape, now `hoisted: true`
+ * on the same compound classes). Fixtures use leaf-attribute symbols
+ * (fieldName / multiplicity) instead of FieldRule / OptionalRule / RepeatRule
+ * wrappers.
  */
 
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { ChoiceRule, Rule, SeqRule, StringRule, SymbolRule } from '../../types/rule.ts';
-import type {
-	AssembledBranch,
-	AssembledGroup,
-	AssembledNonterminal,
-	NodeOrTerminal
-} from '../../compiler/model/node-map.ts';
-import { emitBranchTemplate, emitGroupTemplate, type EmitCtx } from '../templates.ts';
+import type { AssembledBranch, AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
+import { emitBranchTemplate, type EmitCtx } from '../templates.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	return {
@@ -69,16 +58,15 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 	} as AssembledNonterminal;
 }
 
-// Minimal mock factories.
-//
-// Branch / Group: emitBranchTemplate / emitGroupTemplate consume `renderRule`
-// (PR2 Task 3.B3). Mocks supply `renderRule` (RenderRule, wrapper-free shape).
+// Minimal mock factories. `emitBranchTemplate` consumes `renderRule`
+// (RenderRule, wrapper-free shape) for both plain branches and link-minted
+// compounds; mocks supply it directly.
 function mockBranch(renderRule: Rule): AssembledBranch {
 	return { modelType: 'branch', renderRule } as unknown as AssembledBranch;
 }
 
-function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledGroup {
-	return { modelType: 'group', renderRule, name, kind } as unknown as AssembledGroup;
+function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledBranch {
+	return { modelType: 'branch', hoisted: true, renderRule, name, kind } as unknown as AssembledBranch;
 }
 
 describe('emitBranchTemplate', () => {
@@ -142,7 +130,7 @@ describe('emitBranchTemplate', () => {
 
 describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 	it("references the transport struct's own `.separator` field instead of a hardcoded literal when the separator is nonterminal", () => {
-		// Mirrors the real shape AssembledSeparatedList.renderRule carries for
+		// Mirrors the real shape AssembledList.renderRule carries for
 		// a rule like `object_type_content: seq(optional(choice(',', ';')),
 		// seq(member, repeat(seq(choice(',', ';'), member))), optional(choice(',', ';')))`
 		// after link.ts's liftCommaSep + wrapper-deletion: a CHOICE-of-members
@@ -205,10 +193,10 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 	});
 });
 
-describe('emitGroupTemplate', () => {
+describe('emitBranchTemplate — link-minted (formerly group) node', () => {
 	it('emits a single literal for a string-only rule', () => {
 		const rule: StringRule = { type: STRING, value: 'pub' };
-		expect(emitGroupTemplate(mockGroup(rule), makeCtx())).toBe('pub');
+		expect(emitBranchTemplate(mockGroup(rule), makeCtx())).toBe('pub');
 	});
 
 	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
@@ -226,6 +214,6 @@ describe('emitGroupTemplate', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitGroupTemplate(mockGroup(rule), ctx)).toBe('mod {{ name }}');
+		expect(emitBranchTemplate(mockGroup(rule), ctx)).toBe('mod {{ name }}');
 	});
 });

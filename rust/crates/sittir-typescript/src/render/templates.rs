@@ -219,6 +219,7 @@ pub struct ExportStatementDefaultDefaultKwTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmTemplate<'a> {
+    pub automatic_semicolon: SingleNonterminalView<'a>,
     pub content: SingleNonterminalView<'a>,
 }
 
@@ -238,6 +239,7 @@ pub struct ExportStatementDefaultStarFromTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_value.jinja", escape = "none")]
 pub struct ExportStatementDefaultValueTemplate<'a> {
+    pub automatic_semicolon: SingleNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }
 
@@ -306,8 +308,8 @@ pub struct FormalParametersElementsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_default_import.jinja", escape = "none")]
 pub struct ImportClauseDefaultImportTemplate<'a> {
+    pub identifier: SingleNonterminalView<'a>,
     pub import_clause_group: OptionalNonterminalView<'a>,
-    pub import_identifier: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -341,21 +343,6 @@ pub struct ImportStatementArmTemplate<'a> {
 pub struct IndexSignatureColonTemplate<'a> {
     pub index_type: SingleNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_jsx_opening_element_content.jinja", escape = "none")]
-pub struct JsxOpeningElementContentTemplate<'a> {
-    pub attribute: ListNonterminalView<'a>,
-    pub jsx_start_opening_element_arm: OptionalNonterminalView<'a>,
-    pub name: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_jsx_start_opening_element_arm.jinja", escape = "none")]
-pub struct JsxStartOpeningElementArmTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_arguments: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -827,15 +814,6 @@ pub struct ExtendsTypeClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "field_definition.jinja", escape = "none")]
-pub struct FieldDefinitionTemplate<'a> {
-    pub decorator: ListNonterminalView<'a>,
-    pub property: SingleNonterminalView<'a>,
-    pub static_marker: OptionalNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "finally_clause.jinja", escape = "none")]
 pub struct FinallyClauseTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
@@ -1052,52 +1030,6 @@ pub struct InternalModuleTemplate<'a> {
 pub struct IntersectionTypeTemplate<'a> {
     pub left: OptionalNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_attribute.jinja", escape = "none")]
-pub struct JsxAttributeTemplate<'a> {
-    pub jsx_attribute_name: SingleNonterminalView<'a>,
-    pub jsx_attribute_value: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_closing_element.jinja", escape = "none")]
-pub struct JsxClosingElementTemplate<'a> {
-    pub name: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_element.jinja", escape = "none")]
-pub struct JsxElementTemplate<'a> {
-    pub close_tag: SingleNonterminalView<'a>,
-    pub jsx_childs: ListNonterminalView<'a>,
-    pub open_tag: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_expression.jinja", escape = "none")]
-pub struct JsxExpressionTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_namespace_name.jinja", escape = "none")]
-pub struct JsxNamespaceNameTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub namespace: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_opening_element.jinja", escape = "none")]
-pub struct JsxOpeningElementTemplate<'a> {
-    pub jsx_opening_element_content: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "jsx_self_closing_element.jinja", escape = "none")]
-pub struct JsxSelfClosingElementTemplate<'a> {
-    pub jsx_opening_element_content: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -13,7 +13,8 @@
  *                         redundancies surface as nested same-name FIELDs.
  *   - `link`            — after `link()` (symbol-reference inference,
  *                         promoted rules).
- *   - `normalize`       — after `normalizeGrammar()` (rule canonicalisation).
+ *   - `normalize`       — `normalized.normalizedRules[kind]`, the render view
+ *                         (wrappers flattened to attributes).
  *   - `simplify`        — `normalized.rules[kind]` (SimplifiedGrammar's
  *                         phase product), the template-walker's view of
  *                         the same rule with decorative wrappers stripped.
@@ -87,14 +88,14 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 
 	const { normalizeGrammar } = await load('normalize');
 	const normalized = normalizeGrammar(linked);
-	stages.normalize = normalized.linkRules[kind] ?? null;
+	stages.normalize = normalized.normalizedRules[kind] ?? null;
 	stages.simplify = normalized.rules?.[kind] ?? null;
 
 	const { assemble, AssembleCtx, hydrateSlotRefs } = await load('assemble');
-	const nodeMap = assemble(AssembleCtx.from(normalized));
+	const { loadGeneratedIdTables } = await load('generatedMetadata');
+	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(opts.grammar)));
 	const node = nodeMap.nodes.get(kind) ?? null;
 	stages.assemble = node ? summarizeAssembled(node) : null;
-	const { loadGeneratedIdTables } = await load('generatedMetadata');
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	if (!opts.skipEmit) {
