@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 368,
+  "nodeCount": 409,
   "word": "identifier",
   "supertypes": [
     "_lhs_expression",
@@ -769,6 +769,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "operator": {
         "unnamed": false,
         "slotCount": 1,
@@ -780,27 +787,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "for_header_lhs": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "for_header_var_kind": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "for_header_let_const_kind": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -4167,12 +4153,12 @@
     },
     {
       "kind": "_ambient_declaration_global",
-      "modelType": "group",
+      "modelType": "envelope",
       "typeName": "AmbientDeclarationGlobal",
       "factoryName": "_ambientDeclarationGlobal",
       "irKey": "ambientDeclarationGlobal",
       "hidden": false,
-      "name": "_ambient_declaration_global",
+      "hoisted": true,
       "fields": [
         {
           "name": "body",
@@ -4199,6 +4185,7 @@
         }
       ],
       "children": [],
+      "name": "_ambient_declaration_global",
       "factoryShape": "forwarded",
       "forwardsTo": "statement_block",
       "factoryFields": [
@@ -4207,12 +4194,12 @@
     },
     {
       "kind": "_ambient_declaration_module",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "AmbientDeclarationModule",
       "factoryName": "_ambientDeclarationModule",
       "irKey": "ambientDeclarationModule",
       "hidden": false,
-      "name": "_ambient_declaration_module",
+      "hoisted": true,
       "fields": [
         {
           "name": "name",
@@ -4291,20 +4278,22 @@
         }
       ],
       "children": [],
+      "name": "_ambient_declaration_module",
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "type"
+        "type",
+        "semicolon"
       ]
     },
     {
       "kind": "_arrow_function__call_signature",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ArrowFunctionUCallSignature",
       "factoryName": "_arrowFunctionUCallSignature",
       "irKey": "arrowFunctionUCallSignature",
       "hidden": false,
-      "name": "_arrow_function__call_signature",
+      "hoisted": true,
       "fields": [
         {
           "name": "type_parameters",
@@ -4393,6 +4382,7 @@
         }
       ],
       "children": [],
+      "name": "_arrow_function__call_signature",
       "factoryShape": "config",
       "factoryFields": [
         "type_parameters",
@@ -4402,11 +4392,12 @@
     },
     {
       "kind": "_arrow_function_parameter",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ArrowFunctionParameter",
       "factoryName": "arrowFunctionParameter",
       "irKey": "arrowFunctionParameter",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "parameter",
@@ -4444,22 +4435,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "parameter"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "reservedIdentifier",
-          "via": "form",
-          "slot": "parameter",
-          "childKind": "_reserved_identifier",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "parameter",
-          "childKind": "identifier",
-          "path": []
-        }
       ]
     },
     {
@@ -4496,16 +4471,17 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
+      "word": false,
       "text": "\n"
     },
     {
       "kind": "_binary_expression_arm",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "BinaryExpressionArm",
       "factoryName": "_binaryExpressionArm",
       "irKey": "binaryExpressionArm",
       "hidden": false,
-      "name": "_binary_expression_arm",
+      "hoisted": true,
       "fields": [
         {
           "name": "left",
@@ -4563,27 +4539,21 @@
         }
       ],
       "children": [],
+      "name": "_binary_expression_arm",
       "factoryShape": "config",
       "factoryFields": [
         "left",
         "right"
-      ],
-      "determinedSlots": [
-        {
-          "name": "operator",
-          "storageKey": "_operator",
-          "text": "in"
-        }
       ]
     },
     {
       "kind": "_call_expression_call",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "CallExpressionCall",
       "factoryName": "_callExpressionCall",
       "irKey": "callExpressionCall",
       "hidden": false,
-      "name": "_call_expression_call",
+      "hoisted": true,
       "fields": [
         {
           "name": "function",
@@ -4664,6 +4634,7 @@
         }
       ],
       "children": [],
+      "name": "_call_expression_call",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -4673,12 +4644,12 @@
     },
     {
       "kind": "_call_expression_member",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "CallExpressionMember",
       "factoryName": "_callExpressionMember",
       "irKey": "callExpressionMember",
       "hidden": false,
-      "name": "_call_expression_member",
+      "hoisted": true,
       "fields": [
         {
           "name": "function",
@@ -4751,6 +4722,7 @@
         }
       ],
       "children": [],
+      "name": "_call_expression_member",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -4760,12 +4732,12 @@
     },
     {
       "kind": "_call_expression_template_call",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "CallExpressionTemplateCall",
       "factoryName": "_callExpressionTemplateCall",
       "irKey": "callExpressionTemplateCall",
       "hidden": false,
-      "name": "_call_expression_template_call",
+      "hoisted": true,
       "fields": [
         {
           "name": "function",
@@ -4823,6 +4795,7 @@
         }
       ],
       "children": [],
+      "name": "_call_expression_template_call",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -4831,12 +4804,12 @@
     },
     {
       "kind": "_catch_clause_group",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "CatchClauseGroup",
       "factoryName": "_catchClauseGroup",
       "irKey": "catchClauseGroup",
       "hidden": false,
-      "name": "_catch_clause_group",
+      "hoisted": true,
       "fields": [
         {
           "name": "parameter",
@@ -4902,6 +4875,7 @@
         }
       ],
       "children": [],
+      "name": "_catch_clause_group",
       "factoryShape": "config",
       "factoryFields": [
         "parameter",
@@ -4910,12 +4884,12 @@
     },
     {
       "kind": "_class_body_member",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ClassBodyMember",
       "factoryName": "_classBodyMember",
       "irKey": "classBodyMember",
       "hidden": false,
-      "name": "_class_body_member",
+      "hoisted": true,
       "fields": [
         {
           "name": "content",
@@ -5001,85 +4975,21 @@
         }
       ],
       "children": [],
+      "name": "_class_body_member",
       "factoryShape": "config",
       "factoryFields": [
-        "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "abstractMethodSignature",
-          "via": "form",
-          "slot": "content",
-          "childKind": "abstract_method_signature",
-          "path": []
-        },
-        {
-          "name": "indexSignature",
-          "via": "form",
-          "slot": "content",
-          "childKind": "index_signature",
-          "path": []
-        },
-        {
-          "name": "dash",
-          "via": "form",
-          "slot": "content",
-          "childKind": "index_signature",
-          "path": [
-            "dash"
-          ]
-        },
-        {
-          "name": "plus",
-          "via": "form",
-          "slot": "content",
-          "childKind": "index_signature",
-          "path": [
-            "plus"
-          ]
-        },
-        {
-          "name": "methodSignature",
-          "via": "form",
-          "slot": "content",
-          "childKind": "method_signature",
-          "path": []
-        },
-        {
-          "name": "publicFieldDefinition",
-          "via": "form",
-          "slot": "content",
-          "childKind": "public_field_definition",
-          "path": []
-        },
-        {
-          "name": "qmark",
-          "via": "form",
-          "slot": "content",
-          "childKind": "public_field_definition",
-          "path": [
-            "qmark"
-          ]
-        },
-        {
-          "name": "bang",
-          "via": "form",
-          "slot": "content",
-          "childKind": "public_field_definition",
-          "path": [
-            "bang"
-          ]
-        }
+        "content",
+        "terminator"
       ]
     },
     {
       "kind": "_class_body_method",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ClassBodyMethod",
       "factoryName": "_classBodyMethod",
       "irKey": "classBodyMethod",
       "hidden": false,
-      "name": "_class_body_method",
+      "hoisted": true,
       "fields": [
         {
           "name": "decorator",
@@ -5158,20 +5068,22 @@
         }
       ],
       "children": [],
+      "name": "_class_body_method",
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "method_definition"
+        "method_definition",
+        "semicolon"
       ]
     },
     {
       "kind": "_class_body_method_sig",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ClassBodyMethodSig",
       "factoryName": "_classBodyMethodSig",
       "irKey": "classBodyMethodSig",
       "hidden": false,
-      "name": "_class_body_method_sig",
+      "hoisted": true,
       "fields": [
         {
           "name": "method_signature",
@@ -5227,48 +5139,21 @@
         }
       ],
       "children": [],
+      "name": "_class_body_method_sig",
       "factoryShape": "config",
       "factoryFields": [
-        "method_signature"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "get",
-          "via": "form",
-          "slot": "method_signature",
-          "childKind": "method_signature",
-          "path": [
-            "get"
-          ]
-        },
-        {
-          "name": "set",
-          "via": "form",
-          "slot": "method_signature",
-          "childKind": "method_signature",
-          "path": [
-            "set"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "form",
-          "slot": "method_signature",
-          "childKind": "method_signature",
-          "path": [
-            "star"
-          ]
-        }
+        "method_signature",
+        "terminator"
       ]
     },
     {
       "kind": "_class_heritage_extends_clause",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ClassHeritageExtendsClause",
       "factoryName": "_classHeritageExtendsClause",
       "irKey": "classHeritageExtendsClause",
       "hidden": false,
-      "name": "_class_heritage_extends_clause",
+      "hoisted": true,
       "fields": [
         {
           "name": "extends_clause",
@@ -5318,6 +5203,7 @@
         }
       ],
       "children": [],
+      "name": "_class_heritage_extends_clause",
       "factoryShape": "config",
       "factoryFields": [
         "extends_clause",
@@ -5326,7 +5212,7 @@
     },
     {
       "kind": "_enum_body_elements",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "EnumBodyElements",
       "factoryName": "enumBodyElements",
       "irKey": "enumBodyElements",
@@ -5350,7 +5236,7 @@
     },
     {
       "kind": "_export_specifiers",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "ExportSpecifiers",
       "factoryName": "exportSpecifiers",
       "irKey": "exportSpecifiers",
@@ -5369,11 +5255,12 @@
     },
     {
       "kind": "_export_statement_default",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ExportStatementDefault",
       "factoryName": "exportStatementDefault",
       "irKey": "exportStatementDefault",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -5411,86 +5298,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "fromArm",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": []
-        },
-        {
-          "name": "starFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": [
-            "exportStatementDefaultStarFrom"
-          ]
-        },
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": [
-            "stringDouble"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": [
-            "stringSingle"
-          ]
-        },
-        {
-          "name": "nsFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": [
-            "exportStatementDefaultNsFrom"
-          ]
-        },
-        {
-          "name": "clauseFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": [
-            "exportStatementDefaultClauseFrom"
-          ]
-        },
-        {
-          "name": "exportClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_from_arm",
-          "path": [
-            "exportClause"
-          ]
-        },
-        {
-          "name": "declArm",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_decl_arm",
-          "path": []
-        }
       ]
     },
     {
       "kind": "_export_statement_default_clause_from",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementDefaultClauseFrom",
       "factoryName": "_exportStatementDefaultClauseFrom",
       "irKey": "exportStatementDefaultClauseFrom",
       "hidden": false,
-      "name": "_export_statement_default_clause_from",
+      "hoisted": true,
       "fields": [
         {
           "name": "export_clause",
@@ -5540,6 +5357,7 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_default_clause_from",
       "factoryShape": "config",
       "factoryFields": [
         "export_clause",
@@ -5548,12 +5366,12 @@
     },
     {
       "kind": "_export_statement_default_decl_arm",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementDefaultDeclArm",
       "factoryName": "_exportStatementDefaultDeclArm",
       "irKey": "exportStatementDefaultDeclArm",
       "hidden": false,
-      "name": "_export_statement_default_decl_arm",
+      "hoisted": true,
       "fields": [
         {
           "name": "decorator",
@@ -5611,6 +5429,7 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_default_decl_arm",
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
@@ -5619,12 +5438,12 @@
     },
     {
       "kind": "_export_statement_default_default_kw",
-      "modelType": "group",
+      "modelType": "polymorph",
       "typeName": "ExportStatementDefaultDefaultKw",
       "factoryName": "_exportStatementDefaultDefaultKw",
       "irKey": "exportStatementDefaultDefaultKw",
       "hidden": false,
-      "name": "_export_statement_default_default_kw",
+      "hoisted": true,
       "fields": [
         {
           "name": "content",
@@ -5659,18 +5478,10 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_default_default_kw",
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "exportStatementDefaultValue",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_value",
-          "path": []
-        }
       ]
     },
     {
@@ -5680,6 +5491,7 @@
       "factoryName": "exportStatementDefaultFromArm",
       "irKey": "exportStatementDefaultFromArm",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -5761,65 +5573,18 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "exportStatementDefaultStarFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_star_from",
-          "path": []
-        },
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_star_from",
-          "path": [
-            "stringDouble"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_star_from",
-          "path": [
-            "stringSingle"
-          ]
-        },
-        {
-          "name": "exportStatementDefaultNsFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_ns_from",
-          "path": []
-        },
-        {
-          "name": "exportStatementDefaultClauseFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default_clause_from",
-          "path": []
-        },
-        {
-          "name": "exportClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "export_clause",
-          "path": []
-        }
+        "content",
+        "automatic_semicolon"
       ]
     },
     {
       "kind": "_export_statement_default_ns_from",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementDefaultNsFrom",
       "factoryName": "_exportStatementDefaultNsFrom",
       "irKey": "exportStatementDefaultNsFrom",
       "hidden": false,
-      "name": "_export_statement_default_ns_from",
+      "hoisted": true,
       "fields": [
         {
           "name": "namespace_export",
@@ -5869,6 +5634,7 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_default_ns_from",
       "factoryShape": "config",
       "factoryFields": [
         "namespace_export",
@@ -5877,12 +5643,12 @@
     },
     {
       "kind": "_export_statement_default_star_from",
-      "modelType": "group",
+      "modelType": "envelope",
       "typeName": "ExportStatementDefaultStarFrom",
       "factoryName": "_exportStatementDefaultStarFrom",
       "irKey": "exportStatementDefaultStarFrom",
       "hidden": false,
-      "name": "_export_statement_default_star_from",
+      "hoisted": true,
       "fields": [
         {
           "name": "source",
@@ -5909,40 +5675,21 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_default_star_from",
       "factoryShape": "forwarded",
       "forwardsTo": "string",
       "factoryFields": [
         "source"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "source",
-          "childKind": "string",
-          "path": [
-            "double"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "source",
-          "childKind": "string",
-          "path": [
-            "single"
-          ]
-        }
       ]
     },
     {
       "kind": "_export_statement_default_value",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementDefaultValue",
       "factoryName": "_exportStatementDefaultValue",
       "irKey": "exportStatementDefaultValue",
       "hidden": false,
-      "name": "_export_statement_default_value",
+      "hoisted": true,
       "fields": [
         {
           "name": "value",
@@ -5998,19 +5745,21 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_default_value",
       "factoryShape": "config",
       "factoryFields": [
-        "value"
+        "value",
+        "automatic_semicolon"
       ]
     },
     {
       "kind": "_export_statement_equals_export",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementEqualsExport",
       "factoryName": "_exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
       "hidden": false,
-      "name": "_export_statement_equals_export",
+      "hoisted": true,
       "fields": [
         {
           "name": "expression",
@@ -6066,19 +5815,21 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_equals_export",
       "factoryShape": "config",
       "factoryFields": [
-        "expression"
+        "expression",
+        "semicolon"
       ]
     },
     {
       "kind": "_export_statement_namespace_export",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementNamespaceExport",
       "factoryName": "_exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
       "hidden": false,
-      "name": "_export_statement_namespace_export",
+      "hoisted": true,
       "fields": [
         {
           "name": "identifier",
@@ -6134,19 +5885,21 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_namespace_export",
       "factoryShape": "config",
       "factoryFields": [
-        "identifier"
+        "identifier",
+        "semicolon"
       ]
     },
     {
       "kind": "_export_statement_type_export",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExportStatementTypeExport",
       "factoryName": "_exportStatementTypeExport",
       "irKey": "exportStatementTypeExport",
       "hidden": false,
-      "name": "_export_statement_type_export",
+      "hoisted": true,
       "fields": [
         {
           "name": "export_clause",
@@ -6225,20 +5978,22 @@
         }
       ],
       "children": [],
+      "name": "_export_statement_type_export",
       "factoryShape": "config",
       "factoryFields": [
         "export_clause",
-        "source"
+        "source",
+        "semicolon"
       ]
     },
     {
       "kind": "_extends_clause_single",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ExtendsClauseSingle",
       "factoryName": "_extendsClauseSingle",
       "irKey": "extendsClauseSingle",
       "hidden": false,
-      "name": "_extends_clause_single",
+      "hoisted": true,
       "fields": [
         {
           "name": "value",
@@ -6288,6 +6043,7 @@
         }
       ],
       "children": [],
+      "name": "_extends_clause_single",
       "factoryShape": "config",
       "factoryFields": [
         "value",
@@ -6296,12 +6052,12 @@
     },
     {
       "kind": "_for_header_let_const_kind",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ForHeaderLetConstKind",
       "factoryName": "_forHeaderLetConstKind",
       "irKey": "forHeaderLetConstKind",
       "hidden": false,
-      "name": "_for_header_let_const_kind",
+      "hoisted": true,
       "fields": [
         {
           "name": "kind",
@@ -6390,19 +6146,22 @@
         }
       ],
       "children": [],
+      "name": "_for_header_let_const_kind",
       "factoryShape": "config",
       "factoryFields": [
         "kind",
-        "left"
+        "left",
+        "automatic_semicolon"
       ]
     },
     {
       "kind": "_for_header_lhs",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ForHeaderLhs",
       "factoryName": "forHeaderLhs",
       "irKey": "forHeaderLhs",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -6440,70 +6199,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "left"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "parenthesizedExpression",
-          "via": "form",
-          "slot": "left",
-          "childKind": "parenthesized_expression",
-          "path": []
-        },
-        {
-          "name": "parenthesizedExpressionTyped",
-          "via": "form",
-          "slot": "left",
-          "childKind": "parenthesized_expression",
-          "path": [
-            "typed"
-          ]
-        },
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "left",
-          "childKind": "parenthesized_expression",
-          "path": [
-            "sequenceExpression"
-          ]
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "left",
-          "childKind": "parenthesized_expression",
-          "path": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "decoratorMemberExpression",
-          "via": "form",
-          "slot": "left",
-          "childKind": "parenthesized_expression",
-          "path": [
-            "decoratorMemberExpression"
-          ]
-        },
-        {
-          "name": "decoratorCallExpression",
-          "via": "form",
-          "slot": "left",
-          "childKind": "parenthesized_expression",
-          "path": [
-            "decoratorCallExpression"
-          ]
-        }
       ]
     },
     {
       "kind": "_for_header_var_kind",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ForHeaderVarKind",
       "factoryName": "_forHeaderVarKind",
       "irKey": "forHeaderVarKind",
       "hidden": false,
-      "name": "_for_header_var_kind",
+      "hoisted": true,
       "fields": [
         {
           "name": "left",
@@ -6569,22 +6274,16 @@
         }
       ],
       "children": [],
+      "name": "_for_header_var_kind",
       "factoryShape": "config",
       "factoryFields": [
         "left",
         "value"
-      ],
-      "determinedSlots": [
-        {
-          "name": "kind",
-          "storageKey": "_kind",
-          "text": "var"
-        }
       ]
     },
     {
       "kind": "_formal_parameters_elements",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "FormalParametersElements",
       "factoryName": "formalParametersElements",
       "irKey": "formalParametersElements",
@@ -6610,6 +6309,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
+      "word": false,
       "text": "\n"
     },
     {
@@ -6619,6 +6319,7 @@
       "factoryName": "importClauseDefaultImport",
       "irKey": "importClauseDefaultImport",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "identifier",
@@ -6682,11 +6383,12 @@
     },
     {
       "kind": "_import_clause_group",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ImportClauseGroup",
       "factoryName": "importClauseGroup",
       "irKey": "importClauseGroup",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -6724,32 +6426,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "namespaceImport",
-          "via": "form",
-          "slot": "content",
-          "childKind": "namespace_import",
-          "path": []
-        },
-        {
-          "name": "namedImports",
-          "via": "form",
-          "slot": "content",
-          "childKind": "named_imports",
-          "path": []
-        }
       ]
     },
     {
       "kind": "_import_specifier_as",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ImportSpecifierAs",
       "factoryName": "_importSpecifierAs",
       "irKey": "importSpecifierAs",
       "hidden": false,
-      "name": "_import_specifier_as",
+      "hoisted": true,
       "fields": [
         {
           "name": "name",
@@ -6819,6 +6505,7 @@
         }
       ],
       "children": [],
+      "name": "_import_specifier_as",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -6827,7 +6514,7 @@
     },
     {
       "kind": "_import_specifiers",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "ImportSpecifiers",
       "factoryName": "importSpecifiers",
       "irKey": "importSpecifiers",
@@ -6846,12 +6533,12 @@
     },
     {
       "kind": "_import_statement_arm",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ImportStatementArm",
       "factoryName": "_importStatementArm",
       "irKey": "importStatementArm",
       "hidden": false,
-      "name": "_import_statement_arm",
+      "hoisted": true,
       "fields": [
         {
           "name": "import_clause",
@@ -6901,6 +6588,7 @@
         }
       ],
       "children": [],
+      "name": "_import_statement_arm",
       "factoryShape": "config",
       "factoryFields": [
         "import_clause",
@@ -6909,12 +6597,12 @@
     },
     {
       "kind": "_index_signature_colon",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "IndexSignatureColon",
       "factoryName": "_indexSignatureColon",
       "irKey": "indexSignatureColon",
       "hidden": false,
-      "name": "_index_signature_colon",
+      "hoisted": true,
       "fields": [
         {
           "name": "name",
@@ -6972,6 +6660,7 @@
         }
       ],
       "children": [],
+      "name": "_index_signature_colon",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -6993,97 +6682,105 @@
     },
     {
       "kind": "_kw_abstract_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwAbstractMarker",
       "factoryName": "kwAbstractMarker",
       "irKey": "kwAbstractMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
+      "word": true,
       "text": "abstract",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_accessor_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwAccessorMarker",
       "factoryName": "kwAccessorMarker",
       "irKey": "kwAccessorMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
+      "word": true,
       "text": "accessor",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_async_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwAsyncMarker",
       "factoryName": "kwAsyncMarker",
       "irKey": "kwAsyncMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
+      "word": true,
       "text": "async",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_await_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwAwaitMarker",
       "factoryName": "kwAwaitMarker",
       "irKey": "kwAwaitMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
+      "word": true,
       "text": "await",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_const_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwConstMarker",
       "factoryName": "kwConstMarker",
       "irKey": "kwConstMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
+      "word": true,
       "text": "const",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_declare_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwDeclareMarker",
       "factoryName": "kwDeclareMarker",
       "irKey": "kwDeclareMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
+      "word": true,
       "text": "declare",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_static_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwStaticMarker",
       "factoryName": "kwStaticMarker",
       "irKey": "kwStaticMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
+      "word": true,
       "text": "static",
       "factoryShape": "text"
     },
     {
       "kind": "_kw_using_marker",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "KwUsingMarker",
       "factoryName": "kwUsingMarker",
       "irKey": "kwUsingMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
+      "word": true,
       "text": "using",
       "factoryShape": "text"
     },
@@ -7093,6 +6790,7 @@
       "typeName": "_LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "array_pattern",
@@ -7106,32 +6804,34 @@
     },
     {
       "kind": "_meta_property_arm1",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "MetaPropertyArm1",
-      "factoryName": "metaPropertyArm1",
       "irKey": "metaPropertyArm1",
-      "hidden": false,
-      "text": "new . target",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"new . target\" as const",
+      "word": false,
+      "text": "new . target"
     },
     {
       "kind": "_meta_property_arm2",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "MetaPropertyArm2",
-      "factoryName": "metaPropertyArm2",
       "irKey": "metaPropertyArm2",
-      "hidden": false,
-      "text": "import . meta",
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"import . meta\" as const",
+      "word": false,
+      "text": "import . meta"
     },
     {
       "kind": "_number",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "_Number",
       "factoryName": "_number",
       "irKey": "number",
       "hidden": false,
-      "name": "_number",
+      "hoisted": true,
       "fields": [
         {
           "name": "operator",
@@ -7181,6 +6881,7 @@
         }
       ],
       "children": [],
+      "name": "_number",
       "factoryShape": "config",
       "factoryFields": [
         "operator",
@@ -7202,12 +6903,12 @@
     },
     {
       "kind": "_parenthesized_expression_typed",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "ParenthesizedExpressionTyped",
       "factoryName": "_parenthesizedExpressionTyped",
       "irKey": "parenthesizedExpressionTyped",
       "hidden": false,
-      "name": "_parenthesized_expression_typed",
+      "hoisted": true,
       "fields": [
         {
           "name": "expression",
@@ -7257,6 +6958,7 @@
         }
       ],
       "children": [],
+      "name": "_parenthesized_expression_typed",
       "factoryShape": "config",
       "factoryFields": [
         "expression",
@@ -7269,6 +6971,7 @@
       "typeName": "PropertyIdentifier",
       "irKey": "propertyIdentifier",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "identifier"
@@ -7313,6 +7016,7 @@
       "typeName": "ShorthandPropertyIdentifier",
       "irKey": "shorthandPropertyIdentifier",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "identifier"
@@ -7324,6 +7028,7 @@
       "typeName": "ShorthandPropertyIdentifierPattern",
       "irKey": "shorthandPropertyIdentifierPattern",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "identifier"
@@ -7335,6 +7040,7 @@
       "typeName": "StatementIdentifier",
       "irKey": "statementIdentifier",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "identifier"
@@ -7342,12 +7048,12 @@
     },
     {
       "kind": "_string_double",
-      "modelType": "group",
+      "modelType": "envelope",
       "typeName": "StringDouble",
       "factoryName": "_stringDouble",
       "irKey": "stringDouble",
       "hidden": false,
-      "name": "_string_double",
+      "hoisted": true,
       "fields": [
         {
           "name": "elements",
@@ -7382,6 +7088,7 @@
         }
       ],
       "children": [],
+      "name": "_string_double",
       "factoryShape": "config",
       "factoryFields": [
         "elements"
@@ -7389,12 +7096,12 @@
     },
     {
       "kind": "_string_single",
-      "modelType": "group",
+      "modelType": "envelope",
       "typeName": "StringSingle",
       "factoryName": "_stringSingle",
       "irKey": "stringSingle",
       "hidden": false,
-      "name": "_string_single",
+      "hoisted": true,
       "fields": [
         {
           "name": "elements_2",
@@ -7429,6 +7136,7 @@
         }
       ],
       "children": [],
+      "name": "_string_single",
       "factoryShape": "config",
       "factoryFields": [
         "elements_2"
@@ -7453,7 +7161,7 @@
     },
     {
       "kind": "_tuple_type_members",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "TupleTypeMembers",
       "factoryName": "tupleTypeMembers",
       "irKey": "tupleTypeMembers",
@@ -7484,7 +7192,7 @@
     },
     {
       "kind": "_type_parameters_elements",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "TypeParametersElements",
       "factoryName": "typeParametersElements",
       "irKey": "typeParametersElements",
@@ -7503,12 +7211,12 @@
     },
     {
       "kind": "_type_query_call_expression",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "TypeQueryCallExpression",
       "factoryName": "_typeQueryCallExpression",
       "irKey": "typeQueryCallExpression",
       "hidden": false,
-      "name": "_type_query_call_expression",
+      "hoisted": true,
       "fields": [
         {
           "name": "function",
@@ -7582,6 +7290,7 @@
         }
       ],
       "children": [],
+      "name": "_type_query_call_expression",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -7590,12 +7299,12 @@
     },
     {
       "kind": "_type_query_call_expression_in_type_annotation",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "TypeQueryCallExpressionInTypeAnnotation",
       "factoryName": "_typeQueryCallExpressionInTypeAnnotation",
       "irKey": "typeQueryCallExpressionInTypeAnnotation",
       "hidden": false,
-      "name": "_type_query_call_expression_in_type_annotation",
+      "hoisted": true,
       "fields": [
         {
           "name": "function",
@@ -7653,6 +7362,7 @@
         }
       ],
       "children": [],
+      "name": "_type_query_call_expression_in_type_annotation",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -7661,12 +7371,12 @@
     },
     {
       "kind": "_type_query_instantiation_expression",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "TypeQueryInstantiationExpression",
       "factoryName": "_typeQueryInstantiationExpression",
       "irKey": "typeQueryInstantiationExpression",
       "hidden": false,
-      "name": "_type_query_instantiation_expression",
+      "hoisted": true,
       "fields": [
         {
           "name": "function",
@@ -7740,6 +7450,7 @@
         }
       ],
       "children": [],
+      "name": "_type_query_instantiation_expression",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -7748,12 +7459,12 @@
     },
     {
       "kind": "_type_query_member_expression",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "TypeQueryMemberExpression",
       "factoryName": "_typeQueryMemberExpression",
       "irKey": "typeQueryMemberExpression",
       "hidden": false,
-      "name": "_type_query_member_expression",
+      "hoisted": true,
       "fields": [
         {
           "name": "object",
@@ -7869,43 +7580,22 @@
         }
       ],
       "children": [],
+      "name": "_type_query_member_expression",
       "factoryShape": "config",
       "factoryFields": [
         "object",
         "content",
         "property"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dot",
-          "via": "member",
-          "slot": "content",
-          "literal": ".",
-          "params": [
-            "object",
-            "property"
-          ]
-        },
-        {
-          "name": "qmarkDot",
-          "via": "member",
-          "slot": "content",
-          "literal": "?.",
-          "params": [
-            "object",
-            "property"
-          ]
-        }
       ]
     },
     {
       "kind": "_type_query_member_expression_in_type_annotation",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "TypeQueryMemberExpressionInTypeAnnotation",
       "factoryName": "_typeQueryMemberExpressionInTypeAnnotation",
       "irKey": "typeQueryMemberExpressionInTypeAnnotation",
       "hidden": false,
-      "name": "_type_query_member_expression_in_type_annotation",
+      "hoisted": true,
       "fields": [
         {
           "name": "object",
@@ -7979,6 +7669,7 @@
         }
       ],
       "children": [],
+      "name": "_type_query_member_expression_in_type_annotation",
       "factoryShape": "config",
       "factoryFields": [
         "object",
@@ -7987,12 +7678,12 @@
     },
     {
       "kind": "_type_query_subscript_expression",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "TypeQuerySubscriptExpression",
       "factoryName": "_typeQuerySubscriptExpression",
       "irKey": "typeQuerySubscriptExpression",
       "hidden": false,
-      "name": "_type_query_subscript_expression",
+      "hoisted": true,
       "fields": [
         {
           "name": "object",
@@ -8090,6 +7781,7 @@
         }
       ],
       "children": [],
+      "name": "_type_query_subscript_expression",
       "factoryShape": "config",
       "factoryFields": [
         "object",
@@ -8098,7 +7790,7 @@
     },
     {
       "kind": "_types",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "Types",
       "factoryName": "types",
       "irKey": "types",
@@ -8135,12 +7827,12 @@
     },
     {
       "kind": "_update_expression_postfix",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "UpdateExpressionPostfix",
       "factoryName": "_updateExpressionPostfix",
       "irKey": "updateExpressionPostfix",
       "hidden": false,
-      "name": "_update_expression_postfix",
+      "hoisted": true,
       "fields": [
         {
           "name": "argument",
@@ -8190,6 +7882,7 @@
         }
       ],
       "children": [],
+      "name": "_update_expression_postfix",
       "factoryShape": "config",
       "factoryFields": [
         "argument",
@@ -8198,12 +7891,12 @@
     },
     {
       "kind": "_update_expression_prefix",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "UpdateExpressionPrefix",
       "factoryName": "_updateExpressionPrefix",
       "irKey": "updateExpressionPrefix",
       "hidden": false,
-      "name": "_update_expression_prefix",
+      "hoisted": true,
       "fields": [
         {
           "name": "operator",
@@ -8253,6 +7946,7 @@
         }
       ],
       "children": [],
+      "name": "_update_expression_prefix",
       "factoryShape": "config",
       "factoryFields": [
         "operator",
@@ -8261,12 +7955,12 @@
     },
     {
       "kind": "_variable_declarator_arm1",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "VariableDeclaratorArm1",
       "factoryName": "_variableDeclaratorArm1",
       "irKey": "variableDeclaratorArm1",
       "hidden": false,
-      "name": "_variable_declarator_arm1",
+      "hoisted": true,
       "fields": [
         {
           "name": "name",
@@ -8355,6 +8049,7 @@
         }
       ],
       "children": [],
+      "name": "_variable_declarator_arm1",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -8364,12 +8059,12 @@
     },
     {
       "kind": "_variable_declarator_arm2",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "VariableDeclaratorArm2",
       "factoryName": "_variableDeclaratorArm2",
       "irKey": "variableDeclaratorArm2",
       "hidden": false,
-      "name": "_variable_declarator_arm2",
+      "hoisted": true,
       "fields": [
         {
           "name": "name",
@@ -8419,6 +8114,7 @@
         }
       ],
       "children": [],
+      "name": "_variable_declarator_arm2",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -8427,12 +8123,13 @@
     },
     {
       "kind": "abstract",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Abstract",
       "irKey": "abstract",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
+      "word": true,
       "text": "abstract",
       "factoryShape": "text"
     },
@@ -8443,6 +8140,7 @@
       "factoryName": "abstractClassDeclaration",
       "irKey": "abstractClassDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "decorator",
@@ -8577,6 +8275,7 @@
       "factoryName": "abstractMethodSignature",
       "irKey": "abstractMethodSignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "accessibility_modifier",
@@ -8821,52 +8520,13 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
+        "override_modifier",
         "accessor_kind",
         "name",
+        "optional_marker",
         "type_parameters",
         "parameters",
         "return_type"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "get",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "get",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type"
-          ]
-        },
-        {
-          "name": "set",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "set",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "*",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type"
-          ]
-        }
       ]
     },
     {
@@ -8885,22 +8545,24 @@
     },
     {
       "kind": "accessor",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Accessor",
       "irKey": "accessor",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
+      "word": true,
       "text": "accessor",
       "factoryShape": "text"
     },
     {
       "kind": "adding_type_annotation",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "AddingTypeAnnotation",
       "factoryName": "addingTypeAnnotation",
       "irKey": "addingTypeAnnotation",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -8934,11 +8596,12 @@
     },
     {
       "kind": "ambient_declaration",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "AmbientDeclaration",
       "factoryName": "ambientDeclaration",
       "irKey": "ambientDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -8984,22 +8647,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "global",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_ambient_declaration_global",
-          "path": []
-        },
-        {
-          "name": "module",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_ambient_declaration_module",
-          "path": []
-        }
       ]
     },
     {
@@ -9010,6 +8657,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&\" as const",
+      "word": false,
       "text": "&"
     },
     {
@@ -9020,70 +8668,147 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&&\" as const",
+      "word": false,
       "text": "&&"
     },
     {
+      "kind": "amp_amp_eq",
+      "modelType": "token",
+      "typeName": "AmpAmpEq",
+      "irKey": "ampAmpEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&&=\" as const",
+      "word": false,
+      "text": "&&="
+    },
+    {
+      "kind": "amp_eq",
+      "modelType": "token",
+      "typeName": "AmpEq",
+      "irKey": "ampEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&=\" as const",
+      "word": false,
+      "text": "&="
+    },
+    {
       "kind": "anon_asserts",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "AnonAsserts",
       "irKey": "anonAsserts",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"asserts\" as const",
+      "word": true,
       "text": "asserts",
       "factoryShape": "text"
     },
     {
       "kind": "anon_class",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "AnonClass",
       "irKey": "anonClass",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"class\" as const",
+      "word": true,
       "text": "class",
       "factoryShape": "text"
     },
     {
       "kind": "anon_import",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "AnonImport",
       "irKey": "anonImport",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
+      "word": true,
       "text": "import",
       "factoryShape": "text"
     },
     {
       "kind": "anon_module",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "AnonModule",
       "irKey": "anonModule",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"module\" as const",
+      "word": true,
       "text": "module",
       "factoryShape": "text"
     },
     {
+      "kind": "anon_number",
+      "modelType": "token",
+      "typeName": "AnonNumber",
+      "irKey": "anonNumber",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"number\" as const",
+      "word": true,
+      "text": "number",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_object",
+      "modelType": "token",
+      "typeName": "AnonObject",
+      "irKey": "anonObject",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"object\" as const",
+      "word": true,
+      "text": "object",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_string",
+      "modelType": "token",
+      "typeName": "AnonString",
+      "irKey": "anonString",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"string\" as const",
+      "word": true,
+      "text": "string",
+      "factoryShape": "text"
+    },
+    {
       "kind": "anon_type",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "AnonType",
       "irKey": "anonType",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"type\" as const",
+      "word": true,
       "text": "type",
       "factoryShape": "text"
     },
     {
+      "kind": "any",
+      "modelType": "token",
+      "typeName": "Any",
+      "irKey": "any",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"any\" as const",
+      "word": true,
+      "text": "any",
+      "factoryShape": "text"
+    },
+    {
       "kind": "arguments",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "arguments",
@@ -9125,11 +8850,12 @@
     },
     {
       "kind": "array",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "Array",
       "factoryName": "array",
       "irKey": "array",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "elements",
@@ -9171,11 +8897,12 @@
     },
     {
       "kind": "array_pattern",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ArrayPattern",
       "factoryName": "arrayPattern",
       "irKey": "arrayPattern",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "elements",
@@ -9217,11 +8944,12 @@
     },
     {
       "kind": "array_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ArrayType",
       "factoryName": "arrayType",
       "irKey": "arrayType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "primary_type",
@@ -9260,6 +8988,7 @@
       "factoryName": "arrowFunction",
       "irKey": "arrowFunction",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "async_marker",
@@ -9350,18 +9079,20 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "content",
         "body"
       ]
     },
     {
       "kind": "as",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "As",
       "irKey": "as",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"as\" as const",
+      "word": true,
       "text": "as",
       "factoryShape": "text"
     },
@@ -9372,6 +9103,7 @@
       "factoryName": "asExpression",
       "irKey": "asExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -9434,12 +9166,25 @@
       ]
     },
     {
+      "kind": "assert",
+      "modelType": "token",
+      "typeName": "Assert",
+      "irKey": "assert",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"assert\" as const",
+      "word": true,
+      "text": "assert",
+      "factoryShape": "text"
+    },
+    {
       "kind": "asserts",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "Asserts",
       "factoryName": "asserts",
       "irKey": "asserts",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -9485,38 +9230,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "typePredicate",
-          "via": "form",
-          "slot": "content",
-          "childKind": "type_predicate",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "this",
-          "via": "form",
-          "slot": "content",
-          "childKind": "this",
-          "path": []
-        }
       ]
     },
     {
       "kind": "asserts_annotation",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "AssertsAnnotation",
       "factoryName": "assertsAnnotation",
       "irKey": "assertsAnnotation",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "asserts",
@@ -9547,35 +9270,6 @@
       "forwardsTo": "asserts",
       "factoryFields": [
         "asserts"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "typePredicate",
-          "via": "form",
-          "slot": "asserts",
-          "childKind": "asserts",
-          "path": [
-            "typePredicate"
-          ]
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "asserts",
-          "childKind": "asserts",
-          "path": [
-            "identifier"
-          ]
-        },
-        {
-          "name": "this",
-          "via": "form",
-          "slot": "asserts",
-          "childKind": "asserts",
-          "path": [
-            "this"
-          ]
-        }
       ]
     },
     {
@@ -9585,6 +9279,7 @@
       "factoryName": "assignmentExpression",
       "irKey": "assignmentExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "using_marker",
@@ -9667,6 +9362,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "using_marker",
         "left",
         "right"
       ]
@@ -9678,6 +9374,7 @@
       "factoryName": "assignmentPattern",
       "irKey": "assignmentPattern",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -9735,12 +9432,13 @@
     },
     {
       "kind": "async",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Async",
       "irKey": "async",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
+      "word": true,
       "text": "async",
       "factoryShape": "text"
     },
@@ -9752,6 +9450,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"@\" as const",
+      "word": false,
       "text": "@"
     },
     {
@@ -9761,6 +9460,7 @@
       "factoryName": "augmentedAssignmentExpression",
       "irKey": "augmentedAssignmentExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -9882,22 +9582,24 @@
     },
     {
       "kind": "await",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Await",
       "irKey": "await",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
+      "word": true,
       "text": "await",
       "factoryShape": "text"
     },
     {
       "kind": "await_expression",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
       "irKey": "awaitExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -9937,6 +9639,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
+      "word": false,
       "text": "!"
     },
     {
@@ -9947,6 +9650,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!=\" as const",
+      "word": false,
       "text": "!="
     },
     {
@@ -9957,6 +9661,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!==\" as const",
+      "word": false,
       "text": "!=="
     },
     {
@@ -9966,6 +9671,7 @@
       "factoryName": "binaryExpression",
       "irKey": "binaryExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -10202,256 +9908,19 @@
         "operator",
         "right",
         "binary_expression_arm"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "arm",
-          "via": "form",
-          "slot": "binary_expression_arm",
-          "childKind": "_binary_expression_arm",
-          "path": []
-        },
-        {
-          "name": "ampAmp",
-          "via": "member",
-          "slot": "operator",
-          "literal": "&&",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "pipePipe",
-          "via": "member",
-          "slot": "operator",
-          "literal": "||",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gtGt",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">>",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gtGtGt",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">>>",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "ltLt",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<<",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "amp",
-          "via": "member",
-          "slot": "operator",
-          "literal": "&",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "caret",
-          "via": "member",
-          "slot": "operator",
-          "literal": "^",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "pipe",
-          "via": "member",
-          "slot": "operator",
-          "literal": "|",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "operator",
-          "literal": "+",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "-",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "operator",
-          "literal": "*",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "slash",
-          "via": "member",
-          "slot": "operator",
-          "literal": "/",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "percent",
-          "via": "member",
-          "slot": "operator",
-          "literal": "%",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "starStar",
-          "via": "member",
-          "slot": "operator",
-          "literal": "**",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "lt",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "ltEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "<=",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "eqEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "==",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "eqEqEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "===",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "bangEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "!=",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "bangEqEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": "!==",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gtEq",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">=",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "gt",
-          "via": "member",
-          "slot": "operator",
-          "literal": ">",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "qmarkQmark",
-          "via": "member",
-          "slot": "operator",
-          "literal": "??",
-          "params": [
-            "left",
-            "right"
-          ]
-        },
-        {
-          "name": "instanceof",
-          "via": "member",
-          "slot": "operator",
-          "literal": "instanceof",
-          "params": [
-            "left",
-            "right"
-          ]
-        }
       ]
+    },
+    {
+      "kind": "boolean",
+      "modelType": "token",
+      "typeName": "Boolean",
+      "irKey": "boolean",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"boolean\" as const",
+      "word": true,
+      "text": "boolean",
+      "factoryShape": "text"
     },
     {
       "kind": "bquote",
@@ -10461,16 +9930,18 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"`\" as const",
+      "word": false,
       "text": "`"
     },
     {
       "kind": "break",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Break",
       "irKey": "break",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
+      "word": true,
       "text": "break",
       "factoryShape": "text"
     },
@@ -10481,6 +9952,7 @@
       "factoryName": "breakStatement",
       "irKey": "breakStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "label",
@@ -10538,16 +10010,18 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "label"
+        "label",
+        "semicolon"
       ]
     },
     {
       "kind": "call_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "CallExpression",
       "factoryName": "callExpression",
       "irKey": "callExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -10593,29 +10067,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "call",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_call_expression_call",
-          "path": []
-        },
-        {
-          "name": "templateCall",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_call_expression_template_call",
-          "path": []
-        },
-        {
-          "name": "member",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_call_expression_member",
-          "path": []
-        }
       ]
     },
     {
@@ -10625,6 +10076,7 @@
       "factoryName": "callSignature",
       "irKey": "callSignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type_parameters",
@@ -10728,27 +10180,41 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"^\" as const",
+      "word": false,
       "text": "^"
     },
     {
+      "kind": "caret_eq",
+      "modelType": "token",
+      "typeName": "CaretEq",
+      "irKey": "caretEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^=\" as const",
+      "word": false,
+      "text": "^="
+    },
+    {
       "kind": "case",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Case",
       "irKey": "case",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"case\" as const",
+      "word": true,
       "text": "case",
       "factoryShape": "text"
     },
     {
       "kind": "catch",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Catch",
       "irKey": "catch",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"catch\" as const",
+      "word": true,
       "text": "catch",
       "factoryShape": "text"
     },
@@ -10759,6 +10225,7 @@
       "factoryName": "catchClause",
       "irKey": "catchClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "catch_clause_group",
@@ -10821,6 +10288,7 @@
       "factoryName": "class_",
       "irKey": "class",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "decorator",
@@ -10946,24 +10414,16 @@
         "type_parameters",
         "class_heritage",
         "body"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "body",
-          "via": "form",
-          "slot": "body",
-          "childKind": "class_body",
-          "path": []
-        }
       ]
     },
     {
       "kind": "class_body",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ClassBody",
       "factoryName": "classBody",
       "irKey": "classBody",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -11032,6 +10492,7 @@
       "factoryName": "classDeclaration",
       "irKey": "classDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "decorator",
@@ -11179,16 +10640,18 @@
         "name",
         "type_parameters",
         "class_heritage",
-        "body"
+        "body",
+        "automatic_semicolon"
       ]
     },
     {
       "kind": "class_heritage",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ClassHeritage",
       "factoryName": "classHeritage",
       "irKey": "classHeritage",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -11226,22 +10689,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "extendsClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_class_heritage_extends_clause",
-          "path": []
-        },
-        {
-          "name": "implementsClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "implements_clause",
-          "path": []
-        }
       ]
     },
     {
@@ -11251,6 +10698,7 @@
       "factoryName": "classStaticBlock",
       "irKey": "classStaticBlock",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "automatic_semicolon",
@@ -11302,6 +10750,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "automatic_semicolon",
         "body"
       ]
     },
@@ -11313,6 +10762,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\":\" as const",
+      "word": false,
       "text": ":"
     },
     {
@@ -11323,6 +10773,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\",\" as const",
+      "word": false,
       "text": ","
     },
     {
@@ -11336,11 +10787,12 @@
     },
     {
       "kind": "computed_property_name",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ComputedPropertyName",
       "factoryName": "computedPropertyName",
       "irKey": "computedPropertyName",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -11379,6 +10831,7 @@
       "factoryName": "conditionalType",
       "irKey": "conditionalType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -11484,12 +10937,13 @@
     },
     {
       "kind": "const",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Const",
       "irKey": "const",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
+      "word": true,
       "text": "const",
       "factoryShape": "text"
     },
@@ -11500,6 +10954,7 @@
       "factoryName": "constraint",
       "irKey": "constraint",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -11556,26 +11011,6 @@
       "factoryFields": [
         "content",
         "type"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "extends",
-          "via": "member",
-          "slot": "content",
-          "literal": "extends",
-          "params": [
-            "type"
-          ]
-        },
-        {
-          "name": "colon",
-          "via": "member",
-          "slot": "content",
-          "literal": ":",
-          "params": [
-            "type"
-          ]
-        }
       ]
     },
     {
@@ -11585,6 +11020,7 @@
       "factoryName": "constructSignature",
       "irKey": "constructSignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "abstract_marker",
@@ -11682,6 +11118,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "abstract_marker",
         "type_parameters",
         "parameters",
         "type"
@@ -11694,6 +11131,7 @@
       "factoryName": "constructorType",
       "irKey": "constructorType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "abstract_marker",
@@ -11791,6 +11229,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "abstract_marker",
         "type_parameters",
         "parameters",
         "type"
@@ -11798,12 +11237,13 @@
     },
     {
       "kind": "continue",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Continue",
       "irKey": "continue",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
+      "word": true,
       "text": "continue",
       "factoryShape": "text"
     },
@@ -11814,6 +11254,7 @@
       "factoryName": "continueStatement",
       "irKey": "continueStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "label",
@@ -11871,7 +11312,8 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "label"
+        "label",
+        "semicolon"
       ]
     },
     {
@@ -11882,7 +11324,30 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-\" as const",
+      "word": false,
       "text": "-"
+    },
+    {
+      "kind": "dash_dash",
+      "modelType": "token",
+      "typeName": "DashDash",
+      "irKey": "dashDash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"--\" as const",
+      "word": false,
+      "text": "--"
+    },
+    {
+      "kind": "dash_eq",
+      "modelType": "token",
+      "typeName": "DashEq",
+      "irKey": "dashEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-=\" as const",
+      "word": false,
+      "text": "-="
     },
     {
       "kind": "dash_qmark_colon",
@@ -11892,26 +11357,29 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-?:\" as const",
+      "word": false,
       "text": "-?:"
     },
     {
       "kind": "debugger",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Debugger",
       "irKey": "debugger",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"debugger\" as const",
+      "word": true,
       "text": "debugger",
       "factoryShape": "text"
     },
     {
       "kind": "debugger_statement",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "DebuggerStatement",
       "factoryName": "debuggerStatement",
       "irKey": "debuggerStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "semicolon",
@@ -11944,7 +11412,10 @@
         }
       ],
       "children": [],
-      "factoryShape": "config"
+      "factoryShape": "direct",
+      "factoryFields": [
+        "semicolon"
+      ]
     },
     {
       "kind": "declaration",
@@ -11952,6 +11423,7 @@
       "typeName": "Declaration",
       "irKey": "declaration",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "abstract_class_declaration",
         "ambient_declaration",
@@ -11971,22 +11443,24 @@
     },
     {
       "kind": "declare",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Declare",
       "irKey": "declare",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
+      "word": true,
       "text": "declare",
       "factoryShape": "text"
     },
     {
       "kind": "decorator",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "Decorator",
       "factoryName": "decorator",
       "irKey": "decorator",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -12040,36 +11514,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "memberExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_member_expression",
-          "path": []
-        },
-        {
-          "name": "callExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_call_expression",
-          "path": []
-        },
-        {
-          "name": "parenthesizedExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_parenthesized_expression",
-          "path": []
-        }
       ]
     },
     {
@@ -12079,6 +11523,7 @@
       "factoryName": "decoratorCallExpression",
       "irKey": "decoratorCallExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "function",
@@ -12173,6 +11618,7 @@
       "factoryName": "decoratorMemberExpression",
       "irKey": "decoratorMemberExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "object",
@@ -12238,11 +11684,12 @@
     },
     {
       "kind": "decorator_parenthesized_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "DecoratorParenthesizedExpression",
       "factoryName": "decoratorParenthesizedExpression",
       "irKey": "decoratorParenthesizedExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -12288,49 +11735,28 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "decoratorMemberExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_member_expression",
-          "path": []
-        },
-        {
-          "name": "decoratorCallExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_call_expression",
-          "path": []
-        }
       ]
     },
     {
       "kind": "default",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Default",
       "irKey": "default",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
+      "word": true,
       "text": "default",
       "factoryShape": "text"
     },
     {
       "kind": "default_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "DefaultType",
       "factoryName": "defaultType",
       "irKey": "defaultType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -12363,13 +11789,26 @@
       ]
     },
     {
+      "kind": "delete",
+      "modelType": "token",
+      "typeName": "Delete",
+      "irKey": "delete",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"delete\" as const",
+      "word": true,
+      "text": "delete",
+      "factoryShape": "text"
+    },
+    {
       "kind": "do",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Do",
       "irKey": "do",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"do\" as const",
+      "word": true,
       "text": "do",
       "factoryShape": "text"
     },
@@ -12380,6 +11819,7 @@
       "factoryName": "doStatement",
       "irKey": "doStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "body",
@@ -12461,7 +11901,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "condition"
+        "condition",
+        "semicolon"
       ]
     },
     {
@@ -12472,6 +11913,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"${\" as const",
+      "word": false,
       "text": "${"
     },
     {
@@ -12482,6 +11924,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\".\" as const",
+      "word": false,
       "text": "."
     },
     {
@@ -12492,6 +11935,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
+      "word": false,
       "text": "..."
     },
     {
@@ -12502,26 +11946,29 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\\"\" as const",
+      "word": false,
       "text": "\""
     },
     {
       "kind": "else",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Else",
       "irKey": "else",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"else\" as const",
+      "word": true,
       "text": "else",
       "factoryShape": "text"
     },
     {
       "kind": "else_clause",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ElseClause",
       "factoryName": "elseClause",
       "irKey": "elseClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "statement",
@@ -12557,20 +12004,24 @@
       "kind": "empty_statement",
       "modelType": "token",
       "typeName": "EmptyStatement",
+      "factoryName": "emptyStatement",
       "irKey": "emptyStatement",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
-      "text": ";"
+      "word": false,
+      "text": ";",
+      "factoryShape": "text"
     },
     {
       "kind": "enum",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Enum",
       "irKey": "enum",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"enum\" as const",
+      "word": true,
       "text": "enum",
       "factoryShape": "text"
     },
@@ -12581,6 +12032,7 @@
       "factoryName": "enumAssignment",
       "irKey": "enumAssignment",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -12670,11 +12122,12 @@
     },
     {
       "kind": "enum_body",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "EnumBody",
       "factoryName": "enumBody",
       "irKey": "enumBody",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "enum_body_elements",
@@ -12714,6 +12167,7 @@
       "factoryName": "enumDeclaration",
       "irKey": "enumDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "const_marker",
@@ -12788,6 +12242,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "const_marker",
         "name",
         "body"
       ]
@@ -12800,6 +12255,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"=\" as const",
+      "word": false,
       "text": "="
     },
     {
@@ -12810,6 +12266,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"==\" as const",
+      "word": false,
       "text": "=="
     },
     {
@@ -12820,6 +12277,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"===\" as const",
+      "word": false,
       "text": "==="
     },
     {
@@ -12830,6 +12288,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"=>\" as const",
+      "word": false,
       "text": "=>"
     },
     {
@@ -12845,30 +12304,35 @@
       "kind": "existential_type",
       "modelType": "token",
       "typeName": "ExistentialType",
+      "factoryName": "existentialType",
       "irKey": "existentialType",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
-      "text": "*"
+      "word": false,
+      "text": "*",
+      "factoryShape": "text"
     },
     {
       "kind": "export",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Export",
       "irKey": "export",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"export\" as const",
+      "word": true,
       "text": "export",
       "factoryShape": "text"
     },
     {
       "kind": "export_clause",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ExportClause",
       "factoryName": "exportClause",
       "irKey": "exportClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "export_specifiers",
@@ -12908,6 +12372,7 @@
       "factoryName": "exportSpecifier",
       "irKey": "exportSpecifier",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "export_kind",
@@ -13004,37 +12469,16 @@
         "export_kind",
         "name",
         "alias"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "type",
-          "via": "member",
-          "slot": "export_kind",
-          "literal": "type",
-          "params": [
-            "name",
-            "alias"
-          ]
-        },
-        {
-          "name": "typeof",
-          "via": "member",
-          "slot": "export_kind",
-          "literal": "typeof",
-          "params": [
-            "name",
-            "alias"
-          ]
-        }
       ]
     },
     {
       "kind": "export_statement",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ExportStatement",
       "factoryName": "exportStatement",
       "irKey": "exportStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -13088,108 +12532,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "default",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": []
-        },
-        {
-          "name": "defaultFromArm",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "fromArm"
-          ]
-        },
-        {
-          "name": "defaultStarFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "starFrom"
-          ]
-        },
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "stringDouble"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "stringSingle"
-          ]
-        },
-        {
-          "name": "defaultNsFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "nsFrom"
-          ]
-        },
-        {
-          "name": "defaultClauseFrom",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "clauseFrom"
-          ]
-        },
-        {
-          "name": "exportClause",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "exportClause"
-          ]
-        },
-        {
-          "name": "defaultDeclArm",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_default",
-          "path": [
-            "declArm"
-          ]
-        },
-        {
-          "name": "typeExport",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_type_export",
-          "path": []
-        },
-        {
-          "name": "equalsExport",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_equals_export",
-          "path": []
-        },
-        {
-          "name": "namespaceExport",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_export_statement_namespace_export",
-          "path": []
-        }
       ]
     },
     {
@@ -13198,6 +12540,7 @@
       "typeName": "Expression",
       "irKey": "expression",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "as_expression",
         "assignment_expression",
@@ -13223,6 +12566,7 @@
       "factoryName": "expressionStatement",
       "irKey": "expressionStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expressions",
@@ -13288,36 +12632,30 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "expressions",
-          "childKind": "sequence_expression",
-          "path": []
-        }
+        "expressions",
+        "semicolon"
       ]
     },
     {
       "kind": "extends",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Extends",
       "irKey": "extends",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"extends\" as const",
+      "word": true,
       "text": "extends",
       "factoryShape": "text"
     },
     {
       "kind": "extends_clause",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ExtendsClause",
       "factoryName": "extendsClause",
       "irKey": "extendsClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "extends_clause_single",
@@ -13351,11 +12689,12 @@
     },
     {
       "kind": "extends_type_clause",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ExtendsTypeClause",
       "factoryName": "extendsTypeClause",
       "irKey": "extendsTypeClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -13405,34 +12744,37 @@
     },
     {
       "kind": "false",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "False",
       "factoryName": "false_",
       "irKey": "false",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
+      "word": true,
       "text": "false",
       "factoryShape": "text"
     },
     {
       "kind": "finally",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Finally",
       "irKey": "finally",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"finally\" as const",
+      "word": true,
       "text": "finally",
       "factoryShape": "text"
     },
     {
       "kind": "finally_clause",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "FinallyClause",
       "factoryName": "finallyClause",
       "irKey": "finallyClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "body",
@@ -13467,11 +12809,12 @@
     },
     {
       "kind": "flow_maybe_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "FlowMaybeType",
       "factoryName": "flowMaybeType",
       "irKey": "flowMaybeType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "primary_type",
@@ -13505,12 +12848,13 @@
     },
     {
       "kind": "for",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "For",
       "irKey": "for",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"for\" as const",
+      "word": true,
       "text": "for",
       "factoryShape": "text"
     },
@@ -13521,6 +12865,7 @@
       "factoryName": "forInStatement",
       "irKey": "forInStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "await_marker",
@@ -13542,6 +12887,45 @@
             "typeName": "",
             "kinds": [
               "_kw_await_marker"
+            ]
+          }
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_for_header_lhs",
+              "parseKind": "for_header_lhs",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_for_header_var_kind",
+              "parseKind": "for_header_var_kind",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_for_header_let_const_kind",
+              "parseKind": "for_header_let_const_kind",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_for_header_lhs",
+              "_for_header_var_kind",
+              "_for_header_let_const_kind"
             ]
           }
         },
@@ -13600,75 +12984,6 @@
           }
         },
         {
-          "name": "for_header_lhs",
-          "propertyName": "forHeaderLhs",
-          "paramName": "forHeaderLhs",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_for_header_lhs",
-              "parseKind": "for_header_lhs",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_lhs"
-            ]
-          }
-        },
-        {
-          "name": "for_header_var_kind",
-          "propertyName": "forHeaderVarKind",
-          "paramName": "forHeaderVarKind",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_for_header_var_kind",
-              "parseKind": "for_header_var_kind",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_var_kind"
-            ]
-          }
-        },
-        {
-          "name": "for_header_let_const_kind",
-          "propertyName": "forHeaderLetConstKind",
-          "paramName": "forHeaderLetConstKind",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_for_header_let_const_kind",
-              "parseKind": "for_header_let_const_kind",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_for_header_let_const_kind"
-            ]
-          }
-        },
-        {
           "name": "body",
           "propertyName": "body",
           "paramName": "body",
@@ -13695,11 +13010,10 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "await_marker",
+        "content",
         "operator",
         "right",
-        "for_header_lhs",
-        "for_header_var_kind",
-        "for_header_let_const_kind",
         "body"
       ]
     },
@@ -13710,6 +13024,7 @@
       "factoryName": "forStatement",
       "irKey": "forStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "initializer",
@@ -13871,11 +13186,12 @@
     },
     {
       "kind": "formal_parameters",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "FormalParameters",
       "factoryName": "formalParameters",
       "irKey": "formalParameters",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "formal_parameters_elements",
@@ -13910,23 +13226,25 @@
     },
     {
       "kind": "from",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "From",
       "irKey": "from",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"from\" as const",
+      "word": true,
       "text": "from",
       "factoryShape": "text"
     },
     {
       "kind": "function",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Function",
       "irKey": "function",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"function\" as const",
+      "word": true,
       "text": "function",
       "factoryShape": "text"
     },
@@ -13937,6 +13255,7 @@
       "factoryName": "functionDeclaration",
       "irKey": "functionDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "async_marker",
@@ -14119,11 +13438,13 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "name",
         "type_parameters",
         "parameters",
         "return_type",
-        "body"
+        "body",
+        "automatic_semicolon"
       ]
     },
     {
@@ -14133,6 +13454,7 @@
       "factoryName": "functionExpression",
       "irKey": "functionExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "async_marker",
@@ -14292,6 +13614,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "name",
         "type_parameters",
         "parameters",
@@ -14306,6 +13629,7 @@
       "factoryName": "functionSignature",
       "irKey": "functionSignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "async_marker",
@@ -14479,10 +13803,12 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "name",
         "type_parameters",
         "parameters",
-        "return_type"
+        "return_type",
+        "semicolon"
       ]
     },
     {
@@ -14492,6 +13818,7 @@
       "factoryName": "functionType",
       "irKey": "functionType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type_parameters",
@@ -14594,6 +13921,7 @@
       "factoryName": "generatorFunction",
       "irKey": "generatorFunction",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "async_marker",
@@ -14753,6 +14081,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "name",
         "type_parameters",
         "parameters",
@@ -14767,6 +14096,7 @@
       "factoryName": "generatorFunctionDeclaration",
       "irKey": "generatorFunctionDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "async_marker",
@@ -14949,11 +14279,13 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "async_marker",
         "name",
         "type_parameters",
         "parameters",
         "return_type",
-        "body"
+        "body",
+        "automatic_semicolon"
       ]
     },
     {
@@ -14963,6 +14295,7 @@
       "factoryName": "genericType",
       "irKey": "genericType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -15027,13 +14360,26 @@
       ]
     },
     {
+      "kind": "get",
+      "modelType": "token",
+      "typeName": "Get",
+      "irKey": "get",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"get\" as const",
+      "word": true,
+      "text": "get",
+      "factoryShape": "text"
+    },
+    {
       "kind": "global",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Global",
       "irKey": "global",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"global\" as const",
+      "word": true,
       "text": "global",
       "factoryShape": "text"
     },
@@ -15045,6 +14391,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">\" as const",
+      "word": false,
       "text": ">"
     },
     {
@@ -15055,6 +14402,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">=\" as const",
+      "word": false,
       "text": ">="
     },
     {
@@ -15065,7 +14413,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>\" as const",
+      "word": false,
       "text": ">>"
+    },
+    {
+      "kind": "gt_gt_eq",
+      "modelType": "token",
+      "typeName": "GtGtEq",
+      "irKey": "gtGtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>=\" as const",
+      "word": false,
+      "text": ">>="
     },
     {
       "kind": "gt_gt_gt",
@@ -15075,7 +14435,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>>\" as const",
+      "word": false,
       "text": ">>>"
+    },
+    {
+      "kind": "gt_gt_gt_eq",
+      "modelType": "token",
+      "typeName": "GtGtGtEq",
+      "irKey": "gtGtGtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>>=\" as const",
+      "word": false,
+      "text": ">>>="
     },
     {
       "kind": "hash_bang_line",
@@ -15107,12 +14479,13 @@
     },
     {
       "kind": "if",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "If",
       "irKey": "if",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"if\" as const",
+      "word": true,
       "text": "if",
       "factoryShape": "text"
     },
@@ -15123,6 +14496,7 @@
       "factoryName": "ifStatement",
       "irKey": "ifStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "condition",
@@ -15204,22 +14578,24 @@
     },
     {
       "kind": "implements",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Implements",
       "irKey": "implements",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"implements\" as const",
+      "word": true,
       "text": "implements",
       "factoryShape": "text"
     },
     {
       "kind": "implements_clause",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ImplementsClause",
       "factoryName": "implementsClause",
       "irKey": "implementsClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -15253,13 +14629,14 @@
     },
     {
       "kind": "import",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Import",
       "factoryName": "import_",
       "irKey": "import",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
+      "word": true,
       "text": "import",
       "factoryShape": "text"
     },
@@ -15270,6 +14647,7 @@
       "factoryName": "importAlias",
       "irKey": "importAlias",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -15359,7 +14737,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "value"
+        "value",
+        "semicolon"
       ]
     },
     {
@@ -15369,6 +14748,7 @@
       "factoryName": "importAttribute",
       "irKey": "importAttribute",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "attribute_kind",
@@ -15425,35 +14805,16 @@
       "factoryFields": [
         "attribute_kind",
         "object"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "with",
-          "via": "member",
-          "slot": "attribute_kind",
-          "literal": "with",
-          "params": [
-            "object"
-          ]
-        },
-        {
-          "name": "assert",
-          "via": "member",
-          "slot": "attribute_kind",
-          "literal": "assert",
-          "params": [
-            "object"
-          ]
-        }
       ]
     },
     {
       "kind": "import_clause",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ImportClause",
       "factoryName": "importClause",
       "irKey": "importClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -15499,29 +14860,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "namespaceImport",
-          "via": "form",
-          "slot": "content",
-          "childKind": "namespace_import",
-          "path": []
-        },
-        {
-          "name": "namedImports",
-          "via": "form",
-          "slot": "content",
-          "childKind": "named_imports",
-          "path": []
-        },
-        {
-          "name": "defaultImport",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_import_clause_default_import",
-          "path": []
-        }
       ]
     },
     {
@@ -15531,6 +14869,7 @@
       "factoryName": "importRequireClause",
       "irKey": "importRequireClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "identifier",
@@ -15593,6 +14932,7 @@
       "factoryName": "importSpecifier",
       "irKey": "importSpecifier",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "import_kind",
@@ -15663,26 +15003,6 @@
       "factoryFields": [
         "import_kind",
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "type",
-          "via": "member",
-          "slot": "import_kind",
-          "literal": "type",
-          "params": [
-            "content"
-          ]
-        },
-        {
-          "name": "typeof",
-          "via": "member",
-          "slot": "import_kind",
-          "literal": "typeof",
-          "params": [
-            "content"
-          ]
-        }
       ]
     },
     {
@@ -15692,6 +15012,7 @@
       "factoryName": "importStatement",
       "irKey": "importStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "import_clause",
@@ -15816,39 +15137,19 @@
       "factoryFields": [
         "import_clause",
         "from_clause",
-        "import_attribute"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "type",
-          "via": "member",
-          "slot": "import_clause",
-          "literal": "type",
-          "params": [
-            "from_clause",
-            "import_attribute"
-          ]
-        },
-        {
-          "name": "typeof",
-          "via": "member",
-          "slot": "import_clause",
-          "literal": "typeof",
-          "params": [
-            "from_clause",
-            "import_attribute"
-          ]
-        }
+        "import_attribute",
+        "semicolon"
       ]
     },
     {
       "kind": "in",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "In",
       "irKey": "in",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
+      "word": true,
       "text": "in",
       "factoryShape": "text"
     },
@@ -15859,6 +15160,7 @@
       "factoryName": "indexSignature",
       "irKey": "indexSignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "sign",
@@ -15989,39 +15291,19 @@
       "factoryShape": "config",
       "factoryFields": [
         "sign",
+        "readonly_marker",
         "content",
         "type"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "dash",
-          "via": "member",
-          "slot": "sign",
-          "literal": "-",
-          "params": [
-            "content",
-            "type"
-          ]
-        },
-        {
-          "name": "plus",
-          "via": "member",
-          "slot": "sign",
-          "literal": "+",
-          "params": [
-            "content",
-            "type"
-          ]
-        }
       ]
     },
     {
       "kind": "index_type_query",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "IndexTypeQuery",
       "factoryName": "indexTypeQuery",
       "irKey": "indexTypeQuery",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "primary_type",
@@ -16055,12 +15337,13 @@
     },
     {
       "kind": "infer",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Infer",
       "irKey": "infer",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"infer\" as const",
+      "word": true,
       "text": "infer",
       "factoryShape": "text"
     },
@@ -16071,6 +15354,7 @@
       "factoryName": "inferType",
       "irKey": "inferType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type_identifier",
@@ -16128,12 +15412,13 @@
     },
     {
       "kind": "instanceof",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Instanceof",
       "irKey": "instanceof",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"instanceof\" as const",
+      "word": true,
       "text": "instanceof",
       "factoryShape": "text"
     },
@@ -16144,6 +15429,7 @@
       "factoryName": "instantiationExpression",
       "irKey": "instantiationExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -16201,12 +15487,13 @@
     },
     {
       "kind": "interface",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Interface",
       "irKey": "interface",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"interface\" as const",
+      "word": true,
       "text": "interface",
       "factoryShape": "text"
     },
@@ -16217,6 +15504,7 @@
       "factoryName": "interfaceDeclaration",
       "irKey": "interfaceDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -16327,6 +15615,7 @@
       "factoryName": "internalModule",
       "irKey": "internalModule",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -16405,6 +15694,7 @@
       "factoryName": "intersectionType",
       "irKey": "intersectionType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -16462,12 +15752,13 @@
     },
     {
       "kind": "is",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Is",
       "irKey": "is",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"is\" as const",
+      "word": true,
       "text": "is",
       "factoryShape": "text"
     },
@@ -16482,12 +15773,13 @@
     },
     {
       "kind": "keyof",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Keyof",
       "irKey": "keyof",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"keyof\" as const",
+      "word": true,
       "text": "keyof",
       "factoryShape": "text"
     },
@@ -16498,6 +15790,7 @@
       "factoryName": "labeledStatement",
       "irKey": "labeledStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "label",
@@ -16561,7 +15854,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"{\" as const",
+      "word": false,
       "text": "{"
+    },
+    {
+      "kind": "lbrace_pipe",
+      "modelType": "token",
+      "typeName": "LbracePipe",
+      "irKey": "lbracePipe",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"{|\" as const",
+      "word": false,
+      "text": "{|"
     },
     {
       "kind": "lbrack",
@@ -16571,7 +15876,20 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"[\" as const",
+      "word": false,
       "text": "["
+    },
+    {
+      "kind": "let",
+      "modelType": "token",
+      "typeName": "Let",
+      "irKey": "let",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"let\" as const",
+      "word": true,
+      "text": "let",
+      "factoryShape": "text"
     },
     {
       "kind": "lexical_declaration",
@@ -16580,6 +15898,7 @@
       "factoryName": "lexicalDeclaration",
       "irKey": "lexicalDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "kind",
@@ -16661,7 +15980,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "kind",
-        "declarators"
+        "declarators",
+        "semicolon"
       ]
     },
     {
@@ -16670,6 +15990,7 @@
       "typeName": "LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "array_pattern",
@@ -16683,11 +16004,12 @@
     },
     {
       "kind": "literal_type",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "LiteralType",
       "factoryName": "literalType",
       "irKey": "literalType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -16765,61 +16087,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "string",
-          "via": "form",
-          "slot": "content",
-          "childKind": "string",
-          "path": []
-        },
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "content",
-          "childKind": "string",
-          "path": [
-            "double"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "content",
-          "childKind": "string",
-          "path": [
-            "single"
-          ]
-        },
-        {
-          "name": "true",
-          "via": "form",
-          "slot": "content",
-          "childKind": "true",
-          "path": []
-        },
-        {
-          "name": "false",
-          "via": "form",
-          "slot": "content",
-          "childKind": "false",
-          "path": []
-        },
-        {
-          "name": "null",
-          "via": "form",
-          "slot": "content",
-          "childKind": "null",
-          "path": []
-        },
-        {
-          "name": "undefined",
-          "via": "form",
-          "slot": "content",
-          "childKind": "undefined",
-          "path": []
-        }
       ]
     },
     {
@@ -16829,6 +16096,7 @@
       "factoryName": "lookupType",
       "irKey": "lookupType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "primary_type",
@@ -16892,6 +16160,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"(\" as const",
+      "word": false,
       "text": "("
     },
     {
@@ -16902,6 +16171,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<\" as const",
+      "word": false,
       "text": "<"
     },
     {
@@ -16912,6 +16182,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<=\" as const",
+      "word": false,
       "text": "<="
     },
     {
@@ -16922,7 +16193,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<<\" as const",
+      "word": false,
       "text": "<<"
+    },
+    {
+      "kind": "lt_lt_eq",
+      "modelType": "token",
+      "typeName": "LtLtEq",
+      "irKey": "ltLtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<=\" as const",
+      "word": false,
+      "text": "<<="
     },
     {
       "kind": "mapped_type_clause",
@@ -16931,6 +16214,7 @@
       "factoryName": "mappedTypeClause",
       "irKey": "mappedTypeClause",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -17017,6 +16301,7 @@
       "factoryName": "memberExpression",
       "irKey": "memberExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "object",
@@ -17127,12 +16412,25 @@
       ]
     },
     {
+      "kind": "meta",
+      "modelType": "token",
+      "typeName": "Meta",
+      "irKey": "meta",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"meta\" as const",
+      "word": true,
+      "text": "meta",
+      "factoryShape": "text"
+    },
+    {
       "kind": "meta_property",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "MetaProperty",
       "factoryName": "metaProperty",
       "irKey": "metaProperty",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -17170,22 +16468,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "arm1",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_meta_property_arm1",
-          "path": []
-        },
-        {
-          "name": "arm2",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_meta_property_arm2",
-          "path": []
-        }
       ]
     },
     {
@@ -17195,6 +16477,7 @@
       "factoryName": "methodDefinition",
       "irKey": "methodDefinition",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "accessibility_modifier",
@@ -17528,56 +16811,17 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
+        "static_marker",
+        "override_modifier",
+        "readonly_marker",
+        "async_marker",
         "accessor_kind",
         "name",
+        "optional_marker",
         "type_parameters",
         "parameters",
         "return_type",
         "body"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "get",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "get",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type",
-            "body"
-          ]
-        },
-        {
-          "name": "set",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "set",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type",
-            "body"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "*",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type",
-            "body"
-          ]
-        }
       ]
     },
     {
@@ -17587,6 +16831,7 @@
       "factoryName": "methodSignature",
       "irKey": "methodSignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "accessibility_modifier",
@@ -17897,52 +17142,16 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
+        "static_marker",
+        "override_modifier",
+        "readonly_marker",
+        "async_marker",
         "accessor_kind",
         "name",
+        "optional_marker",
         "type_parameters",
         "parameters",
         "return_type"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "get",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "get",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type"
-          ]
-        },
-        {
-          "name": "set",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "set",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type"
-          ]
-        },
-        {
-          "name": "star",
-          "via": "member",
-          "slot": "accessor_kind",
-          "literal": "*",
-          "params": [
-            "accessibility_modifier",
-            "name",
-            "type_parameters",
-            "parameters",
-            "return_type"
-          ]
-        }
       ]
     },
     {
@@ -17952,6 +17161,7 @@
       "factoryName": "module",
       "irKey": "module",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -18025,11 +17235,12 @@
     },
     {
       "kind": "named_imports",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "NamedImports",
       "factoryName": "namedImports",
       "irKey": "namedImports",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "import_specifiers",
@@ -18064,22 +17275,24 @@
     },
     {
       "kind": "namespace",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Namespace",
       "irKey": "namespace",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"namespace\" as const",
+      "word": true,
       "text": "namespace",
       "factoryShape": "text"
     },
     {
       "kind": "namespace_export",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "NamespaceExport",
       "factoryName": "namespaceExport",
       "irKey": "namespaceExport",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "module_export_name",
@@ -18117,49 +17330,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "module_export_name"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "module_export_name",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "string",
-          "via": "form",
-          "slot": "module_export_name",
-          "childKind": "string",
-          "path": []
-        },
-        {
-          "name": "stringDouble",
-          "via": "form",
-          "slot": "module_export_name",
-          "childKind": "string",
-          "path": [
-            "double"
-          ]
-        },
-        {
-          "name": "stringSingle",
-          "via": "form",
-          "slot": "module_export_name",
-          "childKind": "string",
-          "path": [
-            "single"
-          ]
-        }
       ]
     },
     {
       "kind": "namespace_import",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "NamespaceImport",
       "factoryName": "namespaceImport",
       "irKey": "namespaceImport",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "identifier",
@@ -18199,6 +17379,7 @@
       "factoryName": "nestedIdentifier",
       "irKey": "nestedIdentifier",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "object",
@@ -18269,6 +17450,7 @@
       "factoryName": "nestedTypeIdentifier",
       "irKey": "nestedTypeIdentifier",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "module",
@@ -18333,13 +17515,26 @@
       ]
     },
     {
+      "kind": "never",
+      "modelType": "token",
+      "typeName": "Never",
+      "irKey": "never",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"never\" as const",
+      "word": true,
+      "text": "never",
+      "factoryShape": "text"
+    },
+    {
       "kind": "new",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "New",
       "irKey": "new",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"new\" as const",
+      "word": true,
       "text": "new",
       "factoryShape": "text"
     },
@@ -18350,6 +17545,7 @@
       "factoryName": "newExpression",
       "irKey": "newExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "constructor",
@@ -18431,11 +17627,12 @@
     },
     {
       "kind": "non_null_expression",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "NonNullExpression",
       "factoryName": "nonNullExpression",
       "irKey": "nonNullExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -18469,13 +17666,14 @@
     },
     {
       "kind": "null",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Null",
       "factoryName": "null_",
       "irKey": "null",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"null\" as const",
+      "word": true,
       "text": "null",
       "factoryShape": "text"
     },
@@ -18490,11 +17688,12 @@
     },
     {
       "kind": "object",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "Object",
       "factoryName": "object",
       "irKey": "object",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "properties",
@@ -18557,6 +17756,7 @@
       "factoryName": "objectAssignmentPattern",
       "irKey": "objectAssignmentPattern",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -18630,11 +17830,12 @@
     },
     {
       "kind": "object_pattern",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ObjectPattern",
       "factoryName": "objectPattern",
       "irKey": "objectPattern",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "properties",
@@ -18697,6 +17898,7 @@
       "factoryName": "objectType",
       "irKey": "objectType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "opening",
@@ -18784,7 +17986,7 @@
     },
     {
       "kind": "object_type_content",
-      "modelType": "separatedList",
+      "modelType": "list",
       "typeName": "ObjectTypeContent",
       "factoryName": "objectTypeContent",
       "irKey": "objectTypeContent",
@@ -18807,12 +18009,25 @@
       ]
     },
     {
+      "kind": "of",
+      "modelType": "token",
+      "typeName": "Of",
+      "irKey": "of",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"of\" as const",
+      "word": true,
+      "text": "of",
+      "factoryShape": "text"
+    },
+    {
       "kind": "omitting_type_annotation",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "OmittingTypeAnnotation",
       "factoryName": "omittingTypeAnnotation",
       "irKey": "omittingTypeAnnotation",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -18846,11 +18061,12 @@
     },
     {
       "kind": "opting_type_annotation",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "OptingTypeAnnotation",
       "factoryName": "optingTypeAnnotation",
       "irKey": "optingTypeAnnotation",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -18886,11 +18102,14 @@
       "kind": "optional_chain",
       "modelType": "token",
       "typeName": "OptionalChain",
+      "factoryName": "optionalChain",
       "irKey": "optionalChain",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
-      "text": "?."
+      "word": false,
+      "text": "?.",
+      "factoryShape": "text"
     },
     {
       "kind": "optional_parameter",
@@ -18899,6 +18118,7 @@
       "factoryName": "optionalParameter",
       "irKey": "optionalParameter",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "decorator",
@@ -19072,6 +18292,8 @@
       "factoryFields": [
         "decorator",
         "accessibility_modifier",
+        "override_modifier",
+        "readonly_marker",
         "pattern",
         "type",
         "value"
@@ -19084,6 +18306,7 @@
       "factoryName": "optionalTupleParameter",
       "irKey": "optionalTupleParameter",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -19141,11 +18364,12 @@
     },
     {
       "kind": "optional_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "OptionalType",
       "factoryName": "optionalType",
       "irKey": "optionalType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -19179,24 +18403,26 @@
     },
     {
       "kind": "override",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Override",
       "irKey": "override",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
+      "word": true,
       "text": "override",
       "factoryShape": "text"
     },
     {
       "kind": "override_modifier",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "OverrideModifier",
       "factoryName": "overrideModifier",
       "irKey": "overrideModifier",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
+      "word": true,
       "text": "override",
       "factoryShape": "text"
     },
@@ -19207,6 +18433,7 @@
       "factoryName": "pair",
       "irKey": "pair",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "key",
@@ -19301,6 +18528,7 @@
       "factoryName": "pairPattern",
       "irKey": "pairPattern",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "key",
@@ -19398,11 +18626,12 @@
     },
     {
       "kind": "parenthesized_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesizedExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -19464,52 +18693,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "typed",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_parenthesized_expression_typed",
-          "path": []
-        },
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "sequence_expression",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "decoratorMemberExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_member_expression",
-          "path": []
-        },
-        {
-          "name": "decoratorCallExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "decorator_call_expression",
-          "path": []
-        }
       ]
     },
     {
       "kind": "parenthesized_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ParenthesizedType",
       "factoryName": "parenthesizedType",
       "irKey": "parenthesizedType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -19547,6 +18740,7 @@
       "typeName": "Pattern",
       "irKey": "pattern",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_lhs_expression",
         "rest_pattern"
@@ -19560,7 +18754,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"%\" as const",
+      "word": false,
       "text": "%"
+    },
+    {
+      "kind": "percent_eq",
+      "modelType": "token",
+      "typeName": "PercentEq",
+      "irKey": "percentEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%=\" as const",
+      "word": false,
+      "text": "%="
     },
     {
       "kind": "pipe",
@@ -19570,7 +18776,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
+      "word": false,
       "text": "|"
+    },
+    {
+      "kind": "pipe_eq",
+      "modelType": "token",
+      "typeName": "PipeEq",
+      "irKey": "pipeEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|=\" as const",
+      "word": false,
+      "text": "|="
     },
     {
       "kind": "pipe_pipe",
@@ -19580,7 +18798,30 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"||\" as const",
+      "word": false,
       "text": "||"
+    },
+    {
+      "kind": "pipe_pipe_eq",
+      "modelType": "token",
+      "typeName": "PipePipeEq",
+      "irKey": "pipePipeEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"||=\" as const",
+      "word": false,
+      "text": "||="
+    },
+    {
+      "kind": "pipe_rbrace",
+      "modelType": "token",
+      "typeName": "PipeRbrace",
+      "irKey": "pipeRbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|}\" as const",
+      "word": false,
+      "text": "|}"
     },
     {
       "kind": "plus",
@@ -19590,7 +18831,30 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+\" as const",
+      "word": false,
       "text": "+"
+    },
+    {
+      "kind": "plus_eq",
+      "modelType": "token",
+      "typeName": "PlusEq",
+      "irKey": "plusEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+=\" as const",
+      "word": false,
+      "text": "+="
+    },
+    {
+      "kind": "plus_plus",
+      "modelType": "token",
+      "typeName": "PlusPlus",
+      "irKey": "plusPlus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"++\" as const",
+      "word": false,
+      "text": "++"
     },
     {
       "kind": "plus_qmark_colon",
@@ -19600,6 +18864,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+?:\" as const",
+      "word": false,
       "text": "+?:"
     },
     {
@@ -19629,6 +18894,7 @@
       "typeName": "PrimaryExpression",
       "irKey": "primaryExpression",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_reserved_identifier",
         "array",
@@ -19662,6 +18928,7 @@
       "typeName": "PrimaryType",
       "irKey": "primaryType",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "array_type",
         "conditional_type",
@@ -19685,6 +18952,18 @@
       ]
     },
     {
+      "kind": "private",
+      "modelType": "token",
+      "typeName": "Private",
+      "irKey": "private",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"private\" as const",
+      "word": true,
+      "text": "private",
+      "factoryShape": "text"
+    },
+    {
       "kind": "private_property_identifier",
       "modelType": "pattern",
       "typeName": "PrivatePropertyIdentifier",
@@ -19700,6 +18979,7 @@
       "factoryName": "program",
       "irKey": "program",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "hash_bang_line",
@@ -19762,6 +19042,7 @@
       "factoryName": "propertySignature",
       "irKey": "propertySignature",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "accessibility_modifier",
@@ -19955,9 +19236,37 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
+        "static_marker",
+        "override_modifier",
+        "readonly_marker",
         "name",
+        "optional_marker",
         "type"
       ]
+    },
+    {
+      "kind": "protected",
+      "modelType": "token",
+      "typeName": "Protected",
+      "irKey": "protected",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"protected\" as const",
+      "word": true,
+      "text": "protected",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "public",
+      "modelType": "token",
+      "typeName": "Public",
+      "irKey": "public",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"public\" as const",
+      "word": true,
+      "text": "public",
+      "factoryShape": "text"
     },
     {
       "kind": "public_field_definition",
@@ -19966,6 +19275,7 @@
       "factoryName": "publicFieldDefinition",
       "irKey": "publicFieldDefinition",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "decorator",
@@ -20280,39 +19590,17 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
+        "declare_marker",
         "accessibility_modifier",
+        "static_marker",
+        "readonly_marker",
+        "abstract_marker",
+        "accessor_marker",
+        "override_modifier",
         "name",
         "optionality_marker",
         "type",
         "value"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "qmark",
-          "via": "member",
-          "slot": "optionality_marker",
-          "literal": "?",
-          "params": [
-            "decorator",
-            "accessibility_modifier",
-            "name",
-            "type",
-            "value"
-          ]
-        },
-        {
-          "name": "bang",
-          "via": "member",
-          "slot": "optionality_marker",
-          "literal": "!",
-          "params": [
-            "decorator",
-            "accessibility_modifier",
-            "name",
-            "type",
-            "value"
-          ]
-        }
       ]
     },
     {
@@ -20323,6 +19611,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?\" as const",
+      "word": false,
       "text": "?"
     },
     {
@@ -20333,6 +19622,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?:\" as const",
+      "word": false,
       "text": "?:"
     },
     {
@@ -20343,6 +19633,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
+      "word": false,
       "text": "?."
     },
     {
@@ -20353,7 +19644,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"??\" as const",
+      "word": false,
       "text": "??"
+    },
+    {
+      "kind": "qmark_qmark_eq",
+      "modelType": "token",
+      "typeName": "QmarkQmarkEq",
+      "irKey": "qmarkQmarkEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"??=\" as const",
+      "word": false,
+      "text": "??="
     },
     {
       "kind": "rbrace",
@@ -20363,6 +19666,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"}\" as const",
+      "word": false,
       "text": "}"
     },
     {
@@ -20373,26 +19677,29 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"]\" as const",
+      "word": false,
       "text": "]"
     },
     {
       "kind": "readonly",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Readonly",
       "irKey": "readonly",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"readonly\" as const",
+      "word": true,
       "text": "readonly",
       "factoryShape": "text"
     },
     {
       "kind": "readonly_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "ReadonlyType",
       "factoryName": "readonlyType",
       "irKey": "readonlyType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -20431,6 +19738,7 @@
       "factoryName": "regex",
       "irKey": "regex",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "pattern",
@@ -20484,15 +19792,6 @@
       "factoryFields": [
         "pattern",
         "flags"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "pattern",
-          "via": "form",
-          "slot": "pattern",
-          "childKind": "regex_pattern",
-          "path": []
-        }
       ]
     },
     {
@@ -20516,12 +19815,13 @@
     },
     {
       "kind": "require",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Require",
       "irKey": "require",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"require\" as const",
+      "word": true,
       "text": "require",
       "factoryShape": "text"
     },
@@ -20532,6 +19832,7 @@
       "factoryName": "requiredParameter",
       "irKey": "requiredParameter",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "decorator",
@@ -20705,6 +20006,8 @@
       "factoryFields": [
         "decorator",
         "accessibility_modifier",
+        "override_modifier",
+        "readonly_marker",
         "pattern",
         "type",
         "value"
@@ -20712,11 +20015,12 @@
     },
     {
       "kind": "rest_pattern",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "RestPattern",
       "factoryName": "restPattern",
       "irKey": "restPattern",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "lhs_expression",
@@ -20802,73 +20106,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "lhs_expression"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "memberExpression",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "member_expression",
-          "path": []
-        },
-        {
-          "name": "subscriptExpression",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "subscript_expression",
-          "path": []
-        },
-        {
-          "name": "undefined",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "undefined",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "reservedIdentifier",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "_reserved_identifier",
-          "path": []
-        },
-        {
-          "name": "objectPattern",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "object_pattern",
-          "path": []
-        },
-        {
-          "name": "arrayPattern",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "array_pattern",
-          "path": []
-        },
-        {
-          "name": "nonNullExpression",
-          "via": "form",
-          "slot": "lhs_expression",
-          "childKind": "non_null_expression",
-          "path": []
-        }
       ]
     },
     {
       "kind": "rest_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "RestType",
       "factoryName": "restType",
       "irKey": "restType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -20902,12 +20149,13 @@
     },
     {
       "kind": "return",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Return",
       "irKey": "return",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
+      "word": true,
       "text": "return",
       "factoryShape": "text"
     },
@@ -20918,6 +20166,7 @@
       "factoryName": "returnStatement",
       "irKey": "returnStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expressions",
@@ -20983,16 +20232,8 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "expressions",
-          "childKind": "sequence_expression",
-          "path": []
-        }
+        "expressions",
+        "semicolon"
       ]
     },
     {
@@ -21003,16 +20244,18 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\")\" as const",
+      "word": false,
       "text": ")"
     },
     {
       "kind": "satisfies",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Satisfies",
       "irKey": "satisfies",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"satisfies\" as const",
+      "word": true,
       "text": "satisfies",
       "factoryShape": "text"
     },
@@ -21023,6 +20266,7 @@
       "factoryName": "satisfiesExpression",
       "irKey": "satisfiesExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -21086,15 +20330,17 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
+      "word": false,
       "text": ";"
     },
     {
       "kind": "sequence_expression",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "SequenceExpression",
       "factoryName": "sequenceExpression",
       "irKey": "sequenceExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -21127,6 +20373,18 @@
       ]
     },
     {
+      "kind": "set",
+      "modelType": "token",
+      "typeName": "Set",
+      "irKey": "set",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"set\" as const",
+      "word": true,
+      "text": "set",
+      "factoryShape": "text"
+    },
+    {
       "kind": "slash",
       "modelType": "token",
       "typeName": "Slash",
@@ -21134,15 +20392,28 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
+      "word": false,
       "text": "/"
     },
     {
+      "kind": "slash_eq",
+      "modelType": "token",
+      "typeName": "SlashEq",
+      "irKey": "slashEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/=\" as const",
+      "word": false,
+      "text": "/="
+    },
+    {
       "kind": "spread_element",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "SpreadElement",
       "factoryName": "spreadElement",
       "irKey": "spreadElement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",
@@ -21182,6 +20453,7 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"'\" as const",
+      "word": false,
       "text": "'"
     },
     {
@@ -21192,7 +20464,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
+      "word": false,
       "text": "*"
+    },
+    {
+      "kind": "star_eq",
+      "modelType": "token",
+      "typeName": "StarEq",
+      "irKey": "starEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*=\" as const",
+      "word": false,
+      "text": "*="
     },
     {
       "kind": "star_star",
@@ -21202,7 +20486,19 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
+      "word": false,
       "text": "**"
+    },
+    {
+      "kind": "star_star_eq",
+      "modelType": "token",
+      "typeName": "StarStarEq",
+      "irKey": "starStarEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"**=\" as const",
+      "word": false,
+      "text": "**="
     },
     {
       "kind": "statement",
@@ -21210,6 +20506,7 @@
       "typeName": "Statement",
       "irKey": "statement",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "break_statement",
         "continue_statement",
@@ -21240,6 +20537,7 @@
       "factoryName": "statementBlock",
       "irKey": "statementBlock",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "statements",
@@ -21291,27 +20589,30 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "statements"
+        "statements",
+        "automatic_semicolon"
       ]
     },
     {
       "kind": "static",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Static",
       "irKey": "static",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
+      "word": true,
       "text": "static",
       "factoryShape": "text"
     },
     {
       "kind": "string",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "String",
       "factoryName": "string",
       "irKey": "string",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -21349,22 +20650,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "double",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_string_double",
-          "path": []
-        },
-        {
-          "name": "single",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_string_single",
-          "path": []
-        }
       ]
     },
     {
@@ -21374,6 +20659,7 @@
       "factoryName": "subscriptExpression",
       "irKey": "subscriptExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "object",
@@ -21465,39 +20751,43 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
+        "optional_chain",
         "index"
       ]
     },
     {
       "kind": "super",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Super",
       "factoryName": "super",
       "irKey": "super",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
+      "word": true,
       "text": "super",
       "factoryShape": "text"
     },
     {
       "kind": "switch",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Switch",
       "irKey": "switch",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"switch\" as const",
+      "word": true,
       "text": "switch",
       "factoryShape": "text"
     },
     {
       "kind": "switch_body",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "SwitchBody",
       "factoryName": "switchBody",
       "irKey": "switchBody",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "cases",
@@ -21544,6 +20834,7 @@
       "factoryName": "switchCase",
       "irKey": "switchCase",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "value",
@@ -21609,11 +20900,12 @@
     },
     {
       "kind": "switch_default",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "SwitchDefault",
       "factoryName": "switchDefault",
       "irKey": "switchDefault",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "body",
@@ -21652,6 +20944,7 @@
       "factoryName": "switchStatement",
       "irKey": "switchStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "value",
@@ -21708,12 +21001,37 @@
       ]
     },
     {
+      "kind": "symbol",
+      "modelType": "token",
+      "typeName": "Symbol",
+      "irKey": "symbol",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"symbol\" as const",
+      "word": true,
+      "text": "symbol",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "target",
+      "modelType": "token",
+      "typeName": "Target",
+      "irKey": "target",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"target\" as const",
+      "word": true,
+      "text": "target",
+      "factoryShape": "text"
+    },
+    {
       "kind": "template_literal_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TemplateLiteralType",
       "factoryName": "templateLiteralType",
       "irKey": "templateLiteralType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "elements",
@@ -21755,11 +21073,12 @@
     },
     {
       "kind": "template_string",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TemplateString",
       "factoryName": "templateString",
       "irKey": "templateString",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "elements",
@@ -21809,11 +21128,12 @@
     },
     {
       "kind": "template_substitution",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "TemplateSubstitution",
       "factoryName": "templateSubstitution",
       "irKey": "templateSubstitution",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expressions",
@@ -21851,24 +21171,16 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expressions"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "expressions",
-          "childKind": "sequence_expression",
-          "path": []
-        }
       ]
     },
     {
       "kind": "template_type",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "TemplateType",
       "factoryName": "templateType",
       "irKey": "templateType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -21906,15 +21218,6 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "inferType",
-          "via": "form",
-          "slot": "content",
-          "childKind": "infer_type",
-          "path": []
-        }
       ]
     },
     {
@@ -21924,6 +21227,7 @@
       "factoryName": "ternaryExpression",
       "irKey": "ternaryExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "condition",
@@ -22005,24 +21309,26 @@
     },
     {
       "kind": "this",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "This",
       "factoryName": "this",
       "irKey": "this",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"this\" as const",
+      "word": true,
       "text": "this",
       "factoryShape": "text"
     },
     {
       "kind": "throw",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Throw",
       "irKey": "throw",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"throw\" as const",
+      "word": true,
       "text": "throw",
       "factoryShape": "text"
     },
@@ -22033,6 +21339,7 @@
       "factoryName": "throwStatement",
       "irKey": "throwStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expressions",
@@ -22098,38 +21405,43 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "sequenceExpression",
-          "via": "form",
-          "slot": "expressions",
-          "childKind": "sequence_expression",
-          "path": []
-        }
+        "expressions",
+        "semicolon"
       ]
     },
     {
+      "kind": "tilde",
+      "modelType": "token",
+      "typeName": "Tilde",
+      "irKey": "tilde",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"~\" as const",
+      "word": false,
+      "text": "~"
+    },
+    {
       "kind": "true",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "True",
       "factoryName": "true_",
       "irKey": "true",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
+      "word": true,
       "text": "true",
       "factoryShape": "text"
     },
     {
       "kind": "try",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Try",
       "irKey": "try",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"try\" as const",
+      "word": true,
       "text": "try",
       "factoryShape": "text"
     },
@@ -22140,6 +21452,7 @@
       "factoryName": "tryStatement",
       "irKey": "tryStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "body",
@@ -22226,6 +21539,7 @@
       "factoryName": "tupleParameter",
       "irKey": "tupleParameter",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -22291,11 +21605,12 @@
     },
     {
       "kind": "tuple_type",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TupleType",
       "factoryName": "tupleType",
       "irKey": "tupleType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "tuple_type_members",
@@ -22334,6 +21649,7 @@
       "typeName": "Type",
       "irKey": "type",
       "hidden": true,
+      "transparent": true,
       "subtypes": [
         "_type_query_call_expression_in_type_annotation",
         "_type_query_member_expression_in_type_annotation",
@@ -22351,6 +21667,7 @@
       "factoryName": "typeAliasDeclaration",
       "irKey": "typeAliasDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -22456,16 +21773,18 @@
       "factoryFields": [
         "name",
         "type_parameters",
-        "value"
+        "value",
+        "semicolon"
       ]
     },
     {
       "kind": "type_annotation",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TypeAnnotation",
       "factoryName": "typeAnnotation",
       "irKey": "typeAnnotation",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type",
@@ -22499,11 +21818,12 @@
     },
     {
       "kind": "type_arguments",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "types",
@@ -22543,6 +21863,7 @@
       "factoryName": "typeAssertion",
       "irKey": "typeAssertion",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type_arguments",
@@ -22605,6 +21926,7 @@
       "factoryName": "typeParameter",
       "irKey": "typeParameter",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "const_marker",
@@ -22702,6 +22024,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "const_marker",
         "name",
         "constraint",
         "value"
@@ -22709,11 +22032,12 @@
     },
     {
       "kind": "type_parameters",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type_parameters_elements",
@@ -22753,6 +22077,7 @@
       "factoryName": "typePredicate",
       "irKey": "typePredicate",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "name",
@@ -22826,11 +22151,12 @@
     },
     {
       "kind": "type_predicate_annotation",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "TypePredicateAnnotation",
       "factoryName": "typePredicateAnnotation",
       "irKey": "typePredicateAnnotation",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "type_predicate",
@@ -22865,11 +22191,12 @@
     },
     {
       "kind": "type_query",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "TypeQuery",
       "factoryName": "typeQuery",
       "irKey": "typeQuery",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -22939,78 +22266,17 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "subscriptExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_type_query_subscript_expression",
-          "path": []
-        },
-        {
-          "name": "memberExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_type_query_member_expression",
-          "path": []
-        },
-        {
-          "name": "dot",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_type_query_member_expression",
-          "path": [
-            "dot"
-          ]
-        },
-        {
-          "name": "qmarkDot",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_type_query_member_expression",
-          "path": [
-            "qmarkDot"
-          ]
-        },
-        {
-          "name": "callExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_type_query_call_expression",
-          "path": []
-        },
-        {
-          "name": "instantiationExpression",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_type_query_instantiation_expression",
-          "path": []
-        },
-        {
-          "name": "identifier",
-          "via": "form",
-          "slot": "content",
-          "childKind": "identifier",
-          "path": []
-        },
-        {
-          "name": "this",
-          "via": "form",
-          "slot": "content",
-          "childKind": "this",
-          "path": []
-        }
       ]
     },
     {
       "kind": "typeof",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Typeof",
       "irKey": "typeof",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"typeof\" as const",
+      "word": true,
       "text": "typeof",
       "factoryShape": "text"
     },
@@ -23021,6 +22287,7 @@
       "factoryName": "unaryExpression",
       "irKey": "unaryExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "operator",
@@ -23078,13 +22345,14 @@
     },
     {
       "kind": "undefined",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Undefined",
       "factoryName": "undefined_",
       "irKey": "undefined",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"undefined\" as const",
+      "word": true,
       "text": "undefined",
       "factoryShape": "text"
     },
@@ -23115,6 +22383,7 @@
       "factoryName": "unionType",
       "irKey": "unionType",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "left",
@@ -23171,12 +22440,36 @@
       ]
     },
     {
+      "kind": "unique",
+      "modelType": "token",
+      "typeName": "Unique",
+      "irKey": "unique",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"unique symbol\" as const",
+      "word": false,
+      "text": "unique symbol"
+    },
+    {
+      "kind": "unknown",
+      "modelType": "token",
+      "typeName": "Unknown",
+      "irKey": "unknown",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"unknown\" as const",
+      "word": true,
+      "text": "unknown",
+      "factoryShape": "text"
+    },
+    {
       "kind": "update_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "UpdateExpression",
       "factoryName": "updateExpression",
       "irKey": "updateExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -23214,43 +22507,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "postfix",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_update_expression_postfix",
-          "path": []
-        },
-        {
-          "name": "prefix",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_update_expression_prefix",
-          "path": []
-        }
       ]
     },
     {
       "kind": "using",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Using",
       "irKey": "using",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
+      "word": true,
       "text": "using",
       "factoryShape": "text"
     },
     {
       "kind": "var",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Var",
       "irKey": "var",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"var\" as const",
+      "word": true,
       "text": "var",
       "factoryShape": "text"
     },
@@ -23261,6 +22540,7 @@
       "factoryName": "variableDeclaration",
       "irKey": "variableDeclaration",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "declarators",
@@ -23318,16 +22598,18 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "declarators"
+        "declarators",
+        "semicolon"
       ]
     },
     {
       "kind": "variable_declarator",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "VariableDeclarator",
       "factoryName": "variableDeclarator",
       "irKey": "variableDeclarator",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "content",
@@ -23365,32 +22647,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
-      ],
-      "namespacedConstructors": [
-        {
-          "name": "arm1",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_variable_declarator_arm1",
-          "path": []
-        },
-        {
-          "name": "arm2",
-          "via": "form",
-          "slot": "content",
-          "childKind": "_variable_declarator_arm2",
-          "path": []
-        }
       ]
     },
     {
+      "kind": "void",
+      "modelType": "token",
+      "typeName": "Void",
+      "irKey": "void",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"void\" as const",
+      "word": true,
+      "text": "void",
+      "factoryShape": "text"
+    },
+    {
       "kind": "while",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "While",
       "irKey": "while",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"while\" as const",
+      "word": true,
       "text": "while",
       "factoryShape": "text"
     },
@@ -23401,6 +22680,7 @@
       "factoryName": "whileStatement",
       "irKey": "whileStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "condition",
@@ -23458,12 +22738,13 @@
     },
     {
       "kind": "with",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "With",
       "irKey": "with",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"with\" as const",
+      "word": true,
       "text": "with",
       "factoryShape": "text"
     },
@@ -23474,6 +22755,7 @@
       "factoryName": "withStatement",
       "irKey": "withStatement",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "object",
@@ -23531,22 +22813,24 @@
     },
     {
       "kind": "yield",
-      "modelType": "keyword",
+      "modelType": "token",
       "typeName": "Yield",
       "irKey": "yield",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"yield\" as const",
+      "word": true,
       "text": "yield",
       "factoryShape": "text"
     },
     {
       "kind": "yield_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
       "irKey": "yieldExpression",
       "hidden": false,
+      "hoisted": false,
       "fields": [
         {
           "name": "expression",

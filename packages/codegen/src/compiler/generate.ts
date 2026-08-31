@@ -3,7 +3,6 @@ import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
-import { pruneDeterminedSlots } from './model/node-map.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -12,12 +11,11 @@ import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { emitIndex } from '../emitters/index-file.ts';
-import { emitSuggested } from '../emitters/suggested.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
+import { computeFieldStorageInfo } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
@@ -36,7 +34,6 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
-import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 
@@ -56,7 +53,6 @@ export interface GeneratedFiles {
 	tests: string;
 	config: string;
 	nodeModel: string;
-	suggested: string | undefined;
 	is: string;
 	kindIds: string;
 	nodeMap: NodeMap;
@@ -71,7 +67,6 @@ export interface GenerateConfig {
 	outputDir: string;
 	include?: IncludeFilter;
 	strict?: boolean;
-	roundTripFailures?: readonly RoundTripDiagnostic[];
 	emitRenderModule?: boolean;
 }
 
@@ -138,13 +133,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 	computeFieldStorageInfo(nodeMap);
 
-	pruneDeterminedSlots(nodeMap);
-
 	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
 
 	hydrateSlotRefs(nodeMap);
-
-	computeSlotClasses(nodeMap);
 
 	nodeMap.scc = computeTransportSCC(nodeMap);
 
@@ -190,11 +181,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		tests: emitted.tests,
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel,
-		suggested: emitSuggested({
-			grammar: cfg.grammar,
-			nodeMap,
-			roundTripFailures: cfg.roundTripFailures
-		}),
 		is: emitted.is,
 		kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
 		nodeMap,

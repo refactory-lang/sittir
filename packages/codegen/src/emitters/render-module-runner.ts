@@ -4,6 +4,7 @@ import type { EmittedTemplates } from './templates.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
+import { AssembledKeyword, AssembledSupertype } from '../compiler/model/node-map.ts';
 
 export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
@@ -23,24 +24,37 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 	for (const [, node] of config.nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'pattern':
-			case 'keyword':
 			case 'enum':
 				templateEmitter.emitLeaf?.(node);
 				renderModuleEmitter.emitLeaf?.(node);
 				break;
-			case 'branch':
-				templateEmitter.emitBranch?.(node);
-				renderModuleEmitter.emitBranch?.(node);
-				break;
-			case 'group':
-				templateEmitter.emitGroup?.(node);
-				renderModuleEmitter.emitGroup?.(node);
-				break;
 			case 'token':
-			case 'supertype':
-			case 'multi':
+				if (node instanceof AssembledKeyword) {
+					templateEmitter.emitLeaf?.(node);
+					renderModuleEmitter.emitLeaf?.(node);
+				}
 				break;
-			case 'separatedList':
+			case 'branch':
+			case 'envelope':
+				if (node.hoisted) {
+					templateEmitter.emitGroup?.(node);
+					renderModuleEmitter.emitGroup?.(node);
+				} else {
+					templateEmitter.emitBranch?.(node);
+					renderModuleEmitter.emitBranch?.(node);
+				}
+				break;
+			case 'polymorph':
+				if (node instanceof AssembledSupertype) break;
+				if (node.hoisted) {
+					templateEmitter.emitGroup?.(node);
+					renderModuleEmitter.emitGroup?.(node);
+				} else {
+					templateEmitter.emitBranch?.(node);
+					renderModuleEmitter.emitBranch?.(node);
+				}
+				break;
+			case 'list':
 				templateEmitter.emitBranch?.(node);
 				renderModuleEmitter.emitBranch?.(node);
 				break;

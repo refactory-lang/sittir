@@ -9,8 +9,8 @@
  * run-codegen. That severs the `codegen → tools` dependency edge — validation is
  * a tool, so it lives here.
  *
- * Both functions reach codegen internals (the validators read the codegen model;
- * `emitSuggested` is a codegen emitter) ONLY through the dynamic codegen-surface
+ * Both functions reach codegen internals (the validators read the codegen model)
+ * ONLY through the dynamic codegen-surface
  * — never a static cross-project import — so this module adds no build-fragile
  * `tools → codegen` declaration edge.
  */
@@ -18,7 +18,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { invoke, type NodeMap, type RoundTripDiagnostic } from './codegen-surface.ts';
+import { invoke, type NodeMap } from './codegen-surface.ts';
 
 /**
  * Content-aware write: skip the write when the file already holds identical
@@ -98,14 +98,12 @@ export async function emitParityFixtures(grammar: string, templatesPath: string)
 
 /**
  * Run the corpus round-trip validator probes (read-projection, read-render-parse,
- * factory-render-parse, from) and re-emit `overrides.suggested.ts` with the
- * collected render-parse diagnostics appended.
+ * factory-render-parse, from).
  *
  * Returns the total render-parse / from() failure count so the orchestrator can
- * set `process.exitCode`. Reaches codegen's `emitSuggested` emitter via the
- * dynamic codegen-surface (it consumes validation results + the NodeMap).
+ * set `process.exitCode`.
  */
-export async function runRoundtripProbes(grammar: string, templatesDir: string, nodeMap: NodeMap): Promise<number> {
+export async function runRoundtripProbes(grammar: string, templatesDir: string): Promise<number> {
 	console.log('\nRunning validator probes...');
 
 	const { validateReadProjection, formatReadProjectionReport } = await import('./validate/read-projection.ts');
@@ -134,82 +132,6 @@ export async function runRoundtripProbes(grammar: string, templatesDir: string, 
 	// from() correctness (structural comparison: from() vs factory())
 	const fromResult = await validateFrom(grammar, 'native');
 	console.log(formatFromReport(fromResult));
-
-	// Collect render-parse failures into a structured diagnostic list and re-emit
-	// overrides.suggested.ts with the new section — a copy-pasteable record of
-	// input-vs-rendered for every corpus case that didn't survive the
-	// render-parse path (useful for spotting missing joinBy / transform patches).
-	const parseFrag = (name: string): { entry: string; kind: string } => {
-		const m = name.match(/^(.+)\s+\[([^\]]+)\]$/);
-		return m ? { entry: m[1]!, kind: m[2]! } : { entry: name, kind: 'unknown' };
-	};
-	const diagnostics: RoundTripDiagnostic[] = [];
-	for (const e of readRenderParseResult.errors ?? []) {
-		const { entry, kind } = parseFrag(e.name);
-		diagnostics.push({
-			entry,
-			kind,
-			source: 'render',
-			category: 'parse-error',
-			message: String(e.message),
-			rendered: e.rendered,
-			input: e.input
-		});
-	}
-	for (const m of readRenderParseResult.astMismatches ?? []) {
-		diagnostics.push({
-			entry: m.entry ?? '(unknown)',
-			kind: m.kind,
-			source: 'render',
-			category: 'ast-mismatch',
-			message: String(m.message),
-			rendered: m.rendered,
-			input: m.input
-		});
-	}
-	// Factory render-parse diagnostics — validator runs once per kind with
-	// entry/input/rendered captured from the corpus case. Surfaces factory-API
-	// gaps (missing fields, wrong defaults) the weaker kind-found pass doesn't flag.
-	for (const e of factoryRenderParseResult.errors ?? []) {
-		diagnostics.push({
-			entry: e.entry ?? '(unknown)',
-			kind: e.kind,
-			source: 'factory',
-			category: 'parse-error',
-			message: String(e.message),
-			rendered: e.rendered,
-			input: e.input
-		});
-	}
-	for (const m of factoryRenderParseResult.astMismatches ?? []) {
-		diagnostics.push({
-			entry: m.entry ?? '(unknown)',
-			kind: m.kind,
-			source: 'factory',
-			category: 'ast-mismatch',
-			message: String(m.message),
-			rendered: m.rendered,
-			input: m.input
-		});
-	}
-	if (diagnostics.length > 0) {
-		const suggestedWithFailures: string | undefined = await invoke('suggested', 'emitSuggested', {
-			grammar,
-			nodeMap,
-			roundTripFailures: diagnostics
-		});
-		// overrides.suggested.ts lives at the package root, next to grammar.sittir.ts —
-		// i.e. the parent of the templates directory. `undefined` means the
-		// emitter has nothing to suggest (emission disabled) — skip the write
-		// and clear any stale file from a prior run.
-		const suggestedPath = join(dirname(templatesDir), 'overrides.suggested.ts');
-		if (suggestedWithFailures !== undefined) {
-			writeFile(suggestedPath, suggestedWithFailures);
-			console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`);
-		} else if (existsSync(suggestedPath)) {
-			rmSync(suggestedPath);
-		}
-	}
 
 	return readRenderParseResult.fail + factoryRenderParseResult.fail + fromResult.fail;
 }

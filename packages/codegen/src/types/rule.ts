@@ -39,6 +39,8 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 
 	readonly inlinedFrom?: string;
 
+	readonly absorbedIds?: readonly RuleId[];
+
 	readonly metadata?: RuleMetadata;
 
 	readonly splicedBody?: boolean;
@@ -302,13 +304,13 @@ export type ImmediateTokenRule<Phase extends PhaseName = 'evaluate'> = Phase ext
 	: never;
 
 export type PrecRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
-	? RuleBase<Phase> & { readonly type: 'PREC'; readonly content: Rule<Phase>; readonly value: number }
+	? RuleBase<Phase> & { readonly type: 'PREC'; readonly content: Rule<Phase>; readonly value: number | string }
 	: never;
 export type PrecLeftRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
-	? RuleBase<Phase> & { readonly type: 'PREC_LEFT'; readonly content: Rule<Phase>; readonly value: number }
+	? RuleBase<Phase> & { readonly type: 'PREC_LEFT'; readonly content: Rule<Phase>; readonly value: number | string }
 	: never;
 export type PrecRightRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
-	? RuleBase<Phase> & { readonly type: 'PREC_RIGHT'; readonly content: Rule<Phase>; readonly value: number }
+	? RuleBase<Phase> & { readonly type: 'PREC_RIGHT'; readonly content: Rule<Phase>; readonly value: number | string }
 	: never;
 export type PrecDynamicRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
 	? RuleBase<Phase> & { readonly type: 'PREC_DYNAMIC'; readonly content: Rule<Phase>; readonly value: number }
@@ -402,7 +404,7 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 }
 
 export function sym(name: string): SymbolRule<'evaluate'> {
-	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
+	return { type: SYMBOL, name, inline: name.startsWith('_') };
 }
 
 export function isIdentifierLike(value: string): boolean {

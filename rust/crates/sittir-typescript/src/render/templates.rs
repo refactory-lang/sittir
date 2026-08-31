@@ -830,9 +830,7 @@ pub struct FlowMaybeTypeTemplate<'a> {
 pub struct ForInStatementTemplate<'a> {
     pub await_marker: OptionalNonterminalView<'a>,
     pub body: SingleNonterminalView<'a>,
-    pub for_header_let_const_kind: OptionalNonterminalView<'a>,
-    pub for_header_lhs: OptionalNonterminalView<'a>,
-    pub for_header_var_kind: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
     pub operator: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
 }

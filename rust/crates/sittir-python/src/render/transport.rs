@@ -107,7 +107,7 @@ pub enum AnyTransport {
     Attribute(AttributeTransport),
     Subscript(SubscriptTransport),
     Slice(SliceTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     Call(CallTransport),
     TypedParameter(TypedParameterTransport),
     Type(TypeTransport),
@@ -202,6 +202,7 @@ pub enum AnyTransport {
     CloseBrace(CloseBraceTransport),
     Except(ExceptTransport),
     Import(ImportTransport),
+    Dot(DotTransport),
     From(FromTransport),
     FutureU(FutureUTransport),
     As(AsTransport),
@@ -246,10 +247,10 @@ pub enum AnyTransport {
     Rbrace(RbraceTransport),
     Anonymous(AnonymousTransport),
     Dash(DashTransport),
+    Plus(PlusTransport),
     Not(NotTransport),
     And(AndTransport),
     Or(OrTransport),
-    Plus(PlusTransport),
     Slash(SlashTransport),
     Percent(PercentTransport),
     SlashSlash(SlashSlashTransport),
@@ -259,15 +260,32 @@ pub enum AnyTransport {
     LtLt(LtLtTransport),
     AnonLambda(AnonLambdaTransport),
     AnonYield(AnonYieldTransport),
-    Dot(DotTransport),
-    Ellipsis(EllipsisTransport),
     Bslash(BslashTransport),
-    True2(True2Transport),
-    False2(False2Transport),
-    None2(None2Transport),
     AnonAwait(AnonAwaitTransport),
     Async(AsyncTransport),
+    Tilde(TildeTransport),
+    PlusEq(PlusEqTransport),
+    DashEq(DashEqTransport),
+    StarEq(StarEqTransport),
+    SlashEq(SlashEqTransport),
+    AtEq(AtEqTransport),
+    SlashSlashEq(SlashSlashEqTransport),
+    PercentEq(PercentEqTransport),
+    StarStarEq(StarStarEqTransport),
+    GtGtEq(GtGtEqTransport),
+    LtLtEq(LtLtEqTransport),
+    AmpEq(AmpEqTransport),
+    CaretEq(CaretEqTransport),
+    PipeEq(PipeEqTransport),
     Print(PrintTransport),
+    Lt(LtTransport),
+    LtEq(LtEqTransport),
+    EqEq(EqEqTransport),
+    BangEq(BangEqTransport),
+    GtEq(GtEqTransport),
+    Gt(GtTransport),
+    LtGt(LtGtTransport),
+    Is(IsTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
     Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     Literal2_2a,
@@ -656,9 +674,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 202 => Ok(AnyTransport::Slice(
                     SliceTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ellipsis (ELLIPSIS2)
-                64 => Ok(AnyTransport::Ellipsis2(
-                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                // kind: ellipsis (ELLIPSIS)
+                64 => Ok(AnyTransport::Ellipsis(
+                    EllipsisTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: call (CALL)
                 203 => Ok(AnyTransport::Call(
@@ -1032,6 +1050,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 2 => Ok(AnyTransport::Import(
                     ImportTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: dot (DOT)
+                3 => Ok(AnyTransport::Dot(
+                    DotTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: from (FROM)
                 4 => Ok(AnyTransport::From(
                     FromTransport::from_napi_value(env, napi_val)?
@@ -1196,6 +1218,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 50 => Ok(AnyTransport::Dash(
                     DashTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: plus (PLUS)
+                49 => Ok(AnyTransport::Plus(
+                    PlusTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: not (NOT)
                 51 => Ok(AnyTransport::Not(
                     NotTransport::from_napi_value(env, napi_val)?
@@ -1207,10 +1233,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: or (OR)
                 53 => Ok(AnyTransport::Or(
                     OrTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: plus (PLUS)
-                49 => Ok(AnyTransport::Plus(
-                    PlusTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: slash (SLASH)
                 54 => Ok(AnyTransport::Slash(
@@ -1248,10 +1270,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 63 => Ok(AnyTransport::AnonYield(
                     AnonYieldTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: dot (DOT)
-                3 => Ok(AnyTransport::Dot(
-                    DotTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: bslash (BSLASH)
                 66 => Ok(AnyTransport::Bslash(
                     BslashTransport::from_napi_value(env, napi_val)?
@@ -1264,28 +1282,100 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 72 => Ok(AnyTransport::Async(
                     AsyncTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: tilde (TILDE)
+                60 => Ok(AnyTransport::Tilde(
+                    TildeTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: plus_eq (PLUS_EQ)
+                81 => Ok(AnyTransport::PlusEq(
+                    PlusEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: dash_eq (DASH_EQ)
+                82 => Ok(AnyTransport::DashEq(
+                    DashEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: star_eq (STAR_EQ)
+                83 => Ok(AnyTransport::StarEq(
+                    StarEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: slash_eq (SLASH_EQ)
+                84 => Ok(AnyTransport::SlashEq(
+                    SlashEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: at_eq (AT_EQ)
+                85 => Ok(AnyTransport::AtEq(
+                    AtEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: slash_slash_eq (SLASH_SLASH_EQ)
+                86 => Ok(AnyTransport::SlashSlashEq(
+                    SlashSlashEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: percent_eq (PERCENT_EQ)
+                87 => Ok(AnyTransport::PercentEq(
+                    PercentEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: star_star_eq (STAR_STAR_EQ)
+                88 => Ok(AnyTransport::StarStarEq(
+                    StarStarEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: gt_gt_eq (GT_GT_EQ)
+                89 => Ok(AnyTransport::GtGtEq(
+                    GtGtEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: lt_lt_eq (LT_LT_EQ)
+                90 => Ok(AnyTransport::LtLtEq(
+                    LtLtEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: amp_eq (AMP_EQ)
+                91 => Ok(AnyTransport::AmpEq(
+                    AmpEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: caret_eq (CARET_EQ)
+                92 => Ok(AnyTransport::CaretEq(
+                    CaretEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: pipe_eq (PIPE_EQ)
+                93 => Ok(AnyTransport::PipeEq(
+                    PipeEqTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: print (PRINT)
                 71 => Ok(AnyTransport::Print(
                     PrintTransport::from_napi_value(env, napi_val)?
                 )),
-                // literal kind: < → "<"
-                94 => Ok(AnyTransport::Literal24_3c),
-                // literal kind: <= → "<="
-                95 => Ok(AnyTransport::Literal25_3c_3d),
-                // literal kind: == → "=="
-                96 => Ok(AnyTransport::Literal26_3d_3d),
-                // literal kind: != → "!="
-                97 => Ok(AnyTransport::Literal27_21_3d),
-                // literal kind: >= → ">="
-                98 => Ok(AnyTransport::Literal28_3e_3d),
-                // literal kind: > → ">"
-                99 => Ok(AnyTransport::Literal29_3e),
-                // literal kind: <> → "<>"
-                100 => Ok(AnyTransport::Literal30_3c_3e),
+                // kind: lt (LT)
+                94 => Ok(AnyTransport::Lt(
+                    LtTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: lt_eq (LT_EQ)
+                95 => Ok(AnyTransport::LtEq(
+                    LtEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: eq_eq (EQ_EQ)
+                96 => Ok(AnyTransport::EqEq(
+                    EqEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: bang_eq (BANG_EQ)
+                97 => Ok(AnyTransport::BangEq(
+                    BangEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: gt_eq (GT_EQ)
+                98 => Ok(AnyTransport::GtEq(
+                    GtEqTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: gt (GT)
+                99 => Ok(AnyTransport::Gt(
+                    GtTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: lt_gt (LT_GT)
+                100 => Ok(AnyTransport::LtGt(
+                    LtGtTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: is (IS)
+                61 => Ok(AnyTransport::Is(
+                    IsTransport::from_napi_value(env, napi_val)?
+                )),
                 // literal kind: not in → "not in"
                 190 => Ok(AnyTransport::Literal32_6e_6f_74_20_69_6e),
-                // literal kind: is → "is"
-                61 => Ok(AnyTransport::Literal33_69_73),
                 // literal kind: is not → "is not"
                 191 => Ok(AnyTransport::Literal34_69_73_20_6e_6f_74),
                 other => Err(::napi::Error::from_reason(format!(
@@ -2402,7 +2492,7 @@ pub enum PrimaryExpressionTransport {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
 }
 
@@ -2476,8 +2566,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = GeneratorExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::GeneratorExpression(value));
                         }
-                        if let Ok(value) = Ellipsis2Transport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Ellipsis2(value));
+                        if let Ok(value) = EllipsisTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Ellipsis(value));
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
@@ -2580,8 +2670,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -2658,8 +2748,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = GeneratorExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::GeneratorExpression(value));
                         }
-                        if let Ok(value) = Ellipsis2Transport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Ellipsis2(value));
+                        if let Ok(value) = EllipsisTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Ellipsis(value));
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
@@ -2762,8 +2852,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -2833,7 +2923,7 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Tuple(inner) => AnyTransport::Tuple(inner),
         PrimaryExpressionTransport::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         PrimaryExpressionTransport::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        PrimaryExpressionTransport::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        PrimaryExpressionTransport::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         PrimaryExpressionTransport::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
     }
 }
@@ -3540,7 +3630,7 @@ pub enum ExpressionStatementContentTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -3659,8 +3749,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -3796,8 +3886,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -3892,7 +3982,7 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
         ExpressionStatementContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         ExpressionStatementContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ExpressionStatementContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ExpressionStatementContentTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ExpressionStatementContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         ExpressionStatementContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         ExpressionStatementContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         ExpressionStatementContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -3937,7 +4027,7 @@ impl RenderableTransport for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::Tuple(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            ExpressionStatementContentTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -3979,7 +4069,7 @@ pub enum ReturnStatementExpressionsTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -4095,8 +4185,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -4223,8 +4313,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -4310,7 +4400,7 @@ fn return_statement_expressions_transport_slot_to_any(t: ReturnStatementExpressi
         ReturnStatementExpressionsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ReturnStatementExpressionsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ReturnStatementExpressionsTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ReturnStatementExpressionsTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         ReturnStatementExpressionsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         ReturnStatementExpressionsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -4352,7 +4442,7 @@ impl RenderableTransport for ReturnStatementExpressionsTransportSlot {
             ReturnStatementExpressionsTransportSlot::Tuple(inner) => inner.render_into(dest),
             ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ReturnStatementExpressionsTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            ReturnStatementExpressionsTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             ReturnStatementExpressionsTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             ReturnStatementExpressionsTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -4391,7 +4481,7 @@ pub enum DeleteStatementExpressionsTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -4507,8 +4597,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -4635,8 +4725,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -4722,7 +4812,7 @@ fn delete_statement_expressions_transport_slot_to_any(t: DeleteStatementExpressi
         DeleteStatementExpressionsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         DeleteStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         DeleteStatementExpressionsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        DeleteStatementExpressionsTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        DeleteStatementExpressionsTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         DeleteStatementExpressionsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         DeleteStatementExpressionsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         DeleteStatementExpressionsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -4764,7 +4854,7 @@ impl RenderableTransport for DeleteStatementExpressionsTransportSlot {
             DeleteStatementExpressionsTransportSlot::Tuple(inner) => inner.render_into(dest),
             DeleteStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             DeleteStatementExpressionsTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            DeleteStatementExpressionsTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            DeleteStatementExpressionsTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             DeleteStatementExpressionsTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             DeleteStatementExpressionsTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             DeleteStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -4803,7 +4893,7 @@ pub enum RaiseStatementExpressionsTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -4919,8 +5009,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -5047,8 +5137,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -5134,7 +5224,7 @@ fn raise_statement_expressions_transport_slot_to_any(t: RaiseStatementExpression
         RaiseStatementExpressionsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         RaiseStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         RaiseStatementExpressionsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        RaiseStatementExpressionsTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        RaiseStatementExpressionsTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         RaiseStatementExpressionsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         RaiseStatementExpressionsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         RaiseStatementExpressionsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -5176,7 +5266,7 @@ impl RenderableTransport for RaiseStatementExpressionsTransportSlot {
             RaiseStatementExpressionsTransportSlot::Tuple(inner) => inner.render_into(dest),
             RaiseStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             RaiseStatementExpressionsTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            RaiseStatementExpressionsTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            RaiseStatementExpressionsTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             RaiseStatementExpressionsTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             RaiseStatementExpressionsTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             RaiseStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -6075,7 +6165,7 @@ pub enum ForStatementRightTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -6191,8 +6281,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -6319,8 +6409,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -6406,7 +6496,7 @@ fn for_statement_right_transport_slot_to_any(t: ForStatementRightTransportSlot) 
         ForStatementRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         ForStatementRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ForStatementRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ForStatementRightTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ForStatementRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         ForStatementRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         ForStatementRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         ForStatementRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -6448,7 +6538,7 @@ impl RenderableTransport for ForStatementRightTransportSlot {
             ForStatementRightTransportSlot::Tuple(inner) => inner.render_into(dest),
             ForStatementRightTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ForStatementRightTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            ForStatementRightTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            ForStatementRightTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             ForStatementRightTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             ForStatementRightTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             ForStatementRightTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -10340,7 +10430,7 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -10456,8 +10546,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -10584,8 +10674,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -10671,7 +10761,7 @@ fn lambda_within_for_in_clause_body_transport_slot_to_any(t: LambdaWithinForInCl
         LambdaWithinForInClauseBodyTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        LambdaWithinForInClauseBodyTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        LambdaWithinForInClauseBodyTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -10713,7 +10803,7 @@ impl RenderableTransport for LambdaWithinForInClauseBodyTransportSlot {
             LambdaWithinForInClauseBodyTransportSlot::Tuple(inner) => inner.render_into(dest),
             LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            LambdaWithinForInClauseBodyTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            LambdaWithinForInClauseBodyTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -11214,7 +11304,7 @@ pub enum AugmentedAssignmentRightTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -11334,8 +11424,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -11474,8 +11564,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -11573,7 +11663,7 @@ fn augmented_assignment_right_transport_slot_to_any(t: AugmentedAssignmentRightT
         AugmentedAssignmentRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         AugmentedAssignmentRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        AugmentedAssignmentRightTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        AugmentedAssignmentRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         AugmentedAssignmentRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         AugmentedAssignmentRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -11619,7 +11709,7 @@ impl RenderableTransport for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::Tuple(inner) => inner.render_into(dest),
             AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             AugmentedAssignmentRightTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            AugmentedAssignmentRightTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            AugmentedAssignmentRightTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             AugmentedAssignmentRightTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             AugmentedAssignmentRightTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -11756,7 +11846,7 @@ pub enum YieldContentTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -11875,8 +11965,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -12006,8 +12096,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -12094,7 +12184,7 @@ fn yield_content_transport_slot_to_any(t: YieldContentTransportSlot) -> AnyTrans
         YieldContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         YieldContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         YieldContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        YieldContentTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        YieldContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         YieldContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         YieldContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         YieldContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -12137,7 +12227,7 @@ impl RenderableTransport for YieldContentTransportSlot {
             YieldContentTransportSlot::Tuple(inner) => inner.render_into(dest),
             YieldContentTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             YieldContentTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            YieldContentTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            YieldContentTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             YieldContentTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             YieldContentTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             YieldContentTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -12415,7 +12505,7 @@ pub enum TypeContentTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -12535,8 +12625,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -12675,8 +12765,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -12774,7 +12864,7 @@ fn type_content_transport_slot_to_any(t: TypeContentTransportSlot) -> AnyTranspo
         TypeContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         TypeContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         TypeContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        TypeContentTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        TypeContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         TypeContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         TypeContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         TypeContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -12820,7 +12910,7 @@ impl RenderableTransport for TypeContentTransportSlot {
             TypeContentTransportSlot::Tuple(inner) => inner.render_into(dest),
             TypeContentTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             TypeContentTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            TypeContentTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            TypeContentTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             TypeContentTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             TypeContentTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             TypeContentTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -13079,7 +13169,7 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -13196,8 +13286,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -13327,8 +13417,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -13417,7 +13507,7 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
         ParenthesizedExpressionContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ParenthesizedExpressionContentTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ParenthesizedExpressionContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -13460,7 +13550,7 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
             ParenthesizedExpressionContentTransportSlot::Tuple(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            ParenthesizedExpressionContentTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            ParenthesizedExpressionContentTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -13500,7 +13590,7 @@ pub enum CollectionElementsElementTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -13618,8 +13708,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -13752,8 +13842,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -13845,7 +13935,7 @@ fn collection_elements_element_transport_slot_to_any(t: CollectionElementsElemen
         CollectionElementsElementTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         CollectionElementsElementTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         CollectionElementsElementTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        CollectionElementsElementTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        CollectionElementsElementTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         CollectionElementsElementTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         CollectionElementsElementTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         CollectionElementsElementTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -13889,7 +13979,7 @@ impl RenderableTransport for CollectionElementsElementTransportSlot {
             CollectionElementsElementTransportSlot::Tuple(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            CollectionElementsElementTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            CollectionElementsElementTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -14192,7 +14282,7 @@ pub enum ForInClauseRightTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -14308,8 +14398,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -14436,8 +14526,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -14523,7 +14613,7 @@ fn for_in_clause_right_transport_slot_to_any(t: ForInClauseRightTransportSlot) -
         ForInClauseRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         ForInClauseRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ForInClauseRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ForInClauseRightTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ForInClauseRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         ForInClauseRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         ForInClauseRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         ForInClauseRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -14565,7 +14655,7 @@ impl RenderableTransport for ForInClauseRightTransportSlot {
             ForInClauseRightTransportSlot::Tuple(inner) => inner.render_into(dest),
             ForInClauseRightTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ForInClauseRightTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            ForInClauseRightTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            ForInClauseRightTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             ForInClauseRightTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             ForInClauseRightTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             ForInClauseRightTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -14896,7 +14986,7 @@ pub enum InterpolationExpressionTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -15014,8 +15104,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -15148,8 +15238,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -15241,7 +15331,7 @@ fn interpolation_expression_transport_slot_to_any(t: InterpolationExpressionTran
         InterpolationExpressionTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         InterpolationExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         InterpolationExpressionTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        InterpolationExpressionTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        InterpolationExpressionTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         InterpolationExpressionTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         InterpolationExpressionTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         InterpolationExpressionTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -15285,7 +15375,7 @@ impl RenderableTransport for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::Tuple(inner) => inner.render_into(dest),
             InterpolationExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             InterpolationExpressionTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            InterpolationExpressionTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            InterpolationExpressionTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             InterpolationExpressionTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             InterpolationExpressionTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             InterpolationExpressionTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -15507,7 +15597,7 @@ pub enum ArgumentListElementsElementTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -15626,8 +15716,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -15763,8 +15853,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -15859,7 +15949,7 @@ fn argument_list_elements_element_transport_slot_to_any(t: ArgumentListElementsE
         ArgumentListElementsElementTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         ArgumentListElementsElementTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ArgumentListElementsElementTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ArgumentListElementsElementTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ArgumentListElementsElementTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         ArgumentListElementsElementTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         ArgumentListElementsElementTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         ArgumentListElementsElementTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -15904,7 +15994,7 @@ impl RenderableTransport for ArgumentListElementsElementTransportSlot {
             ArgumentListElementsElementTransportSlot::Tuple(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            ArgumentListElementsElementTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            ArgumentListElementsElementTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -16043,7 +16133,7 @@ pub enum SubscriptsSubscriptTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -16159,8 +16249,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -16287,8 +16377,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -16374,7 +16464,7 @@ fn subscripts_subscript_transport_slot_to_any(t: SubscriptsSubscriptTransportSlo
         SubscriptsSubscriptTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         SubscriptsSubscriptTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         SubscriptsSubscriptTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        SubscriptsSubscriptTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        SubscriptsSubscriptTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         SubscriptsSubscriptTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         SubscriptsSubscriptTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         SubscriptsSubscriptTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -16416,7 +16506,7 @@ impl RenderableTransport for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::Tuple(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            SubscriptsSubscriptTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            SubscriptsSubscriptTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -16839,7 +16929,7 @@ pub enum AssignmentEqRightTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -16959,8 +17049,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -17099,8 +17189,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -17198,7 +17288,7 @@ fn assignment_eq_right_transport_slot_to_any(t: AssignmentEqRightTransportSlot) 
         AssignmentEqRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         AssignmentEqRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         AssignmentEqRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        AssignmentEqRightTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        AssignmentEqRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         AssignmentEqRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         AssignmentEqRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         AssignmentEqRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -17244,7 +17334,7 @@ impl RenderableTransport for AssignmentEqRightTransportSlot {
             AssignmentEqRightTransportSlot::Tuple(inner) => inner.render_into(dest),
             AssignmentEqRightTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             AssignmentEqRightTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            AssignmentEqRightTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            AssignmentEqRightTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             AssignmentEqRightTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             AssignmentEqRightTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             AssignmentEqRightTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -17287,7 +17377,7 @@ pub enum AssignmentTypedRightTransportSlot {
     Tuple(TupleTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     GeneratorExpression(GeneratorExpressionTransport),
-    Ellipsis2(Ellipsis2Transport),
+    Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
@@ -17407,8 +17497,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -17547,8 +17637,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    64 => Ok(Self::Ellipsis2(
-                        Ellipsis2Transport::from_napi_value(env, napi_val)?
+                    64 => Ok(Self::Ellipsis(
+                        EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
@@ -17646,7 +17736,7 @@ fn assignment_typed_right_transport_slot_to_any(t: AssignmentTypedRightTransport
         AssignmentTypedRightTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
         AssignmentTypedRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         AssignmentTypedRightTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        AssignmentTypedRightTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        AssignmentTypedRightTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
         AssignmentTypedRightTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
         AssignmentTypedRightTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
         AssignmentTypedRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
@@ -17692,7 +17782,7 @@ impl RenderableTransport for AssignmentTypedRightTransportSlot {
             AssignmentTypedRightTransportSlot::Tuple(inner) => inner.render_into(dest),
             AssignmentTypedRightTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             AssignmentTypedRightTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
-            AssignmentTypedRightTransportSlot::Ellipsis2(inner) => inner.render_into(dest),
+            AssignmentTypedRightTransportSlot::Ellipsis(inner) => inner.render_into(dest),
             AssignmentTypedRightTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
             AssignmentTypedRightTransportSlot::ConditionalExpression(inner) => inner.render_into(dest),
             AssignmentTypedRightTransportSlot::NamedExpression(inner) => inner.render_into(dest),
@@ -18572,7 +18662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22628,7 +22718,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Ellipsis2Transport {
+pub struct EllipsisTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -22638,7 +22728,7 @@ pub struct Ellipsis2Transport {
     pub text: String,
 }
 
-impl RenderableTransport for Ellipsis2Transport {
+impl RenderableTransport for EllipsisTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -22648,7 +22738,7 @@ impl RenderableTransport for Ellipsis2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -22666,7 +22756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22677,7 +22767,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -22703,7 +22793,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Ellipsis2Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for EllipsisTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -22713,22 +22803,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Ellipsis2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<Ellipsis2Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<EllipsisTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        Ellipsis2Transport::from_napi_value(env, napi_val).map(Box::new)
+        EllipsisTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<Ellipsis2Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<EllipsisTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Ellipsis2Transport::to_napi_value(env, *val)
+        EllipsisTransport::to_napi_value(env, *val)
     }
 }
 
@@ -25410,7 +25500,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -25515,7 +25605,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: Some(false),
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -29173,6 +29263,111 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ImportTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DotTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for DotTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ".".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| ".".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DotTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DotTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DotTransport::to_napi_value(env, *val)
     }
 }
 
@@ -33797,6 +33992,111 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DashTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct PlusTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for PlusTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "+".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "+".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "+".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PlusTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PlusTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PlusTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PlusTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct NotTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -34108,111 +34408,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OrTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         OrTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct PlusTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for PlusTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "+".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| "+".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "+".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PlusTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PlusTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PlusTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PlusTransport::to_napi_value(env, *val)
     }
 }
 
@@ -35162,216 +35357,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonYieldTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct DotTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for DotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => ".".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| ".".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DotTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DotTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DotTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct EllipsisTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for EllipsisTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "...".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| "...".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "...".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EllipsisTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<EllipsisTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        EllipsisTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<EllipsisTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        EllipsisTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct BslashTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -35473,321 +35458,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         BslashTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct True2Transport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for True2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for True2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "True".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| "True".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for True2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "True".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for True2Transport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<True2Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        True2Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<True2Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        True2Transport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct False2Transport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for False2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for False2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "False".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| "False".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for False2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "False".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for False2Transport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<False2Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        False2Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<False2Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        False2Transport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct None2Transport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for None2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for None2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "None".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| "None".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for None2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "None".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for None2Transport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<None2Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        None2Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<None2Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        None2Transport::to_napi_value(env, *val)
     }
 }
 
@@ -36002,6 +35672,1476 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct TildeTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for TildeTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "~".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "~".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "~".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TildeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TildeTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TildeTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TildeTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TildeTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PlusEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for PlusEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "+=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "+=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "+=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PlusEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PlusEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PlusEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PlusEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DashEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for DashEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "-=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "-=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "-=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DashEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DashEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DashEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DashEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DashEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct StarEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for StarEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "*=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "*=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "*=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StarEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StarEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StarEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StarEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StarEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct SlashEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for SlashEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "/=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "/=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "/=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SlashEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SlashEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SlashEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct AtEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AtEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "@=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "@=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "@=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AtEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AtEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AtEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AtEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AtEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct SlashSlashEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for SlashSlashEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "//=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "//=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "//=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SlashSlashEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashSlashEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SlashSlashEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashSlashEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SlashSlashEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PercentEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for PercentEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "%=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "%=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "%=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PercentEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PercentEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PercentEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PercentEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PercentEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct StarStarEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for StarStarEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "**=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "**=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "**=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StarStarEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StarStarEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StarStarEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StarStarEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StarStarEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct GtGtEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for GtGtEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ">>=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| ">>=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">>=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GtGtEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GtGtEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        GtGtEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GtGtEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        GtGtEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct LtLtEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for LtLtEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "<<=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "<<=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<<=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LtLtEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LtLtEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LtLtEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LtLtEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LtLtEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct AmpEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AmpEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "&=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "&=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "&=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AmpEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AmpEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AmpEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AmpEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AmpEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CaretEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for CaretEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "^=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "^=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "^=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CaretEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CaretEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CaretEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CaretEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CaretEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PipeEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for PipeEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "|=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "|=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "|=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PipeEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PipeEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PipeEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PipeEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PipeEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct PrintTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -36103,6 +37243,846 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         PrintTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct LtTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for LtTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "<".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "<".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LtTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LtTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LtTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LtTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LtTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct LtEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for LtEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "<=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "<=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LtEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LtEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LtEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LtEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LtEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct EqEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for EqEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "==".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "==".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "==".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EqEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<EqEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        EqEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<EqEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        EqEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct BangEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for BangEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "!=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "!=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "!=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BangEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BangEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BangEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BangEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BangEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct GtEqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for GtEqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ">=".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| ">=".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">=".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GtEqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GtEqTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        GtEqTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GtEqTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        GtEqTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct GtTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for GtTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ">".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| ">".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GtTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GtTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        GtTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GtTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        GtTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct LtGtTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for LtGtTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "<>".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "<>".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<>".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LtGtTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LtGtTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LtGtTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LtGtTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LtGtTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct IsTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for IsTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "is".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "is".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "is".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IsTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IsTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IsTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IsTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IsTransport::to_napi_value(env, *val)
     }
 }
 
@@ -37086,7 +39066,7 @@ fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     template.render_into(dest)
 }
 
-fn render_ellipsis2(t: &Ellipsis2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_ellipsis(t: &EllipsisTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -38090,6 +40070,10 @@ fn render_import(t: &ImportTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_from(t: &FromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -38266,6 +40250,10 @@ fn render_dash(t: &DashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_plus(t: &PlusTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_not(t: &NotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -38275,10 +40263,6 @@ fn render_and(t: &AndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
 }
 
 fn render_or(t: &OrTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_plus(t: &PlusTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -38318,27 +40302,7 @@ fn render_anon_yield(t: &AnonYieldTransport, dest: &mut dyn ::std::fmt::Write) -
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_ellipsis(t: &EllipsisTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_bslash(t: &BslashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_true2(t: &True2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_false2(t: &False2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_none2(t: &None2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -38350,7 +40314,95 @@ fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_tilde(t: &TildeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_plus_eq(t: &PlusEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_dash_eq(t: &DashEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_star_eq(t: &StarEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_slash_eq(t: &SlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_at_eq(t: &AtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_slash_slash_eq(t: &SlashSlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_percent_eq(t: &PercentEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_star_star_eq(t: &StarStarEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_gt_gt_eq(t: &GtGtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_lt_lt_eq(t: &LtLtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_amp_eq(t: &AmpEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_caret_eq(t: &CaretEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_pipe_eq(t: &PipeEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_print(t: &PrintTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_lt(t: &LtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_lt_eq(t: &LtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_eq_eq(t: &EqEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_bang_eq(t: &BangEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_gt_eq(t: &GtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_gt(t: &GtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_lt_gt(t: &LtGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_is(t: &IsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -38438,7 +40490,7 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, dest: &mut dyn ::st
         PrimaryExpressionTransport::Tuple(inner) => inner.render_into(dest),
         PrimaryExpressionTransport::ParenthesizedExpression(inner) => inner.render_into(dest),
         PrimaryExpressionTransport::GeneratorExpression(inner) => inner.render_into(dest),
-        PrimaryExpressionTransport::Ellipsis2(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Ellipsis(inner) => inner.render_into(dest),
         PrimaryExpressionTransport::ListSplatPattern(inner) => inner.render_into(dest),
     }
 }
@@ -38555,7 +40607,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Attribute(t) => t.render_into(dest),
             AnyTransport::Subscript(t) => t.render_into(dest),
             AnyTransport::Slice(t) => t.render_into(dest),
-            AnyTransport::Ellipsis2(t) => t.render_into(dest),
+            AnyTransport::Ellipsis(t) => t.render_into(dest),
             AnyTransport::Call(t) => t.render_into(dest),
             AnyTransport::TypedParameter(t) => t.render_into(dest),
             AnyTransport::Type(t) => t.render_into(dest),
@@ -38650,6 +40702,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::CloseBrace(t) => t.render_into(dest),
             AnyTransport::Except(t) => t.render_into(dest),
             AnyTransport::Import(t) => t.render_into(dest),
+            AnyTransport::Dot(t) => t.render_into(dest),
             AnyTransport::From(t) => t.render_into(dest),
             AnyTransport::FutureU(t) => t.render_into(dest),
             AnyTransport::As(t) => t.render_into(dest),
@@ -38694,10 +40747,10 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Rbrace(t) => t.render_into(dest),
             AnyTransport::Anonymous(t) => t.render_into(dest),
             AnyTransport::Dash(t) => t.render_into(dest),
+            AnyTransport::Plus(t) => t.render_into(dest),
             AnyTransport::Not(t) => t.render_into(dest),
             AnyTransport::And(t) => t.render_into(dest),
             AnyTransport::Or(t) => t.render_into(dest),
-            AnyTransport::Plus(t) => t.render_into(dest),
             AnyTransport::Slash(t) => t.render_into(dest),
             AnyTransport::Percent(t) => t.render_into(dest),
             AnyTransport::SlashSlash(t) => t.render_into(dest),
@@ -38707,15 +40760,32 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::LtLt(t) => t.render_into(dest),
             AnyTransport::AnonLambda(t) => t.render_into(dest),
             AnyTransport::AnonYield(t) => t.render_into(dest),
-            AnyTransport::Dot(t) => t.render_into(dest),
-            AnyTransport::Ellipsis(t) => t.render_into(dest),
             AnyTransport::Bslash(t) => t.render_into(dest),
-            AnyTransport::True2(t) => t.render_into(dest),
-            AnyTransport::False2(t) => t.render_into(dest),
-            AnyTransport::None2(t) => t.render_into(dest),
             AnyTransport::AnonAwait(t) => t.render_into(dest),
             AnyTransport::Async(t) => t.render_into(dest),
+            AnyTransport::Tilde(t) => t.render_into(dest),
+            AnyTransport::PlusEq(t) => t.render_into(dest),
+            AnyTransport::DashEq(t) => t.render_into(dest),
+            AnyTransport::StarEq(t) => t.render_into(dest),
+            AnyTransport::SlashEq(t) => t.render_into(dest),
+            AnyTransport::AtEq(t) => t.render_into(dest),
+            AnyTransport::SlashSlashEq(t) => t.render_into(dest),
+            AnyTransport::PercentEq(t) => t.render_into(dest),
+            AnyTransport::StarStarEq(t) => t.render_into(dest),
+            AnyTransport::GtGtEq(t) => t.render_into(dest),
+            AnyTransport::LtLtEq(t) => t.render_into(dest),
+            AnyTransport::AmpEq(t) => t.render_into(dest),
+            AnyTransport::CaretEq(t) => t.render_into(dest),
+            AnyTransport::PipeEq(t) => t.render_into(dest),
             AnyTransport::Print(t) => t.render_into(dest),
+            AnyTransport::Lt(t) => t.render_into(dest),
+            AnyTransport::LtEq(t) => t.render_into(dest),
+            AnyTransport::EqEq(t) => t.render_into(dest),
+            AnyTransport::BangEq(t) => t.render_into(dest),
+            AnyTransport::GtEq(t) => t.render_into(dest),
+            AnyTransport::Gt(t) => t.render_into(dest),
+            AnyTransport::LtGt(t) => t.render_into(dest),
+            AnyTransport::Is(t) => t.render_into(dest),
             AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
             AnyTransport::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
             AnyTransport::Literal2_2a => dest.write_str("*").map_err(::askama::Error::from),

@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
-import { allFormFieldsOf } from '../compiler/model/node-map.ts';
+import { allFormFieldsOf, AssembledSupertype } from '../compiler/model/node-map.ts';
 import { fieldTypeComponents, resolveHiddenKeywordLeaf } from './shared.ts';
 
 export interface TransportLiteral {
@@ -38,17 +38,17 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 
 function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean {
 	switch (node.modelType) {
-		case 'branch':
 		case 'pattern':
-		case 'keyword':
 		case 'token':
 		case 'enum':
-		case 'separatedList':
+		case 'list':
 			return true;
-		case 'group':
-			return !nodeMap.polymorphFormKinds.has(node.kind);
+		case 'branch':
+		case 'envelope':
+			return node.hoisted ? !nodeMap.polymorphFormKinds.has(node.kind) : true;
+		case 'polymorph':
+			return node.hoisted ? !nodeMap.polymorphFormKinds.has(node.kind) : true;
 		case 'supertype':
-		case 'multi':
 			return false;
 		default:
 			return assertNever(node);
@@ -106,7 +106,7 @@ function fieldTransportLiterals(
 function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {
 	const names = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType === 'supertype') names.add(node.typeName);
+		if (node instanceof AssembledSupertype) names.add(node.typeName);
 	}
 	return names;
 }
@@ -118,8 +118,6 @@ function terminalTransportLiteralForKind(kind: string, nodeMap: NodeMap): Transp
 	}
 	const node = nodeMap.nodes.get(kind);
 	switch (node?.modelType) {
-		case 'keyword':
-			return { kind, text: node.text, resolvedKindId: node.resolvedKindId };
 		case 'token':
 			return node.text === undefined ? undefined : { kind, text: node.text, resolvedKindId: node.resolvedKindId };
 		default:

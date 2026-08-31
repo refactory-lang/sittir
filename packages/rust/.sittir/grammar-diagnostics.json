@@ -1,11 +1,25 @@
 [
   {
     "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "rust",
     "ownerKind": "mut",
-    "message": "[assemble] anonymous literal \"mut\" resolved no parser kindId — keyed by raw text 'mut'",
+    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "mut"
@@ -24,6 +38,22 @@
       "newType": "_Type",
       "visibleKinds": [
         "type"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_literal",
+    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Literal",
+      "newType": "_Literal",
+      "visibleKinds": [
+        "literal"
       ]
     }
   },

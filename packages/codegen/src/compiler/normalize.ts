@@ -26,7 +26,7 @@ import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
-import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
+import { prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
@@ -199,12 +199,13 @@ function materializeInlinedBody(
 	if (r.separator !== undefined) carry.separator = r.separator;
 	if (r.fieldName !== undefined) carry.fieldName = r.fieldName;
 
-	if (body.type === SEQ) {
-		return { ...body, ...carry, inlinedFrom, splicedBody: true } as Rule<'link'>;
+	const { hidden: _sourceKindHidden, ...spliced } = body;
+	if (spliced.type === SEQ) {
+		return { ...spliced, ...carry, inlinedFrom, splicedBody: true } as Rule<'link'>;
 	}
 	return {
 		type: SEQ,
-		members: [body],
+		members: [spliced as Rule<'link'>],
 		...carry,
 		inlinedFrom,
 		splicedBody: true
@@ -257,7 +258,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	}
 
 	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
-	for (const [parentKind, targetNames] of deriveStructuralVariantChildren(linked.rules)) {
+	for (const [parentKind, targetNames] of linked.variantChildren ?? []) {
 		variantSkip.add(parentKind);
 		for (const targetName of targetNames) {
 			const suffix = prefixNamedSuffix(parentKind, targetName);
@@ -268,7 +269,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	const normalizedGrammarView: NormalizedGrammar = {
 		name: linked.name,
 		rules: normalizedRules,
-		linkRules: rules,
 		supertypes: linked.supertypes,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
@@ -280,6 +280,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
+		variantChildren: linked.variantChildren,
 		refineForms: linked.refineForms
 	};
 	const simplifiedRules = computeSimplifiedRules(
@@ -303,8 +304,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		const aliasBodiesRender = flattenRules(aliasBodiesNormalized);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
-			rules: aliasBodiesRender,
-			linkRules: aliasBodiesNormalized
+			rules: aliasBodiesRender
 		};
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({
@@ -327,7 +327,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	return {
 		name: linked.name,
-		linkRules: rules,
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
@@ -342,7 +341,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
-		visibleAliasTargets: linked.visibleAliasTargets
+		visibleAliasTargets: linked.visibleAliasTargets,
+		variantChildren: linked.variantChildren
 	};
 }
 
@@ -647,7 +647,10 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
-			if (rule.name === targetName && rule.inline === true) return rebaseRuleIds(targetRule, rule.id ?? targetRule.id);
+			if (rule.name === targetName && rule.inline === true) {
+				const { hidden: _sourceKindHidden, ...spliced } = targetRule;
+				return rebaseRuleIds(spliced as Rule<'link'>, rule.id ?? targetRule.id);
+			}
 			return rule;
 		case SEQ: {
 			let changed = false;

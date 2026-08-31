@@ -519,6 +519,18 @@ function _wrapKindNameOf(entry: unknown): string | undefined {
 	return typeof raw === 'string' ? raw : undefined;
 }
 
+// The model is the wire contract: a `_<key>` the model has no slot for
+// (a reference to a literal — the grammar-agnostic reader still emits it)
+// never enters a wrapped node.
+function _keepModelledSlots<T extends object>(data: T, keys: readonly string[]): T {
+	const out: Record<string, unknown> = {};
+	for (const key of Object.keys(data)) {
+		if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) continue;
+		out[key] = (data as Record<string, unknown>)[key];
+	}
+	return out as T;
+}
+
 function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {
 	if (allowedKinds.includes(kind)) return true;
 	const stripped = kind.startsWith('_') ? kind.slice(1) : undefined;
@@ -581,6 +593,7 @@ function _filterWrapChildrenByKind<T>(
 }
 
 export function wrapModule(data: T.Module, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_statements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -609,6 +622,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
 }
 
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_simple_statements_elements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -635,6 +649,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 }
 
 export function wrapImportStatement(data: T.ImportStatement & { readonly _names?: T.ImportList }, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_import_list', '_names']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_names']),
@@ -660,6 +675,7 @@ export function wrapImportStatement(data: T.ImportStatement & { readonly _names?
 }
 
 export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_import_prefix', '_dotted_name']);
 	const _node = withMethods(
 		{
 			...data,
@@ -702,6 +718,7 @@ export function wrapFutureImportStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_import_list', '_future_import_statement_arm']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_future_import_statement_arm', '_import_list']),
@@ -735,6 +752,13 @@ export function wrapImportFromStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_module_name',
+		'_content',
+		'_wildcard_import',
+		'_import_list',
+		'_future_import_statement_arm'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_future_import_statement_arm', '_import_list', '_wildcard_import']),
@@ -775,6 +799,7 @@ export function wrapImportList(
 	data: T.ImportList & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_name']);
 	const _content = normalizeRepeatedWrapSlot(data._name, true, 'name', {
 		tree,
 		nodeType: data.$type,
@@ -803,6 +828,7 @@ export function wrapImportList(
 }
 
 export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_alias']);
 	const _node = withMethods(
 		{
 			...data,
@@ -843,6 +869,7 @@ export function wrapPrintStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_print_statement_arm1', '_print_statement_arm2']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_print_statement_arm1', '_print_statement_arm2']),
@@ -869,6 +896,7 @@ export function wrapPrintStatement(
 }
 
 export function wrapChevron(data: T.Chevron, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -894,6 +922,7 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle) {
 }
 
 export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -1069,6 +1098,45 @@ export function wrapExpressionStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_expression_statement_tuple',
+		'_assignment',
+		'_augmented_assignment',
+		'_yield'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -1171,6 +1239,7 @@ export function wrapExpressionStatement(
 }
 
 export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -1243,6 +1312,42 @@ export function wrapReturnStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expressions',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_expression_list'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -1373,6 +1478,42 @@ export function wrapDeleteStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expressions',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_expression_list'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -1503,6 +1644,43 @@ export function wrapRaiseStatement(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expressions',
+		'_cause',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_expression_list'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -1606,6 +1784,7 @@ export function wrapRaiseStatement(
 }
 
 export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_condition', '_consequence', '_alternative']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.IfStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1657,6 +1836,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 }
 
 export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_condition', '_consequence']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ElifClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1694,6 +1874,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 }
 
 export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ElseClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1719,6 +1900,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 }
 
 export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_subjects', '_body']);
 	const _node = withMethods(
 		{
 			...data,
@@ -1760,6 +1942,7 @@ export function wrapMatchBlock(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_match_block_block', '_newline']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MatchBlock as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1786,6 +1969,7 @@ export function wrapMatchBlock(
 }
 
 export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_case_patterns', '_guard', '_consequence']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.CaseClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1833,6 +2017,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 }
 
 export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_async_marker', '_left', '_right', '_body', '_alternative']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1902,6 +2087,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 }
 
 export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_condition', '_body', '_alternative']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.WhileStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -1950,6 +2136,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 }
 
 export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body', '_except_clauses', '_else_clause', '_finally_clause']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TryStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -2015,6 +2202,14 @@ export function wrapExceptClause(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_star_marker',
+		'_except_clause_arm',
+		'_suite',
+		'_simple_statements',
+		'_suite_block_with_indent',
+		'_newline'
+	]);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ExceptClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -2065,6 +2260,7 @@ export function wrapExceptClause(
 }
 
 export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_block']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FinallyClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -2090,6 +2286,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 }
 
 export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_async_marker', '_with_clause', '_body']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.WithStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -2145,6 +2342,7 @@ export function wrapWithClause(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_with_clause_bare', '_with_clause_paren']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_with_clause_bare', '_with_clause_paren']),
@@ -2170,6 +2368,7 @@ export function wrapWithClause(
 }
 
 export function wrapWithItem(data: T.WithItem, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2194,6 +2393,14 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle) {
 }
 
 export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHandle) {
+	data = _keepModelledSlots(data, [
+		'_async_marker',
+		'_name',
+		'_type_parameters',
+		'_parameters',
+		'_return_type',
+		'_body'
+	]);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.FunctionDefinition as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -2281,6 +2488,7 @@ export function wrapParameters(
 	data: T.Parameters & { readonly _parameters_elements?: T._Parameters },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_parameters', '_parameters_elements']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_parameters_elements']),
@@ -2310,6 +2518,7 @@ export function wrapLambdaParameters(
 	data: T.LambdaParameters & { readonly _parameters_elements?: T._Parameters },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_parameters', '_parameters_elements']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_parameters_elements']),
@@ -2336,6 +2545,7 @@ export function wrapLambdaParameters(
 }
 
 export function wrapListSplat(data: T.ListSplat, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2361,6 +2571,7 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle) {
 }
 
 export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2386,6 +2597,7 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle) {
 }
 
 export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_identifier']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2411,6 +2623,7 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle) {
 }
 
 export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_identifier']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2436,6 +2649,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 }
 
 export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_code', '_in_clause']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2506,6 +2720,7 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 }
 
 export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_right']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2542,6 +2757,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 }
 
 export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_type_parameters', '_superclasses', '_body']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ClassDefinition as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -2600,6 +2816,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 }
 
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_types']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2630,6 +2847,7 @@ export function wrapParenthesizedListSplat(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_parenthesized_expression', '_list_splat']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_list_splat', '_parenthesized_expression']),
@@ -2656,6 +2874,7 @@ export function wrapParenthesizedListSplat(
 }
 
 export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_arguments']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2681,6 +2900,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
 }
 
 export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_decorator', '_definition']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2717,6 +2937,7 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 }
 
 export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2742,6 +2963,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 }
 
 export function wrapBlock(data: T.Block, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_statements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -2806,6 +3028,42 @@ export function wrapExpressionList(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expression',
+		'_tail',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern'
+	]);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ExpressionList as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -2909,6 +3167,7 @@ export function wrapExpressionList(
 }
 
 export function wrapDottedName(data: T.DottedName, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_identifier']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3244,6 +3503,26 @@ export function wrapCasePattern(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_case_as_pattern',
+		'_keyword_pattern',
+		'_class_pattern',
+		'_splat_pattern',
+		'_union_pattern',
+		'_case_list_pattern',
+		'_case_tuple_pattern',
+		'_dict_pattern',
+		'_string',
+		'_concatenated_string',
+		'_true',
+		'_false',
+		'_none',
+		'_simple_pattern_negative',
+		'_complex_pattern',
+		'_dotted_name',
+		'_wildcard_pattern'
+	]);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.CasePattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -3323,6 +3602,7 @@ export function wrapCasePattern(
 }
 
 export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_simple_pattern']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UnionPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -3404,6 +3684,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 }
 
 export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_dict_pattern_elements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3430,6 +3711,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
 }
 
 export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_key', '_value']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.KeyValuePattern as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -3483,6 +3765,7 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 }
 
 export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_identifier', '_simple_pattern']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.KeywordPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -3537,6 +3820,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 }
 
 export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_operator', '_identifier']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SplatPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -3578,6 +3862,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 }
 
 export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_dotted_name', '_arguments']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3617,6 +3902,7 @@ export function wrapComplexPattern(
 	data: T.ComplexPattern & { readonly _integer?: T.Integer | T.Float; readonly _float?: T.Integer | T.Float },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_real', '_imaginary', '_operator', '_content', '_integer', '_float']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ComplexPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -3685,6 +3971,7 @@ export function wrap_Parameters(
 	data: T._Parameters & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_parameter']);
 	const _content = normalizeRepeatedWrapSlot(data._parameter, true, 'parameter', {
 		tree,
 		nodeType: data.$type,
@@ -3713,6 +4000,7 @@ export function wrapPatterns(
 	data: T.Patterns & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_pattern']);
 	const _content = normalizeRepeatedWrapSlot(data._pattern, true, 'pattern', {
 		tree,
 		nodeType: data.$type,
@@ -3741,6 +4029,17 @@ export function wrapParameter(
 	data: T.Parameter & { readonly $other?: T.Parameter | readonly T.Parameter[] },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_identifier',
+		'_typed_parameter',
+		'_default_parameter',
+		'_typed_default_parameter',
+		'_list_splat_pattern',
+		'_tuple_pattern',
+		'_keyword_separator',
+		'_positional_separator',
+		'_dictionary_splat_pattern'
+	]);
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'identifier',
 		'typed_parameter',
@@ -3783,6 +4082,14 @@ export function wrapPattern(
 	data: T.Pattern & { readonly $other?: T.Pattern | readonly T.Pattern[] },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_identifier',
+		'_subscript',
+		'_attribute',
+		'_list_splat_pattern',
+		'_tuple_pattern',
+		'_list_pattern'
+	]);
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'identifier',
 		'subscript',
@@ -3816,6 +4123,7 @@ export function wrapPattern(
 }
 
 export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_patterns']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3841,6 +4149,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 }
 
 export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_patterns']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3866,6 +4175,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
 }
 
 export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3902,6 +4212,7 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 }
 
 export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_type', '_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -3956,6 +4267,7 @@ export function wrapListSplatPattern(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_identifier', '_subscript', '_attribute']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_attribute', '_identifier', '_subscript']),
@@ -3989,6 +4301,7 @@ export function wrapDictionarySplatPattern(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_identifier', '_subscript', '_attribute']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_attribute', '_identifier', '_subscript']),
@@ -4015,6 +4328,7 @@ export function wrapDictionarySplatPattern(
 }
 
 export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression', '_alias']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4053,6 +4367,16 @@ export function wrapExpression(
 	data: T.Expression & { readonly $other?: T.Expression | readonly T.Expression[] },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_primary_expression',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern'
+	]);
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'comparison_operator',
 		'not_operator',
@@ -4093,6 +4417,33 @@ export function wrapPrimaryExpression(
 	data: T.PrimaryExpression & { readonly $other?: T.PrimaryExpression | readonly T.PrimaryExpression[] },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern'
+	]);
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'await',
 		'binary_operator',
@@ -4164,6 +4515,7 @@ export function wrapPrimaryExpression(
 }
 
 export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_argument']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4189,6 +4541,7 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle) {
 }
 
 export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_operator', '_right']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.BooleanOperator as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -4241,6 +4594,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 }
 
 export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_operator', '_right']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.BinaryOperator as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -4321,6 +4675,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 }
 
 export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_operator', '_argument']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4361,6 +4716,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 }
 
 export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_comparators']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4400,6 +4756,7 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 }
 
 export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_parameters', '_body']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4434,6 +4791,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
 }
 
 export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_parameters', '_body']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4477,6 +4835,7 @@ export function wrapAssignment(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_left', '_content', '_assignment_eq', '_assignment_type', '_assignment_typed']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_assignment_eq', '_assignment_type', '_assignment_typed']),
@@ -4512,6 +4871,7 @@ export function wrapAssignment(
 }
 
 export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_operator', '_right']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4604,6 +4964,16 @@ export function wrapPatternList(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_pattern',
+		'_tail',
+		'_identifier',
+		'_subscript',
+		'_attribute',
+		'_list_splat_pattern',
+		'_tuple_pattern',
+		'_list_pattern'
+	]);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PatternList as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -4692,6 +5062,43 @@ export function wrapYield(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_yield_from_clause',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_expression_list'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -4786,6 +5193,7 @@ export function wrapYield(
 }
 
 export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_object', '_attribute']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4821,6 +5229,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 }
 
 export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_value', '_subscripts']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4856,6 +5265,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
 }
 
 export function wrapSlice(data: T.Slice, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_start', '_stop', '_step']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4900,6 +5310,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
 }
 
 export function wrapCall(data: T.Call, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_function', '_arguments']);
 	const _node = withMethods(
 		{
 			...data,
@@ -4941,6 +5352,13 @@ export function wrapTypedParameter(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_type',
+		'_identifier',
+		'_list_splat_pattern',
+		'_dictionary_splat_pattern'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dictionary_splat_pattern', '_identifier', '_list_splat_pattern']),
@@ -5114,6 +5532,46 @@ export function wrapType(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_splat_type',
+		'_generic_type',
+		'_union_type',
+		'_constrained_type',
+		'_member_type'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -5217,6 +5675,7 @@ export function wrapType(
 }
 
 export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_operator', '_identifier']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SplatType as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -5257,6 +5716,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 }
 
 export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_identifier', '_type_parameter']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.GenericType as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -5294,6 +5754,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 }
 
 export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_left', '_right']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5328,6 +5789,7 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
 }
 
 export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_base_type', '_constraint']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5364,6 +5826,7 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle) {
 }
 
 export function wrapMemberType(data: T.MemberType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_base_type', '_identifier']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5400,6 +5863,7 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle) {
 }
 
 export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5435,6 +5899,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 }
 
 export function wrapList(data: T.List, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_collection_elements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5461,6 +5926,7 @@ export function wrapList(data: T.List, tree: TreeHandle) {
 }
 
 export function wrapSet(data: T.Set, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_collection_elements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5487,6 +5953,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle) {
 }
 
 export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_collection_elements']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5513,6 +5980,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
 }
 
 export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_entries']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5537,6 +6005,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
 }
 
 export function wrapPair(data: T.Pair, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_key', '_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5571,6 +6040,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 }
 
 export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body', '_comprehension_clauses']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5608,6 +6078,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 }
 
 export function wrapDictionaryComprehension(data: T.DictionaryComprehension, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body', '_comprehension_clauses']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5645,6 +6116,7 @@ export function wrapDictionaryComprehension(data: T.DictionaryComprehension, tre
 }
 
 export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body', '_comprehension_clauses']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5682,6 +6154,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 }
 
 export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body', '_comprehension_clauses']);
 	const _node = withMethods(
 		{
 			...data,
@@ -5757,6 +6230,43 @@ export function wrapParenthesizedExpression(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern',
+		'_yield',
+		'_list_splat'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -5858,6 +6368,7 @@ export function wrapCollectionElements(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_element']);
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
 		tree,
 		nodeType: data.$type,
@@ -5886,6 +6397,7 @@ export function wrapCollectionElements(
 }
 
 export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_async_marker', '_left', '_right', '_comma']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForInClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -5986,6 +6498,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 }
 
 export function wrapIfClause(data: T.IfClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -6011,6 +6524,7 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle) {
 }
 
 export function wrapConditionalExpression(data: T.ConditionalExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body', '_condition', '_alternative']);
 	const _node = withMethods(
 		{
 			...data,
@@ -6058,6 +6572,7 @@ export function wrapConditionalExpression(data: T.ConditionalExpression, tree: T
 }
 
 export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_string']);
 	const _node = withMethods(
 		{
 			...data,
@@ -6083,6 +6598,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 }
 
 export function wrapString(data: T.String, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_string_start', '_content', '_string_end']);
 	const _node = withMethods(
 		{
 			...data,
@@ -6160,6 +6676,13 @@ export function wrapStringContent(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_escape_interpolation',
+		'_escape_sequence',
+		'_not_escape_sequence',
+		'_string_fragment'
+	]);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StringContent as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -6196,6 +6719,7 @@ export function wrapStringContent(
 }
 
 export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression', '_eq_marker', '_type_conversion', '_format_specifier']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Interpolation as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -6262,6 +6786,7 @@ export function wrapFormatSpecifier(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_format_expression']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.FormatSpecifier as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -6294,6 +6819,7 @@ export function wrapFormatSpecifier(
 }
 
 export function wrapAwait(data: T.Await, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_primary_expression']);
 	const _node = withMethods(
 		{
 			...data,
@@ -6325,6 +6851,7 @@ export function wrapSimpleStatementsElements(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_simple_statement']);
 	const _content = normalizeRepeatedWrapSlot(data._simple_statement, true, 'simple_statement', {
 		tree,
 		nodeType: data.$type,
@@ -6353,6 +6880,7 @@ export function wrapSubjects(
 	data: T.Subjects & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_subject']);
 	const _content = normalizeRepeatedWrapSlot(data._subject, true, 'subject', {
 		tree,
 		nodeType: data.$type,
@@ -6381,6 +6909,7 @@ export function wrapCasePatterns(
 	data: T.CasePatterns & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_case_pattern']);
 	const _content = normalizeRepeatedWrapSlot(data._case_pattern, true, 'case_pattern', {
 		tree,
 		nodeType: data.$type,
@@ -6412,6 +6941,7 @@ export function wrapWithClauseWithItems(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_with_item']);
 	const _content = normalizeRepeatedWrapSlot(data._with_item, true, 'with_item', {
 		tree,
 		nodeType: data.$type,
@@ -6440,6 +6970,7 @@ export function wrapTypes(
 	data: T.Types & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_type']);
 	const _content = normalizeRepeatedWrapSlot(data._type, true, 'type', {
 		tree,
 		nodeType: data.$type,
@@ -6471,6 +7002,7 @@ export function wrapArgumentListElements(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_element']);
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
 		tree,
 		nodeType: data.$type,
@@ -6541,6 +7073,41 @@ export function wrapExpressionListExpressions(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expression',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern'
+	]);
 	const _content = normalizeRepeatedWrapSlot(
 		data._expression !== undefined
 			? _toArr(data._expression)
@@ -6640,6 +7207,7 @@ export function wrapListPatternCasePatterns(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_case_pattern']);
 	const _content = normalizeRepeatedWrapSlot(data._case_pattern, true, 'case_pattern', {
 		tree,
 		nodeType: data.$type,
@@ -6671,6 +7239,7 @@ export function wrapDictPatternElements(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_element']);
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
 		tree,
 		nodeType: data.$type,
@@ -6711,6 +7280,15 @@ export function wrapPatternListPatterns(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_pattern',
+		'_identifier',
+		'_subscript',
+		'_attribute',
+		'_list_splat_pattern',
+		'_tuple_pattern',
+		'_list_pattern'
+	]);
 	const _content = normalizeRepeatedWrapSlot(
 		data._pattern !== undefined
 			? _toArr(data._pattern)
@@ -6755,6 +7333,7 @@ export function wrapSubscripts(
 	data: T.Subscripts & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_subscript']);
 	const _content = normalizeRepeatedWrapSlot(data._subscript, true, 'subscript', {
 		tree,
 		nodeType: data.$type,
@@ -6789,6 +7368,7 @@ export function wrapDictionaryElements(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_element']);
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
 		tree,
 		nodeType: data.$type,
@@ -6820,6 +7400,7 @@ export function wrapFutureImportStatementArm(
 	data: T.FutureImportStatementArm & { readonly _names?: T.ImportList },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_import_list', '_names']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_names']),
@@ -6851,6 +7432,7 @@ export function wrapExceptClauseArm(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_content', '_except_clause_as', '_except_clause_list']);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_except_clause_as', '_except_clause_list']),
@@ -6913,6 +7495,41 @@ export function wrapSliceGroup(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expression',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -7004,6 +7621,7 @@ export function wrapSliceGroup(
 }
 
 export function wrapExceptClauseAs(data: T.ExceptClauseAs, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_value', '_alias']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7039,6 +7657,7 @@ export function wrapExceptClauseAs(data: T.ExceptClauseAs, tree: TreeHandle) {
 }
 
 export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_list_pattern_case_patterns']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7065,6 +7684,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 }
 
 export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_list_pattern_case_patterns']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7091,6 +7711,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
 }
 
 export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_case_pattern', '_identifier']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7127,6 +7748,7 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle) {
 }
 
 export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7158,6 +7780,7 @@ export function wrapPrintArguments(
 	data: T.PrintArguments & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_argument']);
 	const _content = normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
 		tree,
 		nodeType: data.$type,
@@ -7189,6 +7812,7 @@ export function wrapPrintChevronArguments(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_argument']);
 	const _content = normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
 		tree,
 		nodeType: data.$type,
@@ -7217,6 +7841,7 @@ export function wrapPrintStatementArm1(
 	data: T.PrintStatementArm1 & { readonly _comma?: T.PrintChevronArguments | ',' },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_chevron', '_print_chevron_arguments', '_comma']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.PrintStatementArm1 as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -7256,6 +7881,7 @@ export function wrapPrintStatementArm1(
 }
 
 export function wrapPrintStatementArm2(data: T.PrintStatementArm2, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_print_arguments']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7281,6 +7907,7 @@ export function wrapPrintStatementArm2(data: T.PrintStatementArm2, tree: TreeHan
 }
 
 export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_right']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7307,6 +7934,7 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {
 }
 
 export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_type']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7331,6 +7959,7 @@ export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle) {
 }
 
 export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_type', '_right']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7374,6 +8003,7 @@ export function wrapExpressionStatementTuple(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _content = normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
 		tree,
 		nodeType: data.$type,
@@ -7402,6 +8032,7 @@ export function wrapWithClauseBare(
 	data: T.WithClauseBare & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_with_item']);
 	const _content = normalizeRepeatedWrapSlot(data._with_item, true, 'with_item', {
 		tree,
 		nodeType: data.$type,
@@ -7427,6 +8058,7 @@ export function wrapWithClauseBare(
 }
 
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_with_clause_with_items']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7453,6 +8085,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
 }
 
 export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_alternative']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7478,6 +8111,7 @@ export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle) {
 }
 
 export function wrapSuiteBlockWithIndent(data: T.SuiteBlockWithIndent, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_block']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7506,6 +8140,7 @@ export function wrapSimplePatternNegative(
 	data: T.SimplePatternNegative & { readonly _integer?: T.Integer | T.Float; readonly _float?: T.Integer | T.Float },
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, ['_sign', '_content', '_integer', '_float']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.SimplePatternNegative as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -7546,6 +8181,7 @@ export function wrapSimplePatternNegative(
 }
 
 export function wrapExceptClauseList(data: T.ExceptClauseList, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_value']);
 	const _node = withMethods(
 		{
 			...data,
@@ -7635,6 +8271,35 @@ export function wrapComparisonOperatorComparator(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_operators',
+		'_primary_expression',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern'
+	]);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ComparisonOperatorComparator as const }, _treeEngine(tree));
 	const _node = withMethods(
@@ -7790,6 +8455,41 @@ export function wrapYieldFromClause(
 	},
 	tree: TreeHandle
 ) {
+	data = _keepModelledSlots(data, [
+		'_expression',
+		'_comparison_operator',
+		'_not_operator',
+		'_boolean_operator',
+		'_lambda',
+		'_await',
+		'_binary_operator',
+		'_identifier',
+		'_string',
+		'_concatenated_string',
+		'_integer',
+		'_float',
+		'_true',
+		'_false',
+		'_none',
+		'_unary_operator',
+		'_attribute',
+		'_subscript',
+		'_call',
+		'_list',
+		'_list_comprehension',
+		'_dictionary',
+		'_dictionary_comprehension',
+		'_set',
+		'_set_comprehension',
+		'_tuple',
+		'_parenthesized_expression',
+		'_generator_expression',
+		'_ellipsis',
+		'_list_splat_pattern',
+		'_conditional_expression',
+		'_named_expression',
+		'_as_pattern'
+	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -7890,6 +8590,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ImportFromStatement]: (d, t) => wrapImportFromStatement(d as unknown as T.ImportFromStatement, t),
 	[TSKindId.ImportList]: (d, t) => wrapImportList(d as unknown as T.ImportList, t),
 	[TSKindId.AliasedImport]: (d, t) => wrapAliasedImport(d as unknown as T.AliasedImport, t),
+	[TSKindId.WildcardImport]: (d) => ({ ...d, $type: TSKindId.WildcardImport as const }),
 	[TSKindId.PrintStatement]: (d, t) => wrapPrintStatement(d as unknown as T.PrintStatement, t),
 	[TSKindId.Chevron]: (d, t) => wrapChevron(d as unknown as T.Chevron, t),
 	[TSKindId.AssertStatement]: (d, t) => wrapAssertStatement(d as unknown as T.AssertStatement, t),
@@ -7969,6 +8670,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Attribute]: (d, t) => wrapAttribute(d as unknown as T.Attribute, t),
 	[TSKindId.Subscript]: (d, t) => wrapSubscript(d as unknown as T.Subscript, t),
 	[TSKindId.Slice]: (d, t) => wrapSlice(d as unknown as T.Slice, t),
+	[TSKindId.Ellipsis]: (d) => ({ ...d, $type: TSKindId.Ellipsis as const }),
 	[TSKindId.Call]: (d, t) => wrapCall(d as unknown as T.Call, t),
 	[TSKindId.TypedParameter]: (d, t) => wrapTypedParameter(d as unknown as T.TypedParameter, t),
 	[TSKindId.Type]: (d, t) => wrapType(d as unknown as T.Type, t),
@@ -8010,6 +8712,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Await]: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	[TSKindId.Comment]: (d) => ({ ...d, $type: TSKindId.Comment as const }),
 	[TSKindId.LineContinuation]: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
+	[TSKindId.PositionalSeparator]: (d) => ({ ...d, $type: TSKindId.PositionalSeparator as const }),
+	[TSKindId.KeywordSeparator]: (d) => ({ ...d, $type: TSKindId.KeywordSeparator as const }),
 	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	[TSKindId.SimpleStatementsElements]: (d, t) =>
 		wrapSimpleStatementsElements(d as unknown as T.SimpleStatementsElements, t),
@@ -8077,6 +8781,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ImportFromStatement]: ReturnType<typeof wrapImportFromStatement>;
 	[TSKindId.ImportList]: ReturnType<typeof wrapImportList>;
 	[TSKindId.AliasedImport]: ReturnType<typeof wrapAliasedImport>;
+	[TSKindId.WildcardImport]: _NodeData & { readonly $type: TSKindId.WildcardImport };
 	[TSKindId.PrintStatement]: ReturnType<typeof wrapPrintStatement>;
 	[TSKindId.Chevron]: ReturnType<typeof wrapChevron>;
 	[TSKindId.AssertStatement]: ReturnType<typeof wrapAssertStatement>;
@@ -8155,6 +8860,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.Attribute]: ReturnType<typeof wrapAttribute>;
 	[TSKindId.Subscript]: ReturnType<typeof wrapSubscript>;
 	[TSKindId.Slice]: ReturnType<typeof wrapSlice>;
+	[TSKindId.Ellipsis]: _NodeData & { readonly $type: TSKindId.Ellipsis };
 	[TSKindId.Call]: ReturnType<typeof wrapCall>;
 	[TSKindId.TypedParameter]: ReturnType<typeof wrapTypedParameter>;
 	[TSKindId.Type]: ReturnType<typeof wrapType>;
@@ -8194,6 +8900,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.Await]: ReturnType<typeof wrapAwait>;
 	[TSKindId.Comment]: _NodeData & { readonly $type: TSKindId.Comment };
 	[TSKindId.LineContinuation]: _NodeData & { readonly $type: TSKindId.LineContinuation };
+	[TSKindId.PositionalSeparator]: _NodeData & { readonly $type: TSKindId.PositionalSeparator };
+	[TSKindId.KeywordSeparator]: _NodeData & { readonly $type: TSKindId.KeywordSeparator };
 	[TSKindId.KwAsyncMarker]: _NodeData & { readonly $type: TSKindId.KwAsyncMarker };
 	[TSKindId.SimpleStatementsElements]: ReturnType<typeof wrapSimpleStatementsElements>;
 	[TSKindId.Subjects]: ReturnType<typeof wrapSubjects>;

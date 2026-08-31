@@ -20,7 +20,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "...",
-    "message": "[assemble] anonymous literal \"...\" resolved no parser kindId — keyed by raw text '...'",
+    "message": "[assemble] literal \"...\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "..."
@@ -32,7 +32,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "True",
-    "message": "[assemble] anonymous literal \"True\" resolved no parser kindId — keyed by raw text 'True'",
+    "message": "[assemble] literal \"True\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "True"
@@ -44,7 +44,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "False",
-    "message": "[assemble] anonymous literal \"False\" resolved no parser kindId — keyed by raw text 'False'",
+    "message": "[assemble] literal \"False\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "False"
@@ -56,26 +56,10 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "None",
-    "message": "[assemble] anonymous literal \"None\" resolved no parser kindId — keyed by raw text 'None'",
+    "message": "[assemble] literal \"None\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "None"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "ellipsis",
-    "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Ellipsis",
-      "newType": "Ellipsis2",
-      "siblingKinds": [
-        "..."
-      ]
     }
   },
   {
@@ -91,54 +75,6 @@
       "newType": "_StringContent",
       "visibleKinds": [
         "string_content"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "True",
-    "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')",
-    "canProceed": true,
-    "details": {
-      "typeName": "True",
-      "newType": "True2",
-      "siblingKinds": [
-        "true"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "False",
-    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
-    "canProceed": true,
-    "details": {
-      "typeName": "False",
-      "newType": "False2",
-      "siblingKinds": [
-        "false"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "None",
-    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
-    "canProceed": true,
-    "details": {
-      "typeName": "None",
-      "newType": "None2",
-      "siblingKinds": [
-        "none"
       ]
     }
   },

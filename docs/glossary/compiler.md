@@ -71,6 +71,15 @@ parents.
 	 * The grammar word-matcher is NOT derived here — it's pinned once at Link
 	 * time (`link.ts`, from `raw.rules`) and carried onto `normalized.wordMatcher`
 	 * unchanged; see `LinkedGrammar.wordMatcher`'s doc comment.
+	 *
+	 * `generatedIdTables` is optional but load-bearing for anonymous-kind
+	 * minting: `assemble()` derives `kindEntries` from it
+	 * (`collectGeneratedKindEntries`), and `collectAnonymousNodes` mints a
+	 * node only when the catalog has an anonymous-symbol entry for a
+	 * literal. Omitting `generatedIdTables` yields an empty `kindEntries`, so
+	 * the resulting `NodeMap` has no anonymous kinds at all — every
+	 * production call site and probe that needs anonymous kinds must pass
+	 * the grammar's generated id tables here.
 	 */
 ```
 
@@ -95,8 +104,7 @@ parents.
 ```text
 // Link-time-pinned, carried — NOT recompiled here. See
 // `LinkedGrammar.wordMatcher`'s doc comment for why a post-link recompile
-// (from `normalized.linkRules`, the wrapper-bearing view this function used
-// to compile from) is unsound in general.
+// from `normalized.rules`, the wrapper-deleted view, is unsound in general.
 ```
 
 #### body
@@ -128,7 +136,8 @@ parents.
 // `reference_expression`, ts `string`'s `string_fragment` — joined the
 // form set) and the enumerated known exceptions (parents that
 // structurally qualify but can never appear in node-model.json5 because
-// they classify to SupertypeRule/AssembledGroup, not AssembledBranch).
+// they classify to SupertypeRule/AssembledSupertype or a hoisted compound,
+// not an ordinary AssembledBranch).
 ```
 
 #### body
@@ -142,24 +151,32 @@ parents.
 #### body
 
 ```text
-// Classification reads the already-stamped normalize-phase view
-// (`renderRule`) instead of re-deriving wrapper shape from
-// `inlinedRule` — wrapper-deletion already computed the same facts
-// (multiplicity/nonterminal/separator) these checks used to walk
-// OPTIONAL/FIELD/REPEAT/REPEAT1 nodes for. `inlinedRule` (Rule<'link'>)
-// still feeds most node CONSTRUCTORS below (AssembledGroup deliberately
-// needs the pre-deletion wrapper node); AssembledMulti constructs
-// directly off `renderRule` — a hidden repeat helper's own body IS the
-// repeat, so wrapper-deletion's pushed-down attributes are already
-// everything it needs.
+// classifyNode is called with the SIMPLIFIED rule (`normalized.rules`,
+// simplify's fixpoint-folded view), not `renderRule` and not the
+// link-phase `inlinedRule` — simplify's own folds (literal-only body to
+// STRING, single-slot seq collapse) are what settle a kind's true shape.
+// `renderRule` and `inlinedRule` still feed the node CONSTRUCTORS below
+// wherever the SHAPE they build needs the pre-simplify view (a hoisted
+// compound deliberately needs the pre-deletion wrapper node; every
+// AbstractAssembledCompound subclass — branch/envelope/polymorph/list —
+// carries both views, simplified for shape and render for rendering);
+// AssembledList derives its own list-specific facts (`elements`,
+// `separatorRule`) directly off the peeled list-element rule, not off
+// simplifiedRule/renderRule — a genuine separated list's own body IS the
+// repeat, so simplify's pushed-down attributes are already everything it
+// needs for those two facts.
 ```
 
 #### body
 
 ```text
-// Leaves construct off the wrapper-free `renderRule`: a kind's
-// lexical facts (`tokenized`/`immediate`) are stamps the
-// normalize builders put on the leaf, and the leaf reads them.
+// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledToken)
+// build off the SIMPLIFIED rule: simplify's literal-only fold
+// (`collectFixedLiteral` via `isAllTextRender`) is what produces the
+// STRING body these leaves read. A kind's lexical facts
+// (`tokenized`/`immediate`) are stamps normalize put on the leaf and
+// simplify's fixpoint carries unchanged (`withAttrsFrom`), so the leaf
+// reads them off either view.
 ```
 
 #### body
@@ -181,13 +198,15 @@ parents.
 #### body
 
 ```text
-// TEMPORARY behavior-preserving stub (see
-// AssembledSeparatedList's doc comment) — the SAME
+// The 'list' case passes AssembledList the SAME
 // simplifiedRule/renderRule/parseKindCollisionContext
-// the 'branch' case above passes (group-unwrapped for
-// group-wrapped kinds, exactly as the 'group' case
-// would have), so wrap/render/factory emission reusing
-// 'branch's code path stays byte-identical.
+// the compound case above passes (group-unwrapped for
+// group-wrapped kinds, exactly as a branch/envelope/
+// polymorph would get) — AssembledList extends the same
+// AbstractAssembledCompound base and genuinely inherits
+// its buildSlotsRecord construction, so wrap/render/factory
+// emission stays byte-identical with the pre-taxonomy
+// 'branch' output for these kinds.
 ```
 
 #### body
@@ -200,7 +219,7 @@ parents.
 // a genuinely distinct, named CST node at that occurrence
 // (`SupertypeRule.subtypeParseNames`, confirmed against grammar.json
 // — see `resolveHiddenSubtypes`'s doc comment). That aliased name has
-// no entry of its own in `normalized.linkRules` (it's a parse-time
+// no entry of its own in `normalized.normalizedRules` (it's a parse-time
 // label, not a rule sittir's own grammar declares), so the main loop
 // above never assembles it. Give it one here: reuse the nested rule's
 // OWN already-resolved subtypes (identical union either way — the
@@ -308,6 +327,18 @@ parents.
 // feedback_ruleid_backpointer.
 ```
 
+#### body
+
+```text
+// A literal-bodied kind is a keyword-class leaf (a factory, a type, a
+// union member, an `is` guard) when its text is word-shaped OR the kind is
+// a visible parser kind (a catalog entry that is neither anonymous nor a
+// hidden `_` rule): `unit_expression`, `never_type`, `empty_statement`,
+// `ellipsis`, `wildcard_import`. Only an anonymous punctuation token has no
+// surface of its own (`AssembledToken`). Word shape stays the spacing fact
+// (`AssembledKeyword.word`), not the surface fact.
+```
+
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
 
 ```text
@@ -395,24 +426,23 @@ parents.
  *
  *   Non-hidden names pass through unchanged.
  *
- *   2026-07-05 (PR-137 follow-on-3): body lookups migrated from
- *   `ctx.linkRules` to `ctx.normalizedRules` (see `AssembleCtx.normalizedRules`
- *   / `resolveHiddenRuleContent`'s doc comments for the attribute-aware
- *   rationale). follow-on-4 (same day) re-examined `normalizedRules` vs
- *   `ctx.rules` and confirmed empirically that `normalizedRules` must stay —
- *   see `AssembleCtx`'s class doc comment for the `_simple_pattern_negative`
- *   finding that settled it. `ctx.topLevelAliasBodies` is UNCHANGED — its
- *   `.has(name)` test is a presence fact ("is this hidden kind an alias-mint
- *   target elsewhere in the grammar") with no rule-attribute equivalent (a
- *   hidden kind's own rule body carries no trace of being aliased-TO by
- *   another rule), so it can't be derived from `normalizedRules[name]`'s
- *   attributes the way the wrapper shapes could. Its VALUES, however, are now
- *   redundant with `normalizedRules[name]` (verified empirically: every
- *   alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
- *   flattenRules(topLevelAliasBodies.get(name))`, since
- *   `normalizeGrammar` already threads alias-target bodies through the same
- *   wrapper-deletion pipeline and merges them into `normalizedRules` under the
- *   identical hidden-kind key) — so the `body` lookup below reads
+ *   Body lookups read `ctx.normalizedRules` (see `resolveHiddenRuleContent`'s
+ *   doc comment for the attribute-aware rationale) — `ctx.rules`
+ *   (`SimplifiedRule`, simplify's own further-canonicalized product) is NOT
+ *   safe here: its independent structural canonicalization, beyond
+ *   wrapper-deletion, can unmask an intentionally opaque SEQ shape into a
+ *   dispatchable one (see `AssembleCtx`'s class doc comment for the
+ *   `_simple_pattern_negative` case this breaks). `ctx.topLevelAliasBodies`
+ *   is a presence fact ("is this hidden kind an alias-mint target elsewhere
+ *   in the grammar") with no rule-attribute equivalent (a hidden kind's own
+ *   rule body carries no trace of being aliased-TO by another rule), so it
+ *   can't be derived from `normalizedRules[name]`'s attributes the way the
+ *   wrapper shapes could. Its VALUES, however, are redundant with
+ *   `normalizedRules[name]` (every alias-body kind across all 3 grammars
+ *   satisfies `normalizedRules[name] === flattenRules(topLevelAliasBodies.get(name))`,
+ *   since `normalizeGrammar` already threads alias-target bodies through the
+ *   same wrapper-deletion pipeline and merges them into `normalizedRules`
+ *   under the identical hidden-kind key) — so the `body` lookup below reads
  *   `rules[name]` uniformly instead of `topLevelAliasBodies.get(name) ??
  *   rules[name]`.
  */
@@ -483,18 +513,18 @@ parents.
 
 ```text
 /**
- * Attribute-aware hidden-body walker (2026-07-05, PR-137 follow-on-3 —
- * migrated OFF `ctx.linkRules` onto `ctx.normalizedRules`; see
- * `AssembleCtx.normalizedRules`'s doc comment). `rule` is a `RenderRule`
- * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
- * exist as `rule.type` values on this view — their meaning is stamped onto
- * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedTo`
+ * Attribute-aware hidden-body walker. `rule` is a `RenderRule`
+ * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias`/`token`
+ * wrappers don't exist as `rule.type` values on this view — their meaning is
+ * stamped onto whatever leaf they used to wrap, as
+ * `multiplicity`/`fieldName`/`aliasedTo`/`tokenized`/`immediate`
  * (`attributeAlias` stamps `aliasedTo`/`aliasedToId` on whatever content the
- * `alias()` wrapper wraps, symbol or otherwise). The link-view switch enforced wrapper opacity by SIMPLY HAVING
- * NO CASE for REPEAT/REPEAT1/OPTIONAL/FIELD (falling to `default: []`); the
- * equivalent here is an explicit attribute check BEFORE the type switch,
- * covering every rule type uniformly (a repeat/optional can wrap ANY rule
- * shape, not just the ones the old switch happened to dispatch):
+ * `alias()` wrapper wraps, symbol or otherwise; `attributeToken` stamps
+ * `tokenized`/`immediate` the same way onto whatever content `token()`
+ * wraps). The switch below enforces wrapper opacity with an explicit
+ * attribute check BEFORE dispatching on `rule.type`, covering every rule
+ * type uniformly (a repeat/optional can wrap ANY rule shape, not just the
+ * ones a type-only switch would dispatch on):
  *
  *   - `multiplicity === 'array' | 'nonEmptyArray'` — was `repeat`/`repeat1`.
  *     LOAD-BEARING: this is the crash fix (regression fixture:
@@ -504,53 +534,42 @@ parents.
  *     through `_delim_tokens`'s supertype chain) collapses post-wrapper-
  *     deletion to a bare `CHOICE(...)` stamped `multiplicity: 'nonEmptyArray'`
  *     — structurally indistinguishable from an unwrapped CHOICE without this
- *     check, so the old switch's CHOICE case would wrongly recurse into the
+ *     check, so a type-only CHOICE case would wrongly recurse into the
  *     punctuation arms and surface `%` as a bogus subtype name (crashing
- *     `emitSupertypeUnionDeclarations`). PR-137 follow-on-4 confirmed this
- *     particular shape actually survives `computeSimplifiedRules` unchanged
- *     too (`simplifyChoiceRule` bails to a no-op `liftSharedArmAttrs` for two
- *     bare STRING branches; `simplifySeqRule`'s anonymous-literal stripping
- *     only fires on SEQ members, never CHOICE members) — but a SIBLING shape
- *     (a SEQ, not a CHOICE, wrapping one anonymous literal + one nonterminal)
- *     does NOT survive unchanged, which is why the family stays on
- *     `normalizedRules` rather than migrating to `ctx.rules` — see the `case
- *     SEQ` branch below and `AssembleCtx`'s class doc comment for that
- *     finding (python's `_simple_pattern_negative`).
- *   - `multiplicity === 'optional'` — was `optional`. The link-view switch had
- *     no OPTIONAL case either (same opacity), so this mirrors it exactly.
+ *     `emitSupertypeUnionDeclarations`). This particular shape survives
+ *     `computeSimplifiedRules` unchanged too (`simplifyChoiceRule` bails to a
+ *     no-op `liftSharedArmAttrs` for two bare STRING branches;
+ *     `simplifySeqRule`'s anonymous-literal stripping only fires on SEQ
+ *     members, never CHOICE members) — but a SIBLING shape (a SEQ, not a
+ *     CHOICE, wrapping one anonymous literal + one nonterminal) does NOT
+ *     survive unchanged, which is why the family stays on `normalizedRules`
+ *     rather than migrating to `ctx.rules` — see the `case SEQ` branch below
+ *     and `AssembleCtx`'s class doc comment for that finding (python's
+ *     `_simple_pattern_negative`).
+ *   - `multiplicity === 'optional'` — was `optional`.
  *   - `fieldName !== undefined` — was `field`. Kept for parity though no
  *     caller in this family is expected to hand a field-wrapped position
  *     (callers only pass hidden-kind top-level bodies and supertype/choice
  *     arms, never seq-internal field slots).
  *
- * `ALIAS` is dropped as a switch case (not translated): unlike `token`,
- * `alias` is fully consumed by `flattenRules` (it never survives as
- * its own node — the wrapper disappears and `aliasedTo`/`aliasedToId` land on
- * its content), so `RenderRule` can never have `type === 'ALIAS'` at runtime,
- * not just by static type (`AliasRule<'normalize'> = never`). The alias form
- * flip means the SYMBOL case needs no dual read for this: `rule.name` is
- * ALREADY the storage kind on every SYMBOL leaf, aliased or not — `aliasedTo`
- * only ever carries the extra display (parse) name, never the identity this
- * walk resolves by. A structural alias content (SEQ/CHOICE/…) carries
- * `aliasedTo` too (`attributeAlias` stamps it uniformly regardless of content
- * shape), but this walk never reads it: `case SEQ` and `default` both return
- * `[]` unconditionally, so an alias wrapping something other than a symbol
- * or literal is opaque here exactly like an unaliased occurrence of the same
- * shape would be.
- *
- * `TOKEN` is dropped as a switch case (matching `emitters/templates.ts`'s
- * `isLeftmostTerminalImmediate` precedent — see its NOTE comment,
- * `project_preserve_token_wrappers`): `flattenRules`'s TOKEN case
- * technically PRESERVES the node (`{...rule, content}`, not deleted like
- * ALIAS), so `RenderRule`'s `never` for TOKEN is a type-level assertion, not a
- * runtime guarantee — but it's backed by the same EMPIRICAL fact that
- * consumer already relies on (0 top-level `token(...)` survivors into
- * `normalizedRules` across all 3 grammars). Adding a defensive case here would
- * require an `as`-cast the gates forbid for a shape that doesn't occur;
- * `default: []` is honest (a hidden supertype/choice chain reaching a
- * TOKEN-wrapped position would be opaque anyway, since opacity is the safe
- * fallback) and matches the recorded preserve-token-wrappers debt rather than
- * papering over it per-callsite.
+ * `ALIAS` and `TOKEN` are both dropped as switch cases (not translated):
+ * both are fully consumed by `flattenRules` — the wrapper disappears and its
+ * meaning lands on the content's own leaf attributes (`aliasedTo`/
+ * `aliasedToId` for alias, `tokenized`/`immediate` for token) — so
+ * `RenderRule` can never have `type === 'ALIAS'` or `type === 'TOKEN'` at
+ * runtime, matching their static `never` type (`AliasRule<'normalize'>`/
+ * `TokenRule<'normalize'> = never`). The alias form flip means the SYMBOL
+ * case needs no dual read for this: `rule.name` is ALREADY the storage kind
+ * on every SYMBOL leaf, aliased or not — `aliasedTo` only ever carries the
+ * extra display (parse) name, never the identity this walk resolves by. A
+ * structural alias content (SEQ/CHOICE/…) carries `aliasedTo` too
+ * (`attributeAlias` stamps it uniformly regardless of content shape), but
+ * this walk never reads it: `case SEQ` and `default` both return `[]`
+ * unconditionally, so an alias wrapping something other than a symbol or
+ * literal is opaque here exactly like an unaliased occurrence of the same
+ * shape would be. A tokenized bare literal is likewise just a STRING/PATTERN
+ * rule carrying `tokenized`/`immediate` — the STRING case already handles it
+ * via its own word-shape check, with no separate case needed.
  */
 ```
 
@@ -828,67 +847,75 @@ parents.
 
 ```text
 /**
- * Recursively collect all string literals from a rule tree into `out`.
+ * Recursively collect all string literals from a `RenderRule` tree into `out`.
  *
- * @param rule - The rule to walk.
+ * @param rule - The `RenderRule` to walk.
  * @param out - Mutable set that receives each string literal value.
  * @remarks
- *   `enum` rules are deliberately **not** descended. Enum values are the `text`
- *   content of the parent kind, not distinct node kinds — the parser produces a
- *   single node (e.g. `primitive_type` with text `"usize"`), never a `usize`
- *   node, so collecting the enum member strings as anonymous token kinds would
- *   be incorrect.
+ *   Enum-shaped choices ARE descended: every value that can appear in a slot
+ *   or as an enum member has its own anonymous parser symbol (`primitive_type`
+ *   wraps an anonymous `usize` child), and the wire format needs a kindId for
+ *   it, so each member literal is collected and minted like any other
+ *   literal. STRING values and `SYMBOL.literal` both contribute a
+ *   literal; VARIANT/GROUP descend into their `content`. There are no
+ *   OPTIONAL/REPEAT/FIELD/TOKEN cases — on this wrapper-free view, those
+ *   wrappers are leaf attributes on whatever this switch already recurses
+ *   into or collects, not separate node shapes to walk.
  */
 ```
 
-#### body
-
-```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
-```
-
-#### body
-
-```text
-// Do NOT descend into enum-shaped choices. Two forms must be guarded:
-// 1. Pre-link: all members are STRING nodes (isEnumChoiceRule).
-// 2. Post-link: all members are LINK-SYMBOL nodes (canonicalizeRuleLiterals).
-```
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyNode`
 
 ```text
 /**
- * Classify a rule into a model type by pure rule.type dispatch.
+ * Classify a kind's SIMPLIFIED rule — simplify's fixpoint-folded view,
+ * where a literal-only body has already folded to one STRING
+ * (`collectFixedLiteral`) and a slot-free single-member seq has already
+ * collapsed to its survivor — into a `ModelType`.
  *
- * By the time rules reach Assemble, Link and Normalize have already
- * pre-classified the interesting cases via dedicated rule types:
+ * A fielded/multiplicity-free body dispatches structurally: an enum
+ * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a
+ * GROUP → 'list' when its peeled core (`peelSeparatedListCore`) is a
+ * separated-list shape (`isSeparatedListShape`), else `compoundModelType`
+ * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'); a PATTERN
+ * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
+ * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
+ * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
+ * here).
  *
- *   EnumRule<'link'>       — Link: choice-of-strings
- *   SupertypeRule<'link'>  — Link: hidden choice-of-symbols (grammar or promoted)
- *   GroupRule<'link'>      — Link: hidden seq with fields
- *   TerminalRule   — Link: subtree with no fields and no symbol refs
- *   PolymorphRule  — Normalize: choice-of-variants with heterogeneous fields
- *
- * Assemble just dispatches on rule.type. The only structural inspection
- * left is distinguishing branch (has fields) from container (has children
- * only) for ordinary seq rules — that's a one-level check.
+ * Otherwise (fielded or multiplicity-bearing): a separated-list shape
+ * (`isSeparatedListShape`) → 'list'; a slot-bearing body
+ * (`hasSlotBearingContent`) → `compoundModelType`; anything left falls to
+ * `classifyTerminalFallback` (an enum choice or an all-text pattern that
+ * only becomes slot-free at this later, structural check) — unless the
+ * RENDER rule still references a kind (`referencesKind`): a body whose
+ * every reference was stripped as fixed text is a compound with no slots,
+ * not a leaf (rust `_reference_expression_raw_mut` → `raw mut`). A hidden repeat
+ * helper has no dedicated classification of its own — such a rule
+ * classifies by these same general rules (typically `'polymorph'` for a
+ * repeated choice-of-symbols with no separator, or `'list'` if it does
+ * carry one) and is suppressed from user-facing emission by the ordinary
+ * hidden/`userFacing` mechanism; some hidden repeats are also inlined at
+ * their referrer before assemble ever runs
+ * (`resolveGroupOrMultiInlineTarget`, dsl/rule-transforms.ts, called from
+ * simplify's `inlineRefs`), so they never reach classification at all.
  */
 ```
 
 ```text
-// Reads RenderRule directly — see "classifyNode's RenderRule-only design" in
-// docs/compiler-phase-glossary.md. Kept as a module-level export purely for
-// assemble.test.ts's direct unit coverage; assemble()'s own loop is the only
-// real caller.
+// Kept as a module-level export purely for assemble.test.ts's direct
+// unit coverage; assemble()'s own loop — which passes the SIMPLIFIED
+// rule, not the render-phase view — is the only real caller.
 ```
 
 #### body
 
 ```text
-// Guards against a DECORATED PATTERN/STRING (wrapper-collapsible content
-// masquerading as bare) early-exiting wrong — see "classifyNode's
-// RenderRule-only design" in docs/compiler-phase-glossary.md.
+// Guards against a decorated PATTERN/STRING — a fielded or
+// multiplicity-bearing leaf masquerading as bare — early-exiting to
+// token/pattern wrongly; it must fall through to
+// classifyTerminalFallback instead.
 ```
 
 #### body
@@ -904,8 +931,8 @@ parents.
 // A polymorph-form / content-alias GROUP is a transparent
 // wrapper: when its (sole) content carries a lifted separated
 // list's multiplicity + separator, the kind IS that list — the
-// delimiter belongs to the kind, so it classifies
-// separatedList, not opaque group.
+// delimiter belongs to the kind, so it classifies 'list', not an
+// opaque compound.
 ```
 
 #### body
@@ -918,7 +945,16 @@ parents.
 #### body
 
 ```text
-// keyword vs token honours the grammar's `word` rule — see matchesWordShape.
+// The keyword-vs-token split (AssembledKeyword vs AssembledToken, honouring
+// the grammar's `word` rule via matchesWordShape) happens in assemble()'s
+// own switch on this function's 'token' return value, not here.
+```
+
+### `packages/codegen/src/compiler/assemble.ts::referencesKind`
+
+```text
+/** Does this render rule reference another kind anywhere? The compound
+ *  test `classifyNode` applies when the simplified body has no slots. */
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::isSeparatedListShape`
@@ -934,8 +970,9 @@ parents.
  * Does NOT match a branch that merely HAS one array-multiplicity field
  * among several named fields (that stays 'branch', unchanged) — only a
  * rule whose own top-level `multiplicity` is `array`/`nonEmptyArray`
- * qualifies, the same `rule.multiplicity` gate `isHiddenRepeatHelper` uses
- * for the (unrelated) hidden-multi case above.
+ * qualifies. A rule with that multiplicity but no separator at all falls
+ * through to `hasSlotBearingContent`/`compoundModelType` instead — this
+ * predicate requires the separator unconditionally.
  */
 ```
 
@@ -945,53 +982,8 @@ parents.
 // Only a genuinely OPTIONAL flank has per-instance variability worth
 // this classification — 'mandatory' (always present) is compile-time
 // renderable exactly like 'none' (absent), and stays classified as
-// 'branch' via the pre-existing hasTrailingDelimiter/hasLeadingDelimiter mechanism.
-```
-
-### `packages/codegen/src/compiler/assemble.ts::isHiddenRepeatHelper`
-
-```text
-/**
- * Test whether a rule should be classified as a hidden `multi` helper:
- * `rule.hidden === true && (rule.multiplicity === 'array' ||
- * rule.multiplicity === 'nonEmptyArray')`.
- *
- * @remarks
- *   Hidden repeat helpers are inlined by tree-sitter at parse time, so they never
- *   surface as concrete nodes. Classifying them as `multi` lets downstream emitters
- *   skip the interface/factory/resolver and the walker inlines the repeat at
- *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
- *
- *   Aliased hidden kinds (e.g. `_with_clause_bare` aliased to `with_clause_bare`)
- *   are NOT inlined — tree-sitter exposes them as concrete named nodes, so they must
- *   classify as `branch` so the Rust transport can dispatch on their kind ID. No
- *   separate `parentAliasedKinds` exclusion set is needed for this: link's
- *   `unhideAliasedTargets` already flips such a rule's `hidden` to `false`, so the
- *   single `rule.hidden === true` check already excludes it.
- */
-```
-
-### `packages/codegen/src/compiler/assemble.ts::classifyBranchOrContainer`
-
-```text
-/**
- * Classify a rule as `branch` based on presence of fields or children,
- * or return `null` when neither applies.
- *
- * The prior `'container'` model was collapsed into `'branch'`: nodes
- * that carry only unnamed children (no `field()` on the rule) are still
- * `AssembledBranch` instances — whether a slot is named is read off the
- * slot itself (`AssembledNonterminal.isUnnamed`). The single
- * classification arm reflects that there is one runtime class for both
- * shapes.
- *
- * @param rule - The rule to inspect.
- * @returns `'branch'` if the rule has any named field or unnamed child,
- *   or `null` when neither applies.
- * @remarks
- *   Only existence checks are performed — not full extraction. The class
- *   getter (`AssembledBranch.fields`) does the full walk later, once.
- */
+// 'branch'/'envelope'/'polymorph' via the pre-existing
+// hasTrailingDelimiter/hasLeadingDelimiter mechanism.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyTerminalFallback`
@@ -1243,7 +1235,9 @@ parents.
 ### `packages/codegen/src/compiler/collect-slots.ts::isSlotNode`
 
 ```text
-/** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
+/** True iff this node is a slot. An explicit `nonterminal` stamp decides
+ *  (`flatten.ts::stampTerminality`); an unstamped node falls back to its
+ *  intrinsic shape (`isNonterminalRuleType`). */
 ```
 
 #### body
@@ -1420,13 +1414,13 @@ parents.
 // OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
 // (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
 // `isSeparatedListShape` (assemble.ts) only routes a rule to
-// `'separatedList'` classification when the rule's OWN top-level
+// `'list'` classification when the rule's OWN top-level
 // structure IS the array (the kind's whole identity is a list) — a slot
 // that is merely ONE array-multiplicity field among several in a larger
 // branch/seq (e.g. a paren-wrapped tuple's inner repeat field) never
 // reaches that check, so `sep?.trailing`/`.leading` here can genuinely be
 // `'optional'`, not just `'mandatory'`. Preserve that tri-state via
-// `trailingDelimiter`/`leadingDelimiter` (mirrors `AssembledSeparatedList`'s own
+// `trailingDelimiter`/`leadingDelimiter` (mirrors `AssembledList`'s own
 // fields) instead of collapsing straight to a presence boolean — the
 // `findRepeatFlag` fallback has no mode granularity of its own, so a flag
 // found only that way is treated as `'mandatory'` (preserves prior
@@ -1455,14 +1449,13 @@ parents.
 #### body
 
 ```text
-// A sanctioned union slot's addressable positions are every one of its
-// arms, not just the CHOICE root — the render-rule's per-arm scan
-// (`emitChoice`'s union-backed path in templates.ts) resolves EACH arm
-// symbol independently via `lookupSlot`'s primary `slotByRuleId` path,
-// so each arm's own id must also back-point to this slot. Scoped to the
-// union-slot path only (never the general case) — a non-union rule's
-// members belong to their OWN slots, and merging their ids in here would
-// misroute `slotByRuleId` for them.
+// A CHOICE slot's addressable positions are every one of its members, not
+// just the CHOICE root: `sourceRuleIds` includes each member's own id and
+// its `absorbedIds` alongside the rule's own id and `absorbedIds`. A choice
+// of leaves IS one union-valued slot, so its members' ids belong to it —
+// this holds for any CHOICE slot, not only the sanctioned-union-routing
+// path, since `emitChoice`'s per-arm scan resolves EACH arm symbol
+// independently via `lookupSlot`'s primary `slotByRuleId` path.
 ```
 
 #### body
@@ -1477,7 +1470,13 @@ parents.
 
 ```text
 /**
- * Walk a wrapper-free RenderRule and collect one slot per nonterminal node.
+ * Body entry for slot derivation. A body is a seq of members or a single
+ * member: a `SEQ` body resolves each member one level down via
+ * `resolveMember`, passing the seq's own multiplicity/separator as the
+ * inherited context for its members; any other body is resolved as one
+ * member via `resolveMember`. No tree walk lives here — recursion is
+ * `resolveMember`'s exception path (a list-less nested seq, or a
+ * structural choice).
  *
  * @param rule        wrapper-free rule (post `flattenRules`)
  * @param kindForName owning branch kind name (for unnamed-choice warnings)
@@ -1501,6 +1500,53 @@ parents.
 // mandatory member of an optional unit mis-derives as a required
 // single (e.g. index_signature's `readonly` marker inside its
 // optional modifier group).
+```
+
+### `packages/codegen/src/compiler/collect-slots.ts::recordUnclassifiableShape`
+
+```text
+/**
+ * Records the `unclassifiable-shape` assemble warning for a member
+ * `resolveMember` could not resolve as a leaf slot or a choice of leaves:
+ * code, owner kind, the member's rule id, the bucket (`nested-seq` or
+ * `choice-with-structured-arms`), and the shape via `describeArmShape`.
+ * Deduped by `recordAssembleWarning`. The count of these warnings across a
+ * grammar is a ratchet — it may only fall, never rise.
+ */
+```
+
+### `packages/codegen/src/compiler/collect-slots.ts::resolveMember`
+
+```text
+/**
+ * Per-member resolution, one level down. A leaf slot node (`SYMBOL` /
+ * `SUPERTYPE`, or anything `isSlotNode`) becomes one slot via `buildSlot`; a
+ * `CHOICE` with no field name that is not structural (`isStructuralChoice`
+ * false) is a choice of leaves — one union-valued slot via `buildSlot` (its
+ * members' own ids belong to that slot); a fielded `CHOICE` likewise
+ * resolves to one slot via `buildSlot`. `VARIANT` / `GROUP` are
+ * transparent — they resolve their `content`, threading their own
+ * multiplicity/separator down as the inherited context.
+ *
+ * Two shapes resist that one-level classification and are the recursion
+ * exceptions, each recorded via `recordUnclassifiableShape`: a nested `SEQ`
+ * member that is not itself a list (no multiplicity/separator of its own),
+ * resolved by recursing into `collectSlots`; and a structural `CHOICE`
+ * whose arm partition has structured arms (`structuredArms` or
+ * `structuredNamedArms`), resolved by the choice-arm partition /
+ * union-routing path below (distribute into arms and merge by name).
+ */
+```
+
+#### body
+
+```text
+// A nested seq is not itself a list-slot unless it carries its own
+// multiplicity or separator (a real repeated/separated group). Without
+// one, its members aren't distinguishable from the owning seq's own
+// members by shape alone — record the shape as unclassifiable and resolve
+// it by recursing into collectSlots, which distributes it exactly like
+// the outer seq.
 ```
 
 #### body
@@ -2925,30 +2971,36 @@ parents.
 
 ```text
 /**
- * Evaluate's exit gate — the one place `hidden` and `inline` get stamped
- * for every rule reference in the grammar, and where
- * `RawGrammar.visibleInlineNames` gets recorded (the grammar's `inline:`
- * array entries that do NOT start with `_` — link reports these as the
- * `inline-array-visible-name` diagnostic, since the parser inlines them
- * regardless of the leading-underscore convention, so they never surface
- * as their own nodes). Every rule link resolves afterward has its
+ * Evaluate's exit gate. `hidden` is stamped ONLY on top-level rules
+ * (`hidden = isParserHiddenName(name)`, one stamp per entry in
+ * `raw.rules`); a SYMBOL reference never carries `hidden` —
+ * reference-level classification is `inline` alone. `isParserHiddenName`
+ * (`dsl/rule-patterns.ts`) is the single source both stamps read: `inline`
+ * gets stamped on every rule reference in the grammar, and
+ * `RawGrammar.visibleInlineNames` gets recorded here (the grammar's
+ * `inline:` array entries that do NOT start with `_` — link reports these
+ * as the `inline-array-visible-name` diagnostic, since the parser inlines
+ * them regardless of the leading-underscore convention, so they never
+ * surface as their own nodes). Every rule link resolves afterward has its
  * `hidden`/`inline` facts already settled.
  *
- * For a top-level rule: `hidden = name.startsWith('_')`. For a SYMBOL
- * reference: `hidden = name.startsWith('_')`; a reference is a `boundary`
- * — never eligible to inline — when its name is a declared supertype, OR
- * when it is not itself in the grammar's `inline:` array and its target
- * rule's shape is {@link isNonInlinableLeafShape} (an enum choice,
- * SUPERTYPE, PATTERN, or STRING body — splicing one of those into every
- * occurrence site would duplicate a whole leaf class rather than fold a
- * single reference). `inline = !boundary && (hidden || inlineNames.has(name))`.
- * For a named ALIAS wrapping a bare SYMBOL: forces that symbol's `inline`
- * to `false` regardless of what the name-based computation would give —
- * an alias confers a real visible CST kind that must materialize, not
- * flatten, however the ALIAS was built (`structuralAlias`, an
- * enrich-injected alias, a hand-built rule literal). Runs bottom-up over
- * every node in every rule (`RuleWalker.map`), so it corrects a symbol's
- * `inline` no matter how deep under an ALIAS it sits.
+ * For a SYMBOL reference: a local `hidden = isParserHiddenName(rule.name)`
+ * feeds only the `inline` computation below, never the returned rule (a
+ * reference's own `hidden` field is never set); a reference is a
+ * `boundary` — never eligible to inline — when its name is a declared
+ * supertype, OR when it is not itself in the grammar's `inline:` array and
+ * its target rule's shape is {@link isNonInlinableLeafShape} (an enum
+ * choice, SUPERTYPE, PATTERN, or STRING body — splicing one of those into
+ * every occurrence site would duplicate a whole leaf class rather than
+ * fold a single reference). `inline = !boundary && (hidden ||
+ * inlineNames.has(name))`. For a named ALIAS wrapping a bare SYMBOL:
+ * forces that symbol's `inline` to `false` regardless of what the
+ * name-based computation would give — an alias confers a real visible CST
+ * kind that must materialize, not flatten, however the ALIAS was built
+ * (`structuralAlias`, an enrich-injected alias, a hand-built rule
+ * literal). Runs bottom-up over every node in every rule
+ * (`RuleWalker.map`), so it corrects a symbol's `inline` no matter how
+ * deep under an ALIAS it sits.
  */
 ```
 
@@ -3623,7 +3675,10 @@ parents.
  *  rule's body, stamping `inlinedFrom` on the substituted body with the
  *  ref's own name and keeping the ref's own id (`withId(..., r.id ??
  *  body.id)`) so downstream slot-naming and provenance still resolve to
- *  the occurrence site, not the definition site. Runs to a fixed point (no
+ *  the occurrence site, not the definition site. The spliced body drops
+ *  its source kind's own `hidden` stamp — it describes the SOURCE kind,
+ *  not the host occurrence site, and simplify's single-member collapse
+ *  would otherwise hoist that fact onto the host. Runs to a fixed point (no
  *  rule changed in a pass) or a 64-pass cap, whichever comes first; hitting
  *  the cap emits the `inline-fixpoint-unreached` diagnostic (`canProceed:
  *  true` — a stalled inline chain degrades slot naming, it does not break
@@ -3794,7 +3849,7 @@ parents.
  * @remarks
  *   The `variant()` naming convention produces visible kinds named
  *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
- *   each as a derivation gives `suggested.ts` visibility into what the parse
+ *   each as a derivation records in the derivation log what the parse
  *   tree carries vs what sittir's typed surface presents. Without this,
  *   `readNode` would have to infer polymorph-internal shape from
  *   grammar-specific knowledge.
@@ -4187,8 +4242,8 @@ parents.
 /**
  * Walk every rule's field content-type unions and flag kind sets
  * that appear in ≥2 distinct parent rules. Each unique set becomes
- * a `RepeatedShapeEntry` that the suggested.ts emitter surfaces as
- * a review candidate — the grammar author can then declare a shared
+ * a `RepeatedShapeEntry` recorded in the derivation log as a review
+ * candidate — the grammar author can then declare a shared
  * supertype (choice of the kinds) or a group and replace the
  * repeated union with a single reference.
  *
@@ -4558,13 +4613,12 @@ parents.
 
 ```text
 // NOTE: we deliberately do NOT delete the folded `_x` entry from the map.
-// `assemble` iterates the RAW `normalized.linkRules` keys and looks up the matching
-// `normalizedRules[kind]` / `rules[kind]` (SimplifiedGrammar's phase product) for
-// EACH — deleting `_x` from normalizedRules only would desync the maps and crash
-// assemble. The folded `_x` survives as a standalone entry (its parents simply no
-// longer reference it); emitters already skip it via `inlineKinds`. Dead-duplicate
-// cleanup of the orphaned `_x` kind + its transport is a separate concern (§D-2b),
-// not here.
+// `assemble` iterates `normalized.normalizedRules` keys and looks up the matching
+// `rules[kind]` (SimplifiedGrammar's phase product) for EACH — deleting `_x` from
+// normalizedRules only would desync the maps and crash assemble. The folded `_x`
+// survives as a standalone entry (its parents simply no longer reference it);
+// emitters already skip it via `inlineKinds`. Dead-duplicate cleanup of the
+// orphaned `_x` kind + its transport is a separate concern, not here.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::spliceFoldableRefs`
@@ -4599,7 +4653,7 @@ parents.
 // not gated/joined by the existing emit path, so folding it here would
 // DROP the joins (extends_clause regression). Leave the `symbol(_x)` ref
 // intact — it renders correctly via the existing emit machinery — and
-// let the deliberate AssembledGroup boundary stand (plan §D-2a: "respect
+// let the deliberate hoisted-compound boundary stand (plan §D-2a: "respect
 // resolveGroupOrMultiInlineTarget eligibility").
 ```
 
@@ -4634,7 +4688,11 @@ parents.
  * / fieldName pushed down by wrapper-deletion (e.g. `optional(_initializer)` →
  * `symbol(_initializer){multiplicity:'optional'}`). We re-home those attributes
  * onto the group's body — onto the SEQ node itself, not its leaves — so the
- * render emitter gates the whole sequence on its single internal slot.
+ * render emitter gates the whole sequence on its single internal slot. The
+ * spliced body drops the source group's own `hidden` stamp — it describes
+ * the group kind being folded away, not the host occurrence site, and
+ * simplify's single-member collapse would otherwise hoist that fact onto
+ * the host.
  */
 ```
 
@@ -5016,9 +5074,12 @@ parents.
  * `inline === true`; a non-inline ref to `targetName` (an aliased,
  * supertype, or self-recursive occurrence) is a real node the parser
  * keeps and must NOT be spliced away, even though this is the SAME
- * name `spliceHiddenRuleIntoSingleParent` is trying to fold. Returns the
- * same reference when nothing changed so callers can do identity
- * comparison.
+ * name `spliceHiddenRuleIntoSingleParent` is trying to fold. The spliced
+ * body drops `targetRule`'s own `hidden` stamp — it describes the source
+ * kind being folded away, not the host occurrence site, and simplify's
+ * single-member collapse would otherwise hoist that fact onto the host.
+ * Returns the same reference when nothing changed so callers can do
+ * identity comparison.
  */
 ```
 
@@ -5247,13 +5308,10 @@ parents.
  * bare wrapper-deleted rules map, defaulting every other phase-invariant
  * field to an empty/absent value. For call sites (tests, `makeDefaultCtx`)
  * that only have a rules map in hand — not a full linked-grammar bundle —
- * and need a `SimplifyCtx` (S2: `SimplifyCtx` now requires a full
- * `Grammar<'normalize'>` container, not a bare `rules` field). `linkRules`
- * is left empty: these callers have no distinct mid-normalize link-phase
- * view to carry (only that of a real `normalizeGrammar()` run), and only
+ * and need a `SimplifyCtx` (`SimplifyCtx` requires a full
+ * `Grammar<'normalize'>` container, not a bare `rules` field). Only
  * `simplify`'s own `ctx.rules` read (→ `grammar.rules`) is exercised by
- * `computeSimplifiedRules` — the carried `linkRules` view is consumed
- * downstream by assemble, not by simplify itself.
+ * `computeSimplifiedRules`, so every other field defaults away safely.
  */
 ```
 
@@ -5338,10 +5396,13 @@ parents.
  * Merge a choice of structurally-equivalent branches into one flat seq: every
  * position must be pairwise mergeable (same symbol / supertype / literal, or
  * JSON-equal) and at most one position may vary, in which case the first
- * branch's member stands for it. Bails (→ `liftSharedArmAttrs`) otherwise;
- * NEVER unwraps `variant()`. Typed on the wrapper-free view: a field arrives
- * as `fieldName` on its content, never as a FieldRule, so a differing
- * slot-promoted literal is simply a non-mergeable STRING position.
+ * branch's member stands for it and absorbs the other branches' members at
+ * that position (`absorbIds`) — the merged position keeps one member, but
+ * every folded branch's id is still reachable through it. Bails
+ * (→ `liftSharedArmAttrs`) otherwise; NEVER unwraps `variant()`. Typed on the
+ * wrapper-free view: a field arrives as `fieldName` on its content, never as
+ * a FieldRule, so a differing slot-promoted literal is simply a
+ * non-mergeable STRING position.
  */
 ```
 
@@ -5504,13 +5565,11 @@ parents.
  * must never appear in the input:
  *  - `flattenRules` (which runs before this in the production pipeline)
  *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
- *    attributes and pushes ALIAS down to `aliasedTo`+`aliasedToId` leaf
- *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
- *    (`{...rule, content}`, flatten.ts) — its absence here is a
- *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
- *    empirically (0 surviving top-level token rules across all 3 grammars),
- *    not a mechanism guarantee; see the preserve-token-wrappers debt. All
- *    six still collapse to `never` under `RenderRule` (types/rule.ts).
+ *    attributes, pushes ALIAS down to `aliasedTo`+`aliasedToId`, and pushes
+ *    TOKEN down to `tokenized`+`immediate` — all six wrapper types are fully
+ *    consumed into leaf attributes on their content, never preserved as
+ *    their own node, so all six collapse to `never` under `RenderRule`
+ *    (types/rule.ts).
  *  - Construction sites inside `mergePositionForChoice` / `extractFieldFromBranchesForChoice`
  *    and the empty-match fold in `simplifyChoiceRule` now delegate to
  *    `ctx.builder` (= `attributeBuilder` in production) which pushes attributes
@@ -5644,52 +5703,79 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/simplify.ts::isAllTextRender`
+
+```text
+/**
+ * Is `rule`, at every level, made of nothing but fixed text — no slot
+ * anywhere in the subtree, and no member promoted to a slot
+ * (`isSlotPromotedLiteral`)? True for a bare STRING or PATTERN; a SEQ or
+ * CHOICE where every member is itself all-text; the content of a VARIANT
+ * or GROUP passthrough. This is the predicate `simplifySeqRule` uses to
+ * decide whether a member (or the whole seq) has nothing left for a
+ * factory to address and can fold to a literal or be stripped.
+ */
+```
+
 ### `packages/codegen/src/compiler/simplify.ts::simplifySeqRule`
 
 ```text
 /**
- * Collapse a `seq`, carrying the seq node's slot attrs onto the survivor when
- * the node is discarded (`seq(x) → x` / multi-member flatten) — else
- * multiplicity/separator/fieldName are lost. `multiplicity` COMBINES via the
- * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
- * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
+ * Collapse a `seq`. A slot-free body (`isAllTextRender`) folds to a single
+ * STRING when `collectFixedLiteral` resolves one deterministic realisation
+ * for the whole seq — the leaf/enum boundary where a run of literal-only
+ * members becomes one token — and is retained whole when no such single
+ * realisation exists (a divergent CHOICE arm, an array-multiplicity
+ * member, a nonterminal). Otherwise, beside a slot, every member stamped
+ * `nonterminal: false` (`flatten.ts::stampTerminality`: a literal, a layout
+ * token, a reference to a literal) and an all-text SEQ member are stripped, and empty
+ * seqs are dropped; a spliceable bare seq member is spliced into this
+ * seq's own member list. A single surviving member carries the seq's own
+ * attrs (`withAttrsFrom`) and combines multiplicity with its own via the
+ * lattice (a survivor `optional` inside an `array` seq combines to
+ * `array`); more than one survivor keeps the SEQ shape.
  */
 ```
 
+#### body
+
 ```text
-// ---------------------------------------------------------------------------
-// Hidden group / multi inlining (moved from assemble.ts to participate in
-// the simplify fixpoint).
-// ---------------------------------------------------------------------------
+// The whole-seq fold to a single STRING only applies to a slot-free body
+// (`isAllTextRender`) — a fielded or multiplicity-bearing seq is never
+// collapsed to a bare literal here.
 ```
 
 #### body
 
 ```text
-// Members already simplified by simplifyRule's ctx.walker.map recursion —
-// this function no longer recurses into its own children (PR-S task 4).
+// Members are already simplified: simplifyRule's ctx.walker.map recurses
+// into children before this dispatch runs, so this function only
+// restructures its own member list, never its children's.
 ```
 
 #### body
 
 ```text
-// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
+// Strips a member stamped `nonterminal: false` and a SEQ member that
+// is empty or itself all-text — either would otherwise sit inert beside
+// a slot with nothing left for a factory to address.
 ```
 
 #### body
 
 ```text
-// Keep a nested seq that carries its OWN cardinality as one member:
-// splicing would lose that cardinality and hoist an inner choice to
-// the parent's seq position (a non-canonical choice-at-seq). A bare
-// seq (no own attrs) is spliced/flattened — shared predicate with
-// flatten.ts's SEQ case (see isSpliceableBareSeq's doc).
+// A spliceable bare seq (no own attrs — shared predicate with
+// flatten.ts's SEQ case, see isSpliceableBareSeq's doc) is inlined into
+// this seq's member list; a seq that carries its own cardinality
+// survives as one member instead, so splicing never drops a
+// multiplicity/separator stamp.
 ```
 
 #### body
 
 ```text
-// Only stamp when non-default (single → undefined per combineMultiplicity).
+// Multiplicity combines via the lattice; stamped only when the combined
+// value is non-default (absent stays absent).
 ```
 
 ### `packages/codegen/src/compiler/trace.ts::tracePhaseRules`
@@ -5862,11 +5948,12 @@ parents.
 ```text
 /**
  * Derive `{parent -> childTargetName[]}` for every kind in `rules`, purely
- * structurally — the SOLE source `assemble.ts`'s `variantChildrenByParent`,
- * `link.ts`'s `applyOverridePolymorphs`, and `normalize.ts`'s `variantSkip`
- * all consume (V2: the former wire-metadata channel this replaced,
- * `normalized.polymorphVariants`, is deleted entirely — see this module's
- * top-of-file STATUS comment). Values are the arm's FULL target kind name
+ * structurally. Link calls it twice: `applyOverridePolymorphs` derives on
+ * the pre-classification rules to push ambient scaffold into variant
+ * children, and the end of link derives on the final rules to stamp
+ * `LinkedGrammar.variantChildren` — the single table `normalize.ts`'s
+ * `variantSkip` and `assemble.ts`'s `variantChildrenByParent` read; neither
+ * re-derives. Values are the arm's FULL target kind name
  * (`arm.targetName`) — NOT a `${kind}_${suffix}` reconstruction, which is
  * unsound when a hidden (`_`-prefixed) parent has a VISIBLE target (ts's
  * `_export_statement_default` → `export_statement_default_from_arm`; the
@@ -5911,7 +5998,10 @@ parents.
  * PRE-flatten rule's `hidden`/`inlinedFrom` facts onto the flattened root
  * (`dsl/rule-attrs.ts::withKindFacts`) — flattening can rebuild the root
  * node fresh (a collapsed singleton, a spliced seq), so those facts don't
- * survive the rebuild on their own.
+ * survive the rebuild on their own. Then, over the whole map:
+ * `factorChoiceArmsToFixpoint` (distributed choices and permutations become
+ * one seq) and `stampTerminality` (references to a literal rule — it needs
+ * every rule flattened to know which those are).
  */
 ```
 
@@ -5922,6 +6012,75 @@ parents.
 // flattening has pushed multiplicity/separator to leaves, so the
 // renderRule the emitter consumes already has the canonical single
 // multi slot (no head single + tail array split).
+```
+
+### `packages/codegen/src/compiler/flatten.ts::stampTerminality`
+
+```text
+/**
+ * The one terminality stamp the builders cannot make: a single-cardinality
+ * symbol that references a literal rule — a link-minted literal kind
+ * (`literal`), or a rule whose body is one fixed string
+ * (`collectFixedLiteral`) — is `nonterminal: false`; its text is the
+ * template's. Runs after `factorChoiceArmsToFixpoint` over the whole map,
+ * then recomputes every seq's own stamp bottom-up (a seq is nonterminal
+ * iff any member is). An optional or repeated reference keeps `true`: it
+ * carries presence. `simplifySeqRule` strips every `false` member; the
+ * template emitter renders a `false` reference as fixed text.
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::shapeKey`
+
+```text
+/** Structural identity of a rule for arm comparison — ids excluded. */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::factorChoiceArms`
+
+```text
+/**
+ * A choice distributed over seq arms is one seq with a choice at the
+ * position that varies: `choice(seq(l, op1, r), seq(l, op2, r), …)` →
+ * `seq(l, choice(op1, op2, …), r)`. Applies when the seq arms have equal
+ * length and differ (by `shapeKey`) at exactly one position; other arms
+ * (a hoisted form referenced as a symbol, `_binary_expression_arm`) stay
+ * beside the factored seq. The rebuilt choice directly wraps the varying
+ * members, so `attributeBuilder.choice` makes it the slot — this is how a
+ * fielded literal that differs between arms (`binary_expression.operator`)
+ * is an enum slot without any field-based rule. The choice carries the
+ * arms' unanimous fieldName / multiplicity (`sharedArmAttrs`).
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::permutationKey`
+
+```text
+/** Structural identity ignoring ids AND multiplicity — the same member in
+ *  two permutation arms differs only in being required vs optional. */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::foldPermutationArms`
+
+```text
+/**
+ * Tree-sitter's "either order" idiom, `choice(seq(A, optional(B)),
+ * seq(B, optional(A)))`, is one seq of presence flags: `seq(optional(A),
+ * optional(B))` in the first arm's order (a member required in every arm
+ * stays required). Applies when every arm is a seq of the same members
+ * (by `permutationKey`, each single or optional) in a different order.
+ * A folded seq whose members are all optional drops an `optional`
+ * multiplicity of its own — it is already optional — so simplify splices
+ * it into the parent and each keyword is its own optional slot
+ * (`public_field_definition`'s `declare` / `accessibility_modifier`).
+ */
+```
+
+### `packages/codegen/src/compiler/flatten.ts::factorChoiceArmsToFixpoint`
+
+```text
+/** `factorChoiceArms` then `foldPermutationArms`, bottom-up over every
+ *  rule, to a fixpoint — nested choices factor inside-out. */
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`
@@ -6376,12 +6535,6 @@ parents.
 	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 ```
 
-### `packages/codegen/src/compiler/generate.ts::suggested`
-
-```text
-/** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
-```
-
 ### `packages/codegen/src/compiler/generate.ts::is`
 
 ```text
@@ -6434,7 +6587,7 @@ parents.
 	 * mutate the rule tree with.
 	 *
 	 * Entries EXCLUDED from this filter still appear in the
-	 * `derivations` log (and therefore in `overrides.suggested.ts`)
+	 * `derivations` log
 	 * so you can review what Link inferred and either adopt it into
 	 * grammar.sittir.ts or leave it in the log.
 	 *
@@ -6460,18 +6613,6 @@ parents.
 	 * leaf patterns can diverge from JS RegExp syntax (Unicode
 	 * property escapes without the `u` flag, PCRE-only features) so
 	 * opt-in avoids surprising the non-strict call sites.
-	 */
-```
-
-### `packages/codegen/src/compiler/generate.ts::roundTripFailures`
-
-```text
-/**
-	 * Round-trip failure diagnostics to surface in overrides.suggested.ts.
-	 * Collected by the CLI `--roundtrip` flag; when absent, the suggested
-	 * emitter skips the round-trip section. Passing empty or omitting
-	 * produces the same output — the emitter only adds the section
-	 * when at least one diagnostic exists.
 	 */
 ```
 
@@ -6643,9 +6784,10 @@ parents.
  * `classifyAndLogHiddenRules` / `classifyHiddenRule` / `classifyHiddenChoiceRule`
  * already take the accumulator as an explicit `rules` parameter (V2 fixed
  * this pre-S3 — kept as-is). `applyOverridePolymorphs` /
- * `deriveStructuralVariantChildren` callers in this file, normalize.ts, and
- * assemble.ts each pass an explicit accumulator/carried-view parameter, never
- * an ambient ctx field. No STOP-worthy wrong-phase value flow found.
+ * `deriveStructuralVariantChildren` callers in this file pass an explicit
+ * accumulator parameter, never an ambient ctx field; normalize.ts and
+ * assemble.ts read the stamped `variantChildren` table instead of
+ * re-deriving. No STOP-worthy wrong-phase value flow found.
  */
 ```
 
@@ -6858,8 +7000,9 @@ parents.
 ```text
 /**
 	 * Per-kind group-lift map from `groups:` in the override layer.
-	 * Link reads this to synthesize nested sub-rules into hidden
-	 * AssembledGroup kinds. See:
+	 * Link reads this to synthesize nested sub-rules into hidden, hoisted
+	 * compound kinds (`AbstractAssembledCompound` with `enrichment.hoisted`
+	 * set). See:
 	 *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 	 */
 ```
@@ -6968,10 +7111,25 @@ parents.
 ### `packages/codegen/src/compiler/types.ts::RefineForm`
 
 ```text
-/**
- * A single refine() form — duplicated from `dsl/wire/wire.ts::RefineForm`
- * as a plain type so the compiler tier doesn't import the DSL layer.
- */
+/** The authored refine() form, re-exported from `dsl/wire/wire.ts::RefineForm`
+ *  — one declaration, no compiler-side copy. Link stamps it into
+ *  `LinkedRefineForm`. */
+```
+
+### `packages/codegen/src/compiler/types.ts::NarrowedField`
+
+```text
+/** One field a refine form pins to a single literal: the enclosing field
+ *  name and the chosen string value. */
+```
+
+### `packages/codegen/src/compiler/types.ts::LinkedRefineForm`
+
+```text
+/** A refine form after link: the authored `RefineForm` plus
+ *  `narrowedFields`, resolved once by `narrowedFieldLiteralsForForm`
+ *  against the final link rules. Emitters read the stamp and never walk a
+ *  link tree for it. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::DerivationLog`
@@ -6980,10 +7138,10 @@ parents.
 /**
  * DerivationLog — sidecar record of everything Link inferred / promoted.
  *
- * Populated unconditionally by Link's derivation passes. The emitter
- * for `overrides.suggested.ts` reads this to surface every
- * finding as a reviewable suggestion, regardless of whether Link
- * actually applied the mutation to the rule tree.
+ * Populated unconditionally by Link's derivation passes and recorded
+ * regardless of whether Link actually applied the mutation to the rule
+ * tree. No emitter consumes it; it is a diagnostics record pinned by
+ * link's tests.
  *
  * Whether a derivation is ALSO applied (mutating the rule tree) is
  * governed by `IncludeFilter` — excluded sources still appear in the
@@ -7192,6 +7350,18 @@ parents.
 	 */
 ```
 
+
+### `packages/codegen/src/compiler/types.ts::variantChildren`
+
+```text
+/** `{parent -> childTargetName[]}` for every variant-adoption parent, stamped
+ *  once at the end of link from the final link rules
+ *  (`deriveStructuralVariantChildren`). Normalize's `variantSkip` and
+ *  assemble's `variantChildrenByParent` consume this table; it is carried
+ *  unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`. Absent when
+ *  no kind adopts variants. */
+```
+
 ### `packages/codegen/src/compiler/types.ts::contentAliasedFrom`
 
 ```text
@@ -7218,16 +7388,14 @@ parents.
 	 *
 	 * Every later phase CARRIES this value forward (`NormalizedGrammar` →
 	 * `SimplifiedGrammar` → `NodeMap`) rather than recompiling from its own
-	 * `rules`/`linkRules` view: compiling from a post-normalize view is
+	 * `rules`/`normalizedRules` view: compiling from a post-normalize view is
 	 * unsound in general — normalize's wrapper-deletion collapses
 	 * `REPEAT`/`OPTIONAL` wrappers into leaf `multiplicity` attributes that
 	 * `ruleToRegexSource`'s walker doesn't consult, so a post-link recompile
 	 * can silently undercount the regex (confirmed regression: typescript's
 	 * `identifier` word rule loses its trailing `REPEAT`). Pinning at link
 	 * time — where the wrapper is still a real node — and carrying the single
-	 * compiled result is the fix; see
-	 * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md (PR-137
-	 * follow-on) for the falsifying probe.
+	 * compiled result is the fix.
 	 */
 ```
 
@@ -7265,18 +7433,17 @@ parents.
 ```text
 /**
  * Normalize-phase view of the grammar (`Grammar<'normalize'>`): `rules` IS
- * the wrapper-deleted set (`flattenRules` output + the §D-2a inline
- * hoist), i.e. what the phase PRODUCES — per the 2026-07-04 design decision
- * that "normalize's output rules are the normalized rules" (the map formerly
- * known as `renderRules`). `linkRules` is the carried mid-normalize
- * link-phase view (post-`applyNormalizationPasses`, pre-wrapper-deletion —
- * wrappers intact) that hidden-rule resolution in assemble still needs.
+ * the wrapper-deleted set (`flattenRules` output plus the hidden-seq inline
+ * hoist), i.e. what the phase PRODUCES. There is no separate mid-normalize,
+ * wrapper-bearing view carried alongside it — the intermediate
+ * `applyNormalizationPasses` output is a local inside `normalizeGrammar()`,
+ * consumed immediately by `flattenRules` and never exposed on this
+ * container.
  *
  * Today this view exists as locals inside `normalizeGrammar()` (which runs
  * simplify as its final stage and returns the {@link SimplifiedGrammar}
- * bundle directly); it is reified here so `SimplifyCtx` (S2) can be
- * `BaseCtx<'normalize'>` reading exactly this shape. See
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md.
+ * bundle directly); it is reified here so `SimplifyCtx` can be
+ * `BaseCtx<'normalize'>` reading exactly this shape.
  */
 ```
 
@@ -7286,35 +7453,10 @@ parents.
 /** The normalize-phase rules — wrapper-free, attribute-stamped. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::linkRules`
-
-```text
-/** Carried mid-normalize link-phase view (wrappers intact). */
-```
-
 ### `packages/codegen/src/compiler/types.ts::wordMatcher`
 
 ```text
 /** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
-```
-
-### `packages/codegen/src/compiler/types.ts::linkRules`
-
-```text
-/**
-	 * Carried mid-normalize link-phase view (wrappers intact) — see
-	 * {@link NormalizedGrammar.linkRules}'s doc comment for the pipeline
-	 * provenance. Carried through assemble onto {@link NodeMap.linkRules};
-	 * see THAT field's doc comment for the current (2026-07-05, post-PR-137-
-	 * follow-on-3) consumer list — now exclusively the two by-design
-	 * authoring-shape diagnostics (`emitters/suggested.ts`,
-	 * `emitters/refine-emit.ts` via `compiler/link.ts`'s refine-path
-	 * resolution). `compiler/assemble.ts`'s hidden-body/subtype-resolution
-	 * family migrated off this view onto `normalizedRules` (below); this
-	 * field's sole remaining purpose is feeding `NodeMap.linkRules` for those
-	 * two diagnostics — a candidate for a diagnostics-scoped carry in a future
-	 * pass (not restructured here; see PR-137 follow-on-3 notes).
-	 */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
@@ -7340,9 +7482,8 @@ parents.
 	 * view of every rule, produced by `simplifyRule` as the final pass in
 	 * `normalizeGrammar()`. Downstream consumers (`assemble` →
 	 * `AssembledBranch/Container/Group`) read from this map instead of
-	 * re-simplifying per-node. Raw templates still read `normalizedRules` /
-	 * `linkRules` because they need anonymous delimiters to surface as
-	 * template literals.
+	 * re-simplifying per-node. Raw templates still read `normalizedRules`
+	 * because they need anonymous delimiters to surface as template literals.
 	 */
 ```
 
@@ -7401,8 +7542,8 @@ parents.
  * (2026-07-05: closed the former `SimplifiedGrammar` exception — its phase
  * product field is named `rules` like every other family member now):
  * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` for ALL `P`.
- * `SimplifiedGrammar` additionally carries `normalizedRules` / `linkRules`
- * as extra (non-`rules`) views alongside its `rules` product. See
+ * `SimplifiedGrammar` additionally carries `normalizedRules` as an extra
+ * (non-`rules`) view alongside its `rules` product. See
  * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
  */
 ```
@@ -7458,76 +7599,19 @@ parents.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::linkRules`
-
-```text
-/**
-	 * `SimplifiedGrammar.linkRules` carried through assemble — the
-	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
-	 * output, BEFORE `flattenRules` strips modifier wrappers).
-	 *
-	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers; the PR-137
-	 * follow-on-3 migration (2026-07-05) closed out the LAST render/derivation
-	 * consumer — `compiler/assemble.ts`'s hidden-body/subtype-resolution
-	 * family (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
-	 * `isAliasMemberKind` / `isCompatibleSubtypeMember` /
-	 * `resolveHiddenRuleContent`) now reads `AssembleCtx.normalizedRules`
-	 * instead, with the former "no REPEAT1 case = opaque" switch behavior
-	 * translated into explicit `multiplicity`/`fieldName`/`aliasedTo`
-	 * attribute checks run BEFORE the type switch (see
-	 * `resolveHiddenRuleContent`'s doc comment in assemble.ts for the full
-	 * translation table and the regression fixture this closes — rust's
-	 * `_delim_tokens` supertype chain resolving `%` as a bogus subtype and
-	 * crashing `emitSupertypeUnionDeclarations`). `AssembleCtx.linkRules` (the
-	 * getter this family used to read) is DELETED — zero assemble consumers
-	 * remain. The PR-137 follow-on-4 investigation (same day) tried migrating
-	 * this family from `AssembleCtx.normalizedRules` to `AssembleCtx.rules`
-	 * (`SimplifiedGrammar`'s own phase product — the map `assemble()`'s input
-	 * container is actually named for, so `normalizedRules` wasn't obviously
-	 * justified over it) and found it EMPIRICALLY UNSAFE: python's
-	 * `_simple_pattern` supertype loses its `_simple_pattern_negative` subtype
-	 * entry under `rules` (simplify's SEQ-collapse unmasks an intentionally
-	 * opaque SEQ shape into a dispatchable CHOICE, discarding the variant-
-	 * adopted kind's own name) — see `AssembleCtx`'s class doc comment for the
-	 * full root-cause. The family stays on `normalizedRules`; the getter is
-	 * NOT deleted. `topLevelAliasBodies` stays a distinct field (its presence
-	 * test — "is this hidden kind an alias-mint target" — has no rule-
-	 * attribute equivalent; its VALUES are redundant with `normalizedRules[name]`
-	 * and no longer read directly).
-	 *
-	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
-	 * no longer compiles from `linkRules` (or any post-link view) at all —
-	 * it's pinned once at Link time from `raw.rules` and carried on
-	 * `wordMatcher` (below) instead. Remaining consumers are exclusively the
-	 * two BY-DESIGN authoring-shape diagnostics (not render/derivation paths —
-	 * see docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md's
-	 * end-state table, row "emitters"):
-	 *   - `emitters/suggested.ts`'s `findSymbolPosition` (via `parentRule`)
-	 *     and `detectGroupCandidates`/`walkBodyForGroups` (via `groupRules`):
-	 *     both explicitly pattern-match `FIELD`/`OPTIONAL`/`REPEAT`/
-	 *     `REPEAT1`/`ALIAS`/`TOKEN`/`VARIANT`/`GROUP` wrapper shapes by
-	 *     design — these are propose-diagnostics over the grammar's
-	 *     natural (pre-wrapper-deletion) authoring shape, not render
-	 *     consumers.
-	 *   - `compiler/link.ts`'s `resolveRefinePath`/`narrowedFieldLiteralsForForm`
-	 *     (via `emitters/refine-emit.ts`'s `collectRefineKindInfos`):
-	 *     `refine()` selection paths are authored against the pre-normalize
-	 *     tree, so path resolution must walk the same wrapper shapes.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::normalizedRules`
 
 ```text
 /**
 	 * `SimplifiedGrammar.normalizedRules` carried through assemble — the
 	 * wrapper-deleted `RenderRule` view (modifier wrappers pushed down to
-	 * leaf attributes). PR-137: added so `emitters/templates.ts`'s
-	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) can
-	 * read the honest post-normalize view directly instead of bridging
-	 * through `flatten(linkRules[name])` per call — verified
-	 * byte-identical to the former bridge for every hidden ref the
-	 * fallback actually reaches, across all 3 grammars.
+	 * leaf attributes). Read by `compiler/assemble.ts`'s hidden-body/
+	 * subtype-resolution family (`resolveHiddenSubtypes` /
+	 * `resolveHiddenRuleContent` and peers) and by `emitters/templates.ts`'s
+	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) — the
+	 * only wrapper-free, attribute-stamped view assemble and the emitters
+	 * ever read; there is no separate mid-normalize wrapper-bearing view to
+	 * fall back to.
 	 */
 ```
 
@@ -7575,10 +7659,11 @@ parents.
 
 ```text
 /**
-	 * Per-kind refine() form declarations, keyed by rule kind. Emitters
-	 * read this to generate namespace-keyed factories and narrowed
-	 * Config types for per-form factories. Undefined when no refine()
-	 * calls fired in this grammar's overrides.
+	 * Per-kind refine() forms, keyed by rule kind, each carrying link's
+	 * `narrowedFields` stamp (`LinkedRefineForm`). Emitters read this to
+	 * generate namespace-keyed factories and narrowed Config types for
+	 * per-form factories. Undefined when no refine() calls fired in this
+	 * grammar's overrides.
 	 */
 ```
 
@@ -7996,6 +8081,14 @@ source, one derivation.
 // the same call.
 ```
 
+#### body
+
+```text
+// Every leaf is rebuilt through its attribute builder so it carries the
+// builder's terminality stamp (`attributeBuilder`); link-phase attrs on the
+// node (literal, kindId, hidden, …) are kept by spreading the node first.
+```
+
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
 ```text
@@ -8242,16 +8335,25 @@ source, one derivation.
  *
  *   **A slot IS a `nonterminal`-flagged node.**
  *
- * Walk a wrapper-free RenderRule; emit one `AssembledNonterminal` per
- * `nonterminal` node:
- *  - `symbol` / `supertype` / `choice` / `pattern` / `enum` (intrinsic
- *    nonterminals, Table 1) or any node carrying a pushed-down
- *    `nonterminal: true` (Table 2) → ONE slot. A choice is a single UNION
- *    slot — its arms are NOT recursed into separate slots.
- *  - `seq` → distribute: flat-collect the slots of its members. The seq
- *    itself emits no slot.
- *  - `variant` / `clause` / `group` → transparent: recurse into content.
+ * `collectSlots` is the body entry: a `seq` distributes into its members
+ * one level down, anything else is a single member. `resolveMember`
+ * classifies that member one level down, with no tree walk as its main
+ * path:
+ *  - `symbol` / `supertype` / `pattern` / `enum` (intrinsic nonterminals,
+ *    Table 1) or any node carrying a pushed-down `nonterminal: true`
+ *    (Table 2), or a non-structural `choice` → ONE slot via `buildSlot`. A
+ *    choice of leaves is a single UNION slot — its arms are not recursed
+ *    into separate slots.
+ *  - `variant` / `group` → transparent: resolve their content.
  *  - non-nonterminal leaf (terminal `string` / `token('lit')` / indent / …) → [].
+ *
+ * Two shapes resist that one-level classification and are the recursion
+ * exceptions (each recorded as an `unclassifiable-shape` diagnostic — a
+ * ratchet, never rising): a nested `seq` with no multiplicity/separator of
+ * its own recurses via `collectSlots`, distributing exactly like the outer
+ * seq; a structural `choice` (arms carrying distinct fields or ambient
+ * structure) recurses via the choice-arm partition / union-routing path,
+ * merging same-named slots across arms.
  *
  * Removed vs the old walker: `effectiveMultiplicity` threading,
  * `deriveSlotsRawFromLeafAttr` folding, `armSlots` / `mergeChoiceArmSlots`,
@@ -8412,26 +8514,26 @@ source, one derivation.
  *   of named kinds" for the predicate to match against at all, by design
  *   (the predicate is CHOICE-centric, matching `isAllAliasChoice`/
  *   `findVariantChoice`'s own scope).
- * - **Supertype/Group union, not (only) a plain BRANCH.** Some
- *   variant-adoption parents classify to `SupertypeRule` (python's
- *   `_simple_pattern`) or `AssembledGroup` (ts's
- *   `_export_statement_default_decl_arm` family, `_for_header`) rather than
- *   `AssembledBranch`. `_simple_pattern`'s original CHOICE flattens into a
- *   bare `subtypes: string[]` BEFORE this module ever sees the rule
- *   (`classifyHiddenChoiceRule`, link.ts) — the alias-mint linkage would be
- *   destroyed if not for the declared `variantArms` fact that flatten
- *   stamps (see `RuleBase.variantArms`'s doc comment); this module still
- *   can't reproduce it from `normalized.rules` alone (verified: ts `type`'s
- *   `_type_query_member_expression_in_type_annotation` subtype is a
+ * - **Supertype/hoisted-compound union, not (only) a plain BRANCH.** Some
+ *   variant-adoption parents classify to `SupertypeRule`/`AssembledSupertype`
+ *   (python's `_simple_pattern`) or a hoisted `AbstractAssembledCompound`
+ *   (ts's `_export_statement_default_decl_arm` family, `_for_header`) rather
+ *   than an ordinary `AssembledBranch`. `_simple_pattern`'s original CHOICE
+ *   flattens into a bare `subtypes: string[]` BEFORE this module ever sees
+ *   the rule (`classifyHiddenChoiceRule`, link.ts) — the alias-mint linkage
+ *   would be destroyed if not for the declared `variantArms` fact that
+ *   flatten stamps (see `RuleBase.variantArms`'s doc comment); this module
+ *   still can't reproduce it from `normalized.rules` alone (verified: ts
+ *   `type`'s `_type_query_member_expression_in_type_annotation` subtype is a
  *   structurally-identical-looking coincidental collision that a generic
- *   body-presence heuristic would readmit as a false positive). GROUP
- *   parents have no `variantChildKinds` field at all on `AssembledGroup` —
- *   `buildFactoryMap` (emitters/factory-map.ts) only ever visits
- *   `modelType==='branch'` nodes, so neither shape can EVER produce a
+ *   body-presence heuristic would readmit as a false positive). A hoisted
+ *   compound carries a real `variantChildKinds` field, but `buildFactoryMap`
+ *   (emitters/factory-map.ts) gates on `isAuthoredCompound` (compound, not a
+ *   list, not hoisted), so neither shape can EVER produce a
  *   `node-model.json5` `polymorphVariants` entry regardless of how the
  *   children were discovered. `tool variant-derivation-probe`'s comparison
- *   restricts to `modelType==='branch'` parents on both sides for exactly
- *   this reason — see that probe's own doc.
+ *   restricts to the same non-hoisted-compound parents on both sides for
+ *   exactly this reason — see that probe's own doc.
  *
  * EXTRA (structural finds a prefix-named, alias-minted choice that has no
  * historical wire-pair equivalent — REVIEWED-ADDITIVE, these joined the
@@ -8686,6 +8788,14 @@ source, one derivation.
 ```text
 // Both evaluate's own runtime and wire's makeSimpleDollarProxy produce
 // uppercase SYMBOL $ references, so this is a plain equality check.
+```
+
+#### body
+
+```text
+// Grammar files are untyped JavaScript: the target may be `undefined` /
+// `null`, so guard before reading `.type` and report the invalid alias
+// value instead of a property-access TypeError.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::blank`
@@ -9120,8 +9230,10 @@ source, one derivation.
 
 ```text
 // Force-classify synthesized kinds as GroupRule<'link'> so downstream
-// normalize.inlineSingleUseHidden skips them (it preserves 'group'
-// type rules) and assemble sees them as AssembledGroup candidates.
+// normalize.inlineSingleUseHidden skips them (it preserves GROUP-typed
+// rules) and assemble sees them as hoisted-compound candidates
+// (`simplifiedRule.type === GROUP` triggers the `hoisted` opt in
+// assemble.ts's compound construction).
 ```
 
 #### body
@@ -9698,7 +9810,7 @@ source, one derivation.
 // `DelimiterMode` value from Case 4's `'optional'`, not the same
 // boolean `true` both used to share (which is what let a genuinely
 // mandatory flank get misclassified as `'optional'` downstream, per
-// `AssembledSeparatedList.leadingDelimiter`'s doc comment, node-map.ts).
+// `AssembledList.leadingDelimiter`'s doc comment, node-map.ts).
 ```
 
 #### body
@@ -10083,9 +10195,10 @@ source, one derivation.
  * whose single literal value should be narrowed for per-form Config
  * emission, along with the narrowed literal.
  *
- * Used by the type/factory emitters to build the per-form narrowed
- * fields. Returns an array because a form may narrow multiple selections
- * (e.g. `opening` and `closing` simultaneously).
+ * Link calls it once per form at its end, after `validateRefineForms`,
+ * to stamp `LinkedRefineForm.narrowedFields`; the type/factory emitters
+ * read that stamp. Returns an array because a form may narrow multiple
+ * selections (e.g. `opening` and `closing` simultaneously).
  *
  * @returns Array of `{ fieldName, literal }` tuples. `fieldName` is the
  *   enclosing field (when the selection targets a field-wrapped choice)
@@ -10385,10 +10498,13 @@ source, one derivation.
  * member list (choice associativity) — each spliced arm carries the nested
  * node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …,
  * already flattened to attributes by this phase) via `withAttrsFrom` onto
- * that arm, not the nested CHOICE node itself. Then: fold an empty-match
- * member (`pattern("")`, empty seq) into `optional`; collapse a single
- * member; merge structurally-equivalent branches (`mergeBranchesForChoice`).
- * Variant wrappers are preserved for polymorph detection.
+ * that arm, not the nested CHOICE node itself, and the parent absorbs the
+ * spliced-away nested choices' ids (`absorbIds`). Then: fold an empty-match
+ * member (`pattern("")`, empty seq) into `optional`, where a single
+ * surviving non-empty member absorbs the wrapper choice's id; collapse a
+ * single member the same way; merge structurally-equivalent branches
+ * (`mergeBranchesForChoice`). Variant wrappers are preserved for polymorph
+ * detection.
  *
  * Constructs through `ctx.builder` (`RuleBuilder<'normalize'>` — always
  * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather
@@ -10700,7 +10816,14 @@ source, one derivation.
 
 ```text
 // ---------------------------------------------------------------------------
-// collectAnonymousNodes — extract string literals from rules as token/keyword entries
+// collectAnonymousNodes — mint anonymous-symbol token/keyword nodes for the
+// string literals occurring in `rules` (`Record<string, RenderRule>`, the
+// normalize view). Minting is catalog-driven: a literal is only ever minted
+// when the parser's generated-id catalog knows it as an anonymous symbol
+// (`findEntryForLiteralText` → an entry with `anon === true`), keyed by that
+// catalog entry's kind name. A literal the catalog has no anonymous entry
+// for is NOT minted; the occurrence-collecting walk over `rules` is a filter
+// only, never itself a source of new kinds.
 // ---------------------------------------------------------------------------
 ```
 
@@ -10717,9 +10840,14 @@ source, one derivation.
 // A token whose whole body is one literal lexes as that literal's own
 // anonymous symbol (`token.immediate('"')` IS the `"` node); a
 // composite token body (`token(seq('/', '/', '/'))`) is one symbol whose
-// parts are never CST nodes. So a bare-literal token contributes its
-// literal like a top-level STRING/PATTERN rule does, and any other
-// compound all-text rule is skipped.
+// parts are never CST nodes. There is no TOKEN wrapper on this view — by
+// the time `rules` reaches here, `token()`/`token.immediate()` have been
+// consumed into `tokenized`/`immediate` attributes on the literal's own
+// STRING/PATTERN rule (see `resolveHiddenRuleContent`'s doc comment). So a
+// bare-literal token contributes its literal like a top-level STRING/PATTERN
+// rule does, and only a `tokenized` compound body is skipped — an untokenized
+// all-text rule (an enum choice, a seq of literals) is walked because its
+// parts are CST nodes with their own anonymous symbols.
 ```
 
 ```text
@@ -10729,13 +10857,15 @@ source, one derivation.
 #### body
 
 ```text
-// Resolve through the catalog FIRST (anon-token-first chain — the same
-// resolution AssembledKeyword/AssembledToken's own constructor uses to
-// stamp resolvedKind/resolvedKindId) so the minted node is keyed by the
-// catalog row's kind name, not the literal's raw text. Tree-sitter often
-// sanitizes or dedupes anonymous literals under a different name
-// (`,` → `comma`, `mut` → `mutable_specifier`) — keying by raw text mints
-// a phantom name with no id row even though the token already has one.
+// Resolve through the catalog — the same resolution AssembledKeyword/
+// AssembledToken's own constructor uses to stamp resolvedKind/resolvedKindId
+// — so the minted node is keyed by the catalog row's kind name, not the
+// literal's raw text: tree-sitter often sanitizes or dedupes anonymous
+// literals under a different name (`,` → `comma`) — keying by raw text mints
+// a phantom name with no id row even though the token already has one. This
+// is the ONLY path to minting: a literal with no anonymous catalog entry is
+// never minted (see the `kindid-unstamped-anon-literal` warning below)
+// rather than falling back to raw-text keying.
 ```
 
 ```text
@@ -10745,10 +10875,15 @@ source, one derivation.
 #### body
 
 ```text
-// No catalog row for this literal — fall back to raw-text keying and
-// surface it in the same grammar-diagnostics.json stream the link-time
-// kindid-unstamped-* report uses, so this fallback is visible and
-// ratcheted rather than silently minting a phantom.
+// No anonymous-symbol catalog row for this literal — record the
+// kindid-unstamped-anon-literal warning and do NOT mint it. This is the
+// literal's own body as a NAMED rule (e.g. python's `True`/`False`/`None`/
+// `...`, rust's `mut`) or a literal outside the reachable rules — in both
+// cases the kind already exists (or will) under its own name, never under
+// this raw literal text, so minting here would create an unaddressable
+// phantom. A literal that instead resolves to a named (non-anonymous)
+// catalog entry is skipped silently just above — its kind already exists as
+// a named node, so no warning is needed.
 ```
 
 #### body
@@ -10880,7 +11015,7 @@ source, one derivation.
  * only — it MUST NOT silently classify rules as polymorphs because
  * tree-sitter's parser-generator doesn't see these mutations and the parse
  * tree wouldn't match the typed surface. Heuristic candidates that need
- * promotion are surfaced via suggested.ts; the user authors variant() in
+ * promotion are recorded in the derivation log; the user authors variant() in
  * grammar.sittir.ts to make them explicit.
  */
 ```
@@ -10938,10 +11073,10 @@ source, one derivation.
 // every variant-adoption parent/child is already resolved by variant
 // dispatch; flagging them as multi-slot seqs in the diagnostic would be
 // a false positive. Formerly derived from the wire-metadata channel's
-// `{parent, child}` pairs (`linked.polymorphVariants`); now derived from
-// `deriveStructuralVariantChildren(linked.rules)` — the SAME derivation
-// assemble.ts and link.ts's `applyOverridePolymorphs` consume, so this
-// skip-set can never drift from what actually adopted. Preserves the
+// `{parent, child}` pairs (`linked.polymorphVariants`); now read from
+// `linked.variantChildren` — the table link stamps once from its final
+// rules and assemble.ts reads too, so this skip-set can never drift from
+// what actually adopted. Preserves the
 // exact two-string-per-child shape the old code added (`pv.parent` +
 // `pv.child`, the SHORT suffix): the short suffix is recovered from
 // each structural target's full name via `prefixNamedSuffix` (the
@@ -10951,11 +11086,12 @@ source, one derivation.
 #### body
 
 ```text
-// S2: build the honest Grammar<'normalize'> view SimplifyCtx reads (§2 —
-// SimplifyCtx = BaseCtx<'normalize'>). `rules` (mid-normalize, wrapper-intact
-// link view) becomes NormalizedGrammar.linkRules; `normalizedRules`
-// (wrapper-deleted) is NormalizedGrammar.rules — the phase's own product.
-// Phase-invariant fields carry straight from `linked`.
+// Build the Grammar<'normalize'> view SimplifyCtx reads (SimplifyCtx =
+// BaseCtx<'normalize'>). `rules` (mid-normalize, wrapper-intact link view) is
+// a local consumed immediately by flattenRules; `normalizedRules`
+// (wrapper-deleted) is NormalizedGrammar.rules — the phase's own product, the
+// only rule view this container carries. Phase-invariant fields carry
+// straight from `linked`.
 ```
 
 #### body

@@ -115,7 +115,7 @@ export const gen: CommandModule = {
 
 				// Optional round-trip validator probes (--roundtrip).
 				if (opts.roundtrip) {
-					const totalFail = await runRoundtripProbes(opts.grammar, templatesDir, nodeMap);
+					const totalFail = await runRoundtripProbes(opts.grammar, templatesDir);
 					if (totalFail > 0) {
 						console.error(`\n${totalFail} render-parse / from() failure(s) — see above.`);
 						process.exitCode = 1;

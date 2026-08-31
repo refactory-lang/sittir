@@ -60,8 +60,7 @@ import type {
 	IncludeFilter,
 	DerivationLog,
 	RepeatedShapeEntry,
-	RefineForm
-} from './types.ts';
+	RefineForm, LinkedRefineForm, NarrowedField } from './types.ts';
 import { hasAnyField } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
@@ -252,16 +251,20 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
 	stampLinkMintedVisibility(rules, linkCtx);
-	if (raw.refineForms && raw.refineForms.size > 0) {
-		for (const [kind, forms] of raw.refineForms) {
-			const rule = rules[kind];
-			if (!rule) {
-				throw new Error(
-					`refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
-				);
-			}
-			validateRefineForms(kind, rule, forms, rules);
+	const variantChildren = deriveStructuralVariantChildren(rules);
+	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
+	for (const [kind, forms] of raw.refineForms ?? []) {
+		const rule = rules[kind];
+		if (!rule) {
+			throw new Error(
+				`refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
+			);
 		}
+		validateRefineForms(kind, rule, forms, rules);
+		refineForms.set(
+			kind,
+			forms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
+		);
 	}
 
 	return {
@@ -279,9 +282,10 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
-		refineForms: raw.refineForms,
+		refineForms: refineForms.size > 0 ? refineForms : undefined,
 		parentAliasedKinds,
-		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
+		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
+		variantChildren: variantChildren.size > 0 ? variantChildren : undefined
 	};
 }
 
@@ -771,7 +775,8 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name)) return r;
 		const body = rules[r.name];
 		if (body === undefined) return r;
-		return rebaseRuleIds({ ...body, inlinedFrom: r.name }, r.id ?? body.id);
+		const { hidden: _sourceKindHidden, ...spliced } = body;
+		return rebaseRuleIds({ ...spliced, inlinedFrom: r.name } as Rule<'link'>, r.id ?? body.id);
 	};
 	for (let pass = 0; pass < 64; pass++) {
 		let changed = false;
@@ -2425,8 +2430,8 @@ export function narrowedFieldLiteralsForForm(
 	rule: Rule<'link'>,
 	form: RefineForm,
 	rules?: Readonly<Record<string, Rule<'link'>>>
-): Array<{ fieldName: string; literal: string }> {
-	const out: Array<{ fieldName: string; literal: string }> = [];
+): NarrowedField[] {
+	const out: NarrowedField[] = [];
 	for (const [pathStr, selection] of Object.entries(form.selections)) {
 		const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
 		if (!resolution.fieldName) continue;

@@ -496,7 +496,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * the whole list (head + repeat + trailing) is captured as one group. Without
  * it the trailing separator strands as a standalone member → wrapper-deletion
  * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
- * groups it is permanently split from its list across the AssembledGroup
+ * groups it is permanently split from its list across the hoisted-compound
  * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
  * into the group's `repeat1` as `trailing: true`.
  */
@@ -1257,8 +1257,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Register the FLATTENED head-form spelling — the canonical shape the
 // link phase's separator lift recognizes, so the kind classifies
-// 'separatedList' (kind-level flank keys) instead of 'group' with
-// per-field capture. Language-identical (seq nesting is associative);
+// 'list' (kind-level flank keys) instead of an ordinary hoisted compound
+// with per-field capture. Language-identical (seq nesting is associative);
 // the ambient prec wrapper re-applies around the flat seq.
 ```
 
@@ -1308,37 +1308,47 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // survives only as the collision fallback.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::armLeadingSymbolName`
+### `packages/codegen/src/dsl/rule-patterns.ts::armLeadingSymbolName`
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
- * LEFTMOST reachable position (descending through SEQ's first member,
- * every CHOICE member, and single-content wrappers — the same shape a
- * parser's FIRST-set walk would follow) references one of `siblingNames`.
- * Guards against minting a choice arm that is structurally a RECURSIVE
- * extension of a SIBLING arm in the same choice rather than an
- * independent alternative — e.g. python's `expression_statement`:
- * arm 0 is the bare `$.expression`; arm 1 is `seq(commaSep1($.expression),
- * optional(','))`, which itself STARTS with `$.expression`. Minting arm 1
- * into its own hidden rule creates a second grammar production sharing
- * arm 0's leading symbol — an unresolvable tree-sitter LR conflict, not a
- * cosmetic one (confirmed: no `conflicts:` declaration or rename
- * resolves it, since it's a genuine shared-prefix ambiguity between two
- * live productions). Skipping the mint here leaves the arm exactly as
- * enrich found it — whatever OTHER mechanism (variant()/polymorphs in
- * this grammar's own grammar.sittir.ts, same as before PR 3) already handles
- * it keeps doing so, unimpeded.
+ * Resolve `rule`'s LEFTMOST reachable symbol name — descending through a
+ * SEQ's first member and single-content wrappers (optional/field/repeat/
+ * prec/token/...), the same shape a parser's FIRST-set walk would follow.
+ * A CHOICE has no single leftmost symbol (it varies per arm) and resolves
+ * to `undefined`; the `seen` set guards against infinite recursion on a
+ * self-referential rule.
+ *
+ * For a SYMBOL, hiddenness gates whether the name IS the leftmost
+ * boundary or resolution must descend further: `rulesBag[name]?.hidden`
+ * — the referenced rule's OWN stamp, looked up by name — decides, never
+ * a property read off the reference itself (a SYMBOL reference carries
+ * no `hidden` of its own; only top-level rules do). A visible target's
+ * name IS the leftmost boundary — return it. A hidden target is
+ * invisible to the parser's distinguishable-item boundary, so its own
+ * leftmost symbol (found by recursing into its body) is what actually
+ * matters; if that recursion resolves to `undefined` (e.g. the hidden
+ * body is a CHOICE), the hidden name is returned as the fallback.
+ *
+ * `armStartsWithSymbol` (this file) is the boolean guard built on top:
+ * true when this resolved name collides with a sibling arm's own
+ * leading symbol — the shared-prefix collision that would create an
+ * unresolvable tree-sitter LR conflict if a choice arm minted its own
+ * hidden rule while structurally being a recursive extension of a
+ * sibling arm (e.g. python's `expression_statement`: one arm is bare
+ * `$.expression`; another is `seq(commaSep1($.expression),
+ * optional(','))`, which itself starts with `$.expression`).
  */
 ```
 
 #### body
 
 ```text
-// A VISIBLE symbol is its own meaningful boundary for LR
-// prefix-collision purposes — stop here. A HIDDEN symbol is
-// invisible to the parser's distinguishable-item boundary, so its
-// OWN leading symbol (descend into its body) is what matters.
+// A visible target (`rulesBag[name]?.hidden !== true`) is its own
+// meaningful boundary for LR prefix-collision purposes — stop here. A
+// hidden target is invisible to the parser's distinguishable-item
+// boundary, so its OWN leading symbol (descend into its body) is what
+// matters instead.
 ```
 
 #### body
@@ -1517,7 +1527,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     slot that is a `field` or `symbol` (NOT a bare `choice`) after dropping
  *     pure literals/punctuation and `blank`. The inline+gate render path can
  *     key on that single slot; multi-slot or bare-choice bodies need to be
- *     visible (their own AssembledGroup template).
+ *     visible (their own hoisted-compound template).
  */
 ```
 
@@ -1639,7 +1649,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * flattened seq is an optional/choice-of-blank flank of that same separator
  * literal (a stranded leading/trailing comma). Either shape means the list
  * can't be rendered from one fixed separator string — it needs its own
- * visible `AssembledSeparatedList` template, not the hidden inline-flat
+ * visible `AssembledList` template, not the hidden inline-flat
  * path.
  */
 ```
@@ -1704,7 +1714,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     or any other multi-valued / compound type.
  *
  * Multi-slot or bare-choice bodies are "inline-unsafe" and require a visible
- * AssembledGroup template for correct rendering.
+ * hoisted-compound template for correct rendering.
  *
  * @param seqBody — the rule to classify. Typically the body of an
  *   `optional(seq)` position, but may also be called with non-seq bodies
@@ -1727,7 +1737,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   EXCEPT when the repeat has genuine per-instance separator variability
 	   (a non-literal separator rule) — such a list can't render from one
 	   fixed separator string on the inline-flat path and needs its own
-	   visible `AssembledSeparatedList` template instead. See
+	   visible `AssembledList` template instead. See
 	   `repeatHasGenuineSeparatorVariability`. */
 ```
 
@@ -1792,7 +1802,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * parse time exactly one arm's node materializes and the hidden rule
  * splices away, so wrapping it in a mint alias inserts a CST node level
  * into every position the union appears in AND severs the wrap layer's
- * concrete-kind expansion (keyed on `modelType === 'supertype'`) — the
+ * concrete-kind expansion (keyed on `instanceof AssembledSupertype`) — the
  * failure class that took python to 0/115 when `_compound_statement` was
  * wrapped.
  *
@@ -1961,6 +1971,28 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * Non-overriding: a passed-through inner node keeps its own id; only a
  * freshly-rebuilt structural node (`{ type:'CHOICE', members }`) gets the
  * source id stamped.
+ */
+```
+
+#### body
+
+```text
+// Identity rides along with the attrs: the result absorbs the original's
+// `id` (when it did not take it over) and `absorbedIds`, so a rewrite that
+// replaces a node — a literal-only seq folded to one STRING — keeps every
+// slot id the replaced subtree carried (`slotByRuleId` coverage).
+```
+
+### `packages/codegen/src/dsl/rule-attrs.ts::absorbIds`
+
+```text
+/** `absorbIds(host, ...absorbed)` returns `host` with `absorbedIds`
+ *  extended by each absorbed rule's own `id` and its own `absorbedIds`
+ *  (deduped, and never the host's own id). Returns `host` unchanged when
+ *  nothing new is added. Used wherever simplify reduces sibling or nested
+ *  nodes into one survivor — the survivor's `absorbedIds` is how a later
+ *  slot lookup still resolves an id the simplified tree no longer has a
+ *  node for.
  */
 ```
 
@@ -2576,8 +2608,10 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
  *    e.g. `choice(commaSep1(X), X)`).
  *
- * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
- * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
+ * `fieldName` / `multiplicity` / `separator` are UNANIMOUS — present and
+ * equal on EVERY arm, else `undefined`; `nonterminal` lifts only a unanimous
+ * `true` (arms that are each fixed text do not make the choice text — a
+ * choice is nonterminal). `strongestMultiplicity` is
  * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
  * optional`; `single` / absent ignored), regardless of unanimity.
  */
@@ -2653,7 +2687,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 * grammar (`'grammar'`, e.g. present in `grammar.supertypes`) or inferred
 	 * by link's structural classifier (`'link'`, the former `source:
 	 * 'promoted'` value). Diagnostics-only (the `promotedRules` derivation
-	 * log / suggested.ts's override-candidate surfacing) — never an
+	 * log) — never an
 	 * authorship fact.
 	 */
 ```
@@ -3005,6 +3039,14 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+#### body
+
+```text
+// The seq's own stamp: nonterminal iff any member is. Multiplicity pushed
+// down from an enclosing optional/repeat lands on the members; their
+// terminality does not change — `optional` reaches one level only.
+```
+
 ### `packages/codegen/src/dsl/builders.ts::buildRepeatLike`
 
 ```text
@@ -3075,6 +3117,14 @@ registered but later unused still counts as a sibling.
  *  `attributeBuilder.prec` stamps `prec` but nothing routes through it. */
 ```
 
+#### body
+
+```text
+// `prec` / `prec.left` / `prec.right` take tree-sitter's named precedences
+// (`prec.left('binary_relation', …)`) as well as numbers; only
+// `prec.dynamic` is numeric.
+```
+
 ### `packages/codegen/src/dsl/builders.ts::RuleBuilder`
 
 ```text
@@ -3142,6 +3192,29 @@ registered but later unused still counts as a sibling.
  *  the empty seq (→ `Rule`), otherwise `R`; `choice` is always a
  *  ChoiceRule (no FIELD exists on this view). A catch-all `(Rule) → Rule`
  *  overload closes each set so a wide argument stays honest. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::attributeBuilder`
+
+```text
+/**
+ * Every attribute builder stamps the terminality of the node it builds —
+ * `nonterminal` is the single slot switch, and this table is its one
+ * source (`dsl/rule-patterns.ts::classifyByType` is the same table read
+ * off the type tags):
+ *   string / indent / dedent / newline → false
+ *   pattern / symbol / supertype       → true
+ *   choice                             → true, always: the choice node is the
+ *                                        slot; its arms keep their own stamps
+ *   seq                                → true iff any member is true
+ *   repeat / repeat1                   → true
+ *   optional                           → its content's (`buildOptional`), one
+ *                                        level down — never into a seq's members
+ *   field / alias / token / group / variant → the content's, untouched
+ * The one stamp no builder can make is a symbol that references a literal
+ * rule (it needs the rule map): `compiler/flatten.ts::stampTerminality`
+ * flips that to false after the whole map is built.
+ */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::AttributeToken`
@@ -3344,7 +3417,8 @@ registered but later unused still counts as a sibling.
 
 ```text
 // The one expression for any content: `{...content, aliasedTo: target.name,
-// aliasedToId: target.kindId, inline: false, nonterminal: true}`. `name`/
+// aliasedToId: target.kindId, inline: false}` — an alias never changes
+// terminality. `name`/
 // `kindId` on `content` stay the SOURCE (storage) kind; `aliasedTo` is the
 // alias TARGET (the parse kind). No branching on content shape — a literal,
 // a symbol, or any other built rule all take the same stamp uniformly.
@@ -3666,6 +3740,56 @@ registered but later unused still counts as a sibling.
 		   runtime, transparent single-child wrapper like TOKEN. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::collectFixedLiteral`
+
+```text
+/**
+ * The single derivation of a literal-only body's rendered text — the
+ * fixed-literal join every literal-text consumer (`isAllTextRender`'s
+ * SEQ/CHOICE fold in `simplifySeqRule`, `AssembledPattern.fixedLiteralText`,
+ * `flatten.ts::stampTerminality`'s "is this rule a literal" test, the
+ * template emitter's fixed-text render of a `nonterminal: false` reference)
+ * goes through rather than re-walking the tree itself.
+ *
+ * Walks `rule` collecting leaf `string` values and returns the single
+ * distinct string every parse produces, or `undefined` the moment a
+ * content-bearing symbol or a multi-value divergence is found. Undefined
+ * for a nonterminal rule, an array-multiplicity rule (`array` /
+ * `nonEmptyArray` — repetition has no single realisation), and an
+ * `optional`-multiplicity rule when `ctx.deterministic` is set (two
+ * realisations: present or absent). Blanks (an empty `choice` or `seq`)
+ * are skipped in non-deterministic mode — they contribute no text and
+ * represent the "omit" arm of an optional — but bail the whole CHOICE to
+ * `undefined` in deterministic mode, where a blank arm IS a second
+ * realisation.
+ *
+ * A CHOICE is fixed only when every non-blank arm resolves to the SAME
+ * string. A SEQ with exactly one non-blank member recurses directly on it
+ * (no join needed); with more than one, every member is walked in
+ * `deterministic` mode (an optional member or a blank-arm CHOICE inside a
+ * seq means divergent realisations, not a fixed one) and the results are
+ * joined with `ctx.joiner` — e.g. python's `_not_in` = `seq('not', 'in')`,
+ * aliased to `'not in'`, IS a fixed realisation: every parse produces
+ * exactly the same token sequence.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::FixedLiteralCtx`
+
+```text
+/**
+ * @param joiner - separator used when concatenating a multi-member SEQ's
+ *   literals: a single space at grammar level (canonical token
+ *   separation), an empty string inside a `tokenized` subtree (contiguous
+ *   by construction — a `tokenized` rule forces this joiner for its own
+ *   recursive calls).
+ * @param deterministic - when true, any optionality (`multiplicity:
+ *   'optional'`, a blank CHOICE arm) makes the subtree non-fixed. Set for
+ *   the members of a multi-member SEQ, where "same text OR absent" is no
+ *   longer a single fixed realisation.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::ruleChildren`
 
 #### body
@@ -3795,6 +3919,22 @@ registered but later unused still counts as a sibling.
  *  prec-wrapped), else null. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isParserHiddenName`
+
+```text
+/**
+ * The parser's own hiddenness rule: a symbol name beginning with `_`. The
+ * single source for "the parser hides this symbol" — evaluate's
+ * `canonicalizeRawGrammar` reads it for both the rule-level `hidden` stamp
+ * and the reference-level `inline` computation, and `selfReferentialFoldOf`
+ * reads it directly on a self-reference's name. Distinct from
+ * `RuleBase.hidden` (sittir's own PUBLISHED visibility fact, which link's
+ * `unhideAliasedTargets` may flip to `false` for an alias target): a
+ * symbol occurrence is parser-hidden purely by its name, independent of
+ * whatever visibility sittir later publishes the rule under.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::selfReferentialFoldOf`
 
 ```text
@@ -3805,18 +3945,26 @@ registered but later unused still counts as a sibling.
 
 ```text
 /**
- * Tree-sitter's prec.left self-referential-choice flattening: a hidden
- * CHOICE rule whose arms are all 3-member SEQs
+ * Tree-sitter's prec.left self-referential-choice flattening: a CHOICE
+ * rule whose arms are all 3-member SEQs
  * `[field(base), STRING(separator), field(extension)]` with the SAME
  * (base, extension) field-name pair and separator literal across every
  * arm, where at least one arm's base field is a bare (non-alias-wrapped)
- * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
- * collapses the recursion into ONE FLAT node at parse time: the base field
- * stays singular — only the true base operand carries it, since inner
+ * SYMBOL reference to THIS rule's own name whose name is
+ * `isParserHiddenName` — the PARSER's own hiddenness rule (leading `_`),
+ * not `RuleBase.hidden` (sittir's published-visibility fact, which link's
+ * `unhideAliasedTargets` may flip for an alias target): tree-sitter
+ * flattens an occurrence of a symbol whenever THAT occurrence's name is
+ * hidden, regardless of whether sittir later publishes the target rule as
+ * visible under an alias — an unaliased inner self-reference is still
+ * flattened by the parser even when the rule it names is otherwise
+ * published visibly elsewhere. Tree-sitter's LR table collapses the
+ * recursion into ONE FLAT node at parse time: the base field stays
+ * singular — only the true base operand carries it, since inner
  * recursive occurrences dissolve into siblings and the leftover separator
- * tokens are anonymous so the reader drops them — while the extension field
- * repeats once per additional chained operand. No wrapper shape and no
- * node-types.json entry can see this: the multiplicity is an emergent
+ * tokens are anonymous so the reader drops them — while the extension
+ * field repeats once per additional chained operand. No wrapper shape and
+ * no node-types.json entry can see this: the multiplicity is an emergent
  * property of LR precedence-climbing over a self-referential choice.
  * Confirmed case: rust's `_let_chain` (`a && b && c && d` parses as one
  * node with a single `left` and a repeated `right`).
@@ -4429,7 +4577,7 @@ registered but later unused still counts as a sibling.
 // (`seq(seq(elem, repeat(sep elem)), flank)`) — e.g. python's upstream
 // `_patterns`/`_parameters`/`_import_list` helpers — flattens to the
 // canonical head-form so the link phase's separator lift recognizes it
-// and the kind classifies 'separatedList' (kind-level flank keys), same
+// and the kind classifies 'list' (kind-level flank keys), same
 // as the mints below. Language-identical: seq nesting is associative.
 ```
 
@@ -5251,9 +5399,9 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/enrich.ts::applyOptionalKeyword`
 
 ```text
-// `enrichFieldWrappers` REMOVED — `fieldName`/`nonterminal` are derived by
-// `flattenRules`'s FIELD case (push the field's name + nonterminal onto
-// its content) and its SEQ case (retains fieldName on the seq node), with
+// `enrichFieldWrappers` REMOVED — `fieldName` is derived by
+// `flattenRules`'s FIELD case (push the field's name onto its content; a
+// field never changes terminality) and its SEQ case (retains fieldName on the seq node), with
 // `materializeInlinedBody` carrying fieldName through group inlining. Stamping it
 // in enrich was premature (nothing reads it before wrapper-deletion); enrich no
 // longer stamps the derived slot attributes at all (see also the removed
@@ -5396,7 +5544,7 @@ registered but later unused still counts as a sibling.
 // already a dispatchable union (subtype expansion IS its identity);
 // wrapping it in a mint alias adds a CST wrapper node to every tree it
 // appears in and severs its wrap-time concrete-kind expansion (which
-// keys on `modelType === 'supertype'`). Carried on this per-rule ctx
+// keys on `instanceof AssembledSupertype`). Carried on this per-rule ctx
 // bag (§7.7 Principle #14) because it already travels through every
 // applyClauseHoist recursion into the mint site.
 ```
@@ -5614,7 +5762,7 @@ registered but later unused still counts as a sibling.
 // runtime identity — so a mint adds nothing, while the alias wrapper
 // it introduces (a) inserts a CST node level into every tree the
 // supertype appears in, and (b) severs the supertype's wrap-time
-// concrete-kind expansion (keyed on `modelType === 'supertype'`).
+// concrete-kind expansion (keyed on `instanceof AssembledSupertype`).
 // Empirically: minting python's `_compound_statement` arm produced
 // `statement_group2` wrappers that broke wrap universally (0/115).
 ```
@@ -5864,3 +6012,13 @@ registered but later unused still counts as a sibling.
 // `prec.left`/`prec.right`/`prec.dynamic` around a choice-of-strings is
 // just as reusable as one wrapped in plain `prec`.
 ```
+### `packages/codegen/src/dsl/rule-attrs.ts::structuralKey`
+
+```text
+/** A rule's grammar shape as a string — `id` / `absorbedIds` (identity
+ *  provenance, distinct per occurrence) excluded. The one comparison every
+ *  structural equality goes through: `flatten`'s arm factoring,
+ *  `simplify`'s arm merge and fixpoint test. Comparing whole-rule JSON
+ *  would make every position differ by its ids. */
+```
+
