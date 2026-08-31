@@ -329,10 +329,12 @@ export const keywordIdentifier: {
 
 export const ir: {
 	readonly module: typeof F.module;
+	readonly simpleStatements: typeof F.simpleStatements;
 	readonly importStatement: typeof F.importStatement;
 	readonly relativeImport: typeof F.relativeImport;
 	readonly futureImportStatement: typeof F.futureImportStatement;
 	readonly importFromStatement: typeof F.importFromStatement;
+	readonly importList: typeof F.importList;
 	readonly aliasedImport: typeof F.aliasedImport;
 	readonly printStatement: typeof F.printStatement;
 	readonly chevron: typeof F.chevron;
@@ -346,6 +348,7 @@ export const ir: {
 	readonly elifClause: typeof F.elifClause;
 	readonly elseClause: typeof F.elseClause;
 	readonly matchStatement: typeof F.matchStatement;
+	readonly matchBlock: typeof F.matchBlock;
 	readonly caseClause: typeof F.caseClause;
 	readonly forStatement: typeof F.forStatement;
 	readonly whileStatement: typeof F.whileStatement;
@@ -380,6 +383,8 @@ export const ir: {
 	readonly splatPattern: typeof F.splatPattern;
 	readonly classPattern: typeof F.classPattern;
 	readonly complexPattern: typeof F.complexPattern;
+	readonly _parameters: typeof F._parameters;
+	readonly patterns: typeof F.patterns;
 	readonly tuplePattern: typeof F.tuplePattern;
 	readonly listPattern: typeof F.listPattern;
 	readonly defaultParameter: typeof F.defaultParameter;
@@ -420,6 +425,7 @@ export const ir: {
 	readonly setComprehension: typeof F.setComprehension;
 	readonly generatorExpression: typeof F.generatorExpression;
 	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
+	readonly collectionElements: typeof F.collectionElements;
 	readonly forInClause: typeof F.forInClause;
 	readonly ifClause: typeof F.ifClause;
 	readonly conditionalExpression: typeof F.conditionalExpression;
@@ -429,12 +435,35 @@ export const ir: {
 	readonly interpolation: typeof F.interpolation;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
+	readonly simpleStatementsElements: typeof F.simpleStatementsElements;
+	readonly subjects: typeof F.subjects;
+	readonly casePatterns: typeof F.casePatterns;
+	readonly withClauseWithItems: typeof F.withClauseWithItems;
+	readonly types: typeof F.types;
+	readonly argumentListElements: typeof F.argumentListElements;
+	readonly expressionListExpressions: typeof F.expressionListExpressions;
+	readonly listPatternCasePatterns: typeof F.listPatternCasePatterns;
+	readonly dictPatternElements: typeof F.dictPatternElements;
+	readonly patternListPatterns: typeof F.patternListPatterns;
+	readonly subscripts: typeof F.subscripts;
+	readonly dictionaryElements: typeof F.dictionaryElements;
+	readonly futureImportStatementArm: typeof F.futureImportStatementArm;
+	readonly exceptClauseArm: typeof F.exceptClauseArm;
+	readonly sliceGroup: typeof F.sliceGroup;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
 	readonly caseAsPattern: typeof F.caseAsPattern;
 	readonly comprehensionClauses: typeof F.comprehensionClauses;
+	readonly printArguments: typeof F.printArguments;
+	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementArm1: typeof F.printStatementArm1;
 	readonly printStatementArm2: typeof F.printStatementArm2;
+	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
+	readonly withClauseBare: typeof F.withClauseBare;
+	readonly withClauseParen: typeof F.withClauseParen;
+	readonly suiteBlockWithIndent: typeof F.suiteBlockWithIndent;
+	readonly exceptClauseList: typeof F.exceptClauseList;
+	readonly yieldFromClause: typeof F.yieldFromClause;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -519,10 +548,12 @@ export const ir: {
 } = {
 	// Node factories
 	module: F.module,
+	simpleStatements: F.simpleStatements,
 	importStatement: F.importStatement,
 	relativeImport: F.relativeImport,
 	futureImportStatement: F.futureImportStatement,
 	importFromStatement: F.importFromStatement,
+	importList: F.importList,
 	aliasedImport: F.aliasedImport,
 	printStatement: F.printStatement,
 	chevron: F.chevron,
@@ -536,6 +567,7 @@ export const ir: {
 	elifClause: F.elifClause,
 	elseClause: F.elseClause,
 	matchStatement: F.matchStatement,
+	matchBlock: F.matchBlock,
 	caseClause: F.caseClause,
 	forStatement: F.forStatement,
 	whileStatement: F.whileStatement,
@@ -570,6 +602,8 @@ export const ir: {
 	splatPattern: F.splatPattern,
 	classPattern: F.classPattern,
 	complexPattern: F.complexPattern,
+	_parameters: F._parameters,
+	patterns: F.patterns,
 	tuplePattern: F.tuplePattern,
 	listPattern: F.listPattern,
 	defaultParameter: F.defaultParameter,
@@ -610,6 +644,7 @@ export const ir: {
 	setComprehension: F.setComprehension,
 	generatorExpression: F.generatorExpression,
 	parenthesizedExpression: F.parenthesizedExpression,
+	collectionElements: F.collectionElements,
 	forInClause: F.forInClause,
 	ifClause: F.ifClause,
 	conditionalExpression: F.conditionalExpression,
@@ -619,12 +654,35 @@ export const ir: {
 	interpolation: F.interpolation,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
+	simpleStatementsElements: F.simpleStatementsElements,
+	subjects: F.subjects,
+	casePatterns: F.casePatterns,
+	withClauseWithItems: F.withClauseWithItems,
+	types: F.types,
+	argumentListElements: F.argumentListElements,
+	expressionListExpressions: F.expressionListExpressions,
+	listPatternCasePatterns: F.listPatternCasePatterns,
+	dictPatternElements: F.dictPatternElements,
+	patternListPatterns: F.patternListPatterns,
+	subscripts: F.subscripts,
+	dictionaryElements: F.dictionaryElements,
+	futureImportStatementArm: F.futureImportStatementArm,
+	exceptClauseArm: F.exceptClauseArm,
+	sliceGroup: F.sliceGroup,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
 	caseAsPattern: F.caseAsPattern,
 	comprehensionClauses: F.comprehensionClauses,
+	printArguments: F.printArguments,
+	printChevronArguments: F.printChevronArguments,
 	printStatementArm1: F.printStatementArm1,
 	printStatementArm2: F.printStatementArm2,
+	expressionStatementTuple: F.expressionStatementTuple,
+	withClauseBare: F.withClauseBare,
+	withClauseParen: F.withClauseParen,
+	suiteBlockWithIndent: F.suiteBlockWithIndent,
+	exceptClauseList: F.exceptClauseList,
+	yieldFromClause: F.yieldFromClause,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,

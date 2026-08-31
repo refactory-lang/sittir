@@ -107,6 +107,7 @@ export const fieldInitializer: Hoisted<typeof O.fieldInitializer> = hoist(O.fiel
 export const baseFieldInitializer: Hoisted<typeof O.baseFieldInitializer> = hoist(O.baseFieldInitializer);
 export const ifExpression: Hoisted<typeof O.ifExpression> = hoist(O.ifExpression);
 export const letCondition: Hoisted<typeof O.letCondition> = hoist(O.letCondition);
+export const letChain: Hoisted<typeof O.letChain> = hoist(O.letChain);
 export const elseClause: Hoisted<typeof O.elseClause> = hoist(O.elseClause);
 export const matchExpression: Hoisted<typeof O.matchExpression> = hoist(O.matchExpression);
 export const matchBlock: Hoisted<typeof O.matchBlock> = hoist(O.matchBlock);
@@ -147,3 +148,49 @@ export const stringLiteral: Hoisted<typeof O.stringLiteral> = hoist(O.stringLite
 export const rawStringLiteral: Hoisted<typeof O.rawStringLiteral> = hoist(O.rawStringLiteral);
 export const lineComment: Hoisted<typeof O.lineComment> = hoist(O.lineComment);
 export const blockComment: Hoisted<typeof O.blockComment> = hoist(O.blockComment);
+export const macroRules: Hoisted<typeof O.macroRules> = hoist(O.macroRules);
+export const enumVariantListElements: Hoisted<typeof O.enumVariantListElements> = hoist(O.enumVariantListElements);
+export const fieldDeclarationListElements: Hoisted<typeof O.fieldDeclarationListElements> = hoist(
+	O.fieldDeclarationListElements
+);
+export const orderedFieldDeclarationListElements: Hoisted<typeof O.orderedFieldDeclarationListElements> = hoist(
+	O.orderedFieldDeclarationListElements
+);
+export const wherePredicates: Hoisted<typeof O.wherePredicates> = hoist(O.wherePredicates);
+export const typeParametersElements: Hoisted<typeof O.typeParametersElements> = hoist(O.typeParametersElements);
+export const useClauses: Hoisted<typeof O.useClauses> = hoist(O.useClauses);
+export const parametersElements: Hoisted<typeof O.parametersElements> = hoist(O.parametersElements);
+export const lifetimes: Hoisted<typeof O.lifetimes> = hoist(O.lifetimes);
+export const useBoundsElements: Hoisted<typeof O.useBoundsElements> = hoist(O.useBoundsElements);
+export const typeArgumentsElements: Hoisted<typeof O.typeArgumentsElements> = hoist(O.typeArgumentsElements);
+export const argumentsElements: Hoisted<typeof O.argumentsElements> = hoist(O.argumentsElements);
+export const fieldInitializerListElements: Hoisted<typeof O.fieldInitializerListElements> = hoist(
+	O.fieldInitializerListElements
+);
+export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoist(O.tuplePatternElements);
+export const patterns: Hoisted<typeof O.patterns> = hoist(O.patterns);
+export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoist(O.structPatternElements);
+export const attributeArm: Hoisted<typeof O.attributeArm> = hoist(O.attributeArm);
+export const visibilityModifierGroup: Hoisted<typeof O.visibilityModifierGroup> = hoist(O.visibilityModifierGroup);
+export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoist(O.tupleTypeElements);
+export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoist(O.tupleExpressionElements);
+export const referenceExpressionRawMut: Hoisted<typeof O.referenceExpressionRawMut> = hoist(
+	O.referenceExpressionRawMut
+);
+export const implItemBody: Hoisted<typeof O.implItemBody> = hoist(O.implItemBody);
+export const closureExpressionExpr: Hoisted<typeof O.closureExpressionExpr> = hoist(O.closureExpressionExpr);
+export const functionTypeTraitForm: Hoisted<typeof O.functionTypeTraitForm> = hoist(O.functionTypeTraitForm);
+export const functionTypeFnForm: Hoisted<typeof O.functionTypeFnForm> = hoist(O.functionTypeFnForm);
+export const macroDefinitionParen: Hoisted<typeof O.macroDefinitionParen> = hoist(O.macroDefinitionParen);
+export const macroDefinitionBracket: Hoisted<typeof O.macroDefinitionBracket> = hoist(O.macroDefinitionBracket);
+export const macroDefinitionBrace: Hoisted<typeof O.macroDefinitionBrace> = hoist(O.macroDefinitionBrace);
+export const visibilityModifierPub: Hoisted<typeof O.visibilityModifierPub> = hoist(O.visibilityModifierPub);
+export const visibilityModifierInPath: Hoisted<typeof O.visibilityModifierInPath> = hoist(O.visibilityModifierInPath);
+export const attributedFieldDeclaration: Hoisted<typeof O.attributedFieldDeclaration> = hoist(
+	O.attributedFieldDeclaration
+);
+export const attributedEnumVariant: Hoisted<typeof O.attributedEnumVariant> = hoist(O.attributedEnumVariant);
+export const attributedParameter: Hoisted<typeof O.attributedParameter> = hoist(O.attributedParameter);
+export const attributedTypeParameter: Hoisted<typeof O.attributedTypeParameter> = hoist(O.attributedTypeParameter);
+export const attributedArgument: Hoisted<typeof O.attributedArgument> = hoist(O.attributedArgument);
+export const typeArgument: Hoisted<typeof O.typeArgument> = hoist(O.typeArgument);

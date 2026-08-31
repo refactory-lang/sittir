@@ -2230,6 +2230,15 @@ describe('function_type sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.FunctionTypeTraitForm);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('identifier builds the parent', () => {
+		const node = ir.functionType.identifier({
+			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
+			content: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.FunctionType);
+		expect((node as any).content()?.$type).toBe(TSKindId.FunctionTypeTraitForm);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('fnForm builds the parent', () => {
 		const node = ir.functionType.fnForm({
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
@@ -5588,6 +5597,15 @@ describe('closure_expression sub-factories', () => {
 		const node = ir.closureExpression.expr({
 			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
 			content: [{ $type: TSKindId.Anonymous, $text: '_', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ClosureExpression);
+		expect((node as any).content()?.$type).toBe(TSKindId.ClosureExpressionExpr);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('_ builds the parent', () => {
+		const node = ir.closureExpression._({
+			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
+			content: []
 		});
 		expect(node.$type).toBe(TSKindId.ClosureExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.ClosureExpressionExpr);

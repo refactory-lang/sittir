@@ -21,25 +21,25 @@ const futureImportStatement$arm =
 export const futureImportStatement: typeof B.futureImportStatement & {
 	importList: {
 		strict: (...args: ArgsOf<typeof F.buildImportList>) => ReturnType<typeof F.buildFutureImportStatement>;
-		coerce: (...args: ArgsOf<typeof F.buildImportList>) => ReturnType<typeof C.coerceToFutureImportStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToImportList>) => ReturnType<typeof C.coerceToFutureImportStatement>;
 	};
 	arm: {
 		strict: (
 			...args: ArgsOf<typeof F.buildFutureImportStatementArm>
 		) => ReturnType<typeof F.buildFutureImportStatement>;
 		coerce: (
-			...args: ArgsOf<typeof F.buildFutureImportStatementArm>
+			...args: ArgsOf<typeof C.coerceToFutureImportStatementArm>
 		) => ReturnType<typeof C.coerceToFutureImportStatement>;
 	};
 } = {
 	...B.futureImportStatement,
 	importList: {
 		strict: futureImportStatement$importList(F.buildFutureImportStatement, F.buildImportList),
-		coerce: futureImportStatement$importList(C.coerceToFutureImportStatement, F.buildImportList)
+		coerce: futureImportStatement$importList(C.coerceToFutureImportStatement, C.coerceToImportList)
 	},
 	arm: {
 		strict: futureImportStatement$arm(F.buildFutureImportStatement, F.buildFutureImportStatementArm),
-		coerce: futureImportStatement$arm(C.coerceToFutureImportStatement, F.buildFutureImportStatementArm)
+		coerce: futureImportStatement$arm(C.coerceToFutureImportStatement, C.coerceToFutureImportStatementArm)
 	}
 };
 
@@ -69,7 +69,7 @@ export const printStatementArm1: typeof B.printStatementArm1 & {
 		) => ReturnType<typeof F.buildPrintStatementArm1>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPrintStatementArm1>[0], 'printChevronArguments'> & {
-				printChevronArguments: ArgsOf<typeof F.buildPrintChevronArguments>;
+				printChevronArguments: ArgsOf<typeof C.coerceToPrintChevronArguments>;
 			}
 		) => ReturnType<typeof C.coerceToPrintStatementArm1>;
 	};
@@ -85,7 +85,7 @@ export const printStatementArm1: typeof B.printStatementArm1 & {
 	...B.printStatementArm1,
 	printChevronArguments: {
 		strict: printStatementArm1$printChevronArguments(F.buildPrintStatementArm1, F.buildPrintChevronArguments),
-		coerce: printStatementArm1$printChevronArguments(C.coerceToPrintStatementArm1, F.buildPrintChevronArguments)
+		coerce: printStatementArm1$printChevronArguments(C.coerceToPrintStatementArm1, C.coerceToPrintChevronArguments)
 	},
 	comma: {
 		strict: printStatementArm1$comma(F.buildPrintStatementArm1, ','),
@@ -194,7 +194,7 @@ export const expressionList: typeof B.expressionList & {
 		) => ReturnType<typeof F.buildExpressionList>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExpressionList>[0], 'tail'> & {
-				tail: ArgsOf<typeof F.buildExpressionListExpressions>;
+				tail: ArgsOf<typeof C.coerceToExpressionListExpressions>;
 			}
 		) => ReturnType<typeof C.coerceToExpressionList>;
 	};
@@ -206,7 +206,7 @@ export const expressionList: typeof B.expressionList & {
 	},
 	expressions: {
 		strict: expressionList$expressions(F.buildExpressionList, F.buildExpressionListExpressions),
-		coerce: expressionList$expressions(C.coerceToExpressionList, F.buildExpressionListExpressions)
+		coerce: expressionList$expressions(C.coerceToExpressionList, C.coerceToExpressionListExpressions)
 	}
 };
 
@@ -237,7 +237,7 @@ const yield_$expressionListExpressions =
 export const yield_: typeof B.yield_ & {
 	fromClause: {
 		strict: (...args: ArgsOf<typeof F.buildYieldFromClause>) => ReturnType<typeof F.buildYield>;
-		coerce: (...args: ArgsOf<typeof F.buildYieldFromClause>) => ReturnType<typeof C.coerceToYield>;
+		coerce: (...args: ArgsOf<typeof C.coerceToYieldFromClause>) => ReturnType<typeof C.coerceToYield>;
 	};
 	expressionList: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionList>) => ReturnType<typeof F.buildYield>;
@@ -255,7 +255,7 @@ export const yield_: typeof B.yield_ & {
 	...B.yield_,
 	fromClause: {
 		strict: yield_$fromClause(F.buildYield, F.buildYieldFromClause),
-		coerce: yield_$fromClause(C.coerceToYield, F.buildYieldFromClause)
+		coerce: yield_$fromClause(C.coerceToYield, C.coerceToYieldFromClause)
 	},
 	expressionList: {
 		strict: yield_$expressionList(F.buildYield, F.buildExpressionList),
@@ -305,7 +305,7 @@ export const expressionStatement: typeof B.expressionStatement & {
 	tuple: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionStatementTuple>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (
-			...args: ArgsOf<typeof F.buildExpressionStatementTuple>
+			...args: ArgsOf<typeof C.coerceToExpressionStatementTuple>
 		) => ReturnType<typeof C.coerceToExpressionStatement>;
 	};
 	assignment: {
@@ -328,7 +328,7 @@ export const expressionStatement: typeof B.expressionStatement & {
 	...B.expressionStatement,
 	tuple: {
 		strict: expressionStatement$tuple(F.buildExpressionStatement, F.buildExpressionStatementTuple),
-		coerce: expressionStatement$tuple(C.coerceToExpressionStatement, F.buildExpressionStatementTuple)
+		coerce: expressionStatement$tuple(C.coerceToExpressionStatement, C.coerceToExpressionStatementTuple)
 	},
 	assignment: {
 		strict: expressionStatement$assignment(F.buildExpressionStatement, F.buildAssignment),
@@ -551,7 +551,7 @@ export const ifStatement: typeof B.ifStatement & {
 		) => ReturnType<typeof F.buildIfStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSimpleStatements>;
+				consequence: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToIfStatement>;
 	};
@@ -563,7 +563,7 @@ export const ifStatement: typeof B.ifStatement & {
 		) => ReturnType<typeof F.buildIfStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToIfStatement>;
 	};
@@ -571,11 +571,11 @@ export const ifStatement: typeof B.ifStatement & {
 	...B.ifStatement,
 	simpleStatements: {
 		strict: ifStatement$simpleStatements(F.buildIfStatement, F.buildSimpleStatements),
-		coerce: ifStatement$simpleStatements(C.coerceToIfStatement, F.buildSimpleStatements)
+		coerce: ifStatement$simpleStatements(C.coerceToIfStatement, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: ifStatement$suiteBlockWithIndent(F.buildIfStatement, F.buildSuiteBlockWithIndent),
-		coerce: ifStatement$suiteBlockWithIndent(C.coerceToIfStatement, F.buildSuiteBlockWithIndent)
+		coerce: ifStatement$suiteBlockWithIndent(C.coerceToIfStatement, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -606,7 +606,7 @@ export const elifClause: typeof B.elifClause & {
 		) => ReturnType<typeof F.buildElifClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSimpleStatements>;
+				consequence: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToElifClause>;
 	};
@@ -618,7 +618,7 @@ export const elifClause: typeof B.elifClause & {
 		) => ReturnType<typeof F.buildElifClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToElifClause>;
 	};
@@ -626,11 +626,11 @@ export const elifClause: typeof B.elifClause & {
 	...B.elifClause,
 	simpleStatements: {
 		strict: elifClause$simpleStatements(F.buildElifClause, F.buildSimpleStatements),
-		coerce: elifClause$simpleStatements(C.coerceToElifClause, F.buildSimpleStatements)
+		coerce: elifClause$simpleStatements(C.coerceToElifClause, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: elifClause$suiteBlockWithIndent(F.buildElifClause, F.buildSuiteBlockWithIndent),
-		coerce: elifClause$suiteBlockWithIndent(C.coerceToElifClause, F.buildSuiteBlockWithIndent)
+		coerce: elifClause$suiteBlockWithIndent(C.coerceToElifClause, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -649,21 +649,40 @@ const elseClause$suiteBlockWithIndent =
 export const elseClause: typeof B.elseClause & {
 	simpleStatements: {
 		strict: (...args: ArgsOf<typeof F.buildSimpleStatements>) => ReturnType<typeof F.buildElseClause>;
-		coerce: (...args: ArgsOf<typeof F.buildSimpleStatements>) => ReturnType<typeof C.coerceToElseClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimpleStatements>) => ReturnType<typeof C.coerceToElseClause>;
 	};
 	suiteBlockWithIndent: {
 		strict: (...args: ArgsOf<typeof F.buildSuiteBlockWithIndent>) => ReturnType<typeof F.buildElseClause>;
-		coerce: (...args: ArgsOf<typeof F.buildSuiteBlockWithIndent>) => ReturnType<typeof C.coerceToElseClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>) => ReturnType<typeof C.coerceToElseClause>;
 	};
 } = {
 	...B.elseClause,
 	simpleStatements: {
 		strict: elseClause$simpleStatements(F.buildElseClause, F.buildSimpleStatements),
-		coerce: elseClause$simpleStatements(C.coerceToElseClause, F.buildSimpleStatements)
+		coerce: elseClause$simpleStatements(C.coerceToElseClause, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: elseClause$suiteBlockWithIndent(F.buildElseClause, F.buildSuiteBlockWithIndent),
-		coerce: elseClause$suiteBlockWithIndent(C.coerceToElseClause, F.buildSuiteBlockWithIndent)
+		coerce: elseClause$suiteBlockWithIndent(C.coerceToElseClause, C.coerceToSuiteBlockWithIndent)
+	}
+};
+
+const matchBlock$block =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+export const matchBlock: typeof B.matchBlock & {
+	block: {
+		strict: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
+		coerce: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
+	};
+} = {
+	...B.matchBlock,
+	block: {
+		strict: matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock),
+		coerce: matchBlock$block(C.coerceToMatchBlock, F.buildMatchBlockBlock)
 	}
 };
 
@@ -694,7 +713,7 @@ export const caseClause: typeof B.caseClause & {
 		) => ReturnType<typeof F.buildCaseClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToCaseClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSimpleStatements>;
+				consequence: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToCaseClause>;
 	};
@@ -706,7 +725,7 @@ export const caseClause: typeof B.caseClause & {
 		) => ReturnType<typeof F.buildCaseClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToCaseClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToCaseClause>;
 	};
@@ -714,11 +733,11 @@ export const caseClause: typeof B.caseClause & {
 	...B.caseClause,
 	simpleStatements: {
 		strict: caseClause$simpleStatements(F.buildCaseClause, F.buildSimpleStatements),
-		coerce: caseClause$simpleStatements(C.coerceToCaseClause, F.buildSimpleStatements)
+		coerce: caseClause$simpleStatements(C.coerceToCaseClause, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: caseClause$suiteBlockWithIndent(F.buildCaseClause, F.buildSuiteBlockWithIndent),
-		coerce: caseClause$suiteBlockWithIndent(C.coerceToCaseClause, F.buildSuiteBlockWithIndent)
+		coerce: caseClause$suiteBlockWithIndent(C.coerceToCaseClause, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -749,7 +768,7 @@ export const whileStatement: typeof B.whileStatement & {
 		) => ReturnType<typeof F.buildWhileStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWhileStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSimpleStatements>;
+				body: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToWhileStatement>;
 	};
@@ -761,7 +780,7 @@ export const whileStatement: typeof B.whileStatement & {
 		) => ReturnType<typeof F.buildWhileStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWhileStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToWhileStatement>;
 	};
@@ -769,11 +788,11 @@ export const whileStatement: typeof B.whileStatement & {
 	...B.whileStatement,
 	simpleStatements: {
 		strict: whileStatement$simpleStatements(F.buildWhileStatement, F.buildSimpleStatements),
-		coerce: whileStatement$simpleStatements(C.coerceToWhileStatement, F.buildSimpleStatements)
+		coerce: whileStatement$simpleStatements(C.coerceToWhileStatement, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: whileStatement$suiteBlockWithIndent(F.buildWhileStatement, F.buildSuiteBlockWithIndent),
-		coerce: whileStatement$suiteBlockWithIndent(C.coerceToWhileStatement, F.buildSuiteBlockWithIndent)
+		coerce: whileStatement$suiteBlockWithIndent(C.coerceToWhileStatement, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -802,7 +821,7 @@ export const tryStatement: typeof B.tryStatement & {
 		) => ReturnType<typeof F.buildTryStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSimpleStatements>;
+				body: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToTryStatement>;
 	};
@@ -814,7 +833,7 @@ export const tryStatement: typeof B.tryStatement & {
 		) => ReturnType<typeof F.buildTryStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToTryStatement>;
 	};
@@ -822,11 +841,11 @@ export const tryStatement: typeof B.tryStatement & {
 	...B.tryStatement,
 	simpleStatements: {
 		strict: tryStatement$simpleStatements(F.buildTryStatement, F.buildSimpleStatements),
-		coerce: tryStatement$simpleStatements(C.coerceToTryStatement, F.buildSimpleStatements)
+		coerce: tryStatement$simpleStatements(C.coerceToTryStatement, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: tryStatement$suiteBlockWithIndent(F.buildTryStatement, F.buildSuiteBlockWithIndent),
-		coerce: tryStatement$suiteBlockWithIndent(C.coerceToTryStatement, F.buildSuiteBlockWithIndent)
+		coerce: tryStatement$suiteBlockWithIndent(C.coerceToTryStatement, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -857,7 +876,7 @@ export const exceptClause: typeof B.exceptClause & {
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof F.buildSimpleStatements>;
+				suite: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
@@ -869,7 +888,7 @@ export const exceptClause: typeof B.exceptClause & {
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				suite: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
@@ -877,11 +896,11 @@ export const exceptClause: typeof B.exceptClause & {
 	...B.exceptClause,
 	simpleStatements: {
 		strict: exceptClause$simpleStatements(F.buildExceptClause, F.buildSimpleStatements),
-		coerce: exceptClause$simpleStatements(C.coerceToExceptClause, F.buildSimpleStatements)
+		coerce: exceptClause$simpleStatements(C.coerceToExceptClause, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: exceptClause$suiteBlockWithIndent(F.buildExceptClause, F.buildSuiteBlockWithIndent),
-		coerce: exceptClause$suiteBlockWithIndent(C.coerceToExceptClause, F.buildSuiteBlockWithIndent)
+		coerce: exceptClause$suiteBlockWithIndent(C.coerceToExceptClause, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -900,21 +919,21 @@ const finallyClause$suiteBlockWithIndent =
 export const finallyClause: typeof B.finallyClause & {
 	simpleStatements: {
 		strict: (...args: ArgsOf<typeof F.buildSimpleStatements>) => ReturnType<typeof F.buildFinallyClause>;
-		coerce: (...args: ArgsOf<typeof F.buildSimpleStatements>) => ReturnType<typeof C.coerceToFinallyClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimpleStatements>) => ReturnType<typeof C.coerceToFinallyClause>;
 	};
 	suiteBlockWithIndent: {
 		strict: (...args: ArgsOf<typeof F.buildSuiteBlockWithIndent>) => ReturnType<typeof F.buildFinallyClause>;
-		coerce: (...args: ArgsOf<typeof F.buildSuiteBlockWithIndent>) => ReturnType<typeof C.coerceToFinallyClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>) => ReturnType<typeof C.coerceToFinallyClause>;
 	};
 } = {
 	...B.finallyClause,
 	simpleStatements: {
 		strict: finallyClause$simpleStatements(F.buildFinallyClause, F.buildSimpleStatements),
-		coerce: finallyClause$simpleStatements(C.coerceToFinallyClause, F.buildSimpleStatements)
+		coerce: finallyClause$simpleStatements(C.coerceToFinallyClause, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: finallyClause$suiteBlockWithIndent(F.buildFinallyClause, F.buildSuiteBlockWithIndent),
-		coerce: finallyClause$suiteBlockWithIndent(C.coerceToFinallyClause, F.buildSuiteBlockWithIndent)
+		coerce: finallyClause$suiteBlockWithIndent(C.coerceToFinallyClause, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -945,7 +964,7 @@ export const withStatement: typeof B.withStatement & {
 		) => ReturnType<typeof F.buildWithStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSimpleStatements>;
+				body: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 	};
@@ -957,7 +976,7 @@ export const withStatement: typeof B.withStatement & {
 		) => ReturnType<typeof F.buildWithStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 	};
@@ -965,11 +984,11 @@ export const withStatement: typeof B.withStatement & {
 	...B.withStatement,
 	simpleStatements: {
 		strict: withStatement$simpleStatements(F.buildWithStatement, F.buildSimpleStatements),
-		coerce: withStatement$simpleStatements(C.coerceToWithStatement, F.buildSimpleStatements)
+		coerce: withStatement$simpleStatements(C.coerceToWithStatement, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: withStatement$suiteBlockWithIndent(F.buildWithStatement, F.buildSuiteBlockWithIndent),
-		coerce: withStatement$suiteBlockWithIndent(C.coerceToWithStatement, F.buildSuiteBlockWithIndent)
+		coerce: withStatement$suiteBlockWithIndent(C.coerceToWithStatement, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -988,21 +1007,21 @@ const withClause$paren =
 export const withClause: typeof B.withClause & {
 	bare: {
 		strict: (...args: ArgsOf<typeof F.buildWithClauseBare>) => ReturnType<typeof F.buildWithClause>;
-		coerce: (...args: ArgsOf<typeof F.buildWithClauseBare>) => ReturnType<typeof C.coerceToWithClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToWithClauseBare>) => ReturnType<typeof C.coerceToWithClause>;
 	};
 	paren: {
 		strict: (...args: ArgsOf<typeof F.buildWithClauseParen>) => ReturnType<typeof F.buildWithClause>;
-		coerce: (...args: ArgsOf<typeof F.buildWithClauseParen>) => ReturnType<typeof C.coerceToWithClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToWithClauseParen>) => ReturnType<typeof C.coerceToWithClause>;
 	};
 } = {
 	...B.withClause,
 	bare: {
 		strict: withClause$bare(F.buildWithClause, F.buildWithClauseBare),
-		coerce: withClause$bare(C.coerceToWithClause, F.buildWithClauseBare)
+		coerce: withClause$bare(C.coerceToWithClause, C.coerceToWithClauseBare)
 	},
 	paren: {
 		strict: withClause$paren(F.buildWithClause, F.buildWithClauseParen),
-		coerce: withClause$paren(C.coerceToWithClause, F.buildWithClauseParen)
+		coerce: withClause$paren(C.coerceToWithClause, C.coerceToWithClauseParen)
 	}
 };
 
@@ -1033,7 +1052,7 @@ export const functionDefinition: typeof B.functionDefinition & {
 		) => ReturnType<typeof F.buildFunctionDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSimpleStatements>;
+				body: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToFunctionDefinition>;
 	};
@@ -1045,7 +1064,7 @@ export const functionDefinition: typeof B.functionDefinition & {
 		) => ReturnType<typeof F.buildFunctionDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToFunctionDefinition>;
 	};
@@ -1053,11 +1072,11 @@ export const functionDefinition: typeof B.functionDefinition & {
 	...B.functionDefinition,
 	simpleStatements: {
 		strict: functionDefinition$simpleStatements(F.buildFunctionDefinition, F.buildSimpleStatements),
-		coerce: functionDefinition$simpleStatements(C.coerceToFunctionDefinition, F.buildSimpleStatements)
+		coerce: functionDefinition$simpleStatements(C.coerceToFunctionDefinition, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: functionDefinition$suiteBlockWithIndent(F.buildFunctionDefinition, F.buildSuiteBlockWithIndent),
-		coerce: functionDefinition$suiteBlockWithIndent(C.coerceToFunctionDefinition, F.buildSuiteBlockWithIndent)
+		coerce: functionDefinition$suiteBlockWithIndent(C.coerceToFunctionDefinition, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -1142,7 +1161,7 @@ export const classDefinition: typeof B.classDefinition & {
 		) => ReturnType<typeof F.buildClassDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToClassDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSimpleStatements>;
+				body: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
 		) => ReturnType<typeof C.coerceToClassDefinition>;
 	};
@@ -1154,7 +1173,7 @@ export const classDefinition: typeof B.classDefinition & {
 		) => ReturnType<typeof F.buildClassDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToClassDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
 			}
 		) => ReturnType<typeof C.coerceToClassDefinition>;
 	};
@@ -1162,11 +1181,11 @@ export const classDefinition: typeof B.classDefinition & {
 	...B.classDefinition,
 	simpleStatements: {
 		strict: classDefinition$simpleStatements(F.buildClassDefinition, F.buildSimpleStatements),
-		coerce: classDefinition$simpleStatements(C.coerceToClassDefinition, F.buildSimpleStatements)
+		coerce: classDefinition$simpleStatements(C.coerceToClassDefinition, C.coerceToSimpleStatements)
 	},
 	suiteBlockWithIndent: {
 		strict: classDefinition$suiteBlockWithIndent(F.buildClassDefinition, F.buildSuiteBlockWithIndent),
-		coerce: classDefinition$suiteBlockWithIndent(C.coerceToClassDefinition, F.buildSuiteBlockWithIndent)
+		coerce: classDefinition$suiteBlockWithIndent(C.coerceToClassDefinition, C.coerceToSuiteBlockWithIndent)
 	}
 };
 
@@ -2279,7 +2298,7 @@ export const patternList: typeof B.patternList & {
 		) => ReturnType<typeof F.buildPatternList>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPatternList>[0], 'tail'> & {
-				tail: ArgsOf<typeof F.buildPatternListPatterns>;
+				tail: ArgsOf<typeof C.coerceToPatternListPatterns>;
 			}
 		) => ReturnType<typeof C.coerceToPatternList>;
 	};
@@ -2288,7 +2307,7 @@ export const patternList: typeof B.patternList & {
 	comma: { strict: patternList$comma(F.buildPatternList, ','), coerce: patternList$comma(C.coerceToPatternList, ',') },
 	patterns: {
 		strict: patternList$patterns(F.buildPatternList, F.buildPatternListPatterns),
-		coerce: patternList$patterns(C.coerceToPatternList, F.buildPatternListPatterns)
+		coerce: patternList$patterns(C.coerceToPatternList, C.coerceToPatternListPatterns)
 	}
 };
 
@@ -2918,5 +2937,38 @@ export const interpolation: typeof B.interpolation & {
 	yieldFromClause: {
 		strict: interpolation$yieldFromClause(F.buildInterpolation, yield_.fromClause.strict),
 		coerce: interpolation$yieldFromClause(C.coerceToInterpolation, yield_.fromClause.coerce)
+	}
+};
+
+const exceptClauseArm$exceptClauseAs =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+const exceptClauseArm$exceptClauseList =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		(parent as unknown as (arg: unknown) => ReturnType<PF>)(
+			(child as unknown as (...args: readonly unknown[]) => unknown)(...args)
+		);
+export const exceptClauseArm: typeof B.exceptClauseArm & {
+	exceptClauseAs: {
+		strict: (...args: ArgsOf<typeof F.buildExceptClauseAs>) => ReturnType<typeof F.buildExceptClauseArm>;
+		coerce: (...args: ArgsOf<typeof F.buildExceptClauseAs>) => ReturnType<typeof C.coerceToExceptClauseArm>;
+	};
+	exceptClauseList: {
+		strict: (...args: ArgsOf<typeof F.buildExceptClauseList>) => ReturnType<typeof F.buildExceptClauseArm>;
+		coerce: (...args: ArgsOf<typeof C.coerceToExceptClauseList>) => ReturnType<typeof C.coerceToExceptClauseArm>;
+	};
+} = {
+	...B.exceptClauseArm,
+	exceptClauseAs: {
+		strict: exceptClauseArm$exceptClauseAs(F.buildExceptClauseArm, F.buildExceptClauseAs),
+		coerce: exceptClauseArm$exceptClauseAs(C.coerceToExceptClauseArm, F.buildExceptClauseAs)
+	},
+	exceptClauseList: {
+		strict: exceptClauseArm$exceptClauseList(F.buildExceptClauseArm, F.buildExceptClauseList),
+		coerce: exceptClauseArm$exceptClauseList(C.coerceToExceptClauseArm, C.coerceToExceptClauseList)
 	}
 };

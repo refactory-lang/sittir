@@ -57,6 +57,6 @@ describe('ir entry ratchet', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(242);
+		expect(builders.length).toBeLessThanOrEqual(255);
 	});
 });

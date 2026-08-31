@@ -1364,7 +1364,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			return;
 		}
 		if (node instanceof AbstractAssembledCompound) {
-			if (node.hoisted) return;
 			this.emitBranch(node);
 			return;
 		}

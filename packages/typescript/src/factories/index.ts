@@ -162,4 +162,21 @@ export const readonlyType: Hoisted<typeof O.readonlyType> = hoist(O.readonlyType
 export const unionType: Hoisted<typeof O.unionType> = hoist(O.unionType);
 export const intersectionType: Hoisted<typeof O.intersectionType> = hoist(O.intersectionType);
 export const functionType: Hoisted<typeof O.functionType> = hoist(O.functionType);
+export const exportSpecifiers: Hoisted<typeof O.exportSpecifiers> = hoist(O.exportSpecifiers);
+export const importSpecifiers: Hoisted<typeof O.importSpecifiers> = hoist(O.importSpecifiers);
+export const formalParametersElements: Hoisted<typeof O.formalParametersElements> = hoist(O.formalParametersElements);
+export const enumBodyElements: Hoisted<typeof O.enumBodyElements> = hoist(O.enumBodyElements);
+export const types: Hoisted<typeof O.types> = hoist(O.types);
+export const typeParametersElements: Hoisted<typeof O.typeParametersElements> = hoist(O.typeParametersElements);
+export const tupleTypeMembers: Hoisted<typeof O.tupleTypeMembers> = hoist(O.tupleTypeMembers);
+export const importClauseGroup: Hoisted<typeof O.importClauseGroup> = hoist(O.importClauseGroup);
 export const objectTypeContent: Hoisted<typeof O.objectTypeContent> = hoist(O.objectTypeContent);
+export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoist(O.exportStatementDefault);
+export const arrowFunctionParameter: Hoisted<typeof O.arrowFunctionParameter> = hoist(O.arrowFunctionParameter);
+export const importClauseDefaultImport: Hoisted<typeof O.importClauseDefaultImport> = hoist(
+	O.importClauseDefaultImport
+);
+export const exportStatementDefaultFromArm: Hoisted<typeof O.exportStatementDefaultFromArm> = hoist(
+	O.exportStatementDefaultFromArm
+);
+export const forHeaderLhs: Hoisted<typeof O.forHeaderLhs> = hoist(O.forHeaderLhs);

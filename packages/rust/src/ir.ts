@@ -778,6 +778,7 @@ export const ir: {
 	readonly baseFieldInitializer: typeof F.baseFieldInitializer;
 	readonly ifExpression: typeof F.ifExpression;
 	readonly letCondition: typeof F.letCondition;
+	readonly letChain: typeof F.letChain;
 	readonly elseClause: typeof F.elseClause;
 	readonly matchExpression: typeof F.matchExpression;
 	readonly matchBlock: typeof F.matchBlock;
@@ -818,6 +819,42 @@ export const ir: {
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
 	readonly lineComment: typeof F.lineComment;
 	readonly blockComment: typeof F.blockComment;
+	readonly macroRules: typeof F.macroRules;
+	readonly enumVariantListElements: typeof F.enumVariantListElements;
+	readonly fieldDeclarationListElements: typeof F.fieldDeclarationListElements;
+	readonly orderedFieldDeclarationListElements: typeof F.orderedFieldDeclarationListElements;
+	readonly wherePredicates: typeof F.wherePredicates;
+	readonly typeParametersElements: typeof F.typeParametersElements;
+	readonly useClauses: typeof F.useClauses;
+	readonly parametersElements: typeof F.parametersElements;
+	readonly lifetimes: typeof F.lifetimes;
+	readonly useBoundsElements: typeof F.useBoundsElements;
+	readonly typeArgumentsElements: typeof F.typeArgumentsElements;
+	readonly argumentsElements: typeof F.argumentsElements;
+	readonly fieldInitializerListElements: typeof F.fieldInitializerListElements;
+	readonly tuplePatternElements: typeof F.tuplePatternElements;
+	readonly patterns: typeof F.patterns;
+	readonly structPatternElements: typeof F.structPatternElements;
+	readonly attributeArm: typeof F.attributeArm;
+	readonly visibilityModifierGroup: typeof F.visibilityModifierGroup;
+	readonly tupleTypeElements: typeof F.tupleTypeElements;
+	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
+	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
+	readonly implItemBody: typeof F.implItemBody;
+	readonly closureExpressionExpr: typeof F.closureExpressionExpr;
+	readonly functionTypeTraitForm: typeof F.functionTypeTraitForm;
+	readonly functionTypeFnForm: typeof F.functionTypeFnForm;
+	readonly macroDefinitionParen: typeof F.macroDefinitionParen;
+	readonly macroDefinitionBracket: typeof F.macroDefinitionBracket;
+	readonly macroDefinitionBrace: typeof F.macroDefinitionBrace;
+	readonly visibilityModifierPub: typeof F.visibilityModifierPub;
+	readonly visibilityModifierInPath: typeof F.visibilityModifierInPath;
+	readonly attributedFieldDeclaration: typeof F.attributedFieldDeclaration;
+	readonly attributedEnumVariant: typeof F.attributedEnumVariant;
+	readonly attributedParameter: typeof F.attributedParameter;
+	readonly attributedTypeParameter: typeof F.attributedTypeParameter;
+	readonly attributedArgument: typeof F.attributedArgument;
+	readonly typeArgument: typeof F.typeArgument;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -1030,6 +1067,7 @@ export const ir: {
 	baseFieldInitializer: F.baseFieldInitializer,
 	ifExpression: F.ifExpression,
 	letCondition: F.letCondition,
+	letChain: F.letChain,
 	elseClause: F.elseClause,
 	matchExpression: F.matchExpression,
 	matchBlock: F.matchBlock,
@@ -1070,6 +1108,42 @@ export const ir: {
 	rawStringLiteral: F.rawStringLiteral,
 	lineComment: F.lineComment,
 	blockComment: F.blockComment,
+	macroRules: F.macroRules,
+	enumVariantListElements: F.enumVariantListElements,
+	fieldDeclarationListElements: F.fieldDeclarationListElements,
+	orderedFieldDeclarationListElements: F.orderedFieldDeclarationListElements,
+	wherePredicates: F.wherePredicates,
+	typeParametersElements: F.typeParametersElements,
+	useClauses: F.useClauses,
+	parametersElements: F.parametersElements,
+	lifetimes: F.lifetimes,
+	useBoundsElements: F.useBoundsElements,
+	typeArgumentsElements: F.typeArgumentsElements,
+	argumentsElements: F.argumentsElements,
+	fieldInitializerListElements: F.fieldInitializerListElements,
+	tuplePatternElements: F.tuplePatternElements,
+	patterns: F.patterns,
+	structPatternElements: F.structPatternElements,
+	attributeArm: F.attributeArm,
+	visibilityModifierGroup: F.visibilityModifierGroup,
+	tupleTypeElements: F.tupleTypeElements,
+	tupleExpressionElements: F.tupleExpressionElements,
+	referenceExpressionRawMut: F.referenceExpressionRawMut,
+	implItemBody: F.implItemBody,
+	closureExpressionExpr: F.closureExpressionExpr,
+	functionTypeTraitForm: F.functionTypeTraitForm,
+	functionTypeFnForm: F.functionTypeFnForm,
+	macroDefinitionParen: F.macroDefinitionParen,
+	macroDefinitionBracket: F.macroDefinitionBracket,
+	macroDefinitionBrace: F.macroDefinitionBrace,
+	visibilityModifierPub: F.visibilityModifierPub,
+	visibilityModifierInPath: F.visibilityModifierInPath,
+	attributedFieldDeclaration: F.attributedFieldDeclaration,
+	attributedEnumVariant: F.attributedEnumVariant,
+	attributedParameter: F.attributedParameter,
+	attributedTypeParameter: F.attributedTypeParameter,
+	attributedArgument: F.attributedArgument,
+	typeArgument: F.typeArgument,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,

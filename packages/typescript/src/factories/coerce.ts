@@ -1137,6 +1137,22 @@ const _K65: readonly string[] = [
 	'asserts',
 	'type_predicate'
 ];
+const _K66: readonly string[] = ['namespace_import', 'named_imports'];
+const _K67: readonly string[] = ['_export_statement_default_from_arm', '_export_statement_default_decl_arm'];
+const _K68: readonly string[] = [
+	'_export_statement_default_star_from',
+	'_export_statement_default_ns_from',
+	'_export_statement_default_clause_from',
+	'export_clause'
+];
+const _K69: readonly string[] = [
+	'member_expression',
+	'subscript_expression',
+	'object_pattern',
+	'array_pattern',
+	'non_null_expression',
+	'parenthesized_expression'
+];
 
 export function resolveProgram_hashBangLine(
 	value: T.Program.LooseConfig['hashBangLine']
@@ -3839,6 +3855,13 @@ export function coerceToComputedPropertyName(
 	);
 }
 
+export function coerceToReservedIdentifier(
+	input: string | T.ReservedIdentifier
+): ReturnType<typeof F.buildReservedIdentifier> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildReservedIdentifier>;
+	return F.buildReservedIdentifier(input as Parameters<typeof F.buildReservedIdentifier>[0]);
+}
+
 export function resolvePublicFieldDefinition_decorators(
 	value: T.PublicFieldDefinition.LooseConfig['decorator']
 ): T.PublicFieldDefinition['_decorator'] {
@@ -5975,6 +5998,221 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 	});
 }
 
+export function coerceToExportSpecifiers(
+	...input: readonly (T.ExportSpecifier | T.Identifier | T.String | T.ExportSpecifiers)[]
+): ReturnType<typeof F.buildExportSpecifiers> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExportSpecifiers) {
+		const data = input[0];
+		const stored = (data as unknown as { _export_specifier?: unknown })._export_specifier;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExportSpecifiers(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
+		);
+	}
+	return F.buildExportSpecifiers(...(input as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>));
+}
+
+export function coerceToImportSpecifiers(
+	...input: readonly (T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs | T.ImportSpecifiers)[]
+): ReturnType<typeof F.buildImportSpecifiers> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImportSpecifiers) {
+		const data = input[0];
+		const stored = (data as unknown as { _import_specifier?: unknown })._import_specifier;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildImportSpecifiers(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>)
+		);
+	}
+	return F.buildImportSpecifiers(
+		...(input as unknown as NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>)
+	);
+}
+
+export function coerceToFormalParametersElements(
+	...input: readonly (T.RequiredParameter | T.OptionalParameter | T.FormalParametersElements)[]
+): ReturnType<typeof F.buildFormalParametersElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormalParametersElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _formal_parameter?: unknown })._formal_parameter;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildFormalParametersElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
+		);
+	}
+	return F.buildFormalParametersElements(
+		...(input as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
+	);
+}
+
+export function coerceToEnumBodyElements(
+	...input: readonly (
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
+		| T.EnumBodyElements
+	)[]
+): ReturnType<typeof F.buildEnumBodyElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.EnumBodyElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _content?: unknown })._content;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildEnumBodyElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<
+				| T._PropertyIdentifier
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+				| T.EnumAssignment
+			>)
+		);
+	}
+	return F.buildEnumBodyElements(
+		...(input as unknown as NonEmptyArray<
+			| T._PropertyIdentifier
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment
+		>)
+	);
+}
+
+export function coerceToTypes(...input: readonly (T.Type | T.Types)[]): ReturnType<typeof F.buildTypes> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Types) {
+		const data = input[0];
+		const stored = (data as unknown as { _type?: unknown })._type;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTypes(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Type>)
+		);
+	}
+	return F.buildTypes(...(input as unknown as NonEmptyArray<T.Type>));
+}
+
+export function coerceToTypeParametersElements(
+	...input: readonly (T.TypeParameter | T.Identifier | T.TypeParametersElements)[]
+): ReturnType<typeof F.buildTypeParametersElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParametersElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _type_parameter?: unknown })._type_parameter;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTypeParametersElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>)
+		);
+	}
+	return F.buildTypeParametersElements(...(input as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>));
+}
+
+export function coerceToTupleTypeMembers(
+	...input: readonly (
+		| T.TupleParameter
+		| T.OptionalTupleParameter
+		| T.OptionalType
+		| T.RestType
+		| T.Type
+		| T.TupleTypeMembers
+	)[]
+): ReturnType<typeof F.buildTupleTypeMembers> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TupleTypeMembers) {
+		const data = input[0];
+		const stored = (data as unknown as { _tuple_type_member?: unknown })._tuple_type_member;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTupleTypeMembers(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<
+				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type
+			>)
+		);
+	}
+	return F.buildTupleTypeMembers(
+		...(input as unknown as NonEmptyArray<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type
+		>)
+	);
+}
+
+export function resolveImportClauseGroup_content(
+	value: T.ImportClauseGroup.LooseConfig['content']
+): T.ImportClauseGroup['_content'] {
+	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K66);
+}
+
+export function coerceToImportClauseGroup(
+	input: (T.NamespaceImport | T.NamedImports) | T.ImportClauseGroup.Loose
+): ReturnType<typeof F.buildImportClauseGroup> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImportClauseGroup)
+		return input as unknown as ReturnType<typeof F.buildImportClauseGroup>;
+	return F.buildImportClauseGroup(
+		_requireField(
+			'_import_clause_group',
+			'content',
+			_resolveOne<T.NamespaceImport | T.NamedImports>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K2,
+				_K66
+			)
+		)
+	);
+}
+
+export function coerceToKind(input: string | T.Kind): ReturnType<typeof F.buildKind> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildKind>;
+	return F.buildKind(input as Parameters<typeof F.buildKind>[0]);
+}
+
+export function coerceToForHeaderOperator(
+	input: string | T.ForHeaderOperator
+): ReturnType<typeof F.buildForHeaderOperator> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildForHeaderOperator>;
+	return F.buildForHeaderOperator(input as Parameters<typeof F.buildForHeaderOperator>[0]);
+}
+
 export function coerceToObjectTypeContent(
 	...input: readonly (
 		| T.ExportStatement
@@ -6022,6 +6260,149 @@ export function coerceToObjectTypeContent(
 			| T.MethodSignature
 		>)
 	);
+}
+
+export function resolveExportStatementDefault_content(
+	value: T.ExportStatementDefault.LooseConfig['content']
+): T.ExportStatementDefault['_content'] {
+	return _resolveOne<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(value, _K2, _K67);
+}
+
+export function coerceToExportStatementDefault(
+	input: (T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) | T.ExportStatementDefault.Loose
+): ReturnType<typeof F.buildExportStatementDefault> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefault)
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefault>;
+	return F.buildExportStatementDefault(
+		_requireField(
+			'_export_statement_default',
+			'content',
+			_resolveOne<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K2,
+				_K67
+			)
+		)
+	);
+}
+
+export function resolveArrowFunctionParameter_parameter(
+	value: T.ArrowFunctionParameter.LooseConfig['parameter']
+): T.ArrowFunctionParameter['_parameter'] {
+	return _resolveOne<T.ReservedIdentifier | T.Identifier>(value, _super_statement_identifier, _K2);
+}
+
+export function coerceToArrowFunctionParameter(
+	input: (T.ReservedIdentifier | T.Identifier) | T.ArrowFunctionParameter.Loose
+): ReturnType<typeof F.buildArrowFunctionParameter> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ArrowFunctionParameter)
+		return input as unknown as ReturnType<typeof F.buildArrowFunctionParameter>;
+	return F.buildArrowFunctionParameter(
+		_requireField(
+			'_arrow_function_parameter',
+			'parameter',
+			_resolveOne<T.ReservedIdentifier | T.Identifier>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'parameter' in input
+					? input.parameter
+					: input,
+				_super_statement_identifier,
+				_K2
+			)
+		)
+	);
+}
+
+export function resolveImportClauseDefaultImport_identifier(
+	value: T.ImportClauseDefaultImport.LooseConfig['identifier']
+): T.ImportClauseDefaultImport['_identifier'] {
+	return _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier');
+}
+
+export function resolveImportClauseDefaultImport_importClauseGroup(
+	value: T.ImportClauseDefaultImport.LooseConfig['importClauseGroup']
+): T.ImportClauseDefaultImport['_import_clause_group'] {
+	return _resolveOneBranch<T.ImportClauseGroup>(value, '_import_clause_group');
+}
+
+export function coerceToImportClauseDefaultImport(
+	input: T.ImportClauseDefaultImport.Loose
+): ReturnType<typeof F.buildImportClauseDefaultImport> {
+	if (!_isLooseConfig<T.ImportClauseDefaultImport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildImportClauseDefaultImport>;
+	return F.buildImportClauseDefaultImport({
+		identifier: _requireField(
+			'_import_clause_default_import',
+			'identifier',
+			resolveImportClauseDefaultImport_identifier(input.identifier)
+		),
+		importClauseGroup: resolveImportClauseDefaultImport_importClauseGroup(input.importClauseGroup)
+	});
+}
+
+export function resolveExportStatementDefaultFromArm_content(
+	value: T.ExportStatementDefaultFromArm.LooseConfig['content']
+): T.ExportStatementDefaultFromArm['_content'] {
+	return _resolveOne<
+		| T.ExportStatementDefaultStarFrom
+		| T.ExportStatementDefaultNsFrom
+		| T.ExportStatementDefaultClauseFrom
+		| T.ExportClause
+	>(value, _K2, _K68);
+}
+
+export function resolveExportStatementDefaultFromArm_automaticSemicolon(
+	value: T.ExportStatementDefaultFromArm.LooseConfig['automaticSemicolon']
+): T.ExportStatementDefaultFromArm['_automatic_semicolon'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToExportStatementDefaultFromArm(
+	input: T.ExportStatementDefaultFromArm.Loose
+): ReturnType<typeof F.buildExportStatementDefaultFromArm> {
+	if (!_isLooseConfig<T.ExportStatementDefaultFromArm.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFromArm>;
+	return F.buildExportStatementDefaultFromArm({
+		content: _requireField(
+			'_export_statement_default_from_arm',
+			'content',
+			resolveExportStatementDefaultFromArm_content(input.content)
+		),
+		automaticSemicolon: _requireField(
+			'_export_statement_default_from_arm',
+			'automaticSemicolon',
+			resolveExportStatementDefaultFromArm_automaticSemicolon(input.automaticSemicolon)
+		)
+	});
+}
+
+export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): T.ForHeaderLhs['_left'] {
+	return _resolveOne<T._LhsExpression | T.ParenthesizedExpression>(value, _K20, _K69);
+}
+
+export function coerceToForHeaderLhs(
+	input: (T._LhsExpression | T.ParenthesizedExpression) | T.ForHeaderLhs.Loose
+): ReturnType<typeof F.buildForHeaderLhs> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ForHeaderLhs)
+		return input as unknown as ReturnType<typeof F.buildForHeaderLhs>;
+	return F.buildForHeaderLhs(
+		_requireField(
+			'_for_header_lhs',
+			'left',
+			_resolveOne<T._LhsExpression | T.ParenthesizedExpression>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'left' in input ? input.left : input,
+				_K20,
+				_K69
+			)
+		)
+	);
+}
+
+export function coerceToTemplateChars(input: string | T.TemplateChars): ReturnType<typeof F.buildTemplateChars> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildTemplateChars>;
+	return F.buildTemplateChars(input as Parameters<typeof F.buildTemplateChars>[0]);
 }
 
 export function coerceToHtmlComment(input: string | T.HtmlComment): ReturnType<typeof F.buildHtmlComment> {

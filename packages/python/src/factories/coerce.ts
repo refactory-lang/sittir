@@ -3,7 +3,7 @@
 import * as F from './raw.js';
 import type * as T from '../types.js';
 import { TSKindId, Delimiter } from '../types.js';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -999,7 +999,8 @@ const _K35: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
-const _K36: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K36: readonly string[] = ['_except_clause_as', '_except_clause_list'];
+const _K37: readonly string[] = ['for_in_clause', 'if_clause'];
 
 export function coerceToModule(
 	...input: readonly (
@@ -1029,6 +1030,31 @@ export function coerceToModule(
 		...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(_elems, _K0, _K1) as unknown as Parameters<
 			typeof F.buildModule
 		>)
+	);
+}
+
+export function resolveSimpleStatements_simpleStatementsElements(
+	value: T.SimpleStatements.LooseConfig['simpleStatementsElements']
+): T.SimpleStatements['_simple_statements_elements'] {
+	return _resolveOneBranch<T.SimpleStatementsElements>(value, '_simple_statements_elements');
+}
+
+export function coerceToSimpleStatements(
+	input: T.SimpleStatementsElements | T.SimpleStatement | T.SimpleStatements.Loose
+): ReturnType<typeof F.buildSimpleStatements> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SimpleStatements)
+		return input as unknown as ReturnType<typeof F.buildSimpleStatements>;
+	return F.buildSimpleStatements(
+		_requireField(
+			'_simple_statements',
+			'simpleStatementsElements',
+			_resolveOneBranch<T.SimpleStatementsElements>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'simpleStatementsElements' in input
+					? input.simpleStatementsElements
+					: input,
+				'_simple_statements_elements'
+			)
+		)
 	);
 }
 
@@ -1136,6 +1162,26 @@ export function coerceToImportFromStatement(
 		),
 		content: _requireField('import_from_statement', 'content', resolveImportFromStatement_content(input.content))
 	});
+}
+
+export function coerceToImportList(
+	...input: readonly (T.DottedName | T.AliasedImport | T.ImportList)[]
+): ReturnType<typeof F.buildImportList> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImportList) {
+		const data = input[0];
+		const stored = (data as unknown as { _name?: unknown })._name;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildImportList(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>)
+		);
+	}
+	return F.buildImportList(...(input as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>));
 }
 
 export function resolveAliasedImport_name(value: T.AliasedImport.LooseConfig['name']): T.AliasedImport['_name'] {
@@ -1445,6 +1491,28 @@ export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnTyp
 		subjects: _requireField('match_statement', 'subjects', resolveMatchStatement_subjects(input.subjects)),
 		body: _requireField('match_statement', 'body', resolveMatchStatement_body(input.body))
 	});
+}
+
+export function resolveMatchBlock_content(value: T.MatchBlock.LooseConfig['content']): T.MatchBlock['_content'] {
+	return _resolveOneBranch<T.MatchBlockBlock | '\n'>(value, '_match_block_block', [TSKindId.Newline]);
+}
+
+export function coerceToMatchBlock(
+	input: (T.MatchBlockBlock | '\n') | T.MatchBlock.Loose
+): ReturnType<typeof F.buildMatchBlock> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MatchBlock)
+		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
+	return F.buildMatchBlock(
+		_requireField(
+			'_match_block',
+			'content',
+			_resolveOneBranch<T.MatchBlockBlock | '\n'>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				'_match_block_block',
+				[TSKindId.Newline]
+			)
+		)
+	);
 }
 
 export function resolveCaseClause_casePatterns(
@@ -2499,6 +2567,44 @@ export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnTyp
 	});
 }
 
+export function coerceTo_Parameters(
+	...input: readonly (T.Parameter | T._Parameters)[]
+): ReturnType<typeof F.build_Parameters> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId._Parameters) {
+		const data = input[0];
+		const stored = (data as unknown as { _parameter?: unknown })._parameter;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.build_Parameters(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Parameter>)
+		);
+	}
+	return F.build_Parameters(...(input as unknown as NonEmptyArray<T.Parameter>));
+}
+
+export function coerceToPatterns(...input: readonly (T.Pattern | T.Patterns)[]): ReturnType<typeof F.buildPatterns> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Patterns) {
+		const data = input[0];
+		const stored = (data as unknown as { _pattern?: unknown })._pattern;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildPatterns(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Pattern>)
+		);
+	}
+	return F.buildPatterns(...(input as unknown as NonEmptyArray<T.Pattern>));
+}
+
 export function resolveTuplePattern_patterns(
 	value: T.TuplePattern.LooseConfig['patterns']
 ): T.TuplePattern['_patterns'] {
@@ -3396,6 +3502,28 @@ export function coerceToParenthesizedExpression(
 	);
 }
 
+export function coerceToCollectionElements(
+	...input: readonly (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat | T.CollectionElements)[]
+): ReturnType<typeof F.buildCollectionElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CollectionElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _element?: unknown })._element;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildCollectionElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
+		);
+	}
+	return F.buildCollectionElements(
+		...(input as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
+	);
+}
+
 export function resolveForInClause_asyncMarker(
 	value: T.ForInClause.LooseConfig['asyncMarker']
 ): T.ForInClause['_async_marker'] {
@@ -3718,6 +3846,331 @@ export function coerceToKeywordSeparator(input?: T.KeywordSeparator): ReturnType
 	return F.buildKeywordSeparator();
 }
 
+export function coerceToSimpleStatementsElements(
+	...input: readonly (T.SimpleStatement | T.SimpleStatementsElements)[]
+): ReturnType<typeof F.buildSimpleStatementsElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SimpleStatementsElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _simple_statement?: unknown })._simple_statement;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildSimpleStatementsElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.SimpleStatement>)
+		);
+	}
+	return F.buildSimpleStatementsElements(...(input as unknown as NonEmptyArray<T.SimpleStatement>));
+}
+
+export function coerceToSubjects(...input: readonly (T.Expression | T.Subjects)[]): ReturnType<typeof F.buildSubjects> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Subjects) {
+		const data = input[0];
+		const stored = (data as unknown as { _subject?: unknown })._subject;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildSubjects(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression>)
+		);
+	}
+	return F.buildSubjects(...(input as unknown as NonEmptyArray<T.Expression>));
+}
+
+export function coerceToCasePatterns(
+	...input: readonly (T.CasePattern | T.CasePatterns)[]
+): ReturnType<typeof F.buildCasePatterns> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CasePatterns) {
+		const data = input[0];
+		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildCasePatterns(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.CasePattern>)
+		);
+	}
+	return F.buildCasePatterns(...(input as unknown as NonEmptyArray<T.CasePattern>));
+}
+
+export function coerceToWithClauseWithItems(
+	...input: readonly (T.WithItem | T.WithClauseWithItems)[]
+): ReturnType<typeof F.buildWithClauseWithItems> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.WithClauseWithItems) {
+		const data = input[0];
+		const stored = (data as unknown as { _with_item?: unknown })._with_item;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildWithClauseWithItems(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.WithItem>)
+		);
+	}
+	return F.buildWithClauseWithItems(...(input as unknown as NonEmptyArray<T.WithItem>));
+}
+
+export function coerceToTypes(...input: readonly (T.Type | T.Types)[]): ReturnType<typeof F.buildTypes> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Types) {
+		const data = input[0];
+		const stored = (data as unknown as { _type?: unknown })._type;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTypes(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Type>)
+		);
+	}
+	return F.buildTypes(...(input as unknown as NonEmptyArray<T.Type>));
+}
+
+export function coerceToArgumentListElements(
+	...input: readonly (
+		| T.Expression
+		| T.ListSplat
+		| T.DictionarySplat
+		| T.ParenthesizedListSplat
+		| T.KeywordArgument
+		| T.ArgumentListElements
+	)[]
+): ReturnType<typeof F.buildArgumentListElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ArgumentListElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _element?: unknown })._element;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildArgumentListElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+			>)
+		);
+	}
+	return F.buildArgumentListElements(
+		...(input as unknown as NonEmptyArray<
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+		>)
+	);
+}
+
+export function coerceToExpressionListExpressions(
+	...input: readonly (T.Expression | T.ExpressionListExpressions)[]
+): ReturnType<typeof F.buildExpressionListExpressions> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExpressionListExpressions) {
+		const data = input[0];
+		const stored = (data as unknown as { _expression?: unknown })._expression;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExpressionListExpressions(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression>)
+		);
+	}
+	return F.buildExpressionListExpressions(...(input as unknown as NonEmptyArray<T.Expression>));
+}
+
+export function coerceToListPatternCasePatterns(
+	...input: readonly (T.CasePattern | T.ListPatternCasePatterns)[]
+): ReturnType<typeof F.buildListPatternCasePatterns> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ListPatternCasePatterns) {
+		const data = input[0];
+		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildListPatternCasePatterns(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.CasePattern>)
+		);
+	}
+	return F.buildListPatternCasePatterns(...(input as unknown as NonEmptyArray<T.CasePattern>));
+}
+
+export function coerceToDictPatternElements(
+	...input: readonly (T.KeyValuePattern | T.SplatPattern | T.DictPatternElements)[]
+): ReturnType<typeof F.buildDictPatternElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DictPatternElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _element?: unknown })._element;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildDictPatternElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>)
+		);
+	}
+	return F.buildDictPatternElements(...(input as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>));
+}
+
+export function coerceToPatternListPatterns(
+	...input: readonly (T.Pattern | T.PatternListPatterns)[]
+): ReturnType<typeof F.buildPatternListPatterns> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PatternListPatterns) {
+		const data = input[0];
+		const stored = (data as unknown as { _pattern?: unknown })._pattern;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildPatternListPatterns(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Pattern>)
+		);
+	}
+	return F.buildPatternListPatterns(...(input as unknown as NonEmptyArray<T.Pattern>));
+}
+
+export function coerceToSubscripts(
+	...input: readonly (T.Expression | T.Slice | T.Subscripts)[]
+): ReturnType<typeof F.buildSubscripts> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Subscripts) {
+		const data = input[0];
+		const stored = (data as unknown as { _subscript?: unknown })._subscript;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildSubscripts(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression | T.Slice>)
+		);
+	}
+	return F.buildSubscripts(...(input as unknown as NonEmptyArray<T.Expression | T.Slice>));
+}
+
+export function coerceToDictionaryElements(
+	...input: readonly (T.Pair | T.DictionarySplat | T.DictionaryElements)[]
+): ReturnType<typeof F.buildDictionaryElements> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DictionaryElements) {
+		const data = input[0];
+		const stored = (data as unknown as { _element?: unknown })._element;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildDictionaryElements(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>)
+		);
+	}
+	return F.buildDictionaryElements(...(input as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>));
+}
+
+export function resolveFutureImportStatementArm_importList(
+	value: T.FutureImportStatementArm.LooseConfig['importList']
+): T.FutureImportStatementArm['_import_list'] {
+	return _resolveOneBranch<T.ImportList>(value, '_import_list');
+}
+
+export function coerceToFutureImportStatementArm(
+	input: T.ImportList | T.DottedName | T.AliasedImport | T.FutureImportStatementArm.Loose
+): ReturnType<typeof F.buildFutureImportStatementArm> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FutureImportStatementArm)
+		return input as unknown as ReturnType<typeof F.buildFutureImportStatementArm>;
+	return F.buildFutureImportStatementArm(
+		_requireField(
+			'_future_import_statement_arm',
+			'importList',
+			_resolveOneBranch<T.ImportList>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'importList' in input
+					? input.importList
+					: input,
+				'_import_list'
+			)
+		)
+	);
+}
+
+export function resolveExceptClauseArm_content(
+	value: T.ExceptClauseArm.LooseConfig['content']
+): T.ExceptClauseArm['_content'] {
+	return _resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(value, _K0, _K36);
+}
+
+export function coerceToExceptClauseArm(
+	input: (T.ExceptClauseAs | T.ExceptClauseList) | T.ExceptClauseArm.Loose
+): ReturnType<typeof F.buildExceptClauseArm> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExceptClauseArm)
+		return input as unknown as ReturnType<typeof F.buildExceptClauseArm>;
+	return F.buildExceptClauseArm(
+		_requireField(
+			'_except_clause_arm',
+			'content',
+			_resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K0,
+				_K36
+			)
+		)
+	);
+}
+
+export function resolveSliceGroup_expression(
+	value: T.SliceGroup.LooseConfig['expression']
+): T.SliceGroup['_expression'] {
+	return _resolveOne<T.Expression>(value, _K6, _K7);
+}
+
+export function coerceToSliceGroup(input?: T.Expression | T.SliceGroup.Loose): ReturnType<typeof F.buildSliceGroup> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.SliceGroup)
+		return input as unknown as ReturnType<typeof F.buildSliceGroup>;
+	return F.buildSliceGroup(
+		_resolveOne<T.Expression>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+				? input.expression
+				: input,
+			_K6,
+			_K7
+		)
+	);
+}
+
+export function coerceToAugmentedAssignmentOperator(
+	input: string | T.AugmentedAssignmentOperator
+): ReturnType<typeof F.buildAugmentedAssignmentOperator> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildAugmentedAssignmentOperator>;
+	return F.buildAugmentedAssignmentOperator(input as Parameters<typeof F.buildAugmentedAssignmentOperator>[0]);
+}
+
 export function resolveCaseTuplePattern_listPatternCasePatterns(
 	value: T.CaseTuplePattern.LooseConfig['listPatternCasePatterns']
 ): T.CaseTuplePattern['_list_pattern_case_patterns'] {
@@ -3793,7 +4246,7 @@ export function coerceToComprehensionClauses(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildComprehensionClauses(
-			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K36) as unknown as Parameters<
+			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K37) as unknown as Parameters<
 				typeof F.buildComprehensionClauses
 			>)
 		);
@@ -3806,10 +4259,50 @@ export function coerceToComprehensionClauses(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
-		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K36) as unknown as Parameters<
+		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K37) as unknown as Parameters<
 			typeof F.buildComprehensionClauses
 		>)
 	);
+}
+
+export function coerceToPrintArguments(
+	...input: readonly (T.Expression | T.PrintArguments)[]
+): ReturnType<typeof F.buildPrintArguments> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PrintArguments) {
+		const data = input[0];
+		const stored = (data as unknown as { _argument?: unknown })._argument;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildPrintArguments(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression>)
+		);
+	}
+	return F.buildPrintArguments(...(input as unknown as NonEmptyArray<T.Expression>));
+}
+
+export function coerceToPrintChevronArguments(
+	...input: readonly (T.Expression | T.PrintChevronArguments)[]
+): ReturnType<typeof F.buildPrintChevronArguments> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PrintChevronArguments) {
+		const data = input[0];
+		const stored = (data as unknown as { _argument?: unknown })._argument;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildPrintChevronArguments(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression>)
+		);
+	}
+	return F.buildPrintChevronArguments(...(input as unknown as NonEmptyArray<T.Expression>));
 }
 
 export function resolvePrintStatementArm1_chevron(
@@ -3860,9 +4353,151 @@ export function coerceToPrintStatementArm2(
 	);
 }
 
+export function coerceToExpressionStatementTuple(
+	...input: readonly (T.Expression | T.ExpressionStatementTuple)[]
+): ReturnType<typeof F.buildExpressionStatementTuple> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExpressionStatementTuple) {
+		const data = input[0];
+		const stored = (data as unknown as { _expression?: unknown })._expression;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExpressionStatementTuple(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Expression>)
+		);
+	}
+	return F.buildExpressionStatementTuple(...(input as unknown as NonEmptyArray<T.Expression>));
+}
+
+export function coerceToWithClauseBare(
+	...input: readonly (T.WithItem | T.WithClauseBare)[]
+): ReturnType<typeof F.buildWithClauseBare> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.WithClauseBare) {
+		const data = input[0];
+		const stored = (data as unknown as { _with_item?: unknown })._with_item;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildWithClauseBare(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					return d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.WithItem>)
+		);
+	}
+	return F.buildWithClauseBare(...(input as unknown as NonEmptyArray<T.WithItem>));
+}
+
+export function resolveWithClauseParen_withClauseWithItems(
+	value: T.WithClauseParen.LooseConfig['withClauseWithItems']
+): T.WithClauseParen['_with_clause_with_items'] {
+	return _resolveOneBranch<T.WithClauseWithItems>(value, '_with_clause_with_items');
+}
+
+export function coerceToWithClauseParen(
+	input: T.WithClauseWithItems | T.WithItem | T.WithClauseParen.Loose
+): ReturnType<typeof F.buildWithClauseParen> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.WithClauseParen)
+		return input as unknown as ReturnType<typeof F.buildWithClauseParen>;
+	return F.buildWithClauseParen(
+		_requireField(
+			'_with_clause_paren',
+			'withClauseWithItems',
+			_resolveOneBranch<T.WithClauseWithItems>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'withClauseWithItems' in input
+					? input.withClauseWithItems
+					: input,
+				'_with_clause_with_items'
+			)
+		)
+	);
+}
+
+export function resolveSuiteBlockWithIndent_block(
+	value: T.SuiteBlockWithIndent.LooseConfig['block']
+): T.SuiteBlockWithIndent['_block'] {
+	return _resolveOneBranch<T.Block>(value, 'block');
+}
+
+export function coerceToSuiteBlockWithIndent(
+	input: T.Block | T.SuiteBlockWithIndent.Loose
+): ReturnType<typeof F.buildSuiteBlockWithIndent> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlockWithIndent)
+		return input as unknown as ReturnType<typeof F.buildSuiteBlockWithIndent>;
+	return F.buildSuiteBlockWithIndent(
+		_requireField(
+			'_suite_block_with_indent',
+			'block',
+			_resolveOneBranch<T.Block>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
+				'block'
+			)
+		)
+	);
+}
+
+export function coerceToExceptClauseList(
+	...input: readonly (T.Expression | T.ExceptClauseList | { value: T.Expression | readonly T.Expression[] })[]
+): ReturnType<typeof F.buildExceptClauseList> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseList) {
+		const data = input[0];
+		const stored = (data as unknown as { _value?: unknown })._value;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExceptClauseList(
+			...(_resolveMany<T.Expression>(children, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('value' in head)) return input;
+		const v = (head as Record<string, unknown>)['value'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildExceptClauseList(
+		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+	);
+}
+
+export function resolveYieldFromClause_expression(
+	value: T.YieldFromClause.LooseConfig['expression']
+): T.YieldFromClause['_expression'] {
+	return _resolveOne<T.Expression>(value, _K6, _K7);
+}
+
+export function coerceToYieldFromClause(
+	input: T.Expression | T.YieldFromClause.Loose
+): ReturnType<typeof F.buildYieldFromClause> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.YieldFromClause)
+		return input as unknown as ReturnType<typeof F.buildYieldFromClause>;
+	return F.buildYieldFromClause(
+		_requireField(
+			'_yield_from_clause',
+			'expression',
+			_resolveOne<T.Expression>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+					? input.expression
+					: input,
+				_K6,
+				_K7
+			)
+		)
+	);
+}
+
 export function coerceToStringStart(input: string | T.StringStart): ReturnType<typeof F.buildStringStart> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringStart>;
 	return F.buildStringStart(input as Parameters<typeof F.buildStringStart>[0]);
+}
+
+export function coerceTo_StringContent(input: string | T._StringContent): ReturnType<typeof F.build_StringContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.build_StringContent>;
+	return F.build_StringContent(input as Parameters<typeof F.build_StringContent>[0]);
 }
 
 export function coerceToEscapeInterpolation(

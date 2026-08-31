@@ -110,6 +110,7 @@ export const fieldInitializer = bundle(F.buildFieldInitializer, C.coerceToFieldI
 export const baseFieldInitializer = bundle(F.buildBaseFieldInitializer, C.coerceToBaseFieldInitializer);
 export const ifExpression = bundle(F.buildIfExpression, C.coerceToIfExpression);
 export const letCondition = bundle(F.buildLetCondition, C.coerceToLetCondition);
+export const letChain = bundle(F.buildLetChain, C.coerceToLetChain);
 export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause);
 export const matchExpression = bundle(F.buildMatchExpression, C.coerceToMatchExpression);
 export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock);
@@ -150,3 +151,51 @@ export const stringLiteral = bundle(F.buildStringLiteral, C.coerceToStringLitera
 export const rawStringLiteral = bundle(F.buildRawStringLiteral, C.coerceToRawStringLiteral);
 export const lineComment = bundle(F.buildLineComment, C.coerceToLineComment);
 export const blockComment = bundle(F.buildBlockComment, C.coerceToBlockComment);
+export const macroRules = bundle(F.buildMacroRules, C.coerceToMacroRules);
+export const enumVariantListElements = bundle(F.buildEnumVariantListElements, C.coerceToEnumVariantListElements);
+export const fieldDeclarationListElements = bundle(
+	F.buildFieldDeclarationListElements,
+	C.coerceToFieldDeclarationListElements
+);
+export const orderedFieldDeclarationListElements = bundle(
+	F.buildOrderedFieldDeclarationListElements,
+	C.coerceToOrderedFieldDeclarationListElements
+);
+export const wherePredicates = bundle(F.buildWherePredicates, C.coerceToWherePredicates);
+export const typeParametersElements = bundle(F.buildTypeParametersElements, C.coerceToTypeParametersElements);
+export const useClauses = bundle(F.buildUseClauses, C.coerceToUseClauses);
+export const parametersElements = bundle(F.buildParametersElements, C.coerceToParametersElements);
+export const lifetimes = bundle(F.buildLifetimes, C.coerceToLifetimes);
+export const useBoundsElements = bundle(F.buildUseBoundsElements, C.coerceToUseBoundsElements);
+export const typeArgumentsElements = bundle(F.buildTypeArgumentsElements, C.coerceToTypeArgumentsElements);
+export const argumentsElements = bundle(F.buildArgumentsElements, C.coerceToArgumentsElements);
+export const fieldInitializerListElements = bundle(
+	F.buildFieldInitializerListElements,
+	C.coerceToFieldInitializerListElements
+);
+export const tuplePatternElements = bundle(F.buildTuplePatternElements, C.coerceToTuplePatternElements);
+export const patterns = bundle(F.buildPatterns, C.coerceToPatterns);
+export const structPatternElements = bundle(F.buildStructPatternElements, C.coerceToStructPatternElements);
+export const attributeArm = bundle(F.buildAttributeArm, C.coerceToAttributeArm);
+export const visibilityModifierGroup = bundle(F.buildVisibilityModifierGroup, C.coerceToVisibilityModifierGroup);
+export const tupleTypeElements = bundle(F.buildTupleTypeElements, C.coerceToTupleTypeElements);
+export const tupleExpressionElements = bundle(F.buildTupleExpressionElements, C.coerceToTupleExpressionElements);
+export const referenceExpressionRawMut = bundle(F.buildReferenceExpressionRawMut, C.coerceToReferenceExpressionRawMut);
+export const implItemBody = bundle(F.buildImplItemBody, C.coerceToImplItemBody);
+export const closureExpressionExpr = bundle(F.buildClosureExpressionExpr, C.coerceToClosureExpressionExpr);
+export const functionTypeTraitForm = bundle(F.buildFunctionTypeTraitForm, C.coerceToFunctionTypeTraitForm);
+export const functionTypeFnForm = bundle(F.buildFunctionTypeFnForm, C.coerceToFunctionTypeFnForm);
+export const macroDefinitionParen = bundle(F.buildMacroDefinitionParen, C.coerceToMacroDefinitionParen);
+export const macroDefinitionBracket = bundle(F.buildMacroDefinitionBracket, C.coerceToMacroDefinitionBracket);
+export const macroDefinitionBrace = bundle(F.buildMacroDefinitionBrace, C.coerceToMacroDefinitionBrace);
+export const visibilityModifierPub = bundle(F.buildVisibilityModifierPub, C.coerceToVisibilityModifierPub);
+export const visibilityModifierInPath = bundle(F.buildVisibilityModifierInPath, C.coerceToVisibilityModifierInPath);
+export const attributedFieldDeclaration = bundle(
+	F.buildAttributedFieldDeclaration,
+	C.coerceToAttributedFieldDeclaration
+);
+export const attributedEnumVariant = bundle(F.buildAttributedEnumVariant, C.coerceToAttributedEnumVariant);
+export const attributedParameter = bundle(F.buildAttributedParameter, C.coerceToAttributedParameter);
+export const attributedTypeParameter = bundle(F.buildAttributedTypeParameter, C.coerceToAttributedTypeParameter);
+export const attributedArgument = bundle(F.buildAttributedArgument, C.coerceToAttributedArgument);
+export const typeArgument = bundle(F.buildTypeArgument, C.coerceToTypeArgument);

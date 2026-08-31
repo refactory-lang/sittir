@@ -166,16 +166,11 @@ export function emitIr(config: EmitIrConfig): string {
 	const irTypeMembers: string[] = [];
 	const irValueLines: string[] = [];
 	irValueLines.push('  // Node factories');
-	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') || node.factoryInline) continue;
-		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
-		if (!isValidIdent(node.irKey)) continue;
-		if (usedGroupNames.has(node.irKey)) continue;
-		if (!((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList)) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+	for (const { key, node } of bundleEntries(nodeMap, generatedIdTables)) {
+		if (usedGroupNames.has(key)) continue;
 		const ref = bundleRef(node);
-		irValueLines.push(`  ${node.irKey}: ${ref},`);
-		irTypeMembers.push(`  readonly ${node.irKey}: typeof ${ref};`);
+		irValueLines.push(`  ${key}: ${ref},`);
+		irTypeMembers.push(`  readonly ${key}: typeof ${ref};`);
 	}
 	irValueLines.push('');
 

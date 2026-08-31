@@ -9872,6 +9872,10 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  *  the kind has zero or two-plus slots. */
 ```
 
+### `packages/codegen/src/emitters/shared.ts::classifyFromEmission`
+
+The single gate for the coerce surface: which kinds get a `coerceTo*` and, through it, a bundle entry, an `ir` key, and coerce flavors on overlay wires. The from-surface is a strict subset of the factory-surface — a coercer wraps a raw builder, so `classifyFactoryEmission !== 'emit'` is `skip-no-raw-factory` (this is what keeps a name-only `rawFactoryName` getter from minting references to builders that were never emitted). A hidden kind passes only when `userFacing` (the stamped model attribute — alias-faced, variant-adopted, or slot-reachable), which is how aliased-hidden kinds join the surface under their visible identity. A hoisted non-list compound is `skip-hoisted-form` — hoisted forms coerce locally inside their parent, never publicly; lists are exempt because a GROUP-wrapped separated list carries the hoisted stamp yet owns a public coerce surface. Every consumer (from.ts dispatch, `bundleEntries`, the overlay's `coerceEmitted`, the test emitter through the wire SSOT) reads this one classification; none re-derives it.
+
 ### `packages/codegen/src/emitters/shared.ts::emitsBuildArgsAlias`
 
 ```text
@@ -12561,6 +12565,8 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
+The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
+
 #### body
 
 ```text
@@ -13085,9 +13091,10 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 /**
 	 * Coercers for the form children a loose mirror routes through that no
 	 * kind's own dispatch emits. Those children are hidden polymorph-form
-	 * groups: their factory exists, but `classifyFromEmission`'s `_`-prefix
-	 * gate suppresses the matching coercer, so the parent's namespace bundle
-	 * has nothing but the strict form to re-expose.
+	 * groups: their factory exists, but `classifyFromEmission`'s
+	 * hoisted-form skip suppresses the matching public coercer, so the
+	 * parent's namespace bundle has nothing but the strict form to
+	 * re-expose.
 	 *
 	 * MODULE-LOCAL, coercer and per-field resolvers alike: the child kind is
 	 * hidden, so exporting either would widen the public surface for an

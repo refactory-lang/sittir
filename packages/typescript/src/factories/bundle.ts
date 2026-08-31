@@ -165,4 +165,20 @@ export const readonlyType = bundle(F.buildReadonlyType, C.coerceToReadonlyType);
 export const unionType = bundle(F.buildUnionType, C.coerceToUnionType);
 export const intersectionType = bundle(F.buildIntersectionType, C.coerceToIntersectionType);
 export const functionType = bundle(F.buildFunctionType, C.coerceToFunctionType);
+export const exportSpecifiers = bundle(F.buildExportSpecifiers, C.coerceToExportSpecifiers);
+export const importSpecifiers = bundle(F.buildImportSpecifiers, C.coerceToImportSpecifiers);
+export const formalParametersElements = bundle(F.buildFormalParametersElements, C.coerceToFormalParametersElements);
+export const enumBodyElements = bundle(F.buildEnumBodyElements, C.coerceToEnumBodyElements);
+export const types = bundle(F.buildTypes, C.coerceToTypes);
+export const typeParametersElements = bundle(F.buildTypeParametersElements, C.coerceToTypeParametersElements);
+export const tupleTypeMembers = bundle(F.buildTupleTypeMembers, C.coerceToTupleTypeMembers);
+export const importClauseGroup = bundle(F.buildImportClauseGroup, C.coerceToImportClauseGroup);
 export const objectTypeContent = bundle(F.buildObjectTypeContent, C.coerceToObjectTypeContent);
+export const exportStatementDefault = bundle(F.buildExportStatementDefault, C.coerceToExportStatementDefault);
+export const arrowFunctionParameter = bundle(F.buildArrowFunctionParameter, C.coerceToArrowFunctionParameter);
+export const importClauseDefaultImport = bundle(F.buildImportClauseDefaultImport, C.coerceToImportClauseDefaultImport);
+export const exportStatementDefaultFromArm = bundle(
+	F.buildExportStatementDefaultFromArm,
+	C.coerceToExportStatementDefaultFromArm
+);
+export const forHeaderLhs = bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs);

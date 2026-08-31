@@ -655,11 +655,15 @@ export type FromEmission =
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-hidden-kind'
 	| 'skip-polymorph-form'
+	| 'skip-hoisted-form'
+	| 'skip-no-raw-factory'
 	| 'skip-no-from-surface';
 
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
-	if (kind.startsWith('_')) return 'skip-hidden-kind';
+	if (kind.startsWith('_') && !node.userFacing) return 'skip-hidden-kind';
 	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
+	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.hoisted) return 'skip-hoisted-form';
+	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
 	return node.rawFactoryName && node.fromFunctionName ? 'emit' : 'skip-no-from-surface';

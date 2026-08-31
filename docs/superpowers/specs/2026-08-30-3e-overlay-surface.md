@@ -33,7 +33,16 @@ composition — a second, private "forms on a builder" mechanism.
 
 **Bundles are plain objects; overlays are static wiring; one method per
 builder.** The core emitters keep producing plain strict builders and plain
-coercers. A *bundle* pairs the two for one kind — `{ strict, coerce }`,
+coercers. The coerce surface is a strict subset of the factory surface
+(a coercer wraps a raw builder), and a hidden kind belongs to both when
+the model marks it user-facing — alias-faced, variant-adopted, or
+slot-reachable — so aliased-hidden kinds join the bundles, `ir`, and the
+wire map under their visible-style keys; hoisted form kinds coerce only
+locally inside their parent (separated lists are exempt: a GROUP-wrapped
+list carries the hoisted stamp yet owns a public coerce surface). The
+`ir` namespace's node-factory members are the bundle entries themselves,
+so the three surfaces cannot disagree.
+A *bundle* pairs the two for one kind — `{ strict, coerce }`,
 made by the one generic `bundle()` helper — and every ergonomic layer
 decorates bundles by object spread, never by mutating a function. A
 sub-factory's mechanics ("build the child, seat it in the parent slot")

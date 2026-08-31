@@ -547,7 +547,20 @@ export const ir: {
 	readonly unionType: typeof F.unionType;
 	readonly intersectionType: typeof F.intersectionType;
 	readonly functionType: typeof F.functionType;
+	readonly exportSpecifiers: typeof F.exportSpecifiers;
+	readonly importSpecifiers: typeof F.importSpecifiers;
+	readonly formalParametersElements: typeof F.formalParametersElements;
+	readonly enumBodyElements: typeof F.enumBodyElements;
+	readonly types: typeof F.types;
+	readonly typeParametersElements: typeof F.typeParametersElements;
+	readonly tupleTypeMembers: typeof F.tupleTypeMembers;
+	readonly importClauseGroup: typeof F.importClauseGroup;
 	readonly objectTypeContent: typeof F.objectTypeContent;
+	readonly exportStatementDefault: typeof F.exportStatementDefault;
+	readonly arrowFunctionParameter: typeof F.arrowFunctionParameter;
+	readonly importClauseDefaultImport: typeof F.importClauseDefaultImport;
+	readonly exportStatementDefaultFromArm: typeof F.exportStatementDefaultFromArm;
+	readonly forHeaderLhs: typeof F.forHeaderLhs;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly optionalChain: typeof F.buildOptionalChain;
@@ -813,7 +826,20 @@ export const ir: {
 	unionType: F.unionType,
 	intersectionType: F.intersectionType,
 	functionType: F.functionType,
+	exportSpecifiers: F.exportSpecifiers,
+	importSpecifiers: F.importSpecifiers,
+	formalParametersElements: F.formalParametersElements,
+	enumBodyElements: F.enumBodyElements,
+	types: F.types,
+	typeParametersElements: F.typeParametersElements,
+	tupleTypeMembers: F.tupleTypeMembers,
+	importClauseGroup: F.importClauseGroup,
 	objectTypeContent: F.objectTypeContent,
+	exportStatementDefault: F.exportStatementDefault,
+	arrowFunctionParameter: F.arrowFunctionParameter,
+	importClauseDefaultImport: F.importClauseDefaultImport,
+	exportStatementDefaultFromArm: F.exportStatementDefaultFromArm,
+	forHeaderLhs: F.forHeaderLhs,
 
 	// Keyword factories
 	import: F.buildImport,

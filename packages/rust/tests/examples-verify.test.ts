@@ -237,7 +237,7 @@ describe('ir entry ratchet', () => {
 		// (Total keys moved 247 → 250 when the hidden dispatch-union
 		// supertypes returned as grouped namespaces; builders did not grow.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(233);
+		expect(builders.length).toBeLessThanOrEqual(270);
 	});
 });
 
