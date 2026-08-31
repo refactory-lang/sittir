@@ -1,17 +1,5 @@
-import {
-	CHOICE,
-	FIELD,
-	GROUP,
-	OPTIONAL,
-	REPEAT,
-	REPEAT1,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL,
-	VARIANT
-} from '../../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, SimplifiedRule } from '../../types/rule.ts';
+import { CHOICE, GROUP, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import type { SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { isAllTextShape } from '../assemble.ts';
 import { isStructuralChoice } from '../collect-slots.ts';
 import { isNonterminalRuleType } from '../../dsl/rule-patterns.ts';
@@ -69,7 +57,7 @@ export function diagnoseSlotGrouping(
 }
 
 function walkRule(
-	rule: Rule<'link'>,
+	rule: SimplifiedRule,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[],
 	inSlotPosition: boolean,
@@ -85,32 +73,15 @@ function walkRule(
 			}
 			break;
 
-		case REPEAT:
-		case REPEAT1:
-			checkRepeat(rule, ownerKind, records);
-			walkRule(rule.content, ownerKind, records,  true,  false);
-			break;
-
 		case CHOICE:
 			for (const m of rule.members) {
-				walkRule(m, ownerKind, records,  true,  true);
+				walkRule(m, ownerKind, records, true, true);
 			}
-			break;
-
-		case OPTIONAL:
-		case FIELD:
-			walkRule(
-				(rule as { content: Rule<'link'> }).content,
-				ownerKind,
-				records,
-				 true,
-				 false
-			);
 			break;
 
 		case VARIANT:
 		case GROUP:
-			walkRule((rule as { content: Rule<'link'> }).content, ownerKind, records, inSlotPosition, inChoiceArm);
+			walkRule(rule.content, ownerKind, records, inSlotPosition, inChoiceArm);
 			break;
 
 		default:
@@ -119,7 +90,7 @@ function walkRule(
 }
 
 function checkSeq(
-	rule: Extract<Rule<'link'>, { type: 'SEQ' }>,
+	rule: SeqRule<'simplify'>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[],
 	inChoiceArm: boolean
@@ -143,74 +114,7 @@ function checkSeq(
 	});
 }
 
-function checkRepeat(
-	rule: Extract<Rule<'link'>, { type: 'REPEAT' | 'REPEAT1' }>,
-	ownerKind: string,
-	records: SlotGroupingDiagnostic[]
-): void {
-	const content = rule.content;
-
-	if (content.type === CHOICE) {
-		const hasLiteral = content.members.some((m) => m.type === STRING);
-		if (hasLiteral) {
-			records.push({
-				code: 'repeat-choice-with-literal',
-				severity: 'warning',
-				message: `Kind '${ownerKind}' has a repeat(choice(..., literal, ...)) — heterogeneous repeating content with interleaved literals.`,
-				canProceed: true,
-				ownerKind,
-				slotCount: 1,
-				proposal:
-					`Kind '${ownerKind}' has a repeat(choice(..., literal, ...)) — ` +
-					`heterogeneous repeating content with interleaved literals. ` +
-					`Author decides: visible groups: registration or transforms: field() rename.`
-			});
-			return;
-		}
-		checkRepeatOfSymbol(rule, content, ownerKind, records);
-		return;
-	}
-
-	checkRepeatOfSymbol(rule, content, ownerKind, records);
-}
-
-function checkRepeatOfSymbol(
-	_repeatRule: Extract<Rule<'link'>, { type: 'REPEAT' | 'REPEAT1' }>,
-	content: Rule<'link'>,
-	ownerKind: string,
-	records: SlotGroupingDiagnostic[]
-): void {
-	const isSymbolLike = content.type === SYMBOL || content.type === SUPERTYPE;
-	const isChoiceOfSymbols =
-		content.type === CHOICE &&
-		content.members.length > 0 &&
-		content.members.every((m) => m.type === SYMBOL || m.type === SUPERTYPE);
-
-	if (!isSymbolLike && !isChoiceOfSymbols) return;
-
-	const fieldName = (content as { fieldName?: string }).fieldName;
-	if (fieldName !== undefined) return;
-
-	const symName =
-		content.type === SYMBOL || content.type === SUPERTYPE
-			? content.name
-			: content.members.map((m) => (m as { name: string }).name).join('|');
-
-	records.push({
-		code: 'supertype-list',
-		severity: 'warning',
-		message: `Kind '${ownerKind}' has a repeat(${symName}) without a field name.`,
-		canProceed: true,
-		ownerKind,
-		slotCount: 1,
-		proposal:
-			`Kind '${ownerKind}' has a repeat(${symName}) without a field name. ` +
-			`This fragments at read by concrete kind. ` +
-			`Propose: add transforms: { '(${symName})': field('<name>') } in grammar.sittir.ts.`
-	});
-}
-
-export function countSlots(rule: Rule<'link'>): number {
+export function countSlots(rule: SimplifiedRule): number {
 	switch (rule.type) {
 		case SEQ:
 			return rule.members.reduce((sum, m) => sum + countSlots(m), 0);
@@ -224,17 +128,17 @@ export function countSlots(rule: Rule<'link'>): number {
 	}
 }
 
-export function countContentSlots(rule: Rule<'link'>): number {
+export function countContentSlots(rule: SimplifiedRule): number {
 	switch (rule.type) {
 		case SEQ:
-			return (rule as { fieldName?: string }).fieldName !== undefined
+			return rule.fieldName !== undefined
 				? 0
 				: rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
 		case VARIANT:
 		case GROUP:
 			return countContentSlots(rule.content);
 		case CHOICE:
-			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
+			if (rule.fieldName === undefined && isStructuralChoice(rule)) {
 				return rule.members.reduce((max, m) => Math.max(max, countContentSlots(m)), 0);
 			}
 			return isContentSlot(rule) ? 1 : 0;
@@ -243,33 +147,28 @@ export function countContentSlots(rule: Rule<'link'>): number {
 	}
 }
 
-function isContentSlot(rule: Rule<'link'>): boolean {
+function isContentSlot(rule: SimplifiedRule): boolean {
 	if (!isNonterminalRuleType(rule)) return false;
-	if ((rule as { fieldName?: string }).fieldName !== undefined) return false;
+	if (rule.fieldName !== undefined || rule.inlinedFrom !== undefined) return false;
 	const { named, hasUnnamed } = slotKindProfile(rule);
 	return !(named.size === 1 && !hasUnnamed);
 }
 
-function slotKindProfile(rule: Rule<'link'>): { named: Set<string>; hasUnnamed: boolean } {
+function slotKindProfile(rule: SimplifiedRule): { named: Set<string>; hasUnnamed: boolean } {
 	switch (rule.type) {
 		case SYMBOL:
 		case SUPERTYPE:
-			return { named: new Set([(rule as { name: string }).name]), hasUnnamed: false };
+			return { named: new Set([rule.name]), hasUnnamed: false };
 		case CHOICE: {
 			const named = new Set<string>();
 			let hasUnnamed = false;
-			for (const m of (rule as { members: Rule<'link'>[] }).members) {
+			for (const m of rule.members) {
 				const p = slotKindProfile(m);
 				for (const n of p.named) named.add(n);
 				hasUnnamed = hasUnnamed || p.hasUnnamed;
 			}
 			return { named, hasUnnamed };
 		}
-		case REPEAT:
-		case REPEAT1:
-		case OPTIONAL:
-		case FIELD:
-			return slotKindProfile((rule as { content: Rule<'link'> }).content);
 		default:
 			return { named: new Set(), hasUnnamed: true };
 	}

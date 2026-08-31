@@ -1,23 +1,28 @@
-import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
-import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, RenderRule, Rule, SimplifiedRule } from '../../types/rule.ts';
+import {
+	AssembledPattern,
+	AssembledList,
+	type AssembledNode,
+	type SeparatedListElementRule
+} from '../../compiler/model/node-map.ts';
+import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
 // `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
-// each carry a distinct `__brand?: never` marker) — one Rule<'link'>-typed
-// constant can't satisfy both, so each gets its own phase-typed declaration.
+// each carry a distinct `__brand?: never` marker) — one single-typed constant
+// can't satisfy both, so each gets its own phase-typed declaration.
 const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
 const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
-function makeMemberNodeMap(rule: Repeat1Rule, opts: { separatorRule: Rule<'link'> | undefined }) {
+function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledSeparatedList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
@@ -37,19 +42,20 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 describe('wrap emitter — separatedList', () => {
 	it('emits _member/_separator/_delimiter for a nonterminal separator with both flanks optional', () => {
 		// Storage/accessor key is the model's OWN derived slot name (`_member`,
-		// from the element kind — see AssembledSeparatedList.fields / Bug B fix),
+		// from the element kind — see AssembledList.fields / Bug B fix),
 		// NOT a hardcoded `_content`/`content()`. `_content` remains only as an
 		// internal local var feeding `_hasSeparatorFlank`/`_separatorKindOf`.
-		const sepChoice: Rule<'link'> = {
+		const sepChoice: RenderRule = {
 			type: CHOICE,
 			members: [
 				{ type: STRING, value: ',' },
 				{ type: STRING, value: ';' }
 			]
 		};
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
@@ -65,9 +71,10 @@ describe('wrap emitter — separatedList', () => {
 	});
 
 	it('omits _separator and the leading bit for a literal-separator node with only an optional trailing flank', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
@@ -79,73 +86,5 @@ describe('wrap emitter — separatedList', () => {
 		// Only the trailing bit contributes — no leading term in the flag.
 		expect(emitted).not.toContain('? Delimiter.Leading');
 		expect(emitted).toContain('? Delimiter.Trailing : Delimiter.None');
-	});
-
-	it('routes a MULTI-field separatedList (each repeated element is itself a key/value pair) through the exact per-field drilling logic emitFieldCarryingWrap uses, not one shared bucket', () => {
-		// Each repeated element is a two-FIELD seq (`field('key', ...)` +
-		// `field('value', ...)`) — deriveSlots yields TWO separate real slots
-		// (`_key`/`_value`) from this shape, mirroring a dict-pattern-shaped
-		// separatedList (e.g. python's DictPatternGroup1) whose elements route
-		// to more than one real slot, not one shared `_content` bucket.
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: {
-				type: SEQ,
-				members: [
-					{ type: FIELD, name: 'key', content: { type: SYMBOL, name: 'key_item' } },
-					{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'val_item' } }
-				]
-			},
-			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
-		};
-		// Post-wrapper-deletion (normalize/simplify) view of the same content:
-		// FIELD wrappers are gone — `fieldName` is stamped directly onto each
-		// leaf instead (see RuleBase's NormalizedPhase branch, types/rule.ts).
-		const normalizedContentRule: SimplifiedRule = {
-			type: SEQ,
-			members: [
-				{ type: SYMBOL, name: 'key_item', fieldName: 'key' },
-				{ type: SYMBOL, name: 'val_item', fieldName: 'value' }
-			]
-		};
-		const nodes = new Map<string, AssembledNode>();
-		nodes.set(
-			'multi_field_list',
-			new AssembledSeparatedList('multi_field_list', rule, undefined, {
-				separatorRule: undefined,
-				simplifiedRule: normalizedContentRule,
-				renderRule: normalizedContentRule
-			})
-		);
-		nodes.set('key_item', new AssembledPattern('key_item', { type: PATTERN, value: '[a-z]+' }));
-		nodes.set('val_item', new AssembledPattern('val_item', { type: PATTERN, value: '[0-9]+' }));
-		const nodeMap = makeNodeMapWith(nodes);
-		const entries: KindEnumEntry[] = [
-			{ id: 1, kind: 'multi_field_list', member: 'MultiFieldList' },
-			{ id: 2, kind: 'key_item', member: 'KeyItem' },
-			{ id: 3, kind: 'val_item', member: 'ValItem' }
-		];
-		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: entries });
-
-		// Each real per-field slot gets its OWN storage assignment + accessor —
-		// NOT a single hardcoded `_content`/`content()` bucket.
-		expect(emitted).toContain('_key:');
-		expect(emitted).toContain('key() {');
-		expect(emitted).toContain('_value:');
-		expect(emitted).toContain('value() {');
-		expect(emitted).not.toContain('_content:');
-		expect(emitted).not.toContain('content() {');
-
-		// The internal `_content` LOCAL (feeding only `_hasSeparatorFlank`/
-		// `_separatorKindOf`, never stored or exposed as an accessor) combines
-		// candidate keys from more than one real field here (`_key_item` AND
-		// `_val_item`), which don't share a common element type. Both the
-		// outer `normalizeRepeatedWrapSlot` and inner `_interleaveBySlotOrder`
-		// calls must carry an explicit `<unknown>` type argument — regressing
-		// either one back to bare inference reproduces the real
-		// EnumAssignment/PropertyName CI type error this shape was built to
-		// catch (TypeScript's `enum_body_elements`).
-		expect(emitted).toContain('const _content = normalizeRepeatedWrapSlot<unknown>(');
-		expect(emitted).toContain('_interleaveBySlotOrder<unknown>(');
 	});
 });

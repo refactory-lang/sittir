@@ -112,6 +112,23 @@ pnpm exec tsx packages/cli/src/cli.ts validate trace-rt <grammar> [options]
 
 Developer diagnostics
 
+### `tool assemble-shape-census`
+
+Census the rule shapes that reach each Assembled* constructor, grouped by modelType
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `--all-grammars` — Run all three grammars
+- `--format <fmt>` — Output format: table | json (default: `table`)
+- `--view <view>` — Which rule view to census: constructor | simplified | both (default: `both`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool assemble-shape-census [options]
+```
+
 ### `tool bench`
 
 Render benchmark comparing native (Askama) vs JS (Nunjucks)
@@ -194,25 +211,6 @@ Inspect kind classification through the compiler phases
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool classify [options]
-```
-
-### `tool compare-overrides`
-
-Compare override key sets between backup and current overrides.suggested.ts
-
-**Options**
-
-- `-g, --grammar <name>` — Grammar(s) to compare: rust|python|typescript|all (default: `all`)
-- `--backup-dir <dir>` — Directory containing <grammar>-grammar.sittir.ts backup files
-- `--backup-rust <file>` — Path to Rust overrides backup file
-- `--backup-python <file>` — Path to Python overrides backup file
-- `--backup-typescript <file>` — Path to TypeScript overrides backup file
-- `--suggested-dir <dir>` — Packages root for overrides.suggested.ts lookup
-
-**Example**
-
-```sh
-pnpm exec tsx packages/cli/src/cli.ts tool compare-overrides [options]
 ```
 
 ### `tool corpus-coverage-census`

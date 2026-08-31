@@ -69,6 +69,25 @@ they carry every ruling. Session memory: call `get_latest_session`.
   `examples/18-dogfood-typescript-strict.ts`, `tsconfig.json`,
   `packages/tools/validation-report.json`.
 
+## Ruling 3 is written
+
+`docs/superpowers/specs/2026-08-28-assemble-off-the-simplified-tree.md` —
+read it before touching assemble. Two views per kind (simplified = what is a
+slot; normalized = what is rendered); node types are the simplified rule
+types (`AssembledSymbol` / `AssembledBranch<SeqRule>` / `AssembledPolymorph`
+/ `AssembledEnum` / leaf / list) with `hidden` / `transparent` / `word` as
+facts; VARIANT and GROUP leave the rule vocabulary (they are not in the
+tree-sitter DSL); override-layer facts (variant arm names, role, refine,
+factoryInline) live in `AssembledNode.enrichment` — enrich itself is base
+(parser-visible) — and enriching emitters produce overlay modules
+(`variants.ts`) that extend the core emitters' output; `classifyNode`
+default → `unclassifiable-shape` diagnostic ratchet; simplify folds
+literal-only seqs to a `STRING` via the fixed-literal join; static spacing
+in normalize only where the seam census is static. Steps 3a → 3c → 3d → 3e
+→ 3f, 3b parked. Census numbers are in the spec; the probe is
+`ushape-census.mts` (scratch) until promoted to `sittir tool
+universal-shape-census`.
+
 ## Next steps, in order
 
 3. **Assemble never sees a wrapper.** Move the remaining `linkRules`
@@ -101,6 +120,12 @@ they carry every ruling. Session memory: call `get_latest_session`.
    narrow each strategy's exact return types (`RuleBuilder<P>.choice` is
    `Rule<P>`). Enrich keeps calling the globals — under tree-sitter's bundle
    they are tree-sitter's DSL.
+8. DONE (`77f742750`, branch `typed-builder-outputs` stacked on
+   `evaluate-through-builder`, PR #243): each strategy states the node it
+   returns — `StructuralBuilder` exact nodes / honest unions,
+   `AttributeBuilder` identity-preserving `<R>(…): R` with input-type
+   overloads for the recognitions; never conditional return types (they
+   force casts back into the builders). Stack: master ← #241 ← #242 ← #243.
 
 ## Tooling that works here
 

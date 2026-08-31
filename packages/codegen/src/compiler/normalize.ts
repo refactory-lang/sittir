@@ -19,14 +19,14 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
-import { deriveComplexAliasTargetHidden, isEnumChoiceRule, separatorFactsEqual } from '../dsl/rule-patterns.ts';
+import { deriveComplexAliasTargetHidden, isEnumChoiceRule, isHiddenRule, separatorFactsEqual } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
 import { attributeBuilder } from '../dsl/builders.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
-import { withAttrsFrom } from '../dsl/rule-attrs.ts';
-import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
+import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
+import { prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
@@ -67,11 +67,11 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 	const twinned = new Set<string>();
 	const supertypeNamed = new Set<string>();
 
-	const isHidden = (name: string): boolean => name.startsWith('_');
+	const isHidden = (name: string): boolean => isHiddenRule(name, rules);
 
 	const walk = (rule: Rule<'link'>, ownerTwinTarget: string | undefined): void => {
 		if (rule.type === SYMBOL) {
-			const name = rule.aliasedFrom ?? rule.name;
+			const name = rule.name;
 			if (isHidden(name)) {
 				refcount.set(name, (refcount.get(name) ?? 0) + 1);
 				if (ownerTwinTarget !== undefined && name === ownerTwinTarget) twinned.add(name);
@@ -80,7 +80,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 		}
 		if (rule.type === SUPERTYPE) {
 			for (const subRef of rule.subtypes) {
-				const sub = subRef.aliasedFrom ?? subRef.name;
+				const sub = subRef.name;
 				if (isHidden(sub)) supertypeNamed.add(sub);
 			}
 			return;
@@ -109,7 +109,7 @@ export function inlineHiddenSeqRefs(
 ): boolean {
 	const foldable = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
-		if (!name.startsWith('_')) continue;
+		if (!isHiddenRule(name, rules)) continue;
 		if (keepRef.has(name)) continue;
 		if (name === '_import_list') continue;
 		if (resolveGroupOrMultiInlineTarget(rule) !== null) foldable.add(name);
@@ -199,16 +199,15 @@ function materializeInlinedBody(
 	if (r.separator !== undefined) carry.separator = r.separator;
 	if (r.fieldName !== undefined) carry.fieldName = r.fieldName;
 
-	const meta = { ...body.metadata, inlinedFrom };
-
-	if (body.type === SEQ) {
-		return { ...body, ...carry, metadata: meta, splicedBody: true } as Rule<'link'>;
+	const { hidden: _sourceKindHidden, ...spliced } = body;
+	if (spliced.type === SEQ) {
+		return { ...spliced, ...carry, inlinedFrom, splicedBody: true } as Rule<'link'>;
 	}
 	return {
 		type: SEQ,
-		members: [body],
+		members: [spliced as Rule<'link'>],
 		...carry,
-		metadata: meta,
+		inlinedFrom,
 		splicedBody: true
 	} as Rule<'link'>;
 }
@@ -259,7 +258,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	}
 
 	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
-	for (const [parentKind, targetNames] of deriveStructuralVariantChildren(linked.rules)) {
+	for (const [parentKind, targetNames] of linked.variantChildren ?? []) {
 		variantSkip.add(parentKind);
 		for (const targetName of targetNames) {
 			const suffix = prefixNamedSuffix(parentKind, targetName);
@@ -270,7 +269,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	const normalizedGrammarView: NormalizedGrammar = {
 		name: linked.name,
 		rules: normalizedRules,
-		linkRules: rules,
 		supertypes: linked.supertypes,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
@@ -282,6 +280,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
+		variantChildren: linked.variantChildren,
 		refineForms: linked.refineForms
 	};
 	const simplifiedRules = computeSimplifiedRules(
@@ -305,8 +304,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		const aliasBodiesRender = flattenRules(aliasBodiesNormalized);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
-			rules: aliasBodiesRender,
-			linkRules: aliasBodiesNormalized
+			rules: aliasBodiesRender
 		};
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({
@@ -319,7 +317,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			})
 		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			normalizedRules[kind] = rule;
+			const own = normalizedRules[kind];
+			normalizedRules[kind] = own === undefined ? rule : withKindFacts(rule, own);
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;
@@ -328,7 +327,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	return {
 		name: linked.name,
-		linkRules: rules,
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
@@ -343,7 +341,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
-		visibleAliasTargets: linked.visibleAliasTargets
+		visibleAliasTargets: linked.visibleAliasTargets,
+		variantChildren: linked.variantChildren
 	};
 }
 
@@ -507,7 +506,7 @@ function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserv
 		const refCounts = countReferences(work);
 		let changed = false;
 		for (const [name, rule] of Object.entries(work)) {
-			if (!name.startsWith('_')) continue;
+			if (!isHiddenRule(name, work)) continue;
 			if (isStructurallyMeaningfulHiddenRule(rule)) continue;
 			if (preserveKinds?.has(name)) continue;
 			const uses = refCounts.get(name) ?? 0;
@@ -624,7 +623,7 @@ function countReferences(rules: Record<string, Rule<'link'>>): Map<string, numbe
 function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 	switch (rule.type) {
 		case SYMBOL:
-			visit(rule.aliasedFrom ?? rule.name);
+			visit(rule.name);
 			return;
 		case SEQ:
 		case CHOICE:
@@ -640,7 +639,7 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 			walkSymbols(rule.content, visit);
 			return;
 		case SUPERTYPE:
-			for (const subRef of rule.subtypes) visit(subRef.aliasedFrom ?? subRef.name);
+			for (const subRef of rule.subtypes) visit(subRef.name);
 			return;
 	}
 }
@@ -648,7 +647,10 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
-			if (rule.name === targetName) return targetRule;
+			if (rule.name === targetName && rule.inline === true) {
+				const { hidden: _sourceKindHidden, ...spliced } = targetRule;
+				return rebaseRuleIds(spliced as Rule<'link'>, rule.id ?? targetRule.id);
+			}
 			return rule;
 		case SEQ: {
 			let changed = false;
@@ -746,7 +748,7 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 		case PATTERN:
 			return a.value === (b as typeof a).value;
 		case SYMBOL:
-			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
+			return a.name === (b as typeof a).name && a.aliasedTo === (b as typeof a).aliasedTo;
 		case SEQ:
 			return (
 				a.members.length === (b as typeof a).members.length &&

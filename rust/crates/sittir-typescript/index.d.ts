@@ -110,8 +110,8 @@ export interface AbstractMethodSignatureTransport {
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override_modifier?: SlotValue<OverrideModifierTransport>
   _accessor_kind?: SlotValue<Box<AnyTransport>>
-  _name: SlotValue<PropertyNameTransport>
-  _optional_marker?: SlotValue<KwOptionalMarkerTransport>
+  _name: SlotValue<AbstractMethodSignatureNameTransportSlot>
+  _optional_marker?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<AbstractMethodSignatureReturnTypeTransportSlot>
@@ -149,7 +149,7 @@ export interface AmbientDeclarationModuleTransport {
   '$triviaData'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
-  _semicolon?: SlotValue<SemicolonEnum>
+  _semicolon?: SlotValue<AmbientDeclarationModuleSemicolonTransportSlot>
 }
 
 export interface AmbientDeclarationTransport {
@@ -286,7 +286,7 @@ export interface AssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _using_marker?: boolean
+  _using_marker?: SlotValue<KwUsingMarkerTransport>
   _left: SlotValue<Box<AssignmentExpressionLeftTransportSlot>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
@@ -311,7 +311,7 @@ export interface AugmentedAssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: SlotValue<Box<AugmentedAssignmentLhsTransport>>
+  _left: SlotValue<Box<AugmentedAssignmentExpressionLeftTransportSlot>>
   _operator: SlotValue<AugmentedAssignmentExpressionOperatorEnum>
   _right: SlotValue<Box<ExpressionTransport>>
 }
@@ -362,7 +362,7 @@ export interface BreakStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _label?: SlotValue<IdentifierTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<BreakStatementSemicolonTransportSlot>
 }
 
 export interface CallExpressionCallTransport {
@@ -412,19 +412,6 @@ export interface CallExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: SlotValue<Box<CallExpressionContentTransportSlot>>
-}
-
-export interface CallSignatureTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type_parameters?: SlotValue<TypeParametersTransport>
-  _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<_CallSignatureReturnTypeTransportSlot>
 }
 
 export interface CallSignatureTransport {
@@ -497,7 +484,7 @@ export interface ClassBodyMethodTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _semicolon?: SlotValue<SemicolonEnum>
+  _semicolon?: SlotValue<ClassBodyMethodSemicolonTransportSlot>
   _method_definition: SlotValue<MethodDefinitionTransport>
 }
 
@@ -652,7 +639,7 @@ export interface ContinueStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _label?: SlotValue<IdentifierTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<ContinueStatementSemicolonTransportSlot>
 }
 
 export interface DebuggerStatementTransport {
@@ -663,7 +650,7 @@ export interface DebuggerStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<DebuggerStatementSemicolonTransportSlot>
 }
 
 export interface DecoratorCallExpressionTransport {
@@ -734,7 +721,7 @@ export interface DoStatementTransport {
   '$triviaData'?: TransportTrivia
   _body: SlotValue<Box<StatementTransport>>
   _condition: SlotValue<ParenthesizedExpressionTransport>
-  _semicolon?: SlotValue<SemicolonEnum>
+  _semicolon?: SlotValue<DoStatementSemicolonTransportSlot>
 }
 
 export interface ElseClauseTransport {
@@ -760,7 +747,7 @@ export interface EnumAssignmentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: SlotValue<PropertyNameTransport>
+  _name: SlotValue<EnumAssignmentNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
 }
 
@@ -811,17 +798,6 @@ export interface ExportClauseTransport {
   _export_specifiers?: SlotValue<ExportSpecifiersTransport>
 }
 
-export interface ExportSpecifierOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _alias: SlotValue<ModuleExportNameTransport>
-}
-
 export interface ExportSpecifiersTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -843,8 +819,8 @@ export interface ExportSpecifierTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_kind?: SlotValue<Box<AnyTransport>>
-  _name: SlotValue<ModuleExportNameTransport>
-  _alias?: SlotValue<ModuleExportNameTransport>
+  _name: SlotValue<ExportSpecifierNameTransportSlot>
+  _alias?: SlotValue<ExportSpecifierAliasTransportSlot>
 }
 
 export interface ExportStatementDefaultClauseFromTransport {
@@ -891,7 +867,7 @@ export interface ExportStatementDefaultFromArmTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: SlotValue<ExportStatementDefaultFromArmContentTransportSlot>
-  _semicolon: SlotValue<SemicolonEnum>
+  _automatic_semicolon: SlotValue<ExportStatementDefaultFromArmAutomaticSemicolonTransportSlot>
 }
 
 export interface ExportStatementDefaultNsFromTransport {
@@ -937,7 +913,7 @@ export interface ExportStatementDefaultValueTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _automatic_semicolon: SlotValue<ExportStatementDefaultValueAutomaticSemicolonTransportSlot>
 }
 
 export interface ExportStatementEqualsExportTransport {
@@ -949,7 +925,7 @@ export interface ExportStatementEqualsExportTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<ExportStatementEqualsExportSemicolonTransportSlot>
 }
 
 export interface ExportStatementNamespaceExportTransport {
@@ -961,7 +937,7 @@ export interface ExportStatementNamespaceExportTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _identifier: SlotValue<IdentifierTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<ExportStatementNamespaceExportSemicolonTransportSlot>
 }
 
 export interface ExportStatementTransport {
@@ -985,7 +961,7 @@ export interface ExportStatementTypeExportTransport {
   '$triviaData'?: TransportTrivia
   _export_clause: SlotValue<ExportClauseTransport>
   _source?: SlotValue<StringTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<ExportStatementTypeExportSemicolonTransportSlot>
 }
 
 export interface ExpressionStatementTransport {
@@ -996,8 +972,8 @@ export interface ExpressionStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _semicolon: SlotValue<SemicolonEnum>
-  _expressions: SlotValue<ExpressionsTransport>
+  _semicolon: SlotValue<ExpressionStatementSemicolonTransportSlot>
+  _expressions: SlotValue<ExpressionStatementExpressionsTransportSlot>
 }
 
 export interface ExtendsClauseSingleTransport {
@@ -1032,20 +1008,6 @@ export interface ExtendsTypeClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<SlotValue<ExtendsTypeClauseTypeTransportSlot>>
-}
-
-export interface FieldDefinitionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _decorator?: Array<SlotValue<DecoratorTransport>>
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
-  _property: SlotValue<PropertyNameTransport>
-  _value?: SlotValue<ExpressionTransport>
 }
 
 export interface FinallyClauseTransport {
@@ -1094,19 +1056,6 @@ export interface ForHeaderLhsTransport {
   _left: SlotValue<ForHeaderLhsLeftTransportSlot>
 }
 
-export interface ForHeaderTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _operator: SlotValue<ForHeaderOperatorEnum>
-  _right: SlotValue<ExpressionsTransport>
-  _content: SlotValue<ForHeaderContentTransportSlot>
-}
-
 export interface ForHeaderVarKindTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1127,9 +1076,9 @@ export interface ForInStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _await_marker?: boolean
+  _await_marker?: SlotValue<KwAwaitMarkerTransport>
   _operator: SlotValue<ForHeaderOperatorEnum>
-  _right: SlotValue<ExpressionsTransport>
+  _right: SlotValue<ForInStatementRightTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
   _content: SlotValue<ForInStatementContentTransportSlot>
 }
@@ -1142,7 +1091,7 @@ export interface FormalParametersElementsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _formal_parameter: Array<SlotValue<FormalParameterTransport>>
+  _formal_parameter: Array<SlotValue<FormalParametersElementsFormalParameterTransportSlot>>
   _delimiter?: number
 }
 
@@ -1167,19 +1116,8 @@ export interface ForStatementTransport {
   '$triviaData'?: TransportTrivia
   _initializer: SlotValue<ForStatementInitializerTransportSlot>
   _condition: SlotValue<ForStatementConditionTransportSlot>
-  _increment?: SlotValue<ExpressionsTransport>
+  _increment?: SlotValue<ForStatementIncrementTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
-}
-
-export interface FromClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _source: SlotValue<StringTransport>
 }
 
 export interface FunctionDeclarationTransport {
@@ -1323,7 +1261,7 @@ export interface ImportAliasTransport {
   '$triviaData'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _value: SlotValue<ImportAliasValueTransportSlot>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<ImportAliasSemicolonTransportSlot>
 }
 
 export interface ImportAttributeTransport {
@@ -1346,7 +1284,7 @@ export interface ImportClauseDefaultImportTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _import_identifier: SlotValue<ImportIdentifierTransport>
+  _identifier: SlotValue<ImportClauseDefaultImportIdentifierTransportSlot>
   _import_clause_group?: SlotValue<ImportClauseGroupTransport>
 }
 
@@ -1393,7 +1331,7 @@ export interface ImportSpecifierAsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: SlotValue<ImportSpecifierAsNameTransportSlot>
-  _alias: SlotValue<ImportIdentifierTransport>
+  _alias: SlotValue<ImportSpecifierAsAliasTransportSlot>
 }
 
 export interface ImportSpecifiersTransport {
@@ -1443,7 +1381,7 @@ export interface ImportStatementTransport {
   _import_clause?: SlotValue<Box<AnyTransport>>
   _from_clause: SlotValue<ImportStatementFromClauseTransportSlot>
   _import_attribute?: SlotValue<ImportAttributeTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<ImportStatementSemicolonTransportSlot>
 }
 
 export interface IndexSignatureColonTransport {
@@ -1458,17 +1396,6 @@ export interface IndexSignatureColonTransport {
   _index_type: SlotValue<TypeTransport>
 }
 
-export interface IndexSignatureOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _sign?: SlotValue<Box<AnyTransport>>
-}
-
 export interface IndexSignatureTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1478,7 +1405,7 @@ export interface IndexSignatureTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _sign?: SlotValue<Box<AnyTransport>>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
+  _readonly_marker?: boolean
   _type: SlotValue<IndexSignatureTypeTransportSlot>
   _content: SlotValue<IndexSignatureContentTransportSlot>
 }
@@ -1494,17 +1421,6 @@ export interface IndexTypeQueryTransport {
   _primary_type: SlotValue<Box<PrimaryTypeTransport>>
 }
 
-export interface InferTypeOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type: SlotValue<TypeTransport>
-}
-
 export interface InferTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1515,17 +1431,6 @@ export interface InferTypeTransport {
   '$triviaData'?: TransportTrivia
   _type_identifier: SlotValue<IdentifierTransport>
   _type?: SlotValue<Box<TypeTransport>>
-}
-
-export interface InitializerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _value: SlotValue<ExpressionTransport>
 }
 
 export interface InstantiationExpressionTransport {
@@ -1578,135 +1483,6 @@ export interface IntersectionTypeTransport {
   _right: SlotValue<Box<TypeTransport>>
 }
 
-export interface JsxAttributeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _jsx_attribute_name: SlotValue<JsxAttributeNameTransport>
-  _jsx_attribute_value?: SlotValue<JsxAttributeValueTransport>
-}
-
-export interface JsxClosingElementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _name?: SlotValue<JsxElementNameTransport>
-}
-
-export interface JsxElementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _open_tag: SlotValue<JsxOpeningElementTransport>
-  _jsx_childs?: Array<SlotValue<JsxChildTransport>>
-  _close_tag: SlotValue<JsxClosingElementTransport>
-}
-
-export interface JsxExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _expression?: SlotValue<JsxExpressionExpressionTransportSlot>
-}
-
-export interface JsxNamespaceNameTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _namespace: SlotValue<_JsxIdentifierTransport>
-  _name: SlotValue<_JsxIdentifierTransport>
-}
-
-export interface JsxOpeningElementContentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _name?: SlotValue<JsxOpeningElementContentNameTransportSlot>
-  _attribute?: Array<SlotValue<_JsxAttributeTransport>>
-  _jsx_start_opening_element_arm?: SlotValue<JsxStartOpeningElementArmTransport>
-}
-
-export interface JsxOpeningElementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _jsx_opening_element_content?: SlotValue<JsxOpeningElementContentTransport>
-}
-
-export interface JsxSelfClosingElementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _jsx_opening_element_content?: SlotValue<JsxOpeningElementContentTransport>
-}
-
-export interface JsxStartOpeningElementArmTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _name: SlotValue<JsxStartOpeningElementArmNameTransportSlot>
-  _type_arguments?: SlotValue<TypeArgumentsTransport>
-}
-
-export interface JsxStartOpeningElementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _jsx_opening_element_content?: SlotValue<JsxOpeningElementContentTransport>
-}
-
-export interface JsxStringTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _elements?: Array<SlotValue<JsxStringElementsTransportSlot>>
-  _elements_2?: Array<SlotValue<JsxStringElements2TransportSlot>>
-}
-
 export interface LabeledStatementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1729,7 +1505,7 @@ export interface LexicalDeclarationTransport {
   '$triviaData'?: TransportTrivia
   _kind: SlotValue<KindEnum>
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<LexicalDeclarationSemicolonTransportSlot>
 }
 
 export interface LiteralTypeTransport {
@@ -1753,17 +1529,6 @@ export interface LookupTypeTransport {
   '$triviaData'?: TransportTrivia
   _primary_type: SlotValue<Box<PrimaryTypeTransport>>
   _index_type: SlotValue<Box<TypeTransport>>
-}
-
-export interface MappedTypeClauseOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _alias: SlotValue<TypeTransport>
 }
 
 export interface MappedTypeClauseTransport {
@@ -1814,11 +1579,11 @@ export interface MethodDefinitionTransport {
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static_marker?: SlotValue<KwStaticMarkerTransport>
   _override_modifier?: SlotValue<OverrideModifierTransport>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
+  _readonly_marker?: boolean
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _accessor_kind?: SlotValue<Box<AnyTransport>>
-  _name: SlotValue<PropertyNameTransport>
-  _optional_marker?: SlotValue<KwOptionalMarkerTransport>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
+  _optional_marker?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodDefinitionReturnTypeTransportSlot>
@@ -1836,11 +1601,11 @@ export interface MethodSignatureTransport {
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static_marker?: SlotValue<KwStaticMarkerTransport>
   _override_modifier?: SlotValue<OverrideModifierTransport>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
+  _readonly_marker?: boolean
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _accessor_kind?: SlotValue<Box<AnyTransport>>
-  _name: SlotValue<PropertyNameTransport>
-  _optional_marker?: SlotValue<KwOptionalMarkerTransport>
+  _name: SlotValue<MethodSignatureNameTransportSlot>
+  _optional_marker?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodSignatureReturnTypeTransportSlot>
@@ -1855,18 +1620,6 @@ export interface ModuleTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: SlotValue<ModuleNameTransportSlot>
-  _body?: SlotValue<StatementBlockTransport>
-}
-
-export interface ModuleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _name: SlotValue<_ModuleNameTransportSlot>
   _body?: SlotValue<StatementBlockTransport>
 }
 
@@ -1889,7 +1642,7 @@ export interface NamespaceExportTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _module_export_name: SlotValue<ModuleExportNameTransport>
+  _module_export_name: SlotValue<NamespaceExportModuleExportNameTransportSlot>
 }
 
 export interface NamespaceImportTransport {
@@ -2054,7 +1807,7 @@ export interface OptionalParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
+  _readonly_marker?: boolean
   _pattern: SlotValue<OptionalParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -2093,7 +1846,7 @@ export interface PairPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _key: SlotValue<PropertyNameTransport>
+  _key: SlotValue<PairPatternKeyTransportSlot>
   _value: SlotValue<PairPatternValueTransportSlot>
 }
 
@@ -2105,23 +1858,8 @@ export interface PairTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _key: SlotValue<PropertyNameTransport>
+  _key: SlotValue<PairKeyTransportSlot>
   _value: SlotValue<ExpressionTransport>
-}
-
-export interface ParameterNameTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _decorator?: Array<SlotValue<DecoratorTransport>>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
-  _pattern: SlotValue<ParameterNamePatternTransportSlot>
-  _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
 }
 
 export interface ParenthesizedExpressionTransport {
@@ -2181,9 +1919,9 @@ export interface PropertySignatureTransport {
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static_marker?: SlotValue<KwStaticMarkerTransport>
   _override_modifier?: SlotValue<OverrideModifierTransport>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
-  _name: SlotValue<PropertyNameTransport>
-  _optional_marker?: SlotValue<KwOptionalMarkerTransport>
+  _readonly_marker?: boolean
+  _name: SlotValue<PropertySignatureNameTransportSlot>
+  _optional_marker?: boolean
   _type?: SlotValue<TypeAnnotationTransport>
 }
 
@@ -2199,10 +1937,10 @@ export interface PublicFieldDefinitionTransport {
   _declare_marker?: SlotValue<KwDeclareMarkerTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static_marker?: SlotValue<KwStaticMarkerTransport>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
+  _readonly_marker?: boolean
   _abstract_marker?: SlotValue<KwAbstractMarkerTransport>
-  _accessor_marker?: boolean
-  _name: SlotValue<PropertyNameTransport>
+  _accessor_marker?: SlotValue<KwAccessorMarkerTransport>
+  _name: SlotValue<PublicFieldDefinitionNameTransportSlot>
   _optionality_marker?: SlotValue<Box<AnyTransport>>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -2241,7 +1979,7 @@ export interface RequiredParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _readonly_marker?: SlotValue<KwReadonlyMarkerTransport>
+  _readonly_marker?: boolean
   _pattern: SlotValue<RequiredParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -2257,7 +1995,7 @@ export interface RestPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _lhs_expression: SlotValue<_LhsExpressionTransport>
+  _lhs_expression: SlotValue<RestPatternLhsExpressionTransportSlot>
 }
 
 export interface RestTypeTransport {
@@ -2279,8 +2017,8 @@ export interface ReturnStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _semicolon: SlotValue<SemicolonEnum>
-  _expressions?: SlotValue<ExpressionsTransport>
+  _semicolon: SlotValue<ReturnStatementSemicolonTransportSlot>
+  _expressions?: SlotValue<ReturnStatementExpressionsTransportSlot>
 }
 
 export interface SatisfiesExpressionTransport {
@@ -2372,7 +2110,7 @@ export interface SubscriptExpressionTransport {
   '$triviaData'?: TransportTrivia
   _object: SlotValue<Box<SubscriptExpressionObjectTransportSlot>>
   _optional_chain?: SlotValue<OptionalChainTransport>
-  _index: SlotValue<Box<ExpressionsTransport>>
+  _index: SlotValue<Box<SubscriptExpressionIndexTransportSlot>>
 }
 
 export interface SwitchBodyTransport {
@@ -2394,7 +2132,7 @@ export interface SwitchCaseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: SlotValue<ExpressionsTransport>
+  _value: SlotValue<SwitchCaseValueTransportSlot>
   _body?: Array<SlotValue<StatementTransport>>
 }
 
@@ -2451,7 +2189,7 @@ export interface TemplateSubstitutionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expressions: SlotValue<ExpressionsTransport>
+  _expressions: SlotValue<TemplateSubstitutionExpressionsTransportSlot>
 }
 
 export interface TemplateTypeTransport {
@@ -2486,8 +2224,8 @@ export interface ThrowStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _semicolon: SlotValue<SemicolonEnum>
-  _expressions: SlotValue<ExpressionsTransport>
+  _semicolon: SlotValue<ThrowStatementSemicolonTransportSlot>
+  _expressions: SlotValue<ThrowStatementExpressionsTransportSlot>
 }
 
 export interface TryStatementTransport {
@@ -2523,7 +2261,7 @@ export interface TupleTypeMembersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _tuple_type_member: Array<SlotValue<TupleTypeMemberTransport>>
+  _tuple_type_member: Array<SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>
   _delimiter?: number
 }
 
@@ -2549,7 +2287,7 @@ export interface TypeAliasDeclarationTransport {
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _value: SlotValue<TypeTransport>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<TypeAliasDeclarationSemicolonTransportSlot>
 }
 
 export interface TypeAnnotationTransport {
@@ -2810,7 +2548,7 @@ export interface VariableDeclarationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
-  _semicolon: SlotValue<SemicolonEnum>
+  _semicolon: SlotValue<VariableDeclarationSemicolonTransportSlot>
 }
 
 export interface VariableDeclaratorArm1Transport {

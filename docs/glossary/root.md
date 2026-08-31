@@ -400,8 +400,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // and before any validation runs. Always happens regardless of --roundtrip,
 // because the manifest needs to track the current on-disk state for any
 // downstream validator (this function's roundtrip probes OR the external
-// validator CLI). The only post-validation write is overrides.suggested.ts,
-// which is intentionally excluded from the manifest (see pathsFor()).
+// validator CLI). Nothing is written after validation runs.
 ```
 
 #### body
@@ -411,8 +410,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // grouped by emitter, working tree vs HEAD. Convenience only — skipped under
 // --no-emit-diff and silently when git is unavailable. Printed here (right
 // after the manifest write, before validation) so it reflects the same on-disk
-// state the manifest just captured; overrides.suggested.ts is excluded from
-// the tracked roots, so the later validation write does not muddy the report.
+// state the manifest just captured.
 ```
 
 #### body

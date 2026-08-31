@@ -105076,6 +105076,7 @@
                 "$type": 386,
                 "$source": 0,
                 "$named": true,
+                "_identifier": "UserID",
                 "_import_clause_group": {
                   "$type": 374,
                   "$source": 0,
@@ -105149,8 +105150,7 @@
                 "$slotOrder": [
                   "identifier",
                   "import_clause_group"
-                ],
-                "_import_identifier": "UserID"
+                ]
               }
             },
             "_source": {
@@ -105229,12 +105229,12 @@
                 "$type": 386,
                 "$source": 0,
                 "$named": true,
+                "_identifier": "type",
                 "$span": {
                   "start": 219,
                   "end": 223
                 },
-                "$nodeHandle": 326417514654,
-                "_import_identifier": "type"
+                "$nodeHandle": 326417514654
               }
             },
             "_source": {
@@ -105312,6 +105312,7 @@
                 "$type": 386,
                 "$source": 0,
                 "$named": true,
+                "_identifier": "type",
                 "_import_clause_group": {
                   "$type": 374,
                   "$source": 0,
@@ -105371,8 +105372,7 @@
                 "$slotOrder": [
                   "identifier",
                   "import_clause_group"
-                ],
-                "_import_identifier": "type"
+                ]
               }
             },
             "_source": {
@@ -106064,6 +106064,7 @@
                 "$type": 386,
                 "$source": 0,
                 "$named": true,
+                "_identifier": "type",
                 "_import_clause_group": {
                   "$type": 374,
                   "$source": 0,
@@ -106142,8 +106143,7 @@
                 "$slotOrder": [
                   "identifier",
                   "import_clause_group"
-                ],
-                "_import_identifier": "type"
+                ]
               }
             },
             "_source": {
@@ -106683,6 +106683,7 @@
             "$type": 386,
             "$source": 0,
             "$named": true,
+            "_identifier": "UserID",
             "_import_clause_group": {
               "$type": 374,
               "$source": 0,
@@ -106756,8 +106757,7 @@
             "$slotOrder": [
               "identifier",
               "import_clause_group"
-            ],
-            "_import_identifier": "UserID"
+            ]
           }
         },
         "_source": {
@@ -106852,12 +106852,12 @@
             "$type": 386,
             "$source": 0,
             "$named": true,
+            "_identifier": "type",
             "$span": {
               "start": 219,
               "end": 223
             },
-            "$nodeHandle": 326417514751,
-            "_import_identifier": "type"
+            "$nodeHandle": 326417514751
           }
         },
         "_source": {
@@ -106951,6 +106951,7 @@
             "$type": 386,
             "$source": 0,
             "$named": true,
+            "_identifier": "type",
             "_import_clause_group": {
               "$type": 374,
               "$source": 0,
@@ -107010,8 +107011,7 @@
             "$slotOrder": [
               "identifier",
               "import_clause_group"
-            ],
-            "_import_identifier": "type"
+            ]
           }
         },
         "_source": {
@@ -107799,6 +107799,7 @@
             "$type": 386,
             "$source": 0,
             "$named": true,
+            "_identifier": "type",
             "_import_clause_group": {
               "$type": 374,
               "$source": 0,
@@ -107877,8 +107878,7 @@
             "$slotOrder": [
               "identifier",
               "import_clause_group"
-            ],
-            "_import_identifier": "type"
+            ]
           }
         },
         "_source": {
@@ -162996,12 +162996,12 @@
                 "$type": 386,
                 "$source": 0,
                 "$named": true,
+                "_identifier": "something",
                 "$span": {
                   "start": 7,
                   "end": 16
                 },
-                "$nodeHandle": 476741369871,
-                "_import_identifier": "something"
+                "$nodeHandle": 476741369871
               }
             },
             "_source": {
@@ -163179,12 +163179,12 @@
             "$type": 386,
             "$source": 0,
             "$named": true,
+            "_identifier": "something",
             "$span": {
               "start": 7,
               "end": 16
             },
-            "$nodeHandle": 476741369881,
-            "_import_identifier": "something"
+            "$nodeHandle": 476741369881
           }
         },
         "_source": {

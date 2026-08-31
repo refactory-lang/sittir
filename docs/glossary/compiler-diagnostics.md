@@ -187,77 +187,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * @param inSlotPosition - True when `rule` occupies a slot-creating position:
- *   inside a repeat/optional content, inside a choice arm, or as the top-level
- *   body of an inline-listed (auto-group helper) kind.
- * @param inChoiceArm - True when `rule` is directly inside a choice arm.
- *   Multi-slot seqs in choice arms are handled by collectSlots' union semantics
- *   (a choice is a single slot boundary regardless of arm content) and are NOT
- *   genuine group-lift violations. Only repeat/optional positions are genuine.
- *   This flag lets checkSeq distinguish the two sources of inSlotPosition.
+ * Walk the simplified rule looking for seqs in slot position. On the
+ * simplified view a slot position is a choice arm (every arm is one slot
+ * candidate) or the top level of a kind that is inlined into its parents
+ * (`inlineKinds`); seq and variant/group members inherit their parent's
+ * position. Wrapper-carried positions (repeat / optional / field content)
+ * do not exist here — those wrappers are attributes on the wrapped node.
  */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Walk — visits seq and repeat/repeat1 nodes tracking slot position
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Only check if in a slot-creating position — a top-level rule body
-// seq is the rule itself, not a nested seq inside a slot.
-```
-
-#### body
-
-```text
-// Recurse into members. A seq member's position context is inherited
-// from the current position (a nested seq inside another seq that is
-// already in slot position is also in slot position).
-```
-
-#### body
-
-```text
-// Content of a repeat is in slot position (genuine group-lift position).
-```
-
-```text
-/* inSlotPosition= */
-```
-
-```text
-/* inChoiceArm= */
-```
-
-#### body
-
-```text
-// Each choice arm is in slot position per collectSlots' union semantics,
-// but this is a CHOICE-ARM position — seqs here are NOT genuine
-// group-lift violations (the choice already forms a single union slot).
-```
-
-#### body
-
-```text
-// Simplified rules normally have wrappers deleted, but handle
-// defensively. Content is in slot position (genuine group-lift position).
-```
-
-#### body
-
-```text
-// Transparent structural wrappers — propagate current slot position.
-```
-
-#### body
-
-```text
-// Leaf — nothing to walk.
 ```
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::countSlots`
@@ -370,7 +306,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::isContentSlot`
 
 ```text
-/** A slot boundary that resolves to the generic `content` storage name. */
+/** A slot boundary that resolves to the generic `content` storage name. A
+ *  fielded slot (`fieldName` set) or an inlined-body slot (`inlinedFrom`
+ *  set — see {@link RuleBase.inlinedFrom}, types/rule.ts) is never a
+ *  content slot regardless of its kind profile: both already carry a
+ *  meaningful name of their own (the field name; the fallback name
+ *  `projectSlotNaming` derives from `inlinedFrom`), so grouping them under
+ *  the generic content-slot count would double-count a slot this
+ *  diagnostic's collision check already has a real name for.
+ */
 ```
 
 ```text
@@ -617,42 +561,3 @@ construction sites, so this override never touches them.
 // (inChoiceArm === false) are genuine group-lift candidates.
 ```
 
-### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::checkRepeat`
-
-```text
-// ---------------------------------------------------------------------------
-// Shape ② and ③: repeat / repeat1 of symbol/supertype or choice-with-literal
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Shape ③: repeat(choice(..., literal, ...)) — heterogeneous; flag as ambiguous.
-```
-
-#### body
-
-```text
-// No literal in the choice → single union slot → shape ②.
-```
-
-#### body
-
-```text
-// Shape ②: repeat/repeat1 of a single symbol or supertype (not field-named).
-```
-
-### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::checkRepeatOfSymbol`
-
-#### body
-
-```text
-// Only symbol or supertype, or a choice of symbols/supertypes (all union, no literals).
-```
-
-#### body
-
-```text
-// Already field-named → the author has already named this slot → silent.
-```

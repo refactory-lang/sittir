@@ -27,7 +27,14 @@ import type {
 	ImmediateTokenRule,
 	IndentRule,
 	NewlineRule,
+	OptionalRule,
 	PatternRule,
+	PrecDynamicRule,
+	PrecLeftRule,
+	PrecRightRule,
+	PrecRule,
+	Repeat1Rule,
+	RepeatRule,
 	PhaseName,
 	Rule,
 	RuleId,
@@ -38,9 +45,11 @@ import type {
 	TokenRule,
 	VariantRule
 } from '../types/rule.ts';
+import { sym } from '../types/rule.ts';
 import { isSpliceableBareSeq } from './rule-patterns.ts';
 import { withAttrsFrom } from './rule-attrs.ts';
 import { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
+import { withId } from './rule-attrs.ts';
 import { makeRuleMetadata } from './rule-metadata.ts';
 
 export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
@@ -51,9 +60,9 @@ export interface TokenBuilder<P extends PhaseName> {
 }
 
 export interface PrecBuilder<P extends PhaseName> {
-	(value: number, content: Rule<P>): Rule<P>;
-	left(value: number, content: Rule<P>): Rule<P>;
-	right(value: number, content: Rule<P>): Rule<P>;
+	(value: number | string, content: Rule<P>): Rule<P>;
+	left(value: number | string, content: Rule<P>): Rule<P>;
+	right(value: number | string, content: Rule<P>): Rule<P>;
 	dynamic(value: number, content: Rule<P>): Rule<P>;
 }
 
@@ -83,18 +92,58 @@ export interface StructuralToken extends TokenBuilder<'evaluate'> {
 	immediate(content: Rule<'evaluate'>): ImmediateTokenRule<'evaluate'>;
 }
 
+export interface StructuralPrec extends PrecBuilder<'evaluate'> {
+	(value: number | string, content: Rule<'evaluate'>): PrecRule<'evaluate'>;
+	left(value: number | string, content: Rule<'evaluate'>): PrecLeftRule<'evaluate'>;
+	right(value: number | string, content: Rule<'evaluate'>): PrecRightRule<'evaluate'>;
+	dynamic(value: number, content: Rule<'evaluate'>): PrecDynamicRule<'evaluate'>;
+}
+
 export interface StructuralBuilder extends RuleBuilder<'evaluate'> {
+	seq(...members: Rule<'evaluate'>[]): SeqRule<'evaluate'>;
+	choice(...members: Rule<'evaluate'>[]): ChoiceRule<'evaluate'> | FieldRule<'evaluate'>;
+	optional(content: Rule<'evaluate'>): OptionalRule<'evaluate'> | RepeatRule<'evaluate'>;
+	repeat(content: Rule<'evaluate'>): RepeatRule<'evaluate'>;
+	repeat1(content: Rule<'evaluate'>): Repeat1Rule<'evaluate'>;
 	field(name: string, content: Rule<'evaluate'>): FieldRule<'evaluate'>;
 	alias(content: Rule<'evaluate'>, target: string | SymbolRule<'evaluate'>): AliasRule<'evaluate'>;
 	token: StructuralToken;
+	prec: StructuralPrec;
+}
+
+type Built = Rule<'normalize'>;
+type BuiltSeq = SeqRule<'normalize'>;
+type BuiltString = StringRule<'normalize'>;
+type Stampable = Exclude<Built, BuiltSeq>;
+type StampableNonLiteral = Exclude<Built, BuiltSeq | BuiltString>;
+
+export interface AttributeToken extends TokenBuilder<'normalize'> {
+	<R extends Built>(content: R): R;
+	immediate<R extends Built>(content: R): R;
+}
+
+export interface AttributePrec extends PrecBuilder<'normalize'> {
+	<R extends Built>(value: number | string, content: R): R;
+	left<R extends Built>(value: number | string, content: R): R;
+	right<R extends Built>(value: number | string, content: R): R;
+	dynamic<R extends Built>(value: number, content: R): R;
 }
 
 export interface AttributeBuilder extends RuleBuilder<'normalize'> {
-	choice(...members: Rule<'normalize'>[]): ChoiceRule<'normalize'>;
-}
-
-export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
-	return id !== undefined ? { ...rule, id } : rule;
+	choice(...members: Built[]): ChoiceRule<'normalize'>;
+	optional(content: BuiltSeq | BuiltString): Built;
+	optional<R extends StampableNonLiteral>(content: R): R;
+	optional(content: Built): Built;
+	repeat(content: BuiltSeq): Built;
+	repeat<R extends Stampable>(content: R): R;
+	repeat(content: Built): Built;
+	repeat1(content: BuiltSeq): Built;
+	repeat1<R extends Stampable>(content: R): R;
+	repeat1(content: Built): Built;
+	field<R extends Built>(name: string, content: R): R;
+	alias<R extends Built>(content: R, target: string | SymbolRule<'normalize'>): R;
+	token: AttributeToken;
+	prec: AttributePrec;
 }
 
 type Structural = Rule<'evaluate'>;
@@ -104,22 +153,20 @@ const structuralToken: StructuralToken = Object.assign(
 	{ immediate: (content: Structural): ImmediateTokenRule<'evaluate'> => ({ type: 'IMMEDIATE_TOKEN', content }) }
 );
 
-const structuralPrecOf =
-	(kind: PrecKind) =>
-	(value: number, content: Structural): Structural => ({
-		type:
-			kind === 'left' ? 'PREC_LEFT' : kind === 'right' ? 'PREC_RIGHT' : kind === 'dynamic' ? 'PREC_DYNAMIC' : 'PREC',
-		content,
-		value
-	});
+const structuralPrec: StructuralPrec = Object.assign(
+	(value: number | string, content: Structural): PrecRule<'evaluate'> => ({ type: 'PREC', content, value }),
+	{
+		left: (value: number | string, content: Structural): PrecLeftRule<'evaluate'> => ({ type: 'PREC_LEFT', content, value }),
+		right: (value: number | string, content: Structural): PrecRightRule<'evaluate'> => ({ type: 'PREC_RIGHT', content, value }),
+		dynamic: (value: number, content: Structural): PrecDynamicRule<'evaluate'> => ({
+			type: 'PREC_DYNAMIC',
+			content,
+			value
+		})
+	}
+);
 
-const structuralPrec: PrecBuilder<'evaluate'> = Object.assign(structuralPrecOf(undefined), {
-	left: structuralPrecOf('left'),
-	right: structuralPrecOf('right'),
-	dynamic: structuralPrecOf('dynamic')
-});
-
-function collapseStructuralOptional(content: Structural): Structural {
+function collapseStructuralOptional(content: Structural): OptionalRule<'evaluate'> | RepeatRule<'evaluate'> {
 	if (content.type === OPTIONAL) return content;
 	if (content.type === REPEAT) return content;
 	if (content.type === REPEAT1) {
@@ -134,13 +181,13 @@ function collapseStructuralOptional(content: Structural): Structural {
 	return { type: OPTIONAL, content };
 }
 
-function collapseStructuralRepeat(content: Structural): Structural {
+function collapseStructuralRepeat(content: Structural): RepeatRule<'evaluate'> {
 	if (content.type === REPEAT && !content.separator) return content;
 	if (content.type === OPTIONAL) return { type: REPEAT, content: content.content };
 	return { type: REPEAT, content };
 }
 
-function collapseStructuralRepeat1(content: Structural): Structural {
+function collapseStructuralRepeat1(content: Structural): Repeat1Rule<'evaluate'> {
 	if (content.type === REPEAT1 && !content.separator) return content;
 	return { type: REPEAT1, content };
 }
@@ -161,7 +208,9 @@ function collapseOptionalRepeatInFieldContent(content: Structural): Structural {
 	return content;
 }
 
-function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): Structural {
+function collapseAllFieldChoiceMembers(
+	fieldMembers: FieldRule<'evaluate'>[]
+): ChoiceRule<'evaluate'> | FieldRule<'evaluate'> {
 	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
 	if (anyAlias) return { type: CHOICE, members: fieldMembers };
 	const names = fieldMembers.map((f) => f.name);
@@ -177,7 +226,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): S
 	return { type: CHOICE, members: fieldMembers };
 }
 
-function structuralChoice(...members: Structural[]): Structural {
+function structuralChoice(...members: Structural[]): ChoiceRule<'evaluate'> | FieldRule<'evaluate'> {
 	if (members.length >= 2 && members.every((m) => m.type === FIELD)) {
 		return collapseAllFieldChoiceMembers(members);
 	}
@@ -191,27 +240,24 @@ export const structuralBuilder: StructuralBuilder = {
 	repeat: collapseStructuralRepeat,
 	repeat1: collapseStructuralRepeat1,
 	field: (name, content) => ({ type: FIELD, name, content: collapseOptionalRepeatInFieldContent(content) }),
-	alias: (content, target) => ({
-		type: ALIAS,
-		content,
-		named: typeof target !== 'string',
-		value: typeof target === 'string' ? target : target.name
-	}),
+	alias: structuralAlias,
 	token: structuralToken,
 	prec: structuralPrec,
 	variant: (name, content) => ({ type: VARIANT, name, content }),
 	group: (name, content) => ({ type: GROUP, name, content }),
 	string: (value) => ({ type: STRING, value }),
 	pattern: (value) => ({ type: PATTERN, value }),
-	symbol: (name) => ({ type: SYMBOL, name }),
+	symbol: sym,
 	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes }),
 	indent: () => ({ type: INDENT }),
 	dedent: () => ({ type: DEDENT }),
 	newline: () => ({ type: NEWLINE })
 };
 
-type Built = Rule<'normalize'>;
-type BuiltSeq = SeqRule<'normalize'>;
+function structuralAlias(content: Structural, target: string | SymbolRule<'evaluate'>): AliasRule<'evaluate'> {
+	const inner = content.type === SYMBOL ? { ...content, inline: false } : content;
+	return { type: ALIAS, content: inner, named: typeof target !== 'string', value: typeof target === 'string' ? target : target.name };
+}
 
 function collapseSingletonSeq(seq: BuiltSeq): Built {
 	const survivor = seq.members[0]!;
@@ -234,7 +280,7 @@ function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }):
 		return combined !== undefined ? { ...m, multiplicity: combined } : m;
 	});
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
-	const seq: BuiltSeq = { type: SEQ, members: pushed };
+	const seq: BuiltSeq = { type: SEQ, members: pushed, nonterminal: pushed.some((m) => m.nonterminal === true) };
 	const withMult: BuiltSeq = hasBareLiteral && multToPush !== undefined ? { ...seq, multiplicity: multToPush } : seq;
 	return pushed.length === 1 ? collapseSingletonSeq(withMult) : withMult;
 }
@@ -311,52 +357,71 @@ function buildRepeatLike(input: { content: Built; native: 'array' | 'nonEmptyArr
 	return { ...content, multiplicity: repeatCombine({ contentMult: content.multiplicity, native }), ...stamps };
 }
 
-const attributeToken: TokenBuilder<'normalize'> = Object.assign(
-	(content: Built): Built => ({ ...content, tokenized: true }),
-	{ immediate: (content: Built): Built => ({ ...content, tokenized: true, immediate: true }) }
+const attributeToken: AttributeToken = Object.assign(
+	<R extends Built>(content: R): R => ({ ...content, tokenized: true }),
+	{ immediate: <R extends Built>(content: R): R => ({ ...content, tokenized: true, immediate: true }) }
 );
 
 const attributePrecOf =
 	(kind: PrecKind) =>
-	(value: number, content: Built): Built => ({ ...content, prec: { kind, value } });
+	<R extends Built>(value: number | string, content: R): R => ({ ...content, prec: { kind, value } });
 
-const attributePrec: PrecBuilder<'normalize'> = Object.assign(attributePrecOf(undefined), {
+const attributePrec: AttributePrec = Object.assign(attributePrecOf(undefined), {
 	left: attributePrecOf('left'),
 	right: attributePrecOf('right'),
 	dynamic: attributePrecOf('dynamic')
 });
 
+function attributeOptional(content: BuiltSeq | BuiltString): Built;
+function attributeOptional<R extends StampableNonLiteral>(content: R): R;
+function attributeOptional(content: Built): Built;
+function attributeOptional(content: Built): Built {
+	return foldOptionalEmptyMatch(content);
+}
+
+function attributeRepeat(content: BuiltSeq): Built;
+function attributeRepeat<R extends Stampable>(content: R): R;
+function attributeRepeat(content: Built): Built;
+function attributeRepeat(content: Built): Built {
+	return buildRepeatLike({ content, native: 'array' });
+}
+
+function attributeRepeat1(content: BuiltSeq): Built;
+function attributeRepeat1<R extends Stampable>(content: R): R;
+function attributeRepeat1(content: Built): Built;
+function attributeRepeat1(content: Built): Built {
+	return buildRepeatLike({ content, native: 'nonEmptyArray' });
+}
+
+function attributeField<R extends Built>(name: string, content: R): R {
+	return { ...content, fieldName: name };
+}
+
+function attributeAlias<R extends Built>(content: R, target: string | SymbolRule<'normalize'>): R {
+	const aliasedTo = typeof target === 'string' ? target : target.name;
+	const aliasedToId = typeof target === 'string' ? undefined : target.kindId;
+	return { ...content, aliasedTo, aliasedToId, inline: false };
+}
+
 export const attributeBuilder: AttributeBuilder = {
 	seq: (...members) => buildSeq({ members }),
-	choice: (...members) => ({ type: CHOICE, members }),
-	optional: (content) => foldOptionalEmptyMatch(content),
-	repeat: (content) => buildRepeatLike({ content, native: 'array' }),
-	repeat1: (content) => buildRepeatLike({ content, native: 'nonEmptyArray' }),
-	field: (name, content) => ({ ...content, fieldName: name, nonterminal: true }),
-	alias: (content, target) => {
-		const named = typeof target !== 'string';
-		const name = typeof target === 'string' ? target : target.name;
-		const nonterminal = content.nonterminal || named || undefined;
-		if (content.type === SYMBOL) {
-			return { ...content, name, aliasedFrom: content.name, aliasNamed: named, inline: false, nonterminal };
-		}
-		if (content.type === STRING) {
-			const { value: literal, ...rest } = content;
-			return { ...rest, type: SYMBOL, name, literal, inline: false, aliasNamed: named, nonterminal };
-		}
-		return { ...content, aliasNamed: named, inline: false, nonterminal };
-	},
+	choice: (...members) => ({ type: CHOICE, members, nonterminal: true }),
+	optional: attributeOptional,
+	repeat: attributeRepeat,
+	repeat1: attributeRepeat1,
+	field: attributeField,
+	alias: attributeAlias,
 	token: attributeToken,
 	prec: attributePrec,
 	variant: (name, content) => ({ type: VARIANT, name, content }),
 	group: (name, content) => ({ type: GROUP, name, content }),
-	string: (value) => ({ type: STRING, value }),
-	pattern: (value) => ({ type: PATTERN, value }),
-	symbol: (name) => ({ type: SYMBOL, name }),
-	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes }),
-	indent: () => ({ type: INDENT }),
-	dedent: () => ({ type: DEDENT }),
-	newline: () => ({ type: NEWLINE })
+	string: (value) => ({ type: STRING, value, nonterminal: false }),
+	pattern: (value) => ({ type: PATTERN, value, nonterminal: true }),
+	symbol: (name) => ({ type: SYMBOL, name, nonterminal: true }),
+	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes, nonterminal: true }),
+	indent: () => ({ type: INDENT, nonterminal: false }),
+	dedent: () => ({ type: DEDENT, nonterminal: false }),
+	newline: () => ({ type: NEWLINE, nonterminal: false })
 };
 
 export function isSlotPromotedLiteral(rule: Built): boolean {

@@ -26,7 +26,7 @@ Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Pref
 - `profile` — unified failure aggregation across validators
 - `check-baseline` / `check-perf` / `check-jinja` — regression gates and invariant checks
 - `propose-14` — signature-conformance ratchet: per-module classification table (`--table`), committed-baseline regression gate (`--update` to lower the baseline in a sweep PR)
-- `list-kinds`, `classify`, `phantom-kinds`, `field-provenance`, `grammar-diagnostics` — discovery tools
+- `list-kinds`, `classify`, `phantom-kinds`, `field-provenance`, `grammar-diagnostics`, `assemble-shape-census` (per-modelType histogram of the rule shape each `Assembled*` constructor receives) — discovery tools
 - `inspect-type`, `inspect-refs`, `compare-overrides` — inspection tools
 - `walk`, `exercise` — round-trip exercise harnesses
 

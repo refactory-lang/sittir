@@ -3,7 +3,7 @@
  * universal-shape canonicalization + post-condition check in simplify.ts.
  *
  * Per the spec's "Universal canonical shape" decision: every
- * AssembledBranch / AssembledGroup body, after simplification, should be a
+ * AssembledBranch body (plain or link-minted), after simplification, should be a
  * SeqRule whose members are leaves (literals + slot-refs). No nested
  * structural rules with slot content.
  *
@@ -18,11 +18,11 @@
  *     burn-in confirms the invariant holds across real grammars).
  */
 
-import { CHOICE, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
-import { AssembledBranch, AssembledGroup, AssembledPattern } from '../model/node-map.ts';
-import type { RenderRule, Rule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
+import { AssembledBranch, AssembledPattern } from '../model/node-map.ts';
+import type { RenderRule, SeqRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // canonicalizeSeqOfLeaves
@@ -95,79 +95,39 @@ describe('canonicalizeSeqOfLeaves', () => {
 
 describe('assertUniversalShape', () => {
 	it('passes for well-shaped AssembledBranch (seq of leaves)', () => {
-		const body: SeqRule<'link'> = {
+		const body: RenderRule = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
 				{ type: SYMBOL, name: 'name' }
 			]
 		};
-		const node = new AssembledBranch(
-			'function_decl',
-			body,
-			body as unknown as SimplifiedRule,
-			body as unknown as RenderRule
-		);
+		const node = new AssembledBranch('function_decl', body, body);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
-	it('passes for well-shaped AssembledGroup (seq of leaves)', () => {
-		const body: SeqRule<'link'> = {
+	it('passes for well-shaped link-minted AssembledBranch (seq of leaves)', () => {
+		const body: RenderRule = {
 			type: SEQ,
 			members: [
 				{ type: SYMBOL, name: 'modifier' },
 				{ type: STRING, value: 'static' }
 			]
 		};
-		const node = new AssembledGroup(
-			'_modifiers',
-			body,
-			body as unknown as SimplifiedRule,
-			body as unknown as RenderRule
-		);
+		const node = new AssembledBranch('_modifiers', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
 	it('passes for single-leaf body (non-seq)', () => {
 		// A branch body that is just a single leaf is valid — it would have
 		// been flattened by canonicalizeSeqOfLeaves from seq([X]) -> X.
-		// However AssembledBranch's R generic doesn't permit a bare symbol,
-		// so we test the case via AssembledGroup which accepts any Rule.
-		const body: Rule<'link'> = { type: SYMBOL, name: 'X' };
-		const node = new AssembledGroup(
-			'_passthrough',
-			body,
-			body as unknown as SimplifiedRule,
-			body as unknown as RenderRule
-		);
+		const body: RenderRule = { type: SYMBOL, name: 'X' };
+		const node = new AssembledBranch('_passthrough', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
-	it('throws for branch with nested optional containing slot content', () => {
-		// optional(symbol) is a structural wrapper around a slot-ref — this
-		// is the kind of shape decomposeOptional should have lifted into a
-		// hidden group. assertUniversalShape catches the violation.
-		const body: SeqRule<'link'> = {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: 'fn' },
-				{
-					type: OPTIONAL,
-					content: { type: SYMBOL, name: 'type_params' }
-				}
-			]
-		};
-		const node = new AssembledGroup(
-			'function_decl',
-			body,
-			body as unknown as SimplifiedRule,
-			body as unknown as RenderRule
-		);
-		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation in kind 'function_decl'/);
-	});
-
 	it('throws with offending sub-rule type in error message', () => {
-		const body: SeqRule<'link'> = {
+		const body: RenderRule = {
 			type: SEQ,
 			members: [
 				{
@@ -179,29 +139,19 @@ describe('assertUniversalShape', () => {
 				}
 			]
 		};
-		const node = new AssembledGroup(
-			'_choice_wrap',
-			body,
-			body as unknown as SimplifiedRule,
-			body as unknown as RenderRule
-		);
+		const node = new AssembledBranch('_choice_wrap', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
 	it('throws for non-seq, non-leaf body (e.g. bare choice)', () => {
-		const body: Rule<'link'> = {
+		const body: RenderRule = {
 			type: CHOICE,
 			members: [
 				{ type: SYMBOL, name: 'a' },
 				{ type: SYMBOL, name: 'b' }
 			]
 		};
-		const node = new AssembledGroup(
-			'_choice_kind',
-			body,
-			body as unknown as SimplifiedRule,
-			body as unknown as RenderRule
-		);
+		const node = new AssembledBranch('_choice_kind', body, body, { hoisted: {} });
 		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation/);
 	});
 

@@ -1,4 +1,4 @@
-import { FIELD, PATTERN, SEQ, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
+import { PATTERN, SEQ, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript6';
 import { describe, expect, it } from 'vitest';
@@ -44,10 +44,6 @@ function asRecord(value: unknown): Record<string, unknown> {
 async function loadFreshWrapWitnessModule(): Promise<{
 	wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
 }> {
-	const rule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
-	};
 	// FIELD wrappers don't survive normalize/simplify — post-wrapper-deletion,
 	// `fieldName` is stamped directly onto the leaf instead (see RuleBase's
 	// NormalizedPhase branch, types/rule.ts).
@@ -60,7 +56,7 @@ async function loadFreshWrapWitnessModule(): Promise<{
 		members: [{ type: SYMBOL, name: 'identifier', fieldName: 'value' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('list_splat', new AssembledBranch('list_splat', rule, simplifiedRule, renderRule));
+	nodes.set('list_splat', new AssembledBranch('list_splat', simplifiedRule, renderRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
@@ -96,7 +92,7 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'alias_holder',
-		new AssembledBranch('alias_holder', rule, rule, rule, {
+		new AssembledBranch('alias_holder', rule, rule, {
 			slotRecord: Object.freeze({
 				identifier: new AssembledNonterminal({
 					values: [

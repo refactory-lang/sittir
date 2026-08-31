@@ -28,7 +28,9 @@ import type { LinkedGrammar, ExternalRole } from '../types.ts';
 function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
 	return {
 		name: 'test',
-		rules,
+		rules: Object.fromEntries(
+			Object.entries(rules).map(([name, rule]) => [name, rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule])
+		),
 		supertypes: new Set(),
 		factoryInline: new Set(),
 		externalRoles: new Map<string, ExternalRole>(),
@@ -125,9 +127,9 @@ describe('Normalize — normalizeGrammar()', () => {
 		});
 		const normalized = normalizeGrammar(linked);
 		expect(normalized.name).toBe('test');
-		expect(normalized.linkRules['item']).toBeDefined();
+		expect(normalized.normalizedRules['item']).toBeDefined();
 		// Field metadata must be preserved
-		const item = normalized.linkRules['item'] as any;
+		const item = normalized.normalizedRules['item'] as any;
 		const fieldMember = item.members?.find((m: any) => m.type === FIELD) ?? (item.type === FIELD ? item : null);
 		if (fieldMember) {
 			expect(fieldMember.name).toBe('body');

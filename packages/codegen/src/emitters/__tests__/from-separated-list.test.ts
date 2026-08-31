@@ -19,26 +19,31 @@
  * let the original spread/index bug hide from the type checker undetected.
  */
 
-import { PATTERN, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
-import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, Rule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
+import {
+	AssembledPattern,
+	AssembledList,
+	type AssembledNode,
+	type SeparatedListElementRule
+} from '../../compiler/model/node-map.ts';
+import type { SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
 // `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
-// each carry a distinct `__brand?: never` marker) — one Rule<'link'>-typed
-// constant can't satisfy both, so each gets its own phase-typed declaration.
+// each carry a distinct `__brand?: never` marker) — one single-typed constant
+// can't satisfy both, so each gets its own phase-typed declaration.
 const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
 const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
-function makeMemberNodeMap(rule: Repeat1Rule, opts: { separatorRule: Rule<'link'> | undefined }) {
+function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledSeparatedList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
@@ -61,9 +66,10 @@ function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 
 describe('from emitter — separatedList', () => {
 	it('coerceToMemberList spreads the elements into the factory call, preserving captured flank options on self-unwrap', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
@@ -81,9 +87,10 @@ describe('from emitter — separatedList', () => {
 	});
 
 	it('_wrapWithChildren dispatches separatedList kinds by spreading the children array, never indexing', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'member' },
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));

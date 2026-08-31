@@ -496,7 +496,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * the whole list (head + repeat + trailing) is captured as one group. Without
  * it the trailing separator strands as a standalone member → wrapper-deletion
  * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
- * groups it is permanently split from its list across the AssembledGroup
+ * groups it is permanently split from its list across the hoisted-compound
  * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
  * into the group's `repeat1` as `trailing: true`.
  */
@@ -1257,8 +1257,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Register the FLATTENED head-form spelling — the canonical shape the
 // link phase's separator lift recognizes, so the kind classifies
-// 'separatedList' (kind-level flank keys) instead of 'group' with
-// per-field capture. Language-identical (seq nesting is associative);
+// 'list' (kind-level flank keys) instead of an ordinary hoisted compound
+// with per-field capture. Language-identical (seq nesting is associative);
 // the ambient prec wrapper re-applies around the flat seq.
 ```
 
@@ -1308,37 +1308,47 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // survives only as the collision fallback.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::armLeadingSymbolName`
+### `packages/codegen/src/dsl/rule-patterns.ts::armLeadingSymbolName`
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
- * LEFTMOST reachable position (descending through SEQ's first member,
- * every CHOICE member, and single-content wrappers — the same shape a
- * parser's FIRST-set walk would follow) references one of `siblingNames`.
- * Guards against minting a choice arm that is structurally a RECURSIVE
- * extension of a SIBLING arm in the same choice rather than an
- * independent alternative — e.g. python's `expression_statement`:
- * arm 0 is the bare `$.expression`; arm 1 is `seq(commaSep1($.expression),
- * optional(','))`, which itself STARTS with `$.expression`. Minting arm 1
- * into its own hidden rule creates a second grammar production sharing
- * arm 0's leading symbol — an unresolvable tree-sitter LR conflict, not a
- * cosmetic one (confirmed: no `conflicts:` declaration or rename
- * resolves it, since it's a genuine shared-prefix ambiguity between two
- * live productions). Skipping the mint here leaves the arm exactly as
- * enrich found it — whatever OTHER mechanism (variant()/polymorphs in
- * this grammar's own grammar.sittir.ts, same as before PR 3) already handles
- * it keeps doing so, unimpeded.
+ * Resolve `rule`'s LEFTMOST reachable symbol name — descending through a
+ * SEQ's first member and single-content wrappers (optional/field/repeat/
+ * prec/token/...), the same shape a parser's FIRST-set walk would follow.
+ * A CHOICE has no single leftmost symbol (it varies per arm) and resolves
+ * to `undefined`; the `seen` set guards against infinite recursion on a
+ * self-referential rule.
+ *
+ * For a SYMBOL, hiddenness gates whether the name IS the leftmost
+ * boundary or resolution must descend further: `rulesBag[name]?.hidden`
+ * — the referenced rule's OWN stamp, looked up by name — decides, never
+ * a property read off the reference itself (a SYMBOL reference carries
+ * no `hidden` of its own; only top-level rules do). A visible target's
+ * name IS the leftmost boundary — return it. A hidden target is
+ * invisible to the parser's distinguishable-item boundary, so its own
+ * leftmost symbol (found by recursing into its body) is what actually
+ * matters; if that recursion resolves to `undefined` (e.g. the hidden
+ * body is a CHOICE), the hidden name is returned as the fallback.
+ *
+ * `armStartsWithSymbol` (this file) is the boolean guard built on top:
+ * true when this resolved name collides with a sibling arm's own
+ * leading symbol — the shared-prefix collision that would create an
+ * unresolvable tree-sitter LR conflict if a choice arm minted its own
+ * hidden rule while structurally being a recursive extension of a
+ * sibling arm (e.g. python's `expression_statement`: one arm is bare
+ * `$.expression`; another is `seq(commaSep1($.expression),
+ * optional(','))`, which itself starts with `$.expression`).
  */
 ```
 
 #### body
 
 ```text
-// A VISIBLE symbol is its own meaningful boundary for LR
-// prefix-collision purposes — stop here. A HIDDEN symbol is
-// invisible to the parser's distinguishable-item boundary, so its
-// OWN leading symbol (descend into its body) is what matters.
+// A visible target (`rulesBag[name]?.hidden !== true`) is its own
+// meaningful boundary for LR prefix-collision purposes — stop here. A
+// hidden target is invisible to the parser's distinguishable-item
+// boundary, so its OWN leading symbol (descend into its body) is what
+// matters instead.
 ```
 
 #### body
@@ -1517,7 +1527,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     slot that is a `field` or `symbol` (NOT a bare `choice`) after dropping
  *     pure literals/punctuation and `blank`. The inline+gate render path can
  *     key on that single slot; multi-slot or bare-choice bodies need to be
- *     visible (their own AssembledGroup template).
+ *     visible (their own hoisted-compound template).
  */
 ```
 
@@ -1639,7 +1649,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * flattened seq is an optional/choice-of-blank flank of that same separator
  * literal (a stranded leading/trailing comma). Either shape means the list
  * can't be rendered from one fixed separator string — it needs its own
- * visible `AssembledSeparatedList` template, not the hidden inline-flat
+ * visible `AssembledList` template, not the hidden inline-flat
  * path.
  */
 ```
@@ -1704,7 +1714,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *     or any other multi-valued / compound type.
  *
  * Multi-slot or bare-choice bodies are "inline-unsafe" and require a visible
- * AssembledGroup template for correct rendering.
+ * hoisted-compound template for correct rendering.
  *
  * @param seqBody — the rule to classify. Typically the body of an
  *   `optional(seq)` position, but may also be called with non-seq bodies
@@ -1727,7 +1737,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   EXCEPT when the repeat has genuine per-instance separator variability
 	   (a non-literal separator rule) — such a list can't render from one
 	   fixed separator string on the inline-flat path and needs its own
-	   visible `AssembledSeparatedList` template instead. See
+	   visible `AssembledList` template instead. See
 	   `repeatHasGenuineSeparatorVariability`. */
 ```
 
@@ -1792,7 +1802,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * parse time exactly one arm's node materializes and the hidden rule
  * splices away, so wrapping it in a mint alias inserts a CST node level
  * into every position the union appears in AND severs the wrap layer's
- * concrete-kind expansion (keyed on `modelType === 'supertype'`) — the
+ * concrete-kind expansion (keyed on `instanceof AssembledSupertype`) — the
  * failure class that took python to 0/115 when `_compound_statement` was
  * wrapped.
  *
@@ -1967,6 +1977,45 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 #### body
 
 ```text
+// Identity rides along with the attrs: the result absorbs the original's
+// `id` (when it did not take it over) and `absorbedIds`, so a rewrite that
+// replaces a node — a literal-only seq folded to one STRING — keeps every
+// slot id the replaced subtree carried (`slotByRuleId` coverage).
+```
+
+### `packages/codegen/src/dsl/rule-attrs.ts::absorbIds`
+
+```text
+/** `absorbIds(host, ...absorbed)` returns `host` with `absorbedIds`
+ *  extended by each absorbed rule's own `id` and its own `absorbedIds`
+ *  (deduped, and never the host's own id). Returns `host` unchanged when
+ *  nothing new is added. Used wherever simplify reduces sibling or nested
+ *  nodes into one survivor — the survivor's `absorbedIds` is how a later
+ *  slot lookup still resolves an id the simplified tree no longer has a
+ *  node for.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-attrs.ts::withKindFacts`
+
+```text
+/** Carries a rule's `hidden`/`inlinedFrom` facts from `source` onto
+ *  `result` when `result` doesn't already have them — `hidden` only
+ *  overwrites on a real difference, `inlinedFrom` only fills an absent
+ *  slot (never overwrites an existing splice-provenance stamp). Used
+ *  where a pass rebuilds a rule's root fresh — flatten's `flattenRules`
+ *  carries the pre-flatten rule's facts onto the flattened root; link's
+ *  `classifyAndLogHiddenRules` carries them onto a reclassified
+ *  EnumRule/SupertypeRule; normalize's alias-bodies merge carries the
+ *  MAIN rules map's already-facted entry onto the separately re-derived
+ *  alias-body rule when both exist for the same kind — and the
+ *  pre-rebuild rule's kind-level facts would otherwise be silently
+ *  dropped. */
+```
+
+#### body
+
+```text
 // `original` may be a wrapper-bearing (evaluate/link) rule where these
 // stamped leaf attrs aren't part of the type yet (they're populated by
 // `flattenRules` during Normalize) — but `collapseWrappers`
@@ -2000,6 +2049,31 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) still
 // share one of the slot's `sourceRuleIds`, making `slotByRuleId` (the canonical,
 // primary slot lookup) resolve instead of degrading to fragile fallbacks.
+```
+
+### `packages/codegen/src/dsl/rule-attrs.ts::withId`
+
+```text
+/** Stamp a rule id onto a built rule when there is one to stamp. Identity
+ *  is not a DSL parameter, so no constructor takes it: `flatten` applies
+ *  `id: node.id ?? built.id` once per rebuilt node (the wrapper's own id
+ *  wins over the survivor's — `slotByRuleId` resolves the wrapper's id),
+ *  `inlineRefs` keeps the reference's id over the inlined body's, and
+ *  link's mints stamp the rule they replace. */
+```
+
+### `packages/codegen/src/dsl/rule-attrs.ts::rebaseRuleIds`
+
+```text
+/** Re-key a spliced body's rule ids under the host reference's id. Ids are
+ *  minted once, per owner kind, by the rule catalog (`rule:<owner>:<path>`);
+ *  when link or normalize splices a body into another rule, the descendants
+ *  would otherwise keep the source owner's ids, and every host that inlines
+ *  the same body would register the same id in `slotByRuleId` — last writer
+ *  wins, so a host could resolve another host's slot (and inherit its
+ *  requiredness). The body root takes the host id; each descendant becomes
+ *  `<hostId>/<path>`, so ids stay unique per host and `slotByRuleId` resolves
+ *  the host's own slot. A missing host id leaves the body untouched. */
 ```
 
 ### `packages/codegen/src/dsl/rule-attrs.ts::armsOf`
@@ -2193,97 +2267,26 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * Inline hidden symbol references by substituting their content. Two inlining
  * paths are applied in priority order:
  *
- *  1. GROUP / MULTI path (existing): hidden group rules (seq-with-fields) and
- *     hidden multi helpers (repeat / repeat1 wrappers) are always inlined so
- *     the referrer's field walker sees the fields / multi-slot directly.
+ *  1. GROUP / MULTI path: hidden group rules (seq-with-fields) and hidden
+ *     multi helpers (repeat / repeat1 wrappers) are always inlined so the
+ *     referrer's field walker sees the fields / multi-slot directly.
  *
- *  2. grammar.inline path (new): hidden symbol refs whose target appears in the
+ *  2. grammar.inline path: hidden symbol refs whose target appears in the
  *     grammar's `inline:` array are inlined unconditionally — these are
- *     helpers tree-sitter itself expands at parse time (e.g., auto-synthesized
- *     `_type_arguments_repeat1` from applyAutoGroups). Sittir's derivation
- *     view must match what tree-sitter produces: if the parser inlines a helper,
- *     the simplified rule must too. References with `source === 'group-lift'` are
- *     still inlined when `inlineKinds` contains the target — the group-lift guard
- *     only applies to the group/multi path (where the assemble-side AssembledGroup
- *     should materialise as its own node rather than being collapsed away).
+ *     helpers tree-sitter itself expands at parse time. Sittir's derivation
+ *     view must match what tree-sitter produces: if the parser inlines a
+ *     helper, the simplified rule must too. Skipped when the reference
+ *     carries `aliasedTo` — an aliased occurrence materializes as its own
+ *     node regardless of the grammar's `inline:` array.
+ *
+ * The inlined body takes the REFERENCE's id (`id: ref.id ?? body.id`) — the
+ * parent's identity survives a nesting that disappears, the same rule
+ * `flatten` applies to a deleted wrapper. The render view keeps the
+ * reference, so both views name the slot by one id and `slotByRuleId`
+ * resolves the template walk's lookups without a second derivation.
  *
  * Cycle-safe via visited set.
  */
-```
-
-#### body
-
-```text
-/* grammar.inline is the single source of truth for inlining. Any
-			   symbol ref whose target is listed in `grammar.inline` is inlined
-			   here — REGARDLESS of `source` (group-lift or not) or `hidden` —
-			   because tree-sitter inlines exactly those kinds at parse time. If
-			   sittir's derivation view doesn't match (i.e. it keeps a ref to a
-			   kind the parser expands away), `deriveSlots` mints a slot for a
-			   node that never materialises at runtime → singular-vs-multi and
-			   non-canonical-shape mismatches. Matching the parser's inlining is
-			   a correctness invariant.
-
-			   Resolution: group/multi targets inline their CONTENT (the seq /
-			   repeat wrapper) so the referrer's walker sees the fields / multi
-			   slot directly and no bare `group` rule leaks into simplified
-			   output; every other target inlines its body verbatim.
-			   `inlineKinds` here is the pre-filtered inline-DECISION set (built in
-			   generate.ts): grammar.inline membership minus supertype / keyword /
-			   token / pattern / enum modelTypes. So a plain membership test is the
-			   gate — supertypes and lexeme leaves were already excluded upstream. */
-```
-
-#### body
-
-```text
-/* Preserve the referring symbol's pushed-down leaf attributes
-				   (multiplicity / separator / fieldName) onto the inlined body.
-				   wrapper-deletion stamped e.g. `repeat1(SYMBOL(_x_repeat1))` down
-				   to `SYMBOL{multiplicity:nonEmptyArray, separator}`; replacing the
-				   symbol with the target body would otherwise DROP that
-				   multiplicity, collapsing a multi slot to singular. Re-wrap the
-				   inlined body in the equivalent modifier and re-run the
-				   (idempotent) flatten to re-push the attributes onto the
-				   inlined leaves.
-
-				   `inlined` comes back typed `AnyRule` (via the internal `recurse`
-				   closure, which type-erases to keep the recursive call generic),
-				   but is structurally the same phase-view shape as `rule: R` —
-				   `inlineRefs` never changes which phase's rule shape it operates
-				   over, only rewrites refs within it. */
-```
-
-#### body
-
-```text
-/* Not inline-listed. Inline EVERY hidden helper ref, mirroring what
-			   tree-sitter does at parse time: a `_`-prefixed rule produces no CST
-			   node — its children flatten into the parent. So the derivation view
-			   must inline hidden refs regardless of multiplicity or provenance.
-
-			   Hiddenness is AUTHORITATIVE via isHiddenKind (the `_`-convention
-			   oracle in evaluate.ts), NOT the non-authoritative stamped `hidden`
-			   flag nor the `source:'group-lift'` provenance tag. The inner seq of
-			   a `repeat(seq(...))` still becomes a group for slot pairing, but an
-			   INLINE group with no named CST kind — matching the flattened CST.
-
-			   Read the authoritative per-ref `inline` flag (hidden && !aliased &&
-			   !supertype && !self-recursive) rather than re-deriving hiddenness —
-			   the same oracle the templates emit path uses. The GROUP/MULTI shape
-			   gate below still excludes non-foldable shapes. */
-```
-
-#### body
-
-```text
-/* Combine the referring symbol's pushed-down attributes (multiplicity /
-			   separator / fieldName) with the inlined target — same as the
-			   inline-listed path above. wrapper-deletion stamps e.g.
-			   `optional(SYMBOL(_initializer))` to `SYMBOL{multiplicity:'optional'}`;
-			   without this the optional is dropped on inline and the spliced leaf
-			   (e.g. required_parameter's `value`) collapses to a required single.
-			   See the same-shape rationale on the inline-listed path's cast above. */
 ```
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::resolveGroupOrMultiInlineTarget`
@@ -2351,7 +2354,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 ```text
 /**
  * Structural identity of two slot-bearing rules ignoring leaf attributes
- * (multiplicity / separator / fieldName / aliasedFrom). Used to decide that a
+ * (multiplicity / separator / fieldName / aliasedTo). Used to decide that a
  * head element and a repeat element are "the same list element".
  */
 ```
@@ -2605,8 +2608,10 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
  *    e.g. `choice(commaSep1(X), X)`).
  *
- * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
- * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
+ * `fieldName` / `multiplicity` / `separator` are UNANIMOUS — present and
+ * equal on EVERY arm, else `undefined`; `nonterminal` lifts only a unanimous
+ * `true` (arms that are each fixed text do not make the choice text — a
+ * choice is nonterminal). `strongestMultiplicity` is
  * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
  * optional`; `single` / absent ignored), regardless of unanimity.
  */
@@ -2682,16 +2687,9 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 * grammar (`'grammar'`, e.g. present in `grammar.supertypes`) or inferred
 	 * by link's structural classifier (`'link'`, the former `source:
 	 * 'promoted'` value). Diagnostics-only (the `promotedRules` derivation
-	 * log / suggested.ts's override-candidate surfacing) — never an
+	 * log) — never an
 	 * authorship fact.
 	 */
-```
-
-### `packages/codegen/src/dsl/rule-metadata.ts::inlinedFrom`
-
-```text
-/** Diagnostics-only: the hidden kind whose body was spliced in by the
-	 *  normalize inline hoist (§D-2a). */
 ```
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::fieldSource`
@@ -3041,6 +3039,14 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+#### body
+
+```text
+// The seq's own stamp: nonterminal iff any member is. Multiplicity pushed
+// down from an enclosing optional/repeat lands on the members; their
+// terminality does not change — `optional` reaches one level only.
+```
+
 ### `packages/codegen/src/dsl/builders.ts::buildRepeatLike`
 
 ```text
@@ -3111,6 +3117,14 @@ registered but later unused still counts as a sibling.
  *  `attributeBuilder.prec` stamps `prec` but nothing routes through it. */
 ```
 
+#### body
+
+```text
+// `prec` / `prec.left` / `prec.right` take tree-sitter's named precedences
+// (`prec.left('binary_relation', …)`) as well as numbers; only
+// `prec.dynamic` is numeric.
+```
+
 ### `packages/codegen/src/dsl/builders.ts::RuleBuilder`
 
 ```text
@@ -3121,9 +3135,10 @@ registered but later unused still counts as a sibling.
  * attribute-built children (bottom-up) and `structuralBuilder` receives
  * evaluate-phase nodes. The identity constructors (variant, group, the
  * leaves) return their exact node type — both strategies build exactly
- * that node. `choice` returns `Rule<P>` because the structural strategy
- * recognizes on it; each strategy's own interface (`StructuralBuilder`,
- * `AttributeBuilder`) narrows what it really returns. The content-consuming constructors
+ * that node. `choice` and the content-consuming constructors return
+ * `Rule<P>` at this level because a strategy may recognize on them; each
+ * strategy's own interface (`StructuralBuilder`, `AttributeBuilder`)
+ * states what it really returns. The content-consuming constructors
  * (optional, repeat, field, alias, token, prec) return `Rule<P>` because
  * the attribute strategy returns its content, of whatever type that was.
  * `alias`'s target is a string (anonymous alias) or a symbol (named), as
@@ -3134,13 +3149,17 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/builders.ts::StructuralBuilder`
 
 ```text
-/** `RuleBuilder<'evaluate'>` narrowed to what the structural strategy
- *  actually returns: `field` always builds a FieldRule, `alias` an
- *  AliasRule, `token` a TokenRule and `token.immediate` tree-sitter's own
- *  IMMEDIATE_TOKEN shape (enrich runs before the fold and must see the
- *  same tag in both pipelines). Evaluate's private DSL wrappers read
- *  those results without asserting. `choice` stays `Rule<'evaluate'>`: it
- *  recognizes an all-same-name-field choice into one field. */
+/** `RuleBuilder<'evaluate'>` with the node each constructor actually
+ *  builds: `seq` a SeqRule, `field` a FieldRule, `alias` an AliasRule,
+ *  `repeat`/`repeat1` their repeat node, `token` a TokenRule and
+ *  `token.immediate` tree-sitter's own IMMEDIATE_TOKEN shape (enrich runs
+ *  before the fold and must see the same tag in both pipelines), the
+ *  `prec` family its four PREC nodes. Where recognition can change the
+ *  node the return is the honest union: `choice` is a ChoiceRule or the
+ *  FieldRule an all-same-name-field choice collapses to; `optional` is an
+ *  OptionalRule or the RepeatRule that `optional(repeat…)` becomes. Unions
+ *  rather than input-conditional overloads: a wide `Rule<'evaluate'>`
+ *  argument would pick the catch-all overload and lie about the result. */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::StructuralToken`
@@ -3149,23 +3168,241 @@ registered but later unused still counts as a sibling.
 /** `token` / `token.immediate` with their exact evaluate-phase node types. */
 ```
 
+### `packages/codegen/src/dsl/builders.ts::StructuralPrec`
+
+```text
+/** `prec` / `prec.left` / `prec.right` / `prec.dynamic` with their exact
+ *  evaluate-phase node types. */
+```
+
 ### `packages/codegen/src/dsl/builders.ts::AttributeBuilder`
 
 ```text
-/** `RuleBuilder<'normalize'>` narrowed to what the attribute strategy
- *  actually returns: `choice` is always a ChoiceRule on this view (there is
- *  no FIELD to recognize), which is what `flatten`'s CHOICE case and
- *  simplify's branch merging spread over. */
+/** `RuleBuilder<'normalize'>` with what the attribute strategy actually
+ *  returns. An attribute constructor only stamps attributes on its input,
+ *  so it is identity-preserving in the type: `field`, `token`,
+ *  `token.immediate`, `prec`, and `alias` are all `<R>(…, content: R): R` —
+ *  `alias` stamps `aliasedTo`/`aliasedToId` onto whatever `R` it's given,
+ *  symbol, literal, or structural, uniformly, never changing its shape.
+ *  The exceptions are exactly the recognitions, spelled as overloads on the
+ *  INPUT type (never as a conditional return type — a deferred conditional
+ *  cannot be checked against the implementation's literals and would force
+ *  casts back into the builders): `optional`/`repeat`/`repeat1` re-enter
+ *  `buildSeq` for a SEQ (→ `Rule`) and `optional` folds a bare literal to
+ *  the empty seq (→ `Rule`), otherwise `R`; `choice` is always a
+ *  ChoiceRule (no FIELD exists on this view). A catch-all `(Rule) → Rule`
+ *  overload closes each set so a wide argument stays honest. */
 ```
 
-### `packages/codegen/src/dsl/builders.ts::withId`
+### `packages/codegen/src/dsl/builders.ts::attributeBuilder`
 
 ```text
-/** Stamp a rule id onto a built rule when there is one to stamp. Identity
- *  is not a DSL parameter, so no constructor takes it: `flatten` applies
- *  `id: node.id ?? built.id` once per rebuilt node (the wrapper's own id
- *  wins over the survivor's — `slotByRuleId` resolves the wrapper's id),
- *  and link's mints stamp the rule they replace. */
+/**
+ * Every attribute builder stamps the terminality of the node it builds —
+ * `nonterminal` is the single slot switch, and this table is its one
+ * source (`dsl/rule-patterns.ts::classifyByType` is the same table read
+ * off the type tags):
+ *   string / indent / dedent / newline → false
+ *   pattern / symbol / supertype       → true
+ *   choice                             → true, always: the choice node is the
+ *                                        slot; its arms keep their own stamps
+ *   seq                                → true iff any member is true
+ *   repeat / repeat1                   → true
+ *   optional                           → its content's (`buildOptional`), one
+ *                                        level down — never into a seq's members
+ *   field / alias / token / group / variant → the content's, untouched
+ * The one stamp no builder can make is a symbol that references a literal
+ * rule (it needs the rule map): `compiler/flatten.ts::stampTerminality`
+ * flips that to false after the whole map is built.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::AttributeToken`
+
+```text
+/** Identity-preserving `token` / `token.immediate`: a tokenized leaf is the
+ *  same leaf with `tokenized` (and `immediate`) stamped. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::AttributePrec`
+
+```text
+/** Identity-preserving `prec` family: the input with `prec` stamped. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::attributeOptional`
+
+```text
+/** The overload set is the type-level statement of `foldOptionalEmptyMatch`
+ *  + `buildOptional`: identity for anything that is not a SEQ or a bare
+ *  literal. Declared as functions (not arrows in the object literal)
+ *  because an arrow cannot be contextually typed against an overloaded
+ *  property; `attributeRepeat`, `attributeRepeat1`, `attributeField` and
+ *  `attributeAlias` are the same shape. */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.choice`
+
+```text
+/**
+ * Choice combinator's one-level shape recognition: an all-same-name FIELD
+ * choice factors to a single FIELD wrapping a CHOICE of the arms' contents
+ * (delegates to {@link collapseAllFieldChoiceMembers}); any other member
+ * shape passes through as a plain CHOICE. The single-member collapse,
+ * `choice(x, blank())` → `optional(x)`, and all-string → EnumRule
+ * detection are evaluate's own sugar (compiler/evaluate.ts's `choice()`
+ * wrapper) — they run before this is ever reached, not builder work.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::collapseAllFieldChoiceMembers`
+
+```text
+/**
+ * Collapse an all-field choice into a factored field, or leave it as a
+ * plain choice of (heterogeneously-named) fields.
+ *
+ * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
+ * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
+ *   name, otherwise a raw `choice` of the original `field()` members.
+ * @remarks
+ * All branches wrap the SAME field name — factor the field outward to
+ * `field('x', choice(A, B))`. The choice content may itself simplify to an
+ * enum when all inners are strings.
+ *
+ * Otherwise (different field names, or any branch wraps an alias — see
+ * below), the choice passes through as-is: `choice(field('body', seq(...)),
+ * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
+ * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
+ * / `VariantRule` share the same `name`+`content` shape, so the retype was a
+ * pure discriminator change) — that existed only for Link's now-deleted
+ * `promotePolymorph` pass to recognize the shape and wrap the rule in a
+ * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
+ * the pipeline, so the fields now stay FIELD-typed and route into named
+ * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
+ * any other heterogeneous fielded choice.
+ *
+ * @remarks
+ * Any branch wrapping an alias directly takes this same passthrough (checked
+ * first, before the same-name factoring). Aliases are structural rename
+ * markers; downstream passes (Link, assemble) depend on the alias appearing
+ * inside a plain choice to route the synthetic kind into the NodeMap —
+ * factoring or retyping shifts classification and leaves the alias target
+ * unregistered (observed on rust `_line_doc_comment_marker` /
+ * `_block_doc_comment_marker`).
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.optional`
+
+```text
+/**
+ * Optional combinator's one-level shape recognition.
+ *
+ * @remarks
+ * `optional(optional(x))` collapses to `optional(x)` — two layers of
+ * "zero or one" is the same as one layer.
+ *
+ * @remarks
+ * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
+ * already optional in the config surface (`items?: T[]`, null-coalesced
+ * to `[]` in the factory), so the wrapper adds no information.
+ *
+ * @remarks
+ * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
+ * parse-identical: tree-sitter surfaces "optional didn't fire" and
+ * "repeat1 fired with zero items" identically (an empty children list).
+ * The non-empty guarantee a bare `repeat1` carries only holds when there
+ * is no `optional` wrapper to swallow the empty case.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat`
+
+```text
+/**
+ * Zero-or-more repetition combinator's one-level shape recognition.
+ *
+ * @remarks
+ * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
+ * a distinct separator — the outer loop is redundant.
+ *
+ * @remarks
+ * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
+ * zero occurrences, so the optional wrapper is redundant.
+ *
+ * @remarks
+ * The separator LIFT (`repeat(seq(sep, x))` → `repeat{separator}`) runs in
+ * the link pass, not here — see compiler/lift-separators.ts.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat1`
+
+```text
+/**
+ * One-or-more repetition combinator's one-level shape recognition.
+ *
+ * @remarks
+ * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
+ * more" of "one or more" accepts the same strings as the inner.
+ *
+ * @remarks
+ * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
+ * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
+ * zero-or-more `x` (one outer iteration of zero inner matches), which
+ * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
+ * left alone to preserve grammar author intent.
+ *
+ * @remarks
+ * The separator LIFT runs in the link pass, not here — see
+ * compiler/lift-separators.ts.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.field`
+
+```text
+/**
+ * Field combinator's one-level shape recognition: collapses
+ * `optional(repeat(...))` and `optional(repeat1(...))` field content to
+ * `repeat(...)` (delegates to {@link collapseOptionalRepeatInFieldContent}).
+ * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any empty
+ * case as an empty children list. Collapsing here keeps evaluate output
+ * canonical across all the equivalent list encodings grammar authors write.
+ *
+ * @remarks
+ * Ref-name propagation, the `content === undefined` placeholder sugar for
+ * `resolvePatch`, and stopping at inner field/alias boundaries are
+ * evaluate's own wrapper concern (compiler/evaluate.ts's `field()`), not
+ * builder work — this only shapes the content.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::collapseOptionalRepeatInFieldContent`
+
+```text
+/**
+ * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
+ * `repeat(...)` inside a field's content.
+ *
+ * @param content - The field's already-resolved content rule.
+ * @returns The canonicalized rule with the optional wrapper removed when
+ *   the inner content is a repeat variant.
+ */
+```
+
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.token.immediate`
+
+```text
+/**
+ * Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
+ * `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule doc
+ * comment in types/rule.ts. `grammarFn`'s `normalizeImmediateTokens`
+ * (compiler/evaluate.ts) folds this into TOKEN+immediate once enrich's
+ * minting decisions (which must see the same arm shape under both
+ * runtimes) are locked in.
+ */
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::structuralBuilder.choice`
@@ -3343,28 +3580,24 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/builders.ts::attributeBuilder.alias`
 
 ```text
-// aliasedFrom is the alias SOURCE (storage) name; `name` is the alias
-// TARGET — the same provenance form link's own
-// `resolveNamedAliasWithProvenance` (compiler/link.ts) produces, applied
-// one level down here: a SYMBOL content's own `.name` becomes
-// `aliasedFrom`, and the alias's `value` becomes the new `.name`.
+// The one expression for any content: `{...content, aliasedTo: target.name,
+// aliasedToId: target.kindId, inline: false}` — an alias never changes
+// terminality. `name`/
+// `kindId` on `content` stay the SOURCE (storage) kind; `aliasedTo` is the
+// alias TARGET (the parse kind). No branching on content shape — a literal,
+// a symbol, or any other built rule all take the same stamp uniformly.
 ```
 
-#### body (`packages/codegen/src/dsl/builders.ts:285`)
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder.alias`
 
 ```text
-// Alias of a literal: there is no storage rule to name (mirrors
-// link's own STRING-content branch, which stamps no
-// `aliasedFrom` either) — the literal text becomes the new
-// SYMBOL's `literal`, and the STRING-only `value` key is dropped.
-```
-
-#### body (`packages/codegen/src/dsl/builders.ts:305`)
-
-```text
-// Structural alias body (SEQ/CHOICE/PATTERN/…): no storage name to
-// record — link never produces this shape (it collapses named
-// aliases to a SYMBOL ref before this point is reached).
+// The tree-sitter ALIAS wrapper: `content` unchanged except a bare SYMBOL
+// content is stamped `inline: false` (an alias confers a real visible CST
+// kind, so its wrapped reference must materialize rather than fold away —
+// mirrors evaluate's own `canonicalizeRawGrammar`, which forces the same
+// stamp on any symbol it finds under an ALIAS built some other way). Evaluate never
+// mints `aliasedTo`/`aliasedToId` here; those are wrapper-deletion facts
+// (`attributeAlias`), stamped once the ALIAS wrapper itself is consumed.
 ```
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::module`
@@ -3671,6 +3904,56 @@ registered but later unused still counts as a sibling.
 		   runtime, transparent single-child wrapper like TOKEN. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::collectFixedLiteral`
+
+```text
+/**
+ * The single derivation of a literal-only body's rendered text — the
+ * fixed-literal join every literal-text consumer (`isAllTextRender`'s
+ * SEQ/CHOICE fold in `simplifySeqRule`, `AssembledPattern.fixedLiteralText`,
+ * `flatten.ts::stampTerminality`'s "is this rule a literal" test, the
+ * template emitter's fixed-text render of a `nonterminal: false` reference)
+ * goes through rather than re-walking the tree itself.
+ *
+ * Walks `rule` collecting leaf `string` values and returns the single
+ * distinct string every parse produces, or `undefined` the moment a
+ * content-bearing symbol or a multi-value divergence is found. Undefined
+ * for a nonterminal rule, an array-multiplicity rule (`array` /
+ * `nonEmptyArray` — repetition has no single realisation), and an
+ * `optional`-multiplicity rule when `ctx.deterministic` is set (two
+ * realisations: present or absent). Blanks (an empty `choice` or `seq`)
+ * are skipped in non-deterministic mode — they contribute no text and
+ * represent the "omit" arm of an optional — but bail the whole CHOICE to
+ * `undefined` in deterministic mode, where a blank arm IS a second
+ * realisation.
+ *
+ * A CHOICE is fixed only when every non-blank arm resolves to the SAME
+ * string. A SEQ with exactly one non-blank member recurses directly on it
+ * (no join needed); with more than one, every member is walked in
+ * `deterministic` mode (an optional member or a blank-arm CHOICE inside a
+ * seq means divergent realisations, not a fixed one) and the results are
+ * joined with `ctx.joiner` — e.g. python's `_not_in` = `seq('not', 'in')`,
+ * aliased to `'not in'`, IS a fixed realisation: every parse produces
+ * exactly the same token sequence.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::FixedLiteralCtx`
+
+```text
+/**
+ * @param joiner - separator used when concatenating a multi-member SEQ's
+ *   literals: a single space at grammar level (canonical token
+ *   separation), an empty string inside a `tokenized` subtree (contiguous
+ *   by construction — a `tokenized` rule forces this joiner for its own
+ *   recursive calls).
+ * @param deterministic - when true, any optionality (`multiplicity:
+ *   'optional'`, a blank CHOICE arm) makes the subtree non-fixed. Set for
+ *   the members of a multi-member SEQ, where "same text OR absent" is no
+ *   longer a single fixed realisation.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::ruleChildren`
 
 #### body
@@ -3800,6 +4083,22 @@ registered but later unused still counts as a sibling.
  *  prec-wrapped), else null. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isParserHiddenName`
+
+```text
+/**
+ * The parser's own hiddenness rule: a symbol name beginning with `_`. The
+ * single source for "the parser hides this symbol" — evaluate's
+ * `canonicalizeRawGrammar` reads it for both the rule-level `hidden` stamp
+ * and the reference-level `inline` computation, and `selfReferentialFoldOf`
+ * reads it directly on a self-reference's name. Distinct from
+ * `RuleBase.hidden` (sittir's own PUBLISHED visibility fact, which link's
+ * `unhideAliasedTargets` may flip to `false` for an alias target): a
+ * symbol occurrence is parser-hidden purely by its name, independent of
+ * whatever visibility sittir later publishes the rule under.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::selfReferentialFoldOf`
 
 ```text
@@ -3810,18 +4109,26 @@ registered but later unused still counts as a sibling.
 
 ```text
 /**
- * Tree-sitter's prec.left self-referential-choice flattening: a hidden
- * CHOICE rule whose arms are all 3-member SEQs
+ * Tree-sitter's prec.left self-referential-choice flattening: a CHOICE
+ * rule whose arms are all 3-member SEQs
  * `[field(base), STRING(separator), field(extension)]` with the SAME
  * (base, extension) field-name pair and separator literal across every
  * arm, where at least one arm's base field is a bare (non-alias-wrapped)
- * hidden SYMBOL reference to THIS rule's own name. Tree-sitter's LR table
- * collapses the recursion into ONE FLAT node at parse time: the base field
- * stays singular — only the true base operand carries it, since inner
+ * SYMBOL reference to THIS rule's own name whose name is
+ * `isParserHiddenName` — the PARSER's own hiddenness rule (leading `_`),
+ * not `RuleBase.hidden` (sittir's published-visibility fact, which link's
+ * `unhideAliasedTargets` may flip for an alias target): tree-sitter
+ * flattens an occurrence of a symbol whenever THAT occurrence's name is
+ * hidden, regardless of whether sittir later publishes the target rule as
+ * visible under an alias — an unaliased inner self-reference is still
+ * flattened by the parser even when the rule it names is otherwise
+ * published visibly elsewhere. Tree-sitter's LR table collapses the
+ * recursion into ONE FLAT node at parse time: the base field stays
+ * singular — only the true base operand carries it, since inner
  * recursive occurrences dissolve into siblings and the leftover separator
- * tokens are anonymous so the reader drops them — while the extension field
- * repeats once per additional chained operand. No wrapper shape and no
- * node-types.json entry can see this: the multiplicity is an emergent
+ * tokens are anonymous so the reader drops them — while the extension
+ * field repeats once per additional chained operand. No wrapper shape and
+ * no node-types.json entry can see this: the multiplicity is an emergent
  * property of LR precedence-climbing over a self-referential choice.
  * Confirmed case: rust's `_let_chain` (`a && b && c && d` parses as one
  * node with a single `left` and a repeated `right`).
@@ -4058,6 +4365,35 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isNonInlinableLeafShape`
+
+```text
+/** A rule shape that must never be spliced into every occurrence site by
+ *  reference-inlining: an enum choice, SUPERTYPE, PATTERN, or STRING body.
+ *  Each of those is a whole leaf CLASS with its own catalog identity, not
+ *  a single-use structural fragment — folding one into an inline SYMBOL
+ *  reference would duplicate that class at every reference site instead of
+ *  collapsing a single occurrence. Consumers: evaluate's
+ *  `canonicalizeRawGrammar` gates a reference's `inline` stamp on this
+ *  (unless the reference's own name is explicitly in the grammar's
+ *  `inline:` array, which overrides the guard); `inline-sets.ts` and
+ *  `assemble.ts` read the negation directly as an inlinability check.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isHiddenRule`
+
+```text
+/**
+ * Reads the `hidden` stamp `RuleBase.hidden` puts on a rule (evaluate's
+ * `canonicalizeRawGrammar`, corrected by link's `unhideAliasedTargets` /
+ * `stampLinkMintedVisibility`) instead of re-deriving hidden-ness from a
+ * leading underscore. The stamp — not the name — is authoritative once a
+ * rule has passed through evaluate: a rule some named alias wraps is
+ * `hidden:false` even though its name starts with `_`.
+ */
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::isComplexBody`
 
 ```text
@@ -4082,15 +4418,17 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * Derive the set of hidden (`_`-prefixed) kinds that:
- *   1. Appear as the source of a NAMED ALIAS — either in pre-link form
- *      (`alias(symbol(_X), $visible)`) or post-link form
- *      (`symbol(visible, aliasedFrom='_X')`).
+ *   1. Appear as the source of a NAMED ALIAS — either the wrapper form
+ *      (`alias(symbol(_X), $visible)`, kept through link since link never
+ *      restructures an ALIAS it can't reduce) or the reduced form link
+ *      produces for a complex alias content that targets a declared rule
+ *      (`symbol(_X, aliasedTo:'visible')`).
  *   2. Whose own rule body in `rules` satisfies {@link isComplexBody}.
  *
  * This is the on-demand structural replacement for `patternReplacementKinds`.
  * Both consumers receive different rule-map shapes:
- *   - `link.ts` calls this on `raw.rules` (pre-link; alias nodes present).
- *   - `normalize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
+ *   - `link.ts` calls this on `raw.rules` (pre-link; only the wrapper form exists).
+ *   - `normalize.ts` calls this on `linked.rules` (post-link; both forms can appear).
  *
  * The predicate is intentionally conservative (the derived set may be a
  * strict superset of the old `patternReplacementKinds` cache). Probe-verified
@@ -4106,13 +4444,13 @@ registered but later unused still counts as a sibling.
 #### body
 
 ```text
-// Pre-link form: alias(symbol(_X), $visible)
+// Wrapper form: alias(symbol(_X), $visible)
 ```
 
 #### body
 
 ```text
-// Post-link form: symbol(visible, aliasedFrom='_X')
+// Reduced form: symbol(_X, aliasedTo:'visible')
 ```
 
 #### body
@@ -4403,7 +4741,7 @@ registered but later unused still counts as a sibling.
 // (`seq(seq(elem, repeat(sep elem)), flank)`) — e.g. python's upstream
 // `_patterns`/`_parameters`/`_import_list` helpers — flattens to the
 // canonical head-form so the link phase's separator lift recognizes it
-// and the kind classifies 'separatedList' (kind-level flank keys), same
+// and the kind classifies 'list' (kind-level flank keys), same
 // as the mints below. Language-identical: seq nesting is associative.
 ```
 
@@ -5225,9 +5563,9 @@ registered but later unused still counts as a sibling.
 ### `packages/codegen/src/dsl/enrich.ts::applyOptionalKeyword`
 
 ```text
-// `enrichFieldWrappers` REMOVED — `fieldName`/`nonterminal` are derived by
-// `flattenRules`'s FIELD case (push the field's name + nonterminal onto
-// its content) and its SEQ case (retains fieldName on the seq node), with
+// `enrichFieldWrappers` REMOVED — `fieldName` is derived by
+// `flattenRules`'s FIELD case (push the field's name onto its content; a
+// field never changes terminality) and its SEQ case (retains fieldName on the seq node), with
 // `materializeInlinedBody` carrying fieldName through group inlining. Stamping it
 // in enrich was premature (nothing reads it before wrapper-deletion); enrich no
 // longer stamps the derived slot attributes at all (see also the removed
@@ -5370,7 +5708,7 @@ registered but later unused still counts as a sibling.
 // already a dispatchable union (subtype expansion IS its identity);
 // wrapping it in a mint alias adds a CST wrapper node to every tree it
 // appears in and severs its wrap-time concrete-kind expansion (which
-// keys on `modelType === 'supertype'`). Carried on this per-rule ctx
+// keys on `instanceof AssembledSupertype`). Carried on this per-rule ctx
 // bag (§7.7 Principle #14) because it already travels through every
 // applyClauseHoist recursion into the mint site.
 ```
@@ -5588,7 +5926,7 @@ registered but later unused still counts as a sibling.
 // runtime identity — so a mint adds nothing, while the alias wrapper
 // it introduces (a) inserts a CST node level into every tree the
 // supertype appears in, and (b) severs the supertype's wrap-time
-// concrete-kind expansion (keyed on `modelType === 'supertype'`).
+// concrete-kind expansion (keyed on `instanceof AssembledSupertype`).
 // Empirically: minting python's `_compound_statement` arm produced
 // `statement_group2` wrappers that broke wrap universally (0/115).
 ```
@@ -5838,3 +6176,13 @@ registered but later unused still counts as a sibling.
 // `prec.left`/`prec.right`/`prec.dynamic` around a choice-of-strings is
 // just as reusable as one wrapped in plain `prec`.
 ```
+### `packages/codegen/src/dsl/rule-attrs.ts::structuralKey`
+
+```text
+/** A rule's grammar shape as a string — `id` / `absorbedIds` (identity
+ *  provenance, distinct per occurrence) excluded. The one comparison every
+ *  structural equality goes through: `flatten`'s arm factoring,
+ *  `simplify`'s arm merge and fixpoint test. Comparing whole-rule JSON
+ *  would make every position differ by its ids. */
+```
+

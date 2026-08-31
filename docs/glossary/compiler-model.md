@@ -10,27 +10,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-### `packages/codegen/src/compiler/model/node-map.ts::setOptionalBodyKinds`
-
-```text
-/** Set by `assemble.ts` before running the rule walk; cleared after. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isOptionalBodyKind`
-
-```text
-/** True iff `kindName` resolves to a wholly-optional rule body. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::relaxForOptionalBody`
-
-```text
-/**
- * Downgrade `'single'` → `'optional'` when the referenced kind has a
- * wholly-optional resolved body. Pass-through otherwise.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text
@@ -111,17 +90,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Pluralize a camelCase property name for array/nonEmptyArray slots.
  * Only `propertyName` and `paramName` get pluralized — `storageName`
  * stays singular (tree-sitter facing).
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::hasAnyField`
-
-```text
-/**
- * Cheap existence predicate: does this rule's tree contain any field()?
- * Used by pre-assembly phases (classifier, normalizer) that only need to
- * know IF fields exist — not the full list. Shorter-circuits than
- * deriveFields.
  */
 ```
 
@@ -227,14 +195,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Internal — fields-side walk. The exported derivation surface is
- * `deriveSlots`; this helper is its fields-portion.
+ * Internal — fields-side walk over the SIMPLIFIED rule. The exported
+ * derivation surface is `deriveSlots`; this helper is its fields-portion.
  *
- * Applies `flatten` before dispatching so test fixtures that pass raw
- * rule trees (with `field` / `optional` / `repeat` / `repeat1` wrappers) get
- * canonical input automatically. In production the rule arrives already
- * wrapper-free from `computeSimplifiedRules` — `flatten` is idempotent
- * on wrapper-free input, so this is a no-op on the hot path.
+ * Consumes the simplified tree exactly as `computeSimplifiedRules` produced
+ * it — no re-flattening. A nested bare seq that simplify left behind reaches
+ * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
+ * derive-audit is there to surface); re-splicing it here would mask that.
+ * `DeriveCtx.shapeAudit` lets a caller opt a rule out of the audit
+ * (`shapeAudit: false`); every current caller derives slots straight from
+ * the simplified tree and leaves the audit on.
  */
 ```
 
@@ -249,25 +219,24 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Nonterminal-driven collection (2026-05-21 design): one slot per
-// `nonterminal` node, choice = one union slot, seq distributes. Replaces
-// the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker. Same-name
-// slots that appear in multiple positions (e.g. python `if_statement`'s
-// `alternative` in both a repeat and an optional) are still folded into one
-// AssembledNonterminal by `mergeSlotsByName`.
+// Nonterminal-driven collection (collect-slots.ts's collectSlots /
+// resolveMember): one slot per `nonterminal` node; a non-structural choice
+// is one union slot, a structural choice distributes into its arms instead,
+// and a seq distributes into its members. Same-name slots that appear in
+// multiple positions (e.g. python `if_statement`'s `alternative` in both a
+// repeat and an optional) are folded into one AssembledNonterminal by
+// `mergeSlotsByName`.
 ```
 
 #### body
 
 ```text
-// Gate (a) of the union-slot design (2026-07-21): a synthesized union
-// slot's projected storageName (usually 'content', or the single member
-// kind) must be unclaimed by every sibling slot of the rule. This is the
-// only place with whole-rule visibility, so the check runs here: an
-// optimistic collection above, then — on collision — one pessimistic
-// rerun with routing disabled (status quo distribution) + a diagnostic.
-// Two qualifying choices in one rule collide with each other and both
-// fall back, which subsumes the "only one choice per rule" discipline.
+// Gate (a) of the union-slot design: a synthesized union slot's projected
+// storageName (usually 'content', or the single member kind) must be
+// unclaimed by every sibling slot of the rule. This is the
+// consumer-visible collision that would otherwise surface as a
+// storagename-collision warning; on collision, union routing is disabled
+// for the rule and the status-quo distribution is re-derived.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeSlotsByName`
@@ -338,76 +307,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Single-walk slot derivation — returns every slot on a kind in declared
- * rule order. Replaces the prior `deriveFields` + `deriveChildren` split
- * (DRY: one source, one derivation). Internally it still delegates to
- * those walkers for the actual rule traversal — they're factored to walk
- * identical input — but produces a single unified `AssembledNonterminal[]`
- * view for consumers that need declared order with full per-slot metadata.
- *
- * @remarks
- * Today the slot ordering is fields-first / children-second because
- * downstream consumers (factory emitter, types emitter) rely on that
- * ordering. A future cleanup could rewrite the walk to preserve true
- * declared-order with one unified pass over the rule tree.
- */
-```
-
-```text
-/**
- * Derive child slots from a canonical rule tree.
- *
- * Two axes of "canonical" apply to deriveChildren:
- *
- * 1. **Branch kinds** — top-level `seq` of field/symbol/wrapper members.
- *    Children are the non-field members (symbol refs, optional /
- *    repeat / repeat1 around refs, choice of refs).
- *
- * 2. **Container kinds** — top-level is a `repeat` / `repeat1` whose
- *    content may be a `seq` of refs (tree-sitter flattens the seq's
- *    elements into sibling children at parse time). `enum_variant_list`
- *    has shape `repeat(seq(repeat(attribute_item), enum_variant),
- *    separator=',', trailing=true)` — the inner seq is load-bearing
- *    template structure AND yields two array children (attribute_item,
- *    enum_variant) flattened together.
- *
- * The walker handles both by treating top-level `seq` members as the
- * canonical unit and recursing through wrappers/choices/nested-seqs
- * when the structure demands it. What it rejects:
- *
- *   - `alias` / `group` / `polymorph` — simplify strips the first two;
- *     the third is a retired IR type that no longer exists at runtime.
- *     Reaching them here is a real canonicalization gap.
- *
- *   - `variant` / `clause` — post-variant-adoption these should be
- *     either resolved to aliased symbols or promoted to polymorph
- *     forms. Retained as canonicalization-gap signals.
- */
-```
-
-#### body
-
-```text
-// The field walker handles positional symbol/supertype/choice content
-// too, so it produces every slot — no separate children walker needed.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isSyntheticFieldWrapper`
-
-```text
-/**
- * Detect an override-synthesized "outer field wrapper" that has no
- * corresponding runtime data. The autogen produced by v1's extractor
- * sometimes wraps a multi-member seq directly in an outer
- * `field('name', seq(...))` where the seq's TOP level contains another
- * named field. Tree-sitter doesn't produce a single node value for
- * such wrappers — the inner fields are the real runtime data.
- *
- * The check is deliberately narrow: only direct `field('x', seq(...))`
- * where the top-level seq contains an inner `field('y', ...)`. Deeper
- * nestings (`field('body', symbol(block))` where block's rule definition
- * contains fields) are NOT synthetic — those have real field values
- * that tree-sitter populates at parse time.
+ * Single-walk slot derivation over the simplified rule — returns every slot
+ * on a kind in declared rule order. The simplified tree is the one view that
+ * answers "what is a slot": wrappers are already attributes, literals beside
+ * slots are already stripped, so most of the walk is one nonterminal → one
+ * slot; a structural choice or a list-less nested seq is resolved by
+ * `collect-slots.ts`'s recursion exceptions instead of that direct mapping.
  */
 ```
 
@@ -415,19 +320,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Unified walker that produces `NodeOrTerminal[]` directly from a field's
- * content rule. Each entry carries its own per-value `multiplicity` — this
- * preserves information that the old parallel `deriveContentTypes` +
- * `deriveLiteralValues` pair silently dropped (e.g. `choice('const',
- * $.mutable_specifier)` previously produced `contentTypes=['mutable_specifier']`
- * and `literalValues=[]` because the old bail-on-mixed logic gave up;
- * now it produces `[TerminalValue('const','single'), NodeRef('mutable_specifier','single')]`).
+ * Unified walker that produces `NodeOrTerminal[]` directly from a
+ * normalize-view rule. Each entry carries its own per-value `multiplicity`,
+ * so a mixed choice such as `choice('const', $.mutable_specifier)` yields
+ * `[TerminalValue('const'), NodeRef('mutable_specifier')]` rather than
+ * collapsing to one side.
  *
- * Multiplicity is threaded through the walker:
- *   - outer `optional(...)` → entries from content get `optional` multiplicity
- *   - outer `repeat(...)` → entries from content get `array` multiplicity
- *   - outer `repeat1(...)` → entries from content get `nonEmptyArray` multiplicity
- *   - no wrapper → entries get `single` multiplicity
+ * `multiplicity` is the caller's: the slot's multiplicity is decided by the
+ * caller (`buildSlot` from the slot node's own attributes, the separated
+ * list from its element's) and threaded down unchanged through seq /
+ * choice / variant / group. A choice with a blank arm relaxes the arms
+ * (`single` → `optional`, `nonEmptyArray` → `array`).
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  */
@@ -436,205 +339,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Link-synthesized operator literal (Chunk D1): `canonicalizeRuleLiterals`
-// rewrites a field-wrapped operator literal (`'<'`) into
-// `symbol{ name: 'lt', literal: '<', metadata: {symbolSource: 'link'} }`.
-// The `name` is the alias-target kind (the runtime `$type`) and
-// `literal` is the original source string. Emit a TERMINAL of the
-// source string — `value` is what the renderer emits (`<`),
-// `resolvedKind` is the alias-target kindId read-time matching keys
-// on (`lt`). Dropping `literal` (the old behavior) leaked a PHANTOM
-// kind ref (`Lt`/`LtEq`) into the operator enum and left render
-// emitting the bare literal while read could not populate the slot.
-//
-// (debt PR-P1) Was `rule.source === 'link' && rule.literal !==
-// undefined`; `literal` is set ONLY by `canonicalizeRuleLiterals`
-// alongside the (now-deleted) `source: 'link'` stamp — its one and
-// only writer — so `literal !== undefined` alone is the exact same
-// condition, structurally, not an inference.
-```
-
-#### body
-
-```text
-// The value is the literal text; its id was stamped at link time
-// onto `kindId` by the same LITERAL chain (anon token wins a
-// same-spelled NAMED rule) — read that fact instead of
-// re-resolving it here. `resolvedKind`/`parseKind` keep the
-// link-minted alias-target NAME (`rule.name`) as before.
-```
-
-#### body
-
-```text
-// Ref kind: resolve to SOURCE kind (`aliasedFrom`, when the
-// symbol came from an alias). Only source kinds exist in
-// rules post-synthesis-removal.
-```
-
-#### body
-
-```text
-// parse-as kind = the alias TARGET (`rule.name`); `node` is the
-// render/source (`refName`). For `_suite`: node=_simple_statements,
-// parseKind=block (the CST kind).
-```
-
-#### body
-
-```text
-// `parseEntry.parseId` (falling back to `.id`) — an alias
-// occurrence carries its OWN distinct runtime symbol id,
-// separate from the source rule's storage id; dispatch must
-// key on that, not the storage identity.
-```
-
-#### body
-
-```text
-// Supertype refs expand to their subtype list — each subtype is a
-// valid concrete kind the slot can hold. Each subtype ref's own
-// kindId/aliasedFromId is stamped at link (canonicalizeRuleLiterals's
-// SUPERTYPE arm) — read that fact first, catalog fallback only for
-// refs that weren't stamped (mirrors the SYMBOL(ref) case above).
-```
-
-#### body
-
-```text
-// Aliased arm: the flatten stamped the parse name the arm
-// displays under (`aliasedFrom`/`name` on the ref itself); its
-// catalog row carries the alias occurrence's own runtime id,
-// which is what dispatch must key on — mirrors the SYMBOL
-// case's aliasedFrom/name pair above.
-```
-
-#### body
-
-```text
-// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
-// anonymous-token text it matches — a terminal value, like a `string` or an
-// `enum` member. Without this case it fell to `default: return []`, so a
-// pattern slot had no values and was elided (e.g. token_repetition's
-// separator pattern never became a slot).
-```
-
-#### body
-
-```text
-// Stamped leaf: `resolvedKindId` was already resolved through the
-// literal chain at link time — look the entry up BY that id (not by
-// re-matching `rule.value` against the catalog) to recover the
-// display name/parse id, since the id is the trusted key here.
-```
-
-#### body
-
-```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE below.
-```
-
-#### body
-
-```text
-// PR-P: handle enum-shaped ChoiceRules (all-STRING members) as enum terminal values.
-```
-
-#### body
-
-```text
-// Literal-first chain (#129); for literal-carrying SYMBOL
-// members whose text has no anon-token catalog row (an
-// aliased fixed-text external — `automatic_semicolon`'s
-// '\n' render text is not a parse literal), fall back to
-// the member's own KIND entry: the parser emits the kind,
-// so its id is the wire tag the enum must accept.
-```
-
-#### body
-
-```text
-// `choice(X, blank)` is functionally `optional(X)` — the blank arm
-// makes the entire choice optional. Downgrade nonEmptyArray → array
-// and single → optional when recursing into the non-blank arms.
-// Mirrors the fieldContentMultiplicity choice handling and the
-// rule-body lookthrough in assemble.ts.
-```
-
-#### body
-
-```text
-// Each arm is independent — union all entries. Arms may differ in
-// their own multiplicity if they wrap repeat/optional differently.
-```
-
-#### body
-
-```text
-// Union-slot design §5 (PR 1.5): this CHOICE is the SANCTIONED
-// union-routing restriction (collect-slots.ts builds it from
-// `unionArms ∪ degenerateNamedArms` only) — a member carrying its
-// OWN `fieldName` directly (post-wrapper-deletion push-down; a
-// degenerate fielded arm, not a genuine FIELD wrapper) is routed by
-// FIELD LABEL at read time, not by kind. Stamp `parseName` so
-// `projectSlotNaming`'s parseNames union in the label alongside the
-// plain union arms' kinds.
-```
-
-#### body
-
-```text
-// A fielded arm appears either as a genuine FIELD wrapper
-// (link-phase rule, e.g. a separatedList's element choice) or
-// as a pushed-down `fieldName` attribute (post-wrapper-deletion
-// members) — both route by field label at read time.
-```
-
-#### body
-
-```text
-// `optional(repeat1(X, sep))` survives evaluate when the
-// optional wraps the canonical commaSep1 lift (e.g. python's
-// `parameters: seq('(', optional(_parameters), ')')`).
-// Recursing with multiplicity 'optional' lets the inner
-// 'repeat1' case clobber it back to 'nonEmptyArray', which
-// mis-marks the slot as never-empty even though `()` is
-// valid. Downgrade to 'array' when the inner is repeat1, so
-// the outer-optional semantics survive. Mirrors the
-// `collectChildFromMember` rule for child slots.
-```
-
-#### body
-
-```text
-// For `optional(seq(..., repeat1(...), ...))` and similar nested
-// shapes (which is the form `choice(seq(...), blank)` folds to
-// during simplify), the outer optional makes the entire content
-// empty-allowed. Any `nonEmptyArray` produced by an inner repeat1
-// is therefore relaxed to `array` at the outer slot — empty inputs
-// like `{}` (object_type with zero members) are valid.
-```
-
-#### body
-
-```text
-// Nested field inside a choice — recurse into its content
-```
-
-#### body
-
-```text
-// `token(...)` / `token.immediate(...)` wrappers carry adjacency
-// metadata the inner rule alone doesn't express. Recurse, then
-// tag each produced terminal so render templates can decide
-// whether to emit adjacent or spaced.
-```
-
-#### body
-
-```text
-// Seq inside a choice arm — flatten all members (rare, but
-// handles seq-of-symbols within choice arms).
+// Link-synthesized operator literal: `canonicalizeRuleLiterals` rewrites a
+// field-wrapped operator literal (`'<'`) into
+// `symbol{ name: 'lt', literal: '<' }`. The `name` is the alias-target kind
+// (the runtime `$type`) and `literal` is the original source string. Emit a
+// TERMINAL of the source string — `value` is what the renderer emits (`<`),
+// `resolvedKind` is the alias-target kindId read-time matching keys on
+// (`lt`). `literal` is set only by `canonicalizeRuleLiterals`, so
+// `literal !== undefined` is the exact discriminator.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::dedupeValues`
@@ -696,7 +408,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledToken`):
 	 *   overridden to return `true` unconditionally (or conditionally for
 	 *   tokens — only `string`-rule tokens are parameterless).
-	 * - **Parameterless compounds** (`AssembledBranch`, `AssembledGroup`):
+	 * - **Parameterless compounds** (any `AbstractAssembledCompound` subclass —
+	 *   `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph`; `AssembledList`
+	 *   overrides this getter to always return `false`):
 	 *   computed recursively — a compound is parameterless iff it has at
 	 *   least one required slot AND every slot passes `_isAutoStampSlot`
 	 *   (which recurses into child nodes via their own `parameterless`
@@ -1005,6 +719,19 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // lone ref (`splat_pattern.content` → `identifier`).
 ```
 
+#### body
+
+```text
+// A slot backed by more than one distinct storage kind (or an unnamed
+// value) has no single kind name to fall back on — try `slot.inlinedFrom`
+// (leading underscores stripped, same trim as the single-storage-kind
+// branch) before giving up to the generic `content`. `inlinedFrom` is set
+// only when this slot's whole content was spliced in from another rule's
+// body (link's `inlineReferences`, normalize's `spliceFoldableRefs`), so
+// the fallback names the slot after the rule it was inlined from rather
+// than the uninformative `content`.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::foldParseKindDuplicateSingularSlots`
 
 ```text
@@ -1013,9 +740,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * ARRAY slot into that array slot, then drop the singular slot.
  *
  * Background: `alias($.last_match_arm, $.match_arm)` causes `deriveValuesForRule`
- * to produce a `symbol{name:'match_arm', aliasedFrom:'last_match_arm'}` value.
- * `projectSlotNaming` derives `storageName='last_match_arm'` (from the aliasedFrom
- * side), creating a SEPARATE singular slot with `parseKind='match_arm'` — colliding
+ * to produce a `symbol{name:'last_match_arm', aliasedTo:'match_arm'}` value —
+ * `name` is always the storage kind. `projectSlotNaming` derives
+ * `storageName='last_match_arm'` (from `name` directly), creating a SEPARATE
+ * singular slot with `parseKind='match_arm'` — colliding
  * with the existing array `match_arm` slot. At parse time every node appears as
  * `match_arm`; there is no `last_match_arm` kind in the CST. The array slot already
  * covers all of them. The singular slot is spurious and causes the native reader to
@@ -1192,20 +920,19 @@ can't be unified.
 ```text
 /**
  * Build the frozen slot Record for an AssembledBranch (or any kind that
- * uses the slot-Record surface). Walks `deriveSlots(rule)` once and
- * keys each slot by its name. Insertion order = declared rule order.
+ * uses the slot-Record surface). Signature `(rule: SimplifiedRule, ctx:
+ * KindedDeriveCtx)`. Walks `deriveSlots(rule, ctx)` over the simplified
+ * rule — the one derivation of what is a slot — and keys each slot by its
+ * name. Insertion order = declared rule order.
  *
- * Constructor-time helper for every class that exposes the unified
- * `slots` surface. The locked design's
- * eager validation (collision throw, >1 unnamed slot throw, mixed-arity
- * warn, key remap to 'child'/'children' for inferred slots) is NOT
- * enforced here yet — see the JSDoc on `AssembledBranch.slots` for the
- * rationale. When the grammar-override migration lands ("Owner A"), this
- * helper picks up the strict checks and the remap.
- *
- * @param rule - Simplified rule to walk for slots.
- * @param ctx - Kinded derive context: owning kind + the grammar-wide
- *   inputs (kind entries, collision signatures, alias targets, rules).
+ * Slots derive from the simplified rule only; there is no second
+ * derivation over a render rule and no `renderRule` parameter. An inlined
+ * reference already keeps its own id (`inlineRefs`), a discarded wrapper's
+ * id lands on its survivor (`flatten`, `withAttrsFrom`), and a choice arm
+ * that simplify merges or splices away (`'+' field rhs` / `'-' field rhs`
+ * → one `rhs`; rust `_let_chain.left`) carries its id forward as
+ * `absorbedIds` on the surviving node — so `buildSlot`'s `sourceRuleIds`
+ * resolves every merged-away id straight from the simplified tree.
  */
 ```
 
@@ -1227,33 +954,6 @@ can't be unified.
 // Augment slot values with the concrete parse-surface children of any visible
 // rule aliased TO the owning kind. Example: `alias($.delim_token_tree, $.token_tree)`
 // means the `token_tree.content` slot must also accept `delim_token_tree_paren/
-// bracket/brace` parseKinds, which are the concrete children that the native reader
-// delivers when a macro_invocation's `token_tree` field holds a delim_token_tree.
-```
-
-#### body
-
-```text
-// Strict design (FR-T05): inferred slots remap to 'child'/'children'
-// keys and at most one unnamed slot per branch is permitted. Empirical
-// check confirms 14 kinds across 3 grammars currently have >1 unnamed
-// positional slot. Enforcement requires either (a) collapse of choice-
-// of-distinct-kinds into one slot with multi-value `values[]`, or (b)
-// grammar overrides to explicitly name the positions ("Owner A"
-// migration). Until then: keep the kind-derived name as the Record
-// key, no collision throw, no >1-unnamed throw.
-```
-
-#### body
-
-```text
-// storageName collision check. Multiple slots sharing the same NodeData
-// storage key means the emitters can't distinguish them — the override
-// layer must name N-1 children to eliminate the collision.
-// Warn (not throw) because assemble runs on base grammars in tests
-// before overrides apply. The generate() pipeline enforces zero
-// collisions via the override layer; this warning surfaces any that
-// slip through during development.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::_isAutoStampSlotForParameterless`
@@ -1261,7 +961,8 @@ can't be unified.
 ```text
 /**
  * Determine whether a single slot is auto-stamp-eligible for the purposes
- * of the `parameterless` getter on compounds (AssembledBranch / AssembledGroup).
+ * of the `parameterless` getter on compounds (any `AbstractAssembledCompound`
+ * subclass — AssembledBranch / AssembledEnvelope / AssembledPolymorph).
  *
  * This replicates the `isAutoStampSlot` predicate from the former
  * `markParameterlessKinds` fixpoint pass, but reads `node.parameterless`
@@ -1283,18 +984,7 @@ can't be unified.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::members`
-
-```text
-/**
-	 * Direct access to the rule's ordered members (seq or choice).
-	 * Returns an empty array for repeat / repeat1 — those shapes don't
-	 * carry an ordered member tuple (the `content` is a single repeated
-	 * rule, surfaced via `children`).
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::separator`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.separator`
 
 ```text
 /**
@@ -1307,32 +997,15 @@ can't be unified.
 	 * empirically (phase-visibility-tightening investigation): 0 of 468
 	 * AssembledBranch nodes across rust/typescript/python ever had a
 	 * REPEAT-shaped `simplifiedRule`, confirming the branch was always dead.
-	 * Always returns `undefined` now; kept as a documented no-op rather than
-	 * deleted outright so `render-module.ts`'s fallback-chain comment (and its
-	 * call site) don't need to change in this pass.
+	 * Always returns `undefined` on the base class; kept as a documented
+	 * no-op rather than deleted outright so `render-module.ts`'s
+	 * fallback-chain comment (and its call site) don't need to change in
+	 * this pass. `AssembledList` overrides this getter to return the real
+	 * separator text.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isContainerShape`
-
-```text
-/**
-	 * `true` when this branch was the former `AssembledContainer` shape
-	 * — i.e., its raw rule contained no `field()` declaration. The
-	 * derivation matches the pre-merge `classifyBranchOrContainer`
-	 * predicate exactly so emitters that previously branched on
-	 * `modelType === 'container'` keep byte-identical output. Note that
-	 * this is *not* the same as `fields.length === 0`: a branch can
-	 * declare `field()` slots that the simplified rule strips out (e.g.
-	 * field references whose visible target was inlined away),
-	 * leaving `fields` empty while the rule still carries field markers.
-	 * Those kinds were `'branch'` originally and stay on the
-	 * field-carrying factory path; only kinds with zero `field()` in the
-	 * raw rule trigger the rest-param container factory shape.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::attachNodeMap`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.attachNodeMap`
 
 ```text
 /**
@@ -1343,26 +1016,15 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
 
 ```text
-/**
-	 * Recursive, cascade-preserving parameterless check. Replicates the
-	 * former `markParameterlessKinds` fixpoint semantics as a structural
-	 * getter:
-	 *
-	 * - At least one required slot must exist (no "vacuous" parameterless).
-	 * - Every slot must be auto-stamp-eligible (optional, or single-value
-	 *   terminal, or single-value ref to a parameterless child).
-	 * - The node must have a `rawFactoryName` (hidden nodes can't be stamped).
-	 * - Cycle guard: re-entrant calls return `false` (LFP-from-false semantics).
-	 *
-	 * Not memoized: slot refs are UnresolvedRef until `hydrateSlotRefs` runs;
-	 * caching before hydration would lock in a spurious `false`.
-	 */
+/** A compound with a factory and no slots takes no arguments — every
+ *  reference in its render rule is fixed text (`_reference_expression_raw_mut`
+ *  → `raw mut`). Guarded against re-entrancy: a cycle reads as false. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.stampExpression`
 
 ```text
 /**
@@ -1371,7 +1033,7 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::fields`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.fields`
 
 ```text
 /**
@@ -1379,7 +1041,8 @@ can't be unified.
 	 * After unified-slot refactor (spec 2026-05-17): every slot has a name and
 	 * `_<name>` storage key regardless of whether the name came from a `field()`
 	 * wrapper or the content kind. Consumers should NOT branch on origin — they
-	 * are all just slots.
+	 * are all just slots. Shared by `AssembledBranch`, `AssembledEnvelope`,
+	 * `AssembledPolymorph`, and `AssembledList` alike.
 	 */
 ```
 
@@ -1387,40 +1050,11 @@ can't be unified.
 
 ```text
 /**
- * Peel structural passthrough wrappers off a rule until reaching a
- * non-passthrough core. Single source of truth for the "find the
- * meaningful inner rule" walk that otherwise gets re-inlined every
- * time a caller wants to ignore decorative wrappers.
- *
- * Passthroughs:
- * - `optional`, `variant`, `clause`, `group` — pure structural
- *   markers (presence/absence, polymorph variant, override clause,
- *   anonymous group). None contribute their own runtime position.
- * - `alias` — renames the kind without changing the rule's structural
- *   role.
- * - `token`, `terminal` — terminalisation wrappers; the inner rule
- *   carries the actual content shape.
- *
- * @remarks Exhaustive `switch` on `Rule<'link'>.type`; non-passthrough rules
- * (seq/choice/repeat/repeat1/field/symbol/string/pattern/etc.) are
- * returned as-is. `assertNever` locks the switch shut so adding a new
- * Rule<'link'> variant becomes a compile error here instead of silently
- * skipping the unwrap step.
- *
- * @see template-walker.ts `fieldContentIsMultiSibling`.
+ * Peel the two structural passthroughs the simplified tree still carries —
+ * `variant` and `group` — until reaching the core they decorate. Neither
+ * contributes a runtime position of its own. Single source for the "find
+ * the meaningful inner rule" step.
  */
-```
-
-#### body
-
-```text
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-#### body
-
-```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules are CHOICE now.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::pattern`
@@ -1445,60 +1079,6 @@ can't be unified.
 	 * then picks up to enable the existing u16 acceptance branch in the
 	 * generated `FromNapiValue` impls.
 	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::collectFixedLiteral`
-
-```text
-/**
- * Walk a rule subtree collecting leaf `string` values.
- * Returns the single distinct string if every non-blank reachable leaf is
- * the same fixed literal, or `undefined` the moment any content-bearing
- * external (symbol) or multi-value divergence is encountered.
- *
- * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
- * represent the "omit" arm of an `optional`.
- */
-```
-
-#### body
-
-```text
-// A slot (promoted literal, ref) is content-bearing; a repeated literal
-// has no single realisation; an optional one has two in deterministic mode.
-```
-
-```text
-// blank sentinel
-```
-
-```text
-// blank arm = optionality
-```
-
-```text
-// blank arm — ignore
-```
-
-```text
-// non-literal or divergent branch
-```
-
-```text
-// two different literals
-```
-
-#### body
-
-```text
-// Multi-member seq: fixed iff every member is itself a deterministic
-// fixed literal; the realisation is their joined concatenation.
-```
-
-#### body
-
-```text
-// symbol, pattern, variant, group, … — content-bearing or structural
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::text`
@@ -1623,125 +1203,40 @@ can't be unified.
 	 * flatten saw aliased arms. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::elementRule`
-
-```text
-/** The repeat's inner content type — raw Rule<'link'>, for downstream
-	 * consumers that need the element union (types emitter maps this
-	 * to a union of TypeNames, inlineRefs hands the whole repeat
-	 * back to referrers). */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::nonEmpty`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.nonEmpty`
 
 ```text
 /** `true` when the source rule is `repeat1` (at least one element);
-	 * `false` for plain `repeat` (zero-or-more). Referrers thread this
-	 * into AssembledNonterminal.nonEmpty. */
+	 * `false` for plain `repeat` (zero-or-more). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::separator`
-
-```text
-/** Separator string from the repeat rule, if any. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::trailing`
-
-```text
-/** Whether a trailing separator is permitted. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::leading`
-
-```text
-/** Whether a leading separator is permitted. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::attachNodeMap`
-
-```text
-/**
-	 * Attach the assembled node map so the `parameterless` getter can resolve
-	 * UnresolvedRef slots by name before `hydrateSlotRefs` runs. See
-	 * {@link AssembledBranch.attachNodeMap} for full documentation.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
-
-```text
-/**
-	 * Recursive, cascade-preserving parameterless check. Same semantics as
-	 * `AssembledBranch.parameterless` — see that getter for full documentation.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
-
-```text
-/**
-	 * Compound stamp: factory call with no arguments, e.g. `"breakExpression()"`.
-	 * Only defined when `parameterless` is true.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::fields`
-
-```text
-/**
-	 * All slots — both field-named (origin='field') and kind-named (origin='kind').
-	 * After unified-slot refactor (spec 2026-05-17): all slots have a name and
-	 * `_<name>` storage key regardless of slot origin. Consumers should NOT
-	 * branch on origin — they are all just slots.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::nonEmpty`
-
-```text
-/** `true` when the source rule is `repeat1` (at least one element);
-	 * `false` for plain `repeat` (zero-or-more). Mirrors
-	 * `AssembledMulti.nonEmpty`. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::separator`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separator`
 
 ```text
 /**
 	 * Separator string from the repeat rule, if any — `undefined` for a
 	 * nonterminal separator (mirrors `separatorRule`'s same distinction) or
-	 * when the separator is otherwise not a fixed literal. Mirrors
-	 * `AssembledMulti.separator` exactly — unlike `AssembledBranch.separator`
-	 * (permanently dead: a branch's post-wrapper-deletion `simplifiedRule`
-	 * never survives as REPEAT-shaped), `this.rule` here IS always the raw
-	 * REPEAT/REPEAT1 rule by construction (that's the classification
-	 * criterion), so this getter is live. `render-module.ts`'s
-	 * `collectMetaData` reads this as the node-wide separator fallback for
-	 * list-container nodes whose separator doesn't reach a per-slot-value
-	 * stamp — see isSlotBearingCompound's doc comment (emitters/shared.ts)
-	 * for why 'separatedList' shares that fallback with 'branch'.
+	 * when the separator is otherwise not a fixed literal. Overrides the
+	 * base `AbstractAssembledCompound.separator` (permanently `undefined`
+	 * there: a branch/envelope/polymorph's post-wrapper-deletion
+	 * `simplifiedRule` never survives as REPEAT-shaped); `this.rule` here IS
+	 * always the raw REPEAT/REPEAT1 rule by construction (that's the
+	 * classification criterion), so this override is live.
+	 * `render-module.ts`'s `collectMetaData` reads this as the node-wide
+	 * separator fallback for list-container nodes whose separator doesn't
+	 * reach a per-slot-value stamp — see isSlotBearingCompound's doc comment
+	 * (emitters/shared.ts) for why `'list'` shares that fallback with
+	 * `'branch'`/`'envelope'`/`'polymorph'`.
 	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::slots`
-
-```text
-/** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.slots`. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::fields`
-
-```text
-/** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.fields`. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::structuralFieldsOf`
 
 ```text
 /**
- * Dedup'd structural fields for a node — Branch/Group return their `.fields`;
- * non-structural kinds return `[]`.
+ * Dedup'd structural fields for a node — any `AbstractAssembledCompound`
+ * subclass (branch, envelope, polymorph, list) returns its `.fields`;
+ * non-compound kinds (leaf/token/enum/supertype) return `[]`.
  *
  * Use this when emitting types, factories, or anything that asks
  * "what fields does this kind have."
@@ -1753,70 +1248,44 @@ can't be unified.
 // 5. Canonical structural-view helpers
 // ============================================================================
 //
-// Branch and Group expose `.fields` directly; non-structural kinds
-// (leaf/keyword/token/enum/supertype/multi) have no structural surface.
-// These helpers narrow over `AssembledNode` and give consumers one
-// canonical entry point per fact.
-```
-
-#### body
-
-```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (emitters/shared.ts).
+// Every AbstractAssembledCompound subclass (branch/envelope/polymorph/list)
+// exposes `.fields` directly; non-compound kinds (leaf/token/enum/supertype)
+// have no structural surface. These helpers narrow over `AssembledNode` via
+// a single `instanceof AbstractAssembledCompound` check and give consumers
+// one canonical entry point per fact.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::allFormFieldsOf`
 
 ```text
 /**
- * Raw cross-form flatten of fields — Branch/Group return their `.fields`;
- * non-structural kinds return `[]`.
+ * Raw cross-form flatten of fields — any `AbstractAssembledCompound`
+ * subclass returns its `.fields`; non-compound kinds return `[]`.
  *
  * (Previously Polymorph returned per-form fields; no polymorphs exist at runtime.)
  */
-```
-
-#### body
-
-```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (emitters/shared.ts).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::allSlotsOf`
 
 ```text
 /**
- * Every slot reachable from a node — Branch/Group return all entries of their
- * `.slots`; non-structural kinds return `[]`.
+ * Every slot reachable from a node — any `AbstractAssembledCompound`
+ * subclass returns all entries of its `.slots`; non-compound kinds return
+ * `[]`.
  *
  * Use this when the consumer doesn't care about the field/child distinction
  * (graph traversal, kind reachability, alias-source collection, etc.).
  */
 ```
 
-#### body
-
-```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (emitters/shared.ts).
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::allStructuralSlotsOf`
 
 ```text
 /**
- * Dedup'd union of every slot — Branch/Group return all entries of their
- * `.slots`; non-structural kinds return `[]`.
+ * Dedup'd union of every slot — any `AbstractAssembledCompound` subclass
+ * returns all entries of its `.slots`; non-compound kinds return `[]`.
  */
-```
-
-#### body
-
-```text
-// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
-// isSlotBearingCompound's doc comment (emitters/shared.ts).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::UnresolvedRef`
@@ -1834,15 +1303,6 @@ can't be unified.
 // ============================================================================
 // 2. Slot model & derivation
 // ============================================================================
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
-
-```text
-/**
- * Slot taxonomy classification for branch/group nodes.
- * Computed post-assembly by `computeSlotClasses()`.
- */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef`
@@ -1975,8 +1435,8 @@ can't be unified.
 /**
  * Unified slot descriptor — covers both named grammar-field slots
  * (source != 'inferred') and inferred positional slots (source == 'inferred').
- * Produced by `deriveSlots` and stored in `AssembledBranch.slots` /
- * `AssembledGroup.slots`. The `source` discriminant replaces the old
+ * Produced by `deriveSlots` and stored in every `AbstractAssembledCompound`
+ * subclass's `.slots`. The `source` discriminant replaces the old
  * `AssembledField` / `AssembledChild` split.
  *
  * `AssembledField` and `AssembledChild` have been removed; all consumers
@@ -1994,7 +1454,7 @@ can't be unified.
 
 ```text
 /**
-	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
+	 * Ids of every simplified-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
 	 */
 ```
@@ -2070,54 +1530,11 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledMulti`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList`
 
 ```text
-/**
- * AssembledMulti — hidden repeat helpers that tree-sitter inlines at
- * parse time.
- *
- * Shape: a hidden rule whose top-level content is `repeat` or `repeat1`
- * (possibly wrapped in `optional` / `variant`). Canonical case: python
- *   `_collection_elements: repeat1(choice(expression, yield, list_splat, ...))`
- * used inside `tuple`, `list`, `set`, etc.
- *
- * These never surface as parse-tree nodes — tree-sitter expands the
- * repeat in-place at every referrer. Our codegen therefore:
- *   - Emits NO interface / factory / from-resolver / wrap function /
- *     render template for the helper itself.
- *   - Emits a TYPE ALIAS naming the element union:
- *       `export type CollectionElements = Expression | Yield | ListSplat | …`
- *   - Inlines the repeat at every referrer (`inlineRefs` extends
- *     to cover `multi` alongside `group`), so the referrer's walker
- *     sees `repeat1(...)` directly and sets `multiple: true` on the
- *     child slot → rest-params factory.
- *
- * Mirrors the existing "hidden helper" story:
- *   group    — hidden seq with fields  (inline fields)
- *   supertype — hidden choice of symbols (dispatch to one subtype)
- *   multi    — hidden repeat of union    (inline as multi child slot)
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList`
-
-```text
-/**
- * A repeated rule with genuine per-instance separator variability — either
- * the separator itself is nonterminal (multiple possible literal kinds), or
- * it's a literal separator with an optional leading/trailing flank. See
- * docs/superpowers/specs/2026-07-12-separator-as-slot-design.md. Classified
- * by `assemble.ts`'s `isSeparatedListShape` — distinct from `AssembledMulti`
- * (hidden repeat-shape helpers tree-sitter inlines away, an unrelated
- * concept sharing only the REPEAT/REPEAT1 rule type).
- *
- * Unlike `AssembledGroup`, does NOT route through
- * `buildSlotsRecord`/`deriveSlots` (the general-purpose slot-collection/
- * merge machinery this design explicitly avoids) — it has exactly two
- * fixed-purpose fields (`elements`, `separatorRule`), derived directly via
- * `deriveValuesForRule`.
- */
+/** An envelope whose sole slot is a separated list: the element values,
+ *  the separator rule, and the leading/trailing delimiter facts. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
@@ -2184,16 +1601,17 @@ can't be unified.
 
 ---
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.keywordConstructibleText`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.keywordConstructibleText`
 
 ```text
 /**
- * The branch's fixed leading keyword text, when the node is
+ * The compound's fixed leading keyword text, when the node is
  * KEYWORD-CONSTRUCTIBLE: its rule opens with a STRING literal (a SEQ's
  * first member, or the whole rule) and every slot is optional — an empty
  * build renders the keyword alone. Drives from()'s string→branch coercion
  * (`'pub'` → the pub arm) and the config-input literal widening; consumed
- * instead of re-deriving from rule shape.
+ * instead of re-deriving from rule shape. Shared by every
+ * `AbstractAssembledCompound` subclass (branch, envelope, polymorph, list).
  */
 ```
 
@@ -2224,15 +1642,14 @@ can't be unified.
  * delimited by `// ===` banners:
  *
  *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
- *      accumulators + the optional-body and audit-context module pointers.
+ *      accumulators + the audit-context module pointer.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
  *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
  *      slots/values derivation (`deriveSlots`, `deriveValuesForRule`,
- *      `dedupeValues`, separators, `nameNode`). `hasAnyField` (the Rule<'link'>
- *      wrapper walker `isContainerShape` below still needs) lives in
- *      `dsl/rule-transforms.ts` — this module holds the assembled-node data
- *      model, not general rule-shape predicates.
+ *      `dedupeValues`, separators, `nameNode`) over the simplified view.
+ *      General rule-shape predicates live in `dsl/` — this module holds the
+ *      assembled-node data model.
  *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
  *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
@@ -2286,46 +1703,6 @@ can't be unified.
 // structured diagnostic payloads so they surface through the grammar-diagnostics
 // preflight rather than being silently swallowed when SITTIR_QUIET is set.
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::fieldContentIsMultiSibling`
-
-```text
-/**
- * True when a field's content would have tree-sitter emit multiple children under
- * the same field name at parse time. Uses `unwrapStructuralPassthroughs` defined
- * below (moved from field-shape.ts in R7 de-scatter; uses the node-map version).
- */
-```
-
-#### body
-
-```text
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::currentOptionalBodyKinds`
-
-```text
-// ---------------------------------------------------------------------------
-// Optional-body lookthrough (module-level current pointer)
-// ---------------------------------------------------------------------------
-//
-// Some rule kinds, after Link-phase stamping (see
-// `stampStaticRenderAs` for blank-bodied renderAs entries),
-// resolve to a body that's wholly optional — `optional(X)` or a choice
-// containing the blank sentinel. References to such a kind are
-// effectively optional even when the SYMBOL ref itself sits at a
-// non-optional position in the parent rule (e.g. tree-sitter externals
-// like `_automatic_semicolon` that fire invisibly at runtime — the
-// grammar requires them syntactically but the parser can match them
-// without producing a CST token).
-//
-// `currentOptionalBodyKinds` is set by `assemble.ts` for the duration of
-// the rule walk and consulted by the slot-value constructors to downgrade
-// the multiplicity of single-position refs to such kinds from `'single'`
-// to `'optional'`. Without this look-through, wrap-side reads would
-// assert required-singular and reject ASI-terminated corpus entries.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageInfo.enumKindsById`
@@ -2387,9 +1764,10 @@ can't be unified.
 
 ```text
 // Parse-as kind ref: the CST kind this value
-// surfaces under — the alias TARGET when aliased (`rule.name`), else the
-// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
-// only for aliased/variant values. `storageName`/`parseNames` project this.
+// surfaces under — the alias TARGET when aliased (`rule.aliasedTo`), else
+// the own kind. Differs from `node` (render/source = always `rule.name`,
+// the storage kind) only for aliased/variant values. `storageName`/
+// `parseNames` project this.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseKindId`
@@ -2684,10 +2062,20 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::ModelType`
 
 ```text
-/** Every shape an assembled node can take. A closed union so a switch over it
- *  can be exhaustive: a new shape then fails to compile at each site that has
- *  to say something about it, rather than falling into a `default` that
- *  quietly answers for it. */
+/** Every shape an assembled node can take: `'envelope'` (single-symbol
+ *  passthrough body), `'branch'` (a seq/choice of members), `'polymorph'`
+ *  (a choice of leaf-shaped members — a node holding one union slot),
+ *  `'supertype'` (`AssembledSupertype`: a collection of subtypes with no
+ *  slot; never a polymorph), `'enum'` (closed set of literals),
+ *  `'token'` (a single fixed literal — `AssembledKeyword`/`AssembledToken`
+ *  share this discriminant, distinguished by their `word` getter), `'pattern'`
+ *  (open regex/text-shaped leaf), `'list'` (a repeated element with genuine
+ *  per-instance separator variability). A closed
+ *  union so a switch over it can be exhaustive: a new shape then fails to
+ *  compile at each site that has to say something about it, rather than
+ *  falling into a `default` that quietly answers for it. See
+ *  `compoundModelTypeFor`/`branchClassFor` for how a rule's shape maps to
+ *  `'envelope'`/`'branch'`/`'polymorph'` and its constructing class. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.typeName`
@@ -2717,20 +2105,18 @@ can't be unified.
 
 ```text
 /**
-	 * The grammar rule that produced this assembled node. All 10 concrete
-	 * subclasses store their rule here. The generic parameter `R` narrows
-	 * this to the exact Rule<'link'> subset each subclass accepts — the narrowing
-	 * is truthful at runtime (not just documentation) because every
-	 * subclass constructor stores its rule argument here.
+	 * The rule the constructor received — a normalize-view rule
+	 * (`RenderRule`) or one of its subsets: each subclass's generic parameter
+	 * `R` narrows it to the shape that class's population actually has
+	 * (`sittir tool assemble-shape-census` is the evidence for each). Nothing
+	 * past assemble holds a link-phase tree.
 	 *
-	 * **Protected — no external consumer reaches in.** The project
-	 * convention: only `renderTemplate()` methods (and other in-class
-	 * behaviors) read `this.rule` directly. Outside consumers (emitters,
-	 * assemble/link phases, tests) must go through the class's public
-	 * getters (`members`, `content`, `separator`, `text`, `values`,
-	 * `subtypes`, `forms`, `pattern`, `elementRule`, `isTextTemplate`,
-	 * ...) — if a new use case needs raw rule access, add the
-	 * corresponding getter here instead of widening this field.
+	 * **Protected — no external consumer reaches in.** Only in-class
+	 * behaviours read `this.rule` directly. Outside consumers (emitters,
+	 * assemble, tests) go through the public getters (`renderRule`,
+	 * `content`, `separator`, `text`, `values`, `subtypes`, `pattern`,
+	 * `elements`, ...) — a new use case adds a getter here instead of
+	 * widening this field.
 	 */
 ```
 
@@ -2750,12 +2136,16 @@ can't be unified.
 	 * and IR emitters should produce output for this node.
 	 *
 	 * Rules:
-	 * - Visible kinds (not `_`-prefixed) — always user-facing UNLESS
-	 *   modelType is `token` or `multi` (structural helpers with no
-	 *   API surface).
+	 * - Visible kinds (not `_`-prefixed) — always user-facing UNLESS the
+	 *   node is an `AssembledToken` (anonymous single-literal delimiter
+	 *   with no API surface), and even then only when it is a
+	 *   variant-child kind. A hidden tree-sitter-inlined repeat helper is,
+	 *   by construction, `_`-prefixed — it falls out through the
+	 *   hidden-kind branch below rather than a modelType check; `classifyNode`
+	 *   does not force-classify such a kind to a dedicated shape at all.
 	 * - Hidden kinds (`_`-prefixed) — user-facing ONLY when the kind
-	 *   is an alias source (some symbol ref elsewhere points at it
-	 *   via `aliasedFrom`, meaning factories stamp this kind as
+	 *   is an alias source (some symbol ref elsewhere points at it by
+	 *   its storage `.name`, meaning factories stamp this kind as
 	 *   `$type` per the source-kind identity model). Otherwise hidden
 	 *   kinds are inlined / never surface at runtime.
 	 *
@@ -2798,7 +2188,7 @@ can't be unified.
 ```text
 /**
 	 * Tri-state flank mode backing `hasTrailingDelimiter`/`hasLeadingDelimiter`'s boolean
-	 * presence check, when the producer has it — `AssembledSeparatedList`'s
+	 * presence check, when the producer has it — `AssembledList`'s
 	 * `trailingDelimiter`/`leadingDelimiter` counterpart, for a per-*slot* (not
 	 * per-kind) array field. Optional so every existing constructor caller
 	 * (test fixtures, merge helpers that only ever OR the booleans) keeps
@@ -2814,13 +2204,6 @@ can't be unified.
 
 ```text
 /** See `trailingDelimiter`'s doc comment — same rationale, `leading` side. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.determined`
-
-```text
-/** Stamped by `pruneDeterminedSlots`: this slot's value is grammar-fixed
-	 *  and it renders as template text — it is no longer in any slot record. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.trailingDelimiter`
@@ -2839,11 +2222,13 @@ can't be unified.
 
 ```text
 /**
-	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
-	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
-	 * view a consumer walks to the owning slot without owner traversal. Empty
-	 * when the source rules carry no ids (hand-constructed test fixtures that
-	 * bypass `buildRuleCatalog`). See feedback_ruleid_backpointer / FOLD-1.
+	 * Ids of every simplified-rule position that produced this slot: the
+	 * rule's own id, its `absorbedIds`, and — for a CHOICE slot — every
+	 * member's id and `absorbedIds`. Used by `NodeMap.slotByRuleId` to
+	 * back-pointer from a simplified-rule id to the owning slot without
+	 * owner traversal. Empty when the source rules carry no ids
+	 * (hand-constructed test fixtures that bypass `buildRuleCatalog`). See
+	 * feedback_ruleid_backpointer / FOLD-1.
 	 */
 ```
 
@@ -2895,57 +2280,16 @@ can't be unified.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isDeterminedSlot`
+### `packages/codegen/src/compiler/model/node-map.ts::fixedTextOfKind`
 
 ```text
-/**
- * A determined slot is an enum of cardinality 1: a required, singular slot
- * whose value set has exactly one member — an inline literal, or a
- * reference to a leaf whose rendered text is a constant (keyword, or a
- * string-bodied token). Such a slot carries zero information per instance;
- * it is not a slot: `pruneDeterminedSlots` moves it out of the slot record
- * (no storage, transport, wrap capture, accessor, or `from()` handling) and
- * its text renders as template text (`determinedSlotText`).
- */
+/** The constant text a leaf kind renders as — a keyword, or a token whose
+ *  body is a single string — else `undefined`. The one text source for a
+ *  reference stamped `nonterminal: false` (template emitter) — a compound
+ *  target is never fixed text: its render is its own template. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::determinedSlotText`
-
-```text
-/** The constant text a determined slot renders as — `undefined` when the
- *  slot is not determined. The single classification AND text source. */
-```
-
-#### body
-
-```text
-// Leaf targets only: a keyword or a string-bodied token has one constant
-// render. A parameterless COMPOUND target is deliberately excluded — its
-// render is its own template, and inlining that here would re-derive it;
-// no current grammar has such a slot, and one that appears stays a real
-// (caller-supplied) slot, surfacing loudly in the factory Config.
-```
-
-#### body
-
-```text
-// A token is parameterless exactly when its body is a single string.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::pruneDeterminedSlots`
-
-```text
-/**
- * The determined-slot pruning pass — runs post-hydration (a ref target is
- * not resolvable at construction). Determined slots leave the slot record
- * (every record-driven emitter drops them atomically) and land on the
- * node's `determinedSlots`, each stamped `determined` so the template
- * emitter — which still reaches them through `slotByRuleId` — inlines
- * their text instead of a slot reference.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound`
 
 ```text
 // ============================================================================
@@ -2953,7 +2297,29 @@ can't be unified.
 // ============================================================================
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.simplifiedRule`
+```text
+/**
+ * Abstract slot-bearing base for every compound (non-leaf) node kind —
+ * `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph`, and
+ * `AssembledList` all extend this directly and share its whole slot
+ * machinery (`simplifiedRule`/`renderRule`, `slots`/`fields`,
+ * `slotClass`, determined-slot pruning, `parameterless`,
+ * `keywordConstructibleText`). `AssembledSupertype` is NOT one of these —
+ * it is `modelType: 'polymorph'` too (a hidden choice-of-symbols dispatch
+ * point) but has no slots of its own and does not extend this class.
+ *
+ * The `hoisted`/`detectToken`/`name`/`parentKind`/`overridePassthrough`
+ * getters read the `enrichment.hoisted` sidecar (`NodeEnrichment`,
+ * `HoistedFacts`) — set only when this kind was minted by hoisting a
+ * sub-shape out of its parent.
+ * `hoisted` is TRANSITIONAL: a later enrichment step that dissolves
+ * hoisted kinds back into nested shapes removes the sidecar and these
+ * getters collapse to their non-hoisted defaults (`false`/`undefined`/the
+ * plain `kind`).
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.simplifiedRule`
 
 ```text
 // rule narrowed to SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule —
@@ -2972,24 +2338,23 @@ can't be unified.
 	 * (`deriveFields`, `deriveChildren`, separator discovery) don't have to
 	 * re-navigate past delimiter literals on every call. Template emission
 	 * still reads the raw `rule` because templates need the literals to
-	 * surface as template text. Stage 1: populated but not yet read.
+	 * surface as template text.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.renderRule`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.renderRule`
 
 ```text
 /**
-	 * Wrapper-deleted view of the rule, sourced from
-	 * `normalized.normalizedRules[kind]` at assemble time. Optional / field /
-	 * repeat / repeat1 wrappers are pushed down to leaf attributes;
-	 * structural rules (seq / choice / variant / group / polymorph) are
-	 * preserved. Populated alongside `simplifiedRule`; consumed by PR1
-	 * Task 2.A5 and later passes that operate on the wrapper-less shape.
+	 * The normalize view of this kind (`normalized.normalizedRules[kind]`):
+	 * what is rendered. Wrappers are attributes on the wrapped node;
+	 * seq / choice / variant / group structure is preserved. It IS the
+	 * constructor's `rule`; the getter is the public name for it. The other
+	 * view, `simplifiedRule`, answers what is a slot.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.variantChildKinds`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.variantChildKinds`
 
 ```text
 /**
@@ -3003,22 +2368,11 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.slotClass`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound._slots`
 
 ```text
 /**
-	 * Slot taxonomy — `singleSlot` when exactly one user-facing slot
-	 * survives after filtering auto-stamp, hidden-infra, and keyword-
-	 * presence fields; `multiSlot` otherwise. Set post-assembly by
-	 * `computeSlotClasses()`.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch._slots`
-
-```text
-/**
-	 * The unified slot Record — every constituent of this branch keyed
+	 * The unified slot Record — every constituent of this compound keyed
 	 * by its grammar field name (for `field()`-derived slots) or its
 	 * kind-derived positional name (for inferred slots). Insertion order
 	 * matches the order produced by `deriveSlots`. Frozen at construction.
@@ -3038,14 +2392,7 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.determinedSlots`
-
-```text
-/** The slots `pruneDeterminedSlots` removed from the record — their
-	 *  value is grammar-fixed and renders as template text. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.<unknown>`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.<unknown>`
 
 ```text
 // Cycle guard for the parameterless getter. Breaks re-entrant calls
@@ -3075,10 +2422,170 @@ can't be unified.
 // in place.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch.parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
 
 ```text
 // cycle — conservative false
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
+
+```text
+/** `modelType: 'branch'` — a seq or choice of members classified by
+ *  `compoundModelTypeFor` (neither a single-symbol envelope body nor a
+ *  choice of leaf-shaped members). No members of its own beyond the
+ *  `modelType` discriminant; everything else is inherited from
+ *  `AbstractAssembledCompound`. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnvelope`
+
+```text
+/**
+ * A compound with zero or one slot. `AssembledPolymorph` (the slot is a
+ * union chosen once per instance) and `AssembledList` (the slot is
+ * repeated, with separator/delimiter facts) extend it — what sets them
+ * apart is variant/form handling and list facts, not slot structure, so
+ * every envelope consumer (`soleSlot`, the factory-surface helpers) covers
+ * all three. `M` is the `modelType` label each subclass narrows to, kept
+ * as a type parameter so `modelType` still discriminates the
+ * `AssembledNode` union.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph`
+
+```text
+/** An envelope whose sole slot is a choice of leaf-shaped arms — the
+ *  variant/form dispatch surface until the enrichment overlays lift it. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph.arms`
+
+```text
+/** The choice's member rules — one per polymorph arm. `[]` if the
+ *  (structural-passthrough-peeled) body isn't a CHOICE. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isLeafShapedMember`
+
+```text
+/**
+ * A choice member shape that keeps a compound classified as `'polymorph'`
+ * rather than `'branch'` — SYMBOL, SUPERTYPE, STRING, PATTERN, INDENT,
+ * DEDENT, NEWLINE. Anything else (a nested SEQ/CHOICE arm) forces the
+ * whole compound to `'branch'` instead, since a polymorph's arms must
+ * each resolve to a single referenceable kind, not a sub-structure of
+ * their own.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundClass`
+
+```text
+/** The three constructible non-supertype compound classes —
+ *  `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph` — as a
+ *  type, for `branchClassFor`'s return and `COMPOUND_CLASS_BY_MODEL_TYPE`'s
+ *  value type. `AssembledSupertype` and `AssembledList` are constructed
+ *  separately in `assemble.ts` (a supertype needs its resolved subtype
+ *  list; a list needs its separator/element derivation), so neither is
+ *  reached through this lookup. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundModelType`
+
+```text
+/** The subset of `ModelType` a `compoundModelTypeFor`/`branchClassFor`
+ *  call can return — excludes `'enum'`, `'token'`, `'pattern'`, `'list'`,
+ *  none of which a compositional (non-leaf, non-list) rule can classify
+ *  as. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::compoundModelTypeFor`
+
+```text
+/**
+ * The single predicate deciding whether a compositional rule classifies
+ * as `'envelope'`, `'polymorph'`, or `'branch'`: peel structural
+ * passthroughs (`variant`/`group` wrappers) first, then — one symbol, or
+ * an empty seq (every reference stripped as fixed text), or a choice under
+ * array multiplicity (one list slot, exactly like a repeated symbol) →
+ * `'envelope'`; a non-empty single-cardinality choice whose every member is
+ * leaf-shaped
+ * (`isLeafShapedMember`) → `'polymorph'`; anything else → `'branch'`.
+ * `classifyNode` (assemble.ts) calls this for any rule shape that isn't
+ * already resolved to `'enum'`/`'token'`/`'pattern'`/`'list'` earlier in
+ * its own dispatch. `branchClassFor` looks up the constructing class for
+ * whatever this returns.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::branchClassFor`
+
+```text
+/** The constructing class (`AssembledBranch`/`AssembledEnvelope`/
+ *  `AssembledPolymorph`) for a compositional rule's `compoundModelTypeFor`
+ *  classification — `assemble.ts` calls this once it has already ruled
+ *  out the SUPERTYPE-body and list-shaped cases, which construct
+ *  `AssembledSupertype`/`AssembledList` directly instead. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::unwrapStructuralPassthroughs`
+
+```text
+/**
+ * Peel the two structural passthroughs the simplified tree still carries —
+ * `variant` and `group` — until reaching the core they decorate. Neither
+ * contributes a runtime position of its own. Single source for the "find
+ * the meaningful inner rule" step; `compoundModelTypeFor` and
+ * `AssembledPolymorph.arms` both call this before inspecting the body's
+ * shape.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::HoistedFacts`
+
+```text
+/**
+ * Sittir-decided facts about a kind minted by hoisting a sub-shape out of
+ * its parent rule, carried as a `hoisted` sidecar on an ordinary
+ * `AbstractAssembledCompound` subclass rather than a separate model type.
+ * `detectToken` is the literal
+ * that lets a parent's dispatch recognize which hoisted arm matched;
+ * `name` is the short label (e.g. a variant name like `'pub'` or
+ * `'tuple'`); `parentKind` is set when this hoisted kind is a polymorph
+ * form — the parent polymorph's kind, i.e. what tree-sitter actually
+ * produces for this node (form factories must emit `type: parentKind`,
+ * not the synthesized form kind); `overridePassthrough` marks a form
+ * whose factory should forward straight through rather than wrap.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeEnrichment`
+
+```text
+/**
+ * Sidecar for facts sittir decided rather than facts the parser stamped —
+ * currently only `hoisted`. Threaded through `CompoundOpts.hoisted` at
+ * construction and read back via `AbstractAssembledCompound`'s
+ * `hoisted`/`detectToken`/`name`/`parentKind`/`overridePassthrough`
+ * getters. Kept as its own sidecar (not spread directly onto the node)
+ * so the transitional hoisted-dissolution pass can drop it wholesale
+ * without touching any other field.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts`
+
+```text
+/**
+ * Constructor options shared by every `AbstractAssembledCompound`
+ * subclass. `hoisted`, when present (even `{}`), marks the kind as
+ * hoisted (`NodeEnrichment.hoisted` is populated, `AbstractAssembledCompound.hoisted`
+ * returns `true`) and its fields become the `HoistedFacts` sidecar
+ * content. `visibleAliasTargets`/`simplifiedRules` feed
+ * `expandSlotWithVisibleAliasSources` during slot derivation.
+ */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf`
@@ -3094,10 +2601,13 @@ can't be unified.
  *   - `AssembledToken` — single fixed anonymous delimiter (e.g. `"{"`)
  *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
  *
- * The base intentionally has no `modelType` — each concrete subclass
- * keeps its own discriminant string (`'pattern'` for Pattern, `'keyword'`,
- * `'token'`, `'enum'`) so byte-identity of generated output is preserved
- * during the taxonomy refactor.
+ * The base intentionally has no `modelType` of its own — each concrete
+ * subclass declares its own discriminant string: `'pattern'` for
+ * `AssembledPattern`, `'enum'` for `AssembledEnum`, and `'token'` for
+ * BOTH `AssembledKeyword` and `AssembledToken` — a named single literal
+ * and an anonymous single literal are not distinguished by modelType,
+ * only by the `word` getter (`true` on Keyword, `false` on Token, both
+ * overriding the base's `false` default).
  *
  * Introduced alongside the rename of the previous
  * open-text `AssembledLeaf` class to `AssembledPattern`.
@@ -3123,49 +2633,28 @@ can't be unified.
 	 * wrapper's stamp, or an external scanner symbol). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
-
-```text
-// regex — always content-bearing
-```
-
-#### body
-
-```text
-// Terminal-shape rule: walk the content tree collecting all non-blank string leaves.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::FixedLiteralCtx`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.word`
 
 ```text
 /**
- * Walk a rule subtree collecting leaf `string` values.
- * Returns the single distinct string if every non-blank reachable leaf is
- * the same fixed literal, or `undefined` the moment any content-bearing
- * external (symbol) or multi-value divergence is encountered.
- *
- * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
- * represent the "omit" arm of an `optional`.
- *
- * Multi-member SEQs of fixed literals (e.g. python's `_not_in` =
- * `seq('not', 'in')`, aliased to `'not in'`) ARE a fixed realisation: every
- * parse of the rule produces exactly the same token sequence. Their members
- * are collected in `deterministic` mode (no optional member / blank-arm
- * CHOICE allowed — optionality inside a seq means divergent realisations)
- * and joined with `joiner`: a single space at grammar level (canonical
- * token separation), an empty string under a `tokenized` stamp (contiguous
- * by construction).
- *
- * The rule is the wrapper-free normalize view: optionality, repetition and
- * slot promotion are the leaf's own `multiplicity` / `nonterminal` stamps,
- * read one level at a time.
- *
- * @param ctx.joiner - separator used when concatenating a multi-member SEQ's
- *   literals. `' '` outside a tokenized subtree, `''` inside.
- * @param ctx.deterministic - when true, any optionality (`multiplicity:
- *   'optional'`, blank CHOICE arm) makes the subtree non-fixed. Used for
- *   members of a multi-member SEQ, where "same text OR absent" is no longer
- *   a single fixed realisation.
+	 * Base default: `false`. The sole discriminant between the two
+	 * `modelType: 'token'` leaves — `AssembledKeyword` overrides this to
+	 * `true` (a named single literal matching the grammar's word shape,
+	 * e.g. `"fn"`), `AssembledToken` leaves it `false` (an anonymous
+	 * single-literal delimiter, e.g. `"{"`). `assemble.ts`'s `classifyNode`
+	 * for a `'token'`-shaped rule picks which class to construct via
+	 * `matchesWordShape`, before either instance exists to ask.
+	 */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
+
+```text
+/**
+ * A PATTERN leaf's rule is always content-bearing (a regex, not a fixed
+ * string) so this short-circuits before delegating to simplify's
+ * `collectFixedLiteral` — the single derivation of a literal-only body's
+ * text — for every other pattern shape.
  */
 ```
 
@@ -3261,6 +2750,20 @@ can't be unified.
 // id is the wire tag the enum dispatches on.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype`
+
+```text
+/**
+ * `modelType: 'supertype'`, `transparent: true` — a hidden choice-of-symbols
+ * dispatch point (e.g. python's `expression`, rust's `pattern`): parsing
+ * always yields one of `subtypeNames`, never a node of this kind's own
+ * type. NOT an `AbstractAssembledCompound` — a supertype has no slots of
+ * its own; it dispatches straight through to whichever subtype matched.
+ * Always hidden (no factory, no factoryName) — supertypes are dispatch
+ * points, not user-constructable nodes.
+ */
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
 
 ```text
@@ -3302,130 +2805,53 @@ can't be unified.
 // Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledMulti.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.constructor`
 
 ```text
-// rule is the normalize-phase RenderRule: wrapper-deletion already pushed
-// the REPEAT/REPEAT1 wrapper's own multiplicity/separator down onto its
-// content, so the wrapper-bearing node no longer exists to hold — the
-// same facts these getters used to read off the wrapper live on `rule`
-// itself now.
-```
-
-#### body
-
-```text
-// Multi nodes are always hidden (no factoryName)
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.simplifiedRule`
-
-```text
-// rule typed as Rule<'link'> — groups can carry GroupRule<'link'> (pre-unwrap),
-// SeqRule<'link'>/ChoiceRule<'link'> after unwrapGroupRuleAndSimplified(), or any
-// Rule<'link'> when constructed as polymorph forms (form.content can be
-// any Rule<'link'> type).
+// rule typed as Rule<'link'> — a hoisted compound can carry GroupRule<'link'>
+// (pre-unwrap), SeqRule<'link'>/ChoiceRule<'link'> after
+// unwrapGroupRuleAndSimplified(), or any Rule<'link'> when constructed as
+// polymorph forms (form.content can be any Rule<'link'> type).
 ```
 
 ```text
-/** See `AssembledBranch.simplifiedRule`. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.renderRule`
-
-```text
-/** See `AssembledBranch.renderRule`. Sourced from `normalized.normalizedRules[kind]` at assemble time. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.name`
-
-```text
-/** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.parentKind`
-
-```text
-/**
-	 * When this group is a polymorph form, the parent polymorph's kind —
-	 * what tree-sitter actually produces for this node. Form factories
-	 * must emit `type: parentKind` so the runtime NodeData matches the
-	 * tree-sitter kind, not the synthesized form kind. Undefined for
-	 * standalone groups (inlined hidden seqs).
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.slotClass`
-
-```text
-/** See {@link AssembledBranch.slotClass}. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup._slots`
-
-```text
-/**
-	 * The unified slot Record — every constituent of this group keyed by
-	 * its grammar field name (for `field()`-derived slots) or its
-	 * kind-derived positional name (for inferred slots). Insertion order
-	 * matches the order produced by `deriveSlots`. Frozen at construction.
-	 *
-	 * Mirrors `AssembledBranch.slots` — group consumers use this instead
-	 * of `.fields` directly.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.determinedSlots`
-
-```text
-/** See {@link AssembledBranch.determinedSlots}. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.constructor`
-
-#### body
-
-```text
-// Groups always derive a factoryName — hidden groups emit fragment factories
-// for composition (hidden-group-factories). Polymorph form groups
-// still use the explicitly provided factoryName so their emitted name matches
-// the form name (e.g. `rangePatternUFormLeftWithRight`), not the raw kind.
+// Hoisted compounds always derive a factoryName — hidden hoisted kinds emit
+// fragment factories for composition (hidden-group-factories). Polymorph
+// form compounds still use the explicitly provided factoryName so their
+// emitted name matches the form name (e.g. `rangePatternUFormLeftWithRight`),
+// not the raw kind.
 //
-// Hidden groups (kind starts with `_`) need the leading `_` preserved in
-// the factory name so the emitted function is `_fooBar`, not `fooBar`.
+// Hidden hoisted kinds (kind starts with `_`) need the leading `_` preserved
+// in the factory name so the emitted function is `_fooBar`, not `fooBar`.
 // `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
-// re-derive and prefix here when no explicit factoryName was provided.
+// re-derive and prefix here when no explicit factoryName was provided. A
+// non-hoisted compound never hits this branch — `hoisted` is `undefined`
+// for an ordinary branch/envelope/polymorph, and factoryName derivation
+// falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.<unknown>`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.name`
 
 ```text
-// Cycle guard for the parameterless getter. Same rationale as AssembledBranch.
-// No memoization — see AssembledBranch comment.
+/** Short label (e.g., variant name like 'pub' or 'tuple'), read from the
+	 * `hoisted` sidecar. Defaults to `kind` when not hoisted (or when
+	 * hoisted with no `name` fact). */
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parentKind`
 
 ```text
-// Node map back-reference for pre-hydration UnresolvedRef resolution.
-// See AssembledBranch.#nodes for full rationale.
+/**
+	 * When this hoisted compound is a polymorph form, the parent
+	 * polymorph's kind — what tree-sitter actually produces for this node.
+	 * Form factories must emit `type: parentKind` so the runtime NodeData
+	 * matches the tree-sitter kind, not the synthesized form kind.
+	 * Undefined for standalone hoisted compounds (inlined hidden seqs) and
+	 * for every non-hoisted compound.
+	 */
 ```
 
-```text
-// hidden nodes have no factory
-```
-
-#### body
-
-```text
-// See AssembledBranch.#computeParameterless.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledGroup.parameterless`
-
-```text
-// cycle — conservative false
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.separatorRule`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorRule`
 
 ```text
 /**
@@ -3441,7 +2867,7 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.leadingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.leadingDelimiter`
 
 ```text
 /**
@@ -3460,7 +2886,8 @@ can't be unified.
 	 * literal separator when at least one flank is genuinely `'optional'`
 	 * (a nonterminal separator routes here regardless of flank state) — a
 	 * literal separator with ONLY `'mandatory'`/`'none'` flanks stays
-	 * classified as `'branch'`, rendered by the pre-existing
+	 * classified as `'branch'`/`'envelope'`/`'polymorph'` (whichever
+	 * `compoundModelTypeFor` resolves), rendered by the pre-existing
 	 * `hasTrailingDelimiter`/`hasLeadingDelimiter` boolean mechanism instead. So a
 	 * literal-separator kind reaching this class always has at least one
 	 * `'optional'` flank; `'mandatory'` is only reachable here in
@@ -3469,50 +2896,7 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.simplifiedRule`
-
-```text
-/**
-	 * TEMPORARY behavior-preserving stub (separator-as-slot Task 2 follow-up,
-	 * see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
-	 * `simplifiedRule`/`renderRule`/`slots`/`fields`/`slotClass` exist ONLY so
-	 * the wrap/render/factory emitters can route a `'separatedList'` node
-	 * through the EXACT SAME code paths they already use for `'branch'`/
-	 * `'group'` — `_slots` is built via the identical
-	 * `buildSlotsRecord(simplifiedRule, ctx, renderRule)` call
-	 * `AssembledBranch`/`AssembledGroup` make, with the SAME `simplifiedRule`/
-	 * `renderRule` `assemble()` would have passed had this kind stayed
-	 * classified as `'branch'`. This guarantees real grammar kinds that now
-	 * classify as `'separatedList'` (e.g. python's `_with_clause_bare`,
-	 * `_expression_statement_tuple`, `lambda_parameters`) keep rendering
-	 * byte-identically to their pre-Task-2 `'branch'` output, so `cargo
-	 * build` stays green and existing corpus round-trips don't regress.
-	 * Tasks 4-6 replace this with real per-instance separator capture
-	 * (`_separator`/`_leading_sep`/`_trailing_sep`); at that point this
-	 * slot-bearing surface goes away — do NOT build new capture logic on
-	 * top of it.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.renderRule`
-
-```text
-/** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList._slots`
-
-```text
-/** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.slotClass`
-
-```text
-/** See `AssembledBranch.slotClass` — set post-assembly by `computeSlotClasses()`. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.constructor`
 
 #### body
 
@@ -3522,7 +2906,7 @@ can't be unified.
 // so the wrap capture keys can include it.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSeparatedList.terminatedSeparator`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.terminatedSeparator`
 
 ```text
 /**
@@ -3552,11 +2936,12 @@ can't be unified.
  * terminal of the kind's rule forbids preceding whitespace
  * (`token.immediate`), making every reference to the kind seam-free on its
  * left in every context — the structural counterpart of
- * `AssembledLeaf.immediate`. Walks the link-phase rule leftmost-first: a
- * pushed `immediate` attr anywhere on the leftmost path decides true; a
- * CHOICE requires every arm; a nullable leftmost item (OPTIONAL/REPEAT)
- * decides false because the true left edge then varies per instance; an
- * unresolvable reference decides false. A conservative false never costs
+ * `AssembledLeaf.immediate`. Walks the normalized (render-view) rule
+ * leftmost-first: an `immediate` attribute anywhere on the leftmost path
+ * decides true; a CHOICE requires every arm; a nullable leftmost item
+ * (optional/array multiplicity) decides false because the true left edge
+ * then varies per instance; an unresolvable reference decides false. A
+ * conservative false never costs
  * correctness — only a runtime seam check that static resolution could
  * have skipped.
  */
@@ -3577,8 +2962,8 @@ can't be unified.
 #### body
 
 ```text
-// OPTIONAL/REPEAT (nullable left edge), unstamped terminals, and
-// compound forms with no single leftmost path.
+// Unstamped terminals and compound forms with no single leftmost
+// path (nullable multiplicity already decided false above).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::SeamEdgeClass`
@@ -3594,6 +2979,16 @@ can't be unified.
  *  when every instance's edge character has that class under the grammar's
  *  `wordMatcher`, `varies` when the class differs per instance or cannot be
  *  established (nullable edges, unparsed pattern tails, unresolved refs). */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isNullableMultiplicity`
+
+```text
+/** A rule whose flattened multiplicity is `optional` or `array` may render
+ *  nothing, so it has no fixed edge: the edge walkers treat it the way the
+ *  wrapper phases treated an OPTIONAL/REPEAT node — no left-immediacy, edge
+ *  class `varies`, no edge char set (except as a nullable SEQ member, which
+ *  contributes and falls through). */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
@@ -3637,8 +3032,9 @@ can't be unified.
  * Edge character classes of a kind's rendered text. Leaves answer from
  * their own literal text (keyword), literal value set (enum), or pattern
  * source (leading atom only — a pattern's trailing class is `varies` in
- * this cut); structural kinds walk their link-phase rule to the leftmost/
- * rightmost terminal, with nullable edges and cycles deciding `varies`.
+ * this cut); structural kinds walk their normalized (render-view) rule to
+ * the leftmost/rightmost terminal, with nullable edges (optional/array
+ * multiplicity) and cycles deciding `varies`.
  * `varies` never causes a wrong static decision — only a boundary left to
  * the runtime writer.
  */
@@ -3655,8 +3051,8 @@ can't be unified.
 #### body
 
 ```text
-// OPTIONAL/REPEAT (nullable edge) and forms with no single
-// terminal on this side.
+// Forms with no single terminal on this side (nullable
+// multiplicity already decided `varies` above).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindEdgeCharSets`
@@ -3673,9 +3069,9 @@ can't be unified.
 #### body
 
 ```text
-// A nullable edge member (OPTIONAL/REPEAT) contributes its
-// content's edge chars AND falls through to the next member
-// inward — both are possible edges depending on presence.
+// A nullable edge member (optional/array multiplicity) contributes
+// its own edge chars AND falls through to the next member inward —
+// both are possible edges depending on presence.
 ```
 
 #### body
@@ -3694,8 +3090,8 @@ can't be unified.
 #### body
 
 ```text
-// PATTERN (not enumerable), OPTIONAL/REPEAT (nullable edge), and
-// forms with no single terminal on this side.
+// PATTERN (not enumerable) and forms with no single terminal on
+// this side (nullable multiplicity already decided undefined above).
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFlags`
@@ -3712,3 +3108,20 @@ can't be unified.
  *  template text and never encoded; a slot's permitted values are exactly
  *  the grammar's optional flanks (see `permittedDelimiters`). */
 ```
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`
+
+```text
+/** The one slot of a one-slot compound (an envelope's body, a polymorph's
+ *  union), `undefined` for zero or two-plus. The factory surface reads
+ *  this — the class is the surface. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.word`
+
+```text
+/** Whether the keyword's text is word-shaped (`wordMatcher`) — the spacing
+ *  fact, independent of the kind's surface. A named literal kind that is
+ *  not a word (rust `unit_expression` `()`, python `ellipsis` `...`) is a
+ *  keyword-class leaf with `word: false`. */
+```
+

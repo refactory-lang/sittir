@@ -31,7 +31,7 @@ import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
 import { simplifyRule } from '../simplify.ts';
-import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../simplify.ts';
+import { mergeBranchesForChoice } from '../simplify.ts';
 import { attributeBuilder } from '../../dsl/builders.ts';
 import { flattenRules } from '../flatten.ts';
 
@@ -183,97 +183,6 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		const result = simplifyRule(fieldFree as Rule);
 		// The optional wraps a nonterminal string → stays as optional (not stripped)
 		expect(result.type).not.toBe('SEQ');
-	});
-});
-
-describe('simplifyRule — hoistInnerFieldFromWrapperForField', () => {
-	// Tree-sitter flattens nested-field-paths to top-level on the parent
-	// kind. The hoist drops an OUTER `field('outer', ...)` wrapper when
-	// its content carries an inner `field('inner', X)` reachable through
-	// structural-only wrappers (no named-symbol siblings). After the
-	// hoist the inner field is the top-level reference the walker sees,
-	// matching tree-sitter's parse-tree shape.
-	//
-	it('hoists an inner field out of `field(outer, optional(seq(literal, field(inner))))`', () => {
-		// Pre-clause-detection shape of typescript `infer_type`.
-		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
-		const expected = optional(seq(str('extends'), field('type', sym('type'))));
-		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(expected);
-	});
-
-	it('hoists through `optional(repeat1(choice(field, symbol), sep))` (typescript enum_body)', () => {
-		// The inner `symbol(enum_assignment)` is a CHOICE ARM, not a
-		// seq sibling of the inner field — the hoist guard sees no
-		// named sibling and proceeds.
-		const input = field(
-			'opening',
-			optional(repeat1(choice(field('name', sym('_property_name')), sym('enum_assignment')), ','))
-		);
-		const result = hoistInnerFieldFromWrapperForField(input);
-		expect(result.type).toBe('OPTIONAL');
-	});
-
-	it('does NOT hoist when the inner field has a NAMED-symbol sibling in the enclosing seq', () => {
-		// python `comparison_operator` family: the seq enclosing the
-		// inner field also carries a `symbol(primary_expression)` —
-		// dropping the outer `comparators` wrapper would strip the
-		// label tree-sitter put on `primary_expression` and the
-		// expression children would render via `$$$CHILDREN`.
-		const input = field(
-			'comparators',
-			repeat1(seq(field('operators', choice(str('<'), str('>'))), sym('primary_expression')))
-		);
-		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
-	});
-
-	it('does NOT hoist when the outer field directly wraps another field (no structural scaffolding)', () => {
-		// `field('outer', field('inner', X))` direct nesting is a
-		// direct outer-inner wrap, not the scaffolded case this hoist
-		// handles. We bail to keep the two hoists from racing.
-		const input = field('outer', field('inner', sym('x')));
-		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
-	});
-
-	it('does NOT hoist when the outer field has no inner field at exposable depth', () => {
-		// Plain `field('name', symbol(X))` — no inner field to hoist.
-		const input = field('name', sym('identifier'));
-		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
-	});
-
-	it('does NOT hoist when the inner field is hidden behind a `symbol` reference', () => {
-		// Tree-sitter's flattening does NOT cross symbol boundaries —
-		// the inner field belongs to the referenced rule, not the
-		// current kind. Dropping the outer wrapper would lose the
-		// outer label without recovering anything.
-		const input = field('module_name', sym('dotted_name'));
-		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
-	});
-
-	it('preserves anonymous-string siblings (literal "extends" stays in the hoisted seq)', () => {
-		// The structural literal that previously rode inside the
-		// outer field's content must survive the hoist — the walker
-		// emits it as template text.
-		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
-		const result = hoistInnerFieldFromWrapperForField(input);
-		// Walk into the optional → seq → first member: the literal.
-		expect(result.type).toBe('OPTIONAL');
-		const optInner = (result as { type: 'OPTIONAL'; content: Rule }).content;
-		expect(optInner.type).toBe('SEQ');
-		const seqMembers = (optInner as { members: Rule[] }).members;
-		expect(seqMembers[0]).toEqual(str('extends'));
-		expect(seqMembers[1]?.type).toBe('FIELD');
-	});
-
-	it('integration: a NAMED supertype sibling also blocks the hoist', () => {
-		const input = field('outer', seq(sup('expression'), field('inner', sym('identifier'))));
-		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
-	});
-
-	it('idempotent: running the hoist twice is a no-op on the hoisted shape', () => {
-		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
-		const once = hoistInnerFieldFromWrapperForField(input);
-		const twice = hoistInnerFieldFromWrapperForField(once);
-		expect(twice).toEqual(once);
 	});
 });
 

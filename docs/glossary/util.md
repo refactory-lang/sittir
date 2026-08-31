@@ -120,7 +120,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * → `NodeMap`; every downstream consumer (`AssembleCtx.from`, `assemble()`,
  * `TemplateEmitter`) reads the carried field — none may call
  * `compileWordMatcher` again over a post-link rules view
- * (`linkRules`/`normalizedRules`/`rules`). Recompiling from a post-normalize
+ * (`normalizedRules`/`rules`). Recompiling from a post-normalize
  * view is unsound in general: wrapper-deletion collapses `REPEAT`/`OPTIONAL`
  * wrappers into leaf `multiplicity` attributes that `ruleToRegexSource`
  * doesn't consult, so a post-link recompile can silently undercount the

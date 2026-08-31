@@ -3,13 +3,13 @@ import { Command } from 'commander';
 import { toolModules, registerTools } from '../../../src/commands/tool/index.ts';
 
 const EXPECTED = [
+	'assemble-shape-census',
 	'bench',
 	'bench-codemod',
 	'check-baseline',
 	'check-jinja',
 	'check-perf',
 	'classify',
-	'compare-overrides',
 	'corpus-coverage-census',
 	'defect-histogram',
 	'diff-failures',

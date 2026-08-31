@@ -43,7 +43,7 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
 	// has a stranded optional trailing/leading separator flank sibling to the
 	// repeat — genuine per-instance separator variability (the list may or may
 	// not end with a trailing SEP). It is NO LONGER inline-safe: it falls
-	// through to the visible-promotion path (AssembledSeparatedList), same as
+	// through to the visible-promotion path (AssembledList), same as
 	// a multi-slot/bare-choice body. Confirmed via Task 1's live probe on
 	// rust's `parameters` rule (`_parameters_optional1`/`parameters_group1`).
 	it('separator-variable seq(E, repeat(seq(SEP,E)), opt(SEP)) is NOT inline-safe (genuine separator variability)', () =>

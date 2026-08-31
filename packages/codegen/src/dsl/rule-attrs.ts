@@ -1,5 +1,6 @@
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId } from '../types/rule.ts';
+import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
@@ -19,8 +20,30 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	if (immediate !== undefined && !Object.prototype.hasOwnProperty.call(result, 'immediate'))
 		patch['immediate'] = immediate;
 	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
-	if (Object.keys(patch).length === 0) return result;
-	return { ...result, ...patch };
+	const withPatch = Object.keys(patch).length === 0 ? result : { ...result, ...patch };
+	return absorbIds(withPatch, { ...original, id: original.id === withPatch.id ? undefined : original.id });
+}
+
+export function absorbIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
+	const ids = new Set<RuleId>(host.absorbedIds ?? []);
+	for (const r of absorbed) {
+		if (r.id !== undefined && r.id !== host.id) ids.add(r.id);
+		for (const id of r.absorbedIds ?? []) if (id !== host.id) ids.add(id);
+	}
+	if (ids.size === (host.absorbedIds?.length ?? 0)) return host;
+	return { ...host, absorbedIds: [...ids] };
+}
+
+export function structuralKey(rule: AnyRule): string {
+	return JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'absorbedIds' ? undefined : value));
+}
+
+export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {
+	const { hidden, inlinedFrom } = source;
+	const patch: { hidden?: boolean; inlinedFrom?: string } = {};
+	if (hidden !== undefined && result.hidden !== hidden) patch.hidden = hidden;
+	if (inlinedFrom !== undefined && result.inlinedFrom === undefined) patch.inlinedFrom = inlinedFrom;
+	return Object.keys(patch).length === 0 ? result : { ...result, ...patch };
 }
 
 export interface SharedArmAttrs {
@@ -65,8 +88,24 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 	return {
 		fieldName: unanimous((r) => r.fieldName),
 		multiplicity: unanimous((r) => r.multiplicity),
-		nonterminal: unanimous((r) => r.nonterminal),
+		nonterminal: unanimous((r) => r.nonterminal) === true ? true : undefined,
 		separator,
 		strongestMultiplicity
 	};
+}
+
+export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
+	return id !== undefined ? { ...rule, id } : rule;
+}
+
+const RULE_ID_OWNER_PREFIX = /^rule:[^:]*:/;
+
+export function rebaseRuleIds<R extends AnyRule>(body: R, hostId: RuleId | undefined): R {
+	if (hostId === undefined) return body;
+	const rebase = (r: R): R => {
+		if (r.id === undefined) return r;
+		const path = r.id.replace(RULE_ID_OWNER_PREFIX, '');
+		return { ...r, id: path === 'root' ? hostId : `${hostId}/${path}` };
+	};
+	return rebase(new RuleWalker<R>().map(body, rebase));
 }

@@ -2,13 +2,13 @@ import type { Command } from 'commander';
 import type { CommandModule } from '../../framework/command-module.ts';
 import { registerNamespace } from '../../framework/command-module.ts';
 
+import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
 import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkJinja } from './check-jinja.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
-import { compareOverrides } from './compare-overrides.ts';
 import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
@@ -34,13 +34,13 @@ import { walk } from './walk.ts';
 
 /** All developer-diagnostic tool CommandModules, registered under `sittir tool`. */
 export const toolModules: readonly CommandModule[] = [
+	assembleShapeCensus,
 	bench,
 	benchCodemod,
 	checkBaseline,
 	checkJinja,
 	checkPerf,
 	classify,
-	compareOverrides,
 	corpusCoverageCensus,
 	defectHistogram,
 	diffFailures,
