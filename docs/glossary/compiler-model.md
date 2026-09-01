@@ -2328,7 +2328,8 @@ can't be unified.
 
 ```text
 /**
-	 * Visible variant-child kinds registered via `variant()` adoption in
+	 * Visible variant children — each the child's kind paired with the name
+	 * the arm is addressed by — registered via `variant()` adoption in
 	 * grammar.sittir.ts (empty on non-override-polymorph parents). Populated
 	 * for parents whose variant children live deep in the rule and were
 	 * handled by Link's push-down path — they classify as branches

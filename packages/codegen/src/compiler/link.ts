@@ -1017,9 +1017,9 @@ export interface VariantChoiceLocation {
 export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, derivations: DerivationLog): void {
 	const structural = deriveStructuralVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
-	for (const [parentKind, targetNames] of structural) {
-		const suffixes = targetNames.map((t) => prefixNamedSuffix(parentKind, t)).filter((s): s is string => s !== null);
-		if (suffixes.length > 0) parentToChildren.set(parentKind, suffixes);
+	for (const [parentKind, variantChildren] of structural) {
+		const names = variantChildren.map((c) => c.name);
+		if (names.length > 0) parentToChildren.set(parentKind, names);
 	}
 
 	for (const [parentKind, children] of parentToChildren) {

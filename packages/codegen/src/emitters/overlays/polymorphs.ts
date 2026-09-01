@@ -12,7 +12,6 @@ import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../
 import { armConfigKeys, armIsConfigShaped, subFactoriesOf, type SubFactory } from './sub-factories.ts';
 import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
 import { camelCase } from '../refine-emit.ts';
-import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
 
 interface FlavorRefs {
 	readonly strict: string;
@@ -60,11 +59,12 @@ function variantAliasWires(
 	const claimedNames = new Set(subs.map((s) => s.name));
 	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
 	const aliases: AliasWire[] = [];
-	for (const visible of node.variantChildKinds) {
+	for (const variantChild of node.variantChildKinds) {
+		const visible = variantChild.kind;
 		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
 		if (child === undefined || child.rawFactoryName === undefined) continue;
 		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
-		const name = camelCase(prefixNamedSuffix(node.kind, visible) ?? visible);
+		const name = camelCase(variantChild.name);
 		if (claimedNames.has(name)) continue;
 		aliases.push({ name, child });
 	}

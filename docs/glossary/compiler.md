@@ -5863,10 +5863,41 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  */
 ```
 
+### `packages/codegen/src/compiler/variant-structural.ts::VariantChild`
+
+```text
+/**
+ * One variant arm of a parent: the child's full target kind and the name the
+ * arm is addressed by. Carrying the name here is the point — it is resolved
+ * once during derivation and read unchanged by every consumer, rather than
+ * each of them re-deriving it from the two kind names.
+ */
+```
+
+### `packages/codegen/src/compiler/variant-structural.ts::declaredVariantName`
+
+```text
+/**
+ * The variant name an author declared for this arm, or `undefined` when they
+ * declared none. Walks the arm's `content` chain because the annotation is
+ * stamped on an ALIAS's content rather than the wrapper. Honoured only when
+ * the annotation's declaring kind matches `parentKind`: a child kind is
+ * reachable from several parents, and a name declared under one of them says
+ * nothing about how another addresses the same arm.
+ */
+```
+
 ### `packages/codegen/src/compiler/variant-structural.ts::prefixNamedSuffix`
 
 ```text
 /**
+ * Two jobs, and only one of them is still about naming. It GATES which arms
+ * count as variant children at all, and it supplies the arm's name only when
+ * the author declared none — a declared annotation wins. Hand-authored
+ * grammars mint their arms as plain `alias()` calls following this naming
+ * convention with nothing declaring them, so the convention remains the only
+ * way to recognise those.
+ *
  * Does `targetName` look like a prefix-named variant child of `parentKind`
  * — i.e. does it equal `polymorphVisibleName(parentKind, suffix)` (wire.ts,
  * the SAME helper `injectHiddenRulePlaceholders` and both transform paths use
@@ -5939,14 +5970,15 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /**
- * Derive `{parent -> childTargetName[]}` for every kind in `rules`, purely
+ * Derive `{parent -> VariantChild[]}` for every kind in `rules`, purely
  * structurally. Link calls it twice: `applyOverridePolymorphs` derives on
  * the pre-classification rules to push ambient scaffold into variant
  * children, and the end of link derives on the final rules to stamp
  * `LinkedGrammar.variantChildren` — the single table `normalize.ts`'s
  * `variantSkip` and `assemble.ts`'s `variantChildrenByParent` read; neither
- * re-derives. Values are the arm's FULL target kind name
- * (`arm.targetName`) — NOT a `${kind}_${suffix}` reconstruction, which is
+ * re-derives. Each entry pairs the arm's FULL target kind name
+ * (`arm.targetName`) with the name it is addressed by, so no consumer
+ * reconstructs either. The kind is never a `${kind}_${suffix}` rebuild, which is
  * unsound when a hidden (`_`-prefixed) parent has a VISIBLE target (ts's
  * `_export_statement_default` → `export_statement_default_from_arm`; the
  * target strips its own leading `_` independently of the parent's, per
@@ -7677,8 +7709,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * One qualifying choice node found while walking a kind's rule body: the
- * choice itself, plus the resolved `{suffix -> targetName}` pairs for each
- * arm (in member order).
+ * choice itself, plus the resolved `{name -> targetName}` pairs for each
+ * arm (in member order). `name` is the arm's DECLARED variant name when the
+ * author gave one, and the prefix-derived suffix otherwise.
  */
 ```
 

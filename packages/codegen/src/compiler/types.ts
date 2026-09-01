@@ -1,6 +1,7 @@
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
+import type { VariantChild } from './variant-structural.ts';
 
 import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
@@ -171,7 +172,7 @@ export interface LinkedGrammar {
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
+	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
@@ -198,7 +199,7 @@ export interface NormalizedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
+	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
@@ -209,7 +210,7 @@ export interface SimplifiedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-	readonly variantChildren?: ReadonlyMap<string, readonly string[]>;
+	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;

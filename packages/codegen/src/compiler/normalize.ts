@@ -263,12 +263,9 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	}
 
 	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
-	for (const [parentKind, targetNames] of linked.variantChildren ?? []) {
+	for (const [parentKind, children] of linked.variantChildren ?? []) {
 		variantSkip.add(parentKind);
-		for (const targetName of targetNames) {
-			const suffix = prefixNamedSuffix(parentKind, targetName);
-			if (suffix !== null) variantSkip.add(suffix);
-		}
+		for (const child of children) variantSkip.add(child.name);
 	}
 
 	const normalizedGrammarView: NormalizedGrammar = {

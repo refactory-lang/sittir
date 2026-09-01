@@ -1,3 +1,4 @@
+import type { VariantChild } from './variant-structural.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -141,7 +142,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
-	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly string[]>();
+	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly VariantChild[]>();
 	const variantParents = new Set(variantChildrenByParent.keys());
 
 	const parseKindCollisionContext = {
@@ -267,7 +268,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				}
 			}
 		}
-		const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat());
+		const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat().map((c) => c.kind));
 		for (const rule of Object.values(normalized.normalizedRules)) {
 			if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
 			for (const arm of rule.variantArms) variantChildKindsSet.add(arm);

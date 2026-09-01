@@ -1,3 +1,4 @@
+import type { VariantChild } from '../variant-structural.ts';
 import {
 	CHOICE,
 	DEDENT,
@@ -1400,7 +1401,7 @@ export interface CompoundOpts {
 	factoryName?: string;
 	irKey?: string;
 	hidden?: boolean;
-	variantChildKinds?: readonly string[];
+	variantChildKinds?: readonly VariantChild[];
 	hoisted?: HoistedFacts;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
@@ -1412,7 +1413,7 @@ export interface CompoundOpts {
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
-	readonly variantChildKinds: readonly string[];
+	readonly variantChildKinds: readonly VariantChild[];
 
 	get hoisted(): boolean {
 		return this.enrichment.hoisted !== undefined;

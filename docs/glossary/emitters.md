@@ -9400,15 +9400,12 @@ carry the variant-child kinds on `variantChildKinds`. They must land in
 `polymorphVariants` so that `.from()`-dispatch and the validator's deep-read
 path both know which kinds participate in `variant()` adoption.
 
-### `packages/codegen/src/emitters/factory-map.ts::mapVariantChildKindsToSuffixes`
+### `packages/codegen/src/emitters/factory-map.ts::mapVariantChildKindsToNames`
 
-Uses `prefixNamedSuffix` (`compiler/variant-structural.ts`) rather than a raw
-`${kind}_` slice. The raw slice is unsound when `kind` is hidden: a hidden
-parent's visible target strips its OWN leading `_` independently of the
-parent's, per `polymorphVisibleName`'s convention — `_match_block` yields
-`match_block_block`, not `_match_block_block`. It falls back to the full name
-only for the (currently unobserved) shape where the target doesn't prefix-match
-at all.
+Reads the name each variant child already carries. The name was resolved once
+during structural derivation — from the author's declaration where there is
+one, else from the prefix convention — so this is a projection into the
+`{childKind: name}` shape the model file wants, not a second derivation.
 
 ### `packages/codegen/src/emitters/wrap.ts::expandToConcreteParseKinds`
 
@@ -14597,7 +14594,7 @@ A form wire with no seat: the child kind is a complete alternative of the parent
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::variantAliasWires`
 
-Whole-rule alternative arms. A parent's `variantChildKinds` (visible names) can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `choiceSlotOf` never sees those, because they are not in a slot. Each resolves to its node (visible key, else `_`-prefixed), is named by `prefixNamedSuffix` over the visible name, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
+Whole-rule alternative arms. A parent's `variantChildKinds` can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `choiceSlotOf` never sees those, because they are not in a slot. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::methodName`
 
