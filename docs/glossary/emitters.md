@@ -5096,12 +5096,13 @@ Surface`
  *              is stored. A kind missing from the map still gets `node`
  *              storage under a synthesized PascalCase type name, flagged
  *              `missing` so types.ts can emit its stub.
- * - `kindId` — identity only: a reference to a factoryless keyword or
- *              token (a hidden keyword leaf, or any AssembledKeyword /
- *              AssembledToken with text and no `rawFactoryName`), or an
- *              inline literal that resolved to a kind. The text is carried
- *              for the verbatim-slot and fallback paths; the id when one
- *              was stamped at link.
+ * - `kindId` — identity only: a reference whose storage target — the
+ *              kind itself, or the leaf a transparent single-subtype
+ *              supertype chain ends in (`storageTargetOf`) — carries
+ *              `storage: 'kindId'` (`isKindIdStored`), or an inline
+ *              literal that resolved to a kind. The text is carried for
+ *              the verbatim-slot and fallback paths; the id when one was
+ *              stamped at link.
  * - `literal` — an inline literal with no kind at all.
  *
  * `carrier` records whether the value arrived as a node reference or an
@@ -5120,16 +5121,6 @@ Surface`
 ```text
 /** A value's storage stamp, classifying and stamping it on first use when
  *  the eager pass in `computeFieldStorageInfo` has not reached it. */
-```
-
-### `packages/codegen/src/emitters/shared.ts::isFactorylessTextLeaf`
-
-```text
-/** An AssembledKeyword or AssembledToken that has text but no factory —
- *  the shape whose reference stores as a kind id, because there is a
- *  fixed body to render but no node to build. This is the real predicate
- *  behind "factoryless value kind"; the hidden-`_` prefix is only a proxy
- *  for it. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::typeComponentOf`

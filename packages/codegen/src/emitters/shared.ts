@@ -22,6 +22,8 @@ import {
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
 	storageKindOfRef,
+	storageTargetOf,
+	isKindIdStored,
 	AbstractAssembledCompound,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -167,13 +169,6 @@ export type TypeComponent =
 	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string; immediate?: boolean }
 	| { kind: 'missing'; value: string; rawKind: string };
 
-function isFactorylessTextLeaf(
-	node: AssembledNode
-): node is (AssembledKeyword | AssembledToken) & { text: string } {
-	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledToken)) return false;
-	return node.rawFactoryName === undefined && node.text !== undefined;
-}
-
 export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
 	if (isTerminalValue(value)) {
 		const via = value.resolvedKind === undefined ? 'literal' : 'kindId';
@@ -188,16 +183,6 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 	}
 	if (!isNodeRef(value)) return undefined;
 	const kind = storageKindOfRef(value.node);
-	const leaf = resolveHiddenKeywordLeaf(kind, nodeMap);
-	if (leaf?.text !== undefined) {
-		return {
-			via: 'kindId',
-			carrier: 'ref',
-			kind,
-			kindId: value.storageKindId ?? leaf.resolvedKindId,
-			text: leaf.text
-		};
-	}
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) {
 		return {
@@ -208,13 +193,14 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 			missing: true
 		};
 	}
-	if (isFactorylessTextLeaf(node)) {
+	const target = storageTargetOf(node, nodeMap);
+	if (isKindIdStored(target)) {
 		return {
 			via: 'kindId',
 			carrier: 'ref',
 			kind,
-			kindId: value.storageKindId ?? node.resolvedKindId,
-			text: node.text
+			kindId: value.storageKindId ?? target.resolvedKindId,
+			text: target.text
 		};
 	}
 	return { via: 'node', carrier: 'ref', kind, typeName: node.typeName };

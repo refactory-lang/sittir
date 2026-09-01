@@ -2167,6 +2167,27 @@ can't be unified.
 	 */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::KindStorage`
+
+```text
+/** How a value of this kind is stored in a slot: `node` — the built node
+ *  object (anything with structure, or text a factory takes); `kindId` —
+ *  identity only, the kind's id is the value (a keyword or fixed-text
+ *  token: a fixed body to render, nothing to build). A property of the
+ *  KIND, decided once by its class; a reference's storage is projected
+ *  from its target's (`classifyValueStorage`), never decided per
+ *  reference. Multiplicity is orthogonal (an array of ids, an array of
+ *  nodes), and so is slot-level presence storage (boolean / bitflag),
+ *  which the slot's own shape decides. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.storage`
+
+```text
+/** The kind's {@link KindStorage}. Defaults to `node`; the fixed-text leaf
+ *  classes override it. */
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.factoryInline`
 
 ```text
@@ -2299,6 +2320,32 @@ can't be unified.
  *  body is a single string — else `undefined`. The one text source for a
  *  reference stamped `nonterminal: false` (template emitter) — a compound
  *  target is never fixed text: its render is its own template. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodesCtx`
+
+```text
+/** The smallest context a kind-level lookup needs: the assembled node map
+ *  by kind. `NodeMap` satisfies it structurally; richer contexts
+ *  (`LeftImmediateCtx`) extend it. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::storageTargetOf`
+
+```text
+/** The kind whose storage a reference to `node` takes: `node` itself,
+ *  or — through a transparent single-subtype supertype chain
+ *  (`_semicolon` → `_automatic_semicolon`) — the leaf the chain ends in.
+ *  A reference's storage is its target's storage; a one-arm supertype
+ *  is a pure alias and contributes nothing of its own. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isKindIdStored`
+
+```text
+/** Narrows on the stamped `storage` attribute: the kinds stored as ids are
+ *  exactly the fixed-text leaf classes, whose `text` / `resolvedKindId` a
+ *  consumer then reads. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound`
@@ -2716,6 +2763,26 @@ can't be unified.
 
 ```text
 // No emitFactory — tokens are always hidden, no factoryName.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.storage`
+
+```text
+/** A token is always hidden and always fixed text: identity is the value. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.storage`
+
+```text
+/** Transitional form: `kindId` when the keyword has no factory OR its
+ *  name is grammar-hidden (`_`-prefixed). The `_` half is required because
+ *  `assemble` derives a `factoryName` for every grammar keyword, including
+ *  `_kw_*` marker kinds whose factory is later dropped by
+ *  `classifyFactoryEmission` — so "has a factory name" over-approximates
+ *  "has a factory", and those references must still store as ids. The
+ *  end state is unconditional `kindId` for every keyword (a keyword kind
+ *  has no node to build; its factory returns the id), at which point this
+ *  condition and the `_` check go. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.resolvedKindIds`

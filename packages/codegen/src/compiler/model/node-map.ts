@@ -149,6 +149,8 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
+export type KindStorage = 'node' | 'kindId';
+
 export type ValueCarrier = 'ref' | 'terminal';
 
 export type ValueStorage =
@@ -969,6 +971,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return false;
 	}
 
+	get storage(): KindStorage {
+		return 'node';
+	}
+
 	get slots(): readonly AssembledNonterminal[] {
 		return [];
 	}
@@ -1409,6 +1415,18 @@ export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | u
 	return undefined;
 }
 
+export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNode {
+	if (node instanceof AssembledSupertype && node.subtypeNames.length === 1) {
+		const sole = ctx.nodes.get(node.subtypeNames[0]!);
+		if (sole !== undefined) return storageTargetOf(sole, ctx);
+	}
+	return node;
+}
+
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+	return node.storage === 'kindId';
+}
+
 export interface HoistedFacts {
 	readonly detectToken?: string;
 	readonly name?: string;
@@ -1715,6 +1733,10 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 		return true;
 	}
 
+	override get storage(): KindStorage {
+		return this.hidden || this.kind.startsWith('_') ? 'kindId' : 'node';
+	}
+
 	override get stampExpression(): string {
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
@@ -1746,6 +1768,10 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 
 	override get parameterless(): boolean {
 		return true;
+	}
+
+	override get storage(): KindStorage {
+		return 'kindId';
 	}
 
 	override get stampExpression(): string {
@@ -1915,8 +1941,11 @@ export type AssembledNode =
 	| AssembledSupertype
 	| AssembledList;
 
-export interface LeftImmediateCtx {
+export interface NodesCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
+}
+
+export interface LeftImmediateCtx extends NodesCtx {
 	readonly normalizedRules?: Record<string, RenderRule>;
 }
 
