@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import { AssembledKeyword, allSlotsOf, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { AssembledKeyword, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none';
 
@@ -37,7 +37,7 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 		if (p === 'template') templated.add(label);
 	};
 	for (const node of nodeMap.nodes.values()) {
-		for (const slot of allSlotsOf(node)) {
+		for (const slot of node.slots) {
 			for (const value of slot.values) {
 				if (!isNodeRef(value) || value.parseKind?.name === undefined) continue;
 				addLabel(value.parseKind.name, storageKindOfRef(value.node));

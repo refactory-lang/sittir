@@ -8,7 +8,6 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import {
-	AbstractAssembledCompound,
 	AssembledSupertype,
 	isNodeRef,
 	isUnresolvedRef,
@@ -40,15 +39,12 @@ interface SerializedValue {
 interface SerializedSlot {
 	name: string;
 	propertyName: string;
+	paramName: string;
 	required: boolean;
 	multiple: boolean;
 	nonEmpty: boolean;
+	kinds: string[];
 	values: SerializedValue[];
-}
-
-interface SerializedField extends SerializedSlot {
-	paramName: string;
-	projection: { typeName: string; kinds: string[] };
 }
 
 interface SerializedNodeBase {
@@ -71,8 +67,7 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	name?: string;
 	detectToken?: string;
 	parentKind?: string;
-	fields: SerializedField[];
-	children: SerializedSlot[];
+	slots: SerializedSlot[];
 	separator?: string;
 }
 
@@ -233,8 +228,7 @@ function serializeCompoundNode(
 		...base,
 		modelType: node.modelType,
 		hoisted: node.hoisted,
-		fields: node.fields.map(serializeField),
-		children: []
+		slots: node.slots.map(serializeSlot)
 	};
 	if (node.hoisted) {
 		out.name = node.name;
@@ -245,19 +239,16 @@ function serializeCompoundNode(
 	return out;
 }
 
-function serializeField(field: AssembledNonterminal): SerializedField {
-	const out: SerializedField = {
-		name: field.name,
-		propertyName: field.propertyName,
-		paramName: field.paramName,
-		required: isRequired(field),
-		multiple: isMultiple(field),
-		nonEmpty: isNonEmpty(field),
-		values: field.values.map(serializeValue),
-		projection: {
-			typeName: '',
-			kinds: [...kindsOf(field)]
-		}
+function serializeSlot(slot: AssembledNonterminal): SerializedSlot {
+	const out: SerializedSlot = {
+		name: slot.name,
+		propertyName: slot.propertyName,
+		paramName: slot.paramName,
+		required: isRequired(slot),
+		multiple: isMultiple(slot),
+		nonEmpty: isNonEmpty(slot),
+		kinds: [...kindsOf(slot)],
+		values: slot.values.map(serializeValue)
 	};
 	return out;
 }

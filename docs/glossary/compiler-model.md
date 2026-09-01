@@ -10,6 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+
 ### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageKind`
 
 How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
@@ -247,13 +248,13 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 
 ```text
 /**
- * Fold fields with the same grammar name into a single AssembledNonterminal whose
- * `values` is the union of the contributing fields' values. Tree-sitter allows
+ * Fold slots with the same grammar name into a single AssembledNonterminal whose
+ * `values` is the union of the contributing slots' values. Tree-sitter allows
  * the same field name to appear multiple times in a rule (e.g. Python's
  * `if_statement` has `field('alternative', $.elif_clause)` inside a repeat AND
  * `field('alternative', $.else_clause)` inside an optional, producing a single
  * `alternative` slot at runtime whose values span both kinds). Emitters that
- * iterate `node.structuralFields` — the types emitter, the factory emitter,
+ * iterate `node.slots` — the types emitter, the factory emitter,
  * the from-emitter — must see ONE slot per name, not the raw unmerged list.
  *
  * @remarks
@@ -919,15 +920,15 @@ can't be unified.
 // See glossary — full rationale.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::buildSlotsRecord`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.constructor`
 
 ```text
 /**
- * Build the frozen slot Record for an AssembledBranch (or any kind that
- * uses the slot-Record surface). Signature `(rule: SimplifiedRule, ctx:
- * KindedDeriveCtx)`. Walks `deriveSlots(rule, ctx)` over the simplified
- * rule — the one derivation of what is a slot — and keys each slot by its
- * name. Insertion order = declared rule order.
+ * Derives the frozen slot array for a compound (unless `opts.slots`
+ * supplies it directly). Walks `deriveSlots(simplifiedRule, ctx)` over
+ * the simplified rule — the one derivation of what is a slot — resolves
+ * parse-kind collisions, then dedupes by slot name (last wins, first
+ * position kept). Order = declared rule order.
  *
  * Slots derive from the simplified rule only; there is no second
  * derivation over a render rule and no `renderRule` parameter. An inlined
@@ -1034,19 +1035,6 @@ can't be unified.
 /**
 	 * Compound stamp: factory call with no arguments, e.g. `"breakExpression()"`.
 	 * Only defined when `parameterless` is true.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.fields`
-
-```text
-/**
-	 * All slots — both field-named (origin='field') and kind-named (origin='kind').
-	 * After unified-slot refactor (spec 2026-05-17): every slot has a name and
-	 * `_<name>` storage key regardless of whether the name came from a `field()`
-	 * wrapper or the content kind. Consumers should NOT branch on origin — they
-	 * are all just slots. Shared by `AssembledBranch`, `AssembledEnvelope`,
-	 * `AssembledPolymorph`, and `AssembledList` alike.
 	 */
 ```
 
@@ -1234,62 +1222,31 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::structuralFieldsOf`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.slots`
 
 ```text
 /**
- * Dedup'd structural fields for a node — any `AbstractAssembledCompound`
- * subclass (branch, envelope, polymorph, list) returns its `.fields`;
- * non-compound kinds (leaf/token/enum/supertype) return `[]`.
- *
- * Use this when emitting types, factories, or anything that asks
- * "what fields does this kind have."
- */
+	 * Every slot of the node, in derivation order — the single structural
+	 * view. The base returns `[]`: leaf kinds (pattern/keyword/token/enum/
+	 * supertype) have no structural surface, so any `AssembledNode` can be
+	 * asked uniformly. `AbstractAssembledCompound` overrides this with its
+	 * real slot array.
+	 */
 ```
 
-```text
-// ============================================================================
-// 5. Canonical structural-view helpers
-// ============================================================================
-//
-// Every AbstractAssembledCompound subclass (branch/envelope/polymorph/list)
-// exposes `.fields` directly; non-compound kinds (leaf/token/enum/supertype)
-// have no structural surface. These helpers narrow over `AssembledNode` via
-// a single `instanceof AbstractAssembledCompound` check and give consumers
-// one canonical entry point per fact.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::allFormFieldsOf`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.slots`
 
 ```text
 /**
- * Raw cross-form flatten of fields — any `AbstractAssembledCompound`
- * subclass returns its `.fields`; non-compound kinds return `[]`.
- *
- * (Previously Polymorph returned per-form fields; no polymorphs exist at runtime.)
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::allSlotsOf`
-
-```text
-/**
- * Every slot reachable from a node — any `AbstractAssembledCompound`
- * subclass returns all entries of its `.slots`; non-compound kinds return
- * `[]`.
- *
- * Use this when the consumer doesn't care about the field/child distinction
- * (graph traversal, kind reachability, alias-source collection, etc.).
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::allStructuralSlotsOf`
-
-```text
-/**
- * Dedup'd union of every slot — any `AbstractAssembledCompound` subclass
- * returns all entries of its `.slots`; non-compound kinds return `[]`.
- */
+	 * All slots — both field-named (origin='field') and kind-named
+	 * (origin='kind'): every slot has a name and `_<name>` storage key
+	 * either way, so consumers never branch on origin. Shared by
+	 * `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph`, and
+	 * `AssembledList` alike. Stored as an array, derived in the
+	 * constructor (deriveSlots → collision resolution → name dedup).
+	 * The one name-keyed consumer (templates.ts
+	 * `ownerSlotsFor`) derives its own local index from this array.
+	 */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::UnresolvedRef`
@@ -1658,7 +1615,7 @@ can't be unified.
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
  *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
  *      `Keyword`/`Token`/`Enum`/`Supertype`/`Multi`/`Group` + the `AssembledNode` union.
- *   5. Canonical structural-view helpers — `structuralFieldsOf`/`allSlotsOf`/….
+ *   5. Slot view — the `.slots` getter on the class hierarchy (base `[]`).
  *
  * `isSyntheticFieldWrapper` is a classification hint used by template-walker.ts.
  * Backward compatibility: `rule.ts` re-exports everything from this file.
@@ -3112,6 +3069,7 @@ can't be unified.
  *  template text and never encoded; a slot's permitted values are exactly
  *  the grammar's optional flanks (see `permittedDelimiters`). */
 ```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`
 
 ```text
@@ -3129,3 +3087,26 @@ can't be unified.
  *  keyword-class leaf with `word: false`. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::atomEndingAt`
+
+```text
+/**
+ * Identifies the single atom (bracket class, escape code, or literal char)
+ * ending exactly at `end`, refusing (returns undefined) whenever that
+ * position is itself inside a quantifier — the caller decides whether a
+ * quantifier boundary here is the subject atom (already stripped before
+ * calling) or a stop condition (the atom immediately preceding a stripped
+ * one, which this function never chains through).
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::patternTrailingEdgeClass`
+
+#### body
+
+```text
+// A zero-permitting quantifier makes the atom itself absent-or-present; the
+// trailing edge is provable only if what precedes it, when the quantified
+// atom is absent, would end in the SAME class — sound because both outcomes
+// then agree regardless of which one actually rendered.
+```

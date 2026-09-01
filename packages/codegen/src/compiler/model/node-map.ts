@@ -9,23 +9,19 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
 	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
-	Rule,
 	RuleBase,
 	RenderRule,
 	SimplifiedRule,
-	SeqRule,
 	ChoiceRule,
 	StringRule,
 	SupertypeRule,
 	SymbolRule,
 	Multiplicity,
-	RuleId,
-	DelimiterMode
+	RuleId
 } from '../../types/rule.ts';
 import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
@@ -497,11 +493,11 @@ export function mergeDelimiterMode(
 	return a === b ? a : 'optional';
 }
 
-function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
-	if (fields.length <= 1) return fields;
+function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
+	if (slots.length <= 1) return slots;
 	const out: AssembledNonterminal[] = [];
 	const namedIndexByName = new Map<string, number>();
-	for (const f of fields) {
+	for (const f of slots) {
 		if (f.isUnnamed) {
 			out.push(f);
 			continue;
@@ -939,6 +935,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return false;
 	}
 
+	get slots(): readonly AssembledNonterminal[] {
+		return [];
+	}
+
 	get stampExpression(): string | undefined {
 		return undefined;
 	}
@@ -1369,58 +1369,6 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 	return closure;
 }
 
-function buildSlotsRecord(rule: SimplifiedRule, ctx: KindedDeriveCtx): Readonly<Record<string, AssembledNonterminal>> {
-	const kind = ctx.kindName;
-	const slots = [...deriveSlots(rule, ctx)];
-	let resolvedSlots = resolveParseKindCollisions(slots, ctx);
-
-	resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
-
-	if (ctx.visibleAliasTargets && ctx.simplifiedRules) {
-		resolvedSlots = resolvedSlots.map((slot) => expandSlotWithVisibleAliasSources(slot, ctx));
-	}
-
-	const out: Record<string, AssembledNonterminal> = {};
-	for (const slot of resolvedSlots) {
-		out[slot.name] = slot;
-	}
-
-	const byStorageName = new Map<string, AssembledNonterminal[]>();
-	for (const slot of resolvedSlots) {
-		const list = byStorageName.get(slot.storageName) ?? [];
-		list.push(slot);
-		byStorageName.set(slot.storageName, list);
-	}
-	for (const [storageName, slots] of byStorageName) {
-		if (slots.length > 1) {
-			const details = slots.map((s) => {
-				const kinds = s.values.map((v) =>
-					isTerminalValue(v)
-						? `"${v.value}"`
-						: isNodeRef(v) && isUnresolvedRef(v.node)
-							? v.node.name
-							: isNodeRef(v)
-								? (v.node as AssembledNode).kind
-								: '?'
-				);
-				const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
-				const named = s.isUnnamed ? 'positional' : 'named';
-				return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
-			});
-			recordAssembleWarning({
-				code: 'storagename-collision',
-				message:
-					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
-					`with storageName '${storageName}':\n${details.join('\n')}`,
-				ownerKind: kind,
-				details: { storageName, slotCount: slots.length }
-			});
-		}
-	}
-
-	return Object.freeze(out);
-}
-
 export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
 	if (node instanceof AssembledKeyword) return node.text;
 	if (node instanceof AssembledToken && node.parameterless) return node.text;
@@ -1446,7 +1394,7 @@ export interface CompoundOpts {
 	hoisted?: HoistedFacts;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
-	slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
+	slots?: readonly AssembledNonterminal[];
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	simplifiedRules?: Record<string, SimplifiedRule>;
 }
@@ -1476,7 +1424,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this.enrichment.hoisted?.overridePassthrough;
 	}
 
-	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
+	protected readonly _slots: readonly AssembledNonterminal[];
 
 	constructor(
 		kind: string,
@@ -1492,31 +1440,80 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this._slots =
-			opts?.slotRecord ??
-			buildSlotsRecord(simplifiedRule, {
+		if (opts?.slots !== undefined) {
+			this._slots = opts.slots;
+		} else {
+			const ctx: KindedDeriveCtx = {
 				kindName: kind,
 				kindEntries: opts?.kindEntries,
 				collision: opts?.parseKindCollisionContext,
 				visibleAliasTargets: opts?.visibleAliasTargets,
 				simplifiedRules: opts?.simplifiedRules
-			});
+			};
+			const slots = [...deriveSlots(simplifiedRule, ctx)];
+			let resolvedSlots = resolveParseKindCollisions(slots, ctx);
+
+			resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
+
+			if (ctx.visibleAliasTargets && ctx.simplifiedRules) {
+				resolvedSlots = resolvedSlots.map((slot) => expandSlotWithVisibleAliasSources(slot, ctx));
+			}
+
+			const byName = new Map<string, AssembledNonterminal>();
+			for (const slot of resolvedSlots) {
+				byName.set(slot.name, slot);
+			}
+
+			const byStorageName = new Map<string, AssembledNonterminal[]>();
+			for (const slot of resolvedSlots) {
+				const list = byStorageName.get(slot.storageName) ?? [];
+				list.push(slot);
+				byStorageName.set(slot.storageName, list);
+			}
+			for (const [storageName, slots] of byStorageName) {
+				if (slots.length > 1) {
+					const details = slots.map((s) => {
+						const kinds = s.values.map((v) =>
+							isTerminalValue(v)
+								? `"${v.value}"`
+								: isNodeRef(v) && isUnresolvedRef(v.node)
+									? v.node.name
+									: isNodeRef(v)
+										? (v.node as AssembledNode).kind
+										: '?'
+						);
+						const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
+						const named = s.isUnnamed ? 'positional' : 'named';
+						return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+					});
+					recordAssembleWarning({
+						code: 'storagename-collision',
+						message:
+							`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
+							`with storageName '${storageName}':\n${details.join('\n')}`,
+						ownerKind: kind,
+						details: { storageName, slotCount: slots.length }
+					});
+				}
+			}
+
+			this._slots = Object.freeze([...byName.values()]);
+		}
 	}
 
-	get slots(): Readonly<Record<string, AssembledNonterminal>> {
+	override get slots(): readonly AssembledNonterminal[] {
 		return this._slots;
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
-		const slots = Object.values(this._slots);
-		return slots.length === 1 ? slots[0] : undefined;
+		return this._slots.length === 1 ? this._slots[0] : undefined;
 	}
 
 	get keywordConstructibleText(): string | undefined {
 		const r = this.renderRule;
 		const lead = r.type === SEQ ? r.members[0] : r;
 		if (lead === undefined || lead.type !== STRING) return undefined;
-		if (!this.fields.every((f) => !isRequired(f))) return undefined;
+		if (!this._slots.every((f) => !isRequired(f))) return undefined;
 		return lead.value;
 	}
 
@@ -1543,11 +1540,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	#computeParameterless(): boolean {
-		return this.rawFactoryName !== undefined && Object.keys(this._slots).length === 0;
-	}
-
-	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots);
+		return this.rawFactoryName !== undefined && this._slots.length === 0;
 	}
 }
 
@@ -1888,26 +1881,6 @@ export type AssembledNode =
 	| AssembledSupertype
 	| AssembledList;
 
-export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return node.fields;
-	return [];
-}
-
-export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return node.fields;
-	return [];
-}
-
-export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return Object.values(node.slots);
-	return [];
-}
-
-export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node instanceof AbstractAssembledCompound) return Object.values(node.slots);
-	return [];
-}
-
 export interface LeftImmediateCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly normalizedRules?: Record<string, RenderRule>;
@@ -1984,55 +1957,132 @@ const REGEX_CONTROL_ESCAPES: Record<string, string> = {
 	'0': '\0'
 };
 
+function bracketExprEdgeClass(
+	source: string,
+	openBracketIdx: number,
+	ctx: { isWordChar: (c: string) => boolean }
+): SeamEdgeClass {
+	if (source[openBracketIdx + 1] === '^') return 'varies';
+	const chars: string[] = [];
+	for (let i = openBracketIdx + 1; i < source.length && source[i] !== ']'; i++) {
+		let ch = source[i]!;
+		if (ch === '\\') {
+			const esc = source[++i];
+			if (esc === undefined) return 'varies';
+			if (esc === 'd' || esc === 'w') {
+				chars.push('a');
+				continue;
+			}
+			if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
+				return 'varies';
+			ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
+		}
+		if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
+			const lo = ch.charCodeAt(0);
+			const hi = source[i + 2]!.charCodeAt(0);
+			i += 2;
+			if (hi < lo || hi - lo > 128) return 'varies';
+			for (let code = lo; code <= hi; code++) chars.push(String.fromCharCode(code));
+			continue;
+		}
+		chars.push(ch);
+	}
+	return uniformEdgeClass(chars.map((c) => charEdgeClass(c, ctx)));
+}
+
+function escapeCodeEdgeClass(esc: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
+	if (esc === 'd' || esc === 'w') return 'word';
+	if (
+		esc === undefined ||
+		esc === 's' ||
+		esc === 'S' ||
+		esc === 'D' ||
+		esc === 'W' ||
+		esc === 'p' ||
+		esc === 'u' ||
+		esc === 'x'
+	)
+		return 'varies';
+	return charEdgeClass(REGEX_CONTROL_ESCAPES[esc] ?? esc, ctx);
+}
+
 export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
 	if (source.length === 0) return 'varies';
 	const c0 = source[0]!;
-	if (c0 === '[') {
-		if (source[1] === '^') return 'varies';
-		const chars: string[] = [];
-		for (let i = 1; i < source.length && source[i] !== ']'; i++) {
-			let ch = source[i]!;
-			if (ch === '\\') {
-				const esc = source[++i];
-				if (esc === undefined) return 'varies';
-				if (esc === 'd' || esc === 'w') {
-					chars.push('a');
-					continue;
-				}
-				if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
-					return 'varies';
-				ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
-			}
-			if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
-				const lo = ch.charCodeAt(0);
-				const hi = source[i + 2]!.charCodeAt(0);
-				i += 2;
-				if (hi < lo || hi - lo > 128) return 'varies';
-				for (let code = lo; code <= hi; code++) chars.push(String.fromCharCode(code));
-				continue;
-			}
-			chars.push(ch);
-		}
-		return uniformEdgeClass(chars.map((c) => charEdgeClass(c, ctx)));
-	}
-	if (c0 === '\\') {
-		const esc = source[1];
-		if (esc === 'd' || esc === 'w') return 'word';
-		if (
-			esc === undefined ||
-			esc === 's' ||
-			esc === 'S' ||
-			esc === 'D' ||
-			esc === 'W' ||
-			esc === 'p' ||
-			esc === 'u' ||
-			esc === 'x'
-		)
-			return 'varies';
-		return charEdgeClass(REGEX_CONTROL_ESCAPES[esc] ?? esc, ctx);
-	}
+	if (c0 === '[') return bracketExprEdgeClass(source, 0, ctx);
+	if (c0 === '\\') return escapeCodeEdgeClass(source[1], ctx);
 	if (c0 === '(' || c0 === '^' || c0 === '.') return 'varies';
 	return charEdgeClass(c0, ctx);
+}
+
+function precedingBackslashCount(pos: { source: string; index: number }): number {
+	const { source, index } = pos;
+	let n = 0;
+	while (index - 1 - n >= 0 && source[index - 1 - n] === '\\') n++;
+	return n;
+}
+
+function hasUnescapedPipe(source: string): boolean {
+	for (let i = 0; i < source.length; i++) {
+		if (source[i] === '|' && precedingBackslashCount({ source, index: i }) % 2 === 0) return true;
+	}
+	return false;
+}
+
+const QUANTIFIER_CHARS = new Set(['*', '?', '+', '}']);
+
+interface TrailingAtom {
+	readonly edgeClass: SeamEdgeClass;
+	readonly atomStart: number;
+}
+
+function atomEndingAt(
+	source: string,
+	end: number,
+	ctx: { isWordChar: (c: string) => boolean }
+): TrailingAtom | undefined {
+	if (end === 0) return undefined;
+	const cLast = source[end - 1]!;
+	if (precedingBackslashCount({ source, index: end - 1 }) % 2 === 1) {
+		return { edgeClass: escapeCodeEdgeClass(cLast, ctx), atomStart: end - 2 };
+	}
+	if (cLast === ']') {
+		let i = end - 2;
+		while (i >= 0 && !(source[i] === '[' && precedingBackslashCount({ source, index: i }) % 2 === 0)) {
+			if (source[i] === ']' && precedingBackslashCount({ source, index: i }) % 2 === 0) return undefined;
+			i--;
+		}
+		return i < 0 ? undefined : { edgeClass: bracketExprEdgeClass(source, i, ctx), atomStart: i };
+	}
+	if (cLast === ')' || cLast === '(' || cLast === '^' || cLast === '.' || QUANTIFIER_CHARS.has(cLast)) return undefined;
+	return { edgeClass: charEdgeClass(cLast, ctx), atomStart: end - 1 };
+}
+
+export function patternTrailingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
+	if (source.length === 0 || hasUnescapedPipe(source)) return 'varies';
+	let end = source.length;
+	const last = source[end - 1]!;
+	const lastIsLiteral = precedingBackslashCount({ source, index: end - 1 }) % 2 === 1;
+	let permitsZero = false;
+	if (!lastIsLiteral && (last === '*' || last === '?')) {
+		permitsZero = true;
+		end -= 1;
+	} else if (!lastIsLiteral && last === '}') {
+		const braceStart = source.lastIndexOf('{', end - 2);
+		if (braceStart === -1 || precedingBackslashCount({ source, index: braceStart }) % 2 === 1) return 'varies';
+		const quant = /^(\d+)(,\d*)?$/.exec(source.slice(braceStart + 1, end - 1));
+		if (!quant) return 'varies';
+		permitsZero = Number(quant[1]) === 0;
+		end = braceStart;
+	} else if (!lastIsLiteral && last === '+') {
+		end -= 1;
+	}
+	const atom = atomEndingAt(source, end, ctx);
+	if (atom === undefined) return 'varies';
+	if (!permitsZero) return atom.edgeClass;
+	if (atom.edgeClass === 'varies') return 'varies';
+	const preceding = atomEndingAt(source, atom.atomStart, ctx);
+	return preceding !== undefined && preceding.edgeClass === atom.edgeClass ? atom.edgeClass : 'varies';
 }
 
 export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
@@ -2056,7 +2106,8 @@ export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClas
 			return { starts: charEdgeClass(fixed[0], ctx), ends: charEdgeClass(fixed[fixed.length - 1], ctx) };
 		}
 		const pattern = node.pattern;
-		if (pattern !== undefined) return { starts: patternLeadingEdgeClass(pattern, ctx), ends: 'varies' };
+		if (pattern !== undefined)
+			return { starts: patternLeadingEdgeClass(pattern, ctx), ends: patternTrailingEdgeClass(pattern, ctx) };
 		return { starts: 'varies', ends: 'varies' };
 	}
 	const rule = ctx.normalizedRules?.[kind];
@@ -2080,7 +2131,7 @@ function ruleEdgeClass(
 			return charEdgeClass(c, ctx);
 		}
 		case 'PATTERN':
-			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : 'varies';
+			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : patternTrailingEdgeClass(rule.value, ctx);
 		case 'SEQ': {
 			const member = side === 'starts' ? rule.members[0] : rule.members[rule.members.length - 1];
 			return ruleEdgeClass(member, side, ctx, visiting);

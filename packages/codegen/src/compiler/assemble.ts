@@ -1,5 +1,4 @@
 import {
-	ALIAS,
 	CHOICE,
 	FIELD,
 	GROUP,
@@ -19,18 +18,13 @@ import type {
 	AnyRule,
 	RenderRule,
 	SimplifiedRule,
-	GroupRule,
 	SymbolRule,
-	SeqRule,
 	ChoiceRule,
-	RepeatRule,
-	Repeat1Rule,
 	StringRule,
-	EnumRule,
 	SupertypeRule
 } from '../types/rule.ts';
-import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
-import { isEnumChoiceRule, isHiddenRule, isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
+import { subtypeParseNamesOf } from '../types/rule.ts';
+import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -49,7 +43,6 @@ import type {
 	UnresolvedRef
 } from './model/node-map.ts';
 import {
-	AssembledBranch,
 	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
@@ -66,7 +59,6 @@ import {
 	isNodeRef,
 	storageKindOfRef,
 	isUnresolvedRef,
-	allSlotsOf,
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	buildParseKindRuleSignatures,
@@ -267,7 +259,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
 		const aliasSourceKinds = new Set<string>();
 		for (const n of nodes.values()) {
-			for (const slot of allSlotsOf(n)) {
+			for (const slot of n.slots) {
 				for (const v of slot.values) {
 					if (!isNodeRef(v)) continue;
 					const name = storageKindOfRef(v.node);
@@ -302,7 +294,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			if (rule.id) nodeByRuleId.set(rule.id, node);
 		}
 		for (const node of nodes.values()) {
-			for (const slot of allSlotsOf(node)) {
+			for (const slot of node.slots) {
 				for (const id of slot.sourceRuleIds) slotByRuleId.set(id, slot);
 			}
 		}
@@ -383,7 +375,7 @@ function stampFactoryInline(
 	const parentsByKind = new Map<string, Set<string>>();
 	const supertypesByMember = new Map<string, string[]>();
 	for (const node of nodes.values()) {
-		for (const slot of allSlotsOf(node)) {
+		for (const slot of node.slots) {
 			for (const value of slot.values) {
 				if (!isNodeRef(value)) continue;
 				const referenced = storageKindOfRef(value.node);
@@ -644,11 +636,11 @@ export function hydrateSlotRefs(nodeMap: NodeMap): void {
 
 function hydrateSlots(
 	parentKind: string,
-	slots: Readonly<Record<string, AssembledNonterminal>>,
+	slots: readonly AssembledNonterminal[],
 	nodes: Map<string, AssembledNode>,
 	externals: ReadonlySet<string>
 ): void {
-	for (const slot of Object.values(slots)) {
+	for (const slot of slots) {
 		hydrateValues(slot.values, { parentKind, siteLabel: `slot '${slot.name}'`, nodes, externals });
 	}
 }
@@ -988,7 +980,7 @@ function classifyTerminalFallback(kind: string, rule: RenderRule): ModelType {
 	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
 	throw new Error(
-		`classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
+		`classifyNode: '${kind}' has no slots and no rule-type ` +
 			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
 	);
 }

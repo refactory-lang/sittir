@@ -88,7 +88,7 @@ describe('grammar diagnostics preflight', () => {
 		});
 
 		const host = result.nodeMap.nodes.get('host');
-		const slot = Object.values((host as { slots: Record<string, { values: readonly unknown[] }> }).slots)[0];
+		const slot = (host as { slots: readonly { values: readonly unknown[] }[] }).slots[0];
 		expect(result.nodeMap.parseKindCollisions).toEqual([]);
 		expect(result.diagnostics).toEqual([]);
 		expect(slot?.values).toHaveLength(1);

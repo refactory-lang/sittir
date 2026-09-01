@@ -66,6 +66,7 @@ function emitAttachProps(): string[] {
 		'    : never;',
 		'',
 		'export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;',
+
 		'',
 		'export type Hoisted<B> = B extends { coerce: infer C }',
 		'  ? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }',

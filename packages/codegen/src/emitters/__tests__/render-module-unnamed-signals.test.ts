@@ -69,7 +69,7 @@ describe('render-module unnamed structural signals', () => {
 		const parent = nodeMap.nodes.get('mixed_parent');
 		expect(parent?.modelType).toBe('branch');
 		if (!parent || parent.modelType !== 'branch') throw new Error('expected mixed_parent branch');
-		(parent.fields[0] as unknown as { source: 'grammar' }).source = 'grammar';
+		(parent.slots[0] as unknown as { source: 'grammar' }).source = 'grammar';
 
 		const emitted = emitRenderModule(
 			'rust',
@@ -93,7 +93,7 @@ describe('render-module unnamed structural signals', () => {
 		const helper = nodeMap.nodes.get('_helper');
 		expect(helper?.modelType).toBe('branch');
 		if (!helper || helper.modelType !== 'branch') throw new Error('expected _helper branch');
-		const innerUnnamed = helper.fields.find((slot) => slot.isUnnamed);
+		const innerUnnamed = helper.slots.find((slot) => slot.isUnnamed);
 		expect(innerUnnamed).toBeDefined();
 		(innerUnnamed! as unknown as { source: 'grammar' }).source = 'grammar';
 

@@ -7,18 +7,16 @@
  *
  * Uses the rust grammar as a concrete example.
  *
- * `it.fails` cases: specs/022-binding-simplify-assemble/IMPLEMENTATION-
- * STATUS.md documents freeze/$with as deferred ("hygiene rule: iterative
- * optimizations") — `freezeNodeData` and `buildWithNamespace` (packages/
- * common/src/nodeData.ts) are tagged `@forFutureUse ADR-0018` and not yet
- * wired into generated factory output. Non-enumerable accessors (FR-002 /
- * SC-004) shipped separately via `withAccessors` (packages/common/src/
- * utils.ts), wired into `packages/codegen/src/emitters/factories.ts`'s three
- * accessor-emission sites. The remaining `it.fails` cases assert the ADR's
- * target contract and are expected to fail until freeze/$with wiring lands;
- * `it.fails` flags loudly (test failure) if one unexpectedly starts passing,
- * which is the signal that its slice of the feature has shipped and the case
- * should convert back to a plain `it`.
+ * `it.fails` cases: the freeze contract and $with non-enumerability are
+ * not yet wired into generated factory output (the one-time scaffolding
+ * helpers for them were deleted as dead code — zero callers; the wiring,
+ * when it lands, is emitted per-kind). Non-enumerable accessors shipped
+ * separately via `withAccessors` (packages/common/src/utils.ts), wired
+ * into the factories emitter's accessor-emission sites. The remaining
+ * `it.fails` cases assert the target contract and are expected to fail
+ * until the wiring lands; `it.fails` flags loudly (test failure) if one
+ * unexpectedly starts passing, which is the signal that its slice has
+ * shipped and the case should convert back to a plain `it`.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -91,14 +89,10 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect(keys).not.toContain('$fields');
 	});
 
-	// CONFIRMED DEFERRED (not a stale assertion or regression):
-	// specs/022-binding-simplify-assemble/IMPLEMENTATION-STATUS.md's Phase 2
-	// row explicitly says "Freeze deferred (hygiene rule: iterative
-	// optimizations)" — `freezeNodeData` (packages/common/src/nodeData.ts)
-	// carries an `@forFutureUse ADR-0018` tag and is not yet wired into
-	// generated factory output. Left failing on purpose, same discipline as
-	// the other two confirmed-real, deliberately-deferred bugs found this
-	// session (acceptedTransportKinds, python _patterns).
+	// CONFIRMED DEFERRED (not a stale assertion or regression): the freeze
+	// contract is not yet wired into generated factory output, and no shared
+	// freeze helper exists any more (deleted as dead scaffolding). Left
+	// failing on purpose until per-kind freeze wiring ships.
 	it.fails('Object.isFrozen() returns true (freeze contract)', () => {
 		expect(Object.isFrozen(node)).toBe(true);
 	});
@@ -139,18 +133,10 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 
 // ---------- $with namespace ----------
 
-// CONFIRMED DEFERRED (not stale assertions or a regression): `$with` does not
-// exist on factory output at all today — `buildWithNamespace` (packages/
-// common/src/nodeData.ts) carries an `@forFutureUse ADR-0018 ... frozen
-// NodeData / $with update namespace` tag, and `replaceField`/`replace`/
-// `bindRange` (packages/common/src/edit.ts) are tagged "$replace method. Not
-// yet wired into gener[ated factories]". specs/022-binding-simplify-assemble/
-// IMPLEMENTATION-STATUS.md's Phase 2 summary row lists `$with` as "✅
-// Shipped" alongside `_<name>` storage and freeze, but that line is stale —
-// freeze is separately confirmed deferred in the same doc, and $with is
-// empirically absent (`original.$with` is `undefined`). All 4 cases below
-// left failing on purpose, same discipline as the other confirmed-deferred
-// findings in this file and this session.
+// `$with` EXISTS on factory output — the factories emitter builds it inline
+// per kind (the passing plain-`it` case below pins that). Still unshipped,
+// pinned by the `it.fails` cases: $with non-enumerability (it currently
+// serializes), the frozen-result contract, and JSON/Object.keys exclusion.
 describe('ADR-0018 Phase 2 — $with namespace', () => {
 	const original = ir.function({ name: 'original', parameters: [], body: minimalBlock } as any);
 

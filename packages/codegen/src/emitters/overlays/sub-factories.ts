@@ -63,7 +63,7 @@ const EMPTY: SubFactorySet = { entries: [], diagnostics: [] };
 
 export function choiceSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
-	const choices = node.fields.filter((f) => f.values.length >= 2 && !isMultiple(f));
+	const choices = node.slots.filter((f) => f.values.length >= 2 && !isMultiple(f));
 	return choices.length === 1 ? choices[0] : undefined;
 }
 
@@ -119,7 +119,7 @@ function derive(
 			return EMPTY;
 		}
 		slot = node.soleSlot!;
-		const residual = node.fields.filter((f) => f !== slot);
+		const residual = node.slots.filter((f) => f !== slot);
 		const inner = subFactoriesInternal(forwardChild, nodeMap, isEmitted, nextVisiting);
 		for (const s of inner.entries) {
 			const leaf = s.arm.via === 'kind' ? (s.arm.leaf ?? s.arm.child) : undefined;
@@ -131,7 +131,7 @@ function derive(
 		return resolveCandidates(node, candidates, residual, nodeMap, isEmitted, nextVisiting);
 	}
 
-	const residual = node.fields.filter((f) => f !== slot);
+	const residual = node.slots.filter((f) => f !== slot);
 
 	for (const value of slot.values) {
 		if (isTerminalValue(value)) {
@@ -291,7 +291,7 @@ export function armConfigKeys(
 	if (arm.via === 'literal') return [];
 	if (arm.path.length === 0) {
 		if (!armIsConfigShaped(sub, nodeMap, opts)) return [];
-		return isSlotBearingCompound(arm.child) ? arm.child.fields.map((f) => f.configKey) : [];
+		return isSlotBearingCompound(arm.child) ? arm.child.slots.map((f) => f.configKey) : [];
 	}
 	if (visiting.has(arm.child.kind)) return [];
 	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);

@@ -80,13 +80,19 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  * sittir-registered join-variant filters (`join`, `joinWithTrailing`,
  * `joinWithLeading`, `joinWithFlanks`, `join_with_trailing`,
  * `join_with_leading`, `join_with_flanks`) signals a multi-valued slot
- * (maps to `$$$`); the bare form is single-valued (`$`). See
+ * (maps to `$$$`); the bare form is single-valued (`$`). A trailing
+ * `| markSeam` (the pass-through seam-check-skip filter, applied at
+ * `staticSeamBefore`-stamped boundaries) never changes multiplicity —
+ * matched independently of whichever join/value filter precedes it.
+ * `{{- -}}` whitespace-trim markers are tolerated on both sides: they
+ * carry no field meaning, and separateBraceFromTag emits the opening
+ * one wherever a literal brace abuts an interpolation. See
  * `packages/legacy-core/src/templates/nunjucks-env.ts:registerSittirFilters`
  * for the filter inventory the walker picks from.
  */
 function jinjaInterpolationsToLegacy(body: string): string {
 	return body.replace(
-		/\{\{\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?\s*\}\}/g,
+		/\{\{-?\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?(?:\s*\|\s*markSeam)?\s*-?\}\}/g,
 		(_m, name: string, joinFilter: string | undefined) => {
 			// Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
 			// Single-valued slot: bare `{{ name }}` OR the `| value`
@@ -931,12 +937,12 @@ function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
 	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts> & {
-		nodes?: ReadonlyArray<{ kind: string; fields?: ReadonlyArray<{ name: string }> }>;
+		nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }>;
 	};
 	const modelFieldsByKind = new Map<string, Set<string>>();
 	for (const node of parsed.nodes ?? []) {
-		if (node.fields === undefined) continue;
-		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.fields.map((f) => f.name)));
+		if (node.slots === undefined) continue;
+		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.slots.map((f) => f.name)));
 	}
 	return {
 		factorySlots: parsed.factorySlots ?? {},

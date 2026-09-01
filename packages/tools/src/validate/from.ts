@@ -392,9 +392,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			// wears the member_expression face over the decorator_member_expression
 			// storage kind). Storage identity picks the from/factory pair — the
 			// face is only how the corpus walk found the node.
-			const readTypeName =
-				typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
-			const readKind = readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
+			const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
+			const readKind =
+				readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
 			try {
 				const fromResult = fromMap[readKind]!(readData) as AnyNodeData;
 				let factoryResult: AnyNodeData;

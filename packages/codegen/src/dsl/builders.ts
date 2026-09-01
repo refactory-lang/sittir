@@ -19,7 +19,6 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AliasRule,
-	AnyRule,
 	ChoiceRule,
 	DedentRule,
 	FieldRule,
@@ -37,7 +36,6 @@ import type {
 	RepeatRule,
 	PhaseName,
 	Rule,
-	RuleId,
 	SeqRule,
 	StringRule,
 	SupertypeRule,

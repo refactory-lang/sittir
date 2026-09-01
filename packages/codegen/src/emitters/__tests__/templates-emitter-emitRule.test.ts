@@ -92,9 +92,14 @@ describe('emitRule — string', () => {
 		expect(emitRule(rule, makeCtx())).toBe('fn');
 	});
 
-	it('escapes brace pairs that collide with Jinja syntax', () => {
+	it('leaves brace pairs alone — they collide with nothing', () => {
+		// Askama lexes only `{{`, `{%` and `{#`. A brace followed by
+		// anything else, `}` included, is ordinary text, so escaping it
+		// would put a space in the rendered output for no reason.
+		// Separation is applied at emission, and only against a real
+		// tag opener — see separateBraceFromTag.
 		const rule: StringRule = { type: STRING, value: '{}' };
-		expect(emitRule(rule, makeCtx())).toBe('{ }');
+		expect(emitRule(rule, makeCtx())).toBe('{}');
 	});
 });
 
@@ -589,7 +594,7 @@ describe('emitRule — tag-boundary seams', () => {
 
 	it('bakes the space when both edge classes are statically word-class', () => {
 		const ctx = makeCtx({ nodeMap, rules: { identifier: { type: PATTERN, value: '[a-z]+' } } });
-		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left }}');
+		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left | markSeam }}');
 	});
 
 	it('leaves the boundary glued when the slot edge varies', () => {

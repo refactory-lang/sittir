@@ -21,9 +21,6 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	kindsOf,
-	structuralFieldsOf,
-	allFormFieldsOf,
-	allSlotsOf,
 	aliasTargetToSourceMapOf,
 	acceptedIdPairsByKindOf,
 	storageKindOfRef,
@@ -50,8 +47,7 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents,
-	isAuthoredCompound
+	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -439,7 +435,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 function renderSlotAuditVariantsOf(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList
 ): readonly (readonly AssembledNonterminal[])[] {
-	return [Object.values(node.slots)];
+	return [node.slots];
 }
 
 function renderSlotAuditKey(slot: AssembledNonterminal): string {
@@ -530,7 +526,7 @@ function emitStruct(
 				const helperNodeName = `_${helperSlot.name}`;
 				const helperNode = nodeMap.nodes.get(helperNodeName);
 				if (helperNode === undefined) continue;
-				const helperSlots = allSlotsOf(helperNode);
+				const helperSlots = helperNode.slots;
 				const innerSlot = helperSlots.find((s) => s.name === f.name);
 				if (innerSlot !== undefined) {
 					f.backingTransportField = helperSlot.storageName;
@@ -674,7 +670,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		if (!node.userFacing) continue;
 		if (node instanceof AbstractAssembledCompound || node instanceof AssembledList) {
 			let sep: string | undefined;
-			const allSlots = node.fields;
+			const allSlots = node.slots;
 			outer: for (const slot of allSlots) {
 				for (const v of slot.values) {
 					if ((v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') && v.separator) {
@@ -917,17 +913,17 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 	];
 }
 
-function buildFieldKindsByName(fields: readonly AssembledNonterminal[]): ReadonlyMap<string, readonly string[]> {
+function buildFieldKindsByName(slots: readonly AssembledNonterminal[]): ReadonlyMap<string, readonly string[]> {
 	const map = new Map<string, readonly string[]>();
-	for (const f of fields) {
+	for (const f of slots) {
 		map.set(f.name, kindsOf(f));
 	}
 	return map;
 }
 
-function buildFieldMixedByName(fields: readonly AssembledNonterminal[]): ReadonlySet<string> {
+function buildFieldMixedByName(slots: readonly AssembledNonterminal[]): ReadonlySet<string> {
 	const set = new Set<string>();
-	for (const f of fields) {
+	for (const f of slots) {
 		if (kindsOf(f).length > 0 && slotLiteralValues(f).length > 0) {
 			set.add(f.name);
 		}
@@ -1516,6 +1512,7 @@ function filtersModule(): string {
 		'    pub use ::sittir_core::filters::{',
 		'        upper, lower,',
 		'        isBlank, isPresent,',
+		'        markSeam,',
 		'    };',
 		'}'
 	].join('\n');
@@ -1596,7 +1593,7 @@ function nodeTransportHasRequiredField(node: AssembledNode): boolean {
 	if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
 		return true;
 	}
-	return allFormFieldsOf(node).some((slot) => isRequired(slot));
+	return node.slots.some((slot) => isRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
@@ -2767,7 +2764,7 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 	const literal = node.text;
 	if (!literal) return undefined;
 	for (const [, owner] of nodeMap.nodes) {
-		for (const field of structuralFieldsOf(owner)) {
+		for (const field of owner.slots) {
 			if (keywordPresenceValue(field, nodeMap) !== literal) continue;
 			if (field.values.some((value) => isNodeRef(value) && storageKindOfRef(value.node) === node.kind)) {
 				return literal;
@@ -2827,7 +2824,7 @@ function renderTransportDataStruct(
 				const helperNodeName = `_${unnamedSlot.name}`;
 				const helperNode = nodeMap.nodes.get(helperNodeName);
 				if (helperNode === undefined) continue;
-				const helperSlots = allSlotsOf(helperNode);
+				const helperSlots = helperNode.slots;
 				for (const innerSlot of helperSlots) {
 					if (innerSlot.isUnnamed) continue;
 					if (emittedStorageNames.has(innerSlot.storageName)) continue;

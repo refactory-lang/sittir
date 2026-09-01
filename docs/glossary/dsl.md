@@ -5258,7 +5258,7 @@ registered but later unused still counts as a sibling.
  * Fields the LEADING element and the repeat's per-iteration element with
  * the SAME name. Tree-sitter tracks a field by name across every position
  * it's attached to within a rule, and `compiler/model/node-map.ts`'s
- * `mergeSlotsByName` already folds same-named fields at different
+ * `mergeSlotsByName` already folds same-named slots at different
  * structural positions into one array-valued slot downstream — so two
  * SIBLING per-occurrence fields (this position, and the repeat's own) is
  * enough; no outer field wrapping the whole list is needed. That outer-

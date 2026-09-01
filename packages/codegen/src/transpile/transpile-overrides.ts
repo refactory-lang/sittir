@@ -10,8 +10,7 @@ function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 			const existing = readFileSync(path);
 			const next = typeof content === 'string' ? Buffer.from(content) : Buffer.from(content);
 			if (existing.equals(next)) return;
-		} catch {
-		}
+		} catch {}
 	}
 	writeFileSync(path, content);
 }

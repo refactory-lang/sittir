@@ -1,5 +1,5 @@
 import type { AnyRule } from '../types/rule.ts';
-import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
+import type { AssembledNode } from './model/node-map.ts';
 
 const FLAG = 'SITTIR_TRACE';
 
@@ -37,9 +37,7 @@ export function traceAssembleNodes(phase: string, nodes: Map<string, AssembledNo
 		}
 		console.error(`[sittir-trace] ${phase}: '${k}'`);
 		console.error(`  modelType=${node.modelType} typeName=${node.typeName}`);
-		if ('slots' in node) {
-			const fields = (node as { fields: readonly AssembledNonterminal[] }).fields;
-			if (fields.length > 0) console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
-		}
+		const slots = node.slots;
+		if (slots.length > 0) console.error(`  slots=${JSON.stringify(slots.map((f) => f.name))}`);
 	}
 }

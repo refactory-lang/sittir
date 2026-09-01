@@ -24,7 +24,6 @@ import {
 	deriveSlots,
 	isRequired,
 	isMultiple,
-	allSlotsOf,
 	AssembledList,
 	AssembledSupertype,
 	AssembledKeyword,
@@ -420,7 +419,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_pair_alias');
 		expect(node?.modelType).toBe('branch');
-		expect(allSlotsOf(node!).map((slot) => slot.name)).toEqual(['left', 'right']);
+		expect(node!.slots.map((slot) => slot.name)).toEqual(['left', 'right']);
 	});
 
 	it('includes alias-member hidden kinds in supertype subtype expansion', () => {

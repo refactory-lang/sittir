@@ -524,7 +524,7 @@ describe('Evaluate — evaluate()', () => {
 			const nodeMap = assemble(AssembleCtx.from(normalized));
 			const node = nodeMap.nodes.get('binary_expression');
 			expect(node && 'slots' in node).toBe(true);
-			const operatorSlot = node && 'slots' in node ? node.slots.operator : undefined;
+			const operatorSlot = node && 'slots' in node ? node.slots.find((slot) => slot.name === 'operator') : undefined;
 			const operatorValues = operatorSlot
 				? operatorSlot.values
 						.filter((value: any) => value.value !== undefined)

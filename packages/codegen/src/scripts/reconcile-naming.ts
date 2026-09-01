@@ -9,7 +9,7 @@ import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { allStructuralSlotsOf, projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 
 const requireFromHere = createRequire(import.meta.url);
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
@@ -107,7 +107,7 @@ async function probeGrammar(grammar: Grammar, repoRoot: string): Promise<Diverge
 	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(grammar)));
 	const divergences: Divergence[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		for (const slot of allStructuralSlotsOf(node)) {
+		for (const slot of node.slots) {
 			divergences.push(...diffSlotNames(slot, kind));
 		}
 	}

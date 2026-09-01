@@ -281,7 +281,7 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	// plain `factoryFields` name list).
 	const makeOpts = (fields: Record<string, readonly string[]>): NodeToConfigOpts => ({
 		polymorphVariants: {
-			range_expression: { definedBy: 'promoted', fields }
+			range_expression: { definedBy: 'promoted', slots: fields }
 		},
 		factoryFields: {
 			range_expression: [...new Set(Object.values(fields).flat())]

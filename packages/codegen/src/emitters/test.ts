@@ -6,7 +6,6 @@ import {
 	AssembledKeyword,
 	AssembledList,
 	AssembledSupertype,
-	allSlotsOf,
 	isNodeRef,
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
@@ -21,8 +20,7 @@ import {
 import {
 	isValidIdent,
 	resolveDirectFactorySlot,
-	classifyChildFactorySurface,
-	classifyFactoryEmission,
+	testConstructsWithChildren,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -34,7 +32,7 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { constructorSurface, constructorTargetKind, kindEnumConfigValue, separatedListSurface } from './factories.ts';
+import { kindEnumConfigValue, separatedListSurface } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
 
@@ -143,7 +141,7 @@ function emitBranchTest(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.hoisted) return;
-	if (classifyChildFactorySurface(node, nodeMap) !== null) {
+	if (testConstructsWithChildren(node, nodeMap)) {
 		emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
 		return;
 	}
@@ -180,7 +178,7 @@ function factoryCallArgs(
 	strict = false
 ): { typeConfigArg: string; renderConfigArg: string } {
 	const typeConfigParts: string[] = [];
-	for (const f of node.fields) {
+	for (const f of node.slots) {
 		if (isRequired(f)) {
 			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
 		}
@@ -254,7 +252,7 @@ function childBareCallArgs(
 		case 'envelope':
 		case 'polymorph': {
 			if (!(child instanceof AbstractAssembledCompound) || child instanceof AssembledList) return undefined;
-			if (classifyChildFactorySurface(child, nodeMap) !== null) {
+			if (testConstructsWithChildren(child, nodeMap)) {
 				return subFactoryContainerArgs(child, nodeMap, kindEntries);
 			}
 			return factoryCallArgs(child, nodeMap, kindEntries).renderConfigArg;
@@ -282,11 +280,11 @@ function childBareCallArgs(
 }
 
 function requiredFieldParts(
-	fields: readonly AssembledNonterminal[],
+	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
-	return fields.filter(isRequired).map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
+	return slots.filter(isRequired).map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
 }
 
 function objectLiteralInner(text: string): string | undefined {
@@ -426,7 +424,7 @@ function emitContainerTest(
 	nodeMap: NodeMap
 ): void {
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList) return;
-	if (classifyChildFactorySurface(node, nodeMap) === null) return;
+	if (!testConstructsWithChildren(node, nodeMap)) return;
 
 	const placeholder = containerCallArgs(node, nodeMap, kindEntries);
 	lines.push(`describe('${kind}', () => {`);
@@ -648,7 +646,7 @@ function buildDummyStub(
 	const nextVisiting = new Set(visiting);
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
-	for (const f of allSlotsOf(node)) {
+	for (const f of node.slots) {
 		if (!isRequired(f)) continue;
 		const value = isMultiple(f)
 			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
