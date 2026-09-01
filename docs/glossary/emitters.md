@@ -501,7 +501,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `packages/codegen/src/emitters/factories.ts::childElementType`
 
 ```text
-/** Resolve a container node's children element type to a concrete TS type expression. */
+/** Resolve a container node's children element type to a concrete TS type
+ *  expression, reading each value's stamped storage. A value stored as a
+ *  kind id contributes its discriminant through `valueKindIdExpr` (the same
+ *  resolver the runtime value arms use, so a strict parameter type and the
+ *  value seated into it can never disagree); a text-stored value
+ *  contributes its literal. */
 ```
 
 #### body
@@ -5070,41 +5075,71 @@ Surface`
 
 ```text
 /**
- * Compute the shared {@link TypeComponent} list for a field slot.
- *
- * Pure derivation over the slot's `values`. Applies:
- *   1. Hidden-keyword inlining: `_kw_async` → literal `"async"`.
- *   2. NodeMap lookup: resolved kind → `nodeKind`; missing → `missing`
- *      (with a PascalCase fallback name for consumers that need one).
- *
- * Used by `types.ts::fieldTypeExpr` and `factories.ts::fieldElementType`
- * — previously two parallel walkers with near-identical logic, differing
- * only in prefix choice and missing-kind handling.
- *
- * @param field - The field whose slot values drive the projection.
- * @param nodeMap - The assembled node map for kind resolution.
- * @returns Ordered components (in the order the kinds / literals appear
- *   in `field.values`). Callers deduplicate at emission time.
+ * The {@link TypeComponent} list for a field slot, projected from each
+ * value's stamped `storage` by `typeComponentOf`. This is a presentation
+ * layer for the consumers that still assemble type expressions from
+ * components (types.ts, render-module.ts, transport-projection.ts); it
+ * derives nothing itself. Ordered as the values appear in `field.values`;
+ * callers deduplicate at emission time. Values with no storage (neither a
+ * node nor a literal) are dropped.
  */
 ```
 
-#### body
+### `packages/codegen/src/emitters/shared.ts::classifyValueStorage`
 
 ```text
-// Carry the value's grammar-immediacy stamp — consumers gate seam
-// marks on it; re-deriving it later from nodeMap is impossible for
-// inline terminals (they have no kind of their own to look up).
+/**
+ * The one producer of a value's storage kind. Every entry in a slot's
+ * `values` maps to exactly one of:
+ *
+ * - `node`   — a reference to a kind with a real factory; the built node
+ *              is stored. A kind missing from the map still gets `node`
+ *              storage under a synthesized PascalCase type name, flagged
+ *              `missing` so types.ts can emit its stub.
+ * - `kindId` — identity only: a reference to a factoryless keyword or
+ *              token (a hidden keyword leaf, or any AssembledKeyword /
+ *              AssembledToken with text and no `rawFactoryName`), or an
+ *              inline literal that resolved to a kind. The text is carried
+ *              for the verbatim-slot and fallback paths; the id when one
+ *              was stamped at link.
+ * - `literal` — an inline literal with no kind at all.
+ *
+ * `carrier` records whether the value arrived as a node reference or an
+ * inline terminal — the stamped form of `isNodeRef` / `isTerminalValue`.
+ * Its only reader is `typeComponentOf`, which needs it to keep the
+ * component shape exact (a ref-carried literal reports its hidden kind as
+ * `rawKind`; a terminal reports `immediate`).
+ *
+ * Resolved once per value in `computeFieldStorageInfo`, read verbatim by
+ * every consumer, never re-derived from a slot-level verdict.
+ */
 ```
 
-#### body
+### `packages/codegen/src/emitters/shared.ts::valueStorageOf`
 
 ```text
-// Two stamps, both minted at node/value construction, never
-// re-derived from text here: `v.storageKindId` (the ref's own
-// catalog row, when the hidden kind IS a parser symbol) and the
-// leaf's `resolvedKindId` (the anon token's row, for
-// compile-synthesized kinds like evaluate's field-enum names that
-// have no parser symbol of their own).
+/** A value's storage stamp, classifying and stamping it on first use when
+ *  the eager pass in `computeFieldStorageInfo` has not reached it. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::isFactorylessTextLeaf`
+
+```text
+/** An AssembledKeyword or AssembledToken that has text but no factory —
+ *  the shape whose reference stores as a kind id, because there is a
+ *  fixed body to render but no node to build. This is the real predicate
+ *  behind "factoryless value kind"; the hidden-`_` prefix is only a proxy
+ *  for it. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::typeComponentOf`
+
+```text
+/** Projects a storage stamp onto the {@link TypeComponent} shape the
+ *  component consumers expect. The `carrier` axis decides the literal
+ *  form: a ref-carried kind id keeps its hidden kind as `rawKind` (the
+ *  transport and render walkers key on it), a terminal keeps `immediate`
+ *  and reports its id only when it resolved to a kind. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::childTypeComponents`
@@ -12238,17 +12273,55 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  *  NAME — what keeps declaration emit finite), and the shared method tail. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::kindEnumConfigValue`
+### `packages/codegen/src/emitters/factories.ts::valueKindIdExpr`
 
 ```text
-/** The strict Config value for a kind-enum member: its kind discriminant
- *  when one can be resolved, else the text. Identity wins over text —
- *  `valueKind` names the kind the arm's value belongs to and is looked up
- *  directly, and only an arm carrying no kind falls back to matching the
- *  literal against the catalog. A text match cannot tell two kinds apart
- *  when they share a literal, and several do (`;` is the entire body of a
- *  unit struct's arm, of an empty impl's, and of a bodyless module's), so
- *  the stamped kind is the only sound source whenever it is present. */
+/** The kind-discriminant expression for a value's stamped storage, or
+ *  `undefined` when the value is not stored as a kind id. Three facts gate
+ *  it, each resolved once elsewhere and only read here: the value's
+ *  `storage.via` must be `kindId`, a kind catalog must be in scope, and the
+ *  owning slot must store ids at all (`slotStoresKindIds`) — a verbatim
+ *  slot seats raw text with no coercion call, so an id there would land a
+ *  number where render expects a string. Identity wins over text: a stamped
+ *  `kindId` or `kind` is looked up directly and, if the catalog lacks it,
+ *  the answer is `undefined` rather than a text match. Only an arm carrying
+ *  no kind at all falls back to matching its literal, because a text match
+ *  cannot tell two kinds apart when they share a literal, and several do
+ *  (`;` is the whole body of a unit struct's arm, an empty impl's, and a
+ *  bodyless module's). This is the single site that turns a storage stamp
+ *  into an emitted discriminant; every emitter that needs one calls it. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::valueStorageExpr`
+
+```text
+/** The strict value expression a value arm seats: `valueKindIdExpr` when
+ *  the storage resolves to a kind id, else the text quoted for source.
+ *  Used wherever an arm's value is emitted as a runtime argument (the
+ *  polymorph overlays and the generated node tests); type positions use
+ *  `valueKindIdExpr` directly with their own `JSON.stringify` fallback so
+ *  the two quoting conventions never diverge in what kind they name. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::slotStoresKindIds`
+
+```text
+/** Whether a slot's storage encoding holds kind ids at all — true for
+ *  `kindEnum` and `mixedEnum`, and when no slot verdict is in scope. This
+ *  is the slot-level half of the storage decision: the per-value stamp says
+ *  whether a value IS an identity-only arm, this says whether the slot has
+ *  anywhere to put an id. They are orthogonal and both are needed; neither
+ *  alone can decide what a mixed slot's token arm seats. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::kindEnumTextExpr`
+
+```text
+/** `valueStorageExpr` for a bare text with no value in hand — the generated
+ *  tests' dummy-value path reads a slot's first text without walking its
+ *  values. Synthesizes a kind-less `kindId` storage so the lookup goes
+ *  through the one resolver and its literal-match fallback, rather than
+ *  re-deriving the discriminant here. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::elementsTypeOf`
@@ -14620,12 +14693,11 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  literal branch of the slot (`op: choice('and', 'or')` yields one per
  *  string), and a reference to a factoryless value kind — an
  *  AssembledKeyword or AssembledToken whose whole body is a fixed literal,
- *  which owns a kind identity but has no factory to call. `literal` is the
- *  text the arm seats; `valueKind` names the kind that identity belongs to
- *  and is set only for the second shape. Which of the two the emitter
- *  actually seats is decided by the slot's storage — a kindEnum or
- *  mixedEnum slot takes the kind discriminant, a verbatim slot takes the
- *  text — so the arm carries both and lets the slot choose. */
+ *  which owns a kind identity but has no factory to call. The arm carries
+ *  the value's stamped `storage` and nothing else: its text, and — for a
+ *  value that resolved to a kind — that kind and its id. What the emitter
+ *  seats is read from the stamp by `valueStorageExpr`; the arm never
+ *  re-derives it and carries no second copy of the fact. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::NodeArm`
@@ -14720,15 +14792,16 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  it. */
 ```
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::stampedValueOf`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::textStorageOf`
 
 ```text
-/** The literal text a factoryless value kind seats, or `undefined` when the
- *  kind is not one of those. Only AssembledKeyword and AssembledToken
- *  qualify: their whole body is a fixed literal, so an arm can be built
- *  from that text plus the kind's own identity with no factory to call.
- *  Everything else that lacks a factory — supertypes above all — has no
- *  value to seat and stays skipped. */
+/** The value's stamped storage when it seats text or a kind id, or
+ *  `undefined` when it stores a node — a node-storage value composes a
+ *  child factory (a NodeArm) and is never a value arm. Factoryless
+ *  AssembledKeyword / AssembledToken references arrive here already
+ *  stamped `kindId` by `classifyValueStorage`; everything else that lacks
+ *  a factory — supertypes above all — has no value to seat and stays
+ *  skipped by the caller's own test. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::resolveCandidates`

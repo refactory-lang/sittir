@@ -7,7 +7,7 @@ import {
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo
 } from '../shared.ts';
-import { kindEnumConfigValue } from '../factories.ts';
+import { valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import { armConfigKeys, armIsConfigShaped, subFactoriesOf, type SubFactory } from './sub-factories.ts';
 import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
@@ -287,13 +287,7 @@ function emitSub(
 	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 
 	if (sub.arm.via === 'value') {
-		const slotStorageKindOf = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
-		const slotIsKindEnum = slotStorageKindOf === 'kindEnum' || slotStorageKindOf === 'mixedEnum';
-		const val = kindEnumConfigValue(
-			sub.arm.literal,
-			!positional && slotIsKindEnum ? wires.kindEntries : undefined,
-			sub.arm.valueKind
-		);
+		const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), wires.kindEntries);
 		const s = shape(sub, k, positional, undefined, m);
 		const typeFor = (ref: string): string => `${s.paramFor(ref, undefined)} => ReturnType<typeof ${ref}>`;
 		return {

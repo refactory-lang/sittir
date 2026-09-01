@@ -559,7 +559,7 @@ describe('variable_declaration sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.VariableDeclaration);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
@@ -657,7 +657,7 @@ describe('lexical_declaration sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.LexicalDeclaration);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
@@ -934,7 +934,7 @@ describe('do_statement sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.DoStatement);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
@@ -1018,7 +1018,7 @@ describe('break_statement sub-factories', () => {
 		const node = ir.breakStatement.automaticSemicolon({});
 		expect(node.$type).toBe(TSKindId.BreakStatement);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('semi builds the parent', () => {
@@ -1047,7 +1047,7 @@ describe('continue_statement sub-factories', () => {
 		const node = ir.continueStatement.automaticSemicolon({});
 		expect(node.$type).toBe(TSKindId.ContinueStatement);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('semi builds the parent', () => {
@@ -1073,7 +1073,7 @@ describe.skip('debugger_statement sub-factories', () => {
 		const node = ir.debuggerStatement.automaticSemicolon();
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('semi builds the parent', () => {
@@ -2661,14 +2661,14 @@ describe('meta_property sub-factories', () => {
 		const node = ir.metaProperty.arm1();
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe('new . target');
+		expect(seated?.$text ?? seated).toBe(TSKindId.MetaPropertyArm1);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('arm2 builds the parent', () => {
 		const node = ir.metaProperty.arm2();
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe('import . meta');
+		expect(seated?.$text ?? seated).toBe(TSKindId.MetaPropertyArm2);
 		expect(() => node.$render!()).not.toThrow();
 	});
 });
@@ -3840,7 +3840,7 @@ describe('type_alias_declaration sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.TypeAliasDeclaration);
 		const seated = (node as any).semicolon();
-		expect(seated?.$text ?? seated).toBe('\n');
+		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {

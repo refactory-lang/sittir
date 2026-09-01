@@ -5827,8 +5827,8 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle) {
 
 export function wrapMetaProperty(
 	data: T.MetaProperty & {
-		readonly _meta_property_arm1?: 'new . target' | 'import . meta';
-		readonly _meta_property_arm2?: 'new . target' | 'import . meta';
+		readonly _meta_property_arm1?: TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2;
+		readonly _meta_property_arm2?: TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2;
 	},
 	tree: TreeHandle
 ) {
@@ -11905,7 +11905,7 @@ export function wrapExportStatementDefaultFromArm(
 			| T.ExportStatementDefaultNsFrom
 			| T.ExportStatementDefaultClauseFrom
 			| T.ExportClause;
-		readonly _semi?: '\n' | ';';
+		readonly _semi?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	},
 	tree: TreeHandle
 ) {
@@ -12155,7 +12155,7 @@ export function wrapExportStatementDefaultDefaultKw(
 }
 
 export function wrapExportStatementDefaultValue(
-	data: T.ExportStatementDefaultValue & { readonly _semi?: '\n' | ';' },
+	data: T.ExportStatementDefaultValue & { readonly _semi?: TSKindId.AutomaticSemicolon | TSKindId.Semi },
 	tree: TreeHandle
 ) {
 	data = _keepModelledSlots(data, ['_value', '_automatic_semicolon', '_semi']);

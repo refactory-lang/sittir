@@ -4018,8 +4018,8 @@ export const rangeExpression: typeof B.rangeExpression & {
 		coerce: rangeExpression$prefix(C.coerceToRangeExpression, F.buildRangeExpressionPrefix)
 	},
 	bare: {
-		strict: rangeExpression$bare(F.buildRangeExpression, '..'),
-		coerce: rangeExpression$bare(C.coerceToRangeExpression, '..')
+		strict: rangeExpression$bare(F.buildRangeExpression, TSKindId.RangeExpressionBare),
+		coerce: rangeExpression$bare(C.coerceToRangeExpression, TSKindId.RangeExpressionBare)
 	}
 };
 

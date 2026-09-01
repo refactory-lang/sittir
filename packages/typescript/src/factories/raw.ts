@@ -1282,9 +1282,9 @@ export function buildContinueStatement(config: T.ContinueStatement.Config): Cont
 	);
 }
 
-export type DebuggerStatementBuildArgs = [value: '\n' | ';'];
+export type DebuggerStatementBuildArgs = [value: TSKindId.AutomaticSemicolon | TSKindId.Semi];
 export type DebuggerStatementLooseArgs = [
-	value: LooseValue<'\n' | ';', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type DebuggerStatementBuilt = T.DebuggerStatement & {
@@ -1295,7 +1295,7 @@ export type DebuggerStatementBuilt = T.DebuggerStatement & {
 	};
 } & _NodeMethods;
 
-export function buildDebuggerStatement(value: '\n' | ';'): DebuggerStatementBuilt {
+export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKindId.Semi): DebuggerStatementBuilt {
 	const _semicolon = coerceKindEnumStorage<number>(value, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -3427,9 +3427,14 @@ export function buildPrivatePropertyIdentifier(text: string) {
 	);
 }
 
-export type MetaPropertyBuildArgs = [value: 'new . target' | 'import . meta'];
+export type MetaPropertyBuildArgs = [value: TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2];
 export type MetaPropertyLooseArgs = [
-	value: LooseValue<'new . target' | 'import . meta', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<
+		TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2,
+		T.LeafScalarMap,
+		T.LeafStringMap,
+		T.NamespaceMap
+	>
 ];
 
 export type MetaPropertyBuilt = T.MetaProperty & {
@@ -3440,7 +3445,7 @@ export type MetaPropertyBuilt = T.MetaProperty & {
 	};
 } & _NodeMethods;
 
-export function buildMetaProperty(value: 'new . target' | 'import . meta'): MetaPropertyBuilt {
+export function buildMetaProperty(value: TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2): MetaPropertyBuilt {
 	const _content = coerceKindEnumStorage<number>(value, [
 		['new . target', TSKindId.MetaPropertyArm1] as const,
 		['import . meta', TSKindId.MetaPropertyArm2] as const

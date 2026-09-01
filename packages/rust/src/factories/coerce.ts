@@ -3559,7 +3559,9 @@ export function resolveRangeExpression_content(
 }
 
 export function coerceToRangeExpression(
-	input: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') | T.RangeExpression.Loose
+	input:
+		| (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare)
+		| T.RangeExpression.Loose
 ): ReturnType<typeof F.buildRangeExpression> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.RangeExpression)
 		return input as unknown as ReturnType<typeof F.buildRangeExpression>;

@@ -652,8 +652,9 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 
 ```text
 /**
- * Per-storage-kind accepted wire ids for a slot, from the mint stamps
- * (KindId-NodeRefs §2.3 /): for each node-ref value, the union of
+ * Per-storage-kind accepted wire ids for a slot, read from the ids stamped
+ * on each node-ref at link time (never re-resolved by name here): for each
+ * node-ref value, the union of
  * `storageKindId` (the modeled storage kind) and `parseKindId` (the wire
  * `$type` tree-sitter actually stamps — the alias TARGET at aliased
  * reference sites). For value-backed kinds this subsumes both name-keyed
@@ -1703,6 +1704,47 @@ can't be unified.
 // IR-only enum kinds, tree-sitter-erased hidden supertypes. Ids are
 // stamped FACTS, never identity — node identity stays the name, and
 // serialization (node-model.json5) never carries ids.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.storage`
+
+```text
+// The value's storage kind — `node`, `kindId`, or `literal` — stamped once
+// by `classifyValueStorage` in the field-storage pass and read verbatim by
+// every emitter. Mutable for the same reason `AssembledNonterminal.storageInfo`
+// is: it is a post-construction stamp, not an identity. A slot's values can
+// carry different storage from one another; that per-value granularity is
+// the point, since a per-slot verdict cannot say that a mixed slot's node
+// arms store nodes while its token arm stores an id.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::ValueStorage`
+
+```text
+// What a slot value stores at runtime, as a discriminated union on `via`.
+// Exactly three representations exist — a built node, a kind id, or raw
+// text — and `kindId` is reachable from either carrier: a factoryless
+// keyword/token reference and an inline literal that resolved to a kind
+// both store identity alone. `literal` is only ever terminal-carried; a
+// node reference either resolves to a kind (`kindId`) or to a type
+// (`node`), never to anonymous text.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::ValueCarrier`
+
+```text
+// Which shape a slot value arrived in: a node reference (`ref`) or an
+// inline terminal (`terminal`). Orthogonal to storage — a kind id can come
+// from either — and kept separate so the storage discriminant stays
+// three-way.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::TextValueStorage`
+
+```text
+// The storage variants that carry text: `kindId` and `literal`. A value arm
+// is exactly a value with this storage; `node` storage composes a child
+// factory instead.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`

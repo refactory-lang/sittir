@@ -714,7 +714,7 @@ describe('mod_item sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ModItem);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
+		expect(seated?.$text ?? seated).toBe(TSKindId.ModItemExternal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('inline builds the parent', () => {
@@ -753,7 +753,7 @@ describe('foreign_mod_item sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ForeignModItem);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
+		expect(seated?.$text ?? seated).toBe(TSKindId.ForeignModItemSemi);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('body builds the parent', () => {
@@ -818,7 +818,7 @@ describe('struct_item sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.StructItem);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
+		expect(seated?.$text ?? seated).toBe(TSKindId.StructItemUnit);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3782,7 +3782,7 @@ describe('range_expression sub-factories', () => {
 		const node = ir.rangeExpression.bare();
 		expect(node.$type).toBe(TSKindId.RangeExpression);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.DotDot);
+		expect(seated?.$text ?? seated).toBe(TSKindId.RangeExpressionBare);
 		expect(() => node.$render!()).not.toThrow();
 	});
 });

@@ -32,7 +32,7 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { kindEnumConfigValue, separatedListSurface } from './factories.ts';
+import { valueStorageExpr, kindEnumTextExpr, separatedListSurface } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
 
@@ -370,7 +370,7 @@ function emitSubFactoryTests(
 		const slotStorageKind = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
 		const slotIsKindEnum = slotStorageKind === 'kindEnum' || slotStorageKind === 'mixedEnum';
 		if (sub.arm.via === 'value') {
-			const val = kindEnumConfigValue(sub.arm.literal, slotIsKindEnum ? kindEntries : undefined);
+			const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), kindEntries);
 			cases.push(`    const seated = (node as any).${slotProp}();`);
 			cases.push(`    expect(seated?.$text ?? seated).toBe(${val});`);
 		} else if (!slotIsKindEnum) {
@@ -670,7 +670,7 @@ function dummyValue(
 		if (strict) {
 			const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
 			const text = storageInfo.texts[0];
-			if (storageInfo.kind === 'kindEnum' && text !== undefined) return kindEnumConfigValue(text, kindEntries);
+			if (storageInfo.kind === 'kindEnum' && text !== undefined) return kindEnumTextExpr(text, kindEntries);
 		}
 	}
 	if (!nodeMap) {

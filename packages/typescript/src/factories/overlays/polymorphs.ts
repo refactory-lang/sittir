@@ -628,12 +628,12 @@ export const debuggerStatement: typeof B.debuggerStatement & {
 } = {
 	...B.debuggerStatement,
 	automaticSemicolon: {
-		strict: debuggerStatement$automaticSemicolon(F.buildDebuggerStatement, '\n'),
-		coerce: debuggerStatement$automaticSemicolon(C.coerceToDebuggerStatement, '\n')
+		strict: debuggerStatement$automaticSemicolon(F.buildDebuggerStatement, TSKindId.AutomaticSemicolon),
+		coerce: debuggerStatement$automaticSemicolon(C.coerceToDebuggerStatement, TSKindId.AutomaticSemicolon)
 	},
 	semi: {
-		strict: debuggerStatement$semi(F.buildDebuggerStatement, ';'),
-		coerce: debuggerStatement$semi(C.coerceToDebuggerStatement, ';')
+		strict: debuggerStatement$semi(F.buildDebuggerStatement, TSKindId.Semi),
+		coerce: debuggerStatement$semi(C.coerceToDebuggerStatement, TSKindId.Semi)
 	}
 };
 
@@ -2378,12 +2378,12 @@ export const metaProperty: typeof B.metaProperty & {
 } = {
 	...B.metaProperty,
 	arm1: {
-		strict: metaProperty$arm1(F.buildMetaProperty, 'new . target'),
-		coerce: metaProperty$arm1(C.coerceToMetaProperty, 'new . target')
+		strict: metaProperty$arm1(F.buildMetaProperty, TSKindId.MetaPropertyArm1),
+		coerce: metaProperty$arm1(C.coerceToMetaProperty, TSKindId.MetaPropertyArm1)
 	},
 	arm2: {
-		strict: metaProperty$arm2(F.buildMetaProperty, 'import . meta'),
-		coerce: metaProperty$arm2(C.coerceToMetaProperty, 'import . meta')
+		strict: metaProperty$arm2(F.buildMetaProperty, TSKindId.MetaPropertyArm2),
+		coerce: metaProperty$arm2(C.coerceToMetaProperty, TSKindId.MetaPropertyArm2)
 	}
 };
 

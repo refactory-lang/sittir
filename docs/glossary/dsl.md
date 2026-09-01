@@ -396,8 +396,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @internal — canonical JSON stringify with sorted object keys. Ensures
  * that two structurally-equal rule bodies stringify identically even
  * when property insertion order differs between rule construction paths.
- * Mirrors the helper in auto-groups.ts (kept in sync, not shared yet —
- * DRY extraction is scheduled for that change.1).
+ * Mirrors the helper in auto-groups.ts; the two are kept in sync by hand
+ * and should be extracted into one shared helper.
  */
 ```
 
@@ -2726,7 +2726,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 
 ```text
 /**
- * Ctx for the shared `inlineRefs` op (/ PR-O M1 closure). Self-contained so
+ * Ctx for the shared `inlineRefs` op. Self-contained so
  * non-phase callers (assemble's alias-body path) can construct it without a
  * full TransformCtx.
  */

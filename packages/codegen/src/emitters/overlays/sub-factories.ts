@@ -10,22 +10,23 @@ import {
 	storageKindOfRef,
 	type AssembledNode,
 	type AssembledNonterminal,
-	type NodeOrTerminal
+	type NodeOrTerminal,
+	type TextValueStorage
 } from '../../compiler/model/node-map.ts';
 import {
 	forwardedTargetKind,
 	isSlotBearingCompound,
 	isTextLeaf,
 	isValidIdent,
-	classifyFactoryShape
+	classifyFactoryShape,
+	valueStorageOf
 } from '../shared.ts';
 import { camelCase } from '../refine-emit.ts';
 import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
 
 export interface ValueArm {
 	readonly via: 'value';
-	readonly literal: string;
-	readonly valueKind?: string;
+	readonly storage: TextValueStorage;
 }
 
 export interface NodeArm {
@@ -70,9 +71,9 @@ export function choiceSlotOf(node: AssembledNode): AssembledNonterminal | undefi
 	return choices.length === 1 ? choices[0] : undefined;
 }
 
-function stampedValueOf(child: AssembledNode): string | undefined {
-	if (!(child instanceof AssembledKeyword) && !(child instanceof AssembledToken)) return undefined;
-	return child.text;
+function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorage | undefined {
+	const storage = valueStorageOf(value, nodeMap);
+	return storage !== undefined && storage.via !== 'node' ? storage : undefined;
 }
 
 function kindArmName(parentKind: string, child: AssembledNode): string {
@@ -118,7 +119,7 @@ function isDirect(entry: SubFactory): boolean {
 }
 
 function claimantOf(entry: SubFactory): string {
-	if (entry.arm.via === 'value') return `'${entry.arm.literal}'`;
+	if (entry.arm.via === 'value') return `'${entry.arm.storage.text}'`;
 	return [entry.arm.child.kind, ...entry.arm.path].join('.');
 }
 
@@ -157,8 +158,9 @@ function derive(
 	for (const value of slot.values) {
 		if (isTerminalValue(value)) {
 			const name = armName(node, value, nodeMap);
-			if (name === undefined) continue;
-			const arm: ValueArm = { via: 'value', literal: value.value };
+			const storage = textStorageOf(value, nodeMap);
+			if (name === undefined || storage === undefined) continue;
+			const arm: ValueArm = { via: 'value', storage };
 			const entry: SubFactory = { name, slot, residual, arm };
 			candidates.push({ name, entry, claimant: claimantOf(entry) });
 			continue;
@@ -167,10 +169,10 @@ function derive(
 		const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (child === undefined) continue;
 		if (child.rawFactoryName === undefined) {
-			const stamped = stampedValueOf(child);
-			const naming = stamped === undefined ? undefined : armNaming(node, value, nodeMap);
-			if (stamped === undefined || naming === undefined) continue;
-			const arm: ValueArm = { via: 'value', literal: stamped, valueKind: child.kind };
+			const storage = textStorageOf(value, nodeMap);
+			const naming = storage === undefined ? undefined : armNaming(node, value, nodeMap);
+			if (storage === undefined || naming === undefined) continue;
+			const arm: ValueArm = { via: 'value', storage };
 			const entry: SubFactory = { name: naming.name, slot, residual, arm };
 			candidates.push({ ...naming, entry, claimant: claimantOf(entry) });
 			continue;

@@ -4,7 +4,8 @@ import type {
 	NodeOrTerminal,
 	NodeBackedRef,
 	AssembledNode,
-	FieldStorageInfo
+	FieldStorageInfo,
+	ValueStorage
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
@@ -166,32 +167,85 @@ export type TypeComponent =
 	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string; immediate?: boolean }
 	| { kind: 'missing'; value: string; rawKind: string };
 
+function isFactorylessTextLeaf(
+	node: AssembledNode
+): node is (AssembledKeyword | AssembledToken) & { text: string } {
+	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledToken)) return false;
+	return node.rawFactoryName === undefined && node.text !== undefined;
+}
+
+export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
+	if (isTerminalValue(value)) {
+		const via = value.resolvedKind === undefined ? 'literal' : 'kindId';
+		return {
+			via,
+			carrier: 'terminal',
+			kind: value.resolvedKind,
+			kindId: value.resolvedKindId,
+			text: value.value,
+			immediate: value.immediate
+		} as ValueStorage;
+	}
+	if (!isNodeRef(value)) return undefined;
+	const kind = storageKindOfRef(value.node);
+	const leaf = resolveHiddenKeywordLeaf(kind, nodeMap);
+	if (leaf?.text !== undefined) {
+		return {
+			via: 'kindId',
+			carrier: 'ref',
+			kind,
+			kindId: value.storageKindId ?? leaf.resolvedKindId,
+			text: leaf.text
+		};
+	}
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined) {
+		return {
+			via: 'node',
+			carrier: 'ref',
+			kind,
+			typeName: kind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase()),
+			missing: true
+		};
+	}
+	if (isFactorylessTextLeaf(node)) {
+		return {
+			via: 'kindId',
+			carrier: 'ref',
+			kind,
+			kindId: value.storageKindId ?? node.resolvedKindId,
+			text: node.text
+		};
+	}
+	return { via: 'node', carrier: 'ref', kind, typeName: node.typeName };
+}
+
+export function valueStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
+	return (value.storage ??= classifyValueStorage(value, nodeMap));
+}
+
+function typeComponentOf(storage: ValueStorage): TypeComponent {
+	if (storage.via === 'node') {
+		return storage.missing
+			? { kind: 'missing', value: storage.typeName, rawKind: storage.kind }
+			: { kind: 'nodeKind', value: storage.typeName, rawKind: storage.kind };
+	}
+	if (storage.via === 'kindId' && storage.carrier === 'ref') {
+		return { kind: 'literal', value: storage.text, rawKind: storage.kind, resolvedKindId: storage.kindId };
+	}
+	return {
+		kind: 'literal',
+		value: storage.text,
+		resolvedKindId: storage.via === 'kindId' ? storage.kindId : undefined,
+		immediate: storage.immediate
+	};
+}
+
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
 	const out: TypeComponent[] = [];
-	for (const v of field.values) {
-		if (isTerminalValue(v)) {
-			out.push({ kind: 'literal', value: v.value, resolvedKindId: v.resolvedKindId, immediate: v.immediate });
-			continue;
-		}
-		if (!isNodeRef(v)) continue;
-		const t = storageKindOfRef(v.node);
-		const leaf = resolveHiddenKeywordLeaf(t, nodeMap);
-		if (leaf?.text !== undefined) {
-			out.push({
-				kind: 'literal',
-				value: leaf.text,
-				rawKind: t,
-				resolvedKindId: v.storageKindId ?? leaf.resolvedKindId
-			});
-			continue;
-		}
-		const node = nodeMap.nodes.get(t);
-		if (!node) {
-			const fallback = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase());
-			out.push({ kind: 'missing', value: fallback, rawKind: t });
-			continue;
-		}
-		out.push({ kind: 'nodeKind', value: node.typeName, rawKind: t });
+	for (const value of field.values) {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage !== undefined) out.push(typeComponentOf(storage));
 	}
 	return out;
 }
@@ -391,6 +445,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
+			for (const value of slot.values) value.storage = classifyValueStorage(value, nodeMap);
 			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap);
 		}
 	}
