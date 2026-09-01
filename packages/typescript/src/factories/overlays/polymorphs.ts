@@ -231,9 +231,11 @@ export const namespaceExport: typeof B.namespaceExport & {
 
 export const importStatement: typeof B.importStatement & {
 	arm: { strict: typeof F.buildImportStatementArm };
+	importRequireClause: { strict: typeof F.buildImportRequireClause; coerce: typeof C.coerceToImportRequireClause };
 } = {
 	...B.importStatement,
-	arm: { strict: F.buildImportStatementArm }
+	arm: { strict: F.buildImportStatementArm },
+	importRequireClause: { strict: F.buildImportRequireClause, coerce: C.coerceToImportRequireClause }
 };
 
 const importClauseDefaultImport$identifier =
@@ -1424,11 +1426,11 @@ export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration
 
 export const arrowFunction: typeof B.arrowFunction & {
 	parameter: { strict: typeof F.buildArrowFunctionParameter; coerce: typeof C.coerceToArrowFunctionParameter };
-	callSignature: { strict: typeof F.buildArrowFunctionUCallSignature };
+	callSignature: { strict: typeof F.buildCallSignature; coerce: typeof C.coerceToCallSignature };
 } = {
 	...B.arrowFunction,
 	parameter: { strict: F.buildArrowFunctionParameter, coerce: C.coerceToArrowFunctionParameter },
-	callSignature: { strict: F.buildArrowFunctionUCallSignature }
+	callSignature: { strict: F.buildCallSignature, coerce: C.coerceToCallSignature }
 };
 
 const callExpression$call =
@@ -2530,11 +2532,13 @@ export const decoratorCallExpression: typeof B.decoratorCallExpression & {
 export const classBody: typeof B.classBody & {
 	method: { strict: typeof F.buildClassBodyMethod };
 	methodSig: { strict: typeof F.buildClassBodyMethodSig };
+	classStaticBlock: { strict: typeof F.buildClassStaticBlock; coerce: typeof C.coerceToClassStaticBlock };
 	member: { strict: typeof F.buildClassBodyMember };
 } = {
 	...B.classBody,
 	method: { strict: F.buildClassBodyMethod },
 	methodSig: { strict: F.buildClassBodyMethodSig },
+	classStaticBlock: { strict: F.buildClassStaticBlock, coerce: C.coerceToClassStaticBlock },
 	member: { strict: F.buildClassBodyMember }
 };
 
@@ -4106,9 +4110,11 @@ export const constraint: typeof B.constraint & {
 
 export const indexSignature: typeof B.indexSignature & {
 	colon: { strict: typeof F.buildIndexSignatureColon };
+	mappedTypeClause: { strict: typeof F.buildMappedTypeClause; coerce: typeof C.coerceToMappedTypeClause };
 } = {
 	...B.indexSignature,
-	colon: { strict: F.buildIndexSignatureColon }
+	colon: { strict: F.buildIndexSignatureColon },
+	mappedTypeClause: { strict: F.buildMappedTypeClause, coerce: C.coerceToMappedTypeClause }
 };
 
 const functionType$asserts =

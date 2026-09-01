@@ -557,69 +557,68 @@ export const enum TSKindId {
 	ObjectTypeContent = 380,
 	ExportStatementDefault = 381,
 	ArrowFunctionParameter = 382,
-	ArrowFunctionUCallSignature = 383,
-	ClassHeritageExtendsClause = 384,
-	ImportClauseDefaultImport = 385,
-	ImportSpecifierAs = 386,
-	IndexSignatureColon = 387,
-	ExportStatementDefaultFromArm = 388,
-	ExportStatementDefaultDeclArm = 389,
-	ExportStatementDefaultStarFrom = 390,
-	ExportStatementDefaultNsFrom = 391,
-	ExportStatementDefaultClauseFrom = 392,
-	ExportStatementDefaultDefaultKw = 393,
-	ExportStatementDefaultValue = 394,
-	ClassBodyMethod = 395,
-	ClassBodyMethodSig = 396,
-	ClassBodyMember = 397,
-	ForHeaderLhs = 398,
-	ForHeaderVarKind = 399,
-	ForHeaderLetConstKind = 400,
-	BinaryExpressionIn = 401,
-	ParenthesizedExpressionTyped = 402,
-	ExportStatementTypeExport = 403,
-	ExportStatementEqualsExport = 404,
-	ExportStatementNamespaceExport = 405,
-	CallExpressionCall = 406,
-	CallExpressionTemplateCall = 407,
-	CallExpressionMember = 408,
-	StringDouble = 409,
-	StringSingle = 410,
-	UpdateExpressionPostfix = 411,
-	UpdateExpressionPrefix = 412,
-	ProgramRepeat1 = 413,
-	VariableDeclarationRepeat1 = 414,
-	SwitchBodyRepeat1 = 415,
-	ObjectRepeat1 = 416,
-	ObjectPatternRepeat1 = 417,
-	ArrayRepeat1 = 418,
-	ArrayPatternRepeat1 = 419,
-	ClassRepeat1 = 420,
-	SequenceExpressionRepeat1 = 421,
-	TemplateStringRepeat1 = 422,
-	ClassBodyRepeat1 = 423,
-	ExtendsClauseRepeat1 = 424,
-	ImplementsClauseRepeat1 = 425,
-	ExtendsTypeClauseRepeat1 = 426,
-	TemplateLiteralTypeRepeat1 = 427,
-	_ExportSpecifiersRepeat1 = 428,
-	_ImportSpecifiersRepeat1 = 429,
-	_FormalParametersElementsRepeat1 = 430,
-	_EnumBodyElementsRepeat1 = 431,
-	_TypeParametersElementsRepeat1 = 432,
-	_TupleTypeMembersRepeat1 = 433,
-	ObjectTypeContentRepeat1 = 434,
-	_StringDoubleRepeat1 = 435,
-	_StringSingleRepeat1 = 436,
-	_InterfaceBody = 437,
-	_PropertyIdentifier = 439,
-	ReservedIdentifier = 440,
-	_Semicolon = 441,
-	ShorthandPropertyIdentifier = 442,
-	ShorthandPropertyIdentifierPattern = 443,
-	StatementIdentifier = 444,
-	_ThisType = 445,
-	TypeIdentifier = 446
+	ClassHeritageExtendsClause = 383,
+	ImportClauseDefaultImport = 384,
+	ImportSpecifierAs = 385,
+	IndexSignatureColon = 386,
+	ExportStatementDefaultFromArm = 387,
+	ExportStatementDefaultDeclArm = 388,
+	ExportStatementDefaultStarFrom = 389,
+	ExportStatementDefaultNsFrom = 390,
+	ExportStatementDefaultClauseFrom = 391,
+	ExportStatementDefaultDefaultKw = 392,
+	ExportStatementDefaultValue = 393,
+	ClassBodyMethod = 394,
+	ClassBodyMethodSig = 395,
+	ClassBodyMember = 396,
+	ForHeaderLhs = 397,
+	ForHeaderVarKind = 398,
+	ForHeaderLetConstKind = 399,
+	BinaryExpressionIn = 400,
+	ParenthesizedExpressionTyped = 401,
+	ExportStatementTypeExport = 402,
+	ExportStatementEqualsExport = 403,
+	ExportStatementNamespaceExport = 404,
+	CallExpressionCall = 405,
+	CallExpressionTemplateCall = 406,
+	CallExpressionMember = 407,
+	StringDouble = 408,
+	StringSingle = 409,
+	UpdateExpressionPostfix = 410,
+	UpdateExpressionPrefix = 411,
+	ProgramRepeat1 = 412,
+	VariableDeclarationRepeat1 = 413,
+	SwitchBodyRepeat1 = 414,
+	ObjectRepeat1 = 415,
+	ObjectPatternRepeat1 = 416,
+	ArrayRepeat1 = 417,
+	ArrayPatternRepeat1 = 418,
+	ClassRepeat1 = 419,
+	SequenceExpressionRepeat1 = 420,
+	TemplateStringRepeat1 = 421,
+	ClassBodyRepeat1 = 422,
+	ExtendsClauseRepeat1 = 423,
+	ImplementsClauseRepeat1 = 424,
+	ExtendsTypeClauseRepeat1 = 425,
+	TemplateLiteralTypeRepeat1 = 426,
+	_ExportSpecifiersRepeat1 = 427,
+	_ImportSpecifiersRepeat1 = 428,
+	_FormalParametersElementsRepeat1 = 429,
+	_EnumBodyElementsRepeat1 = 430,
+	_TypeParametersElementsRepeat1 = 431,
+	_TupleTypeMembersRepeat1 = 432,
+	ObjectTypeContentRepeat1 = 433,
+	_StringDoubleRepeat1 = 434,
+	_StringSingleRepeat1 = 435,
+	_InterfaceBody = 436,
+	_PropertyIdentifier = 438,
+	ReservedIdentifier = 439,
+	_Semicolon = 440,
+	ShorthandPropertyIdentifier = 441,
+	ShorthandPropertyIdentifierPattern = 442,
+	StatementIdentifier = 443,
+	_ThisType = 444,
+	TypeIdentifier = 445
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -860,7 +859,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'member_expression'],
 	[236, 'subscript_expression'],
 	[237, '_lhs_expression'],
-	[438, '_lhs_expression'],
+	[437, '_lhs_expression'],
 	[238, 'assignment_expression'],
 	[239, '_augmented_assignment_lhs'],
 	[240, 'augmented_assignment_expression'],
@@ -1006,69 +1005,68 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[380, 'object_type_content'],
 	[381, '_export_statement_default'],
 	[382, '_arrow_function_parameter'],
-	[383, '_arrow_function__call_signature'],
-	[384, '_class_heritage_extends_clause'],
-	[385, '_import_clause_default_import'],
-	[386, '_import_specifier_as'],
-	[387, '_index_signature_colon'],
-	[388, '_export_statement_default_from_arm'],
-	[389, '_export_statement_default_decl_arm'],
-	[390, '_export_statement_default_star_from'],
-	[391, '_export_statement_default_ns_from'],
-	[392, '_export_statement_default_clause_from'],
-	[393, '_export_statement_default_default_kw'],
-	[394, '_export_statement_default_value'],
-	[395, '_class_body_method'],
-	[396, '_class_body_method_sig'],
-	[397, '_class_body_member'],
-	[398, '_for_header_lhs'],
-	[399, '_for_header_var_kind'],
-	[400, '_for_header_let_const_kind'],
-	[401, '_binary_expression_in'],
-	[402, '_parenthesized_expression_typed'],
-	[403, '_export_statement_type_export'],
-	[404, '_export_statement_equals_export'],
-	[405, '_export_statement_namespace_export'],
-	[406, '_call_expression_call'],
-	[407, '_call_expression_template_call'],
-	[408, '_call_expression_member'],
-	[409, '_string_double'],
-	[410, '_string_single'],
-	[411, '_update_expression_postfix'],
-	[412, '_update_expression_prefix'],
-	[413, 'program_repeat1'],
-	[414, 'variable_declaration_repeat1'],
-	[415, 'switch_body_repeat1'],
-	[416, 'object_repeat1'],
-	[417, 'object_pattern_repeat1'],
-	[418, 'array_repeat1'],
-	[419, 'array_pattern_repeat1'],
-	[420, 'class_repeat1'],
-	[421, 'sequence_expression_repeat1'],
-	[422, 'template_string_repeat1'],
-	[423, 'class_body_repeat1'],
-	[424, 'extends_clause_repeat1'],
-	[425, 'implements_clause_repeat1'],
-	[426, 'extends_type_clause_repeat1'],
-	[427, 'template_literal_type_repeat1'],
-	[428, '_export_specifiers_repeat1'],
-	[429, '_import_specifiers_repeat1'],
-	[430, '_formal_parameters_elements_repeat1'],
-	[431, '_enum_body_elements_repeat1'],
-	[432, '_type_parameters_elements_repeat1'],
-	[433, '_tuple_type_members_repeat1'],
-	[434, 'object_type_content_repeat1'],
-	[435, '_string_double_repeat1'],
-	[436, '_string_single_repeat1'],
-	[437, '_interface_body'],
-	[439, '_property_identifier'],
-	[440, '_reserved_identifier'],
-	[441, '_semicolon'],
-	[442, '_shorthand_property_identifier'],
-	[443, '_shorthand_property_identifier_pattern'],
-	[444, '_statement_identifier'],
-	[445, '_this_type'],
-	[446, '_type_identifier']
+	[383, '_class_heritage_extends_clause'],
+	[384, '_import_clause_default_import'],
+	[385, '_import_specifier_as'],
+	[386, '_index_signature_colon'],
+	[387, '_export_statement_default_from_arm'],
+	[388, '_export_statement_default_decl_arm'],
+	[389, '_export_statement_default_star_from'],
+	[390, '_export_statement_default_ns_from'],
+	[391, '_export_statement_default_clause_from'],
+	[392, '_export_statement_default_default_kw'],
+	[393, '_export_statement_default_value'],
+	[394, '_class_body_method'],
+	[395, '_class_body_method_sig'],
+	[396, '_class_body_member'],
+	[397, '_for_header_lhs'],
+	[398, '_for_header_var_kind'],
+	[399, '_for_header_let_const_kind'],
+	[400, '_binary_expression_in'],
+	[401, '_parenthesized_expression_typed'],
+	[402, '_export_statement_type_export'],
+	[403, '_export_statement_equals_export'],
+	[404, '_export_statement_namespace_export'],
+	[405, '_call_expression_call'],
+	[406, '_call_expression_template_call'],
+	[407, '_call_expression_member'],
+	[408, '_string_double'],
+	[409, '_string_single'],
+	[410, '_update_expression_postfix'],
+	[411, '_update_expression_prefix'],
+	[412, 'program_repeat1'],
+	[413, 'variable_declaration_repeat1'],
+	[414, 'switch_body_repeat1'],
+	[415, 'object_repeat1'],
+	[416, 'object_pattern_repeat1'],
+	[417, 'array_repeat1'],
+	[418, 'array_pattern_repeat1'],
+	[419, 'class_repeat1'],
+	[420, 'sequence_expression_repeat1'],
+	[421, 'template_string_repeat1'],
+	[422, 'class_body_repeat1'],
+	[423, 'extends_clause_repeat1'],
+	[424, 'implements_clause_repeat1'],
+	[425, 'extends_type_clause_repeat1'],
+	[426, 'template_literal_type_repeat1'],
+	[427, '_export_specifiers_repeat1'],
+	[428, '_import_specifiers_repeat1'],
+	[429, '_formal_parameters_elements_repeat1'],
+	[430, '_enum_body_elements_repeat1'],
+	[431, '_type_parameters_elements_repeat1'],
+	[432, '_tuple_type_members_repeat1'],
+	[433, 'object_type_content_repeat1'],
+	[434, '_string_double_repeat1'],
+	[435, '_string_single_repeat1'],
+	[436, '_interface_body'],
+	[438, '_property_identifier'],
+	[439, '_reserved_identifier'],
+	[440, '_semicolon'],
+	[441, '_shorthand_property_identifier'],
+	[442, '_shorthand_property_identifier_pattern'],
+	[443, '_statement_identifier'],
+	[444, '_this_type'],
+	[445, '_type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1310,7 +1308,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'member_expression'],
 	[236, 'subscript_expression'],
 	[237, 'lhs_expression'],
-	[438, 'lhs_expression'],
+	[437, 'lhs_expression'],
 	[238, 'assignment_expression'],
 	[239, '_augmented_assignment_lhs'],
 	[240, 'augmented_assignment_expression'],
@@ -1456,69 +1454,68 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[380, 'object_type_content'],
 	[381, 'export_statement_default'],
 	[382, 'arrow_function_parameter'],
-	[383, 'arrow_function__call_signature'],
-	[384, 'class_heritage_extends_clause'],
-	[385, 'import_clause_default_import'],
-	[386, 'import_specifier_as'],
-	[387, 'index_signature_colon'],
-	[388, 'export_statement_default_from_arm'],
-	[389, 'export_statement_default_decl_arm'],
-	[390, 'export_statement_default_star_from'],
-	[391, 'export_statement_default_ns_from'],
-	[392, 'export_statement_default_clause_from'],
-	[393, 'export_statement_default_default_kw'],
-	[394, 'export_statement_default_value'],
-	[395, 'class_body_method'],
-	[396, 'class_body_method_sig'],
-	[397, 'class_body_member'],
-	[398, 'for_header_lhs'],
-	[399, 'for_header_var_kind'],
-	[400, 'for_header_let_const_kind'],
-	[401, 'binary_expression_in'],
-	[402, 'parenthesized_expression_typed'],
-	[403, 'export_statement_type_export'],
-	[404, 'export_statement_equals_export'],
-	[405, 'export_statement_namespace_export'],
-	[406, 'call_expression_call'],
-	[407, 'call_expression_template_call'],
-	[408, 'call_expression_member'],
-	[409, 'string_double'],
-	[410, 'string_single'],
-	[411, 'update_expression_postfix'],
-	[412, 'update_expression_prefix'],
-	[413, 'program_repeat1'],
-	[414, 'variable_declaration_repeat1'],
-	[415, 'switch_body_repeat1'],
-	[416, 'object_repeat1'],
-	[417, 'object_pattern_repeat1'],
-	[418, 'array_repeat1'],
-	[419, 'array_pattern_repeat1'],
-	[420, 'class_repeat1'],
-	[421, 'sequence_expression_repeat1'],
-	[422, 'template_string_repeat1'],
-	[423, 'class_body_repeat1'],
-	[424, 'extends_clause_repeat1'],
-	[425, 'implements_clause_repeat1'],
-	[426, 'extends_type_clause_repeat1'],
-	[427, 'template_literal_type_repeat1'],
-	[428, '_export_specifiers_repeat1'],
-	[429, '_import_specifiers_repeat1'],
-	[430, '_formal_parameters_elements_repeat1'],
-	[431, '_enum_body_elements_repeat1'],
-	[432, '_type_parameters_elements_repeat1'],
-	[433, '_tuple_type_members_repeat1'],
-	[434, 'object_type_content_repeat1'],
-	[435, '_string_double_repeat1'],
-	[436, '_string_single_repeat1'],
-	[437, 'interface_body'],
-	[439, 'property_identifier'],
-	[440, 'reserved_identifier'],
-	[441, 'semicolon'],
-	[442, 'shorthand_property_identifier'],
-	[443, 'shorthand_property_identifier_pattern'],
-	[444, 'statement_identifier'],
-	[445, 'this_type'],
-	[446, 'type_identifier']
+	[383, 'class_heritage_extends_clause'],
+	[384, 'import_clause_default_import'],
+	[385, 'import_specifier_as'],
+	[386, 'index_signature_colon'],
+	[387, 'export_statement_default_from_arm'],
+	[388, 'export_statement_default_decl_arm'],
+	[389, 'export_statement_default_star_from'],
+	[390, 'export_statement_default_ns_from'],
+	[391, 'export_statement_default_clause_from'],
+	[392, 'export_statement_default_default_kw'],
+	[393, 'export_statement_default_value'],
+	[394, 'class_body_method'],
+	[395, 'class_body_method_sig'],
+	[396, 'class_body_member'],
+	[397, 'for_header_lhs'],
+	[398, 'for_header_var_kind'],
+	[399, 'for_header_let_const_kind'],
+	[400, 'binary_expression_in'],
+	[401, 'parenthesized_expression_typed'],
+	[402, 'export_statement_type_export'],
+	[403, 'export_statement_equals_export'],
+	[404, 'export_statement_namespace_export'],
+	[405, 'call_expression_call'],
+	[406, 'call_expression_template_call'],
+	[407, 'call_expression_member'],
+	[408, 'string_double'],
+	[409, 'string_single'],
+	[410, 'update_expression_postfix'],
+	[411, 'update_expression_prefix'],
+	[412, 'program_repeat1'],
+	[413, 'variable_declaration_repeat1'],
+	[414, 'switch_body_repeat1'],
+	[415, 'object_repeat1'],
+	[416, 'object_pattern_repeat1'],
+	[417, 'array_repeat1'],
+	[418, 'array_pattern_repeat1'],
+	[419, 'class_repeat1'],
+	[420, 'sequence_expression_repeat1'],
+	[421, 'template_string_repeat1'],
+	[422, 'class_body_repeat1'],
+	[423, 'extends_clause_repeat1'],
+	[424, 'implements_clause_repeat1'],
+	[425, 'extends_type_clause_repeat1'],
+	[426, 'template_literal_type_repeat1'],
+	[427, '_export_specifiers_repeat1'],
+	[428, '_import_specifiers_repeat1'],
+	[429, '_formal_parameters_elements_repeat1'],
+	[430, '_enum_body_elements_repeat1'],
+	[431, '_type_parameters_elements_repeat1'],
+	[432, '_tuple_type_members_repeat1'],
+	[433, 'object_type_content_repeat1'],
+	[434, '_string_double_repeat1'],
+	[435, '_string_single_repeat1'],
+	[436, 'interface_body'],
+	[438, 'property_identifier'],
+	[439, 'reserved_identifier'],
+	[440, 'semicolon'],
+	[441, 'shorthand_property_identifier'],
+	[442, 'shorthand_property_identifier_pattern'],
+	[443, 'statement_identifier'],
+	[444, 'this_type'],
+	[445, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2293,8 +2290,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementDefault;
 		case '_arrow_function_parameter':
 			return TSKindId.ArrowFunctionParameter;
-		case '_arrow_function__call_signature':
-			return TSKindId.ArrowFunctionUCallSignature;
 		case '_class_heritage_extends_clause':
 			return TSKindId.ClassHeritageExtendsClause;
 		case '_import_clause_default_import':
@@ -2601,8 +2596,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementDefault;
 		case 'arrow_function_parameter':
 			return TSKindId.ArrowFunctionParameter;
-		case 'arrow_function__call_signature':
-			return TSKindId.ArrowFunctionUCallSignature;
 		case 'class_heritage_extends_clause':
 			return TSKindId.ClassHeritageExtendsClause;
 		case 'import_clause_default_import':
@@ -3561,7 +3554,7 @@ export interface GeneratorFunctionDeclaration {
 export interface ArrowFunction {
 	readonly $type: TSKindId.ArrowFunction;
 	readonly _async_marker?: boolean;
-	readonly _content: ArrowFunctionParameter | ArrowFunctionUCallSignature;
+	readonly _content: ArrowFunctionParameter | CallSignature;
 	readonly _body: Expression | StatementBlock;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
@@ -3570,7 +3563,7 @@ export interface ArrowFunction {
 		readonly async_marker?: 'async' | 'async';
 	};
 	asyncMarker(): boolean | undefined;
-	content(): ArrowFunctionParameter | ArrowFunctionUCallSignature;
+	content(): ArrowFunctionParameter | CallSignature;
 	body(): Expression | StatementBlock;
 }
 
@@ -5243,20 +5236,6 @@ export interface ArrowFunctionParameter {
 	parameter(): ReservedIdentifier | Identifier;
 }
 
-export interface ArrowFunctionUCallSignature {
-	readonly $type: TSKindId.ArrowFunctionUCallSignature;
-	readonly _type_parameters?: TypeParameters;
-	readonly _parameters: FormalParameters;
-	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
-	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
-	};
-	typeParameters(): TypeParameters | undefined;
-	parameters(): FormalParameters;
-	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
-}
-
 export interface ClassHeritageExtendsClause {
 	readonly $type: TSKindId.ClassHeritageExtendsClause;
 	readonly _extends_clause: ExtendsClause;
@@ -5972,9 +5951,6 @@ export interface ExportStatementDefaultTree extends AnyTreeNode {
 }
 export interface ArrowFunctionParameterTree extends AnyTreeNode {
 	readonly type: '_arrow_function_parameter';
-}
-export interface ArrowFunctionUCallSignatureTree extends AnyTreeNode {
-	readonly type: '_arrow_function__call_signature';
 }
 export interface ClassHeritageExtendsClauseTree extends AnyTreeNode {
 	readonly type: '_class_heritage_extends_clause';
@@ -6883,7 +6859,6 @@ export type TypescriptNode =
 	| ObjectTypeContent
 	| ExportStatementDefault
 	| ArrowFunctionParameter
-	| ArrowFunctionUCallSignature
 	| ClassHeritageExtendsClause
 	| ImportClauseDefaultImport
 	| ImportSpecifierAs
@@ -7091,7 +7066,6 @@ export interface KindMap {
 	object_type_content: ObjectTypeContent;
 	_export_statement_default: ExportStatementDefault;
 	_arrow_function_parameter: ArrowFunctionParameter;
-	_arrow_function__call_signature: ArrowFunctionUCallSignature;
 	_class_heritage_extends_clause: ClassHeritageExtendsClause;
 	_import_clause_default_import: ImportClauseDefaultImport;
 	_import_specifier_as: ImportSpecifierAs;
@@ -8746,15 +8720,6 @@ export interface ArrowFunctionParameterNs extends NodeNs<
 	F$.ArrowFunctionParameterBuildArgs,
 	F$.ArrowFunctionParameterLooseArgs
 > {}
-export interface ArrowFunctionUCallSignatureNs extends NodeNs<
-	ArrowFunctionUCallSignature,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	F$.ArrowFunctionUCallSignatureBuilt,
-	F$.ArrowFunctionUCallSignatureBuildArgs,
-	F$.ArrowFunctionUCallSignatureLooseArgs
-> {}
 export interface ClassHeritageExtendsClauseNs extends NodeNs<
 	ClassHeritageExtendsClause,
 	LeafScalarMap,
@@ -9194,7 +9159,6 @@ export interface NamespaceMap {
 	[TSKindId.ObjectTypeContent]: ObjectTypeContentNs;
 	[TSKindId.ExportStatementDefault]: ExportStatementDefaultNs;
 	[TSKindId.ArrowFunctionParameter]: ArrowFunctionParameterNs;
-	[TSKindId.ArrowFunctionUCallSignature]: ArrowFunctionUCallSignatureNs;
 	[TSKindId.ClassHeritageExtendsClause]: ClassHeritageExtendsClauseNs;
 	[TSKindId.ImportClauseDefaultImport]: ImportClauseDefaultImportNs;
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAsNs;
@@ -11004,16 +10968,6 @@ export namespace ArrowFunctionParameter {
 	export type LooseArgs = LooseArgsFor<TSKindId.ArrowFunctionParameter>;
 	export type Tree = TreeFor<TSKindId.ArrowFunctionParameter>;
 	export type Kind = '_arrow_function_parameter';
-}
-export namespace ArrowFunctionUCallSignature {
-	export type Config = ConfigFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type Fluent = FluentFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type Loose = LooseFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type Tree = TreeFor<TSKindId.ArrowFunctionUCallSignature>;
-	export type Kind = '_arrow_function__call_signature';
 }
 export namespace ClassHeritageExtendsClause {
 	export type Config = ConfigFor<TSKindId.ClassHeritageExtendsClause>;

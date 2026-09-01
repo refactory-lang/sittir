@@ -770,7 +770,7 @@ export type IfStatementBuilt = T.IfStatement & {
 	readonly $named: true;
 	readonly $with: {
 		condition(value: T.Expression): IfStatementBuilt;
-		consequence(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): IfStatementBuilt;
+		consequence(value: T.SimpleStatements | T.SuiteBlock | '\n'): IfStatementBuilt;
 		alternatives(...values: (T.ElifClause | T.ElseClause)[]): IfStatementBuilt;
 	};
 } & _NodeMethods;
@@ -790,7 +790,7 @@ export function buildIfStatement(config: T.IfStatement.Config): IfStatementBuilt
 				_alternative,
 				$with: {
 					condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
-					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+					consequence: (value: T.SimpleStatements | T.SuiteBlock | '\n') =>
 						buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
 						buildIfStatement({ ...config, alternative: values })
@@ -814,7 +814,7 @@ export type ElifClauseBuilt = T.ElifClause & {
 	readonly $named: true;
 	readonly $with: {
 		condition(value: T.Expression): ElifClauseBuilt;
-		consequence(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): ElifClauseBuilt;
+		consequence(value: T.SimpleStatements | T.SuiteBlock | '\n'): ElifClauseBuilt;
 	};
 } & _NodeMethods;
 
@@ -831,7 +831,7 @@ export function buildElifClause(config: T.ElifClause.Config): ElifClauseBuilt {
 				_consequence,
 				$with: {
 					condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
-					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+					consequence: (value: T.SimpleStatements | T.SuiteBlock | '\n') =>
 						buildElifClause({ ...config, consequence: value })
 				}
 			},
@@ -844,25 +844,20 @@ export function buildElifClause(config: T.ElifClause.Config): ElifClauseBuilt {
 	);
 }
 
-export type ElseClauseBuildArgs = [value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'];
+export type ElseClauseBuildArgs = [value: T.SimpleStatements | T.SuiteBlock | '\n'];
 export type ElseClauseLooseArgs = [
-	value: LooseValue<
-		T.SimpleStatements | T.SuiteBlockWithIndent | '\n',
-		T.LeafScalarMap,
-		T.LeafStringMap,
-		T.NamespaceMap
-	>
+	value: LooseValue<T.SimpleStatements | T.SuiteBlock | '\n', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ElseClauseBuilt = T.ElseClause & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): ElseClauseBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): ElseClauseBuilt;
 	};
 } & _NodeMethods;
 
-export function buildElseClause(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): ElseClauseBuilt {
+export function buildElseClause(value: T.SimpleStatements | T.SuiteBlock | '\n'): ElseClauseBuilt {
 	const _body = value;
 	return withMethods(
 		withAccessors(
@@ -872,7 +867,7 @@ export function buildElseClause(value: T.SimpleStatements | T.SuiteBlockWithInde
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') => buildElseClause(value)
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildElseClause(value)
 				}
 			},
 			{
@@ -963,7 +958,7 @@ export type CaseClauseBuilt = T.CaseClause & {
 	readonly $with: {
 		casePatterns(value: T.CasePatterns): CaseClauseBuilt;
 		guard(value?: T.IfClause): CaseClauseBuilt;
-		consequence(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): CaseClauseBuilt;
+		consequence(value: T.SimpleStatements | T.SuiteBlock | '\n'): CaseClauseBuilt;
 	};
 } & _NodeMethods;
 
@@ -983,7 +978,7 @@ export function buildCaseClause(config: T.CaseClause.Config): CaseClauseBuilt {
 				$with: {
 					casePatterns: (value: T.CasePatterns) => buildCaseClause({ ...config, casePatterns: value }),
 					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
-					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+					consequence: (value: T.SimpleStatements | T.SuiteBlock | '\n') =>
 						buildCaseClause({ ...config, consequence: value })
 				}
 			},
@@ -1007,7 +1002,7 @@ export type ForStatementBuilt = T.ForStatement & {
 		asyncMarker(value?: NonNullable<Parameters<typeof buildForStatement>[0]>['asyncMarker']): ForStatementBuilt;
 		left(value: T.Pattern | T.PatternList): ForStatementBuilt;
 		right(value: T.Expression | T.ExpressionList): ForStatementBuilt;
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): ForStatementBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): ForStatementBuilt;
 		alternative(value?: T.ElseClause): ForStatementBuilt;
 	};
 } & _NodeMethods;
@@ -1034,8 +1029,7 @@ export function buildForStatement(config: T.ForStatement.Config): ForStatementBu
 						buildForStatement({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForStatement({ ...config, left: value }),
 					right: (value: T.Expression | T.ExpressionList) => buildForStatement({ ...config, right: value }),
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildForStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildForStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
 				}
 			},
@@ -1059,7 +1053,7 @@ export type WhileStatementBuilt = T.WhileStatement & {
 	readonly $named: true;
 	readonly $with: {
 		condition(value: T.Expression): WhileStatementBuilt;
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): WhileStatementBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): WhileStatementBuilt;
 		alternative(value?: T.ElseClause): WhileStatementBuilt;
 	};
 } & _NodeMethods;
@@ -1079,8 +1073,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): WhileState
 				_alternative,
 				$with: {
 					condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildWhileStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildWhileStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
 				}
 			},
@@ -1101,7 +1094,7 @@ export type TryStatementBuilt = T.TryStatement & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): TryStatementBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): TryStatementBuilt;
 		exceptClauses(...values: T.ExceptClause[]): TryStatementBuilt;
 		elseClause(value?: T.ElseClause): TryStatementBuilt;
 		finallyClause(value?: T.FinallyClause): TryStatementBuilt;
@@ -1124,8 +1117,7 @@ export function buildTryStatement(config: T.TryStatement.Config): TryStatementBu
 				_else_clause,
 				_finally_clause,
 				$with: {
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildTryStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildTryStatement({ ...config, body: value }),
 					exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
 					elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
 					finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
@@ -1151,7 +1143,7 @@ export type ExceptClauseBuilt = T.ExceptClause & {
 	readonly $with: {
 		starMarker(value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['starMarker']): ExceptClauseBuilt;
 		exceptClauseArm(value?: T.ExceptClauseArm): ExceptClauseBuilt;
-		suite(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): ExceptClauseBuilt;
+		suite(value: T.SimpleStatements | T.SuiteBlock | '\n'): ExceptClauseBuilt;
 	};
 } & _NodeMethods;
 
@@ -1172,8 +1164,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): ExceptClauseBu
 					starMarker: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['starMarker']) =>
 						buildExceptClause({ ...config, starMarker: value }),
 					exceptClauseArm: (value?: T.ExceptClauseArm) => buildExceptClause({ ...config, exceptClauseArm: value }),
-					suite: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildExceptClause({ ...config, suite: value })
+					suite: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildExceptClause({ ...config, suite: value })
 				}
 			},
 			{
@@ -1186,25 +1177,20 @@ export function buildExceptClause(config: T.ExceptClause.Config): ExceptClauseBu
 	);
 }
 
-export type FinallyClauseBuildArgs = [value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'];
+export type FinallyClauseBuildArgs = [value: T.SimpleStatements | T.SuiteBlock | '\n'];
 export type FinallyClauseLooseArgs = [
-	value: LooseValue<
-		T.SimpleStatements | T.SuiteBlockWithIndent | '\n',
-		T.LeafScalarMap,
-		T.LeafStringMap,
-		T.NamespaceMap
-	>
+	value: LooseValue<T.SimpleStatements | T.SuiteBlock | '\n', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type FinallyClauseBuilt = T.FinallyClause & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		block(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): FinallyClauseBuilt;
+		block(value: T.SimpleStatements | T.SuiteBlock | '\n'): FinallyClauseBuilt;
 	};
 } & _NodeMethods;
 
-export function buildFinallyClause(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): FinallyClauseBuilt {
+export function buildFinallyClause(value: T.SimpleStatements | T.SuiteBlock | '\n'): FinallyClauseBuilt {
 	const _block = value;
 	return withMethods(
 		withAccessors(
@@ -1214,7 +1200,7 @@ export function buildFinallyClause(value: T.SimpleStatements | T.SuiteBlockWithI
 				$named: true as const,
 				_block,
 				$with: {
-					block: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') => buildFinallyClause(value)
+					block: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildFinallyClause(value)
 				}
 			},
 			{
@@ -1234,7 +1220,7 @@ export type WithStatementBuilt = T.WithStatement & {
 	readonly $with: {
 		asyncMarker(value?: NonNullable<Parameters<typeof buildWithStatement>[0]>['asyncMarker']): WithStatementBuilt;
 		withClause(value: T.WithClause): WithStatementBuilt;
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): WithStatementBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): WithStatementBuilt;
 	};
 } & _NodeMethods;
 
@@ -1255,8 +1241,7 @@ export function buildWithStatement(config: T.WithStatement.Config): WithStatemen
 					asyncMarker: (value?: NonNullable<Parameters<typeof buildWithStatement>[0]>['asyncMarker']) =>
 						buildWithStatement({ ...config, asyncMarker: value }),
 					withClause: (value: T.WithClause) => buildWithStatement({ ...config, withClause: value }),
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildWithStatement({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildWithStatement({ ...config, body: value })
 				}
 			},
 			{
@@ -1349,7 +1334,7 @@ export type FunctionDefinitionBuilt = T.FunctionDefinition & {
 		typeParameters(value?: T.TypeParameter): FunctionDefinitionBuilt;
 		parameters(value: T.Parameters): FunctionDefinitionBuilt;
 		returnType(value?: T.Type): FunctionDefinitionBuilt;
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): FunctionDefinitionBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): FunctionDefinitionBuilt;
 	};
 } & _NodeMethods;
 
@@ -1379,8 +1364,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): Fu
 					typeParameters: (value?: T.TypeParameter) => buildFunctionDefinition({ ...config, typeParameters: value }),
 					parameters: (value: T.Parameters) => buildFunctionDefinition({ ...config, parameters: value }),
 					returnType: (value?: T.Type) => buildFunctionDefinition({ ...config, returnType: value }),
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildFunctionDefinition({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildFunctionDefinition({ ...config, body: value })
 				}
 			},
 			{
@@ -1712,7 +1696,7 @@ export type ClassDefinitionBuilt = T.ClassDefinition & {
 		name(value: T.Identifier): ClassDefinitionBuilt;
 		typeParameters(value?: T.TypeParameter): ClassDefinitionBuilt;
 		superclasses(value?: T.ArgumentList): ClassDefinitionBuilt;
-		body(value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n'): ClassDefinitionBuilt;
+		body(value: T.SimpleStatements | T.SuiteBlock | '\n'): ClassDefinitionBuilt;
 	};
 } & _NodeMethods;
 
@@ -1735,8 +1719,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): ClassDef
 					name: (value: T.Identifier) => buildClassDefinition({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameter) => buildClassDefinition({ ...config, typeParameters: value }),
 					superclasses: (value?: T.ArgumentList) => buildClassDefinition({ ...config, superclasses: value }),
-					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildClassDefinition({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.SuiteBlock | '\n') => buildClassDefinition({ ...config, body: value })
 				}
 			},
 			{
@@ -6731,29 +6714,27 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 	);
 }
 
-export type SuiteBlockWithIndentBuildArgs = [value: T.Block];
-export type SuiteBlockWithIndentLooseArgs = [
-	value: LooseValue<T.Block, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-];
+export type SuiteBlockBuildArgs = [value: T.Block];
+export type SuiteBlockLooseArgs = [value: LooseValue<T.Block, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 
-export type SuiteBlockWithIndentBuilt = T.SuiteBlockWithIndent & {
+export type SuiteBlockBuilt = T.SuiteBlock & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		block(value: T.Block): SuiteBlockWithIndentBuilt;
+		block(value: T.Block): SuiteBlockBuilt;
 	};
 } & _NodeMethods;
 
-export function buildSuiteBlockWithIndent(value: T.Block): ReturnType<typeof _buildSuiteBlockWithIndent>;
-export function buildSuiteBlockWithIndent(
+export function buildSuiteBlock(value: T.Block): ReturnType<typeof _buildSuiteBlock>;
+export function buildSuiteBlock(
 	...children: (T.SimpleStatements | T.CompoundStatement)[]
-): ReturnType<typeof _buildSuiteBlockWithIndent>;
-export function buildSuiteBlockWithIndent(...args: unknown[]) {
+): ReturnType<typeof _buildSuiteBlock>;
+export function buildSuiteBlock(...args: unknown[]) {
 	if (args.length === 0) {
-		return _buildSuiteBlockWithIndent(buildBlock() as T.Block);
+		return _buildSuiteBlock(buildBlock() as T.Block);
 	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildSuiteBlockWithIndent(args[0] as T.Block);
+		return _buildSuiteBlock(args[0] as T.Block);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6761,20 +6742,20 @@ export function buildSuiteBlockWithIndent(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Block as const);
 	return prebuilt
-		? _buildSuiteBlockWithIndent(args[0] as T.Block)
-		: _buildSuiteBlockWithIndent((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
+		? _buildSuiteBlock(args[0] as T.Block)
+		: _buildSuiteBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
 }
-function _buildSuiteBlockWithIndent(value: T.Block): SuiteBlockWithIndentBuilt {
+function _buildSuiteBlock(value: T.Block): SuiteBlockBuilt {
 	const _block = value;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.SuiteBlockWithIndent as const,
+				$type: TSKindId.SuiteBlock as const,
 				$source: 2 as const,
 				$named: true as const,
 				_block,
 				$with: {
-					block: (value: T.Block) => buildSuiteBlockWithIndent(value)
+					block: (value: T.Block) => buildSuiteBlock(value)
 				}
 			},
 			{
@@ -7282,7 +7263,7 @@ export type FluentKindMap = {
 	_with_clause_bare: WithClauseBareBuilt;
 	_with_clause_paren: WithClauseParenBuilt;
 	_match_block_block: MatchBlockBlockBuilt;
-	_suite_block_with_indent: SuiteBlockWithIndentBuilt;
+	_suite_block: SuiteBlockBuilt;
 	_simple_pattern_negative: SimplePatternNegativeBuilt;
 	_except_clause_list: ExceptClauseListBuilt;
 	_comparison_operator_comparator: ComparisonOperatorComparatorBuilt;
@@ -7458,7 +7439,7 @@ export const _factoryMap = {
 	_with_clause_bare: buildWithClauseBare,
 	_with_clause_paren: buildWithClauseParen,
 	_match_block_block: buildMatchBlockBlock,
-	_suite_block_with_indent: buildSuiteBlockWithIndent,
+	_suite_block: buildSuiteBlock,
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_except_clause_list: buildExceptClauseList,
 	_comparison_operator_comparator: buildComparisonOperatorComparator,

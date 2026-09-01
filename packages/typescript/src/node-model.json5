@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 419,
+  "nodeCount": 418,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -53,12 +53,15 @@
     "import_statement": {
       "definedBy": "override",
       "childKind": {
-        "import_statement_arm": "arm"
+        "import_statement_arm": "arm",
+        "import_require_clause": "import_require_clause"
       }
     },
     "import_clause": {
       "definedBy": "override",
       "childKind": {
+        "namespace_import": "namespace_import",
+        "named_imports": "named_imports",
         "import_clause_default_import": "default_import"
       }
     },
@@ -78,20 +81,22 @@
     "parenthesized_expression": {
       "definedBy": "override",
       "childKind": {
-        "parenthesized_expression_typed": "typed"
+        "parenthesized_expression_typed": "typed",
+        "sequence_expression": "sequence"
       }
     },
     "class_heritage": {
       "definedBy": "override",
       "childKind": {
-        "class_heritage_extends_clause": "extends_clause"
+        "class_heritage_extends_clause": "extends_clause",
+        "implements_clause": "implements_clause"
       }
     },
     "arrow_function": {
       "definedBy": "override",
       "childKind": {
         "arrow_function_parameter": "parameter",
-        "arrow_function__call_signature": "_call_signature"
+        "call_signature": "call_signature"
       }
     },
     "call_expression": {
@@ -134,6 +139,7 @@
       "childKind": {
         "class_body_method": "method",
         "class_body_method_sig": "method_sig",
+        "class_static_block": "class_static_block",
         "class_body_member": "member"
       }
     },
@@ -146,6 +152,7 @@
     "ambient_declaration": {
       "definedBy": "override",
       "childKind": {
+        "declaration": "declaration",
         "ambient_declaration_global": "global",
         "ambient_declaration_module": "module"
       }
@@ -153,7 +160,8 @@
     "index_signature": {
       "definedBy": "override",
       "childKind": {
-        "index_signature_colon": "colon"
+        "index_signature_colon": "colon",
+        "mapped_type_clause": "mapped_type_clause"
       }
     },
     "_export_statement_default": {
@@ -3638,29 +3646,6 @@
         "nonEmpty": false
       }
     },
-    "_arrow_function__call_signature": {
-      "type_parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "return_type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_class_heritage_extends_clause": {
       "extends_clause": {
         "unnamed": false,
@@ -4280,100 +4265,6 @@
         "name",
         "type",
         "semicolon"
-      ]
-    },
-    {
-      "kind": "_arrow_function__call_signature",
-      "modelType": "branch",
-      "typeName": "ArrowFunctionUCallSignature",
-      "factoryName": "_arrowFunctionUCallSignature",
-      "irKey": "arrowFunctionUCallSignature",
-      "hidden": false,
-      "hoisted": true,
-      "slots": [
-        {
-          "name": "type_parameters",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "type_parameters"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_parameters",
-              "parseKind": "type_parameters",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "formal_parameters"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "formal_parameters",
-              "parseKind": "formal_parameters",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "type_annotation",
-            "asserts_annotation",
-            "type_predicate_annotation"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_annotation",
-              "parseKind": "type_annotation",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "asserts_annotation",
-              "parseKind": "asserts_annotation",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_predicate_annotation",
-              "parseKind": "type_predicate_annotation",
-              "unresolved": true
-            }
-          ]
-        }
-      ],
-      "name": "_arrow_function__call_signature",
-      "factoryShape": "config",
-      "factoryFields": [
-        "type_parameters",
-        "parameters",
-        "return_type"
       ]
     },
     {
@@ -8753,7 +8644,7 @@
           "nonEmpty": false,
           "kinds": [
             "_arrow_function_parameter",
-            "_arrow_function__call_signature"
+            "call_signature"
           ],
           "values": [
             {
@@ -8766,8 +8657,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_arrow_function__call_signature",
-              "parseKind": "arrow_function__call_signature",
+              "name": "call_signature",
+              "parseKind": "call_signature",
               "unresolved": true
             }
           ]

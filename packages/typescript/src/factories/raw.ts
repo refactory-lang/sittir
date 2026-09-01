@@ -2437,7 +2437,7 @@ export type ArrowFunctionBuilt = T.ArrowFunction & {
 	readonly $named: true;
 	readonly $with: {
 		asyncMarker(value?: NonNullable<Parameters<typeof buildArrowFunction>[0]>['asyncMarker']): ArrowFunctionBuilt;
-		content(value: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature): ArrowFunctionBuilt;
+		content(value: T.ArrowFunctionParameter | T.CallSignature): ArrowFunctionBuilt;
 		body(value: T.Expression | T.StatementBlock): ArrowFunctionBuilt;
 	};
 } & _NodeMethods;
@@ -2458,7 +2458,7 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): ArrowFunctio
 				$with: {
 					asyncMarker: (value?: NonNullable<Parameters<typeof buildArrowFunction>[0]>['asyncMarker']) =>
 						buildArrowFunction({ ...config, asyncMarker: value }),
-					content: (value: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature) =>
+					content: (value: T.ArrowFunctionParameter | T.CallSignature) =>
 						buildArrowFunction({ ...config, content: value }),
 					body: (value: T.Expression | T.StatementBlock) => buildArrowFunction({ ...config, body: value })
 				}
@@ -9137,54 +9137,6 @@ export function buildArrowFunctionParameter(value: T.ReservedIdentifier | T.Iden
 	);
 }
 
-export type ArrowFunctionUCallSignatureBuildArgs = [config: T.ArrowFunctionUCallSignature.Config];
-export type ArrowFunctionUCallSignatureLooseArgs = [config: T.ArrowFunctionUCallSignature.Loose];
-
-export type ArrowFunctionUCallSignatureBuilt = T.ArrowFunctionUCallSignature & {
-	readonly $source: 2;
-	readonly $named: true;
-	readonly $with: {
-		typeParameters(value?: T.TypeParameters): ArrowFunctionUCallSignatureBuilt;
-		parameters(value: T.FormalParameters): ArrowFunctionUCallSignatureBuilt;
-		returnType(
-			value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation
-		): ArrowFunctionUCallSignatureBuilt;
-	};
-} & _NodeMethods;
-
-export function buildArrowFunctionUCallSignature(
-	config: T.ArrowFunctionUCallSignature.Config
-): ArrowFunctionUCallSignatureBuilt {
-	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
-	const _return_type = config.returnType;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ArrowFunctionUCallSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				$with: {
-					typeParameters: (value?: T.TypeParameters) =>
-						buildArrowFunctionUCallSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildArrowFunctionUCallSignature({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildArrowFunctionUCallSignature({ ...config, returnType: value })
-				}
-			},
-			{
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type
-			}
-		),
-		methodsEngine
-	);
-}
-
 export type ClassHeritageExtendsClauseBuildArgs = [config: T.ClassHeritageExtendsClause.Config];
 export type ClassHeritageExtendsClauseLooseArgs = [config: T.ClassHeritageExtendsClause.Loose];
 
@@ -10736,7 +10688,6 @@ export type FluentKindMap = {
 	object_type_content: ObjectTypeContentBuilt;
 	_export_statement_default: ExportStatementDefaultBuilt;
 	_arrow_function_parameter: ArrowFunctionParameterBuilt;
-	_arrow_function__call_signature: ArrowFunctionUCallSignatureBuilt;
 	_class_heritage_extends_clause: ClassHeritageExtendsClauseBuilt;
 	_import_clause_default_import: ImportClauseDefaultImportBuilt;
 	_import_specifier_as: ImportSpecifierAsBuilt;
@@ -10978,7 +10929,6 @@ export const _factoryMap = {
 	object_type_content: buildObjectTypeContent,
 	_export_statement_default: buildExportStatementDefault,
 	_arrow_function_parameter: buildArrowFunctionParameter,
-	_arrow_function__call_signature: buildArrowFunctionUCallSignature,
 	_class_heritage_extends_clause: buildClassHeritageExtendsClause,
 	_import_clause_default_import: buildImportClauseDefaultImport,
 	_import_specifier_as: buildImportSpecifierAs,

@@ -534,8 +534,8 @@ describe('if_statement', () => {
 });
 
 describe('if_statement sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.ifStatement.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.ifStatement.inline({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			consequence: [
 				{
@@ -551,17 +551,17 @@ describe('if_statement sub-factories', () => {
 		expect((node as any).consequence()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.ifStatement.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.ifStatement.block({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			consequence: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.IfStatement);
-		expect((node as any).consequence()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).consequence()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.ifStatement.newline({
+	it('empty builds the parent', () => {
+		const node = ir.ifStatement.empty({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.IfStatement);
@@ -590,8 +590,8 @@ describe('elif_clause', () => {
 });
 
 describe('elif_clause sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.elifClause.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.elifClause.inline({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			consequence: [
 				{
@@ -607,17 +607,17 @@ describe('elif_clause sub-factories', () => {
 		expect((node as any).consequence()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.elifClause.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.elifClause.block({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			consequence: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ElifClause);
-		expect((node as any).consequence()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).consequence()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.elifClause.newline({
+	it('empty builds the parent', () => {
+		const node = ir.elifClause.empty({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ElifClause);
@@ -629,27 +629,15 @@ describe('elif_clause sub-factories', () => {
 
 describe('else_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.elseClause({
-			$type: TSKindId.SimpleStatements,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_simple_statements_elements: {
-				$type: TSKindId.SimpleStatementsElements,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-			} as any
-		} as any);
+		const node = ir.elseClause({ $type: TSKindId._SuiteInline, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.ElseClause);
 		expect(node.$source).toBe(2);
 	});
 });
 
 describe('else_clause sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.elseClause.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.elseClause.inline({
 			$type: TSKindId.SimpleStatementsElements,
 			$text: 'test',
 			$source: 2,
@@ -660,19 +648,14 @@ describe('else_clause sub-factories', () => {
 		expect((node as any).body()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.elseClause.blockWithIndent({
-			$type: TSKindId.Block,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+	it('block builds the parent', () => {
+		const node = ir.elseClause.block({ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.ElseClause);
-		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.elseClause.newline();
+	it('empty builds the parent', () => {
+		const node = ir.elseClause.empty();
 		expect(node.$type).toBe(TSKindId.ElseClause);
 		const seated = (node as any).body();
 		expect(seated?.$text ?? seated).toBe('\n');
@@ -769,8 +752,8 @@ describe('case_clause', () => {
 });
 
 describe('case_clause sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.caseClause.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.caseClause.inline({
 			casePatterns: {
 				$type: TSKindId.CasePatterns,
 				$text: 'test',
@@ -800,8 +783,8 @@ describe('case_clause sub-factories', () => {
 		expect((node as any).consequence()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.caseClause.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.caseClause.block({
 			casePatterns: {
 				$type: TSKindId.CasePatterns,
 				$text: 'test',
@@ -820,11 +803,11 @@ describe('case_clause sub-factories', () => {
 			consequence: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CaseClause);
-		expect((node as any).consequence()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).consequence()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.caseClause.newline({
+	it('empty builds the parent', () => {
+		const node = ir.caseClause.empty({
 			casePatterns: {
 				$type: TSKindId.CasePatterns,
 				$text: 'test',
@@ -887,8 +870,8 @@ describe('while_statement', () => {
 });
 
 describe('while_statement sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.whileStatement.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.whileStatement.inline({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: [
 				{
@@ -904,17 +887,17 @@ describe('while_statement sub-factories', () => {
 		expect((node as any).body()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.whileStatement.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.whileStatement.block({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.WhileStatement);
-		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.whileStatement.newline({
+	it('empty builds the parent', () => {
+		const node = ir.whileStatement.empty({
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.WhileStatement);
@@ -937,8 +920,8 @@ describe('try_statement', () => {
 });
 
 describe('try_statement sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.tryStatement.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.tryStatement.inline({
 			body: [
 				{
 					$type: TSKindId.SimpleStatementsElements,
@@ -953,16 +936,16 @@ describe('try_statement sub-factories', () => {
 		expect((node as any).body()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.tryStatement.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.tryStatement.block({
 			body: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.TryStatement);
-		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.tryStatement.newline({});
+	it('empty builds the parent', () => {
+		const node = ir.tryStatement.empty({});
 		expect(node.$type).toBe(TSKindId.TryStatement);
 		const seated = (node as any).body();
 		expect(seated?.$text ?? seated).toBe('\n');
@@ -983,8 +966,8 @@ describe('except_clause', () => {
 });
 
 describe('except_clause sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.exceptClause.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.exceptClause.inline({
 			suite: [
 				{
 					$type: TSKindId.SimpleStatementsElements,
@@ -999,16 +982,16 @@ describe('except_clause sub-factories', () => {
 		expect((node as any).suite()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.exceptClause.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.exceptClause.block({
 			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).suite()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).suite()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.exceptClause.newline({});
+	it('empty builds the parent', () => {
+		const node = ir.exceptClause.empty({});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
 		const seated = (node as any).suite();
 		expect(seated?.$text ?? seated).toBe('\n');
@@ -1018,27 +1001,15 @@ describe('except_clause sub-factories', () => {
 
 describe('finally_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.finallyClause({
-			$type: TSKindId.SimpleStatements,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_simple_statements_elements: {
-				$type: TSKindId.SimpleStatementsElements,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-			} as any
-		} as any);
+		const node = ir.finallyClause({ $type: TSKindId._SuiteInline, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.FinallyClause);
 		expect(node.$source).toBe(2);
 	});
 });
 
 describe('finally_clause sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.finallyClause.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.finallyClause.inline({
 			$type: TSKindId.SimpleStatementsElements,
 			$text: 'test',
 			$source: 2,
@@ -1049,19 +1020,14 @@ describe('finally_clause sub-factories', () => {
 		expect((node as any).block()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.finallyClause.blockWithIndent({
-			$type: TSKindId.Block,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+	it('block builds the parent', () => {
+		const node = ir.finallyClause.block({ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.FinallyClause);
-		expect((node as any).block()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).block()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.finallyClause.newline();
+	it('empty builds the parent', () => {
+		const node = ir.finallyClause.empty();
 		expect(node.$type).toBe(TSKindId.FinallyClause);
 		const seated = (node as any).block();
 		expect(seated?.$text ?? seated).toBe('\n');
@@ -1128,8 +1094,8 @@ describe('with_statement', () => {
 });
 
 describe('with_statement sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.withStatement.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.withStatement.inline({
 			withClause: {
 				$type: TSKindId.WithClause,
 				$text: 'test',
@@ -1165,8 +1131,8 @@ describe('with_statement sub-factories', () => {
 		expect((node as any).body()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.withStatement.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.withStatement.block({
 			withClause: {
 				$type: TSKindId.WithClause,
 				$text: 'test',
@@ -1191,11 +1157,11 @@ describe('with_statement sub-factories', () => {
 			body: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.WithStatement);
-		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.withStatement.newline({
+	it('empty builds the parent', () => {
+		const node = ir.withStatement.empty({
 			withClause: {
 				$type: TSKindId.WithClause,
 				$text: 'test',
@@ -1311,8 +1277,8 @@ describe('function_definition', () => {
 });
 
 describe('function_definition sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.functionDefinition.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.functionDefinition.inline({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
 			body: [
@@ -1329,18 +1295,18 @@ describe('function_definition sub-factories', () => {
 		expect((node as any).body()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.functionDefinition.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.functionDefinition.block({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
 			body: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.FunctionDefinition);
-		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.functionDefinition.newline({
+	it('empty builds the parent', () => {
+		const node = ir.functionDefinition.empty({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -1494,8 +1460,8 @@ describe('class_definition', () => {
 });
 
 describe('class_definition sub-factories', () => {
-	it('simpleStatements builds the parent', () => {
-		const node = ir.classDefinition.simpleStatements({
+	it('inline builds the parent', () => {
+		const node = ir.classDefinition.inline({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: [
 				{
@@ -1511,17 +1477,17 @@ describe('class_definition sub-factories', () => {
 		expect((node as any).body()?.$type).toBe(TSKindId.SimpleStatements);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('blockWithIndent builds the parent', () => {
-		const node = ir.classDefinition.blockWithIndent({
+	it('block builds the parent', () => {
+		const node = ir.classDefinition.block({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ClassDefinition);
-		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlockWithIndent);
+		expect((node as any).body()?.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('newline builds the parent', () => {
-		const node = ir.classDefinition.newline({
+	it('empty builds the parent', () => {
+		const node = ir.classDefinition.empty({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ClassDefinition);

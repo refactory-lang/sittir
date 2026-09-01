@@ -186,7 +186,7 @@ pub enum AnyTransport {
     WithClauseBare(WithClauseBareTransport),
     WithClauseParen(WithClauseParenTransport),
     MatchBlockBlock(MatchBlockBlockTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     SimplePatternNegative(SimplePatternNegativeTransport),
     ExceptClauseList(ExceptClauseListTransport),
     ComparisonOperatorComparator(ComparisonOperatorComparatorTransport),
@@ -983,9 +983,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 269 => Ok(AnyTransport::MatchBlockBlock(
                     MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _suite_block_with_indent (_SUITE_BLOCK_WITH_INDENT)
-                270 => Ok(AnyTransport::SuiteBlockWithIndent(
-                    SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                // kind: _suite_block (_SUITE_BLOCK)
+                270 => Ok(AnyTransport::SuiteBlock(
+                    SuiteBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _simple_pattern_negative (_SIMPLE_PATTERN_NEGATIVE)
                 271 => Ok(AnyTransport::SimplePatternNegative(
@@ -5280,7 +5280,7 @@ impl RenderableTransport for RaiseStatementExpressionsTransportSlot {
 #[derive(Debug, Clone)]
 pub enum IfStatementConsequenceTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -5297,8 +5297,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IfStatementConsequenceTransportSlot",
@@ -5315,8 +5318,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IfStatementConsequenceTransportSlot",
@@ -5361,7 +5367,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfStatementConsequenceTranspor
 fn if_statement_consequence_transport_slot_to_any(t: IfStatementConsequenceTransportSlot) -> AnyTransport {
     match t {
         IfStatementConsequenceTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        IfStatementConsequenceTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        IfStatementConsequenceTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         IfStatementConsequenceTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -5373,7 +5379,7 @@ impl RenderableTransport for IfStatementConsequenceTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             IfStatementConsequenceTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            IfStatementConsequenceTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            IfStatementConsequenceTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             IfStatementConsequenceTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -5479,7 +5485,7 @@ impl RenderableTransport for IfStatementAlternativeTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ElifClauseConsequenceTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -5496,8 +5502,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElifClauseConsequenceTransportSlot",
@@ -5514,8 +5523,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElifClauseConsequenceTransportSlot",
@@ -5560,7 +5572,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifClauseConsequenceTransport
 fn elif_clause_consequence_transport_slot_to_any(t: ElifClauseConsequenceTransportSlot) -> AnyTransport {
     match t {
         ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ElifClauseConsequenceTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         ElifClauseConsequenceTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -5572,7 +5584,7 @@ impl RenderableTransport for ElifClauseConsequenceTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            ElifClauseConsequenceTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             ElifClauseConsequenceTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -5581,7 +5593,7 @@ impl RenderableTransport for ElifClauseConsequenceTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ElseClauseBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -5598,8 +5610,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElseClauseBodyTransportSlot",
@@ -5616,8 +5631,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ElseClauseBodyTransportSlot",
@@ -5662,7 +5680,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseBodyTransportSlot> {
 fn else_clause_body_transport_slot_to_any(t: ElseClauseBodyTransportSlot) -> AnyTransport {
     match t {
         ElseClauseBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ElseClauseBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        ElseClauseBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         ElseClauseBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -5674,7 +5692,7 @@ impl RenderableTransport for ElseClauseBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ElseClauseBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            ElseClauseBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            ElseClauseBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             ElseClauseBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -5776,7 +5794,7 @@ impl RenderableTransport for MatchBlockContentTransportSlot {
 #[derive(Debug, Clone)]
 pub enum CaseClauseConsequenceTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -5793,8 +5811,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CaseClauseConsequenceTransportSlot",
@@ -5811,8 +5832,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CaseClauseConsequenceTransportSlot",
@@ -5857,7 +5881,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseClauseConsequenceTransport
 fn case_clause_consequence_transport_slot_to_any(t: CaseClauseConsequenceTransportSlot) -> AnyTransport {
     match t {
         CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        CaseClauseConsequenceTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         CaseClauseConsequenceTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -5869,7 +5893,7 @@ impl RenderableTransport for CaseClauseConsequenceTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            CaseClauseConsequenceTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             CaseClauseConsequenceTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -6552,7 +6576,7 @@ impl RenderableTransport for ForStatementRightTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ForStatementBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -6569,8 +6593,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementBodyTransportSlot",
@@ -6587,8 +6614,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementBodyTransportSlot",
@@ -6633,7 +6663,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementBodyTransportSlot>
 fn for_statement_body_transport_slot_to_any(t: ForStatementBodyTransportSlot) -> AnyTransport {
     match t {
         ForStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ForStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        ForStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         ForStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -6645,7 +6675,7 @@ impl RenderableTransport for ForStatementBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ForStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            ForStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            ForStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             ForStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -6654,7 +6684,7 @@ impl RenderableTransport for ForStatementBodyTransportSlot {
 #[derive(Debug, Clone)]
 pub enum WhileStatementBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -6671,8 +6701,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WhileStatementBodyTransportSlot",
@@ -6689,8 +6722,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WhileStatementBodyTransportSlot",
@@ -6735,7 +6771,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileStatementBodyTransportSlo
 fn while_statement_body_transport_slot_to_any(t: WhileStatementBodyTransportSlot) -> AnyTransport {
     match t {
         WhileStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        WhileStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        WhileStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         WhileStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -6747,7 +6783,7 @@ impl RenderableTransport for WhileStatementBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             WhileStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            WhileStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            WhileStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             WhileStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -6756,7 +6792,7 @@ impl RenderableTransport for WhileStatementBodyTransportSlot {
 #[derive(Debug, Clone)]
 pub enum TryStatementBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -6773,8 +6809,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TryStatementBodyTransportSlot",
@@ -6791,8 +6830,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TryStatementBodyTransportSlot",
@@ -6837,7 +6879,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TryStatementBodyTransportSlot>
 fn try_statement_body_transport_slot_to_any(t: TryStatementBodyTransportSlot) -> AnyTransport {
     match t {
         TryStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        TryStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        TryStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         TryStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -6849,7 +6891,7 @@ impl RenderableTransport for TryStatementBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             TryStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            TryStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            TryStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             TryStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -6942,7 +6984,7 @@ impl RenderableTransport for ExceptClauseStarMarkerTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ExceptClauseSuiteTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -6959,8 +7001,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseSuiteTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExceptClauseSuiteTransportSlot",
@@ -6977,8 +7022,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseSuiteTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExceptClauseSuiteTransportSlot",
@@ -7023,7 +7071,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseSuiteTransportSlot
 fn except_clause_suite_transport_slot_to_any(t: ExceptClauseSuiteTransportSlot) -> AnyTransport {
     match t {
         ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ExceptClauseSuiteTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         ExceptClauseSuiteTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -7035,7 +7083,7 @@ impl RenderableTransport for ExceptClauseSuiteTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            ExceptClauseSuiteTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             ExceptClauseSuiteTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -7044,7 +7092,7 @@ impl RenderableTransport for ExceptClauseSuiteTransportSlot {
 #[derive(Debug, Clone)]
 pub enum FinallyClauseBlockTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -7061,8 +7109,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FinallyClauseBlockTransportSlot",
@@ -7079,8 +7130,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FinallyClauseBlockTransportSlot",
@@ -7125,7 +7179,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyClauseBlockTransportSlo
 fn finally_clause_block_transport_slot_to_any(t: FinallyClauseBlockTransportSlot) -> AnyTransport {
     match t {
         FinallyClauseBlockTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        FinallyClauseBlockTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        FinallyClauseBlockTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         FinallyClauseBlockTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -7137,7 +7191,7 @@ impl RenderableTransport for FinallyClauseBlockTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             FinallyClauseBlockTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            FinallyClauseBlockTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            FinallyClauseBlockTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             FinallyClauseBlockTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -7230,7 +7284,7 @@ impl RenderableTransport for WithStatementAsyncMarkerTransportSlot {
 #[derive(Debug, Clone)]
 pub enum WithStatementBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -7247,8 +7301,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WithStatementBodyTransportSlot",
@@ -7265,8 +7322,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WithStatementBodyTransportSlot",
@@ -7311,7 +7371,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementBodyTransportSlot
 fn with_statement_body_transport_slot_to_any(t: WithStatementBodyTransportSlot) -> AnyTransport {
     match t {
         WithStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        WithStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        WithStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         WithStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -7323,7 +7383,7 @@ impl RenderableTransport for WithStatementBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             WithStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            WithStatementBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            WithStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             WithStatementBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -7513,7 +7573,7 @@ impl RenderableTransport for FunctionDefinitionAsyncMarkerTransportSlot {
 #[derive(Debug, Clone)]
 pub enum FunctionDefinitionBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -7530,8 +7590,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDefinitionBodyTransportSlot",
@@ -7548,8 +7611,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDefinitionBodyTransportSlot",
@@ -7594,7 +7660,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionBodyTranspor
 fn function_definition_body_transport_slot_to_any(t: FunctionDefinitionBodyTransportSlot) -> AnyTransport {
     match t {
         FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        FunctionDefinitionBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         FunctionDefinitionBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -7606,7 +7672,7 @@ impl RenderableTransport for FunctionDefinitionBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            FunctionDefinitionBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             FunctionDefinitionBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -7748,7 +7814,7 @@ impl RenderableTransport for ExecStatementCodeTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ClassDefinitionBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -7765,8 +7831,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassDefinitionBodyTransportSlot",
@@ -7783,8 +7852,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassDefinitionBodyTransportSlot",
@@ -7829,7 +7901,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassDefinitionBodyTransportSl
 fn class_definition_body_transport_slot_to_any(t: ClassDefinitionBodyTransportSlot) -> AnyTransport {
     match t {
         ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ClassDefinitionBodyTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         ClassDefinitionBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -7841,7 +7913,7 @@ impl RenderableTransport for ClassDefinitionBodyTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            ClassDefinitionBodyTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             ClassDefinitionBodyTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -8050,7 +8122,7 @@ impl RenderableTransport for DecoratedDefinitionDefinitionTransportSlot {
 #[derive(Debug, Clone)]
 pub enum SuiteContentTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
-    SuiteBlockWithIndent(SuiteBlockWithIndentTransport),
+    SuiteBlock(SuiteBlockTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
 }
 
@@ -8067,8 +8139,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SuiteContentTransportSlot",
@@ -8085,8 +8160,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::SuiteBlockWithIndent(
-                        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SuiteContentTransportSlot",
@@ -8131,7 +8209,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteContentTransportSlot> {
 fn suite_content_transport_slot_to_any(t: SuiteContentTransportSlot) -> AnyTransport {
     match t {
         SuiteContentTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        SuiteContentTransportSlot::SuiteBlockWithIndent(inner) => AnyTransport::SuiteBlockWithIndent(inner),
+        SuiteContentTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
         SuiteContentTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
     }
 }
@@ -8143,7 +8221,7 @@ impl RenderableTransport for SuiteContentTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             SuiteContentTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
-            SuiteContentTransportSlot::SuiteBlockWithIndent(inner) => inner.render_into(dest),
+            SuiteContentTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
             SuiteContentTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -27923,7 +28001,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockBlockTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct SuiteBlockWithIndentTransport {
+pub struct SuiteBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -27942,32 +28020,32 @@ pub struct SuiteBlockWithIndentTransport {
     pub block: ::sittir_core::SlotValue<BlockTransport>,
 }
 
-impl RenderableTransport for SuiteBlockWithIndentTransport {
+impl RenderableTransport for SuiteBlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_suite_block_with_indent(self, dest))
+        render_with_trivia!(self, dest, render_suite_block(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteBlockWithIndentTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteBlockTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        SuiteBlockWithIndentTransport::from_napi_value(env, napi_val).map(Box::new)
+        SuiteBlockTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteBlockWithIndentTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteBlockTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        SuiteBlockWithIndentTransport::to_napi_value(env, *val)
+        SuiteBlockTransport::to_napi_value(env, *val)
     }
 }
 
@@ -40119,8 +40197,8 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::st
     template.render_into(dest)
 }
 
-fn render_suite_block_with_indent(node: &SuiteBlockWithIndentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = SuiteBlockWithIndentTemplate {
+fn render_suite_block(node: &SuiteBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = SuiteBlockTemplate {
         block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
     };
     template.render_into(dest)
@@ -40840,7 +40918,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::WithClauseBare(t) => t.render_into(dest),
             AnyTransport::WithClauseParen(t) => t.render_into(dest),
             AnyTransport::MatchBlockBlock(t) => t.render_into(dest),
-            AnyTransport::SuiteBlockWithIndent(t) => t.render_into(dest),
+            AnyTransport::SuiteBlock(t) => t.render_into(dest),
             AnyTransport::SimplePatternNegative(t) => t.render_into(dest),
             AnyTransport::ExceptClauseList(t) => t.render_into(dest),
             AnyTransport::ComparisonOperatorComparator(t) => t.render_into(dest),

@@ -4593,8 +4593,8 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
 
 export function wrapArrowFunction(
 	data: T.ArrowFunction & {
-		readonly _arrow_function_parameter?: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature;
-		readonly _arrow_function__call_signature?: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature;
+		readonly _arrow_function_parameter?: T.ArrowFunctionParameter | T.CallSignature;
+		readonly _call_signature?: T.ArrowFunctionParameter | T.CallSignature;
 	},
 	tree: TreeHandle
 ) {
@@ -4603,12 +4603,12 @@ export function wrapArrowFunction(
 		'_content',
 		'_body',
 		'_arrow_function_parameter',
-		'_arrow_function__call_signature'
+		'_call_signature'
 	]);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ArrowFunction as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_arrow_function__call_signature', '_arrow_function_parameter']),
+			..._omitWrapKeys(data, ['_arrow_function_parameter', '_call_signature']),
 			$type: TSKindId.ArrowFunction as const,
 			_async_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
@@ -4619,7 +4619,7 @@ export function wrapArrowFunction(
 				})
 			),
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._arrow_function_parameter ?? data._arrow_function__call_signature,
+				data._content ?? data._arrow_function_parameter ?? data._call_signature,
 				'content',
 				true,
 				data.$type,
@@ -4636,7 +4636,7 @@ export function wrapArrowFunction(
 				return this._async_marker;
 			},
 			content() {
-				return drillIn<T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature>(this._content, tree);
+				return drillIn<T.ArrowFunctionParameter | T.CallSignature>(this._content, tree);
 			},
 			body() {
 				return drillIn<T.Expression | T.StatementBlock>(this._body, tree);
@@ -11650,57 +11650,6 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 	return _node;
 }
 
-export function wrapArrowFunctionUCallSignature(data: T.ArrowFunctionUCallSignature, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_type_parameters', '_parameters', '_return_type']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.ArrowFunctionUCallSignature as const,
-			_type_parameters: normalizeSingularWrapSlot(data._type_parameters, 'type_parameters', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'type_parameters',
-				span: (data as _NodeData).$span
-			}),
-			_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameters',
-				span: (data as _NodeData).$span
-			}),
-			_return_type: normalizeSingularWrapSlot(data._return_type, 'return_type', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'return_type',
-				span: (data as _NodeData).$span
-			}),
-
-			typeParameters() {
-				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
-			},
-			parameters() {
-				return drillIn<T.FormalParameters>(this._parameters, tree);
-			},
-			returnType() {
-				return drillIn<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
-					this._return_type,
-					tree
-				);
-			},
-			$with: {
-				typeParameters: (v: NonNullable<T.ArrowFunctionUCallSignature['_type_parameters']>) =>
-					wrapArrowFunctionUCallSignature({ ...$edited(data), _type_parameters: v }, tree),
-				parameters: (v: NonNullable<T.ArrowFunctionUCallSignature['_parameters']>) =>
-					wrapArrowFunctionUCallSignature({ ...$edited(data), _parameters: v }, tree),
-				returnType: (v: NonNullable<T.ArrowFunctionUCallSignature['_return_type']>) =>
-					wrapArrowFunctionUCallSignature({ ...$edited(data), _return_type: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClause, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_extends_clause', '_implements_clause']);
 	const _node = withMethods(
@@ -13484,8 +13433,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ObjectTypeContent]: (d, t) => wrapObjectTypeContent(d as unknown as T.ObjectTypeContent, t),
 	[TSKindId.ExportStatementDefault]: (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),
 	[TSKindId.ArrowFunctionParameter]: (d, t) => wrapArrowFunctionParameter(d as unknown as T.ArrowFunctionParameter, t),
-	[TSKindId.ArrowFunctionUCallSignature]: (d, t) =>
-		wrapArrowFunctionUCallSignature(d as unknown as T.ArrowFunctionUCallSignature, t),
 	[TSKindId.ClassHeritageExtendsClause]: (d, t) =>
 		wrapClassHeritageExtendsClause(d as unknown as T.ClassHeritageExtendsClause, t),
 	[TSKindId.ImportClauseDefaultImport]: (d, t) =>
@@ -13771,7 +13718,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.ObjectTypeContent]: ReturnType<typeof wrapObjectTypeContent>;
 	[TSKindId.ExportStatementDefault]: ReturnType<typeof wrapExportStatementDefault>;
 	[TSKindId.ArrowFunctionParameter]: ReturnType<typeof wrapArrowFunctionParameter>;
-	[TSKindId.ArrowFunctionUCallSignature]: ReturnType<typeof wrapArrowFunctionUCallSignature>;
 	[TSKindId.ClassHeritageExtendsClause]: ReturnType<typeof wrapClassHeritageExtendsClause>;
 	[TSKindId.ImportClauseDefaultImport]: ReturnType<typeof wrapImportClauseDefaultImport>;
 	[TSKindId.ImportSpecifierAs]: ReturnType<typeof wrapImportSpecifierAs>;

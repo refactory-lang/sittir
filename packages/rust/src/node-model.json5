@@ -69,13 +69,15 @@
     "mod_item": {
       "definedBy": "override",
       "childKind": {
-        "mod_item_external": "external"
+        "mod_item_external": "external",
+        "declaration_list": "inline"
       }
     },
     "foreign_mod_item": {
       "definedBy": "override",
       "childKind": {
-        "foreign_mod_item_semi": "semi"
+        "foreign_mod_item_semi": "semi",
+        "declaration_list": "body"
       }
     },
     "struct_item": {
@@ -98,6 +100,7 @@
     "visibility_modifier": {
       "definedBy": "override",
       "childKind": {
+        "crate": "crate",
         "visibility_modifier_pub": "pub"
       }
     },
@@ -111,7 +114,8 @@
     "pointer_type": {
       "definedBy": "override",
       "childKind": {
-        "pointer_type_const": "const"
+        "pointer_type_const": "const",
+        "mutable_specifier": "mut"
       }
     },
     "delim_token_tree": {
@@ -135,7 +139,8 @@
       "definedBy": "override",
       "childKind": {
         "reference_expression_raw_const": "raw_const",
-        "reference_expression_raw_mut": "raw_mut"
+        "reference_expression_raw_mut": "raw_mut",
+        "mutable_specifier": "mutable_specifier"
       }
     },
     "array_expression": {
@@ -191,7 +196,8 @@
       "definedBy": "override",
       "childKind": {
         "block_comment_doc_outer": "doc_outer",
-        "block_comment_doc_inner": "doc_inner"
+        "block_comment_doc_inner": "doc_inner",
+        "_block_comment_content": "block_comment_content"
       }
     }
   },

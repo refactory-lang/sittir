@@ -390,7 +390,7 @@ function resolvePatch(
 		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
 		if ((originalMember as { type?: string }).type === 'ALIAS') {
 			const content = (originalMember as { content?: unknown }).content as { type?: string; name?: string } | undefined;
-			if (content?.type === 'SYMBOL' && typeof content.name === 'string') {
+			if (content?.type === 'SYMBOL' && typeof content.name === 'string' && isEnrichGroupLiftSymbol(content as RuntimeRule)) {
 				const body = getGroupLiftRuleBody(content.name);
 				if (body !== undefined) {
 					const depositName = polymorphHiddenName(parentKind, patch.name);
@@ -412,10 +412,6 @@ function resolvePatch(
 			});
 		}
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);
-		const original = originalMember as { type?: string; name?: string };
-		if (original.type === 'SYMBOL' && typeof original.name === 'string') {
-			wireRegisterSymbolRename(original.name, hiddenName);
-		}
 		return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
 	}
 	if (isAliasPlaceholder(patch)) {
@@ -639,6 +635,9 @@ function resolveAliasPlaceholder(
 	originalMember: RuntimeRule,
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
+	if ((originalMember as { type?: string }).type === 'ALIAS') {
+		return { ...(originalMember as object), value: patch.name } as unknown as RuntimeRule;
+	}
 	const hiddenName = '_' + patch.name;
 	return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
@@ -649,6 +648,12 @@ export function registerAliasedVariant(
 	originalMember: RuntimeRule,
 	bodyWrapper: (body: RuntimeRule) => RuntimeRule
 ): RuntimeRule {
+	const single = originalMember as { type?: string; name?: string };
+	if (single.type === 'SYMBOL' && typeof single.name === 'string') {
+		const alias = nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias');
+		const sym = nativeRuleFn<(name: string) => RuntimeRule>('sym', 'symbol');
+		return alias(originalMember, sym(aliasValue));
+	}
 	const wasEmpty = matchesEmpty(originalMember);
 	const factored = factorOutEmptiness(originalMember);
 	if (wasEmpty && !factored) {

@@ -916,7 +916,7 @@ const _K23: readonly string[] = [
 const _K24: readonly string[] = ['nested_identifier'];
 const _K25: readonly string[] = ['_class_heritage_extends_clause', 'implements_clause'];
 const _K26: readonly string[] = ['type_annotation', 'asserts_annotation', 'type_predicate_annotation'];
-const _K27: readonly string[] = ['_arrow_function_parameter', '_arrow_function__call_signature'];
+const _K27: readonly string[] = ['_arrow_function_parameter', 'call_signature'];
 const _K28: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
@@ -2727,7 +2727,7 @@ export function resolveArrowFunction_asyncMarker(
 export function resolveArrowFunction_content(
 	value: T.ArrowFunction.LooseConfig['content']
 ): T.ArrowFunction['_content'] {
-	return _resolveOne<T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature>(value, _K2, _K27);
+	return _resolveOne<T.ArrowFunctionParameter | T.CallSignature>(value, _K2, _K27);
 }
 
 export function resolveArrowFunction_body(value: T.ArrowFunction.LooseConfig['body']): T.ArrowFunction['_body'] {

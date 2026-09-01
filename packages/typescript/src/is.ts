@@ -583,19 +583,19 @@ const _supertype_expression_ids = new Set<number>([
 	276, 277, 278, 286, 275, 238, 240, 234, 246, 245, 244, 247, 233, 213
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	236, 235, 210, 105, 1, 440, 100, 101, 98, 249, 250, 252, 102, 103, 104, 214, 218, 224, 228, 226, 221, 253, 232, 270
+	236, 235, 210, 105, 1, 439, 100, 101, 98, 249, 250, 252, 102, 103, 104, 214, 218, 224, 228, 226, 221, 253, 232, 270
 ]);
 const _supertype_formalParameter_ids = new Set<number>([298, 299]);
-const _supertype_lhsExpression_ids = new Set<number>([235, 236, 105, 1, 440, 215, 219, 270]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([235, 236, 440, 1, 210, 270]);
+const _supertype_lhsExpression_ids = new Set<number>([235, 236, 105, 1, 439, 215, 219, 270]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([235, 236, 439, 1, 210, 270]);
 const _supertype_destructuringPattern_ids = new Set<number>([215, 219]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
 const _supertype_pattern_ids = new Set<number>([262]);
 const _supertype_propertyName_ids = new Set<number>([99, 249, 98, 267]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 440]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 440]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 440]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 440]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 439]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 439]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 439]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 439]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([353, 350, 315, 319, 305, 306]);
 const _supertype_tupleTypeMember_ids = new Set<number>([310, 311, 312, 313]);

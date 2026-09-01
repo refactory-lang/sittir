@@ -138,6 +138,6 @@ export const printStatementArm2: Hoisted<typeof O.printStatementArm2> = hoist(O.
 export const expressionStatementTuple: Hoisted<typeof O.expressionStatementTuple> = hoist(O.expressionStatementTuple);
 export const withClauseBare: Hoisted<typeof O.withClauseBare> = hoist(O.withClauseBare);
 export const withClauseParen: Hoisted<typeof O.withClauseParen> = hoist(O.withClauseParen);
-export const suiteBlockWithIndent: Hoisted<typeof O.suiteBlockWithIndent> = hoist(O.suiteBlockWithIndent);
+export const suiteBlock: Hoisted<typeof O.suiteBlock> = hoist(O.suiteBlock);
 export const exceptClauseList: Hoisted<typeof O.exceptClauseList> = hoist(O.exceptClauseList);
 export const yieldFromClause: Hoisted<typeof O.yieldFromClause> = hoist(O.yieldFromClause);

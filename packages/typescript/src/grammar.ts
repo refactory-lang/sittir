@@ -296,27 +296,7 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [
-				{ type: 'arrow_function__call_signature'; named: true },
-				{ type: 'arrow_function_parameter'; named: true }
-			];
-		};
-	};
-	readonly arrow_function__call_signature: {
-		type: 'arrow_function__call_signature';
-		named: true;
-		fields: {
-			parameters: { multiple: false; required: true; types: [{ type: 'formal_parameters'; named: true }] };
-			return_type: {
-				multiple: false;
-				required: false;
-				types: [
-					{ type: 'asserts_annotation'; named: true },
-					{ type: 'type_annotation'; named: true },
-					{ type: 'type_predicate_annotation'; named: true }
-				];
-			};
-			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
+			types: [{ type: 'arrow_function_parameter'; named: true }, { type: 'call_signature'; named: true }];
 		};
 	};
 	readonly arrow_function_parameter: {

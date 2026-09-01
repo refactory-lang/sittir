@@ -2114,7 +2114,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._condition, tree);
 			},
 			consequence() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._consequence, tree);
 			},
 			alternatives() {
 				return drillInAll<T.ElifClause | T.ElseClause>(
@@ -2160,7 +2160,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._condition, tree);
 			},
 			consequence() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._consequence, tree);
 			},
 			$with: {
 				condition: (v: NonNullable<T.ElifClause['_condition']>) =>
@@ -2189,7 +2189,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 			}),
 
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			$with: {
 				body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...$edited(data), _body: v }, tree)
@@ -2302,7 +2302,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 				return drillIn<T.IfClause | undefined>(this._guard, tree);
 			},
 			consequence() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._consequence, tree);
 			},
 			$with: {
 				casePatterns: (v: NonNullable<T.CaseClause['_case_patterns']>) =>
@@ -2367,7 +2367,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 				return drillIn<T.Expression | T.ExpressionList>(this._right, tree);
 			},
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			alternative() {
 				return drillIn<T.ElseClause | undefined>(this._alternative, tree);
@@ -2418,7 +2418,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._condition, tree);
 			},
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			alternative() {
 				return drillIn<T.ElseClause | undefined>(this._alternative, tree);
@@ -2469,7 +2469,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 			}),
 
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			exceptClauses() {
 				return drillInAll<T.ExceptClause>(this._except_clauses as readonly T.ExceptClause[] | undefined, tree);
@@ -2497,9 +2497,9 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 
 export function wrapExceptClause(
 	data: T.ExceptClause & {
-		readonly _simple_statements?: T.SimpleStatements | T.SuiteBlockWithIndent | '\n';
-		readonly _suite_block_with_indent?: T.SimpleStatements | T.SuiteBlockWithIndent | '\n';
-		readonly _newline?: T.SimpleStatements | T.SuiteBlockWithIndent | '\n';
+		readonly _suite_inline?: T.SimpleStatements | T.SuiteBlock | '\n';
+		readonly _suite_block?: T.SimpleStatements | T.SuiteBlock | '\n';
+		readonly _suite_empty?: T.SimpleStatements | T.SuiteBlock | '\n';
 	},
 	tree: TreeHandle
 ) {
@@ -2507,14 +2507,14 @@ export function wrapExceptClause(
 		'_star_marker',
 		'_except_clause_arm',
 		'_suite',
-		'_simple_statements',
-		'_suite_block_with_indent',
-		'_newline'
+		'_suite_inline',
+		'_suite_block',
+		'_suite_empty'
 	]);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ExceptClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_newline', '_simple_statements', '_suite_block_with_indent']),
+			..._omitWrapKeys(data, ['_suite_block', '_suite_empty', '_suite_inline']),
 			$type: TSKindId.ExceptClause as const,
 			_star_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
@@ -2531,7 +2531,7 @@ export function wrapExceptClause(
 				span: (data as _NodeData).$span
 			}),
 			_suite: normalizeSingularWrapSlot(
-				data._suite ?? data._simple_statements ?? data._suite_block_with_indent ?? data._newline,
+				data._suite ?? data._suite_inline ?? data._suite_block ?? data._suite_empty,
 				'suite',
 				true,
 				data.$type,
@@ -2545,7 +2545,7 @@ export function wrapExceptClause(
 				return drillIn<T.ExceptClauseArm | undefined>(this._except_clause_arm, tree);
 			},
 			suite() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._suite, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._suite, tree);
 			},
 			$with: {
 				starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
@@ -2575,7 +2575,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 			}),
 
 			block() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._block, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._block, tree);
 			},
 			$with: {
 				block: (v: NonNullable<T.FinallyClause['_block']>) => wrapFinallyClause({ ...$edited(data), _block: v }, tree)
@@ -2621,7 +2621,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 				return drillIn<T.WithClause>(this._with_clause, tree);
 			},
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.WithStatement['_async_marker']>) =>
@@ -2763,7 +2763,7 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 				return drillIn<T.Type | undefined>(this._return_type, tree);
 			},
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.FunctionDefinition['_async_marker']>) =>
@@ -3100,7 +3100,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 				return drillIn<T.ArgumentList | undefined>(this._superclasses, tree);
 			},
 			body() {
-				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
+				return drillIn<T.SimpleStatements | T.SuiteBlock | '\n'>(this._body, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.ClassDefinition['_name']>) => wrapClassDefinition({ ...$edited(data), _name: v }, tree),
@@ -8597,12 +8597,12 @@ export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapSuiteBlockWithIndent(data: T.SuiteBlockWithIndent, tree: TreeHandle) {
+export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_block']);
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.SuiteBlockWithIndent as const,
+			$type: TSKindId.SuiteBlock as const,
 			_block: normalizeSingularWrapSlot(data._block, 'block', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -8614,8 +8614,7 @@ export function wrapSuiteBlockWithIndent(data: T.SuiteBlockWithIndent, tree: Tre
 				return drillIn<T.Block>(this._block, tree);
 			},
 			$with: {
-				block: (v: NonNullable<T.SuiteBlockWithIndent['_block']>) =>
-					wrapSuiteBlockWithIndent({ ...$edited(data), _block: v }, tree)
+				block: (v: NonNullable<T.SuiteBlock['_block']>) => wrapSuiteBlock({ ...$edited(data), _block: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -9247,7 +9246,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.WithClauseBare]: (d, t) => wrapWithClauseBare(d as unknown as T.WithClauseBare, t),
 	[TSKindId.WithClauseParen]: (d, t) => wrapWithClauseParen(d as unknown as T.WithClauseParen, t),
 	[TSKindId.MatchBlockBlock]: (d, t) => wrapMatchBlockBlock(d as unknown as T.MatchBlockBlock, t),
-	[TSKindId.SuiteBlockWithIndent]: (d, t) => wrapSuiteBlockWithIndent(d as unknown as T.SuiteBlockWithIndent, t),
+	[TSKindId.SuiteBlock]: (d, t) => wrapSuiteBlock(d as unknown as T.SuiteBlock, t),
 	[TSKindId.SimplePatternNegative]: (d, t) => wrapSimplePatternNegative(d as unknown as T.SimplePatternNegative, t),
 	[TSKindId.ExceptClauseList]: (d, t) => wrapExceptClauseList(d as unknown as T.ExceptClauseList, t),
 	[TSKindId.ComparisonOperatorComparator]: (d, t) =>
@@ -9436,7 +9435,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.WithClauseBare]: ReturnType<typeof wrapWithClauseBare>;
 	[TSKindId.WithClauseParen]: ReturnType<typeof wrapWithClauseParen>;
 	[TSKindId.MatchBlockBlock]: ReturnType<typeof wrapMatchBlockBlock>;
-	[TSKindId.SuiteBlockWithIndent]: ReturnType<typeof wrapSuiteBlockWithIndent>;
+	[TSKindId.SuiteBlock]: ReturnType<typeof wrapSuiteBlock>;
 	[TSKindId.SimplePatternNegative]: ReturnType<typeof wrapSimplePatternNegative>;
 	[TSKindId.ExceptClauseList]: ReturnType<typeof wrapExceptClauseList>;
 	[TSKindId.ComparisonOperatorComparator]: ReturnType<typeof wrapComparisonOperatorComparator>;

@@ -384,7 +384,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
-	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
+	_suite_block: TSKindId.SuiteBlock,
 	_except_clause_list: TSKindId.ExceptClauseList,
 	_yield_from_clause: TSKindId.YieldFromClause
 };
@@ -541,8 +541,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_paren':
 			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
-		case '_suite_block_with_indent':
-			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
+		case '_suite_block':
+			return F.buildSuiteBlock(children[0] as Parameters<typeof F.buildSuiteBlock>[0]);
 		case '_except_clause_list':
 			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
 		case '_yield_from_clause':
@@ -751,7 +751,7 @@ const _K9: readonly string[] = [
 	'as_pattern',
 	'expression_list'
 ];
-const _K10: readonly string[] = ['_simple_statements', '_suite_block_with_indent'];
+const _K10: readonly string[] = ['_simple_statements', '_suite_block'];
 const _K11: readonly string[] = ['elif_clause', 'else_clause'];
 const _K12: readonly string[] = [
 	'subscript',
@@ -1419,7 +1419,7 @@ export function resolveIfStatement_condition(
 export function resolveIfStatement_consequence(
 	value: T.IfStatement.LooseConfig['consequence']
 ): T.IfStatement['_consequence'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function resolveIfStatement_alternatives(
@@ -1445,7 +1445,7 @@ export function resolveElifClause_condition(value: T.ElifClause.LooseConfig['con
 export function resolveElifClause_consequence(
 	value: T.ElifClause.LooseConfig['consequence']
 ): T.ElifClause['_consequence'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof F.buildElifClause> {
@@ -1457,11 +1457,11 @@ export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof
 }
 
 export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): T.ElseClause['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToElseClause(
-	input: (T.SimpleStatements | T.SuiteBlockWithIndent | '\n') | T.ElseClause.Loose
+	input: (T.SimpleStatements | T.SuiteBlock | '\n') | T.ElseClause.Loose
 ): ReturnType<typeof F.buildElseClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ElseClause)
 		return input as unknown as ReturnType<typeof F.buildElseClause>;
@@ -1469,7 +1469,7 @@ export function coerceToElseClause(
 		_requireField(
 			'else_clause',
 			'body',
-			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(
+			_resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
 				_K0,
 				_K10
@@ -1532,7 +1532,7 @@ export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']
 export function resolveCaseClause_consequence(
 	value: T.CaseClause.LooseConfig['consequence']
 ): T.CaseClause['_consequence'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof F.buildCaseClause> {
@@ -1559,7 +1559,7 @@ export function resolveForStatement_right(value: T.ForStatement.LooseConfig['rig
 }
 
 export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): T.ForStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function resolveForStatement_alternative(
@@ -1587,7 +1587,7 @@ export function resolveWhileStatement_condition(
 }
 
 export function resolveWhileStatement_body(value: T.WhileStatement.LooseConfig['body']): T.WhileStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function resolveWhileStatement_alternative(
@@ -1607,7 +1607,7 @@ export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnTyp
 }
 
 export function resolveTryStatement_body(value: T.TryStatement.LooseConfig['body']): T.TryStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function resolveTryStatement_exceptClauses(
@@ -1652,7 +1652,7 @@ export function resolveExceptClause_exceptClauseArm(
 }
 
 export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): T.ExceptClause['_suite'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
@@ -1666,11 +1666,11 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 }
 
 export function resolveFinallyClause_block(value: T.FinallyClause.LooseConfig['block']): T.FinallyClause['_block'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToFinallyClause(
-	input: (T.SimpleStatements | T.SuiteBlockWithIndent | '\n') | T.FinallyClause.Loose
+	input: (T.SimpleStatements | T.SuiteBlock | '\n') | T.FinallyClause.Loose
 ): ReturnType<typeof F.buildFinallyClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FinallyClause)
 		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
@@ -1678,7 +1678,7 @@ export function coerceToFinallyClause(
 		_requireField(
 			'finally_clause',
 			'block',
-			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(
+			_resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
 				_K0,
 				_K10
@@ -1700,7 +1700,7 @@ export function resolveWithStatement_withClause(
 }
 
 export function resolveWithStatement_body(value: T.WithStatement.LooseConfig['body']): T.WithStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<typeof F.buildWithStatement> {
@@ -1788,7 +1788,7 @@ export function resolveFunctionDefinition_returnType(
 export function resolveFunctionDefinition_body(
 	value: T.FunctionDefinition.LooseConfig['body']
 ): T.FunctionDefinition['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToFunctionDefinition(
@@ -2019,7 +2019,7 @@ export function resolveClassDefinition_superclasses(
 }
 
 export function resolveClassDefinition_body(value: T.ClassDefinition.LooseConfig['body']): T.ClassDefinition['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10);
 }
 
 export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnType<typeof F.buildClassDefinition> {
@@ -4435,20 +4435,16 @@ export function coerceToWithClauseParen(
 	);
 }
 
-export function resolveSuiteBlockWithIndent_block(
-	value: T.SuiteBlockWithIndent.LooseConfig['block']
-): T.SuiteBlockWithIndent['_block'] {
+export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block']): T.SuiteBlock['_block'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToSuiteBlockWithIndent(
-	input: T.Block | T.SuiteBlockWithIndent.Loose
-): ReturnType<typeof F.buildSuiteBlockWithIndent> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlockWithIndent)
-		return input as unknown as ReturnType<typeof F.buildSuiteBlockWithIndent>;
-	return F.buildSuiteBlockWithIndent(
+export function coerceToSuiteBlock(input: T.Block | T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlock)
+		return input as unknown as ReturnType<typeof F.buildSuiteBlock>;
+	return F.buildSuiteBlock(
 		_requireField(
-			'_suite_block_with_indent',
+			'_suite_block',
 			'block',
 			_resolveOneBranch<T.Block>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,

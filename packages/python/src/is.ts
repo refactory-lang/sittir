@@ -226,9 +226,7 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
-	SuiteBlockWithIndent<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.SuiteBlockWithIndent };
+	SuiteBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SuiteBlock };
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
@@ -404,7 +402,7 @@ export interface AssertGuards {
 	}): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
-	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
+	SuiteBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlock };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
@@ -589,7 +587,7 @@ export const is = {
 	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	WithClauseBare: _g(TSKindId.WithClauseBare),
 	WithClauseParen: _g(TSKindId.WithClauseParen),
-	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
+	SuiteBlock: _g(TSKindId.SuiteBlock),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
@@ -766,7 +764,7 @@ export const assert = {
 	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
 	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
 	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
-	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
+	SuiteBlock: _makeAssert('SuiteBlock', is.SuiteBlock as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),

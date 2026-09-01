@@ -361,7 +361,7 @@ export const enum TSKindId {
 	WithClauseBare = 267,
 	WithClauseParen = 268,
 	MatchBlockBlock = 269,
-	SuiteBlockWithIndent = 270,
+	SuiteBlock = 270,
 	SimplePatternNegative = 271,
 	ExceptClauseList = 272,
 	ComparisonOperatorComparator = 273,
@@ -403,7 +403,9 @@ export const enum TSKindId {
 	_ExceptClauseListRepeat1 = 309,
 	_AsPatternTarget = 310,
 	_FormatExpression = 311,
-	_Names = 312
+	_Names = 312,
+	_SuiteEmpty = 313,
+	_SuiteInline = 314
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -676,7 +678,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[267, '_with_clause_bare'],
 	[268, '_with_clause_paren'],
 	[269, '_match_block_block'],
-	[270, '_suite_block_with_indent'],
+	[270, '_suite_block'],
 	[271, '_simple_pattern_negative'],
 	[272, '_except_clause_list'],
 	[273, '_comparison_operator_comparator'],
@@ -718,7 +720,9 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[309, '_except_clause_list_repeat1'],
 	[310, '_as_pattern_target'],
 	[311, '_format_expression'],
-	[312, '_names']
+	[312, '_names'],
+	[313, '_suite_empty'],
+	[314, '_suite_inline']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -992,7 +996,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[267, 'with_clause_bare'],
 	[268, 'with_clause_paren'],
 	[269, 'match_block_block'],
-	[270, 'suite_block_with_indent'],
+	[270, 'suite_block'],
 	[271, 'simple_pattern_negative'],
 	[272, 'except_clause_list'],
 	[273, 'comparison_operator_comparator'],
@@ -1034,7 +1038,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[309, '_except_clause_list_repeat1'],
 	[310, 'as_pattern_target'],
 	[311, 'format_expression'],
-	[312, 'names']
+	[312, 'names'],
+	[313, 'suite_empty'],
+	[314, 'suite_inline']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1580,8 +1586,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseParen;
 		case '_match_block_block':
 			return TSKindId.MatchBlockBlock;
-		case '_suite_block_with_indent':
-			return TSKindId.SuiteBlockWithIndent;
+		case '_suite_block':
+			return TSKindId.SuiteBlock;
 		case '_simple_pattern_negative':
 			return TSKindId.SimplePatternNegative;
 		case '_except_clause_list':
@@ -1666,6 +1672,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._FormatExpression;
 		case '_names':
 			return TSKindId._Names;
+		case '_suite_empty':
+			return TSKindId._SuiteEmpty;
+		case '_suite_inline':
+			return TSKindId._SuiteInline;
 		case '.':
 			return TSKindId.Dot;
 		case ',':
@@ -1836,8 +1846,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseParen;
 		case 'match_block_block':
 			return TSKindId.MatchBlockBlock;
-		case 'suite_block_with_indent':
-			return TSKindId.SuiteBlockWithIndent;
+		case 'suite_block':
+			return TSKindId.SuiteBlock;
 		case 'simple_pattern_negative':
 			return TSKindId.SimplePatternNegative;
 		case 'except_clause_list':
@@ -1852,6 +1862,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._FormatExpression;
 		case 'names':
 			return TSKindId._Names;
+		case 'suite_empty':
+			return TSKindId._SuiteEmpty;
+		case 'suite_inline':
+			return TSKindId._SuiteInline;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -2151,25 +2165,25 @@ export interface RaiseStatement {
 export interface IfStatement {
 	readonly $type: TSKindId.IfStatement;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlock | '\n';
 	readonly _alternative?: readonly (ElifClause | ElseClause)[];
 	condition(): Expression;
-	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	consequence(): SimpleStatements | SuiteBlock | '\n';
 	alternatives(): readonly (ElifClause | ElseClause)[];
 }
 
 export interface ElifClause {
 	readonly $type: TSKindId.ElifClause;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlock | '\n';
 	condition(): Expression;
-	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	consequence(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface MatchStatement {
@@ -2194,14 +2208,14 @@ export interface CaseClause {
 	readonly $type: TSKindId.CaseClause;
 	readonly _case_patterns: CasePatterns;
 	readonly _guard?: IfClause;
-	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlock | '\n';
 	readonly __looseHints__?: {
 		readonly case_patterns: readonly CasePattern[];
 		readonly guard?: readonly Expression[];
 	};
 	casePatterns(): CasePatterns;
 	guard(): IfClause | undefined;
-	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	consequence(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface ForStatement {
@@ -2209,46 +2223,46 @@ export interface ForStatement {
 	readonly _async_marker?: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: Expression | ExpressionList;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
-		readonly alternative?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
+		readonly alternative?: readonly (SimpleStatements | SuiteBlock | '\n')[];
 	};
 	asyncMarker(): boolean | undefined;
 	left(): Pattern | PatternList;
 	right(): Expression | ExpressionList;
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 	alternative(): ElseClause | undefined;
 }
 
 export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: Expression;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
 	readonly _alternative?: ElseClause;
 	readonly __looseHints__?: {
-		readonly alternative?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
+		readonly alternative?: readonly (SimpleStatements | SuiteBlock | '\n')[];
 	};
 	condition(): Expression;
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 	alternative(): ElseClause | undefined;
 }
 
 export interface TryStatement {
 	readonly $type: TSKindId.TryStatement;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
 	readonly _except_clauses?: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
 	readonly __looseHints__?: {
-		readonly else_clause?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
-		readonly finally_clause?: readonly (SimpleStatements | SuiteBlockWithIndent | '\n')[];
+		readonly else_clause?: readonly (SimpleStatements | SuiteBlock | '\n')[];
+		readonly finally_clause?: readonly (SimpleStatements | SuiteBlock | '\n')[];
 	};
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 	exceptClauses(): readonly ExceptClause[];
 	elseClause(): ElseClause | undefined;
 	finallyClause(): FinallyClause | undefined;
@@ -2258,7 +2272,7 @@ export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
 	readonly _star_marker?: boolean;
 	readonly _except_clause_arm?: ExceptClauseArm;
-	readonly _suite: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _suite: SimpleStatements | SuiteBlock | '\n';
 	readonly __inputHints__?: {
 		readonly star_marker?: BooleanKeyword<'*'>;
 	};
@@ -2267,20 +2281,20 @@ export interface ExceptClause {
 	};
 	starMarker(): boolean | undefined;
 	exceptClauseArm(): ExceptClauseArm | undefined;
-	suite(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	suite(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
-	readonly _block: SimpleStatements | SuiteBlockWithIndent | '\n';
-	block(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _block: SimpleStatements | SuiteBlock | '\n';
+	block(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _async_marker?: boolean;
 	readonly _with_clause: WithClause;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
@@ -2290,7 +2304,7 @@ export interface WithStatement {
 	};
 	asyncMarker(): boolean | undefined;
 	withClause(): WithClause;
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface WithClause {
@@ -2312,7 +2326,7 @@ export interface FunctionDefinition {
 	readonly _type_parameters?: TypeParameter;
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
@@ -2327,7 +2341,7 @@ export interface FunctionDefinition {
 	typeParameters(): TypeParameter | undefined;
 	parameters(): Parameters;
 	returnType(): Type | undefined;
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface Parameters {
@@ -2397,7 +2411,7 @@ export interface ClassDefinition {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _superclasses?: ArgumentList;
-	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | '\n';
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly Type[];
 		readonly superclasses?: readonly (
@@ -2411,7 +2425,7 @@ export interface ClassDefinition {
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	superclasses(): ArgumentList | undefined;
-	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface TypeParameter {
@@ -2460,8 +2474,8 @@ export interface Decorator {
 
 export interface Suite {
 	readonly $type: '_suite';
-	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
-	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly _content: SimpleStatements | SuiteBlock | '\n';
+	content(): SimpleStatements | SuiteBlock | '\n';
 }
 
 export interface Block {
@@ -3506,8 +3520,8 @@ export interface MatchBlockBlock {
 	alternatives(): readonly CaseClause[];
 }
 
-export interface SuiteBlockWithIndent {
-	readonly $type: TSKindId.SuiteBlockWithIndent;
+export interface SuiteBlock {
+	readonly $type: TSKindId.SuiteBlock;
 	readonly _block: Block;
 	readonly __looseHints__?: {
 		readonly block: readonly (SimpleStatements | CompoundStatement)[];
@@ -3816,8 +3830,8 @@ export interface WithClauseParenTree extends AnyTreeNode {
 export interface MatchBlockBlockTree extends AnyTreeNode {
 	readonly type: '_match_block_block';
 }
-export interface SuiteBlockWithIndentTree extends AnyTreeNode {
-	readonly type: '_suite_block_with_indent';
+export interface SuiteBlockTree extends AnyTreeNode {
+	readonly type: '_suite_block';
 }
 export interface SimplePatternNegativeTree extends AnyTreeNode {
 	readonly type: '_simple_pattern_negative';
@@ -4405,7 +4419,7 @@ export type PythonNode =
 	| WithClauseBare
 	| WithClauseParen
 	| MatchBlockBlock
-	| SuiteBlockWithIndent
+	| SuiteBlock
 	| SimplePatternNegative
 	| ExceptClauseList
 	| ComparisonOperatorComparator
@@ -4552,7 +4566,7 @@ export interface KindMap {
 	_with_clause_bare: WithClauseBare;
 	_with_clause_paren: WithClauseParen;
 	_match_block_block: MatchBlockBlock;
-	_suite_block_with_indent: SuiteBlockWithIndent;
+	_suite_block: SuiteBlock;
 	_simple_pattern_negative: SimplePatternNegative;
 	_except_clause_list: ExceptClauseList;
 	_comparison_operator_comparator: ComparisonOperatorComparator;
@@ -5841,14 +5855,14 @@ export interface MatchBlockBlockNs extends NodeNs<
 	F$.MatchBlockBlockBuildArgs,
 	F$.MatchBlockBlockLooseArgs
 > {}
-export interface SuiteBlockWithIndentNs extends NodeNs<
-	SuiteBlockWithIndent,
+export interface SuiteBlockNs extends NodeNs<
+	SuiteBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SuiteBlockWithIndentBuilt,
-	F$.SuiteBlockWithIndentBuildArgs,
-	F$.SuiteBlockWithIndentLooseArgs
+	F$.SuiteBlockBuilt,
+	F$.SuiteBlockBuildArgs,
+	F$.SuiteBlockLooseArgs
 > {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
@@ -6027,7 +6041,7 @@ export interface NamespaceMap {
 	[TSKindId.WithClauseBare]: WithClauseBareNs;
 	[TSKindId.WithClauseParen]: WithClauseParenNs;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlockNs;
-	[TSKindId.SuiteBlockWithIndent]: SuiteBlockWithIndentNs;
+	[TSKindId.SuiteBlock]: SuiteBlockNs;
 	[TSKindId.SimplePatternNegative]: SimplePatternNegativeNs;
 	[TSKindId.ExceptClauseList]: ExceptClauseListNs;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparatorNs;
@@ -7434,15 +7448,15 @@ export namespace MatchBlockBlock {
 	export type Tree = TreeFor<TSKindId.MatchBlockBlock>;
 	export type Kind = '_match_block_block';
 }
-export namespace SuiteBlockWithIndent {
-	export type Config = ConfigFor<TSKindId.SuiteBlockWithIndent>;
-	export type Fluent = FluentFor<TSKindId.SuiteBlockWithIndent>;
-	export type Loose = LooseFor<TSKindId.SuiteBlockWithIndent>;
-	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlockWithIndent>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SuiteBlockWithIndent>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SuiteBlockWithIndent>;
-	export type Tree = TreeFor<TSKindId.SuiteBlockWithIndent>;
-	export type Kind = '_suite_block_with_indent';
+export namespace SuiteBlock {
+	export type Config = ConfigFor<TSKindId.SuiteBlock>;
+	export type Fluent = FluentFor<TSKindId.SuiteBlock>;
+	export type Loose = LooseFor<TSKindId.SuiteBlock>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
+	export type BuildArgs = BuildArgsFor<TSKindId.SuiteBlock>;
+	export type LooseArgs = LooseArgsFor<TSKindId.SuiteBlock>;
+	export type Tree = TreeFor<TSKindId.SuiteBlock>;
+	export type Kind = '_suite_block';
 }
 export namespace SimplePatternNegative {
 	export type Config = ConfigFor<TSKindId.SimplePatternNegative>;

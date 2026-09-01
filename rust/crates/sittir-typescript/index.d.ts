@@ -231,19 +231,6 @@ export interface ArrowFunctionTransport {
   _content: SlotValue<ArrowFunctionContentTransportSlot>
 }
 
-export interface ArrowFunctionUCallSignatureTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type_parameters?: SlotValue<TypeParametersTransport>
-  _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<ArrowFunctionUCallSignatureReturnTypeTransportSlot>
-}
-
 export interface AsExpressionTransport {
   '$source'?: Source
   '$named'?: boolean

@@ -362,9 +362,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			guard: { multiple: false; required: false; types: [{ type: 'if_clause'; named: true }] };
@@ -429,9 +429,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
@@ -662,9 +662,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 		};
@@ -677,9 +677,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 		};
@@ -693,9 +693,9 @@ export type PythonGrammar = {
 			required: true;
 			types: [
 				{ type: 'except_clause_arm'; named: true },
-				{ type: 'newline'; named: true },
-				{ type: 'simple_statements'; named: true },
-				{ type: 'suite_block_with_indent'; named: true }
+				{ type: 'suite_block'; named: true },
+				{ type: 'suite_empty'; named: true },
+				{ type: 'suite_inline'; named: true }
 			];
 		};
 	};
@@ -781,9 +781,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 		};
@@ -820,9 +820,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			left: {
@@ -871,9 +871,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
@@ -936,9 +936,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 		};
@@ -1450,11 +1450,21 @@ export type PythonGrammar = {
 			};
 		};
 	};
-	readonly suite_block_with_indent: {
-		type: 'suite_block_with_indent';
+	readonly suite_block: {
+		type: 'suite_block';
 		named: true;
 		fields: {};
 		children: { multiple: false; required: true; types: [{ type: 'block'; named: true }] };
+	};
+	readonly suite_inline: {
+		type: 'suite_inline';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'newline'; named: true }, { type: 'simple_statements_elements'; named: true }];
+		};
 	};
 	readonly try_statement: {
 		type: 'try_statement';
@@ -1464,9 +1474,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			else_clause: { multiple: false; required: false; types: [{ type: 'else_clause'; named: true }] };
@@ -1601,9 +1611,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			condition: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
@@ -1651,9 +1661,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true },
-					{ type: 'suite_block_with_indent'; named: true }
+					{ type: 'suite_block'; named: true },
+					{ type: 'suite_empty'; named: true },
+					{ type: 'suite_inline'; named: true }
 				];
 			};
 			with_clause: { multiple: false; required: true; types: [{ type: 'with_clause'; named: true }] };
@@ -1770,6 +1780,7 @@ export type PythonGrammar = {
 	readonly string_end: { type: 'string_end'; named: true };
 	readonly string_fragment: { type: 'string_fragment'; named: true };
 	readonly string_start: { type: 'string_start'; named: true };
+	readonly suite_empty: { type: 'suite_empty'; named: true };
 	readonly true: { type: 'true'; named: true };
 	readonly _anonymous_try: { type: 'try'; named: false };
 	readonly _anonymous_type: { type: 'type'; named: false };

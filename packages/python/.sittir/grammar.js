@@ -4463,7 +4463,7 @@ function resolvePatch(patch, originalMember, precStack) {
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const content = originalMember.content;
-      if (content?.type === "SYMBOL" && typeof content.name === "string") {
+      if (content?.type === "SYMBOL" && typeof content.name === "string" && isEnrichGroupLiftSymbol(content)) {
         const body = getGroupLiftRuleBody(content.name);
         if (body !== void 0) {
           const depositName = polymorphHiddenName(parentKind, patch.name);
@@ -4485,10 +4485,6 @@ function resolvePatch(patch, originalMember, precStack) {
       });
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    const original = originalMember;
-    if (original.type === "SYMBOL" && typeof original.name === "string") {
-      wireRegisterSymbolRename(original.name, hiddenName);
-    }
     return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
   }
   if (isAliasPlaceholder(patch)) {
@@ -4693,10 +4689,19 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  if (originalMember.type === "ALIAS") {
+    return { ...originalMember, value: patch.name };
+  }
   const hiddenName = "_" + patch.name;
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
+  const single = originalMember;
+  if (single.type === "SYMBOL" && typeof single.name === "string") {
+    const alias2 = nativeRuleFn("alias");
+    const sym = nativeRuleFn("sym", "symbol");
+    return alias2(originalMember, sym(aliasValue));
+  }
   const wasEmpty = matchesEmpty(originalMember);
   const factored = factorOutEmptiness(originalMember);
   if (wasEmpty && !factored) {
@@ -4854,18 +4859,16 @@ var grammar_sittir_default = grammar(
           0: "bare",
           1: "paren"
         },
-        _match_block: { 0: "block" },
-        // `_suite`'s indent-bearing arm (`seq($._indent, $.block)`) has no
-        // identity of its own otherwise — it's an anonymous seq member of
-        // a CHOICE whose other two arms are themselves aliases (to
-        // `simple_statements`/`newline`). Promoting it to its own kind
-        // (same mechanism as `_match_block`'s `block` arm above) gives it
-        // a real template, walked normally by emitRule/emitOne, so its
-        // own INDENT member (`case INDENT` in templates.ts) renders
-        // correctly instead of being silently dropped by emitChoice's
-        // union-slot routing, which has no notion of "gate an anonymous
-        // seq arm with no discriminating field of its own."
-        _suite: { 1: "block_with_indent" },
+        _match_block: { 0: "block", 1: "empty" },
+        // A suite is one of three forms: simple statements on the same
+        // line, an indented block, or nothing at all. Arms 0 and 2 are
+        // aliases (to `simple_statements` / `newline`) and only need arm
+        // names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
+        // member with no identity of its own; promoting it to a kind
+        // (same mechanism as `_match_block`'s `block` arm above) gives
+        // it a real template, so its INDENT member renders instead of
+        // being dropped by emitChoice's union-slot routing.
+        _suite: { 0: "inline", 1: "block", 2: "empty" },
         _simple_pattern: { "11": "negative" },
         except_clause: { "2/0/0": "as", "2/0/1": "list" }
       },

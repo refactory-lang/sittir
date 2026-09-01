@@ -322,6 +322,20 @@ describe('import_statement sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ImportStatementArm);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('importRequireClause builds the import_require_clause form', () => {
+		const node = ir.importStatement.importRequireClause({
+			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			source: {
+				$type: TSKindId.String,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.ImportRequireClause);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('import_clause', () => {
@@ -1860,11 +1874,11 @@ describe('arrow_function sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ArrowFunctionParameter);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('callSignature builds the _arrow_function__call_signature form', () => {
+	it('callSignature builds the call_signature form', () => {
 		const node = ir.arrowFunction.callSignature({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
 		});
-		expect(node.$type).toBe(TSKindId.ArrowFunctionUCallSignature);
+		expect(node.$type).toBe(TSKindId.CallSignature);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2888,6 +2902,13 @@ describe('class_body sub-factories', () => {
 			terminator: '\n'
 		});
 		expect(node.$type).toBe(TSKindId.ClassBodyMethodSig);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('classStaticBlock builds the class_static_block form', () => {
+		const node = ir.classBody.classStaticBlock({
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassStaticBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('member builds the _class_body_member form', () => {
@@ -5108,6 +5129,14 @@ describe('index_signature sub-factories', () => {
 			indexType: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.IndexSignatureColon);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('mappedTypeClause builds the mapped_type_clause form', () => {
+		const node = ir.indexSignature.mappedTypeClause({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MappedTypeClause);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
