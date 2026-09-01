@@ -8,13 +8,7 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
-4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
-5. `ki-exercise-span-transport` — exercise renders natively now; chip its honest failure inventory ($span class + set_comprehension padding)
-6. `ki-raw-read-root-render` — hydrate read stubs before transport; `it.fails` pin in examples-verify
-8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
-9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
-10. `ki-mapentry-forwarded` — one-line type-union gap in the factory-map emitter
+5. `ki-exercise-span-transport` — one class left: partial `$span` on factory-built nodes reaching the transport
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
@@ -43,18 +37,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 
 The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the EXPRESSION fork: `let [c] = [];` parses as `expression_statement > assignment_expression > subscript_expression(object: reserved_identifier, ERROR, …)` — even the simplest array-destructuring `let` fails, while `const [c] = [];` (unambiguous keyword) parses correctly, and upstream tree-sitter-typescript parses the `let` form as a `lexical_declaration`. A GLR tie-break in the override grammar diverges from upstream's here (`let` doubles as a reserved identifier, so `let [` genuinely forks). No corpus entry currently exercises statement-level `let`-destructuring, so no validator row pins this — but it corrupts any real-world source using the construct. Fix belongs at the grammar level (a dynamic-precedence tie-break restoring upstream's resolution, the `primary_expression`/`list_splat_pattern` treatment in python's grammar being the in-repo precedent), not in consumers.
 
-## `ki-interp-brace-padding` — interpolation braces render with template-authored padding (`f"{ x }"`, `` `${ x }` ``)
-
-**Found during:** the string-fragment visibility work (python) and the template-substitution immediacy fix (typescript). The walker-authored templates for interpolation kinds carry style spaces around the substitution body, so a source `f"{x}"` renders `f"{ x }"` and `` `pre${x}` `` renders `` `pre${ x }` `` — valid in both languages and reparse-identical (the padding is code-context whitespace inside the substitution), but byte-divergent from typical source. Distinct from the (fixed) seam-injection class: these spaces are template TEXT, not writer insertions, so the seam machinery never sees them.
-
-**Fix, if/when prioritized:** drop the padding from the walker-emitted templates for interpolation-family kinds (template text is the sole owner of these spaces — deleting them there is the whole fix); the corpus rows for mixed strings pin that nothing else regresses.
-
-## `ki-nodemembervalue-boolean` — TS `NodeMemberValue` union lacks `boolean`, lagging the sanctioned wire contract
-
-**Found during:** the parity-fixture serde fix — the generic Rust `FieldValue` union gained `Bool` (and `Option`-element `Multiple`) to match what the generated transports and `assertNativeFieldValue` already accept, but the TS-side `NodeMemberValue` (`AnyNodeData | string | number`) was left unwidened: a naive widening would falsely widen `NodeChildren` too, since children disallow booleans. Type-level only — runtime paths already handle boolean slots.
-
-**Fix, if/when prioritized:** split the member-value and child-value unions so `boolean` lands only on the member side; deferred with the rest of the type-debt class (gates run on `validate:native`, not tsgo).
-
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 
 **Found during:** re-pinning `packages/codegen/src/scm/__tests__/scm-roles.test.ts`. Rust's `string_literal` factory takes a config with an explicit `stringOpen` slot (the open-quote token variant: `"`, `b"`, …) plus an `elements` array, so `emitFromString` has no single-positional-child surface to compose and deliberately skips rather than inventing a default quote style (`line_comment`'s content-node shape skips `from.comment` the same way). The test now pins the absence.
@@ -62,28 +44,11 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 **Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
 
 
-## `ki-raw-read-root-render` — rendering a RAW parsed root fails: reader stubs reach the native transport unhydrated
-
-**Found during:** the examples verification pass — `wrapNode(root, tree).$render()` on a freshly parsed root (the use-case guide's round-trip example) throws ``Missing field `_name` on SourceFileTransport._statements``. The native reader materializes one level and leaves children as `$nodeHandle` stubs the wrap layer drills lazily; the boundary render hands the raw NodeData straight to the transport deserializer, which demands the full struct. Sibling class to `ki-exercise-span-transport` (there the inputs are factory-built span-less nodes; here they are READ stubs). Pinned by an `it.fails` in `packages/rust/tests/examples-verify.test.ts` — flips green when fixed.
-
-**Fix, if/when prioritized:** hydrate before transport — either the wrap surface's `$render` drills the tree fully first, or the boundary render resolves `$nodeHandle` stubs via `readNode` while projecting the transport. The validators' render paths (`loadBoundaryRender`) read fully-materialized nodes, which is why no validator row pins this.
-
 ## `ki-exercise-span-transport` — exercise factory round-trips fail on `Missing field start on …Transport.$span`
 
-**Found during:** porting the exercise tool's render step off `@sittir/legacy-core` onto the native boundary (`loadBoundaryRender`) — the port replaced the old seam-less-garbage renders with honest native-transport errors, exposing the real per-case failures the legacy renderer had been masking. Post-port inventory: rust 2 pass / 0 fail; python 1 pass / 9 fail (4× the `$span` class via `comparison_operator`/comprehension clauses, plus `set_comprehension` rendering `{ a for a in b }` with brace padding for input `{a for a in b}`); typescript 0 pass / 2 fail (both the `$span` class via `type_parameters` / `type_arguments`).
+**Found during:** porting the exercise tool's render step off `@sittir/legacy-core` onto the native boundary (`loadBoundaryRender`) — the port replaced the old seam-less-garbage renders with honest native-transport errors, exposing the real per-case failures the legacy renderer had been masking. Current inventory: rust 2 pass / 0 fail; python 2 pass / 8 fail (the `$span` class via `comparison_operator`/comprehension clauses); typescript 0 pass / 2 fail (both the `$span` class, via `formal_parameters` / `type_arguments`). The `set_comprehension` brace-padding row that used to sit alongside these is gone — that was the escaping artifact, since fixed; `{a for a in b}` now renders byte-exact.
 
 The dominant class: the native transport deserializer demands a complete `$span` on nested transport structs (e.g. `ComparisonOperatorComparatorTransport.$span`) that the exercise path's factory-built (span-less) nodes cannot supply — while the factory-render-parse validator renders factory output for the same grammars at 1385/1390+, so the gap is specific to how the exercise tool materializes its node inputs (wrapped/read stubs mixed into factory configs), not to factory rendering per se.
 
-**Fix, if/when prioritized:** root-cause why exercise-built nodes reach the transport with partial `$span`s (likely a read-stub surviving `nodeToConfig` into the rebuilt node) and either materialize the stub fully or strip `$span` so the transport takes the factory-shaped (span-less) path; the `set_comprehension` padding row is a separate template-spacing defect.
+**Fix, if/when prioritized:** root-cause why exercise-built nodes reach the transport with partial `$span`s (likely a read-stub surviving `nodeToConfig` into the rebuilt node) and either materialize the stub fully or strip `$span` so the transport takes the factory-shaped (span-less) path; the remaining failures are all one class.
 
-## `ki-dict-pattern-comma` — python `dict_pattern` drops the inter-entry comma on render
-
-**Found during:** the flank-capture census (Task 3 of the separator work). `case {1: a, 2: b}:` renders without the comma between entries; shares a root with the (since-fixed) `print_statement` class — the mandatory-flank handling hardcoded where a headless-group shape needs a capture — but this kind was not closed by that fix and has not been re-root-caused since.
-
-**Fix, if/when prioritized:** re-probe under the current separator-as-slot model (`probe-kind -g python -k dict_pattern --reparse`); the fix likely belongs with the kind's separated-list flank capture, not the template.
-
-## `ki-from-default-empty-delimiter` — generated `from.ts` `?? F.xElements({ delimiter: 2 })` defaults fail the list Config type
-
-**Found during:** the container-from coercion review fixes — the dominant remaining type-error cluster (TS2739, ~20-40 sites per grammar pre-review-fix, still the bulk of what's left). `canDefaultToEmpty` emits `?? F.<list>({ delimiter: 2 })` as the empty-list default, but the options bag alone is not assignable to the list factory's element-bearing Config — runtime is fine (the factory dispatches on the bag shape), types are not. Cosmetic per the type-debt policy (gates run on `validate:native`, not tsgo), but it is the single biggest cluster and one emitter site.
-
-**Fix, if/when prioritized:** emit the empty call in the list factory's real signature — `F.<list>({ delimiter: 2 })` → the options-first overload requires at least the options bag to typecheck against the overload set; passing it through the factory's declared options overload (or emitting `F.<list>()` when no options vary) closes the whole cluster at `canDefaultToEmpty`.

@@ -10,6 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+
 ### `packages/codegen/src/types/diagnostics.ts::fail`
 
 ```text
@@ -1519,3 +1520,25 @@ narrowing guard.
 // stamped storage id cannot prove the wire distinguishes them, so
 // they conservatively share one collision group.
 ```
+
+### `packages/codegen/src/types/rule.ts::RuleBase.staticSeamBefore`
+
+```text
+/**
+			 * The write seam immediately before this SEQ member, when the
+			 * grammar decides it independent of any particular render: `glued`
+			 * — the two sides never collide, no space is ever inserted;
+			 * `spaced` — a space is always inserted. Stamped once by
+			 * `stampStaticSpacing` (a template-emission dry run over the
+			 * assembled tree, run between `assemble` and the real emitter) and
+			 * consumed by every later template walk instead of recomputing —
+			 * a stamped member never re-derives its own boundary. Absent means
+			 * the boundary is residual: presence-conditional siblings (an
+			 * adjacent optional/array) or a genuinely mixed first-set (a
+			 * choice/supertype arm whose members disagree in word-class) make
+			 * the outcome instance-varying, and the boundary stays a runtime
+			 * `SpacingWriter` check.
+			 */
+```
+
+Any consumer downstream of the template emitter (e.g. the render-module emitter's writer-choice decision) can read this stamp as already-final without re-running `stampStaticSpacing` itself. That guarantee comes from `emit.ts`'s `emitAll`: every emitter's per-node dispatch (`dispatchNodeMapByTaxonomy`) completes, then `jinjaTemplates = templateEmitter.finalize()` is computed and passed as an explicit argument into `renderModuleEmitterInst.finalize(jinjaTemplates)` — plain sequential code order guarantees the template emitter's full lifecycle (including every `staticSeamBefore` write, whether from the dedicated `stampStaticSpacing` pass or a template walk's own in-pass stamping) is complete before render-module's `finalize` runs. The ordering is not a property of stamp-write timing alone; it depends on `emitAll` continuing to compute `jinjaTemplates` before calling `renderModuleEmitterInst.finalize`, so a reorder of those two calls would need to re-establish it.

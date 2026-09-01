@@ -62,8 +62,7 @@ type ExtractLoneSymbol<M extends readonly GrammarRule[], Found extends string | 
 		: Found;
 
 type MemberWrapName<N extends GrammarRule> = N extends SymbolRule
-	?
-		N['name'] extends `_${string}`
+	? N['name'] extends `_${string}`
 		? N['name'] extends RustSupertypes
 			? N['name']
 			: never
@@ -71,13 +70,11 @@ type MemberWrapName<N extends GrammarRule> = N extends SymbolRule
 	: N extends ChoiceRule
 		? OptionalInner<N> extends infer Inner
 			? Inner extends SymbolRule
-				?
-					Inner['name'] extends `_${string}`
+				? Inner['name'] extends `_${string}`
 					? never
 					: Inner['name']
 				: Inner extends SeqRule
-					?
-						Shape3Symbol<Inner> extends infer SymName
+					? Shape3Symbol<Inner> extends infer SymName
 						? SymName extends `_${string}`
 							? never
 							: SymName extends string
@@ -125,8 +122,7 @@ type WrapShape3Members<M extends readonly GrammarRule[], Name extends string> = 
 
 type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule[]> =
 	MemberWrapName<N> extends infer WName
-		?
-			[WName] extends [never]
+		? [WName] extends [never]
 			? N
 			: WName extends string
 				? FieldNameFor<WName, AllMembers> extends infer FName

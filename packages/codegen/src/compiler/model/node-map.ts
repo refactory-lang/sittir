@@ -9,23 +9,19 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
 	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
-	Rule,
 	RuleBase,
 	RenderRule,
 	SimplifiedRule,
-	SeqRule,
 	ChoiceRule,
 	StringRule,
 	SupertypeRule,
 	SymbolRule,
 	Multiplicity,
-	RuleId,
-	DelimiterMode
+	RuleId
 } from '../../types/rule.ts';
 import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
@@ -1961,55 +1957,132 @@ const REGEX_CONTROL_ESCAPES: Record<string, string> = {
 	'0': '\0'
 };
 
+function bracketExprEdgeClass(
+	source: string,
+	openBracketIdx: number,
+	ctx: { isWordChar: (c: string) => boolean }
+): SeamEdgeClass {
+	if (source[openBracketIdx + 1] === '^') return 'varies';
+	const chars: string[] = [];
+	for (let i = openBracketIdx + 1; i < source.length && source[i] !== ']'; i++) {
+		let ch = source[i]!;
+		if (ch === '\\') {
+			const esc = source[++i];
+			if (esc === undefined) return 'varies';
+			if (esc === 'd' || esc === 'w') {
+				chars.push('a');
+				continue;
+			}
+			if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
+				return 'varies';
+			ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
+		}
+		if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
+			const lo = ch.charCodeAt(0);
+			const hi = source[i + 2]!.charCodeAt(0);
+			i += 2;
+			if (hi < lo || hi - lo > 128) return 'varies';
+			for (let code = lo; code <= hi; code++) chars.push(String.fromCharCode(code));
+			continue;
+		}
+		chars.push(ch);
+	}
+	return uniformEdgeClass(chars.map((c) => charEdgeClass(c, ctx)));
+}
+
+function escapeCodeEdgeClass(esc: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
+	if (esc === 'd' || esc === 'w') return 'word';
+	if (
+		esc === undefined ||
+		esc === 's' ||
+		esc === 'S' ||
+		esc === 'D' ||
+		esc === 'W' ||
+		esc === 'p' ||
+		esc === 'u' ||
+		esc === 'x'
+	)
+		return 'varies';
+	return charEdgeClass(REGEX_CONTROL_ESCAPES[esc] ?? esc, ctx);
+}
+
 export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
 	if (source.length === 0) return 'varies';
 	const c0 = source[0]!;
-	if (c0 === '[') {
-		if (source[1] === '^') return 'varies';
-		const chars: string[] = [];
-		for (let i = 1; i < source.length && source[i] !== ']'; i++) {
-			let ch = source[i]!;
-			if (ch === '\\') {
-				const esc = source[++i];
-				if (esc === undefined) return 'varies';
-				if (esc === 'd' || esc === 'w') {
-					chars.push('a');
-					continue;
-				}
-				if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
-					return 'varies';
-				ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
-			}
-			if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
-				const lo = ch.charCodeAt(0);
-				const hi = source[i + 2]!.charCodeAt(0);
-				i += 2;
-				if (hi < lo || hi - lo > 128) return 'varies';
-				for (let code = lo; code <= hi; code++) chars.push(String.fromCharCode(code));
-				continue;
-			}
-			chars.push(ch);
-		}
-		return uniformEdgeClass(chars.map((c) => charEdgeClass(c, ctx)));
-	}
-	if (c0 === '\\') {
-		const esc = source[1];
-		if (esc === 'd' || esc === 'w') return 'word';
-		if (
-			esc === undefined ||
-			esc === 's' ||
-			esc === 'S' ||
-			esc === 'D' ||
-			esc === 'W' ||
-			esc === 'p' ||
-			esc === 'u' ||
-			esc === 'x'
-		)
-			return 'varies';
-		return charEdgeClass(REGEX_CONTROL_ESCAPES[esc] ?? esc, ctx);
-	}
+	if (c0 === '[') return bracketExprEdgeClass(source, 0, ctx);
+	if (c0 === '\\') return escapeCodeEdgeClass(source[1], ctx);
 	if (c0 === '(' || c0 === '^' || c0 === '.') return 'varies';
 	return charEdgeClass(c0, ctx);
+}
+
+function precedingBackslashCount(pos: { source: string; index: number }): number {
+	const { source, index } = pos;
+	let n = 0;
+	while (index - 1 - n >= 0 && source[index - 1 - n] === '\\') n++;
+	return n;
+}
+
+function hasUnescapedPipe(source: string): boolean {
+	for (let i = 0; i < source.length; i++) {
+		if (source[i] === '|' && precedingBackslashCount({ source, index: i }) % 2 === 0) return true;
+	}
+	return false;
+}
+
+const QUANTIFIER_CHARS = new Set(['*', '?', '+', '}']);
+
+interface TrailingAtom {
+	readonly edgeClass: SeamEdgeClass;
+	readonly atomStart: number;
+}
+
+function atomEndingAt(
+	source: string,
+	end: number,
+	ctx: { isWordChar: (c: string) => boolean }
+): TrailingAtom | undefined {
+	if (end === 0) return undefined;
+	const cLast = source[end - 1]!;
+	if (precedingBackslashCount({ source, index: end - 1 }) % 2 === 1) {
+		return { edgeClass: escapeCodeEdgeClass(cLast, ctx), atomStart: end - 2 };
+	}
+	if (cLast === ']') {
+		let i = end - 2;
+		while (i >= 0 && !(source[i] === '[' && precedingBackslashCount({ source, index: i }) % 2 === 0)) {
+			if (source[i] === ']' && precedingBackslashCount({ source, index: i }) % 2 === 0) return undefined;
+			i--;
+		}
+		return i < 0 ? undefined : { edgeClass: bracketExprEdgeClass(source, i, ctx), atomStart: i };
+	}
+	if (cLast === ')' || cLast === '(' || cLast === '^' || cLast === '.' || QUANTIFIER_CHARS.has(cLast)) return undefined;
+	return { edgeClass: charEdgeClass(cLast, ctx), atomStart: end - 1 };
+}
+
+export function patternTrailingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
+	if (source.length === 0 || hasUnescapedPipe(source)) return 'varies';
+	let end = source.length;
+	const last = source[end - 1]!;
+	const lastIsLiteral = precedingBackslashCount({ source, index: end - 1 }) % 2 === 1;
+	let permitsZero = false;
+	if (!lastIsLiteral && (last === '*' || last === '?')) {
+		permitsZero = true;
+		end -= 1;
+	} else if (!lastIsLiteral && last === '}') {
+		const braceStart = source.lastIndexOf('{', end - 2);
+		if (braceStart === -1 || precedingBackslashCount({ source, index: braceStart }) % 2 === 1) return 'varies';
+		const quant = /^(\d+)(,\d*)?$/.exec(source.slice(braceStart + 1, end - 1));
+		if (!quant) return 'varies';
+		permitsZero = Number(quant[1]) === 0;
+		end = braceStart;
+	} else if (!lastIsLiteral && last === '+') {
+		end -= 1;
+	}
+	const atom = atomEndingAt(source, end, ctx);
+	if (atom === undefined) return 'varies';
+	if (!permitsZero) return atom.edgeClass;
+	if (atom.edgeClass === 'varies') return 'varies';
+	const preceding = atomEndingAt(source, atom.atomStart, ctx);
+	return preceding !== undefined && preceding.edgeClass === atom.edgeClass ? atom.edgeClass : 'varies';
 }
 
 export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
@@ -2033,7 +2106,8 @@ export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClas
 			return { starts: charEdgeClass(fixed[0], ctx), ends: charEdgeClass(fixed[fixed.length - 1], ctx) };
 		}
 		const pattern = node.pattern;
-		if (pattern !== undefined) return { starts: patternLeadingEdgeClass(pattern, ctx), ends: 'varies' };
+		if (pattern !== undefined)
+			return { starts: patternLeadingEdgeClass(pattern, ctx), ends: patternTrailingEdgeClass(pattern, ctx) };
 		return { starts: 'varies', ends: 'varies' };
 	}
 	const rule = ctx.normalizedRules?.[kind];
@@ -2057,7 +2131,7 @@ function ruleEdgeClass(
 			return charEdgeClass(c, ctx);
 		}
 		case 'PATTERN':
-			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : 'varies';
+			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : patternTrailingEdgeClass(rule.value, ctx);
 		case 'SEQ': {
 			const member = side === 'starts' ? rule.members[0] : rule.members[rule.members.length - 1];
 			return ruleEdgeClass(member, side, ctx, visiting);

@@ -10,6 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+
 ### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageKind`
 
 How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
@@ -3068,6 +3069,7 @@ can't be unified.
  *  template text and never encoded; a slot's permitted values are exactly
  *  the grammar's optional flanks (see `permittedDelimiters`). */
 ```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`
 
 ```text
@@ -3085,3 +3087,26 @@ can't be unified.
  *  keyword-class leaf with `word: false`. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::atomEndingAt`
+
+```text
+/**
+ * Identifies the single atom (bracket class, escape code, or literal char)
+ * ending exactly at `end`, refusing (returns undefined) whenever that
+ * position is itself inside a quantifier — the caller decides whether a
+ * quantifier boundary here is the subject atom (already stripped before
+ * calling) or a stop condition (the atom immediately preceding a stripped
+ * one, which this function never chains through).
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::patternTrailingEdgeClass`
+
+#### body
+
+```text
+// A zero-permitting quantifier makes the atom itself absent-or-present; the
+// trailing edge is provable only if what precedes it, when the quantified
+// atom is absent, would end in the SAME class — sound because both outcomes
+// then agree regardless of which one actually rendered.
+```

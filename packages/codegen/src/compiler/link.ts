@@ -30,8 +30,7 @@ import type {
 	Repeat1Rule,
 	SymbolRule,
 	StringRule,
-	RepeatRule,
-	RuleId
+	RepeatRule
 } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {

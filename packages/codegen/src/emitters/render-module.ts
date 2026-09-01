@@ -47,8 +47,7 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents,
-	isAuthoredCompound
+	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -1513,6 +1512,7 @@ function filtersModule(): string {
 		'    pub use ::sittir_core::filters::{',
 		'        upper, lower,',
 		'        isBlank, isPresent,',
+		'        markSeam,',
 		'    };',
 		'}'
 	].join('\n');

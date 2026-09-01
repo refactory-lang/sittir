@@ -3,7 +3,6 @@ export type { TreeHandle } from './readNode.ts';
 export { replace, bindRange, replaceField, applyEdits } from './edit.ts';
 export { toCst } from './cst.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
-export { freezeNodeData, buildWithNamespace } from './nodeData.ts';
 export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from './metrics.ts';
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export { assertRenderableNodeData, isRenderableNodeData } from './native-boundary.ts';

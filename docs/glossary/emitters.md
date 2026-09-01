@@ -10,6 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -5394,44 +5395,38 @@ Surface`
  *  a list's canonical element field. */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::classifyChildFactorySurface`
+### `packages/codegen/src/emitters/shared.ts` — the child-surface questions
 
 ```text
 /**
- * Resolve whether a branch factory consumes children directly instead of a config bag.
+ * `classifyChildFactorySurface` is module-private on purpose. It answers
+ * one structural question — does this kind construct from children, and
+ * if so by spread or directly — and six unrelated decisions used to read
+ * that single answer:
  *
- * @remarks
- * `direct` covers the single unnamed-child surface (`factory(child)`), while
- * `spread` covers repeated child surfaces (`factory(...children)`). Field-backed
- * direct factories intentionally return `null` here — they still consume a direct
- * value, but not through the children surface used by wrap/from dispatch.
+ *   factoryTakesSpreadChildren   factories.ts: does the factory take
+ *                                positional element args?
+ *   fromEmitsChildrenCoercer     from.ts: emit the children-taking
+ *                                coercer rather than the field-carrying one?
+ *   fromForwardsToChildFactory   from.ts: may this target's factory be
+ *                                forwarded to?
+ *   wrapExposesChildren          wrap.ts: does `$with` expose children?
+ *   testConstructsWithChildren   test.ts: may a generated test construct
+ *                                this with children?
+ *   irNamespacesChildFactory     ir.ts: does a leaf factory under this
+ *                                parent get namespaced?
+ *
+ * They agree today, and each is a one-line delegation because of that.
+ * The names exist so they can stop agreeing: widening the shared
+ * classifier for one consumer used to re-shape the other five silently —
+ * narrowing it once emptied `_wrapKindIds` and broke array auto-wrap at
+ * runtime, and re-broadening it moved named kinds into the child coercer
+ * and cost them their dual-surface tolerance. A consumer whose question
+ * changes now edits its own predicate.
+ *
+ * `isWrapChildrenKind` and `emitsFieldResolvers` are the same pattern,
+ * already named for their questions before this split.
  */
-```
-
-#### body
-
-```text
-// A hoisted compound (e.g. `wrap.group()`'s own call site) and a 'list'
-// kind both legitimately reach this function with a broad `AssembledNode`
-// and correctly get `null` back — a hoisted compound via the explicit
-// `node.hoisted` guard (this function was never hoisted-inclusive), and
-// 'list' because `classifyFactoryShape` returns `'elements'` for
-// `AssembledList` (neither `'direct'`/`'spread'`/`'forwarded'`), and it now
-// has its own dedicated factory/wrap/from emission everywhere (Tasks 4/6);
-// every remaining call site narrows its own node type to 'branch' before
-// calling in.
-```
-
-#### body
-
-```text
-// 'forwarded' refines 'direct' (same positional child surface, plus the
-// factory also accepts the child's constructor args) — the child SURFACE
-// is 'direct' either way, for a named sole slot exactly as for an unnamed
-// one. What this answers is whether the factory takes its children
-// positionally, and that does not depend on the slot carrying a field
-// name. The factories emitter asks a narrower question and gates on
-// 'spread' alone.
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::unnamedChildSlotFacts`
@@ -11053,6 +11048,16 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // reference; defer to per-modelType emit by returning empty.
 ```
 
+#### body
+
+```text
+// The boundary immediately before a SEQ member is a fact of the grammar
+// shape, invariant across every occurrence of this rule subtree — once
+// decided statically it is stamped onto that member so a repeat visit
+// (shared helper rules inlined at multiple call sites) and any other
+// consumer of the assembled tree read the fact instead of re-deriving it.
+```
+
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
 ```text
@@ -14707,4 +14712,3 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
-

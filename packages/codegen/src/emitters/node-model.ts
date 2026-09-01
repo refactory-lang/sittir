@@ -8,7 +8,6 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import {
-	AbstractAssembledCompound,
 	AssembledSupertype,
 	isNodeRef,
 	isUnresolvedRef,

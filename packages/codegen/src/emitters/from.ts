@@ -30,7 +30,8 @@ import {
 	fieldResolverName,
 	needsNonEmptyHoist,
 	classifyFactoryShape,
-	classifyChildFactorySurface,
+	fromEmitsChildrenCoercer,
+	fromForwardsToChildFactory,
 	classifyFromEmission,
 	isWrapChildrenKind,
 	soleSlotFacts,
@@ -282,9 +283,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode.rawFactoryName) return null;
 
 	const branchTarget = targetNode instanceof AbstractAssembledCompound && !targetNode.hoisted ? targetNode : null;
-	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
-	if (childSurface === 'direct' || childSurface === 'spread') {
-		if (branchTarget === null) return null;
+	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
 		const facts = soleSlotFacts(branchTarget, nodeMap);
 		if (!facts) return null;
 		if (facts.multiple || !facts.required) return targetNode.rawFactoryName;
@@ -306,7 +305,7 @@ function emitBranchFrom(
 	intern: KindInterner,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	if (classifyChildFactorySurface(node, nodeMap) === 'spread') {
+	if (fromEmitsChildrenCoercer(node, nodeMap)) {
 		return emitContainerFrom(
 			{
 				kind: node.kind,

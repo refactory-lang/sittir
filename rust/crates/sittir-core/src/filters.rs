@@ -21,6 +21,8 @@
 
 use std::fmt;
 
+use crate::spacing::mark_adjacent;
+
 /// Uppercase. Mirrors TS `String.prototype.toUpperCase()`.
 ///
 /// Returns `Result<_, askama::Error>` per askama filter convention so
@@ -591,6 +593,26 @@ impl<T: PresenceCheck> PresenceCheck for Option<T> {
     fn is_present_check(&self) -> bool {
         self.as_ref().is_some_and(PresenceCheck::is_present_check)
     }
+}
+
+/// Pass-through filter: marks the render thread's `SpacingWriter` to
+/// skip its seam check on the very next write, then returns `value`
+/// unchanged so the template's own `{{ }}` expression renders exactly
+/// as it would without this filter.
+///
+/// Used at a `staticSeamBefore`-stamped boundary (`packages/codegen/src/
+/// types/rule.ts::RuleBase.staticSeamBefore`) — codegen already proved
+/// the boundary's spacing statically, so the runtime check would only
+/// re-confirm a foregone conclusion. `mark_adjacent()`'s existing
+/// contract (see `spacing.rs`) still applies: the mark is consumed by
+/// the very next non-empty write, so this filter must sit immediately
+/// adjacent to the value it wraps in template source, with no
+/// intervening writer use.
+#[askama::filter_fn]
+#[allow(non_snake_case)]
+pub fn markSeam<T>(value: T, _values: &dyn askama::Values) -> Result<T, askama::Error> {
+    mark_adjacent();
+    Ok(value)
 }
 
 /// Presence test's inverse — blank means "not present".

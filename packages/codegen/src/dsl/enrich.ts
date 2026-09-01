@@ -11,14 +11,12 @@ import {
 	isOptionalType,
 	isChoiceType,
 	isRepeatType,
-	isBlankType,
 	isPrecWrapper,
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
 import {
 	separatorOf,
-	leadingLiteralOf,
 	ruleMatchesEmpty,
 	isInlineSafe,
 	isSupertypeLike,
@@ -30,7 +28,6 @@ import {
 	peelOptionalSeq,
 	listSeparatorOfOptionalSeq,
 	optionalStringLiteral,
-	peelOptionalEitherSpelling,
 	separatedListBodyInfo,
 	armLeadingSymbolName,
 	armStartsWithSymbol,
@@ -751,9 +748,7 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 	const choiceFn = nativeRuleFn<(...args: unknown[]) => Rule>('choice');
 
 	const collapse = (alts: readonly Rule[]): Rule =>
-		alts.length === 1
-			? alts[0]!
-			: ({ ...choiceFn(...alts), metadata: makeRuleMetadata({ author: 'enrich' }) } as Rule);
+		alts.length === 1 ? alts[0]! : ({ ...choiceFn(...alts), metadata: makeRuleMetadata({ author: 'enrich' }) } as Rule);
 
 	const expand = (node: Rule): readonly Rule[] => {
 		if (!node || typeof node !== 'object') return [node];

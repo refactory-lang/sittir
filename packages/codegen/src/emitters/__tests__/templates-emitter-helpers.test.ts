@@ -1,23 +1,36 @@
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
-import { escapeJinjaString, escapeLiteral, stringifyRule } from '../templates.ts';
+import { escapeJinjaString, separateBraceFromTag, stringifyRule } from '../templates.ts';
 
-describe('escapeLiteral', () => {
-	it('adds spacing around opening braces', () => {
-		expect(escapeLiteral('{value')).toBe('{ value');
+describe('separateBraceFromTag', () => {
+	// Askama only lexes `{{`, `{%` and `{#` specially, and only when the
+	// opener is not itself preceded by a literal brace it would swallow.
+	// Everything else is ordinary text and must reach the output untouched.
+	it('leaves a brace followed by ordinary text alone', () => {
+		expect(separateBraceFromTag('{value')).toBe('{value');
 	});
 
-	it('adds spacing around closing braces', () => {
-		expect(escapeLiteral('value}')).toBe('value }');
+	it('leaves closing braces alone, adjacent or not', () => {
+		expect(separateBraceFromTag('value}')).toBe('value}');
+		expect(separateBraceFromTag('{{ x }}}')).toBe('{{ x }}}');
 	});
 
-	it('collapses empty braces to a single interior space', () => {
-		expect(escapeLiteral('{}')).toBe('{ }');
+	it('leaves empty braces alone', () => {
+		expect(separateBraceFromTag('{}')).toBe('{}');
 	});
 
-	it('escapes multiple brace pairs', () => {
-		expect(escapeLiteral('{{value}}')).toBe('{ { value } }');
+	it('separates a literal brace from a following expression and trims it back out', () => {
+		expect(separateBraceFromTag('{{{ x }}')).toBe('{ {{- x }}');
+	});
+
+	it('separates a literal brace from a following statement or comment', () => {
+		expect(separateBraceFromTag('{{% if x %}')).toBe('{ {%- if x %}');
+		expect(separateBraceFromTag('{{# c #}')).toBe('{ {#- c #}');
+	});
+
+	it('does not double the trim marker when the tag already carries one', () => {
+		expect(separateBraceFromTag('{{{- x }}')).toBe('{ {{- x }}');
 	});
 });
 

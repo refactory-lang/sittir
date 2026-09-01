@@ -12,6 +12,12 @@ export * from './refines.js';
 // every wire method routes through these two sites.
 const _p = <R>(f: unknown) => f as (arg: unknown) => R;
 const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+// A kind's Config is a declared interface, and those are not assignable
+// to an index signature — so reading or spreading one generically needs
+// an erasure. It lives here, once, rather than at every method that
+// merges or partitions a config.
+const _o = (config: unknown) => config as Record<string, unknown>;
+const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
 
 const exportStatementDefault$fromArm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1543,22 +1549,22 @@ const augmentedAssignmentExpression$memberExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'separator' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const augmentedAssignmentExpression$subscriptExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'optionalChain' || key === 'index') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const augmentedAssignmentExpression$reservedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2353,11 +2359,11 @@ const decoratorCallExpression$decoratorMemberExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
 export const decoratorCallExpression: typeof B.decoratorCallExpression & {
 	identifier: {
@@ -2770,11 +2776,11 @@ const module$nestedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 export const module: typeof B.module & {
 	string: {
@@ -2870,11 +2876,11 @@ const internalModule$nestedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 export const internalModule: typeof B.internalModule & {
 	string: {
@@ -2959,11 +2965,11 @@ const nestedTypeIdentifier$nestedIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'module'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'object' || key === 'property') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, module: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, module: _c(child)(inner) });
 	};
 export const nestedTypeIdentifier: typeof B.nestedTypeIdentifier & {
 	identifier: {
@@ -3423,11 +3429,11 @@ const genericType$nestedTypeIdentifier =
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'module' || key === 'name') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const genericType$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3979,11 +3985,11 @@ const functionType$typePredicate =
 	(config: OmitEach<ArgsOf<PF>[0], 'returnType'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, returnType: _c(child)(inner) });
 	};
 export const functionType: typeof B.functionType & {
 	asserts: {

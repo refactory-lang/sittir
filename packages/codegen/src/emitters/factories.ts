@@ -37,7 +37,7 @@ import {
 	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
-	classifyChildFactorySurface,
+	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
 	keywordRefWireIdentity,
 	classifyFactoryEmission,
@@ -590,9 +590,7 @@ function resolveFactorySurface(
 	kindEntries?: readonly KindEnumEntry[]
 ): FactorySurface {
 	const spreadFacts =
-		isAuthoredCompound(node) && classifyChildFactorySurface(node, nodeMap) === 'spread'
-			? soleSlotFacts(node, nodeMap)
-			: null;
+		isAuthoredCompound(node) && factoryTakesSpreadChildren(node, nodeMap) ? soleSlotFacts(node, nodeMap) : null;
 	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 	if (spreadFacts) {
 		const elementType = childElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);

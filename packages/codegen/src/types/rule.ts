@@ -59,6 +59,8 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 			readonly tokenized?: boolean;
 			readonly immediate?: boolean;
 
+			readonly staticSeamBefore?: 'glued' | 'spaced';
+
 			readonly prec?: {
 				readonly kind: 'left' | 'right' | 'dynamic' | undefined;
 				readonly value: number | string;
